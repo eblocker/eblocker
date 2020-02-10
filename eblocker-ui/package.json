@@ -28,7 +28,7 @@
         "chart.js": "2.7.3",
         "express": "4.16.4",
         "gulp-empty": "0.1.2",
-        "jquery": "3.3.1",
+        "jquery": "3.4.1",
         "jquery-ui": "1.12.1",
         "jquery-ui-touch-punch": "0.2.3",
         "moment": "2.22.2",

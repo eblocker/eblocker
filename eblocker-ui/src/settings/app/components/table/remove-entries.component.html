@@ -1,0 +1,9 @@
+<div layout="row" layout-align="start center">
+    <md-button ng-click="vm.handleButtonClick(event)"
+               ng-disabled="vm.getNumberOfSelectedEntries() === 0 || vm.isButtonDisabled()"
+               class="md-raised eb-delete-button"
+                style="margin: 0;">
+        {{ vm.buttonLabel | translate:{num: vm.getNumberOfSelectedEntries()}:'messageformat' }}
+    </md-button>
+    <md-tooltip md-delay="300" ng-if="vm.buttonTooltip !== undefined">{{ vm.buttonTooltip | translate }}</md-tooltip>
+</div>

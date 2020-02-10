@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.eblocker</groupId>
+        <artifactId>eblocker-top</artifactId>
+        <version>2.3.9</version>
+        <relativePath>../../eblocker-top/</relativePath>
+    </parent>
+    <groupId>org.eblocker</groupId>
+    <artifactId>eblocker-parent</artifactId>
+    <version>2.5-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>eBlocker - Dependencies</name>
+
+    <properties>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.eblocker</groupId>
+                <artifactId>eblocker-crypto</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eblocker</groupId>
+                <artifactId>eblocker-registration-api</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eblocker</groupId>
+                <artifactId>eblocker-icapserver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+    </build>
+
+    <profiles>
+    </profiles>
+
+</project>

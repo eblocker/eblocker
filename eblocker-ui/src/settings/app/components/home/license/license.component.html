@@ -1,0 +1,108 @@
+<div flex-gt-sm="60" layout="column" layout-fill class="settings-child-view">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/home/license/help-license.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div class="config-frame md-whiteframe-z1">
+
+        <div layout="row" layout-xs="column">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{'ADMINCONSOLE.LICENSE.LICENSE_TYPE.LABEL' | translate}}" config="vm.licenseType"></eb-label-container>
+            </div>
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.REGISTRATION_STATE.LABEL' | translate }}" config="vm.registrationState"></eb-label-container>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_FROM.LABEL' | translate }}" config="vm.validFrom"></eb-label-container>
+            </div>
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.REGISTERED_BY.LABEL' | translate }}" config="vm.registeredBy"></eb-label-container>
+            </div>
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.DEVICE_NAME.LABEL' | translate }}" config="vm.deviceName"></eb-label-container>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUY LICENSE -->
+    <div class="config-frame md-whiteframe-z1">
+        <div flex-gt-sm="60" >
+            <div>
+                <h4 translate="ADMINCONSOLE.LICENSE.LABEL_BUY_LINK"></h4>
+            </div>
+            <div>
+                <md-button class="md-accent"
+                           style="margin-left: 0;"
+                           ng-href="{{'ADMINCONSOLE.LICENSE.PURCHASE_NEW_URL' | translate }}"
+                           target="_blank">
+                    {{'ADMINCONSOLE.LICENSE.ACTION.BUY_LICENSE' | translate }}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSFER LICENSE -->
+    <div class="config-frame md-whiteframe-z1">
+        <div flex-gt-sm="60">
+            <div>
+                <h4 translate="ADMINCONSOLE.LICENSE.LABEL_TRANSFER_LINK"></h4>
+            </div>
+            <div>
+                <md-button class="md-accent"
+                           style="margin-left: 0;white-space: inherit;"
+                           ng-href="{{'ADMINCONSOLE.LICENSE.TRANSFER_URL' | translate }}"
+                           target="_blank">
+                    {{'ADMINCONSOLE.LICENSE.ACTION.TRANSFER_LICENSE' | translate }}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVATE LICENSE -->
+    <div ng-if="vm.showActivationButton" class="config-frame md-whiteframe-z1">
+        <div flex-gt-sm="60">
+            <div>
+                <h4 translate="ADMINCONSOLE.LICENSE.LABEL_ACTIVATE_LICENSE"></h4>
+            </div>
+            <div>
+                <md-button type="button"
+                           style="margin-left: 0;"
+                           ng-click="vm.openLicenseDialog($event)"
+                           class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.LICENSE.ACTION.ACTIVATE_LICENSE' | translate }}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVATE LICENSE OR START SETUP -->
+    <div ng-if="vm.showSetupWizardButton()" class="config-frame md-whiteframe-z1">
+        <div flex-gt-sm="60">
+            <div>
+                <h4 translate="ADMINCONSOLE.LICENSE.LABEL_SETUP_WIZARD"></h4>
+            </div>
+            <div flex="100">
+                <md-button type="button"
+                           class="md-raised md-accent"
+                           style="margin-left: 0;"
+                           ng-click="vm.openSetupWizard()">
+                    {{ 'ADMINCONSOLE.LICENSE.ACTION.ACTIVATE_EBLOCKER' | translate }}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+</div>

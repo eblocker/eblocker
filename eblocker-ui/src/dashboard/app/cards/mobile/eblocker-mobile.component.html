@@ -1,0 +1,74 @@
+<eb-card
+    icon="/img/icons/ic_smartphone_black.svg"
+    card-title="{{'MOBILE.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="MOBILE.CARD.TOOLTIP">
+    <eb-card-content class="whitelist-dns-card">
+
+        <div layout="column">
+
+            <div layout="row" layout-align="center center">
+                <md-button class="md-primary"
+                           ng-href="#!/mobileSetup"
+                           aria-label="{{ 'MOBILE.CARD.ACTION.START_WIZARD' | translate }}">
+                    {{'MOBILE.CARD.ACTION.START_WIZARD' | translate}}
+                </md-button>
+            </div>
+
+            <md-divider style="margin-top: 8px;"></md-divider>
+
+            <p translate="MOBILE.CARD.LABEL_STEP_1" style="margin-bottom: 0;"></p>
+            <div layout="row" layout-xs="column" layout-align="center center">
+                <div>
+                    <md-button class="md-primary"
+                               ng-href="{{ 'MOBILE.CARD.LINK.RECOMMENDED_APPS' | translate}}" target="_blank"
+                               aria-label="{{ 'MOBILE.CARD.ACTION.RECOMMENDED_APPS' | translate }}">
+                        {{'MOBILE.CARD.ACTION.RECOMMENDED_APPS' | translate}}
+                    </md-button>
+                </div>
+            </div>
+
+            <p translate="MOBILE.CARD.LABEL_STEP_2" style="margin-bottom: 0;"></p>
+            <div layout="row" layout-xs="column" layout-align="center center">
+                <div style="width: 100%;">
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'SHARED.MOBILE.DEVICE_TYPE.LABEL_SELECT' | translate }}</label>
+                        <md-select ng-model="vm.operatingSystemType" aria-label="{{ 'SHARED.MOBILE.DEVICE_TYPE.LABEL_SELECT' | translate }}">
+                            <div ng-repeat="type in vm.osTypes">
+                                <md-option ng-value="type">{{ type.value | translate }}</md-option>
+                            </div>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div>
+                    <md-button class="md-raised md-primary md-accent"
+                               ng-disabled="vm.vpnHomeStatus.isFirstStart || vm.isCreatingCertificate || vm.isDownloadingConf"
+                               ng-click="vm.downloadClientConf(vm.device)"
+                               aria-label="{{ 'MOBILE.CARD.ACTION.DOWNLOAD' | translate }}">
+                        {{'MOBILE.CARD.ACTION.DOWNLOAD' | translate}}
+                    </md-button>
+                </div>
+                <!--<div>-->
+                    <!--<md-button class="md-raised eb-delete-button"-->
+                               <!--ng-disabled="!vm.device.hasCertificate || vm.vpnHomeStatus.isFirstStart || vm.isRevokingCertificate"-->
+                               <!--ng-click="vm.clickRevokeCert($event, vm.device)"-->
+                               <!--aria-label="{{ 'MOBILE.CARD.ACTION.REVOKE' | translate }}">-->
+                        <!--{{'MOBILE.CARD.ACTION.REVOKE' | translate}}-->
+                    <!--</md-button>-->
+                <!--</div>-->
+            </div>
+
+            <p translate="MOBILE.CARD.LABEL_STEP_3" style="margin-bottom: 0;"></p>
+            <div layout="row" layout-xs="column" layout-align="center center">
+                <div>
+                    <md-button class="md-primary"
+                               ng-href="{{ 'MOBILE.CARD.LINK.HOW_TO_START' | translate}}" target="_blank"
+                               aria-label="{{ 'MOBILE.CARD.ACTION.HOW_TO_START' | translate }}">
+                        {{'MOBILE.CARD.ACTION.HOW_TO_START' | translate}}
+                    </md-button>
+                </div>
+            </div>
+        </div>
+
+    </eb-card-content>
+</eb-card>

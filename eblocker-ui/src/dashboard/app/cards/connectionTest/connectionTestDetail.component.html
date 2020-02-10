@@ -1,0 +1,52 @@
+<div layout="column" layout-align="center none">
+    <div layout="row">
+        <span flex="grow">
+            <div>
+                {{ vm.testLabel | translate }}
+                <span ng-if="vm.showUsageAsText && vm.checksStatus.resultsPresent && (vm.checkResult.ok !== vm.checkResult.expected)">
+                    {{ 'CONNECTION_TEST.CARD.RESULT.NOT_USED' | translate }}
+                </span>
+            </div>
+        </span>
+        <span flex="none">
+            <div style="height: 32px;">
+                <!-- Spinner shown during the checks -->
+                <div ng-if="vm.checksStatus.running" aria-label="{{ 'CONNECTION_TEST.CARD.TOOLTIP.PROGRESS' | translate }}">
+                    <md-progress-circular md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                </div>
+                <div ng-if="!vm.checksStatus.running">
+                    <!-- Expected pass -->
+                    <div ng-if="vm.checkResult.ok && vm.checkResult.expected"
+                         aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.OK_EXPECTED'}}">
+                        <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+                    </div>
+                    <!-- Unexpected pass -->
+                    <div ng-if="vm.checkResult.ok && !vm.checkResult.expected"
+                         aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.OK_UNEXPECTED'}}"
+                         ng-click="vm.toggleExplanations()">
+                        <md-icon ng-if="vm.showUsageAsText" class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+                        <md-icon ng-if="!vm.showUsageAsText" class="content-error" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+                    </div>
+                    <!-- Expected failure -->
+                    <div ng-if="!vm.checkResult.ok && vm.checkResult.expected"
+                         aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.ERROR_EXPECTED'}}">
+                        <md-icon ng-if="vm.showUsageAsText" class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+                        <md-icon ng-if="!vm.showUsageAsText" class="content-off" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+                    </div>
+                    <!-- Unexpected failure -->
+                    <div ng-if="!vm.checkResult.ok && !vm.checkResult.expected"
+                         aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.ERROR_UNEXPECTED'}}"
+                         ng-click="vm.toggleExplanations()">
+                        <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </div>
+    <div class="connection-test-details-box" ng-show="vm.showExplanations && !vm.checkResult.expected">
+        <p>{{'CONNECTION_TEST.CARD.RESULT.EXPLANATION.HEADING' | translate}}</p>
+        <ul>
+            <li ng-repeat="expl in vm.checkResult.expl">{{'CONNECTION_TEST.CARD.RESULT.EXPLANATION.' + expl | translate}}</li>
+        </ul>
+    </div>
+</div>

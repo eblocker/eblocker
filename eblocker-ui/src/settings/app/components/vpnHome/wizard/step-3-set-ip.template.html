@@ -1,0 +1,86 @@
+<div>
+
+    <form name="vm.vpnHomeForm">
+        <div ng-if="vm.accessType === vm.ACCESS_OPTIONS.fixedIp">
+            <div style="padding-bottom: 0;">
+                <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.FIXED.HEADER' | translate }}</h3>
+            </div>
+
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.FIXED.HOST_LABEL' | translate }}</label>
+                    <input size="32" name="host" ng-model="vm.vpnHomeStatus.host" required>
+                    <div ng-messages="vm.vpnHomeForm.host.$error" ng-if="vm.vpnHomeForm.$submitted || vm.vpnHomeForm.host.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.ERROR.HOST_REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </div>
+
+        <div ng-if="vm.accessType === vm.ACCESS_OPTIONS.dynDns">
+            <div style="padding-bottom: 0;">
+                <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.DYN_DNS.HEADER' | translate }}</h3>
+            </div>
+
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.DYN_DNS.HOST_LABEL' | translate }}</label>
+                    <input size="32" name="host" ng-model="vm.vpnHomeStatus.host" required>
+                    <div ng-messages="vm.vpnHomeForm.host.$error" ng-if="vm.vpnHomeForm.$submitted || vm.vpnHomeForm.host.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.ERROR.HOST_REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </div>
+
+        <div ng-if="vm.accessType === vm.ACCESS_OPTIONS.ebDynDns">
+            <div style="padding-bottom: 0;">
+                <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.EB_DYN_DNS.HEADER' | translate }}</h3>
+            </div>
+
+            <div>
+                <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.EB_DYN_DNS.TEXT1"></p>
+                <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.EB_DYN_DNS.TEXT2"></p>
+                <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.EB_DYN_DNS.TEXT3"></p>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.ebDynConnectionConfirmed">
+                    {{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_SET_IP.EB_DYN_DNS.TEXT_CONFIRM' | translate}}
+                </md-checkbox>
+            </div>
+        </div>
+
+        <div hide-xs layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.openSaveWizardDialog()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.changeHost()" ng-if="vm.accessType !== vm.ACCESS_OPTIONS.ebDynDns" ng-disabled="!vm.isHostNameOrIpValid()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.nextStep()" ng-if="vm.accessType === vm.ACCESS_OPTIONS.ebDynDns" ng-disabled="!vm.ebDynConnectionConfirmed" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+            </md-button>
+        </div>
+
+        <div hide-gt-xs layout-xs="column" layout-align-xs="center center">
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+                </md-button>
+                <md-button type="button" ng-click="vm.changeHost()" ng-if="vm.accessType !== vm.ACCESS_OPTIONS.ebDynDns" ng-disabled="!vm.isHostNameOrIpValid()" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+                </md-button>
+                <md-button type="button" ng-click="vm.nextStep()" ng-if="vm.accessType === vm.ACCESS_OPTIONS.ebDynDns" ng-disabled="!vm.ebDynConnectionConfirmed" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+                </md-button>
+            </div>
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.openSaveWizardDialog()" class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+    </form>
+</div>

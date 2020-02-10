@@ -1,0 +1,24 @@
+<div>
+    <div>
+        <p translate="WIZARD.HTTPS.INTRO.EXPLAIN"></p>
+    </div>
+
+    <div ng-if="vm.isIos() && vm.isFirefox()">
+        <p>
+            <span style="font-weight: bold;" translate="WIZARD.HTTPS.INTRO.EXPLAIN_IOS"></span>
+        </p>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button ng-if="vm.isIos() && vm.isFirefox()" type="button" ng-click="vm.close()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.DONE' | translate }}
+        </md-button>
+
+        <md-button ng-if="!vm.isIos() || ! vm.isFirefox()" type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

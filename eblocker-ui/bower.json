@@ -1,0 +1,22 @@
+{
+  "name": "eblocker-ui",
+  "version": "1.6.0-SNAPSHOT",
+  "description": "eBlocker UI",
+  "authors": [],
+  "license": "UNLICENSED",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+}

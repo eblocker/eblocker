@@ -1,0 +1,335 @@
+{
+    "CONTROLBAR" : {
+        "DIALOGS" : {
+            "CLOAKING" : {
+                "CUSTOM" : {
+                    "BODY" : "To avoid dynamic pricing based on the device identification in shops, you can adjust your device identification here. This information (UserAgent) is sent to every webserver while you are surfing the web.",
+                    "BUTTON" : {
+                        "CANCEL" : "Cancel",
+                        "OK" : "Set User Agent"
+                    },
+                    "ERROR" : {
+                        "REQUIRED" : "Please enter a user agent string"
+                    },
+                    "INPUT" : "User Agent String",
+                    "TITLE" : "Custom device profile"
+                }
+            },
+            "MESSAGE" : {
+                "CENTER" : {
+                    "DATE_FORMAT" : "MMM D, YYYY",
+                    "DO_NOT_SHOW_AGAIN" : "Do not show again",
+                    "MESSAGES_AVAILABLE" : "New messages available: ",
+                    "MESSAGE_NO_NEW" : "No new messages available.",
+                    "MESSAGE_NO_NEW_EXPLAIN" : "There are currently no new messages available.",
+                    "TITLE" : "eBlocker Messages",
+                    "TOOLTIP_CLOSE" : "Close this message"
+                }
+            },
+            "PAUSE" : {
+                "CONFIRMATION" : {
+                    "BODY_PART_1" : "This will pause the eBlocker for this device and close the ControlBar. The Dashboard will be opened in another tab.",
+                    "BODY_PART_2" : "You may disable the pause at anytime from the dashboard.",
+                    "BUTTON" : {
+                        "CANCEL" : "Cancel",
+                        "OK" : "Activate pause"
+                    },
+                    "DO_NOT_SHOW_AGAIN" : "Do not show again",
+                    "TITLE" : "Activate pause for this device"
+                }
+            },
+            "PIN" : {
+                "BUTTON" : {
+                    "CANCEL" : "Cancel",
+                    "LOCK" : "Lock",
+                    "LOGIN" : "Change user",
+                    "OK" : "Ok"
+                },
+                "ERROR" : {
+                    "INVALID" : "PIN is invalid.",
+                    "REQUIRED" : "PIN is required."
+                },
+                "INPUT" : "PIN entry",
+                "PIN_CHANGE" : {
+                    "ERROR" : {
+                        "INVALID" : "Invalid PIN",
+                        "MISMATCH" : "PINs do not match",
+                        "REQUIRED" : "Please enter a pin!",
+                        "TOO_LONG" : "PIN is too long.",
+                        "TOO_SHORT" : "PIN must have at least 4 characters."
+                    },
+                    "HEADER" : "Change PIN",
+                    "INPUT_CURRENT" : "Current PIN",
+                    "INPUT_NEW" : "New PIN",
+                    "INPUT_RENEW" : "Repeat new PIN"
+                },
+                "PIN_LOCK" : {
+                    "BODY" : "Do you really want to lock Internet access for this device?",
+                    "HEADER" : "Lock Internet Access"
+                },
+                "PIN_SELECT_USER" : {
+                    "BODY_LOCK" : "Alternatively, you can lock Internet access for this device.",
+                    "BODY_POST" : ".",
+                    "BODY_PRE" : "The user PIN is required for the switchover to user ",
+                    "HEADER" : "PIN Required"
+                }
+            },
+            "TOR" : {
+                "VERIFY" : {
+                    "BODY" : "You can use one of the following services to check whether a connection can be established via Tor. Please note that eBlocker cannot guarantee the availability or correct functioning of these services.",
+                    "BUTTON" : {
+                        "CANCEL" : "Cancel"
+                    },
+                    "TITLE" : "Verify connection"
+                }
+            },
+            "VPN" : {
+                "ACTIVATION" : {
+                    "BUTTON" : {
+                        "BLANK_PAGE" : "Go to blank page",
+                        "CANCEL" : "Cancel",
+                        "CONTINUE" : "Stay on current page"
+                    },
+                    "ERROR" : {
+                        "CONNECTION_FAILURE" : "Connection failed",
+                        "CONNECTION_TIMEOUT" : "Connection timeout",
+                        "LIST_ERRORS" : "Connection errors:"
+                    },
+                    "SUCCESS" : "Connection successfully established.",
+                    "SUCCESS_TEXT" : "Staying on the same website may reveal your new IP address due to existing sessions.",
+                    "TITLE" : "Establishing connection with VPN: {{name}}"
+                }
+            }
+        },
+        "DROPDOWN_FILTERS" : {
+            "ALLOW_ON_THIS_WEBSITE" : "on this website",
+            "FOUND_ON_THIS_PAGE" : "On this website",
+            "LABEL_ENABLE_FILTERS" : "Go to settings",
+            "LABEL_FILTERS_DISABLED" : "Blockers are disabled.",
+            "LABEL_LAST_MINUTE" : "Last minute:",
+            "LABEL_TEN_MINUTE" : "Last 10 minutes:",
+            "MORE" : "More..."
+        },
+        "MENU" : {
+            "ACTIVATION" : {
+                "LABEL_REGISTER" : "Register",
+                "LABEL_RENEW" : "Renew License",
+                "TOOLTIP_REGISTER" : "Register your eBlocker to profit from all features",
+                "TOOLTIP_RENEW" : "Renew your license, so that you can continue to use all features."
+            },
+            "ADS" : {
+                "LABEL" : "Ads",
+                "MENU" : {
+                    "LABEL_ALLOW_LOCAL" : "Allow ads...",
+                    "LABEL_BLOCKED" : "Ads blocked:",
+                    "LABEL_BLOCK_GLOBAL" : "Block ads"
+                },
+                "TOOLTIP_ALLOW_GLOBAL" : "Ads are globally allowed",
+                "TOOLTIP_ALLOW_LOCAL" : "Ads are allowed on this page",
+                "TOOLTIP_BLOCK" : "{param, select, 0{No ads found on this page} 1{One ad is blocked} other{{param} ads are blocked}}",
+                "TOOLTIP_BLOCK_DNS" : "Domain blocker is active",
+                "TOOLTIP_NO_FILTER" : "Blockers are disabled. Enable blockers to protect this device."
+            },
+            "ANON" : {
+                "LABEL" : "IP-Anon",
+                "MENU" : {
+                    "ACTIONS" : {
+                        "CHECK_CONNECTION" : "Verify connection",
+                        "CONFIGURE_CONNECTION" : "Configure",
+                        "GET_NEW_TOR_ID" : "Get new Tor identity",
+                        "START_TOR" : "Tor Network"
+                    },
+                    "LABEL" : "Anonymous by...",
+                    "LABEL_TOR" : "Tor network",
+                    "LABEL_VPN_PREFIX" : "VPN: ",
+                    "TOOLTIP_ACTIVATE" : "Activate",
+                    "TOOLTIP_DEACTIVATE" : "Deactivate"
+                },
+                "NOTIFICATION" : {
+                    "CONNECTION_DOWN" : "VPN {{name}} has been disconnected.",
+                    "TOR_CONNECT" : "Connection to Tor network established.",
+                    "TOR_DISCONNECT" : "Tor network disconnected.",
+                    "TOR_ID_RENEW_ERROR" : "Error getting new Tor identity",
+                    "TOR_ID_RENEW_SUCCESS" : "Tor identity renewed.",
+                    "VPN_CONNECT" : "VPN is connected.",
+                    "VPN_DISCONNECT" : "VPN is disconnected."
+                },
+                "TOOLTIP_ACTIVATE" : "Activate IP anonymization",
+                "TOOLTIP_DEACTIVATE" : "Change or deactivate IP anonymization"
+            },
+            "CLOAKING" : {
+                "ALERT_NO_HTTPS" : "HTTPS deactivated",
+                "LABEL" : "Cloaking",
+                "MENU" : {
+                    "ACTION" : {
+                        "CUSTOM" : "Custom device"
+                    },
+                    "DISABLE" : "Not cloaked",
+                    "LABEL" : "Cloak as..."
+                },
+                "TOOLTIP" : "Cloak your device",
+                "TOOLTIP_ACTIVATE" : "Cloak as",
+                "TOOLTIP_ALERT_NO_HTTPS" : "Without HTTPS support cloaking is not 100% effective.",
+                "TOOLTIP_CLOAKED" : "Cloaked as {param}",
+                "TOOLTIP_DEACTIVATE" : "Disable cloaking as"
+            },
+            "DASHBOARD" : {
+                "LABEL" : "Dashboard",
+                "TOOLTIP" : "Opens the dashboard for this device"
+            },
+            "HELP" : {
+                "LABEL" : "Help",
+                "TOOLTIP" : "Get help online"
+            },
+            "MESSAGES" : {
+                "LABEL" : "Messages",
+                "NOTIFICATION" : {
+                    "HAS_ALERT" : "You've got important new messages!"
+                },
+                "TOOLTIP" : "There {param, select, 1{is} other{are}} {param, select, 0{no} other{{param}}} {param, select, 1{message} other{messages}}"
+            },
+            "ONLINE_TIME" : {
+                "LABEL" : "Online Time",
+                "MENU" : {
+                    "ACCESS_CONTINGENTS_FOR" : "Online times:",
+                    "ACTION" : {
+                        "USAGE_START" : "Start",
+                        "USAGE_STOP" : "Stop"
+                    },
+                    "REMAINING_TIME" : {
+                        "INFIX" : " {hours, select, 1{one} other{{hours}}} {hours, select, 1{hour} other{hours}} and ",
+                        "POSTFIX" : " {min, select, 1{one} other{{min}}} {min, select, 1{minute} other{minutes}}",
+                        "PREFIX" : ""
+                    },
+                    "TOOLTIP" : {
+                        "USAGE_START" : "Start Internet usage",
+                        "USAGE_STOP" : "Stop Internet usage"
+                    }
+                },
+                "TOOLTIP" : "Manage your online times."
+            },
+            "PAUSE" : {
+                "LABEL" : "Pause",
+                "TOOLTIP" : "Pause eBlocker for this device"
+            },
+            "SETTINGS" : {
+                "LABEL" : "Settings",
+                "TOOLTIP" : "Open settings"
+            },
+            "TRACKERS" : {
+                "LABEL" : "Trackers",
+                "MENU" : {
+                    "LABEL_ALLOW_LOCAL" : "Allow trackers...",
+                    "LABEL_BLOCKED" : "Trackers blocked:",
+                    "LABEL_BLOCK_GLOBAL" : "Block trackers"
+                },
+                "TOOLTIP_ALLOW_GLOBAL" : "Trackers are globally allowed",
+                "TOOLTIP_ALLOW_LOCAL" : "Trackers are allowed on this page",
+                "TOOLTIP_BLOCK" : "{param, select, 0{No trackers found on this page} 1{One tracker is blocked} other{{param} trackers are blocked}}",
+                "TOOLTIP_BLOCK_DNS" : "Domain blocker is active",
+                "TOOLTIP_NO_FILTER" : "Filters are disabled. Enable filters to protect this device."
+            },
+            "USER" : {
+                "ACTIONS" : {
+                    "CHANGE_PIN" : "Change PIN",
+                    "CHANGE_USER" : "Change user:",
+                    "LOCK_INTERNET" : "Lock Internet access",
+                    "RETURN_DEVICE" : "Return device"
+                },
+                "LABEL" : "User",
+                "LABEL_NO_OP" : "Device is currently locked.",
+                "LABEL_SYSTEM" : "Locked",
+                "MENU" : {
+                    "LABEL_ASSIGNED_USER" : "This device belongs to:",
+                    "LABEL_OPERATING_USER" : "Device currently used by:"
+                },
+                "TOOLTIP" : "This device is currently used by {param}."
+            }
+        },
+        "SERVICE" : {
+            "USER" : {
+                "NOTIFICATION" : {
+                    "ERROR" : {
+                        "CHANGE_PIN_FAIL" : "PIN is incorrect.",
+                        "NOT_PERMITTED" : "This action is not permitted.",
+                        "OTHER_ERROR" : "The action could not be completed.",
+                        "PIN_INVALID" : "The PIN is invalid.",
+                        "USER_NOT_AVAILABLE" : "Could not load users."
+                    },
+                    "SUCCESS" : {
+                        "CHANGE_PIN" : "Your PIN has been changed."
+                    }
+                }
+            }
+        }
+    },
+    "EXPIRED" : {
+        "CARD" : {
+            "BUTTON" : {
+                "RESUME" : "Continue"
+            },
+            "TEXT" : "Your session expired.",
+            "TITLE" : "Session expired"
+        }
+    },
+    "IDLE" : {
+        "DIALOG" : {
+            "BUTTON" : {
+                "RESUME" : "Continue"
+            },
+            "TEXT" : "Your session expires in {countdown} {countdown, select, 1{second} other{seconds}}.",
+            "TITLE" : "Session expires"
+        }
+    },
+    "MESSAGE_ALERT_EVENT_CONTENT" : "System events are available",
+    "MESSAGE_ALERT_EVENT_LABEL" : "Show events",
+    "MESSAGE_ALERT_EVENT_TITLE" : "System Events",
+    "MESSAGE_ALERT_EVENT_URL" : "/#!/system/events",
+    "MESSAGE_APP_MODULE_REMOVAL_CONTENT" : "Support for the exception list for {{ appNames }} has been withdrawn. The exception list is still available for your convinience, however, we recommend not to use this exception list anymore.",
+    "MESSAGE_APP_MODULE_REMOVAL_LABEL" : "Please find more details here",
+    "MESSAGE_APP_MODULE_REMOVAL_TITLE" : "Support for exception list withdrawn",
+    "MESSAGE_APP_MODULE_REMOVAL_URL" : "https://www.eblocker.com/en/appremoval_en",
+    "MESSAGE_CERTIFICATE_EXPIRATION_CONTENT" : "The eBlocker certificate is about to expire. Please add the new certificate to your operating system or browser.",
+    "MESSAGE_CERTIFICATE_EXPIRATION_LABEL" : "Add new certificate",
+    "MESSAGE_CERTIFICATE_EXPIRATION_TITLE" : "eBlocker certificate renewal",
+    "MESSAGE_CERTIFICATE_EXPIRATION_URL" : "/api/ssl/renewalCertificate.crt",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT" : "The eBlocker certificate has not yet been added. Please add the certificate to your operating system or browser.",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_LABEL" : "Add certificate",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_TITLE" : "eBlocker Certificate not yet added",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_URL" : "/api/ssl/caCertificate.crt",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT" : "Another DNS (domain name server) in your local network has been found which is not your gateway or router. This will cause problems resolving DNS requests by eBlocker and disable protection. Please turn off this DNS or remove it from your DHCP configuration.",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL" : "DNS Configuration",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE" : "DNS in local network detected",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL" : "/#!/dns",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT" : "The following name servers are answering slowly or unreliable: {{nameServers}}. This may impair your network access.",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_LABEL" : "DNS Configuration",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_TITLE" : "Unreliable DNS server(s) detected",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_URL" : "/#!/dns",
+    "MESSAGE_LICENSE_EXPIRED_CONTENT" : "Your current eBlocker license expired on {{licenseNotValidAfter | date}}.\n\nPlease purchase a new license to keep your eBlocker activated and protected permanently.",
+    "MESSAGE_LICENSE_EXPIRED_LABEL" : "Purchase new license",
+    "MESSAGE_LICENSE_EXPIRED_TITLE" : "License expired",
+    "MESSAGE_LICENSE_EXPIRED_URL" : "https://www.eBlocker.com/ebl/en/shop",
+    "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease purchase a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
+    "MESSAGE_LICENSE_EXPIRING_LABEL" : "Purchase new license",
+    "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease purchase a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
+    "MESSAGE_LICENSE_EXPIRING_TITLE" : "License expiring soon",
+    "MESSAGE_LICENSE_EXPIRING_URL" : "https://www.eBlocker.com/ebl/en/shop",
+    "MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease purchase a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
+    "MESSAGE_PATCH_RELEASE_NOTES_CONTENT" : "Important bug fix.",
+    "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "More...",
+    "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
+    "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://support.eBlocker.com/hc/de/articles/360025406994",
+    "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 2.4: You can now provide your own filter lists for domain and pattern blockers. Reactivation of already used licenses is much simpler now and does not require manual intervention of eBlocker support. Several other improvements and fixes have been added to this release.",
+    "MESSAGE_RELEASE_NOTES_LABEL" : "More...",
+    "MESSAGE_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
+    "MESSAGE_RELEASE_NOTES_URL" : "https://support.eBlocker.com/hc/de/articles/360025406994",
+    "MESSAGE_ROUTER_PROBLEMATIC_CONTENT" : "Your router seems to be a FritzBox 7490 (or a similar model) that is not compatible with the Plug-and-Play mode. n\nTherefore we recommend to use eBlocker's individual setup to avoid these problems.",
+    "MESSAGE_ROUTER_PROBLEMATIC_LABEL" : "Go to network settings",
+    "MESSAGE_ROUTER_PROBLEMATIC_TITLE" : "Detected a FritzBox 7490, 7360 oder 3490",
+    "MESSAGE_ROUTER_PROBLEMATIC_URL" : "/#!/network",
+    "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT" : "Did you know, that you can use the eBlocker with HTTPS encrypted websites now?\n\nYou only need to install eBlocker's security certificate in your client device and browsers.",
+    "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "Open HTTPS support settings",
+    "MESSAGE_SSL_SUPPORT_INSTALL_TITLE" : "Activate HTTPS support",
+    "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/#!/ssl",
+    "PARENTAL_CONTROL_USER_NAME" : "{{ name }}"
+}

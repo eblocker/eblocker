@@ -1,0 +1,69 @@
+<!-- ICON -->
+<div flex class="column-xs" hide-xs>
+    <md-icon ng-class="{'eb-table-icon-active': entry.currentConfig === 'FILTER' || entry.currentConfig === 'DENY' }" md-svg-src="/img/icons/ic_list_black.svg" aria-label="Recording entry"></md-icon>
+    <md-tooltip md-delay="300" ng-show="entry.currentConfig === 'FILTER'">{{'ADMINCONSOLE.MANUAL_RECORDING.TOOLTIP.FILTER' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-show="entry.currentConfig === 'DENY'">{{'ADMINCONSOLE.MANUAL_RECORDING.TOOLTIP.DENY' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-show="entry.currentConfig === 'ALLOW'">{{'ADMINCONSOLE.MANUAL_RECORDING.TOOLTIP.ALLOW' | translate}}</md-tooltip>
+</div>
+
+<!-- DOMAIN -->
+<div flex>
+    <span ng-show="entry.recordedDomain !== undefined && entry.recordedDomain !== ''">{{entry.recordedDomain}}</span>
+    <md-tooltip md-delay="300"><span ng-show="entry.recordedDomain !== undefined && entry.recordedDomain !== ''">{{entry.recordedDomain}}</span></md-tooltip>
+</div>
+
+<!-- IP -->
+<div flex>
+    <span ng-show="entry.recordedIp !== undefined && entry.recordedIp !== ''">{{entry.recordedIp}}</span>
+    <md-tooltip md-delay="300">{{entry.recordedIp}}</md-tooltip>
+</div>
+
+<!-- PROTOCOL -->
+<div flex hide-xs>
+    <span>{{'ADMINCONSOLE.MANUAL_RECORDING.LABEL_PROTOCOL_PORT' | translate }}</span>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.MANUAL_RECORDING.LABEL_PROTOCOL_PORT' | translate }}</md-tooltip>
+</div>
+
+<!-- CURRENT_RULE -->
+<div flex>
+    <span>{{'ADMINCONSOLE.MANUAL_RECORDING.CONFIG.' + entry.currentConfig | translate}}</span> <span ng-show="entry.whitelistedBy && entry.whitelistedBy.length > 0"> ({{vm.templateCallback.getWhitelistedByAsString(entry.whitelistedBy)}})</span>
+    <md-tooltip md-delay="300"><!--
+        --><span>{{'ADMINCONSOLE.MANUAL_RECORDING.CONFIG.' + entry.currentConfig | translate}}</span> <span ng-show="entry.whitelistedBy && entry.whitelistedBy.length > 0"> ({{vm.templateCallback.getWhitelistedByAsString(entry.whitelistedBy)}})</span><!--
+    --></md-tooltip>
+</div>
+
+<!-- RECOMMENDED_RULE -->
+<div flex hide-xs>
+    <span>{{'ADMINCONSOLE.MANUAL_RECORDING.CONFIG.' + entry.recommendedConfig | translate}}</span>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.MANUAL_RECORDING.CONFIG.' + entry.recommendedConfig | translate}}</md-tooltip>
+</div>
+
+<!-- TEMP_RULE -->
+<div flex>
+    <div>
+        <md-input-container md-theme="eBlockerThemeInput" style="max-width: 100%;margin: 0;">
+            <md-select ng-model="entry.testingConfig" md-on-close="vm.templateCallback.updateTesting()" aria-label="{{ 'ADMINCONSOLE.MANUAL_RECORDING.ARIA_TEMP_RULE' | translate }}">
+                <md-option aria-label="{{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.NO_CHANGE' | translate }}" value="NO_CHANGE">
+                    {{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.NO_CHANGE' | translate }}
+                </md-option>
+                <md-option aria-label="{{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.FILTER' | translate }}" value="FILTER">
+                    {{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.FILTER' | translate }}
+                </md-option>
+                <md-option aria-label="{{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.ALLOW' | translate }}" value="ALLOW">
+                    {{ 'ADMINCONSOLE.MANUAL_RECORDING.TEST_CONFIG.ALLOW' | translate }}
+                </md-option>
+            </md-select>
+        </md-input-container>
+    </div>
+</div>
+
+<!-- APPLY_RULE -->
+<div flex>
+    <md-icon class="content-eb-orange icon-pointer"
+             style="display: block; margin: 0 auto;"
+             ng-click="vm.templateCallback.editDomainIPRangeDialog(entry)"
+             md-svg-src="/img/icons/ic_edit_black.svg"
+             aria-label="{{ 'ADMINCONSOLE.MANUAL_RECORDING.TABLE.COLUMN.APPLY_RULE' | translate }}">
+    </md-icon>
+    <md-tooltip md-delay="300">{{ 'ADMINCONSOLE.MANUAL_RECORDING.TABLE.COLUMN.APPLY_RULE' | translate }}</md-tooltip>
+</div>

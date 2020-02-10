@@ -1,0 +1,77 @@
+<md-dialog aria-label="{{ 'DIALOGS.PIN.PIN_SELECT_USER.HEADER' | translate }}" id="pin-dialog">
+    <form name="pinForm" layout-padding  ng-submit="vm.commit()" novalidate style="overflow: initial;">
+
+        <md-dialog-content layout="column" style="overflow: initial;" layout-padding>
+            <div ng-if="vm.mode === 'askForPin'">
+                <div>
+                    <h2>{{ 'DIALOGS.PIN.PIN_SELECT_USER.HEADER' | translate }}</h2>
+                </div>
+                <div>
+                    <div>
+                        <p>
+                            <span translate="DIALOGS.PIN.PIN_SELECT_USER.BODY_PRE"></span>
+                            <b>{{'DIALOGS.PIN.PIN_SELECT_USER.USER_NAME' | translate: {name: vm.user.name} }}</b><!--
+                            --><span translate="DIALOGS.PIN.PIN_SELECT_USER.BODY_POST"></span>
+                        </p>
+                    </div>
+                    <div>
+                        <p ng-if="vm.lockEnabled">{{ 'DIALOGS.PIN.PIN_SELECT_USER.BODY_LOCK' | translate }}</p>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="vm.mode === 'confirmLock'">
+                <div>
+                    <h2>{{ 'DIALOGS.PIN.PIN_LOCK.HEADER' | translate }}</h2>
+                </div>
+                <div>
+                    <p>{{ 'DIALOGS.PIN.PIN_LOCK.BODY' | translate }}</p>
+                </div>
+            </div>
+
+            <div layout-padding ng-if="vm.mode === 'selectUser'" style="margin-top: 18px;">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 90%;">
+                    <label>{{ 'DIALOGS.PIN.PIN_SELECT_USER.LABEL' | translate }}</label>
+                    <md-select ng-model="vm.user">
+                        <div ng-repeat="user in vm.users | orderBy:'name'">
+                            <md-option ng-value="user" translate="{{user.nameKey}}" translate-values="{'name': user.name}">
+                            </md-option>
+                        </div>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div layout-padding ng-if="vm.mode === 'askForPin' || vm.mode === 'selectUser'">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 90%;">
+                    <label>{{ 'DIALOGS.PIN.INPUT' | translate }}</label>
+                    <input name="userPin" ng-model="vm.pin" type="password" required/>
+                    <div ng-messages="pinForm.userPin.$error">
+                        <div ng-message="pinInvalid">{{ 'DIALOGS.PIN.ERROR.INVALID' | translate }}</div>
+                        <div ng-message="required">{{ 'DIALOGS.PIN.ERROR.REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                 layout-align="end center"
+                 layout-xs="column"
+                 layout-align-xs="center center"
+                 style="padding-right: 16px;">
+            <div layout="row" layout-align="end center"
+                 layout-xs="row" layout-align-xs="center center">
+                <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                    {{ 'DIALOGS.PIN.BUTTON.CANCEL' | translate }}
+                </md-button>
+                <md-button type="button" ng-show="vm.lockEnabled && (vm.mode === 'selectUser' || vm.mode === 'askForPin')" ng-click="vm.confirmLock()" class="md-raised md-secondary">
+                    {{ 'DIALOGS.PIN.BUTTON.LOCK' | translate }}
+                </md-button>
+            </div>
+            <md-button class="md-raised md-primary md-accent" type="submit">
+                {{ vm.mode === 'selectUser' ? 'DIALOGS.PIN.BUTTON.LOGIN' :
+                vm.mode === 'askForPin' ? 'DIALOGS.PIN.BUTTON.OK' :
+                'DIALOGS.PIN.BUTTON.LOCK' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

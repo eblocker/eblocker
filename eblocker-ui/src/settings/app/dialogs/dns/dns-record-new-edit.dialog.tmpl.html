@@ -1,0 +1,53 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ARIA' | translate }}"
+           style="max-width: 800px;">
+
+    <form name="vm.dnsRecordForm" ng-submit="vm.dnsRecordForm.$valid && vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2 ng-show="vm.new" translate="ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.TITLE_NEW"></h2>
+                <h2 ng-show="!vm.new" translate="ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.TITLE_EDIT" translate-values="vm.current"></h2>
+            </div>
+
+            <div layout="column" layout-align="start start" style="margin-top: 20px;">
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.NAME_LABEL' | translate }}</label>
+                    <input eb-unique="vm.isUnique(name)" name="name" ng-model="vm.working.name" type="text" md-maxlength="50" required />
+                    <div ng-messages="vm.dnsRecordForm.name.$error" ng-if="vm.dnsRecordForm.$submitted || vm.dnsRecordForm.name.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.NAME_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.NAME_TOO_LONG' | translate }}</div>
+                        <div ng-message="unique">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.NAME_NOT_UNIQUE' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.IP4_ADDRESS_LABEL' | translate }}</label>
+                    <input eb-ip-address name="ipAddress" ng-model="vm.working.ipAddress" type="text" ng-required="!vm.ip6FeatureEnabled || !vm.working.ipAddress && !vm.working.ip6Address"/>
+                    <div ng-messages="vm.dnsRecordForm.ipAddress.$error" ng-if="vm.dnsRecordForm.$submitted || vm.dnsRecordForm.ipAddress.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.IP_ADDRESS_REQUIRED' | translate }}</div>
+                        <div ng-message="ipAddress">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput" ng-if="vm.ip6FeatureEnabled">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.IP6_ADDRESS_LABEL' | translate }}</label>
+                    <input eb-ip6-address name="ip6Address" ng-model="vm.working.ip6Address" type="text" ng-required="!vm.working.ipAddress && !vm.working.ip6Address"/>
+                    <div ng-messages="vm.dnsRecordForm.ip6Address.$error" ng-if="vm.dnsRecordForm.$submitted || vm.dnsRecordForm.ip6Address.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.IP_ADDRESS_REQUIRED' | translate }}</div>
+                        <div ng-message="ip6Address">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.ADD_EDIT_DNS_RECORD.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

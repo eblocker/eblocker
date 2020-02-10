@@ -1,0 +1,51 @@
+<div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab>
+            <md-tab-label>{{ 'HELP_ICON.TAB.OVERVIEW' | translate }}</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" class="help-tab">
+                    <div style="margin-top: 10px;" class="md-headline">
+                        {{ 'HELP_ICON.NETWORK.OVERVIEW.TITLE' | translate}}
+                    </div>
+                    <div>
+                        <p translate="HELP_ICON.NETWORK.OVERVIEW.P1"></p>
+                        <p>
+                            <span translate="HELP_ICON.NETWORK.OVERVIEW.P2_PRE"></span>
+                            <a class="orange" ng-href="{{'HELP_ICON.NETWORK.OVERVIEW.P2_LINK_URL' | translate}}" target="_blank" translate="HELP_ICON.NETWORK.OVERVIEW.P2_LINK_TEXT"></a>
+                            <span translate="HELP_ICON.NETWORK.OVERVIEW.P2_POST"></span>
+                        </p>
+                    </div>
+                    <!--<div ng-bind-html="vm.contentOverview | htmlSafe"></div>-->
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+
+        <!-- comment or uncomment to show or hide details section -->
+        <md-tab>
+            <md-tab-label>{{ 'HELP_ICON.TAB.DETAILS' | translate }}</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" class="help-tab">
+                    <div>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P1"></p>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P2"></p>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P3"></p>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P4"></p>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P5"></p>
+                        <p translate="HELP_ICON.NETWORK.DETAILS.P6"></p>
+                    </div>
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+
+        <!-- comment or uncomment to show or hide additional-resource section -->
+        <!--<md-tab>-->
+        <!--<md-tab-label>{{ 'HELP_ICON.TAB.ADDITIONAL' | translate }}</md-tab-label>-->
+        <!--<md-tab-body>-->
+        <!--<md-content layout="column" class="help-tab">-->
+        <!--&lt;!&ndash;<div style="margin-top: 10px;" class="md-headline">{{ vm.title | translate }}</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div ng-bind-html="vm.contentAdditionalResources | htmlSafe"></div>&ndash;&gt;-->
+        <!--</md-content>-->
+        <!--</md-tab-body>-->
+        <!--</md-tab>-->
+    </md-tabs>
+</div>

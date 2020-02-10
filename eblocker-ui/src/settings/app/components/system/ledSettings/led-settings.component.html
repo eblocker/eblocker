@@ -1,0 +1,23 @@
+<div ng-if="vm.ledSettings.hardwareAvailable"
+     flex-gt-lg="50" flex-md="60" flex-lg="60"
+     layout="column" layout-fill
+     class="settings-child-view">
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.LED_SETTINGS.LABEL' | translate }}</h3>
+        <div layout="row">
+            <div flex="none" layout="row" layout-align="center center">
+                <span>{{ 'ADMINCONSOLE.LED_SETTINGS.BRIGHTNESS' | translate }}</span>
+            </div>
+            <div flex>
+                <md-slider aria-label="{{ 'ADMINCONSOLE.LED_SETTINGS.BRIGHTNESS' | translate }}"
+                           md-theme="eBlockerThemeSwitch"
+                           class="md-primary"
+                           ng-model="vm.model"
+                           min="0.05" max="1.0" step="0.05"
+                           ng-change="vm.sliderUpdated()"
+                           style="margin-left: 16px; margin-right: 16px; width: 95%;">
+                </md-slider>
+            </div>
+        </div>
+    </div>
+</div>

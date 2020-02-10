@@ -1,0 +1,48 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout-padding>
+
+        <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+
+        <md-divider></md-divider>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div>
+                <h3 style="margin-top: 0;" class="eb-table-details-view">
+                    {{'ADMINCONSOLE.BLACKLISTS.DETAILS.HEADING' | translate }}
+                </h3>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <!-- **** Name -->
+                <div flex-gt-xs="50">
+                    <eb-label-container is-edit="vm.editable(vm.blacklist)" edit-callback="vm.editName($event, vm.blacklist)" label="{{ 'ADMINCONSOLE.BLACKLISTS.DETAILS.LABEL_NAME' | translate }}" config="vm.blacklistName"></eb-label-container>
+                </div>
+
+                <!-- **** Description -->
+                <div flex-gt-xs="50">
+                    <eb-label-container is-edit="vm.editable(vm.blacklist)" edit-callback="vm.editDescription($event, vm.blacklist)" label="{{ 'ADMINCONSOLE.BLACKLISTS.DETAILS.LABEL_DESCRIPTION' | translate }}" config="vm.blacklistDescription"></eb-label-container>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <!-- **** Domains -->
+                <div flex-gt-xs="50" ng-if="!vm.blacklist.providedByEblocker && !vm.isUrlBlocker">
+                    <eb-label-container is-edit="vm.editable(vm.blacklist)" edit-callback="vm.editDomains($event, vm.blacklist)" label="{{ 'ADMINCONSOLE.BLACKLISTS.DETAILS.LABEL_DOMAINS' | translate }}" config="vm.blacklistDomains"></eb-label-container>
+                </div>
+
+                <!-- **** URL -->
+                <div flex-gt-xs="50" ng-if="!vm.blacklist.providedByEblocker && vm.isUrlBlocker">
+                    <eb-label-container is-edit="vm.editable(vm.blacklist)" edit-callback="vm.editUrl($event, vm.blacklist)" label="{{ 'ADMINCONSOLE.BLACKLISTS.DETAILS.LABEL_URL' | translate }}" config="vm.blacklistUrl"></eb-label-container>
+                </div>
+
+                <!-- **** URL -->
+                <div flex-gt-xs="50" ng-if="!vm.blacklist.providedByEblocker && vm.isUrlBlocker">
+                    <eb-label-container is-edit="vm.editable(vm.blacklist)" edit-callback="vm.editFormat($event, vm.blacklist)" label="{{ 'ADMINCONSOLE.BLACKLISTS.DETAILS.LABEL_FORMAT' | translate }}" config="vm.blacklistFormat"></eb-label-container>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

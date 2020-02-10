@@ -1,0 +1,56 @@
+<div layout-padding layout="column">
+    <!--<div>-->
+    <!--<h3>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TIME_LANG.GREETING' | translate }}</h3>-->
+    <!--</div>-->
+    <!--<div>-->
+        <!--<p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.INTRO' | translate }}</p>-->
+    <!--</div>-->
+    <form name="vm.deviceForm" ng-submit="vm.submitDeviceForm()">
+
+        <div ng-if="vm.askForSerialNumber">
+
+            <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.SERIAL_EXPLAIN_PART1' | translate:{serialSample: vm.serialSample} }}</p>
+            <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.SERIAL_EXPLAIN_PART2' | translate }}</p>
+
+            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;" flex>
+                <label>{{'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.SERIAL_NUMBER_LABEL' | translate}}</label>
+                <input class="o-input" name="serialNumber" ng-model="vm.registrationUserData.serialNumber" required>
+                <div ng-messages="vm.deviceForm.serialNumber.$error">
+                    <div ng-message="required">{{'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.SERIAL_NUMBER_ERROR' | translate}}</div>
+                    <div ng-message="wrongFormat">{{'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.SERIAL_NUMBER_WRONG_FORMAT' | translate}}</div>
+                </div>
+            </md-input-container>
+
+            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                <label>{{'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.EBLOCKER_DEVICE_NAME_LABEL' | translate}}</label>
+                <input class="o-input" name="deviceName" ng-model="vm.registrationUserData.deviceName">
+            </md-input-container>
+
+        </div>
+
+        <div ng-if="!vm.askForSerialNumber">
+            <div>
+                <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.INTRO' | translate}}</p>
+            </div>
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.EBLOCKER_DEVICE_NAME_LABEL' | translate}}</label>
+                    <input class="o-input" name="deviceName" ng-model="vm.registrationUserData.deviceName">
+                </md-input-container>
+            </div>
+        </div>
+
+
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.closeWizard()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.BACK' | translate }}
+            </md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CONTINUE' | translate }}
+            </md-button>
+        </div>
+    </form>
+</div>

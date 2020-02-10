@@ -1,0 +1,29 @@
+
+
+<div ng-if="!vm.initFinished"
+     class="dashboard-spinner"
+     layout="row" layout-align="center center">
+    <md-progress-circular md-diameter="36"></md-progress-circular>
+</div>
+
+<div ng-if="vm.initFinished"
+     layout="row" layout-align="center start"
+     class="dashboard-main-screen"
+     ng-class="vm.getScreenClass()">
+    <!-- * class 'cards-container' required for ui-sortable; even if there is no css definition for this class
+           add ' ng-class="{'cardHandle': !vm.isTouchDevice()}" ' to last div to make entire card draggable.
+         * ID tag for parent div is required, so that we can increase the height of the columns while dragging -->
+    <div ui-sortable="vm.staticOptions"
+         class="cards-container"
+         ng-repeat="column in vm.columns track by $index"
+         ng-model="column"
+         id="{{ $index }}"
+         style="width: 100%;">
+        <!-- ng-show is required (do not use ng-if to hide cards ) because the element must be in the DOM for ui-sortable to work -->
+        <div ng-repeat="card in column"
+             ng-show="card.visible && card.displayGlobally && card.showInMenuButDisable !== true"
+             id="{{card.name}}"
+             compile="{{vm.getCardObject(card)}}">
+        </div>
+    </div>
+</div>

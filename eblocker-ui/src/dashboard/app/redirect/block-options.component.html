@@ -1,0 +1,32 @@
+<eb-wizard-component wizard-title="{{ 'REDIRECT.BLOCK_OPTIONS.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <div layout="column" layout-padding>
+
+            <div>
+                <p>
+                    <span>{{'REDIRECT.BLOCK_OPTIONS.TEXT_1' | translate}}</span>
+                </p>
+            </div>
+
+            <div class="redirect-link">
+                <span>{{'REDIRECT.BLOCK_OPTIONS.TEXT_2A' | translate}}</span>
+                <span style="font-weight: bold;">{{vm.originalDomain}}</span><span>{{'REDIRECT.BLOCK_OPTIONS.TEXT_2B' | translate}}</span>
+            </div>
+
+            <div>
+                <span>{{'REDIRECT.BLOCK_OPTIONS.TEXT_3' | translate}}</span>
+            </div>
+
+        </div>
+
+        <div layout="row" layout-xs="column" layout-sm="column" layout-align="end center">
+            <md-button hide-xs class="md-raised md-warn" ng-href="" ng-click="vm.redirect('PASS')">{{'REDIRECT.BLOCK_OPTIONS.ACTION.CONTINUE' | translate}}</md-button>
+            <md-button hide-gt-xs class="md-raised md-warn" ng-href="" ng-click="vm.redirect('PASS')">{{'REDIRECT.BLOCK_OPTIONS.ACTION.CONTINUE_XS' | translate}}</md-button>
+            <md-button ng-disabled="vm.isHistoryDisabled()" hide-xs class="md-raised" ng-href="" ng-click="vm.back();">{{'REDIRECT.BLOCK_OPTIONS.ACTION.BACK' | translate}}</md-button>
+            <md-button ng-disabled="vm.isHistoryDisabled()" hide-gt-xs class="md-raised" ng-href="" ng-click="vm.back();">{{'REDIRECT.BLOCK_OPTIONS.ACTION.BACK_XS' | translate}}</md-button>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

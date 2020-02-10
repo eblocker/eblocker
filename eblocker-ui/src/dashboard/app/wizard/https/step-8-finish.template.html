@@ -1,0 +1,24 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.HTTPS.FINISH.TITLE' | translate }}</h3>
+    </div>
+
+
+    <div>
+        <p translate="WIZARD.HTTPS.FINISH.TEXT_1"></p>
+    </div>
+
+    <div>
+        <p translate="WIZARD.HTTPS.FINISH.TEXT_2"></p>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button class="md-raised md-secondary" ng-click="vm.prevStep()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.close()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.DONE' | translate }}
+        </md-button>
+    </div>
+</div>

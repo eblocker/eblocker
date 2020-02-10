@@ -1,0 +1,30 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL' | translate }}</h3>
+        <div layout="column">
+            <div>
+                <p>{{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN' | translate }}
+                    <ul>
+                        <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
+                        <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
+                    </ul>
+                </p>
+            </div>
+            <div layout="row" layout-xs="column" layout-align="center center">
+                <md-button class="md-raised md-accent" ng-click="vm.createConfigBackup()">
+                    {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.GENERATE' | translate }}
+                </md-button>
+                <md-button class="md-raised md-secondary"
+                           name="configFile"
+                           ngf-select="vm.uploadConfigBackup($file, $invalidFiles)"
+                           ng-model="vm.configFile"
+                           ngf-pattern="'.eblcfg'"
+                           accept=".eblcfg"
+                           ngf-max-size="'1MB'"
+                           ng-required="required">
+                    {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.UPLOAD' | translate}}
+                </md-button>
+            </div>
+        </div>
+    </div>
+</div>

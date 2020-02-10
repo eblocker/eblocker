@@ -1,0 +1,168 @@
+<div flex-gt-sm="65" layout="column" layout-fill class="settings-child-view eb-update">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/home/update/help-update.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div class="config-frame md-whiteframe-z1">
+
+        <!-- Label / value: eBlocker OS, filter version, license valid till -->
+        <div layout="row" layout-xs="column">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{'ADMINCONSOLE.UPDATE.EBLOCKER_OS_VERSION.LABEL' | translate}}" config="vm.osVersion"></eb-label-container>
+            </div>
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.EBLOCKER_FILTER_VERSION.LABEL' | translate }}" config="vm.filterVersion"></eb-label-container>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column" ng-if="vm.isRegistered()">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.EBLOCKER_ACTIVATION_STATE.LABEL' | translate }}" config="vm.activationState"></eb-label-container>
+            </div>
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.LICENSE_VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
+            </div>
+        </div>
+
+        <div ng-show="!vm.isRegistered()" layout="column">
+            <p>{{ 'ADMINCONSOLE.UPDATE.UPDATES_NOT_AVAILABLE.NOT_REGISTERED_TEXT1' | translate }}</p>
+            <p>{{ 'ADMINCONSOLE.UPDATE.UPDATES_NOT_AVAILABLE.NOT_REGISTERED_TEXT2' | translate }}</p>
+        </div>
+
+        <div ng-show="vm.hasLicenseExpired()" layout="column">
+            <p>{{ 'ADMINCONSOLE.UPDATE.UPDATES_NOT_AVAILABLE.EXPIRED_TEXT1' | translate }}</p>
+            <p>{{ 'ADMINCONSOLE.UPDATE.UPDATES_NOT_AVAILABLE.EXPIRED_TEXT2' | translate }}</p>
+        </div>
+
+    </div>
+
+    <div class="config-frame md-whiteframe-z1">
+
+        <div ng-show="!vm.hasLicenseExpired()" layout="column">
+
+            <h4>{{'ADMINCONSOLE.UPDATE.LABEL_HEADER_AUTO_UPDATE' | translate}}</h4>
+
+            <!-- Switch to toggle auto update and set update time  -->
+            <div layout="row" layout-align-gt-sm="start center"
+                 layout-xs="column" layout-sm="column" layout-align="center start">
+
+                <!-- Toggle Automatic updates -->
+                <div>
+                    <md-switch md-theme="eBlockerThemeSwitch" class="md-primary" style="white-space: inherit;" ng-model="vm.automaticUpdates" ng-change="vm.setAutomaticUpdateStatus()">
+                        {{ vm.automaticUpdates ? 'ADMINCONSOLE.UPDATE.ACTION.AUTO_UPDATE_ENABLED' : 'ADMINCONSOLE.UPDATE.ACTION.AUTO_UPDATE_DISABLED' | translate }}
+                    </md-switch>
+                </div>
+
+                <div hide-gt-xs style="padding-top: 16px;"></div>
+
+                <div ng-if="vm.automaticUpdates" layout="row"
+                     ng-click="vm.openSetUpdateTimeDialog($event)"
+                     class="auto-update-edit unselectable">
+                    <div>
+                        <span>{{vm.update.beginTime | date : ('ADMINCONSOLE.UPDATE.TIME_FORMAT' | translate) }}</span><!--
+                        --><span>{{ 'ADMINCONSOLE.UPDATE.AUTO_UPDATE_EDIT.CONJ' | translate}}</span><!--
+                        --><span>{{vm.update.endTime | date : ('ADMINCONSOLE.UPDATE.TIME_FORMAT' | translate) }}</span><!--
+                        --><span>{{ 'ADMINCONSOLE.UPDATE.AUTO_UPDATE_EDIT.OCLOCK' | translate}}</span>
+                    </div>
+
+                    <!-- Toggle time selection dropdown -->
+                    <div layout="row" layout-align="start center">
+                        <div class="auto-update-icon" layout="row" layout-align="center center">
+                            <md-icon class="md-primary" md-svg-src="/img/icons/ic_edit_black.svg"></md-icon>
+                        </div>
+                    </div>
+                    <md-tooltip md-delay="300">{{ 'ADMINCONSOLE.UPDATE.TOOLTIP.EDIT_AUTO_TIME' | translate}}</md-tooltip>
+                </div>
+
+            </div>
+
+
+            <div layout="row" layout-xs="column" style="padding-top: 20px;">
+                <div flex-gt-xs="50">
+                    <eb-label-container label="{{'ADMINCONSOLE.UPDATE.LAST_UPDATE.LABEL' | translate}}" config="vm.lastUpdate"></eb-label-container>
+                </div>
+                <div flex-gt-xs="50">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.NEXT_UPDATE.LABEL' | translate }}" config="vm.nextUpdate"></eb-label-container>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="config-frame md-whiteframe-z1" layout="column">
+
+        <h4>{{'ADMINCONSOLE.UPDATE.LABEL_HEADER_MAN_UPDATE' | translate}}</h4>
+
+        <div layout="row" layout-xs="column" layout-align="start center" layout-align-xs="center center">
+
+            <div>
+                <md-button ng-if="!vm.areUpdatesAvailable && vm.automaticUpdates"
+                           class="md-raised md-secondary"
+                           style="margin-left: 0;"
+                           ng-click="vm.checkForUpdates()"
+                           ng-disabled="!vm.isDeviceReady()">
+                    {{'ADMINCONSOLE.UPDATE.ACTION.CHECK_FOR_UPDATES' | translate}}
+                </md-button>
+
+                <md-button ng-if="!vm.areUpdatesAvailable && !vm.automaticUpdates"
+                           class="md-raised md-accent"
+                           style="margin-left: 0;"
+                           ng-click="vm.checkForUpdates()"
+                           ng-disabled="!vm.isDeviceReady()">
+                    {{'ADMINCONSOLE.UPDATE.ACTION.CHECK_FOR_UPDATES' | translate}}
+                </md-button>
+
+                <md-button ng-if="vm.areUpdatesAvailable"
+                           class="md-raised md-accent"
+                           style="margin-left: 0;"
+                           ng-click="vm.openUpdateDialog($event)"
+                           ng-disabled="!vm.isDeviceReady()">
+                    {{'ADMINCONSOLE.UPDATE.ACTION.UPDATE' | translate}}
+                </md-button>
+            </div>
+
+            <div hide-gt-xs style="padding-top: 20px;"></div>
+            <div hide-xs style="margin-left: 40px;"></div>
+
+            <div ng-show="vm.isPreparingToCheck || vm.isChecking || vm.isUpdating || vm.waitingForUpdateToStart"
+                 layout="row"
+                 layout-align="start center">
+                <div>
+                    <md-progress-circular md-mode="indeterminate"  md-diameter="32"></md-progress-circular>
+                </div>
+                <div style="margin-left: 15px;">
+                    <span ng-show="(vm.isChecking || vm.isPreparingToCheck) && !vm.isUpdating && !vm.waitingForUpdateToStart">
+                        {{ 'ADMINCONSOLE.UPDATE.INFO.CHECK_RUNNING' | translate }}
+                    </span>
+                    <span ng-show="vm.isUpdating && !(vm.isChecking || vm.isPreparingToCheck) && !vm.waitingForUpdateToStart">
+                        {{ 'ADMINCONSOLE.UPDATE.INFO.UPDATE_RUNNING' | translate }}
+                    </span>
+                    <span ng-show="vm.waitingForUpdateToStart">
+                        {{ 'ADMINCONSOLE.UPDATE.INFO.WAITING_FOR_UPDATE' | translate }}
+                    </span>
+                </div>
+            </div>
+
+            <div ng-if="vm.isDeviceReady()" layout="row" layout-align="start center">
+                <div ng-show="vm.areUpdatesAvailable && !vm.waitingForUpdateToStart">
+                    <span>{{ 'ADMINCONSOLE.UPDATE.INFO.UPDATES_AVAILABLE' | translate :{num: vm.packageUpdates.length}:"messageformat"}}</span>
+                    <!--<span>{{ vm.packageUpdates.length }} {{ 'ADMINCONSOLE.UPDATE.INFO.UPDATES_AVAILABLE' | translate }}</span>-->
+                    <md-tooltip><!--
+                        -->{{ 'ADMINCONSOLE.UPDATE.INFO.UPDATABLE_PACKAGES' | translate }} {{ vm.packageUpdates.join(", ") }}<!--
+                    --></md-tooltip>
+                </div>
+
+                <div ng-show="!vm.areUpdatesAvailable && vm.alreadyCheckedForUpdates">
+                    {{ 'ADMINCONSOLE.UPDATE.INFO.NO_UPDATES_AVAILABLE' | translate }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

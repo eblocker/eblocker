@@ -1,0 +1,7 @@
+<html><body>
+<script type="text/javascript">
+   $(function(){
+      var connection = undefined;
+   });
+</script>
+</body></html>

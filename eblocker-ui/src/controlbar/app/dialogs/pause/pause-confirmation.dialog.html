@@ -1,0 +1,37 @@
+<md-dialog aria-label="Edit User Agent" layout-padding>
+    <md-dialog-content style="max-width:800px;max-height:810px;" layout="column" layout-padding>
+
+        <div>
+            <h2>{{ 'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.TITLE' | translate}}</h2>
+        </div>
+
+        <div>
+            <div>
+                <p>{{ 'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.BODY_PART_1' | translate }}</p>
+            </div>
+            <div>
+                <p>{{ 'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.BODY_PART_2' | translate }}</p>
+            </div>
+            <div layout="row" layout-align="start center" style="padding-top: 15px;">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="ctrl.doNotShowAgain" layout="row" layout-align="start center">
+                    <span>{{'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.DO_NOT_SHOW_AGAIN' | translate }}</span>
+                </md-checkbox>
+            </div>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row"
+                       layout-xs="column"
+                       layout-align="end center"
+                       layout-align-xs="center center"
+                       style="padding-right: 16px;">
+            <md-button type="button" class="md-raised md-secondary" ng-click="ctrl.cancel()">
+                {{ 'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.BUTTON.CANCEL' | translate }}
+            </md-button>
+            <a class="controlbar-link" ng-href="{{ctrl.dashboardPauseUrl}}" target="eblocker.dashboard">
+                <md-button md-offset="-32 44" class="md-raised md-primary md-accent" ng-click="ctrl.ok()" aria-label="Dashboard">
+                    {{ 'CONTROLBAR.DIALOGS.PAUSE.CONFIRMATION.BUTTON.OK' | translate }}
+                </md-button>
+            </a>
+    </md-dialog-actions>
+</md-dialog>

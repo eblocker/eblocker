@@ -1,0 +1,15 @@
+<div layout="row" ng-class="{'setup-padding-top': $ctrl.license.registrationState === 'OK'}">
+
+    <span layout="row" flex="50" layout-align="end center" class="setup-status-label">{{ 'LICENSE_STATUS.REGISTERED' | translate }}</span>
+
+    <div layout-gt-xs="row" layout-xs="column" flex-gt-xs="50" ng-if="$ctrl.license.registrationState === 'NEW'" layout-align="start center">
+        <md-icon class="content-error setup-status-icon" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+        <md-button class="md-primary" ng-click="$ctrl.openConsole()">{{ 'LICENSE_STATUS.BUTTON.ACTIVATE' | translate }}</md-button>
+    </div>
+
+    <div layout="row" flex="50" layout-align="start center" class="setup-status-value" ng-if="$ctrl.license.registrationState === 'OK'">
+        <span>{{$ctrl.license.displayProductName}}</span>
+        <span ng-hide="$ctrl.license.licenseLifetime" style="padding-left: 5px;" class="setup-license-valid">({{'LICENSE_STATUS.VALID_TILL' | translate}} {{ $ctrl.license.licenseNotValidAfterDisplay }})</span>
+    </div>
+    <!--<span class="setup-status-value" layout="row" layout-align="start center" ng-if="!$ctrl.license.licenseAboutToExpire">{{ $ctrl.license.deviceRegisteredBy }}</span>-->
+</div>

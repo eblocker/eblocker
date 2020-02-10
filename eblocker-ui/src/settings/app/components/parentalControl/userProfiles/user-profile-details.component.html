@@ -1,0 +1,205 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+    <div layout-padding>
+
+        <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+
+        <md-divider></md-divider>
+
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <div>
+                <h3 style="margin-top: 0;" class="eb-table-details-view">
+                    {{'ADMINCONSOLE.USER_PROFILES.DETAILS.HEADING' | translate }}
+                </h3>
+            </div>
+
+
+            <!-- **** Name -->
+            <div layout="row" layout-align="start center" style="width: 100%;">
+                <eb-label-container is-edit="!vm.profile.builtin" edit-callback="vm.editProfileName($event, vm.profile)" label="{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.LABEL_NAME' | translate }}" config="vm.profileName"></eb-label-container>
+            </div>
+
+            <!-- **** Description -->
+            <div layout="row" layout-align="start center" style="width: 100%;">
+                <eb-label-container is-edit="!vm.profile.builtin" edit-callback="vm.editProfileDescription($event, vm.profile)" style="margin: 0;" label="{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.LABEL_DESCRIPTION' | translate }}" config="vm.profileDescription"></eb-label-container>
+            </div>
+        </div>
+
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <!-- **** Restrict access to URLs -->
+
+            <div hide-gt-xs style="margin-top: 35px;"></div>
+
+            <div layout="row" layout-align="start center">
+                <md-switch md-theme="eBlockerThemeSwitch"
+                           ng-model="vm.profile.controlmodeUrls"
+                           class="md-primary switch-word-break"
+                           ng-change="vm.onChangeUrlRestrictions(vm.profile)"
+                           ng-disabled="vm.isProfileBeingUpdated(vm.profile)">
+                    {{ vm.profile.controlmodeUrls ?
+                    vm.profile.internetAccessRestrictionMode === 1 ?
+                    'ADMINCONSOLE.USER_PROFILES.DETAILS.FILTERING_MODE.BLACKLISTING' :
+                    'ADMINCONSOLE.USER_PROFILES.DETAILS.FILTERING_MODE.WHITELISTING' :
+                    'ADMINCONSOLE.USER_PROFILES.DETAILS.FILTERING_MODE.NONE' | translate }}
+                </md-switch>
+            </div>
+
+            <div hide-gt-xs style="margin-bottom: 46px;"></div>
+
+            <!-- List of activated black- or whitelists -->
+            <div ng-show="vm.profile.controlmodeUrls" layout="row" layout-align="start start">
+                <div flex="5"></div>
+                <div flex="65" layout="row" layout-wrap>
+                    <div ng-repeat="filterlist in vm.getActivatedFilterlists(vm.profile) | orderBy:'localizedName'">
+                        <md-tooltip ng-if="filterlist.localizedDescription != ''" md-direction="top"><!--
+                            -->{{ filterlist.localizedDescription }}
+                        </md-tooltip><!--
+                        -->{{ filterlist.localizedName }}{{ $last ? '' : ', &nbsp;' }}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="vm.profile.controlmodeUrls && vm.hasActivatedExceptionFilterLists(vm.profile)"
+                 layout="row"
+                 layout-align="start start"
+                 layout-margin>
+                {{ vm.profile.internetAccessRestrictionMode == 1 ? 'ADMINCONSOLE.USER_PROFILES.DETAILS.BLACKLIST_EXCEPTIONS' : 'ADMINCONSOLE.USER_PROFILES.DETAILS.WHITELIST_EXCEPTIONS' | translate }}
+            </div>
+
+            <div ng-show="vm.profile.controlmodeUrls && vm.hasActivatedExceptionFilterLists(vm.profile)" layout="row" layout-align="start start">
+                <div flex="5"></div>
+                <div flex="30" layout="row">
+                    <div ng-repeat="filterlist in vm.getActivatedExceptionFilterlists(vm.profile) | orderBy:'localizedName'">
+                        <md-tooltip ng-if="filterlist.localizedDescription != ''" md-direction="top"><!--
+                            -->{{ filterlist.localizedDescription }}
+                        </md-tooltip>
+                        {{ filterlist.localizedName }}{{ $last ? '' : ', &nbsp;' }}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="true" layout="column" layout-align="start start" style="padding-top: 8px;">
+                <md-button class="md-raised" ng-hide="vm.isProfileBeingUpdated(vm.profile)" aria-label="Edit restrictions" ng-click="vm.editAccessRestrictions(vm.profile)" >
+                    {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ACTION.EDIT_ACCESS_RESTRICTIONS' | translate }}
+                    <md-tooltip><!--
+                        -->{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.EDIT_ACCESS_RESTRICTIONS' | translate }}
+                    </md-tooltip>
+                </md-button>
+            </div>
+
+            <div ng-show="vm.profile.controlmodeUrls" layout="column" layout-align="start start" layout-padding>
+                <div ng-hide="vm.dialogOpen || !vm.isProfileBeingUpdated(vm.profile)" layout="row" layout-align="start center">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="24"></md-progress-circular>
+                    <span style="padding-left: 16px">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.UPDATE_RUNNING' | translate }}</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" layout="column" style="width: 100%;">
+            <!--  **** Restrict access to times -->
+            <div layout="row" layout-align="start center">
+                <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.profile.controlmodeTime" class="md-primary switch-word-break" ng-change="vm.onChangeTimeRestrictions(vm.profile)">
+                    {{ vm.profile.controlmodeTime && vm.profile.internetAccessContingents.length > 0? 'ADMINCONSOLE.USER_PROFILES.DETAILS.TIME_RESTRICTIONS_ACTIVATED' : 'ADMINCONSOLE.USER_PROFILES.DETAILS.TIME_RESTRICTIONS_DEACTIVATED' | translate }}
+                </md-switch>
+            </div>
+
+            <!-- List of times -->
+            <div ng-show="vm.profile.controlmodeTime" layout="column" layout-align="start start" style="width: 100%;">
+                <div layout="row" layout-xs="column" layout-align="start center"
+                     style="width: 100%;"
+                     ng-repeat="contingent in vm.profile.internetAccessContingents | orderBy: 'tillHours' | orderBy: 'fromHours' | orderBy:'onDay'">
+
+                    <div style="margin-right: 5px;" flex-gt-sm="20" flex-sm="30">
+                        {{ vm.getContingentDay(contingent) | translate }}
+                    </div>
+
+                    <div layout="row" flex="auto" layout-align="start center" style="padding-top: 8px;">
+                        <div flex-sm="40" flex-gt-sm="25" flex-gt-lg="15">{{ vm.getContingentDisplayTime(contingent.fromMinutes) }} - {{ vm.getContingentDisplayTime(contingent.tillMinutes) }}</div>
+                        <div flex="auto">
+                            <md-button style="min-width: 0; margin: 0;" aria-label="Edit contingent" ng-click="vm.editAccessContingent(vm.profile, contingent)">
+                                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_edit_black.svg"></md-icon>
+                                <md-tooltip>{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.EDIT_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                            </md-button>
+                            <md-button style="min-width: 0; margin: 0;" aria-label="Delete contingent" ng-click="vm.deleteAccessContingent(vm.profile, contingent)">
+                                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_remove_circle_black.svg"></md-icon>
+                                <md-tooltip>{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.REMOVE_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="vm.profile.internetAccessContingents.length > 0" layout="column" layout-align="start start" >
+                    <md-button class="md-raised" aria-label="Add contingent" ng-click="vm.addAccessContingent(vm.profile)">
+                        {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ACTION.ADD_TIME_RESTRICTIONS' | translate }}
+                        <md-tooltip>{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.ADD_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                    </md-button>
+                </div>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <!-- **** Restrict total usage time per day -->
+            <div layout="row" layout-align="start start">
+                <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.profile.controlmodeMaxUsage" class="md-primary switch-word-break" ng-change="vm.onChangeUsageRestrictions(vm.profile)">
+                    {{ vm.profile.controlmodeMaxUsage ? 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_ACTIVATED' : 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_DEACTIVATED' | translate }}
+                </md-switch>
+            </div>
+
+            <!-- List of times -->
+            <div ng-show="vm.profile.controlmodeMaxUsage" layout="column" layout-align="start start" style="width: 100%;">
+                <div layout="row" layout-align="start center" ng-repeat="usage in vm.profile.normalizedMaxUsageTimeByDay" style="width: 100%;">
+                    <div flex="20" flex-xs="40">
+                        {{ 'SHARED.PARENTAL_CONTROL.ACCESS_CONTINGENTS.' + usage.label | translate }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) > 0">
+                        {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_HOURS_MINUTES' | translate:{hours: (usage.minutes | displayHours), minutes: (usage.minutes | displayMinutes)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) > 0">
+                        {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_MINUTES' | translate:{minutes: (usage.minutes | displayMinutes)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) === 0">
+                        {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_HOURS' | translate:{hours: (usage.minutes | displayHours)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) === 0">
+                        {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_NO_TIME' | translate }}
+                    </div>
+                </div>
+            </div>
+            <div ng-show="vm.profile.controlmodeMaxUsage" layout="column" layout-align="start start" style="padding-top: 8px;">
+                <md-button class="md-raised" aria-label="{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.EDIT_USAGE_RESTRICTIONS' | translate }}" ng-click="vm.editAccessUsage(vm.profile)" >
+                    {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ACTION.EDIT_USAGE_RESTRICTIONS' | translate }}
+                    <md-tooltip>{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.TOOLTIP.EDIT_USAGE_RESTRICTIONS' | translate }}</md-tooltip>
+                </md-button>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" layout="row" style="margin-top: 15px; margin-bottom: 15px; width: 100%;">
+            <!-- **** List of people this profile is assigned to -->
+            <div ng-show="vm.profile.assignedToUsers.length > 0"
+                 layout-gt-sm="row"
+                 layout="column"
+                 layout-align="start start"
+                 style="width: 100%;">
+                <div>
+                    {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ASSIGNED_TO.HEADING' | translate }}&nbsp;
+                </div>
+                <div>
+                    <span ng-repeat="user in vm.profile.assignedToUsers | filter: {'system': false} | orderBy:'name' ">
+                        <span>
+                            <md-icon md-svg-src="/img/icons/ic_person_black.svg"></md-icon>
+                        </span>
+                        <span>
+                            {{ user.name }}{{$last ? '' : ', '}}
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div ng-show="vm.profile.assignedToUsers.length === 0">
+                {{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ASSIGNED_TO.PRE' | translate }}<span class="link" ng-click="vm.goToUsers()">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ASSIGNED_TO.CAPTION' | translate }}</span>{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.ASSIGNED_TO.POST' | translate }}
+            </div>
+        </div>
+    </div>
+
+</div>

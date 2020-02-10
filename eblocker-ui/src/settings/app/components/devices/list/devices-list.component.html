@@ -1,0 +1,94 @@
+<div layout="column" layout-fill class="settings-child-view eb-devices">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/devices/list/help-devices-list.template.html"></eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div>
+        <!-- Action bar of table -->
+        <div layout="row" layout-xs="column" layout-align="start center">
+
+            <div layout="row" style="width: 100%;">
+                <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                    <!-- WORK MODE -->
+                    <div ng-if="!vm.tableEditMode">
+                        <md-button class="md-raised md-secondary" ng-click="vm.reloadTable()">{{ 'ADMINCONSOLE.DEVICES_LIST.ACTION.REFRESH' | translate }}</md-button>
+                    </div>
+
+                    <!-- EDIT MODE -->
+                    <div ng-if="vm.tableEditMode">
+                        <table-remove-entries table-data="vm.filteredTableData"
+                                              is-entry-deletable="vm.isDeletable(value)"
+                                              delete-single-entry="vm.deleteSingleEntry(value)"
+                                              on-single-delete-done="vm.onSingleDeleteDone()"
+                                              button-label="ADMINCONSOLE.DEVICES_LIST.ACTION.REMOVE"
+                                              button-tooltip="ADMINCONSOLE.DEVICES_LIST.TOOLTIP.REMOVE_BUTTON"
+                                              dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_CONFIRM.TITLE"
+                                              dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_CONFIRM.TEXT"
+                                              dialog-text-undeletable="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_CONFIRM.TEXT_UNDELETABLE">
+                        </table-remove-entries>
+                        <!--<md-input-container md-theme="eBlockerThemeInput" style="margin-left: 18px; width: 180px;">-->
+                            <!--<label>{{ 'ADMINCONSOLE.DEVICES_LIST.SELECT_MULTIPLE.LABEL' | translate }}</label>-->
+                            <!--<md-select ng-model="vm.selectMultipleEntries" ng-change="vm.selectMultiple(vm.selectMultipleEntries)" aria-label="Select multiple devices">-->
+                                <!--<md-option value="NO_IP">{{ 'ADMINCONSOLE.DEVICES_LIST.SELECT_MULTIPLE.OPTION_NO_IP' | translate }}</md-option>-->
+                                <!--<md-option value="OFFLINE">{{ 'ADMINCONSOLE.DEVICES_LIST.SELECT_MULTIPLE.OPTION_OFFLINE' | translate }}</md-option>-->
+                                <!--<md-option value="ALL">{{ 'ADMINCONSOLE.DEVICES_LIST.SELECT_MULTIPLE.OPTION_ALL' | translate }}</md-option>-->
+                                <!--<md-option value="NONE">{{ 'ADMINCONSOLE.DEVICES_LIST.SELECT_MULTIPLE.OPTION_NONE' | translate }}</md-option>-->
+                            <!--</md-select>-->
+                        <!--</md-input-container>-->
+                    </div>
+
+                    <div ng-if="vm.loading" style="padding-left: 8px;" layout="row" layout-align="start center">
+                        <md-progress-circular md-diameter="32" md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+
+                <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                    <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableData"
+                                     search-term="vm.searchTerm"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+
+                <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                    <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                    <eb-edit-table table-data="vm.filteredTableData"
+                                   table-edit-mode="vm.tableEditMode">
+                    </eb-edit-table>
+                </div>
+            </div>
+
+            <div hide-gt-xs style="width: 100%;">
+                <!-- TABLE SEARCH -->
+                <eb-filter-table filtered-data="vm.filteredTableData"
+                                 original-data="vm.tableData"
+                                 filter-properties="vm.searchProps">
+                </eb-filter-table>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <eb-table table-data="vm.filteredTableData"
+                  table-header="vm.tableHeaderConfig"
+                  table-template="app/components/devices/list/devices-list-table.template.html"
+                  table-id="vm.tableId"
+                  template-callback="vm.templateCallback"
+                  table-details-state-name="{{vm.detailsState}}"
+                  table-details-params="vm.detailsParams"
+                  edit-mode="vm.tableEditMode"
+                  is-entry-selectable="vm.isSelectable(value)"
+                  small-table-header-limit="4">
+        </eb-table>
+
+        <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+            <eb-scroll-paginator table-id="vm.tableId"
+                                 table-size="vm.filteredTableData.length">
+            </eb-scroll-paginator>
+        </div>
+
+    </div>
+</div>

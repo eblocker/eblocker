@@ -1,0 +1,9 @@
+Package: [[artifactId]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: eblocker-icapserver, squid, redsocks, tor, tor-geoipdb, eblocker-network-tools, eblocker-dns, net-tools, iptables-persistent
+Maintainer: eBlocker Open Source UG <dev@eblocker.org>
+Description: eBlocker Configuration
+Distribution: development

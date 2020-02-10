@@ -1,0 +1,52 @@
+<md-dialog id="change-pin-dialog" aria-label="{{ 'DIALOGS.PIN.PIN_CHANGE.HEADER' | translate }}">
+    <form name="changePinForm" layout-padding  ng-submit="vm.save()" novalidate style="overflow: initial;">
+        <md-dialog-content layout="column" style="overflow: initial;" layout-padding>
+            <div>
+                <h2 ng-show="vm.module.containsPin">{{ 'DIALOGS.PIN.PIN_CHANGE.HEADER' | translate: {name: vm.title} }}</h2>
+                <h2 ng-hide="vm.module.containsPin">{{ 'DIALOGS.PIN.PIN_SET.HEADER' | translate: {name: vm.title} }}</h2>
+            </div>
+            <div layout="column">
+                <md-input-container md-theme="eBlockerThemeInput" ng-if="vm.module.containsPin">
+                    <label>{{ 'DIALOGS.PIN.PIN_CHANGE.INPUT_CURRENT' | translate }}</label>
+                    <input name="oldPin" ng-model="vm.module.oldPin" type="password" required>
+                    <div ng-messages="changePinForm.oldPin.$error" ng-if="changePinForm.$submitted || changePinForm.oldPin.$touched">
+                        <div ng-message="pinInvalid">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.INVALID' | translate }}</div>
+                        <div ng-message="required">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.REQUIRED' |  translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'DIALOGS.PIN.PIN_CHANGE.INPUT_NEW' | translate }}</label>
+                    <input name="newPin1" ng-model="vm.module.newPin" type="password" ng-minlength="4" md-maxlength="16" required>
+                    <div ng-messages="changePinForm.newPin1.$error" ng-if="changePinForm.$submitted || changePinForm.newPin1.$touched">
+                        <div ng-message="required">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.REQUIRED' |  translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.TOO_LONG' |  translate }}</div>
+                        <div ng-message="minlength">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.TOO_SHORT' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'DIALOGS.PIN.PIN_CHANGE.INPUT_RENEW' | translate }}</label>
+                    <input name="newPin2" ng-model="vm.module.newPinAgain" type="password" md-maxlength="16" required>
+                    <div ng-messages="changePinForm.newPin2.$error" ng-if="changePinForm.$submitted || changePinForm.newPin1.$touched || changePinForm.newPin2.$touched">
+                        <div ng-message="required">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.REQUIRED' |  translate }}</div>
+                        <div ng-message="mustMatch">{{ 'DIALOGS.PIN.PIN_CHANGE.ERROR.MISMATCH' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+                <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                    {{ 'DIALOGS.PIN.BUTTON.CANCEL' | translate }}
+                </md-button>
+                <md-button type="submit" class="md-raised md-primary md-accent">
+                    {{ 'DIALOGS.PIN.BUTTON.OK' | translate }}
+                </md-button>
+        </md-dialog-actions>
+    </form>
+
+</md-dialog>

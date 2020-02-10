@@ -1,0 +1,92 @@
+<eb-wizard-component wizard-title="{{ 'WIZARD.HTTPS.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <div ng-if="vm.currentStep === 1">
+            <ng-include src="'app/wizard/https/step-1-welcome.template.html'"></ng-include>
+        </div>
+
+        <!-- Firefox add cert -->
+        <div ng-if="vm.currentStep === 2">
+            <ng-include src="'app/wizard/https/step-2-firefox-add-cert.template.html'"></ng-include>
+        </div>
+
+        <!-- Firefox add cert -->
+        <div ng-if="vm.currentStep === 3">
+            <ng-include src="'app/wizard/https/step-3-firefox-add-os.template.html'"></ng-include>
+        </div>
+
+        <!-- Mac download cert -->
+        <div ng-if="vm.currentStep === 4 && vm.isMac()">
+            <ng-include src="'app/wizard/https/step-4-mac-download-cert.template.html'"></ng-include>
+        </div>
+        <!-- Win download cert -->
+        <div ng-if="vm.currentStep === 4 && vm.isWindows()">
+            <ng-include src="'app/wizard/https/step-4-win-download-cert.template.html'"></ng-include>
+        </div>
+        <!-- iOS add cert -->
+        <div ng-if="vm.currentStep === 4 && vm.isIos()">
+            <ng-include src="'app/wizard/https/step-4-ios-add-cert.template.html'"></ng-include>
+        </div>
+        <!-- Android add cert -->
+        <div ng-if="vm.currentStep === 4 && vm.isAndroid()">
+            <ng-include src="'app/wizard/https/step-4-android-add-cert.template.html'"></ng-include>
+        </div>
+
+
+        <!-- Mac add 1 cert -->
+        <div ng-if="vm.currentStep === 5 && vm.isMac()">
+            <ng-include src="'app/wizard/https/step-5-mac-add-cert-1.template.html'"></ng-include>
+        </div>
+        <!-- Win add 1 cert -->
+        <div ng-if="vm.currentStep === 5 && vm.isWindows()">
+            <ng-include src="'app/wizard/https/step-5-win-add-cert-1.template.html'"></ng-include>
+        </div>
+
+
+        <!-- Mac add 2 cert -->
+        <div ng-if="vm.currentStep === 6 && vm.isMac()">
+            <ng-include src="'app/wizard/https/step-6-mac-add-cert-2.template.html'"></ng-include>
+        </div>
+        <!-- Win add 2 cert -->
+        <div ng-if="vm.currentStep === 6 && vm.isWindows()">
+            <ng-include src="'app/wizard/https/step-6-win-add-cert-2.template.html'"></ng-include>
+        </div>
+
+
+        <!-- Mac add cert -->
+        <div ng-if="vm.currentStep === 7 && vm.isMac()">
+            <ng-include src="'app/wizard/https/step-7-mac-test-cert.template.html'"></ng-include>
+        </div>
+        <!-- Win add cert -->
+        <div ng-if="vm.currentStep === 7 && vm.isWindows()">
+            <ng-include src="'app/wizard/https/step-7-win-test-cert.template.html'"></ng-include>
+        </div>
+        <!-- iOS add cert -->
+        <div ng-if="vm.currentStep === 7 && vm.isIos()">
+            <ng-include src="'app/wizard/https/step-7-ios-test-cert.template.html'"></ng-include>
+        </div>
+        <!-- Android add cert -->
+        <div ng-if="vm.currentStep === 7 && vm.isAndroid()">
+            <ng-include src="'app/wizard/https/step-7-android-test-cert.template.html'"></ng-include>
+        </div>
+
+
+        <div ng-if="vm.currentStep === 8">
+            <ng-include src="'app/wizard/https/step-8-finish.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 9">
+            <ng-include src="'app/wizard/https/step-9-already-installed.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === vm.STEP_NO_WIZARD">
+            <ng-include src="'app/wizard/https/step-10-other-no-wizard.template.html'"></ng-include>
+        </div>
+
+
+    </eb-wizard-content>
+
+</eb-wizard-component>
+
+

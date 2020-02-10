@@ -1,0 +1,159 @@
+<div class="eb-table eb-table-large eb-table-striped" ng-class="{'eb-selection-table': vm.noSelection !== true}">
+    <div layout="column" style="padding-top: 5px; padding-bottom: 5px;">
+
+        <!-- UNCOMMENT THIS LINE TO MAKE HEADER SCROLL WITH TABLE; COMMENT LINE ABOVE BODY -->
+        <md-virtual-repeat-container  ng-style="vm.getTableStyle()">
+
+        <!-- HEAD -->
+        <div layout="row"
+             class="head">
+
+            <!-- Check-all Checkbox header -->
+            <div ng-if="vm.editMode"
+                 class="column-xs overall-checkbox"
+                 layout="row"
+                 ng-style="vm.getEntryStyle()">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" ng-click="vm.checkAll(vm.tableData)"
+                             class="md-primary"
+                             ng-checked="vm.allEntriesChecked(vm.tableData)"
+                             aria-label="Overall checkbox"
+                             md-indeterminate="vm.someNotAllEntriesChecked(vm.tableData)"
+                             style="margin-bottom: 0; margin-left: 11px;">
+                </md-checkbox>
+            </div>
+
+            <!-- EACH HEADER COLUMN -->
+            <div layout="row" layout-align="start center"
+                 class="column-wrapper"
+                 ng-style="vm.getEntryStyle()"
+                 ng-class="{
+                        'reduced-width': vm.isReducedWidth(vm.editMode, vm.hasDetails),
+                        'full-width': !vm.isReducedWidth(vm.editMode, vm.hasDetails)}">
+
+                <div layout="column" layout-align="center start"
+                     flex="{{header.flex ? header.flex : ''}}"
+                     flex-gt-xs="{{header.flexGtXs ? header.flexGtXs : ''}}"
+                     flex-xs="{{header.flexXs ? header.flexXs : ''}}"
+                     flex-sm="{{header.flexSm ? header.flexSm : ''}}"
+                     flex-md="{{header.flexMd ? header.flexMd : ''}}"
+                     flex-lg="{{header.flexLg ? header.flexLg : ''}}"
+                     ng-repeat="header in vm.tableHeader | limitTo: vm.getHeaderLimit()"
+                     ng-if="vm.showHeaderOnCurrentSizedTable(header)"
+                     ng-class="{
+                        'sortable-column': header.isSortable,
+                        'column-xs': header.isXsColumn
+                        }"
+                     ng-click="header.isSortable ? vm.changeOrder(header.sortingKey) : ''"
+                     class="unselectable">
+
+                    <!-- ARROW UP -->
+                    <div style="height: 18px; min-height: 18px;">
+                        <md-icon ng-show="header.isSortable && vm.orderKey === header.sortingKey && !vm.reverseOrder"
+                                 class="table-sort-icon"
+                                 style="margin-bottom: -8px;"
+                                 ng-style="vm.getSortingStyle(header.label, header.icon)"
+                                 md-svg-src="/img/icons/ic_keyboard_arrow_up_black.svg"
+                                 aria-label="{{'ADMINCONSOLE.TABLE.ARIA.SORT_UP' | translate}}">
+                        </md-icon>
+                        <div ng-hide="header.isSortable && vm.orderKey === header.sortingKey && !vm.reverseOrder"
+                             style="height: 18px; min-height: 18px;"
+                             class="table-sort-icon">
+                        </div>
+                    </div>
+
+                    <!-- LABEL -->
+                    <div class="large-table-label">
+                        <div ng-if="header.label !== undefined && header.label !== ''">
+                            <span>{{ header.label | translate }}</span>
+                            <md-tooltip ng-if="header.tooltip === undefined" md-delay="300">{{ header.label | translate }}</md-tooltip>
+                        </div>
+                        <div>
+                            <md-icon ng-if="header.icon !== undefined"
+                                     style="fill: black;"
+                                     md-svg-src="{{header.icon}}"
+                                     aria-label="{{'ADMINCONSOLE.TABLE.ARIA.CUSTOM_ICON' | translate}}">
+                            </md-icon>
+                        </div>
+                        <md-tooltip ng-if="header.tooltip" md-delay="300">{{header.tooltip | translate}}</md-tooltip>
+                    </div>
+
+                    <!-- ARROW DOWN -->
+                    <div style="height: 18px; min-height: 18px;">
+                        <md-icon ng-show="header.isSortable && vm.orderKey === header.sortingKey && vm.reverseOrder"
+                                 class="table-sort-icon"
+                                 style="margin-top: -18px;"
+                                 ng-style="vm.getSortingStyle(header.label, header.icon)"
+                                 md-svg-src="/img/icons/ic_keyboard_arrow_down_black.svg"
+                                 aria-label="{{'ADMINCONSOLE.TABLE.ARIA.SORT_DOWN' | translate}}">
+                        </md-icon>
+                        <div ng-hide="header.isSortable && vm.orderKey === header.sortingKey && vm.reverseOrder"
+                             style="height: 18px; min-height: 18px;"
+                             class="table-sort-icon">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Optional Show Details arrow placeholder -->
+            <div ng-if="vm.hasDetails && !vm.editMode" class="column-xs">
+            </div>
+        </div>
+
+        <!-- REMOVE THIS LINE TO MAKE HEADER SCROLL WITH TABLE; UNCOMMENT LINE ABOVE HEADER -->
+        <!--<md-virtual-repeat-container  ng-style="vm.getTableStyle()">-->
+
+            <!-- BODY -->
+            <div class="body">
+                <div layout="row" layout-align="start center" class="row-template"
+                     md-virtual-repeat="entry in vm.tableData" md-item-size="vm.getTableRowHeight()"
+                     ng-class="{
+                        'is-selected': entry._checked,
+                        'icon-pointer': vm.hasDetails || (vm.editMode && vm.isEntrySelectable({value: entry})),
+                        'icon-disallow': vm.editMode && !vm.isEntrySelectable({value: entry}),
+                        'column-xs': entry.isXsColumn || entry.isSelection,
+                        'striped-entry': entry.striped,
+                        'unselectable': (vm.hasDetails && !vm.editMode)
+                     }"
+                     style="outline: none;"
+                     ng-style="vm.getEntryStyle()"
+                     ng-click="vm.hasDetails && !vm.editMode ? vm.openDetails(entry) : vm.checkEntry(entry)">
+
+                    <!-- Checkmark -->
+                    <div ng-if="vm.editMode" layout="row" layout-align="center center">
+                        <eb-check-entry entry="entry" edit-mode="vm.editMode" is-selectable="vm.isEntrySelectable({value: value})"></eb-check-entry>
+                    </div>
+
+                    <!-- Table row-->
+                    <div layout="row" layout-align="start center"
+                         layout-fill
+                         ng-class="{
+                            'reduced-width': vm.isReducedWidth(vm.editMode, vm.hasDetails),
+                            'full-width': !vm.isReducedWidth(vm.editMode, vm.hasDetails)}"
+                         class="row-include"
+                         ng-include="vm.tableTemplate">
+                    </div>
+
+                    <!-- Optional Show Details arrow -->
+                    <div ng-if="vm.hasDetails && !vm.editMode" class="column-xs">
+                        <div flex>
+                            <md-icon class="eb-table-icon-active"
+                                     aria-label="Show details"
+                                     md-svg-src="/img/icons/ic_keyboard_arrow_right_black.svg">
+                            </md-icon>
+                            <md-tooltip md-delay="300">{{'ADMINCONSOLE.TABLE.ACTION.OPEN_DETAILS' | translate }}</md-tooltip>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- BODY END -->
+
+        </md-virtual-repeat-container>
+
+        <div ng-show="vm.tableData === undefined || vm.tableData.length === 0 && !vm.loading"
+             layout="row" layout-align="center center"
+             ng-style="vm.getEntryStyle()">
+            <span ng-show="vm.tableEmptyMsg !== undefined">{{vm.tableEmptyMsg | translate}}</span>
+            <span ng-hide="vm.tableEmptyMsg !== undefined">{{'ADMINCONSOLE.TABLE.EMPTY' | translate}}</span>
+        </div>
+    </div>
+</div>

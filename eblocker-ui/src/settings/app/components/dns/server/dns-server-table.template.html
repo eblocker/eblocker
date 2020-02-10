@@ -1,0 +1,69 @@
+<!-- ICON -->
+<div flex hide-xs class="column-xs">
+    <md-icon ng-class="{'eb-table-icon-active': entry.showStats}" md-svg-src="/img/icons/ic_dns_black.svg"></md-icon>
+    <md-tooltip md-delay="300" ng-show="entry.showStats">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.ACTIVE' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-hide="entry.showStats">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.NOT_ACTIVE' | translate}}</md-tooltip>
+</div>
+
+<!-- ORDER -->
+<div flex="15">
+    <span>{{entry.orderNumber}}</span>
+</div>
+
+
+<!-- SERVER -->
+<div flex>
+    <span ng-show="entry.server !== undefined && entry.server !== '' && (vm.templateCallback.configuration.modeDisplay !== 'TOR')">{{entry.server}}</span>
+    <!-- Display label for Tor DNS Server when IP is 127.0.0.1 -->
+    <span ng-show="entry.server !== undefined && entry.server !== '' && (vm.templateCallback.configuration.modeDisplay === 'TOR' && entry.server === '127.0.0.1')">{{'ADMINCONSOLE.DNS_SERVER.LABEL_IPS_DISPLAYED_TOR' | translate }}</span>
+</div>
+
+<!-- RESPONSE_TIME -->
+<div flex hide-xs>
+    <md-tooltip ng-if="entry.showStats" md-delay="300"><!--
+                           -->{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_AVERAGE' | translate}}: {{entry.responseTimeAverage}}{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_UNIT' | translate}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_MEDIAN' | translate}}: {{entry.responseTimeMedian}}{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_UNIT' | translate}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_MIN' | translate}}: {{entry.responseTimeMin}}{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_UNIT' | translate}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_MAX' | translate}}: {{entry.responseTimeMax}}{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RESPONSE_TIME_UNIT' | translate}}<!--
+                        --></md-tooltip>
+    <span ng-show="entry.responseTimeRating !== undefined && entry.responseTimeRating !== ''">{{'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.SERVERS_RATING_RESPONSE_TIME_' + entry.responseTimeRating | translate}}</span>
+    <span ng-hide="entry.responseTimeRating !== undefined && entry.responseTimeRating !== ''">{{'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.EMPTY' | translate}}</span>
+</div>
+
+<!-- RELIABILITY -->
+<div flex hide-xs>
+    <md-tooltip ng-if="entry.showStats" md-delay="300"><!--
+                            -->{{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RELIABILITY_VALID' | translate}}: {{entry.valid}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RELIABILITY_INVALID' | translate}}: {{entry.invalid}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RELIABILITY_TIMEOUT' | translate}}: {{entry.timeout}},
+        {{::'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.STATS_RELIABILITY_ERROR' | translate}}: {{entry.error}}<!--
+                    --></md-tooltip>
+    <span ng-show="entry.reliabilityRating !== undefined && entry.reliabilityRating !== ''">{{'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.SERVERS_RATING_RELIABILITY_' + entry.reliabilityRating | translate}}</span>
+    <span ng-hide="entry.reliabilityRating !== undefined && entry.reliabilityRating !== ''">{{'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.EMPTY' | translate}}</span>
+</div>
+
+<!-- RATING -->
+<div flex>
+    <md-icon ng-if="entry.rating === 'GOOD'" class="content-ok" md-svg-src="/img/icons/ic_check_black.svg">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.RATING_GOOD' | translate}}</md-tooltip>
+    </md-icon>
+    <md-icon ng-if="entry.rating === 'MEDIUM'" class="content-warn" md-svg-src="/img/icons/ic_warning.svg">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.RATING_MEDIUM' | translate}}</md-tooltip>
+    </md-icon>
+    <md-icon ng-if="entry.rating === 'BAD'" class="content-error" md-svg-src="/img/icons/ic_error_outline.svg">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.RATING_BAD' | translate}}</md-tooltip>
+    </md-icon>
+    <span ng-if="entry.rating === undefined">{{'ADMINCONSOLE.DNS_SERVER.TABLE.KEYS.EMPTY' | translate}}</span>
+</div>
+
+<!-- EDIT -->
+<div flex-xs="10" flex-gt-xs="5">
+    <div ng-show="vm.templateCallback.isCustom()">
+        <md-icon class="content-eb-orange icon-pointer"
+                 ng-click="vm.templateCallback.edit($event, entry)"
+                 md-svg-src="/img/icons/ic_edit_black.svg"
+                 aria-label="Edit entry">
+        </md-icon>
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DNS_SERVER.TOOLTIP.EDIT' | translate}}</md-tooltip>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+<eb-card
+    icon="/img/icons/ic_messages_black.svg"
+    card-title="{{'MESSAGE.CARD.TITLE' | translate}}"
+    tooltip="MESSAGE.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{ vm.getCardStatus() }}">
+    <eb-card-content>
+
+        <div layout="row" layout-xs="column" layout-align="center center">
+
+            <!-- Message labels + Icon -->
+            <div flex="auto" layout="column">
+
+                <!-- ALERT message label -->
+                <div layout="row" layout-align="end center" ng-if="vm.getNumberOfAlerts() > 0">
+                    <span  class="align-right" flex="8" flex-gt-sm="15">
+                        <md-icon md-svg-src="/img/icons/ic_error.svg"
+                                 class="content-error"
+                                 aria-label="Icon for important messages">
+                        </md-icon>
+                    </span>
+                    <span flex="auto">
+                        {{'MESSAGE.CARD.TEXT.HAS_ALERT' | translate:{count: vm.getNumberOfAlerts()}:"messageformat" }}
+                    </span>
+                </div>
+
+                <md-divider hide-gt-xs ng-if="vm.getNumberOfAlerts() > 0 && vm.getNumberOfInfo() > 0" style="margin: 10px 0 10px 0;"></md-divider>
+
+                <!-- INFO message label -->
+                <div layout="row" layout-align="end center" ng-if="vm.getNumberOfInfo() > 0">
+                    <span class="align-right" flex="8" flex-gt-sm="15">
+                        <md-icon md-svg-src="/img/icons/ic_info_black.svg"
+                                 class="content-info"
+                                 aria-label="Icon for informational messages">
+                        </md-icon>
+                    </span>
+                    <span flex="auto">
+                        {{'MESSAGE.CARD.TEXT.HAS_INFO' | translate:{count: vm.getNumberOfInfo()}:"messageformat" }}
+                    </span>
+                </div>
+
+                <!-- No message label -->
+                <div layout="row" layout-align="end center" ng-if="!vm.hasMessages()">
+                    <span flex="auto">
+                        {{'MESSAGE.CARD.TEXT.NO_MESSAGES' | translate }}
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- Refresh button -->
+            <div flex="auto">
+                <md-button class="md-primary"
+                           ng-click="vm.refreshMessages(true)"
+                           ng-disabled="vm.isMessageLoading()">
+                    {{'MESSAGE.CARD.BUTTON.REFRESH' | translate}}
+                </md-button>
+            </div>
+
+        </div>
+    </eb-card-content>
+
+    <eb-card-content ng-if="vm.showDetails && vm.hasMessages()">
+        <div class="dashboard-message-scrollable-list">
+
+            <!-- Message body -->
+            <div ng-mouseenter="message.showCloseOption = true"
+                 ng-mouseleave="message.showCloseOption = false"
+                 layout="column"
+                 ng-repeat="message in vm.messages">
+
+                <!-- Date + close icon  -->
+                <div layout="row" flex="auto">
+                    <span flex="50" layout-padding >{{ message.displayDate }}</span>
+                    <span flex="50"
+                          title="{{ 'MESSAGE.CARD.MESSAGES_NOTIFY_CLOSE_TOOLTIP' | translate }}"
+                          class="no-frame dashboard-close-message-wrapper">
+                            <md-icon ng-class="{'hide-element': message.messageSeverity === 'ALERT' || !message.showCloseOption}"
+                                     ng-click="vm.clickedHideButton(message);"
+                                     md-svg-src="/img/icons/ic_close_black_24px.svg"
+                                     style="cursor: pointer;"
+                                     class="no-frame">
+                            </md-icon>
+                    </span>
+                </div>
+
+                <!-- Title + icon (if required) -->
+                <div layout="row" class="md-title">
+                    <span ng-if="message.messageSeverity === 'ALERT'" class="dashboard-message-alert-icon">
+                        <md-icon md-svg-src="/img/icons/ic_error.svg"
+                                 class="content-error">
+                        </md-icon>
+                    </span>
+                    <span class="dashboard-message-title">
+                        {{ message.title ? 'MESSAGE.CARD.MESSAGES.' + message.title : 'MESSAGE.CARD.MESSAGES.' + message.titleKey | translate: message.context }}
+                    </span>
+                </div>
+
+                <!-- Message content -->
+                <div layout-padding layout="row">
+                    <span>
+                        {{ message.content ? 'MESSAGE.CARD.MESSAGES.' + message.content : 'MESSAGE.CARD.MESSAGES.' + message.contentKey | translate: message.context }}
+                    </span>
+                </div>
+
+                <!-- Action button -->
+                <div layout="row"
+                     layout-xs="column"
+                     layout-align-xs="start center"
+                     layout-align-xs="center center">
+
+                    <div ng-if="message.actionButtonUrlKey !== undefined"
+                         flex="60"
+                         flex-xs="100">
+                        <a ng-href="{{'MESSAGE.CARD.MESSAGES.' + message.actionButtonUrlKey | translate: message.context}}"
+                           target="_blank">
+                            <md-button class="md-secondary md-raised" ng-click="vm.clickedActionButton(message)">
+                                {{ 'MESSAGE.CARD.MESSAGES.' + message.actionButtonLabelKey | translate }}
+                            </md-button>
+                        </a>
+                    </div>
+
+                    <md-button flex="60"
+                               flex-xs="100"
+                               ng-if="message.actionButtonUrlKey === undefined"
+                               ng-click="vm.clickedActionButton(message)">
+                        {{ 'MESSAGE.CARD.MESSAGES.' + message.actionButtonLabelKey | translate }}
+                    </md-button>
+
+                    <!-- DO NOT SHOW AGAIN -->
+                    <div ng-if="message.showDoNotShowAgain"
+                         style="padding-left: 10px;"
+                         flex="40"
+                         layout="row"
+                         layout-align="start center"
+                         flex-xs="100">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                                     ng-model="message.doNotShowAgain"
+                                     ng-click="vm.updateDoNotShowAgain(message)"
+                                     class="md-primary dashboard-do-not-show-again">
+                            {{ 'MESSAGE.CARD.BUTTON.DO_NOT_SHOW_AGAIN' | translate}}
+                        </md-checkbox>
+                    </div>
+                </div>
+
+                <md-divider style="margin: 15px 0 15px 0;" ng-hide="$last"></md-divider>
+
+            </div>
+        </div>
+
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="vm.setShowDetails(true)" ng-disabled="!vm.hasMessages()" ng-hide="vm.showDetails && vm.hasMessages()">{{'MESSAGE.CARD.BUTTON.SHOW_DETAILS' | translate}}</md-button>
+        <md-button class="md-primary" ng-click="vm.setShowDetails(false)" ng-show="vm.showDetails && vm.hasMessages()">{{'MESSAGE.CARD.BUTTON.HIDE_DETAILS' | translate}}</md-button>
+    </eb-card-actions>
+</eb-card>

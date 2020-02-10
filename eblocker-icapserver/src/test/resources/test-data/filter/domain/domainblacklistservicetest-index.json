@@ -1,0 +1,63 @@
+{
+    "format": 5,
+    "filters": {
+        "0": [
+            {
+                "key": {
+                    "id": 0,
+                    "version": 1
+                },
+                "bloomFilterFileName": "lists/0-v1.bloom",
+                "fileFilterFileName": "lists/0-v1.filter",
+                "format": "domainblacklist/string",
+                "deleted": false
+            },
+            {
+                "key": {
+                    "id": 0,
+                    "version": 0
+                },
+                "bloomFilterFileName": "lists/0-v0.bloom",
+                "fileFilterFileName": "lists/0-v0.filter",
+                "format": "domainblacklist/string",
+                "deleted": false
+            }
+        ],
+        "1": [
+            {
+                "key": {
+                    "id": 1,
+                    "version": 1
+                },
+                "bloomFilterFileName": "lists/1-v1.bloom",
+                "fileFilterFileName": "lists/1-v1.filter",
+                "format": "domainblacklist/string",
+                "deleted": false
+            }
+        ],
+        "2": [
+            {
+                "key": {
+                    "id": 2,
+                    "version": 0
+                },
+                "bloomFilterFileName": "lists/2-v0.bloom",
+                "fileFilterFileName": null,
+                "format": "domainblacklist/bloom",
+                "deleted": false
+            }
+        ],
+        "3": [
+            {
+                "key": {
+                    "id": 3,
+                    "version": 0
+                },
+                "bloomFilterFileName": "lists/3-v0.bloom",
+                "fileFilterFileName": "lists/3-v0.filter",
+                "format": "domainblacklist/hash-md5",
+                "deleted": false
+            }
+        ]
+    }
+}

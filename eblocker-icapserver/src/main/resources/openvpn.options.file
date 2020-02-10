@@ -1,0 +1,8 @@
+ca;pem
+cert;pem
+dh;pem
+extra-certs;pem
+key;pem
+pkcs12;base64
+secret;openVpnStaticKey
+tls-auth;openVpnStaticKey

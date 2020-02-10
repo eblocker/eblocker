@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# Moves the DHCP server configuration file that was written by
+# the ICAP server to /etc/dhcp, if the configuration has changed.
+# If the service is running, it is restarted.
+
+# Minimal path needed for update-rc.d:
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+CONFDIR=/opt/eblocker-icap/network
+
+CONF_DHCPD=$CONFDIR/dhcpd.conf
+TARGET=/etc/dhcp/dhcpd.conf
+
+if test ! -f $CONF_DHCPD
+then
+    echo "Could not apply DHCP server configuration: Config file '$CONF_DHCPD' does not exist." 1>&2
+    exit 1
+fi
+
+if ! diff $CONF_DHCPD $TARGET
+then
+    # enable DHCP server
+    chown root:root $CONF_DHCPD
+    mv $CONF_DHCPD $TARGET
+
+    # Restart the server if it is running
+    if service isc-dhcp-server status
+    then
+	service isc-dhcp-server restart
+    fi
+
+    # Sync file systems (before user pulls the plug)
+    sync
+else
+    echo "DHCP server configuration has not changed."
+fi

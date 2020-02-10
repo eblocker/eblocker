@@ -1,0 +1,8 @@
+#open telnet control port with password authentification
+ControlPort 9051
+CookieAuthentication 0
+SOCKSPort 9050
+
+#control specific Exit nodes (countries)
+ ExitNodes {aa},{ba},{bb}
+ StrictNodes 1

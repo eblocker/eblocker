@@ -1,0 +1,38 @@
+<eb-wizard-component wizard-title="{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.CARD.TITLE' | translate }}">
+
+    <!-- INTO AUTO MODE -->
+    <eb-wizard-content>
+
+        <div ng-if="vm.currentStep === 1">
+            <ng-include src="'app/components/vpnHome/wizard/step-1-welcome.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 2">
+            <ng-include src="'app/components/vpnHome/wizard/step-2-choose-access.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 3">
+            <ng-include src="'app/components/vpnHome/wizard/step-3-set-ip.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 4">
+            <ng-include src="'app/components/vpnHome/wizard/step-4-choose-port-mapping.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 5">
+            <ng-include src="'app/components/vpnHome/wizard/step-5-do-port-mapping.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 6">
+            <ng-include src="'app/components/vpnHome/wizard/step-6-connection-test.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 7">
+            <ng-include src="'app/components/vpnHome/wizard/step-7-finish.template.html'"></ng-include>
+        </div>
+
+    </eb-wizard-content>
+
+</eb-wizard-component>
+
+

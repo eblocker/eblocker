@@ -1,0 +1,206 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ARIA' | translate }}"
+           style="max-width: 800px;"
+           class="vpn-connection-dialog"
+           layout-padding>
+
+    <md-dialog-content layout="column" layout-padding>
+        <div>
+            <h2>{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TITLE' | translate }}</h2>
+        </div>
+
+        <div style="padding-bottom: 0;">
+
+            <md-tabs id="vpn-tabs"
+                     md-selected="vm.ssl.step"
+                     md-dynamic-height
+                     md-no-select-click
+                     md-border-bottom
+                     md-swipe-content="true"
+                     style="margin-top: 10px;">
+
+                <!-- Initial creation of certification authority -->
+                <md-tab>
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.LABEL' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div ng-hide="vm.ssl.renew">
+                            <div layout-margin layout-padding>
+                                <div>
+                                    <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.INTRO_1' | translate}}</p>
+                                    <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.INTRO_2' | translate}}</p>
+                                    <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.INTRO_3' | translate}}</p>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-align="end center" style="padding: 0;">
+                                <md-button class="md-raised md-secondary"
+                                           ng-click="vm.cancel()">
+                                    {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CANCEL' | translate}}
+                                </md-button>
+                                <md-button class="md-raised md-primary md-accent"
+                                           ng-show="vm.ssl.certificatesReady"
+                                           ng-click="vm.reEnableSSL()">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.ENABLE' | translate}}
+                                </md-button>
+                                <md-button class="md-raised md-primary md-accent"
+                                           ng-hide="vm.ssl.certificatesReady"
+                                           ng-click="vm.gotoStep(1)">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CONTINUE' | translate}}
+                                </md-button>
+                            </div>
+                        </div>
+
+                        <!-- Re-creation of certification authority -->
+                        <div layout="column" ng-show="vm.ssl.renew">
+                            <div style="padding: 8px 8px 0 8px; margin: 0 8px 0 8px;">
+                                <div>
+                                    <p class="o-paragraph">{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.RENEW_TEXT1' | translate }}</p>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-xs="column" style="padding: 8px 8px 0 8px; margin: 0 8px 0 8px;">
+                                <div flex-gt-xs="50">
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.LABEL_SSL_COMMON_NAME' | translate }}" config="vm.certName"></eb-label-container>
+                                </div>
+                                <div flex-gt-xs="50">
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.LABEL_SSL_CERTIFICATE_NOT_AFTER' | translate }}" config="vm.certNotAfter"></eb-label-container>
+                                </div>
+                            </div>
+
+                            <div style="padding: 0 8px 0 8px; margin: 0 8px 0 8px;">
+                                <div>
+                                    <p class="o-paragraph">
+                                        <b>{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.RENEW_TEXT2_HIGHLIGHTED' | translate }}</b>
+                                        {{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_1.RENEW_TEXT2' | translate }}</p>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-align="end center" style="padding: 0;">
+                                <md-button class="md-raised md-secondary"
+                                           ng-click="vm.cancel()">
+                                    {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CANCEL' | translate}}
+                                </md-button>
+                                <md-button class="md-raised md-primary md-accent"
+                                           ng-hide="vm.ssl.certificatesReady"
+                                           ng-click="vm.gotoStep(1)">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CONTINUE' | translate}}
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <!-- show certificate generation parameters -->
+                <md-tab ng-disabled="!vm.ssl.generateCa">
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.LABEL' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <form name="vm.newCertForm" class="o-container" novalidate >
+
+                            <div style="padding: 8px 8px 0 8px; margin: 0 8px 0 8px;">
+                                <div>
+                                    <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.OPTIONS_TEXT' | translate}}</p>
+                                </div>
+                            </div>
+
+                            <div style="padding: 0 8px 0 8px; margin: 0 8px 0 8px;">
+
+                                <div layout="row">
+                                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%">
+                                        <label>{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.MONTHS_VALID' | translate }}</label>
+                                        <md-select name="validmonth" ng-model="vm.caOptions.validityInMonths"
+                                                   ng-disabled="vm.ssl.waitingForCertificates">
+                                            <md-option value="12">12</md-option>
+                                            <md-option value="24">24</md-option>
+                                            <md-option value="36">36</md-option>
+                                        </md-select>
+                                        <!--<div ng-messages="vm.newCertForm.validmonth.$error" ng-if="vm.newCertForm.$submitted || vm.newCertForm.validmonth.$touched">-->
+                                            <!--<div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.ERROR.VALID_REQUIRED' | translate }}</div>-->
+                                        <!--</div>-->
+                                    </md-input-container>
+                                </div>
+
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%">
+                                        <label>{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.LABEL_SSL_COMMON_NAME' | translate }}</label>
+                                        <input name="certname" class="o-input" ng-model="vm.caOptions.distinguishedName.commonName" ng-disabled="vm.ssl.waitingForCertificates" required>
+                                        <div ng-messages="vm.newCertForm.certname.$error" ng-if="vm.newCertForm.$submitted || vm.newCertForm.certname.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.ERROR.NAME_REQUIRED' | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                            </div>
+
+                            <div ng-show="vm.ssl.waitingForCertificates" layout="row" layout-align="center center">
+                                <md-progress-circular md-mode="indeterminate"  md-diameter="32"></md-progress-circular>
+                                <div style="margin-left: 10px;">{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_2.PLEASE_BE_PATIENT' | translate }}</div>
+                            </div>
+
+
+                            <div layout="row" layout-align="end center" style="padding: 0;">
+                                <md-button class="md-raised md-secondary"
+                                           ng-click="vm.cancel()">
+                                    {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CANCEL' | translate}}
+                                </md-button>
+                                <md-button class="md-raised md-primary md-accent"
+                                           ng-hide="vm.ssl.renew"
+                                           ng-disabled="vm.ssl.waitingForCertificates"
+                                           ng-click="vm.okEnableSSL()">
+                                    {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.GENERATE_CERT' | translate}}
+                                </md-button>
+                                <md-button class="md-raised md-primary md-accent"
+                                           ng-show="vm.ssl.renew"
+                                           ng-disabled="vm.ssl.waitingForCertificates"
+                                           ng-click="vm.generateNewCa()">
+                                    {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.GENERATE_CERT' | translate}}
+                                </md-button>
+                            </div>
+                        </form>
+                    </md-tab-body>
+                </md-tab>
+
+
+                <md-tab ng-disabled="!vm.ssl.generateCa || !vm.ssl.certificatesReady">
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.LABEL' | translate }}</md-tab-label>
+                    <md-tab-body>
+
+                        <div style="padding: 8px 8px 0 8px; margin: 0 8px 0 8px;">
+                            <div>
+                                <p class="o-paragraph">{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.TEXT' | translate }}</p>
+                            </div>
+                        </div>
+
+                        <div style="padding: 0 8px 0 8px; margin: 0 8px 0 8px;">
+
+                            <div layout="column">
+                                <div>
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.LABEL_SSL_COMMON_NAME' | translate }}" config="vm.summaryCertName"></eb-label-container>
+                                </div>
+                                <div>
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.FINGERPRINT_SHA256' | translate }}" config="vm.summaryFingerprint"></eb-label-container>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-xs="column" layout-align="start start" style="padding: 16px 0 0 0; margin: 0">
+                                <div flex-gt-xs="25" style="padding-bottom: 0;">
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.NOT_BEFORE' | translate }}" config="vm.summaryNotBefore"></eb-label-container>
+                                </div>
+                                <div flex-gt-xs="25" style="padding-bottom: 0;">
+                                    <eb-label-container label="{{ 'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.TAB_3.NOT_AFTER' | translate }}" config="vm.summaryNotAfter"></eb-label-container>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       href="/api/ssl/caCertificate.crt">
+                                {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.INSTALL_CERT' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-click="vm.hide()">
+                                {{'ADMINCONSOLE.DIALOG.SSL_STATUS_WIZARD.ACTION.CLOSE' | translate}}
+                            </md-button>
+                        </div>
+
+                    </md-tab-body>
+                </md-tab>
+
+            </md-tabs>
+        </div>
+    </md-dialog-content>
+</md-dialog>

@@ -1,0 +1,8 @@
+<div ng-if="vm.tableSize > 5" layout="row" layout-align="start center">
+    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%; min-width: 160px;">
+        <label>{{ 'ADMINCONSOLE.TABLE.PAGINATOR.ROWS' | translate }}</label>
+        <md-select ng-model="vm.visiblePerPage" ng-change="vm.onSelectionChange()">
+            <md-option ng-repeat="option in vm.options" ng-value="option.value">{{ option.label | translate }}</md-option>
+        </md-select>
+    </md-input-container>
+</div>

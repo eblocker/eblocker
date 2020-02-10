@@ -1,0 +1,9 @@
+#
+# Script fragment to prevent dhclient from updating /etc/resolv.conf
+# ! not compatible with resolvconf-package !
+#
+
+# redefine make_resolv_conf() function if eblocker-dns is enabled
+if [ -f /opt/eblocker-icap/conf/eblocker/eblocker-dns.enabled ]; then
+    make_resolv_conf() ( : ; )
+fi

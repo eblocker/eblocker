@@ -1,0 +1,92 @@
+<div class="settings-child-view" flex-gt-lg="70" flex-lg="85" flex-md="65" layout="column" layout-fill>
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/ssl/certificate/help-ssl-cert.template.html"></eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div ng-show="vm.ssl.enabled">
+
+
+        <div class="config-frame md-whiteframe-z1" layout="column">
+            <div>
+                <h3 translate="ADMINCONSOLE.SSL_CERTIFICATE.EXPLAIN_WIZARD"></h3>
+            </div>
+            <div layout="column" layout-align="start center" layout-gt-sm="row">
+                <md-button class="md-raised md-accent"
+                           ng-disabled="!vm.ssl.certificatesReady"
+                           ng-href="{{'ADMINCONSOLE.SSL_CERTIFICATE.URL.WIZARD' | translate}}"
+                           target="_blank">
+                    {{ 'ADMINCONSOLE.SSL_CERTIFICATE.ACTION.HTTPS_WIZARD' | translate}}
+                </md-button>
+                <md-button class="md-accent"
+                           ng-href="{{'ADMINCONSOLE.SSL_CERTIFICATE.URL.TUTORIAL' | translate}}"
+                           style="margin-left: 0;" target="_blank">
+                    {{'ADMINCONSOLE.SSL_CERTIFICATE.ACTION.TUTORIALS' | translate}}
+                </md-button>
+            </div>
+        </div>
+
+
+        <div class="config-frame md-whiteframe-z1" layout="column" layout-gt-md="row" layout-padding>
+
+            <!-- renewal cert -->
+            <div ng-if="vm.ssl.renewalCertificateReady" layout="column">
+                <div layout="row" layout-align="start center">
+                    <h4>{{ 'ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_TITLE' | translate }}</h4>
+                </div>
+                <eb-label-container label="{{'ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_CN' | translate }}" config="vm.renewName"></eb-label-container>
+                <div layout="row">
+                    <eb-label-container config="vm.renewNotBefore" label="{{'ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_VNB' | translate }}"></eb-label-container>
+                    <eb-label-container config="vm.renewNotAfter" label="{{'ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_VNA' | translate }}"></eb-label-container>
+                </div>
+                <div layout="row" layout-align="start center">
+                    <md-button class="md-raised"
+                               href="/api/ssl/renewalCertificate.crt">
+                        {{ 'ADMINCONSOLE.SSL_CERTIFICATE.ACTION.DOWNLOAD_CERT' | translate}}
+                    </md-button>
+                </div>
+            </div>
+
+            <!-- current cert -->
+            <div layout="column">
+                <div layout="row" layout-align="start center">
+                    <h4 ng-if="!vm.ssl.renewalCertificateReady">{{ 'ADMINCONSOLE.SSL_CERTIFICATE.CURRENT_TITLE' | translate }}</h4>
+                    <h4 ng-if="vm.ssl.renewalCertificateReady">{{ 'ADMINCONSOLE.SSL_CERTIFICATE.EXPIRING_TITLE' | translate }}</h4>
+                </div>
+                <eb-label-container label="{{'ADMINCONSOLE.SSL_CERTIFICATE.CURRENT_CN' | translate }}" config="vm.currentName"></eb-label-container>
+                <div layout="row">
+                    <eb-label-container config="vm.currentNotBefore" label="{{'ADMINCONSOLE.SSL_CERTIFICATE.CURRENT_VNB' | translate }}"></eb-label-container>
+                    <eb-label-container config="vm.currentNotAfter" label="{{'ADMINCONSOLE.SSL_CERTIFICATE.CURRENT_VNA' | translate }}"></eb-label-container>
+                </div>
+                <div layout="row" layout-align="start center">
+                    <md-button class="md-raised"
+                               href="/api/ssl/caCertificate.crt">
+                        {{ 'ADMINCONSOLE.SSL_CERTIFICATE.ACTION.DOWNLOAD_CERT' | translate}}
+                    </md-button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="config-frame md-whiteframe-z1" layout="column">
+            <div layout="row" layout-align="start center">
+                <h4>{{ 'ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_AUTOMATIC' | translate }}</h4>
+            </div>
+            <div translate="ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_INFO_1" translate-values="{caRenewWeeks: vm.ssl.caRenewWeeks}">
+            </div>
+            <div translate="ADMINCONSOLE.SSL_CERTIFICATE.RENEWAL_INFO_2">
+            </div>
+            <div layout="row" style="margin-top: 8px;">
+                <md-button  ng-show="vm.ssl.enabled"
+                            class="md-raised eb-delete-button"
+                            ng-disabled="!vm.ssl.certificatesReady"
+                            ng-click="vm.createNewRootCA()">
+                    {{ 'ADMINCONSOLE.SSL_CERTIFICATE.ACTION.RENEW_CERTIFICATE' | translate}}
+                </md-button>
+            </div>
+        </div>
+    </div>
+</div>

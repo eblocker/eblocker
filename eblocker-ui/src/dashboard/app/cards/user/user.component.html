@@ -1,0 +1,68 @@
+<eb-card
+    icon="{{vm.getIconPath()}}"
+    card-title="{{'USER.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="USER.CARD.TOOLTIP_CARD">
+
+    <eb-card-content>
+
+        <!-- LABEL OWNER / ASSIGNED USER -->
+        <div layout="row" layout-align="start center" style="height: 38px;">
+            <span flex="55" translate="USER.CARD.LABEL_ASSIGNED_USER"></span>
+            <span flex="35" style="font-weight: bold;">{{vm.assignedUser.name | translate}}</span>
+        </div>
+
+
+        <div layout="column">
+
+            <!-- LABEL OPERATING USER -->
+            <div layout="row" layout-align="start center" style="height: 38px;"
+                 ng-if="vm.operatingUser.id !== 2">
+                <span flex="55" translate="USER.CARD.LABEL_OPERATING_USER"></span>
+                <div flex="35" layout="row" layout-align="start center">
+                    <md-input-container>
+                        <md-select ng-change="vm.changeUser()"
+                                   ng-model="vm.opModel"
+                                   placeholder="{{'USER.CARD.LABEL_SELECT_USER' | translate}}">
+                            <md-option ng-repeat="user in vm.users | orderBy: 'name'" ng-value="user.id">
+                                {{ user.name | translate }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div flex="10" layout="row" layout-align="end center">
+                    <md-icon class="content-eb-orange icon-pointer"
+                             ng-if="vm.operatingUser.id !== vm.assignedUser.id"
+                             ng-click="vm.returnDevice()"
+                             md-svg-src="/img/icons/baseline-keyboard_return.svg">
+                    </md-icon>
+                </div>
+            </div>
+
+            <!-- LABEL LOCKED -->
+            <div layout="row" layout-align="center center" style="height: 48px;"
+                 ng-if="vm.operatingUser.id === 2">
+                <span>{{ 'USER.CARD.LABEL_LOCKED_USER' | translate }}</span>
+            </div>
+
+        </div>
+
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-xs="column" layout-align="center center">
+        <div layout="row" layout-align="center center" ng-if="vm.operatingUser.id !== 2">
+            <md-button class="md-primary" ng-click="vm.changePin()">
+                {{'' | translate}}
+                <span ng-show="vm.operatingUser.containsPin" translate="USER.CARD.ACTION.CHANGE_PIN"></span>
+                <span ng-hide="vm.operatingUser.containsPin" translate="USER.CARD.ACTION.SET_PIN"></span>
+            </md-button>
+        </div>
+        <div ng-if="vm.operatingUser.id !== 2 && vm.operatingUser.containsPin" style="padding: 0 12px 0 12px;"></div>
+        <div layout="row" layout-align="center center" ng-if="vm.operatingUser.id !== 2 && vm.operatingUser.containsPin">
+            <md-button class="md-primary" ng-click="vm.lockInternet()">{{'USER.CARD.ACTION.LOCK_ACCESS' | translate}}</md-button>
+        </div>
+        <div ng-if="vm.operatingUser.id === 2" layout="row" layout-align="center center">
+            <md-button class="md-primary" ng-click="vm.returnDevice()">{{'USER.CARD.ACTION.UNLOCK_ACCESS' | translate}}</md-button>
+        </div>
+    </eb-card-actions>
+</eb-card>

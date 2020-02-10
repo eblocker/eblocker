@@ -1,0 +1,121 @@
+<md-content flex layout-gt-xs="row" layout="column" layout-align="center center">
+    <div layout="column" layout-align="center center">
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Switches</h2>
+                <div layout="row">
+                    <div layout="column">
+                        <md-switch ng-model="switch1" class="md-primary">
+                            {{ switch1 ? 'Primary switch is on' :'Primary switch is off'}}
+                        </md-switch>
+                        <md-switch ng-model="switch2" class="md-accent">
+                            {{ switch2 ? 'Accent switch is on' :'Accent switch is off'}}
+                        </md-switch>
+                        <md-switch ng-model="switch3" class="">
+                            {{ switch3 ? 'Neutral switch is on' :'Neutral switch is off'}}
+                        </md-switch>
+                    </div>
+                    <div layout="column">
+                        <md-switch ng-model="switch1" class="md-primary">
+                            {{ switch1 ? 'Primary switch is on' :'Primary switch is off'}}
+                        </md-switch>
+                        <md-switch ng-model="switch2" class="md-accent">
+                            {{ switch2 ? 'Accent switch is on' :'Accent switch is off'}}
+                        </md-switch>
+                        <md-switch ng-model="switch3" class="">
+                            {{ switch3 ? 'Neutral switch is on' :'Neutral switch is off'}}
+                        </md-switch>
+                    </div>
+                </div>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Cancel</md-button>
+                <md-button>Ok</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Escaping characters</h2>
+                <div layout="row">
+                    <md-input-container flex>
+                        <label>Enter name</label>
+                        <input type="text" ng-model="main.firstName"/>
+                    </md-input-container>
+                </div>
+                <div layout="column" layout-padding>
+                    <p><span class="md-body-2" md-colors="{color:'warn'}">Don't do this: </span>(Translate filter)</p>
+                    <span>
+                        {{ 'MAIN.I18N_TEST.NAME_TEMPLATE' | translate:{'name': main.firstName} }}
+                    </span>
+                </div>
+                <md-divider layout-padding />
+                <div layout="column" layout-padding>
+                    <p><span class="md-body-2" md-colors="{color:'accent'}">Do it like this: </span>(Translate directive)</p>
+                    <span translate="MAIN.I18N_TEST.NAME_TEMPLATE" translate-values="{'name': main.firstName}">
+                    </span>
+                </div>
+            </md-card-content>
+        </md-card>
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Spinner</h2>
+                <div flex layout="row" layout-align="center center">
+                    <md-progress-circular></md-progress-circular>
+                </div>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Cancel</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Checkboxes</h2>
+                <md-checkbox ng-model="checkbox1" class="md-primary" ng-init="checkbox3 = false">
+                    Primary checkbox {{checkbox1 ? 'checked' : 'unchecked'}}
+                </md-checkbox>
+                <md-checkbox ng-model="checkbox2" class="md-primary" ng-init="checkbox2 = true">
+                    Primary checkbox {{checkbox2? 'checked' : 'unchecked'}}
+                </md-checkbox>
+                <md-checkbox ng-model="checkbox3" class="md-primary" ng-init="checkbox3 = false" disabled>
+                    Primary checkbox {{checkbox3? 'checked' : 'unchecked'}} and disabled
+                </md-checkbox>
+                <md-checkbox ng-model="checkbox4" class="md-primary" ng-init="checkbox4 = true" disabled>
+                    Primary checkbox {{checkbox4? 'checked' : 'unchecked'}} and disabled
+                </md-checkbox>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Cancel</md-button>
+                <md-button>Ok</md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    <div layout="column" layout-align="center center">
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Pause</h2>
+                <p>Switch eBlocker off for this device for a short time.</p>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Start Pause</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Pause</h2>
+                <p>Switch eBlocker off for this device for a short time.</p>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Start Pause</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card class="eblocker-dashboard-card" layout-align="center center">
+            <md-card-content>
+                <h2>Pause</h2>
+                <p>Switch eBlocker off for this device for a short time.</p>
+            </md-card-content>
+            <md-card-actions>
+                <md-button>Start Pause</md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+</md-content>

@@ -1,0 +1,13 @@
+<svg id="7448e51858ccfa287a8726081c50f510" xmlns="http://www.w3.org/2000/svg"
+     width="1px" height="1px" onload="redirect();" visibility="hidden">
+  <script>
+  // <![CDATA[
+  function redirect() {
+       var svg = document.getElementById('7448e51858ccfa287a8726081c50f510');
+       if (this == top && (svg == null || svg.parentNode == document)) {
+          document.location = 'https://www.eblocker.com/test?class=OnePixelImageTest';
+      }
+  }
+  // ]]>
+  </script>
+</svg>

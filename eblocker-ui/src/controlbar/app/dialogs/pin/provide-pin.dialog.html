@@ -1,0 +1,83 @@
+<md-dialog id="pin-dialog" aria-label="{{ 'PARENTAL_CONTROL_DIALOG_PROVIDE_PIN_TITLE' | translate }}">
+    <form name="pinForm" layout-padding  ng-submit="Dialog.commit()" novalidate style="overflow: initial;">
+
+        <md-dialog-content layout="column" style="overflow: initial;" layout-padding>
+            <div ng-if="Dialog.mode === 'selectUser'">
+                <div>
+                    <h2>{{ 'PARENTAL_CONTROL_DIALOG_PROVIDE_PIN_SELECT_USER_TITLE' | translate }}</h2>
+                </div>
+                <div>
+                    <p>{{ 'PARENTAL_CONTROL_DIALOG_PROVIDE_PIN_SELECT_USER_TEXT' | translate }}</p>
+                </div>
+            </div>
+            <div ng-if="Dialog.mode === 'askForPin'">
+                <div>
+                    <h2>{{ 'CONTROLBAR.DIALOGS.PIN.PIN_SELECT_USER.HEADER' | translate }}</h2>
+                </div>
+                <div>
+                    <div>
+                        <p>
+                            <span>{{ 'CONTROLBAR.DIALOGS.PIN.PIN_SELECT_USER.BODY_PRE' | translate }}</span>
+                            <span><b translate="{{Dialog.user.nameKey}}" translate-values="{'name': Dialog.user.name}"></b></span><!--
+                            --><span>{{ 'CONTROLBAR.DIALOGS.PIN.PIN_SELECT_USER.BODY_POST' | translate }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p ng-if="Dialog.lockEnabled">{{ 'CONTROLBAR.DIALOGS.PIN.PIN_SELECT_USER.BODY_LOCK' | translate }}</p>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="Dialog.mode === 'confirmLock'">
+                <div>
+                    <h2>{{ 'CONTROLBAR.DIALOGS.PIN.PIN_LOCK.HEADER' | translate }}</h2>
+                </div>
+                <div>
+                    <p>{{ 'CONTROLBAR.DIALOGS.PIN.PIN_LOCK.BODY' | translate }}</p>
+                </div>
+            </div>
+
+            <md-input-container md-theme="eBlockerThemeInput" ng-if="Dialog.mode === 'selectUser'" layout-padding>
+                <label>{{ 'PARENTAL_CONTROL_DIALOG_PROVIDE_PIN_SELECT_USER_LABEL' | translate }}</label>
+                <md-select ng-model="Dialog.user">
+                    <div ng-repeat="user in Dialog.users | orderBy:'name'">
+                        <md-option ng-value="user" translate="{{user.nameKey}}" translate-values="{'name': user.name}">
+                        </md-option>
+                    </div>
+                </md-select>
+            </md-input-container>
+
+            <div ng-if="Dialog.mode === 'askForPin'" style="padding-left: 24px;">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 90%;">
+                    <label>{{ 'CONTROLBAR.DIALOGS.PIN.INPUT' | translate }}</label>
+                    <input name="userPin" ng-model="Dialog.pin" type="password" required/>
+                    <div ng-messages="pinForm.userPin.$error">
+                        <div ng-message="pinInvalid">{{ 'CONTROLBAR.DIALOGS.PIN.ERROR.INVALID' | translate }}</div>
+                        <div ng-message="required">{{ 'CONTROLBAR.DIALOGS.PIN.ERROR.REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                 layout-align="end center"
+                 layout-xs="column"
+                 layout-align-xs="center center"
+                 style="padding-right: 16px;">
+            <div layout="row" layout-align="end center"
+                 layout-xs="row" layout-align-xs="center center">
+                <md-button type="button" ng-click="Dialog.cancel()" class="md-raised md-secondary">
+                    {{ 'CONTROLBAR.DIALOGS.PIN.BUTTON.CANCEL' | translate }}
+                </md-button>
+                <md-button type="button" ng-show="Dialog.lockEnabled && (Dialog.mode === 'selectUser' || Dialog.mode === 'askForPin')" ng-click="Dialog.confirmLock()" class="md-raised md-secondary">
+                    {{ 'CONTROLBAR.DIALOGS.PIN.BUTTON.LOCK' | translate }}
+                </md-button>
+            </div>
+            <md-button class="md-raised md-primary md-accent" type="submit">
+                {{ Dialog.mode === 'selectUser' ? 'CONTROLBAR.DIALOGS.PIN.BUTTON.LOGIN' :
+                Dialog.mode === 'askForPin' ? 'CONTROLBAR.DIALOGS.PIN.BUTTON.OK' :
+                'CONTROLBAR.DIALOGS.PIN.BUTTON.LOCK' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

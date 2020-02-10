@@ -1,0 +1,21 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout="column">
+        <div>
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.CAPTIVE_PORTAL.TITLE' | translate }}</h3>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.CAPTIVE_PORTAL.TEXT1' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.CAPTIVE_PORTAL.TEXT2' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.CAPTIVE_PORTAL.TEXT3' | translate }}</p>
+            </div>
+        </div>
+        <div hide-gt-sm layout-padding></div>
+        <div hide-gt-xs layout-padding></div>
+        <div layout="row">
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.responderEnabled" class="md-primary switch-word-break" ng-change="vm.setState()">
+                {{ vm.responderEnabled ? 'ADMINCONSOLE.CAPTIVE_PORTAL.ENABLED' : 'ADMINCONSOLE.CAPTIVE_PORTAL.DISABLED' | translate }}
+            </md-switch>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+<div flex="15" layout="row">
+    <div>
+        <md-icon ng-class="{
+                    'eb-table-icon-deactivated': !entry.isLicensed,
+                    'eb-table-icon-active': entry.isLicensed && entry.usedBy > 0
+                    }"
+                 md-svg-src="/img/icons/eblocker-blocked-24px-2.svg"
+                 aria-label="Filter activation status">
+        </md-icon>
+        <md-tooltip ng-if="entry.isLicensed" md-delay="300">{{'ADMINCONSOLE.FILTER_OVERVIEW.TOOLTIP.FILTER_ACTIVE' | translate:{num: entry.usedBy}:"messageformat"}}</md-tooltip>
+        <md-tooltip ng-if="!entry.isLicensed" md-delay="300">{{ 'ADMINCONSOLE.FILTER_OVERVIEW.TOOLTIP.FILTER_UNLICENSED' | translate }}</md-tooltip>
+    </div>
+    <div ng-if="entry.needsDns && !entry.dnsEnabled && entry.usedBy > 0" style="margin-left: 5px;">
+        <md-icon class="content-error"
+                 md-svg-src="/img/icons/ic_error.svg"
+                 aria-label="Filter DNS status">
+        </md-icon>
+        <md-tooltip md-delay="300">{{ 'ADMINCONSOLE.FILTER_OVERVIEW.TOOLTIP.DNS_DISABLED' | translate }}</md-tooltip>
+    </div>
+    <div ng-if="entry.needsSsl && (entry.sslStatus === false || entry.sslGloballyDisabled) && entry.usedBy > 0" style="margin-left: 5px;">
+        <md-icon class="content-warn"
+                 md-svg-src="/img/icons/ic_warning.svg"
+                 aria-label="Filter SSL status">
+        </md-icon>
+        <md-tooltip ng-if="entry.sslGloballyDisabled" md-delay="300">{{ 'ADMINCONSOLE.FILTER_OVERVIEW.TOOLTIP.SSL_DISABLED_GLOBALLY' | translate }}</md-tooltip>
+        <md-tooltip ng-if="!entry.sslGloballyDisabled" md-delay="300">{{ 'ADMINCONSOLE.FILTER_OVERVIEW.TOOLTIP.SSL_DISABLED_DEVICE' | translate }}</md-tooltip>
+    </div>
+</div>
+
+<!-- FILTER TYPE -->
+<div flex flex-gt-xs="25" layout="row">
+    <div layout="row" layout-align="center center">
+        <span style="margin-right: 5px;">
+            {{entry.name | translate}}
+        </span>
+        <eb-help-inline style="width: 30px;max-width: 30px;"
+                        template="{{entry.template}}"
+                        ng-click="$event.stopPropagation();"
+                        as-dialog="true" icon-only="true">
+        </eb-help-inline>
+    </div>
+</div>
+
+<!-- DEVICES -->
+<div flex hide-xs>
+    <span>{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.LABEL_DEVICES' | translate:{num: entry.devices.length}:"messageformat"}}&nbsp;</span>
+    <span ng-repeat="dev in entry.devices | orderBy:'displayName' track by $index">
+        <span>{{ dev.name }}</span><span ng-show="$index < entry.devices.length - 1">,&nbsp;</span>
+    </span>
+</div>
+
+<!-- NUMBER BLOCKED -->
+<div flex flex-gt-xs="20">{{entry.numBlocked()}}</div>

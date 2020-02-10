@@ -1,0 +1,57 @@
+<md-card class="dashboard-card-template">
+    <md-card-title layout="row">
+        <!-- card icon and title -->
+        <div flex="75" layout="row" layout-align="start center"
+             ng-click="vm.toggleCollapse()"
+             class="unselectable">
+            <div layout="row" layout-align="start center">
+                <md-icon md-svg-src="{{vm.icon}}"></md-icon>
+                <md-icon class="card-error-icon" md-svg-src="/img/icons/ic_error.svg" ng-show="vm.status === 'ERROR'"></md-icon>
+                <md-icon class="card-warn-icon" md-svg-src="/img/icons/ic_warning.svg" ng-show="vm.status === 'WARN'"></md-icon>
+                <md-icon class="card-ok-icon" md-svg-src="/img/icons/ic_check_circle.svg" ng-show="vm.status === 'OK'"></md-icon>
+                <md-tooltip md-delay="300" md-direction="top"><span>{{vm.tooltip | translate}}</span></md-tooltip>
+            </div>
+
+            <!-- Unfolded title or if folded title is not specified -->
+            <div ng-if="!vm.hasCollapsedTitle || vm.isExpanded" layout="row" layout-align="start center" style="padding-left: 8px;">
+                <h2 class="md-title">{{ vm.cardTitle | translate }}</h2>
+                <md-tooltip md-delay="300" md-direction="top"><span>{{vm.tooltip | translate}}</span></md-tooltip>
+            </div>
+
+            <!-- Folded title -->
+            <div ng-if="vm.hasCollapsedTitle && !vm.isExpanded" layout="row" layout-align="start center" style="padding-left: 8px;">
+                <h2 class="md-title">{{ vm.collapsedTitle | translate }}</h2>
+            </div>
+        </div>
+
+        <!-- fold / unfold icon and drag handle -->
+        <div flex="25" layout="row" layout-align="end center">
+            <div ng-click="vm.toggleCollapse()"
+                 class="unselectable">
+                <md-icon class="md-hue-1" md-svg-src="/img/icons/unfold_less.svg" ng-show="vm.isExpanded"></md-icon>
+                <md-icon class="md-hue-1" md-svg-src="/img/icons/unfold_more.svg" ng-hide="vm.isExpanded"></md-icon>
+            </div>
+            <div class="cardHandle cardHandleCursorMove unselectable" style="padding-left: 10px; padding-right: 16px;">
+                <md-tooltip md-delay="300" md-direction="top"><div translate="APP.DRAG_DROP.TOOLTIP"></div></md-tooltip>
+                <md-icon aria-label="{{'APP.DRAG_DROP.TOOLTIP' | translate}}" md-svg-src="/img/icons/drag_handle.svg"></md-icon>
+            </div>
+        </div>
+    </md-card-title>
+
+    <div ng-show="vm.isExpanded">
+
+        <md-divider ng-if="vm.hasContent() && (vm.hideTopDivider !== true && vm.hideTopDivider !== 'true')"></md-divider>
+
+        <md-card-content layout="column" layout-align="start stretch" ng-class="{'no-padding': (vm.hideTopDivider === true || vm.hideTopDivider === 'true') || vm.noPadding}" ng-if="vm.hasContent()">
+            <ng-transclude ng-transclude-slot="content"></ng-transclude>
+        </md-card-content>
+
+        <md-divider ng-show="vm.hasActions() && (vm.hideBottomDivider !== true && vm.hideBottomDivider !== 'true')"></md-divider>
+
+        <md-card-actions layout="row" layout-align="center center" ng-show="vm.hasActions()">
+            <ng-transclude ng-transclude-slot="actions"></ng-transclude>
+        </md-card-actions>
+
+    </div>
+
+</md-card>

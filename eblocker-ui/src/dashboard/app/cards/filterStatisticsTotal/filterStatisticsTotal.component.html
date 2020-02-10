@@ -1,0 +1,94 @@
+<eb-card
+    icon="/img/icons/baseline-insert_chart.svg"
+    card-title="{{'BLOCKER_STATISTICS_TOTAL.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="BLOCKER_STATISTICS_TOTAL.CARD.TOOLTIP">
+
+    <eb-card-content>
+        <div>
+
+            <div style="padding-bottom: 16px;">
+                {{'BLOCKER_STATISTICS_TOTAL.CARD.LABELS.STATS_SINCE' | translate:{'date': vm.blockedDomainsLastReset} }}
+            </div>
+
+            <div>
+                <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
+            </div>
+
+            <div layout="row" layout-align="center center" style="padding-bottom: 16px; height: 100%;">
+                <div flex="70">
+                    <div layout="column" layout-align="start start">
+                        <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_REQUESTS"></span>
+                        <div style="padding-left: 16px;">
+                            <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_BLOCKED"></span>
+                            <div style="padding-left: 16px;">
+                                <div>
+                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_TRACKERS"></span>
+                                </div>
+                                <div>
+                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_ADS"></span>
+                                </div>
+                                <div>
+                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_PARENTAL"></span>
+                                </div>
+                                <div>
+                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_CUSTOM"></span>
+                                </div>
+                            </div>
+                            <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.BLOCKED_PERCENTAGE"></span>
+                        </div>
+                    </div>
+                </div>
+                <div flex="20">
+                    <div layout="column" layout-align="end end">
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.queries)"></div>
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueries)"></div>
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.TRACKERS || 0)"></div>
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.ADS || 0)"></div>
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.PARENTAL_CONTROL || 0)"></div>
+                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.CUSTOM || 0)"></div>
+                        <div ng-if="vm.displayBin.queries !== 0">{{vm.displayBin.percentageBlocked}}%</div>
+                        <div ng-if="vm.displayBin.queries === 0">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
+            </div>
+
+            <div ng-hide="vm.blockedDomainsStatisticEmpty"
+                 layout="row" layout-align="start center">
+                <div>{{ 'BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOP_N' | translate:{'number': vm.blockedDomainsNumberEntries} }}</div>
+                <md-button class="md-primary" ng-click="vm.resetBlockedDomainsStatistic()">{{'BLOCKER_STATISTICS_TOTAL.CARD.BUTTONS.RESET_TOP_N' | translate}}</md-button>
+            </div>
+            <div ng-hide="vm.blockedDomainsStatisticEmpty"
+                 layout="column" layout-align="center center" style="height: 100%;">
+                <md-tabs md-border-bottom md-dynamic-height md-selected="vm.domainsSelectedTabIndex" style="width: 100%;">
+                    <md-tab ng-disabled="!vm.blockedDomainsStatistic[category]"
+                            md-dynamic-height md-border-bottom layout-padding layout-margin
+                            ng-repeat="category in vm.blockedDomainsCategories">
+                        <md-tab-label>{{ 'BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_' + category | translate }}</md-tab-label>
+                        <md-tab-body>
+                            <div style="height: 150px; overflow-y: scroll; padding: 8px;">
+                                <div layout="column" ng-repeat="e in vm.blockedDomainsStatistic[category]" style="min-height: 22px;">
+                                    <div flex layout="row">
+                                        <div flex="75" style="padding-right: 8px;"
+                                             layout="row" layout-align="start center">
+                                            <span>{{e.domain}}</span>
+                                        </div>
+                                        <div flex="25" style="padding-right: 8px;"
+                                             layout="row" layout-align="end center">
+                                            <span>{{e.count}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </md-tab-body>
+                    </md-tab>
+                </md-tabs>
+            </div>
+        </div>
+    </eb-card-content>
+
+</eb-card>

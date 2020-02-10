@@ -1,0 +1,24 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.HTTPS.NO_WIZARD.TITLE' | translate }}</h3>
+    </div>
+
+    <div>
+        <p translate="WIZARD.HTTPS.NO_WIZARD.TEXT_1"></p>
+    </div>
+
+    <div>
+        <md-button class="md-raised md-secondary"
+                   ng-href="{{ vm.getCertificateDownloadUrl() }}">
+            {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+        </md-button>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <!-- back button only when firefox. if not firefox, there is no page to go back to -->
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.close()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.DONE' | translate }}
+        </md-button>
+    </div>
+</div>

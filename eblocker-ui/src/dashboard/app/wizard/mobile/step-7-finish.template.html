@@ -1,0 +1,23 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.MOBILE.FINISH.TITLE' | translate }}</h3>
+    </div>
+
+    <div>
+        <p translate="WIZARD.MOBILE.FINISH.TEXT_1"></p>
+        <p translate="WIZARD.MOBILE.FINISH.TEXT_2"></p>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-xs="column" layout-align-xs="center center">
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.close()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CLOSE' | translate }}
+        </md-button>
+        <md-button type="button" ng-href="#!/main" target="_blank" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.DONE' | translate }}
+        </md-button>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<div layout="row" layout-align="start center" class="eb-filter-component">
+    <md-input-container md-theme="eBlockerThemeInput" layout="row" layout-align="center center"  style="width: 100%;">
+        <label>
+            <md-icon ng-if="vm.iconPath === undefined" style="margin-top: -4px;" md-svg-src="/img/icons/ic_search_black.svg"></md-icon>
+            <md-icon ng-if="vm.iconPath !== undefined" style="margin-top: -4px;" md-svg-src="{{vm.iconPath}}"></md-icon>
+            <span ng-if="vm.placeholderLabel === undefined">{{ 'SHARED.FILTER.LABEL' | translate }}</span>
+            <span ng-if="vm.placeholderLabel !== undefined">{{ vm.placeholderLabel }}</span>
+        </label>
+        <input ng-if="vm.searchTerm !== undefined"
+               name="searchTerm"
+               ng-model="vm.searchTerm"
+               ng-model-options="{ debounce: 200 }"
+               ng-change="vm.searchUpdate()"
+               ng-keyup="vm.inputKeyUp($event)">
+
+        <input ng-if="vm.searchTerm === undefined"
+               name="internSearchTerm"
+               ng-model="vm.internSearchTerm"
+               ng-model-options="{ debounce: 200 }"
+               ng-change="vm.internSearchUpdate()"
+               ng-keyup="vm.inputKeyUp($event)">
+        <md-icon ng-click="vm.clear()" style="color: lightgray;position: absolute;right: 10px; top: 4px;" class="icon-pointer" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+    </md-input-container>
+</div>

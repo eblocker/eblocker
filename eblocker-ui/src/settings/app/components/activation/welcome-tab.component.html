@@ -1,0 +1,19 @@
+<div layout-padding layout="column">
+    <div>
+        <h3>{{ 'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.GREETING' | translate }}</h3>
+    </div>
+    <div>
+        <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.INTRO_PART1' | translate }}</p>
+        <p ng-if="vm.askForSerialNumber">{{ 'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.INTRO_PART2_ASK_FOR_SERIAL' | translate }}</p>
+        <p ng-if="!vm.askForSerialNumber">{{  'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.INTRO_PART2_NOT_ASK_FOR_SERIAL' | translate }}</p>
+        <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.THANKS_FOR_PURCHASING_EBLOCKER' | translate }}</p>
+    </div>
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.closeWizard()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+<md-dialog layout-padding aria-label="{{'CONTROLBAR.DIALOGS.VPN.ACTIVATION.TITLE' | translate}}">
+    <md-dialog-content layout-padding>
+        <div layout="column" layout-align="center center">
+
+            <h4 translate="CONTROLBAR.DIALOGS.VPN.ACTIVATION.TITLE" translate-values="ctrl.profile"></h4>
+
+            <md-progress-circular md-mode="indeterminate" md-diameter="32" ng-show="ctrl.vpnConnection.poller"></md-progress-circular>
+
+            <h4 ng-show="ctrl.vpnConnection.status.up">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.SUCCESS' | translate }}</h4>
+            <h4 ng-show="ctrl.vpnConnection.status.exitStatus">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.ERROR.CONNECTION_FAILURE' | translate }}</h4>
+            <h4 ng-show="ctrl.vpnConnection.isTimeout()">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.ERROR.CONNECTION_TIMEOUT' | translate }}</h4>
+            <div ng-show="ctrl.vpnConnection.status.exitStatus && ctrl.vpnConnection.status.errors !== null">
+                <p>{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.ERROR.LIST_ERRORS' | translate }}</p>
+                <pre class="vpn-connection-log"><span ng-repeat="error in ctrl.vpnConnection.status.errors">{{error}}<br/></span></pre>
+            </div>
+            <div ng-show="ctrl.vpnConnection.status.up">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.SUCCESS_TEXT' | translate }}</div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"
+                       layout-align="end center"
+                       layout-xs="column"
+                       layout-align-xs="center center"
+                       style="padding-right: 16px;">
+        <md-button class="md-raised md-secondary" ng-click="ctrl.connectionDialogCancel()">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.BUTTON.CANCEL' | translate}}</md-button>
+        <md-button class="md-raised md-secondary" ng-click="ctrl.connectionDialogContinue()" ng-disabled="!ctrl.vpnConnection.status.up">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.BUTTON.CONTINUE' | translate}}</md-button>
+        <md-button class="md-raised md-accent md-secondary" ng-click="ctrl.connectionDialogBlankPage()" ng-disabled="!ctrl.vpnConnection.status.up">{{ 'CONTROLBAR.DIALOGS.VPN.ACTIVATION.BUTTON.BLANK_PAGE' | translate}}</md-button>
+
+    </md-dialog-actions>
+</md-dialog>

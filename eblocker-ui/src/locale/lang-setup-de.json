@@ -1,0 +1,56 @@
+{
+    "APP" : {
+        "FOOTER" : {
+            "BUTTON" : {
+                "DASHBOARD" : "Dashboard für dieses Gerät",
+                "SETTINGS" : "Einstellungen"
+            }
+        },
+        "HEADER" : {
+            "SUB_TITLE" : "Willkommen bei eBlocker",
+            "TITLE" : "eBlocker Setup"
+        },
+        "TOOLBAR" : {
+            "COMPANY" : "eBlocker",
+            "TITLE" : "English"
+        }
+    },
+    "DEVICE_STATUS" : {
+        "INTERNET" : "Internetverbindung:",
+        "OFFLINE" : {
+            "BOOTING" : "(startet)",
+            "DOWN" : "(nicht verfügbar)",
+            "SHUTTING_DOWN" : "(wird heruntergefahren)",
+            "SHUTTING_DOWN_FOR_REBOOT" : "(startet neu)",
+            "UPDATING" : "(Aktualisierung läuft)"
+        },
+        "ONLINE" : "eBlocker ist online:",
+        "PROTECTING" : "Netzwerkschutz:"
+    },
+    "EXPIRED" : {
+        "CARD" : {
+            "BUTTON" : {
+                "RESUME" : "Weiter arbeiten"
+            },
+            "TITLE" : "Setup angehalten"
+        }
+    },
+    "LICENSE_STATUS" : {
+        "BUTTON" : {
+            "ACTIVATE" : "Lizenz aktivieren"
+        },
+        "FORMAT_DATE" : "D. MMM YYYY",
+        "REGISTERED" : "eBlocker Lizenz:",
+        "VALID_TILL" : "gültig bis"
+    },
+    "NETWORK_STATUS" : {
+        "EBLOCKER_IP" : "eBlocker Adresse:",
+        "GATEWAY_IP" : "Gateway Adresse:",
+        "MODE" : {
+            "AUTO" : "Plug-and-Play (automatisch)",
+            "LABEL" : "Netzwerkmodus:",
+            "MAN" : "Individuelle Einstellungen"
+        },
+        "USER_IP" : "Adresse dieses Gerätes:"
+    }
+}

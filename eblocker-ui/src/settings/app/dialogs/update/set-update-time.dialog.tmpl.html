@@ -1,0 +1,53 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.TITLE' | translate }}"
+           class="set-update-time-dialog"
+           style="max-width: 800px;">
+
+    <form name="vm.setUpdateTime" ng-submit="vm.apply()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.TITLE' | translate }}</h2>
+            </div>
+
+            <!-- Automatic updates time selection dropdown -->
+            <div layout="row"
+                 layout-align="start center"
+                 layout-sm="column" layout-xs="column" layout-padding>
+
+                <div layout="row" layout-align="start center">
+                    <span>{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.TIME_RANGE_LABEL' | translate}}</span>
+                </div>
+
+                <div layout="row" layout-xs="column">
+                    <div layout="row" class="time-picker-container">
+                        <md-time-picker ng-if="vm.isMeridiem()" message="vm.timePickerMessage" ng-model="vm.update.beginTime" no-auto-switch mandatory="true"></md-time-picker>
+                        <md-time-picker ng-if="!vm.isMeridiem()" message="vm.timePickerMessage" ng-model="vm.update.beginTime" no-meridiem no-auto-switch mandatory="true"></md-time-picker>
+                    </div>
+
+                    <div layout="row" layout-xs="center center">
+                        <div layout="row" layout-align="start center" ng-show="vm.updateEndTimeSet()" style="margin-left: 20px; margin-right: 20px;">
+                            <span>{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.TIME_RANGE_CONJ' | translate}}</span>
+                        </div>
+                        <div layout="row" layout-align="start center" ng-show="vm.updateEndTimeSet()">
+                            <span>{{ vm.update.endTimeDisplay }}</span>
+                        </div>
+                        <div layout="row" layout-align="start center" ng-show="vm.updateEndTimeSet()" style="margin-left: 20px;">
+                            <span>{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.TIME_RANGE_OCLOCK' | translate}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button class="md-raised md-secondary" type="button" ng-click="vm.cancel()" >{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.ACTION.CANCEL' | translate }}</md-button>
+            <md-button class="md-raised md-primary md-accent" type="submit">{{ 'ADMINCONSOLE.DIALOG.SET_AUTO_TIME.ACTION.APPLY' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

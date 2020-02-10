@@ -1,0 +1,32 @@
+<md-dialog id="tasks-view-config-edit-dialog" aria-label="{{ 'ADMINCONSOLE.TASKS.DIALOG.TITLE' | translate}}">
+    <form name="tasksViewConfigForm" layout-padding ng-submit="Dialog.save()" novalidate style="overflow: initial;">
+        <md-dialog-content layout="column" layout-padding style="overflow: initial;">
+            <div>
+                <h2>{{ 'ADMINCONSOLE.TASKS.DIALOG.TITLE' | translate }}</h2>
+            </div>
+            <md-input-container md-theme="eBlockerThemeInput">
+                <div layout="column">
+                    <div ng-repeat="header in vm.headers">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.config.columns[header._tasksViewKey]">
+                            {{ header.label | translate }}
+                        </md-checkbox>
+                    </div>
+                </div>
+            </md-input-container>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
+            </md-button>
+            <md-button type="submit" ng-click="vm.close()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.TASKS.DIALOG.OK' | translate }}
+            </md-button>
+
+        </md-dialog-actions>
+    </form>
+</md-dialog>

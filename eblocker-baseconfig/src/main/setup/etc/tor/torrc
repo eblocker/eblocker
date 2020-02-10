@@ -1,0 +1,5 @@
+#open telnet control port with password authentification
+ControlPort 9051
+CookieAuthentication 0
+HashedControlPassword 16:07A78B33096768E8605E5C0F3D8539DD2D95DE31E6144BE01DCD149944
+SOCKSPort 9050

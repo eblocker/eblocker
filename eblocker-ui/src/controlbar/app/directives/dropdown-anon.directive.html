@@ -1,0 +1,83 @@
+<div>
+    <div class="entry-directive unselectable">
+        <md-button aria-label="{{ imageLabel | translate}}"
+                   ng-click="toggleSelect()">
+            <div layout="column" layout-align="start center" layout-fill>
+                <div layout="row" layout-align="center start" class="controlbar-icon">
+                    <div layout="row" layout-align="center start">
+                        <!--<md-icon ng-show="activeProfile.isVpn" md-svg-src="/img/icons/ic_vpn_lock.svg"></md-icon>-->
+                        <!--<md-icon ng-show="activeProfile.isTor" md-svg-src="/img/icons/ic_security.svg"></md-icon>-->
+                        <!--<md-icon ng-show="!activeProfile.isTor && !activeProfile.isVpn" md-svg-src="/img/icons/anonymization.svg"></md-icon>-->
+
+                        <md-icon ng-show="activeProfile.isTor || activeProfile.isVpn" md-svg-src="/img/icons/ic_security_black.svg"></md-icon>
+                        <md-icon ng-hide="activeProfile.isTor || activeProfile.isVpn" md-svg-src="/img/icons/ic_security_black_outline.svg"></md-icon>
+                    </div>
+                </div>
+                <div>
+                    <div class="controlbar-label truncate"><!--
+                        --><span ng-hide="activeProfile.suffix !== undefined">{{ activeProfile.base | translate}}</span><!--
+                        --><span ng-show="false" style="padding-right: 2px;">{{ activeProfile.delimiter | translate}}</span><!--
+                        --><span ng-show="activeProfile.suffix !== undefined && activeProfile.isTor">{{ activeProfile.suffix | translate}}</span><!--
+                        --><span ng-show="activeProfile.suffix !== undefined && activeProfile.isVpn">{{ 'CONTROLBAR.MENU.ANON.MENU.LABEL_VPN_PREFIX' | translate}} {{ activeProfile.suffix | translate}}</span><!--
+                --></div>
+                </div>
+            </div>
+            <md-tooltip md-delay="500" ng-if="activeProfile.suffix === undefined && !isOpen"><!--
+                --><span>{{ 'CONTROLBAR.MENU.ANON.TOOLTIP_ACTIVATE' | translate}}</span>
+            </md-tooltip>
+            <md-tooltip md-delay="500" ng-if="activeProfile.suffix !== undefined && !isOpen"><!--
+                --><span>{{ 'CONTROLBAR.MENU.ANON.TOOLTIP_DEACTIVATE' | translate}}</span>
+            </md-tooltip>
+            <!--<md-tooltip ng-if="activeProfile.suffix !== undefined">-->
+                <!--{{ activeProfile.suffix | translate}}-->
+            <!--</md-tooltip>-->
+        </md-button>
+    </div>
+
+    <div ng-show="isOpen" class="controlbar-dropdown-menu scrollable-menu" layout="column" layout-padding my-cloak>
+
+        <div style="padding: 16px 16px 8px 16px">
+            <span>{{ label | translate }}</span>
+        </div>
+
+        <div class="controlbar-dropdown-all-options" layout-padding>
+            <div ng-repeat="profile in profiles"
+                 class="controlbar-dropdown-option unselectable"
+                 ng-click="profile.actionCallback(profile)"
+                 layout="row"
+                 layout-align="start center"
+                 flex>
+                <div flex="25" layout="row" layout-align="center center">
+                    <md-icon class="icon-opacity" layout="row" layout-align="center center" md-svg-src="/img/icons/ic_check_box_black.svg" ng-show="profile.isActive(profile)" style="margin-left: 12px; opacity: 0.54;"></md-icon>
+                    <md-icon class="icon-opacity" layout="row" layout-align="center center" md-svg-src="/img/icons/ic_check_box_outline_blank_black.svg" ng-hide="profile.isActive(profile)" style="margin-left: 12px; opacity: 0.54;"></md-icon>
+                </div>
+                <div flex="auto" layout="row" layout-align="start center">
+                    <span style="max-width: 180px;" class="truncate">{{profile.label | translate}}</span>
+                    <md-tooltip ng-if="profile.isActive(profile)">{{'CONTROLBAR.MENU.ANON.MENU.TOOLTIP_DEACTIVATE' | translate}} {{profile.label | translate}}</md-tooltip>
+                    <md-tooltip ng-if="!profile.isActive(profile)">{{'CONTROLBAR.MENU.ANON.MENU.TOOLTIP_ACTIVATE' | translate}} {{profile.label | translate}}</md-tooltip>
+                </div>
+            </div>
+        </div>
+
+        <md-divider style="padding: 0;"></md-divider>
+
+        <div class="controlbar-dropdown-all-options" layout-padding>
+            <md-divider style="padding: 8px 0 0 0; margin-top: 8px;" ng-if="option.divider && (option.show === undefined  || option.show())" ng-repeat-start="option in options"></md-divider>
+            <div ng-repeat-end
+                 ng-if="option.show === undefined  || option.show()"
+                 class="controlbar-dropdown-option unselectable"
+                 ng-click="option.actionCallback()"
+                 layout="row"
+                 layout-align="start center"
+                 flex>
+                <div flex="25" layout="row" layout-align="center center">
+                    <md-icon class="icon-opacity" md-svg-src="{{option.imageUrl}}" style="margin-left: 12px;"></md-icon>
+                </div>
+                <div flex="auto" layout="row" layout-align="start center">
+                    <span>{{option.label | translate}}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,77 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_USER.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <div style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column" layout-align="center center">
+
+
+                <div layout="row" layout-align="center center" style="width: 80%;">
+                    <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                    <eb-filter-table filtered-data="vm.filteredDevices"
+                                     original-data="vm.devices"
+                                     search-term="vm.searchTerm"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+
+
+                <div ng-if="vm.filteredDevices.length > 0" class="devices-table">
+
+                    <div layout="row" layout-align="center center">
+                        <div flex-gt-sm="50" flex="90" style="font-weight: bold;">
+                            <span translate="ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.COLUMN.DEVICE"></span>
+                        </div>
+                        <div hide-xs hide-sm flex="30" style="font-weight: bold;">
+                            <span translate="ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.COLUMN.IP"></span>
+                        </div>
+                        <div flex="10"></div>
+                    </div>
+
+                    <div class="devices-table-body">
+                        <div layout="row" layout-align="center center"
+                             class="devices-table-row icon-pointer"
+                             ng-click="device.assignToUser = !device.assignToUser;"
+                             ng-repeat="device in vm.filteredDevices track by $index">
+                            <div flex-gt-sm="50" flex="90" class="truncate">
+                                <span>{{device.name}}</span>
+                            </div>
+                            <div hide-xs hide-sm flex="30" layout="row" layout-align="start center">
+                                <span>{{device.ipAddresses.join(',')}}</span>
+                            </div>
+                            <div flex="10" layout="row" layout-align="center center">
+                                <div layout="row" layout-align="center center">
+                                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                                 style="margin-bottom: 0;"
+                                                 ng-click="device.assignToUser = !device.assignToUser;"
+                                                 aria-label="Assign this device the user"
+                                                 ng-model="device.assignToUser">
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="vm.filteredDevices.length === 0"
+                     layout="row" layout-align="center center">
+                    <span translate="ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.TABLE_EMPTY"></span>
+                </div>
+
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="button" ng-click="vm.ok()" ng-disabled="!vm.isADeviceSelected()" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.ADD_DEVICE_TO_USER.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </div>
+</md-dialog>

@@ -1,0 +1,86 @@
+<eb-card
+    icon="/img/icons/ic_settings.svg"
+    card-title="{{'CONSOLE.CARD.TITLE' | translate}}"
+    tooltip="CONSOLE.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{vm.getStatus()}}">
+
+    <eb-card-content>
+
+        <div layout="column">
+            <div layout="row" style="height: 38px;">
+                <span flex="40">{{ 'CONSOLE.CARD.NETWORK.DEVICE_IP' | translate}}</span>
+                <span flex="60" style="font-weight: bold;">{{vm.device}}</span>
+            </div>
+            <div layout="row" style="height: 38px;">
+                <span flex="40">{{ 'CONSOLE.CARD.NETWORK.EBLOCKER_IP' | translate}}</span>
+                <span flex="60" style="font-weight: bold;">{{vm.eblocker}}</span>
+            </div>
+            <div layout="row" style="height: 38px;">
+                <span flex="40">{{ 'CONSOLE.CARD.NETWORK.GATEWAY_IP' | translate}}</span>
+                <span flex="60" style="font-weight: bold;">{{vm.gateway}}</span>
+            </div>
+        </div>
+
+        <md-divider style="margin-top: 4px; margin-bottom: 8px;"></md-divider>
+
+        <div layout="column" layout-align="start center">
+            <div layout="row" layout-align="start center" style="width: 100%; height: 38px;">
+                <span flex="40">{{ 'CONSOLE.CARD.LICENSE.LABEL' | translate}}</span>
+                <span flex="60" ng-if="vm.license.registrationState === 'OK'" style="font-weight: bold;">{{vm.license.displayProductName}}</span>
+                <span flex="60" ng-if="vm.license.registrationState !== 'OK'" style="font-weight: bold;">-</span>
+            </div>
+
+            <div hide-gt-xs style="padding-top: 8px;"></div>
+
+            <div layout="row" layout-align="start center" style="width: 100%; height: 20px;"
+                 ng-hide="vm.license.licenseLifetime || vm.license.registrationState !== 'OK'">
+                <span flex="40"></span>
+                <span flex="60" layout="row" layout-align="start center" style="font-style: italic; font-weight: bold; font-size:14px;">
+                    ({{'CONSOLE.CARD.LICENSE.VALID_TILL' | translate}} {{ vm.license.licenseNotValidAfterDisplay }})
+                </span>
+            </div>
+
+            <div layout="row" layout-align="start center" style="width: 100%;"
+                 ng-show="!vm.isRegistered">
+                <div flex="55" layout="row" layout-align="end center"
+                     style="padding-right: 20px;">
+                    <span>{{'CONSOLE.CARD.ACTIVATION_WARNING' | translate}}</span>
+                </div>
+                <div flex="5" layout="row" layout-align="center center">
+                    <md-icon class="card-error-icon" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+                </div>
+                <div flex="40" layout="row" layout-align="start center">
+                    <md-button class="md-primary"
+                               ng-click="vm.openConsole()">
+                        {{ 'CONSOLE.CARD.BUTTON.ACTIVATE' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+
+            <div layout="row" layout-align="start center" style="width: 100%;"
+                 ng-show="vm.isLicenseAboutToExpire">
+                <div flex="55" layout="row" layout-align="end center"
+                     style="padding-right: 20px;">
+                    <span>{{'CONSOLE.CARD.EXPIRED_WARNING' | translate}}</span>
+                </div>
+                <div flex="5" layout="row" layout-align="center center">
+                    <md-icon class="card-warn-icon" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div flex="40" layout="row" layout-align="start center">
+                    <md-button class="md-primary"
+                               ng-click="vm.openConsole()">
+                        {{ 'CONSOLE.CARD.BUTTON.RENEW' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+        </div>
+
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="vm.openConsole()">{{'CONSOLE.CARD.BUTTON.OK' | translate}}</md-button>
+    </eb-card-actions>
+</eb-card>

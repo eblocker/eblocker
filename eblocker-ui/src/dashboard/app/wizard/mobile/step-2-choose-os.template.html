@@ -1,0 +1,55 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.MOBILE.CHOOSE_OS.TITLE' | translate }}</h3>
+    </div>
+
+    <div layout-padding>
+
+        <div layout="row" layout-xs="column" layout-align="start center" layout-align-xs="center center">
+            <div style="width: 100%;">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'WIZARD.MOBILE.CHOOSE_OS.LABEL_CHOICE' | translate }}</label>
+                    <md-select ng-model="vm.deviceOs" ng-change="vm.getOpenVPNName(vm.device)" aria-label="Choose operating system">
+                        <div ng-repeat="type in vm.osTypes">
+                            <md-option ng-value="type">{{ type.value | translate }}</md-option>
+                        </div>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <div>
+                <md-button class="md-raised md-primary md-accent"
+                           target="_blank"
+                           ng-href="{{'WIZARD.MOBILE.CHOOSE_OS.VPN_URL.' + vm.deviceOs.type | translate }}"
+                           aria-label="{{ 'WIZARD.MOBILE.CHOOSE_OS.ACTION_DOWNLOAD' | translate }}">
+                    {{'WIZARD.MOBILE.CHOOSE_OS.ACTION_DOWNLOAD' | translate}}
+                </md-button>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="end center">
+            <md-checkbox md-theme="eBlockerThemeCheckbox"
+                         layout="row" layout-align="start center"
+                         ng-model="vm.downloadConfirmed"
+                         class="md-primary"
+                         style="margin-bottom: -1px;"
+                         aria-label="Tor country checkbox">
+                {{'WIZARD.MOBILE.CHOOSE_OS.CONFIRM_DOWNLOAD' | translate}}
+            </md-checkbox>
+        </div>
+
+    </div>
+
+
+    <div layout="row" layout-align="end center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.downloadConfirmed" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

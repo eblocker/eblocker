@@ -1,0 +1,39 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.MOBILE.INSTALL_WINDOWS.TITLE' | translate }}</h3>
+    </div>
+
+    <div>
+
+        <ol>
+            <li translate="WIZARD.MOBILE.INSTALL_WINDOWS.STEP_1"></li>
+            <li translate="WIZARD.MOBILE.INSTALL_WINDOWS.STEP_2"></li>
+        </ol>
+
+    </div>
+
+    <div layout="row" layout-align="end center" layout-padding>
+        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                     layout="row" layout-align="start center"
+                     ng-model="vm.confirmInstallAppWin"
+                     class="md-primary"
+                     style="margin-bottom: -1px;"
+                     aria-label="Tor country checkbox">
+            {{'WIZARD.MOBILE.INSTALL_WINDOWS.CONFIRM_INSTALL' | translate}}
+        </md-checkbox>
+    </div>
+
+
+    <div layout="row" layout-align="end center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.confirmInstallAppWin" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

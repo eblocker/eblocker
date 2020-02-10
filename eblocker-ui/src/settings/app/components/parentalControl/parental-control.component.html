@@ -1,0 +1,29 @@
+<div layout="column">
+    <div class="md-padding" ng-if="vm.isPasswordSet">
+
+        <md-tabs md-selected="vm.selectedIndex" md-border-bottom md-swipe-content>
+            <md-tab ng-repeat="subState in vm.subStates track by $index"
+                    label="{{subState.translationKey | translate}}"
+                    ng-click="vm.switchTab(subState)">
+            </md-tab>
+        </md-tabs>
+        <div ui-view></div>
+    </div>
+
+    <div class="md-padding" ng-if="!vm.isPasswordSet">
+        <div layout="column" layout-align="center center">
+            <md-card layout-align="center center">
+                <md-card-content layout="column" layout-align="start center" layout-padding>
+                    <div>
+                        <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+                    </div>
+                    <div layout-padding>
+                        {{ 'ADMINCONSOLE.PARENTAL_CONTROL.SET_ADMIN_PASSWORD_TEXT' | translate }}
+                    </div>
+                    <md-button class="md-accent" ng-click="vm.goToAdminPassword()">{{'ADMINCONSOLE.PARENTAL_CONTROL.ACTION.SET_PASSWORD' | translate }}</md-button>
+                </md-card-content>
+            </md-card>
+        </div>
+    </div>
+
+</div>

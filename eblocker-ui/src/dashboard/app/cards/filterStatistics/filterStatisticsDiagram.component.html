@@ -1,0 +1,52 @@
+<div layout="column" layout-align="center center">
+    <div>
+        <canvas
+            id="line"
+            class="chart chart-line"
+            height="230"
+            width="400"
+            chart-data="$ctrl.chart.data"
+            chart-labels="$ctrl.chart.labels"
+            chart-options="$ctrl.chart.options"
+            chart-series="$ctrl.chart.series"
+            chart-colors="$ctrl.chart.colors"
+            chart-click="$ctrl.chartClick">
+        </canvas>
+    </div>
+
+    <div>
+        <div>
+            <canvas
+                id="pie"
+                class="chart chart-pie"
+                height="64"
+                chart-data="$ctrl.pie.data"
+                chart-labels="$ctrl.pie.labels"
+                chart-options="$ctrl.pie.options"
+                chart-colors="$ctrl.pie.colors"
+                style="display: block">
+            </canvas>
+        </div>
+    </div>
+
+    <div layout-fill layout="row" layout-align="center center">
+        <div flex="10" layout="column" layout-align="center center">
+            <div>&nbsp;</div>
+            <div ng-style="{{$ctrl.lineColors.TRACKERS}}">&nbsp;</div>
+            <div ng-style="{{$ctrl.lineColors.ADS}}">&nbsp;</div>
+            <div ng-style="{{$ctrl.lineColors.CUSTOM}}">&nbsp;</div>
+        </div>
+        <div flex="70" layout="column" layout-align="start start">
+            <div>{{'DNS_STATISTICS.CARD.BIN.QUERIES.BLOCKED_TOTAL' | translate}}</div>
+            <div>{{'DNS_STATISTICS.CARD.BIN.QUERIES.BLOCKED_TRACKERS' | translate}}</div>
+            <div>{{'DNS_STATISTICS.CARD.BIN.QUERIES.BLOCKED_ADS' | translate}}</div>
+            <div>{{'DNS_STATISTICS.CARD.BIN.QUERIES.BLOCKED_CUSTOM' | translate}}</div>
+        </div>
+        <div flex="20" layout="column" layout-align="end end">
+            <div>{{$ctrl.displayBin.blockedQueries}}</div>
+            <div>{{$ctrl.displayBin.blockedTrackers}}</div>
+            <div>{{$ctrl.displayBin.blockedAds}}</div>
+            <div>{{$ctrl.displayBin.blockedCustom}}</div>
+        </div>
+    </div>
+</div>

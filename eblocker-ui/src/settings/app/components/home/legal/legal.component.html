@@ -1,0 +1,41 @@
+<div layout="column" layout-fill class="settings-child-view eb-about">
+    <div layout="column">
+        <div layout="column" layout-align="start start">
+            <h3>eBlocker OS {{vm.projectVersion}}</h3>
+            <p>
+                {{ 'ADMINCONSOLE.LEGAL.COPYRIGHT_GMBH' | translate }}
+            </p>
+            <p>
+                {{ 'ADMINCONSOLE.LEGAL.COPYRIGHT' | translate }}
+            </p>
+            <p>
+                {{ 'ADMINCONSOLE.LEGAL.ADDRESS_NAME' | translate }}
+                <br>
+                {{ 'ADMINCONSOLE.LEGAL.ADDRESS_STREET' | translate }}
+                <br>
+                {{ 'ADMINCONSOLE.LEGAL.ADDRESS_CITY' | translate }}
+                <br>
+                {{ 'ADMINCONSOLE.LEGAL.ADDRESS_COUNTRY' | translate }}
+            </p>
+            <p>
+                <a class="orange" target="_blank" href="{{ 'ADMINCONSOLE.LEGAL.AGB_LINK' | translate }}">
+                    {{ 'ADMINCONSOLE.LEGAL.AGB_LABEL' | translate }}
+                </a>
+            </p>
+            <p>
+                <a class="orange" target="_blank" href="{{ 'ADMINCONSOLE.LEGAL.EULA_LINK' | translate }}">
+                    {{ 'ADMINCONSOLE.LEGAL.EULA_LABEL' | translate }}
+                </a>
+            </p>
+            <p>
+                <a class="orange" ui-sref="{{vm.getStateName()}}">
+                    {{ 'ADMINCONSOLE.LEGAL.OSS_LABEL' | translate }}
+                </a>
+            </p>
+            <h3>{{ 'ADMINCONSOLE.LEGAL.TRADEMARK_LABEL' | translate }}</h3>
+            <p>
+                <b>{{ 'ADMINCONSOLE.LEGAL.TRADEMARK' | translate }}</b>
+            </p>
+         </div>
+    </div>
+</div>

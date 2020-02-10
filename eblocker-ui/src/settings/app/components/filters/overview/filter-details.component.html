@@ -1,0 +1,177 @@
+<div class="settings-child-view">
+    <div layout-padding>
+
+        <div layout="row" layout-xs="column" layout-align-xs="center center">
+            <div layout="row" layout-align="start center" layout-align-xs="center center" style="width: 100%;">
+                <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+            </div>
+
+            <div layout="row" layout-align="end center" layout-align-xs="center center" style="width: 100%;">
+                <eb-details-paginator table-data="vm.tableData"
+                                      tooltip-property="name"
+                                      on-change="vm.onChangePaginator(entry)"
+                                      current-entry="vm.blocker">
+                </eb-details-paginator>
+            </div>
+        </div>
+
+        <div>
+            <md-divider></md-divider>
+        </div>
+
+        <!-- content -->
+        <div flex-gt-md="95" style="height: 100%;" layout="column">
+
+            <div>
+                <h3 style="margin: 0;" class="eb-table-details-view">
+                    {{vm.blocker.name | translate}}
+                </h3>
+            </div>
+
+            <div class="config-frame md-whiteframe-z1" layout="column" layout-padding>
+
+                <div layout="row" layout-align="start center" layout-xs="column" layout-align-xs="center start">
+                    <div flex="15">
+                        <eb-label-container  label="{{ 'ADMINCONSOLE.FILTER_DETAILS.LABEL.STATUS' | translate }}" config="vm.status"></eb-label-container>
+                    </div>
+
+                    <div flex="60" flex-xs="100">
+                        <eb-label-container  label="{{ 'ADMINCONSOLE.FILTER_DETAILS.LABEL.DEVICES' | translate }}" config="vm.devices"></eb-label-container>
+                    </div>
+
+                    <div flex="20">
+                        <eb-label-container  label="{{ 'ADMINCONSOLE.FILTER_DETAILS.LABEL.BLOCKED' | translate }}" config="vm.blocked"></eb-label-container>
+                    </div>
+                </div>
+
+                <div ng-if="vm.blocker.needsDns && !vm.blocker.dnsEnabled && vm.blocker.usedBy > 0"
+                     layout="row" layout-align="start center">
+                    <div style="padding-right: 8px;">
+                        <md-icon class="content-error"
+                                 md-svg-src="/img/icons/ic_error.svg"
+                                 aria-label="Filter DNS status">
+                        </md-icon>
+                    </div>
+                    <span>{{ 'ADMINCONSOLE.FILTER_DETAILS.LABEL.DNS_DISABLED' | translate }}</span>
+                </div>
+
+
+                <!-- Warning: devices with no HTTPS support active -->
+                <div ng-if="!vm.blocker.sslGloballyDisabled && vm.blocker.sslDisabledDevices.length > 0"
+                     layout-gt-sm="row" layout="column" layout-padding>
+                    <div flex-gt-sm="35" flex="100" layout="row" layout-align="start start">
+
+                        <div style="padding-right: 8px;">
+                            <md-icon class="content-warn"
+                                     md-svg-src="/img/icons/ic_warning.svg"
+                                     aria-label="SSL Status disabled">
+                            </md-icon>
+                        </div>
+                        <span translate="ADMINCONSOLE.FILTER_DETAILS.LABEL.DEVICES_NO_SSL"></span>
+
+                    </div>
+
+                    <div flex layout="column" layout-align="center start">
+                        <span ng-repeat="device in vm.blocker.sslDisabledDevices track by $index">
+                            <a ng-click="vm.goToDevice(device)" target="_blank" class="orange icon-pointer">{{device.name}}</a><!-- prevent extra whitespace
+                         -->
+                            <!--<span ng-show="$index < vm.blocker.sslDisabledDevices.length - 1">,&nbsp;</span>-->
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Warning: no global HTTPS support active -->
+                <div ng-if="vm.blocker.sslGloballyDisabled" layout="row" layout-align="start center">
+                    <div style="padding-right: 8px;">
+                        <md-icon class="content-warn"
+                                 md-svg-src="/img/icons/ic_warning.svg"
+                                 aria-label="SSL Status disabled">
+                        </md-icon>
+                    </div>
+                    <span translate="ADMINCONSOLE.FILTER_DETAILS.LABEL.GLOBAL_NO_SSL"></span>
+                    <md-button ng-click="vm.goToHttps()" class="md-primary" translate="ADMINCONSOLE.FILTER_DETAILS.LABEL.GO_TO_HTTPS"></md-button>
+                </div>
+
+            </div>
+
+            <!-- Table: blocker lists -->
+            <div>
+                <!-- Action bar of table -->
+                <div layout="row" layout-xs="column" layout-align="start center">
+
+                    <div layout="row" style="width: 100%;">
+                        <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                            <!-- WORK MODE -->
+                            <div ng-if="!vm.tableEditMode">
+                                <md-button ng-click="vm.newCustomList()" class="md-raised md-accent">
+                                    {{ 'ADMINCONSOLE.FILTER_DETAILS.ACTION.ADD' | translate }}
+                                </md-button>
+                            </div>
+
+                            <!-- EDIT MODE -->
+                            <div ng-if="vm.tableEditMode">
+                                <table-remove-entries table-data="vm.filteredTableData"
+                                                      is-entry-deletable="vm.isDeletable(value)"
+                                                      delete-single-entry="vm.deleteEntry(value)"
+                                                      on-single-delete-done="vm.onDeleteDone()"
+                                                      button-label="ADMINCONSOLE.FILTER_DETAILS.ACTION.REMOVE"
+                                                      dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM.TITLE"
+                                                      dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM.TEXT">
+                                </table-remove-entries>
+                            </div>
+
+                            <div ng-if="vm.loading" layout="row" layout-align="start center">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </div>
+
+                        <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                            <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                            <eb-filter-table filtered-data="vm.filteredTableData"
+                                             original-data="vm.blockerListsTableData"
+                                             filter-properties="vm.searchProps">
+                            </eb-filter-table>
+                        </div>
+
+                        <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                            <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                            <eb-edit-table table-data="vm.filteredTableData"
+                                           table-edit-mode="vm.tableEditMode">
+                            </eb-edit-table>
+                        </div>
+                    </div>
+
+                    <div hide-gt-xs style="width: 100%;">
+                        <!-- TABLE SEARCH -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.blockerListsTableData"
+                                         filter-properties="vm.searchProps">
+                        </eb-filter-table>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <eb-table table-data="vm.filteredTableData"
+                          table-header="vm.tableHeaderConfig"
+                          table-template="app/components/filters/overview/blocked-lists-table.template.html"
+                          table-id="vm.tableId"
+                          table-edit-callback="vm.updateCustomList(value)"
+                          table-callback="vm.tableCallback"
+                          template-callback="vm.templateCallback"
+                          edit-mode="vm.tableEditMode"
+                          is-entry-selectable="vm.isSelectable(value)"
+                          small-table-header-limit="4">
+                </eb-table>
+
+                <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                    <eb-scroll-paginator table-id="vm.tableId"
+                                         table-size="vm.filteredTableData.length">
+                    </eb-scroll-paginator>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Content end -->
+    </div>
+</div>

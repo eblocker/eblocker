@@ -1,0 +1,24 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/system/status/help-status.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div>
+        <p>{{ 'ADMINCONSOLE.STATUS.EXPLANATION' | translate }}</p>
+        <div class="config-frame md-whiteframe-z1">
+            <div layout="column">
+                <div layout="row" layout-align="space-around center">
+                    <div>
+                        <md-button class="md-raised eb-delete-button" ng-click="vm.shutdown($event)">{{ 'ADMINCONSOLE.STATUS.ACTION.SHUTDOWN' | translate}}</md-button>
+                    </div>
+                    <div>
+                        <md-button class="md-raised md-accent" ng-click="vm.reboot($event)">{{'ADMINCONSOLE.STATUS.ACTION.REBOOT' | translate}}</md-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

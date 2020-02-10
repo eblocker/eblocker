@@ -1,0 +1,33 @@
+<md-card-title>
+    <md-toolbar>
+        <div class="md-toolbar-tools"
+             layout="row"
+             md-scroll-shrink>
+            <div>
+                <h2 ng-show="vm.exeState === 'SHUTTING_DOWN_FOR_REBOOT'">{{ 'ADMINCONSOLE.SHUTDOWN.CARD.TITLE_REBOOT' | translate }}</h2>
+                <h2 ng-hide="vm.exeState === 'SHUTTING_DOWN_FOR_REBOOT'">{{ 'ADMINCONSOLE.SHUTDOWN.CARD.TITLE_SHUTDOWN' | translate }}</h2>
+            </div>
+            <div flex></div>
+            <md-progress-circular ng-show="vm.isCheckingStatus()"
+                                  class="md-hue-3"
+                                  md-mode="indeterminate"
+                                  md-diameter="36">
+            </md-progress-circular>
+        </div>
+    </md-toolbar>
+</md-card-title>
+<md-card-content>
+
+    <div layout="column" layout-align="center center" layout-margin>
+        <div ng-show="vm.exeState === 'SHUTTING_DOWN_FOR_REBOOT'" translate="ADMINCONSOLE.SHUTDOWN.CARD.HINT1_REBOOT"></div>
+        <div ng-show="vm.exeState === 'SHUTTING_DOWN'" translate="ADMINCONSOLE.SHUTDOWN.CARD.HINT1_SHUTDOWN"></div>
+        <!--<div>-->
+            <!--<md-progress-circular ng-show="vm.isCheckingStatus()"-->
+                                  <!--md-mode="indeterminate"-->
+                                  <!--md-diameter="36">-->
+            <!--</md-progress-circular>-->
+        <!--</div>-->
+        <div style="font-weight: bold;" translate="ADMINCONSOLE.SHUTDOWN.CARD.HINT2"></div>
+    </div>
+
+</md-card-content>

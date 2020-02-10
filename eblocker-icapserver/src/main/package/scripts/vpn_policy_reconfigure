@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+#
+# This script creates the policy based routing rules. It expects the routing tables to be already registered and named with a common prefix.
+#
+# Usage:
+#   openvpn_policy prefix offset [id...]
+# where
+#   prefix is the routing table prefix (e.g. openvpn)
+#   offset each rule is given a priority of offset + id
+#
+
+if [ $# -ge '2' ];
+then
+
+    #debugging
+    SCRIPT_NAME="vpn_policy_reconfigure"
+    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
+
+	# Policy Routing Rules:
+	# add policy routing rules
+    TABLE_NAME_PREFIX=$1
+    OFFSET=$2
+
+    # clear all previously set rules
+    rules=`ip rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`
+    for rule in `ip rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`; do
+        ip rule del pref $rule
+    done
+
+    shift 2
+    while(("$#")); do
+        ip rule add prio $(($OFFSET+$1)) from all fwmark $1 table $TABLE_NAME_PREFIX$1
+        shift
+    done
+
+	# cleanup,commit changes
+	ip route flush cache
+
+    #debugging
+    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
+else
+	echo "Wrong number of arguments!"
+fi

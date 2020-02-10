@@ -1,0 +1,145 @@
+<html>
+<head>
+
+</head>
+<body>
+    <h1>Tracking Redirect Test Page</h1>
+    <h2>Look&feel</h2>
+    <p>
+        Use these forms to test the look&feel of the redirect pages.<br/>
+        Expects eblocker server on http://127.0.0.1:300<br/>
+        <b>Attention:</b> Make sure that your request is <b>not</b> going through Squid and ICAP!<br/>
+        Please note that the "remember" function is not working here!
+    </p>
+    <form action="http://127.0.0.1:3000/redirect" method="post">
+        <table>
+            <tbody>
+            <tr>
+            </tr>
+            <tr>
+                <td>
+                    <label for="url">Original URL</label>
+                </td>
+                <td>
+                    <input id="url" type="text" name="url" value="http://etracker.com"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="redirectTarget">Target URL</label>
+                </td>
+                <td>
+                    <input id="redirectTarget" type="text" name="redirectTarget" value="http://eblocker.com" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Show eBlocker's redirect option page">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <form action="http://127.0.0.1:3000/redirect" method="post">
+        <table>
+            <tbody>
+            <tr>
+            </tr>
+            <tr>
+                <td>
+                    <label for="url2">Target URL</label>
+                </td>
+                <td>
+                    <input id="url2" type="text" name="url" value="http://etracker.com"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Show eBlocker's blocking option page">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <h2>Actual filter tests</h2>
+    <p>
+        The following links expect that the request is running through an eblocker ICAP server.
+        It assumes that the following filters have been definined in <span style="font-family: monospace;">eblocker-filter.txt</span>:
+     </p>
+    <pre>
+ASK	HIGH	etracker.com	CONTAINS	&trackthis=	-	-	trackthis
+ASK	HIGH	etracker.com	CONTAINS	&trackthat=	-	-	-
+    </pre>
+    <p>
+        Tracking link with known URL parameter for target link.
+    </p>
+    <form action="http://www.etracker.com" method="get">
+        <input id="key" type="hidden" name="key" value="value"/>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <label for="trackthis">Target URL</label>
+                </td>
+                <td>
+                    <input id="trackthis" type="text" name="trackthis" value="http://www.eblocker.com"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                     <input type="submit" value="Go to link">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <p>
+        Tracking link with URL for target link in unknown parameter.
+    </p>
+    <form action="http://www.etracker.com" method="get">
+        <input id="key" type="hidden" name="key" value="value"/>
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <label for="trackthat">Target URL</label>
+                </td>
+                <td>
+                    <input id="trackthat" type="text" name="trackthat" value="http://www.eblocker.com"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Go to link">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <p>
+        Tracking link without (recognized) target URL.
+    </p>
+    <form action="http://www.etracker.com" method="get">
+        <input id="key" type="hidden" name="key" value="value"/>
+        <table>
+            <tbody>
+            <tr>
+                <td></td>
+                <td>
+                    <input id="trackthat2" type="hidden" name="trackthat" value="not-a-url"/>
+                    <input type="submit" value="Go to link">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.newProfileForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.LABEL_NAME' | translate }}</label>
+                    <input name="name" unique-name ng-model="vm.module.name" md-maxlength="vm.nameMaxLength" required>
+                    <div ng-messages="vm.newProfileForm.name.$error" ng-if="vm.newProfileForm.$submitted || vm.newProfileForm.name.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ERROR.NAME_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ERROR.NAME_TOO_LONG' | translate }}</div>
+                        <div ng-message="unique">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ERROR.NAME_NOT_UNIQUE' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.LABEL_DESCRIPTION' | translate }}</label>
+                    <textarea name="description" ng-model="vm.module.description" md-maxlength="vm.descMaxLength" max-rows="3"></textarea>
+                    <div ng-messages="vm.newProfileForm.description.$error" ng-if="vm.newProfileForm.$submitted || vm.newProfileForm.description.$touched">
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ERROR.DESC_TOO_LONG' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <!--<md-checkbox class="md-primary" ng-model="vm.openDetails">-->
+                    <!--{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.FURTHER_EDIT' | translate }}-->
+                <!--</md-checkbox>-->
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.ADD_PROFILE.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

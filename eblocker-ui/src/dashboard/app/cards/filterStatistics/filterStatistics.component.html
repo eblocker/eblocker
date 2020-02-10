@@ -1,0 +1,22 @@
+<eb-card
+    icon="/img/icons/baseline-insert_chart_outlined.svg"
+    card-title="{{'DNS_STATISTICS.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="DNS_STATISTICS.CARD.TOOLTIP">
+
+    <eb-card-content>
+        <div layout="column" layout-align="center center">
+            <md-tabs md-border-bottom md-dynamic-height md-selected="vm.statsSelectedTabIndex" style="width: 100%;">
+                <md-tab layout-margin layout-padding md-border-bottom md-dynamic-height ng-repeat="range in vm.chartRanges">
+                    <md-tab-label>{{ 'DNS_STATISTICS.CARD.CHART.LABELS.' + range.label | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <div style="padding-top: 8px">
+                            <dashboard-filter-statistics-diagram bin-size-minutes="range.binSizeMinutes" number-of-bins="range.numberOfBins"></dashboard-filter-statistics-diagram>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </eb-card-content>
+
+</eb-card>

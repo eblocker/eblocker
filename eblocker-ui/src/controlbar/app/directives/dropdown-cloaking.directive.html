@@ -1,0 +1,94 @@
+<div>
+    <button-entry ng-click="toggleSelect()"
+                  label="selectedUserAgent === 'Off' ? imageLabel : selectedUserAgent"
+                  image-url="imageUrl"
+                  tooltip-disabled="isOpen"
+                  tooltip-param="selectedUserAgent"
+                  tooltip="selectedUserAgent === 'Off' ? tooltip : 'CONTROLBAR.MENU.CLOAKING.TOOLTIP_CLOAKED'">
+    </button-entry>
+
+    <div ng-show="isOpen" class="controlbar-dropdown-menu scrollable-menu" layout="column" layout-padding my-cloak>
+
+        <div style="padding: 16px 16px 0 16px" ng-if="showSslWarning()"
+             layout="row" layout-align="center center">
+            <div style="margin-right: 8px;">
+                <md-icon style="color: #ffeb3b; fill: #ffeb3b;" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+            </div>
+            <span>{{ 'CONTROLBAR.MENU.CLOAKING.ALERT_NO_HTTPS' | translate }}</span>
+            <md-tooltip md-delay="300">{{'CONTROLBAR.MENU.CLOAKING.TOOLTIP_ALERT_NO_HTTPS' | translate}}</md-tooltip>
+        </div>
+
+        <div style="padding: 16px 16px 8px 16px">
+            <span>{{ label | translate }}</span>
+        </div>
+
+        <div class="controlbar-dropdown-all-options"
+             layout="column" flex layout-fill>
+
+            <div class="controlbar-dropdown-all-options" style="padding-top: 0;">
+                <div ng-repeat="userAgentProfile in userAgentList | orderBy:'+'"
+                     ng-show="userAgentProfile.name !== 'Off'"
+                     class="controlbar-dropdown-option unselectable"
+                     ng-click="setUserAgent({userAgent: userAgentProfile.name});toggleSelect();"
+                     layout="row"
+                     layout-align="start center"
+                     flex>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon ng-show="userAgentProfile.isActive(userAgentProfile.name)" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_black.svg"></md-icon>
+                        <md-icon ng-hide="userAgentProfile.isActive(userAgentProfile.name)" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_outline_blank_black.svg"></md-icon>
+                    </div>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <!--<md-icon ng-show="userAgentProfile.isMobile" class="cloaking-image" md-svg-src="/img/icons/device_mobile.svg"></md-icon>-->
+                        <!--<md-icon ng-hide="userAgentProfile.isMobile" class="cloaking-image" md-svg-src="/img/icons/device.svg"></md-icon>-->
+                        <md-icon ng-show="userAgentProfile.name === 'Android'" class="cloaking-image" md-svg-src="/img/icons/ic_phone_android_black.svg"></md-icon>
+                        <md-icon ng-show="userAgentProfile.name === 'iPad'" class="cloaking-image" md-svg-src="/img/icons/ic_tablet_mac_black.svg"></md-icon>
+                        <md-icon ng-show="userAgentProfile.name === 'iPhone'" class="cloaking-image" md-svg-src="/img/icons/ic_phone_iphone_black.svg"></md-icon>
+                        <md-icon ng-show="userAgentProfile.name === 'Mac'" class="cloaking-image" md-svg-src="/img/icons/ic_desktop_mac_black.svg"></md-icon>
+                        <md-icon ng-show="!userAgentProfile.isMobile &&  userAgentProfile.name !== 'Mac'" class="cloaking-image" md-svg-src="/img/icons/ic_desktop_windows_black.svg"></md-icon>
+                    </div>
+                    <div flex="auto" layout="row" layout-align="start center">
+                        <span style="max-width: 180px;" class="truncate">{{ userAgentProfile.name }}</span>
+                        <md-tooltip ng-if="userAgentProfile.isActive(userAgentProfile.name)">{{'CONTROLBAR.MENU.CLOAKING.TOOLTIP_DEACTIVATE' | translate}} {{userAgentProfile.name | translate}}</md-tooltip>
+                        <md-tooltip ng-if="!userAgentProfile.isActive(userAgentProfile.name)">{{'CONTROLBAR.MENU.CLOAKING.TOOLTIP_ACTIVATE' | translate}} {{userAgentProfile.name | translate}}</md-tooltip>
+                    </div>
+                </div>
+
+                <md-divider style="margin: 8px 0 8px 0;"></md-divider>
+
+                <div class="controlbar-dropdown-option unselectable"
+                     ng-click="setUserAgent({userAgent: 'Off'});toggleSelect();"
+                     layout="row"
+                     layout-align="start center"
+                     flex>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon ng-show="selectedUserAgent === 'Off'" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_black.svg"></md-icon>
+                        <md-icon ng-hide="selectedUserAgent === 'Off'" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_outline_blank_black.svg"></md-icon>
+                    </div>
+                    <div flex="auto" layout="row" layout-align="start center">
+                        <span>{{'CONTROLBAR.MENU.CLOAKING.MENU.DISABLE' | translate}}</span>
+                    </div>
+                </div>
+
+                <md-divider style="margin: 8px 0 8px 0;"></md-divider>
+
+                <div class="controlbar-dropdown-option unselectable"
+                     ng-click="setCustomUserAgent()"
+                     layout="row"
+                     layout-align="start center"
+                     flex>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon ng-show="selectedUserAgent === 'Custom'" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_black.svg"></md-icon>
+                        <md-icon ng-hide="selectedUserAgent === 'Custom'" class="cloaking-check" md-svg-src="/img/icons/ic_check_box_outline_blank_black.svg"></md-icon>
+                    </div>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon class="icon-opacity cloaking-image" md-svg-src="/img/icons/ic_devices_other_black.svg"></md-icon>
+                    </div>
+                    <div flex="auto" layout="row" layout-align="start center">
+                        <span>{{ 'CONTROLBAR.MENU.CLOAKING.MENU.ACTION.CUSTOM' | translate}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

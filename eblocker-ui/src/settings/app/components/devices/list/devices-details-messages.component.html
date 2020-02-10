@@ -1,0 +1,62 @@
+<div style="padding-top: 16px;" layout-padding>
+
+    <div layout="column" layout-align="start start" ng-if="vm.hasFeature('BAS')">
+        <!-- Message severity level -->
+        <label style="font-weight: normal;">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_MESSAGE' | translate }}</label>
+
+        <div style="margin-left: 25px;padding-top:15px;">
+            <md-radio-group class="md-primary" ng-model="vm.device.messageSeverity" ng-change="vm.updateMessageSeverity(vm.device)">
+                <md-radio-button md-theme="eBlockerThemeRadio" value="ALL">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_MESSAGE_ALL' | translate }}</md-radio-button>
+                <md-radio-button md-theme="eBlockerThemeRadio" value="ALERT_ONLY">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_MESSAGE_ALERT' | translate }}</md-radio-button>
+                <md-radio-button md-theme="eBlockerThemeRadio" value="NONE">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_MESSAGE_NONE' | translate }}</md-radio-button>
+            </md-radio-group>
+        </div>
+    </div>
+
+    <div style="margin-top: 15px;"layout="column" layout-align="start start">
+        <label style="font-weight: normal;">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_CONFIRM_DIALOG' | translate}}</label>
+
+        <div style="margin-left: 25px; padding-top: 15px;" layout="column">
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.areDeviceMessagesSettingsDefault"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_TOR_DIALOG' | translate}}">
+                    <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_TOR_DIALOG"></span>
+            </md-checkbox>
+
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.showPauseDialog"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_PAUSE_DIALOG' | translate}}">
+                <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_PAUSE_DIALOG"></span>
+            </md-checkbox>
+
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.showDnsFilterInfoDialog"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG' | translate}}">
+                <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG"></span>
+            </md-checkbox>
+
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.showBookmarkDialog"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_BOOKMAKR_DIALOG' | translate}}">
+                <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_BOOKMAKR_DIALOG"></span>
+            </md-checkbox>
+
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.showWelcomePage"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_WELCOME_PAGE' | translate}}">
+                <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MESSAGES.LABEL_SHOW_WELCOME_PAGE"></span>
+            </md-checkbox>
+        </div>
+    </div>
+
+</div>

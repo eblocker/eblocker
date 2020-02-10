@@ -1,0 +1,67 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view eb-system-lang">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/system/timeLang/help-time-language.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <form name="vm.timezoneForm" novalidate ng-submit="vm.setTimezone()">
+        <div class="config-frame md-whiteframe-z1">
+
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.TIME_LANGUAGE.TIMEZONE_HEADING' | translate }}</h3>
+            </div>
+
+            <div layout="row" layout-xs="column" layout-padding style="padding-left: 0;">
+                <div flex-gt-xs="50">
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'ADMINCONSOLE.TIME_LANGUAGE.CONTINENT_LABEL' | translate }}</label>
+                        <md-select aria-label="{{ 'ADMINCONSOLE.TIME_LANGUAGE.ARIA_REGION' | translate }}" ng-model="vm.region" ng-change="vm.setRegionAndGetCities(vm.region)">
+                            <md-option ng-repeat="region in vm.regions" ng-value="region" ng-selected="region === vm.region">{{region}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div flex-gt-xs="50">
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'ADMINCONSOLE.TIME_LANGUAGE.CITY_LABEL' | translate }}</label>
+                        <md-select name="city" aria-label="{{ 'ADMINCONSOLE.TIME_LANGUAGE.ARIA_CITY' | translate }}" ng-model="vm.city" ng-change="vm.cityChanged()" required>
+                            <md-option ng-repeat="city in vm.cities" ng-value="city" ng-selected="city === vm.city">{{city}}</md-option>
+                        </md-select>
+                        <div ng-messages="vm.timezoneForm.city.$error" ng-if="vm.timezoneForm.$submitted || vm.timezoneForm.city.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.TIME_LANGUAGE.ERROR.REQUIRED' | translate }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+            </div>
+
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.TIME_LANGUAGE.LANGUAGE_HEADING' | translate }}</h3>
+            </div>
+
+            <div layout="row" layout-xs="column" style="width: 100%; padding-bottom: 16px;">
+                <div layout="row"
+                     layout-align="start center"
+                     layout-padding
+                     ng-repeat="lang in vm.languages"
+                     class="icon-pointer icon-option"
+                     ng-click="vm.setLanguage(lang.id, lang)">
+                    <div>
+                        <md-icon md-svg-src="/img/flags/translate/{{lang.id}}.svg"></md-icon>
+                    </div>
+                    <div ng-class="{'lang-selected': lang.id === vm.getLanguage()}">
+                        <span>{{'ADMINCONSOLE.LANG.' + lang.translationKey | translate}}</span>
+                    </div>
+                    <div ng-show="lang.id === vm.getLanguage()">
+                        <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                    </div>
+                    <div ng-hide="lang.id === vm.getLanguage()" flex>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

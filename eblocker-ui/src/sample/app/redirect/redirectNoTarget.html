@@ -1,0 +1,21 @@
+<md-content flex layout="row" layout-align="center center">
+    <div layout="column" layout-align="center center">
+        <md-card layout-align="center center">
+            <md-card-content>
+                <h2>{{'REDIRECT.NO_TARGET.TITLE' | translate}}</h2>
+                <p>
+                    {{'REDIRECT.NO_TARGET.TEXT_1' | translate}}
+                </p>
+                <p>
+                    {{'REDIRECT.NO_TARGET.TEXT_2.PRE' | translate}}<b>{{redirect.originalDomain}}</b>{{'REDIRECT.NO_TARGET.TEXT_2.POST' | translate}}
+                    <br />
+                    {{'REDIRECT.NO_TARGET.TEXT_3' | translate}}
+                </p>
+                <p layout="row" layout-sm="column" layout-align="center center">
+                    <md-button class="md-raised" ng-href="" ng-click="redirect.back();">{{'REDIRECT.NO_TARGET.BUTTON.BACK' | translate}}</md-button>
+                    <md-button class="md-raised md-warn" ng-href="" ng-click="redirect.setDecision('PASS')">{{'REDIRECT.NO_TARGET.BUTTON.CONTINUE' | translate}}</md-button>
+                </p>
+            </md-card-content>
+        </md-card>
+    </div>
+</md-content>

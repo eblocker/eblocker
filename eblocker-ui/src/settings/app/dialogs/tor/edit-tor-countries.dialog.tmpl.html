@@ -1,0 +1,64 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.TITLE' | translate }}"
+           class="edit-tor-countries-dialog"
+           layout-padding
+           style="max-width: 800px;">
+
+
+
+        <md-dialog-content layout="column" layout-padding>
+
+            <div style="margin-bottom: 16px;">
+                <h2>{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="row" layout-align="center center">
+                <!-- LIST SEARCH -->
+                <eb-filter-table filtered-data="vm.filteredTorCountries"
+                                 original-data="vm.torCountries"
+                                 search-term="vm.searchTerm"
+                                 style="width: 70%;"
+                                 filter-properties="vm.searchProps">
+                </eb-filter-table>
+            </div>
+
+            <div class="tor-country-list" ng-class="{'tor-country-list-small': vm.isSmallScreen(), 'tor-country-list-large': !vm.isSmallScreen()}"
+                 layout="column" layout-padding layout-margin>
+                <div layout="row" layout-align="center center" ng-if="vm.filteredTorCountries.length === 0">
+                    <span>{{'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.EMPTY_LIST' | translate}}</span>
+                </div>
+                <div ng-repeat="country in vm.filteredTorCountries | orderBy:'+name'"
+                     ng-click="vm.checkCountry(country)"
+                     layout="row" layout-align="start center"
+                     class="tor-country-list-entry">
+                    <div style="margin-right: 20px;">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                                     ng-model="country._checked"
+                                     ng-click="vm.checkCountry(country)"
+                                     class="md-primary"
+                                     style="margin-bottom: -1px;"
+                                     aria-label="Tor country checkbox">
+                        </md-checkbox>
+                    </div>
+                    <div>
+                        <img style="width:30px;height:20px;margin-top: 5px;" ng-src="/img/flags/{{country.code}}.svg"/>
+                    </div>
+                    <span style="padding-left: 10px;">{{country.name}}</span>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="start center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-bottom: 16px;">
+            <div flex="50" flex-xs="100" layout="row" layout-align="start center" style="padding-left: 8px;">
+                <md-button class="md-raised md-accent" ng-click="vm.selectAllExitNodes()" ng-disabled="vm.torCountries.length === 0">{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.ACTION.SELECT_ALL' | translate }}</md-button>
+                <md-button class="md-raised md-accent" ng-click="vm.deselectAllExitNodes()" ng-disabled="vm.torCountries.length === 0">{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.ACTION.DESELECT_ALL' | translate }}</md-button>
+            </div>
+            <div flex="50" flex-xs="100" layout="row" layout-align="end center" style="padding-right: 8px;">
+                <md-button class="md-raised md-secondary" type="button" ng-click="vm.cancel()" >{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.ACTION.CANCEL' | translate }}</md-button>
+                <md-button class="md-raised md-primary md-accent" type="button" ng-click="vm.apply()" ng-disabled="vm.torCountries.length === 0 || vm.noEntrySelected()">{{ 'ADMINCONSOLE.DIALOG.EDIT_TOR_COUNTRIES.ACTION.APPLY' | translate }}</md-button>
+            </div>
+        </md-dialog-actions>
+</md-dialog>

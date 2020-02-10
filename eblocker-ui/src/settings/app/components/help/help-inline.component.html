@@ -1,0 +1,20 @@
+<!--<div class="help-inline-container" ng-init="vm.showHelp = false" ng-mouseleave="vm.onMouseLeave();">-->
+<div class="help-inline-container" ng-init="vm.showHelp = false" >
+
+    <div layout="row" layout-align="start center"
+         ng-class="{'hover-effect': vm.showAsDialog()}"
+         ng-mouseenter="vm.openHelp();"
+         ng-click="vm.openHelp($event, true);"
+         style="margin: 0;">
+        <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_help_outline.svg"></md-icon>
+        <span ng-if="vm.iconOnly !== true" class="help-inline-text">{{ "HELP_ICON.ICON" | translate }}</span>
+    </div>
+
+    <md-whiteframe class="md-whiteframe-z2 help-inline-overlay" ng-hide="!vm.showHelp" style="min-width: 270px;">
+        <div class="help-inline-content" ng-include="vm.template"></div>
+
+        <div layout="row" layout-align="center center">
+            <md-button class="md-primary" ng-show="vm.showClose" ng-click="vm.showHelp = false">{{ 'HELP_ICON.BUTTON.CLOSE' | translate }}</md-button>
+        </div>
+    </md-whiteframe>
+</div>

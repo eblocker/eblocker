@@ -1,0 +1,47 @@
+<div layout="column" layout-fill class="settings-child-view eb-filters-overview">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/filters/overview/help-filters-status.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <!-- domain blocker table -->
+    <div>
+        <div layout="row" layout-xs="column" layout-align="start center">
+            <h3 translate="ADMINCONSOLE.FILTER_OVERVIEW.TABLE.HEADER.DOMAIN"></h3>
+        </div>
+
+        <!-- TABLE -->
+        <eb-table table-data="vm.filteredDomainTableData"
+                  table-header="vm.tableHeaderConfig"
+                  table-template="app/components/filters/overview/filters-overview-table.template.html"
+                  table-details-state-name="{{vm.detailsState}}"
+                  table-details-params="vm.domainDetailsParams"
+                  table-id="vm.domainTableId"
+                  small-table-header-limit="4">
+        </eb-table>
+
+    </div>
+
+    <!-- pattern blocker table -->
+    <div>
+        <div layout="row" layout-xs="column" layout-align="start center">
+            <h3 translate="ADMINCONSOLE.FILTER_OVERVIEW.TABLE.HEADER.PATTERN"></h3>
+        </div>
+
+        <!-- TABLE -->
+        <eb-table table-data="vm.filteredPatternTableData"
+                  table-header="vm.tableHeaderConfig"
+                  table-template="app/components/filters/overview/filters-overview-table.template.html"
+                  template-callback="vm.templateCallback"
+                  table-details-state-name="{{vm.detailsState}}"
+                  table-details-params="vm.patternDetailsParams"
+                  table-id="vm.patternTableId"
+                  small-table-header-limit="4">
+        </eb-table>
+
+    </div>
+
+</div>

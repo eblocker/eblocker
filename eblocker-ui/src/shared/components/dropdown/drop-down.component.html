@@ -1,0 +1,61 @@
+<div layout="column" class="eblocker-dropdown-component">
+
+    <div layout="row" layout-align="center center"
+         ng-click="vm.toggleDropdown()" class="icon-pointer eblocker-dropdown-icon-container">
+        <md-icon md-svg-src="/img/icons/baseline-arrow_drop_down.svg"></md-icon>
+        <md-tooltip style="min-width: 80px;" md-delay="300">{{ 'SHARED.DROP_DOWN.TOOLTIP' | translate }}</md-tooltip>
+    </div>
+
+    <div ng-show="vm.openDropdown" class="eblocker-dropdown-content">
+        <div ng-repeat="item in vm.content track by $index">
+
+            <div ng-if="!item.isList && (!item.hide || !item.hide()) && item.action">
+                <div class="eblocker-dropdown-item icon-pointer"
+                     layout="row" layout-align="start center" layout-padding
+                     ng-click="vm.clickHandler(item)">
+                    <div>
+                        <md-icon md-svg-src="{{item.image}}"></md-icon>
+                    </div>
+                    <div>
+                        <span translate="{{item.label}}"></span>
+                    </div>
+                </div>
+                <md-divider ng-if="$index < vm.content.length"></md-divider>
+            </div>
+
+            <div ng-if="!item.isList && (!item.hide || !item.hide()) && item.url">
+                <a class="eblocker-dropdown-item icon-pointer"
+                   target="_blank" ng-href="{{item.url | translate}}"
+                   layout="row" layout-align="start center" layout-padding>
+                    <div>
+                        <md-icon md-svg-src="{{item.image}}"></md-icon>
+                    </div>
+                    <div>
+                        <span translate="{{item.label}}"></span>
+                    </div>
+                </a>
+                <md-divider ng-if="$index < vm.content.length"></md-divider>
+            </div>
+
+            <div ng-if="item.isList && (!item.hide || !item.hide())">
+                <div class="eblocker-dropdown-item icon-pointer"
+                     layout="row" layout-align="start center" layout-padding
+                     ng-repeat="listItem in item.getList() | orderBy: '+sortingString | translate'"
+                     ng-click="vm.clickHandler(item, listItem)">
+                    <div>
+                        <md-icon ng-show="listItem.visible" md-svg-src="/img/icons/ic_visibility_on.svg"></md-icon>
+                        <md-icon ng-hide="listItem.visible" md-svg-src="/img/icons/ic_visibility_off.svg"></md-icon>
+                    </div>
+                    <div>
+                        <span ng-if="listItem.titleParam === undefined">{{ listItem.sortingString | translate }}</span>
+                        <span ng-if="listItem.titleParam !== undefined">{{ listItem.sortingString | translate: {param: listItem.titleParam} }}</span>
+                    </div>
+                    <md-tooltip ng-if="listItem.tooltip !== undefined" md-delay="300">{{ listItem.tooltip | translate }}</md-tooltip>
+                </div>
+                <md-divider ng-if="$index < vm.content.length"></md-divider>
+            </div>
+
+        </div>
+    </div>
+
+</div>

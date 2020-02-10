@@ -1,0 +1,117 @@
+style {
+    /* make sure style tag is not displayed on webpage */
+    display: none !important;
+}
+
+.eblocker-opaque {
+    -moz-opacity: 1.0;
+    opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+
+.eblocker-transparent {
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.eblocker-semitransparent {
+    -moz-opacity: 0.4;
+    opacity: .40;
+    filter: alpha(opacity=40);
+}
+
+.eblocker-icon-image {
+    margin: 0;
+    padding: 0;
+    height: 44px;
+    width: auto;
+}
+
+.eblocker-base-badge-background {
+    display: none; /* initially hidden, will be reset by javascript */
+    background: #ff0000;
+    top: 0;
+    left: auto;
+    z-index: 2147483647;
+}
+
+.eblocker-message-badge-background {
+    display: none; /* initially hidden, will be reset by javascript */
+    background: #ff0000;
+    top: 32px;
+    z-index: 2147483647;
+}
+
+.eblocker-base-badge {
+    color: #ffffff;
+    position: fixed;
+    text-align: center;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    line-height: 18px;
+    padding: 2px;
+    box-shadow: 1px 1px 3px #333;
+}
+
+.eblocker-icon-right, .eblocker-icon-left {
+    display: none; /* initially hidden, will be reset by javascript */
+    position: fixed;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+}
+
+.eblocker-icon-right, .eblocker-icon-left, .eblocker-warning {
+    z-index: 2147483646;
+}
+
+.eblocker-icon-left {
+    left: 0;
+}
+
+.eblocker-icon-right {
+    right: 0;
+    left: auto;
+}
+
+.eblocker-warning img {
+    width: 25px;
+    height: 25px;
+}
+
+.eblocker-warning {
+    position: fixed;
+    top: -1px;
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+}
+
+.eblocker-overlay #eblocker-overlay-container {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    background-color: #ffffff00;
+}
+
+.eblocker-overlay {
+    display: none; /* initially hidden, will be reset by javascript */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    z-index: 2147483645;
+    overflow: hidden;
+    background-color: #00ffff00;
+}

@@ -1,0 +1,33 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.form" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{::'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.SSL_ERRORS_DIALOG_APP' | translate}}</label>
+                    <md-select ng-model="vm.input.selectedModule" required>
+                        <md-option ng-repeat="module in vm.appModules" ng-value="module">{{module.name}}</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{::'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.SSL_ERROR_DIALOG_DOMAINSIPS' | translate }}</label>
+                    <textarea name="domainsips" type="text" ng-model="vm.input.domainsIps" required></textarea>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.ADD_DOMAINIP_TO_APP.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -1,0 +1,145 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+LOGGING_CONSOLE="/dev/tty0"
+console_log() {
+    local message="$1"
+    echo "$message" > $LOGGING_CONSOLE
+}
+
+reset_network_interfaces() {
+    cat <<EOF > /etc/network/interfaces
+# Initial network configuration provided by eBlocker
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto eth0:0
+allow-hotplug eth0:0
+iface eth0:0 inet static
+	address 169.254.94.109
+	netmask 255.255.0.0
+
+auto eth0:1
+allow-hotplug eth0:1
+iface eth0:1 inet static
+	address 169.254.7.53
+	netmask 255.255.0.0
+
+EOF
+}
+
+console_log "*** STARTING EBLOCKER FACTORY RESET ***"
+
+reset_network_interfaces
+# Clean apt cache...
+apt-get clean
+
+# Stopping services...
+service icapserver stop
+service arpread stop
+service arpwrite stop
+service redis-server stop
+service eblocker-dns stop
+service squid stop
+service certvalidator stop
+service eblocker-led stop
+sleep 10
+
+# reset redis database and backups
+rm -f /var/lib/redis/*
+
+# Removing log files...
+find /var/log/ \
+     /var/log.hdd/ \
+     /opt/eblocker-dns/log/ \
+     /opt/eblocker-led/log/ \
+     -type f -exec rm {} \;
+
+# remove flag for eblocker-dns
+rm -f /opt/eblocker-icap/conf/eblocker/eblocker-dns.enabled
+
+# Removing system key, filters and network configuration...
+rm -f /opt/eblocker-icap/conf/filter/*
+rm -f /opt/eblocker-icap/keys/systemkey.properties
+rm -f /opt/eblocker-icap/keys/license.cert
+rm -f /opt/eblocker-icap/keys/license.key
+rm -f /opt/eblocker-icap/keys/ssl/*
+find /opt/eblocker-icap/network/ -maxdepth 1 -type f -exec rm {} \;
+rm -rf /opt/eblocker-icap/network/openvpn/*
+
+# Remove temporary files
+rm -rf /opt/eblocker-icap/tmp/*
+
+# Removing registration...
+rm -f /opt/eblocker-icap/registration/registration.properties
+
+# Disable DHCP server (eBlocker will start in auto mode)
+service isc-dhcp-server stop
+update-rc.d isc-dhcp-server remove
+# Remove the leases
+rm -f /var/lib/dhcp/{dhcpd.leases{,~},dhclient{,.*}.leases}
+
+# Clearing squid alcs for torclients, sslclients, sslwhitelist, parentalcontroltime, parentalcontrolfilter, openvpn
+rm -f /etc/squid/torclients
+touch /etc/squid/torclients
+
+rm -f /etc/squid/sslclients
+touch /etc/squid/sslclients
+
+rm -f /etc/squid/ssldomainwhitelist
+touch /etc/squid/ssldomainwhitelist
+
+rm -f /etc/squid/parentalcontroltime
+touch /etc/squid/parentalcontroltime
+
+rm -f /etc/squid/parentalcontrolfilter
+touch /etc/squid/parentalcontrolfilter
+
+rm -f /etc/squid/openvpn/*
+
+# Remove squid's certificate database
+rm -rf /var/lib/ssl_db
+
+# remove domain filter cache
+rm -f /var/cache/eblocker-icap/domainblacklist/index.json
+rm -f /var/cache/eblocker-icap/domainblacklist/lists/*
+rm -f /var/cache/eblocker-icap/domainblacklist/profiles/*
+
+# remove filter statistics
+rm -f /var/cache/eblocker-icap/stats.db*
+
+# remove custom filter domain lists
+rm -f /opt/eblocker-icap/conf/customercreated/*
+
+# Remove eBlocker mobile VPN data and configuration
+service openvpn stop
+rm -f /etc/openvpn/ca.crt
+rm -f /etc/openvpn/dh2048.pem
+rm -Rf /etc/openvpn/easy-rsa
+rm -f /etc/openvpn/eblocker.conf
+rm -f /etc/openvpn/eblocker.crt
+rm -f /etc/openvpn/eblocker.key
+rm -f /etc/openvpn/ipp.txt
+rm -f /etc/openvpn/ta.key
+
+console_log "*** RESET DONE. Shutting down... ***"
+poweroff

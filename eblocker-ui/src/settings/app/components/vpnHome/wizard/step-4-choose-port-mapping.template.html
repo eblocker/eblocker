@@ -1,0 +1,59 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.HEADER' | translate }}</h3>
+    </div>
+
+    <div>
+        <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.TEXT1"></p>
+    </div>
+
+    <div layout-padding>
+        <md-button type="button" ng-click="vm.choosePortMappingToggleShowMore()" class="md-primary">
+            <span ng-hide="vm.choosePortMappingShowMore">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.MORE' | translate }}</span>
+            <span ng-show="vm.choosePortMappingShowMore">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.LESS' | translate }}</span>
+        </md-button>
+
+        <div ng-show="vm.choosePortMappingShowMore" layout-padding>
+            <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.MORE1"></p>
+            <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.MORE2"></p>
+            <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.MORE3"></p>
+        </div>
+    </div>
+
+    <div>
+        <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.portMappingType" ng-change="vm.portMappingTypeChange()">
+            <md-radio-button value="{{vm.PORT_MAPPING_OPTIONS.auto}}">{{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.OPTION.AUTO' | translate}}  <span style="font-style: italic;">{{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.OPTION.RECOMMENDED' | translate}}</span></md-radio-button>
+            <md-radio-button value="{{vm.PORT_MAPPING_OPTIONS.manual}}">{{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CHOOSE_PORT_MAPPING.OPTION.MANUAL' | translate}}</md-radio-button>
+        </md-radio-group>
+    </div>
+
+
+    <div hide-xs layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.openSaveWizardDialog()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+        </md-button>
+    </div>
+
+    <div hide-gt-xs layout-xs="column" layout-align-xs="center center">
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+            </md-button>
+        </div>
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.openSaveWizardDialog()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+        </div>
+    </div>
+</div>

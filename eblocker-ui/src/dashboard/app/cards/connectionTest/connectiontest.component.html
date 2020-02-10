@@ -1,0 +1,103 @@
+<eb-card
+    icon="/img/icons/baseline-check_circle_outline-24px.svg"
+    card-title="{{'CONNECTION_TEST.CARD.TITLE' | translate}}"
+    tooltip="CONNECTION_TEST.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    hide-bottom-divider="!vm.currentDeviceActivated">
+
+    <eb-card-content>
+
+        <div layout="column" layout-align="center none">
+
+            <div layout="row" layout-align="center center">
+                <!-- Slider to show if eBlocker is activated for this device -->
+                <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.currentDeviceActivated" class="md-primary switch-word-break"
+                    ng-change="vm.onChangeDeviceActive()">
+                    {{ vm.currentDeviceActivated ? 'CONNECTION_TEST.CARD.DEVICE.ACTIVE.LABEL' : 'CONNECTION_TEST.CARD.DEVICE.INACTIVE.LABEL' | translate }}
+                </md-switch>
+            </div>
+
+            <div layout="column" ng-if="vm.currentDeviceActivated && (vm.checksStatus.resultsPresent || vm.checksStatus.running)">
+                <!-- Result for Routingtest -->
+                <connection-test-detail checks-status="vm.checksStatus" check-result="vm.checkResultsUi.routing"
+                                        show-explanations="vm.showExplanations.routing"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.ROUTINGTEST.LABEL">
+                </connection-test-detail>
+
+                <!-- Result for DNS Firewalltest -->
+                <connection-test-detail checks-status="vm.checksStatus" check-result="vm.checkResultsUi.dns"
+                                        show-usage-as-text="true"
+                                        show-explanations="vm.showExplanations.dns"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.DNSFIREWALLTEST.LABEL">
+                </connection-test-detail>
+
+                <!-- Combined HTTP/HTTPS web filtering result -->
+                <connection-test-detail ng-if="vm.checksStatus.running || vm.checkResultsUi.webfiltering.expected"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.webfiltering"
+                                        show-explanations="vm.showExplanations.webfiltering"
+                                        test-label="{{!vm.checksStatus.running && vm.checkResultsUi.https.ok === vm.checkResultsUi.https.expected ?
+                                                    'CONNECTION_TEST.CARD.RESULT.WEBFILTERINGTEST_WITH_HTTPS.LABEL' :
+                                                    'CONNECTION_TEST.CARD.RESULT.WEBFILTERINGTEST.LABEL'}}">
+                </connection-test-detail>
+
+                <!-- HTTP web filtering -->
+                <connection-test-detail ng-if="!vm.checkResultsUi.webfiltering.expected && !vm.checksStatus.running"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.http"
+                                        show-explanations="vm.showExplanations.http"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.WEBFILTERINGTEST_HTTP.LABEL">
+                </connection-test-detail>
+
+                <!-- HTTPS web filtering -->
+                <connection-test-detail ng-if="!vm.checkResultsUi.webfiltering.expected && !vm.checksStatus.running"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.https"
+                                        show-explanations="vm.showExplanations.https"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.WEBFILTERINGTEST_HTTPS.LABEL">
+                </connection-test-detail>
+
+                <!-- Combined domain blocker result -->
+                <connection-test-detail ng-if="vm.checksStatus.running || vm.checkResultsUi.domainblocker.expected"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.domainblocker"
+                                        show-usage-as-text="true"
+                                        show-explanations="vm.showExplanations.domainblocker"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.DOMAINBLOCKERTEST.LABEL">
+                </connection-test-detail>
+
+                <!-- Result for Ads Domainblockertest -->
+                <connection-test-detail ng-if="!vm.checkResultsUi.domainblocker.expected && !vm.checksStatus.running"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.adsdomain"
+                                        show-explanations="vm.showExplanations.adsdomain"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.ADSDOMAINBLOCKERTEST.LABEL">
+                </connection-test-detail>
+
+                <!-- Result for Tracker Domainblockertest -->
+                <connection-test-detail ng-if="!vm.checkResultsUi.domainblocker.expected && !vm.checksStatus.running"
+                                        checks-status="vm.checksStatus" check-result="vm.checkResultsUi.tracker"
+                                        show-explanations="vm.showExplanations.tracker"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.TRACKERDOMAINBLOCKERTEST.LABEL">
+                </connection-test-detail>
+
+                <!-- Result for Patternblockertest -->
+                <connection-test-detail checks-status="vm.checksStatus" check-result="vm.checkResultsUi.pattern"
+                                        show-usage-as-text="true"
+                                        show-explanations="vm.showExplanations.pattern"
+                                        test-label="CONNECTION_TEST.CARD.RESULT.PATTERNBLOCKERTEST.LABEL">
+                </connection-test-detail>
+            </div>
+        </div>
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-align="center center" ng-if="vm.currentDeviceActivated">
+        <div ng-if="!vm.checksStatus.running && !vm.dashboardLoadedViaHttps">
+            <md-button class="md-primary" ng-click="vm.connectionTest()" ng-if="vm.firstCheck">{{'CONNECTION_TEST.CARD.BUTTON_CHECK.LABEL' | translate }}</md-button>
+            <md-button class="md-primary" ng-click="vm.connectionTest()" ng-if="!vm.firstCheck">{{'CONNECTION_TEST.CARD.BUTTON_CHECK_REPEAT.LABEL' | translate }}</md-button>
+            <md-button class="md-primary" ng-click="vm.clear()" ng-if="vm.checksStatus.resultsPresent">{{'CONNECTION_TEST.CARD.BUTTON_CLEAR.LABEL' | translate }}</md-button>
+        </div>
+        <div ng-if="vm.checksStatus.running">
+            {{'CONNECTION_TEST.CARD.EXPLANATION.RUNNING' | translate }}
+        </div>
+        <div ng-if="vm.dashboardLoadedViaHttps">
+            {{'CONNECTION_TEST.CARD.DASHBOARD_HTTP_LINK.LABEL' | translate}}:
+            <a href="{{vm.dashboardHttpLocation}}">{{'CONNECTION_TEST.CARD.DASHBOARD_HTTP_LINK.LINKTEXT' | translate}}</a>
+        </div>
+    </eb-card-actions>
+</eb-card>

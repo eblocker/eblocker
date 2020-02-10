@@ -1,0 +1,12 @@
+<md-dialog>
+    <md-dialog-content class="md-dialog-content " layout="column" layout-align="center center">
+        <div idle-countdown="idle.countdown" layout="column" layout-align="center center">
+            <h2>{{ 'IDLE.DIALOG.TITLE' | translate }}</h2>
+            <p>{{ 'IDLE.DIALOG.TEXT' | translate:{'countdown': idle.countdown}:"messageformat" }}</p>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="idle.resume()">{{ 'IDLE.DIALOG.BUTTON.RESUME' | translate }}</md-button>
+    </md-dialog-actions>
+</md-dialog>
+

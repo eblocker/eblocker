@@ -1,0 +1,167 @@
+$table-border-color:            #e0e0e0;
+$table-border-radius:           8px;
+$scrollbar-width: 15px;
+$column-xs-width: 59px;
+
+@mixin fill-width-minus-xs-column() {
+    // ** basically layout-fill
+    width: -webkit-calc(100% - #{$column-xs-width});
+    width: -moz-calc(100% - #{$column-xs-width});
+    width: calc(100% - #{$column-xs-width});
+    min-width: -webkit-calc(100% - #{$column-xs-width});
+    min-width: -moz-calc(100% - #{$column-xs-width});
+    min-width: calc(100% - #{$column-xs-width});
+}
+
+@mixin fill-width-minus-scrollbar() {
+    // ** basically layout-fill
+    width: -webkit-calc(100% - #{$scrollbar-width});
+    width: -moz-calc(100% - #{$scrollbar-width});
+    width: calc(100% - #{$scrollbar-width});
+    min-width: -webkit-calc(100% - #{$scrollbar-width});
+    min-width: -moz-calc(100% - #{$scrollbar-width});
+    min-width: calc(100% - #{$scrollbar-width});
+}
+
+// for both, small and large table
+.eb-table {
+    // Smallest column, e.g. icons, checkboxes
+    .column-xs {
+        width: $column-xs-width !important;
+        min-width: $column-xs-width !important;
+        max-width: $column-xs-width !important;
+        text-align: center;
+    }
+
+    .head {
+        .sortable-column:hover {
+            cursor: pointer;
+        }
+    }
+
+    .eb-table-icon-active {
+        color: $eblocker-orange;
+    }
+    .eb-table-icon-deactivated {
+        color: $color-light-gray;
+    }
+}
+
+.eb-table-large {
+    border: 1px solid $table-border-color;
+    border-radius: $table-border-radius;
+}
+
+// Large Table HEAD definitions
+.eb-table-large .head {
+
+    border-bottom: 1px solid $table-border-color;
+    font-weight: bold;
+    padding-bottom: 2px;
+
+    div.column-wrapper .large-table-label,
+    div.column-wrapper .large-table-label > div {
+        // required for truncation to work (100% means same width as parent div, which in turn is
+        // x-percent of entire header width. Parent has flex attribute and therefore x-percent of header).
+        width: 100%;
+    }
+
+    // truncation of label of large table (header)
+    div.column-wrapper .large-table-label span {
+        @include truncate-text();
+        display: inline-block;
+        width: 100%;
+        vertical-align: middle;
+    }
+
+    div.column-wrapper > div,
+    > div.overall-checkbox {
+        // rule for overall checkbox div and for each column
+        padding: 8px;
+    }
+
+    $sort-svg-size:           18px;
+    $sort-icon-size:           18px;
+    > div .table-sort-icon > svg {
+        width: $sort-svg-size;
+        height: auto;
+    }
+
+    > div .table-sort-container{
+        min-width: $sort-icon-size;
+        max-width: $sort-icon-size;
+        width: $sort-icon-size;
+        min-height: $sort-icon-size;
+        max-height: $sort-icon-size;
+        height: $sort-icon-size;
+    }
+
+    > div md-icon.table-sort-icon {
+        min-width: $sort-icon-size;
+        max-width: $sort-icon-size;
+        width: $sort-icon-size;
+        min-height: $sort-icon-size;
+        max-height: $sort-icon-size;
+        height: $sort-icon-size;
+    }
+}
+
+.eb-table-large .body {
+    overflow-anchor: none; // ** Fixes auto-scroll to bottom on chrome / opera
+    .md-virtual-repeat-scroller {
+        overflow-y: auto;
+    }
+}
+
+.eb-table-large .body .row-include.full-width,
+.eb-table-large .head .full-width {
+    width: 100%;
+    height: auto;
+}
+
+
+.eb-table-large .head, .eb-table-large .body {
+    //@include fill-width-minus-scrollbar();
+    height: auto;
+}
+
+.eb-table-large .body .row-include.reduced-width,
+.eb-table-large .head .reduced-width {
+    // imitates layout-fill, but reduces the width by checkbox / details view if necessary
+    @include fill-width-minus-xs-column();
+    height: auto;
+}
+
+.eb-table-large .body .row-template .row-include div .help-inline-overlay {
+    // Fix help-inline position for tables
+    //right: 5px;
+}
+
+.eb-table-large .body .row-template .row-include span {
+    @include truncate-text();
+}
+
+.eb-table-large .body .row-template .row-include > div {
+    // ** padding only for first div
+    @include truncate-text();
+    vertical-align: middle;
+    padding: 8px;
+}
+
+.striped-entry {
+    background-color: $eblocker-table-stripes;
+}
+
+//.eb-table-large.eb-table-striped .body > .row-template:last-child {
+//    border-bottom-left-radius: $table-border-radius !important;
+//}
+
+.eb-table-large.eb-selection-table .body .row-template:hover,
+.eb-table-large.eb-selection-table .body .row-template:nth-child(odd):hover {
+    background-color: $eblocker-orange-light-faded;
+}
+
+.eb-table-large .body:last-child {
+    //border-bottom-right-radius: $table-border-radius !important;
+    //border-bottom-left-radius: $table-border-radius !important;
+}

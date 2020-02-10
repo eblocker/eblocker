@@ -1,0 +1,36 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_BLOCKER_FORMAT.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.editForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.EDIT_BLOCKER_FORMAT.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+
+                <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_FORMAT' | translate }}</label>
+                    <md-select aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_FORMAT' | translate }}"
+                               ng-disabled="vm.readOnly"
+                               ng-model="vm.value"
+                               name="format" required>
+                        <md-option ng-value="format.key" ng-repeat="format in vm.formatList">{{'ADMINCONSOLE.FILTER_OVERVIEW.FORMAT_LIST.' + format.key | translate}}</md-option>
+                    </md-select>
+                    <div ng-messages="vm.customListForm.format.$error" ng-if="vm.customListForm.$submitted || vm.customListForm.format.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.FORMAT_REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT_BLOCKER_FORMAT.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_BLOCKER_FORMAT.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

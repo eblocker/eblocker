@@ -1,0 +1,88 @@
+<div layout="column" layout-align="start start" style="padding-top: 16px;">
+
+    <div layout="column" layout-padding>
+        <div>
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.device.controlBarAutoMode"
+                         ng-change="vm.onChange(vm.device)"
+                         ng-disabled="vm.isUpdatingDevice"
+                         aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_AUTO_MODE' | translate}}">
+                {{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_AUTO_MODE' | translate }}
+            </md-checkbox>
+        </div>
+    </div>
+
+    <md-divider style="width: 100%;"></md-divider>
+
+    <div ng-if="(!vm.sslGloballyEnabled || !vm.device.sslEnabled) && vm.device.controlBarAutoMode" layout-padding>
+        <div ng-if="!vm.sslGloballyEnabled">
+            <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_NO_GLOBAL_HTTPS_IN_AUTO"></span>
+        </div>
+
+        <div ng-if="vm.sslGloballyEnabled && !vm.device.sslEnabled">
+            <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_NO_HTTPS_IN_AUTO"></span>
+        </div>
+    </div>
+
+    <div ng-if="(vm.sslGloballyEnabled && vm.device.sslEnabled) || !vm.device.controlBarAutoMode"
+         layout="column">
+
+        <!-- WARNING: NO AUTO MODE, SSL DISABLED -->
+        <div layout="row" layout-align="center center" layout-padding ng-if="(!vm.sslGloballyEnabled || !vm.device.sslEnabled) && vm.device.displayIconOn">
+            <div layout="row" layout-align="start center">
+                <md-icon class="card-warn-icon" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+            </div>
+            <div>
+                <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_NO_HTTPS_IN_MANUAL"></span>
+            </div>
+        </div>
+
+        <!-- MAIN CHECKBOX: SHOW CONTORLBAR -->
+        <div layout="column" layout-padding>
+            <div>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                             ng-model="vm.device.displayIconOn" ng-change="vm.onChange(vm.device)"
+                             ng-disabled="vm.device.controlBarAutoMode || vm.isUpdatingDevice"
+                             aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_DISPLAY_ON' | translate}}">
+                    {{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_DISPLAY_ON' | translate }}
+                </md-checkbox>
+            </div>
+            <div layout="column" style="padding-left: 30px;" ng-show="vm.device.displayIconOn">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                             ng-model="vm.device.displayIconFiveSeconds" ng-change="vm.onChange(vm.device)"
+                             ng-disabled="vm.isUpdatingDevice"
+                             aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_DURATION' | translate}}">
+                    {{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_DURATION' | translate }}
+                </md-checkbox>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.device.displayIconBrowserOnly"
+                             ng-change="vm.onChange(vm.device)"
+                             ng-disabled="vm.isUpdatingDevice"
+                             aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_BROWSER_ONLY' | translate}}">
+                    {{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_BROWSER_ONLY' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+
+
+        <!-- POSITION CHECKBOX: SHOW CONTORLBAR LEFT / RIGHT-->
+        <div layout="column" layout-padding ng-show="vm.device.iconPosition && vm.device.displayIconOn">
+            <div>
+                <span>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_ICON_HEADING' | translate }}</span>
+            </div>
+            <div layout="column" style="padding-left: 22px;" layout-padding>
+                <md-radio-group md-theme="eBlockerThemeRadio"
+                                ng-model="vm.device.iconPosition"
+                                ng-change="vm.onChange(vm.device)"
+                                ng-disabled="vm.isUpdatingDevice"
+                                layout="row"
+                                class="md-primary">
+                    <md-radio-button value="LEFT" >{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_ICON_LEFT'  | translate }}</md-radio-button>
+                    <md-radio-button value="RIGHT">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_ICON_RIGHT' | translate }}</md-radio-button>
+                </md-radio-group>
+                <span>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.ICON.LABEL_ICON_WARNING_CACHE' | translate }}</span>
+            </div>
+        </div>
+
+    </div>
+
+</div>

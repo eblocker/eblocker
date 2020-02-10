@@ -1,0 +1,207 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/ssl/fails/help-ssl-fails.template.html"></eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+
+    <!-- ACTIVATE / DEACTIVATE SSL -->
+    <div layout="row" layout-align="start center" layout-margin layout-xs="column">
+        <md-switch class="md-primary switch-word-break" md-theme="eBlockerThemeSwitch" ng-change="vm.toggleSslErrorRecording()" ng-model="vm.ssl.recordingEnabled">
+            <div ng-show="vm.ssl.recordingEnabled">{{::'ADMINCONSOLE.SSL_FAILS.SWITCH.RECORDING_ENABLED' | translate }}</div>
+            <div ng-hide="vm.ssl.recordingEnabled">{{::'ADMINCONSOLE.SSL_FAILS.SWITCH.RECORDING_DISABLED' | translate }}</div>
+        </md-switch>
+    </div>
+
+    <!-- DESCRIPTION TEXT -->
+    <div class="config-frame md-whiteframe-z1">
+        <h4 translate="ADMINCONSOLE.SSL_FAILS.RECORDING_TITLE"></h4>
+        <div translate="ADMINCONSOLE.SSL_FAILS.RECORDING_DESCRIPTION"></div>
+    </div>
+
+    <div ng-show="vm.ssl.recordingEnabled">
+
+        <!-- LABEL: whether there are recordings or not -->
+        <div class="config-frame md-whiteframe-z1">
+            <div ng-show="vm.suggestions.modules.length === 0 && vm.suggestions.domainsIps.length === 0">
+                <div translate="ADMINCONSOLE.SSL_FAILS.DESCRIPTION_NO_ERRORS"></div>
+            </div>
+
+            <div ng-show="vm.suggestions.modules.length > 0 || vm.suggestions.domainsIps.length > 0">
+                <div translate="ADMINCONSOLE.SSL_FAILS.RECORDING_RECORDED"></div>
+            </div>
+        </div>
+
+        <!-- Table Suggested Trusted Apps-->
+        <div ng-show="vm.suggestions.modules.length > 0" style="margin-top: 50px; padding-left: 12px; padding-right: 12px">
+
+            <h4 translate="ADMINCONSOLE.SSL_FAILS.TITLE_APP_SUGGESTIONS"></h4>
+
+
+            <div>
+                <!-- Action bar of table -->
+                <div layout="row" layout-align="start center" layout-xs="column">
+
+                    <div layout="row" style="width: 100%;">
+                        <div flex="33" flex-xs="50" layout="row" layout-align="start center" style="padding-left: 8px;">
+                            <!-- WORK MODE -->
+                            <div flex-gt-xs="33" ng-if="!vm.tableAppEditMode" style="padding-left: 8px;">
+                                <div layout="row" layout-align="space-around" layout-sm="column" ng-show="vm.loading">
+                                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </div>
+
+                            <!-- EDIT MODE -->
+                            <div ng-if="vm.tableAppEditMode">
+                                <md-button aria-label="Mark as tusted"
+                                           class="md-raised md-warn"
+                                           ng-click="vm.markAsTrusted()"
+                                           ng-disabled="vm.getNumOfSelectedUntrusted(vm.appFilteredTableData) === 0">
+                                    {{ 'ADMINCONSOLE.SSL_FAILS.ACTION.MARK_TRUSTED' | translate }}
+                                </md-button>
+                            </div>
+
+                            <div layout="row" layout-align="start center" ng-if="vm.loading">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </div>
+
+                        <div flex="33" hide-xs layout="row" layout-align="start center" style="width: 100%;">
+                            <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                            <eb-filter-table filter-properties="vm.searchPropsApp"
+                                             filtered-data="vm.appFilteredTableData"
+                                             original-data="vm.suggestions.modules">
+                            </eb-filter-table>
+                        </div>
+
+                        <div flex="33" flex-xs="50" layout="row" layout-align="end center">
+                            <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                            <eb-edit-table table-data="vm.appFilteredTableData"
+                                           table-edit-mode="vm.tableAppEditMode">
+                            </eb-edit-table>
+                        </div>
+                    </div>
+
+                    <div hide-gt-xs style="width: 100%;">
+                        <!-- TABLE SEARCH -->
+                        <eb-filter-table filter-properties="vm.searchPropsApp"
+                                         filtered-data="vm.appFilteredTableData"
+                                         original-data="vm.suggestions.modules">
+                        </eb-filter-table>
+                    </div>
+                </div>
+
+                <!-- TABLE APP -->
+                <eb-table edit-mode="vm.tableAppEditMode"
+                          is-entry-selectable="vm.isAppSelectable(value)"
+                          small-table-header-limit="6"
+                          table-data="vm.appFilteredTableData"
+                          table-header="vm.tableAppHeaderConfig"
+                          table-id="vm.tableAppId"
+                          table-template="app/components/ssl/fails/apps-table.template.html">
+                </eb-table>
+
+                <!-- ACTIONS VISIBLE IN EDIT MODE -->
+                <div layout="row" layout-align="start center" layout-margin ng-show="vm.tableAppEditMode">
+                    <eb-scroll-paginator table-id="vm.tableAppId"
+                                         table-size="vm.appFilteredTableData.length">
+                    </eb-scroll-paginator>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Table DOMAINS -->
+        <div ng-show="vm.suggestions.domainsIps.length > 0" style="margin-top: 50px; padding-left: 12px; padding-right: 12px">
+
+            <h4 translate="ADMINCONSOLE.SSL_FAILS.TITLE_DOMAIN_SUGGESTIONS"></h4>
+
+            <div>
+                <!-- Action bar of table -->
+                <div layout="row" layout-align="start center" layout-xs="column">
+
+                    <div layout="row" style="width: 100%;">
+                        <div flex="33" flex-xs="50" layout="row" layout-align="start center" style="padding-left: 8px;">
+                            <!-- WORK MODE -->
+                            <div ng-if="!vm.tableDomainEditMode">
+                                <div layout="row" layout-align="space-around" layout-sm="column" ng-show="vm.loading">
+                                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                </div>
+                            </div>
+
+                            <!-- EDIT MODE -->
+                            <div ng-if="vm.tableDomainEditMode">
+                                <md-input-container md-theme="eBlockerThemeInput">
+                                    <label>{{ 'ADMINCONSOLE.SSL_FAILS.DOMAIN_CHOOSE_ACTION' | translate }}</label>
+                                    <md-select aria-label="Select domain table action"
+                                               ng-change="vm.domainAction(vm.domainActionSelect)"
+                                               ng-disabled="vm.getNumOfSelectedEntries(vm.domainFilteredTableData) === 0"
+                                               ng-model="vm.domainActionSelect">
+                                        <md-option value="NEW">{{ 'ADMINCONSOLE.SSL_FAILS.ACTION.NEW_APP_DEFINITION' | translate }}</md-option>
+                                        <md-option value="APP">{{ 'ADMINCONSOLE.SSL_FAILS.ACTION.ADD_DOMAINS_EXISTING_APP' | translate }}</md-option>
+                                        <md-option value="WHITELIST">{{ 'ADMINCONSOLE.SSL_FAILS.ACTION.ADD_DOMAINS_TO_WHITELIST' | translate }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+
+                            <div layout="row" layout-align="start center" ng-if="vm.loading">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </div>
+
+                        <div flex="33" hide-xs layout="row" layout-align="start center" style="width: 100%;">
+                            <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                            <eb-filter-table filter-properties="vm.searchPropsDomain"
+                                             filtered-data="vm.domainFilteredTableData"
+                                             original-data="vm.suggestions.domainsIps">
+                            </eb-filter-table>
+                        </div>
+
+                        <div flex="33" flex-xs="50" layout="row" layout-align="end center">
+                            <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                            <eb-edit-table table-data="vm.domainFilteredTableData"
+                                           table-edit-mode="vm.tableDomainEditMode">
+                            </eb-edit-table>
+                        </div>
+                    </div>
+
+                    <div hide-gt-xs style="width: 100%;">
+                        <!-- TABLE SEARCH -->
+                        <eb-filter-table filter-properties="vm.searchPropsDomain"
+                                         filtered-data="vm.domainFilteredTableData"
+                                         original-data="vm.suggestions.domainsIps">
+                        </eb-filter-table>
+                    </div>
+                </div>
+
+                <!-- TABLE DOMAIN -->
+                <eb-table edit-mode="vm.tableDomainEditMode"
+                          small-table-header-limit="5"
+                          table-callback="vm.domainTableCallback"
+                          table-data="vm.domainFilteredTableData"
+                          table-header="vm.tableDomainHeaderConfig"
+                          table-id="vm.tableDomainId"
+                          table-template="app/components/ssl/fails/domains-table.template.html">
+                </eb-table>
+
+                <div layout="row" layout-align="start center" layout-margin ng-show="vm.tableDomainEditMode">
+                    <eb-scroll-paginator table-id="vm.tableDomainId"
+                                         table-size="vm.domainFilteredTableData.length">
+                    </eb-scroll-paginator>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTON: DELETE RECORDING -->
+        <div layout="row"
+             ng-show="vm.suggestions.modules.length > 0 || vm.suggestions.domainsIps.length > 0" style="margin-top: 20px;">
+            <md-button class="md-raised eb-delete-button"
+                       ng-click="vm.clearErrors()">{{::'ADMINCONSOLE.SSL_FAILS.ACTION.CLEAR_ERRORS' | translate}}
+            </md-button>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.OpenVpnServerStartForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+                {{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.START_TEXT' | translate }}
+                <div ng-show="vm.starting" layout="row" layout-align="center center" style="margin-top: 20px;">
+                    <md-progress-circular md-mode="indeterminate"  md-diameter="32"></md-progress-circular>
+                    <div style="margin-left: 20px;">{{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.WAITING_TEXT' | translate }}</div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" ng-disabled="vm.starting" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.VPN_HOME_START.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

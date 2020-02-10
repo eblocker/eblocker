@@ -1,0 +1,17 @@
+<div flex class="column-xs" ng-if="!vm.editMode"></div>
+
+<div flex class="column-xs" ng-if="vm.editMode" style="overflow: hidden;">
+    <div layout="row" layout-align="center center">
+        <md-checkbox md-theme="eBlockerThemeCheckbox" ng-disabled="vm.isDisabled(vm.entry)"
+                     ng-click="vm.prevent($event)"
+                     class="md-primary"
+                     ng-model="vm.entry._checked"
+                     aria-label="Is entry checked"
+                     style="margin-bottom: 0; margin-left: 9px;">
+        </md-checkbox>
+    </div>
+</div>
+
+<!--<div layout="row" layout-align="center center">-->
+    <!--<md-checkbox ng-disabled="vm.isDisabled(vm.entry)" ng-click="vm.prevent($event)" class="md-primary" ng-model="vm.entry._checked" style="margin-bottom: 0;"></md-checkbox>-->
+<!--</div>-->

@@ -1,0 +1,26 @@
+<div class="help-icon-container" ng-init="vm.showHelp = false" layout="row" layout-align="start center">
+
+    <md-button ng-mouseover="vm.onMouseOver()" ng-click="vm.clickOnHelp()"
+               layout="row" layout-align="center center"
+               aria-label="{{ 'HELP_ICON.ICON' | translate }}">
+        <div layout="row" layout-align="start center">
+            <div layout="row" layout-align="start center">
+                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_help_outline.svg"></md-icon>
+            </div>
+            <div layout="row" layout-align="start center">
+                <span class="help-icon-text">{{ 'HELP_ICON.ICON' | translate }}</span>
+            </div>
+        </div>
+    </md-button>
+
+    <md-whiteframe class="md-whiteframe-z2 help-icon-overlay" ng-hide="!vm.showHelp" ng-mouseleave="vm.onMouseLeave();" style="min-width: 270px;max-height: 400px;overflow-y:auto;">
+
+        <div ng-include="vm.template"></div>
+
+        <div layout="row" layout-align="center center">
+            <md-button class="md-primary" ng-show="vm.showClose" ng-click="vm.showHelp = false">{{ 'HELP_ICON.BUTTON.CLOSE' | translate }}</md-button>
+        </div>
+
+    </md-whiteframe>
+
+</div>

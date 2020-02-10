@@ -1,0 +1,50 @@
+<!-- ICON -->
+<div flex class="column-xs no-select" style="overflow-y: hidden" ng-click="$event.stopPropagation();">
+    <md-switch md-theme="eBlockerThemeSwitch"
+        class="md-primary switch-word-break no-margin fill-height"
+        ng-model="entry.enabled"
+        ng-change="vm.templateCallback.onChangeEnabled(entry)"
+        ng-change="vm.templateCallback.onChangeEnabled(entry)"
+        aria-label="{{entry.enabled ? 'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.ENABLED' : 'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.DISABLED' | translate}}">
+    </md-switch>
+    <md-tooltip md-delay="300">{{entry.enabled ? 'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.ENABLED' : 'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.DISABLED' | translate}}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex flex-gt-xs="20">
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+    <md-tooltip ng-if="entry.name !== undefined && entry.name !== ''" mg-delay="300">{{entry.name}}</md-tooltip>
+</div>
+
+<!-- DESCRIPTION -->
+<div flex hide-xs>
+    <span ng-show="entry.localizedDescription !== undefined && entry.localizedDescription !== ''">{{entry.localizedDescription}}</span>
+    <md-tooltip ng-if="entry.localizedDescription !== undefined && entry.localizedDescription !== ''" mg-delay="300">{{entry.localizedDescription}}</md-tooltip>
+</div>
+
+<!-- DOMAINS -->
+<div flex hide-xs>
+    <span ng-show="entry.domainsIps !== undefined && entry.domainsIps !== ''">{{entry.domainsIps}}</span>
+    <md-tooltip ng-if="entry.domainsIps !== undefined && entry.domainsIps !== ''" mg-delay="300">{{entry.domainsIps}}</md-tooltip>
+</div>
+
+<!-- CUSTOM -->
+<div flex="10" flex-sm="15" hide-xs layout="row" layout-align="start center">
+    <div ng-if="entry.builtin">
+        <md-icon md-svg-src="/img/icons/baseline-settings_applications-24px.svg" aria-label="app is builtin"></md-icon>
+        <md-tooltip mg-delay="300">{{'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.BUILTIN' | translate}}</md-tooltip>
+    </div>
+    <div ng-if="!entry.builtin">
+        <md-icon md-svg-src="/img/icons/ic_person_outline_black.svg" aria-label="app is custom made"></md-icon>
+        <md-tooltip mg-delay="300">{{'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.USER_DEFINED' | translate}}</md-tooltip>
+    </div>
+    <div ng-if="entry.builtin && entry.modified">
+        <md-icon md-svg-src="/img/icons/baseline-history-24px.svg" aria-label="app has been modified"></md-icon>
+        <md-tooltip mg-delay="300">{{'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.MODIFIED' | translate}}</md-tooltip>
+    </div>
+    <div ng-if="entry.updatedVersionAvailable">
+        <md-icon ng-class="{'content-error': entry.modified }" md-svg-src="/img/icons/baseline-update-24px.svg" aria-label="app has updates available"></md-icon>
+        <md-tooltip mg-delay="300" ng-if="!entry.modified">{{'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.UPDATES' | translate}}</md-tooltip>
+        <md-tooltip mg-delay="300" ng-if="entry.modified">{{'ADMINCONSOLE.TRUSTED_APPS.TOOLTIP.UPDATES_MODIFIED' | translate}}</md-tooltip>
+    </div>
+</div>

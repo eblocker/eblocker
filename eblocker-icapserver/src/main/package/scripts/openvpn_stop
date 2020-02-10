@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# This script is able to shutdown/kill an OpenVPN client instance process with a given vpn profile ID
+
+if [ $# == '1' ];
+then
+
+    VPNPROFILE_ID=$1
+
+    #get PID for this VPN profile
+    PID=`redis-cli hget vpnprofile:$VPNPROFILE_ID pid`
+
+    #FIXME validate that PID is valid, and we are not killing something really important
+
+    #kill this OpenVPN instance (and trigger the down script)
+    kill $PID
+
+else
+    echo "Wrong number of inputs! Expecting the ID of the OpenVPN profile as the first argument."
+fi

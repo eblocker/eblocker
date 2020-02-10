@@ -1,0 +1,73 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.TITLE_ARIA' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.accessContingentForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding style="overflow: hidden;">
+
+            <div>
+                <h2 ng-show="vm.module.isNew">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.TITLE_NEW' | translate }}</h2>
+                <h2 ng-hide="vm.module.isNew">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.TITLE_EDIT' | translate }}</h2>
+            </div>
+
+            <div>
+                <div layout="row" layout-align="start start" layout-xs="column" layout-sm="column">
+                    <!-- On day -->
+                    <div layout="row" layout-align="center center">
+                        <div layout-margin>{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.EVERY' | translate }}</div>
+
+                        <md-input-container md-theme="eBlockerThemeInput">
+                            <md-select ng-model="vm.module.onDay" aria-label="On which day">
+                                <md-option ng-repeat="displayDay in vm.displayDays" ng-value="displayDay.day">
+                                    {{ 'SHARED.PARENTAL_CONTROL.ACCESS_CONTINGENTS.' + displayDay.label | translate }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+
+                    <div layout="row" layout-align="center center">
+                        <div layout-margin>{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.FROM' | translate }}</div>
+
+                        <div layout="row" class="time-picker-container">
+                            <md-time-picker ng-if="vm.isMeridiem()" message="vm.timePickerMessage" ng-model="vm.timeSlot.beginTime" no-auto-switch mandatory="true"></md-time-picker>
+                            <md-time-picker ng-if="!vm.isMeridiem()" message="vm.timePickerMessage" ng-model="vm.timeSlot.beginTime" no-meridiem no-auto-switch mandatory="true"></md-time-picker>
+                        </div>
+                    </div>
+
+                    <div layout="row" layout-align="center center">
+                        <div layout-margin>{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.TO' | translate }}</div>
+                        <!-- Till time -->
+                        <div layout="row" class="time-picker-container">
+                            <md-time-picker ng-if="vm.isMeridiem()" ng-disabled="vm.endOfDay" message="vm.timePickerMessage" ng-model="vm.timeSlot.endTime" no-auto-switch mandatory="true"></md-time-picker>
+                            <md-time-picker ng-if="!vm.isMeridiem()" ng-disabled="vm.endOfDay" message="vm.timePickerMessage" ng-model="vm.timeSlot.endTime" no-meridiem no-auto-switch mandatory="true"></md-time-picker>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div layout="row" layout-align-gt-sm="end center" flex-gt-sm="75">
+                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                 layout="row" layout-align="start center"
+                                 ng-model="vm.endOfDay">
+                        {{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.END_OF_DAY' | translate }}
+                    </md-checkbox>
+                </div>
+
+                <div layout="row" layout-fill layout-margin>
+                    <div ng-messages="vm.accessContingentForm.$error" ng-if="vm.accessContingentForm.$submitted">
+                        <div style="color: rgb(244,67,54); font-size: 12px;" ng-message="validRange">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.ERROR.RANGE_INVALID' | translate }}</div>
+                        <div style="color: rgb(244,67,54); font-size: 12px;" ng-message="required">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.ERROR.REQUIRED' | translate }}</div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_CONTINGENT.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

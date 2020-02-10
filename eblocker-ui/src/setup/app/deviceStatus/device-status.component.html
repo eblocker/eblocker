@@ -1,0 +1,23 @@
+<div layout="column" layout-padding>
+    <div layout="row">
+        <span style="text-align: right;" layout="row" flex="50" layout-align="end center">{{ 'DEVICE_STATUS.ONLINE' | translate }}</span>
+        <div layout="row" flex="50" layout-align="start center" >
+            <md-icon class="content-ok setup-status-icon" ng-if="vm.eblocker.enabled && !vm.isServerNotRunning()" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+            <md-icon class="content-error setup-status-icon" ng-if="!vm.eblocker.enabled || (vm.isServerNotRunning() && vm.getCurrentStatus() === 'DOWN')" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+            <md-icon class="content-warn setup-status-icon" ng-if="(vm.isServerNotRunning() && vm.getCurrentStatus() !== 'DOWN')" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+            <span ng-if="vm.isServerNotRunning()">{{ 'DEVICE_STATUS.OFFLINE.' + vm.getCurrentStatus() | translate }}</span>
+        </div>
+    </div>
+
+    <div layout="row">
+        <span style="text-align: right;" layout="row" flex="50" layout-align="end center">{{ 'DEVICE_STATUS.PROTECTING' | translate }}</span>
+        <md-icon layout="row" flex="50" layout-align="start center" class="content-ok setup-status-icon" ng-if="vm.eblocker.enabled" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+        <md-icon layout="row" flex="50" layout-align="start center" class="content-error setup-status-icon" ng-if="!vm.eblocker.enabled" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+    </div>
+
+    <div layout="row">
+        <span style="text-align: right;" layout="row" flex="50" layout-align="end center">{{ 'DEVICE_STATUS.INTERNET' | translate }}</span>
+        <md-icon layout="row" flex="50" layout-align="start center" class="content-ok setup-status-icon" ng-if="vm.eblocker.isOnline" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+        <md-icon layout="row" flex="50" layout-align="start center" class="content-error setup-status-icon" ng-if="!vm.eblocker.isOnline" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+    </div>
+</div>

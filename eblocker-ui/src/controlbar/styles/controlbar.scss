@@ -1,0 +1,316 @@
+@import '../../styles/styles.scss';
+
+.eblocker-controlbar {
+
+    background-color: transparent;
+
+    .controlbar-eblocker-icon-right, .controlbar-eblocker-icon-left {
+        position: absolute;
+        z-index: 2147483647;
+    }
+
+    .controlbar-eblocker-icon-right {
+        right: 0;
+    }
+
+    .controlbar-eblocker-icon-left {
+        left: 0;
+    }
+
+    .controlbar-eblocker-icon-right:hover, .controlbar-eblocker-icon-left:hover {
+        cursor: pointer;
+    }
+
+    .controlbar-dropdown-menu {
+        position: absolute;
+        display: block;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.7);
+        border-radius: 3px;
+        //width: auto;
+        max-width: 270px;
+        min-width: 270px;
+        width: 270px;
+        //width: 250px;
+        //height: 200px;
+        //min-height: 200px;
+        //max-height: 310px;
+        overflow-y: auto;
+        top: 50px; // must be same as controlbar height!
+        transform: translateX(-36%);
+        background-color: white;
+        color: black;
+        font-size: 15px;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+
+        .controlbar-dropdown-option.option-disabled:hover {
+            cursor: not-allowed;
+        }
+
+        .controlbar-dropdown-option:hover {
+            background-color: $option-hover;
+            cursor: pointer;
+        }
+
+        .controlbar-dropdown-option.text-only:hover {
+            background-color: inherit;
+            cursor: inherit;
+        }
+
+        .controlbar-dropdown-option.option-disabled {
+            md-icon, span {
+                color: $color-disabled;
+                fill:  $color-disabled;
+            }
+            md-icon.filter-icon {
+                opacity: 0.3;
+            }
+        }
+
+        .controlbar-dropdown-option, .controlbar-dropdown-label {
+            height: 48px;
+            min-height: 48px;
+            max-height: 48px;
+        }
+
+        .controlbar-dropdown-label .filter-domain {
+            max-width: 175px;
+            width: 175px;
+        }
+
+        .controlbar-dropdown-option md-icon.icon-opacity {
+            opacity: 0.54;
+        }
+        .controlbar-dropdown-option md-icon {
+            color: black;
+            fill: black;
+        }
+
+        .controlbar-dropdown-all-options .cloaking-check {
+            margin-left: 20px;
+        }
+
+        .controlbar-dropdown-all-options .cloaking-image {
+            margin-left: 15px;
+        }
+        .controlbar-dropdown-all-options .cloaking-image, .controlbar-dropdown-all-options .cloaking-check {
+            color: black;
+            fill: black;
+            opacity: 0.54;
+        }
+
+        .dropdown-button-option:hover {
+            background-color: $option-hover;
+        }
+
+        .controlbar-dropdown-all-options {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .user-name {
+            // must be smaller than controlbar-dropdown-menu width
+            max-width: 268px;
+            width: 268px;
+            display: block;
+        }
+    }
+
+    [my\:cloak], [my-cloak], [data-my-cloak], [x-my-cloak], .my-cloak, .x-my-cloak {
+        display: none !important;
+    }
+
+    .controlbar-dropdown-menu.scrollable-menu {
+        //max-height: 300px;
+        max-height: 280px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .entry-directive {
+        .controlbar-icon {
+            margin-top: 4px;
+            height: 24px;
+
+            .eblocker-base-badge.badge-black {
+                background: black;
+            }
+
+            .eblocker-base-badge {
+                position: relative;
+                top: 3px;
+                right: 3px;
+                z-index: 2147483647;
+                opacity: 1;
+            }
+
+            md-icon {
+                //margin-top: -15px;
+                color: black;
+                fill: black;
+                opacity: 0.54;
+            }
+
+            .controlbar-image-container {
+                position: relative;
+                right: 8px;
+            }
+        }
+
+        button {
+            height: 50px; // (?) must be same as controlbar height!
+        }
+
+        .controlbar-icon md-icon.isDisabled, .controlbar-label.isDisabled {
+            color: $color-disabled;
+            fill: $color-disabled;
+        }
+
+        .controlbar-label {
+            line-height: 18px;
+            text-transform: none;
+            color: black;
+            opacity: 0.87;
+        }
+        .md-button {
+            padding: 0 6px;
+            margin: 0;
+        }
+    }
+
+    .loading {
+        opacity: 0.4;
+        background-color: black;
+    }
+
+    .loading-container {
+        height: 50px; // must be same as controlbar height!
+        md-progress-circular svg {
+            // adapt spinner to small controlbar
+            width: 50px !important; // must be same as controlbar height!
+            height: 50px !important; // must be same as controlbar height!
+            transform-origin: 25px 25px 25px !important;;
+        }
+    }
+
+    .controlbar-frame {
+        // have some margin below controlbar on which
+        // an accidental click does not close it.
+        height: 100px;
+        min-height: 100px;
+        z-index: 10;
+    }
+
+    .controlbar {
+        min-height: 50px; // must be same as controlbar height!
+        height: 50px; // must be same as controlbar height!
+
+        .md-toolbar-tools.controlbar-container {
+            // this is necessary, because md-toolbar-tools sets the height to 64px,
+            // which pushes the item towards the top in some browsers (e.g. in iOS <= 10)
+            min-height: 50px; // must be same as controlbar height!
+            height: 50px; // must be same as controlbar height!
+        }
+
+        .controlbar-container {
+            margin: 0 50px 0 50px;
+            // account for icons on the side
+            width: calc(100% - 88px);
+        }
+
+        .controlbar-container .restrict-width .entry-directive .controlbar-label.truncate {
+            max-width: 95px;
+            display: block;
+        }
+
+        .controlbar-container .controlbar-navigation-left {
+            left: 65px;
+        }
+
+        .controlbar-container .controlbar-navigation-right {
+            right: 65px;
+        }
+
+        .controlbar-container .controlbar-navigation {
+            cursor: pointer;
+
+            position: absolute;
+            top: 14px;
+
+            md-icon {
+                color: black;
+                fill: black;
+                opacity: 0.87;
+            }
+        }
+
+        .controlbar-container .controlbar-entry {
+            height: 100%;
+        }
+    }
+
+    .overlay {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.6);
+        //overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.eblocker-notification.CONTROLBAR-NOTIFICATION {
+    // css class .CONTROLBAR-NOTIFICATION is defined in NotificationController.js to allow
+    // different stylings for each app.
+    top: 50px; // must be same as controlbar height!
+
+    margin: 0 40px 0 0;
+    md-icon.close-icon {
+        color: white;
+    }
+}
+
+.dialog-paragraph-text {
+    line-height: 20px;
+}
+
+.message-dialog {
+    .md-title {
+        font-weight: bold;
+    }
+
+    .messages-custom-toolbar {
+        background-color: $eblocker-orange;
+        h2, span, md-icon {
+            margin: 0;
+            color: white;
+            opacity: 0.87;
+        }
+        h2, span {
+            font-family: Roboto, sans-serif;
+            font-weight: 400;
+        }
+        h2 {
+            font-weight: 400;
+            font-size: 20px;
+            letter-spacing: 0.1px;
+        }
+        span {
+            font-size: 12px;
+            line-height: 12px;
+            letter-spacing: 0.24px;
+        }
+        md-icon {
+            outline: none;
+        }
+    }
+
+    .icon-messages-alert {
+        color:  $color-error;
+    }
+}

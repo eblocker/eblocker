@@ -1,0 +1,37 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.WIN_ADD_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol>
+            <li>
+                <span translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_1"></span>
+                <div>
+                    <md-button class="md-raised md-secondary"
+                               ng-click="vm.loadCertificate()"
+                               ng-href="{{ vm.getCertificateDownloadUrl() }}">
+                        {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+                    </md-button>
+                </div>
+            </li>
+            <li translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_2"></li>
+            <li translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_2B"></li>
+            <li translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_3"></li>
+            <li translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_4"></li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

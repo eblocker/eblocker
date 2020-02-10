@@ -1,0 +1,44 @@
+<!-- ICON -->
+<div flex="15" layout="row" hide-xs>
+    <div>
+        <md-icon ng-class="{'eb-table-icon-active': entry.isActive(entry.selectedValue)}"
+                 md-svg-src="/img/icons/ic_build_black.svg"
+                 aria-label="Filter advanced settings status">
+        </md-icon>
+        <md-tooltip ng-if="entry.isActive(entry.selectedValue) && vm.templateCallback.sslEnabled" md-delay="300">{{entry.tooltipSslFilter | translate }}</md-tooltip>
+        <md-tooltip ng-if="entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled" md-delay="300">{{entry.tooltipNoSslFilter | translate }}</md-tooltip>
+        <md-tooltip ng-if="!entry.isActive(entry.selectedValue) && vm.templateCallback.sslEnabled" md-delay="300">{{entry.tooltipSslNoFilter | translate }}</md-tooltip>
+        <md-tooltip ng-if="!entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled" md-delay="300">{{entry.tooltipNoSslNoFilter | translate }}</md-tooltip>
+    </div>
+
+    <div ng-if="entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled" style="margin-left: 5px;">
+        <md-icon class="content-warn"
+                 md-svg-src="/img/icons/ic_warning.svg"
+                 aria-label="Advanced filter SSL status">
+        </md-icon>
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.TOOLTIP.SSL_DISABLED' | translate}}</md-tooltip>
+    </div>
+</div>
+
+<!-- NAME -->
+<div flex flex-gt-xs="25" layout="row">
+    <div layout="row" layout-align="center center">
+        <span style="margin-right: 5px;">
+            {{entry.name | translate}}
+            <md-tooltip md-delay="300">{{ entry.name }}</md-tooltip>
+        </span>
+        <eb-help-inline style="width: 30px;max-width: 30px;"
+                        template="{{entry.template}}"
+                        as-dialog="true" icon-only="true">
+        </eb-help-inline>
+    </div>
+</div>
+
+<!-- VALUE -->
+<div flex>
+    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;margin: 0;">
+        <md-select ng-model="entry.selectedValue" ng-change="entry.setValue(entry.selectedValue)" aria-label="Advanced settings options selection">
+            <md-option ng-repeat="option in entry.options" ng-value="option.value">{{ option.label | translate }}</md-option>
+        </md-select>
+    </md-input-container>
+</div>

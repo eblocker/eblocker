@@ -1,0 +1,88 @@
+[
+    {
+        "id": 0,
+        "name": "Content Security Policies",
+        "category": "CONTENT_SECURITY_POLICIES",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/easylist.txt",
+            "/opt/eblocker-icap/conf/easylist/easylistgermany.txt",
+            "/opt/eblocker-icap/conf/easylist/easyprivacy.txt"
+        ],
+        "learningMode": "SYNCHRONOUS",
+        "format": "EASYLIST",
+        "learnForAllDomains": true,
+        "ruleFilters": [
+            "csp"
+        ],
+        "enabled": true
+    },
+    {
+        "id": 1,
+        "name": "Tracking Redirects",
+        "category": "TRACKER_REDIRECT",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/tracking-redirect.txt"
+        ],
+        "learningMode": "SYNCHRONOUS",
+        "format": "CSV",
+        "learnForAllDomains": true,
+        "ruleFilters": [],
+        "enabled": true
+    },
+    {
+        "id": 2,
+        "name": "eBlocker Filter",
+        "category": "EBLOCKER",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/eblocker-filter.txt"
+        ],
+        "learningMode": "SYNCHRONOUS",
+        "format": "CSV",
+        "learnForAllDomains": true,
+        "ruleFilters": [
+            "!csp"
+        ],
+        "enabled": true
+    },
+    {
+        "id": 3,
+        "name": "Ad Blocker",
+        "category": "ADS",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/easylist.txt",
+            "/opt/eblocker-icap/conf/easylist/easylistgermany.txt"
+        ],
+        "learningMode": "ASYNCHRONOUS",
+        "format": "EASYLIST",
+        "learnForAllDomains": true,
+        "ruleFilters": [
+            "!csp"
+        ],
+        "enabled": true
+    },
+    {
+        "id": 4,
+        "name": "Tracking Blocker",
+        "category": "TRACKER_BLOCKER",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/easyprivacy.txt"
+        ],
+        "learningMode": "ASYNCHRONOUS",
+        "format": "EASYLIST",
+        "learnForAllDomains": true,
+        "ruleFilters": [
+            "!csp"
+        ],
+        "enabled": true
+    }
+]

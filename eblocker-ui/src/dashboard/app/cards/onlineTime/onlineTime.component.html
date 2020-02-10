@@ -1,0 +1,93 @@
+<eb-card
+    icon="/img/icons/ic_timelapse.svg"
+    card-title="{{'ONLINE_TIME.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="ONLINE_TIME.CARD.TOOLTIP">
+
+    <eb-card-content>
+
+        <div class="online-time-card" flex="100" layout="column" layout-align="center center" style="padding: 0 10px 0 10px;">
+
+            <!-- Start button and online status-->
+            <div layout="row" layout-align="start center" layout-fill style="padding: 0 8px 0 8px">
+                <div flex="55" ng-if="vm.hasDailyTime">
+                    <md-button aria-label="{{'ONLINE_TIME.CARD.BUTTON.START' | translate}}" class="md-raised md-accent" ng-click="vm.startOnlineTime()" ng-disabled="vm.startStopDisabled()" ng-hide="vm.isOnline" translate="ONLINE_TIME.CARD.BUTTON.START"></md-button>
+                    <md-button aria-label="{{'ONLINE_TIME.CARD.BUTTON.STOP' | translate}}" class="md-raised md-accent" ng-click="vm.stopOnlineTime()"  ng-disabled="vm.startStopDisabled()" ng-show="vm.isOnline" translate="ONLINE_TIME.CARD.BUTTON.STOP"></md-button>
+                </div>
+                <div flex="55" ng-if="!vm.hasDailyTime"></div>
+                <div flex="45" layout="row" layout-align="start center">
+                    <span class="font-bold" ng-show="vm.isOnline" translate="ONLINE_TIME.CARD.LABEL.ONLINE"></span>
+                    <span class="font-bold" ng-hide="vm.isOnline" translate="ONLINE_TIME.CARD.LABEL.OFFLINE"></span>
+                    <div layout="row"
+                         layout-align="start center" ng-hide="vm.isLoading"
+                         style="padding-left: 12px;">
+                        <div class="online-circle" ng-class="{
+                            'online': vm.isOnline,
+                            'offline': !vm.isOnline}">
+                        </div>
+                    </div>
+                    <div ng-show="vm.isLoading" style="padding-left: 8px;">
+                        <md-progress-circular md-diameter="26"></md-progress-circular>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Online time and Progress bar -->
+            <div layout="column" layout-fill layout-padding ng-if="vm.hasDailyTime">
+                <!-- Label online time left -->
+                <div layout="row" layout-align="start center">
+                    <span translate="ONLINE_TIME.CARD.LABEL.TOTAL"></span>
+                    <span>{{vm.dailyTime.totalTime.hours}}</span>
+                    <span translate="ONLINE_TIME.CARD.LABEL.HOURS"></span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.totalTime)">,&nbsp;</span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.totalTime)">{{vm.dailyTime.totalTime.minutes}}</span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.totalTime)" translate="ONLINE_TIME.CARD.LABEL.MIN"></span>
+                </div>
+                <div flex="100" layout="row" layout-align="center center">
+                    <md-progress-linear md-mode="determinate" value="{{vm.dailyTime.percentageUsed}}"></md-progress-linear>
+                </div>
+                <div layout="row" layout-align="end center" ng-hide="vm.internetBlocked">
+                    <span translate="ONLINE_TIME.CARD.LABEL.REMAINING"></span>
+                    <span>{{vm.dailyTime.remainingTime.hours}}</span>
+                    <span translate="ONLINE_TIME.CARD.LABEL.HOURS"></span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.remainingTime)">,&nbsp;</span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.remainingTime)">{{vm.dailyTime.remainingTime.minutes}}</span>
+                    <span ng-show="vm.hasMinutes(vm.dailyTime.remainingTime)" translate="ONLINE_TIME.CARD.LABEL.MIN"></span>
+                </div>
+                <div layout="row" layout-align="end center" ng-show="vm.internetBlocked">
+                    <span translate="ONLINE_TIME.CARD.LABEL.INTERNET_BLOCKED"></span>
+                </div>
+            </div>
+
+            <md-divider class="fill-width" ng-if="vm.hasContingent && vm.hasDailyTime"></md-divider>
+
+            <!-- Today's contingents -->
+            <div layout="row"
+                 layout-align="end start" layout-fill
+                 layout-padding ng-if="vm.hasContingent">
+
+                <div flex="50" layout="row" layout-align="start end" layout-fill>
+                    <div class="font-bold" layout-fill translate="ONLINE_TIME.CARD.LABEL.CONTINGENTS"></div>
+                </div>
+
+                <!-- list of contingents today -->
+                <div flex="50" layout="column" layout-align="start center" layout-fill ng-if="vm.hasContingentsToday">
+                    <div ng-repeat="contingent in vm.contingents.contingents | orderBy: 'fromMinutes' | orderBy: 'whenSortProperty'">
+
+                        <span ng-class="{'ebl-contingent-past': contingent.when=='past', 'ebl-contingent-present': contingent.when=='present', 'ebl-contingent-future': contingent.when=='future'}">
+                            {{vm.getLocalizedTime(contingent.start)}} - {{vm.getLocalizedTime(contingent.end)}}
+                        </span>
+
+                    </div>
+                </div>
+
+                <!-- No contingents today -->
+                <div flex="50" layout="column" layout-align="start center" layout-fill ng-if="!vm.hasContingentsToday">
+                    <div class="font-bold" layout-fill translate="ONLINE_TIME.CARD.LABEL.NO_CONTINGENTS"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </eb-card-content>
+</eb-card>

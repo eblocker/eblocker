@@ -1,0 +1,17 @@
+<div layout="column" layout="center start" style="width: 200px;">
+    <div>
+        <md-datepicker ng-model="vm.internalDate"
+                       ng-change="vm.onDateChange()"
+                       md-current-view="year"
+                       md-open-on-focus
+                       md-max-date="vm.maxDate"
+                       md-date-locale="vm.dateLocale"
+                       md-placeholder="{{vm.placeholderLabel | translate }}">
+        </md-datepicker>
+        <!-- md-open-on-focus: does not work in firefox, have to click and press mouse key to keep open -->
+    </div>
+    <div ng-show="vm.hasError" layout="row" layout-align="center center">
+        <span style="color: red;font-size: 12px;font-style: italic;" translate="SHARED.DATE.ERROR"></span>
+    </div>
+</div>
+

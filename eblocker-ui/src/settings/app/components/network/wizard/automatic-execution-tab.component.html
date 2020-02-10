@@ -1,0 +1,99 @@
+<div layout-padding layout="column">
+
+    <!-- STEP ONE: ENABLE ROUTER'S DHCP -->
+    <div ng-hide="vm.stepTwo">
+        <div ng-show="!vm.dhcpShouldBeOnRouter && (vm.isWaitingForDhcpLease || vm.useCheckmarkToConfirmDhcpUp)">
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_HEADER' | translate }}</p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_1_PRE' | translate }}</span>
+                <a target="_blank" ng-href="{{ 'ADMINCONSOLE.NETWORK_WIZARD.KNOWLEDGE_DB_URL' | translate }}">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT2_LINK' | translate }}</a>
+            </p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_ADDRESS_LABEL' | translate }}</span>
+                <a target="_blank" ng-href="http://{{vm.configuration.gateway}}/">http://{{vm.configuration.gateway}}/</a>
+            </p>
+        </div>
+        <div ng-show="vm.dhcpShouldBeOnRouter && vm.isWaitingForDhcpLease && !vm.useCheckmarkToConfirmDhcpUp">
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_HEADER_DHCP_ON' | translate }}</p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_DHCP_ON' | translate }}</span>
+            </p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_ADDRESS_LABEL' | translate }}</span>
+                <a target="_blank" ng-href="http://{{vm.configuration.gateway}}/">http://{{vm.configuration.gateway}}/</a>
+            </p>
+        </div>
+
+        <div ng-show="vm.isWaitingForDhcpLease" layout="row" layout-align="start center">
+            <div>
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_LABEL_WAIT_DHCP' | translate }}</span>
+        </div>
+
+        <div ng-show="!vm.isWaitingForDhcpLease && !vm.useCheckmarkToConfirmDhcpUp" layout="column">
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_DHCP_FOUND' | translate }}</p>
+        </div>
+        <div ng-show="!vm.isWaitingForDhcpLease && vm.useCheckmarkToConfirmDhcpUp" layout="column">
+            <div layout-gt-sm="row" layout="column" layout-align="start center">
+                <div flex="80">
+                    <span style="font-style: italic;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_DHCP_FAIL' | translate }}</span>
+                </div>
+                <div flex="20">
+                    <md-button type="button" ng-click="vm.recheckDhcpAuto()" class="md-raised md-secondary">
+                        {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.RETRY_DHCP' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="start center" style="margin-top: 25px;">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"  ng-model="vm.isDhcpEnabled">
+                    {{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_CHECKBOX_LABEL' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.gotToStepTwo()" ng-disabled="!vm.isDhcpEnabled" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate }}
+            </md-button>
+        </div>
+    </div>
+
+    <!-- STEP TWO: EXECUTE AND REBOOT -->
+    <div ng-show="vm.stepTwo">
+        <div>
+            <p ng-show="!vm.dhcpShouldBeOnRouter">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP2_HEADER' | translate }}</p>
+            <p ng-show="vm.dhcpShouldBeOnRouter">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP2_HEADER_DHCP_DONE' | translate }}</p>
+            <p ng-show="!vm.settingsApplied">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP2_TEXT_EXECUTE' | translate }}</p>
+            <p ng-show="vm.settingsApplied && !vm.rebootNecessary">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_OK' | translate }}</p>
+            <p ng-show="vm.settingsApplied && vm.rebootNecessary">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP1_TEXT_REBOOT' | translate }}</p>
+        </div>
+
+        <div ng-show="vm.isExecuting" layout="row" layout-align="start center">
+            <div>
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.STEP2_LABEL_EXECUTE_WAIT' | translate }}</span>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+            <md-button type="button" ng-hide="vm.rebootNecessary" ng-disabled="vm.isExecuting" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="!vm.settingsApplied" ng-disabled="vm.isExecuting" ng-click="vm.executeAutomaticMode()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.EXECUTE' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="vm.settingsApplied && vm.rebootNecessary" ng-click="vm.reboot()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.REBOOT' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="vm.settingsApplied && !vm.rebootNecessary" ng-click="vm.goBack()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.OK' | translate }}
+            </md-button>
+        </div>
+    </div>
+</div>
+

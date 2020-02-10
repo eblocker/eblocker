@@ -1,0 +1,7 @@
+Package: eblocker-lists
+Pin: version 1.8.0~base*
+Pin-Priority: 999
+
+Package: eblocker-lists
+Pin: version 1.8.0~daily*
+Pin-Priority: -1

@@ -1,0 +1,16 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <md-icon ng-class="{'eb-table-icon-active': entry.enabled}" md-svg-src="/img/icons/ic_security_black_outline.svg"></md-icon>
+    <md-tooltip md-delay="300" ng-show="entry.enabled">{{'ADMINCONSOLE.VPN_CONNECT.TOOLTIP.VPN_ENABLED' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-hide="entry.enabled">{{'ADMINCONSOLE.VPN_CONNECT.TOOLTIP.VPN_DISABLED' | translate}}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex flex-gt-xs="35">
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+</div>
+
+<!-- DESCRIPTION -->
+<div flex hide-xs>
+    <span ng-show="entry.description !== undefined && entry.description !== ''">{{entry.description}}</span>
+</div>

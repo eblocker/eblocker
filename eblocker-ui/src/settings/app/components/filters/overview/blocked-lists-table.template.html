@@ -1,0 +1,36 @@
+<!-- SWITCH -->
+<div flex
+     class="column-xs no-select" style="overflow-y: hidden"
+     ng-click="$event.stopPropagation();">
+    <md-switch
+        md-theme="eBlockerThemeSwitch"
+        class="md-primary switch-word-break no-margin fill-height"
+        ng-disabled="entry.updateStatus === 'INITIAL_UPDATE' || entry.updateStatus === 'UPDATE'"
+        ng-model="entry.enabled"
+        ng-change="vm.templateCallback.onChangeEnabled(entry)"
+        aria-label="{{'' | translate}}">
+    </md-switch>
+</div>
+
+<!-- NAME -->
+<div flex>
+    <span>{{entry.localizedName | translate}}</span>
+</div>
+
+<!-- URL -->
+<div flex>
+    <span>{{entry.url | translate}}</span>
+</div>
+
+<!-- LAST UPDATED -->
+<div flex hide-xs>
+    <span>{{vm.templateCallback.getFormattedDate(entry.lastUpdate) | translate}}</span>
+</div>
+
+<div flex class="column-xs" layout="row" layout-align="center center">
+    <md-progress-circular ng-if="entry.updateStatus === 'INITIAL_UPDATE' || entry.updateStatus === 'UPDATE'" md-diameter="20"></md-progress-circular>
+    <md-icon ng-if="entry.updateStatus === 'NEW'" md-svg-src="/img/icons/baseline-hourglass_empty.svg"></md-icon>
+    <md-icon ng-if="entry.updateStatus === 'INITIAL_UPDATE_FAILED'" class="content-error" md-svg-src="/img/icons/ic_error_outline.svg"></md-icon>
+    <md-icon ng-if="entry.updateStatus === 'UPDATE_FAILED'" class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+    <md-icon ng-if="entry.updateStatus === 'READY'" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+</div>

@@ -1,0 +1,94 @@
+@import '../../styles/styles.scss';
+
+.eblocker-advice {
+
+    background-color: transparent;
+
+    [my\:cloak], [my-cloak], [data-my-cloak], [x-my-cloak], .my-cloak, .x-my-cloak {
+        display: none !important;
+    }
+
+    .loading {
+        opacity: 0.4;
+        background-color: black;
+    }
+
+    .overlay {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.6);
+        //overflow-y: hidden;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    welcome-component, reminder-component {
+        overflow: auto;
+        z-index: 50; // supersede overlay
+        //overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    reminder-component #eblocker-reminder-iframe-container #eblocker-reminder-iframe {
+        html body .page .content .content.content--single img {
+            width: 260px;
+            height: auto;
+        }
+    }
+
+    reminder-component iframe img {
+        width: 260px !important;
+        height: auto !important;
+    }
+
+    .advice-parent {
+        min-height: 100%;
+    }
+    //
+
+    .advice-frame {
+        max-width: 600px;
+
+        > div {
+            max-width: 600px;
+        }
+    }
+
+    .reminder-frame, .advice-frame {
+        background-color: white;
+        border: 1px black solid;
+        border-radius: 16px;
+        opacity: 1;
+    }
+
+    .advice-frame .bookmark-box {
+        background-color: $eblocker-orange-faded;
+        border-radius: 15px;
+        .exclamation-mark {
+            color: $eblocker-orange;
+            font-size: 30px;
+            font-weight: bold;
+        }
+    }
+
+    .eblocker-notification.ADVICE-NOTIFICATION {
+        // css class .ADVICE-NOTIFICATION is defined in NotificationController.js to allow
+        // different stylings for each app.
+
+        margin: 0 40px 0 0;
+        md-icon.close-icon {
+            color: white;
+        }
+    }
+
+    advice-component, welcome-component, reminder-component {
+        height: 100%;
+        width: 100%;
+    }
+
+}

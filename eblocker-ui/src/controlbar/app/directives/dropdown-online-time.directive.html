@@ -1,0 +1,106 @@
+<div>
+    <button-entry ng-click="toggleSelect();handleClick();"
+                  label="imageLabel"
+                  image-url="imageUrl"
+                  tooltip-disabled="isOpen"
+                  tooltip="tooltip">
+    </button-entry>
+
+    <div ng-show="isOpen" class="controlbar-dropdown-menu scrollable-menu" layout="column" style="padding-top: 8px;" my-cloak>
+
+        <div ng-show="isLoading">
+            <div layout="column" layout-align="center center" style="height: 100px;">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+        <div ng-hide="isLoading">
+            <div class="controlbar-dropdown-all-options">
+                <div class="controlbar-dropdown-option text-only"
+                     style="padding: 0 16px 0 16px"
+                     layout="row"
+                     layout-align="start center"
+                     flex>
+                    <div flex="auto" layout="row" layout-align="start center" ng-show="profile.remainingTime.minutes !== undefined">
+                        <span>{{'CONTROLBAR.MENU.ONLINE_TIME.MENU.REMAINING_TIME.PREFIX' | translate}}
+                            {{'CONTROLBAR.MENU.ONLINE_TIME.MENU.REMAINING_TIME.INFIX' | translate:{hours: profile.remainingTime.hours}:"messageformat" }}
+                            {{'CONTROLBAR.MENU.ONLINE_TIME.MENU.REMAINING_TIME.POSTFIX' | translate:{min: profile.remainingTime.minutes}:"messageformat" }}</span>
+                    </div>
+                </div>
+
+                <md-divider style="padding: 0; margin-top: 5px;" ng-show="profile.showUsageActions"></md-divider>
+
+                <div class="controlbar-dropdown-option unselectable"
+                     layout="row"
+                     layout-align="start center"
+                     style="margin: 8px 0 8px 0;"
+                     ng-show="profile.showUsageActions && !profile.usage.active"
+                     ng-click="startUsage();"
+                     flex>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon class="icon-opacity" md-svg-src="/img/icons/ic_play_arrow_black.svg" style="margin-left: 20px;"></md-icon>
+                    </div>
+                    <div flex="auto" layout="row" layout-align="start center" layout-padding>
+                        <span>{{'CONTROLBAR.MENU.ONLINE_TIME.MENU.ACTION.USAGE_START' | translate}}</span>
+                    </div>
+                    <md-tooltip>
+                        {{'CONTROLBAR.MENU.ONLINE_TIME.MENU.TOOLTIP.USAGE_START' | translate}}
+                    </md-tooltip>
+                </div>
+
+                <div class="controlbar-dropdown-option unselectable"
+                     layout="row"
+                     layout-align="start center"
+                     style="margin: 8px 0 8px 0;"
+                     ng-show="profile.showUsageActions && profile.usage.active"
+                     ng-click="stopUsage();"
+                     flex>
+                    <div flex="20" layout="row" layout-align="center center">
+                        <md-icon class="icon-opacity" style="margin-left: 20px;" md-svg-src="/img/icons/ic_stop_black.svg"></md-icon>
+                    </div>
+                    <div flex="auto" layout="row" layout-align="start center" layout-padding>
+                        <span>{{'CONTROLBAR.MENU.ONLINE_TIME.MENU.ACTION.USAGE_STOP' | translate}}</span>
+                    </div>
+                    <md-tooltip>
+                        {{'CONTROLBAR.MENU.ONLINE_TIME.MENU.TOOLTIP.USAGE_STOP' | translate}}
+                    </md-tooltip>
+                </div>
+            </div>
+
+            <div class="controlbar-dropdown-all-options" style="padding-top: 0;">
+                <md-divider style="padding: 0;" ng-show="profile.showContingents"></md-divider>
+
+                <div ng-show="profile.showContingents"
+                     class="controlbar-dropdown-option text-only"
+                     layout="row"
+                     style="padding: 8px 16px 0 16px"
+                     layout-align="start center"
+                     flex>
+                    <div class="truncate user-name" flex="auto" layout="row" layout-align="start center">
+                        <span>{{'CONTROLBAR.MENU.ONLINE_TIME.MENU.ACCESS_CONTINGENTS_FOR' | translate}}</span>
+                        <md-tooltip>{{profile.profileName}}</md-tooltip>
+                    </div>
+                </div>
+
+                <div ng-show="profile.showContingents"
+                     ng-repeat-start="contingent in profile.contingents | orderBy: 'tillHours' | orderBy: 'fromHours' | orderBy:'onDay'"
+                     class="controlbar-dropdown-option text-only"
+                     layout="row"
+                     style="padding: 0 16px 0 16px"
+                     layout-align="start center"
+                     flex>
+                    <div layout="row" layout-align="start center" layout-fill>
+                        <div flex="40" style="padding-right: 5px;">{{getContingentDay({contingent: contingent}) | translate}}</div>
+                        <div flex="60">
+                            {{ getContingentDisplayTime({minutesFromMidnight: contingent.fromMinutes}) }}
+                            -
+                            {{ getContingentDisplayTime({minutesFromMidnight: contingent.tillMinutes}) }}
+                        </div>
+                    </div>
+                </div>
+                <div ng-repeat-end ng-show="$last" style="padding: 0 0 8px 0"></div>
+
+            </div>
+        </div>
+    </div>
+</div>

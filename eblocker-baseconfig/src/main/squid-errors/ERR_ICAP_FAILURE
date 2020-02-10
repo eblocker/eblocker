@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>eBlocker Error: The requested URL could not be retrieved</title>
+    <style type="text/css">
+      body {
+        margin: 2em 3em;
+        font-family: Helvetica,Verdana,Arial,sans-serif;
+      }
+
+      #icon {
+        vertical-align: bottom;
+      }
+
+      h1 {
+        display: inline;
+        margin-left: 1em;
+        vertical-align: baseline;
+      }
+
+      #content {
+        margin-top: 2em;
+      }
+
+      pre {
+        margin-left: 2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <img id="icon" src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAYAAAAehFoBAAAABHNCSVQICAgIfAhk
+iAAAAAlwSFlzAAAERgAABEYBZgGbmQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3Nj
+YXBlLm9yZ5vuPBoAAASeSURBVFiF7Zl/aFVlGMc/73vO2e7d3cw5NjenzR9gopWB
+xRQrhwrqClNbhqBlVkRqEZFhVFBiJc6NKJCEJP0jMQpFqCQrcVGSRbWWmRvN3G6b
+c9pMuXfeH+ectz+m94dM955d1xT8/nWf5zzP+X4O5/A+7zlXAIQeGl3s2PENwExg
+FNeWgsB+w7TW5n58vEOEF5WV2MquB4oGm6wPdZrCvEPaKl7NtQ8LUGSreLVUiIrB
+JtGVQlRIAaWDDaIrAaVysCG86gbwQOu6Azav5slEYAiycCQivwhcFyfYiOo6eTUt
+MgcW2X6sOY9gTZ2LccsUEOk3TYXO4gYbsRu+JbZnCyoSzszv7MJS1d9mY2I5/lU1
+yJLRWvXq31NEdmwk/vVHoNx+efYLWGT7yV76ElmVj4EQnk2dv36n+41HUV0dnns9
+Awt/LoGNnyFLx6Xl3bZm7COHcJsbcJobULEIxqjxyFHjsSqqkMNvTq8PNhF+eSEq
+dHZggf0rq7FmL0km4jGiOzcR3bMFXKf3JsMka+Zish9+HjGsOJF2jv5I+LUlEIto
++3ta1sw7Z6fBui1HCb0wl+juzZeHBXBsYl/uIPTi/bjtx5LXMeEu/E9v9IKgDyzy
+8vGvrE7EKhKme8MK3GCTtpnq6iD8ahXuieOJnHXvAmSR/hZcGzh70SrE0MJEHN22
+Dvdkq7bRRakznUTefyWZEJKsyuXa/drAZvm8xG/nyCFi+z7UNrlU9i8HsA8fTMTW
+rCUIX44eh06RHDEWWVyWNPx5v0fEC2AzHiRrzlLIzkHeVJDIi8AQAjX7UJEwbnsz
+0Z01uG3NGQBfsiQ5f/7qGVYWlOB/phak0fvxC8PHGDMJ4c+je/2y3ut0zET+8GSg
+FE5zgzdaQMVj4OpNtyuNb729hEy5LuX2mHuUOvcP3W8ux6qouuLz6rYfI/rp1sse
+1wJWZzqTgTQwxkzCafxJn/aC7Po67Po6z32p0gJ2T/2dFhvjbu8XcKpETl7a+uue
+bEWdD/XZpwccbEJ1dSTGqjGxHD7/oJ+oPfKteB1r5mIAVPQ8oSemaPXprcNKEf/h
+i0RoTbsP87bp3ikvmhaXYc1YlIjjdbtQ4XN6vbom0U/eTZ5UCHyraxA5ed5IAQwT
+3+PrwEje3Pjebdrt2sCqqyNtpMrCkfhW1yJ8AW0zpIH/uXcwp8xKpOz6OpyWP/RP
+oe/Wc+vi3+9NxNbUeQTe/grz1ml9G40YS87arVjT5ydybrCJ87UrvSD0YwM/pIDc
+2n2IYenDJP7NbuzDB3s28MEmcGxkQUnPBv6eBT3PbMqUU10dhNfOxz3dPrDAF6F9
+T72FNa2y94J4FGXHEf7cXg+7p9vpXr8Mt7XRq3VmL6HW3Q/ge3I9Ii9fq15Fuont
+3kx0z3ue3jJSlREwgBhaSHbVs5jlc5EFJb1QKtzOIM5v3xHZuSnj7xQZA6dKlk1A
+Di9D5heB6+C0HMVtbcz4W0Sqrirw/6Hr7tvaDeCB1vUHrKBtsCF0paBNCtSBwQbR
+lUAdkKaw1gCdfVYPvjpNYa2RgV0tJwzTmgxsp+dv0mtNQWC7YVqTA7taTvwHpiCn
+f/qi9rYAAAAASUVORK5CYII=">
+
+      <h1>Error</h1>
+    </div>
+    
+    <div id="content">
+      <p>Sorry, an error has occurred.</p>
+      <p>Details:
+	<pre>
+%c
+%D
+%E
+	</pre>
+      </p>
+      <p>If this error persists, please try the following:</p>
+      <ul type="disc">
+        <li>Empty the browser cache</li>
+        <li>Restart the browser</li>
+        <li>Restart the computer</li>
+        <li>Restart the eBlocker</li>
+        <li>Consult eBlocker manual and FAQ</li>
+        <li>Contact eBlocker support</li>
+      </ul>
+    </div>
+  </body>
+</html>

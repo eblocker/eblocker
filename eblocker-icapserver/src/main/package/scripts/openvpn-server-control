@@ -1,0 +1,215 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+set -e
+
+SCRIPT_NAME=$0
+
+function init_vars {
+   # Parameters: email address
+   #             eBlocker device ID
+   #             name given to eBlocker
+   PARAM_EMAIL=$1
+   PARAM_EBL_DEVICE_ID=$2
+   PARAM_EBL_NAME=$3
+   cd /etc/openvpn/easy-rsa/
+
+   source vars
+
+   export KEY_COUNTRY=""
+   export KEY_PROVINCE=""
+   export KEY_CITY=""
+
+   export KEY_EMAIL=$PARAM_EMAIL
+   export KEY_ORG="eBlocker $PARAM_EBL_DEVICE_ID"
+
+   export KEY_OU=""
+
+   # X509 Subject Field
+   export KEY_NAME="eBlocker mobile - $PARAM_EBL_NAME"
+}
+
+function generate_empty_crl {
+   init_vars
+
+   export KEY_CN=""
+
+   export KEY_NAME="eBlocker mobile"
+
+   # required due to hack in openssl.cnf that supports Subject Alternative Names
+   export KEY_ALTNAMES=""
+
+   openssl ca -gencrl -keyfile /etc/openvpn/easy-rsa/keys/ca.key -cert /etc/openvpn/easy-rsa/keys/ca.crt -out /etc/openvpn/easy-rsa/keys/crl.pem -crldays 3650 -config "$KEY_CONFIG" 2>&1
+}
+
+function set_permissions {
+   chmod -R g+r /etc/openvpn/easy-rsa/keys/
+   chmod -R g+x /etc/openvpn/easy-rsa/keys/
+   chmod g+r /etc/openvpn/ta.key
+
+   chmod -R o+x /etc/openvpn/easy-rsa/keys/
+   chmod -R o+r /etc/openvpn/easy-rsa/keys/crl.pem
+}
+
+function create-client {
+   # Parameters: device ID
+   #             email address to be passed to init_vars
+   #             eBlocker device ID
+   #             name given to eBlocker (several parameters)
+   cd /etc/openvpn/easy-rsa/
+   DEVICEID=$1
+
+   init_vars $2 $3 $4
+
+   ./build-key --batch $DEVICEID 2>&1
+
+   chgrp -R icapd /etc/openvpn/easy-rsa/keys/
+   chmod g+r /etc/openvpn/easy-rsa/keys/device:*
+
+   return $?
+}
+
+function purge {
+   cd /etc/openvpn/ && rm -f ca.crt eblocker.crt eblocker.key dh2048.pem ta.key
+
+   cd /etc/openvpn/easy-rsa
+
+   init_vars $1 $2 $3
+   ./clean-all
+
+   return $?
+}
+
+function init {
+   if ! [ -d /usr/share/easy-rsa ]; then
+     return 1
+   fi
+
+   cp -r /usr/share/easy-rsa /etc/openvpn/easy-rsa
+
+   # Create openssl.conf that is used as fallback for easy-rsa if there is no corresponding openssl.cnf for the openssl version installed. 
+   ln -s -f /etc/openvpn/easy-rsa/openssl-1.0.0.cnf /etc/openvpn/easy-rsa/openssl.cnf
+   chmod -R o+r /etc/openvpn/easy-rsa/
+
+   cd /etc/openvpn/easy-rsa
+   mkdir -p keys
+
+   purge $1 $2 $3
+
+   ./build-ca --batch 2>&1 && ./build-key-server --batch eblocker  2>&1 && openssl dhparam -dsaparam -out /etc/openvpn/easy-rsa/keys/dh2048.pem 2048 2>&1
+
+   if [ $? -ne 0 ]; then
+      return 1
+   fi
+
+   cd /etc/openvpn/easy-rsa/keys && cp eblocker.crt eblocker.key ca.crt dh2048.pem /etc/openvpn && chgrp -R icapd /etc/openvpn/easy-rsa/keys/   
+
+   cd /etc/openvpn/ && openvpn --genkey --secret ta.key 2>&1 && chgrp icapd /etc/openvpn/ta.key
+
+   generate_empty_crl
+
+   set_permissions
+
+   return $?
+}
+
+function revoke {
+   # Parameters: device ID
+   CRL="crl.pem"
+   RT="revoke-test.pem"
+
+   cd /etc/openvpn/easy-rsa
+   init_vars
+   export KEY_CN=""
+   export KEY_OU=""
+   export KEY_NAME=""
+   # required due to hack in openssl.cnf that supports Subject Alternative Names
+   export KEY_ALTNAMES=""
+
+   cd keys
+
+   openssl ca -revoke "$1.crt" -config "$KEY_CONFIG" 2>&1
+   openssl ca -gencrl -out $CRL -config "$KEY_CONFIG" -crldays 3650 2>&1
+   rm -f /etc/openvpn/easy-rsa/keys/$1.*
+
+   return $?
+}
+
+function start {
+    rm -f /etc/openvpn/eblocker.conf
+    ln -s -f /opt/eblocker-icap/conf/openvpn-server.conf /etc/openvpn/eblocker.conf
+
+    set_permissions
+
+    /bin/systemctl start openvpn@eblocker.service
+}
+
+echo "$SCRIPT_NAME called with argument(s): $@"
+
+if [ $# -ge '1' ]; then
+    case "$1" in
+    "start")
+        start
+        exit $?
+        ;;
+    "stop")
+        /bin/systemctl stop openvpn@eblocker.service
+        exit $?
+        ;;
+    "status")
+        /bin/systemctl status openvpn@eblocker.service
+        exit $?
+        ;;
+    "init")
+        if [ $# -ne 4 ]; then
+            echo "Illegal number of parameters"
+            echo "Usage: init emailAddress deviceId name"
+            exit 1
+        fi
+        init $2 $3 $4
+        exit $?
+        ;;
+    "create-client")
+        if [ $# -ne 5 ]; then
+            echo "Illegal number of parameters"
+            echo "Usage: create-client deviceId emailAddress shortDeviceId name"
+            exit 1
+        fi
+        create-client $2 $3 $4 $5
+        exit $?
+        ;;
+    "purge")
+        purge
+        exit $?
+        ;;
+    "revoke")
+        if [ $# -ne 2 ]; then
+            echo "Illegal number of parameters"
+            echo "Usage: revoke deviceId"
+            exit 1
+        fi
+        revoke $2
+        exit $?
+        ;;
+    esac
+fi
+
+echo "Error: Wrong number of parameters or wrong mode."
+echo "Expected format: $SCRIPT_NAME start | stop | status | init | create-client [name] | purge | revoke [name]"
+
+exit 1

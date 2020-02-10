@@ -1,0 +1,290 @@
+<eb-card
+    card-title="{{'PARENTAL_CONTROL.CARD.TITLE' | translate: {param: vm.getUserName()} }}"
+    icon="/img/icons/icons8-teddy-bear.svg"
+    card-id="{{ vm.cardId }}"
+    tooltip="PARENTAL_CONTROL.CARD.TOOLTIP">
+
+    <eb-card-content>
+
+        <!-- min-width style, so that there is enough space for online-time label + switch -->
+        <div class="parental-control-card" flex="100" layout="column" layout-align="center center" style="min-width: 350px;">
+
+            <!-- STATUS online status / BUTTON block internet -->
+            <div layout="row" layout-align="start center" layout-fill
+                 style="margin-bottom: 14px;">
+                <div flex="40" ng-if="!vm.initialLoading">
+                    <span class="font-bold" ng-if="vm.isUserOnline()" translate="PARENTAL_CONTROL.CARD.LABEL.ONLINE"></span>
+                    <span class="font-bold" ng-if="!vm.isUserOnline() && !vm.onlineTimeStopped() && !vm.internetBlocked" translate="PARENTAL_CONTROL.CARD.LABEL.OFFLINE"></span>
+                    <span class="font-bold" ng-if="vm.internetBlocked" translate="PARENTAL_CONTROL.CARD.LABEL.LOCKED"></span>
+                    <span class="font-bold" ng-if="vm.onlineTimeStopped()" translate="PARENTAL_CONTROL.CARD.LABEL.NO_TIME"></span>
+                </div>
+                <div flex="40"
+                     layout="row" layout-align="center center" ng-if="vm.initialLoading">
+                    <md-progress-circular md-diameter="26"></md-progress-circular>
+                </div>
+                <div flex="10">
+                    <div class="online-circle" ng-class="{
+                    'online': vm.isUserOnline(),
+                    'offline': !vm.isUserOnline() && !vm.onlineTimeStopped(),
+                    'unavailable': vm.onlineTimeStopped()
+                    }"></div>
+                </div>
+                <div flex="50">
+                    <md-button aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.BLOCK_INTERNET' | translate}}"
+                               class="md-raised eb-delete-button"
+                               ng-click="vm.blockInternetAccess()"
+                               ng-disabled="vm.isLoading"
+                               ng-if="!vm.internetBlocked">
+                        <span hide-xs translate="PARENTAL_CONTROL.CARD.BUTTON.BLOCK_INTERNET"></span>
+                        <span hide-gt-xs translate="PARENTAL_CONTROL.CARD.BUTTON.BLOCK_INTERNET_XS"></span>
+                    </md-button>
+                    <md-button aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.ALLOW_INTERNET' | translate}}"
+                               class="md-raised md-accent"
+                               ng-click="vm.allowInternetAccess()"
+                               ng-disabled="vm.isLoading"
+                               ng-if="vm.internetBlocked">
+                        <span hide-xs translate="PARENTAL_CONTROL.CARD.BUTTON.ALLOW_INTERNET"></span>
+                        <span hide-gt-xs translate="PARENTAL_CONTROL.CARD.BUTTON.ALLOW_INTERNET_XS"></span>
+                    </md-button>
+                </div>
+            </div>
+
+            <!-- SWITCH time limits -->
+            <div class="line-height" layout="row" layout-align="start center" layout-fill>
+                <div flex="40">
+                    <span class="font-bold" translate="PARENTAL_CONTROL.CARD.LABEL.SWITCH_TIME_LIMITS"></span>
+                </div>
+                <div flex="15">
+                    <md-switch class="md-primary switch-word-break"
+                               md-theme="eBlockerThemeSwitch"
+                               style="margin: 0;"
+                               aria-label="{{ 'PARENTAL_CONTROL.CARD.LABEL.SWITCH_TIME_LIMITS' | translate}}"
+                               ng-disabled="vm.internetBlocked || vm.isLoading"
+                               ng-change="vm.hasTimeLimitsChange()"
+                               ng-model="vm.hasTimeLimits">
+                    </md-switch>
+                </div>
+            </div>
+
+            <!-- ONLINE TIME RELATED -->
+            <div class="fill-width" layout="column" layout-align="center center" ng-if="vm.hasTimeLimits">
+                <!-- LABEL used time -->
+                <div class="fill-width line-height" layout="row" layout-align="start center">
+                    <div flex="40" layout="row" layout-align="start center">
+                        <span translate="PARENTAL_CONTROL.CARD.LABEL.USED_TIME"></span>
+                    </div>
+                    <div flex="25" layout="row" layout-align="start center" ng-show="vm.showUsedTime(vm.dailyTime.timesDisplay)">
+                        <span>{{vm.dailyTime.timesDisplay.usedTime.hours}}</span><!--
+                        --><span ng-class="{'clock-display-animate': vm.dailyTime.usage.online}">:</span><!--
+                        --><span>{{vm.dailyTime.timesDisplay.usedTime.minutes}}</span><span translate="PARENTAL_CONTROL.CARD.LABEL.TIME_UNIT"></span>
+                    </div>
+                </div>
+
+                <!-- LABEL remaining time -->
+                <div class="fill-width line-height" layout="row" layout-align="start center">
+
+                    <div flex="40" layout="row" layout-align="start center">
+                        <span translate="PARENTAL_CONTROL.CARD.LABEL.REMAINING_TIME"></span>
+                    </div>
+
+                    <div flex="25" layout="row" layout-align="start center" ng-show="vm.showRemainingTime(vm.dailyTime.timesDisplay)">
+                        <span>{{vm.dailyTime.timesDisplay.remainingTime.hours}}:{{vm.dailyTime.timesDisplay.remainingTime.minutes}}</span><span translate="PARENTAL_CONTROL.CARD.LABEL.TIME_UNIT"></span>
+                    </div>
+
+                    <!-- ONLY SHOW IN ONE ROW FOR SCREENS LARGER THAN XS -->
+                    <div flex="35" hide-xs layout="row" layout-align="start center">
+                        <div flex="65" layout="row" layout-align="center center">
+                            <md-button aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.ADD_TIME' | translate}}"
+                                       class="md-primary"
+                                       style="margin: 0;"
+                                       ng-click="vm.addBonusTimeForToday()"
+                                       ng-disabled="vm.internetBlocked || vm.isMaxTimeReached() || vm.isLoading"
+                                       translate="PARENTAL_CONTROL.CARD.BUTTON.ADD_TIME">
+                            </md-button>
+                        </div>
+                        <div flex="35" layout="row" layout-align="center center">
+                            <md-icon aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.RESET' | translate}}"
+                                     md-svg-src="/img/icons/ic_remove_circle_black.svg"
+                                     ng-class="{
+                                            'content-off no-select': !vm.hasBonusTime || vm.internetBlocked || vm.isLoading,
+                                            'content-error icon-pointer': vm.hasBonusTime && !vm.internetBlocked && !vm.isLoading
+                                     }"
+                                     ng-click="vm.hasBonusTime && !vm.internetBlocked && !vm.isLoading ? vm.resetBonusTimeForToday() : ''">
+                            </md-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHOW +10 MIN AND ICON IN TWO ROWS ON XS SCREEN -->
+                <div class="fill-width line-height" hide-gt-xs layout="row" layout-align="start center">
+                    <div flex="30" flex-offset="35" layout="row" layout-align="center center">
+                        <md-button aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.ADD_TIME' | translate}}"
+                                   class="md-primary"
+                                   ng-click="vm.addBonusTimeForToday()"
+                                   ng-disabled="vm.internetBlocked || vm.isMaxTimeReached() || vm.isLoading"
+                                   style="margin: 0;"
+                                   translate="PARENTAL_CONTROL.CARD.BUTTON.ADD_TIME">
+                        </md-button>
+                    </div>
+                    <div flex="10" layout="row" layout-align="center center">
+                        <md-icon aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.RESET' | translate}}"
+                                 md-svg-src="/img/icons/ic_remove_circle_black.svg"
+                                 ng-class="{
+                                        'content-off no-select': !vm.hasBonusTime || vm.internetBlocked || vm.isLoading,
+                                        'content-error icon-pointer': vm.hasBonusTime && !vm.internetBlocked && !vm.isLoading
+                                 }"
+                                 ng-click="vm.hasBonusTime && !vm.internetBlocked && !vm.isLoading ? vm.resetBonusTimeForToday() : ''">
+                        </md-icon>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- user has time contingents, but not today, so today access is forbidden -->
+            <div class="line-height"
+                 layout="row" layout-align="center center" layout-fill ng-show="!vm.isLoading && !vm.hasContingentToday && vm.hasControlModeTime">
+                <div  flex layout="row" layout-align="center center">
+                    <span class="font-bold" translate="PARENTAL_CONTROL.CARD.LABEL.NO_CONTINGENT_TODAY"></span>
+                </div>
+            </div>
+
+            <!-- LABEL start time if contingent today -->
+            <div class="line-height"
+                 layout="row" layout-align="start center" layout-fill ng-if="vm.startTime && vm.hasContingentToday && vm.hasControlModeTime">
+                <div flex="40" layout="row" layout-align="start center">
+                    <span translate="PARENTAL_CONTROL.CARD.LABEL.START_TIME"></span>
+                </div>
+                <div flex="20" layout="row" layout-align="start center">
+                    <span>{{vm.getConvertedTime(vm.startTime)}}</span>
+                </div>
+            </div>
+
+            <!-- LABEL bedtime -->
+            <div class="line-height"
+                 layout="row" layout-align="start center" layout-fill ng-if="vm.hasContingentToday && vm.hasControlModeTime">
+                <div flex="40" layout="row" layout-align="start center">
+                    <span translate="PARENTAL_CONTROL.CARD.LABEL.BEDTIME"></span>
+                </div>
+                <div flex="20" layout="row" layout-align="start center">
+                    <span ng-show="vm.bedtime">{{vm.getConvertedTime(vm.bedtime)}}</span>
+                    <span ng-hide="vm.bedtime" translate="PARENTAL_CONTROL.CARD.LABEL.NO_BEDTIME"></span>
+                </div>
+            </div>
+
+            <!-- SWITCH content filter -->
+            <!-- TODO issue if switch is used to enable restrictions for the first time: list will be empty, which is not allowed -->
+
+            <!--<div layout="row" layout-align="start center" layout-fill>-->
+                <!--<div flex="45">-->
+                    <!--<span translate="PARENTAL_CONTROL.CARD.LABEL.SWITCH_CONTENT_FILTER"></span>-->
+                <!--</div>-->
+                <!--<div flex="15">-->
+                    <!--<md-switch aria-label="{{ 'PARENTAL_CONTROL.CARD.LABEL.SWITCH_CONTENT_FILTER' | translate}}"-->
+                               <!--class="md-primary switch-word-break"-->
+                               <!--md-theme="eBlockerThemeSwitch"-->
+                               <!--ng-change="vm.hasContentFilterChange()"-->
+                               <!--ng-model="vm.hasContentFilter">-->
+                    <!--</md-switch>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+
+        <!-- CONTENT FILTER LIST: BLACK LISTS -->
+        <div flex="100" layout="column" layout-align="center center" ng-if="vm.hasBlackLists">
+
+            <md-divider style="width: 100%; margin-top: 15px; margin-bottom: 15px;"></md-divider>
+
+            <!-- LABEL and LIST blocked / allowed content -->
+            <div layout="column" layout-align="center center" layout-fill style="padding-bottom: 0;">
+                <div class="fill-width" layout="row">
+                    <div flex="40">
+                        <span translate="PARENTAL_CONTROL.CARD.LABEL.BLOCKED_PAGE_VIEW"></span>
+                    </div>
+                    <div flex="60">
+                        <span class="font-italic">
+                            {{vm.getListAsCommaSeparatedString(vm.blockedContent, 'localizedName')}}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- use same distance between elements as in list above (between remaining time, used time, etc.) -->
+                <div style="padding-bottom: 12px;"></div>
+
+                <div class="fill-width" layout="row" ng-if="vm.exceptionContent.length > 0">
+                    <div flex="40">
+                        <span translate="PARENTAL_CONTROL.CARD.LABEL.EXCEPTION_PAGE_VIEW">:</span>
+                    </div>
+                    <div flex="60">
+                        <span class="font-italic">
+                            {{vm.getListAsCommaSeparatedString(vm.exceptionContent, 'localizedName')}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT FILTER LIST: WHITE LISTS -->
+        <div flex="100" layout="column" layout-align="center center" ng-if="vm.hasWhitelists">
+
+            <md-divider style="width: 100%; margin-top: 15px; margin-bottom: 15px;"></md-divider>
+
+            <!-- LABEL and LIST blocked / allowed content -->
+            <div class="fill-width" layout="row"
+                 layout-align="center center" style="padding-bottom: 0;">
+                <div flex="40">
+                    <span translate="PARENTAL_CONTROL.CARD.LABEL.ALLOWED_PAGE_VIEW"></span>
+                </div>
+                <div flex="60">
+                    <span class="font-italic">
+                        {{vm.getListAsCommaSeparatedString(vm.exceptionContent, 'localizedName')}}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+        <!--<div flex="100" layout="column" layout-align="center center" ng-if="vm.hasContentFilter">-->
+
+            <!--<md-divider style="width: 100%; margin-top: 15px; margin-bottom: 20px;"></md-divider>-->
+
+            <!--&lt;!&ndash; LABEL and BUTTON reset &ndash;&gt;-->
+            <!--<div layout="row" layout-align="start center" layout-fill>-->
+                <!--<div flex="50">-->
+                    <!--<span translate="PARENTAL_CONTROL.CARD.LABEL.BLOCKED_PAGE_VIEW"></span>-->
+                <!--</div>-->
+                <!--<div flex="50">-->
+                    <!--<md-button aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.RESET' | translate}}"-->
+                               <!--class="md-raised md-accent"-->
+                               <!--translate="PARENTAL_CONTROL.CARD.BUTTON.RESET">-->
+                    <!--</md-button>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <!--&lt;!&ndash; CHECKBOXES blocked contents&ndash;&gt;-->
+            <!--<div layout="row" layout-align="start center" layout-fill style="padding-top: 10px;">-->
+                <!--<div flex="50" layout="column" layout-align="center start">-->
+                    <!--<md-checkbox aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.RESET' | translate}} {{list.localizedName}}" class="md-primary"-->
+                                 <!--md-theme="eBlockerThemeCheckbox"-->
+                                 <!--ng-change="vm.checkboxHasChanged(list)"-->
+                                 <!--ng-model="list.isActive"-->
+                                 <!--ng-repeat="list in vm.blockedContent[0] || []">-->
+                        <!--{{list.localizedName}}-->
+                    <!--</md-checkbox>-->
+                <!--</div>-->
+
+                <!--<div flex="50" layout="column" layout-align="center start">-->
+                    <!--<md-checkbox aria-label="{{ 'PARENTAL_CONTROL.CARD.BUTTON.RESET' | translate}} {{list.localizedName}}" class="md-primary"-->
+                                 <!--md-theme="eBlockerThemeCheckbox"-->
+                                 <!--ng-change="vm.checkboxHasChanged(list)"-->
+                                 <!--ng-model="list.isActive"-->
+                                 <!--ng-repeat="list in vm.blockedContent[1] || []">-->
+                        <!--{{list.localizedName}}-->
+                    <!--</md-checkbox>-->
+                <!--</div>-->
+            <!--</div>-->
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary"  ng-click="vm.editUser()">{{'PARENTAL_CONTROL.CARD.BUTTON.EDIT' | translate}}</md-button>
+    </eb-card-actions>
+</eb-card>

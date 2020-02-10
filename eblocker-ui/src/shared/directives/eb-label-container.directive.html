@@ -1,0 +1,53 @@
+<div layout="column"  class="eb-label-container">
+
+    <div layout="row" layout-align="start center" class="eb-label">
+        <!-- Show label only if there is a value, either by function or by value -->
+        <label md-truncate class="md-ellipsis"
+               ng-if="!vm.emptyValue()">
+            {{ label }}
+        </label>
+    </div>
+
+    <div layout="row" layout-align="start center"
+         class="eb-value">
+
+        <div ng-class="{
+            'text-container-full-width': !vm.isEditable(),
+            'text-container': vm.isEditable(),
+            'empty-value': vm.emptyValue() && !vm.isImage(),
+            'editable-label': vm.isEditable()
+            }"
+             ng-click="vm.isEditable() ? vm.handleEditCallback() : ''">
+            <!-- show function value -->
+            <label      ng-if="vm.valueAsFunction && config.value() !== ''" class="text">{{ config.value() }}</label>
+            <md-tooltip ng-if="vm.valueAsFunction && config.value() !== '' && !vm.isEditable()" md-delay="300">{{ config.value() }}</md-tooltip>
+
+            <!-- show value-value -->
+            <label      ng-if="!vm.valueAsFunction && config.value !== undefined && config.value !== ''"
+                        class="text"
+                        ng-class="{'truncate-block': config.truncate}">
+                {{ config.value | translate }}
+            </label>
+            <md-tooltip ng-if="!vm.valueAsFunction && config.value !== undefined && config.value !== '' && !vm.isEditable() && config.valueUncut !== undefined" md-delay="300">{{ config.valueUncut | translate }}</md-tooltip>
+            <md-tooltip ng-if="!vm.valueAsFunction && config.value !== undefined && config.value !== '' && !vm.isEditable() && config.valueUncut === undefined" md-delay="300">{{ config.value | translate }}</md-tooltip>
+
+            <!-- Empty: show label, because there no value -->
+            <label ng-if="vm.emptyValue() && !vm.isImage()">{{ label }}</label>
+
+            <md-icon ng-if="vm.isImage()" class="eb-table-icon-active" ng-class="config.imageClass" md-svg-src="{{config.imagePath}}"></md-icon>
+        </div>
+
+        <div ng-if="vm.isEditable()" style="padding-left: 15px;"
+             class="unselectable"
+             ng-click="vm.isEditable() ? vm.handleEditCallback() : ''"
+             ng-class="{'extra-margin': vm.emptyValue() && !vm.isImage(), 'editable-label': vm.isEditable()}">
+            <md-icon class="content-eb-orange"
+                     md-svg-src="/img/icons/ic_edit_black.svg"
+                     aria-label="{{ 'SHARED.LABEL_CONTAINER.EDIT_TOOLTIP' | translate }}">
+            </md-icon>
+        </div>
+
+        <md-tooltip ng-if="vm.isEditable()" md-delay="300">{{ 'SHARED.LABEL_CONTAINER.EDIT_TOOLTIP' | translate }}</md-tooltip>
+    </div>
+
+</div>

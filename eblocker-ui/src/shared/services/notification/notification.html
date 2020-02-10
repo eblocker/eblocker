@@ -1,0 +1,9 @@
+<md-toast class="eblocker-notification" ng-class="ctrl.css">
+    <span flex translate="{{ ctrl.msgKey }}" translate-values="ctrl.msgParams"></span>
+    <md-button ng-click="ctrl.closeToast()" aria-label="Close">
+        <md-icon class="close-icon" md-svg-icon="/img/icons/ic_close_black_24px.svg"></md-icon>
+    </md-button>
+    <md-tooltip ng-if="ctrl.msgParams !== undefined && ctrl.showTooltip"><!--
+        -->{{ ctrl.msgParams.status + ' - ' + ctrl.msgParams.msg }} - {{ ctrl.msgParams.details | translate }}<!--
+    --></md-tooltip>
+</md-toast>

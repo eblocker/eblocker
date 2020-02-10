@@ -1,0 +1,36 @@
+<md-dialog aria-label="{{ vm.msgKeys.title | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.editForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.EDIT.TITLE_PRE' | translate }} {{ vm.msgKeys.label | translate }} {{ 'ADMINCONSOLE.DIALOG.EDIT.TITLE_POST' | translate }}</h2>
+            </div>
+
+            <div ng-if="!vm.isDate">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ vm.msgKeys.label | translate }}</label>
+                    <input name="value" ng-model="vm.value" type="{{vm.inputType}}" md-maxlength="vm.maxLength" ng-minlength="vm.minLength" ng-change="vm.valueChanged()" ng-required="vm.isRequired">
+                    <div ng-messages="vm.editForm.value.$error" ng-if="vm.editForm.$submitted || vm.editForm.value.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.EDIT.ERROR.VALUE_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.EDIT.ERROR.VALUE_TOO_LONG' | translate }}</div>
+                        <div ng-message="minlength">{{ 'ADMINCONSOLE.DIALOG.EDIT.ERROR.VALUE_TOO_SHORT' | translate:{'min': vm.minLength} }}</div>
+                        <div ng-message="unique">{{ 'ADMINCONSOLE.DIALOG.EDIT.ERROR.VALUE_NOT_UNIQUE' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <div ng-if="vm.isDate" style="padding-top: 18px;">
+                <eb-date-picker date="vm.value" placeholder-label="{{'ADMINCONSOLE.DIALOG.ADD_USER.PLACEHOLDER_DATE' | translate }}"></eb-date-picker>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

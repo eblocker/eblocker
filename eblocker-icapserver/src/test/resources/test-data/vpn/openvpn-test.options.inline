@@ -1,0 +1,8 @@
+option-inline;none
+option-requiring-inlining;none
+tls-auth;none
+secret;none
+option-pem;pem
+option-dh-pem;dh-pem
+option-openVpnStaticKey;openVpnStaticKey
+option-base64;base64

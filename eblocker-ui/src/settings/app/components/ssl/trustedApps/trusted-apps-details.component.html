@@ -1,0 +1,143 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout-padding>
+
+
+        <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+
+        <md-divider></md-divider>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <div>
+                <h3 class="eb-table-details-view">
+                    {{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.HEADING' | translate}}
+                </h3>
+            </div>
+
+            <div layout="column" layout-gt-xs="row">
+                <div flex-gt-xs="50">
+                    <eb-label-container is-edit="vm.editable(vm.trustedApp)" edit-callback="vm.editName($event, vm.trustedApp)"
+                                        label="{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.LABEL_NAME' | translate}}" config="vm.nameConfig"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="50">
+                    <eb-label-container is-edit="true" edit-callback="vm.editDescription($event, vm.trustedApp)"
+                                        label="{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.LABEL_DESCRIPTION' | translate}}" config="vm.descriptionConfig"></eb-label-container>
+                </div>
+            </div>
+
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <div flex-gt-md="70">
+                <p style="font-style: italic;">
+                    <span ng-if="!vm.trustedApp.builtin">{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.USER_DEFINED' | translate}}</span><!--
+                    --><span ng-if="vm.trustedApp.builtin">{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.BUILTIN' | translate}}</span><!--
+                    --><span ng-if="!vm.trustedApp.builtin || !vm.trustedApp.modified">{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.STOP' | translate}}</span><!--
+                    --><span ng-if="vm.trustedApp.builtin && vm.trustedApp.modified">{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.AND' | translate}}</span>
+                    <span ng-if="vm.trustedApp.builtin && vm.trustedApp.modified">{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.MODIFIED' | translate}}</span>
+                </p>
+            </div>
+
+            <div ng-if="vm.trustedApp.modified && vm.trustedApp.updatedVersionAvailable"
+                 layout="row" layout-align="start center"
+                 flex-gt-md="70"
+                 layout-padding>
+                <div>
+                    <md-icon class="content-warn" style="margin-right: 10px;" md-svg-src="/img/icons/ic_warning.svg" aria-label="app cannot be updated"></md-icon>
+                </div>
+                <p style="font-style: italic;">
+                    <span>{{'ADMINCONSOLE.TRUSTED_APPS.DETAILS.STATUS.UPDATES_MODIFIED' | translate}}</span>
+                </p>
+            </div>
+
+            <div layout-gt-xs="row" layout="column">
+                <md-switch md-theme="eBlockerThemeSwitch" class="md-primary switch-word-break"
+                           ng-click="$event.stopPropagation();"
+                           ng-model="vm.trustedApp.enabled"
+                           ng-change="vm.toggleAppModule(vm.trustedApp)">
+                    {{ vm.trustedApp.enabled ? 'ADMINCONSOLE.TRUSTED_APPS.DETAILS.LABEL_MODULE_ENABLED' : 'ADMINCONSOLE.TRUSTED_APPS.DETAILS.LABEL_MODULE_DISABLED' | translate }}
+                </md-switch>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <!-- DOMAIN TABLE -->
+            <div>
+                <h4 translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.LABEL_EXCEPTION_LIST"></h4>
+            </div>
+
+
+            <div flex-gt-sm="80" layout="row" layout-xs="column" layout-align="start center">
+
+                <div layout="row" style="width: 100%;">
+                    <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                        <!-- WORK MODE -->
+                        <div ng-if="!vm.tableEditMode">
+                            <md-button ng-click="vm.newDomain($event)" class="md-raised md-accent">
+                                {{ 'ADMINCONSOLE.TRUSTED_APPS.DETAILS.ACTION.ADD_DOMAIN' | translate }}
+                            </md-button>
+                        </div>
+
+                        <!-- EDIT MODE -->
+                        <div ng-if="vm.tableEditMode">
+                            <table-remove-entries table-data="vm.filteredTableData"
+                                                  is-entry-deletable="vm.isDeletable(value)"
+                                                  on-bulk-delete="vm.deleteDomains(values)"
+                                                  button-label="ADMINCONSOLE.TRUSTED_APPS.DETAILS.ACTION.REMOVE_DOMAIN"
+                                                  dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_TRUSTED_APPS_DOMAINS_CONFIRM.TITLE"
+                                                  dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_TRUSTED_APPS_DOMAINS_CONFIRM.TEXT">
+                            </table-remove-entries>
+                        </div>
+
+                        <div ng-if="vm.loading" layout="row" layout-align="start center">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+
+                    <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                        <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.tableData"
+                                         filter-properties="vm.searchProps">
+                        </eb-filter-table>
+                    </div>
+
+                    <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                        <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                        <eb-edit-table table-data="vm.filteredTableData"
+                                       table-edit-mode="vm.tableEditMode">
+                        </eb-edit-table>
+                    </div>
+                </div>
+
+                <div hide-gt-xs style="width: 100%;">
+                    <!-- TABLE SEARCH -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableData"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+            </div>
+
+            <div flex-gt-sm="80">
+                <eb-table table-data="vm.filteredTableData"
+                          table-header="vm.tableHeaderConfig"
+                          table-template="app/components/ssl/trustedApps/trustedApps-domains-table.template.html"
+                          table-id="vm.tableId"
+                          edit-mode="vm.tableEditMode"
+                          is-entry-selectable="vm.isSelectable(value)">
+                </eb-table>
+            </div>
+
+            <div flex-gt-sm="80" layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     table-size="vm.filteredTableData.length">
+                </eb-scroll-paginator>
+            </div>
+            <!-- END: DOMAIN TABLE -->
+
+        </div>
+        <!-- Content end -->
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ARIA' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.appModuleForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.TITLE_NEW' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.LABEL_NAME' | translate }}</label>
+                    <input name="name" ng-disabled="vm.module.builtin" ng-model="vm.module.name" type="text" ng-change="vm.nameChange()"  md-maxlength="vm.nameMaxLength" required/>
+                    <div ng-messages="vm.appModuleForm.name.$error" ng-if="vm.appModuleForm.$submitted || vm.appModuleForm.name.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.NAME_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.NAME_TOO_LONG' | translate }}</div>
+                        <div ng-message="uniqueName">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.NAME_NOT_UNIQUE' | translate }}</div>
+                    </div>
+                </md-input-container>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.LABEL_DESCRIPTION' | translate }}</label>
+                    <textarea name="description" ng-model="vm.module.localizedDescription" md-maxlength="vm.descriptionMaxLength" max-rows="3"></textarea>
+                    <div ng-messages="vm.appModuleForm.description.$error" ng-if="vm.appModuleForm.$submitted || vm.appModuleForm.description.$touched">
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.DESCRIPTION_TOO_LONG' | translate }}</div>
+                    </div>
+                </md-input-container>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.LABEL_DOMAINSIPS' | translate }}</label>
+                    <textarea name="domainsIps" eb-url-domains ng-model="vm.module.domainsIps" md-maxlength="vm.domainIpMaxLength" required></textarea>
+                    <div ng-messages="vm.appModuleForm.domainsIps.$error" ng-if="vm.appModuleForm.$submitted || vm.appModuleForm.domainsIps.$touched">
+                        <!-- <div ng-message="required">{{ 'APP_MODULE_DIALOG_ERROR_DOMAINS_REQUIRED' | translate }}</div> -->
+                        <div ng-message="urlDomainsIps">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.DOMAINS_INVALID' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.DOMAINS_TOO_LONG' | translate }}</div>
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ERROR.DOMAINS_REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

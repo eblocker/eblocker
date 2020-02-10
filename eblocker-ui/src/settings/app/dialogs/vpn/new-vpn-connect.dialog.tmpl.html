@@ -1,0 +1,319 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_OS.ARIA' | translate }}"
+           style="max-width: 800px;"
+           class="vpn-connection-dialog"
+           layout-padding>
+
+    <md-dialog-content layout="column" layout-padding>
+        <div>
+            <h2 ng-show="vm.dialog.isProfileNew">{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TITLE_NEW' | translate }}</h2>
+            <h2 ng-hide="vm.dialog.isProfileNew">{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TITLE_EDIT' | translate }}</h2>
+        </div>
+
+        <div style="padding-bottom: 0;">
+
+            <md-tabs id="vpn-tabs"
+                     md-selected="vm.dialog.step"
+                     md-dynamic-height
+                     md-no-select-click
+                     md-border-bottom
+                     md-swipe-content="true"
+                     style="margin-top: 10px;">
+
+                <!-- **** Information and links to supported providers -->
+                <md-tab ng-if="vm.dialog.isProfileNew">
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout-margin layout-padding>
+                            <div>
+                                <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_1' | translate}}</p>
+                                <p class="o-paragraph">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_2' | translate}}</p>
+                                <p class="o-paragraph">
+                                    {{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_3_PRE' | translate }}
+                                    <a target="_blank" ng-href="https://{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_3_TARGET' | translate }}">
+                                        {{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_3_LABEL' | translate }}
+                                    </a>
+                                    {{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_1.SELECT_SERVICE_TEXT_3_POST' | translate }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.cancel()">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-click="vm.next()">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.NEXT' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <!-- *** UPLOAD CONFIG -->
+                <md-tab>
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.UPLOAD_CONFIG' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin layout-padding>
+                            <div layout="row" layout-align="start center" class="o-paragraph">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.UPLOAD_TEXT_1' | translate}}</div>
+
+                            <div layout="row" layout-align="start center">
+                                <md-button class="md-raised md-secondary"
+                                           name="configFile"
+                                           ngf-select="vm.uploadConfig($file, $invalidFiles)"
+                                           ng-model="vm.configFile"
+                                           ngf-pattern="'.ovpn,.conf'"
+                                           ngf-max-size="'1MB'"
+                                           ng-required="required">
+                                    {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.UPLOAD' | translate}}
+                                </md-button>
+                            </div>
+
+                            <div layout="column" layout-padding class="md-whiteframe-z1" ng-show="vm.invalidFile || vm.dialog.parsedOptions.validationErrors.length > 0">
+                                <h4>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.ERROR.HEADER' | translate}}</h4>
+                                <div ng-show="vm.invalidFile" class="invalid">
+                                    {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.ERROR.' + vm.invalidFile.$error.toUpperCase() | translate}} {{vm.invalidFile.$errorParam}}
+                                </div>
+                                <div ng-repeat="error in vm.dialog.parsedOptions.validationErrors" class="invalid">
+                                    {{error | translate}}
+                                </div>
+                            </div>
+
+                            <div layout="column" layout-padding class="md-whiteframe-z1" ng-show="vm.dialog.parsedOptions.validationErrors.length === 0 && vm.dialog.parsedOptions.requiredFiles && vm.dialog.parsedOptions.requiredFiles.length > 0">
+                                <h4>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILES_HEADER' | translate}}</h4>
+                                <p>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILES_TEXT' | translate}}</p>
+
+                                <div layout="row">
+                                    <div layout="row" layout-align="start center" flex="15"><b>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILES_TABLE_OPTION' | translate}}</b></div>
+                                    <div flex="5"></div>
+                                    <div layout="row" layout-align="start center" flex><b>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILES_TABLE_FILE_NAME' | translate}}</b></div>
+                                    <div flex="5"></div>
+                                    <div layout="row" layout-align="start center" flex="15"><b>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILES_TABLE_STATUS' | translate}}</b></div>
+                                    <div flex="5"></div>
+                                    <div flex="15"></div>
+                                </div>
+                                <div ng-repeat="requiredFile in vm.dialog.parsedOptions.requiredFiles" layout="row">
+                                    <div layout="row" layout-align="start center" flex="15">{{requiredFile.option}}</div>
+                                    <div flex="5"></div>
+                                    <div layout="row" layout-align="start center" flex>{{requiredFile.name}}</div>
+                                    <div flex="5"></div>
+                                    <div style="color: darkgreen;"
+                                         ng-show="requiredFile.uploaded && !vm.dialog.requiredFileError[requiredFile.option]"
+                                         layout="row"
+                                         layout-align="start center"
+                                         flex="15">
+                                        {{ ::'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILE_STATUS_OK' | translate}}
+                                    </div>
+                                    <div ng-show="!requiredFile.uploaded && !vm.dialog.requiredFileError[requiredFile.option]"
+                                         layout="row"
+                                         layout-align="start center"
+                                         flex="15">
+                                        {{ ::'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILE_STATUS_MISSING' | translate}}
+                                    </div>
+                                    <div ng-show="vm.dialog.requiredFileError[requiredFile.option]" layout="row" layout-align="start center" flex="15">
+                                        <md-tooltip md-autohide="true">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.TOOLTIP.FILE_STATUS_ERROR' | translate}}</md-tooltip>
+                                        <span style="color: red" >
+                                            {{ ::'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.ERROR.FILE_STATUS_ERROR' | translate}}
+                                        </span>
+                                    </div>
+                                    <div flex="5"></div>
+                                    <div layout="row" layout-align="start center" flex="15">
+                                        <md-button style="min-width: 0; margin: 0;"
+                                                   ngf-select="vm.uploadInlineContent(requiredFile.option, $file, $invalidFiles)"
+                                                   ng-model="vm.inlineFile" name="inlineFile"
+                                                   ngf-max-size="'1MB'" ng-required="required"
+                                                   ngf-pattern="{{requiredFile.name}}">
+                                            <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_file_upload_black.svg"></md-icon>
+                                            <md-tooltip><span translate="ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_2.REQUIRED_FILE_UPLOAD" translate-values="{'name': requiredFile.name}"></span></md-tooltip>
+                                        </md-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.cancel()">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-disabled="!vm.dialog.configurationComplete"
+                                       ng-click="vm.next()">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.NEXT' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+
+                <!-- *** DETAILS CONFIG -->
+                <md-tab ng-disabled="!vm.dialog.configurationComplete">
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.DETAILS_CONFIG' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin layout-padding>
+                            <div class="o-paragraph">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.DETAILS_TEXT_1' | translate}}<a href="{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.SUPPORT_LINK' | translate}}">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.SUPPORT_CAPTION' | translate}}</a>
+                            </div>
+
+                            <div layout="column" layout-padding class="md-whiteframe-z1" ng-show="vm.dialog.parsedOptions.activeOptions">
+                                <div layout="row" layout-align="space-between center" style="max-height: 48px;">
+                                    <h4>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.ACTIVE_OPTIONS_HEADER' | translate}}</h4>
+                                    <md-button class="md-accent"
+                                               ng-click="vm.dialog.showActiveOptions = !vm.dialog.showActiveOptions;">
+                                        {{ (vm.dialog.showActiveOptions ? 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_HIDE' : 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_SHOW') | translate}}
+                                    </md-button>
+                                </div>
+                                <div ng-show="vm.dialog.showActiveOptions" layout="column">
+                                    <p>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.ACTIVE_OPTIONS_TEXT' | translate}}</p>
+                                    <div class="vpn-connection-pre-mock">
+                                        <div ng-repeat="option in vm.dialog.parsedOptions.activeOptions"
+                                             class="vpn-connection-log"
+                                             layout="column"
+                                             layout-align="start start"
+                                             ng-class="{'vpn-overridden-option': vm.isOverriddenOption(option), 'vpn-eblocker-option': vm.isEblockerOption(option)}">
+                                            <span><!--
+                                            -->{{option.line}}<!--
+                                            --><md-tooltip md-delay="300" ng-if="vm.isOverriddenOption(option)"><span translate="ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTION_OVERRIDDEN" translate-values="option"></span></md-tooltip><!--
+                                            --><md-tooltip md-delay="300" ng-if="vm.isEblockerOption(option)">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTION_EBLOCKER' | translate}}</md-tooltip><!--
+                                        --></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div layout="column" layout-padding class="md-whiteframe-z1" ng-show="vm.dialog.parsedOptions.ignoredOptions.length">
+                                <div layout="row" layout-align="space-between center" style="max-height: 48px;">
+                                    <h4>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.IGNORED_OPTIONS_HEADER' | translate}}</h4>
+                                    <md-button class="md-accent"
+                                               ng-click="vm.dialog.showIgnoredOptions = !vm.dialog.showIgnoredOptions;">
+                                        {{ (vm.dialog.showIgnoredOptions ? 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_HIDE' : 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_SHOW') | translate}}
+                                    </md-button>
+                                </div>
+                                <div ng-show="vm.dialog.showIgnoredOptions">
+                                    <p>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.IGNORED_OPTIONS_TEXT' | translate}}</p>
+
+                                    <div class="vpn-connection-pre-mock">
+                                        <div ng-repeat="option in vm.dialog.parsedOptions.ignoredOptions | orderBy: 'option.lineNumber'"
+                                             class="vpn-connection-log"
+                                             layout="column"
+                                             layout-align="start start"
+                                             ng-class="{'vpn-overridden-option': vm.isOverriddenOption(option), 'vpn-eblocker-option': vm.isEblockerOption(option)}">
+                                            <span>{{option.lineNumber}}: {{option.line}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div layout="column" layout-padding class="md-whiteframe-z1" ng-show="vm.dialog.parsedOptions.blacklistedOptions.length">
+                                <div layout="row" layout-align="space-between center" style="max-height: 48px;">
+                                    <h4>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.BLACKLISTED_OPTIONS_HEADER' | translate}}</h4>
+                                    <md-button class="md-accent"
+                                               ng-click="vm.dialog.showBlacklistedOptions = !vm.dialog.showBlacklistedOptions;">
+                                        {{ (vm.dialog.showBlacklistedOptions ? 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_HIDE' : 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.OPTIONS_DETAILS_SHOW') | translate}}
+                                    </md-button>
+                                </div>
+                                <div ng-show="vm.dialog.showBlacklistedOptions">
+                                    <p>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_3.BLACKLISTED_OPTIONS_TEXT' | translate}}</p>
+                                    <div class="vpn-connection-pre-mock">
+                                        <div ng-repeat="option in vm.dialog.parsedOptions.blacklistedOptions | orderBy: 'option.lineNumber'"
+                                             class="vpn-connection-log"
+                                             layout="column"
+                                             layout-align="start start"
+                                             ng-class="{'vpn-overridden-option': vm.isOverriddenOption(option), 'vpn-eblocker-option': vm.isEblockerOption(option)}">
+                                            <span>{{option.lineNumber}}: {{option.line}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.cancel()">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-click="vm.next()">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.NEXT' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <!-- **** credentials tab -->
+                <md-tab ng-disabled="!vm.dialog.configurationComplete || !vm.dialog.parsedOptions.credentialsRequired">
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_4.CREDENTIALS' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin layout-padding>
+                            <form autocomplete="off">
+                                <md-input-container md-theme="eBlockerThemeInput" class="md-block">
+                                    <label>{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_4.CREDENTIALS_USERNAME' | translate }}</label>
+                                    <input name="name" type="text" ng-model="vm.dialog.profile.loginCredentials.username"/>
+                                </md-input-container>
+
+                                <md-input-container md-theme="eBlockerThemeInput" class="md-block">
+                                    <label>{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_4.CREDENTIALS_PASSWORD' | translate }}</label>
+                                    <input autocomplete="off"
+                                           type="{{vm.getPasswordFieldType()}}"
+                                           ng-change="vm.passwordChanged()"
+                                           ng-model="vm.dialog.profile.loginCredentials.password"/>
+                                </md-input-container>
+                            </form>
+                        </div>
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.cancel()">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-click="vm.next()">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.NEXT' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <!-- finalize tab -->
+                <md-tab ng-disabled="!vm.dialog.configurationComplete">
+                    <md-tab-label>{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.FINALIZE' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin layout-padding>
+                            <form name="form">
+                                <md-input-container md-theme="eBlockerThemeInput" class="md-block">
+                                    <label>{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_NAME' | translate }}</label>
+                                    <input name="name" ng-model="vm.dialog.profile.name" type="text" required />
+                                </md-input-container>
+
+                                <md-input-container md-theme="eBlockerThemeInput" class="md-block">
+                                    <label>{{ 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_DESCRIPTION' | translate }}</label>
+                                    <textarea ng-model="vm.dialog.profile.description"></textarea>
+                                </md-input-container>
+
+                                <md-switch md-theme="eBlockerThemeSwitch" style="margin-left:0px; margin-top: 0px;" class="md-primary" ng-click="$event.stopPropagation();" ng-model="vm.dialog.profile.enabled">
+                                    {{vm.dialog.profile.enabled ? 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_ENABLED' : 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_DISABLED' | translate }}
+                                </md-switch>
+
+                                <md-switch md-theme="eBlockerThemeSwitch" style="margin-left:0px;" class="md-primary" ng-click="$event.stopPropagation();" ng-model="vm.dialog.profile.nameServersEnabled">
+                                    {{vm.dialog.profile.nameServersEnabled ? 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_NAME_SERVER_ENABLED' : 'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_NAME_SERVER_DISABLED' | translate }}
+                                </md-switch>
+
+                                <md-switch md-theme="eBlockerThemeSwitch" style="margin-left:0px;" class="md-primary" ng-click="$event.stopPropagation();" ng-model="vm.dialog.profile.keepAlivePingEnabled">
+                                    {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.TAB_5.VPN_KEEP_ALIVE_PING_ENABLED' | translate }}
+                                </md-switch>
+                            </form>
+                        </div>
+
+
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.cancel()">
+                                {{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-disabled="form.$invalid"
+                                       ng-click="vm.save()">{{'ADMINCONSOLE.DIALOG.NEW_VPN_CONNECT.ACTION.SAVE' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </md-dialog-content>
+</md-dialog>

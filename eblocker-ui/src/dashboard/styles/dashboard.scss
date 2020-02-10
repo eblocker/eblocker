@@ -1,0 +1,201 @@
+@import '../../styles/styles.scss';
+
+$dashboard-toolbar-height: 66px;
+
+@mixin fill-height-minus-toolbar() {
+    height: -webkit-calc(100% - #{$dashboard-toolbar-height});
+    height: -moz-calc(100% - #{$dashboard-toolbar-height});
+    height: calc(100% - #{$dashboard-toolbar-height});
+    min-height: -webkit-calc(100% - #{$dashboard-toolbar-height});
+    min-height: -moz-calc(100% - #{$dashboard-toolbar-height});
+    min-height: calc(100% - #{$dashboard-toolbar-height});
+}
+
+.eblocker-dashboard {
+    background-color: $eblocker-background-gray-blue;
+
+    .screen-size-xs, .screen-size-sm, .screen-size-mdsm {
+        background-color: $eblocker-orange;
+    }
+
+    .custom-column-xs {
+        padding: 0 1% 0 1%
+    }
+
+    .custom-column-sm {
+        padding: 0 3% 0 3%
+    }
+
+    .custom-column-mdsm {
+        padding: 0 9% 0 19%
+    }
+
+    .custom-column-md {
+        padding: 0 9% 0 9%
+    }
+
+    .custom-column-lg {
+        padding: 0 5% 0 6%
+    }
+
+    .dashboard-spinner {
+        background-color: white;
+        height: 100%;
+    }
+
+    .dashboard-app-screen {
+        height: 100%;
+    }
+    .dashboard-app-screen .dashboard-main-screen .cards-container {
+        // min-height is required, so that we can drop a dashboard card on an empty column
+        min-height: 200px;
+    }
+    .dashboard-app-screen .dashboard-main-screen {
+        padding-top: 8px;
+    }
+
+    dashboard-component {
+        // overflow-y: auto/hidden is set in Javascript (dashboard.component.js) to avoid scrolling on booting screen
+        -webkit-overflow-scrolling: touch;
+    }
+
+    main-component, dashboard-component {
+        // we need height for at the dashboard-component, so that dropdown is always correct height.
+        // issue: adminconsole.scss accidentally defines a rule that sets height of main-component
+        height: 100%;
+        width: 100%;
+    }
+
+    .dashboard-card-template {
+        .no-padding {
+            padding: 0;
+        }
+    }
+
+    .connection-test-details-box {
+        background-color: lightgray;
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .card-placeholder {
+        max-width: 500px;
+        min-height: 80px;
+        background: $color-border;
+        border-radius: 15px;
+    }
+
+    eb-wizard-component {
+
+        md-card.md-eBlockerTheme-theme {
+            @media screen and (min-width: $screen-size-gt-xs) {
+                min-width: 400px; // do not reduce for xs or larger.
+            }
+        }
+
+        md-card.md-eBlockerTheme-theme {
+            @media screen and (min-width: $screen-size-gt-sm) {
+                min-width: 700px; // do not reduce for sm or larger.
+            }
+        }
+
+        md-card-title {
+            padding: 0;
+
+            md-toolbar {
+                min-height: 52px;
+                height: 52px;
+                border-radius: 8px 8px 0 0;
+            }
+        }
+
+        md-card-content {
+            padding-top: 16px;
+        }
+
+        .image-frame {
+            border: 1px solid $eblocker-orange;
+        }
+    }
+
+    .parental-control-card {
+        .line-height {
+            height: 36px;
+        }
+    }
+
+    .online-time-card {
+        md-progress-linear.md-eBlockerTheme-theme .md-container {
+            background-color: #fdfdfd;
+            border: 2px solid gray;
+            border-radius: 4px;
+        }
+        md-progress-linear, md-progress-linear .md-container, md-progress-linear .md-container .md-bar {
+            height: 20px;
+        }
+    }
+
+    .frag-finn-card .iframe-container {
+        iframe {
+            width: 280px;
+            height: 155px;
+        }
+    }
+
+}
+
+// Overlay for paused dashboard
+.eblocker-dashboard .dashboard-paused-overlay-hidden {
+    // hidden / visible classes basically just for fade-in:
+    // makes sure that there is always an overlay, so that hidden-overlay has different opacity than visible overlay
+    // This allows transition (animation) to fade-in the overlay.
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.eblocker-dashboard .dashboard-paused-overlay-visible {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; // over shadow md-switch
+}
+
+.eblocker-dashboard .dashboard-paused-overlay-hidden .dashboard-paused-overlay {
+    // opacity setting for overlay in hidden mode
+    opacity: 0;
+}
+
+.eblocker-dashboard .dashboard-paused-overlay-visible .dashboard-paused-overlay {
+    // opacity setting for overlay in visible mode
+    opacity: 0.7;
+}
+
+.eblocker-dashboard .dashboard-paused-overlay-visible .dashboard-paused-overlay {
+    // actual overlay
+    md-icon {
+        height: 80px;
+        width: auto;
+        color: white;
+        opacity: 1;
+    }
+
+    background-color: black;
+    transition: all 0.5s ease;
+    -webkit-overflow-scrolling: touch;
+}
+
+.eblocker-notification.DASHBOARD-NOTIFICATION {
+    // css class .DASHBOARD-NOTIFICATION is defined in NotificationController.js to allow
+    // different stylings for each app.
+    top: 60px;
+
+    margin: 0 40px 0 0;
+    md-icon.close-icon {
+        color: white;
+    }
+}

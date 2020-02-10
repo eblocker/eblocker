@@ -1,0 +1,132 @@
+<md-toolbar style="min-height: 66px;min-width: 265px;" md-scroll-shrink>
+    <div class="md-toolbar-tools"
+         style="min-height: 66px; height: 66px;"
+         layout="row"
+         layout-xs="row"
+         layout-align-xs="center center"
+         md-scroll-shrink
+         flex>
+
+        <div ng-if="!vm.isMainState()" flex-xs="100" flex="30" layout="row" layout-align="start center">
+            <!-- eBlocker icon and label FOR BLOCKER PAGE-->
+            <div>
+                <md-icon style="height: 40px; width: 180px;"  md-svg-src="/img/eBlocker_2_white.svg"></md-icon>
+            </div>
+        </div>
+
+        <div flex="30" flex-sm="35" flex-xs="15" layout="row" layout-align="start center" ng-if="vm.isMainState()">
+            <!-- eBlocker icon and label FOR DASHBOARD-->
+            <div  hide-xs flex="30">
+                <md-icon style="height: 40px; width: 180px;"  md-svg-src="/img/eBlocker_2_white.svg"></md-icon>
+            </div>
+
+            <!-- eBlocker icon only FOR DASHBOARD -->
+            <div hide-gt-xs flex="20">
+                <md-icon style="height: 35px;width: auto;margin-right: 5px;"  md-svg-src="/img/eBlocker_icon_white.svg"></md-icon>
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <div flex="55" flex-sm="50" flex-xs="65" layout="row" layout-align="center center" ng-if="vm.isMainState()">
+            <!-- REDUCED TITLE: ICON     DEVICE    USER -->
+            <div hide-gt-sm layout="row" layout-xs="column" layout-align="center center">
+                <div flex-sm="60" ng-if="vm.showTitleDevice()" layout="row" layout-align="start center">
+                    <md-icon md-svg-src="/img/icons/ic_computer_black.svg"></md-icon>
+                    <span class="truncate" style="padding-left: 5px;">{{vm.getTitleDevice()}}</span>
+                </div>
+
+                <div hide-xs style="padding-left: 20px;"></div>
+
+                <div flex-sm="40" ng-if="vm.showTitleUser()" layout="row" layout-align="start center">
+                    <md-icon ng-hide="vm.isInternetAccessLocked()" md-svg-src="/img/icons/ic_person_black.svg"></md-icon>
+                    <md-icon ng-show="vm.isInternetAccessLocked()" md-svg-src="/img/icons/ic_block_black.svg"></md-icon>
+                    <span class="truncate" style="padding-left: 5px;">{{vm.getTitleUser() | translate}}</span>
+                </div>
+            </div>
+
+            <!-- FULL TITLE: ICON + LABEL      LABEL    DEVICE    USER -->
+            <div flex hide-sm hide-xs layout="row" layout-align="center center">
+
+                <!-- LABEL "Dashboard for .. "-->
+                <div layout="row" layout-align="start center">
+                    <span style="padding-right: 8px;" translate="APP.TOOLBAR.TITLE"></span>
+                </div>
+
+                <div layout="row" layout-align="start center">
+                    <div layout="row" layout-align="start center" ng-if="vm.showTitleDevice()">
+                        <md-icon md-svg-src="/img/icons/ic_computer_black.svg"></md-icon>
+                        <span class="truncate" style="padding-left: 5px;">{{vm.getTitleDevice()}}</span>
+                    </div>
+
+                    <div layout="row" layout-align="start center" ng-if="vm.showTitleUser()" style="padding-left: 20px;" >
+
+                        <md-icon aria-label="User" md-svg-src="/img/icons/ic_person_black.svg" ng-if="!vm.isInternetAccessLocked() && (vm.getUserRole() === undefined || vm.getUserRole() === 'OTHER')"></md-icon>
+                        <md-icon aria-label="User" md-svg-src="/img/icons/icons8-teddy-bear.svg" ng-if="!vm.isInternetAccessLocked() && vm.getUserRole() === 'CHILD'"></md-icon>
+                        <md-icon aria-label="User" md-svg-src="/img/icons/baseline-supervisor_account.svg" ng-if="!vm.isInternetAccessLocked() && vm.getUserRole() === 'PARENT' && vm.getNameKey() !== 'SHARED.USER.NAME.STANDARD_USER'"></md-icon>
+                        <md-icon aria-label="User" md-svg-src="/img/icons/ic_devices_black.svg" ng-if="!vm.isInternetAccessLocked() && vm.getUserRole() === 'PARENT' && vm.getNameKey() === 'SHARED.USER.NAME.STANDARD_USER'"></md-icon>
+                        <md-icon md-svg-src="/img/icons/ic_block_black.svg" ng-if="vm.isInternetAccessLocked()"></md-icon>
+                        <span class="truncate" style="padding-left: 5px;">{{vm.getTitleUser() | translate}}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MENU -->
+        <div flex="15" flex-xs="20" layout="row" layout-align="end center" ng-if="vm.isMainState()">
+            <div class="icon-pointer" ng-click="vm.goToSettings();">
+                <md-tooltip md-delay="300">{{'APP.SETTINGS_LINK.TOOLTIP' | translate }}</md-tooltip>
+                <!--<md-icon md-svg-src="/img/icons/ic_dashboard.svg"></md-icon>-->
+                <md-icon style="width: 30px; height: 30px;" md-svg-src="/img/icons/baseline-settings.svg"></md-icon>
+            </div>
+            <eb-dropdown ng-if="vm.isMainState()" content="vm.getContent"></eb-dropdown>
+        </div>
+
+    </div>
+</md-toolbar>
+
+<div layout="column" layout-align="start stretch"
+     flex class="dashboard-app-screen"
+     ui-view>
+    <md-content flex layout="row" layout-align="center center">
+        <div layout="column" layout-align="center center">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </md-content>
+</div>
+
+<!-- Overlay when dashboard is paused due to idleness or inactive tab -->
+<div ng-show="vm.showDashboardOverlay()">
+    <div ng-class="{'dashboard-paused-overlay-hidden': !vm.showDashboardOverlay(), 'dashboard-paused-overlay-visible': vm.showDashboardOverlay()}"
+        layout="column" layout-align="start stretch" layout-fill>
+        <div class="dashboard-paused-overlay" layout="row" layout-align="center center" layout-fill>
+
+            <!-- PAUSED DASHBOARD -->
+            <div ng-if="vm.isDashboardPaused() && !vm.isServerNotRunning()" layout="column" layout-align="center center">
+                <span style="color: white; font-weight: bold; font-size: 18px;" translate="APP.PAUSED.LABEL_TOP"></span>
+                <md-icon md-svg-src="/img/icons/ic_play_circle_outline_black.svg"></md-icon>
+                <span style="color: white; font-weight: bold; font-size: 18px;" translate="APP.PAUSED.LABEL_BOTTOM"></span>
+            </div>
+
+            <!-- SERVER STATUS OTHER THAN RUNNING -->
+            <div ng-if="vm.isServerNotRunning()" layout="column" layout-align="center center">
+                <span style="color: white; font-weight: bold; font-size: 18px;" translate="APP.SERVER_UNAVAILABLE.LABEL_TOP"></span>
+
+                <md-progress-circular ng-if="!vm.isShutDown && vm.getCurrentStatus() !== 'UPDATING' && vm.getCurrentStatus() !== 'SHUTTING_DOWN'" md-diameter="32" md-mode="indeterminate"></md-progress-circular>
+                <md-icon ng-if="vm.getCurrentStatus() === 'UPDATING'" md-svg-src="/img/icons/baseline-update-24px.svg"></md-icon>
+                <md-icon ng-if="vm.isShutDown || vm.getCurrentStatus() === 'SHUTTING_DOWN'" md-svg-src="/img/icons/baseline-power_settings_new.svg"></md-icon>
+
+                <span ng-if="!vm.isShutDown || vm.getCurrentStatus() !== 'DOWN'" style="color: white; font-weight: bold; font-size: 18px;">
+                    {{'APP.SERVER_UNAVAILABLE.' + vm.getCurrentStatus() | translate}}
+                </span>
+
+                <!-- here we could show "turned off", but we cannot know for sure when the device is off. HTTP server may only be down. -->
+                <span ng-if="vm.isShutDown && vm.getCurrentStatus() === 'DOWN'" style="color: white; font-weight: bold; font-size: 18px;">
+                    {{'APP.SERVER_UNAVAILABLE.DOWN' | translate}}
+                    <!--{{'APP.SERVER_UNAVAILABLE.OFF' | translate}}-->
+                </span>
+            </div>
+
+        </div>
+    </div>
+</div>

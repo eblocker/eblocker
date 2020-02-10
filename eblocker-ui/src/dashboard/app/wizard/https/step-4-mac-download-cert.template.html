@@ -1,0 +1,43 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.MAC_ADD_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol>
+            <li>
+                <span translate="WIZARD.HTTPS.MAC_ADD_CERT.STEP_1"></span>
+                <md-button class="md-raised md-secondary"
+                           ng-click="vm.confirmDownload = true;"
+                           ng-href="{{ vm.getCertificateDownloadUrl() }}">
+                    {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+                </md-button>
+            </li>
+            <li translate="WIZARD.HTTPS.MAC_ADD_CERT.STEP_2"></li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-padding>
+        <md-checkbox aria-label="{{'WIZARD.HTTPS.MAC_ADD_CERT.CONFIRM_DOWNLOAD' | translate}}"
+                     class="md-primary" layout="row"
+                     layout-align="start center"
+                     md-theme="eBlockerThemeCheckbox"
+                     ng-model="vm.confirmDownload"
+                     style="margin-bottom: -1px;">
+            {{'WIZARD.HTTPS.MAC_ADD_CERT.CONFIRM_DOWNLOAD' | translate}}
+        </md-checkbox>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button class="md-raised md-secondary" ng-click="vm.backToDashboard()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button class="md-raised md-secondary" ng-click="vm.prevStep()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.nextStep()" ng-disabled="!vm.confirmDownload" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

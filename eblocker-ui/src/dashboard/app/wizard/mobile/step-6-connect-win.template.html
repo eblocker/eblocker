@@ -1,0 +1,28 @@
+<div>
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.MOBILE.CONNECT_WIN.TITLE' | translate }}</h3>
+    </div>
+
+    <div>
+        <ol>
+            <li translate="WIZARD.MOBILE.CONNECT_WIN.STEP_1"></li>
+            <li translate="WIZARD.MOBILE.CONNECT_WIN.STEP_2"></li>
+        </ol>
+    </div>
+
+    <div flex="50" flex-xs="100" layout="row" layout-align="center center">
+        <img style="width: 100%;" src="/img/openVpn/Screenshot_Windows_OpenVPN_taskbar-icon-select.png"/>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

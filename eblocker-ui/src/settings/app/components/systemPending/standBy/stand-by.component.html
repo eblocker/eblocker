@@ -1,0 +1,62 @@
+<md-card-title>
+    <md-toolbar>
+        <div class="md-toolbar-tools"
+             layout="row"
+             md-scroll-shrink>
+            <div>
+                <h2 ng-show="!vm.isReadyToTurnOff && !(vm.showRebootHint && vm.countdown === 0)">{{ 'ADMINCONSOLE.STAND_BY.CARD.TITLE' | translate }}</h2>
+                <h2 ng-show="vm.isReadyToTurnOff">{{ 'ADMINCONSOLE.STAND_BY.CARD.TITLE_DOWN' | translate }}</h2>
+                <h2 ng-show="vm.showRebootHint && vm.countdown === 0">{{ 'ADMINCONSOLE.STAND_BY.CARD.TITLE_PENDING' | translate }}</h2>
+            </div>
+        </div>
+    </md-toolbar>
+</md-card-title>
+<md-card-content>
+    <div ng-show="vm.exeState === 'DOWN'" layout="column" layout-padding>
+        <div ng-show="vm.isReboot && !vm.showRebootHint"
+             layout="row" layout-align="center center">
+            <!-- Simply wait for reboot, system will come back up -->
+            <span translate="ADMINCONSOLE.STAND_BY.CARD.DOWN.WAIT"></span>
+        </div>
+        <div ng-show="vm.isReboot && vm.showRebootHint && vm.countdown > 0"
+             layout="row" layout-align="center center">
+            <!-- Keep waiting for reboot, system might come back up -->
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.WAIT_LONGER' | translate:{sec: vm.countdown}:"messageformat"}}
+        </div>
+        <div ng-show="vm.isReboot && vm.showRebootHint && vm.countdown === 0"
+             layout="row" layout-align="center center">
+            <!-- Stop waiting for reboot, system will probably not come back up -->
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.WAIT_DONE' | translate }}
+        </div>
+        <div ng-show="vm.isReadyToTurnOff"
+             layout="row" layout-align="center center">
+            <!-- User may turn off system -->
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.OFF' | translate }}
+        </div>
+        <div ng-show="!vm.isReboot && !vm.isReadyToTurnOff && !vm.isPasswordReset"
+             layout="row" layout-align="center center">
+            <!--
+             Device is DOWN, we are not rebooting, it's not ready to turn off (60 sec wait),
+             so we are waiting for it to shut down.
+            -->
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.SHUTDOWN_WAIT' | translate }}
+        </div>
+
+        <div ng-show="vm.isPasswordReset">
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.PW_RESET_WAIT' | translate }}
+        </div>
+        <!-- Show "Do not unplug power" warning -->
+        <div ng-show="(vm.isReboot && !vm.showRebootHint && !vm.isPasswordReset) || (vm.isReboot && vm.showRebootHint && vm.countdown > 0 && !vm.isPasswordReset) || (!vm.isReboot && !vm.isReadyToTurnOff && !vm.isPasswordReset)"
+             layout="row" layout-align="center center">
+            <span style="font-weight: bold;">{{ 'ADMINCONSOLE.STAND_BY.CARD.DOWN.DO_NOT_DISCONNECT' | translate }}</span>
+        </div>
+    </div>
+    <div ng-show="vm.exeState !== 'DOWN'"
+         layout="row"
+         layout-align="center center"
+         layout-padding>
+        <div>
+            {{ 'ADMINCONSOLE.STAND_BY.CARD.UP.WAIT' | translate }}
+        </div>
+    </div>
+</md-card-content>

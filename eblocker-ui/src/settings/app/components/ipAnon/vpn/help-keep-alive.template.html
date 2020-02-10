@@ -1,0 +1,26 @@
+<div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab>
+            <md-tab-label>{{ 'HELP_ICON.TAB.OVERVIEW' | translate }}</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" class="help-tab">
+                    <div style="margin-top: 10px;" class="md-headline">
+                        {{ 'HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.TITLE' | translate}}
+                    </div>
+                    <div>
+                        <p translate="HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.P1"></p>
+                        <p translate="HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.P2"></p>
+                    </div>
+                    <div>
+                        <md-button class="md-primary"
+                                   ng-href="{{ 'HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.LINK_URL' | translate}}"
+                                   aria-label="{{ 'HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.LINK_TEXT' | translate}}"
+                                   translate="HELP_ICON.ANON.VPN_KEEP_ALIVE.OVERVIEW.LINK_TEXT"
+                                   target="_blank">
+                        </md-button>
+                    </div>
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+    </md-tabs>
+</div>

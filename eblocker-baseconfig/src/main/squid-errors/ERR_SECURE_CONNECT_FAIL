@@ -1,0 +1,13 @@
+<html>
+<body>
+<script>
+var context = JSON.parse('%L');
+window.location = 'https://' + context.ip + ':3443/dashboard/#!/blocked/ERR_SECURE_CONNECT_FAIL?error=' + window.encodeURIComponent('%D') +
+    '&sysErrorCode=' + window.encodeURIComponent('%e') +
+    '&appErrorCode=' + window.encodeURIComponent('%x') +
+    '&target='       + window.encodeURIComponent(document.location.href) +
+    '&token='        + context.token;
+</script>
+</body>
+</html>
+

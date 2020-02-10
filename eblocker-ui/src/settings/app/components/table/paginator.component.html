@@ -1,0 +1,12 @@
+<md-table-pagination md-limit="vm.config.limit"
+                     md-label="{
+                        of: ('ADMINCONSOLE.TABLE.PAGINATOR.OF' | translate),
+                        page: ('ADMINCONSOLE.TABLE.PAGINATOR.PAGE' | translate),
+                        rowsPerPage: ('ADMINCONSOLE.TABLE.PAGINATOR.ROWS' | translate)
+                     }"
+                     md-boundary-links="true"
+                     md-limit-options="vm.config.limitOptions"
+                     md-page="vm.config.page"
+                     md-total="{{ vm.data.length }}"
+                     md-page-select>
+</md-table-pagination>

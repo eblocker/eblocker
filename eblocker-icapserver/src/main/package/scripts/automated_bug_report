@@ -1,0 +1,283 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+#
+# This script generates an automatic bug/status report, which will make it easier to troubleshoot problems and error cases
+# As first argument it expects a valid system token for querying service endpoints.
+#
+
+FILE=/var/log/eblocker/eblocker-status.log
+TGZFILE=eblocker-status.tgz
+SEP="#################################"
+AUTHZ_HEADER='Authorization: Bearer '$1
+CLIENT_IP=$2
+
+if [ -f $FILE ];
+then
+    echo "Writing into file: $FILE"
+else
+    echo "Creating file $FILE and writing result into it"
+    touch $FILE
+fi
+
+### write header
+    echo $SEP > $FILE
+    echo "Automated eBlocker diagnostics report" >> $FILE
+    DATE=$(date)
+    echo "Date: $DATE" >> $FILE
+    UPTIME=$(uptime)
+    echo "Uptime: $UPTIME" >> $FILE
+    echo "Created by: " $CLIENT_IP >> $FILE
+
+### Services ###
+    echo $SEP >> $FILE
+    echo "List of services running:" >> $FILE
+    echo $SEP >> $FILE
+    service --status-all 2>/dev/null | sed 's/arpread/process0/g' | sed 's/arpwrite/process1/g' | sed 's/icapserver/process2/g' | sed 's/ntp/process3/g' | sed 's/redis-server/process4/g' | sed 's/redsocks/process5/g' | sed 's/squid/process6/g' >> $FILE
+### System ###
+    echo $SEP >> $FILE
+    echo "System status:" >> $FILE
+    echo $SEP >> $FILE
+
+    echo "RAM:" >> $FILE
+    cat /proc/meminfo >> $FILE
+    echo $SEP >> $FILE
+
+    #PARTITIONS=$(cat /proc/partitions)
+    #DISKUSAGE=$(cd / && du -s *)
+    #echo "Partitions:" >> $FILE
+    #cat /proc/partitions >> $FILE
+    #echo $SEP >> $FILE
+    echo "Partitions and disk usage:" >> $FILE
+    echo $SEP >> $FILE
+    df -h >> $FILE
+    #cd / && du -s * >> $FILE
+
+    echo "Timezone:" >> $FILE
+    cat /etc/timezone >> $FILE
+
+### Network ###
+    echo $SEP >> $FILE
+    echo "Network status:" >> $FILE
+    echo $SEP >> $FILE
+
+    NETWORKSTATE=$(redis-cli get networkState)
+    echo "Network state: $NETWORKSTATE" >> $FILE
+    IP=$(ifconfig eth0)
+    NETWORK_CONFIG=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/network)
+    DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
+    GATEWAY=$(redis-cli get gateway)
+    DNS_SERVER=$(cat /etc/resolv.conf)
+    DHCP_LEASES=$(cat /var/lib/dhcp/dhcpd.leases)
+    TRACEROUTE_EB=$(traceroute my.eblocker.com)
+
+    echo "ifconfig eth0:" >> $FILE
+    ifconfig eth0 >> $FILE
+    echo $SEP >> $FILE
+    echo "Last DHCP event:" >> $FILE
+    cat /var/log/eblocker/lastreceived_dhcp_ip.log >> $FILE
+    echo $SEP >> $FILE
+    echo "Gateway: $GATEWAY" >> $FILE
+    echo $SEP >> $FILE
+    echo "DNS-Server: $DNS_SERVER" >> $FILE
+    echo $SEP >> $FILE
+    echo "Traceroute to my.eblocker.com:" >> $FILE
+    traceroute my.eblocker.com >> $FILE
+    echo $SEP >> $FILE
+    echo "IPv6 interface addresses: " >> $FILE
+    cat /proc/net/if_inet6 >> $FILE
+    echo $SEP >> $FILE
+    echo "DHCP leases of isc-dhcp-server for clients:" >> $FILE
+    cat /var/lib/dhcp/dhcpd.leases >> $FILE
+    echo $SEP >> $FILE
+    echo "Network packet info:" >> $FILE
+    netstat -s >> $FILE
+    echo $SEP >> $FILE
+    echo "Network configuration:" >> $FILE
+    echo $NETWORK_CONFIG >> $FILE
+
+
+### Updates ###
+    echo $SEP >> $FILE
+    echo "Updates: " >> $FILE
+    echo $SEP >> $FILE
+
+    VERSION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/updates/status)
+    REGISTRATION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/registration)
+
+
+    echo "Installed eBlockerOS version: $VERSION" >> $FILE
+    echo $SEP >> $FILE
+    echo "Registration status: " >> $FILE
+    echo $REGISTRATION >> $FILE
+
+
+    #FIXME disabled showing the last update log in the report
+    #echo $SEP >> $FILE
+    #echo "Last update log:" >> $FILE
+    #cat /var/log/eblocker/install-eblocker-updates.log >> $FILE
+
+
+### TLS ###
+    echo $SEP >> $FILE
+    echo "TLS: " >> $FILE
+    echo $SEP >> $FILE
+
+    TLS_ENABLED=$(redis-cli get ssl_enabled)
+    ROOT_CA_NOT_VALID_AFTER=$(openssl x509 -in /opt/eblocker-icap/keys/ssl/eblocker.cert -text | grep 'Not')
+
+    echo "TLS support enabled: $TLS_ENABLED" >> $FILE
+    echo $SEP >> $FILE
+    echo "Root CA certificate validity: " >> $FILE
+    echo $ROOT_CA_NOT_VALID_AFTER >> $FILE
+
+### Devices ###
+    echo $SEP >> $FILE
+    echo "List of devices:" >> $FILE
+
+    DEVICES_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/devices)
+
+    echo $DEVICES_JSON >> $FILE
+
+### DNS ###
+    DNSSETTINGSFILERELATIVE=dnssettings.log
+    DNSSETTINGSFILE=/var/log/eblocker/$DNSSETTINGSFILERELATIVE
+    echo "DNS Settings:" > $DNSSETTINGSFILE
+    # DNS Server Config
+    echo "DNS Server Config:" >> $DNSSETTINGSFILE
+    redis-cli get DnsServerConfig >> $DNSSETTINGSFILE
+    echo "eBlocker DNS Server State:" >> $DNSSETTINGSFILE
+    redis-cli get EblockerDnsServerState >> $DNSSETTINGSFILE
+
+### Anon ###
+    echo $SEP >> $FILE
+    echo "Anonymization settings:" >> $FILE
+    echo $SEP >> $FILE
+
+    WEBRTC_STATUS=$(redis-cli get webrtc_block_enabled) #default false
+    REFERRER_BLOCKING_STATUS=$(redis-cli get http_referer_remove_enabled) #default false
+    GOOGLE_CPC_STATUS=$(redis-cli get google_CPC_responder_enabled) #default true
+    LIST_TOR_EXIT_NODES=$(redis-cli get torCurrentExitNodes)
+
+    echo "WebRTC blocking enabled: $WEBRTC_STATUS" >> $FILE
+    echo $SEP >> $FILE
+    echo "HTTP Referrer removal enabled: $REFERRER_BLOCKING_STATUS" >> $FILE
+    echo $SEP >> $FILE
+    echo "Google Captive Portal responding enabled: $GOOGLE_CPC_STATUS" >> $FILE
+    echo $SEP >> $FILE
+    echo "List of currently selected Tor Exit node countries: " >> $FILE
+    echo $LIST_TOR_EXIT_NODES >> $FILE
+
+### Do Not Track
+    echo $SEP >> $FILE
+    echo "Do Not Track setting: $(redis-cli GET dnt_header_enabled)" >> $FILE
+
+### iptables configuration ###
+    echo $SEP >> $FILE
+    echo "Iptables configuration:" >> $FILE
+    iptables-save >> $FILE
+
+### redis events ###
+    echo $SEP >> $FILE
+    echo "Redis events:" >> $FILE
+    redis-cli lrange events 0 -1 >> $FILE
+
+### eblocker-device.properties###
+    echo $SEP >> $FILE
+    echo "eblocker-device.properties:" >> $FILE
+    cat /etc/eblocker-device.properties >>  $FILE
+
+### eBlocker mobile (openVPN server) ###
+    echo $SEP >> $FILE
+    echo "OpenVPN server directory (/etc/openvpn):" >> $FILE
+    ls -lR /etc/openvpn/ >> $FILE
+
+### Schedulers ###
+    echo $SEP >> $FILE
+    echo "Schedulers:" >> $FILE
+
+    STATS_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/tasks/stats)
+
+    echo $STATS_JSON >> $FILE
+
+### Tasks ###
+    echo $SEP >> $FILE
+    echo "Tasks:" >> $FILE
+
+    TASKS_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/tasks/log)
+
+    echo $TASKS_JSON >> $FILE
+
+### Squid status ###
+    echo $SEP >> $FILE
+    echo "Squid status:" >> $FILE
+    service squid status >> $FILE
+
+### Certvalidator status ###
+    echo $SEP >> $FILE
+    echo "Certvalidator status:" >> $FILE
+    service certvalidator status >> $FILE
+
+### Include systemd-journal if applicable (the last 10000 lines) ###
+    TMPDIR=$(dirname $(mktemp -u))
+    JOURNAL_CATALOG=journal_catalog.log
+    if [ -x "$(command -v journalctl)" ]; then
+        journalctl -x | tail -n 10000 > $TMPDIR/$JOURNAL_CATALOG
+    fi
+### Include current syslog (last 10000 lines should not exceed 100 kB when compressed)
+    TMPDIR=$(dirname $(mktemp -u))
+    LOGFILESYSLOG=syslog.log
+    tail -n 10000 /var/log/syslog > $TMPDIR/$LOGFILESYSLOG
+
+### Compress bugreport and other files ###
+    LOGFILELOCATION=/var/log/eblocker
+    cd $LOGFILELOCATION
+
+### System Monitoring ###
+    SYSSTATINTERMED=sysstat
+    if [ ! -d "$SYSSTATINTERMED" ]; then
+        mkdir $SYSSTATINTERMED
+    fi
+    SYSSTATSRC=/var/log/sysstat
+    cp $SYSSTATSRC/sa?? ./$SYSSTATINTERMED/ -n > /dev/null 2>&1
+
+    APTGETLOG=/var/log/apt
+    APTGETLOGINTERMED=apt
+    if [ ! -d "$APTGETLOGINTERMED" ]; then
+        mkdir $APTGETLOGINTERMED
+    fi
+    cp $APTGETLOG/{term,history}.log* $APTGETLOGINTERMED/ > /dev/null 2>&1
+
+    LOGFILESYSTEM=eblocker-system.log
+    LOGFILEUPDATE=install-eblocker-updates.log
+    LOGFILEBUGREPORT=eblocker-status.log
+    LOGFILEOPENVPN=openvpn.log
+    LOGFILEDNS=eblocker-dns.log
+    LOGFILECERTVALIDATOR=certificate-validator.log
+
+    BUNDLE="$LOGFILESYSTEM $LOGFILEUPDATE $LOGFILEBUGREPORT $DNSSETTINGSFILERELATIVE $SYSSTATINTERMED/sa?? $APTGETLOGINTERMED -C $TMPDIR $JOURNAL_CATALOG -C /opt/eblocker-dns/log $LOGFILEDNS -C $TMPDIR $LOGFILESYSLOG -C /var/log/certvalidator $LOGFILECERTVALIDATOR"
+    if [ -e /var/log/$LOGFILEOPENVPN ]; then
+        BUNDLE="$BUNDLE -C /var/log $LOGFILEOPENVPN"
+    fi
+
+    tar -cvzf $TGZFILE $BUNDLE
+
+### Cleanup temporary files ###
+    rm ./$SYSSTATINTERMED/sa?? > /dev/null 2>&1
+    rm -f $TMPDIR/$LOGFILESYSLOG
+    rm -f $TMPDIR/$JOURNAL_CATALOG
+    rm -f ./$APTGETLOGINTERMED/* > /dev/null 2>&1

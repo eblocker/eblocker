@@ -1,0 +1,113 @@
+<md-dialog class="message-dialog" aria-label="{{'CONTROLBAR.DIALOGS.MESSAGE.CENTER.TITLE' | translate}}" style="max-height: 80%; display:inline-block; width: 700px; overflow-x: hidden;">
+    <md-dialog-content style="height: 100%;min-height: 100%;">
+
+        <div class="messages-custom-toolbar">
+            <div layout="row" layout-align="start center" flex layout-padding>
+                <div layout="row" layout-xs="column" flex="90" flex-xs="80" layout-align="start center">
+
+                    <div flex-gt-xs="50" layout="row" layout-align="start center" layout-fill>
+                        <h2 class="md-flex">{{'CONTROLBAR.DIALOGS.MESSAGE.CENTER.TITLE' |  translate }}: {{ctrl.messages.length}}</h2>
+                    </div>
+                </div>
+
+                <div flex="10" flex-xs="20">
+                    <md-button ng-click="ctrl.close()" style="min-width: 0;" class="no-frame">
+                        <md-icon aria-label="Close" class="no-frame" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+                    </md-button>
+                </div>
+
+            </div>
+        </div>
+
+        <md-content ng-if="ctrl.messages !== undefined && ctrl.messages.length > 0" layout-padding>
+            <div layout="column" layout-align="start start" style="height: 100%;min-height: 100%;">
+
+                <div ng-mouseenter="message.showCloseOption = true"
+                     ng-mouseleave="message.showCloseOption = false"
+                     layout="column"
+                     layout-align="start start"
+                     ng-repeat="message in ctrl.messages"
+                     style="width:100%;"
+                     layout-padding>
+
+                    <!-- Date and Close Icon -->
+                    <div class="md-caption" layout="row" style="width: 100%; height: 24px;">
+                        <div flex="50" layout="row" layout-align="start center">
+                            <span>{{ message.displayDate }}</span>
+                        </div>
+
+                        <div flex="50" layout="row" layout-align="end center">
+                            <span class="no-frame controlbar-close-message-wrapper">
+                                <md-tooltip>{{ 'CONTROLBAR.DIALOGS.MESSAGE.CENTER.TOOLTIP_CLOSE' | translate }}</md-tooltip>
+                                <md-icon ng-if="message.messageSeverity !== 'ALERT' && message.showCloseOption"
+                                         aria-label="{{ 'CONTROLBAR.DIALOGS.MESSAGE.CENTER.TOOLTIP_CLOSE' | translate }}"
+                                         ng-click="ctrl.clickedHideButton(message);"
+                                         md-svg-src="/img/icons/ic_close_black_24px.svg"
+                                         style="cursor: pointer;"
+                                         class="no-frame">
+                                </md-icon>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="md-title" layout="row" layout-align="start center">
+                        <span ng-if="message.messageSeverity === 'ALERT'" style="padding-right: 15px;">
+                            <md-icon md-svg-src="/img/icons/ic_error.svg"
+                                     class="icon-messages-alert">
+                            </md-icon>
+                        </span>
+                        <span>
+                            {{ message.title ? message.title : message.titleKey | translate: message.context }}
+                        </span>
+                    </div>
+
+                    <!-- Content -->
+                    <div layout-padding>
+                        {{ message.content ? message.content : message.contentKey | translate: message.context }}
+                    </div>
+
+                    <!-- Action Button and do-not-show-again -->
+                    <div layout="row" layout-align="start center" flex layout-fill>
+                        <div flex="50" flex-xs="30">
+                            <a ng-if="message.actionButtonUrlKey != undefined" href="{{message.actionButtonUrlKey | translate: message.context}}" target="_blank">
+                                <md-button class="md-secondary md-raised" ng-click="ctrl.clickedActionButton(message)">
+                                    {{ message.actionButtonLabelKey | translate }}
+                                </md-button>
+                            </a>
+                        </div>
+
+                        <div flex="50" flex-xs="30">
+                            <md-button ng-if="message.actionButtonUrlKey == undefined" class="md-secondary md-raised" ng-click="ctrl.clickedActionButton(message)">
+                                {{ message.actionButtonLabelKey | translate }}
+                            </md-button>
+                        </div>
+
+                        <div flex="50" flex-xs="70" layout="row" layout-align="center center" ng-if="message.showDoNotShowAgain">
+                            <md-checkbox md-theme="eBlockerThemeCheckbox" ng-model="message.doNotShowAgain"
+                                         class="md-primary"
+                                         ng-click="ctrl.updateDoNotShowAgain(message)"
+                                         style="margin-top: 16px;"
+                                         layout="row" layout-align="center center">
+                                <span>{{ 'CONTROLBAR.DIALOGS.MESSAGE.CENTER.DO_NOT_SHOW_AGAIN' | translate}}</span>
+                            </md-checkbox>
+                        </div>
+                    </div>
+
+                    <md-divider style="width: 97%; padding: 0;" ng-hide="$last"></md-divider>
+                </div>
+            </div>
+
+        </md-content>
+
+        <div ng-if="ctrl.messages === undefined || ctrl.messages.length === 0" layout-padding layout="column" layout-align="center center">
+            <div class="md-title">
+                {{ 'CONTROLBAR.DIALOGS.MESSAGE.CENTER.MESSAGE_NO_NEW' | translate }}
+            </div>
+            <!--<div>-->
+                <!--{{ 'CONTROLBAR.DIALOGS.MESSAGE.CENTER.MESSAGE_NO_NEW_EXPLAIN' | translate }}-->
+            <!--</div>-->
+        </div>
+
+    </md-dialog-content>
+</md-dialog>

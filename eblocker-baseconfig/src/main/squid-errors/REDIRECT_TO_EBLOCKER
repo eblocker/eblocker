@@ -1,0 +1,18 @@
+<html>
+<body>
+<script>
+var context = JSON.parse('%L');
+var is_https = (/^https:/i).test(document.location.href);
+var scheme = is_https ? 'https' : 'http';
+var port   = is_https ? 3443    : 3000;
+
+window.location = scheme + '://' + context.ip + ':' + port + '/dashboard/#!/blocked/' + window.encodeURIComponent('%c') +
+    '?error=' + window.encodeURIComponent('%c') +
+    '&errorDetails=' + window.encodeURIComponent('%D') +
+    '&externalAclMessage=' + window.encodeURIComponent('%o') +
+    '&target=' + window.encodeURIComponent(document.location.href) +
+    '&token=' + context.token;
+</script>
+</body>
+</html>
+

@@ -1,0 +1,129 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout-padding>
+
+        <div>
+            <eb-help-icon template="app/components/vpnHome/status/help-vpn-home.template.html">
+            </eb-help-icon>
+        </div>
+
+        <div layout="row" layout-align="start center">
+            <div>
+                <md-switch md-theme="eBlockerThemeSwitch" class="md-primary"
+                           ng-model="vm.status.isRunning" ng-change="vm.toggleServerStatus()" ng-disabled="vm.isTogglingStatus">
+                    {{ vm.status.isRunning ? 'ADMINCONSOLE.VPN_HOME_STATUS.SWITCH_VPN.ON' : 'ADMINCONSOLE.VPN_HOME_STATUS.SWITCH_VPN.OFF' | translate }}
+                </md-switch>
+            </div>
+
+            <div style="margin-left: 12px;" ng-if="vm.isTogglingStatus">
+                <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div>
+                <h3 style="margin-top: 0;" translate="ADMINCONSOLE.VPN_HOME_STATUS.LABEL_SETTINGS"></h3>
+            </div>
+
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL_EXTERNAL_TYPE' | translate }}" config="vm.externalAddressConfig"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL_EXTERNAL_HOST_IP' | translate }}" config="vm.ipOrHostConfig"></eb-label-container>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL_MOBILE_PORT' | translate }}" config="vm.ebMobilePortConfig"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL_ROUTER_PORT' | translate }}" config="vm.mappedPortConfig"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{ 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL_PORT_FORWARDING' | translate }}" config="vm.portForwardingConfig"></eb-label-container>
+                </div>
+            </div>
+
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div layout="column">
+
+                <div>
+                    <h3 style="margin-top: 0;" translate="ADMINCONSOLE.VPN_HOME_STATUS.LABEL_CONNECTION_TEST"></h3>
+                </div>
+
+                <div layout="row" layout-align="start center">
+                    <div>
+                        <md-button type="button"
+                                   ng-disabled="vm.isTestingConnection || vm.status.isRunning"
+                                   ng-hide="vm.isTestingConnection"
+                                   ng-click="vm.testConnection()"
+                                   class="md-raised md-secondary">
+                            {{ 'ADMINCONSOLE.VPN_HOME_STATUS.ACTION.TEST_CONNECTION' | translate }}
+                            <md-tooltip ng-if="vm.status.isRunning" md-delay="300">{{'ADMINCONSOLE.VPN_HOME_STATUS.TOOLTIP.CONNECTION_TEST_DISABLED' | translate}}</md-tooltip>
+                        </md-button>
+                        <md-button type="button"
+                                   ng-show="vm.isTestingConnection"
+                                   ng-click="vm.cancelTestConnection()"
+                                   class="md-raised md-secondary">
+                            {{ 'ADMINCONSOLE.VPN_HOME_STATUS.ACTION.CANCEL_TEST_CONNECTION' | translate }}
+                        </md-button>
+                    </div>
+
+                    <!-- Testing connection  IN PROGRESS -->
+                    <div flex-xs="100" flex-gt-xs="50" ng-show="vm.isTestingConnection" layout="row" layout-align="start center">
+                        <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+                        <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.VPN_HOME_STATUS.CONNECTION_TEST.LABEL_WAITING' | translate}}</span>
+                    </div>
+
+                    <!-- Testing connection DONE -->
+                    <div flex-xs="100" flex-gt-xs="50" ng-show="!vm.isTestingConnection && (vm.connectionOk || vm.connectionError)">
+                        <!-- Testing connection SUCCESS -->
+                        <div ng-show="vm.connectionOk" layout="row" layout-align="start center">
+                            <span class="content-ok" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_STATUS.CONNECTION_TEST.LABEL_SUCCESS' | translate}}</span>
+                            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                        </div>
+                        <!-- Testing connection ERROR -->
+                        <div ng-show="vm.connectionError" layout="row" layout-align="start center">
+                            <span class="content-error" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_STATUS.CONNECTION_TEST.LABEL_ERROR' | translate}}</span>
+                            <md-icon class="content-error" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div>
+                <h3 style="margin-top: 0;" translate="ADMINCONSOLE.VPN_HOME_STATUS.LABEL_WIZARD_REPEAT"></h3>
+            </div>
+
+            <div layout="row" layout-xs="column">
+                <div flex-gt-xs="50" layout="row" layout-align="start center">
+                    <md-button ng-click="vm.repeatWizard()" class="md-raised" ng-disabled="vm.status.isRunning">
+                        {{ 'ADMINCONSOLE.VPN_HOME_STATUS.ACTION.REPEAT_WIZARD' | translate }}
+                        <md-tooltip ng-if="vm.status.isRunning" md-delay="300">{{'ADMINCONSOLE.VPN_HOME_STATUS.TOOLTIP.WIZARD_REPEAT_DISABLED' | translate}}</md-tooltip>
+                    </md-button>
+                </div>
+
+                <div flex-gt-xs="50" layout="row" layout-gt-xs-align="end center">
+                    <md-button ng-click="vm.resetServer()" ng-disabled="vm.status.isFirstStart" class="md-raised eb-delete-button">
+                        {{ 'ADMINCONSOLE.VPN_HOME_STATUS.ACTION.RESET' | translate }}
+                        <md-tooltip ng-if="vm.status.isFirstStart" md-delay="300">{{'ADMINCONSOLE.VPN_HOME_STATUS.TOOLTIP.RESET_DISABLED' | translate }}</md-tooltip>
+                    </md-button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

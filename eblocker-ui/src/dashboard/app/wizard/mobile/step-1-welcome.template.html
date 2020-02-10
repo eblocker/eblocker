@@ -1,0 +1,21 @@
+<div>
+    <div>
+        <p translate="WIZARD.MOBILE.INTRO.EXPLAIN"></p>
+        <p translate="WIZARD.MOBILE.INTRO.EXPLAIN_STEPS"></p>
+        <p>
+            <ol>
+                <li translate="WIZARD.MOBILE.INTRO.EXPLAIN_STEP_1"></li>
+                <li translate="WIZARD.MOBILE.INTRO.EXPLAIN_STEP_2"></li>
+            </ol>
+        </p>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

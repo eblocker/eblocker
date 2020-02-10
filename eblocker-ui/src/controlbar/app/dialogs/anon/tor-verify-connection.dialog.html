@@ -1,0 +1,31 @@
+<md-dialog layout-padding
+           style="max-width: 800px;"
+           aria-label="{{'CONTROLBAR.DIALOGS.TOR.VERIFY.TITLE' | translate}}">
+    <md-dialog-content layout-padding>
+        <h2>{{'CONTROLBAR.DIALOGS.TOR.VERIFY.TITLE' | translate}}</h2>
+        <p class="dialog-paragraph-text">{{'CONTROLBAR.DIALOGS.TOR.VERIFY.BODY' | translate}}</p>
+
+        <md-content ng-if="ctrl.isLoading" layout="row" layout-align="center center">
+            <md-progress-circular layout="row" layout-align="center center"
+                                  md-mode="indeterminate" md-diameter="32">
+            </md-progress-circular>
+        </md-content>
+
+        <md-content>
+            <md-list>
+                <md-list-item class="md-3-list" ng-repeat="checkSite in ctrl.checkSites" ng-click="ctrl.goToSite(checkSite)">
+                    <!--<md-icon md-svg-src="/img/icons/ic_public_black.svg"></md-icon>-->
+                    <md-icon md-svg-src="/img/icons/ic_network_check.svg"></md-icon>
+                    <div style="width: 80%;" class="md-list-item-text" layout="column">
+                        <span class="truncate">{{checkSite.url}}</span>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row" layout-align="start center">
+        <md-button type="button" ng-click="ctrl.closeDialog()" class="md-raised md-secondary">{{'CONTROLBAR.DIALOGS.TOR.VERIFY.BUTTON.CANCEL' | translate }}</md-button>
+    </md-dialog-actions>
+</md-dialog>
+

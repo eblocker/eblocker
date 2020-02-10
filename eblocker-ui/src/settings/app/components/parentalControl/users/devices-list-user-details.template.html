@@ -1,0 +1,45 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <md-icon ng-show="!entry.isEblocker && !entry.isGateway && !(entry.isOnline && entry.paused)" ng-class="{'eb-table-icon-active': entry.enabled}" md-svg-src="/img/icons/ic_computer_black.svg" aria-label="Is device enbaled"></md-icon>
+    <md-icon ng-show="!entry.isEblocker && entry.isGateway" md-svg-src="/img/icons/ic_router_black.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_GATEWAY' | translate}}"></md-icon>
+    <md-icon ng-show="entry.isEblocker" md-svg-src="/img/icons/eblocker.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_EBLOCKER' | translate}}"></md-icon>
+    <md-tooltip md-delay="300" ng-show="entry.enabled && !entry.isEblocker && !entry.isGateway">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_ENABLED' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-show="(!entry.enabled && !entry.paused) && (!entry.isEblocker || !entry.isGateway)">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_DISABLED' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-show="entry.isEblocker">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_EBLOCKER' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-show="entry.isGateway">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_GATEWAY' | translate}}</md-tooltip>
+
+    <!-- PAUSE ICON -->
+    <md-icon ng-show="entry.isOnline && entry.paused" class="eb-table-icon-active" md-svg-src="/img/icons/ic_pause_circle_outline.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_PAUSED' | translate}}">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_PAUSED' | translate }}</md-tooltip>
+    </md-icon>
+
+</div>
+
+<!-- NAME -->
+<div flex>
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+    <md-tooltip md-delay="300">{{entry.name}}</md-tooltip>
+</div>
+
+<!-- STATE: online / offline -->
+<div flex hide-xs layout="row">
+    <!-- ONLINE ICON -->
+    <div ng-show="entry.isOnlineSortable === 0" style="background-color: red; height: 16px; width: 16px;border-radius: 16px;"></div>
+    <div ng-show="entry.isOnlineSortable === 1" style="background-color: green; height: 16px; width: 16px;border-radius: 16px;"></div>
+</div>
+
+<!-- VENDOR -->
+<div flex hide-xs>
+    <span ng-show="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor}}</span>
+    <md-tooltip md-delay="300" ng-if="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor | translate}}</md-tooltip>
+</div>
+
+<!-- IP -->
+<div flex>
+    <span ng-show="entry.displayIpAddresses !== undefined && entry.displayIpAddresses !== ''">{{entry.displayIpAddresses}}</span>
+    <span ng-show="entry.displayIpAddresses === undefined || entry.displayIpAddresses === ''">{{'ADMINCONSOLE.DEVICES_LIST.DEVICE_NOT_CONNECTED' | translate}}</span>
+    <md-tooltip ng-if="entry.displayIpAddresses !== undefined && entry.displayIpAddresses !== ''" md-delay="300">{{entry.displayIpAddresses}}</md-tooltip>
+    <md-tooltip ng-if="entry.displayIpAddresses === undefined || entry.displayIpAddresses === ''" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.DEVICE_NOT_CONNECTED' | translate}}</md-tooltip>
+    <!--<span ng-show="entry.isCurrentDevice">{{'ADMINCONSOLE.DEVICES_LIST.LABEL_CURRENT_DEVICE' | translate}}</span>-->
+</div>
+

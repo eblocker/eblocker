@@ -1,0 +1,109 @@
+<div layout-padding layout="column">
+
+    <!-- STEP ONE: EBLOCKER AS DHCP AND REBOOT -->
+    <div ng-show="vm.individualExecutionStep === 0">
+        <div>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_HEADER' | translate }}</p>
+            <p ng-show="!vm.settingsApplied">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_TEXT_EXECUTE' | translate }}</p>
+            <p ng-show="vm.settingsApplied && vm.rebootNecessary">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_TEXT_REBOOT' | translate }}</p>
+            <p>
+                <span style="font-weight: bold">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_WARN_PRE' | translate }}</span>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_WARN_TEXT' | translate }}</span>
+            </p>
+        </div>
+
+        <div ng-show="vm.isExecuting" layout="row" layout-align="start center">
+            <div>
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP1_LABEL_EXECUTE_WAIT' | translate }}</span>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+            <md-button type="button" ng-show="!vm.settingsApplied && !vm.rebootNecessary" ng-disabled="vm.isExecuting" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="!vm.settingsApplied" ng-disabled="vm.isExecuting" ng-click="vm.executeForIndividualSettings()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.EXECUTE' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="vm.settingsApplied && !vm.rebootNecessary" ng-click="vm.cancel()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.OK' | translate }}
+            </md-button>
+            <md-button type="button" ng-show="vm.settingsApplied && vm.rebootNecessary" ng-click="vm.rebootForIndividualSettings()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.REBOOT' | translate }}
+            </md-button>
+        </div>
+    </div>
+
+    <!-- STEP ONE: DEACTIVATE DHCP OF NETWORK -->
+    <div ng-show="vm.individualExecutionStep === 1">
+        <div>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_HEADER' | translate }}</p>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_TEXT1' | translate }}</p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_TEXT2_PRE' | translate }}</span>
+                <a target="_blank" ng-href="{{ 'ADMINCONSOLE.NETWORK_WIZARD.KNOWLEDGE_DB_URL' | translate }}">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_TEXT2_LINK' | translate }}</a>
+            </p>
+            <p>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_ADDRESS_LABEL' | translate }}</span>
+                <a target="_blank" ng-href="http://{{vm.configuration.gateway}}/">http://{{vm.configuration.gateway}}/</a>
+            </p>
+        </div>
+
+        <div ng-show="vm.isStillGettingDhcpLeases && !vm.useCheckmarkToConfirmDhcpDown" layout="row" layout-align="start center">
+            <div>
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_LABEL_WAIT_DHCP' | translate }}</span>
+        </div>
+
+        <div ng-show="!vm.isStillGettingDhcpLeases && vm.useCheckmarkToConfirmDhcpDown" layout="column">
+            <div layout-gt-sm="row" layout="column" layout-align="start center">
+                <div flex="80">
+                    <span style="font-style: italic;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_LABEL_FAIL_DHCP' | translate }}</span>
+                </div>
+                <div flex="20">
+                    <md-button type="button" ng-click="vm.recheckDhcpIndividual()" class="md-raised md-secondary">
+                        {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.RETRY_DHCP' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="start center" style="margin-top: 25px;">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.isDhcpDisabled">
+                    {{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP2_CHECKBOX_LABEL' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.nextIndividualExecutionStep()" ng-disabled="!vm.isDhcpDisabled" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate }}
+            </md-button>
+        </div>
+    </div>
+
+    <!-- STEP ONE: FINISH -->
+    <div ng-show="vm.individualExecutionStep === 2">
+        <div>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP3_HEADER' | translate }}</p>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP3_TEXT1' | translate }}</p>
+            <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP3_TEXT2' | translate }}</p>
+            <p>
+                <span style="font-weight: bold;">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP3_WARN_PRE' | translate }}</span>
+                <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.STEP3_WARN_TEXT' | translate }}</span>
+            </p>
+        </div>
+
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.finish()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.OK' | translate }}
+            </md-button>
+        </div>
+    </div>
+
+</div>
+

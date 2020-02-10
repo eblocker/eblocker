@@ -1,0 +1,65 @@
+<eb-wizard-component wizard-title="{{ 'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.BLOCKED_' + vm.category + '_TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <div layout="column" layout-align="start center">
+
+            <!-- TARGET -->
+            <div layout="column" layout-align="center stretch"
+                 layout-padding style="width: 100%;">
+                <span>{{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.BLOCKED_' + vm.category + '_TARGET' | translate}}</span>
+                <span style="font-weight: bold;word-break: break-all;word-wrap: break-word;">{{vm.truncateDomain(vm.target)}}</span>
+            </div>
+
+            <div layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span>{{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.BLOCKED_' + vm.category + '_MESSAGE' | translate}}</span>
+                <span style="font-weight: bold;word-break: break-all;word-wrap: break-word;">{{vm.truncateDomain(vm.domain)}}</span>
+            </div>
+
+            <!-- MESSAGE -->
+            <div ng-show="vm.alreadyWhitelisted"
+                 layout="column" layout-align="center stretch">
+                <p>
+                    {{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.BLOCKED_ADS_TRACKERS_ALREADY_WHITELISTED' | translate}}
+                </p>
+            </div>
+
+            <!-- SPINNER WHILE REDIRECTING -->
+            <div ng-if="vm.waitingForRedirect" layout="row" layout-sm="column" layout-align="start center">
+                <md-progress-circular class="md-warn md-hue-3" md-mode="indeterminate" md-diameter="36"></md-progress-circular>
+                <span translate="SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.PAUSE_WAIT_FOR_REDIRECT" style="padding-left: 12px;"></span>
+            </div>
+
+            <!-- ERROR ON PAUSE -->
+            <div ng-if="vm.errorPause" layout="row" layout-align="start center">
+                <span translate="SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.ERROR_DEVICE_PAUSE_CANNOT_EXECUTE" style="color:red; padding-left: 12px;"></span>
+            </div>
+
+        </div>
+
+        <div layout="row" layout-sm="column" layout-align="end center">
+            <div>
+                <md-button class="md-raised md-accent" ng-click="vm.back()" ng-hide="vm.isBackButtonAvailable" ng-disabled="!vm.isBackButtonAvailable || vm.waiting || vm.waitingForRedirect">
+                    {{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.ACTION.GO_BACK' | translate}}
+                </md-button>
+            </div>
+            <div>
+                <md-button class="md-raised md-accent" ng-click="vm.openPauseDialog()" ng-disabled="vm.waiting || vm.waitingForRedirect" ng-hide="vm.category === 'CUSTOM'">
+                    {{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.ACTION.PAUSE_AND_CONTINUE' | translate}}
+                </md-button>
+            </div>
+            <div>
+                <md-button class="md-raised" ng-click="vm.removeDomain()" ng-disabled="vm.waiting || vm.waitingForRedirect" ng-show="vm.category === 'CUSTOM'">
+                    {{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.ACTION.REMOVE_DOMAIN' | translate}}
+                </md-button>
+            </div>
+            <div>
+                <md-button class="md-raised md-accent" ng-click="vm.retry()" ng-disabled="vm.waiting || vm.waitingForRedirect">
+                    {{'SQUID_BLOCKER.BLOCKED_ADS_TRACKERS.ACTION.RETRY' | translate}}
+                </md-button>
+            </div>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

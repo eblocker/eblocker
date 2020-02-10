@@ -1,0 +1,75 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/system/events/help-events.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div>
+
+        <div>
+            <div layout="row" layout-xs="column" layout-align="start center"  style="padding-bottom: 18px;">
+
+                <!-- WORK MODE -->
+                <div ng-if="!vm.tableEditMode" flex-gt-xs="33" layout="row"  style="padding-left: 8px;">
+                    <div layout="row" layout-align="start center">
+                        <md-button class="md-raised" ng-click="vm.reloadEvents()">{{ 'ADMINCONSOLE.EVENTS.ACTION.RELOAD' | translate }}</md-button>
+                    </div>
+
+                    <div ng-if="vm.loading" layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+
+                <!-- EDIT MODE -->
+                <div ng-if="vm.tableEditMode" flex-gt-xs="33" layout="row"  style="padding-left: 8px;">
+                    <div layout="row" layout-xs="column" layout-align="start center" layout-margin>
+                        <md-select ng-model="vm.deleteEventsMode" aria-label="{{ 'ADMINCONSOLE.EVENTS.ARIA_REMOVE' | translate }}">
+                            <md-option value="WEEK">{{ 'ADMINCONSOLE.EVENTS.OPTION.WEEK' | translate }}</md-option>
+                            <md-option value="ALL">{{ 'ADMINCONSOLE.EVENTS.OPTION.ALL' | translate }}</md-option>
+                        </md-select>
+                        <md-button class="md-raised eb-delete-button" ng-click="vm.deleteEvents()" ng-disabled="vm.events.length === 0">{{ 'ADMINCONSOLE.EVENTS.ACTION.REMOVE' | translate }}</md-button>
+                    </div>
+                </div>
+
+                <div flex-gt-xs="33">
+                </div>
+
+                <div flex-gt-xs="33" layout="row" layout-align="end center">
+                    <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                    <eb-edit-table table-data="vm.filteredTableData"
+                                   table-edit-mode="vm.tableEditMode">
+                    </eb-edit-table>
+                </div>
+
+                <div hide-gt-xs>
+                    <eb-scroll-paginator table-id="vm.tableId"
+                                         table-size="vm.filteredTableData.length"
+                                         size="xs">
+                    </eb-scroll-paginator>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <eb-table table-data="vm.filteredTableData"
+                      table-header="vm.tableHeaderConfig"
+                      table-template="app/components/system/events/events-table.template.html"
+                      table-id="vm.tableId"
+                      template-callback="vm.templateCallback">
+            </eb-table>
+
+            <!-- ACTIONS VISIBLE IN EDIT MODE -->
+            <div hide-xs layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     table-size="vm.filteredTableData.length"
+                                     size="lg">
+                </eb-scroll-paginator>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,113 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+    <div>
+
+        <div class="help-on-tabbed-view">
+            <eb-help-icon template="app/components/dns/status/help-dns-status.template.html">
+            </eb-help-icon>
+        </div>
+
+        <div layout-padding layout-margin></div>
+
+
+        <!-- ACTIVATE / DEACTIVATE DNS SETTING -->
+        <div layout="row" layout-xs="column" layout-align="start center" layout-margin>
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.dnsSwitch" class="md-primary switch-word-break" ng-change="vm.dnsStatusFlagChanged()">
+                {{ 'ADMINCONSOLE.DNS_STATUS.SWITCH_LABEL' | translate}}
+            </md-switch>
+        </div>
+    </div>
+
+    <div ng-if="vm.dnsSwitch">
+
+        <div class="config-frame md-whiteframe-z1" layout-margin>
+
+            <div style="margin-bottom: 20px;">
+                <span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.TITLE' | translate }}</span>
+            </div>
+
+            <div>
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.configuration.selectedDnsMode" ng-change="vm.saveDnsConfiguration()">
+
+                    <!-- DHCP Use standard settings from local network -->
+                    <md-radio-button class="md-secondary" value="dhcp" ng-disabled="!vm.isAutoMode">
+                        <div>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD' | translate }}</div>
+                        <md-tooltip ng-if="!vm.isAutoMode" md-delay="300">{{'ADMINCONSOLE.DNS_STATUS.TOOLTIP.MODE_STANDARD_NOT_AVAILABLE' | translate}}</md-tooltip>
+                    </md-radio-button>
+
+                    <div md-theme="eBlockerTheme" style="margin: -23px 0 0 8px;">
+                        <div style="padding: 10px 20px 0 20px; margin: 0 0 10px 0">
+                            <span ng-hide="vm.defaultMore" style="text-transform: uppercase;font-size: 14px;font-weight: 500;" ng-click="vm.defaultMore = true;" class="icon-pointer orange">{{'ADMINCONSOLE.DNS_STATUS.ACTION.MORE' | translate}}</span>
+                            <span ng-show="vm.defaultMore" style="text-transform: uppercase;font-size: 14px;font-weight: 500;" ng-click="vm.defaultMore = false;" class="icon-pointer orange">{{'ADMINCONSOLE.DNS_STATUS.ACTION.LESS' | translate}}</span>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.defaultMore && !vm.isAutoMode" style="margin: -5px 0 0 33px;">
+                        <p translate="ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD_NOT_AVAILABLE"></p>
+                    </div>
+
+                    <div ng-show="vm.defaultMore && vm.isDefaultGatewayDefined() && vm.isAutoMode" style="margin: -5px 0 0 33px;">
+                        <p>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD_FORWARD' | translate:{name: vm.gatewayIp} }}</p>
+                        <p>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD_DISCLAIMER' | translate }}</p>
+                    </div>
+
+                    <div ng-show="vm.defaultMore && !vm.isDefaultGatewayDefined() && vm.isAutoMode" style="margin: -5px 0 0 33px;">
+                        <p>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD_NO_GATEWAY' | translate }}</p>
+                    </div>
+
+                    <!-- TOR Use Tor, also for devices not routed through Tor -->
+                    <md-radio-button class="md-secondary" value="tor">
+                        <div layout="row" layout-align="center center">
+                            <span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_TOR' | translate }}</span>
+                        </div>
+                    </md-radio-button>
+
+                    <div md-theme="eBlockerTheme" style="margin: -23px 0 0 8px;">
+                        <div style="padding: 10px 20px 0 20px; margin: 0 0 10px 0">
+                            <span ng-hide="vm.torMore" style="text-transform: uppercase;font-size: 14px;font-weight: 500;" ng-click="vm.torMore = true;" class="icon-pointer orange">{{'ADMINCONSOLE.DNS_STATUS.ACTION.MORE' | translate}}</span>
+                            <span ng-show="vm.torMore" style="text-transform: uppercase;font-size: 14px;font-weight: 500;" ng-click="vm.torMore = false;" class="icon-pointer orange">{{'ADMINCONSOLE.DNS_STATUS.ACTION.LESS' | translate}}</span>
+                        </div>
+                    </div>
+
+                    <div ng-show="vm.torMore" style="margin: -5px 0 0 33px;">
+                        <p><span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_TOR_FORWARD' | translate }}</span></p>
+                        <p>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_TOR_DISCLAIMER' | translate }}</p>
+                    </div>
+
+                    <!-- Use standard list -->
+                    <!--<md-radio-button class="md-secondary" value="standard">-->
+                        <!--<span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD_LIST' | translate }}</span>-->
+                    <!--</md-radio-button>-->
+                    <!--<div>-->
+                        <!--<md-button class="md-primary" style="margin: -25px 0 0 25px;">{{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_STANDARD' | translate}}</md-button>-->
+                    <!--</div>-->
+
+                    <!-- Use custom list -->
+                    <md-radio-button class="md-secondary" value="custom">
+                        <span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_CUSTOM_LIST' | translate }}</span>
+                    </md-radio-button>
+                    <div md-theme="eBlockerTheme">
+                        <md-button class="md-primary"
+                                   style="margin: -25px 0 0 25px;"
+                                   ng-disabled="vm.configuration.selectedDnsMode !== 'custom'"
+                                   ng-click="vm.goToCustomList()">
+                            {{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_CUSTOM' | translate}}
+                        </md-button>
+                    </div>
+                </md-radio-group>
+            </div>
+        </div>
+
+        <div class="config-frame md-whiteframe-z1" layout-margin>
+            <!-- EMPTY CACHE BUTTON -->
+            <div>
+                <span>{{ 'ADMINCONSOLE.DNS_STATUS.LABEL_EMPTY_CACHE' | translate }}</span>
+            </div>
+            <div>
+                <md-button ng-click="vm.flushCache()" ng-disabled="vm.flushingCache || vm.hasBeenFlushed" class="md-raised">
+                    {{ 'ADMINCONSOLE.DNS_STATUS.ACTION.EMPTY_CACHE' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+    </div>
+</div>

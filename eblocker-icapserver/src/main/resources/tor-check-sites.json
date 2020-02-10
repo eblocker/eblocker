@@ -1,0 +1,15 @@
+[
+    {
+        "url": "http://torcheck.xenobite.eu/"
+    },
+    {
+        "url": "https://torcheck.xenobite.eu/"
+    },
+    {
+        "url": "https://check.torproject.org/",
+        "multiLingual": {
+            "de": "https://check.torproject.org/?lang=de",
+            "en": "https://check.torproject.org/?lang=en"
+        }
+    }
+]

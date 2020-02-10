@@ -1,0 +1,80 @@
+<div layout="row" layout-align="center center" class="advice-parent">
+
+    <div class="advice-frame" layout="column" layout-align="center center" style="padding: 20px;">
+
+        <div layout="column" ng-if="vm.isBas || vm.isFamOrPro" layout-padding>
+            <!-- Title: icon + - Advice -->
+            <div layout="row" layout-align="start center" layout-xs="column">
+                <div style="max-width: 200px;">
+                    <!-- Windows (IE) requires some extra width definitions -->
+                    <md-icon style="height: 40px; width: auto;max-width: 200px;" md-svg-src="/img/eBlocker_2_orange_black.svg"></md-icon>
+                </div>
+                <div>
+                    <h2 style="margin: 0 0 0 8px;">{{'ADVICE.TITLE' | translate}}</h2>
+                </div>
+            </div>
+
+            <!-- Subtext -->
+            <div layout="row" layout-align="start center">
+                <p hide-xs ng-show="vm.isFamOrPro" translate="ADVICE.PROTECTION_FAM_PRO"></p>
+                <p hide-gt-xs ng-show="vm.isFamOrPro" translate="ADVICE.PROTECTION_FAM_PRO_XS"></p>
+                <p hide-xs ng-hide="vm.isFamOrPro" translate="ADVICE.PROTECTION_BAS"></p>
+                <p hide-gt-xs ng-hide="vm.isFamOrPro" translate="ADVICE.PROTECTION_BAS_XS"></p>
+            </div>
+
+            <!-- Countdown to automatically close this dialog (EB1-2131: dialog also opens on SmartTV in Mediathek) -->
+            <div layout="column" layout-align="center center" layout-padding ng-if="!vm.countdownStopped" style="margin-bottom: 8px;">
+                <span style="font-style: italic; padding-right: 12px;">{{ 'GENERAL.COUNTDOWN.LABEL' | translate: {'sec': vm.countdownConfig.seconds}:"messageformat" }}</span>
+                <div>
+                    <md-button class="md-secondary md-raised" ng-click="vm.stopCountdown()" translate="GENERAL.ACTION.STOP_COUNTDOWN"></md-button>
+                </div>
+            </div>
+
+            <!-- Tip: add bookmark-->
+            <div class="bookmark-box"
+                 layout="row" layout-align="start center"
+                 layout-padding>
+                <span class="exclamation-mark">!</span>
+                <span hide-xs translate="ADVICE.TIP"></span>
+                <span hide-gt-xs translate="ADVICE.TIP_XS"></span>
+            </div>
+
+            <!-- Button: go to dashboard-->
+            <div layout="row" layout-align="center center">
+                <md-button class="md-primary md-accent md-raised"
+                           ng-click="vm.goToDashboard()">
+                    {{'ADVICE.ACTION.DASHBOARD' | translate }}
+                </md-button>
+            </div>
+
+        </div>
+
+        <div ng-if="!vm.isBas && !vm.isFamOrPro" layout-padding>
+            <div class="bookmark-box"
+                 layout="row" layout-align="start center"
+                 layout-padding>
+                <span class="exclamation-mark">!</span>
+                <span translate="ADVICE.REGISTER"></span>
+            </div>
+        </div>
+
+        <md-divider hide-xs style="width: 100%;margin-top: 8px;margin-bottom: 20px;"></md-divider>
+
+        <!-- Checkbox: do not show again-->
+        <div layout="row" layout-align="center center">
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.notAgain" ng-change="vm.onChange()">
+                <span hide-xs>{{ 'ADVICE.LABEL_NOT_AGAIN' | translate }}</span>
+                <span hide-gt-xs>{{ 'ADVICE.LABEL_NOT_AGAIN_XS' | translate }}</span>
+            </md-checkbox>
+        </div>
+
+        <div layout="row" layout-align="center center" style="padding-bottom: 0;">
+            <md-button class="md-secondary md-raised"
+                       ng-click="vm.close()">
+                {{'ADVICE.ACTION.OK' | translate }}
+            </md-button>
+        </div>
+
+    </div>
+</div>

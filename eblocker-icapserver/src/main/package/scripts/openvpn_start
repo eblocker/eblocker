@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# Format: ./openvpn_start [ID_OF_INSTANCE]
+
+# This script is able to start an OpenVPN client instance with a given internal ID that the Icapserver choose to map this VPN instance to.
+# It will grab the config file from the specific folder to start the OpenVPN instance.
+# It will tell the instance to ignore the overriding of the default IP route ( = the setting of a new gateway).
+#
+# Returns:
+# Furthermore it will write the PID of the OpenVPN client instance process (which gets started) and the name of the virtual NIC to Redis (into the VPNProfile with the given ID).
+
+SCRIPTSPATH=/opt/eblocker-icap/scripts
+UPSCRIPT=openvpn_up
+DOWNSCRIPT=openvpn_down
+
+if [ $# == '3' ];
+then
+    #debugging
+    SCRIPT_NAME="openvpn_start"
+    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
+
+    ID=$1
+    CONFFILE=$2
+    LOGFILE=$3
+
+    if [ -f $CONFFILE ];
+    then
+        #conffile exists
+        #start OpenVPN instance
+        echo "Starting OpenVPN instance with config file from: $CONFFILE"
+
+        OPENVPN=$(which openvpn)
+        echo "OpenVPN is here: $OPENVPN" >> /var/log/eblocker/$SCRIPT_NAME.log
+
+        PIDOFPROCESS=$$
+        echo "reporting PID of OpenVPN instance: $PIDOFPROCESS"
+        redis-cli PUBLISH "vpn_profile_status:$ID:in" "pid $PIDOFPROCESS"
+
+        exec $OPENVPN --config $CONFFILE \
+                --log $LOGFILE \
+                --script-security 2 \
+                --up "$SCRIPTSPATH/$UPSCRIPT $ID" \
+                --down "$SCRIPTSPATH/$DOWNSCRIPT $ID"
+    else
+        echo "The config file can not be found here: $CONFFILE"
+        # return error
+    fi
+else
+    echo "Error: Wrong number of parameters!"
+    echo "Expected format: openvpn_start [ID_OF_INSTANCE] [CONFIG_FILE] [LOG_FILE]"
+fi

@@ -1,0 +1,118 @@
+{
+    "SHARED" : {
+        "ANONYMIZATION" : {
+            "CLOAKING" : {
+                "ACTION" : {
+                    "CLOAKING_CUSTOM" : "Custom device",
+                    "DISABLE_CLOAKING" : "Disable"
+                },
+                "LABEL_CLOAKED" : "cloaked",
+                "LABEL_CLOAKED_NO_HTTPS" : "Cloaking is not 100% effective if HTTPS support is deactivated.",
+                "LABEL_CLOAKING_AGENT" : "Cloak device",
+                "LABEL_CLOAKING_NAME" : "Enter a customized user agent",
+                "LABEL_CLOAKING_NAME_INVALID" : "Please enter a valid user agent",
+                "LABEL_CLOAKING_OFF" : "Disable",
+                "TITLE" : "Device cloaking"
+            },
+            "IP_ANON" : {
+                "ACTION" : {
+                    "CANCEL_CONNECT" : "Cancel",
+                    "CONNECT" : "Connect",
+                    "DISCONNECT" : "Disconnect",
+                    "RENEW_ID" : "Get new Tor ID",
+                    "TEST_CONNECTION" : "Check privacy status"
+                },
+                "DROPDOWN_LABEL" : "Select a network",
+                "LABEL_CONNECTED" : "Connected",
+                "LABEL_TOR" : "Tor Network",
+                "TITLE" : "IP Anonymization",
+                "TOR_CHECK_URL" : "https://www.eBlocker.com/en/privacy-check/"
+            },
+            "NOTIFICATION" : {
+                "CONNECTION_DOWN" : "VPN {{name}} has been disconnected.",
+                "TOR_CONNECT" : "Connection to Tor network established.",
+                "TOR_DISCONNECT" : "Tor network disconnected.",
+                "TOR_ID_RENEW_ERROR" : "Error getting new Tor identity",
+                "TOR_ID_RENEW_SUCCESS" : "Tor identity renewed.",
+                "VPN_CONNECT" : "VPN is connected.",
+                "VPN_CONNECT_ERROR" : "Unable to connect to VPN",
+                "VPN_CONNECT_TIMEOUT" : "The connection timed out.",
+                "VPN_DISCONNECT" : "VPN is disconnected."
+            },
+            "TOOLTIP" : {
+                "ACTION" : {
+                    "TEST_CONNECTION" : "This link opens a page that allows you to check your privacy settings, like Tor."
+                },
+                "SELECT_DISABLED" : "Disconnect from '{{name | translate }}' before connecting to another network."
+            }
+        },
+        "DIALOG" : {
+            "DNS_FILTER_CHANGE" : {
+                "ACTION" : {
+                    "DO_NOT_SHOW_AGAIN" : "Never show again for this device",
+                    "OK" : "Ok"
+                },
+                "TEXT" : "It may take a few minutes before the new settings take effect.",
+                "TITLE" : "DNS blocker settings"
+            },
+            "TOR" : {
+                "ACTIVATION" : {
+                    "BODY_TEXT1" : "Please note that the effective speed of your Internet connection can be reduced significantly by activating Tor.",
+                    "BODY_TEXT2" : "We recommend to enable IP-anonymization with Tor only, when visiting websites with sensitive contents.",
+                    "BUTTON" : {
+                        "CANCEL" : "Cancel",
+                        "OK" : "Activate Tor"
+                    },
+                    "MORE_INFO_URL" : "https://www.eBlocker.com/en/tor_info",
+                    "MORE_INFO_URL_TEXT" : "Additional Information",
+                    "SHOW_WARNINGS_CAPTION" : "Do not show this warning again",
+                    "TITLE" : "Activate Tor for this device"
+                }
+            }
+        },
+        "DROP_DOWN" : {
+            "TOOLTIP" : "Open menu"
+        },
+        "FILTER" : {
+            "LABEL" : "Search..."
+        },
+        "LABEL_CONTAINER" : {
+            "EDIT_TOOLTIP" : "Edit"
+        },
+        "MOBILE" : {
+            "DEVICE_TYPE" : {
+                "LABEL_SELECT" : "Choose your device",
+                "OTHER" : "Linux/other"
+            }
+        },
+        "USER" : {
+            "NAME" : {
+                "SYSTEM_DEFAULT" : "Device {{name}} not assigned to a user",
+                "STANDARD_USER": "(other devices)",
+                "DEFAULT_PARENT": "Parent"
+            },
+            "TYPE": {
+                "PARENT": "b",
+                "CHILD": "a",
+                "OTHER": "c"
+            }
+        },
+        "PARENTAL_CONTROL": {
+            "ACCESS_CONTINGENTS": {
+                "PARENTAL_CONTROL_DAY_1" : "Monday",
+                "PARENTAL_CONTROL_DAY_2" : "Tuesday",
+                "PARENTAL_CONTROL_DAY_3" : "Wednesday",
+                "PARENTAL_CONTROL_DAY_4" : "Thursday",
+                "PARENTAL_CONTROL_DAY_5" : "Friday",
+                "PARENTAL_CONTROL_DAY_6" : "Saturday",
+                "PARENTAL_CONTROL_DAY_7" : "Sunday",
+                "PARENTAL_CONTROL_DAY_8" : "Monday - Friday",
+                "PARENTAL_CONTROL_DAY_9" : "Saturday and Sunday"
+            }
+        },
+        "DATE": {
+            "DATE_FORMAT" : "MM/DD/YYYY",
+            "ERROR": "Invalid date"
+        }
+    }
+}

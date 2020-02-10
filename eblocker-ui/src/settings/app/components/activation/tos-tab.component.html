@@ -1,0 +1,62 @@
+<div layout-padding layout="column">
+
+    <div style="padding-top: 0;" layout="row" layout-align="end center">
+        <!--<md-button type="button" ng-href="{{ 'ADMINCONSOLE.ACTIVATION.TAB.TOS.EULA_URL' | translate }}" target="_blank" class="md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.OPEN_IN_NEW_WINDOW' | translate }}
+        </md-button>-->
+        <md-button type="button" ng-click="vm.openPrintView()" ng-disabled="!vm.readToPrint()" class="md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.OPEN_IN_NEW_WINDOW' | translate }}
+        </md-button>
+    </div>
+
+    <div class="setup-eula-container" layout="column" layout-align="center center">
+        <div ng-show="vm.tosIsLoading" layout="row" layout="center center">
+            <md-progress-circular md-diameter="36"></md-progress-circular>
+        </div>
+
+        <div ng-show="vm.tosLoadingFailed && vm.registrationAvailable" layout="row" layout="center center">
+            <p style="color: red;" translate="ADMINCONSOLE.ACTIVATION.TAB.TOS.ERROR_LOADING_TOS"></p>
+        </div>
+
+        <div ng-show="vm.tosLoadingFailed && !vm.registrationAvailable" layout="row" layout="center center">
+            <p style="color: red;" translate="ADMINCONSOLE.ACTIVATION.TAB.TOS.REGISTRATION_NOT_AVAILABLE"></p>
+        </div>
+
+        <div ng-show="vm.isTosValid() && !vm.tosLoadingFailed"
+             layout-fill>
+            <p ng-bind-html="vm.tos.licenseText"></p>
+            <p>
+                <span>{{'ADMINCONSOLE.ACTIVATION.TAB.TOS.VERSION_TAG' | translate}}</span>
+                <span>{{vm.tos.licenseVersion}}</span>
+                <span>{{'ADMINCONSOLE.ACTIVATION.TAB.TOS.SEPARATOR' | translate}}</span>
+                <span>{{vm.tos.licenseDateDisplay }}</span>
+            </p>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                     ng-model="vm.isTosConfirmed" ng-disabled="!vm.isTosValid()">
+            {{ 'ADMINCONSOLE.ACTIVATION.TAB.TOS.AGREE_TEXT' | translate }}
+        </md-checkbox>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                     ng-model="vm.isNoRegistrationConfirmed" ng-if="!vm.isTosValid() && !vm.registrationAvailable">
+            {{ 'ADMINCONSOLE.ACTIVATION.TAB.TOS.AGREE_NO_REGISTRATION' | translate }}
+        </md-checkbox>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.closeWizard()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.isStepAllowed(2)" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

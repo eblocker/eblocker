@@ -1,0 +1,142 @@
+.help-container {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.help-container .help-text {
+    color: $eblocker-orange;
+}
+
+.help-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    opacity: 1;
+    background-color: #fcebe1;
+}
+.help-overlay md-content {
+    background-color: #fcebe1 !important;
+}
+
+.help-overlay.ng-hide {
+    opacity: 0;
+}
+
+.help-overlay.ng-hide-add,
+.help-overlay.ng-hide-remove {
+    transition: all linear 0.2s;
+}
+.help-content {
+    margin: 20px;
+    background-color: #fcebe1;
+}
+.help-tab {
+    padding: 0 20px 20px 20px;
+    max-height: 300px;
+}
+.help-tab p {
+    margin-left: 0;
+}
+
+
+
+
+eb-help-inline {
+    max-height: 48px !important;
+    //height: 48px !important;
+}
+
+.help-inline-container {
+    padding: 0 !important;
+}
+
+.help-inline-container .hover-effect:hover {
+    cursor: pointer;
+}
+
+.help-inline-container .hover-effect,
+.help-inline-container > div:active,
+.help-inline-container > div:focus {
+    @include no-select();
+}
+
+.help-inline-container .help-inline-text {
+    margin-left: 5px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 500;
+    color: $eblocker-orange;
+}
+
+.help-inline-overlay {
+    max-width: 200px;
+
+    @media screen and (min-width: 600px) {
+        // ** required for large table, so that overlay is outside table
+        position: fixed;
+    }
+    @media screen and (max-width: 600px) {
+        // ** required for small table, so that overlay is stuck at actual help-text
+        position: absolute;
+    }
+
+    overflow: auto;
+    z-index: 100;
+    opacity: 1;
+    background-color: #fcebe1;
+}
+.help-inline-overlay md-content {
+    background-color: #fcebe1 !important;
+}
+
+.help-inline-overlay.ng-hide {
+    opacity: 0;
+}
+
+.help-inline-overlay.ng-hide-add,
+.help-inline-overlay.ng-hide-remove {
+    transition: all linear 0.2s;
+}
+.help-inline-content {
+    margin: 12px;
+    white-space: normal;
+}
+
+// XXXX new ICON
+
+.help-icon-container {
+
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    .help-icon-text {
+        padding-left: 4px;
+        color: $eblocker-orange;
+    }
+
+    .help-icon-overlay {
+        min-width: 270px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+        opacity: 1;
+        background-color: #fcebe1;
+    }
+    .help-icon-overlay md-content {
+        background-color: #fcebe1 !important;
+    }
+
+    .help-icon-overlay.ng-hide {
+        opacity: 0;
+    }
+
+    .help-icon-overlay.ng-hide-add,
+    .help-icon-overlay.ng-hide-remove {
+        transition: all linear 0.2s;
+    }
+}

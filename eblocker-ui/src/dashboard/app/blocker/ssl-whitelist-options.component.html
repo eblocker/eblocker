@@ -1,0 +1,65 @@
+<eb-wizard-component wizard-title="{{ 'SQUID_BLOCKER.WHITELIST_OPTIONS.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <!-- TARGET -->
+        <div>
+            <div layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span translate="SQUID_BLOCKER.WHITELIST_OPTIONS.TEXT_1"></span>
+                <span style="font-weight: bold;word-break: break-all;word-wrap: break-word;">{{vm.truncateDomain(vm.target)}}</span>
+            </div>
+        </div>
+
+        <!-- ERROR -->
+        <div>
+            <div layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span translate="SQUID_BLOCKER.WHITELIST_OPTIONS.TEXT_2"></span>
+                <span style="font-weight: bold;">{{vm.error}}</span>
+            </div>
+        </div>
+
+        <!-- MESSAGE -->
+        <div layout="column" layout-align="center stretch"
+             layout-padding>
+            <p>
+                {{'SQUID_BLOCKER.WHITELIST_OPTIONS.TEXT_3' | translate}}<br>
+            </p>
+        </div>
+
+        <div style="width: 100%;">
+            <form name="newUrl" novalidate>
+                <div layout="row" layout-xs="column" layout-sm="column" layout-align="center center">
+                    <div flex="90" flex-gt-sm="45" style="padding-right: 8px;">
+                        <md-input-container style="width: 100%;">
+                            <label>{{ 'SQUID_BLOCKER.WHITELIST_OPTIONS.ENTER_NAME_LABEL' | translate}}</label>
+                            <input name="nameInput" ng-model="vm.newDomain.label" aria-label="name of website input">
+                        </md-input-container>
+                    </div>
+                    <div flex="90" flex-gt-sm="45" style="padding-left: 8px;">
+                        <md-input-container style="width: 100%;">
+                            <label>{{ 'SQUID_BLOCKER.WHITELIST_OPTIONS.ENTER_DOMAIN_LABEL' | translate }} </label>
+                            <input required name="urlInput" ng-model="vm.newDomain.domains[0]" only-domain aria-label="domain input" disabled>
+                        </md-input-container>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-sm="column" layout-align="end center">
+            <md-button hide-xs class="md-raised md-accent" ng-href="" ng-click="vm.addAndContinue()"
+                       ng-disabled="vm.newUrl.$invalid || vm.waiting">
+                {{'SQUID_BLOCKER.WHITELIST_OPTIONS.ACTION.ADD_AND_CONTINUE' | translate}}
+            </md-button>
+            <md-button hide-gt-xs class="md-raised md-accent" ng-href="" ng-click="vm.addAndContinue()"
+                       ng-disabled="vm.newUrl.$invalid || vm.waiting">
+                {{'SQUID_BLOCKER.WHITELIST_OPTIONS.ACTION.ADD_AND_CONTINUE_SHORT' | translate}}
+            </md-button>
+            <md-button class="md-raised" ng-href="" ng-click="vm.back()" ng-disabled="!vm.isBackButtonAvailable || vm.waiting">
+                {{'SQUID_BLOCKER.WHITELIST_OPTIONS.ACTION.BACK' | translate}}{{vm.truncateDomain(vm.targetDomain)}}
+            </md-button>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

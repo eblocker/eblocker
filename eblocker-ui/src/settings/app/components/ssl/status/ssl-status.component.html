@@ -1,0 +1,87 @@
+<div flex-gt-lg="60" flex-md="80" flex-lg="80" layout="column" layout-fill class="settings-child-view">
+    <div>
+
+        <div class="help-on-tabbed-view">
+            <eb-help-icon template="app/components/ssl/status/help-ssl-status.template.html"></eb-help-icon>
+        </div>
+
+        <div layout-padding layout-margin></div>
+
+        <!-- ACTIVATE / DEACTIVATE SSL -->
+        <div layout="row" layout-xs="column" layout-align="start center" layout-margin>
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.ssl.enabled" class="md-primary switch-word-break" ng-change="vm.setSSLState(event)">
+                {{ vm.ssl.enabled ? 'ADMINCONSOLE.SSL_STATUS.SWITCH.SSL_ON' : 'ADMINCONSOLE.SSL_STATUS.SWITCH.SSL_OFF' | translate}}
+            </md-switch>
+        </div>
+
+        <div ng-show="vm.ssl.enabled">
+
+            <div ng-if="!vm.ssl.renewalCertificateReady" class="config-frame md-whiteframe-z1" layout="column">
+                <div layout="row" layout-align="start center">
+                    <h3>{{ 'ADMINCONSOLE.SSL_STATUS.IMPORTANT_NOTE' | translate }}</h3>
+                </div>
+                <div layout="column" layout-gt-sm="row" layout-align="start center">
+                    <md-button class="md-raised md-accent" ng-disabled="!vm.ssl.certificatesReady" ng-href="{{'ADMINCONSOLE.SSL_STATUS.URL.WIZARD' | translate}}" target="_blank">{{ 'ADMINCONSOLE.SSL_STATUS.ACTION.HTTPS_WIZARD' | translate}}</md-button>
+                    <md-button class="md-accent" ng-href="{{'ADMINCONSOLE.SSL_STATUS.URL.TUTORIAL' | translate}}" style="margin-left: 0;" target="_blank">{{'ADMINCONSOLE.SSL_STATUS.ACTION.TUTORIALS' | translate}}</md-button>
+                </div>
+            </div>
+
+            <div ng-if="vm.ssl.renewalCertificateReady" class="config-frame md-whiteframe-z1" layout="column">
+                <div layout="row" layout-align="start center">
+                    <h3>{{ 'ADMINCONSOLE.SSL_STATUS.IMPORTANT_NOTE_RENEWAL' | translate }}</h3>
+                </div>
+                <div layout="row" ng-if="vm.ssl.renewalCertificateReady" layout-padding>
+                    {{ 'ADMINCONSOLE.SSL_STATUS.RENEWAL_EXPLANATION_PRE' | translate }}{{vm.ssl.display.validityNotAfter}}{{ 'ADMINCONSOLE.SSL_STATUS.RENEWAL_EXPLANATION_POST' | translate }}
+                </div>
+                <div layout="column" layout-gt-sm="row" layout-align="start center">
+                    <md-button class="md-raised md-accent" ng-href="{{'ADMINCONSOLE.SSL_STATUS.URL.WIZARD' | translate}}" target="_blank">{{ 'ADMINCONSOLE.SSL_STATUS.ACTION.HTTPS_WIZARD' | translate}}</md-button>
+                    <md-button class="md-accent" ng-href="{{'ADMINCONSOLE.SSL_STATUS.URL.TUTORIAL' | translate}}" style="margin-left: 0;" target="_blank">{{'ADMINCONSOLE.SSL_STATUS.ACTION.TUTORIALS' | translate}}</md-button>
+                </div>
+            </div>
+
+            <div class="config-frame md-whiteframe-z1" layout="column">
+                <div layout="row" layout-align="start center">
+                    <h4 style="margin-right:8px;" >{{ 'ADMINCONSOLE.SSL_STATUS.INFO_TITLE' | translate }}</h4>
+                </div>
+                <div layout="column" layout-gt-lg="row">
+                    <div layout="row" flex layout-align="start start" layout-padding>
+                        <div style="width: 20px; padding-top: 8px;">
+                            <md-icon style="width: 20px;" class="content-eb-orange" md-svg-src="/img/icons/ic_label_black.svg"></md-icon>
+                        </div>
+                        <div flex translate="ADMINCONSOLE.SSL_STATUS.INFO_1">
+                        </div>
+                    </div>
+                    <div layout="row" flex layout-align="start start" layout-padding>
+                        <div style="width: 20px; padding-top: 8px;">
+                            <md-icon style="width: 20px;" class="content-eb-orange" md-svg-src="/img/icons/ic_label_black.svg"></md-icon>
+                        </div>
+                        <div flex translate="ADMINCONSOLE.SSL_STATUS.INFO_2">
+                        </div>
+                    </div>
+                </div>
+                <div layout="column" layout-gt-lg="row">
+                    <div layout="row" flex layout-align="start start" layout-padding>
+                        <div style="width: 20px; padding-top: 8px;">
+                            <md-icon style="width: 20px;" class="content-eb-orange" md-svg-src="/img/icons/ic_label_black.svg"></md-icon>
+                        </div>
+                        <div flex translate="ADMINCONSOLE.SSL_STATUS.INFO_4">
+                        </div>
+                    </div>
+                    <div layout="row" flex layout-align="start start" layout-padding>
+                        <div style="width: 20px; padding-top: 8px;">
+                            <md-icon style="width: 20px;" class="content-eb-orange" md-svg-src="/img/icons/ic_label_black.svg"></md-icon>
+                        </div>
+                        <div flex translate="ADMINCONSOLE.SSL_STATUS.INFO_3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-frame md-whiteframe-z1" ng-hide="vm.ssl.enabled">
+            <span style="color: #9e9e9e;" translate="ADMINCONSOLE.SSL_STATUS.LABEL_TEXT_OFF"></span>
+        </div>
+
+    </div>
+
+</div>

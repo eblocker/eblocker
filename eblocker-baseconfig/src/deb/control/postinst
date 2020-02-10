@@ -1,0 +1,131 @@
+#!/bin/sh
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+if [ "$1" = configure ] ; then
+
+# Install firewall rules
+    echo '>>> Initializing IPv4 forwarding..'
+    IFACE=eth0 /etc/network/if-up.d/ipforward
+
+###  R E D S O C K S  ###
+
+# Stopping redsocks:
+    echo '>>> Stopping redsocks via invoke-rc..'
+    invoke-rc.d redsocks stop
+    echo '>>> Removing redsocks via update-rc..'
+    update-rc.d redsocks remove
+
+# Divert the redsocks start/stop script
+    REDSOCKS=/etc/init.d/redsocks
+
+    echo '>>> Diverting redsocks...'
+    dpkg-divert --add --package eblocker-baseconfig --rename --divert $REDSOCKS.distrib $REDSOCKS
+    [ \! -e $REDSOCKS -o -L $REDSOCKS ] && ln -sf $REDSOCKS.site $REDSOCKS
+
+# On Jessie: systemd does not use /etc/init.d/redsocks. Patch /etc/default/redsocks
+    sed -e s/redsocks.conf/redsocks-eblocker.conf/ -i.bak /etc/default/redsocks
+
+    echo '>>> update redsocks via update.rc...'
+    update-rc.d redsocks defaults
+
+# (Re)start services:
+    echo '>>> Restarting redsocks via invoke-rc...'
+    invoke-rc.d redsocks start
+
+
+### T O R ###
+
+# Make Tor config writable for Icap server (because of the need to reconfigure it)
+    chown icapd /etc/tor/torrc-eblocker
+
+    if [ -f /lib/systemd/system/tor.service ]; then
+        # Tor is configured via systemd (Debian Stretch)
+        echo '>>> Configuring tor via systemd..'
+
+        # Stopping tor:
+        echo '>>> Stopping and disablingtor default instance via systemd..'
+        systemctl stop tor
+        systemctl disable tor
+
+        # Create tor instance (includes a user named _tor-eblocker)
+        echo '>>> Create tor instance'
+        tor-instance-create eblocker
+
+        # Deploy tor config
+        echo '>>> Provide icapservers tor config'
+        rm /etc/tor/instances/eblocker/torrc
+        touch /etc/tor/torrc-eblocker
+        ln -s /etc/tor/torrc-eblocker /etc/tor/instances/eblocker/torrc
+
+        echo '>>> Start and enable eblocker tor instance'
+        systemctl enable tor@eblocker
+        systemctl start tor@eblocker
+    else
+        # Tor is configured via SysVinit (pre Debian Stretch)
+        echo '>>> Configuring tor via SysVinit'
+
+        # Stopping tor:
+        echo '>>> Stopping tor via invoke-rc..'
+        invoke-rc.d tor stop
+        echo '>>> Removing tor via update-rc..'
+        update-rc.d tor remove
+
+        # Divert the tor start/stop script
+        TOR=/etc/init.d/tor
+
+        echo '>>> Diverting tor...'
+        dpkg-divert --add --package eblocker-baseconfig --rename --divert $TOR.distrib $TOR
+        [ \! -e $TOR -o -L $TOR ] && ln -sf $TOR.site $TOR
+
+        echo '>>> update tor via update.rc...'
+        update-rc.d tor defaults
+
+        # (Re)start services:
+        echo '>>> Restarting tor via invoke-rc...'
+        invoke-rc.d tor start
+    fi
+
+# Copy issue file:
+    cp /etc/issue.eblocker /etc/issue
+
+# Repair Armbian systems where logrotate did not run:
+    # Set the date of last password change and maximum number of days the password is valid
+    chage -d `date +%Y-%m-%d` -M 99999 root
+    # Truncate large log files (> 16MB)
+    find /var/log/ /opt/eblocker-dns/log/ /opt/eblocker-led/log/ -type f -size +16M -exec sh -c 'date > "$1" && echo "Truncated by eblocker-baseconfig postinst" >> "$1"' -- {} \;
+
+# Configure logrotate to be run hourly
+    dpkg-divert --divert /etc/cron.hourly/logrotate --rename /etc/cron.daily/logrotate
+
+# Deploy iptables/rules.v4 file
+    cat >/etc/iptables/rules.v4 <<EOF
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-A PREROUTING -i eth0 -p tcp --dport 80 -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3000
+-A PREROUTING -i eth0 -p tcp --dport 443 -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3443
+-A PREROUTING -i tun33 -p tcp --dport 80 -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3000
+-A PREROUTING -i tun33 -p tcp --dport 443 -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3443
+COMMIT
+EOF
+fi
+
+exit 0
+

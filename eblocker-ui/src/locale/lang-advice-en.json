@@ -1,0 +1,83 @@
+{
+    "GENERAL": {
+        "ACTION" : {
+            "STOP_COUNTDOWN": "Wait"
+        },
+        "COUNTDOWN": {
+            "LABEL": "This dialog will automatically close {sec, select, 0{now} 1{in one second} other{in {sec} seconds}}"
+        }
+    },
+    "ADVICE" : {
+        "ACTION" : {
+            "DASHBOARD" : "Open dashboard",
+            "OK" : "Continue"
+        },
+        "LABEL_NOT_AGAIN" : "Do not show again for this device",
+        "LABEL_NOT_AGAIN_XS" : "Do not show again",
+        "NOTIFICATION" : {
+            "UDDATE_ERROR" : "Error while saving",
+            "UPDATE_HINT" : "This page will be shown for this device",
+            "UPDATE_NO_HINT" : "This page will not be shown again for this device"
+        },
+        "PROTECTION_BAS" : "You can now make this device anonymous using the eBlocker!",
+        "PROTECTION_BAS_XS" : "Be anonymous by using the eBlocker now!",
+        "PROTECTION_FAM_PRO" : "The eBlocker is now protecting the privacy of this device!",
+        "PROTECTION_FAM_PRO_XS" : "Your privacy is now protected by eBlocker!",
+        "REGISTER" : "Please register your eBlocker",
+        "TIP" : "Tip: Open the eBlocker dashboard now and add a bookmark to access the dashboard quickly and at any time.",
+        "TIP_XS" : "Tip: Bookmark the dashboard now!",
+        "TITLE" : " - Welcome"
+    },
+    "REMINDER" : {
+        "DONOTSHOWAGAIN" : {
+            "CANCEL" : "Cancel",
+            "LABEL_DO_NOT_SHOW" : "Do not show this reminder again.",
+            "OK" : "Ok",
+            "WARNING" : "Attention: You are not protected anymore, if the eBlocker does not receive updates. Your privacy is in danger.",
+            "WARNING_TITLE" : "Do not show this reminder again"
+        },
+        "FORMAT" : {
+            "DATE" : "MMM Do, YYYY"
+        },
+        "OVERLAY" : {
+            "BUTTON" : {
+                "CLOSE" : "Ok",
+                "ENTER" : "Enter license key",
+                "PURCHASE" : "Purchase new license"
+            },
+            "TEXT" : {
+                "DEMO" : {
+                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
+                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
+                },
+                "FAM" : {
+                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
+                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
+                },
+                "PRO" : {
+                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
+                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
+                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
+                }
+            },
+            "URL" : {
+                "PROMO" : "https://www.eblocker.com/en/license-reminder",
+                "PURCHASE" : "https://www.eblocker.com/ebl/en/shop"
+            },
+            "WHEN_AGAIN" : {
+                "POST" : "",
+                "PRE" : "Remind me again ",
+                "TOMORROW" : "tomorrow",
+                "WEEK" : "in one week"
+            }
+        }
+    }
+}

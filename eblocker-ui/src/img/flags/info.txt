@@ -1,0 +1,5 @@
+Flag icons were integrated from here: https://github.com/lipis/flag-icon-css/tree/master/flags/4x3
+
+License: MIT
+
+Missing Netherlands Antilles (AN) taken from https://en.wikipedia.org/wiki/File:Flag_of_the_Netherlands_Antilles_(1986-2010).svg (released by Zscout370 into Public Domain)

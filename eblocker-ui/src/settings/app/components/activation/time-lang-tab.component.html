@@ -1,0 +1,47 @@
+<div layout-padding layout="column">
+    <!--<div>-->
+        <!--<h3>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TIME_LANG.GREETING' | translate }}</h3>-->
+    <!--</div>-->
+    <div>
+        <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TIME_LANG.INTRO' | translate }}</p>
+    </div>
+    <form name="vm.timezoneForm" ng-submit="vm.setTimezone()">
+        <div flex>
+            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                <label>{{ 'ADMINCONSOLE.TIME_LANGUAGE.CONTINENT_LABEL' | translate }}</label>
+                <md-select aria-label="{{ 'ADMINCONSOLE.TIME_LANGUAGE.ARIA_REGION' | translate }}" ng-model="vm.region" ng-change="vm.changeRegion(vm.region)">
+                    <md-option ng-repeat="region in vm.regions" ng-value="region" ng-selected="region === vm.region">{{region}}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+        <div flex>
+            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                <label>{{ 'ADMINCONSOLE.TIME_LANGUAGE.CITY_LABEL' | translate }}</label>
+                <md-select name="city" aria-label="{{ 'ADMINCONSOLE.TIME_LANGUAGE.ARIA_CITY' | translate }}" ng-model="vm.city" ng-change="vm.changeCity()" required>
+                    <md-option ng-repeat="city in vm.cities" ng-value="city" ng-selected="city === vm.city">{{city}}</md-option>
+                </md-select>
+                <div ng-messages="vm.timezoneForm.city.$error" ng-if="vm.timezoneForm.$submitted || vm.timezoneForm.city.$touched">
+                    <div ng-message="required">{{ 'ADMINCONSOLE.TIME_LANGUAGE.ERROR.REQUIRED' | translate }}</div>
+                </div>
+            </md-input-container>
+        </div>
+    </form>
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.closeWizard()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.isTimezoneFormValid() || !vm.timezoneSet" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>
+
+
+
+
+
+

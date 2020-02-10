@@ -1,0 +1,128 @@
+<div layout="column" class="settings-child-view">
+
+    <!--<div class="help-on-tabbed-view">-->
+        <!--<eb-help topic="MOBILE"></eb-help>-->
+    <!--</div>-->
+
+    <!--<div hide-gt-xs layout-padding></div>-->
+
+    <div layout="column" layout-align="center start" layout-align-xs="center center">
+
+        <div layout="row">
+            <!-- TABLE SEARCH -->
+            <div style="width: 270px;">
+                <eb-filter-table filtered-data="vm.filteredTableData"
+                                 original-data="vm.tableData"
+                                 filter-properties="vm.searchProps">
+                </eb-filter-table>
+            </div>
+
+            <div ng-show="vm.isCreatingCertificate || vm.isRevokingCertificate" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+
+        <!-- TABLE -->
+        <!-- RESPONSIVE TABLE -->
+        <div class="table-responsive-vertical shadow-z-1" style="width: 100%;">
+            <table id="table" class="table table-striped table-hover table-eb-orange" cellspacing="0">
+                <!--<table id="table" class="table table-hover table-eb-orange">-->
+                <thead>
+                <tr>
+                    <th class="table-select"></th>
+                    <th class="column-xs sortable-column" ng-click="vm.changeOrder('hasCertificate')">
+                        <md-icon ng-show="vm.orderKey === 'hasCertificate' && !vm.reverseOrder" aria-label="Sort order up" md-svg-src="/img/icons/ic_arrow_upward_black.svg"></md-icon>
+                        <md-icon ng-show="vm.orderKey === 'hasCertificate' && vm.reverseOrder" aria-label="Sort order down" md-svg-src="/img/icons/ic_arrow_downward_black.svg"></md-icon>
+                    </th>
+                    <th class="sortable-column" ng-click="vm.changeOrder('name')">
+                        {{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.NAME' | translate }}
+                        <md-icon ng-show="vm.orderKey === 'name' && !vm.reverseOrder" aria-label="Sort order up" md-svg-src="/img/icons/ic_arrow_upward_black.svg"></md-icon>
+                        <md-icon ng-show="vm.orderKey === 'name' && vm.reverseOrder" aria-label="Sort order down" md-svg-src="/img/icons/ic_arrow_downward_black.svg"></md-icon>
+                    </th>
+                    <th class="sortable-column" ng-click="vm.changeOrder('displayIpAddresses')">
+                        {{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.IP' | translate }}
+                        <md-icon ng-show="vm.orderKey === 'displayIpAddresses' && !vm.reverseOrder" aria-label="Sort order up" md-svg-src="/img/icons/ic_arrow_upward_black.svg"></md-icon>
+                        <md-icon ng-show="vm.orderKey === 'displayIpAddresses' && vm.reverseOrder" aria-label="Sort order down" md-svg-src="/img/icons/ic_arrow_downward_black.svg"></md-icon>
+                    </th>
+                    <th class="column-xs">
+                        {{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.CREATE_CERT' | translate }}
+                    </th>
+                    <th class="column-xs">
+                        {{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.DOWNLOAD_CERT' | translate }}
+                    </th>
+                    <th class="column-xs">
+                        {{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.REVOKE_CERT' | translate }}
+                    </th>
+                </tr>
+                </thead>
+                <tbody style="padding-top: 2px;">
+                <tr ng-show="vm.filteredTableData.length === 0 && !vm.loading">
+                    <td colspan="7" style="text-align: center;">{{'ADMINCONSOLE.TABLE.EMPTY' | translate}}</td>
+                </tr>
+                <tr ng-repeat="entry in vm.filteredTableData | orderBy:vm.orderKey:vm.reverseOrder | limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit track by $index">
+                    <td class="table-select"></td>
+
+                    <!-- ICON -->
+                    <td data-title="">
+                        <!--<md-icon ng-class="{'content-eb-orange': entry.assignedToProfile.length > 0}" md-svg-src="{{vm.getDeviceType(entry)}}"></md-icon>-->
+                        <md-icon ng-show="true" ng-class="{'content-eb-orange': entry.hasCertificate}" aria-label="Has certificate installed" md-svg-src="/img/icons/device.svg"></md-icon>
+                        <md-tooltip md-delay="300" ng-show="entry.hasCertificate">{{'ADMINCONSOLE.VPN_HOME_DEVICES.TOOLTIP.HAS_CERT' | translate}}</md-tooltip>
+                        <md-tooltip md-delay="300" ng-hide="entry.hasCertificate">{{'ADMINCONSOLE.VPN_HOME_DEVICES.TOOLTIP.HAS_NO_CERT' | translate}}</md-tooltip>
+                    </td>
+
+                    <!-- NAME -->
+                    <td data-title="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.NAME' | translate }}">
+                        <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+                    </td>
+
+                    <!-- IP -->
+                    <td data-title="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.IP' | translate }}">
+                        <span>{{entry.displayIpAddresses}}</span>
+                    </td>
+
+                    <td data-title="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.CREATE_CERT' | translate }}">
+                        <div layout="row" layout-align="center center">
+                            <md-icon ng-show="true"
+                                     class="icon-pointer"
+                                     ng-class="{'content-eb-orange': !entry.hasCertificate && !vm.status.isFirstStart && !vm.isCreatingCertificate}"
+                                     ng-click="vm.createCertificate(entry)"
+                                     md-svg-src="/img/icons/ic_vpn_key_black.svg"
+                                     aria-label="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.CREATE_CERT' | translate }}">
+                            </md-icon>
+                        </div>
+                    </td>
+
+                    <td data-title="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.DOWNLOAD_CERT' | translate }}">
+                        <div layout="row" layout-align="center center">
+                            <md-icon ng-show="true"
+                                     class="icon-pointer"
+                                     ng-class="{'content-eb-orange': entry.hasCertificate && !vm.status.isFirstStart}"
+                                     ng-click="vm.downloadClientConf(entry)"
+                                     md-svg-src="/img/icons/ic_file_download_black.svg"
+                                     aria-label="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.DOWNLOAD_CERT' | translate }}">
+                            </md-icon>
+                        </div>
+                    </td>
+
+                    <td data-title="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.REVOKE_CERT' | translate }}">
+                        <div layout="row" layout-align="center center">
+                            <md-icon ng-show="true"
+                                     class="icon-pointer"
+                                     ng-class="{'content-eb-orange': entry.hasCertificate && !vm.status.isFirstStart}"
+                                     ng-click="vm.revokeCertificate(entry)"
+                                     md-svg-src="/img/icons/ic_remove_circle_black.svg"
+                                     aria-label="{{ 'ADMINCONSOLE.VPN_HOME_DEVICES.TABLE.COLUMN.REVOKE_CERT' | translate }}">
+                            </md-icon>
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATOR -->
+        <eb-table-paginator config="vm.query" data="vm.filteredTableData"></eb-table-paginator>
+    </div>
+</div>

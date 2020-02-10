@@ -1,0 +1,53 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <md-icon md-svg-src="/img/icons/ic_list_black.svg" aria-label="Recording entry"></md-icon>
+</div>
+
+<!-- ID -->
+<div flex class="column-xs">
+    <span>{{entry.id}}</span>
+</div>
+
+<!-- TIMESTAMP -->
+<div flex>
+    {{ entry.timestamp | date : ('ADMINCONSOLE.FILTER_ANALYSIS.DATE_TIME_FORMAT' | translate)}}
+</div>
+
+<!-- DOMAIN -->
+<div flex>
+    <span>{{entry.domain}}</span>
+    <md-tooltip md-delay="300">{{entry.domain}}</md-tooltip>
+</div>
+
+<!-- method -->
+<div flex="10">
+    <span>{{entry.method}}</span>
+</div>
+
+<!-- URL -->
+<div flex>
+    <span>{{entry.url}}</span>
+    <md-tooltip md-delay="300">{{entry.url}}</md-tooltip>
+</div>
+
+<!-- DECISION -->
+<div flex="10">
+    <span>{{entry.decision}}</span>
+    <md-tooltip md-delay="300">{{entry.decision}}</md-tooltip>
+</div>
+
+<!-- DECIDER -->
+<div flex>
+    <span>{{entry.decider}}</span>
+    <md-tooltip md-delay="300">{{ entry.decider }}</md-tooltip>
+</div>
+
+<!-- HEADER -->
+<div flex class="column-xs">
+    <md-icon class="content-eb-orange icon-pointer"
+             ng-click="vm.templateCallback.header($event, entry)"
+             md-svg-src="/img/icons/ic_details_black.svg"
+             aria-label="Recording details">
+    </md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.FILTER_ANALYSIS.TABLE.DETAILS' | translate}}</md-tooltip>
+</div>

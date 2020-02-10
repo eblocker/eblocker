@@ -1,0 +1,49 @@
+<eb-wizard-component wizard-title="ADMINCONSOLE.SPLASH_SCREEN.CARD.TITLE">
+    <eb-wizard-content>
+        <div class="highlights-of-eblocker-two">
+            <p>
+                <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.INTRO"></span>
+            </p>
+            <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.HIGHLIGHTS.HEAD"></span>
+            <ul>
+                <li><span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.HIGHLIGHTS.LI_1"></span></li>
+                <li><span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.HIGHLIGHTS.LI_2"></span></li>
+                <li><span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.HIGHLIGHTS.LI_3"></span></li>
+            </ul>
+        </div>
+
+        <div>
+            <p>
+                <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.LINK_PRE"></span>
+                <a class="orange"
+                   translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.LINK_TEXT"
+                   target="_blank"
+                   ng-href="{{'ADMINCONSOLE.SPLASH_SCREEN.CARD.LINK_URL' | translate}}"></a>
+            </p>
+            <p>
+                <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.OUTRO"></span>
+            </p>
+        </div>
+
+        <div layout="column">
+            <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.GREETINGS"></span>
+            <span translate="ADMINCONSOLE.SPLASH_SCREEN.CARD.SIGN"></span>
+        </div>
+
+        <div ng-show="vm.showSplash" layout="row" layout-align="start center" style="margin-top: 25px;">
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"  ng-model="vm.enableDoNotShowAgain">
+                {{ 'ADMINCONSOLE.SPLASH_SCREEN.CARD.ENABLE.NOT_AGAIN' | translate }}
+            </md-checkbox>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align-xs="center center" layout-align="end center">
+            <md-button ng-show="vm.enableDoNotShowAgain" type="button" ng-click="vm.closeDoNotShowAgain()" class="md-raised md-primary">
+                {{ 'ADMINCONSOLE.SPLASH_SCREEN.CARD.ACTION.NOT_AGAIN' | translate }}
+            </md-button>
+            <md-button ng-hide="vm.enableDoNotShowAgain" type="button" ng-click="vm.close()" class="md-raised md-primary">
+                {{ 'ADMINCONSOLE.SPLASH_SCREEN.CARD.ACTION.OK' | translate }}
+            </md-button>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

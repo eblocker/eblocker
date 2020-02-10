@@ -1,0 +1,17 @@
+[
+  {
+    "name": "name-0",
+    "id": 0,
+    "builtin":false
+  },
+  {
+    "name": "name-1",
+    "id": 1,
+    "builtin":false
+  },
+  {
+    "name": "name-2",
+    "id": 2,
+    "builtin":false
+  }
+]

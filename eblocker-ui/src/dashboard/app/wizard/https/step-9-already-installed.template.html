@@ -1,0 +1,52 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.HTTPS.ALREADY_INSTALLED.TITLE' | translate }}</h3>
+    </div>
+
+    <div ng-hide="vm.isFirefox()">
+        <p translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_1"></p>
+        <p translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_2"></p>
+    </div>
+
+    <div ng-show="vm.isFirefox()">
+        <div ng-if="!vm.isOther()">
+            <p translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_1_FIREFOX"></p>
+            <p>
+                <span translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_2_FIREFOX"></span>
+                <span>
+                        <a class="orange" href="" ng-click="vm.nextStep()"
+                           translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_2_FIREFOX_LINK">
+                        </a>
+                </span>
+            </p>
+        </div>
+
+        <div ng-if="vm.isOther()">
+            <p>
+                <span translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_1_FIREFOX"></span>
+                <span translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_2_FIREFOX"></span>
+                <span translate="WIZARD.HTTPS.ALREADY_INSTALLED.TEXT_2_FIREFOX_LINK"></span>
+            </p>
+            <p>
+                <span translate="WIZARD.HTTPS.NO_WIZARD.TEXT_1"></span>
+            </p>
+            <div>
+                <md-button class="md-raised md-secondary"
+                           ng-href="{{ vm.getCertificateDownloadUrl() }}">
+                    {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.close()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.DONE' | translate }}
+        </md-button>
+    </div>
+</div>

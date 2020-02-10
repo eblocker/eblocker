@@ -1,0 +1,36 @@
+<!-- ICON -->
+<div flex class="column-xs" hide-xs>
+    <md-icon ng-class="{'content-eb-orange': entry.enabled }" md-svg-src="/img/icons/ic_list_black.svg" aria-label="App entry"></md-icon>
+    <md-tooltip md-delay="300" ng-show="entry.enabled">{{'ADMINCONSOLE.SSL_FAILS.TOOLTIP.APP_ENABLED' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-hide="entry.enabled">{{'ADMINCONSOLE.SSL_FAILS.TOOLTIP.APP_DISABLED' | translate}}</md-tooltip>
+</div>
+
+<!-- APP -->
+<div flex hide-xs>
+    <span>{{entry.name}}</span>
+</div>
+
+<!-- DEVICES -->
+<div flex>
+    <md-tooltip md-delay="300">{{entry.devices}}</md-tooltip>
+    <span>{{entry.devices}}</span>
+</div>
+
+<!-- DOMAINS -->
+<div flex>
+    <md-tooltip ng-if="entry.domainsIps !== undefined && entry.domainsIps !== ''" md-delay="300">{{entry.domainsIps}}</md-tooltip>
+    <span>{{entry.domainsIps}}</span>
+</div>
+
+<!-- LAST SEEN -->
+<div flex hide-xs>
+    <span>
+        {{ entry.translatedDateTime }}
+    </span>
+</div>
+
+<!-- TRUSTED -->
+<div flex="15">
+    <md-icon ng-show="entry.enabled" class="content-ok" md-svg-src="/img/icons/ic_check_black.svg" aria-label="App trusted"></md-icon>
+    <md-icon ng-hide="entry.enabled" class="content-error" md-svg-src="/img/icons/ic_close_black_24px.svg" aria-label="Recording entry"></md-icon>
+</div>

@@ -1,0 +1,102 @@
+#!/usr/bin/perl
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# Helper for squid to forward squid helper requests via tcp.
+#
+# usage: $0 hostname port [retry_interval]
+#
+# It ...
+# * reconnects after connection retry_interval [s] (default 5s),
+# * buffers one request in case of failure,
+# * exits on stdin close.
+
+use strict;
+use Socket;
+use IO::Select;
+
+if ($#ARGV < 1 || $#ARGV > 2) {
+    print "$0 hostname port [retry_interval]\n";
+    exit(1);
+}
+
+my $host = shift;
+my $port = shift;
+my $retry_interval = shift || 5;
+
+my $proto = getprotobyname('tcp');
+
+my $req = '';
+my $resp;
+my $resp_len;
+
+my $connected = 0;
+
+# prevent perl from terminating on SIGPIPE 
+$SIG{PIPE} = sub {
+};
+
+# for checking eof without blocking in 
+# reconnection loop we need to use select
+my $select = IO::Select->new();
+$select->add(*STDIN);
+
+while(1) {
+
+    # reconnect if neccessary
+    while ($connected != 1) {
+        $connected = connect_to_blacklist_service();
+        if ($connected == 1) {
+            next;
+        }
+
+        # wait, possibly quiting if there is eof
+        if ($select->can_read($retry_interval)) {
+            if (eof()) {
+                exit 0;
+            }
+        }
+    }
+
+    # only read new request when old one has been answered
+    if ($req == '') {
+        if (!($req = <>)) {
+            # quit helper if eof has been reached
+            exit(0);
+        }
+    }
+
+    # forward request to remove service
+    if (!syswrite SOCKET, $req) {
+        $connected = 0;
+        next;
+    }
+
+    # read response
+    if (($resp_len = sysread SOCKET, $resp, 2048)) {      
+        syswrite STDOUT, $resp, $resp_len;
+        $req = '';
+    } else {
+        $connected = 0;
+    }
+}
+
+sub connect_to_blacklist_service {
+    socket(SOCKET, PF_INET, SOCK_STREAM, $proto) || return -1;
+    connect(SOCKET, pack_sockaddr_in($port, inet_aton($host))) || return -2;
+    return 1;
+}

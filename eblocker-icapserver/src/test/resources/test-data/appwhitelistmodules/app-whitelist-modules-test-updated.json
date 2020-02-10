@@ -1,0 +1,71 @@
+[
+  {
+    "name": "OSX App Store (updated)",
+    "description": {
+      "de": "Apple OSX App Store",
+      "en": "Apple OSX App Store"
+    },
+    "domainUrls": [
+      "s.mzstatic.com",
+      "swscan.apple.com",
+      "xp.apple.com",
+      "itunes.apple.com"
+    ],
+    "id": 3,
+    "enabledPerDefault": true
+  },
+  {
+    "name": "Facebook Messenger App",
+    "description": {
+      "de": "Facebook Messenger App",
+      "en": "Facebook Messenger App"
+    },
+    "domainUrls": [
+      "z-p1-external-frt3-1.xx.fbcdn.net",
+      "b-graph.facebook.com",
+      "b-api.facebook.com",
+      "edge-mqtt.facebook.com",
+      "api.facebook.com",
+      "new-host.org"
+    ],
+    "id": 2,
+    "enabledPerDefault": false
+  },
+  {
+    "name": "Windows 10 Updates",
+    "description": null,
+    "domainUrls": [
+      "windowsupdate.com",
+      "update.microsoft.com"
+    ],
+    "id": 4,
+    "enabledPerDefault": false,
+    "version": "explicitVersion"
+  },
+  {
+    "name": "OSX Softwareupdates",
+    "description": {
+      "de": "OSX Softwareerneuerungen",
+      "en": "OSX Softwareupdates"
+    },
+    "domainUrls": [
+      "swcdn.apple.com",
+      "swscan.apple.com",
+      "swquery.apple.com",
+      "swdownload.apple.com"
+    ],
+    "id": 1,
+    "enabledPerDefault": true
+  },
+  { "name": "Telegram (new)",
+    "description": {"en": "Instant Messaging Service",
+      "de": "Instant Messaging Dienst"},
+    "whitelistedDomains": [
+    ],
+    "whitelistedIPs": [
+      "149.154.164.0/22"
+    ],
+    "id": 17,
+    "enabledPerDefault": false
+  }
+]

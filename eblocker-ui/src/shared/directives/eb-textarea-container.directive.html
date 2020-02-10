@@ -1,0 +1,9 @@
+<div layout="column" class="eb-label-container">
+    <div class="eb-label">
+        <label md-truncate class="md-ellipsis">{{ label }}</label>
+    </div>
+    <div class="eb-text-box">
+        <span disabled ng-if="vm.valueAsFunction">{{ config.value() }}</span>
+        <span disabled ng-if="!vm.valueAsFunction && config.value !== undefined">{{ config.value | translate }}</span>
+    </div>
+</div>

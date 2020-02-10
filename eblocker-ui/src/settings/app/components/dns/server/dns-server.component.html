@@ -1,0 +1,97 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+        <div class="help-on-tabbed-view">
+            <eb-help-icon template="app/components/dns/server/help-dns-server.template.html">
+            </eb-help-icon>
+        </div>
+
+        <div layout-padding layout-margin></div>
+
+        <div ng-show="vm.isCustomMode()">
+            <div layout="row" layout-xs="column" layout-align="start center" style="margin-bottom: 12px; margin-left: 16px;">
+                <label style="margin-right: 20px;">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.LABEL' | translate }}</label>
+                <md-select ng-model="vm.configuration.dnsModeListStrategy" ng-change="vm.saveDnsSettings(vm.tableData)" aria-label="Set order of DNS servers">
+                    <md-option value="default">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_DEFAULT' | translate }}</md-option>
+                    <md-option value="round_robin">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_ROUND_ROBIN' | translate }}</md-option>
+                    <md-option value="random">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_RANDOM' | translate }}</md-option>
+                </md-select>
+            </div>
+        </div>
+
+    <div>
+        <!-- Action bar of table -->
+        <div layout="row" layout-xs="column" layout-align="start center">
+
+            <div layout="row" style="width: 100%;">
+                <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                    <!-- WORK MODE -->
+                    <div ng-if="!vm.tableEditMode">
+                        <md-button ng-click="vm.newDnsEntry($event)" ng-disabled="!vm.isCustomMode()" class="md-raised md-accent">
+                            {{ 'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}
+                        </md-button>
+                        <md-tooltip md-delay="300" ng-hide="vm.isCustomMode()" md-autohide="true">{{ 'ADMINCONSOLE.DNS_SERVER.TOOLTIP.ADD_BUTTON' | translate }}</md-tooltip>
+                    </div>
+
+                    <!-- EDIT MODE -->
+                    <div ng-if="vm.tableEditMode">
+                        <table-remove-entries table-data="vm.filteredTableData"
+                                              is-entry-deletable="vm.isDeletable(value)"
+                                              on-bulk-delete="vm.bulkDelete(values)"
+                                              button-label="ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE"
+                                              dialog-title="ADMINCONSOLE.DIALOG.DELETE_DNS_ENTRY_CONFIRM.TITLE"
+                                              dialog-text="ADMINCONSOLE.DIALOG.DELETE_DNS_ENTRY_CONFIRM.TEXT"
+                                              dialog-text-undeletable="ADMINCONSOLE.DIALOG.DELETE_DNS_ENTRY_CONFIRM.TEXT_UNDELETABLE">
+                        </table-remove-entries>
+                    </div>
+
+                    <div ng-if="vm.loading" layout="row" layout-align="start center">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+
+                <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                    <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableData"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+
+                <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                    <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                    <eb-edit-table table-data="vm.filteredTableData"
+                                   table-edit-mode="vm.tableEditMode">
+                    </eb-edit-table>
+                </div>
+            </div>
+
+            <div hide-gt-xs style="width: 100%;">
+                <!-- TABLE SEARCH -->
+                <eb-filter-table filtered-data="vm.filteredTableData"
+                                 original-data="vm.tableData"
+                                 filter-properties="vm.searchProps">
+                </eb-filter-table>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <eb-table table-data="vm.filteredTableData"
+                  table-header="vm.tableHeaderConfig"
+                  template-callback="vm.templateCallback"
+                  table-template="app/components/dns/server/dns-server-table.template.html"
+                  table-id="vm.tableId"
+                  table-callback="vm.tableCallback"
+                  edit-mode="vm.tableEditMode"
+                  is-entry-selectable="vm.isSelectable(value)"
+                  small-table-header-limit="7">
+        </eb-table>
+
+        <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+            <eb-scroll-paginator table-id="vm.tableId"
+                                 table-size="vm.filteredTableData.length">
+            </eb-scroll-paginator>
+        </div>
+
+    </div>
+
+</div>

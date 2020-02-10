@@ -1,0 +1,6 @@
+<md-button class="md-raised md-secondary" ng-show="vm.tableEditMode" ng-click="vm.cancelEditMode()">
+    <span>{{'ADMINCONSOLE.TABLE.ACTION.CANCEL' | translate}}</span>
+</md-button>
+<md-button class="md-raised md-secondary" ng-hide="vm.tableEditMode" ng-click="vm.tableEditMode = !vm.tableEditMode">
+    <span>{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate}}</span>
+</md-button>

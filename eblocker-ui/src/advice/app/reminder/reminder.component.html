@@ -1,0 +1,77 @@
+<div layout="row" layout-align="center center" class="advice-parent">
+
+    <div class="reminder-frame" layout="column" layout-align="center center" style="padding: 20px;">
+
+        <div hide-xs hide-sm id="eblocker-reminder-iframe-container"></div>
+
+        <div hide-xs hide-gt-sm id="eblocker-reminder-iframe-container-sm"></div>
+
+        <div hide-gt-xs id="eblocker-reminder-iframe-container-xs"></div>
+
+
+        <div layout="column" layout-align="center center">
+
+            <div translate="{{'REMINDER.OVERLAY.TEXT.' + vm.productType + '.' + vm.licensePhase}}"
+                 translate-values="vm.context" layout-padding>
+            </div>
+
+            <div>
+                <!-- button to enter license key -->
+                <md-button class="md-raised md-primary md-accent" ng-click="vm.buttonEnterLicenseKeyClicked()">
+                    {{ 'REMINDER.OVERLAY.BUTTON.ENTER' | translate }}
+                </md-button>
+            </div>
+            <div>
+                <!-- button to buy license key -->
+                <md-button class="md-raised md-secondary" ng-click="vm.buttonBuyLicenseKeyClicked()">
+                    {{ 'REMINDER.OVERLAY.BUTTON.PURCHASE' | translate }}
+                </md-button>
+            </div>
+
+        </div>
+
+        <md-divider style="width: 100%;margin-top: 16px;margin-bottom: 8px;"></md-divider>
+
+        <!-- Countdown to automatically close this dialog (EB1-2131: dialog also opens on SmartTV in Mediathek) -->
+        <div layout="column" layout-align="center center" layout-padding ng-if="!vm.countdownStopped" style="margin-bottom: 8px;">
+            <span style="font-style: italic; padding-right: 12px;">{{ 'GENERAL.COUNTDOWN.LABEL' | translate: {'sec': vm.countdownConfig.seconds}:"messageformat" }}</span>
+            <div>
+                <md-button class="md-secondary md-raised" ng-click="vm.stopCountdown()" translate="GENERAL.ACTION.STOP_COUNTDOWN"></md-button>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="center center">
+            <div layout-padding ng-show="!vm.doNotShowAgain">
+                <span>{{ 'REMINDER.OVERLAY.WHEN_AGAIN.PRE' | translate }}</span>
+            </div>
+            <div>
+                <md-select ng-show="vm.context.days > 7 && !vm.doNotShowAgain" ng-model="vm.remindWhenAgain" class="md-no-underline"
+                           aria-label="{{ 'REMINDER.OVERLAY.WHEN_AGAIN.PRE' | translate }}"
+                           style="margin: 20px 0 20px 0">
+                    <md-option ng-value="'day'">{{ 'REMINDER.OVERLAY.WHEN_AGAIN.TOMORROW' | translate }}</md-option>
+                    <md-option ng-value="'week'">{{ 'REMINDER.OVERLAY.WHEN_AGAIN.WEEK' | translate }}</md-option>
+                </md-select>
+            </div>
+            <div ng-hide="vm.context.days > 7 || vm.doNotShowAgain">
+                <span>{{ 'REMINDER.OVERLAY.WHEN_AGAIN.TOMORROW' | translate }}</span>
+            </div>
+            <div layout-padding ng-show="!vm.doNotShowAgain">
+                <span>{{ 'REMINDER.OVERLAY.WHEN_AGAIN.POST' | translate }}</span>
+            </div>
+            <div>
+                <md-button style="margin-top: 20px; margin-bottom: 20px;" class="md-raised md-secondary" ng-click="vm.buttonSetRemindAgain()">
+                    {{ 'REMINDER.OVERLAY.BUTTON.CLOSE' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+        <!-- Checkbox: do not show again-->
+        <div ng-show="vm.context.days > 7" layout="row" layout-align="center center">
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.doNotShowAgain" ng-change="vm.changeShowReminder()">
+                <span>{{ 'REMINDER.DONOTSHOWAGAIN.LABEL_DO_NOT_SHOW' | translate }}</span>
+            </md-checkbox>
+        </div>
+
+    </div>
+</div>

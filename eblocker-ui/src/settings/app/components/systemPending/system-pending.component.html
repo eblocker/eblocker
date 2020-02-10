@@ -1,0 +1,85 @@
+<div layout="column" ng-cloak layout-fill class="settings-status-frame">
+
+    <div class="settings-status-view" layout="row" layout-align="center start" flex>
+
+        <md-content flex layout="column" layout-align="start center" class="status-card-small">
+            <div layout="column" layout-align="center stretch" layout-margin>
+                <md-card>
+
+                    <div ui-view></div>
+
+
+                    <md-divider ng-show="vm.isNetworkWizard" style="width:100%;"></md-divider>
+                    <md-card-footer ng-show="vm.isNetworkWizard" layout="column" layout-align="center center">
+                        <div flex>
+                            <span style="font-style: italic;" translate="ADMINCONSOLE.STAND_BY.CARD.DOWN.NETWORK_WIZARD"></span>
+                        </div>
+                    </md-card-footer>
+
+                    <md-divider ng-hide="vm.isCheckingStatus()" style="width:100%;"></md-divider>
+                    <md-card-footer ng-show="vm.isRunningWithoutWarnings()" layout="column" layout-align="center center">
+                        <div flex translate="ADMINCONSOLE.BOOTING.CARD.RUNNING.WITHOUT_WARNINGS_1"></div>
+                        <div flex translate="ADMINCONSOLE.BOOTING.CARD.RUNNING.WITHOUT_WARNINGS_2"></div>
+                    </md-card-footer>
+                    <md-card-footer ng-show="vm.isRunningWithWarning()" layout="column" layout-align="center center">
+                        <div flex translate="ADMINCONSOLE.BOOTING.CARD.RUNNING.WITH_WARNINGS_1"></div>
+                        <div flex translate="ADMINCONSOLE.BOOTING.CARD.RUNNING.WITH_WARNINGS_2"></div>
+                    </md-card-footer>
+                    <md-card-footer ng-show="vm.isError()" layout="row" layout-align="center center">
+                        <div>
+                            {{ 'ADMINCONSOLE.BOOTING.CARD.ERROR.HINT_PRE' | translate }}<a href="{{ 'ADMINCONSOLE.BOOTING.CARD.ERROR.HINT_URL' | translate }}">{{ 'ADMINCONSOLE.BOOTING.CARD.ERROR.HINT_CAPTION' | translate }}</a>{{ 'ADMINCONSOLE.BOOTING.CARD.ERROR.HINT_POST' | translate }}
+                        </div>
+                    </md-card-footer>
+
+
+                    <md-card-actions layout="column" layout-align="center center" ng-if="vm.isError() || vm.isRunningWithWarning() || vm.downForTooLong()">
+
+                        <div layout="row" layout-xs="column" layout-align-xs="center center" layout-padding >
+                            <div>
+                                <md-button ng-show="vm.isError()"
+                                           type="button"
+                                           aria-label="Reload page"
+                                           ng-disabled="vm.actionsDisabled"
+                                           ng-click="vm.reload()"
+                                           class="md-raised md-secondary"
+                                           translate="ADMINCONSOLE.BOOTING.CARD.ACTION.RELOAD">
+                                </md-button>
+                                <md-button ng-show="vm.isRunningWithWarning()"
+                                           type="button"
+                                           aria-label="Go to settings"
+                                           ng-disabled="ctrl.actionsDisabled"
+                                           ng-click="vm.reload()"
+                                           class="md-primary"
+                                           translate="ADMINCONSOLE.BOOTING.CARD.ACTION.SETTINGS">
+                                </md-button>
+                            </div>
+
+                            <div>
+                                <md-button ng-show="vm.isError() || vm.isRunningWithWarning()"
+                                           type="button"
+                                           aria-label="Shutdown eblocker"
+                                           ng-disabled="vm.actionsDisabled"
+                                           ng-click="vm.shutdown()"
+                                           class="md-raised md-primary md-accent"
+                                           translate="ADMINCONSOLE.BOOTING.CARD.ACTION.SHUTDOWN">
+                                </md-button>
+                            </div>
+
+                            <div>
+                                <md-button ng-show="vm.isError() || vm.isRunningWithWarning()"
+                                           type="button"
+                                           aria-label="Reboot eblocker"
+                                           ng-disabled="vm.actionsDisabled"
+                                           ng-click="vm.reboot()"
+                                           class="md-raised md-primary md-accent"
+                                           translate="ADMINCONSOLE.BOOTING.CARD.ACTION.REBOOT">
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-card-actions>
+
+                </md-card>
+            </div>
+        </md-content>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<div layout="column" ng-cloak layout-fill class="settings-status-frame">
+
+    <div class="settings-status-view" layout="row" layout-align="center start" flex>
+
+        <md-content flex layout="column" layout-align="start center" class="status-card-small">
+            <div layout="column" layout-align="center stretch" layout-margin>
+                <md-card>
+                    <md-card-title>
+                        <md-toolbar>
+                            <div class="md-toolbar-tools"
+                                 layout="row"
+                                 md-scroll-shrink>
+                                <div>
+                                    <h2>{{ 'ADMINCONSOLE.EXPIRED.CARD.TITLE' | translate }}</h2>
+                                </div>
+                            </div>
+                        </md-toolbar>
+                    </md-card-title>
+
+                    <md-card-content>
+                        <div layout="row" layout-align="center center">
+                            <p>{{ 'ADMINCONSOLE.EXPIRED.CARD.TEXT' | translate }}</p>
+                        </div>
+                    </md-card-content>
+
+                    <md-card-actions layout-gt-xs="row" layout="column" layout-align="center center" layout-margin>
+                        <md-button type="button" class="md-raised md-primary md-accent" ng-click="vm.resume()">
+                            {{ 'ADMINCONSOLE.EXPIRED.CARD.ACTION.RESUME' | translate }}
+                        </md-button>
+                    </md-card-actions>
+                </md-card>
+            </div>
+        </md-content>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.editNameForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.TITLE' | translate }}</h2>
+            </div>
+
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <div layout="column" layout-align="start start" layout-fill>
+                        <div layout="row" layout-align="start center">
+                            <md-input-container md-theme="eBlockerThemeInput">
+                                <label>{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.MAIN_LABEL' | translate }}</label>
+                                <md-select ng-model="vm.module.accessRestrictionType">
+                                    <md-option ng-value="1">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.MAIN_1' | translate }}</md-option>
+                                    <md-option ng-if="vm.module.whitelisted.length > 0" ng-value="2">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.MAIN_2' | translate }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+                        <div layout="row" layout-align="start start" layout-fill layout-wrap>
+                            <div ng-repeat="filter in vm.getFilterLists() | orderBy:'localizedName'" flex="50">
+                                <md-tooltip ng-if="filter.localizedDescription != ''" md-delay="300" md-direction="top"><!--
+                                    -->{{ filter.localizedDescription }}
+                                </md-tooltip>
+                                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="filter.active">
+                                    {{ filter.localizedName }}
+                                </md-checkbox>
+                            </div>
+                        </div>
+
+                        <div ng-show="vm.module.accessRestrictionType == 1 && vm.module.whitelisted.length > 0" layout="row" layout-align="start start">
+                            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.hasExceptions" class="md-primary">
+                                {{ vm.hasExceptions ? 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.BLACKLISTED_EXCEPTION_LABEL' : 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.NO_EXCEPTION_LABEL' | translate }}
+                            </md-switch>
+                        </div>
+
+                        <div ng-show="vm.module.accessRestrictionType == 1 && vm.hasExceptions" layout="row" layout-align="start start" layout-fill layout-wrap>
+                            <div ng-repeat="filter in vm.getExceptionFilterLists() | orderBy:'localizedName'" flex="50">
+                                <md-tooltip ng-if="filter.localizedDescription != ''" md-delay="300" md-direction="top"><!--
+                                    -->{{ filter.localizedDescription }}
+                                </md-tooltip>
+                                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="filter.active">
+                                    {{ filter.localizedName }}
+                                </md-checkbox>
+                            </div>
+                        </div>
+
+                    </div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_ACCESS_RESTRICTION.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

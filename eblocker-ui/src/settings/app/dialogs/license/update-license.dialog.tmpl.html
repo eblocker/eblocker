@@ -1,0 +1,143 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.licenseForm" novalidate ng-submit="vm.ok()" style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TITLE' | translate }}</h2>
+            </div>
+
+            <md-tabs md-border-bottom
+                     md-dynamic-height
+                     md-selected="vm.currentStep">
+                <md-tab ng-disabled="!vm.isStepAllowed(0)">
+                    <!-- TAB 0 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.TOS.LABEL' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-padding>
+
+                            <div style="padding-top: 0;" layout="row" layout-align="end center">
+                                <md-button type="button" ng-click="vm.openPrintView()" ng-disabled="!vm.readToPrint()" class="md-secondary">
+                                    {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.OPEN_IN_NEW_WINDOW' | translate }}
+                                </md-button>
+                            </div>
+
+                            <div class="setup-eula-container">
+                                <p ng-bind-html="vm.tos.licenseText"></p>
+                                <p>
+                                    <span>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.TOS.VERSION_TAG' |translate}}</span>
+                                    <span>{{vm.tos.licenseVersion}}</span>
+                                    <span>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.TOS.SEPARATOR' |translate}}</span>
+                                    <span>{{vm.tos.licenseDateDisplay }}</span>
+                                </p>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.isTosConfirmed">
+                                    {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.TOS.AGREE_TEXT' | translate }}
+                                </md-checkbox>
+                            </div>
+
+                            <div layout="row" layout-align="end center">
+                                <md-button type="button" class="md-raised md-secondary" ng-click="vm.cancel()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CANCEL' | translate }}</md-button>
+                                <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.isStepAllowed(1)" class="md-raised md-primary md-accent">
+                                    {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CONTINUE' | translate }}
+                                </md-button>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab ng-disabled="!vm.isStepAllowed(1)">
+                    <!-- TAB 1 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.LABEL' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <!--  ***** ACTIVATION ******  -->
+                        <div>
+                            <div>
+                                <p>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.TEXT1' | translate }}</p>
+                            </div>
+                            <div>
+                                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                    <label>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.LICENSE_KEY_LABEL' | translate }}</label>
+                                    <input name="licenseKey" ng-model="vm.licenseKey" type="text" required>
+                                    <div ng-messages="vm.licenseForm.licenseKey.$error" ng-if="vm.licenseForm.$submitted || vm.licenseForm.licenseKey.$touched">
+                                        <div ng-message="required">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.LICENSE_KEY_REQUIRED' | translate}}</div>
+                                        <div ng-message="backend">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.' + vm.backendErrorKey | translate}}</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+
+                            <div>
+                                <p>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.TEXT2' | translate }}</p>
+                                <p>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.TEXT3' | translate }}</p>
+                            </div>
+
+                            <div>
+                                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                    <label>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.EMAIL_LABEL' | translate }}</label>
+                                    <input name="emailAddress" ng-model="vm.emailAddress" type="email" required>
+                                    <div ng-messages="vm.licenseForm.emailAddress.$error" ng-if="vm.licenseForm.$submitted">
+                                        <div ng-message="required">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.EMAIL_REQUIRED' | translate}}</div>
+                                        <div ng-message="email">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.EMAIL_INVALID' | translate}}</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                        </div>
+
+                        <div ng-show="vm.processing" class="spinner-overlay" layout="column" layout-align="center center">
+                            <md-progress-circular md-mode="indeterminate" ng-show="vm.processing"></md-progress-circular>
+                        </div>
+
+                        <div layout="row" layout-align="end center">
+                            <md-button type="button" class="md-raised md-secondary" ng-click="vm.cancel()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CANCEL' | translate }}</md-button>
+                            <md-button type="button" class="md-raised md-secondary" ng-click="vm.prevStep()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.BACK' | translate }}</md-button>
+                            <md-button type="submit" class="md-raised md-primary md-accent" ng-disabled="vm.processing">
+                                {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.OK' | translate }}
+                            </md-button>
+                        </div>
+
+
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab ng-disabled="!vm.isStepAllowed(2)">
+                    <!-- TAB 2 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.LABEL' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <!--  ***** CONFIRMATION ******  -->
+                        <div layout="column" class="license-confirmation-dialog">
+                            <div>
+                                <p>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.TEXT2' | translate }}</p>
+                            </div>
+                            <ul>
+                                <li ng-repeat="msg in vm.confirmationMsgKeys track by $index">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.' + msg | translate}}</li>
+                            </ul>
+                            <ul ng-if="vm.confirmationMsgKeys.length === 0" style="margin-left: 20px; margin-right: 20px;">
+                                <li>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.DEFAULT_MSG' | translate}}</li>
+                            </ul>
+                            <div>
+                                <p>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.CONFIRM'| translate }}</p>
+                            </div>
+                        </div>
+
+                        <div ng-show="vm.processing" class="spinner-overlay" layout="column" layout-align="center center">
+                            <md-progress-circular md-mode="indeterminate" ng-show="vm.processing"></md-progress-circular>
+                        </div>
+
+                        <div layout="row" layout-align="end center">
+                            <md-button type="button" class="md-raised md-secondary" ng-click="vm.cancel()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CANCEL' | translate }}</md-button>
+                            <!--<md-button type="button" class="md-raised md-secondary" ng-click="vm.prevStep()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.BACK' | translate }}</md-button>-->
+                            <md-button type="submit" class="md-raised md-primary md-accent" ng-disabled="vm.processing || (vm.doConfirm && !vm.confirmed)">
+                                {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CONFIRM' | translate }}
+                            </md-button>
+                        </div>
+
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+            </md-card-content>
+
+        </md-dialog-content>
+    </form>
+</md-dialog>

@@ -1,0 +1,23 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div>
+        <eb-table table-data="vm.table.data"
+                  table-header="vm.table.header"
+                  table-template="app/components/system/tasks/tasks-table.template.html"
+                  table-callback="vm.table.callback"
+                  table-id="vm.table.id">
+        </eb-table>
+    </div>
+    <div layout="row">
+        <md-button ng-click="vm.refresh()" class="md-primary">{{ 'ADMINCONSOLE.TASKS.BUTTONS.REFRESH' | translate }}</md-button>
+        <md-button ng-click="vm.editConfig($event)" class="md-secondary">{{ 'ADMINCONSOLE.TASKS.BUTTONS.EDIT_CONFIG' | translate }}</md-button>
+    </div>
+
+    <div>
+        <eb-table table-data="vm.schedulerTable.data"
+                  table-header="vm.schedulerTable.header"
+                  table-template="app/components/system/tasks/scheduler-table.template.html"
+                  table-id="vm.schedulerTable.id">
+        </eb-table>
+    </div>
+</div>
+

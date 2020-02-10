@@ -1,0 +1,52 @@
+<div layout-padding layout="column">
+    <!--<div>-->
+    <!--<h3>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TIME_LANG.GREETING' | translate }}</h3>-->
+    <!--</div>-->
+    <!--<div>-->
+    <!--<p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.INTRO' | translate }}</p>-->
+    <!--</div>-->
+    <form name="vm.licenseForm" ng-submit="vm.submitLicenseForm()">
+
+        <div>
+            <p>{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.REGISTRATION_PURPOSE_EXPLAIN' | translate }}</p>
+        </div>
+
+        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;" flex>
+            <label>{{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.LICENSE_KEY_LABEL' | translate}}</label>
+            <input class="o-input" name="licenseKey" ng-model="vm.registrationUserData.licenseKey" required>
+            <div ng-messages="vm.licenseForm.licenseKey.$error" ng-if="vm.licenseForm.$submitted">
+                <div ng-message="required">{{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.LICENSE_KEY_WAS_SENT_TO_YOU_IF_NOT' | translate}} <a href="mailto:support@eblocker.com?Subject=License%20key" target="_top"> {{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.PLEASE_LET_US_KNOW' | translate}}</a></div>
+                <div ng-message="invalidKey">{{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.ERROR.' + vm.errorString | translate}}</div>
+            </div>
+        </md-input-container>
+        <p style="margin-top:10px" translate="ADMINCONSOLE.ACTIVATION.TAB.LICENSE.EMAIL_IMPORTANCE_EXPLAIN_PART1"></p>
+        <p translate="ADMINCONSOLE.ACTIVATION.TAB.LICENSE.EMAIL_IMPORTANCE_EXPLAIN_PART2"></p>
+
+        <div layout="row" layout-align="center center" ng-show="vm.registering">
+            <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+            <p style="margin-left: 20px;">{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.REGISTERING_STATUS_LABEL' | translate}}</p>
+        </div>
+
+        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+            <label>{{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.EMAIL_LABEL' | translate}}</label>
+            <input class="o-input" name="emailAddress" ng-model="vm.registrationUserData.emailAddress" type="email" required>
+            <div ng-messages="vm.licenseForm.emailAddress.$error" ng-if="vm.registrationUserData.emailAddress.$touched">
+                <div ng-message="email">{{'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.REGISTRATION_ERROR_INVALID_EMAIL' | translate}}</div>
+                <div ng-message="required">{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.PLEASE_ENTER_EMAIL_HERE' | translate}}</div>
+            </div>
+        </md-input-container>
+
+
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.closeWizard()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.BACK' | translate }}
+            </md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.ACTIVATION.ACTION.CONTINUE' | translate }}
+            </md-button>
+        </div>
+    </form>
+</div>

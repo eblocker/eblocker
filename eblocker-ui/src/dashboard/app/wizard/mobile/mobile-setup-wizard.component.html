@@ -1,0 +1,58 @@
+<eb-wizard-component wizard-title="{{ 'WIZARD.MOBILE.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <div ng-if="vm.currentStep === 1">
+            <ng-include src="'app/wizard/mobile/step-1-welcome.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 2">
+            <ng-include src="'app/wizard/mobile/step-2-choose-os.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 3 && vm.isWindows()">
+            <ng-include src="'app/wizard/mobile/step-3-install-windows.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 3 && vm.isMac()">
+            <ng-include src="'app/wizard/mobile/step-3-install-mac.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 4 && (vm.isMac() || vm.isWindows())">
+            <ng-include src="'app/wizard/mobile/step-4-download-config-win-mac.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 4 && vm.isIos()">
+            <ng-include src="'app/wizard/mobile/step-4-download-install-config-ios.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 4 && vm.isAndroid()">
+            <ng-include src="'app/wizard/mobile/step-4-download-install-config-android.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 5 && vm.isWindows()">
+            <ng-include src="'app/wizard/mobile/step-5-install-config-win.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 5 && vm.isMac()">
+            <ng-include src="'app/wizard/mobile/step-5-install-config-mac.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 6 && vm.isWindows()">
+            <ng-include src="'app/wizard/mobile/step-6-connect-win.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 6 && vm.isMac()">
+            <ng-include src="'app/wizard/mobile/step-6-connect-mac.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 6 && vm.isIos()">
+            <ng-include src="'app/wizard/mobile/step-6-connect-ios.template.html'"></ng-include>
+        </div>
+        <div ng-if="vm.currentStep === 6 && vm.isAndroid()">
+            <ng-include src="'app/wizard/mobile/step-6-connect-android.template.html'"></ng-include>
+        </div>
+
+        <div ng-if="vm.currentStep === 7">
+            <ng-include src="'app/wizard/mobile/step-7-finish.template.html'"></ng-include>
+        </div>
+
+    </eb-wizard-content>
+
+</eb-wizard-component>
+
+

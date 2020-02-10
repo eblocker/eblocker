@@ -1,0 +1,20 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout="column">
+        <div>
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.REFERRER.TITLE' | translate }}</h3>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.REFERRER.TEXT1' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.REFERRER.TEXT2' | translate }}</p>
+            </div>
+        </div>
+        <div hide-gt-sm layout-padding></div>
+        <!--<div hide-gt-xs layout-padding></div>-->
+        <div layout="row">
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.removingEnabled" class="md-primary switch-word-break" ng-change="vm.setState()">
+                {{ vm.removingEnabled ? 'ADMINCONSOLE.REFERRER.ENABLED' : 'ADMINCONSOLE.REFERRER.DISABLED' | translate }}
+            </md-switch>
+        </div>
+    </div>
+</div>

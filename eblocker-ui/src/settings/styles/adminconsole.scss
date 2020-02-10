@@ -1,0 +1,556 @@
+@import '../../styles/styles.scss';
+
+$settings-toolbar-height: 66px;
+$settings-navbar-width: 320px;
+
+@mixin fill-width-minus-navbar() {
+    // ** basically layout-fill
+    width: -webkit-calc(100% - #{$settings-navbar-width});
+    width: -moz-calc(100% - #{$settings-navbar-width});
+    width: calc(100% - #{$settings-navbar-width});
+    min-width: -webkit-calc(100% - #{$settings-navbar-width});
+    min-width: -moz-calc(100% - #{$settings-navbar-width});
+    min-width: calc(100% - #{$settings-navbar-width});
+}
+
+@mixin fill-height-minus-toolbar() {
+    height: -webkit-calc(100% - #{$settings-toolbar-height});
+    height: -moz-calc(100% - #{$settings-toolbar-height});
+    height: calc(100% - #{$settings-toolbar-height});
+    min-height: -webkit-calc(100% - #{$settings-toolbar-height});
+    min-height: -moz-calc(100% - #{$settings-toolbar-height});
+    min-height: calc(100% - #{$settings-toolbar-height});
+}
+
+.time-picker-container md-time-picker button {
+    // ** having issue with material design icons, so simply don't
+    // show the time picker icon (and thus dialog)
+    display: none;
+}
+
+.update-dialog {
+    .update-details {
+        background-color: $content-background;
+        //height: 300px;
+        max-height: 300px;
+        overflow: auto;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+.filter-analysis-dialog {
+    .content-container {
+        white-space: pre-wrap;
+        word-break: break-all;
+        background-color: $content-background;
+        border: 1px solid $content-border;
+        border-radius: 8px;
+        /* margin: 8px; */
+        padding: 8px;
+    }
+}
+
+.vpn-connection-dialog {
+    .vpn-connection-log {
+        //white-space: pre;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 70%;
+    }
+    .vpn-connection-pre-mock {
+        display: block;
+        padding: 9.5px;
+        margin: 0 0 10px;
+        //font-size: 13px;
+        line-height: 1.42857143;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .vpn-eblocker-option {
+        color: darkgreen;
+    }
+
+    .vpn-overridden-option {
+        color: red;
+    }
+}
+
+.edit-tor-countries-dialog {
+
+    .tor-country-list-small {
+        max-height: 150px;
+        min-height: 150px;
+    }
+
+    tor-country-list-large {
+        max-height: 250px;
+        min-height: 250px;
+    }
+
+    .tor-country-list {
+        overflow: auto;
+        border: 1px solid $content-border;
+        border-radius: 8px;
+        .tor-country-list-entry {
+            @include no-select();
+            height: 30px;
+            min-height: 30px;
+        }
+        .tor-country-list-entry:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+$one-line: 12px;
+
+@mixin centerRadioButtonWithExtraLine() {
+    // ** basically layout-fill
+    width: -webkit-calc(100% + #{$one-line});
+    width: -moz-calc(100% + #{$one-line});
+    width: calc(100% + #{$one-line});
+    min-width: -webkit-calc(100% + #{$one-line});
+    min-width: -moz-calc(100% + #{$one-line});
+    min-width: calc(100% + #{$one-line});
+}
+
+.network-mode-dialog {
+    md-radio-button.radio-button-with-link .md-container {
+        margin-top: 12px;
+        //@include centerRadioButtonWithExtraLine();
+    }
+}
+
+// Must be outside of settings-classes, because it is used in dialogs
+.point:last {
+    margin:0 !important;
+}
+.point {
+    background: #DDD;
+    border-radius: 2px;
+    display: inline-block;
+    height: 5px;
+    margin-right: 1px;
+    width: 20px;
+}
+
+.eblocker-adminconsole {
+
+    // ** trying to get md-select to truncate texts on small devices (w/o resize event)
+    // --> issue in user-details select profile
+    //md-select-menu {
+    //    md-content {
+    //        md-option > div.md-text {
+    //            width: 100%;
+    //        }
+    //    }
+    //}
+
+    .settings-status-frame {
+        overflow: auto;
+
+        .settings-status-view {
+            width: 100%;
+
+            //md-content {
+            //    height: 100%;
+            //}
+
+            .status-card-small {
+                md-card.md-eBlockerTheme-theme {
+                    @media screen and (min-width: $screen-size-gt-xs) {
+                        min-width: 400px; // do not reduce for xs or larger.
+                    }
+                }
+            }
+            .status-card {
+                width: 100%;
+                md-card.md-eBlockerTheme-theme {
+                    @media screen and (min-width: $screen-size-gt-sm) {
+                        min-width: 700px; // do not reduce for sm or larger.
+                    }
+                }
+            }
+
+            md-card-title {
+                padding: 0;
+
+                md-toolbar {
+                    min-height: 52px;
+                    height: 52px;
+                    border-radius: 8px 8px 0 0;
+                }
+            }
+
+            md-card-content {
+                padding-top: 16px;
+            }
+
+            .highlights-of-eblocker-two {
+                ul li {
+                    /* Bullet point color orange*/
+                    color: $eblocker-orange;
+                    list-style-type: disc;
+                }
+                ul li span {
+                    /* Bullet Text color black */
+                    color: black;
+                }
+            }
+        }
+
+    }
+
+    .settings-app-frame .settings-main-view eb-back-to-table {
+        padding: 0;
+    }
+
+    // ** App content frame wrapping toolbar and ui-view in settings.html
+    .settings-app-frame {
+        // make main-div container not scrollable, so that toolbar is
+        // always visible.
+        overflow: hidden;
+
+        md-content {
+            height: 100%;
+            background-color: rgb(255,255,255);
+        }
+
+        // ** Wrapping ui-view in settings.html: scrollable part
+        .content-app-container {
+            position: relative;
+            z-index: 1;
+            overflow: auto;
+            // ** Scrollable area minus toolbar
+            @include fill-height-minus-toolbar();
+            > div[ui-view] {
+                height: 100%;
+            }
+        }
+
+        .settings-main-view {
+            //@include fill-width-minus-navbar();
+            width: 100%; // do not reduce for md or smaller.
+            min-width: 100%;
+
+            // ** basic padding on each view-page
+            .settings-child-view {
+                padding: 20px 20px 0 40px;
+            }
+            // ** reduce basic padding for each view-page on small screens
+            @media screen and (max-width: $screen-size-md) {
+                width: 100%; // do not reduce for md or smaller.
+                min-width: 100%; // do not reduce for md or smaller.
+
+                .settings-child-view {
+                    padding: 20px 10px 10px 10px;
+                }
+            }
+        }
+
+        md-toolbar {
+            .logout-button:hover {
+                cursor: pointer;
+            }
+        }
+
+        .table-details-paginator {
+            .paginator-button {
+                width: 30px;
+                max-width: 30px;
+                transition: box-shadow .4s cubic-bezier(.25,.8,.25,1),background-color .4s cubic-bezier(.25,.8,.25,1);
+            }
+        }
+
+        .table-details-paginator .paginator-button:not(.disabled):hover {
+            background-color: $eblocker-orange-faded;
+            border-radius: 8px;
+        }
+
+        .table-details-paginator .paginator-button:not(.disabled):active {
+            background-color: $eblocker-orange-light-faded;
+            border-radius: 8px;
+        }
+
+        .adminconsole-toolbar, .adminconsole-toolbar .settings-toolbar-tools {
+            min-height: $settings-toolbar-height;
+        }
+
+        .adminconsole-navbar {
+            height: 100%;
+            min-height: 100%;
+            background-color: $console-navbar-background;
+            max-width: 290px;
+            min-width: 290px;
+
+            .adminconsole-navbar-toolbar, .adminconsole-navbar-toolbar .settings-toolbar-tools {
+                min-height: $settings-toolbar-height;
+            }
+
+            .navlist {
+                .nav-entry-button {
+                    padding: 12px 0 12px 8px;
+                }
+
+                .nav-entry-button:hover {
+                    //background-color: $console-navbar-background;
+                    background-color: $console-navbar-background-light;
+                }
+
+                .state-is-active {
+                    // active state has orange icon in any case
+                    md-icon {
+                        color: $eblocker-orange;
+                    }
+                }
+
+                div.nav-entry-button:not(.state-is-active) {
+                    md-icon {
+                        color: $eblocker-icon-gray;
+                    }
+                }
+
+                .feature-is-licensed.state-is-active {
+                    span {
+                        // the font is orange, only if licensed
+                        color: $eblocker-orange;
+                    }
+                }
+
+                div.nav-entry-button:not(.feature-is-licensed) {
+                    span {
+                        // the font is gray, if not licensed
+                        color: $color-disabled;
+                        opacity: 0.23;
+                    }
+                }
+
+                .nav-bar-entry-setup-wizard {
+                    width: 100%;
+                    background-color: $eblocker-orange;
+                    span.nav-bar-text {
+                        color: black;
+                        opacity: 1;
+                    }
+                }
+            }
+
+            span {
+                font-family: Helvetica;
+                text-transform: none;
+                font-size: 16px;
+                line-height: 36px;
+                font-weight: 500;
+            }
+
+            md-icon.navicon {
+                height: 40px;
+                width: 40px;
+            }
+        }
+
+        // *** UI-VIEWS, classes for all nav-bar entries
+        .eb-update {
+            // update state
+            .auto-update-edit:hover {
+                cursor: pointer;
+            }
+
+            .auto-update-edit {
+                text-decoration: underline;
+                text-decoration-style: dotted;
+                margin-left: 6px;
+                .auto-update-icon {
+                    margin-left: 20px;
+                }
+            }
+        }
+
+        .eb-about, .eb-tor {
+            p {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+            .orange {
+                color: $eblocker-orange;
+            }
+            .gray {
+                color: $color-disabled;
+            }
+        }
+
+        .eb-system-lang, .activation-wizard-language {
+            .lang-selected {
+                font-weight: bold;
+            }
+            .icon-option {
+                width: 200px;
+                min-width: 200px;
+                max-width: 200px;
+            }
+        }
+
+        .eb-devices {
+            .table-state, .table-ssl {
+                font-weight: bold;
+            }
+            .table-state.table-device-online,
+            .table-state.table-device-offline,
+            .table-state.table-device-paused,
+            .table-ssl.table-ssl-active {
+                color: gray;
+            }
+
+            .icon-placeholder {
+                display: inline-block;
+                width: 24px;
+                min-width: 24px
+            }
+
+            .table-state.table-device-online.eblocker-active, .table-state.table-device-offline.eblocker-active {
+                color: $eblocker-orange;
+            }
+
+            .table-ssl.table-ssl-active.eblocker-active {
+                color: $color-ok;
+            }
+            .table-ssl.table-ssl-not-active {
+                //color: $color-error;
+                color: gray;
+            }
+        }
+
+        .eb-tor {
+            a {
+                text-decoration: none;
+            }
+        }
+
+        .help-on-tabbed-view {
+            .help-icon-container {
+                top: 65px;
+                right: 20px;
+            }
+        }
+
+        .network-label-container, .network-label-container > div {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .booting-screen .subsystem-status-icon {
+            padding-right: 15px;
+        }
+    }
+
+    .settings-status-view {
+        .setup-eula-container {
+            height: 230px;
+            max-height: 230px;
+            overflow: auto;
+            border: 1px solid gray;
+            border-radius: 5px;
+            background-color: lightgray;
+        }
+
+        .network-wizard-settings {
+            .print-settings-container {
+                background-color: lightgray;
+                border-radius: 8px;
+            }
+        }
+    }
+
+    .config-frame {
+        border-radius: 8px;
+        margin: 8px;
+        padding: 16px 16px 16px 16px;
+        box-shadow: none;
+        border: 1px solid $config-frame-border; //$content-border;
+    }
+
+    .hint-box {
+        background-color: $eblocker-orange;
+        border: 1px solid black; //$content-border;
+    }
+
+    .warning-box {
+        background-color: $color-warn;
+        border: 1px solid black; //$content-border;
+    }
+
+    .alert-box {
+        border: 2px solid $eblocker-orange;
+        border-radius: 5px;
+        padding: 8px;
+    }
+
+    .open-source-system-components {
+        td {
+            padding-right: 1em; padding-left: 1em;
+            vertical-align: top;
+        }
+        th {
+            padding-right: 1em; padding-left: 1em;
+            text-align: left;
+        }
+    }
+}
+
+.setup-eula-container {
+    height: 230px;
+    max-height: 230px;
+    overflow: auto;
+    border: 1px solid gray;
+    border-radius: 5px;
+    background-color: lightgray;
+}
+
+.devices-table {
+    padding-top: 16px;
+    max-height: 250px;
+    width: 100%;
+    max-width: 95%;
+
+    .devices-table-body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .devices-table-body .devices-table-row {
+        height: 36px;
+    }
+    .devices-table-body .devices-table-row:nth-child(even) {
+        background-color: #f2f2f2
+    }
+    .devices-table-body .devices-table-row:hover {
+        background-color: $eblocker-orange-faded;
+        //background-color: $eblocker-orange-light-faded;
+    }
+}
+
+.eblocker-notification.ADMINCONSOLE-NOTIFICATION {
+    // css class .ADMINCONSOLE-NOTIFICATION is defined in NotificationController.js to allow
+    // different stylings for each app.
+    //top: 60px;
+
+    margin: 0 40px 0 0;
+    md-icon.close-icon {
+        color: white;
+    }
+}
+
+// Is there a better way?
+// Issue: 'main-component' is also a tag used in dashboard. Since all files are bundled to one css file and these
+// rules here are root, this rule also applies to dashboard's 'main-component'
+login-component, activation-component, activation-finish-component,
+print-component, settings-component, main-component {
+    height: 100%;
+    min-height: 100%;
+}

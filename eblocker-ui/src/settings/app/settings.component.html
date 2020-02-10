@@ -1,0 +1,69 @@
+<div layout-fill class="settings-app-frame">
+
+    <!-- TOOLBAR -->
+    <div class="adminconsole-toolbar">
+        <md-toolbar md-scroll-shrink>
+
+            <div layout="row" layout-align="start center"
+                 class="md-toolbar-tools settings-toolbar-tools">
+
+                <!-- eBlocker Logo and Label -->
+                <div flex-xs="15" flex-sm="35" flex="30" layout="row" layout-align="start center">
+                    <!-- ICON + LABEL FOR LARGE DEVICES -->
+                    <div hide-xs
+                         hide-sm
+                         hide-md
+                         class="unselectable">
+                        <md-icon style="height: 40px; width: 180px;"  md-svg-src="/img/eBlocker_2_white.svg"></md-icon>
+                    </div>
+
+                    <div ng-if="vm.isLoggedIn()" hide-gt-md
+                         layout="row" layout-align="center center">
+                        <div ng-click="vm.toggleSidenav()" class="unselectable icon-pointer">
+                            <md-icon style="width: 38px;height: auto;" md-svg-src="/img/icons/ic_menu_black.svg"></md-icon>
+                        </div>
+                        <div hide-xs style="padding-left: 20px;" class="unselectable">
+                            <!--<md-icon style="height: 40px; width: 180px;"  md-svg-src="/img/eBlocker_2_white.svg"></md-icon>-->
+                            <span translate="ADMINCONSOLE.TOOLBAR.EBLOCKER_TEXT_ONLY" style="font-weight: bold;font-size: 26px;color:white;"></span>
+                        </div>
+                    </div>
+
+                    <!-- ICON FOR SMALL / MEDIUM DEVICES: ICON ONLY -->
+                    <div ng-if="!vm.isLoggedIn()"
+                         hide-gt-md
+                         class="unselectable" style="width: 47px;">
+                        <div>
+                            <md-icon style="height: 35px;width: auto;margin-right: 5px;"  md-svg-src="/img/eBlocker_icon_white.svg"></md-icon>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heading -->
+                <div flex-xs="55" flex-sm="50" flex="60" layout="row" layout-align="center center">
+                    <h2>{{vm.getActiveState().translationKey | translate }}</h2>
+                </div>
+
+                <!-- MENU -->
+                <div flex="25" flex-sm="15" flex="10" layout="row" layout-align="end center">
+                    <div class="icon-pointer" ng-click="vm.showDashboard();">
+                        <md-tooltip md-delay="300">{{'ADMINCONSOLE.TOOLBAR.DASHBOARD' | translate }}</md-tooltip>
+                        <md-icon style="width: 30px; height: 30px;" md-svg-src="/img/icons/ic_dashboard.svg"></md-icon>
+                    </div>
+                    <eb-dropdown content="vm.getContent"></eb-dropdown>
+                </div>
+
+            </div>
+        </md-toolbar>
+    </div>
+
+    <div ng-hide="vm.showSpinner()"
+         ui-view
+         layout="column" layout-align="start stretch" layout-fill
+         class="content-app-container">
+    </div>
+
+    <div ng-show="vm.showSpinner()" layout="column" layout-align="center center" layout-fill>
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
+
+</div>

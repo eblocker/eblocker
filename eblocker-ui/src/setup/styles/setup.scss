@@ -1,0 +1,89 @@
+@import '../../styles/styles.scss';
+
+.eblocker-setup {
+
+    .eblocker-base-badge-right {
+        position: absolute;
+        right: 30px;
+    }
+
+    .eblocker-base-badge-left {
+        position: absolute;
+        left: 30px;
+    }
+
+    .setup-container {
+        position: absolute;
+        top: 8%;
+        left: 0;
+        right: 0;
+        // bottom: 0 is necessary, so that no-scroll works when controlbar is open
+        bottom: 0;
+        overflow: inherit;
+    }
+
+    .setup-toolbar-lang {
+        outline: none;
+        font-size: 18px;
+        .translate-label {
+            width: 160px;
+            min-width: 160px;
+        }
+    }
+
+    .setup-toolbar-lang:hover {
+        cursor: pointer;
+    }
+
+    .setup-status-component-device {
+        height: 140px;
+        min-height: 140px;
+    }
+
+    .setup-status-component-network {
+        height: 140px;
+        min-height: 140px;
+    }
+
+    .setup-status-component-license {
+        height: 80px;
+        min-height: 80px;
+    }
+
+    .setup-status-icon, md-icon.setup-status-icon.layout-row.flex-50 {
+        margin-left: 10px;
+        margin-right: 10px;
+        max-width: 24px;
+        cursor: default;
+    }
+
+    .setup-padding-top {
+        padding-top: 10px;
+    }
+
+    .setup-status-value {
+        font-weight: bold;
+        padding-left: 15px;
+    }
+
+    .setup-license-valid {
+        font-size: 12px;
+    }
+
+    .setup-eblocker-icon-right, .setup-eblocker-icon-left {
+        position: absolute;
+        z-index: 999;
+    }
+
+    .setup-eblocker-icon-right {
+        right: 0;
+    }
+
+    .setup-eblocker-icon-left {
+        left: 0;
+    }
+
+    .setup-eblocker-icon-right:hover, .setup-eblocker-icon-left:hover {
+        cursor: pointer;
+    }
+}

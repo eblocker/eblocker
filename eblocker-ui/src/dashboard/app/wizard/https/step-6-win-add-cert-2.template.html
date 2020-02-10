@@ -1,0 +1,40 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.WIN_ADD_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol start="6">
+            <li>
+                <span translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_6"></span>
+                <div style="width: 60%; height: auto; padding-top: 8px;">
+                    <img class="image-frame" ng-src="/img/screenshots/httpsWizard/{{'WIZARD.HTTPS.WIN_ADD_CERT.IMAGE_2' | translate}}" style="width: 100%; height: auto;"/>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-padding>
+        <md-checkbox aria-label="{{'WIZARD.HTTPS.WIN_ADD_CERT.CONFIRM_SELECT' | translate}}"
+                     class="md-primary" layout="row"
+                     layout-align="start center"
+                     md-theme="eBlockerThemeCheckbox"
+                     ng-model="vm.confirmSelectStore"
+                     style="margin-bottom: -1px;">
+            {{'WIZARD.HTTPS.WIN_ADD_CERT.CONFIRM_SELECT' | translate}}
+        </md-checkbox>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button class="md-raised md-secondary" ng-click="vm.backToDashboard()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button class="md-raised md-secondary" ng-click="vm.prevStep()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.nextStep()" ng-disabled="!vm.confirmSelectStore" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

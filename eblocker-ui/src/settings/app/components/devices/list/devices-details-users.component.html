@@ -1,0 +1,29 @@
+<div layout="column" layout-align="start start" style="padding-top: 8px;" layout-padding>
+
+    <div layout="column" layout-align="start start">
+
+        <!-- Parental Control User selector -->
+        <div ng-if="vm.hasFeature('FAM') && !vm.device.isEblocker && !vm.device.isGateway" style="margin-top:15px; min-width: 200px">
+            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                <label>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.USERS.LABEL_USER_SELECTION' | translate }}</label>
+                <md-select ng-model="vm.device.assignedUser" ng-change="vm.onChangeOwner(vm.device)">
+                    <md-option ng-value="vm.device.defaultSystemUser">{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.USERS.LABEL_USER_SELECTOR_SYSTEM_USER' | translate }}</md-option>
+                    <md-option ng-repeat="user in vm.users | filter: { system : false, nameKey: '!SHARED.USER.NAME.STANDARD_USER' } | orderBy:'name'" ng-value="user.id">
+                        <span>{{ user.name | translate }}</span>
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+
+        <div ng-if="vm.hasFeature('FAM') && !vm.device.isEblocker && !vm.device.isGateway && vm.device.operatingUser !== vm.device.assignedUser"
+             layout="row"
+             layout-align="start center">
+            <span layout-padding>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.USERS.LABEL_OPERATING_USER_SELECTION' | translate }}</span>
+            <span layout-padding ng-show="vm.device.operatingUserEntity.name !== undefined" translate="{{vm.device.operatingUserEntity.nameKey}}" translate-values="{name: vm.device.operatingUserEntity.name}"></span>
+            <span layout-padding ng-hide="vm.device.operatingUserEntity.name !== undefined" translate="{{vm.device.operatingUserEntity.nameKey}}"></span>
+            <md-button class="md-accent" ng-click="vm.logoutOperatingUser(vm.device)">
+                {{'ADMINCONSOLE.DEVICES_LIST.DETAILS.USERS.ACTION.LOGOUT_OP_USER' | translate }}
+            </md-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,118 @@
+{
+    "SHARED" : {
+        "ANONYMIZATION" : {
+            "CLOAKING" : {
+                "ACTION" : {
+                    "CLOAKING_CUSTOM" : "Benutzerdefiniertes Gerät",
+                    "DISABLE_CLOAKING" : "Ausschalten"
+                },
+                "LABEL_CLOAKED" : "getarnt",
+                "LABEL_CLOAKED_NO_HTTPS" : "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht zu 100% wirksam.",
+                "LABEL_CLOAKING_AGENT" : "Gerät tarnen als",
+                "LABEL_CLOAKING_NAME" : "Geben Sie einen UserAgent ein",
+                "LABEL_CLOAKING_NAME_INVALID" : "Bitte geben Sie einen gültigen UserAgent ein",
+                "LABEL_CLOAKING_OFF" : "Deaktivieren",
+                "TITLE" : "Gerätetarnung"
+            },
+            "IP_ANON" : {
+                "ACTION" : {
+                    "CANCEL_CONNECT" : "Abbrechen",
+                    "CONNECT" : "Verbinden",
+                    "DISCONNECT" : "Trennen",
+                    "RENEW_ID" : "Tor ID erneuern",
+                    "TEST_CONNECTION" : "Privatsphärestatus prüfen"
+                },
+                "DROPDOWN_LABEL" : "Wählen Sie ein Netzwerk",
+                "LABEL_CONNECTED" : "verbunden",
+                "LABEL_TOR" : "Tor Netzwerk",
+                "TITLE" : "IP-Anonymisierung",
+                "TOR_CHECK_URL" : "https://www.eBlocker.com/de/privacy-check/"
+            },
+            "NOTIFICATION" : {
+                "CONNECTION_DOWN" : "VPN {{name}} wird nicht mehr verwendet.",
+                "TOR_CONNECT" : "Verbindung zum Tor-Netzwerk wurde aufgebaut.",
+                "TOR_DISCONNECT" : "Verbindung zum Tor-Netzwerk wurde getrennt.",
+                "TOR_ID_RENEW_ERROR" : "Fehler beim Beziehen einer neuen Tor-Identität.",
+                "TOR_ID_RENEW_SUCCESS" : "Die Tor-Identität wurde erneuert.",
+                "VPN_CONNECT" : "VPN Verbindung wurde aufgebaut.",
+                "VPN_CONNECT_ERROR" : "Die Verbindung konnte nicht aufgebaut werden.",
+                "VPN_CONNECT_TIMEOUT" : "Zeitüberschreitung beim Verbindungsaufbau.",
+                "VPN_DISCONNECT" : "VPN Verbindung wurde getrennt."
+            },
+            "TOOLTIP" : {
+                "ACTION" : {
+                    "TEST_CONNECTION" : "Dieser Link öffnet eine Seite, auf der Sie Ihre Einstellungen zur Privatsphäre, wie z.B. Tor, überprüfen können."
+                },
+                "SELECT_DISABLED" : "Trennen Sie die Verbindung zu '{{name | translate }}', bevor Sie sich erneut verbinden."
+            }
+        },
+        "DIALOG" : {
+            "DNS_FILTER_CHANGE" : {
+                "ACTION" : {
+                    "DO_NOT_SHOW_AGAIN" : "Für dieses Gerät nicht wieder anzeigen",
+                    "OK" : "OK"
+                },
+                "TEXT" : "Es kann einige Minuten dauern, bis die Einstellungen wirksam sind.",
+                "TITLE" : "DNS Blocker Einstellungen"
+            },
+            "TOR" : {
+                "ACTIVATION" : {
+                    "BODY_TEXT1" : "Bitte beachten Sie, dass die effektive Geschwindigkeit Ihres Internet-Zugangs bei Verwendung von Tor deutlich reduziert sein kann.",
+                    "BODY_TEXT2" : "Wir empfehlen die IP-Anonymisierung über Tor nur einzuschalten, wenn Sie Websites mit sensitiven Inhalten besuchen.",
+                    "BUTTON" : {
+                        "CANCEL" : "Abbrechen",
+                        "OK" : "Tor aktivieren"
+                    },
+                    "MORE_INFO_URL" : "https://www.eBlocker.com/de/tor_info",
+                    "MORE_INFO_URL_TEXT" : "Weitere Informationen",
+                    "SHOW_WARNINGS_CAPTION" : "Diese Warnung nicht mehr anzeigen.",
+                    "TITLE" : "Tor für dieses Gerät aktivieren"
+                }
+            }
+        },
+        "DROP_DOWN" : {
+            "TOOLTIP" : "Menü öffnen"
+        },
+        "FILTER" : {
+            "LABEL" : "Suche..."
+        },
+        "LABEL_CONTAINER" : {
+            "EDIT_TOOLTIP" : "Bearbeiten"
+        },
+        "MOBILE" : {
+            "DEVICE_TYPE" : {
+                "LABEL_SELECT" : "Wählen Sie Ihr Gerät",
+                "OTHER" : "Linux/andere"
+            }
+        },
+        "USER" : {
+            "NAME" : {
+                "SYSTEM_DEFAULT" : "Device {{name}} not assigned to a user",
+                "STANDARD_USER": "(andere Geräte)",
+                "DEFAULT_PARENT": "Eltern"
+            },
+            "TYPE": {
+                "PARENT": "b",
+                "CHILD": "a",
+                "OTHER": "c"
+            }
+        },
+        "PARENTAL_CONTROL": {
+            "ACCESS_CONTINGENTS": {
+                "PARENTAL_CONTROL_DAY_1" : "Montag",
+                "PARENTAL_CONTROL_DAY_2" : "Dienstag",
+                "PARENTAL_CONTROL_DAY_3" : "Mittwoch",
+                "PARENTAL_CONTROL_DAY_4" : "Donnerstag",
+                "PARENTAL_CONTROL_DAY_5" : "Freitag",
+                "PARENTAL_CONTROL_DAY_6" : "Samstag",
+                "PARENTAL_CONTROL_DAY_7" : "Sonntag",
+                "PARENTAL_CONTROL_DAY_8" : "Montag-Freitag",
+                "PARENTAL_CONTROL_DAY_9" : "Samstag-Sonntag"
+            }
+        },
+        "DATE": {
+            "DATE_FORMAT" : "DD.MM.YYYY",
+            "ERROR": "Ungültiges Datum"
+        }
+    }
+}

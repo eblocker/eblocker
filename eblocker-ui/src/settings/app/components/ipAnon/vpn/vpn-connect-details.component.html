@@ -1,0 +1,122 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout-padding>
+
+        <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+
+        <md-divider></md-divider>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div>
+                <h3 style="margin-top: 0;" class="eb-table-details-view">
+                    {{'ADMINCONSOLE.VPN_CONNECT.DETAILS.HEADING' | translate}}
+                </h3>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container is-edit="vm.editable(vm.profile)" edit-callback="vm.editName($event, vm.profile)"
+                                        label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_NAME' | translate}}" config="vm.profileName"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container is-edit="vm.editable(vm.profile)" edit-callback="vm.editDescription($event, vm.profile)"
+                                        label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_DESCRIPTION' | translate}}" config="vm.profileDescription"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_CONFIG_VERSION' | translate}}" config="vm.profileConfigVersion"></eb-label-container>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container is-edit="vm.editable(vm.profile)" edit-callback="vm.editUserName($event, vm.profile)"
+                                        label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_USERNAME' | translate}}" config="vm.profileUsername"></eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container is-edit="vm.editable(vm.profile)" edit-callback="vm.editPassword($event, vm.profile)" is-password="true"
+                                        label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_PASSWORD' | translate}}" config="vm.profilePasswordSet"></eb-label-container>
+                </div>
+            </div>
+
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <div layout="row" layout-align="start start">
+                <h3 style="margin-top: 0;" class="eb-table-details-view">
+                    {{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.HEADING' | translate}}
+                </h3>
+                <div flex></div>
+                <div>
+                    <eb-help-inline template="app/components/ipAnon/vpn/help-keep-alive.template.html" as-dialog="true"></eb-help-inline>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" layout-align="start center" layout-align-xs="start start">
+                <div flex-gt-xs="50">
+                    <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.profile.keepAliveMode" ng-change="vm.updateKeepAliveMode()">
+                        <md-radio-button class="md-secondary" value="DISABLED">
+                            <div>{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.OPTIONS.DISABLED' | translate}}</div>
+                        </md-radio-button>
+                        <md-radio-button class="md-secondary" value="OPENVPN_REMOTE">
+                            <div>{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.OPTIONS.OPENVPN_REMOTE' | translate}}</div>
+                        </md-radio-button>
+                        <md-radio-button class="md-secondary" value="EBLOCKER">
+                            <div>{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.OPTIONS.EBLOCKER' | translate}}</div>
+                        </md-radio-button>
+                        <md-radio-button class="md-secondary" value="CUSTOM">
+                            <div>{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.OPTIONS.CUSTOM' | translate}}</div>
+                        </md-radio-button>
+                    </md-radio-group>
+                </div>
+                <div flex-gt-xs="50" ng-hide="vm.profile.keepAliveMode === 'DISABLED'">
+                    <eb-label-container is-edit="vm.profile.keepAliveMode === 'CUSTOM'" edit-callback="vm.editKeepAlivePingTarget($event, vm.profile)" label="{{'ADMINCONSOLE.VPN_CONNECT.DETAILS.KEEP_ALIVE.TARGET' | translate}}" config="vm.keepAlivePingTarget"></eb-label-container>
+                </div>
+            </div>
+
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div layout="column" style="padding-top: 20px;">
+                <div>
+                    <md-switch md-theme="eBlockerThemeSwitch"
+                               class="md-primary switch-word-break"
+                               ng-change="vm.updateProfile()" ng-model="vm.profile.enabled">
+                        {{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_ENABLED' | translate}}
+                    </md-switch>
+                </div>
+
+                <div>
+                    <md-switch md-theme="eBlockerThemeSwitch"
+                               class="md-primary switch-word-break"
+                               ng-change="vm.updateProfile()" ng-model="vm.profile.nameServersEnabled">
+                        {{'ADMINCONSOLE.VPN_CONNECT.DETAILS.LABEL_NAME_SERVER_ENABLED' | translate}}
+                    </md-switch>
+                </div>
+
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <div layout-padding ng-if="vm.connected">
+                <span class="font-italic" translate="ADMINCONSOLE.VPN_CONNECT.DETAILS.TEXT_EXISTING_CONNECTIONS"></span>
+            </div>
+
+            <div layout="row" layout-xs="column">
+                <md-button class="md-raised" aria-label="Edit profile" ng-click="vm.editProfile(vm.profile)" >
+                    {{ 'ADMINCONSOLE.VPN_CONNECT.DETAILS.ACTION.REOPEN_WIZARD' | translate }}
+                </md-button>
+
+                <md-button aria-label="Test VPN connection" class="md-raised" ng-click="vm.testConnection(vm.profile)"
+                           ng-disabled="vm.connected">
+                    {{ 'ADMINCONSOLE.VPN_CONNECT.DETAILS.ACTION.CONNECTION_TEST' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,47 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div>
+        <div layout="column" layout-align="center start" layout-align-xs="center center">
+
+            <div>
+                <h2>{{'ADMINCONSOLE.NOT_LICENSED.TITLE' | translate}}</h2>
+            </div>
+
+            <div>
+                <p translate="ADMINCONSOLE.NOT_LICENSED.UPGRADE_INTRO"></p>
+                <p translate="ADMINCONSOLE.NOT_LICENSED.UPGRADE_TEXT"></p>
+            </div>
+
+            <div ng-show="vm.loading">
+                <md-progress-circular md-mode="indeterminate"
+                                      md-diameter="36">
+                </md-progress-circular>
+            </div>
+
+            <div ng-hide="vm.loading || vm.licenses.length === 0">
+                <div ng-repeat="license in vm.licenses | orderBy: 'appearance'" layout="column" class="config-frame md-whiteframe-z1" style="padding: 24px;">
+                    <div class="md-title">{{ license.productName }}</div>
+                    <div layout="row" layout-xs="column">
+                        <md-button ng-show="license.moreInfoLink" class="md-raised" ng-href="{{ license.moreInfoLink }}" target="_blank">
+                            {{ 'ADMINCONSOLE.NOT_LICENSED.ACTION.MORE_INFO' | translate }}
+                        </md-button>
+                        <md-button ng-show="license.buyNowLink" class="md-raised md-accent" ng-href="{{ license.buyNowLink }}" target="_blank">
+                            {{ 'ADMINCONSOLE.NOT_LICENSED.ACTION.UPGRADE_NOW' | translate }}
+                        </md-button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="!vm.loading && vm.licenses.length === 0" class="config-frame md-whiteframe-z1" style="padding: 24px;" layout="column">
+                <div layout="column">
+                    <div class="md-title">{{ 'ADMINCONSOLE.NOT_LICENSED.DEFAULT_PRODUCTNAME' | translate}}</div>
+                    <div layout="row">
+                        <md-button class="md-raised" ng-href="{{ 'ADMINCONSOLE.NOT_LICENSED.DEFAULT_MOREINFOLINK' | translate}}" target="_blank">
+                            {{ 'ADMINCONSOLE.NOT_LICENSED.ACTION.MORE_INFO' | translate }}
+                        </md-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

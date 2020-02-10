@@ -1,0 +1,49 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.TITLE' | translate }}"
+           style="max-width: 800px;"
+           class="network-mode-dialog">
+
+    <form name="vm.networkModeForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.TITLE' | translate }}</h2>
+            </div>
+
+            <div layout="column" layout-align="start start" style="margin-top: 20px;">
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.networkMode">
+                    <!-- Use standard settings from local network -->
+                    <md-radio-button class="md-secondary radio-button-with-link" value="auto" style="margin-bottom: 0;">
+                        <h4 style="margin: 0;">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.AUTO.TITLE' | translate }}</h4>
+                        <div>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.AUTO.TEXT' | translate }}</div>
+                    </md-radio-button>
+                    <div style="padding-left: 30px;">
+                        <a target="_blank"
+                           ng-href="{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.AUTO.URL' | translate }}">
+                            {{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.AUTO.WARNING' | translate }}
+                        </a>
+                    </div>
+
+                    <md-radio-button class="md-accent" value="individual" style="margin-top: 16px;">
+                        <h4 style="margin: 0;">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.INDIVIDUAL.TITLE' | translate }}</h4>
+                        <div>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.INDIVIDUAL.TEXT' | translate }}</div>
+                    </md-radio-button>
+
+                    <md-radio-button class="md-accent" value="expert">
+                        <h4 style="margin: 0;">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.EXPERT.TITLE' | translate }}</h4>
+                        <div>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.EXPERT.TEXT' | translate }}</div>
+                    </md-radio-button>
+
+                </md-radio-group>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_MODE.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

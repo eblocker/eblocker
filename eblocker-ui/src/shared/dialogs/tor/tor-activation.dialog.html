@@ -1,0 +1,50 @@
+<md-dialog aria-label="{{ 'SHARED.DIALOG.TOR.ACTIVATION.TITLE' | translate}}"
+           style="max-width: 800px;">
+    <form name="vm.torConfirmationForm" ng-submit="ctrl.activateTOR()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout-padding>
+            <div>
+                <h2>{{ 'SHARED.DIALOG.TOR.ACTIVATION.TITLE' | translate }}</h2>
+            </div>
+            <div>
+                <p>
+                    <span translate="SHARED.DIALOG.TOR.ACTIVATION.BODY_TEXT1"></span>
+                </p>
+            </div>
+
+            <div>
+                <p>
+                    <span translate="SHARED.DIALOG.TOR.ACTIVATION.BODY_TEXT2"></span>
+                </p>
+            </div>
+
+            <div>
+                <md-button class="md-primary" ng-href="{{ 'SHARED.DIALOG.TOR.ACTIVATION.MORE_INFO_URL' | translate }}" target="_blank">
+                    {{ 'SHARED.DIALOG.TOR.ACTIVATION.MORE_INFO_URL_TEXT' | translate }}
+                </md-button>
+            </div>
+
+            <div>
+                <md-checkbox md-theme="eBlockerThemeCheckbox"
+                             ng-model="ctrl.hideWarnings"
+                             class="md-primary"
+                             layout="row" layout-align="start center">
+                    {{ 'SHARED.DIALOG.TOR.ACTIVATION.SHOW_WARNINGS_CAPTION' | translate }}
+                </md-checkbox>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <!-- we need to set the theme, because this dialog may be opened from a switch with different theme -->
+            <md-button type="button" ng-click="ctrl.cancelTOR()" class="md-raised md-secondary">
+                {{ 'SHARED.DIALOG.TOR.ACTIVATION.BUTTON.CANCEL' | translate }}
+            </md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">
+                {{ 'SHARED.DIALOG.TOR.ACTIVATION.BUTTON.OK' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

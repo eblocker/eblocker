@@ -1,0 +1,31 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.TITLE' | translate }}"
+           style="max-width: 800px;"
+           class="filter-analysis-dialog"
+           layout-padding>
+        <md-dialog-content layout="column" layout-align="center center" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.FILTER_ANALYSIS.TITLE' | translate }}</h2>
+            </div>
+
+            <div>
+                {{ vm.details.method }} {{ vm.details.url }}
+            </div>
+
+            <div layout="column" layout-align="start stretch">
+                <pre class="content-container">{{ vm.content }}</pre>
+            </div>
+
+            <div>
+                {{ vm.details.decision }} {{ vm.details.decider }}
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.ok()" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.FILTER_ANALYSIS.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+</md-dialog>

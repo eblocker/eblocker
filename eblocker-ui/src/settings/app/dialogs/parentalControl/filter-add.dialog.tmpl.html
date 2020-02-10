@@ -1,0 +1,101 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.filterListForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2 ng-show="vm.isNew && vm.module.filterType === 'blacklist'">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.TITLE_NEW_BLACKLIST' | translate }}</h2>
+                <h2 ng-show="!vm.isNew && vm.module.filterType === 'blacklist'">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.TITLE_EDIT_BLACKLIST' | translate }}</h2>
+                <h2 ng-show="vm.isNew && vm.module.filterType === 'whitelist'">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.TITLE_NEW_WHITELIST' | translate }}</h2>
+                <h2 ng-show="!vm.isNew && vm.module.filterType === 'whitelist'">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.TITLE_EDIT_WHITELIST' | translate }}</h2>
+            </div>
+
+            <div layout="column">
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_NAME' | translate }}</label>
+                    <input name="name" eb-unique-filter-name ng-model="vm.module.localizedName" type="text"  md-maxlength="50" required/>
+                    <div ng-messages="vm.filterListForm.name.$error" ng-if="vm.filterListForm.$submitted || vm.filterListForm.name.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.NAME_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.NAME_TOO_LONG' | translate }}</div>
+                        <div ng-message="unique">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.NAME_NOT_UNIQUE' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_DESCRIPTION' | translate }}</label>
+                    <textarea name="description" ng-model="vm.module.localizedDescription" md-maxlength="150" max-rows="3"></textarea>
+                    <div ng-messages="vm.filterListForm.description.$error" ng-if="vm.filterListForm.$submitted || vm.filterListForm.description.$touched">
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.DESCRIPTION_TOO_LONG' | translate }}</div>
+                    </div>
+                </md-input-container>
+
+                <div layout="row" style="padding-bottom: 8px;">
+                    <md-radio-group layout="row" md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.type">
+                        <md-radio-button ng-value="vm.mode.CUSTOM">{{'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.OPTION_CUSTOM' | translate}}</md-radio-button>
+                        <md-radio-button ng-value="vm.mode.DOWNLOAD">{{'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.OPTION_DOWNLOAD' | translate}}</md-radio-button>
+                    </md-radio-group>
+                </div>
+
+                <div ng-if="vm.type === vm.mode.DOWNLOAD">
+
+                    <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_FORMAT' | translate }}</label>
+                        <md-select aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_FORMAT' | translate }}"
+                                   ng-model="vm.format"
+                                   name="format" required>
+                            <md-option ng-value="format.key" ng-repeat="format in vm.formatList">{{'ADMINCONSOLE.FILTER_OVERVIEW.FORMAT_LIST.' + format.key | translate}}</md-option>
+                        </md-select>
+                        <div ng-messages="vm.filterListForm.format.$error" ng-if="vm.filterListForm.$submitted || vm.filterListForm.format.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.FORMAT_REQUIRED' | translate }}</div>
+                        </div>
+                    </md-input-container>
+
+                    <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_URL' | translate }}</label>
+                        <input name="url" ng-model="vm.downloadUrl" type="text"  md-maxlength="1024" required/>
+                        <div ng-messages="vm.filterListForm.url.$error" ng-if="vm.filterListForm.$submitted || vm.filterListForm.url.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.URL_REQUIRED' | translate }}</div>
+                            <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.URL_TOO_LONG' | translate }}</div>
+                        </div>
+                    </md-input-container>
+
+                    <div layout="row" layout-align="start center">
+                        <div style="padding: 0 8px 0 8px">
+                            <span>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}</span>
+                        </div>
+                        <div style="padding: 0 8px 0 8px">
+                            <md-switch class="md-primary switch-word-break no-margin"
+                                       aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}"
+                                       md-theme="eBlockerThemeSwitch"
+                                       ng-model="vm.updates">
+                            </md-switch>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div ng-if="vm.type === vm.mode.CUSTOM" layout="column">
+                    <md-input-container md-theme="eBlockerThemeInput">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.LABEL_DOMAINS' | translate }}</label>
+                        <textarea name="domains" eb-url-domains ng-model="vm.module.filteredDomains" md-maxlength="2048" required></textarea>
+                        <div ng-messages="vm.filterListForm.domains.$error" ng-if="vm.filterListForm.$submitted || vm.filterListForm.domains.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.DOMAINS_REQUIRED' | translate }}</div>
+                            <div ng-message="urlDomains">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.DOMAINS_INVALID' | translate }}</div>
+                            <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ERROR.DOMAINS_TOO_LONG' | translate }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.ADD_FILTERLIST.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

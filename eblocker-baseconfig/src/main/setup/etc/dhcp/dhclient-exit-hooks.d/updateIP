@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+#This script tells the Icapserver which network interface got a new IP address from a DHCP server.
+#It accomplishes this by using Redis to announce that the IP address changed.
+
+#just run this script for dhcp BOUND events
+if [ "$reason" = 'BOUND' ] ; then
+
+    #restart eth0:0 and eth0:1 if the eth0 interface got a new address
+    if [ $interface = 'eth0' ] ; then
+        ifdown eth0:0
+        ifdown eth0:1
+        ifup eth0:0
+        ifup eth0:1
+    fi
+
+    LOGFILE=/var/log/eblocker/lastreceived_dhcp_ip.log
+    TIME=$(date)
+    echo "At $TIME the ethernet interface $interface got this address assigned:" > $LOGFILE
+    echo $new_ip_address >> $LOGFILE
+
+    # ensure new_routers and new_domain_name_servers and comma separated
+    new_routers=`echo $new_routers | sed 's/ /,/g'`
+    new_domain_name_servers=`echo $new_domain_name_servers | sed 's/ /,/g'`
+
+    #publish new IP address in redis channel
+    redis-cli PUBLISH "dhcp_ip:in" "$interface $new_ip_address $new_routers $new_domain_name_servers"
+fi
+
+#e.g. variables we can access in this script (are injected into its environment):
+
+#reason='BOUND'
+#interface='eth2'
+#medium=''
+#alias_ip_address=''
+#new_ip_address='201.52.236.6'
+#new_subnet_mask='255.255.240.0'
+#new_domain_name=''
+#new_domain_name_servers=''
+#new_routers='201.52.224.1'
+#new_static_routes=''
+#old_ip_address='201.52.236.6'
+#old_subnet_mask='255.255.240.0'
+#old_domain_name=''
+#old_domain_name_servers=''
+#old_routers='201.52.224.1'
+#old_static_routes=''

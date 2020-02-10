@@ -1,0 +1,52 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.DomainIPRangeForm" ng-submit="vm.submit()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.TITLE' | translate }}</h2>
+            </div>
+
+            <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.module.selectedDomainIP">
+                <div layout="column">
+                    <div>
+                        <h4>{{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.LABEL_DOMAIN' | translate }}</h4>
+                    </div>
+                    <div ng-show="vm.module.domains.length == 0">
+                        {{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.LABEL_NO_DOMAINS' | translate }}
+                    </div>
+
+                    <div ng-repeat="domain in vm.module.parentDomains" style="padding-left: 8px;">
+                        <md-radio-button value="{{domain}}">{{domain}}</md-radio-button>
+                    </div>
+
+                    <div>
+                        <h4>{{ 'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.LABEL_IP' | translate }}</h4>
+                    </div>
+                    <div style="padding-left: 8px;" layout="column">
+                        <div layout="row" layout-align="start center">
+                            <md-radio-button value="iprange">
+                                <div>{{ vm.module.recordedIp }}</div>
+                            </md-radio-button>
+                            <md-select md-theme="eBlockerThemeInput" ng-disabled="vm.module.selectedDomainIP !== 'iprange'"
+                                       ng-model="vm.module.iprangemask"
+                                       ng-change="vm.iprangemaskChanged()"
+                                       style="margin-top: 10px; margin-left: 20px;">
+                                <md-option ng-repeat="bit in vm.bits" ng-value="bit">{{bit}}</md-option>
+                            </md-select>
+                        </div>
+                        <span>{{'ADMINCONSOLE.DIALOG.DOMAIN_IP_RANGE.LABEL_IP_RESULT' | translate}} {{ vm.minIPAddress }} - {{ vm.maxIPAddress }}</span>
+                    </div>
+                </div>
+            </md-radio-group>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.TRUSTED_APP.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

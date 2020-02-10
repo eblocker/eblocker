@@ -1,0 +1,15 @@
+#open telnet control port with password authentification
+ControlPort 9051
+CookieAuthentication 0
+HashedControlPassword 16:07A78B33096768E8605E5C0F3D8539DD2D95DE31E6144BE01DCD149944
+SOCKSPort 9050
+
+# Number of seconds Tor waits for a circuit before it closes the socks connection
+# (which leads to the ERR_ZERO_SIZE_OBJECT error in Squid):
+SocksTimeout 30
+
+#control specific Exit nodes (countries)
+@SET_EXIT_NODES@ ExitNodes @EXIT_NODES@
+@SET_EXIT_NODES@ StrictNodes 1
+
+DNSPort 0.0.0.0:9053

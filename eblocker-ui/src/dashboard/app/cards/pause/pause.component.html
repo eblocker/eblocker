@@ -1,0 +1,37 @@
+<eb-card
+    icon="/img/icons/ic_pause_circle_outline.svg"
+    card-title="{{'PAUSE.CARD.TITLE' | translate}}"
+    collapsed-title="{{vm.getTitleTranslateString() | translate:{sec: vm.getPausingAsDuration()} }}"
+    tooltip="PAUSE.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    hide-top-divider="!vm.paused()">
+
+    <eb-card-content ng-if="vm.paused()">
+
+        <div layout="column" layout-align="center center">
+
+            <div layout="row" layout-align="center center">
+                <span ng-hide="vm.paused()" class="md-body-1">{{'PAUSE.CARD.TEXT.NOT_PAUSED' | translate}}</span>
+                <span ng-show="vm.paused()" class="md-body-1">{{'PAUSE.CARD.TEXT.PAUSED' | translate}}</span>
+            </div>
+
+            <div layout="row" layout-align="center center">
+                <div>
+                    <md-button class="md-primary" ng-click="vm.minusFive()">{{'PAUSE.CARD.BUTTON.MINUS_FIVE' | translate}}</md-button>
+                </div>
+                <div ng-if="vm.paused()">
+                    <span class="md-display-1">{{vm.getPausingAsDuration()}}</span>
+                </div>
+                <div>
+                    <md-button class="md-primary" ng-disabled="vm.isPauseThreshold()" ng-click="vm.plusFive()">{{'PAUSE.CARD.BUTTON.PLUS_FIVE' | translate}}</md-button>
+                </div>
+            </div>
+
+        </div>
+    </eb-card-content>
+
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-if="! vm.paused()" ng-click="vm.startPause()" ng-disabled="vm.pauseIsPending">{{'PAUSE.CARD.BUTTON.START' | translate}}</md-button>
+        <md-button class="md-primary" ng-if="vm.paused()" ng-click="vm.stopPause()" ng-disabled="vm.pauseIsPending">{{'PAUSE.CARD.BUTTON.STOP' | translate}}</md-button>
+    </eb-card-actions>
+</eb-card>

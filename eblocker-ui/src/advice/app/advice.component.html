@@ -1,0 +1,13 @@
+    <div ng-class="{'loading': vm.isLoading()}"
+         style="height: 100%; width: 100%;"
+         layout="row" layout-align="start center" ui-view>
+        <div layout="row" layout-align="center center" style="height: 100%;">
+            <div>
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" ng-click="vm.handleBackgroundClick()">
+        <!-- Overlay to add opacity to rest of screen.-->
+    </div>

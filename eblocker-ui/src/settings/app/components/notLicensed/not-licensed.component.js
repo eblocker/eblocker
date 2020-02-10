@@ -1,0 +1,73 @@
+/*
+ * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ *
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be
+ * approved by the European Commission - subsequent versions of the EUPL
+ * (the "License"); You may not use this work except in compliance with
+ * the License. You may obtain a copy of the License at:
+ *
+ *   https://joinup.ec.europa.eu/page/eupl-text-11-12
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+export default {
+    templateUrl: 'app/components/notLicensed/not-licensed.component.html',
+    controller: Controller,
+    controllerAs: 'vm'
+};
+
+function Controller(UpsellService, logger, StateService) {
+    'ngInject';
+    'use strict';
+
+    const vm = this;
+    vm.licenses = [];
+    let activeState;
+
+    vm.$onInit = function() {
+        getAndSetActiveState(StateService.getActiveState());
+    };
+
+    /*
+     * If we traverse from notLicensed to notLicensed (by clicking on two unlicensed features in a row)
+     * the state is actually not reloaded, since we stay in the same state. So we watch for changes in the
+     * active state and manually reload required data if necessary.
+     */
+    vm.$doCheck = function() {
+        getAndSetActiveState(StateService.getActiveState());
+    };
+
+    function getAndSetActiveState(state) {
+        const tmpState = state;
+        if (tmpState !== activeState &&
+            angular.isObject(tmpState) &&
+            angular.isFunction(tmpState.requiredLicense)) {
+            loadAndSetFeatureList(tmpState);
+        }
+    }
+
+    function loadAndSetFeatureList(state) {
+        activeState = state;
+        vm.loading = true;
+        const requestedFeature = state.requiredLicense();
+        loadLicenses(requestedFeature);
+    }
+
+    function loadLicenses(requestedFeature) {
+        UpsellService.getUpsellInfo(requestedFeature).then(function success(response){
+            if (response.data) {
+                if (angular.isDefined(response.data.upsellInfoList) && response.data.upsellInfoList.length > 0) {
+                    vm.licenses = response.data.upsellInfoList;
+                }
+            }
+        }, function error(response) {
+            logger.error('Failed: Server responded with ', response);
+        }).finally(function done() {
+            vm.loading = false;
+        });
+    }
+}

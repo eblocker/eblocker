@@ -1,0 +1,335 @@
+{
+    "CONTROLBAR" : {
+        "DIALOGS" : {
+            "CLOAKING" : {
+                "CUSTOM" : {
+                    "BODY" : "Um beispielsweise dynamische Preisdiskriminierung auf Basis der Geräteidentifikation in Shops zu vermeiden, können Sie die Geräteidentifikation anpassen. Die Geräteidentifikation (der sog. UserAgent) wird während des Surfens an den Web-Server gesendet.",
+                    "BUTTON" : {
+                        "CANCEL" : "Abbrechen",
+                        "OK" : "User Agent Einstellen"
+                    },
+                    "ERROR" : {
+                        "REQUIRED" : "Bitte geben Sie einen UserAgent ein."
+                    },
+                    "INPUT" : "User Agent String",
+                    "TITLE" : "Benutzerdefinierte Geräteidentifikation"
+                }
+            },
+            "MESSAGE" : {
+                "CENTER" : {
+                    "DATE_FORMAT" : "D. MMM YYYY",
+                    "DO_NOT_SHOW_AGAIN" : "Nicht mehr anzeigen",
+                    "MESSAGES_AVAILABLE" : "Neue Nachrichten verfügbar: ",
+                    "MESSAGE_NO_NEW" : "Keine neuen Nachrichten.",
+                    "MESSAGE_NO_NEW_EXPLAIN" : "Es gibt derzeit keine neuen Nachrichten.",
+                    "TITLE" : "eBlocker Nachrichten",
+                    "TOOLTIP_CLOSE" : "Diese Nachricht schließen"
+                }
+            },
+            "PAUSE" : {
+                "CONFIRMATION" : {
+                    "BODY_PART_1" : "Wenn der eBlocker für dieses Gerät pausiert, steht auch die ControlBar nicht mehr zur Verfügung. In einem parallelen Browser-Tab wird das eBlocker Dashboard geöffnet.",
+                    "BODY_PART_2" : "Über das Dashboard können Sie die Pause-Zeit jederzeit verlängern oder beenden, sowie andere eBlocker-Funktionen steuern.",
+                    "BUTTON" : {
+                        "CANCEL" : "Abbrechen",
+                        "OK" : "Pause aktivieren"
+                    },
+                    "DO_NOT_SHOW_AGAIN" : "Nicht mehr anzeigen",
+                    "TITLE" : "Pause Funktion für dieses Gerät"
+                }
+            },
+            "PIN" : {
+                "BUTTON" : {
+                    "CANCEL" : "Abbrechen",
+                    "LOCK" : "Sperren",
+                    "LOGIN" : "Benutzer wechseln",
+                    "OK" : "Ok"
+                },
+                "ERROR" : {
+                    "INVALID" : "PIN ist falsch.",
+                    "REQUIRED" : "PIN ist erforderlich."
+                },
+                "INPUT" : "PIN-Eingabe",
+                "PIN_CHANGE" : {
+                    "ERROR" : {
+                        "INVALID" : "Falsche PIN",
+                        "MISMATCH" : "PINs stimmen nicht überein.",
+                        "REQUIRED" : "Geben Sie eine PIN ein.",
+                        "TOO_LONG" : "PIN ist zu lang",
+                        "TOO_SHORT" : "PIN muss mindestens 4 Zeichen haben."
+                    },
+                    "HEADER" : "PIN ändern",
+                    "INPUT_CURRENT" : "Aktuelle PIN",
+                    "INPUT_NEW" : "Neue PIN",
+                    "INPUT_RENEW" : "Neue PIN wiederholen"
+                },
+                "PIN_LOCK" : {
+                    "BODY" : "Sind Sie sicher, dass der Internet-Zugang für dieses Gerät gesperrt werden soll?",
+                    "HEADER" : "Internet-Zugang sperren"
+                },
+                "PIN_SELECT_USER" : {
+                    "BODY_LOCK" : "Alternativ können Sie den Internet-Zugang für das Gerät sperren.",
+                    "BODY_POST" : " ist die Eingabe der Benutzer-PIN notwendig.",
+                    "BODY_PRE" : "Für den Wechsel auf den Benutzer ",
+                    "HEADER" : "PIN-Eingabe erforderlich"
+                }
+            },
+            "TOR" : {
+                "VERIFY" : {
+                    "BODY" : "Sie können einen der folgenden Dienste verwenden, um zu überprüfen, ob eine Verbindung über ein Anonymisierungsnetzwerk besteht, bzw. welche Daten von außen sichtbar sind. Bitte beachten Sie, dass eBlocker keine Gewähr für die Verfügbarkeit oder die korrekte Funktion der Dienste übernehmen kann.",
+                    "BUTTON" : {
+                        "CANCEL" : "Abbrechen"
+                    },
+                    "TITLE" : "Verbindung prüfen"
+                }
+            },
+            "VPN" : {
+                "ACTIVATION" : {
+                    "BUTTON" : {
+                        "BLANK_PAGE" : "Auf leere Seite wechseln",
+                        "CANCEL" : "Abbrechen",
+                        "CONTINUE" : "Auf dieser Seite bleiben"
+                    },
+                    "ERROR" : {
+                        "CONNECTION_FAILURE" : "Verbindung fehlgeschlagen.",
+                        "CONNECTION_TIMEOUT" : "Zeitüberschreitung bei Verbindungsaufbau.",
+                        "LIST_ERRORS" : "Verbindungsfehler:"
+                    },
+                    "SUCCESS" : "Verbindung erfolgreich hergestellt.",
+                    "SUCCESS_TEXT" : "Der Verbleib auf der aktuellen Website kann durch eine bestehende Sitzung Ihre neue IP-Adresse offenbaren.",
+                    "TITLE" : "Verbindung herstellen mit VPN: {{name}}"
+                }
+            }
+        },
+        "DROPDOWN_FILTERS" : {
+            "ALLOW_ON_THIS_WEBSITE" : "auf dieser Website",
+            "FOUND_ON_THIS_PAGE" : "Auf dieser Website",
+            "LABEL_ENABLE_FILTERS" : "Zu den Einstellungen",
+            "LABEL_FILTERS_DISABLED" : "Blocker sind nicht aktiviert.",
+            "LABEL_LAST_MINUTE" : "Letzte Minute:",
+            "LABEL_TEN_MINUTE" : "Letzten 10 Minuten:",
+            "MORE" : "Mehr..."
+        },
+        "MENU" : {
+            "ACTIVATION" : {
+                "LABEL_REGISTER" : "Aktivierung",
+                "LABEL_RENEW" : "Lizenz erneuern",
+                "TOOLTIP_REGISTER" : "Registrieren Sie Ihren eBlocker, um alle Features freizuschalten",
+                "TOOLTIP_RENEW" : "Erneuern Sie Ihre Lizenz, um alle Features weiterhin nutzen zu können."
+            },
+            "ADS" : {
+                "LABEL" : "Werbung",
+                "MENU" : {
+                    "LABEL_ALLOW_LOCAL" : "Erlaube Werbung...",
+                    "LABEL_BLOCKED" : "Werbung blockiert:",
+                    "LABEL_BLOCK_GLOBAL" : "Blockiere Werbung"
+                },
+                "TOOLTIP_ALLOW_GLOBAL" : "Werbung ist global erlaubt",
+                "TOOLTIP_ALLOW_LOCAL" : "Werbung ist auf dieser Seite erlaubt",
+                "TOOLTIP_BLOCK" : "{param, select, 0{Keine Werbung gefunden} 1{Es wird eine Werbung geblockt} other{Es werden {param} Werbungen geblockt}}",
+                "TOOLTIP_BLOCK_DNS" : "Der Domain-Blocker ist aktiv",
+                "TOOLTIP_NO_FILTER" : "Blocker sind nicht aktiv. Aktivieren Sie die Blocker, um dieses Gerät zu schützen."
+            },
+            "ANON" : {
+                "LABEL" : "IP-Anon",
+                "MENU" : {
+                    "ACTIONS" : {
+                        "CHECK_CONNECTION" : "Verbindung prüfen",
+                        "CONFIGURE_CONNECTION" : "Konfigurieren",
+                        "GET_NEW_TOR_ID" : "Neue Tor-Identität beziehen",
+                        "START_TOR" : "Tor-Netzwerk"
+                    },
+                    "LABEL" : "Anonymisieren über...",
+                    "LABEL_TOR" : "Tor-Netzwerk",
+                    "LABEL_VPN_PREFIX" : "VPN: ",
+                    "TOOLTIP_ACTIVATE" : "Aktiviere",
+                    "TOOLTIP_DEACTIVATE" : "Deaktiviere"
+                },
+                "NOTIFICATION" : {
+                    "CONNECTION_DOWN" : "VPN {{name}} wird nicht mehr verwendet.",
+                    "TOR_CONNECT" : "Verbindung zum Tor-Netzwerk wurde aufgebaut.",
+                    "TOR_DISCONNECT" : "Verbindung zum Tor-Netzwerk wurde getrennt.",
+                    "TOR_ID_RENEW_ERROR" : "Fehler beim Beziehen einer neuen Tor-Identität.",
+                    "TOR_ID_RENEW_SUCCESS" : "Die Tor-Identität wurde erneuert.",
+                    "VPN_CONNECT" : "VPN Verbindung wurde aufgebaut.",
+                    "VPN_DISCONNECT" : "VPN Verbindung wurde getrennt."
+                },
+                "TOOLTIP_ACTIVATE" : "Aktiviere IP Anonymisierung",
+                "TOOLTIP_DEACTIVATE" : "Ändere oder deaktiviere IP Anonymisierung"
+            },
+            "CLOAKING" : {
+                "ALERT_NO_HTTPS" : "HTTPS deaktiviert",
+                "LABEL" : "Tarnung",
+                "MENU" : {
+                    "ACTION" : {
+                        "CUSTOM" : "Benutzerdefiniertes Gerät"
+                    },
+                    "DISABLE" : "Nicht getarnt",
+                    "LABEL" : "Tarnen als..."
+                },
+                "TOOLTIP" : "Tarnen Sie Ihr Gerät",
+                "TOOLTIP_ACTIVATE" : "Tarnen als",
+                "TOOLTIP_ALERT_NO_HTTPS" : "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht 100% wirksam.",
+                "TOOLTIP_CLOAKED" : "Getarnt als {param}",
+                "TOOLTIP_DEACTIVATE" : "Nicht mehr tarnen als"
+            },
+            "DASHBOARD" : {
+                "LABEL" : "Dashboard",
+                "TOOLTIP" : "Öffnet das Dashboard für dieses Gerät"
+            },
+            "HELP" : {
+                "LABEL" : "Hilfe",
+                "TOOLTIP" : "Zur Online-Hilfe"
+            },
+            "MESSAGES" : {
+                "LABEL" : "Nachrichten",
+                "NOTIFICATION" : {
+                    "HAS_ALERT" : "Sie haben wichtige Nachrichten!"
+                },
+                "TOOLTIP" : "Sie haben {param, select, 0{keine} other{{param}}} {param, select, 1{Nachricht} other{Nachrichten}}"
+            },
+            "ONLINE_TIME" : {
+                "LABEL" : "Online-Zeiten",
+                "MENU" : {
+                    "ACCESS_CONTINGENTS_FOR" : "Online-Zeiten:",
+                    "ACTION" : {
+                        "USAGE_START" : "Start",
+                        "USAGE_STOP" : "Stop"
+                    },
+                    "REMAINING_TIME" : {
+                        "INFIX" : " {hours, select, 1{eine} other{{hours}}} {hours, select, 1{Stunde} other{Stunden}} und ",
+                        "POSTFIX" : " {min, select, 1{eine} other{{min}}} {min, select, 1{Minute} other{Minuten}}",
+                        "PREFIX" : "Noch "
+                    },
+                    "TOOLTIP" : {
+                        "USAGE_START" : "Internet-Nutzung beginnen",
+                        "USAGE_STOP" : "Internet-Nutzung stoppen"
+                    }
+                },
+                "TOOLTIP" : "Verwalten Sie Ihre Online-Zeiten."
+            },
+            "PAUSE" : {
+                "LABEL" : "Pause",
+                "TOOLTIP" : "Den eBlocker für dieses Gerät pausieren"
+            },
+            "SETTINGS" : {
+                "LABEL" : "Einstellungen",
+                "TOOLTIP" : "Öffnet die eBlocker Einstellungen"
+            },
+            "TRACKERS" : {
+                "LABEL" : "Tracker",
+                "MENU" : {
+                    "LABEL_ALLOW_LOCAL" : "Erlaube Tracker...",
+                    "LABEL_BLOCKED" : "Tracker blockiert:",
+                    "LABEL_BLOCK_GLOBAL" : "Blockiere Tracker"
+                },
+                "TOOLTIP_ALLOW_GLOBAL" : "Tracker sind global erlaubt",
+                "TOOLTIP_ALLOW_LOCAL" : "Tracker sind auf dieser Seite erlaubt",
+                "TOOLTIP_BLOCK" : "{param, select, 0{Keine Tracker gefunden} 1{Es wird ein Tracker geblockt} other{Es werden {param} Tracker geblockt}}",
+                "TOOLTIP_BLOCK_DNS" : "Der Domain-Blocker ist aktiv",
+                "TOOLTIP_NO_FILTER" : "Blocker sind nicht aktiv. Aktivieren Sie die Blocker, um dieses Gerät zu schützen."
+            },
+            "USER" : {
+                "ACTIONS" : {
+                    "CHANGE_PIN" : "PIN ändern",
+                    "CHANGE_USER" : "Benutzer wechseln:",
+                    "LOCK_INTERNET" : "Internet-Zugang sperren",
+                    "RETURN_DEVICE" : "Gerät zurückgeben"
+                },
+                "LABEL" : "Benutzer",
+                "LABEL_NO_OP" : "Gerät ist derzeit gesperrt.",
+                "LABEL_SYSTEM" : "Gesperrt",
+                "MENU" : {
+                    "LABEL_ASSIGNED_USER" : "Dieses Gerät gehört:",
+                    "LABEL_OPERATING_USER" : "Gerät wird verwendet von:"
+                },
+                "TOOLTIP" : "Dieses Gerät wird gerade von {param} genutzt."
+            }
+        },
+        "SERVICE" : {
+            "USER" : {
+                "NOTIFICATION" : {
+                    "ERROR" : {
+                        "CHANGE_PIN_FAIL" : "Die PIN ist falsch.",
+                        "NOT_PERMITTED" : "Diese Aktion ist nicht erlaubt.",
+                        "OTHER_ERROR" : "Die Aktion konnte nicht ausgeführt werden.",
+                        "PIN_INVALID" : "Die PIN ist falsch.",
+                        "USER_NOT_AVAILABLE" : "Benutzer konnten nicht geladen werden."
+                    },
+                    "SUCCESS" : {
+                        "CHANGE_PIN" : "Ihre PIN wurde geändert."
+                    }
+                }
+            }
+        }
+    },
+    "EXPIRED" : {
+        "CARD" : {
+            "BUTTON" : {
+                "RESUME" : "Weiterarbeiten"
+            },
+            "TEXT" : "Ihre Sitzung ist abgelaufen.",
+            "TITLE" : "Sitzung abgelaufen"
+        }
+    },
+    "IDLE" : {
+        "DIALOG" : {
+            "BUTTON" : {
+                "RESUME" : "Weiter"
+            },
+            "TEXT" : "Ihre Sitzung läuft in {countdown} {countdown, select, 1{Sekunde} other{Sekunden}} ab.",
+            "TITLE" : "Sitzung läuft ab"
+        }
+    },
+    "MESSAGE_ALERT_EVENT_CONTENT" : "Es sind Systemereignisse aufgetreten",
+    "MESSAGE_ALERT_EVENT_LABEL" : "Ereignisse ansehen",
+    "MESSAGE_ALERT_EVENT_TITLE" : "Systemereignisse",
+    "MESSAGE_ALERT_EVENT_URL" : "/#!/system/events",
+    "MESSAGE_APP_MODULE_REMOVAL_CONTENT" : "Unterstützung für die Ausnahmeliste für {{ appNames }} wurde zurückgezogen. Diese Liste ist für Sie noch verfügbar, jedoch raten wir von der weiteren Verwendung ab.",
+    "MESSAGE_APP_MODULE_REMOVAL_LABEL" : "Weitere Informationen",
+    "MESSAGE_APP_MODULE_REMOVAL_TITLE" : "Unterstützung für Ausnahmeliste eingestellt",
+    "MESSAGE_APP_MODULE_REMOVAL_URL" : "https://www.eblocker.com/appremoval_de",
+    "MESSAGE_CERTIFICATE_EXPIRATION_CONTENT" : "Das Zertifikat des eBlockers läuft demnächst ab. Bitte nehmen Sie das neue Zertifikat in Ihr Betriebssystem oder Ihren Browser auf.",
+    "MESSAGE_CERTIFICATE_EXPIRATION_LABEL" : "Neues Zertifikat aufnehmen",
+    "MESSAGE_CERTIFICATE_EXPIRATION_TITLE" : "Erneuerung des eBlocker Zertifikats",
+    "MESSAGE_CERTIFICATE_EXPIRATION_URL" : "/api/ssl/renewalCertificate.crt",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT" : "Das Zertifikat des eBlockers wurde noch nicht aufgenommen. Bitte nehmen Sie das Zertifikat in Ihr Betriebssystem oder Ihren Browser auf.",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_LABEL" : "Zertifikat aufnehmen",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_TITLE" : "eBlocker Zertifikat noch nicht aufgenommen",
+    "MESSAGE_CERTIFICATE_UNTRUSTED_URL" : "/api/ssl/caCertificate.crt",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT" : "Ein weiterer DNS Server wurde in Ihrem lokalen Netzwerk gefunden, der nicht Ihr Router ist. Dieses beeinträchtigt möglicherweise den eBlocker, DNS-Anfragen zu beantworten und Sie zu schützen. Bitte schalten Sie diesen Server ab oder entfernen Sie ihn aus der DHCP Konfiguration.",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL" : "DNS Konfiguration",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE" : "weiterer DNS Server im lokalen Netzwerk gefunden",
+    "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL" : "/#!/dns",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT" : "Der/die folgende/n Server antworten langsam oder unzuverlässig: {{nameServers}}. Dieses kann den Internet-Zugriff stören.",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_LABEL" : "DNS Konfiguration",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_TITLE" : "Unzuverlässige DNS-Server",
+    "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_URL" : "/#!/dns",
+    "MESSAGE_LICENSE_EXPIRED_CONTENT" : "Die Lizenz Ihres eBlockers ist am {{licenseNotValidAfter| date}} abgelaufen.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch wieder tägliche Schutz-Updates.",
+    "MESSAGE_LICENSE_EXPIRED_LABEL" : "Neue Lizenz erwerben",
+    "MESSAGE_LICENSE_EXPIRED_TITLE" : "Lizenz abgelaufen",
+    "MESSAGE_LICENSE_EXPIRED_URL" : "https://www.eBlocker.com/ebl/de/shop",
+    "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT" : "Die Lizenz Ihres eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch tägliche Schutz-Updates.\n\nBitte beachten Sie, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
+    "MESSAGE_LICENSE_EXPIRING_LABEL" : "Neue Lizenz erwerben",
+    "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT" : "Die Lizenz Ihres eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch wieder tägliche Schutz-Updates.\n\nBitte beachten Sie, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
+    "MESSAGE_LICENSE_EXPIRING_TITLE" : "Lizenz läuft bald ab",
+    "MESSAGE_LICENSE_EXPIRING_URL" : "https://www.eBlocker.com/ebl/de/shop",
+    "MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT" : "Die Lizenz Ihres eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch wieder tägliche Schutz-Updates.\n\nBitte beachten Sie, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
+    "MESSAGE_PATCH_RELEASE_NOTES_CONTENT" : "Wichtige Fehlerbehebung.",
+    "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "Mehr...",
+    "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "Neues Update installiert: eBlockerOS v{{version}}",
+    "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://support.eBlocker.com/hc/de/articles/360025406994",
+    "MESSAGE_RELEASE_NOTES_CONTENT" : "Neu in eBlockerOS 2.4: Sie können nun Ihre eigenen Filterlisten für Domain und Pattern Blocker verwalten. Die Wiederverwendung von bereits aktivierten Lizenzschlüsseln is viel einfacher und erfordert kein Eingreifen des eBlocker-Supports mehr. Zahlreiche weitere Verbesserungen und Fehlerbehebungen sind Teil dieses Releases.",
+    "MESSAGE_RELEASE_NOTES_LABEL" : "Mehr...",
+    "MESSAGE_RELEASE_NOTES_TITLE" : "Neues Update installiert: eBlockerOS v{{version}}",
+    "MESSAGE_RELEASE_NOTES_URL" : "https://support.eBlocker.com/hc/de/articles/360025406994",
+    "MESSAGE_ROUTER_PROBLEMATIC_CONTENT" : "Sie verwenden eine FritzBox, die mit dem Plug-and-Play-Modus des eBlockers nicht kompatibel ist.\n\nDaher empfehlen wir, individuelle Netzwerkeinstellungen vorzunehmen, um Netzwerk-Probleme zu vermeiden.",
+    "MESSAGE_ROUTER_PROBLEMATIC_LABEL" : "Netzwerkeinstellungen öffnen",
+    "MESSAGE_ROUTER_PROBLEMATIC_TITLE" : "FritzBox 7490, 7360 oder 3490 erkannt",
+    "MESSAGE_ROUTER_PROBLEMATIC_URL" : "/#!/network",
+    "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT" : "Wussten Sie schon, dass Sie den eBlocker auch für HTTPS-verschlüsselte Websites verwenden können?\n\nHierfür müssen Sie nur das eBlocker Zertifikat in ihren Geräten und Browsern aufnehmen.",
+    "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "Einstellungen für HTTPS-Unterstützung öffnen",
+    "MESSAGE_SSL_SUPPORT_INSTALL_TITLE" : "HTTPS-Unterstützung aktivieren",
+    "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/#!/ssl",
+    "PARENTAL_CONTROL_USER_NAME" : "{{ name }}"
+}

@@ -1,0 +1,11 @@
+<div ng-show="entry.columns['NAME']" flex>{{ entry.name }}<md-tooltip md-delay="300">{{ entry.name }}</md-tooltip></div>
+<div ng-show="entry.columns['EXECUTOR']" flex>{{ entry.executor }}<md-tooltip md-delay="300">{{ entry.executor }}</md-tooltip></div>
+<div ng-show="entry.columns['STATUS']" flex>{{ 'ADMINCONSOLE.TASKS.TABLES.TASKS.STATUS.' + entry.status | translate: entry.running }}<md-tooltip ng-if="entry.exception" md-delay="300">{{ entry.exception }}</md-tooltip></div>
+<div ng-show="entry.columns['TYPE']" flex>{{ 'ADMINCONSOLE.TASKS.TABLES.TASKS.TYPE.' + entry.type | translate }}<md-tooltip ng-if="entry.type !== 'ONCE'" md-delay="300">{{ 'ADMINCONSOLE.TASKS.TABLES.TASKS.TYPE.' + entry.type + '_TOOLTIP' | translate: entry.schedule }}</md-tooltip></div>
+<div ng-show="entry.columns['EXECUTIONS']" flex>{{ entry.executions }}</div>
+<div ng-show="entry.columns['STARTED']" flex>{{ entry.lastStart }}<md-tooltip md-delay="300">{{ entry.lastStartTooltip }}</md-tooltip></div>
+<div ng-show="entry.columns['FINISHED']" flex>{{ entry.lastStop }}<md-tooltip md-delay="300">{{ entry.lastStopTooltip }}</md-tooltip></div>
+<div ng-show="entry.columns['TOTAL']" flex>{{ entry.totalRuntime }}</div>
+<div ng-show="entry.columns['AVG']" flex>{{ entry.avgRuntime | number: 1 }}</div>
+<div ng-show="entry.columns['MIN']" flex>{{ entry.minRuntime }}</div>
+<div ng-show="entry.columns['MAX']" flex>{{ entry.maxRuntime }}</div>

@@ -1,0 +1,27 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.resetForm" novalidate ng-submit="vm.ok()" style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.TITLE' | translate }}</h2>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.TEXT1' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.TEXT2' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.TEXT3' | translate }}</p>
+            </div>
+            <div ng-show="vm.processing" class="spinner-overlay" layout="column" layout-align="center center">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.REGISTRATION_RESET.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

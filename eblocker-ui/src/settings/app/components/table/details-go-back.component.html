@@ -1,0 +1,17 @@
+<div layout="row" layout-align="start center" style="padding: 0 0 15px 0;">
+    <div layout="row" layout-align="start center"
+         ng-click="vm.goBack()"
+         class="icon-pointer" >
+        <md-button class="md-primary" style="margin: 0;"
+                   aria-label="{{ 'ADMINCONSOLE.DETAILS_VIEW.NAV_BACK' | translate }}">
+            <div layout="row" layout-align="center center">
+                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_arrow_back_black.svg"></md-icon>
+                <span ng-if="vm.label === undefined" style="margin-left: 20px;">{{ 'ADMINCONSOLE.DETAILS_VIEW.NAV_BACK' | translate }}</span>
+                <span ng-if="vm.label !== undefined" style="margin-left: 20px;">{{ vm.label | translate }}</span>
+            </div>
+        </md-button>
+
+        <!--<md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_arrow_back_black.svg"></md-icon>-->
+        <!--<span style="padding-left: 20px;">{{ 'ADMINCONSOLE.DETAILS_VIEW.NAV_BACK' | translate }}</span>-->
+    </div>
+</div>

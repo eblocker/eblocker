@@ -1,0 +1,30 @@
+<div layout="column" layout-fill class="settings-child-view eb-about">
+    <div layout="column">
+        <div layout="column" layout-align="start start">
+            <p translate="ADMINCONSOLE.ABOUT.THANK_YOU"></p>
+            <p translate="ADMINCONSOLE.ABOUT.NON_PROFIT"></p>
+            <!-- Picture -->
+            <p layout="row" layout-align="center center">
+                <div layout="row" layout-align="center center">
+                    <img hide-gt-xs style="width:100%;height:auto;margin-top: 5px;" ng-src="/img/about-1.png"/>
+                    <img hide-xs hide-gt-sm style="width:65%;height:auto;margin-top: 5px;" ng-src="/img/about-1.png"/>
+                    <img hide-xs hide-sm style="width:50%;height:auto;margin-top: 5px;" ng-src="/img/about-1.png"/>
+                </div>
+            </p>
+            <p translate="ADMINCONSOLE.ABOUT.TEAM"></p>
+            <p translate="ADMINCONSOLE.ABOUT.DONATE"></p>
+            <p layout="row" layout-align="center center">
+                <md-button class="md-raised md-accent" ng-href="{{ 'ADMINCONSOLE.ABOUT.DONATE_URL' | translate }}" target="_blank">
+                    {{'ADMINCONSOLE.ABOUT.DONATE_MORE' | translate}}
+                </md-button>
+            </p>
+            <p translate="ADMINCONSOLE.ABOUT.DONATE_THANKS"></p>
+            <p>{{ "ADMINCONSOLE.ABOUT.COMMUNITY" | translate}}
+                <a href="{{'ADMINCONSOLE.ABOUT.COMMUNITY_URL'|translate}}" target="_blank">{{'ADMINCONSOLE.ABOUT.COMMUNITY_URL'|translate}}</a>
+            </p>
+            <p translate="ADMINCONSOLE.ABOUT.YOURS_EBLOCKER"></p>
+         </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,89 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.ADD_USER.TITLE' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.customListForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2 ng-show="vm.isEdit">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.TITLE_EDIT' | translate:{name: vm.blockerName} }}</h2>
+                <h2 ng-hide="vm.isEdit">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.TITLE' | translate:{name: vm.blockerName} }}</h2>
+            </div>
+
+            <div ng-if="vm.isProcessing && !vm.readOnly" layout="row" layout-align="center center" layout-padding>
+                <span class="font-italic" translate="ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.INFO.PROCESSING"></span>
+            </div>
+
+            <div ng-if="vm.readOnly" layout="row" layout-align="center center" layout-padding>
+                <span class="font-italic" translate="ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.INFO.READ_ONLY"></span>
+            </div>
+
+            <div ng-if="!vm.isProcessing && !vm.readOnly" layout-padding>
+
+                <div>
+                    <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.NAME' | translate }}</label>
+                        <input name="name" ng-model="vm.name" md-maxlength="vm.nameMaxLength" ng-disabled="vm.readOnly" required>
+                        <div ng-messages="vm.customListForm.name.$error" ng-if="vm.customListForm.$submitted || vm.customListForm.name.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.NAME_REQUIRED' | translate }}</div>
+                            <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.NAME_TOO_LONG' | translate }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div>
+                    <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.FORMAT' | translate }}</label>
+                        <md-select aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.FORMAT' | translate }}"
+                                   ng-disabled="vm.readOnly"
+                                   ng-model="vm.format"
+                                   name="format" required>
+                            <md-option ng-value="format.key" ng-repeat="format in vm.formatList">{{'ADMINCONSOLE.FILTER_OVERVIEW.FORMAT_LIST.' + format.key | translate}}</md-option>
+                        </md-select>
+                        <div ng-messages="vm.customListForm.format.$error" ng-if="vm.customListForm.$submitted || vm.customListForm.format.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.FORMAT_REQUIRED' | translate }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div>
+                    <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.URL' | translate }}</label>
+                        <input name="url" ng-model="vm.url" md-maxlength="vm.urlMaxLength" ng-disabled="vm.readOnly" required>
+                        <div ng-messages="vm.customListForm.url.$error" ng-if="vm.customListForm.$submitted || vm.customListForm.url.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.URL_REQUIRED' | translate }}</div>
+                            <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.URL_TOO_LONG' | translate }}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout="row" layout-align="start center">
+                    <div style="padding: 0 8px 0 8px">
+                        <span>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}</span>
+                    </div>
+                    <div style="padding: 0 8px 0 8px">
+                        <md-switch class="md-primary switch-word-break no-margin"
+                                   ng-disabled="vm.readOnly"
+                                   aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}"
+                                   md-theme="eBlockerThemeSwitch"
+                                   ng-model="vm.updates">
+                        </md-switch>
+                    </div>
+                </div>
+
+                <div ng-if="vm.hasServerError" layout="row" layout-align="center center">
+                    <span class="content-error font-italic" translate="ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.SERVER_ERROR"></span>
+                </div>
+            </div>
+
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" ng-show="vm.readOnly || vm.isProcessing" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ACTION.CLOSE' | translate }}</md-button>
+            <md-button type="button" ng-click="vm.cancel()" ng-hide="vm.readOnly || vm.isProcessing" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ACTION.CANCEL' | translate }}</md-button>
+            <md-button type="submit" ng-disabled="vm.loading" ng-hide="vm.readOnly || vm.isProcessing" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ACTION.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

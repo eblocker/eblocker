@@ -1,0 +1,168 @@
+<div layout="column" layout-fill class="settings-child-view eb-filters-advanced-settings">
+    <div>
+
+        <div layout="column">
+            <div>
+                <h3>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.TITLE_RECORD' | translate }}</h3>
+            </div>
+
+            <div layout="row" layout-xs="column" layout-padding>
+
+                <div layout="column" layout-padding flex-gt-xs="50" flex-md="60" flex-gt-md="40" flex-gt-lg="25">
+                    <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_SELECT_DEVICE' | translate }}</label>
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_DEVICE' | translate }}</label>
+                        <md-select ng-model="vm.selectedDevice" ng-disabled="recordingStatus">
+                            <!-- order by name, use ipAddress when ambiguous -->
+                            <md-option ng-value="device"
+                                       ng-repeat="device in vm.devices | orderBy: 'ipAddress' | orderBy: 'name'">
+                                {{device.displayName}} <span ng-show="device.isCurrentDevice">{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_CURRENT_DEVICE' | translate }}</span>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout="column" layout-padding flex>
+                    <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_SELECT_ABORT' | translate }}</label>
+                    <div layout="row">
+                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                            <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_TIME' | translate }}</label>
+                            <md-select ng-model="vm.timeLimitSeconds" ng-disabled="vm.transactionRecorderInfo.active" >
+                                <md-option value="60">1 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.TIME_UNIT_MINUTE' | translate }}</md-option>
+                                <md-option value="300" selected="selected">5 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.TIME_UNIT_MINUTE' | translate }}</md-option>
+                                <md-option value="600">10 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.TIME_UNIT_MINUTE' | translate }}</md-option>
+                                <md-option value="900">15 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.TIME_UNIT_MINUTE' | translate }}</md-option>
+                                <md-option value="7200">120 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.TIME_UNIT_MINUTE' | translate }}</md-option>
+                            </md-select>
+                            </label>
+                        </md-input-container>
+                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                            <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL_SIZE' | translate }}</label>
+                            <md-select ng-model="vm.sizeLimitBytes" ng-disabled="vm.transactionRecorderInfo.active">
+                                <md-option value="52428800">50 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.SIZE_UNIT_MB' | translate }}</md-option>
+                                <md-option value="104857600" selected="selected">100 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.SIZE_UNIT_MB' | translate }}</md-option>
+                                <md-option value="209715200">200 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.SIZE_UNIT_MB' | translate }}</md-option>
+                                <md-option value="524288000">500 {{ 'ADMINCONSOLE.FILTER_ANALYSIS.SIZE_UNIT_MB' | translate }}</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="start start" layout-padding>
+                <md-switch md-theme="eBlockerThemeSwitch" class="md-primary" ng-model="vm.whatIfMode" ng-change="vm.setWhatIfMode()">{{ 'ADMINCONSOLE.FILTER_ANALYSIS.SIMULATE_FILTERING_LABEL' | translate }}</md-switch>
+                <md-tooltip md-delay="300">{{ 'ADMINCONSOLE.FILTER_ANALYSIS.TOOLTIP.WHAT_IF_MODE' | translate }}</md-tooltip>
+            </div>
+
+            <div layout="row" layout-align="start start" layout-xs="column" layout-padding>
+                <div>
+                    <md-button class="md-raised md-primary md-accent" ng-disabled="vm.transactionRecorderInfo.active"  ng-click="vm.start()">
+                        {{ 'ADMINCONSOLE.FILTER_ANALYSIS.ACTION.START_RECORDING' | translate }}
+                    </md-button>
+                </div>
+                <div>
+                    <md-button class="md-raised md-secondary" ng-disabled="!vm.transactionRecorderInfo.active" ng-click="vm.stop()">
+                        {{ 'ADMINCONSOLE.FILTER_ANALYSIS.ACTION.STOP_RECORDING' | translate }}
+                    </md-button>
+                </div>
+                <div>
+                    <md-button class="md-raised md-accent" ng-disabled="vm.initializing" ng-click="vm.update()">
+                        {{ 'ADMINCONSOLE.FILTER_ANALYSIS.ACTION.REFRESH_TABLE' | translate }}
+                    </md-button>
+                    <div ng-show="vm.loading" layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <md-divider ng-show="vm.recordedTransactions.length > 0" style="padding-top: 20px; margin-top: 20px;"></md-divider>
+
+
+        <div layout="column" ng-show="vm.recordedTransactions.length > 0">
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.TITLE_ANALYSIS' | translate }}</h3>
+            </div>
+
+            <div>
+                <div layout="row" layout-xs="column" layout-align="start center" style="padding-left: 8px;">
+
+                    <!-- WORK MODE -->
+                    <div ng-if="!vm.tableEditMode" flex-gt-xs="33" layout="row" style="padding-left: 8px;">
+
+                    </div>
+
+                    <!-- WORK MODE -->
+                    <div ng-if="vm.tableEditMode" flex-gt-xs="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                        <div layout="row" layout-align="start center">
+                            <table-remove-entries table-data="vm.filteredTableData"
+                                                  is-entry-deletable="vm.isDeletable(value)"
+                                                  delete-single-entry="vm.deleteSingleEntry(value)"
+                                                  button-label="ADMINCONSOLE.FILTER_ANALYSIS.ACTION.REMOVE"
+                                                  dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_RECORDINGS_CONFIRM.TITLE"
+                                                  dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_RECORDINGS_CONFIRM.TEXT">
+                            </table-remove-entries>
+                        </div>
+
+                        <div style="padding-left: 8px;" layout="row" layout-align="start center">
+                            <md-input-container md-theme="eBlockerThemeInput">
+                                <label>{{ 'ADMINCONSOLE.FILTER_ANALYSIS.ANALYSIS_ACTION' | translate }}</label>
+                                <md-select ng-model="vm.actionSelect"
+                                           ng-change="vm.analysisAction(vm.actionSelect)"
+                                           ng-disabled="vm.filteredTableData.length <= 0"
+                                           aria-label="Select analysis table action">
+                                    <md-option value="CLEAR">{{ 'ADMINCONSOLE.FILTER_ANALYSIS.ACTION.CLEAR_TABLE' | translate }}</md-option>
+                                    <md-option value="CVS">{{ 'ADMINCONSOLE.FILTER_ANALYSIS.ACTION.CSV_DOWNLOAD' | translate }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                    <div flex-gt-xs="33">
+                        <!-- TABLE SEARCH -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.recordedTransactions"
+                                         filter-properties="vm.searchProps"
+                                         style="width: 100%;">
+                        </eb-filter-table>
+                    </div>
+
+                    <div flex-gt-xs="33" layout="row" layout-align="end center">
+                        <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                        <eb-edit-table table-data="vm.filteredTableData"
+                                       table-edit-mode="vm.tableEditMode">
+                        </eb-edit-table>
+
+                    </div>
+
+                    <div hide-gt-xs>
+                        <eb-scroll-paginator table-id="vm.tableId"
+                                             table-size="vm.filteredTableData.length"
+                                             size="xs">
+                        </eb-scroll-paginator>
+                    </div>
+
+                </div>
+
+                <!-- TABLE -->
+                <eb-table table-data="vm.filteredTableData"
+                          table-header="vm.tableHeaderConfig"
+                          table-template="app/components/filters/analysis/analysis-table.template.html"
+                          table-id="vm.tableId"
+                          template-callback="vm.templateCallback"
+                          edit-mode="vm.tableEditMode">
+                </eb-table>
+
+                <div hide-xs layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                    <eb-scroll-paginator table-id="vm.tableId"
+                                         table-size="vm.filteredTableData.length"
+                                         size="lg">
+                    </eb-scroll-paginator>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

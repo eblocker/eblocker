@@ -1,0 +1,363 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+    <div layout-padding>
+
+        <div layout="row" layout-xs="column" layout-align-xs="center center">
+            <div layout="row" layout-align="start center" layout-align-xs="center center" style="width: 100%;">
+                <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
+            </div>
+
+            <div layout="row" layout-align="end center" layout-align-xs="center center" style="width: 100%;">
+                <eb-details-paginator table-data="vm.tableUserData"
+                                      tooltip-property="name"
+                                      on-change="vm.onChangePaginator(entry)"
+                                      current-entry="vm.user">
+                </eb-details-paginator>
+            </div>
+        </div>
+
+        <md-divider></md-divider>
+
+        <!-- NAME -->
+        <div flex-gt-xs="100" layout="row" layout-align="start center">
+            <div layout="row" layout-align="center center">
+                <span style="font-weight: bold; font-size: 16px;">{{ vm.user.name | translate }}</span>
+                <div ng-if="vm.isUserNameEditable(vm.user)"
+                     ng-click="vm.editUserName($event, vm.user)"
+                     class="unselectable icon-pointer"
+                     style="padding-left: 16px;">
+                    <md-icon class="content-eb-orange"
+                             md-svg-src="/img/icons/ic_edit_black.svg"
+                             aria-label="{{ 'SHARED.LABEL_CONTAINER.EDIT_TOOLTIP' | translate }}">
+                    </md-icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- HINT: SET BIRTHDAY -->
+        <div ng-if="vm.showSetBirthdayHint"
+             flex-gt-lg="65" flex-md="75" flex-lg="75"
+             layout="row"
+             class="config-frame hint-box md-whiteframe-z1">
+            <div flex="90" layout="row" layout-align="start center">
+                <span translate="ADMINCONSOLE.USERS.DETAILS.SET_BIRTHDAY_HINT"></span>
+            </div>
+            <div flex="10" layout="row" layout-align="end center"
+                 class="icon-pointer"
+                 ng-click="vm.showSetBirthdayHint = false;">
+                <md-icon md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+            </div>
+        </div>
+
+        <div ng-if="vm.isStandardUser(vm.user)"
+             flex-gt-lg="65" flex-md="75" flex-lg="75" layout="row" layout-xs="column" class="config-frame md-whiteframe-z1">
+            <span translate="ADMINCONSOLE.USERS.DETAILS.STANDARD_USER_EXPLAIN"></span>
+        </div>
+
+        <div ng-if="!vm.isStandardUser(vm.user)"
+             flex-gt-lg="65" flex-md="75" flex-lg="75" layout="row" layout-xs="column" class="config-frame md-whiteframe-z1">
+
+            <!-- BIRTHDAY -->
+            <div ng-if="vm.user.userRole === 'CHILD'" flex="25" flex-xs="100" layout="row" layout-align="center center">
+                <eb-label-container is-edit="true" edit-callback="vm.editBirthday($event, vm.user)" style="margin: 0;" label="{{ 'ADMINCONSOLE.USERS.DETAILS.LABEL_BIRTHDAY' | translate }}" config="vm.birthday"></eb-label-container>
+            </div>
+
+            <!-- AGE -->
+            <div flex="25" flex-xs="100" layout="row" layout-align="center center" ng-if="vm.user.userRole === 'CHILD' && vm.user.birthday !== undefined">
+                <eb-label-container style="margin: 0;" label="{{ 'ADMINCONSOLE.USERS.DETAILS.LABEL_AGE' | translate }}" config="vm.age"></eb-label-container>
+            </div>
+
+            <!-- PIN -->
+            <div flex="25" flex-xs="100" layout="row" layout-align="center center">
+                <eb-label-container is-edit="true" edit-callback="vm.togglePin($event, vm.user)" style="margin: 0;" label="{{ 'ADMINCONSOLE.USERS.DETAILS.LABEL_PIN' | translate }}" config="vm.pin"></eb-label-container>
+            </div>
+
+            <!-- USER ROLE -->
+            <div flex="25" flex-xs="100" layout="row" layout-align="center center">
+                <eb-label-container is-edit="true" edit-callback="vm.editUserRole($event, vm.user)" style="margin: 0;" label="{{ 'ADMINCONSOLE.USERS.DETAILS.LABEL_USER_ROLE' | translate }}" config="vm.userRole"></eb-label-container>
+            </div>
+        </div>
+
+
+        <!-- SSL WARNING: Show if SSL is not activated on at least one assigned device -->
+        <div ng-if="vm.showSSLWarning"
+             flex-gt-lg="65" flex-md="75" flex-lg="75"
+             layout="row"
+             class="config-frame warning-box md-whiteframe-z1">
+            <div flex="90" layout="row" layout-align="start center">
+                <span translate="ADMINCONSOLE.USERS.DETAILS.ACTIVATE_SSL_PROFILE_MSG"></span>
+            </div>
+            <div flex="10" layout="row" layout-align="end center"
+                 class="icon-pointer"
+                 ng-click="vm.showSSLWarning = false;">
+                <md-icon md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+            </div>
+        </div>
+
+        <!-- HINT: ADD-DEVICE -->
+        <div ng-if="vm.showAddDevicesHint"
+             flex-gt-lg="65" flex-md="75" flex-lg="75"
+             layout="row"
+             class="config-frame hint-box md-whiteframe-z1">
+            <div flex="90" layout="row" layout-align="start center">
+                <span translate="ADMINCONSOLE.USERS.DETAILS.ADD_DEVICES_HINT"></span>
+            </div>
+            <div flex="10" layout="row" layout-align="end center"
+                 class="icon-pointer"
+                 ng-click="vm.showAddDevicesHint = false;">
+                <md-icon md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+            </div>
+        </div>
+
+
+        <!-- ************ DEVICES TABLE ************  -->
+        <div class="config-frame md-whiteframe-z1" flex-gt-lg="65" flex-lg="75" flex-md="75">
+            <!-- Action bar of table -->
+            <div layout="row" layout-xs="column" layout-align="start center">
+
+                <div layout="row" style="width: 100%;">
+                    <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                        <!-- WORK MODE -->
+                        <div ng-if="!vm.tableEditMode">
+                            <md-button class="md-raised md-primary"
+                                       ng-click="vm.addDeviceToUser($event)"
+                                       aria-label="{{ 'ADMINCONSOLE.USERS.DETAILS.ACTION.ADD_DEVICE' | translate}}">
+                                <span ng-show="vm.isStandardUser(vm.user)" translate="ADMINCONSOLE.USERS.DETAILS.ACTION.RELEASE_DEVICE"></span>
+                                <span ng-hide="vm.isStandardUser(vm.user)" translate="ADMINCONSOLE.USERS.DETAILS.ACTION.ADD_DEVICE"></span>
+                            </md-button>
+                        </div>
+
+                        <!-- EDIT MODE -->
+                        <div ng-if="vm.tableEditMode && !vm.isStandardUser(vm.user)">
+                            <table-remove-entries table-data="vm.filteredTableData"
+                                                  is-entry-deletable="vm.isDeletable(value)"
+                                                  on-bulk-delete="vm.bulkDelete(values)"
+                                                  button-label="ADMINCONSOLE.USERS.DETAILS.ACTION.REMOVE_DEVICE"
+                                                  button-tooltip="ADMINCONSOLE.USERS.TOOLTIP.REMOVE_BUTTON"
+                                                  dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_FROM_USER_CONFIRM.TITLE"
+                                                  dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_FROM_USER_CONFIRM.TEXT"
+                                                  dialog-text-undeletable="ADMINCONSOLE.DIALOG.DELETE_ALL_DEVICES_FROM_USER_CONFIRM.TEXT_UNDELETABLE">
+                            </table-remove-entries>
+                        </div>
+
+                        <div ng-if="vm.loading" style="padding-left: 8px;" layout="row" layout-align="start center">
+                            <md-progress-circular md-diameter="32" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+
+                    <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                        <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.tableDataDevices"
+                                         search-term="vm.searchTerm"
+                                         filter-properties="vm.searchProps">
+                        </eb-filter-table>
+                    </div>
+
+                    <div flex="33" flex-xs="50" layout="row" layout-align="end center" ng-if="!vm.isStandardUser(vm.user)">
+                        <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                        <eb-edit-table table-data="vm.filteredTableData"
+                                       table-edit-mode="vm.tableEditMode">
+                        </eb-edit-table>
+                    </div>
+                </div>
+
+                <div hide-gt-xs style="width: 100%;">
+                    <!-- TABLE SEARCH -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableDataDevices"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <eb-table table-data="vm.filteredTableData"
+                      table-header="vm.tableHeaderConfig"
+                      table-template="app/components/parentalControl/users/devices-list-user-details.template.html"
+                      table-id="vm.tableId"
+                      table-empty-msg="'ADMINCONSOLE.USERS.DETAILS.TABLE.EMPTY_TABLE'"
+                      edit-mode="vm.tableEditMode"
+                      is-entry-selectable="vm.isSelectable(value)"
+                      small-table-header-limit="5">
+            </eb-table>
+
+            <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     table-size="vm.filteredTableData.length">
+                </eb-scroll-paginator>
+            </div>
+
+        </div>
+
+
+        <!-- HINT: CHECK PARENTAL CONTROL SETTINGS -->
+        <div ng-if="vm.showCheckParentalControlHint"
+             flex-gt-lg="65" flex-md="75" flex-lg="75"
+             layout="row"
+             class="config-frame hint-box md-whiteframe-z1">
+            <div flex="90" layout="row" layout-align="start center">
+                <span translate="ADMINCONSOLE.USERS.DETAILS.CHECK_PC_HINT"></span>
+            </div>
+            <div flex="10" layout="row" layout-align="end center"
+                 class="icon-pointer"
+                 ng-click="vm.showCheckParentalControlHint = false;">
+                <md-icon md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+            </div>
+        </div>
+        
+        <!-- ************ PARENTAL CONTROL SETTINGS ************  -->
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+
+            <!-- **** Restrict access to URLs -->
+
+            <div hide-gt-xs style="margin-top: 35px;"></div>
+
+            <div layout="row" layout-align="start center">
+                <md-switch md-theme="eBlockerThemeSwitch"
+                           ng-model="vm.assignedProfile.controlmodeUrls"
+                           class="md-primary switch-word-break"
+                           ng-change="vm.onChangeUrlRestrictions(vm.assignedProfile)"
+                           ng-disabled="vm.isProfileBeingUpdated(vm.assignedProfile)">
+                    {{ vm.assignedProfile.controlmodeUrls ?
+                    vm.assignedProfile.internetAccessRestrictionMode === 1 ?
+                    'ADMINCONSOLE.USERS.DETAILS.PROFILE.FILTERING_MODE.BLACKLISTING' :
+                    'ADMINCONSOLE.USERS.DETAILS.PROFILE.FILTERING_MODE.WHITELISTING' :
+                    'ADMINCONSOLE.USERS.DETAILS.PROFILE.FILTERING_MODE.NONE' | translate }}
+                </md-switch>
+            </div>
+
+            <div hide-gt-xs style="margin-bottom: 46px;"></div>
+
+            <!-- List of activated black- or whitelists -->
+            <div ng-show="vm.assignedProfile.controlmodeUrls" layout="row" layout-align="start start">
+                <div flex="5"></div>
+                <div flex="65" layout="row" layout-wrap>
+                    <div ng-repeat="filterlist in vm.getActivatedFilterlists(vm.assignedProfile) | orderBy:'localizedName'">
+                        <md-tooltip ng-if="filterlist.localizedDescription != ''" md-direction="top"><!--
+                            -->{{ filterlist.localizedDescription }}
+                        </md-tooltip><!--
+                        -->{{ filterlist.localizedName }}{{ $last ? '' : ', &nbsp;' }}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="vm.assignedProfile.controlmodeUrls && vm.hasActivatedExceptionFilterLists(vm.assignedProfile)"
+                 layout="row"
+                 layout-align="start start"
+                 layout-margin>
+                {{ vm.assignedProfile.internetAccessRestrictionMode == 1 ? 'ADMINCONSOLE.USERS.DETAILS.PROFILE.BLACKLIST_EXCEPTIONS' : 'ADMINCONSOLE.USERS.DETAILS.PROFILE.WHITELIST_EXCEPTIONS' | translate }}
+            </div>
+
+            <div ng-show="vm.assignedProfile.controlmodeUrls && vm.hasActivatedExceptionFilterLists(vm.assignedProfile)" layout="row" layout-align="start start">
+                <div flex="5"></div>
+                <div flex="30" layout="row">
+                    <div ng-repeat="filterlist in vm.getActivatedExceptionFilterlists(vm.assignedProfile) | orderBy:'localizedName'">
+                        <md-tooltip ng-if="filterlist.localizedDescription != ''" md-direction="top"><!--
+                            -->{{ filterlist.localizedDescription }}
+                        </md-tooltip>
+                        {{ filterlist.localizedName }}{{ $last ? '' : ', &nbsp;' }}
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="true" layout="column" layout-align="start start" style="padding-top: 8px;">
+                <md-button class="md-raised" ng-hide="vm.isProfileBeingUpdated(vm.assignedProfile)" aria-label="Edit restrictions" ng-click="vm.editAccessRestrictions(vm.assignedProfile)" >
+                    {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.ACTION.EDIT_ACCESS_RESTRICTIONS' | translate }}
+                    <md-tooltip><!--
+                        -->{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.EDIT_ACCESS_RESTRICTIONS' | translate }}
+                    </md-tooltip>
+                </md-button>
+            </div>
+
+            <div ng-show="vm.assignedProfile.controlmodeUrls" layout="column" layout-align="start start" layout-padding>
+                <div ng-hide="vm.dialogOpen || !vm.isProfileBeingUpdated(vm.assignedProfile)" layout="row" layout-align="start center">
+                    <md-progress-circular md-mode="indeterminate" md-diameter="24"></md-progress-circular>
+                    <span style="padding-left: 16px">{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.UPDATE_RUNNING' | translate }}</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" layout="column" style="width: 100%;">
+            <!--  **** Restrict access to times -->
+            <div layout="row" layout-align="start center">
+                <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.assignedProfile.controlmodeTime" class="md-primary switch-word-break" ng-change="vm.onChangeTimeRestrictions(vm.assignedProfile)">
+                    {{ vm.assignedProfile.controlmodeTime && vm.assignedProfile.internetAccessContingents.length > 0? 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TIME_RESTRICTIONS_ACTIVATED' : 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TIME_RESTRICTIONS_DEACTIVATED' | translate }}
+                </md-switch>
+            </div>
+
+            <!-- List of times -->
+            <div ng-show="vm.assignedProfile.controlmodeTime" layout="column" layout-align="start start" style="width: 100%;">
+                <div layout="row" layout-xs="column" layout-align="start center"
+                     style="width: 100%;"
+                     ng-repeat="contingent in vm.assignedProfile.internetAccessContingents | orderBy: 'tillHours' | orderBy: 'fromHours' | orderBy:'onDay'">
+
+                    <div style="margin-right: 5px;" flex-gt-sm="20" flex-sm="30">
+                        {{ vm.getContingentDay(contingent) | translate }}
+                    </div>
+
+                    <div layout="row" flex="auto" layout-align="start center" style="padding-top: 8px;">
+                        <div flex-sm="40" flex-gt-sm="25" flex-gt-lg="15">{{ vm.getContingentDisplayTime(contingent.fromMinutes) }} - {{ vm.getContingentDisplayTime(contingent.tillMinutes) }}</div>
+                        <div flex="auto">
+                            <md-button style="min-width: 0; margin: 0;" aria-label="Edit contingent" ng-click="vm.editAccessContingent(vm.assignedProfile, contingent)">
+                                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_edit_black.svg"></md-icon>
+                                <md-tooltip>{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.EDIT_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                            </md-button>
+                            <md-button style="min-width: 0; margin: 0;" aria-label="Delete contingent" ng-click="vm.deleteAccessContingent(vm.assignedProfile, contingent)">
+                                <md-icon class="content-eb-orange" md-svg-src="/img/icons/ic_remove_circle_black.svg"></md-icon>
+                                <md-tooltip>{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.REMOVE_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="vm.assignedProfile.internetAccessContingents.length > 0" layout="column" layout-align="start start" >
+                    <md-button class="md-raised" aria-label="Add contingent" ng-click="vm.addAccessContingent(vm.assignedProfile)">
+                        {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.ACTION.ADD_TIME_RESTRICTIONS' | translate }}
+                        <md-tooltip>{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.ADD_TIME_RESTRICTIONS' | translate }}</md-tooltip>
+                    </md-button>
+                </div>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1">
+            <!-- **** Restrict total usage time per day -->
+            <div layout="row" layout-align="start start">
+                <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.assignedProfile.controlmodeMaxUsage" class="md-primary switch-word-break" ng-change="vm.onChangeUsageRestrictions(vm.assignedProfile)">
+                    {{ vm.assignedProfile.controlmodeMaxUsage ? 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_ACTIVATED' : 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_DEACTIVATED' | translate }}
+                </md-switch>
+            </div>
+
+            <!-- List of times -->
+            <div ng-show="vm.assignedProfile.controlmodeMaxUsage" layout="column" layout-align="start start" style="width: 100%;">
+                <div layout="row" layout-align="start center" ng-repeat="usage in vm.assignedProfile.normalizedMaxUsageTimeByDay" style="width: 100%;">
+                    <div flex="20" flex-xs="40">
+                        {{ 'SHARED.PARENTAL_CONTROL.ACCESS_CONTINGENTS.' + usage.label | translate }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) > 0">
+                        {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_HOURS_MINUTES' | translate:{hours: (usage.minutes | displayHours), minutes: (usage.minutes | displayMinutes)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) > 0">
+                        {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_MINUTES' | translate:{minutes: (usage.minutes | displayMinutes)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) === 0">
+                        {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_HOURS' | translate:{hours: (usage.minutes | displayHours)} }}
+                    </div>
+                    <div flex="20" ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) === 0">
+                        {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.USAGE_RESTRICTIONS_NO_TIME' | translate }}
+                    </div>
+                    <div flex ng-if="vm.isToday(usage) && vm.hasBonusTime">
+                        <span class="font-bold">{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.BONUS_TIME' | translate: {'min': vm.bonusTime.bonusMinutes}:"messageformat" }}</span>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="vm.assignedProfile.controlmodeMaxUsage" layout="column" layout-align="start start" style="padding-top: 8px;">
+                <md-button class="md-raised" aria-label="{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.EDIT_USAGE_RESTRICTIONS' | translate }}" ng-click="vm.editAccessUsage(vm.assignedProfile)" >
+                    {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.ACTION.EDIT_USAGE_RESTRICTIONS' | translate }}
+                    <md-tooltip>{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.EDIT_USAGE_RESTRICTIONS' | translate }}</md-tooltip>
+                </md-button>
+            </div>
+        </div>
+
+    </div>
+</div>

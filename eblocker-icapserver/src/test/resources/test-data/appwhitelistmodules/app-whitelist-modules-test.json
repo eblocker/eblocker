@@ -1,0 +1,142 @@
+[
+  {
+    "name": "INTERNAL_TEMP_MODULE",
+    "description": {"en":"INTERNAL_TEMP_MODULE",
+      "de":"INTERNAL_TEMP_MODULE"},
+    "whitelistedDomains": [],
+    "id": 0,
+    "enabledPerDefault": false,
+    "builtin":true,
+    "hidden":true
+  },
+  {
+    "name": "INTERNAL_STANDARD_MODULE",
+    "description": {"en":"INTERNAL_STANDARD_MODULE",
+      "de":"INTERNAL_STANDARD_MODULE"},
+    "whitelistedDomains": [
+      "bundesbank.de",
+      "ecb.europa.eu",
+      "bayernlb.de",
+      "commerzbank.com",
+      "commerzbank.de",
+      "kfw.de",
+      "dzbank.de",
+      "hypovereinsbank.de",
+      "lbbw-business.de",
+      "lbbw-markets.de",
+      "nordlb.de",
+      "helaba.de",
+      "postbank.de",
+      "haspa.de",
+      "nrwbank.de",
+      "ing-diba.de",
+      "deka.de",
+      "internetbanking.hsh-nordbank-banking.de",
+      "asp2.paybillag.com",
+      "wgzbank.de",
+      "rentenbank.de",
+      "pfandbriefbank.com",
+      "hypothekenbankfrankfurt.com",
+      "dkb.de",
+      "l-bank.de"
+    ],
+    "labels": {
+      "bundesbank.de":"Deutsche Bundesbank",
+      "ecb.europa.eu":"European Central Bank",
+      "bayernlb.de":"Bayern LB",
+      "commerzbank.com":"Commerzbank AG",
+      "commerzbank.de":"Commerzbank AG (deutsch)",
+      "kfw.de":"Kreditanstalt für Wiederaufbau",
+      "dzbank.de":"DZ Bank",
+      "hypovereinsbank.de":"Hypovereinsbank",
+      "lbbw-business.de":"Landesbank Baden Württemberg Business Portal",
+      "lbbw-markets.de":"Landesbank Baden Württemberg Market Portal",
+      "nordlb.de":"Nord LB",
+      "helaba.de":"Helaba Invest",
+      "postbank.de":"Postbank",
+      "haspa.de":"Hamburger Sparkasse",
+      "nrwbank.de":"NRW Bank",
+      "ing-diba.de":"ING DiBa",
+      "deka.de":"DekaBank",
+      "internetbanking.hsh-nordbank-banking.de":"HSH Nordbank Internetbanking",
+      "asp2.paybillag.com":"HSH Nordbank Kreditkartenbanking",
+      "wgzbank.de":"WGZ Bank",
+      "rentenbank.de":"Landwirtschaftliche Rentenbank",
+      "pfandbriefbank.com":"Deutsche Pfandbriefbank",
+      "hypothekenbankfrankfurt.com":"Hypothekenbank Frankfurt",
+      "dkb.de":"Deutsche Kreditbank",
+      "l-bank.de":"Landeskreditbank Baden-Württemberg - Förderbank"
+    },
+    "id": 9999,
+    "enabledPerDefault": true,
+    "builtin":true,
+    "hidden":true
+  },
+  {
+    "name": "INTERNAL_USER_MODULE",
+    "description": {"en":"INTERNAL_USER_MODULE",
+      "de":"INTERNAL_USER_MODULE"},
+    "whitelistedDomains": [],
+    "id": 9998,
+    "enabledPerDefault": true,
+    "builtin":true,
+    "hidden":true
+  },
+  {
+    "name": "OSX App Store",
+    "description": {
+      "de": "Apple OSX App Store",
+      "en": "Apple OSX App Store"
+    },
+    "whitelistedDomains": [
+      "s.mzstatic.com",
+      "swscan.apple.com",
+      "xp.apple.com",
+      "itunes.apple.com"
+    ],
+    "id": 3,
+    "enabledPerDefault": true
+  },
+  {
+    "name": "Facebook Messenger App",
+    "description": {
+      "de": "Facebook Messenger App",
+      "en": "Facebook Messenger App"
+    },
+    "whitelistedDomains": [
+      "z-p1-external-frt3-1.xx.fbcdn.net",
+      "b-graph.facebook.com",
+      "b-api.facebook.com",
+      "edge-mqtt.facebook.com",
+      "api.facebook.com"
+    ],
+    "id": 2,
+    "enabledPerDefault": false
+  },
+  {
+    "name": "Windows 10 Updates",
+    "description": null,
+    "whitelistedDomains": [
+      "windowsupdate.com",
+      "update.microsoft.com"
+    ],
+    "id": 4,
+    "enabledPerDefault": false,
+    "version": "explicitVersion"
+  },
+  {
+    "name": "OSX Softwareupdates",
+    "description": {
+      "de": "OSX Softwareerneuerungen",
+      "en": "OSX Softwareupdates"
+    },
+    "whitelistedDomains": [
+      "swcdn.apple.com",
+      "swscan.apple.com",
+      "swquery.apple.com",
+      "swdownload.apple.com"
+    ],
+    "id": 1,
+    "enabledPerDefault": true
+  }
+]

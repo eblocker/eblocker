@@ -1,0 +1,790 @@
+$font-dark: rgba(0, 0, 0, 0.87);
+$font-medium: rgba(0, 0, 0, 0.54);
+$font-light: rgba(0, 0, 0, 0.38);
+$color-ok: #00b800;
+$color-off: #6f7071;
+$color-warn: #ffeb3b;
+$color-error: #f44336;
+$color-message-background: #f8f8f8;
+$color-border: rgba(0,0,0,0.12);
+$color-HTML-link: #337ab7;
+$color-HTML-link-hover: #23527c;
+$eblocker-orange: #ea5a09;// rgb(234,90,9);
+$eblocker-icon-gray: #6f7071;
+/*
+ * eBlocker orange faded:
+ * 95%: #feefe6
+ * 90%: #fddfce
+ * 85%: #fccfb5
+ * 80%: #fbbf9d
+ * 75%: #fbaf84
+ * 70%: #faa06b
+ */
+$eblocker-orange-faded: #feefe6;
+$eblocker-orange-light-faded: #fddfce;
+$eblocker-background-gray-blue: #f2f4f8;
+$eblocker-table-stripes: $eblocker-background-gray-blue;
+$option-hover: aliceblue;
+$dialog-button-hover: #bf4600;
+$color-disabled: #666;
+$color-light-gray: #808080; // CI: Gray from primary palette, used for inactive icons
+$color-dark-gray: #343434; // CI: Gray from primary palette, used for inactive icons
+$console-navbar-background: $eblocker-background-gray-blue;
+$console-navbar-background-light: #dee3ed; // for hover effect on navbar selection
+//$eblocker-green: #79b199; // CI: Green from secondary palette, used for activated icons
+
+$content-background: #f5f5f5;
+$content-border: #ccc;
+
+$config-frame-border: #e3e3e3;
+
+
+$screen-size-gt-xs: 600px;
+$screen-size-gt-sm: 960px;
+$screen-size-md: 1279px;
+
+// fixes iOS dialog issue: https://github.com/angular/material/issues/10930#issuecomment-340497596
+.md-dialog-container {
+    height: 100% !important;
+    position: fixed !important;
+    top: 0px !important;
+}
+
+md-tooltip {
+    height: auto !important;
+    font-size: 14px !important;
+    line-height: 16px !important;
+    white-space: pre-line !important;
+    background-color: $color-dark-gray !important;
+    color: white !important;
+
+    opacity: 0.8 !important;
+}
+
+// should be configured by theme
+.md-button.md-eBlockerTheme-theme.md-accent.md-raised:not([disabled]):hover {
+    color: white;
+    background-color: $dialog-button-hover !important;
+}
+// should be configured by theme
+.md-button.md-eBlockerTheme-theme.md-accent.md-fab, .md-button.md-eBlockerTheme-theme.md-accent.md-raised:not([disabled]):active {
+    color: white;
+    background-color: $eblocker-orange !important;
+}
+// should be configured by theme
+.md-button.md-eBlockerTheme-theme.md-accent.md-fab, .md-button.md-eBlockerTheme-theme.md-accent.md-raised:not([disabled]) {
+    color: white;
+    background-color: $eblocker-orange !important;
+}
+
+// should be configured by theme
+md-radio-button.md-eBlockerThemeRadio-theme .md-on {
+    background-color: $font-light;
+}
+
+.md-button.md-eBlockerTheme-theme.md-accent, md-nav-bar.md-eBlockerTheme-theme md-nav-ink-bar {
+    color: $eblocker-orange;
+}
+
+md-nav-bar.md-eBlockerTheme-theme md-nav-ink-bar, md-tabs.md-eBlockerTheme-theme md-ink-bar {
+    background-color: $eblocker-orange;
+}
+
+md-nav-bar.md-eBlockerTheme-theme:not([disabled]).md-focused, md-nav-bar.md-eBlockerTheme-theme .md-button._md-nav-button.md-unselected {
+    // fixes issue: move from one tab to another, old tab has gray background
+    background-color: transparent;
+}
+
+md-radio-group.md-eBlockerTheme-theme[disabled] .md-container .md-on {
+    // fixes issue: disabled radio-button has blue circle
+    background-color: $color-disabled;
+}
+
+md-progress-circular.md-eBlockerThemeCheckbox-theme path {
+    // even though checkboxes are green, we need the spinner to be orange
+    stroke: $eblocker-orange;
+}
+
+md-switch.md-eBlockerThemeSwitch-theme[disabled] .md-bar {
+    background-color: lightgray !important;
+    opacity: 0.38;
+}
+
+md-switch.md-eBlockerThemeSwitch-theme[disabled] .md-thumb {
+    background-color: lightgray !important;
+}
+
+// on click on tabs; effect should show orange background
+md-tabs.md-eBlockerTheme-theme .md-tab > .md-ripple-container {
+    //background-color: $eblocker-orange !important;
+    //color: $eblocker-orange !important;
+}
+
+md-tabs.md-eBlockerTheme-theme .md-tab.md-active {
+    background-color: $eblocker-orange;
+    color: white;
+    opacity: 0.9;
+}
+
+// GENERAL STYLING FOR ALL APPS
+
+html {
+    //font-family: 'Roboto', sans-serif;
+    //font-size: 14px;
+    //color: $font-dark;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: $font-dark;
+    background-color: white;
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 33px;
+    margin: 20px 0 10px 0;
+}
+
+p {
+    //margin: 0;
+}
+
+@mixin no-select() {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    outline: none;
+}
+
+@mixin truncate-text() {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.fill-width {
+    min-width: 100%;
+}
+
+.fill-height {
+    height: 100%;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.font-italic {
+    font-style: italic;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.no-select {
+    @include no-select();
+}
+
+.icon-pointer {
+    @include no-select();
+    cursor: pointer;
+}
+
+.icon-disallow {
+    @include no-select();
+    cursor: not-allowed;
+}
+
+.icon-option:hover {
+    background-color: $option-hover;
+    border-radius: 8px;
+}
+
+// md-switch not responsive for long labels
+.switch-word-break {
+    white-space: inherit;
+}
+
+
+md-dialog {
+    @media screen and (min-width: 700px) {
+        min-width: 700px;
+    }
+    h2 {
+        margin: 0;
+    }
+}
+
+.orange {
+    color: $eblocker-orange !important;
+}
+
+.disabled {
+    color: $color-disabled !important;
+}
+
+// ngMessages
+.messages-alert {
+    position: absolute;
+    margin-right: 20px;
+    color: $color-error;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.md-button {
+    // ** this also sets the font style for
+    // the controlbar icon label font
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.eb-delete-button:enabled {
+    //color: white !important;
+    //background-color: $color-error !important;
+    color: $color-error !important;
+    background-color: white !important;
+}
+
+a.link, span.link {
+    color: $color-HTML-link;
+    cursor: pointer;
+}
+
+a.link:hover, span.link:hover {
+    color: $color-HTML-link-hover;
+}
+
+
+a.orange-link, span.orange-link {
+    outline: none;
+    color: $eblocker-orange;
+    cursor: pointer;
+}
+
+a.orange-link:hover, span.orange-link:hover {
+    color: #ff8800;
+    cursor: pointer;
+}
+
+
+.sub-text {
+    font-size: 12px;
+    font-style: italic;
+}
+
+md-card.md-eBlockerTheme-theme {
+    border-radius: 8px;
+    // We do not support smaller screens for now.
+    min-width: 260px;
+    max-width: 500px;
+}
+
+md-card-title h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+md-card md-card-title {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-right: 0;
+    color: $font-medium;
+}
+
+md-card-title md-icon.md-eBlockerTheme-theme {
+    width: 24px;
+    height: 24px;
+}
+
+md-icon {
+    margin: 0;
+}
+
+md-card-title .icon-placeholder {
+    width: 24px;
+}
+md-icon.md-eBlockerTheme-theme.content-eb-light-gray {
+    color: $color-light-gray;
+}
+md-icon.md-eBlockerTheme-theme.content-eb-black {
+    color: black;
+}
+md-icon.md-eBlockerTheme-theme.content-eb-orange {
+    color: $eblocker-orange;
+}
+md-icon.md-eBlockerTheme-theme.content-ok {
+    color: $color-ok;
+}
+md-icon.md-eBlockerTheme-theme.content-off {
+    color: $color-off;
+}
+md-icon.md-eBlockerTheme-theme.content-warn {
+    color: $color-warn;
+}
+md-icon.md-eBlockerTheme-theme.content-error {
+    color: $color-error;
+}
+md-icon.md-eBlockerTheme-theme.content-info {
+    color: $font-light;
+}
+.clock-display {
+    color: $font-light;
+}
+.clock-display-running {
+    color: $font-medium;
+}
+span.clock-display-running, span.clock-display-animate {
+    animation: blink 1s linear infinite;
+}
+
+.online-circle {
+    height: 16px; width: 16px;border-radius: 16px;
+}
+
+.online-circle.online {
+    background-color: $color-ok;
+}
+
+.online-circle.offline {
+    background-color: red;
+}
+
+.online-circle.unavailable {
+    background-color: lightgray;
+}
+
+.ebl-contingent-past {
+    color: lightgray;
+}
+
+.ebl-contingent-present {
+    color: $font-dark;
+}
+
+.ebl-contingent-future {
+    color: grey;
+}
+
+.ebl-contingent-future, .ebl-contingent-past, .ebl-contingent-present{
+    font-weight: bold;
+}
+
+span.content-ok {
+    color: $color-ok;
+}
+span.content-warn {
+    color: $color-warn;
+}
+span.content-error {
+    color: $color-error;
+}
+
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    49% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    99% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.align-right {
+    text-align: right;
+    margin-right: 15px;
+}
+
+.button-label-wrap {
+    white-space: pre-wrap;
+    line-height: normal;
+    text-align: left;
+    display: flex;
+}
+
+md-icon.md-eBlockerTheme-theme.card-error-icon {
+    color:  $color-error;
+    margin-left: -8px;
+}
+md-icon.md-eBlockerTheme-theme.card-warn-icon {
+    color:  $color-warn;
+    margin-left: -16px;
+}
+
+md-icon.md-eBlockerTheme-theme.card-ok-icon {
+    color:  $color-ok;
+    margin-left: -13px;
+}
+
+.dashboard-message-scrollable-list {
+    overflow-y: scroll;
+    max-height: 300px;
+    margin-top: 16px;
+    border-top: 1px $color-border solid;
+}
+
+.dashboard-online-time-details {
+    margin-top: 15px;
+    padding-top: 16px;
+    border-top: 1px $color-border solid;
+}
+
+.dashboard-online-time-details-padding {
+    padding-bottom: 15px;
+}
+
+.dashboard-do-not-show-again {
+    margin-top: 9px;
+}
+
+.dashboard-message-wrapper {
+    background-color: $color-message-background;
+}
+
+.dashboard-message-alert-icon {
+    padding-right: 8px;
+}
+
+.dashboard-message-title {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.dashboard-close-message-wrapper {
+    text-align: end;
+    padding-right: 15px; // avoid collision with scrollbar
+    padding-top: 4px;
+}
+
+.hide-element {
+    visibility: hidden;
+}
+
+.no-frame:hover{
+    background-color: transparent !important;
+}
+
+.no-frame:focus{
+    outline: none;
+}
+
+.no-frame::-moz-focus-inner {
+    border: 0;
+}
+
+.truncate {
+    @include truncate-text();
+}
+
+.truncate-block {
+    display: block;
+    @include truncate-text();
+}
+
+.whitelist-dns-card {
+
+    .whitelist-table .table-header {
+        border-bottom: 2px solid $color-border;
+        padding-bottom: 10px;
+    }
+
+    .whitelist-table {
+        width: 100%;
+        min-width: 100%;
+        border-bottom: 2px solid $color-border;
+    }
+
+    .whitelist-table .table-body {
+        //min-height: 148px;
+        max-height: 216px;
+        overflow: auto;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .whitelist-table .whitelist-entry {
+        .not-whitelisted {
+            color: gray;
+            font-style: italic;
+        }
+    }
+    .whitelist-table .whitelist-entry {
+        min-height: 36px;
+    }
+
+    .whitelist-table .whitelist-entry.selected {
+        //border: 1px solid $eblocker-orange;
+        border-radius: 4px;
+    }
+}
+
+.whitelist-card {
+    md-checkbox.md-eBlockerTheme-theme.md-checked .md-icon {
+        background-color: $eblocker-orange;
+    }
+
+    md-checkbox.md-eBlockerTheme-theme.md-checked .md-icon::after {
+        border-color: white;
+    }
+
+    .whitelist-table {
+        padding: 0 0 0 0;
+
+        .whitelist-table-header {
+            min-height: 36px;
+        }
+
+        .column-domain {
+            float: right;
+            max-width: 90%;
+        }
+
+        .header-tracker, .header-ads {
+            text-align: center;
+        }
+
+        .header-domain, .header-tracker, .header-ads {
+            font-weight: bold;
+        }
+
+        .border-top {
+            border-top: 2px solid $color-border;
+        }
+
+        .margin-bottom {
+            margin-bottom: 16px;
+        }
+
+        .whitelist-all {
+            height: 36px;
+            min-height: 36px;
+            max-height: 36px;
+
+            .whitelist-checkbox {
+                margin-left: 10%;
+            }
+        }
+
+        .whitelist-table-body {
+            overflow-y: auto;
+            max-height: 218px;
+
+            .whitelist-row {
+                height: 36px;
+                min-height: 36px;
+                max-height: 36px;
+
+                .whitelist-checkbox {
+                    margin-left: 10%;
+                }
+            }
+
+            .not-whitelisted {
+                color: gray;
+                font-style: italic;
+            }
+        }
+    }
+}
+
+.semi-transparent {
+    opacity: .40;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+.unselectable {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    outline: none;
+}
+
+.eblocker-static-badge {
+    z-index: 2147483647;
+    right: 32px;
+    top: 0;
+    display: inline;
+}
+
+.eblocker-base-badge {
+    color: #ffffff;
+    position: fixed;
+    text-align: center;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    line-height: 18px;
+    opacity: 0.4;
+    box-shadow: 1px 1px 3px #333;
+    background: #ff0000;
+}
+
+.eblocker-dropdown-component {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+    color: black;
+
+    .eblocker-dropdown-icon-container {
+        height: 40px;
+        width: 40px;
+    }
+    .eblocker-dropdown-icon-container md-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .eblocker-dropdown-content {
+        position:absolute;
+        z-index: 1000;
+        top: 65px;
+        right: 10px;
+        width: 250px;
+        max-height: 300px;
+        border-radius: 3px;
+        background-color: #fcfcfc;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .eblocker-dropdown-content .eblocker-dropdown-item .icon-placeholder {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+    }
+
+    .eblocker-dropdown-content .eblocker-dropdown-item md-icon {
+        fill: $eblocker-icon-gray;
+    }
+    .eblocker-dropdown-content .eblocker-dropdown-item:hover {
+        background-color: $option-hover;
+    }
+    .eblocker-dropdown-content .eblocker-dropdown-item {
+        height: 48px;
+        min-height: 48px;
+        max-height: 48px;
+    }
+}
+
+.cardHandleCursorMove {
+    cursor: move;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.eb-label-container {
+
+    width: 100%;
+    max-width: 100%;
+
+    margin-bottom: 30px;
+
+    .eb-label, .eb-value, .eb-text-box > span {
+        color: black;
+        opacity: 0.77;
+    }
+
+    .eb-label {
+        padding-bottom: 8px;
+        padding-right: 8px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .eb-label .md-ellipsis {
+        // ** for ellipsis / truncation
+        display: block;
+    }
+
+    .eb-value {
+        padding-bottom: 8px;
+        padding-right: 8px;
+    }
+
+    .eb-value, .eb-text-box > span {
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .eb-value div.editable-label:hover, .eb-value div.editable-label label:hover {
+        cursor: pointer;
+    }
+
+    .eb-value .extra-margin {
+        margin-top: 20px;
+    }
+    .eb-value .empty-value {
+        color: $color-disabled;
+        font-style: italic;
+        margin-top: 20px;
+    }
+
+    .eb-value .text-container {
+        max-width: 80%; // leave room for edit icon
+    }
+
+    .eb-value .text-container-full-width {
+        max-width: 100%; // leave room for edit icon
+    }
+
+    .eb-value .text {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        //-ms-hyphens: auto;
+        //-moz-hyphens: auto;
+        //-webkit-hyphens: auto;
+        //hyphens: auto;
+    }
+
+    .editable-label {
+        outline: none;
+        label {
+            border-bottom: 2px dotted $color-disabled;
+            //text-decoration: underline;
+            //text-decoration-style: dotted;
+            //text-underline-position: under;
+        }
+    }
+
+    .eb-text-box > span {
+        white-space: pre-line;
+    }
+}
+
+eb-filter-table {
+    width: 100%;
+}
+
+.eb-filter-component {
+    padding-left: 8px;
+    input {
+        min-width: 100px;
+        background-color: white;
+    }
+}

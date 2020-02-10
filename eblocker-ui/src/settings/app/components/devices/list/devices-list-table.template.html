@@ -1,0 +1,120 @@
+<!-- SWITCH OR ICON -->
+<div flex class="column-xs" ng-show="entry.isEblocker">
+    <md-icon md-svg-src="/img/icons/eblocker.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_EBLOCKER' | translate}}"></md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_EBLOCKER' | translate}}</md-tooltip>
+</div>
+<div flex class="column-xs" ng-show="entry.isGateway">
+    <md-icon md-svg-src="/img/icons/ic_router_black.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_GATEWAY' | translate}}"></md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_GATEWAY' | translate}}</md-tooltip>
+</div>
+<div flex class="column-xs no-select" style="overflow-y: hidden"
+     ng-show="!entry.isEblocker && !entry.isGateway && !entry.paused" ng-click="$event.stopPropagation();">
+    <md-switch
+            md-theme="eBlockerThemeSwitch"
+            class="md-primary switch-word-break no-margin fill-height"
+            ng-model="entry.enabled"
+            ng-change="vm.templateCallback.onChangeEnabled(entry)"
+            aria-label="{{entry.enabled ? 'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_ENABLED' : 'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_DISABLED' | translate}}">
+    </md-switch>
+    <md-tooltip md-delay="300">{{entry.enabled ? 'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_ENABLED' : 'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_DISABLED' | translate}}</md-tooltip>
+</div>
+<div flex class="column-xs" ng-show="!entry.isEblocker && !entry.isGateway && entry.paused" ng-click="$event.stopPropagation();">
+    <!-- PAUSE ICON -->
+    <md-icon ng-show="entry.isOnline" class="eb-table-icon-active" md-svg-src="/img/icons/ic_pause_circle_outline.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_PAUSED' | translate}}">
+    </md-icon>
+    <md-icon ng-hide="entry.isOnline" class="content-eb-light-gray" md-svg-src="/img/icons/ic_pause_circle_outline.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_PAUSED' | translate}}">
+    </md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_PAUSED' | translate }}</md-tooltip>
+</div>
+
+<!-- IP -->
+<div flex hide-xs>
+    <span ng-show="entry.displayIpAddresses !== undefined && entry.displayIpAddresses !== ''">{{entry.displayIpAddresses}}</span>
+    <span ng-show="entry.displayIpAddresses === undefined || entry.displayIpAddresses === ''">{{'ADMINCONSOLE.DEVICES_LIST.DEVICE_NOT_CONNECTED' | translate}}</span>
+    <md-tooltip ng-if="entry.displayIpAddresses !== undefined && entry.displayIpAddresses !== ''" md-delay="300">{{entry.displayIpAddresses}}</md-tooltip>
+    <md-tooltip ng-if="entry.displayIpAddresses === undefined || entry.displayIpAddresses === ''" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.DEVICE_NOT_CONNECTED' | translate}}</md-tooltip>
+    <!--<span ng-show="entry.isCurrentDevice">{{'ADMINCONSOLE.DEVICES_LIST.LABEL_CURRENT_DEVICE' | translate}}</span>-->
+</div>
+
+<!-- NAME LARGE/LARGER DEVICES -->
+<div flex flex-gt-xs="20">
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+    <md-tooltip md-delay="300">{{entry.name}}</md-tooltip>
+</div>
+
+<!-- NAME FOR SMALL DEVICES -->
+<!--<div flex hide-gt-xs>-->
+    <!--<span ng-show="entry.name !== undefined && entry.name !== ''"-->
+          <!--ng-class="{'orange': entry.enabled && !entry.isEblocker && !entry.isGateway}">{{entry.name}}</span>-->
+    <!--<md-tooltip md-delay="300" ng-show="entry.enabled && !entry.isEblocker && !entry.isGateway">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_ENABLED' | translate}}</md-tooltip>-->
+    <!--<md-tooltip md-delay="300" ng-show="(!entry.enabled && !entry.paused) && (!entry.isEblocker || !entry.isGateway)">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.EBLOCKER_DISABLED' | translate}}</md-tooltip>-->
+    <!--<md-tooltip md-delay="300" ng-show="entry.isEblocker">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_EBLOCKER' | translate}}</md-tooltip>-->
+    <!--<md-tooltip md-delay="300" ng-show="entry.isGateway">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.DEVICE_IS_GATEWAY' | translate}}</md-tooltip>-->
+<!--</div>-->
+
+<!-- STAR: CURRENT DEVICE -->
+<div flex class="column-xs">
+    <md-icon ng-show="entry.isCurrentDevice"
+             class="content-eb-orange"
+             style="width: 35px;height: 35px;"
+             md-svg-src="/img/icons/ic_star_rate_black.svg"
+             aria-label="Current device">
+    </md-icon>
+</div>
+
+<!-- STATE: online / offline / paused / SSL state / IP-Anon State -->
+<div flex hide-xs layout="row">
+    <!-- ONLINE ICON -->
+    <md-icon ng-show="entry.isOnline" class="content-eb-orange" md-svg-src="/img/icons/ic_internet_connected_black_48px.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</md-tooltip>
+    </md-icon>
+    <md-icon ng-hide="entry.isOnline" class="eb-table-icon-deactivated" md-svg-src="/img/icons/ic_internet_disconnected_black_48px.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}</md-tooltip>
+    </md-icon>
+
+    <!-- SSL ICON -->
+    <md-icon ng-show="vm.templateCallback.sslEnabled && entry.sslEnabled && (entry.enabled || entry.paused) && !entry.isEblocker && !entry.isGateway" ng-class="{'content-eb-orange': !entry.paused}"  md-svg-src="/img/icons/ic_lock_black.svg" aria-label="Is device paused">
+        <md-tooltip md-delay="300" ng-show="!entry.paused">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.SSL_ENABLED' | translate }}</md-tooltip>
+        <md-tooltip md-delay="300" ng-hide="!entry.paused">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.SSL_ENABLED_PAUSED' | translate }}</md-tooltip>
+    </md-icon>
+    <md-icon ng-show="(vm.templateCallback.sslEnabled && !entry.sslEnabled) && (entry.enabled || entry.paused) && !entry.isEblocker && !entry.isGateway" class="eb-table-icon-deactivated" md-svg-src="/img/icons/ic_lock_outline_black.svg" aria-label="SSL status">
+        <md-tooltip ng-show="vm.templateCallback.sslEnabled" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.SSL_DISABLED' | translate }}</md-tooltip>
+        <md-tooltip ng-hide="vm.templateCallback.sslEnabled" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.SSL_DISABLED_GLOBAL' | translate }}</md-tooltip>
+    </md-icon>
+    <div ng-show="!entry.enabled && !entry.paused && vm.templateCallback.sslEnabled" class="icon-placeholder"></div>
+
+    <!-- MOBILE ICON -->
+    <div layout="row" ng-show="!entry.isEblocker && !entry.isGateway && vm.templateCallback.isMobile()">
+        <md-icon ng-show="!entry.mobileState" md-svg-src="/img/icons/baseline-mobile_off.svg" aria-label="">
+            <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.MOBILE_OFF' | translate }}</md-tooltip>
+        </md-icon>
+        <md-icon ng-show="entry.mobileState" ng-class="{'content-eb-orange': entry.isVpnClient}" md-svg-src="/img/icons/ic_smartphone_black.svg" aria-label="">
+            <md-tooltip md-delay="300" ng-show="!entry.isVpnClient">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.MOBILE_ON' | translate }}</md-tooltip>
+            <md-tooltip md-delay="300" ng-show="entry.isVpnClient">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.MOBILE_CONNECTED' | translate }}</md-tooltip>
+        </md-icon>
+    </div>
+
+    <!-- IP-ANON TOR ICON -->
+    <md-icon ng-show="!entry.isEblocker && !entry.isGateway && entry.useAnonymizationService && entry.routeThroughTor" class="content-eb-orange" md-svg-src="/img/icons/ic_security.svg" aria-label="IP anon status">
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOR_ACTIVE' | translate }}</md-tooltip>
+    </md-icon>
+
+    <!-- IP-ANON VPN ICON -->
+    <md-icon ng-show="!entry.isEblocker && !entry.isGateway && entry.useAnonymizationService && !entry.routeThroughTor"
+             ng-class="{'content-eb-orange': vm.templateCallback.isVpnActive(entry)}" md-svg-src="/img/icons/ic_security.svg" aria-label="IP anon status">
+        <md-tooltip ng-show="vm.templateCallback.isVpnActive(entry)" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.VPN_ACTIVE' | translate }}</md-tooltip>
+        <md-tooltip ng-hide="vm.templateCallback.isVpnActive(entry)" md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.VPN_INACTIVE' | translate }}</md-tooltip>
+    </md-icon>
+</div>
+
+<!-- VENDOR -->
+<div flex hide-xs>
+    <span ng-show="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor}}</span>
+    <md-tooltip md-delay="300" ng-if="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor | translate}}</md-tooltip>
+</div>
+
+<!-- ASSIGNED USER -->
+<div flex ng-if="vm.templateCallback.isFamily" hide-xs>
+    <span ng-hide="entry.assignedUser === entry.defaultSystemUser">{{entry.tmpUser | translate}}</span>
+    <span ng-show="entry.assignedUser === entry.defaultSystemUser">{{'ADMINCONSOLE.DEVICES_LIST.UNASSIGNED' | translate }}</span>
+</div>

@@ -1,0 +1,34 @@
+<!--<md-content style="padding-top: 8px; width: 100%" flex layout="column" layout-align="start center" layout-fill  layout-wrap>-->
+<div style="padding-top: 8px;" layout="column" layout-fill layout-align="start center">
+<!--<md-content-->
+
+    <div hide-gt-xs style="width: 60%; margin-top: 20px; margin-bottom: 10px;">
+        <md-divider></md-divider>
+    </div>
+
+    <div>
+        <h2>{{ 'APP.HEADER.SUB_TITLE' | translate }}</h2>
+    </div>
+
+    <div style="width: 100%;">
+        <device-status layout-fill class="setup-status-component-device"></device-status>
+    </div>
+
+    <div style="width: 100%;">
+        <network-status layout-fill class="setup-status-component-network"></network-status>
+    </div>
+
+    <div style="width: 100%;">
+        <license-status layout-fill class="setup-status-component-license"></license-status>
+    </div>
+
+    <div style="width: 60%; margin-top: 20px; margin-bottom: 10px;">
+        <md-divider></md-divider>
+    </div>
+
+    <div layout="row" layout-xs="column">
+        <md-button ng-click="main.openDashboard()" class="md-primary">{{ 'APP.FOOTER.BUTTON.DASHBOARD' | translate }}</md-button>
+        <md-button ng-click="main.openConsole()" class="md-primary">{{ 'APP.FOOTER.BUTTON.SETTINGS' | translate }}</md-button>
+    </div>
+
+</div>

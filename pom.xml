@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.eblocker</groupId>
+        <artifactId>eblocker-parent</artifactId>
+        <version>2.5-SNAPSHOT</version>
+        <relativePath>eblocker-parent</relativePath>
+    </parent>
+    <artifactId>eblocker</artifactId>
+    <packaging>pom</packaging>
+    <name>eBlocker - Aggregator</name>
+    <modules>
+        <module>eblocker-parent</module>
+        <module>eblocker-icapserver</module>
+        <module>eblocker-baseconfig</module>
+        <module>eblocker-certificate-validator</module>
+        <module>eblocker-ui</module>
+    </modules>
+    <scm>
+        <developerConnection>scm:git:git@github.com:eblocker/eblocker.git</developerConnection>
+    </scm>
+</project>

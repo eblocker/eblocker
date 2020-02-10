@@ -1,0 +1,15 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.RESET_ACTIVATION.LABEL' | translate }}</h3>
+
+        <p>{{ 'ADMINCONSOLE.RESET_ACTIVATION.EXPLAIN_PART1' | translate}}</p>
+        <div layout="column">
+            <div layout="row" layout-align="center center">
+                <md-button class="md-raised eb-delete-button" ng-disabled="vm.isRegistrationStateNew() || vm.isEvaluationLicense()" ng-click="vm.openLicenseResetDialog()">
+                    <md-tooltip ng-if="vm.isRegistrationStateNew() || vm.isEvaluationLicense()">{{ vm.isEvaluationLicense() ? 'ADMINCONSOLE.RESET_ACTIVATION.TOOLTIP.NOT_AVAILABLE' : 'ADMINCONSOLE.RESET_ACTIVATION.TOOLTIP.NOT_REGISTERED' | translate}}</md-tooltip>
+                    {{ 'ADMINCONSOLE.RESET_ACTIVATION.ACTION.RESET' | translate}}
+                </md-button>
+            </div>
+        </div>
+    </div>
+</div>

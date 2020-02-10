@@ -1,0 +1,71 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ARIA' | translate }}"
+           style="max-width: 800px;"
+           class="vpn-connection-dialog"
+           layout-padding>
+
+    <md-dialog-content layout="column" layout-padding>
+        <div layout-padding>
+            <div>
+                <h2>{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TITLE' | translate}}</h2>
+            </div>
+
+            <div ng-if="vm.vpnTest.poller"
+                 layout="row" layout-align="center center" style="margin-top: 12px;">
+                <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+                <span style="padding-left: 18px;" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.PENDING"></span>
+            </div>
+
+            <div>
+                <h4 ng-show="vm.vpnTest.status === 'success'">{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_SUCCESS' | translate }}</h4>
+                <h4 ng-show="vm.vpnTest.status === 'failed'">{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_FAILURE' | translate }}</h4>
+                <h4 ng-show="vm.vpnTest.status === 'auth_failed'">{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_AUTH_FAILURE' | translate }}</h4>
+                <h4 ng-show="vm.vpnTest.status === 'timeout'">{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_TIMEOUT' | translate }}</h4>
+                <div ng-show="vm.vpnTest.status === 'failed' || vm.vpnTest.status === 'timeout' || vm.vpnTest.status === 'auth_failed'">
+                    <p>
+                        <span ng-show="vm.vpnTest.status === 'failed'" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.TEXT_FAILED"></span>
+                        <span ng-show="vm.vpnTest.status === 'timeout'" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.TEXT_TIMEOUT"></span>
+                        <span ng-show="vm.vpnTest.status === 'auth_failed'" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.TEXT_AUTH_FAILED"></span>
+                    </p>
+                    <ul>
+                        <li ng-if="vm.vpnTest.status === 'timeout'" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.REASON_1"></li>
+                        <li ng-if="vm.vpnTest.status === 'timeout'" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.REASON_2"></li>
+                        <li translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.REASON_3"></li>
+                        <li translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.REASON_4"></li>
+                        <li translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_NO_ERRORS.REASON_5"></li>
+                    </ul>
+                </div>
+                <div ng-show="(vm.vpnTest.status === 'failed' || vm.vpnTest.status === 'timeout' || vm.vpnTest.status === 'auth_failed') && vm.hasErrors()"
+                     style="max-width: 650px;">
+                    <md-button type="button" ng-click="vm.showDetails = !vm.showDetails"
+                               class="md-raised md-secondary" aria-label="{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.SHOW_DETAILS' | translate}}">
+                        <span ng-hide="vm.showDetails" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.SHOW_DETAILS"></span>
+                        <span ng-show="vm.showDetails" translate="ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.HIDE_DETAILS"></span>
+                    </md-button>
+                    <div ng-show="vm.showDetails">
+                        <p>{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.TEST_ERRORS' | translate }}</p>
+                        <pre class="vpn-connection-log">{{vm.vpnTest.errors}}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"
+                       layout-align="end center"
+                       layout-xs="column"
+                       layout-align-xs="center center"
+                       style="padding-right: 16px;">
+        <md-button type="button" ng-click="vm.close()"
+                   ng-show="vm.vpnTest.poller"
+                   class="md-raised md-secondary"
+                   aria-label="{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.CANCEL' | translate}}">
+            {{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.close()"
+                   ng-hide="vm.vpnTest.poller"
+                   class="md-raised md-secondary"
+                   aria-label="{{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.CLOSE' | translate}}">
+            {{ 'ADMINCONSOLE.DIALOG.VPN_CONNECT_TEST.ACTION.CLOSE' | translate }}
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

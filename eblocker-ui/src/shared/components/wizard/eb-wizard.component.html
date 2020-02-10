@@ -1,0 +1,27 @@
+<div class="settings-status-frame" style="height: 100%; min-height: 100%;">
+
+    <div flex layout="column" layout-align="center center" class="settings-status-view">
+        <div layout="column" layout-align="center center" layout-margin class="status-card">
+            <md-card>
+                <md-card-title style="height: 60px;">
+                    <md-toolbar style="height: 100%;">
+                        <div class="md-toolbar-tools"
+                             layout="row"
+                             md-scroll-shrink>
+                            <div>
+                                <h2 style="font-weight: 800;">{{ vm.wizardTitle | translate }}</h2>
+                            </div>
+                        </div>
+                    </md-toolbar>
+                </md-card-title>
+                <md-card-content layout="column">
+                    <ng-transclude ng-transclude-slot="content"></ng-transclude>
+                </md-card-content>
+
+                <!--<md-card-actions ng-show="card.hasActions()" layout="row" layout-align="center center">-->
+                    <!--<ng-transclude ng-transclude-slot="actions"></ng-transclude>-->
+                <!--</md-card-actions>-->
+            </md-card>
+        </div>
+    </div>
+</div>

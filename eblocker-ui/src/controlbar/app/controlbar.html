@@ -1,0 +1,19 @@
+<div>
+
+    <div>
+        <img layout="row" class="controlbar-eblocker-icon-right unselectable" ng-click="ctrl.close('right')" src="/img/eblocker-icon-50x50.png"/>
+    </div>
+    <div>
+        <img layout="row" class="controlbar-eblocker-icon-left unselectable" ng-click="ctrl.close('left')" src="/img/eblocker-icon-50x50.png"/>
+    </div>
+
+    <div class="loading-container" ng-class="{'loading': ctrl.isLoading}" layout="column" layout-fill layout-align="start stretch" ui-view>
+        <div layout="column" layout-align="center center">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+
+    <div class="overlay" ng-click="ctrl.handleBackgroundClick()">
+        <!-- Overlay to add opacity to rest of screen.-->
+    </div>
+</div>

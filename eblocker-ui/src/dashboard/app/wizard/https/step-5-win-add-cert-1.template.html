@@ -1,0 +1,29 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.WIN_ADD_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol start="5">
+            <li>
+                <span translate="WIZARD.HTTPS.WIN_ADD_CERT.STEP_5"></span>
+                <div style="width: 60%; height: auto; padding-top: 8px;">
+                    <img class="image-frame" ng-src="/img/screenshots/httpsWizard/{{'WIZARD.HTTPS.WIN_ADD_CERT.IMAGE_1' | translate}}" style="width: 100%; height: auto;"/>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button class="md-raised md-secondary" ng-click="vm.backToDashboard()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button class="md-raised md-secondary" ng-click="vm.prevStep()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.nextStep()" type="button">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

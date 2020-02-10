@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+#
+# This script will write all the routing table stuff needed to be able to route specific traffic over a new VPN instance and through its gateway instead of
+# the normal gateway or using the gateway which gets pushed from the OpenVPN server and use it as the default route, which
+# would lead to all traffic going through the VPN tunnel, which we do not want.
+# That is why we have to create an extra routing table for every VPN client instance and then mark the packets in the iptables
+# mangle table to make them use the VPN gateway.
+#
+#
+# https://airvpn.org/topic/12774-tutorial-my-perfect-airvpn-linux-setup-traffic-splittingfail-protection/
+# http://superuser.com/questions/638044/source-based-policy-routing-nat-dnat-snat-aka-multi-wans-on-centos-5
+
+
+if [ $# -ge '1' ];
+then
+
+    #debugging
+    SCRIPT_NAME="openvpn_setupclientroute"
+    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
+
+	ID=$1
+	IFACENAME=$2
+	route_net_gateway=$3
+	route_vpn_gateway=$4
+	trusted_ip=$5
+
+	VPNTABLE_NAME="openvpn$ID"
+	DEFAULTTABLE_NAME="standard"
+
+	echo "Building route table for VPN client"
+
+	# first normal route to VPN server through default gateway (router)
+	ip route add "$trusted_ip/32" via $route_net_gateway
+
+	# put VPN route into VPN table
+	if ip route show table $VPNTABLE_NAME default | grep -qs 'default'; then
+    		ip route del table $VPNTABLE_NAME default
+	fi
+	ip route add table $VPNTABLE_NAME default via $route_vpn_gateway dev $IFACENAME
+
+
+	# cleanup,commit changes
+	ip route flush cache
+
+    #debugging
+    SCRIPT_NAME="openvpn_setupclientroute"
+    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
+
+
+else
+	echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument."
+fi
+

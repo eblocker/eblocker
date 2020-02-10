@@ -1,0 +1,21 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.FACTORY_RESET.LABEL' | translate }}</h3>
+        <div>
+            <p>{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART1' | translate }}</p>
+            <p><b>{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART2' | translate }}</b></p>
+            <p>{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART3_PRE' | translate }}<a class="orange" target="_blank" ng-href="{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART3_LINK' | translate }}">{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART3_LABEL' | translate }}</a>{{ 'ADMINCONSOLE.FACTORY_RESET.EXPLAIN_PART3_POST' | translate }}</p>
+        </div>
+        <div layout="column">
+            <div layout="row" layout-align="center center">
+                <md-button class="md-raised eb-delete-button" ng-click="vm.openConfirmationDialog()">
+                    {{ 'ADMINCONSOLE.FACTORY_RESET.ACTION.RESET' | translate }}
+                </md-button>
+                <div style="padding-left: 12px;">
+                    <md-progress-circular md-diameter="24" ng-show="vm.isResetting"></md-progress-circular>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

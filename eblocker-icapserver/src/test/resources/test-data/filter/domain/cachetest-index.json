@@ -1,0 +1,39 @@
+{
+  "format": 4,
+  "filters": {
+    "0": [
+      {
+        "key": {
+          "id": 0,
+          "version": 2
+        },
+        "bloomFilterFileName": "lists/0-v2.bloom",
+        "fileFilterFileName": "lists/0-v2.filter",
+        "format": "domainblacklist/string",
+        "deleted": false
+      },
+      {
+        "key": {
+          "id": 0,
+          "version": 0
+        },
+          "format": "domainblacklist/string",
+        "bloomFilterFileName": "lists/0-v0.bloom",
+        "fileFilterFileName": "lists/0-v0.filter",
+        "deleted": false
+      }
+    ],
+    "1": [
+      {
+        "key": {
+          "id": 1,
+          "version": 1
+        },
+        "bloomFilterFileName": "lists/1-v1.bloom",
+        "fileFilterFileName": "lists/1-v1.filter",
+        "format": "domainblacklist/string",
+        "deleted": false
+      }
+    ]
+  }
+}

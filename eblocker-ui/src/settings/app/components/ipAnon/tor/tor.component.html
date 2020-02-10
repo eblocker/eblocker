@@ -1,0 +1,95 @@
+<div flex-gt-lg="50" flex-md="80" flex-lg="80" layout="column" layout-fill class="settings-child-view eb-tor">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/ipAnon/tor/help-tor.template.html"></eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div  layout="column" class="config-frame md-whiteframe-z1">
+
+        <div>
+            <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.torMode" ng-change="vm.torModeChange()">
+                <md-radio-button value="AUTO">{{'ADMINCONSOLE.TOR.OPTION.AUTO' | translate}}</md-radio-button>
+                <md-radio-button value="MAN">{{'ADMINCONSOLE.TOR.OPTION.MAN' | translate}}</md-radio-button>
+            </md-radio-group>
+        </div>
+
+        <div ng-if="vm.torMode === 'MAN' && vm.tableData.length > 0">
+
+            <!-- Action bar of table -->
+            <div layout="row" layout-xs="column" layout-align="start center">
+
+                <div layout="row" style="width: 100%;">
+                    <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                        <!-- WORK MODE -->
+                        <div ng-if="!vm.tableEditMode">
+                            <md-button ng-click="vm.editCountries($event)" class="md-raised md-accent"
+                                       aria-label="{{'ADMINCONSOLE.TOR.ACTION.ADD_BUTTON' | translate }}">
+                                <span hide-xs translate="ADMINCONSOLE.TOR.ACTION.ADD_BUTTON"></span>
+                                <span hide-gt-xs translate="ADMINCONSOLE.TOR.ACTION.ADD_BUTTON_XS"></span>
+                            </md-button>
+                        </div>
+
+                        <!-- EDIT MODE -->
+                        <div ng-if="vm.tableEditMode">
+                            <table-remove-entries table-data="vm.filteredTableData"
+                                                  is-entry-deletable="vm.isDeletable(value)"
+                                                  delete-single-entry="vm.deleteSingleEntry(value)"
+                                                  on-single-delete-done="vm.onSingleDeleteDone()"
+                                                  button-label="ADMINCONSOLE.TOR.ACTION.REMOVE"
+                                                  dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_TOR_COUNTRIES_CONFIRM.TITLE"
+                                                  dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_TOR_COUNTRIES_CONFIRM.TEXT">
+                            </table-remove-entries>
+                        </div>
+
+                        <div ng-if="vm.loading" layout="row" layout-align="start center">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+
+                    <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                        <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.tableData"
+                                         search-term="vm.searchTerm"
+                                         filter-properties="vm.searchProps">
+                        </eb-filter-table>
+                    </div>
+
+                    <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                        <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                        <eb-edit-table table-data="vm.filteredTableData"
+                                       table-edit-mode="vm.tableEditMode">
+                        </eb-edit-table>
+                    </div>
+                </div>
+
+                <div hide-gt-xs style="width: 100%;">
+                    <!-- TABLE SEARCH -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableData"
+                                     search-term="vm.searchTerm"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <eb-table table-data="vm.filteredTableData"
+                      table-header="vm.tableHeaderConfig"
+                      table-template="app/components/ipAnon/tor/tor-table.template.html"
+                      table-id="vm.tableId"
+                      table-empty-msg="vm.isSearchFieldEmpty() ? 'ADMINCONSOLE.TOR.TABLE.EMPTY' : 'ADMINCONSOLE.TABLE.EMPTY'"
+                      edit-mode="vm.tableEditMode">
+            </eb-table>
+
+            <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     table-size="vm.filteredTableData.length">
+                </eb-scroll-paginator>
+            </div>
+
+        </div>
+    </div>
+</div>

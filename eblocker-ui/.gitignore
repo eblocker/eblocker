@@ -1,0 +1,17 @@
+# Dependency directory
+# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
+node_modules/
+bower_components/
+node/
+
+# other
+.tmp
+report/
+build/
+/tmp/
+
+# language file created to dynamically import lang files with random file name (avoid caching)
+src/shared/locale/langFileNames.js
+
+# should not update anymore, but it does. So for now ignore it.
+package-lock.json

@@ -1,0 +1,124 @@
+<eb-wizard-component wizard-title="{{ vm.reason.usageTimeDisabled ? 'SQUID_BLOCKER.ACCESS_DENIED.USAGE_TIME_DISABLED' : 'SQUID_BLOCKER.ACCESS_DENIED.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <!-- TARGET -->
+        <div>
+            <div ng-hide="vm.reason.usageTimeDisabled"
+                 layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span translate="SQUID_BLOCKER.ACCESS_DENIED.TEXT"></span>
+                <span style="font-weight: bold;word-break: break-all;word-wrap: break-word;">{{vm.targetShort}}</span>
+            </div>
+            <div ng-show="vm.reason.usageTimeDisabled"
+                 layout="column" layout-align="center stretch"
+                 layout-padding>
+                <md-switch md-theme="eBlockerThemeSwitch" class="md-primary"
+                           ng-model="vm.internetAccessEnabled" ng-change="vm.onChangeInternetAccess()">
+                    {{ vm.internetAccessEnabled ? 'SQUID_BLOCKER.ACCESS_DENIED.USAGE_ENABLED' : 'SQUID_BLOCKER.ACCESS_DENIED.USAGE_DISABLED' | translate }}
+                </md-switch>
+                <p style="font-weight: bold;">{{ 'SQUID_BLOCKER.ACCESS_DENIED.USAGE_REMAINING_TIME' | translate:{hours: vm.usage.remainingTime.hours, minutes: vm.usage.remainingTime.minutes} }}</p>
+            </div>
+        </div>
+
+        <!-- MESSAGE -->
+        <div ng-hide="vm.reason.usageTimeDisabled"
+             layout="column" layout-align="center stretch"
+             layout-padding>
+            <div style="word-break: break-all;word-wrap: break-word;">
+                <p ng-show="vm.profile.id !== 4">
+                    <span>{{'SQUID_BLOCKER.ACCESS_DENIED.USER_0' | translate}}</span>
+                    <b>
+                        <span ng-show="vm.user.name">{{vm.user.name | translate}}</span><!--
+                     --><span ng-hide="vm.user.name">{{vm.user.nameKey | translate}}</span>
+                    </b>{{'SQUID_BLOCKER.ACCESS_DENIED.USER_1' | translate}}<br/>
+                </p>
+                <p ng-show="vm.profile.id !== 4">
+                    <span>{{'SQUID_BLOCKER.ACCESS_DENIED.REASON' | translate}}</span></br>
+                    <span ng-show="vm.reason.domain && vm.profile.internetAccessRestrictionMode === 1">
+                        {{'SQUID_BLOCKER.ACCESS_DENIED.BLOCKED_DOMAIN_0' | translate}}{{vm.domainShort}}{{'SQUID_BLOCKER.ACCESS_DENIED.BLOCKED_DOMAIN_1' | translate}}<b>{{vm.listName}}</b>{{'SQUID_BLOCKER.ACCESS_DENIED.BLOCKED_DOMAIN_2' | translate}}
+                    </span>
+                    <span ng-show="vm.reason.domain && vm.profile.internetAccessRestrictionMode === 2" translate="SQUID_BLOCKER.ACCESS_DENIED.NON_WHITELISTED_DOMAIN" translate-values="{'domain': vm.domainShort}"></span>
+                </p>
+            </div>
+
+            <div>
+                <span ng-show="vm.reason.timeFrame && !vm.profile.internetBlocked" translate="SQUID_BLOCKER.ACCESS_DENIED.TIME_RESTRICTION"></span>
+                <span ng-show="vm.reason.maxUsage && vm.profile.id !== 4 && !vm.profile.internetBlocked" translate="SQUID_BLOCKER.ACCESS_DENIED.MAX_USAGE_TIME_RESTRICTION"></span>
+                <span ng-show="vm.reason.usageTimeDisabled && !vm.profile.internetBlocked" translate="SQUID_BLOCKER.ACCESS_DENIED.USAGE_TIME_DISABLED"></span>
+                <span ng-show="vm.profile.id === 4 || vm.profile.internetBlocked" translate="SQUID_BLOCKER.ACCESS_DENIED.DEVICE_LOCKED"></span>
+            </div>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+
+            <div layout="row" layout-xs="column">
+                <md-button class="md-raised" ng-click="vm.back()" ng-disabled="!vm.isBackButtonAvailable || vm.waiting">
+                    {{'SQUID_BLOCKER.ACCESS_DENIED.ACTION.BACK' | translate}}
+                </md-button>
+                <md-button class="md-raised" target="_blank" ng-href="/#/parentalcontrol" ng-disabled="vm.waiting">
+                    {{'SQUID_BLOCKER.ACCESS_DENIED.ACTION.CONSOLE' | translate}}
+                </md-button>
+            </div>
+            <div layout="row" layout-xs="column">
+                <md-button ng-show="vm.userList.length > 0" class="md-raised" ng-click="vm.changeUser()" ng-disabled="vm.waiting">
+                    {{ vm.profile.id === 4 ? 'SQUID_BLOCKER.ACCESS_DENIED.ACTION.UNLOCK' : 'SQUID_BLOCKER.ACCESS_DENIED.ACTION.LOGIN' | translate}}
+                </md-button>
+                <md-button class="md-raised md-accent" ng-click="vm.tryAgain()">
+                    {{'SQUID_BLOCKER.ACCESS_DENIED.ACTION.RETRY' | translate}}
+                </md-button>
+            </div>
+
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>
+
+
+<div layout="row" layout-align="center center" style="height: 100%; min-height: 100%;">
+
+    <div flex layout="column" layout-align="center center">
+
+        <!-- SEARCH ENGINE IFRAME-->
+        <div ng-show="vm.reason.domain && vm.searchEngineConfig"
+             layout="column" layout-align="center center"
+             class="reduced-width-for-iframe"
+             ng-class="{'reduced-width-for-iframe': vm.smallWindow()}">
+            <div class="text" ng-show="vm.searchEngineConfig.title" layout-padding>
+                <span style="font-weight: bold; font-size: 16px;">{{vm.searchEngineConfig.title}}</span>
+            </div>
+            <div class="text" ng-show="vm.searchEngineConfig.text" layout-padding>
+                <span>{{vm.searchEngineConfig.text}}</span>
+            </div>
+            <div class="iframe" ng-bind-html="vm.searchEngineConfig.iframe"></div>
+        </div>
+
+        <style>
+            .reduced-width-for-iframe .text {
+                /*width: 300px;*/
+                /*max-width: 300px;*/
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .reduced-width-for-iframe .iframe, .reduced-width-for-iframe .iframe iframe {
+                /*width: 350px;*/
+                /*max-width: 350px;*/
+                height: 200px;
+
+            }
+
+            .reduced-width-for-iframe .iframe {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .reduced-width-for-iframe .iframe iframe {
+                width: 100%;
+                max-width: 100%;
+            }
+
+        </style>
+
+    </div>
+</div>

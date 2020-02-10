@@ -1,0 +1,25 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.CONFIRMATION.ARIA' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.confirmationForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ vm.msgKeys.title | translate }}</h2>
+            </div>
+            <div>
+                <p>{{ vm.msgKeys.text | translate }}</p>
+            </div>
+            <div ng-if="vm.msgKeys.undeletable !== undefined && vm.msgKeys.undeletableNum > 0">
+                <p>{{ vm.msgKeys.undeletable | translate:{num: vm.msgKeys.undeletableNum}:"messageformat" }}</p>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">{{ vm.msgKeys.cancelButton | translate }}</md-button>
+            <md-button type="submit" ng-disabled="vm.inProgress" class="md-raised md-primary md-accent">{{ vm.msgKeys.okButton | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

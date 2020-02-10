@@ -1,0 +1,42 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.MAC_ADD_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol start="4">
+            <li>
+                <span translate="WIZARD.HTTPS.MAC_ADD_CERT.STEP_4"></span>
+                <div style="width: 60%; height: auto;padding-top: 8px;">
+                    <img class="image-frame" ng-src="/img/screenshots/httpsWizard/{{'WIZARD.HTTPS.MAC_ADD_CERT.IMAGE_1' | translate}}" style="width: 100%; height: auto;"/>
+                </div>
+            </li>
+            <li translate="WIZARD.HTTPS.MAC_ADD_CERT.STEP_5"></li>
+            <li translate="WIZARD.HTTPS.MAC_ADD_CERT.STEP_6"></li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-padding>
+        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                     layout="row" layout-align="start center"
+                     ng-model="vm.confirmCertListedMac"
+                     class="md-primary"
+                     style="margin-bottom: -1px;"
+                     aria-label="{{'WIZARD.HTTPS.MAC_ADD_CERT.CONFIRM_LIST' | translate}}">
+            {{'WIZARD.HTTPS.MAC_ADD_CERT.CONFIRM_LIST' | translate}}
+        </md-checkbox>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" ng-disabled="!vm.confirmCertListedMac" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

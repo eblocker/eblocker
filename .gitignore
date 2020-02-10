@@ -1,0 +1,24 @@
+.classpath
+.project
+
+.settings
+.idea
+target
+*.iml
+.DS_Store
+*~
+
+.cache
+
+.scratch
+/.test-results
+
+# Node.js, npm and gulp files
+eblocker-icapserver/src/node
+eblocker-icapserver/src/node_modules
+
+# temp(old) and working files of controlbar and settings
+eblocker-icapserver/src/htdocs/temp
+/eblocker-malware/
+
+eblocker-icapserver/src/htdocs/stylesheets/app.css

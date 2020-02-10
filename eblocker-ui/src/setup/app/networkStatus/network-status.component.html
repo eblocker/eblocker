@@ -1,0 +1,22 @@
+<div layout="column" layout-padding>
+    <div layout="row">
+        <span layout="row" flex="50" class="setup-status-label" layout="row" layout-align="end center">{{ 'NETWORK_STATUS.MODE.LABEL' | translate }}</span>
+        <span layout="row" flex="50" class="setup-status-value" layout="row" ng-if="$ctrl.network.automatic">{{ 'NETWORK_STATUS.MODE.AUTO' | translate }}</span>
+        <span layout="row" flex="50" class="setup-status-value" layout="row" ng-if="!$ctrl.network.automatic">{{ 'NETWORK_STATUS.MODE.MAN' | translate }}</span>
+    </div>
+
+    <div layout="row">
+        <span layout="row" flex="50" class="setup-status-label" layout="row" layout-align="end center">{{ 'NETWORK_STATUS.EBLOCKER_IP' | translate }}</span>
+        <span layout="row" flex="50" class="setup-status-value" layout="row">{{ $ctrl.network.ipAddress }}</span>
+    </div>
+
+    <div layout="row">
+        <span layout="row" flex="50" class="setup-status-label" layout="row" layout-align="end center">{{ 'NETWORK_STATUS.GATEWAY_IP' | translate }}</span>
+        <span layout="row" flex="50" class="setup-status-value" layout="row">{{ $ctrl.network.gateway }}</span>
+    </div>
+
+    <div layout="row">
+        <span layout="row" flex="50" class="setup-status-label" layout="row" layout-align="end center">{{ 'NETWORK_STATUS.USER_IP' | translate }}</span>
+        <span layout="row" flex="50" class="setup-status-value" layout="row">{{ $ctrl.network.userIpAddress }}</span>
+    </div>
+</div>

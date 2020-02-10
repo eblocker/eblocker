@@ -1,0 +1,20 @@
+<div flex class="column-xs" hide-xs>
+    <md-icon md-svg-src="/img/icons/ic_event_black.svg"></md-icon>
+</div>
+
+<div flex>
+    {{ entry.eventDate }}
+    <md-tooltip md-delay="300">{{ entry.eventDate }}</md-tooltip>
+</div>
+
+<div flex flex-gt-xs="15">
+    {{ entry.eventTime }}
+    <md-tooltip md-delay="300">{{ entry.eventTime }}</md-tooltip>
+</div>
+
+<div flex flex-gt-xs="55">
+    {{'ADMINCONSOLE.EVENTS.EVENT.' + entry.type | translate:{deviceName: entry.eventDetails.deviceName, ipAddress: entry.eventDetails.ipAddress, userName: entry.eventDetails.userName } }}
+    <md-tooltip md-delay="300">
+        {{'ADMINCONSOLE.EVENTS.EVENT.' + entry.type | translate:{deviceName: entry.eventDetails.deviceName, ipAddress: entry.eventDetails.ipAddress, userName: entry.eventDetails.userName } }}
+    </md-tooltip>
+</div>

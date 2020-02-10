@@ -1,0 +1,8 @@
+<button-entry handle-click="ctrl.handleClick()"
+              label="'CONTROLBAR.MENU.MESSAGES.LABEL'"
+              badge-number="ctrl.getNumberOfMessages()"
+              badge-black="!ctrl.hasAlertMessage()"
+              image-url="'/img/icons/ic_messages_black.svg'"
+              tooltip-param="ctrl.getNumberOfMessages() < 0 ? 0 : ctrl.getNumberOfMessages()"
+              tooltip="'CONTROLBAR.MENU.MESSAGES.TOOLTIP'">
+</button-entry>

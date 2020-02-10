@@ -1,0 +1,143 @@
+<div>
+    <button-entry ng-click="toggleSelect()"
+                  label="imageLabel"
+                  image-url="imageUrl"
+                  badge-number="filterMode === 'ADVANCED' || filterMode === 'PLUG_AND_PLAY' ? badgeNumber : undefinded"
+                  is-disabled="blockingVars.allowLocally || !blockingVars.blockGlobally || filterMode === 'NONE'"
+                  tooltip-disabled="isOpen"
+                  tooltip-param="badgeNumber"
+                  tooltip="tooltip">
+    </button-entry>
+
+    <div ng-show="isOpen" class="controlbar-dropdown-menu scrollable-menu ng-cloak" layout="column" style="padding-top: 16px;" my-cloak>
+
+        <!-- FILTERS ARE DISABLED -->
+        <div class="controlbar-dropdown-all-options" layout="column" ng-if="filterMode === 'NONE'">
+            <div layout="row" layout-align="center center" style="height: 40px; padding-bottom: 8px;">
+                <span>{{ 'CONTROLBAR.DROPDOWN_FILTERS.LABEL_FILTERS_DISABLED' | translate}}</span>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" layout-align="center center" style="height: 48px;">
+                <md-button class="md-primary" ng-click="vm.handleClick()">{{ 'CONTROLBAR.DROPDOWN_FILTERS.LABEL_ENABLE_FILTERS' | translate }}</md-button>
+            </div>
+        </div>
+
+
+        <!-- FILTERS ARE ENABLED -->
+        <div class="controlbar-dropdown-all-options" layout="column" ng-if="filterMode !== 'NONE'">
+
+            <div layout="row" layout-align="start center" style="padding-left: 20px;padding-bottom: 8px;" class="controlbar-dropdown-label">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                             layout="row" layout-align="start center"
+                             ng-model="blockingVars.blockGlobally"
+                             ng-change="blockGloballyCallback({value: blockingVars.blockGlobally})">
+                    {{ labelBlockGlobal | translate}}
+                </md-checkbox>
+            </div>
+
+            <div ng-if="blockingVars.blockGlobally && filterMode === 'ADVANCED' || filterMode === 'PLUG_AND_PLAY'">
+
+                <md-divider></md-divider>
+
+                <!-- ALLOW ON THIS PAGE -->
+                <div ng-if="filterMode === 'ADVANCED'" layout="column" style="padding: 8px 8px 16px 20px;">
+                    <div>
+                        <span>{{ labelAllowLocal | translate }}</span>
+                    </div>
+
+                    <div style="padding-top: 8px;">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                     layout="row" layout-align="start center"
+                                     ng-model="blockingVars.allowLocally"
+                                     ng-change="allowLocallyCallback({value: blockingVars.allowLocally})">
+                            {{ 'CONTROLBAR.DROPDOWN_FILTERS.ALLOW_ON_THIS_WEBSITE' | translate}}
+                        </md-checkbox>
+                    </div>
+                </div>
+
+                <md-divider ng-if="filterMode === 'ADVANCED'"></md-divider>
+
+                <!-- BLOCKED ON THIS PAGE -->
+                <div layout="column" style="padding: 8px 0 16px 0;">
+
+                    <div style="padding-left: 20px;">
+                        <span>{{ labelBlocked | translate }}</span>
+                    </div>
+
+                    <div layout="row" style="padding: 8px 0 0 0;">
+                        <span flex="15"></span>
+                        <span flex="65">{{ 'CONTROLBAR.DROPDOWN_FILTERS.FOUND_ON_THIS_PAGE' | translate}}</span>
+                        <span flex="auto">{{badgeNumber}}</span>
+                    </div>
+
+                </div>
+
+                <md-divider ng-show="badgeNumber > 0"></md-divider>
+
+                <!-- LIST OF DOMAINS -->
+                <div style="padding-top: 12px; padding-bottom: 8px;" ng-show="badgeNumber > 0">
+                    <!-- EACH DOMAIN -->
+                    <div ng-repeat="domain in blockedList | orderBy: 'url'"
+                         layout-fill flex
+                         style="height: 30px;"
+                         layout="row" layout-align="start center">
+                        <div flex="15"></div>
+                        <div flex="65" layout="row" layout-align="start center">
+                            <md-tooltip>{{ domain.url }}</md-tooltip><!--
+                        --><span class="truncate filter-domain">{{ domain.url }}</span><!--
+                    --></div>
+                        <div flex="auto" layout="row" layout-align="start center" style="margin-left: 5px;">
+                            <md-truncate>{{domain.countBlocked}}</md-truncate>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PLUG AND PLAY FILTER -->
+            <div ng-if="blockingVars.blockGlobally && filterMode === 'PLUG_AND_PLAY_NO_SSL'">
+
+                <md-divider></md-divider>
+
+                <!-- BLOCKED ON THIS PAGE -->
+                <div layout="column" style="padding: 8px 0 16px 0;">
+
+                    <div style="padding-left: 20px;">
+                        <span>{{ labelBlocked | translate }}</span>
+                    </div>
+
+                    <div layout="row" style="padding: 8px 0 0 0;">
+                        <span flex="15"></span>
+                        <span flex="65">{{ 'CONTROLBAR.DROPDOWN_FILTERS.LABEL_LAST_MINUTE' | translate}}</span>
+                        <span flex="auto">{{dnsBlockings.one}}</span>
+                    </div>
+
+                    <div layout="row" style="padding: 8px 0 0 0;">
+                        <span flex="15"></span>
+                        <span flex="65">{{ 'CONTROLBAR.DROPDOWN_FILTERS.LABEL_TEN_MINUTE' | translate}}</span>
+                        <span flex="auto">{{dnsBlockings.ten}}</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--<md-divider ng-if="blockingVars.blockGlobally"></md-divider>-->
+
+            <!--<div ng-if="blockingVars.blockGlobally" style="padding-top: 8px;padding-bottom: 8px;">-->
+                <!--&lt;!&ndash; MORE &ndash;&gt;-->
+                <!--<div  layout="row"-->
+                      <!--layout-align="start center"-->
+                      <!--style="padding: 12px 8px 12px 20px;"-->
+                      <!--ng-click="vm.handleClick()" class="controlbar-dropdown-option unselectable">-->
+                    <!--<div layout="row" layout-align="start center" flex="25">-->
+                        <!--<md-icon class="icon-opacity" md-svg-src="/img/icons/ic_dashboard.svg"></md-icon>-->
+                    <!--</div>-->
+                    <!--<span layout="row" layout-align="start center" flex="auto">{{ 'CONTROLBAR.DROPDOWN_FILTERS.MORE' | translate}}</span>-->
+                <!--</div>-->
+            <!--</div>-->
+
+        </div>
+    </div>
+</div>

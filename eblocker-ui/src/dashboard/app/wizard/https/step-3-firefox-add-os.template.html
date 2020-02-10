@@ -1,0 +1,95 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.FF_ADD_OS.TITLE"></h3>
+    </div>
+
+    <div>
+        <p>
+            <span translate="WIZARD.HTTPS.FF_ADD_OS.EXPLAIN_1"></span>
+        </p>
+    </div>
+
+    <!-- TEST CERTIFCIATE -->
+    <div layout="row" layout-align="start center" layout-xs="column">
+
+        <div layout="row" layout-align="start center">
+            <div>
+                <md-button class="md-raised md-primary md-accent" ng-click="vm.testCertificate()"
+                           ng-disabled="vm.isTestingCert"
+                           type="button">
+                    {{ 'WIZARD.HTTPS.ACTION.TEST' | translate }}
+                </md-button>
+            </div>
+
+            <div ng-if="vm.isTestingCert">
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+        <div layout="row"
+             layout-align="start center" ng-show="vm.currentCertificateInstalled">
+            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+            <span style="padding-left: 8px; font-weight: bold;" translate="WIZARD.HTTPS.LABEL_CERT_SUCCESS"></span>
+        </div>
+
+        <div layout="row"
+             layout-align="start center" ng-show="vm.currentCertificateFailed">
+            <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+            <span style="padding-left: 8px; font-weight: bold;" translate="WIZARD.HTTPS.LABEL_CERT_FAIL"></span>
+        </div>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-padding>
+        <md-checkbox aria-label="{{'WIZARD.HTTPS.FF_ADD_OS.CONFIRM_INSTALL' | translate}}"
+                     class="md-primary" layout="row"
+                     layout-align="start center"
+                     md-theme="eBlockerThemeCheckbox"
+                     ng-disabled="vm.currentCertificateInstalled"
+                     ng-model="vm.confirmInstallCertFirefox"
+                     style="margin-bottom: -1px;">
+            {{'WIZARD.HTTPS.FF_ADD_OS.CONFIRM_INSTALL' | translate}}
+        </md-checkbox>
+    </div>
+
+
+    <div layout="column" ng-hide="!vm.confirmInstallCertFirefox && !vm.currentCertificateInstalled">
+
+        <div ng-if="!vm.isOther()">
+            <p>
+                <span translate="WIZARD.HTTPS.FF_ADD_OS.EXPLAIN_2"></span>
+                <span>
+                    <a class="orange" href="" ng-click="vm.nextStep()"
+                       translate="WIZARD.HTTPS.FF_ADD_OS.EXPLAIN_2_LINK"></a>
+                </span>
+            </p>
+        </div>
+
+        <div ng-if="vm.isOther()">
+            <p>
+                <span translate="WIZARD.HTTPS.FF_ADD_OS.EXPLAIN_2"></span>
+                <span translate="WIZARD.HTTPS.FF_ADD_OS.EXPLAIN_2_LINK"></span>
+            </p>
+            <p>
+                <span translate="WIZARD.HTTPS.NO_WIZARD.TEXT_1"></span>
+            </p>
+            <div>
+                <md-button class="md-raised md-secondary"
+                           ng-href="{{ vm.getCertificateDownloadUrl() }}">
+                    {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-xs="column">
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button class="md-raised md-primary md-accent" ng-click="vm.close()"
+                   ng-disabled="!vm.confirmInstallCertFirefox && !vm.currentCertificateInstalled"
+                   type="button">
+            {{ 'WIZARD.HTTPS.ACTION.DONE' | translate }}
+        </md-button>
+    </div>
+</div>

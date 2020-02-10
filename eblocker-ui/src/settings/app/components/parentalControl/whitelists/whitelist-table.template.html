@@ -1,0 +1,26 @@
+<!-- ICON -->
+<div flex class="column-xs" layout="row" layout-align="center center">
+    <md-progress-circular ng-if="!entry.providedByEblocker && entry.url !== undefined && entry.content === undefined && entry.updateStatus === 'INITIAL_UPDATE' || entry.updateStatus === 'UPDATE'" md-diameter="20"></md-progress-circular>
+    <md-icon ng-if="!entry.providedByEblocker && entry.url !== undefined && entry.content === undefined && entry.updateStatus !== 'INITIAL_UPDATE' && entry.updateStatus !== 'UPDATE'" ng-class="{'eb-table-icon-active': entry.assignedToProfile.length > 0}" md-svg-src="/img/icons/baseline-cloud_download.svg"></md-icon>
+    <md-icon ng-if="!entry.providedByEblocker && entry.url === undefined && entry.content !== undefined" ng-class="{'eb-table-icon-active': entry.assignedToProfile.length > 0}" md-svg-src="/img/icons/ic_list_black.svg"></md-icon>
+    <md-icon ng-if="entry.providedByEblocker" ng-class="{'eb-table-icon-active': entry.assignedToProfile.length > 0}" md-svg-src="/img/icons/eblocker.svg"></md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.WHITELISTS.TOOLTIP.NUM_ASSIGNED' | translate:{num: entry.assignedToProfile.length}:"messageformat" }}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex flex-gt-xs="25">
+    <md-tooltip md-delay="300" ng-if="entry.localizedName !== undefined && entry.localizedName !== ''">{{entry.localizedName | translate}}</md-tooltip>
+    {{entry.localizedName | translate}}
+</div>
+
+<!-- DESCRIPTION -->
+<div flex hide-xs>
+    <md-tooltip md-delay="300" ng-if="entry.localizedDescription !== undefined && entry.localizedDescription !== ''">{{entry.localizedDescription | translate}}</md-tooltip>
+    {{entry.localizedDescription}}
+</div>
+
+<!-- LAST MODIFIED -->
+<div flex="15" hide-xs>
+    <md-tooltip md-delay="300" ng-if="entry.lastUpdate !== undefined && entry.lastUpdate !== ''">{{entry.lastUpdateDisplay }}</md-tooltip>
+    {{entry.lastUpdateDisplay }}
+</div>

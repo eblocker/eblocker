@@ -1,0 +1,27 @@
+<md-content flex layout="row" layout-align="center center">
+    <div layout="column" layout-align="center center">
+        <md-card layout-align="center center">
+            <md-card-content>
+                <h2>{{'REDIRECT.TARGET.TITLE' | translate}}</h2>
+                <p>
+                    {{'REDIRECT.TARGET.TEXT_1' | translate}}
+                </p>
+                <p>
+                    {{'REDIRECT.TARGET.TEXT_2.PRE' | translate}}<b>{{redirect.originalDomain}}</b>{{'REDIRECT.TARGET.TEXT_2.POST' | translate}}
+                    <br />
+                    {{'REDIRECT.TARGET.TEXT_3.PRE' | translate}}<b>{{redirect.targetDomain}}</b>{{'REDIRECT.TARGET.TEXT_3.POST' | translate}}
+                </p>
+                <p layout="row" layout-sm="column" layout-align="center center">
+                    <md-button class="md-raised" ng-href="" ng-click="redirect.back();">{{'REDIRECT.NO_TARGET.BUTTON.BACK' | translate}}</md-button>
+                    <md-button class="md-raised" ng-click="redirect.setDecision('PASS')">{{'REDIRECT.TARGET.BUTTON.CONTINUE' | translate}}</md-button>
+                    <md-button class="md-raised md-warn" ng-click="redirect.setDecision('REDIRECT');">{{'REDIRECT.TARGET.BUTTON.SHORTCUT' | translate}} {{redirect.targetDomain}}</md-button>
+                </p>
+                <p>
+                    <md-checkbox ng-model="redirect.remember">
+                        {{'REDIRECT.TARGET.REMEMBER' | translate}}
+                    </md-checkbox>
+                </p>
+            </md-card-content>
+        </md-card>
+    </div>
+</md-content>

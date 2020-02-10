@@ -1,0 +1,35 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <md-icon ng-class="{'eb-table-icon-active': entry.enabled}" md-svg-src="/img/icons/ic_web_asset_black.svg"></md-icon>
+    <md-tooltip md-delay="300" ng-if="entry.enabled">{{'ADMINCONSOLE.TRUSTED_DOMAINS.TOOLTIP.ENABLED' | translate}}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex hide-xs>
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+    <md-tooltip ng-if="entry.name !== undefined && entry.name !== ''" mg-delay="300">{{entry.name}}</md-tooltip>
+</div>
+
+<!-- DOMAINS -->
+<div flex>
+    <span ng-show="entry.url !== undefined && entry.url !== ''">{{entry.url}}</span>
+    <md-tooltip ng-if="entry.url !== undefined && entry.url !== ''" mg-delay="300">{{entry.url}}</md-tooltip>
+</div>
+
+<!-- APP NAME -->
+<div flex hide-xs>
+    <span ng-show="entry.trustedAppName !== undefined && entry.trustedAppName !== ''">{{entry.trustedAppName}}</span>
+    <md-tooltip ng-if="entry.trustedAppName !== undefined && entry.trustedAppName !== ''" mg-delay="300">{{entry.trustedAppName}}</md-tooltip>
+</div>
+
+<!-- STATUS -->
+<div flex="10" flex-sm="15" flex-xs="20" layout="row">
+    <div ng-if="entry.builtin">
+        <md-icon md-svg-src="/img/icons/baseline-settings_applications-24px.svg" aria-label="domain is builtin"></md-icon>
+        <md-tooltip mg-delay="300">{{'ADMINCONSOLE.TRUSTED_DOMAINS.TOOLTIP.BUILTIN' | translate}}</md-tooltip>
+    </div>
+    <div ng-if="!entry.builtin">
+        <md-icon md-svg-src="/img/icons/ic_person_outline_black.svg" aria-label="domain is custom made"></md-icon>
+        <md-tooltip mg-delay="300">{{'ADMINCONSOLE.TRUSTED_DOMAINS.TOOLTIP.USER_DEFINED' | translate}}</md-tooltip>
+    </div>
+</div>

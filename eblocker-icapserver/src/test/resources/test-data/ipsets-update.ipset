@@ -1,0 +1,7 @@
+create unit-test hash:ip,port family inet hashsize 2 maxelem 1024 -exist
+create unit-test_tmp hash:ip,port family inet hashsize 2 maxelem 1024 -exist
+flush unit-test_tmp
+add unit-test_tmp 8.8.8.8,udp:53
+add unit-test_tmp 8.8.4.4,udp:53
+swap unit-test_tmp unit-test
+destroy unit-test_tmp

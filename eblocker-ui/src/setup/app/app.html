@@ -1,0 +1,66 @@
+<div class="eblocker-setup" layout-fill ng-class="{'no-scroll': app.showControlBar}">
+    <div layout="column" layout-fill style="overflow: hidden">
+        <!-- include controlbar with page-context null -->
+        <div ng-if="app.showRightIcon() || app.showControlBar">
+            <span ng-hide="app.showControlBar" class="eblocker-base-badge eblocker-base-badge-right">0</span>
+            <img ng-show="app.showControlBar" layout="row" class="setup-eblocker-icon-right unselectable" ng-click="app.toggleControlBar('right')" src="/img/eblocker-icon-50x50.png"/>
+            <img ng-hide="app.showControlBar" layout="row" class="setup-eblocker-icon-right unselectable semi-transparent" ng-click="app.toggleControlBar('right')" src="/img/eblocker-icon-44x44.png"/>
+        </div>
+        <div ng-if="!app.showRightIcon() || app.showControlBar">
+            <span ng-hide="app.showControlBar" class="eblocker-base-badge eblocker-base-badge-left">0</span>
+            <img ng-show="app.showControlBar" layout="row" class="setup-eblocker-icon-left unselectable" ng-click="app.toggleControlBar('left')" src="/img/eblocker-icon-50x50.png"/>
+            <img ng-hide="app.showControlBar" layout="row" class="setup-eblocker-icon-left unselectable semi-transparent" ng-click="app.toggleControlBar('left')" src="/img/eblocker-icon-44x44.png"/>
+        </div>
+
+        <!--<img layout="row" ng-show="app.showRightIcon() || app.showControlBar" class="setup-eblocker-icon-right unselectable" ng-class="{'semi-transparent': !app.showControlBar}" ng-click="app.toggleControlBar('right')" src="/img/eblocker-icon-44x44.png"/>-->
+        <!--<img layout="row" ng-show="!app.showRightIcon() || app.showControlBar" class="setup-eblocker-icon-left unselectable" ng-class="{'semi-transparent': !app.showControlBar}" ng-click="app.toggleControlBar('left')" src="/img/eblocker-icon-44x44.png"/>-->
+        <!--<img ng-show="app.showControlBar" layout="row" class="setup-eblocker-icon-left unselectable" ng-click="app.toggleControlBar()" src="/img/eblocker-icon-44x44.png"/>-->
+        <div ng-if="app.showControlBar" class="iframe-for-controlbar" layout-fill style="height: 100%; min-height: 100%;z-index: 99;">
+            <iframe id="iframe-for-controlbar"
+                    layout-fill
+                    style="height: 100%; min-height: 100%;z-index: 99;margin-top: -2px;"
+                    src="../controlbar/index.html#!/null">
+                    <!--
+                        src="../controlbar/index.html#!/null">
+                        src="/controlbar.html#/null">
+                    -->
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Make controlbar overlap the rest of the page -->
+    <div class="setup-container">
+        <div layout="row" layout-xs="column" layout-align-xs="center center">
+            <div flex="50" flex-xs="100" layout="row" layout-align="center center" layout-padding>
+                <div layout="row" layout-align="center center">
+                    <!--<img class="unselectable" style="height: auto; width: 200px;" src="/img/eblocker_breit_512.png"/>-->
+                    <md-icon style="height: 48px;width: auto;" md-svg-src="/img/eBlocker_2_orange_black.svg"></md-icon>
+                </div>
+            </div>
+
+            <div flex="50" flex-xs="100" layout="row" layout-align="center center">
+                <div ng-click="app.toggleLangSettings()" layout="row" layout-align="center center" class="setup-toolbar-lang">
+                    <!--<md-icon class="setup-status-icon" md-svg-src="/img/icons/ic_language_black.svg"></md-icon>-->
+                    <div flex="40" style="padding-left: 30px;">
+                        <md-icon ng-show="app.getLang() === 'en'" class="setup-status-icon" md-svg-src="/img/flags/de.svg"></md-icon>
+                        <md-icon ng-hide="app.getLang() === 'en'" class="setup-status-icon" md-svg-src="/img/flags/us.svg"></md-icon>
+                    </div>
+                    <div flex="auto" class="translate-label">
+                        <span translate="APP.TOOLBAR.TITLE"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div hide-gt-xs style="padding-top: 10px;"></div>
+
+        </div>
+
+        <div style="height: 100%;" layout="column" layout-fill layout-align="start stretch" ui-view>
+            <md-content flex layout="row" layout-align="center center">
+                <div layout="column" layout-align="center center">
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </md-content>
+        </div>
+    </div>
+</div>

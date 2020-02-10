@@ -1,0 +1,59 @@
+<md-card-title>
+    <md-toolbar>
+        <div class="md-toolbar-tools"
+             layout="row"
+             md-scroll-shrink>
+            <div>
+                <h2 ng-show="vm.exeState !== 'ERROR' || vm.isCheckingStatus()">{{ 'ADMINCONSOLE.BOOTING.CARD.TITLE_RESTARTING' | translate }}</h2>
+                <h2 ng-show="vm.exeState === 'ERROR' && !vm.isCheckingStatus()">{{ 'ADMINCONSOLE.BOOTING.CARD.TITLE_ERROR' | translate }}</h2>
+            </div>
+            <div flex></div>
+            <md-progress-circular ng-show="vm.isCheckingStatus()"
+                                  class="md-hue-3"
+                                  md-mode="indeterminate"
+                                  md-diameter="36">
+            </md-progress-circular>
+        </div>
+    </md-toolbar>
+</md-card-title>
+<md-card-content class="booting-screen">
+
+    <div layout="row"
+         layout-align="start center"
+         style="padding: 8px;">
+        <div class="subsystem-status-icon" ng-show="vm.isCheckingStatus() && !vm.systemStatus.projectVersion">
+            <md-icon md-svg-src="/img/icons/ic_hourglass_empty_black.svg"></md-icon>
+        </div>
+        <div class="subsystem-status-icon" ng-show="vm.systemStatus.projectVersion">
+            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+        </div>
+        <div ng-show="vm.isCheckingStatus() && !vm.systemStatus.projectVersion" translate="ADMINCONSOLE.BOOTING.CARD.SYSTEM_STATUS_NO_VERSION"></div>
+        <div ng-show="vm.systemStatus.projectVersion"
+             translate="ADMINCONSOLE.BOOTING.CARD.SYSTEM_STATUS_VERSION"
+             translate-values="{version: vm.systemStatus.projectVersion}"></div>
+    </div>
+<!-- ng-hide="detail.status === 'STARTING'" -->
+    <div layout="row"
+         layout-align="start center"
+         ng-repeat="detail in vm.systemStatus.subSystemDetails | orderBy:'order'"
+         style="padding: 8px;"
+         ng-hide="vm.hasError && detail.status === 'STARTING'">
+        <div class="subsystem-status-icon" ng-show="vm.isCheckingStatus() && detail.status === 'STARTING'">
+            <md-icon md-svg-src="/img/icons/ic_hourglass_empty_black.svg"></md-icon>
+        </div>
+        <div class="subsystem-status-icon" ng-show="detail.status === 'OFF'">
+            <md-icon class="content-off" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+        </div>
+        <div class="subsystem-status-icon" ng-show="detail.status === 'OK'">
+            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+        </div>
+        <div class="subsystem-status-icon" ng-show="detail.status === 'WARN'">
+            <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+        </div>
+        <div class="subsystem-status-icon" ng-show="detail.status === 'ERROR'">
+            <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+        </div>
+        <div translate="{{'ADMINCONSOLE.BOOTING.STATUS_MSG.' + detail.msgKey}}" translate-values="detail.msgContext"></div>
+    </div>
+
+</md-card-content>

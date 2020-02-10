@@ -1,0 +1,20 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout="column">
+        <div>
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.WEB_RTC.TITLE' | translate }}</h3>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.WEB_RTC.TEXT1' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.WEB_RTC.TEXT2' | translate }}</p>
+            </div>
+        </div>
+        <div hide-gt-sm layout-padding></div>
+        <!--<div hide-gt-xs layout-padding></div>-->
+        <div layout="row">
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.blockEnabled" class="md-primary switch-word-break" ng-change="vm.setState()">
+                {{ vm.blockEnabled ? 'ADMINCONSOLE.WEB_RTC.ENABLED' : 'ADMINCONSOLE.WEB_RTC.DISABLED' | translate }}
+            </md-switch>
+        </div>
+    </div>
+</div>

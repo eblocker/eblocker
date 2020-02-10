@@ -1,0 +1,27 @@
+<div layout="column" ng-cloak layout-fill class="settings-status-frame">
+
+    <!-- overlay to mask actual page until it is rendered can be turned into print-view -->
+    <div ng-if="true" style="position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+          background-color: lightgray;
+          opacity: 1">
+        <div layout-fill layout="row" layout-align="center center" style="opacity: 1;">
+            <md-progress-circular md-diameter="66"></md-progress-circular>
+        </div>
+    </div>
+
+    <div class="settings-status-view" layout="row" layout-align="center start">
+
+        <div layout="column" layout-align="start center">
+
+            <div id="print-canvas">
+                <ng-include src="vm.templateUrl"></ng-include>
+            </div>
+
+        </div>
+    </div>
+</div>

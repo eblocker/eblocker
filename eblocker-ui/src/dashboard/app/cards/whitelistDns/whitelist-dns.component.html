@@ -1,0 +1,50 @@
+<eb-card
+    icon="/img/icons/ic_list_black.svg"
+    card-title="{{'WHITELIST_DNS.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="WHITELIST_DNS.CARD.TOOLTIP">
+    <eb-card-content class="whitelist-dns-card">
+
+        <div layout="column">
+
+            <!-- GLOBAL TRACKER / ADS -->
+            <div layout="column" layout-align="start start">
+
+                <div>
+                    <span translate="WHITELIST_DNS.CARD.GLOBAL_BLOCKING.LABEL"></span>
+                </div>
+
+                <div style="padding: 12px 0 8px 32px;">
+                    <div>
+                        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.device.filterPlugAndPlayTrackersEnabled" ng-change="vm.onChangeDevice(vm.device)">
+                            {{ 'WHITELIST_DNS.CARD.GLOBAL_BLOCKING.TRACKER' | translate }}
+                        </md-checkbox>
+                    </div>
+                    <div>
+                        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.device.filterPlugAndPlayAdsEnabled" ng-change="vm.onChangeDevice(vm.device)">
+                            {{ 'WHITELIST_DNS.CARD.GLOBAL_BLOCKING.ADS' | translate }}
+                        </md-checkbox>
+                    </div>
+                </div>
+            </div>
+
+            <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
+            <dashboard-whitelist-dns-table
+                domains="vm.customDomainFilter.whitelistedDomains"
+                on-update="vm.updateWhitelist(domains)"
+                label="WHITELIST_DNS.CARD.TABLE.LABEL_WHITELIST"
+                placeholder="WHITELIST_DNS.CARD.TABLE.EMPTY_WHITELIST">
+            </dashboard-whitelist-dns-table>
+
+            <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
+            <dashboard-whitelist-dns-table
+                domains="vm.customDomainFilter.blacklistedDomains"
+                on-update="vm.updateBlacklist(domains)"
+                label="WHITELIST_DNS.CARD.TABLE.LABEL_BLACKLIST"
+                placeholder="WHITELIST_DNS.CARD.TABLE.EMPTY_BLACKLIST">
+            </dashboard-whitelist-dns-table>
+
+        </div>
+
+    </eb-card-content>
+</eb-card>

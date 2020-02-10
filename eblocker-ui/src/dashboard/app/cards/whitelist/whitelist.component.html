@@ -1,0 +1,123 @@
+<eb-card
+    icon="/img/icons/ic_list_black.svg"
+    card-title="{{'WHITELIST.CARD.TITLE' | translate}}"
+    tooltip="WHITELIST.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{ vm.getCardStatus() }}">
+    <eb-card-content class="whitelist-card">
+
+        <!-- Show table only if there are either domains or global whitelistings or both -->
+        <div class="whitelist-table">
+            <div layout="row" class="whitelist-table-header" layout-align="end center">
+                <div flex="50" flex-xs="33" layout="row" layout-align="end center">
+                    <span class="header-domain">{{'WHITELIST.CARD.TABLE.COLUMN.DOMAIN' | translate}}</span>
+                </div>
+                <div flex="25" flex-xs="33" class="header-tracker">
+                    <span>{{'WHITELIST.CARD.TABLE.COLUMN.TRACKER' | translate}}</span>
+                </div>
+                <div flex="25" flex-xs="33" class="header-tracker">
+                    <span>{{'WHITELIST.CARD.TABLE.COLUMN.AD' | translate}}</span>
+                </div>
+            </div>
+
+            <!-- Only show border if domains are whitelisted and the table is visible -->
+            <div class="border-top"></div>
+
+            <div layout="row" class="whitelist-all" ng-show="(vm.hasWhitelistedDomains() || vm.isGloballyWhitelisted()) && vm.tableData.length > 0" >
+                <div flex="50" flex-xs="33" layout="row" layout-align="end center">
+                    <span>
+                        {{'WHITELIST.CARD.TABLE.COLUMN.ALLOW_ALL' | translate}}
+                    </span>
+                </div>
+
+                <div flex="25" flex-xs="33" layout="row" layout-align="center center">
+                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary whitelist-checkbox"
+                                 style="margin: 0"
+                                 ng-model="vm.allowAllTrackers"
+                                 aria-label="Select all trackers"
+                                 ng-change="vm.updateWhitelistConfig()">
+                    </md-checkbox>
+                </div>
+                <div flex="25" flex-xs="33" layout="row" layout-align="center center">
+                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary whitelist-checkbox"
+                                 style="margin: 0"
+                                 ng-model="vm.allowAllAds"
+                                 aria-label="Select all ads"
+                                 ng-change="vm.updateWhitelistConfig()">
+                    </md-checkbox>
+                </div>
+            </div>
+
+            <md-divider ng-if="vm.hasWhitelistedDomains() || vm.isGloballyWhitelisted()"></md-divider>
+
+            <div layout="column" class="whitelist-table-body" ng-style="vm.getTableBodyStyle()">
+                <div layout="row" ng-repeat="entry in vm.tableData" class="whitelist-row">
+                    <div flex="50" flex-xs="33" layout="row" layout-align="end center">
+                        <span layout="row" layout-align="end center"
+                              ng-class="{'not-whitelisted': !vm.isEntryWhitelisted(entry)}"
+                              style="display: inline-block;"
+                              class="truncate">
+                            <md-tooltip md-delay="300">{{!vm.isEntryWhitelisted(entry) ? ('WHITELIST.CARD.TABLE.MARK_DELETE' | translate) : entry.domain}}</md-tooltip>
+                        {{entry.domain}}
+                        </span>
+                    </div>
+
+                    <div flex="25" flex-xs="33" layout="row" layout-align="center center">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                                     class="md-primary whitelist-checkbox"
+                                     style="margin: 0"
+                                     ng-model="entry.trackers" aria-label="Block trackers"
+                                     ng-change="vm.updateWhitelistEntry(entry)">
+                        </md-checkbox>
+                    </div>
+                    <div flex="25" flex-xs="33" layout="row" layout-align="center center">
+                        <md-checkbox md-theme="eBlockerThemeCheckbox"
+                                     class="md-primary whitelist-checkbox"
+                                     style="margin: 0;"
+                                     ng-model="entry.ads" aria-label="Block ads"
+                                     ng-change="vm.updateWhitelistEntry(entry)">
+                        </md-checkbox>
+                    </div>
+                </div>
+
+                <!-- EMPTY TABLE -->
+                <div ng-if="vm.tableData.length === 0"
+                     layout="row" layout-align="center center"
+                     class="whitelist-all unselectable">
+                    <div ng-show="vm.searchTerm === ''" layout="row" layout-align="center center">
+                        <span>{{'WHITELIST.CARD.TABLE.EMPTY_WHITELISTED' | translate }}</span>
+                    </div>
+                    <div ng-show="vm.searchTerm !== ''" layout="row" layout-align="center center">
+                        <span>{{'WHITELIST.CARD.TABLE.EMPTY_FOUND' | translate }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <md-divider></md-divider>
+
+            <!-- SEARCH AND ADD -->
+            <div layout="row" layout-xs="column" layout-align="center center" style="padding-top: 8px;">
+                <!-- TABLE SEARCH -->
+                <eb-filter-table filtered-data="vm.tableData"
+                                 original-data="vm.whitelist"
+                                 filter-properties="vm.searchProps"
+                                 placeholder-label="{{'WHITELIST.CARD.SEARCH_LABEL' | translate}}"
+                                 icon-path="/img/icons/baseline-add_circle.svg"
+                                 key-up="vm.clickAddDomainButton(value)"
+                                 search-term="vm.searchTerm">
+                </eb-filter-table>
+
+                <div layout="row" layout-align="center center">
+                    <div>
+                        <md-button class="md-secondary" ng-click="vm.clickAddDomainButton(vm.searchTerm)" ng-disabled="vm.isAddButtonDisabled()">
+                            {{'WHITELIST.CARD.ACTION.ADD_DOMAIN' | translate }}
+                        </md-button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </eb-card-content>
+</eb-card>

@@ -1,0 +1,21 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout="column">
+        <div>
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.DO_NOT_TRACK.TITLE' | translate }}</h3>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.DO_NOT_TRACK.TEXT1' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.DO_NOT_TRACK.TEXT2' | translate }}</p>
+                <p>{{ 'ADMINCONSOLE.DO_NOT_TRACK.TEXT3' | translate }}</p>
+            </div>
+        </div>
+        <div hide-gt-sm layout-padding></div>
+        <div hide-gt-xs layout-padding></div>
+        <div layout="row">
+            <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.dntHeaderEnabled" class="md-primary switch-word-break" ng-change="vm.setState()">
+                {{ vm.dntHeaderEnabled ? 'ADMINCONSOLE.DO_NOT_TRACK.ENABLED' : 'ADMINCONSOLE.DO_NOT_TRACK.DISABLED' | translate }}
+            </md-switch>
+        </div>
+    </div>
+</div>

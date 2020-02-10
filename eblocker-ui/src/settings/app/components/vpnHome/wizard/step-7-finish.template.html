@@ -1,0 +1,51 @@
+<div>
+    <div layout="row" layout="center center">
+        <div flex="100" ng-show="!vm.isLaunchSuccess && !vm.isLaunchError && vm.isLaunching" layout="row" layout-align="center center">
+            <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+            <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.LABEL_WAITING' | translate}}</span>
+        </div>
+
+        <div ng-show="vm.isLaunchSuccess" layout="column" style="margin-left: 20px;">
+            <div>
+                <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.LABEL_SUCCESS' | translate}}</h3>
+            </div>
+            <div layout="row">
+                <p style="margin: 0;">
+                    <span translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.LABEL_PRE"></span>
+                    <a class="orange"
+                       ng-href="{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.URL' | translate }}" target="_blank"
+                       aria-label="{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.LABEL_LINK' | translate}}"
+                       translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.LABEL_LINK">
+                    </a>
+                    <span translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.LABEL_POST"></span>
+                </p>
+            </div>
+            <div>
+                <ul>
+                    <li translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.STEP_1"></li>
+                    <li translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_THIS_DEVICE.STEP_2"></li>
+                </ul>
+            </div>
+            <div layout-padding></div>
+            <div layout="row">
+                <span translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_OTHER_DEVICE.LABEL"></span>
+            </div>
+            <div>
+                <ul>
+                    <li translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_OTHER_DEVICE.STEP_1"></li>
+                    <li translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.ACTIVATE_OTHER_DEVICE.STEP_2"></li>
+                </ul>
+            </div>
+        </div>
+
+        <div ng-show="vm.isLaunchError">
+            <h3 style="margin-left: 20px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_FINISH.LABEL_ERROR' | translate}}</h3>
+        </div>
+    </div>
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-show="!vm.isLaunching" ng-click="vm.goBack()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+    </div>
+</div>

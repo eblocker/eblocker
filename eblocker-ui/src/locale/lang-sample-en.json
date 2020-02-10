@@ -1,0 +1,57 @@
+{
+    "EXPIRED" : {
+        "CARD" : {
+            "BUTTON" : {
+                "RESUME" : "Continue"
+            },
+            "TEXT" : "Your session expired.",
+            "TITLE" : "Session expired"
+        }
+    },
+    "IDLE" : {
+        "DIALOG" : {
+            "BUTTON" : {
+                "RESUME" : "Continue"
+            },
+            "TEXT" : "Your session expires in {{countdown}} seconds.",
+            "TITLE" : "Session expires"
+        }
+    },
+    "MAIN" : {
+        "I18N_TEST" : {
+            "NAME_TEMPLATE" : "You entered the name '{{name}}'."
+        }
+    },
+    "REDIRECT" : {
+        "NO_TARGET" : {
+            "BUTTON" : {
+                "BACK" : "Back to previous page",
+                "CONTINUE" : "Continue and Approve Tracking"
+            },
+            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
+            "TEXT_2" : {
+                "POST" : ".",
+                "PRE" : "This link belongs to the data collector "
+            },
+            "TEXT_3" : "Unfortunately we cannot determine the desired target website.",
+            "TITLE" : "Tracking Link Detected"
+        },
+        "TARGET" : {
+            "BUTTON" : {
+                "CONTINUE" : "Get Tracked",
+                "SHORTCUT" : "Go Straight to "
+            },
+            "REMEMBER" : "Remember my decision for similar tracking links.",
+            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
+            "TEXT_2" : {
+                "POST" : ".",
+                "PRE" : "This link belongs to the data collector "
+            },
+            "TEXT_3" : {
+                "POST" : ".",
+                "PRE" : "but you probably want to go straight to "
+            },
+            "TITLE" : "Tracking Link Detected"
+        }
+    }
+}

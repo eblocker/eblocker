@@ -1,0 +1,57 @@
+{
+    "EXPIRED" : {
+        "CARD" : {
+            "BUTTON" : {
+                "RESUME" : "Weiterarbeiten"
+            },
+            "TEXT" : "Ihre Sitzung ist abgelaufen.",
+            "TITLE" : "Sitzung abgelaufen"
+        }
+    },
+    "IDLE" : {
+        "DIALOG" : {
+            "BUTTON" : {
+                "RESUME" : "Weiterarbeiten"
+            },
+            "TEXT" : "Ihre Sitzung läuft in {{countdown}} Sekunden ab.",
+            "TITLE" : "Ablaufwarnung"
+        }
+    },
+    "MAIN" : {
+        "I18N_TEST" : {
+            "NAME_TEMPLATE" : "Sie haben den Namen <b>'{{name}}'</b> eingegeben."
+        }
+    },
+    "REDIRECT" : {
+        "NO_TARGET" : {
+            "BUTTON" : {
+                "BACK" : "Zurück zur vorherigen Seite",
+                "CONTINUE" : "Fortsetzen und Datenerfassung zulassen"
+            },
+            "TEXT_1" : "eBlocker hat einen Tracking-Link erkannt, der Ihren Seitenaufruf erfassen will.",
+            "TEXT_2" : {
+                "POST" : ".",
+                "PRE" : "Dieser Link führt zum bekannten Datensammler "
+            },
+            "TEXT_3" : "Leider konnten wir die Ziel-Website des Links nicht erkennen.",
+            "TITLE" : "Tracking-Link erkannt"
+        },
+        "TARGET" : {
+            "BUTTON" : {
+                "CONTINUE" : "Datenerfassung zustimmen",
+                "SHORTCUT" : "Ohne Datenerfassung zu "
+            },
+            "REMEMBER" : "Entscheidung für ähnliche Tracking-Links merken.",
+            "TEXT_1" : "eBlocker hat einen Tracking-Link erkannt, der Ihren Seitenaufruf erfassen will.",
+            "TEXT_2" : {
+                "POST" : ".",
+                "PRE" : "Dieser Link führt zum bekannten Datensammler "
+            },
+            "TEXT_3" : {
+                "POST" : ".",
+                "PRE" : "aber Ihr eigentliches Ziel ist wahrscheinlich "
+            },
+            "TITLE" : "Tracking-Link erkannt"
+        }
+    }
+}

@@ -1,0 +1,164 @@
+<eb-card
+    icon="/img/icons/ic_lock_black.svg"
+    card-title="{{'SSL.CARD.TITLE' | translate}}"
+    tooltip="SSL.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{vm.cardStatus}}">
+    <eb-card-content>
+
+        <!-- SSL Status -->
+        <div layout="row" layout-align="center center" layout-xs="column" ng-if="vm.status.display">
+
+            <!-- ROW: label + icon -->
+            <div flex-gt-xs="50"
+                 layout="row" layout-align="end center" layout-align-xs="center center">
+
+                <div flex="80">
+                    <div layout="row" layout-align="end center" class="align-right">
+                        <span>{{ 'SSL.CARD.STATUS.LABEL' | translate }}</span>
+                    </div>
+                </div>
+
+                <div flex="auto" layout="row" layout-align="center center">
+                    <md-tooltip md-delay="300" md-direction="top"><!--
+                        --><div ng-if=" vm.status.active &&  vm.status.global" translate="SSL.CARD.STATUS.ACTIVE.TOOLTIP"></div><!--
+                        --><div ng-if="!vm.status.active &&  vm.status.global" translate="SSL.CARD.STATUS.INACTIVE.TOOLTIP"></div><!--
+                        --><div ng-if="!vm.status.global" translate="SSL.CARD.STATUS.INACTIVE.TOOLTIP_GLOBAL"></div><!--
+                    --></md-tooltip>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg" ng-if="vm.status.active && vm.status.global"></md-icon>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg" ng-if="!vm.status.active || !vm.status.global"></md-icon>
+                </div>
+
+            </div>
+
+            <!-- ROW: button -->
+            <div layout="row" layout-align-xs="center center"
+                 flex-gt-xs="50">
+                <div layout="row" layout-align-xs="center center">
+                    <md-button class="md-primary" ng-click="vm.deactivateSsl()" ng-show=" vm.status.active &&  vm.status.global && !vm.status.restricted">{{ 'SSL.CARD.STATUS.ACTIVE.BUTTON_LABEL' | translate }}</md-button>
+                </div>
+                <div layout="row" layout-align-xs="center center">
+                    <md-button class="md-primary" ng-click="vm.activateSsl()" ng-show="!vm.status.active &&  vm.status.global && !vm.status.restricted">{{ 'SSL.CARD.STATUS.INACTIVE.BUTTON_LABEL' | translate }}</md-button>
+                </div>
+                <div layout="row" layout-align-xs="center center">
+                    <md-button class="md-primary" ng-click="vm.openSettings()" ng-show="!vm.status.global || (vm.status.global && vm.status.restricted)">{{ 'SSL.CARD.STATUS.RESTRICTED.BUTTON_LABEL' | translate }}</md-button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <md-divider hide-gt-xs ng-if="vm.executeSslBackgroundCheck && vm.status.global && vm.certificate.display" style="padding-bottom: 10px;"></md-divider>
+
+
+
+        <!-- eBlocker Certificate -->
+        <div ng-if="vm.executeSslBackgroundCheck && vm.status.global && vm.certificate.display"
+             layout="row" layout-xs="column" layout-align="center center"
+             class="ssl-cert-height">
+
+            <!-- ROW: label + icon -->
+            <div flex-gt-xs="50"
+                 layout="row" layout-align="end center" layout-align-xs="center center" >
+
+                <div flex="80" layout="column" layout-align="center end">
+                    <div layout="row" layout-align="end center" class="align-right">
+                        <span>{{ 'SSL.CARD.CERTIFICATE.LABEL' | translate }}</span>
+                    </div>
+                    <div class="sub-text align-right" ng-if="vm.certificate.expires.displayWarning">
+                        {{ 'SSL.CARD.CERTIFICATE.LABEL_EXPIRATION' | translate: {'days': vm.certificate.expires.days}:"messageformat" }}
+                    </div>
+                </div>
+
+                <div flex="auto" layout="row" layout-align="center center">
+                    <md-tooltip md-delay="300" md-direction="top"><!--
+                       --><div ng-if="!vm.showRenewalCertificate() && vm.certificate.installed"><!--
+                           -->{{ 'SSL.CARD.CERTIFICATE.TOOLTIP' | translate:  {'name': vm.certificate.name,
+                           'day': vm.certificate.expires.date.day,
+                           'month': vm.certificate.expires.date.month,
+                           'year': vm.certificate.expires.date.year} }}<!--
+                        --></div><!--
+                        --><div ng-if="!vm.showRenewalCertificate() &&  !vm.certificate.installed"><!--
+                            -->{{ 'SSL.CARD.CERTIFICATE.TOOLTIP_ADD' | translate:  {'name': vm.certificate.name,
+                            'day': vm.certificate.expires.date.day,
+                            'month': vm.certificate.expires.date.month,
+                            'year': vm.certificate.expires.date.year} }}<!--
+                        --></div><!--
+                        --><div ng-if="vm.showRenewalCertificate()"><!--
+                            -->{{ 'SSL.CARD.CERTIFICATE.TOOLTIP_OUTDATED' | translate }}<!--
+                        --></div><!--
+                    --></md-tooltip>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg" ng-if="vm.getCaStatus() === 'OK'"></md-icon>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg" ng-if="vm.getCaStatus() === 'WARN'"></md-icon>
+                    <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg" ng-if="vm.getCaStatus() === 'ERROR'"></md-icon>
+                </div>
+
+            </div>
+
+            <div flex-gt-xs="50" layout="row" layout-align-xs="center center">
+                <md-button class="md-primary button-label-wrap" href="/api/ssl/caCertificate.crt" ng-click="vm.installCertificate()" ng-show="!vm.certificate.installed">{{ 'SSL.CARD.CERTIFICATE.ADD.BUTTON_LABEL' | translate }}</md-button>
+            </div>
+        </div>
+
+
+
+        <md-divider hide-gt-xs ng-if="vm.executeSslBackgroundCheck && vm.showRenewalCertificate()" style="padding-bottom: 10px;"></md-divider>
+
+
+        <!-- Renewal Certificate -->
+        <div class="ssl-cert-height"
+             layout="row" layout-align="center center" layout-xs="column"
+             ng-if="vm.executeSslBackgroundCheck && vm.showRenewalCertificate()" >
+
+            <!-- ROW: label + icon -->
+            <div flex-gt-xs="50"
+                 layout="row" layout-align="end center" layout-align-xs="center center" >
+
+                <div flex="80" layout="column" layout-align="center end">
+                    <div class="align-right" layout="row" layout-align="end center">
+                        <span translate="SSL.CARD.RENEWAL.LABEL"></span>
+                    </div>
+                </div>
+                <div flex="auto" layout="row" layout-align="center center">
+                    <md-tooltip md-delay="300" md-direction="top"><!--
+                       --><div ng-if="vm.renewal.installed"><!--
+                            -->{{ 'SSL.CARD.RENEWAL.TOOLTIP' | translate:  {'name': vm.renewal.name,
+                            'day': vm.renewal.expires.date.day,
+                            'month': vm.renewal.expires.date.month,
+                            'year': vm.renewal.expires.date.year} }}<!--
+                        --></div><!--
+                        --><div ng-if="!vm.renewal.installed"><!--
+                            -->{{ 'SSL.CARD.RENEWAL.TOOLTIP_ADD' | translate:  {'name': vm.renewal.name,
+                            'day': vm.renewal.expires.date.day,
+                            'month': vm.renewal.expires.date.month,
+                            'year': vm.renewal.expires.date.year} }}<!--
+                        --></div><!--
+                   --></md-tooltip>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg" ng-show="vm.showRenewalCertificateWarning()"></md-icon>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg" ng-hide="vm.showRenewalCertificateWarning()"></md-icon>
+                </div>
+            </div>
+            <div flex-gt-xs="50" layout="row" layout-align-xs="center center">
+                <md-button class="md-primary button-label-wrap" href="/api/ssl/renewalCertificate.crt">{{ 'SSL.CARD.RENEWAL.ADD.BUTTON_LABEL' | translate }}</md-button>
+            </div>
+        </div>
+
+        <!--<div style="padding-bottom: 5px;" ng-if="vm.status.global && vm.renewal.display" layout="row" layout-align="center center">-->
+            <!--<md-tooltip md-delay="300" md-direction="top">&lt;!&ndash;-->
+            <!--&ndash;&gt;{{ 'SSL.CARD.RENEWAL.LINK_TOOLTIP' | translate }}&lt;!&ndash;-->
+        <!--&ndash;&gt;</md-tooltip>-->
+            <!--<a ng-click="vm.openHelp('SSL.CARD.RENEWAL.LINK_URL')" class="link" flex="40" flex-offset="50">{{ 'SSL.CARD.RENEWAL.LINK_LABEL' | translate }}</a>-->
+        <!--</div>-->
+
+        <!-- ng-if="vm.getCaStatus() !== 'OK'" -->
+        <div
+            layout="row" layout-align="center center">
+            <md-button class="md-primary"
+                       ng-disabled="!vm.sslTestDone"
+                       ng-href="#!/httpsguide"
+                       aria-label="{{ 'SSL.CARD.ACTION.START_WIZARD' | translate }}">
+                {{'SSL.CARD.ACTION.START_WIZARD' | translate}}
+            </md-button>
+        </div>
+    </eb-card-content>
+</eb-card>

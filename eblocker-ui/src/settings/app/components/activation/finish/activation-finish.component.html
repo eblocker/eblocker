@@ -1,0 +1,122 @@
+<eb-wizard-component wizard-title="{{vm.isReminder ? vm.postRegistrationInformation.TITLE.TEXT : 'ADMINCONSOLE.ACTIVATION_FINISH.CARD.TITLE'}}">
+    <eb-wizard-content>
+        <!-- FINISHED -->
+        <div ng-if="vm.currentStep === 0 && !vm.isReminder">
+            <div>
+                <h3 translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.HEADER"></h3>
+            </div>
+
+            <div>
+                <p translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.TEXT1"></p>
+                <p>
+                    <span translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.TEXT2"></span>
+                    <a target="_blank" ng-href="{{'ADMINCONSOLE.ACTIVATION_FINISH.FINISH.FORUM_URL' | translate}}" translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.FORUM"></a>
+                    <span translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.TEXT3"></span>
+                    <a target="_top" ng-href="mailto:{{'ADMINCONSOLE.ACTIVATION_FINISH.FINISH.EMAIL' | translate}}" translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.EMAIL"></a>
+                </p>
+                <md-divider></md-divider>
+                <p translate="ADMINCONSOLE.ACTIVATION_FINISH.FINISH.TEXT4"></p>
+            </div>
+
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.ACTIVATION_FINISH.ACTION.CONTINUE' | translate }}
+                </md-button>
+            </div>
+        </div>
+        <!-- END FINISHED -->
+
+        <!-- VPN POST REGISTRATION INFORMATION -->
+        <div ng-if="vm.currentStep === 1 || vm.isReminder && vm.postRegistrationInformation !== undefined">
+
+            <div layout="column">
+                <p style="margin: 8px 0 8px 0;">
+                    <span>{{vm.postRegistrationInformation.TEXT.P1.PRE}}</span>
+                    <span style="font-weight: bold">{{vm.postRegistrationInformation.TEXT.P1.EM}}</span>
+                    <span>{{vm.postRegistrationInformation.TEXT.P1.POST}}</span>
+                </p>
+                <p style="margin: 8px 0 8px 0;">
+                    <span>{{vm.postRegistrationInformation.TEXT.P2.PRE}}</span>
+                    <span style="font-weight: bold">{{vm.postRegistrationInformation.TEXT.P2.EM}}</span>
+                    <span>{{vm.postRegistrationInformation.TEXT.P2.POST}}</span>
+                </p>
+                <p style="margin: 8px 0 8px 0;">
+                    <span>{{vm.postRegistrationInformation.TEXT.P3.PRE}}</span>
+                    <span style="font-weight: bold">{{vm.postRegistrationInformation.TEXT.P3.EM}}</span>
+                    <span>{{vm.postRegistrationInformation.TEXT.P3.POST}}</span>
+                </p>
+                <div layout="row" layout-align="center center">
+                    <md-button type="button" target="_blank" ng-href="{{vm.postRegistrationInformation.OK.LINK}}" class="md-primary">
+                        {{vm.postRegistrationInformation.OK.LABEL}}
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.doNotRemindAgain()" class="md-raised md-secondary">
+                    {{vm.postRegistrationInformation.CANCEL.LABEL}}
+                </md-button>
+                <md-button type="button" ng-click="vm.vpnRemindLater()" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.ACTIVATION_FINISH.ACTION.REMIND_ME_LATER' | translate }}
+                </md-button>
+            </div>
+        </div>
+        <!-- END VPN POST REGISTRATION INFORMATION -->
+
+        <!-- UPDATES -->
+        <div ng-if="vm.currentStep === 2 && vm.isCheckingForUpdates && !vm.isReminder">
+            <div style="margin-top: 20px; margin-bottom: 20px;" layout="row" layout-align="center center">
+                <md-progress-circular md-mode="indeterminate"
+                                      md-diameter="36">
+                </md-progress-circular>
+                <span style="margin-left: 20px;">{{'ADMINCONSOLE.ACTIVATION_FINISH.CHECK_UPDATES.LABEL' | translate}}</span>
+            </div>
+        </div>
+        <!-- END UPDATES -->
+
+        <!-- UPDATES AVAILABLE -->
+        <div ng-if="vm.currentStep === 2 && vm.updatesAvailable && !vm.isCheckingForUpdates && !vm.isReminder">
+            <div>
+                <h3 translate="ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.HEADER"></h3>
+            </div>
+
+            <div layout="column">
+                <p style="margin: 8px 0 8px 0;" translate="ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.TEXT1"></p>
+                <p style="margin: 8px 0 8px 0;" translate="ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.TEXT2"></p>
+                <p style="margin: 8px 0 8px 0;" translate="ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.TEXT3"></p>
+                <p style="margin: 8px 0 8px 0;" translate="ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.TEXT4"></p>
+            </div>
+
+            <div ng-show="vm.updateFailReason !== undefined">
+                <p>{{'ADMINCONSOLE.ACTIVATION_FINISH.FOUND_UPDATES.FAIL' | translate}}{{vm.updateFailReason}}</p>
+            </div>
+
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.finish()" class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.ACTIVATION_FINISH.ACTION.UPDATE_LATER' | translate }}
+                </md-button>
+                <md-button type="button" ng-click="vm.updateNow()" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.ACTIVATION_FINISH.ACTION.UPDATE_NOW' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+        <!-- UPDATES NOT AVAILABLE -->
+        <div ng-if="vm.currentStep === 2 && !vm.updatesAvailable && !vm.isCheckingForUpdates && !vm.isReminder">
+            <div>
+                <h3 translate="ADMINCONSOLE.ACTIVATION_FINISH.DONE.HEADER"></h3>
+            </div>
+
+            <div layout="column">
+                <p style="margin: 8px 0 8px 0;" translate="ADMINCONSOLE.ACTIVATION_FINISH.DONE.TEXT1"></p>
+            </div>
+
+            <div layout="row" layout-align="end center">
+                <md-button type="button" ng-click="vm.finish()" class="md-raised md-primary md-accent">
+                    {{ 'ADMINCONSOLE.ACTIVATION_FINISH.ACTION.START_USING' | translate }}
+                </md-button>
+            </div>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

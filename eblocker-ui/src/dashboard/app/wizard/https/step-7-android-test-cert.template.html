@@ -1,0 +1,75 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3 translate="WIZARD.HTTPS.ANDROID_TEST_CERT.TITLE"></h3>
+    </div>
+
+    <div>
+        <ol start="5">
+            <li>
+                <span translate="WIZARD.HTTPS.ANDROID_TEST_CERT.STEP_6"></span>
+                <md-button type="button" class="md-raised md-secondary"
+                           ng-href="{{ vm.getCertificateDownloadUrl() }}"
+                           ng-click="vm.loadCertificate()">
+                    {{ 'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate }}
+                </md-button>
+            </li>
+            <li translate="WIZARD.HTTPS.ANDROID_TEST_CERT.STEP_7"></li>
+            <li translate="WIZARD.HTTPS.ANDROID_TEST_CERT.STEP_8"></li>
+            <li translate="WIZARD.HTTPS.ANDROID_TEST_CERT.STEP_9"></li>
+            <li translate="WIZARD.HTTPS.ANDROID_TEST_CERT.STEP_10"></li>
+        </ol>
+    </div>
+
+    <div ng-if="!vm.isFirefox()" layout="row" layout-align="start center" layout-xs="column" layout-padding>
+        <div>
+            <md-button type="button" ng-click="vm.testCertificate()"
+                       ng-disabled="vm.isTestingCert"
+                       class="md-raised md-primary md-accent">
+                {{ 'WIZARD.HTTPS.ACTION.TEST' | translate }}
+            </md-button>
+        </div>
+
+        <div ng-if="vm.isTestingCert">
+            <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+        </div>
+
+        <div ng-show="vm.currentCertificateInstalled"
+             layout="row" layout-align="start center">
+            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+            <span style="padding-left: 8px; font-weight: bold;" translate="WIZARD.HTTPS.LABEL_CERT_SUCCESS"></span>
+        </div>
+
+        <div ng-show="vm.currentCertificateFailed"
+             layout="row" layout-align="start center">
+            <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+            <span style="padding-left: 8px; font-weight: bold;" translate="WIZARD.HTTPS.LABEL_CERT_FAIL"></span>
+        </div>
+
+    </div>
+
+    <div ng-show="vm.currentCertificateInstalled">
+        <p translate="WIZARD.HTTPS.ANDROID_TEST_CERT.NOTE"></p>
+    </div>
+
+    <div ng-show="vm.currentCertificateFailed">
+        <p>
+            <span translate="WIZARD.HTTPS.CERT_TEST_FAIL.TEXT_FAIL"></span>
+            <span translate="WIZARD.HTTPS.CERT_TEST_FAIL.TEXT_FAIL_SUPPORT_PRE"></span>
+            <a class="orange"
+               ng-href="{{ 'WIZARD.HTTPS.CERT_TEST_FAIL.TEXT_FAIL_SUPPORT_MAIL' | translate }}"
+               translate="WIZARD.HTTPS.CERT_TEST_FAIL.TEXT_FAIL_SUPPORT_TEXT">
+            </a>
+            <span translate="WIZARD.HTTPS.CERT_TEST_FAIL.TEXT_FAIL_SUPPORT_POST"></span>
+        </p>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-align-xs="center center" layout-xs="column">
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.HTTPS.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.close()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.HTTPS.ACTION.FINISH' | translate }}
+        </md-button>
+    </div>
+</div>

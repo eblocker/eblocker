@@ -1,0 +1,79 @@
+<eb-wizard-component wizard-title="{{ 'ADMINCONSOLE.ACTIVATION.CARD.TITLE' | translate }}">
+    <eb-wizard-content>
+        <div layout="row">
+            <div flex="50" layout="row" layout-align="start center">
+                <div class="activation-wizard-language">
+
+                    <div layout="row" layout-xs="column" style="width: 100%;">
+                        <div layout="row"
+                             layout-align="start center"
+                             layout-padding
+                             ng-repeat="lang in vm.languages"
+                             class="icon-pointer icon-option"
+                             ng-click="vm.setLanguage(lang.id, lang)">
+                            <div>
+                                <md-icon md-svg-src="/img/flags/translate/{{lang.id}}.svg"></md-icon>
+                            </div>
+                            <div ng-class="{'lang-selected': lang.id === vm.getLanguage()}">
+                                <span>{{'ADMINCONSOLE.LANG.' + lang.translationKey | translate}}</span>
+                            </div>
+                            <div ng-show="lang.id === vm.getLanguage()">
+                                <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                            </div>
+                            <div ng-hide="lang.id === vm.getLanguage()" flex>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <md-divider></md-divider>
+
+        <md-tabs md-border-bottom
+                 md-dynamic-height
+                 md-selected="vm.currentStep">
+            <md-tab>
+                <!-- TAB 0 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.WELCOME.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/welcome-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab>
+                <!-- TAB 1 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TOS.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/tos-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-disabled="!vm.isStepAllowed(2)" md-on-select="vm.setCurrentTimeZone()">
+                <!-- TAB 2 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.TIME_LANG.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/time-lang-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-disabled="!vm.isStepAllowed(3)">
+                <!-- TAB 3 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.DEVICE.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/device-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-disabled="!vm.isStepAllowed(4)">
+                <!-- TAB 4 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/license-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </eb-wizard-content>
+</eb-wizard-component>

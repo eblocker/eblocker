@@ -1,0 +1,2 @@
+||google.*/gen_204?$~xmlhttprequest
+||0tracker.com^$third-party

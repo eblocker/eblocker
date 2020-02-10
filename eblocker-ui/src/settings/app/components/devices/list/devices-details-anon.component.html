@@ -1,0 +1,180 @@
+<div style="padding-top: 16px;">
+    <div layout="column" layout-padding>
+
+        <div layout="column" layout-align="center start">
+
+            <div layout="row" layout-align="start center">
+                <h4 translate="SHARED.ANONYMIZATION.IP_ANON.TITLE"></h4>
+            </div>
+
+            <div layout="row" layout-xs="column" layout-align-xs="center center" layout-align="start center" style="width: 100%;">
+
+                <div layout="row" layout-align="start center" style="width: 100%;">
+                    <div flex="90" style="min-width: 90%;">
+                        <div layout="row" layout-align="start center" >
+                            <md-input-container style="width: 100%;">
+                                <md-tooltip ng-if="vm.vpnConnection.poller || vm.vpnIsDisconnecting || vm.updatingTor || vm.startingPoller || (vm.vpnStatus.active && vm.vpnStatus.up) || vm.isTorEnabled"
+                                            md-delay="300">{{'SHARED.ANONYMIZATION.TOOLTIP.SELECT_DISABLED' | translate:{name: vm.getVpnNameByProfileId(vm.vpnStatus.profileId)} }}</md-tooltip>
+                                <label translate="SHARED.ANONYMIZATION.IP_ANON.DROPDOWN_LABEL"></label>
+                                <md-select ng-model="vm.selectedProfile"
+                                           ng-disabled="vm.vpnConnection.poller || vm.vpnIsDisconnecting || vm.updatingTor || vm.startingPoller || (vm.vpnStatus.active && vm.vpnStatus.up) || vm.isTorEnabled">
+                                    <md-option ng-value="profile" ng-repeat="profile in vm.profiles">{{ profile.name | translate }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                    <div flex="10" layout="row" layout-align="center center">
+                        <div layout="row" layout-align="center center">
+                            <md-progress-circular md-mode="indeterminate" md-diameter="24" ng-show="vm.vpnConnection.poller || vm.vpnIsDisconnecting || vm.startingPoller || vm.updatingTor"></md-progress-circular>
+                        </div>
+                    </div>
+                </div>
+
+                <div flex="35" flex-gt-sm="20" flex-xs="100">
+                    <div layout="row" layout-align="start center">
+                        <div>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-disabled="vm.selectedProfile === undefined || (vm.vpnConnection.poller || vm.vpnIsDisconnecting) || vm.startingPoller || vm.updatingTor"
+                                       ng-show="!vm.vpnConnection.poller && !(vm.vpnStatus.active && vm.vpnStatus.up) && !vm.isTorEnabled"
+                                       ng-click="vm.toggleAnon(vm.selectedProfile)"
+                                       aria-label="{{ 'SHARED.ANONYMIZATION.IP_ANON.ACTION.CONNECT' | translate }}">
+                                {{'SHARED.ANONYMIZATION.IP_ANON.ACTION.CONNECT' | translate}}
+                            </md-button>
+                        </div>
+                        <div>
+                            <md-button class="md-primary"
+                                       ng-disabled="vm.vpnConnection.poller || vm.vpnIsDisconnecting || vm.startingPoller || vm.updatingTor"
+                                       ng-show="!vm.vpnConnection.poller && (vm.vpnStatus.active && vm.vpnStatus.up) || vm.isTorEnabled"
+                                       ng-click="vm.disconnectIpAnon()"
+                                       aria-label="{{ 'SHARED.ANONYMIZATION.IP_ANON.ACTION.DISCONNECT' | translate }}">
+                                {{'SHARED.ANONYMIZATION.IP_ANON.ACTION.DISCONNECT' | translate}}
+                            </md-button>
+                        </div>
+                        <div>
+                            <md-button class="md-secondary md-raised"
+                                       ng-if="vm.vpnConnection.poller"
+                                       ng-click="vm.cancelVpnConnectionAttempt(vm.selectedProfile)"
+                                       aria-label="{{ 'SHARED.ANONYMIZATION.IP_ANON.ACTION.CANCEL_CONNECT' | translate }}">
+                                {{'SHARED.ANONYMIZATION.IP_ANON.ACTION.CANCEL_CONNECT' | translate}}
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" layout-align-xs="center center" layout-align="start center" style="width: 100%;">
+                <!--<div ng-hide="(vm.vpnStatus.active && vm.vpnStatus.up) || vm.isTorEnabled" flex="50" flex-gt-sm="40"></div>-->
+
+                <div ng-show="(vm.vpnStatus.active && vm.vpnStatus.up) || vm.isTorEnabled">
+                    <div layout="row" layout-align-xs="center center" layout-align="start center">
+                        <md-tooltip ng-if="(vm.vpnStatus.active && vm.vpnStatus.up) || (vm.vpnConnection.poller || vm.vpnIsDisconnecting)" md-delay="300">{{vm.getVpnNameByProfileId(vm.vpnStatus.profileId)}}</md-tooltip>
+                        <div>
+                            <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+                        </div>
+                        <div style="padding-left: 16px;">
+                            <span translate="SHARED.ANONYMIZATION.IP_ANON.LABEL_CONNECTED"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="vm.isTorEnabled">
+                    <div layout="row" layout-align-xs="center center" layout-align="start center">
+                        <md-button class="md-primary"
+                                   ng-click="vm.getNewTorIdentity()"
+                                   ng-disabled="!vm.isTorEnabled"
+                                   aria-label="{{ 'SHARED.ANONYMIZATION.IP_ANON.ACTION.RENEW_ID' | translate }}">
+                            {{'SHARED.ANONYMIZATION.IP_ANON.ACTION.RENEW_ID' | translate}}
+                        </md-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <md-divider flex="100" flex-gt-sm="60" ng-if="vm.hasFeature('PRO')" style="margin-top: 22px;"></md-divider>
+        </div>
+
+        <!-- CLOAKING -->
+        <div ng-if="vm.hasFeature('PRO')"
+             layout="column" layout-align="center start">
+
+            <div layout="row" layout-align="start center">
+                <h4 translate="SHARED.ANONYMIZATION.CLOAKING.TITLE"></h4>
+            </div>
+
+
+            <div layout="row" layout-align="start center" style="width: 100%;">
+                <div flex="55" flex-gt-sm="35">
+                    <div layout="row" layout-align="start center">
+                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                            <label> {{ 'SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKING_AGENT' | translate }}</label>
+                            <md-select ng-model="vm.selectedUserAgent" ng-change="vm.changeUserAgent(vm.device)">
+                                <md-option ng-show="userAgent !== 'Off'" ng-repeat="userAgent in vm.userAgentList | orderBy:'+'" ng-value="userAgent">
+                                    <md-icon ng-show="userAgent === 'Android'" md-svg-src="/img/icons/ic_phone_android_black.svg"></md-icon>
+                                    <md-icon ng-show="userAgent === 'iPad'" md-svg-src="/img/icons/ic_tablet_mac_black.svg"></md-icon>
+                                    <md-icon ng-show="userAgent === 'iPhone'" md-svg-src="/img/icons/ic_phone_iphone_black.svg"></md-icon>
+                                    <md-icon ng-show="userAgent === 'Mac'" md-svg-src="/img/icons/ic_desktop_mac_black.svg"></md-icon>
+                                    <md-icon ng-show="!vm.isMobileDevice(userAgent) &&  userAgent !== 'Mac'" class="cloaking-image" md-svg-src="/img/icons/ic_desktop_windows_black.svg"></md-icon>
+                                    <span style="padding-left: 10px;">{{ userAgent }}</span>
+                                </md-option>
+
+                                <md-divider></md-divider>
+
+                                <md-option value="Off" aria-label="Off">
+                                    {{'SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKING_OFF' | translate}}
+                                </md-option>
+
+                                <md-divider></md-divider>
+
+                                <md-option value="Custom" aria-label="Custom">
+                                    {{'SHARED.ANONYMIZATION.CLOAKING.ACTION.CLOAKING_CUSTOM' | translate}}
+                                </md-option>
+
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div flex-offset="10" flex="35" flex-offset-gt-sm="5" flex-gt-sm="20">
+                    <md-button class="md-primary"
+                               ng-show="vm.selectedUserAgent !== 'Off'"
+                               ng-click="vm.disableCloaking()"
+                               aria-label="{{ 'SHARED.ANONYMIZATION.CLOAKING.ACTION.DISABLE_CLOAKING' | translate }}">
+                        {{'SHARED.ANONYMIZATION.CLOAKING.ACTION.DISABLE_CLOAKING' | translate}}
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row" layout-align="center center">
+                <md-input-container md-theme="eBlockerThemeInput" ng-if="vm.selectedUserAgent === 'Custom'">
+                    <label ng-show="vm.isCustomAgentValid(vm.customUserAgent)">{{ 'SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKING_NAME' | translate }}</label>
+                    <label ng-hide="vm.isCustomAgentValid(vm.customUserAgent)" style="color:red;" >{{ 'SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKING_NAME_INVALID' | translate }}</label>
+                    <input size="50" name="customUserAgent" ng-model="vm.customUserAgent" ng-model-options="{updateOn: 'blur'}" ng-change="vm.updateCustomUserAgent(vm.device)">
+                </md-input-container>
+            </div>
+
+            <div layout="row" layout-align="start center" ng-if="vm.selectedUserAgent !== 'Off'">
+                <div ng-show="vm.device.sslEnabled && vm.sslGloballyEnabled" flex="90" layout="row" layout-align="start center">
+                    <div>
+                        <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
+                    </div>
+                    <div style="padding-left: 16px;">
+                        <span translate="SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKED"></span>
+                    </div>
+                </div>
+
+                <div ng-hide="vm.device.sslEnabled && vm.sslGloballyEnabled" flex="90" layout="row" layout-align="start center">
+                    <div>
+                        <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                    </div>
+                    <div style="padding-left: 16px;">
+                        <span translate="SHARED.ANONYMIZATION.CLOAKING.LABEL_CLOAKED_NO_HTTPS"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

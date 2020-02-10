@@ -1,0 +1,47 @@
+<div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab>
+            <md-tab-label>{{ 'HELP_ICON.TAB.OVERVIEW' | translate }}</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" class="help-tab">
+                    <div style="margin-top: 10px;" class="md-headline">
+                        {{ 'HELP_ICON.PARENTAL_CONTROL.PROFILES.OVERVIEW.TITLE' | translate}}
+                    </div>
+                    <div>
+                        <p translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.OVERVIEW.P1"></p>
+                        <p translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.OVERVIEW.P2"></p>
+                    </div>
+                    <!--<div ng-bind-html="vm.contentOverview | htmlSafe"></div>-->
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+
+        <!-- comment or uncomment to show or hide details section -->
+        <md-tab>
+            <md-tab-label>{{ 'HELP_ICON.TAB.DETAILS' | translate }}</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" class="help-tab">
+                    <div>
+                        <p translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.DETAILS.P1"></p>
+                        <p translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.DETAILS.P2"></p>
+                        <p>
+                            <span translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.DETAILS.P3_PRE"></span>
+                            <a class="orange" href="{{'HELP_ICON.PARENTAL_CONTROL.PROFILES.DETAILS.P3_URL' | translate}}" target="_blank" translate="HELP_ICON.PARENTAL_CONTROL.PROFILES.DETAILS.P3_LINK"></a>
+                        </p>
+                    </div>
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+
+        <!-- comment or uncomment to show or hide additional-resource section -->
+        <!--<md-tab>-->
+            <!--<md-tab-label>{{ 'HELP_ICON.TAB.ADDITIONAL' | translate }}</md-tab-label>-->
+            <!--<md-tab-body>-->
+                <!--<md-content layout="column" class="help-tab">-->
+                    <!--&lt;!&ndash;<div style="margin-top: 10px;" class="md-headline">{{ vm.title | translate }}</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div ng-bind-html="vm.contentAdditionalResources | htmlSafe"></div>&ndash;&gt;-->
+                <!--</md-content>-->
+            <!--</md-tab-body>-->
+        <!--</md-tab>-->
+    </md-tabs>
+</div>

@@ -1,0 +1,36 @@
+#------------------------------------------------------------------------------
+# SSL support
+#------------------------------------------------------------------------------
+https_port 3130 ssl-bump intercept generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/opt/eblocker-icap/keys/ssl/eblocker.cert key=/opt/eblocker-icap/keys/ssl/eblocker.key
+
+#options
+sslproxy_cipher ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA:AES256-SHA:DES-CBC3-SHA
+sslproxy_options NO_SSLv2:NO_SSLv3:SINGLE_DH_USE:No_Compression
+sslproxy_cert_error deny all
+sslproxy_cert_sign signTrusted all
+
+# Only these clients shall be bumped:
+acl sslclients src "/etc/squid/sslclients"
+
+# These servers and domains shall be spliced:
+acl sslwhitelist ssl::server_name "/etc/squid/ssldomainwhitelist"
+acl ipwhitelist dst "/etc/squid/ipwhitelist"
+
+#certificate mimicking
+sslcrtd_program /usr/lib/squid/ssl_crtd -s /var/lib/ssl_db -M 4MB sslcrtd_children 8 startup=1 idle=1
+
+#eblocker certificate validator
+sslcrtvalidator_program ttl=600 nc -q0 127.0.0.1 7443
+sslcrtvalidator_children 1 startup=1 idle=1 concurrency=8
+
+#Bumping steps
+acl step1 at_step SslBump1
+ssl_bump splice ipwhitelist # do this before step1: looking for SNI may already break the handshake
+ssl_bump peek step1 all # only peek at step 1 to find the SNI in the client hello message (needed for sslwhitelist)
+ssl_bump splice localhost
+ssl_bump splice !sslclients
+ssl_bump splice disabledClients !XForwardForDstDomain !XForwardForDst
+ssl_bump splice SSL_test_ports
+ssl_bump splice sslwhitelist !parentalcontrolfilter
+ssl_bump splice sslwhitelist parentalcontrolfilter !domainblacklist
+ssl_bump bump # the default

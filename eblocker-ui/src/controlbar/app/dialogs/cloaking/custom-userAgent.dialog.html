@@ -1,0 +1,37 @@
+<md-dialog aria-label="{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.TITLE' | translate}}"
+           style="max-width: 800px;">
+    <form name="userAgentForm" ng-submit="ctrl.ok()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding style="overflow: initial;">
+
+            <div>
+                <h2>{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.TITLE' | translate}}</h2>
+            </div>
+
+            <div>
+                <div>
+                    <p class="dialog-paragraph-text">{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.BODY' | translate }}</p>
+                </div>
+            </div>
+
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 90%; margin-bottom: 0;">
+                    <label>{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.INPUT' | translate }}</label>
+                    <input class="o-input" name="userAgentString" ng-model="ctrl.customUserAgentSpec" required>
+                    <div ng-messages="userAgentForm.userAgentString.$error">
+                        <div ng-message="required">{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.ERROR.REQUIRED' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" class="md-raised md-secondary" ng-click="ctrl.cancel()">{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.BUTTON.CANCEL' | translate }}</md-button>
+            <md-button type="submit" class="md-raised md-primary md-accent" ng-disabled="userAgentForm.$invalid">{{ 'CONTROLBAR.DIALOGS.CLOAKING.CUSTOM.BUTTON.OK' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

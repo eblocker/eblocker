@@ -1,0 +1,75 @@
+<eb-wizard-component wizard-title="{{ 'ADMINCONSOLE.NETWORK_WIZARD.CARD.TITLE' | translate }}">
+
+    <!-- INTO AUTO MODE -->
+    <eb-wizard-content ng-if="vm.intoAutoMode">
+        <md-tabs md-border-bottom
+                 md-dynamic-height
+                 md-selected="vm.currentStep">
+            <md-tab>
+                <!-- TAB 0 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/automatic-prepare-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab>
+                <!-- TAB 1 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PROCESS.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/automatic-process-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab md-on-select="vm.onSelect()">
+                <!-- TAB 2 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.EXECUTION.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/automatic-execution-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </eb-wizard-content>
+
+    <!-- INTO INDIVIDUAL MODE -->
+    <eb-wizard-content ng-if="vm.intoIndividualMode">
+        <md-tabs md-border-bottom
+                 md-dynamic-height
+                 md-selected="vm.currentStep">
+            <md-tab>
+                <!-- TAB 0 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PREPARE.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/individual-prepare-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab>
+                <!-- TAB 1 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PROCESS.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/individual-process-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab>
+                <!-- TAB 2 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/individual-settings-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab md-on-select="vm.onSelect()">
+                <!-- TAB 3 -->
+                <md-tab-label>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.EXECUTION.LABEL' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/network/wizard/individual-execution-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </eb-wizard-content>
+
+</eb-wizard-component>
+
+

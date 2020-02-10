@@ -1,0 +1,49 @@
+<div layout="row" layout-align="start center" style="padding: 0 0 15px 0;" class="table-details-paginator">
+    <div layout="row" layout-align="center center">
+
+        <!-- GOT TO FIRST -->
+        <div class="paginator-button" ng-class="{'disabled': vm.prevEntry === undefined, 'icon-pointer': vm.prevEntry !== undefined}">
+            <span class="unselectable" style="margin: 0;" ng-click="vm.prevEntry === undefined ? '' : vm.goToFirst()">
+                <div layout="row" layout-align="center center">
+                    <md-icon ng-class="{'content-eb-orange': vm.prevEntry !== undefined}" md-svg-src="/img/icons/baseline-first_page.svg" aria-label="paginator first element"></md-icon>
+                </div>
+                <md-tooltip ng-if="vm.prevEntry[vm.tooltipProperty]" md-delay="300">(1/{{vm.tableData.length}}) {{ vm.first[vm.tooltipProperty] | translate }}</md-tooltip>
+            </span>
+        </div>
+
+        <!-- PREVIOUS -->
+        <div class="paginator-button" ng-class="{'disabled': vm.prevEntry === undefined, 'icon-pointer': vm.prevEntry !== undefined}">
+            <span class="unselectable" style="margin: 0;" ng-click="vm.prevEntry === undefined ? '' : vm.prev()">
+                <div layout="row" layout-align="center center">
+                    <md-icon ng-class="{'content-eb-orange': vm.prevEntry !== undefined}" md-svg-src="/img/icons/baseline-chevron_left.svg" aria-label="paginator previous element"></md-icon>
+                </div>
+                <md-tooltip ng-if="vm.prevEntry[vm.tooltipProperty]" md-delay="300">({{vm.currentIndex}}/{{vm.tableData.length}}) {{ vm.prevEntry[vm.tooltipProperty] | translate }}</md-tooltip>
+            </span>
+        </div>
+
+        <div style="margin-left: 20px;"></div>
+
+        <!-- NEXT -->
+        <div class="paginator-button" ng-class="{'disabled': vm.nextEntry === undefined, 'icon-pointer': vm.nextEntry !== undefined}">
+            <span class="unselectable" style="margin: 0;" ng-click="vm.nextEntry === undefined ? '' : vm.next()">
+                <div layout="row" layout-align="center center">
+                    <md-icon ng-class="{'content-eb-orange': vm.nextEntry !== undefined}" md-svg-src="/img/icons/baseline-chevron_right.svg" aria-label="paginator next element"></md-icon>
+                </div>
+                <md-tooltip ng-if="vm.nextEntry[vm.tooltipProperty]" md-delay="300">({{vm.currentIndex + 2}}/{{vm.tableData.length}}) {{ vm.nextEntry[vm.tooltipProperty] | translate }}</md-tooltip>
+            </span>
+        </div>
+
+        <!-- GO TO LAST-->
+        <div class="paginator-button" ng-class="{'disabled': vm.nextEntry === undefined, 'icon-pointer': vm.nextEntry !== undefined}">
+            <span class="unselectable" style="margin: 0;" ng-click="vm.nextEntry === undefined ? '' : vm.goToLast()">
+                <div layout="row" layout-align="center center">
+                    <md-icon ng-class="{'content-eb-orange': vm.nextEntry !== undefined}" md-svg-src="/img/icons/baseline-last_page.svg" aria-label="paginator last element"></md-icon>
+                </div>
+                <md-tooltip ng-if="vm.nextEntry[vm.tooltipProperty]" md-delay="300">({{vm.tableData.length}}/{{vm.tableData.length}}) {{ vm.last[vm.tooltipProperty] | translate }}</md-tooltip>
+            </span>
+        </div>
+
+        <div hide-xs style="padding-right: 42px;"></div>
+
+    </div>
+</div>

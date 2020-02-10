@@ -1,0 +1,75 @@
+<div layout="column" layout-align="start start" style="padding-top: 16px;" layout-padding>
+
+    <div layout="column" layout-align-xs="start start">
+
+        <div layout="row" layout-align="start center">
+            <div>
+                <md-switch md-theme="eBlockerThemeSwitch" class="md-primary switch-word-break"
+                           layout="row" layout-align="start center"
+                           ng-model="vm.tmpMobileState" ng-change="vm.onChangeMobile($event, vm.device)" ng-disabled="vm.isEnablingDevice || vm.isDisablingDevice">
+                    {{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.LABEL_ENABLED' | translate }}
+                </md-switch>
+            </div>
+            <div ng-if="vm.isEnablingDevice || vm.isDisablingDevice" style="margin-left: 20px;">
+                <md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular>
+            </div>
+        </div>
+
+        <!--<div ng-if="vm.tmpMobileState">-->
+                       <!--ng-disabled="!vm.tmpMobileState || vm.vpnHomeStatus.isFirstStart || vm.isEnablingDevice || vm.isDisablingDevice || vm.isDownloadingConf"-->
+        <div>
+            <md-switch md-theme="eBlockerThemeSwitch" class="md-primary switch-word-break"
+                       layout="row" layout-align="start center"
+                       ng-model="vm.device.mobilePrivateNetworkAccess" ng-change="vm.onChangeMobilePrivateNetworkAccess(vm.device)">
+                {{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.LABEL_PRIVATE_NETWORK_ACCESS' | translate }}
+            </md-switch>
+        </div>
+
+        <div ng-if="vm.tmpMobileState">
+            <div hide-gt-xs style="padding-top: 16px;"></div>
+                <div layout-xs="column" layout="row" layout-align="start center">
+                    <div layout="row" layout-align="start center">
+                        <div>
+                            <md-button class="md-raised md-primary md-accent"
+                                       ng-disabled="vm.isMobileConfigDownloadDisabled()"
+                                       ng-click="vm.downloadClientConf(vm.device)"
+                                       aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.ACTION.DOWNLOAD_CONF' | translate }}">
+                                <span hide-gt-xs>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.ACTION.DOWNLOAD_CERT_XS' | translate }}</span>
+                                <span hide-xs>{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.ACTION.DOWNLOAD_CERT' | translate}}</span>
+                            </md-button>
+                        </div>
+                        <div ng-if="vm.isEnablingDevice || vm.isDisablingDevice || vm.isDownloadingConf" style="margin-left: 20px;margin-right: 20px;">
+                            <md-progress-circular md-mode="indeterminate" md-diameter="36"></md-progress-circular>
+                        </div>
+                        <div hide-xs ng-if="!vm.isEnablingDevice && !vm.isDisablingDevice && !vm.isDownloadingConf" style="margin-left: 76px;">
+
+                        </div>
+                    </div>
+                    <div flex-gt-xs="40" flex="100" style="width: 100%;">
+                        <div>
+                            <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                <label>{{ 'SHARED.MOBILE.DEVICE_TYPE.LABEL_SELECT' | translate }}</label>
+                                <md-select ng-model="vm.operatingSystemType" aria-label="{{ 'SHARED.MOBILE.DEVICE_TYPE.LABEL_SELECT' | translate }}">
+                                    <div ng-repeat="type in vm.osTypes">
+                                        <md-option ng-value="type">{{ type.value | translate }}</md-option>
+                                    </div>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </div>
+
+                <div layout="row" style="margin-top: 20px;">
+                    <p>
+                        <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.HINT_PRE"></span>
+                        <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.HINT_LINK"
+                              ng-click="vm.goToDashboard()"
+                              class="orange-link" style="font-weight: bold;"></span>
+                        <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.MOBILE.HINT_POST"></span>
+                    </p>
+                </div>
+        </div>
+
+    </div>
+
+</div>

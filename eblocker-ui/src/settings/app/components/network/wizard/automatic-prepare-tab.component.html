@@ -1,0 +1,21 @@
+<div layout-padding layout="column">
+    <div>
+        <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.TEXT1' | translate }}</p>
+        <p ng-show="!vm.dhcpShouldBeOnRouter">
+            <span>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.TEXT2_PRE' | translate }}</span>
+            <a target="_blank" ng-href="{{ 'ADMINCONSOLE.NETWORK_WIZARD.KNOWLEDGE_DB_URL' | translate }}">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.TEXT2_LINK' | translate }}</a>
+        </p>
+        <p ng-show="!vm.dhcpShouldBeOnRouter" style="font-weight: bold">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.WARN' | translate }}</p>
+        <p ng-show="vm.dhcpShouldBeOnRouter" style="font-wight: bold">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PREPARE.DHCP_ON' | translate }}</p>
+    </div>
+
+
+    <div layout="row" layout-xs="column" layout-align="end center">
+        <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

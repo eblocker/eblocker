@@ -1,0 +1,56 @@
+<div layout-margin layout="column" layout-align="center center">
+    <div>
+        <table style="border: solid 2px black;" cellpadding="6">
+            <thead style="border: solid 2px black;">
+                <tr>
+                    <th>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_KEYS' | translate}}</th>
+                    <th>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_EBLOCKER' | translate}}</th>
+                    <th>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_OTHER' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_IPADDRESS' | translate}}</td>
+                    <td>{{vm.param.configuration.ipAddress}}</td>
+                    <td>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.GENERATED' | translate}}</td>
+                </tr>
+                <tr>
+                    <td>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_NETMASK' | translate}}</td>
+                    <td>{{vm.param.configuration.networkMask}}</td>
+                    <td>{{vm.param.configuration.networkMask}}</td>
+                </tr>
+                <tr>
+                    <td>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_GATEWAY' | translate}}</td>
+                    <td>{{vm.param.configuration.gateway}}</td>
+                    <td>{{vm.param.configuration.ipAddress}}</td>
+                </tr>
+                <tr>
+                    <td>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_DNS' | translate}}</td>
+                    <td>{{vm.param.configuration.nameServerPrimary}}</td>
+                    <td>{{vm.param.configuration.advisedNameServer}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div layout="column" layout-align="center start">
+        <p>
+            <b>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.FALLBACK_URL_PRE' | translate}}</b>
+        </p>
+        <p>
+            <b>
+                <a style="word-break: break-all;" ng-href="{{vm.param.fallBackUrl}}">{{vm.param.fallBackUrl}}</a>
+            </b>
+        </p>
+        <p>
+            <span>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.PROCESS_STEPS' | translate}}</span>
+            <ol style="margin-top: 0;">
+                <li>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.PROCESS_STEP_1' | translate}}</li>
+                <li>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.PROCESS_STEP_2' | translate}}</li>
+                <li>{{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.PROCESS_STEP_3' | translate}}</li>
+            </ol>
+        </p>
+    </div>
+
+</div>
+

@@ -1,0 +1,120 @@
+<div layout="column">
+
+    <div class="open-source-system-components" layout-padding layout-margin>
+
+        <div ng-if="vm.isLoggedIn" layout="row" layout-align="start center" layout-align-xs="center center" style="width: 100%;">
+            <eb-back-to-table state="{{vm.backState}}" label="ADMINCONSOLE.OPEN_SOURCE_LICENSES.LABEL_BACK"></eb-back-to-table>
+        </div>
+
+        <h3 translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.TITLE"></h3>
+
+        <table>
+            <tr>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.COLUMN.MODULE"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.COLUMN.FUNCTION"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.COLUMN.LICENSOR"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.COLUMN.LICENSE"></th>
+            </tr>
+            <tr>
+                <td><a href="http://www.armbian.com">Armbian</a></td>
+                <td> Debian for ARM boards</td>
+                <td> armbian.com and others</td>
+                <td><a href="http://www.gnu.org/licenses/gpl-2.0.html">GPL v2 and others</a></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.raspbian.org">Raspbian</a></td>
+                <td> Debian for Raspberry PI boards</td>
+                <td> raspbian.org and others</td>
+                <td><a href="http://www.gnu.org/licenses/gpl-2.0.html">GPL v2 and others</a></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.debian.org">Debian</a></td>
+                <td> Debian OS (Jessie / Wheezy)</td>
+                <td> debian.org and others</td>
+                <td>
+                    <a ui-sref="{{vm.getStateName('DEBIAN')}}" translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.SYSTEM_COMPONENTS.LIST_DEBIAN"></a>
+                </td>
+            </tr>
+            <tr>
+                <td><a href="http://www.oracle.com/technetwork/java/javase/overview/index.html">Java 8 SE</a></td>
+                <td> JDK</td>
+                <td> Oracle</td>
+                <td><a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">BCL</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://www.ruby-lang.org/en/">Ruby</a></td>
+                <td>Ruby Runtime</td>
+                <td>Yukihiro Matsumoto</td>
+                <td><a href="https://www.ruby-lang.org/en/about/license.txt">Ruby License or 2-clause BSDL</a></td>
+            </tr>
+            <tr>
+                <td><a href="http://squid-cache.org">Squid</a></td>
+                <td> Caching proxy</td>
+                <td> squid-cache.org</td>
+                <td><a href="http://www.gnu.org/licenses/gpl-2.0.html">GPL v2</a></td>
+            </tr>
+            <tr>
+                <td><a href="http://redis.io">Redis</a></td>
+                <td> Key-Value Database</td>
+                <td> Salvatore Sanfilippo and others</td>
+                <td><a href="https://redis.io/topics/license">BSD-3</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="open-source-system-components" layout-padding layout-margin>
+
+        <h3 translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.THIRD_PARTY.TITLE"></h3>
+
+        <table>
+            <tr>
+                <td><a ui-sref="{{vm.getStateName('JAVA')}}" translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.JAVA.TITLE"></a></td>
+            </tr>
+            <tr>
+                <td><a ui-sref="{{vm.getStateName('CCPP')}}" translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.CCPP.TITLE"></a></td>
+            </tr>
+            <tr>
+                <td><a ui-sref="{{vm.getStateName('JAVASCRIPT')}}" translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.JAVASCRIPT.TITLE"></a></td>
+            </tr>
+            <tr>
+                <td><a ui-sref="{{vm.getStateName('RUBY')}}" translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.RUBY.TITLE"></a></td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div class="open-source-system-components" layout-padding layout-margin>
+
+        <h3 translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.ADDITIONAL_RESOURCES.TITLE"></h3>
+
+        <table>
+            <tr>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.ADDITIONAL_RESOURCES.COLUMN.MODULE"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.ADDITIONAL_RESOURCES.COLUMN.FUNCTION"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.ADDITIONAL_RESOURCES.COLUMN.LICENSOR"></th>
+                <th translate="ADMINCONSOLE.OPEN_SOURCE_LICENSES.ADDITIONAL_RESOURCES.COLUMN.LICENSE"></th>
+            </tr>
+            <tr>
+                <td><a href="https://github.com/google/material-design-icons">Material Design Icons</a></td>
+                <td> Icons</td>
+                <td> Google</td>
+                <td><a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution License</a>
+                </td>
+            </tr>
+            <tr>
+                <td><a href="https://github.com/lipis/flag-icon-css">Flag Icons</a></td>
+                <td> Icons</td>
+                <td> Panayiotis Lipiridis</td>
+                <td><a href="https://github.com/lipis/flag-icon-css/blob/master/LICENSE">MIT License</a></td>
+            </tr>
+            <tr>
+                <td><a href="https://easylist.adblockplus.org/">EasyList</a></td>
+                <td> Filter lists</td>
+                <td><a href="https://easylist.adblockplus.org/">The EasyList authors</a></td>
+                <td><a href="http://www.gnu.org/licenses/gpl-3.0.html">GPL v3</a></td>
+            </tr>
+        </table>
+    </div>
+
+
+</div>

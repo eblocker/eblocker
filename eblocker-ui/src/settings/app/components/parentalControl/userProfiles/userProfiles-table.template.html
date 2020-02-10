@@ -1,0 +1,69 @@
+<div flex class="column-xs" ng-class="{'is-selected-on-small-screen': entry._checked}">
+    <md-icon ng-class="{'eb-table-icon-active': entry.assignedToUsers.length > 0}"
+             aria-label="Assinged to users"
+             md-svg-src="/img/icons/ic_group_black.svg">
+    </md-icon>
+    <md-tooltip md-delay="300">{{'ADMINCONSOLE.USER_PROFILES.TOOLTIP.NUM_ASSIGNED' | translate:{num: entry.assignedToUsers.length}:"messageformat" }}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex flex-gt-xs="20">
+    <md-tooltip md-delay="300">{{entry.name | translate}}</md-tooltip>
+    <span>{{entry.name | translate}}</span>
+</div>
+
+<!-- RESTRICTED WEBSITES -->
+<div flex>
+    <div ng-if="entry.controlmodeUrls && entry.tmpActivatedFilterList.length > 0">
+        <md-tooltip md-direction="top"><div ng-repeat="filterlist in entry.tmpActivatedFilterList | orderBy:'localizedName'">{{ filterlist.localizedName }}{{ $last ? '' : ', &nbsp;' }}</div></md-tooltip>
+        {{entry.tmpActivatedFilterList[0].localizedName}}
+        <span ng-if="entry.tmpActivatedFilterList.length > 1"> (+{{entry.tmpActivatedFilterList.length - 1}})</span>
+    </div>
+</div>
+
+<!-- RESTRICTED TIME RANGE -->
+<div flex hide-xs>
+    <div ng-if="entry.controlmodeTime">
+        <span>{{vm.templateCallback.formatTimeRangeList(entry.internetAccessContingents) | translate}}</span>
+        <md-tooltip ng-if="entry.internetAccessContingents.length > 0" md-delay="300"><div ng-repeat="contingent in entry.internetAccessContingents | orderBy: 'tillHours' | orderBy: 'fromHours' | orderBy:'onDay'"><!--
+            --><span>{{ vm.templateCallback.getContingentDay(contingent) | translate }}</span><!--
+            --><span> {{ vm.templateCallback.getContingentDisplayTime(contingent.fromMinutes) }} - {{ vm.templateCallback.getContingentDisplayTime(contingent.tillMinutes) }}</span><!--
+        --></div><!--
+        --></md-tooltip>
+    </div>
+</div>
+
+<!-- RESTRICTED TIMES -->
+<div flex hide-xs>
+
+    <div ng-if="entry.controlmodeMaxUsage">
+        <md-tooltip md-delay="300" ng-show="entry.controlmodeMaxUsage"><!--
+                                    --><div layout="column" layout-align="start start" style="width: 100%;">
+            <div layout="row" layout-align="start center" ng-repeat="usage in entry.normalizedMaxUsageTimeByDay" style="width: 100%;">
+                <div style="margin-right: 5px;">{{ 'SHARED.PARENTAL_CONTROL.ACCESS_CONTINGENTS.' + usage.label | translate }}</div>
+                <div ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) > 0">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_HOURS_MINUTES' | translate:{hours: (usage.minutes | displayHours), minutes: (usage.minutes | displayMinutes)} }}</div>
+                <div ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) > 0">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_MINUTES' | translate:{minutes: (usage.minutes | displayMinutes)} }}</div>
+                <div ng-show="(usage.minutes | displayHours) > 0 && (usage.minutes | displayMinutes) === 0">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_HOURS' | translate:{hours: (usage.minutes | displayHours)} }}</div>
+                <div ng-show="(usage.minutes | displayHours) === 0 && (usage.minutes | displayMinutes) === 0">{{ 'ADMINCONSOLE.USER_PROFILES.DETAILS.USAGE_RESTRICTIONS_NO_TIME' | translate }}</div>
+            </div>
+        </div><!--
+        --></md-tooltip>
+
+        <span ng-show="entry.controlmodeMaxUsage">
+            {{'ADMINCONSOLE.USER_PROFILES.TODAY_USAGE' | translate:{min: entry.tmpUsageToday}:"messageformat"}}
+        </span>
+    </div>
+</div>
+
+<!-- ASSIGNED USERS -->
+<div flex hide-xs>
+    <span>
+        <md-button class="md-primary" style="line-height: normal;min-width: 5px;min-height: auto;margin: 0;padding: 0;" ng-click="vm.templateCallback.goToUsers($event)">
+            {{vm.templateCallback.formatProfileUsersList((entry.assignedToUsers | filter: {'system': false} ), 'ADMINCONSOLE.USER_PROFILES.ACTION.ASSIGN_USER')  | translate}}
+        </md-button>
+        <md-tooltip ng-if="(entry.assignedToUsers | filter: {'system': false }).length > 0" md-delay="300"><div ng-repeat="dev in entry.assignedToUsers | filter: {'system': false} | orderBy:'name'">{{ dev.name }}</div></md-tooltip>
+
+        <!--                     <span ng-repeat="user in vm.profile.assignedToUsers | filter: {'system': false} | orderBy:'name' ">-->
+
+    </span>
+</div>

@@ -1,0 +1,24 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout="column">
+        <div>
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.WEB_COMPRESSION.TITLE' | translate }}</h3>
+            </div>
+            <div>
+                <p>{{ 'ADMINCONSOLE.WEB_COMPRESSION.TEXT' | translate }}</p>
+            </div>
+        </div>
+        <!--<div hide-gt-sm layout-padding></div>-->
+        <!--<div hide-gt-xs layout-padding></div>-->
+
+        <label>{{'ADMINCONSOLE.WEB_COMPRESSION.COMPRESS_LABEL' | translate }}</label>
+
+        <div layout="row" layout-margin>
+            <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.compressionMode" ng-change="vm.setCompressionMode()">
+                <md-radio-button value="OFF">{{'ADMINCONSOLE.WEB_COMPRESSION.MODE.OFF' | translate}}</md-radio-button>
+                <md-radio-button value="VPN_CLIENTS_ONLY">{{'ADMINCONSOLE.WEB_COMPRESSION.MODE.VPN_CLIENTS_ONLY' | translate}}</md-radio-button>
+                <md-radio-button value="ALWAYS">{{'ADMINCONSOLE.WEB_COMPRESSION.MODE.ALWAYS' | translate}}</md-radio-button>
+            </md-radio-group>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div layout="column" layout-fill class="settings-child-view eb-filters-advanced-settings">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/filters/advanced/help-filters-advanced.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div>
+        <div layout="row" layout-xs="column" layout-align="start center">
+            <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+            <!--<eb-edit-table table-data="vm.tableData"-->
+                           <!--table-edit-mode="vm.tableEditMode">-->
+            <!--</eb-edit-table>-->
+
+            <div hide-gt-xs>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     size="xs">
+                </eb-scroll-paginator>
+            </div>
+
+            <div ng-show="vm.loading" layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <eb-table table-data="vm.tableData"
+                  table-header="vm.tableHeaderConfig"
+                  table-template="app/components/filters/advanced/filters-advanced-settings-table.template.html"
+                  table-id="vm.tableId"
+                  no-selection="true"
+                  template-callback="vm.templateCallback"
+                  small-table-header-limit="3">
+        </eb-table>
+
+        <!-- ACTIONS VISIBLE IN EDIT MODE -->
+        <!--<div layout="row" layout-xs="column" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>-->
+            <!--<div>-->
+                <!--<md-button ng-click="vm.resetDefault()" class="md-raised eb-delete-button">-->
+                    <!--{{ 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.ACTION.RESET_DEFAULT' | translate }}-->
+                <!--</md-button>-->
+            <!--</div>-->
+        <!--</div>-->
+
+    </div>
+
+</div>

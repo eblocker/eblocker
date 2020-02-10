@@ -1,0 +1,40 @@
+<!-- ICON -->
+<div flex class="column-xs" hide-xs>
+    <md-icon ng-class="{'eb-table-icon-active': entry.enabledModule || entry.enabledWhitelist }" md-svg-src="/img/icons/ic_list_black.svg" aria-label="App entry"></md-icon>
+    <md-tooltip md-delay="300" ng-if="!entry.enabledModule && !entry.enabledWhitelist">{{'ADMINCONSOLE.SSL_FAILS.TOOLTIP.DOMAIN_NO_ACTION' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-if="entry.enabledModule">{{'ADMINCONSOLE.SSL_FAILS.TOOLTIP.DOMAIN_APP' | translate}}</md-tooltip>
+    <md-tooltip md-delay="300" ng-if="entry.enabledWhitelist">{{'ADMINCONSOLE.SSL_FAILS.TOOLTIP.DOMAIN_WHITELIST' | translate}}</md-tooltip>
+</div>
+
+<!-- DOMAIN -->
+<div flex>
+    <span>{{entry.domainIp}}</span>
+</div>
+
+<!-- DEVICES -->
+<div flex>
+    <md-tooltip ng-if="entry.devices !== undefined && entry.devices !== ''" md-delay="300">{{entry.devices}}</md-tooltip>
+    <span>{{entry.devices}}</span>
+</div>
+
+<!-- LAST SEEN -->
+<div flex hide-xs>
+    <span>
+        {{ entry.translatedDateTime }}
+    </span>
+</div>
+
+<!-- ACTION -->
+<div flex>
+    <span ng-show="!entry.enabledModule && !entry.enabledWhitelist">{{'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.NO_ACTION' | translate: { module: entry.enabledModule } }}</span>
+    <span ng-show="entry.enabledModule">{{'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.ADDED_TO_APP' | translate: { module: entry.enabledModule } }}</span>
+    <span ng-show="entry.enabledModule && entry.enabledWhitelist">, </span>
+    <span ng-show="entry.enabledWhitelist">{{::'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.WHITELIST_ENABLED' | translate}}</span>
+
+    <md-tooltip md-delay="300"><!--
+        --><span ng-show="!entry.enabledModule && !entry.enabledWhitelist">{{'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.NO_ACTION' | translate: { module: entry.enabledModule } }}</span><!--
+        --><span ng-show="entry.enabledModule">{{'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.ADDED_TO_APP' | translate: { module: entry.enabledModule } }}</span><!--
+        --><span ng-show="entry.enabledModule && entry.enabledWhitelist">, </span><!--
+        --><span ng-show="entry.enabledWhitelist">{{::'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.WHITELIST_ENABLED' | translate}}</span><!--
+    --></md-tooltip>
+</div>

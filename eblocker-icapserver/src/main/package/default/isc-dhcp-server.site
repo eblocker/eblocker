@@ -1,0 +1,6 @@
+# For isc-dhcp-server 4.3.1
+INTERFACES=""
+
+# For isc-dhcp-server 4.3.5 (only start IPv4 server)
+INTERFACESv4="eth0"
+INTERFACESv6=""

@@ -1,0 +1,102 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" class="settings-child-view">
+
+    <div>
+        <eb-help-icon template="app/components/network/settings/help-network.template.html">
+        </eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div class="config-frame md-whiteframe-z1">
+        <!-- SELECT MODE -->
+        <div layout="row" layout-margin>
+            <div flex="35" flex-xs="60">
+                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_MODE' | translate}}" config="vm.mode"></eb-label-container>
+            </div>
+            <div flex="auto">
+                <md-button class="md-raised" ng-click="vm.editMode($event)" translate="ADMINCONSOLE.NETWORK_SETTINGS.ACTION.EDIT" aria-label="Edit network mode"></md-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="config-frame md-whiteframe-z1">
+        <div layout="row" layout-align="start center" layout-xs="column" layout-margin>
+            <h4>{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_CURRENT_SETTINGS' | translate}}</h4>
+            <div ng-hide="vm.configuration.automatic">
+                <md-button class="md-raised" ng-click="vm.editContent($event, vm.configuration)" translate="ADMINCONSOLE.NETWORK_SETTINGS.ACTION.EDIT" aria-label="Edit network mode"></md-button>
+            </div>
+        </div>
+
+
+        <div layout="column">
+            <div layout="row" layout-xs="column" class="network-label-container">
+                <div flex-gt-xs="50" flex-gt-lg="35">
+                    <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_IP' | translate}}" config="vm.ipAddress"></eb-label-container>
+                </div>
+                <div flex-gt-xs="50" flex-gt-lg="35">
+                    <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_NETMASK' | translate}}" config="vm.networkMask"></eb-label-container>
+                </div>
+            </div>
+
+            <div layout="row" class="network-label-container">
+                <div flex-xs="100" flex-gt-xs="50" flex-gt-lg="35">
+                    <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_GATEWAY' | translate}}" config="vm.gateway"></eb-label-container>
+                </div>
+            </div>
+
+            <!-- visible for expert only -->
+            <div ng-if="!vm.configuration.automatic && vm.configuration.expertMode"
+                 layout="row" layout-xs="column" class="network-label-container">
+                <div flex-xs="100" flex-gt-xs="50" flex-gt-lg="35">
+                    <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_DHCP' | translate}}" config="vm.dhcpService"></eb-label-container>
+                </div>
+
+                <div ng-if="vm.configuration.dhcp"
+                     flex-xs="100" flex-gt-xs="50" flex-gt-lg="35">
+                    <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_DHCP_LEASE_TIME' | translate}}" config="vm.dhcpLeaseTime"></eb-label-container>
+                </div>
+            </div>
+
+            <!-- visible for expert only -->
+            <!-- EXTERNAL DHCP -->
+            <div ng-if="!vm.configuration.automatic && vm.configuration.expertMode && !vm.configuration.dhcp" layout-margin>
+                <div flex-sm="80" flex-md="70" flex-lg="60" flex-gt-lg="40" class="alert-box" layout="row" layout-align="start center">
+                    <div style="margin-right: 22px;margin-top: 10px;">
+                        <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                    </div>
+
+                    <div layout="column">
+                        <p style="margin-top: 0;" translate="ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP"></p>
+                        <div flex layout="row" layout-xs="column">
+                            <span flex>{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP_GATEWAY' | translate}}</span>
+                            <span flex>{{vm.configuration.ipAddress}}</span>
+                        </div>
+                        <div flex layout="row" layout-xs="column">
+                            <span flex>{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP_DNS' | translate}}</span>
+                            <span flex>{{vm.configuration.advisedNameServer}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- visible for expert only -->
+            <!-- EBLOCKER IS DHCP -->
+            <div ng-if="!vm.configuration.automatic && vm.configuration.expertMode && vm.configuration.dhcp">
+                <div layout="row" layout-xs="column" class="network-label-container">
+                    <div flex-xs="100" flex-gt-xs="50" flex-gt-lg="35">
+                        <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_FIRST_IP' | translate}}" config="vm.firstIp"></eb-label-container>
+                    </div>
+
+                    <div flex-xs="100" flex-gt-xs="50" flex-gt-lg="35">
+                        <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_LAST_IP' | translate}}" config="vm.lastIp"></eb-label-container>
+                    </div>
+                </div>
+                <div layout-padding>
+                    <span ng-show="vm.configuration.ipFixedByDefault">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_FIXED_IP_ON' | translate }}</span>
+                    <span ng-hide="vm.configuration.ipFixedByDefault">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_FIXED_IP_OFF' | translate }}</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

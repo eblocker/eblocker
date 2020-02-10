@@ -1,0 +1,35 @@
+<!-- Make controlbar little higher, so that accidental click below does not close it right away-->
+<div class="controlbar-frame">
+    <md-toolbar class="controlbar">
+        <div class="md-toolbar-tools controlbar-container" flex layout="row" layout-align="center center">
+
+            <!-- Paginator left -->
+            <div class="controlbar-navigation controlbar-navigation-left unselectable" ng-click="main.previousPage()">
+                <md-icon ng-show="main.showPaginatorLeft()" md-svg-src="/img/icons/ic_navigate_before.svg"></md-icon>
+                <span ng-hide="main.showPaginatorLeft()" style="margin-left: 24px;"></span>
+            </div>
+
+            <!-- Controlbar entries -->
+            <div class="controlbar-entry" ng-class="{'restrict-width': !entry.noTruncation}" layout="row" layout-align="center center" ng-repeat="entry in main.getCurrentPage()">
+                <div compile="entry" layout="row" layout-align="center center" layout-fill ng-cloak>
+                </div>
+            </div>
+
+            <!-- Paginator right -->
+            <div ng-if="main.showPaginatorRight()" class="controlbar-navigation controlbar-navigation-right unselectable" ng-click="main.nextPage()">
+                <md-icon md-svg-src="/img/icons/ic_navigate_next.svg"></md-icon>
+            </div>
+
+        </div>
+    </md-toolbar>
+</div>
+
+    <!--<div ng-repeat="log in main.logs track by $index">-->
+        <!--<span style="color: red;z-index: 9999999999;">{{log}}</br></span>-->
+    <!--</div>-->
+
+<!--<div idle-countdown="countdown">-->
+    <!--<span style="color: red; font-weight: bolder">-->
+        <!--Controlbar closes in {{countdown}} seconds..-->
+    <!--</span>-->
+<!--</div>-->

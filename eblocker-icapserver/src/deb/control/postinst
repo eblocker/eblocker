@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+divert_dhcp_defaults() {
+    # Add diversion of defaults for isc-dhcp-server
+    local DHCP_DEFAULTS=/etc/default/isc-dhcp-server
+
+    dpkg-divert --add --package eblocker-icapserver --rename --divert $DHCP_DEFAULTS.distrib $DHCP_DEFAULTS
+    [ \! -e $DHCP_DEFAULTS -o -L $DHCP_DEFAULTS ] && ln -sf $DHCP_DEFAULTS.site $DHCP_DEFAULTS
+}
+
+disable_armbian_ramlog() {
+    # Fix issue EB1-2287:
+    systemctl stop armbian-ramlog
+    echo "ENABLED=false" > /etc/default/armbian-ramlog
+}
+
+if [ "$1" = configure ] ; then
+
+    # Import previous ca key / cert
+    /opt/eblocker-icap/bin/import-ca-into-jks.sh
+
+    # Install services:
+    update-rc.d eblocker-reset defaults
+    update-rc.d icapserver defaults
+
+    # Show newest release message in all sessions (again)
+    redis-cli del message:42
+
+    # Install sysstat
+    echo "ENABLED=\"true\"" > /etc/default/sysstat
+
+    # Remove Squid's obsolete netdb:
+    rm -f /var/log/squid/netdb.state
+
+    # add icapd user to group proxy to allow reading of squid's cache.log
+    adduser icapd proxy
+
+    # add icapd user to group redis to allow reading of redis' backup files
+    adduser icapd redis
+
+    divert_dhcp_defaults
+
+    disable_armbian_ramlog
+
+    if pgrep apt-get; then
+        # Reboot the machine after apt-get is finished:
+        /opt/eblocker-icap/bin/reboot_after_update_start.sh
+    else
+        # Restart the icapserver:
+        invoke-rc.d icapserver restart
+    fi
+fi
+
+exit 0
+

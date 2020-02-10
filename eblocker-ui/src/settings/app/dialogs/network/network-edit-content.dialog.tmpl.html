@@ -1,0 +1,233 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TITLE' | translate }}"
+           style="max-width: 800px;"
+           ng-cloak>
+    <form name="vm.networkSettingsForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2 ng-show="vm.currentStep === 0">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.EDIT.TITLE' | translate }}</h2>
+                <h2 ng-hide="vm.currentStep === 0">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.TITLE' | translate }}</h2>
+            </div>
+
+            <md-tabs md-border-bottom
+                     md-dynamic-height
+                     md-selected="vm.currentStep">
+                <md-tab md-on-select="vm.currentStep = 0" ng-disabled="vm.configuration.rebootNecessary">
+                    <!-- TAB 0 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.EDIT.TITLE_TAB' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <!-- INDIVIDUAL MODE -->
+                        <div ng-if="!vm.configuration.automatic && !vm.configuration.expertMode">
+                            <div layout="row" layout-margin>
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput">
+                                        <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_IP' | translate }}</label>
+                                        <input name="ip" eb-ip-address ng-model="vm.configuration.ipAddress" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                        <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.ip.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.ip.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                            <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                            <div ng-message="backendError">{{ vm.errors.ipAddress | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-margin>
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput">
+                                        <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_GATEWAY' | translate }}</label>
+                                        <input name="gateway" eb-ip-address ng-model="vm.configuration.gateway" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                        <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.gateway.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.gateway.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                            <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                            <div ng-message="backendError">{{ vm.errors.gateway | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EXPERT MODE -->
+                        <div ng-if="!vm.configuration.automatic && vm.configuration.expertMode">
+                            <div layout="row" layout-margin>
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput">
+                                        <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_IP' | translate }}</label>
+                                        <input name="ip" eb-ip-address ng-model="vm.configuration.ipAddress" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                        <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.ip.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.ip.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                            <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                            <div ng-message="backendError">{{ vm.errors.ipAddress | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput">
+                                        <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_NETMASK' | translate }}</label>
+                                        <input name="netmask" eb-ip-address ng-model="vm.configuration.networkMask" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                        <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.netmask.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.netmask.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                            <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                            <div ng-message="backendError">{{ vm.errors.networkMask | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-margin>
+                                <div>
+                                    <md-input-container md-theme="eBlockerThemeInput">
+                                        <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_GATEWAY' | translate }}</label>
+                                        <input name="gateway" eb-ip-address ng-model="vm.configuration.gateway" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                        <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.gateway.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.gateway.$touched">
+                                            <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                            <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                            <div ng-message="backendError">{{ vm.errors.gateway | translate }}</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-margin>
+                                <md-input-container md-theme="eBlockerThemeInput" style="min-width: 200px;">
+                                    <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_DHCP' | translate }}</label>
+                                    <md-select ng-model="vm.configuration.dhcp" ng-change="vm.onFormUpate()">
+                                        <md-option ng-repeat="dhcp in vm.dhcpServices" ng-value="dhcp.value">{{ dhcp.name  | translate }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+
+                                <md-input-container md-theme="eBlockerThemeInput" ng-if="vm.configuration.dhcp">
+                                    <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_DHCP_LEASE_TIME' | translate }}</label>
+                                    <md-select ng-model="vm.configuration.dhcpLeaseTime" ng-change="vm.onFormUpdate()">
+                                        <md-option ng-repeat="(duration, label) in vm.dhcpLeaseTimes" ng-value="duration">{{ label | translate }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+
+                            <!-- EXTERNAL DHCP -->
+                            <div ng-if="!vm.configuration.dhcp" layout="row" layout-margin layout-align="start center">
+
+                                <div class="alert-box" layout="row" layout-align="start center">
+                                    <div style="margin-right: 22px;margin-top: 10px;">
+                                        <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                                    </div>
+
+                                    <div layout="column">
+                                        <p translate="ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP"></p>
+                                        <div flex layout="row" layout-xs="column">
+                                            <span flex>{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP_GATEWAY' | translate}}</span>
+                                            <span flex>{{vm.configuration.ipAddress}}</span>
+                                        </div>
+                                        <div flex layout="row" layout-xs="column">
+                                            <span flex>{{'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_EXTERNAL_DHCP_DNS' | translate}}</span>
+                                            <!-- eBlocker is DNS server, so we update the DNS display address -->
+                                            <span flex ng-if="vm.dnsEnabled">{{vm.configuration.ipAddress}}</span>
+                                            <!-- eBlocker is not DNS server, so leave the DNS display address -->
+                                            <span flex ng-if="!vm.dnsEnabled">{{vm.configuration.advisedNameServer}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- EBLOCKER IS DHCP -->
+                            <div layout="column" layout-margin ng-if="vm.configuration.dhcp">
+                                <div layout="row">
+                                    <div>
+                                        <md-input-container md-theme="eBlockerThemeInput">
+                                            <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_FIRST_IP' | translate }}</label>
+                                            <input name="firstIp" eb-ip-address ng-model="vm.configuration.dhcpRangeFirst" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                            <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.firstIp.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.firstIp.$touched">
+                                                <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                                <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                                <div ng-message="backendError">{{ vm.errors.firstDHCP | translate }}</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+
+                                    <div>
+                                        <md-input-container md-theme="eBlockerThemeInput">
+                                            <label>{{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_LAST_IP' | translate }}</label>
+                                            <input name="lastIp" eb-ip-address ng-model="vm.configuration.dhcpRangeLast" ng-model-options="{ updateOn: 'blur' }" type="text" ng-change="vm.onFormUpate()" required/>
+                                            <div style="max-width: 200px;" ng-messages="vm.networkSettingsForm.lastIp.$error" ng-if="vm.networkSettingsForm.$submitted || vm.networkSettingsForm.lastIp.$touched">
+                                                <div ng-message="required">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_REQUIRED' | translate }}</div>
+                                                <div ng-message="ipAddress">{{ 'ADMINCONSOLE.NETWORK_SETTINGS.ERROR.IP_ADDRESS_INVALID' | translate }}</div>
+                                                <div ng-message="backendError">{{ vm.errors.lastDHCP | translate }}</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <div>
+                                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.configuration.ipFixedByDefault" ng-change="vm.onFormUpate()">
+                                        {{ 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL_FIXED_IP' | translate }}
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <!-- REBOOT NECESSARY -->
+                <md-tab md-on-select="vm.currentStep = 1" ng-disabled="!vm.configuration.rebootNecessary">
+                    <!-- TAB 1 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.TITLE_TAB' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <div>
+                            <p>{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.TEXT' | translate }}</p>
+                        </div>
+
+                        <div ng-show="vm.configuration.dhcp">
+                            <div class="alert-box" layout="row" layout-align="start center" style="max-width: 400px;">
+                                <div style="margin-right: 22px;">
+                                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                                </div>
+
+                                <div layout="column">
+                                    <p translate="ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.WARN_DHCP_DISABLE"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-show="vm.configuration.dhcp">
+                            <div class="alert-box" layout="row" layout-align="start center" style="max-width: 400px;">
+                                <div style="margin-right: 22px;">
+                                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                                </div>
+
+                                <div layout="column">
+                                    <p translate="ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.WARN_RESTART"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-show="!vm.configuration.dhcp">
+                            <div class="alert-box" layout="row" layout-align="start center" style="max-width: 400px;">
+                                <div style="margin-right: 22px;">
+                                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                                </div>
+
+                                <div layout="column">
+                                    <p translate="ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.TAB.REBOOT.WARN_RESTART_EXTERN"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-show="vm.currentStep === 0" ng-click="vm.cancel()" class="md-raised md-secondary">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.ACTION.CANCEL' | translate }}</md-button>
+            <div ng-if="vm.formSubmitting" layout="row" layout-align="center center"
+                 style="width: 80px; margin: 8px; padding-left: 8px;">
+                <md-progress-circular md-diameter="32"></md-progress-circular>
+            </div>
+            <!--!vm.formSubmitting-->
+            <md-button type="submit" ng-show="vm.currentStep === 0" ng-if="!vm.formSubmitting" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.ACTION.APPLY' | translate }}</md-button>
+            <md-button type="button" ng-show="vm.currentStep === 1" ng-click="vm.rebootAndClose()" ng-disabled="!vm.configuration.rebootNecessary" class="md-raised md-primary md-accent">{{ 'ADMINCONSOLE.DIALOG.EDIT_NETWORK_CONTENT.ACTION.REBOOT' | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -1,0 +1,16 @@
+<div class="dropdown-filter-container">
+    <dropdown-filters image-label="'CONTROLBAR.MENU.ADS.LABEL'"
+                      image-url="'/img/icons/ic_view_quilt_black.svg'"
+                      badge-number="ctrl.numBlocked"
+                      label-block-global="'CONTROLBAR.MENU.ADS.MENU.LABEL_BLOCK_GLOBAL'"
+                      label-allow-local="'CONTROLBAR.MENU.ADS.MENU.LABEL_ALLOW_LOCAL'"
+                      label-blocked="'CONTROLBAR.MENU.ADS.MENU.LABEL_BLOCKED'"
+                      allow-locally-callback="ctrl.allowLocallyFn(value)"
+                      block-globally-callback="ctrl.blockGloballyFn(value)"
+                      blocking-vars="ctrl.blockingVars"
+                      filter-mode="ctrl.filterMode"
+                      blocked-list="ctrl.blockedAds"
+                      dns-blockings="ctrl.dnsBlockings"
+                      tooltip="ctrl.getTooltip()">
+    </dropdown-filters>
+</div>

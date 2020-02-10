@@ -1,0 +1,29 @@
+<div>
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'WIZARD.MOBILE.CONNECT_IOS.TITLE' | translate }}</h3>
+    </div>
+
+    <div>
+        <ol layout="column" layout-gt-sm="row">
+            <li flex-gt-sm="50">
+                <span translate="WIZARD.MOBILE.CONNECT_IOS.STEP_1"></span>
+                <div style="padding-top: 12px;" flex="95">
+                    <img style="width: 90%;" src="/img/openVpn/Screenshot_iOS_OpenVPN_ready-to-connect.png"/>
+                </div>
+            </li>
+            <li flex-gt-sm="50" translate="WIZARD.MOBILE.CONNECT_IOS.STEP_2"></li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-align="end center" layout-xs="column">
+        <md-button type="button" ng-click="vm.backToDashboard()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.prevStep()" class="md-raised md-secondary">
+            {{ 'WIZARD.MOBILE.ACTION.BACK' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'WIZARD.MOBILE.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+{
+  "format": 2,
+  "filters": {
+    "0": [
+      {
+        "key": {
+          "id": 0,
+          "version": 2
+        },
+        "bloomFilterFileName": "lists/0-v2.bloom",
+        "fileFilterFileName": "lists/0-v2.filter"
+      },
+      {
+        "key": {
+          "id": 0,
+          "version": 0
+        },
+        "bloomFilterFileName": "lists/0-v0.bloom",
+        "fileFilterFileName": "lists/0-v0.filter"
+      }
+    ],
+    "1": [
+      {
+        "key": {
+          "id": 1,
+          "version": 1
+        },
+        "bloomFilterFileName": "lists/1-v1.bloom",
+        "fileFilterFileName": "lists/1-v1.filter"
+      }
+    ],
+    "3": [
+    ]
+  }
+}

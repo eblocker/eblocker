@@ -1,0 +1,90 @@
+<div layout-padding layout="column" class="network-wizard-settings">
+    <div>
+        <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.TEXT1' | translate }}</p>
+
+        <!-- SMALL OR LARGER DEVCIES IN ONE ROW -->
+        <div layout="row" layout-padding hide-xs class="print-settings-container">
+            <div flex layout="column">
+                <div layout="row" layout-align="end"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_KEYS' | translate }}</b></div>
+                <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_IPADDRESS' | translate }}</div>
+                <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_NETMASK' | translate }}</div>
+                <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_GATEWAY' | translate }}</div>
+                <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_DNS' | translate }}</div>
+            </div>
+            <div flex layout="column">
+                <div layout="row" layout-align="start"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_EBLOCKER' | translate }}</b></div>
+                <div layout="row" layout-align="start">{{vm.configuration.ipAddress}}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.networkMask}}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.gateway}}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.nameServerPrimary}}</div>
+            </div>
+            <div flex layout="column">
+                <div layout="row" layout-align="start"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_OTHER' | translate }}</b></div>
+                <div layout="row" layout-align="start">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.GENERATED' | translate }}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.networkMask}}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.ipAddress}}</div>
+                <div layout="row" layout-align="start">{{vm.configuration.advisedNameServer}}</div>
+            </div>
+        </div>
+
+        <!-- XS DEVCIES AS TWO COLUMNS -->
+        <div layout="column" layout-padding hide-gt-xs class="print-settings-container">
+            <div layout="row" layout-padding style="white-space: pre;">
+                <div flex layout="column">
+                    <div layout="row" layout-align="end"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_KEYS' | translate }}</b></div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_IPADDRESS' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_NETMASK' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_GATEWAY' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_DNS' | translate }}</div>
+                </div>
+                <div flex layout="column">
+                    <div layout="row" layout-align="start"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_EBLOCKER' | translate }}</b></div>
+                    <div layout="row" layout-align="start">{{vm.configuration.ipAddress}}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.networkMask}}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.ipAddress}}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.nameServerPrimary}}</div>
+                </div>
+            </div>
+            <div layout="row" layout-padding style="white-space: pre;">
+                <div flex layout="column">
+                    <div layout="row" layout-align="end"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_KEYS' | translate }}</b></div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_IPADDRESS' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_NETMASK' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_GATEWAY' | translate }}</div>
+                    <div layout="row" layout-align="end">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.KEY_DNS' | translate }}</div>
+                </div>
+                <div flex layout="column">
+                    <div layout="row" layout-align="start"><b>{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.COL_OTHER' | translate }}</b></div>
+                    <div layout="row" layout-align="start">{{ 'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.GENERATED' | translate }}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.networkMask}}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.ipAddress}}</div>
+                    <div layout="row" layout-align="start">{{vm.configuration.advisedNameServer}}</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="o-paragraph">
+            {{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.SETTINGS.PRINT.FALLBACK_URL_PRE' | translate}}
+            <a ng-href="{{vm.fallBackUrl}}"><b>{{vm.fallBackUrl}}</b></a>
+        </p>
+    </div>
+
+    <div>
+        <div layout="row" layout-align="start center">
+            <md-button type="button" ng-click="vm.openPrintView()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.PRINT_SETTINGS' | translate }}
+            </md-button>
+        </div>
+
+        <div></div>
+
+        <div layout="row" layout-xs="column" layout-align="end center">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate }}
+            </md-button>
+        </div>
+    </div>
+</div>

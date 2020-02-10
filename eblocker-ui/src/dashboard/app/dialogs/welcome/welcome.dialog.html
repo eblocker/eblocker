@@ -1,0 +1,125 @@
+<md-dialog id="change-pin-dialog" style="max-width: 450px;"
+           aria-label="{{ 'DIALOGS.WELCOME.TITLE' | translate }}">
+    <md-dialog-content layout-padding style="overflow: initial;-webkit-overflow-scrolling: touch;">
+        <div layout-padding layout="column" layout-align="center center">
+            <div layout="row" layout-align="center center">
+                <h2 hide-xs style="text-align: center;">{{ 'DIALOGS.WELCOME.TITLE' | translate }}</h2>
+                <h2 hide-gt-xs style="text-align: center;margin-bottom: 0;">{{ 'DIALOGS.WELCOME.TITLE_XS' | translate }}</h2>
+            </div>
+
+            <div hide-xs layout="column" layout-align="center center" layout-padding
+                 style="text-align: center;">
+                <div>
+                    <span translate="DIALOGS.WELCOME.PAR_1"></span>
+                </div>
+                <div>
+                    <span translate="DIALOGS.WELCOME.PAR_2"></span>
+                </div>
+            </div>
+
+            <div hide-xs style="width: 100%;">
+                <md-divider></md-divider>
+            </div>
+
+            <div layout="column" layout-align="center center">
+
+                <div ng-if="!vm.other" layout="row" layout-align="start center" style="padding-bottom: 8px;text-align: center;">
+                    <span hide-xs translate="DIALOGS.WELCOME.BOOKMARK" style="font-size: 24px;"></span>
+                    <!--<span hide-gt-xs translate="DIALOGS.WELCOME.BOOKMARK_XS" style="font-size: 24px;"></span>-->
+                </div>
+                <!-- IS MAC OS -->
+                <div ng-if="vm.isMac" layout="row" layout-align="start center">
+                    <div layout="row" layout-align="start center">
+                        <span translate="DIALOGS.WELCOME.PRESS" style="font-size: 24px; padding-right: 12px;"></span>
+                    </div>
+                    <div layout="row" layout-align="start center">
+                        <img src="/img/AppleCmdSymbol200px.png" style="height: 24px; width: auto; padding-right: 6px;"/>
+                    </div>
+                    <div layout="row" layout-align="start center">
+                        <span translate="DIALOGS.WELCOME.MAC_OS" style="font-size: 24px;font-weight: bold;"></span>
+                    </div>
+                </div>
+                <!-- IS iOS  -->
+                <div ng-if="vm.isIos" layout="column">
+                    <div layout="row" layout-xs="column" layout-align="start center"
+                         style="padding: 8px 0 8px 0;">
+                        <div layout="row" layout-align="start center">
+                            <span ng-if="vm.isSafari" translate="DIALOGS.WELCOME.IOS_SAFARI_PRE" style="font-size: 24px; padding-right: 12px;"></span>
+                            <span ng-if="vm.isFirefox" translate="DIALOGS.WELCOME.IOS_FF_PRE" style="font-size: 24px; padding-right: 12px;"></span>
+                        </div>
+                        <div layout="row" layout-align="start center" style="padding-right: 10px;">
+                            <md-icon ng-if="vm.isSafari" md-svg-src="/img/icons/icons8-upload.svg"></md-icon>
+                            <md-icon ng-if="vm.isFirefox" md-svg-src="/img/icons/baseline-more_horiz.svg"></md-icon>
+                        </div>
+                        <div layout="row" layout-align="start center">
+                            <span ng-if="vm.isSafari" translate="DIALOGS.WELCOME.IOS_SAFARI_POST" style="font-size: 24px;padding-right: 6px;"></span>
+                            <span ng-if="vm.isFirefox" translate="DIALOGS.WELCOME.IOS_FF_POST" style="font-size: 24px;padding-right: 6px;"></span>
+                        </div>
+                    </div>
+                    <div layout="row" layout-align="center center"
+                         style="text-align: center;">
+                        <span ng-if="vm.isSafari" translate="DIALOGS.WELCOME.IOS_SAFARI_ACTION" style="font-size: 24px;font-weight: bold;"></span>
+                        <span ng-if="vm.isFirefox" translate="DIALOGS.WELCOME.IOS_FF_ACTION" style="font-size: 24px;font-weight: bold;"></span>
+                    </div>
+                </div>
+                <!-- IS WINDOWS -->
+                <div ng-if="vm.isWin" layout="row" layout-xs="column" layout-align="start center">
+                    <div layout="row" layout-align="start center">
+                        <span translate="DIALOGS.WELCOME.PRESS" style="font-size: 24px; padding-right: 12px;"></span>
+                    </div>
+                    <div layout="row" layout-align="start center">
+                        <span translate="DIALOGS.WELCOME.WIN" style="font-size: 24px;font-weight: bold;"></span>
+                    </div>
+                </div>
+                <!-- IS ANDROID -->
+                <div ng-if="vm.isAndroid" layout="column">
+                    <div layout-xs="column" layout="row" layout-align="start center"
+                         style="padding: 8px 0 8px 0;">
+                        <div layout="row" layout-align="start center">
+                            <span ng-if="vm.isChrome" translate="DIALOGS.WELCOME.ANDROID_CR_PRE" style="font-size: 24px; padding-right: 12px;"></span>
+                            <span ng-if="vm.isFirefox" translate="DIALOGS.WELCOME.ANDROID_FF_PRE" style="font-size: 24px; padding-right: 12px;"></span>
+                        </div>
+                        <div layout="row" layout-align="start center" style="height: 24px; width: auto; padding-right: 6px;">
+                            <!-- same for firefox or 'other' -->
+                            <md-icon md-svg-src="/img/icons/baseline-more_vert.svg"></md-icon>
+                        </div>
+                        <div layout="row" layout-align="start center">
+                            <span ng-if="vm.isChrome"  translate="DIALOGS.WELCOME.ANDROID_CR_POST" style="font-size: 24px;padding-right: 6px;"></span>
+                            <span ng-if="vm.isFirefox"  translate="DIALOGS.WELCOME.ANDROID_FF_POST" style="font-size: 24px;padding-right: 6px;"></span>
+                        </div>
+                    </div>
+                    <div layout="row" layout-align="center center"
+                         style="text-align: center;">
+                        <span ng-if="vm.isChrome" translate="DIALOGS.WELCOME.ANDROID_CR_ACTION" style="font-size: 24px;font-weight: bold;"></span>
+                        <md-icon ng-if="vm.isFirefox" md-svg-src="/img/icons/baseline-star_border.svg"></md-icon>
+                    </div>
+                </div>
+                <!-- IS OTHER -->
+                <div ng-if="vm.other" layout="row" layout-align="center center"
+                     style="text-align: center;">
+                    <span translate="DIALOGS.WELCOME.OTHER" style="font-size: 24px;font-weight: bold;"></span>
+                </div>
+            </div>
+
+            <div style="width: 100%;">
+                <md-divider></md-divider>
+            </div>
+
+            <div>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.neverAgain">
+                    {{ 'DIALOGS.WELCOME.NEVER_AGAIN' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"
+                       layout-align="center center"
+                       style="padding-bottom: 8px;">
+        <div>
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-primary">
+                {{ 'DIALOGS.WELCOME.ACTION.OK' | translate }}
+            </md-button>
+        </div>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,46 @@
+<div flex class="column-xs">
+    <md-icon aria-label="User" class="edit-user" md-svg-src="/img/icons/ic_person_black.svg" ng-class="{'eb-table-icon-active': entry.assignedToDevices.length > 0}" ng-if="!entry.system && (entry.userRole === undefined || entry.userRole === 'OTHER')"></md-icon>
+    <md-icon aria-label="User" class="edit-user" md-svg-src="/img/icons/icons8-teddy-bear.svg" ng-class="{'eb-table-icon-active': entry.assignedToDevices.length > 0}" ng-if="entry.userRole === 'CHILD'"></md-icon>
+    <md-icon aria-label="User" class="edit-user" md-svg-src="/img/icons/baseline-supervisor_account.svg" ng-class="{'eb-table-icon-active': entry.assignedToDevices.length > 0}" ng-if="entry.userRole === 'PARENT' && entry.nameKey !== 'SHARED.USER.NAME.STANDARD_USER'"></md-icon>
+    <md-icon aria-label="User" class="edit-user" md-svg-src="/img/icons/ic_devices_black.svg" ng-class="{'eb-table-icon-active': entry.assignedToDevices.length > 0}" ng-if="entry.nameKey === 'SHARED.USER.NAME.STANDARD_USER'"></md-icon>
+</div>
+
+<!-- NAME -->
+<div flex class="bold-content">
+    <span>{{ entry.name | translate }}</span>
+    <span ng-if="entry.userRole === 'CHILD' && entry.birthday">({{vm.templateCallback.getUserAge(entry.birthday)}}{{'ADMINCONSOLE.USERS.TABLE.BODY.YEAR_LABEL' | translate}})</span>
+    <span ng-if="entry.userRole === 'CHILD' && !entry.birthday">
+        <md-icon class="content-warn"
+                 aria-label="{{'ADMINCONSOLE.USERS.TABLE.BODY.NO_BIRTHDAY' | translate}}"
+                 md-svg-src="/img/icons/ic_warning.svg">
+        </md-icon>
+    </span>
+    <md-tooltip ng-if="entry.userRole === 'CHILD' && !entry.birthday" md-delay="300">{{'ADMINCONSOLE.USERS.TABLE.BODY.NO_BIRTHDAY' | translate}}</md-tooltip>
+    <md-tooltip ng-if="entry.userRole !== 'CHILD' || entry.birthday" md-delay="300">{{ entry.name | translate }}</md-tooltip>
+</div>
+
+<!-- ONLINE -->
+<div flex="10" hide-xs layout="row" layout-align="start center" style="padding-left: 1.5em;">
+    <div ng-show="entry.isOnline === 0 && entry.assignedToDevices.length === 0" class="online-circle unavailable"></div>
+    <div ng-show="entry.isOnline === 0 && entry.assignedToDevices.length > 0" class="online-circle offline"></div>
+    <div ng-show="entry.isOnline === 1" class="online-circle online"></div>
+</div>
+
+<!-- ASSIGNED DEVICE -->
+<div flex="10" hide-xs style="padding-left: 1.5em;">
+        <span ng-if="entry.assignedToDevices.length > 0">{{entry.assignedToDevices.length}}</span>
+        <span ng-if="entry.assignedToDevices.length === 0" translate="ADMINCONSOLE.USERS.TABLE.BODY.OPERATING_NONE"></span>
+        <md-tooltip ng-if="entry.assignedToDevices.length > 0" md-delay="300"><div ng-repeat="dev in entry.assignedToDevices | orderBy:'displayName'">{{ dev.displayName }}</div></md-tooltip>
+</div>
+
+<!-- CONTENT RESTRICTIONS -->
+<div flex>
+    <span ng-show="entry.hasContentRestrictions" translate="ADMINCONSOLE.USERS.TABLE.BODY.YES"></span>
+    <span ng-hide="entry.hasContentRestrictions" translate="ADMINCONSOLE.USERS.TABLE.BODY.NO"></span>
+</div>
+
+<!-- TIME RESTRICTIONS -->
+<div flex>
+    <span ng-show="entry.hasTimeRestrictions" translate="ADMINCONSOLE.USERS.TABLE.BODY.YES"></span>
+    <span ng-hide="entry.hasTimeRestrictions" translate="ADMINCONSOLE.USERS.TABLE.BODY.NO"></span>
+</div>

@@ -1,0 +1,21 @@
+<div class="entry-directive unselectable">
+    <md-button aria-label="{{ label | translate}}"
+               ng-click="handleClick()">
+        <div layout="column" layout-align="start center" layout-fill>
+            <div layout="row" layout-align="center start" class="controlbar-icon">
+                <div ng-if="badgeNumber !== undefined && isDisabled !== true && badgeNumber > -1" ng-class="{'badge-black': badgeBlack}" class="eblocker-base-badge">
+                    {{badgeNumber}}
+                </div>
+                <div layout="row" layout-align="center start" ng-class="{'controlbar-image-container': badgeNumber !== undefined && isDisabled !== true && badgeNumber > -1}">
+                    <md-icon ng-class="{'isDisabled': isDisabled === true}" md-svg-src="{{imageUrl}}"></md-icon>
+                </div>
+            </div>
+            <span layout="row" layout-align="center end"
+                  ng-class="{'isDisabled': isDisabled === true}"
+                  class="controlbar-label truncate">
+                {{ label | translate }}
+            </span>
+        </div>
+        <md-tooltip md-delay="500" ng-if="tooltip !== undefined && !tooltipDisabled">{{ tooltip | translate :{param: tooltipParam}:"messageformat"}}</md-tooltip>
+    </md-button>
+</div>

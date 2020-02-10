@@ -1,0 +1,22 @@
+<script type="text/javascript">
+    if (this == top) {
+        var testSsl = function(url, errorUrl) {
+            var testSslXhr = new XMLHttpRequest();
+            testSslXhr.onreadystatechange = function () {
+                if (testSslXhr.readyState == 4 && testSslXhr.status != 200) {
+                    var reportFailure = new XMLHttpRequest();
+                    reportFailure.open("POST", errorUrl, true);
+                    reportFailure.send();
+                }
+            };
+            testSslXhr.open("GET", url, true);
+            testSslXhr.send();
+        };
+        if (@TEST_CURRENT@) {
+            testSsl('@URL_CURRENT_CA@', '@URL_REPORT_ERROR_CURRENT@');
+        }
+        if (@TEST_RENEWAL@) {
+            testSsl('@URL_RENEWAL_CA@', '@URL_REPORT_ERROR_RENEWAL@');
+        }
+    }
+</script>

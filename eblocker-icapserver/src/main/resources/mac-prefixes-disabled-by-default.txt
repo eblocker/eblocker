@@ -1,0 +1,10 @@
+00043c:SONOS Co., Ltd.
+000e58:Sonos, Inc.
+5caafd:Sonos, Inc.
+7828ca:Sonos, Inc.
+949f3e:Sonos, Inc.
+b8e937:Sonos, Inc.
+000413:SNOM Technology AG
+002104:Gigaset Communications GmbH
+14b370:Gigaset Digital Technology (Shenzhen) Co., Ltd.
+7c2f80:Gigaset Communications GmbH

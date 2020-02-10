@@ -1,0 +1,25 @@
+<div layout="column" layout-align="start start" style="padding-top: 8px;" layout-padding>
+
+    <div layout="column" layout-align="start start">
+
+        <!-- workaround: otherwise switch labels overlap on small devices -->
+        <div hide-gt-xs style="margin-top: 20px;" ng-if="vm.sslGloballyEnabled && vm.hasFeature('PRO')"></div>
+
+        <!-- SSL switch -->
+        <div ng-if="vm.sslGloballyEnabled && vm.hasFeature('PRO')">
+            <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.sslEnabled" class="md-primary switch-word-break" ng-change="vm.onChangeHttps(vm.device)">
+                {{ vm.device.sslEnabled ? 'ADMINCONSOLE.DEVICES_LIST.DETAILS.HTTPS.LABEL_ENABLED_SSL' : 'ADMINCONSOLE.DEVICES_LIST.DETAILS.HTTPS.LABEL_DISABLED_SSL' | translate }}
+            </md-switch>
+        </div>
+
+        <!-- workaround: otherwise switch labels overlap on small devices -->
+        <div hide-gt-xs ng-if="vm.sslGloballyEnabled && vm.device.sslEnabled && vm.hasFeature('PRO')" style="margin: 35px 0 15px 0;"></div>
+
+        <div ng-if="vm.sslGloballyEnabled && vm.device.sslEnabled && vm.hasFeature('PRO')">
+            <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.sslRecordErrorsEnabled" class="md-primary switch-word-break" ng-change="vm.onChange(vm.device)">
+                {{ vm.device.sslRecordErrorsEnabled ? 'ADMINCONSOLE.DEVICES_LIST.DETAILS.HTTPS.LABEL_ENABLED_SSL_RECORD_ERRORS' : 'ADMINCONSOLE.DEVICES_LIST.DETAILS.HTTPS.LABEL_DISABLED_SSL_RECORD_ERRORS' | translate }}
+            </md-switch>
+        </div>
+
+    </div>
+</div>

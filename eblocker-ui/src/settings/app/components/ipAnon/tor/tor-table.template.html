@@ -1,0 +1,10 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <!--<md-icon ng-class="{'eb-table-icon-active': entry.enabled}" md-svg-src="/img/icons/ic_security_black_outline.svg"></md-icon>-->
+    <img style="width:30px;height:20px;margin-top: 5px;" ng-src="/img/flags/{{entry.code}}.svg"/>
+</div>
+
+<!-- NAME -->
+<div flex>
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+</div>

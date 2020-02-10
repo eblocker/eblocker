@@ -1,0 +1,49 @@
+<div style="padding-top: 16px;" layout-padding>
+
+    <div layout="row" layout-xs="column">
+
+        <div layout="column" layout-align="start start">
+
+            <label style="font-weight: normal;">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.LABEL' | translate }}</label>
+
+            <div style="margin-left: 25px;padding-top:15px;">
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.device.filterMode" ng-change="vm.onChange(vm.device)">
+                    <md-radio-button value="NONE">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.NONE' | translate }}</md-radio-button>
+                    <md-radio-button value="AUTOMATIC">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.AUTOMATIC' | translate }}
+                        <span style="font-style: italic;">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.RECOMMENDED' | translate }}</span>
+                    </md-radio-button>
+                    <md-radio-button value="PLUG_AND_PLAY">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.PLUG_AND_PLAY' | translate }}</md-radio-button>
+                    <md-radio-button value="ADVANCED">
+                        <span>{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.RADIO.PATTERN' | translate }}</span>
+                    </md-radio-button>
+                </md-radio-group>
+            </div>
+        </div>
+
+        <div ng-if="(!vm.sslGloballyEnabled || !vm.device.sslEnabled) && vm.device.filterMode === 'ADVANCED'"
+             style="margin-left: 16px; margin-bottom: 16px;"
+             layout="row"
+             layout-align="start end">
+            <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+            <span style="margin-left: 5px;" translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.WARN_SSL"></span>
+        </div>
+    </div>
+
+    <div ng-show="vm.device.malwareFilterEnabled !== undefined" layout="column" layout-align="start start">
+
+        <md-divider style="width: 100%;"></md-divider>
+
+        <div style="margin-top: 24px;">
+            <label style="font-weight: normal;">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.MALWARE.LABEL' | translate }}</label>
+
+            <div style="margin-left: 25px;padding-top:15px;">
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.device.malwareFilterEnabled" ng-change="vm.onChange(vm.device)">
+                    <md-radio-button ng-value="false">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.MALWARE.OFF' | translate }}</md-radio-button>
+                    <md-radio-button ng-value="true">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.FILTERS.MALWARE.ON' | translate }}</md-radio-button>
+                </md-radio-group>
+            </div>
+        </div>
+
+    </div>
+
+</div>

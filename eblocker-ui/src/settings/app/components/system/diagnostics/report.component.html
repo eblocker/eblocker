@@ -1,0 +1,24 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.REPORT.LABEL' | translate}}</h3>
+        <div layout="column">
+            <div>
+                <p>{{ 'ADMINCONSOLE.REPORT.EXPLAIN_PART1' | translate}} <a class="orange" href="{{ 'ADMINCONSOLE.REPORT.EMAIL_HREF' | translate }}">{{ 'ADMINCONSOLE.REPORT.EMAIL' | translate }}</a>.</p>
+                <p>{{ 'ADMINCONSOLE.REPORT.EXPLAIN_PART2' | translate }}</p>
+            </div>
+            <div layout="row" layout-xs="column" layout-align-xs="center center">
+                <md-button class="md-raised md-accent" ng-disabled="vm.creatingDiagReport" ng-click="vm.createDiagnosticsReport()">
+                    {{ 'ADMINCONSOLE.REPORT.ACTION.GENERATE' | translate }}
+                </md-button>
+                <div hide-gt-xs style="padding-top: 8px;"></div>
+                <div layout="row" layout-align="center center" ng-show="vm.creatingDiagReport" style="margin-left: 15px;">
+                    <div>
+                        <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+                    </div>
+                    <span style="margin-left: 15px;">{{'ADMINCONSOLE.REPORT.LABEL_PROGRESS' | translate }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

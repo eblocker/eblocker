@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="eblocker.sample" ng-strict-di>
+
+<head>
+    <style>
+        /* This helps the ng-show/ng-hide animations start at the right place. */
+        /* Since Angular has this but needs to load, this gives us the class early. */
+
+        .ng-hide {
+            display: none!important;
+        }
+    </style>
+    <title ng-bind="title">
+        eBlocker Sample App
+    </title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+
+    <link rel="shortcut icon" href="/img/fav/favicon.ico">
+
+    <!-- inject:css -->
+    <!-- endinject -->
+
+</head>
+
+<body ng-cloak>
+<div style="width: 100%;" layout="row" layout-fill ui-view>
+</div>
+
+<!-- inject:js -->
+<!-- endinject -->
+
+</body>
+
+</html>

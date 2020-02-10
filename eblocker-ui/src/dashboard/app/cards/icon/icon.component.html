@@ -1,0 +1,61 @@
+<eb-card
+    icon="/img/icons/eblocker.svg"
+    card-title="{{'ICON.CARD.TITLE' | translate}}"
+    tooltip="ICON.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{vm.getStatus()}}"><!-- What for? -->
+    <eb-card-content>
+
+        <!-- WARNING: NO AUTO MODE, SSL DISABLED -->
+        <div layout="row" layout-align="center center" layout-padding ng-if="(!vm.sslGloballyEnabled || !vm.device.sslEnabled) && vm.device.displayIconOn">
+            <div layout="row" layout-align="start center">
+                <md-icon class="card-warn-icon" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+            </div>
+            <div>
+                <span translate="ICON.CARD.LABEL_NO_HTTPS_IN_MANUAL"></span>
+            </div>
+        </div>
+
+
+        <div layout="column">
+            <div style="margin-top: 20px;">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                             layout="row" layout-align="start center"
+                             ng-model="vm.show" ng-change="vm.onChange()"
+                             ng-disabled="vm.device.controlBarAutoMode">
+                    {{ 'ICON.CARD.LABEL_DISPLAY_ON' | translate }}
+                </md-checkbox>
+            </div>
+            <div layout="column" style="padding-left: 30px;" ng-show="vm.show">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.fiveSeconds" ng-change="vm.onChange()">
+                    {{ 'ICON.CARD.LABEL_DURATION' | translate }}
+                </md-checkbox>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.browserOnly" ng-change="vm.onChange()">
+                    {{ 'ICON.CARD.LABEL_BROWSER_ONLY' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+
+
+        <div layout="column" style="padding-top: 8px;" ng-show="vm.show">
+            <div>
+                <span>{{ 'ICON.CARD.LABEL_ICON_HEADING' | translate }}</span>
+            </div>
+            <div layout="column" style="padding-left: 22px;" layout-padding>
+                <md-radio-group md-theme="eBlockerThemeRadio"
+                                ng-model="vm.iconPosition"
+                                ng-change="vm.onChange()"
+                                ng-disabled="!vm.show"
+                                layout="row"
+                                class="md-primary">
+                    <md-radio-button value="LEFT" >{{'ICON.CARD.LABEL_ICON_LEFT'  | translate }}</md-radio-button>
+                    <md-radio-button value="RIGHT">{{'ICON.CARD.LABEL_ICON_RIGHT' | translate }}</md-radio-button>
+                </md-radio-group>
+            </div>
+        </div>
+
+    </eb-card-content>
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="vm.reset()">{{'ICON.CARD.BUTTON.RESET' | translate}}</md-button>
+    </eb-card-actions>
+</eb-card>

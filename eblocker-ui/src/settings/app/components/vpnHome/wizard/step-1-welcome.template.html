@@ -1,0 +1,21 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_WELCOME.HEADER' | translate }}</h3>
+    </div>
+
+    <div>
+        <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_WELCOME.TEXT1"></p>
+        <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_WELCOME.TEXT2"></p>
+    </div>
+
+
+    <div layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.openCloseWizardDialog()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+        </md-button>
+    </div>
+</div>

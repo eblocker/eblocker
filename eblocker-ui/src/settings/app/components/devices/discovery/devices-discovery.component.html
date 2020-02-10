@@ -1,0 +1,47 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view eb-devices">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/devices/discovery/help-device-search.template.html"></eb-help-icon>
+    </div>
+
+    <div style="padding-top: 18px;"></div>
+
+    <div class="config-frame md-whiteframe-z1" layout="column">
+
+        <h3>{{'ADMINCONSOLE.DEVICES_DISCOVERY.SCAN_HEADER_AUTO' | translate}}</h3>
+
+        <div >
+            <!-- SCAN INTERVAL -->
+            <md-input-container flex-xs="100" flex="80" md-theme="eBlockerThemeInput" style="margin-right: 10px;">
+                <label>{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.LABEL' | translate }}</label>
+                <md-select ng-model="vm.deviceScanningInterval" ng-change="vm.setScanningInterval()" aria-label="Select scan interval">
+                    <md-option value="10">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_FAST' | translate }}</md-option>
+                    <md-option value="150">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_MIDDLE' | translate }}</md-option>
+                    <md-option value="300">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_SLOW' | translate }}</md-option>
+                    <md-option value="0">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_0' | translate }}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+    </div>
+
+
+    <div class="config-frame md-whiteframe-z1" layout="column">
+
+        <h3>{{'ADMINCONSOLE.DEVICES_DISCOVERY.SCAN_HEADER_MAN' | translate}}</h3>
+
+        <!-- SCAN DEVICES -->
+        <div layout="row" layout-align="start center">
+            <div>
+                <md-button ng-click="vm.scanDevices()" ng-disabled="vm.scanInProgress || !vm.scanningAvailable" class="md-raised md-accent">
+                    {{ 'ADMINCONSOLE.DEVICES_DISCOVERY.ACTION.SEARCH.BUTTON' | translate }}
+                    <md-tooltip ng-show="!vm.scanningAvailable">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.ACTION.SEARCH.UNAVAILABLE' | translate }}</md-tooltip>
+                </md-button>
+            </div>
+            <div style="min-width: 50px;width: 50px;" ng-show="vm.scanInProgress" >
+                <md-progress-circular md-mode="determinate" value="{{vm.scanningProgress}}" ng-show="vm.scanInProgress" md-diameter="32"></md-progress-circular>
+            </div>
+            <div ng-hide="vm.scanInProgress" style="width: 50px;"></div>
+        </div>
+
+    </div>
+</div>

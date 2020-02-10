@@ -1,0 +1,39 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.SET_PIN.TITLE' | translate }}"
+           style="max-width: 800px">
+    <form name="vm.setPinForm" ng-submit="vm.save()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2>{{ vm.pinChange ? 'ADMINCONSOLE.DIALOG.SET_PIN.TITLE_CHANGE' : 'ADMINCONSOLE.DIALOG.SET_PIN.TITLE_SET' | translate }}</h2>
+            </div>
+
+            <div>
+                <md-input-container md-theme="eBlockerThemeInput">
+                    <label>{{ vm.pinChange ? 'ADMINCONSOLE.DIALOG.SET_PIN.LABEL_CHANGE' : 'ADMINCONSOLE.DIALOG.SET_PIN.LABEL_SET' | translate }}</label>
+                    <input name="pin" ng-model="vm.user.newPin" type="password" ng-minlength="vm.minLength" md-maxlength="vm.maxLength" required>
+                    <div ng-messages="vm.setPinForm.pin.$error" ng-if="vm.setPinForm.$submitted || vm.setPinForm.pin.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.SET_PIN.ERROR.REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.SET_PIN.ERROR.TOO_LONG' | translate }}</div>
+                        <div ng-message="minlength">{{ 'ADMINCONSOLE.DIALOG.SET_PIN.ERROR.TOO_SHORT' | translate:{min: vm.minLength} }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.resetPin()" ng-disabled="!vm.user.containsPin" class="md-raised eb-delete-button">
+                {{ 'ADMINCONSOLE.DIALOG.SET_PIN.ACTION.RESET' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.DIALOG.SET_PIN.ACTION.CANCEL' | translate }}
+            </md-button>
+            <md-button type="submit" ng-disabled="vm.user.newPin === undefined || vm.user.newPin === ''" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.DIALOG.SET_PIN.ACTION.OK' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

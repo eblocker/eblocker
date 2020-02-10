@@ -1,0 +1,28 @@
+<eb-card
+    card-title="{{'FRAG_FINN.CARD.TITLE' | translate: {param: vm.getUserName()} }}"
+    icon="/img/icons/ic_search_black.svg"
+    no-padding="true"
+    card-id="{{ vm.cardId }}"
+    tooltip="FRAG_FINN.CARD.TOOLTIP">
+
+    <eb-card-content>
+
+        <div class="frag-finn-card" flex="100" layout="column" layout-align="center center" ng-if="vm.initialLoading" style="min-height: 100px;">
+            <md-progress-circular md-diameter="36"></md-progress-circular>
+        </div>
+        <div class="frag-finn-card" flex="100" layout="column" layout-align="center center" ng-if="!vm.initialLoading" style="min-height: 100px;">
+            <!-- SEARCH ENGINE IFRAME-->
+            <div layout="column"
+                 layout-align="center center" ng-if="vm.isOnline && vm.searchEngineConfig">
+                <div class="iframe-container" ng-bind-html="vm.searchEngineConfig.iframe"></div>
+            </div>
+
+            <div layout="column"
+                 layout-align="center center" ng-if="!vm.isOnline || !vm.searchEngineConfig">
+                <div>
+                    <span class="font-italic" translate="FRAG_FINN.CARD.OFFLINE_TEXT"></span>
+                </div>
+            </div>
+        </div>
+    </eb-card-content>
+</eb-card>

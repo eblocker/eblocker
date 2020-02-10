@@ -1,0 +1,73 @@
+<div>
+    <button-entry ng-click="toggleSelect()"
+                  label="imageLabel"
+                  image-url="imageUrl"
+                  tooltip-disabled="isOpen"
+                  tooltip-param="vm.translatedTooltipParam"
+                  tooltip="'CONTROLBAR.MENU.USER.TOOLTIP'">
+    </button-entry>
+
+    <div ng-show="isOpen" class="controlbar-dropdown-menu scrollable-menu" layout="column" layout-padding my-cloak>
+
+        <div style="padding: 16px 8px 8px 16px;" layout-fill class="user-name truncate">
+            <span>{{'CONTROLBAR.MENU.USER.MENU.LABEL_ASSIGNED_USER' | translate}} {{ assignedUser.name | translate }}</span>
+            <md-tooltip>{{ assignedUser.name | translate }}</md-tooltip>
+        </div>
+
+        <!-- Only show if operating user NOT assigned user -->
+        <md-divider ng-if="assignedUser.id !== operatingUser.id" style="margin-top: 10px;"></md-divider>
+
+        <!-- Only show if operating user NOT assigned user -->
+        <div ng-if="assignedUser.id !== operatingUser.id"
+             class="user-name truncate"
+             style="padding: 0 16px 16px;">
+            <!-- Device not locked -->
+            <span ng-show="operatingUser.id !== 2">{{'CONTROLBAR.MENU.USER.MENU.LABEL_OPERATING_USER' | translate}} {{ operatingUser.name | translate }}</span>
+            <md-tooltip ng-if="operatingUser.id !== 2">{{ operatingUser.name | translate }}</md-tooltip>
+            <!-- Device locked -->
+            <span ng-hide="operatingUser.id !== 2">{{'CONTROLBAR.MENU.USER.LABEL_NO_OP' | translate}}</span>
+        </div >
+
+        <div ng-if="operatingUser.id !== 2" class="controlbar-dropdown-all-options" style="padding: 8px 0 8px 0">
+            <div ng-repeat="option in options"
+                 ng-if="option.imageUrl !== undefined &&
+                 (option.onlyWhenNotOwner !== true || assignedUser.id !== operatingUser.id) &&
+                 (option.onlyWhenNotLocked !== true || operatingUser.id !== 2) &&
+                 (option.name !== 'lock_internet' || (!operatingUser.system && operatingUser.containsPin) )"
+                 class="controlbar-dropdown-option unselectable"
+                 ng-click="option.actionCallback()"
+                 layout="row"
+                 layout-align="start center"
+                 flex>
+                <div flex="20" layout="row" layout-align="center center">
+                    <md-icon class="icon-opacity" md-svg-src="{{option.imageUrl}}" style="margin-left: 18px;"></md-icon>
+                </div>
+                <div flex="auto" layout="row" layout-align="start center">
+                    <span>{{option.label | translate}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="users.length > 0" class="controlbar-dropdown-all-options" layout="column" layout-padding style="padding-top: 0">
+            <md-divider style="padding: 0"></md-divider>
+            <div style="height: 48px; padding: 16px 8px 8px 16px;" layout="row" layout-align="start center">
+                <span >{{options['changeUser'].label | translate}}</span>
+            </div>
+            <div ng-repeat="user in users"
+                 class="controlbar-dropdown-option unselectable"
+                 ng-click="options['changeUser'].actionCallback(user)"
+                 layout="row"
+                 layout-align="start center"
+                 flex>
+                <div flex="20" layout="row" layout-align="center center">
+                    <md-icon class="icon-opacity" style="margin-left: 10px;" md-svg-src="{{imageUrl}}"></md-icon>
+                </div>
+                <div flex="auto" layout="row" layout-align="start center">
+                    <span>{{ user.name | translate }}</span>
+                </div>
+            </div>
+            <!--<div ng-repeat-end ng-show="$last" style="padding: 0 0 8px 0"></div>-->
+        </div>
+
+    </div>
+</div>

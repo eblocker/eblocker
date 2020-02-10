@@ -1,0 +1,40 @@
+<eb-wizard-component wizard-title="{{ 'REDIRECT.REDIRECT_OPTIONS.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <div layout="column" layout-align="center start" layout-padding>
+            <div>
+                <p>
+                    <span>{{'REDIRECT.REDIRECT_OPTIONS.TEXT_1' | translate}}</span>
+                </p>
+            </div>
+            <div class="redirect-link">
+                <span>{{'REDIRECT.REDIRECT_OPTIONS.TEXT_2A' | translate}}</span>
+                <span style="font-weight: bold;">{{vm.originalDomain}}</span><span>{{'REDIRECT.REDIRECT_OPTIONS.TEXT_2B' | translate}}</span>
+            </div>
+
+            <div class="redirect-link">
+                <span>{{'REDIRECT.REDIRECT_OPTIONS.TEXT_3A' | translate}}</span>
+                <span style="font-weight: bold;">{{vm.targetDomain}}</span><span>{{'REDIRECT.REDIRECT_OPTIONS.TEXT_3B' | translate}}</span>
+            </div>
+        </div>
+
+        <div layout-gt-md="row" layout="column" layout-align="center center"
+             style="margin-top: 20px;">
+            <md-button class="md-raised md-warn" ng-href="" ng-click="vm.redirect('PASS')">{{'REDIRECT.REDIRECT_OPTIONS.ACTION.CONTINUE' | translate}}</md-button>
+            <md-button class="md-raised" ng-href="" ng-click="vm.redirect('REDIRECT');" style="display: inline-block;max-width: 280px;white-space: nowrap;overflow-x: hidden;text-overflow: ellipsis;">
+                <span>{{'REDIRECT.REDIRECT_OPTIONS.ACTION.SHORTCUT' | translate}}</span>
+                <span>{{vm.targetDomain}}</span>
+                <md-tooltip ng-if="vm.targetDomain !== undefined" md-delay="300"><span>{{vm.targetDomain}}</span></md-tooltip>
+            </md-button>
+        </div>
+        <div style="margin-top: 16px; margin-left: 16px;">
+            <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                         ng-model="vm.remember"
+                         aria-label="{{'REDIRECT.REDIRECT_OPTIONS.REMEMBER_LABEL' | translate}}">
+                {{'REDIRECT.REDIRECT_OPTIONS.REMEMBER_LABEL' | translate}}
+            </md-checkbox>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

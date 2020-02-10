@@ -1,0 +1,83 @@
+{
+    "GENERAL": {
+        "ACTION" : {
+            "STOP_COUNTDOWN": "Warten"
+        },
+        "COUNTDOWN": {
+            "LABEL": "Dieses Fenster wird {sec, select, 0{jetzt} 1{in einer Sekunde} other{in {sec} Sekunden}} automatisch geschlossen"
+        }
+    },
+    "ADVICE" : {
+        "ACTION" : {
+            "DASHBOARD" : "Dashboard öffnen",
+            "OK" : "Weiter"
+        },
+        "LABEL_NOT_AGAIN" : "Hinweis auf diesem Gerät nicht mehr anzeigen",
+        "LABEL_NOT_AGAIN_XS" : "Nicht mehr anzeigen",
+        "NOTIFICATION" : {
+            "UDDATE_ERROR" : "Es ist ein Fehler aufgetreten.",
+            "UPDATE_HINT" : "Hinweis wird für dieses Gerät jedes mal angezeigt",
+            "UPDATE_NO_HINT" : "Hinweis wird für dieses Gerät nicht mehr angezeigt"
+        },
+        "PROTECTION_BAS" : "Sie können jetzt dieses Gerät mit dem eBlocker anonymisieren!",
+        "PROTECTION_BAS_XS" : "Bleiben Sie anonym mit dem eBlocker!",
+        "PROTECTION_FAM_PRO" : "Der eBlocker schützt Ihre Privatsphäre nun auch auf diesem Gerät!",
+        "PROTECTION_FAM_PRO_XS" : "Der eBlocker schützt jetzt Ihre Privatsphäre!",
+        "REGISTER" : "Bitte registrieren Sie Ihren eBlocker",
+        "TIP" : "Unser Tipp: Öffnen Sie jetzt das Dashboard und legen Sie ein Lesezeichen an, damit Sie jederzeit schnell das eBlocker Dashboard für dieses Gerät aufrufen können!",
+        "TIP_XS" : "Tipp: Legen Sie jetzt ein Lesezeichen des Dashboards an!",
+        "TITLE" : " - Willkommen"
+    },
+    "REMINDER" : {
+        "DONOTSHOWAGAIN" : {
+            "CANCEL" : "Abbrechen",
+            "LABEL_DO_NOT_SHOW" : "Hinweis nicht mehr anzeigen.",
+            "OK" : "OK",
+            "WARNING" : "Achtung: Sie sind nicht mehr geschützt, wenn der eBlocker keine Updates mehr erhält. Ihre Privatsphäre ist gefährdet.",
+            "WARNING_TITLE" : "Hinweis nicht mehr anzeigen"
+        },
+        "FORMAT" : {
+            "DATE" : "D. MMM YYYY"
+        },
+        "OVERLAY" : {
+            "BUTTON" : {
+                "CLOSE" : "Ok",
+                "ENTER" : "Lizenzschlüssel eingeben",
+                "PURCHASE" : "Neue Lizenz erwerben"
+            },
+            "TEXT" : {
+                "DEMO" : {
+                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
+                },
+                "FAM" : {
+                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
+                },
+                "PRO" : {
+                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
+                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
+                }
+            },
+            "URL" : {
+                "PROMO" : "https://www.eblocker.com/de/license-reminder",
+                "PURCHASE" : "https://www.eblocker.com/ebl/de/shop"
+            },
+            "WHEN_AGAIN" : {
+                "POST" : " erneut erinnern.",
+                "PRE" : "",
+                "TOMORROW" : "Morgen",
+                "WEEK" : "In einer Woche"
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_OS.ARIA' | translate }}"
+           style="max-width: 800px;"
+           class="update-dialog">
+
+    <!--  CONFIRM DIALOG -->
+    <div layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div>
+                <h2 translate="ADMINCONSOLE.DIALOG.UPDATE_OS.CONFIRM.TITLE"></h2>
+            </div>
+            <div>
+                <p translate="ADMINCONSOLE.DIALOG.UPDATE_OS.CONFIRM.TEXT1"></p>
+                <p translate="ADMINCONSOLE.DIALOG.UPDATE_OS.CONFIRM.TEXT2"></p>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button class="md-raised md-secondary" type="button" ng-click="vm.cancel()" >{{ 'ADMINCONSOLE.DIALOG.UPDATE_OS.CONFIRM.ACTION.CANCEL' | translate }}</md-button>
+            <md-button class="md-raised md-primary md-accent" type="button" ng-click="vm.update()" >{{ 'ADMINCONSOLE.DIALOG.UPDATE_OS.CONFIRM.ACTION.UPDATE' | translate }}</md-button>
+        </md-dialog-actions>
+    </div>
+
+</md-dialog>

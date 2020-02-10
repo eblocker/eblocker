@@ -1,0 +1,53 @@
+<eb-wizard-component wizard-title="{{ 'SQUID_BLOCKER.SQUID_ERROR.TITLE' | translate }}">
+
+    <eb-wizard-content>
+
+        <!-- TARGET -->
+        <div>
+            <div layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span translate="SQUID_BLOCKER.SQUID_ERROR.TARGET"></span>
+                <span style="font-weight: bold;word-break: break-all;word-wrap: break-word;">{{vm.truncateDomain(vm.target)}}</span>
+            </div>
+        </div>
+
+        <!-- MESSAGE -->
+        <div layout="column" layout-align="center stretch"
+             layout-padding>
+            <span translate="SQUID_BLOCKER.SQUID_ERROR.MESSAGE"></span>
+            <span style="font-weight: bold;">{{'SQUID_BLOCKER.SQUID_ERROR.MESSAGES.' + vm.error | translate}}</span>
+        </div>
+
+        <div>
+            <div layout="column" layout-align="center stretch"
+                 layout-padding>
+                <span translate="SQUID_BLOCKER.SQUID_ERROR.DETAILS"></span>
+                <span style="font-weight: bold;">{{vm.errorDetails}}</span>
+            </div>
+        </div>
+
+        <!-- POSSIBLE REASONS -->
+        <div layout="column" layout-align="center stretch"
+             layout-padding>
+            <div layout="column">
+                <span>{{'SQUID_BLOCKER.SQUID_ERROR.POSSIBLE_REASONS' | translate}}</span>
+                <ul>
+                    <li ng-repeat="reason in vm.reasons">{{reason}}</li>
+                    <li ng-show="vm.torEnabled">
+                        {{'SQUID_BLOCKER.SQUID_ERROR.TOR' | translate}}
+                    </li>
+                    <li ng-show="vm.vpnEnabled">
+                        {{'SQUID_BLOCKER.SQUID_ERROR.VPN' | translate}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div layout="row" layout-sm="column" layout-align="end center">
+            <md-button class="md-raised" ng-disabled="vm.waiting" ng-show="vm.torEnabled" ng-click="vm.disableTorAndTryAgain()">{{'SQUID_BLOCKER.SQUID_ERROR.ACTION.DISABLE_TOR_TRY_AGAIN' | translate}}</md-button>
+            <md-button class="md-raised" ng-disabled="vm.waiting" ng-show="vm.vpnEnabled" ng-click="vm.disableVpnAndTryAgain()">{{'SQUID_BLOCKER.SQUID_ERROR.ACTION.DISABLE_VPN_TRY_AGAIN' | translate}}</md-button>
+            <md-button class="md-raised md-accent" ng-disabled="vm.waiting" ng-click="vm.tryAgain()" layout-align="center center">{{'SQUID_BLOCKER.SQUID_ERROR.ACTION.TRY_AGAIN' | translate}}</md-button>
+        </div>
+
+    </eb-wizard-content>
+</eb-wizard-component>

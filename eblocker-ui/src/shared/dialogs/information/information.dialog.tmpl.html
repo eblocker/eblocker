@@ -1,0 +1,37 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.CONFIRMATION.ARIA' | translate }}"
+           style="max-width: 800px;">
+    <form name="vm.confirmationForm" ng-submit="vm.ok()" novalidate style="overflow: initial;" layout-padding>
+        <md-dialog-content layout="column" layout-padding>
+            <div ng-if="vm.msgKeys.title !== undefined">
+                <h2>{{ vm.msgKeys.title | translate }}</h2>
+            </div>
+            <div ng-if="vm.msgKeys.text !== undefined">
+                <p>{{ vm.msgKeys.text | translate }}</p>
+            </div>
+
+            <div ng-if="vm.msgKeys.additionalText !== undefined">
+                <p>{{ vm.msgKeys.additionalText | translate }}</p>
+            </div>
+
+            <div ng-if="vm.msgKeys.moreAdditionalText !== undefined">
+                <p>{{ vm.msgKeys.moreAdditionalText | translate }}</p>
+            </div>
+
+            <div ng-if="vm.checkboxValue !== undefined">
+                <md-checkbox ng-model="vm.checkboxValue" class="md-primary">
+                    {{ vm.msgKeys.checkbox | translate }}
+                </md-checkbox>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <!-- we need to set the theme, because this dialog may be opened from a switch with different theme -->
+            <md-button type="submit" md-theme="eBlockerTheme" ng-disabled="vm.inProgress" class="md-raised md-primary md-accent">{{ vm.msgKeys.okButton | translate }}</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="eblocker.dashboard" ng-strict-di>
+
+    <head>
+        <style>
+            /* This helps the ng-show/ng-hide animations start at the right place. */
+            /* Since Angular has this but needs to load, this gives us the class early. */
+
+            .ng-hide {
+                display: none!important;
+            }
+        </style>
+        <title ng-bind="title">
+            eBlocker Dashboard
+        </title>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/fav/apple-touch-icon.png"/>
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/fav/favicon-32x32.png"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/fav/favicon-16x16.png"/>
+        <link rel="manifest" href="/img/fav/site.webmanifest"/>
+        <link rel="mask-icon" href="/img/fav/safari-pinned-tab.svg" color="#ea5b0c"/>
+        <link rel="shortcut icon" href="/img/fav/favicon.ico"/>
+        <meta name="msapplication-TileColor" content="#da532c"/>
+        <meta name="msapplication-config" content="/img/fav/browserconfig.xml"/>
+        <meta name="theme-color" content="#000000"/>
+
+        <!-- inject:css -->
+        <!-- endinject -->
+
+    </head>
+
+    <body ng-cloak class="eblocker-dashboard">
+        <div layout="column" layout-fill ui-view></div>
+
+        <!-- inject:js -->
+        <!-- endinject -->
+
+    </body>
+
+</html>

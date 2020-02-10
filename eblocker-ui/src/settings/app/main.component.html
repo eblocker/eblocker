@@ -1,0 +1,118 @@
+<div layout-fill layout="column">
+
+    <!-- NAVBAR AND VIEW -->
+    <div layout="row" style="height: 100%">
+        <!-- NAVBAR-->
+        <div>
+            <!-- Sidenav, hidden for small devices (second toolbar shows icon in that case, see below) -->
+            <md-sidenav
+                class="md-sidenav-left md-whiteframe-z2 adminconsole-navbar"
+                md-is-locked-open="$mdMedia('gt-md')"
+                md-component-id="left"
+                md-whiteframe="0">
+
+                <md-list class="navlist">
+                    <md-item layout="column" ng-repeat="section in vm.configSections | orderBy:'navbarOrder'">
+                        <md-divider ng-if="section.separator"></md-divider>
+                        <md-item-content layout="row" layout-align="start center" ng-if="!vm.hideNavEntry(section)">
+                            <!-- layout-fill overrides the margin, so just use width: 100% -->
+                            <div style="width: 100%;"
+                                 layout="row"
+                                 layout-align="start center"
+                                 md-no-ink="true"
+                                 ng-click="vm.goToState(section)"
+                                 class="nav-entry-button icon-pointer"
+                                 ng-class="{
+                                   'state-is-active': section.isActive,
+                                   'feature-is-licensed': vm.isLicensed(section.requiredLicense())
+                                   }">
+                                <div style="margin-left: 10px;">
+                                    <md-icon md-svg-src="{{section.iconUrl}}" class="navicon"></md-icon>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <span>{{ section.translationKey | translate }}</span>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+
+                    <md-divider ng-if="vm.setupRequired"></md-divider>
+                    <md-item ng-if="vm.setupRequired">
+                        <md-item-content layout="row" layout-align="start center">
+                            <div layout="row"
+                                 layout-align="start center"
+                                 md-no-ink="true"
+                                 ng-click="vm.openSetupWizard()"
+                                 class="nav-entry-button icon-pointer feature-is-licensed nav-bar-entry-setup-wizard">
+                                <div style="margin-left: 10px;">
+                                    <md-icon md-svg-src="/img/icons/ic_priority_high_black.svg" class="navicon"></md-icon>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <span class="nav-bar-text" translate="ADMINCONSOLE.ACTIVATION.CARD.TITLE"></span>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+
+                    <md-divider ng-if="vm.showPostRegInfoReminder"></md-divider>
+                    <md-item ng-if="vm.showPostRegInfoReminder">
+                        <md-item-content layout="row" layout-align="start center">
+                            <!-- layout-fill overrides the margin, so just use width: 100% -->
+                            <div style="width: 100%;"
+                                 layout="row"
+                                 layout-align="start center"
+                                 md-no-ink="true"
+                                 ng-click="vm.goToVpnReminder()"
+                                 class="nav-entry-button icon-pointer feature-is-licensed">
+                                <div style="margin-left: 10px;">
+                                    <md-icon md-svg-src="/img/icons/ic_priority_high_black.svg" class="navicon"></md-icon>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <span>{{vm.postRegistrationInformationContent.MENU.LABEL}}</span>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+
+                    <md-divider></md-divider>
+                    <md-item>
+                        <md-item-content layout="row" layout-align="start center">
+                            <!-- layout-fill overrides the margin, so just use width: 100% -->
+                            <div style="width: 100%;"
+                                 layout="row"
+                                 layout-align="start center"
+                                 md-no-ink="true"
+                                 ng-click="vm.goToSplashScreen()"
+                                 class="nav-entry-button icon-pointer feature-is-licensed">
+                                <div style="margin-left: 10px;">
+                                    <md-icon md-svg-src="/img/icons/ic_star_rate_black.svg" class="navicon"></md-icon>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <span>{{'ADMINCONSOLE.SPLASH_SCREEN.MENU_LABEL' | translate }}</span>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+
+                    <!-- CLICK TO REENABLE THE SPLASH SCREEN -->
+                    <!--<md-item>-->
+                        <!--<md-item-content layout="row" layout-align="start center">-->
+                            <!--<div ng-click="vm.setSplash()">click me!</div>-->
+                        <!--</md-item-content>-->
+                    <!--</md-item>-->
+                </md-list>
+            </md-sidenav>
+        </div>
+
+        <!-- VIEW -->
+        <div style="overflow: auto;" layout-fill>
+            <md-content>
+                <div ng-hide="vm.showSpinner()" ui-view class="settings-main-view" layout-fill></div>
+
+                <div ng-show="vm.showSpinner()" layout="row" layout-align="center center" layout-fill>
+                    <md-progress-circular md-diameter="50"></md-progress-circular>
+                </div>
+            </md-content>
+        </div>
+    </div>
+</div>

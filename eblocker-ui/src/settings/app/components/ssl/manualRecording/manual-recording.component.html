@@ -1,0 +1,228 @@
+<div layout="column" layout-fill class="settings-child-view">
+
+    <div class="help-on-tabbed-view">
+        <eb-help-icon template="app/components/ssl/manualRecording/help-ssl-record.template.html"></eb-help-icon>
+    </div>
+
+    <div layout-padding layout-margin></div>
+
+    <div flex class="config-frame md-whiteframe-z1">
+        <div>
+            <h3>{{ 'ADMINCONSOLE.MANUAL_RECORDING.TITLE_RECORD' | translate }}</h3>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-padding>
+
+            <div layout="column" layout-padding flex-gt-xs="50" flex-gt-md="50">
+                <label>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_SELECT_DEVICE' | translate }}</label>
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_DEVICE' | translate }}</label>
+                    <md-select ng-model="vm.selectedDevice" ng-disabled="recordingStatus">
+                        <!-- order by name, use ipAddress when ambiguous -->
+                        <md-option ng-value="device"
+                                   ng-repeat="device in vm.devices | orderBy: 'ipAddress' | orderBy: 'name'">
+                            {{device.displayName}} <span ng-show="device.isCurrentDevice">{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_CURRENT_DEVICE' | translate }}</span>
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div layout="column" layout-padding flex-gt-xs="40" flex-gt-md="40">
+                <label>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_SELECT_ABORT' | translate }}</label>
+                <div layout="row">
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_TIME' | translate }}</label>
+                        <md-select ng-model="vm.timeLimit" ng-disabled="vm.recordingStatus" >
+                            <md-option value="1">1 {{ 'ADMINCONSOLE.MANUAL_RECORDING.TIME_UNIT_MINUTE' | translate }}</md-option>
+                            <md-option value="5" selected="selected">5 {{ 'ADMINCONSOLE.MANUAL_RECORDING.TIME_UNIT_MINUTE' | translate }}</md-option>
+                            <md-option value="10">10 {{ 'ADMINCONSOLE.MANUAL_RECORDING.TIME_UNIT_MINUTE' | translate }}</md-option>
+                            <md-option value="15">15 {{ 'ADMINCONSOLE.MANUAL_RECORDING.TIME_UNIT_MINUTE' | translate }}</md-option>
+                        </md-select>
+                        </label>
+                    </md-input-container>
+                    <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                        <label>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_SIZE' | translate }}</label>
+                        <md-select ng-model="vm.sizeLimit" ng-disabled="vm.recordingStatus">
+                            <md-option value="50">50 {{ 'ADMINCONSOLE.MANUAL_RECORDING.SIZE_UNIT_MB' | translate }}</md-option>
+                            <md-option value="100" selected="selected">100 {{ 'ADMINCONSOLE.MANUAL_RECORDING.SIZE_UNIT_MB' | translate }}</md-option>
+                            <md-option value="200">200 {{ 'ADMINCONSOLE.MANUAL_RECORDING.SIZE_UNIT_MB' | translate }}</md-option>
+                            <md-option value="500">500 {{ 'ADMINCONSOLE.MANUAL_RECORDING.SIZE_UNIT_MB' | translate }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div flex class="config-frame md-whiteframe-z1">
+        <div>
+            <h4 translate="ADMINCONSOLE.MANUAL_RECORDING.LABEL_RECORDING_CONTROLS"></h4>
+        </div>
+        <div layout="row" layout-xs="column" layout-xs-align="center center" layout-align="start center" layout-padding>
+
+            <div layout="row" layout-align="start center">
+                <div>
+                    <md-button class="md-raised md-primary md-accent" ng-disabled="vm.recordingStatus || vm.loading"  ng-click="vm.startRecording()">
+                        {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.START_RECORDING' | translate }}
+                    </md-button>
+                </div>
+                <div>
+                    <md-button class="md-raised md-secondary" ng-disabled="!vm.recordingStatus || vm.loading" ng-click="vm.stopRecording()">
+                        {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.STOP_RECORDING' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div layout="row">
+                <md-button class="md-raised md-accent" ng-disabled="vm.initializing || vm.recordingStatus || vm.loading" ng-click="vm.getRecordedUrls()">
+                    {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.REFRESH_TABLE' | translate }}
+                </md-button>
+            </div>
+
+            <div layout="row" layout-align="start center">
+                <div ng-show="vm.initializing || vm.recordingStatus || vm.loading"
+                     layout="row" layout-sm="column" layout-align="space-around"
+                     style="padding-left: 18px;">
+                    <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+                </div>
+
+                <div ng-if="vm.loading" style="padding-left: 12px;">
+                    <span>{{ 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_RECORDING_DONE' | translate }}</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div flex class="config-frame md-whiteframe-z1" layout="column" ng-if="vm.recordingAvailable()">
+        <div>
+            <h3 layout-margin>{{ 'ADMINCONSOLE.MANUAL_RECORDING.TITLE_ANALYSIS' | translate }}</h3>
+        </div>
+
+
+        <div>
+            <!-- Action bar of table -->
+            <div layout="row" layout-xs="column" layout-align="start center">
+
+                <div layout="row" style="width: 100%;">
+                    <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
+                        <!-- WORK MODE -->
+                        <div ng-if="!vm.tableEditMode">
+                        </div>
+
+                        <!-- EDIT MODE -->
+                        <div layout-gt-xs="row" layout-align="start center" ng-if="vm.tableEditMode">
+                            <table-remove-entries table-data="vm.filteredTableData"
+                                                  is-entry-deletable="vm.isDeletable(value)"
+                                                  delete-single-entry="vm.deleteSingleEntry(value)"
+                                                  on-single-delete-done="vm.onSingleDeleteDone()"
+                                                  button-label="ADMINCONSOLE.MANUAL_RECORDING.ACTION.REMOVE"
+                                                  dialog-title="ADMINCONSOLE.DIALOG.DELETE_ALL_RECORDINGS_CONFIRM.TITLE"
+                                                  dialog-text="ADMINCONSOLE.DIALOG.DELETE_ALL_RECORDINGS_CONFIRM.TEXT">
+                            </table-remove-entries>
+
+                            <md-button class="md-raised md-warn eb-delete-button"
+                                       ng-disabled="vm.tableData.length <= 0"
+                                       aria-label="Clear list"
+                                       ng-click="vm.clearList()">
+                                {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.CLEAR_TABLE' | translate }}
+                            </md-button>
+                        </div>
+
+                        <div ng-if="vm.loading" layout="row" layout-align="start center">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </div>
+
+                    <div hide-xs flex="33" layout="row" layout-align="start center" style="width: 100%;">
+                        <!-- TABLE SEARCH FOR LARGE DEVICES -->
+                        <eb-filter-table filtered-data="vm.filteredTableData"
+                                         original-data="vm.tableData"
+                                         filter-properties="vm.searchProps">
+                        </eb-filter-table>
+                    </div>
+
+                    <div flex-xs="50" flex="33" layout="row" layout-align="end center">
+                        <!-- CHANGE EDIT MODE OF TABLE (makes entries selectable) -->
+                        <eb-edit-table table-data="vm.filteredTableData"
+                                       table-edit-mode="vm.tableEditMode">
+                        </eb-edit-table>
+                    </div>
+                </div>
+
+                <div hide-gt-xs style="width: 100%;">
+                    <!-- TABLE SEARCH -->
+                    <eb-filter-table filtered-data="vm.filteredTableData"
+                                     original-data="vm.tableData"
+                                     filter-properties="vm.searchProps">
+                    </eb-filter-table>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <eb-table table-data="vm.filteredTableData"
+                      table-header="vm.tableHeaderConfig"
+                      table-template="app/components/ssl/manualRecording/manual-recording-table.template.html"
+                      table-id="vm.tableId"
+                      template-callback="vm.templateCallback"
+                      edit-mode="vm.tableEditMode"
+                      small-table-header-limit="8">
+            </eb-table>
+
+            <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
+                <eb-scroll-paginator table-id="vm.tableId"
+                                     table-size="vm.filteredTableData.length">
+                </eb-scroll-paginator>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div ng-show="vm.recordingAvailable()" layout="column">
+
+        <div flex class="config-frame md-whiteframe-z1">
+            <div>
+                <h3 layout-margin>{{ 'ADMINCONSOLE.MANUAL_RECORDING.TITLE_TEMP_RULE' | translate }}</h3>
+            </div>
+
+            <div layout-padding style="display: inline-block;">
+                <div flex>
+                    <md-switch md-theme="eBlockerThemeSwitch" ng-disabled="vm.initializing"
+                               class="md-primary"
+                               ng-model="vm.testingRuleSet.enabled"
+                               ng-change="vm.toggleTesting()">
+                        {{ vm.testingRuleSet.enabled ? 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_TESTING_RULE_SET_ENABLED' : 'ADMINCONSOLE.MANUAL_RECORDING.LABEL_TESTING_RULE_SET_DISABLED' | translate }}
+                    </md-switch>
+                </div>
+
+
+
+                <div flex layout="row" layout-align="start center" layout-xs="column">
+
+                    <span translate="ADMINCONSOLE.MANUAL_RECORDING.LABEL_TRUSTED_APP_DEFINITION"></span>
+
+                    <div layout="row" layout-align="start center">
+                        <md-button class="md-raised md-primary md-accent"
+                                   ng-disabled="vm.initializing || !vm.hasDisabledRule()"
+                                   ng-click="vm.save($event)">
+                            {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.SAVE_APP' | translate }}
+                        </md-button>
+                        <md-button class="md-raised md-primary md-accent"
+                                   ng-disabled="vm.initializing || !vm.hasDisabledRule()"
+                                   ng-click="vm.addToExistingApp($event)">
+                            {{ 'ADMINCONSOLE.MANUAL_RECORDING.ACTION.SAVE_TO_EXISTING_APP' | translate }}
+                        </md-button>
+                    </div>
+                    <md-tooltip md-delay="300" ng-hide="vm.hasDisabledRule()">{{'ADMINCONSOLE.MANUAL_RECORDING.TOOLTIP.SAVE_APP_DISABLED' | translate}}</md-tooltip>
+                </div>
+            </div>
+
+            <div ng-show="vm.updating" class="spinner-overlay" layout="column" layout-align="center center">
+                <md-progress-circular md-diameter="36" md-mode="indeterminate"></md-progress-circular>
+            </div>
+        </div>
+    </div>
+</div>

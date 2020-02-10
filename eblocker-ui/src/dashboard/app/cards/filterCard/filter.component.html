@@ -1,0 +1,121 @@
+<eb-card
+    icon="/img/icons/eblocker-blocked-24px-2.svg"
+    card-title="{{'FILTER.CARD.TITLE' | translate}}"
+    tooltip="FILTER.CARD.TOOLTIP"
+    card-id="{{ vm.cardId }}"
+    status="{{vm.getStatus()}}">
+    <eb-card-content>
+
+        <div layout="column">
+            <div layout="column" layout-align="start start">
+                <!-- Message severity level -->
+                <label style="font-weight: normal;">{{'FILTER.CARD.RADIO.LABEL' | translate }}</label>
+
+                <div style="margin-left: 25px;padding-top:15px;">
+                    <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.device.filterMode" ng-change="vm.onChange(vm.device)">
+                        <md-radio-button value="NONE">{{'FILTER.CARD.RADIO.NONE' | translate }}</md-radio-button>
+                        <md-radio-button value="AUTOMATIC">{{'FILTER.CARD.RADIO.AUTOMATIC' | translate }} <span style="font-style: italic;">{{'FILTER.CARD.RADIO.RECOMMENDED' | translate }}</span></md-radio-button>
+                        <md-radio-button value="PLUG_AND_PLAY">{{'FILTER.CARD.RADIO.PLUG_AND_PLAY' | translate }}</md-radio-button>
+                        <md-radio-button value="ADVANCED">
+                            <span>{{'FILTER.CARD.RADIO.PATTERN' | translate }}</span>
+                        </md-radio-button>
+                    </md-radio-group>
+                </div>
+            </div>
+        </div>
+
+        <div layout="column" layout-align="start start" ng-show="vm.device.malwareFilterEnabled !== undefined">
+
+            <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
+
+            <label style="font-weight: normal;">{{'FILTER.CARD.MALWARE.LABEL' | translate }}</label>
+
+            <div style="margin-left: 25px;padding-top:15px;">
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.device.malwareFilterEnabled" ng-change="vm.onChange(vm.device)">
+                    <md-radio-button ng-value="false">{{'FILTER.CARD.MALWARE.OFF' | translate }}</md-radio-button>
+                    <md-radio-button ng-value="true">{{'FILTER.CARD.MALWARE.ON' | translate }}</md-radio-button>
+                </md-radio-group>
+            </div>
+        </div>
+
+        <div layout="column" layout-align="start start" ng-if="vm.showWarning()">
+
+            <md-divider style="width: 100%;padding-bottom: 16px;"></md-divider>
+
+            <div ng-if="!vm.sslGloballyEnabled && vm.device.filterMode === 'ADVANCED'"
+                 style="margin-left: 16px; margin-bottom: 16px;"
+                 layout="row"
+                 layout-align="start center">
+                <div>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div layout="column" layout-align="center start">
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_SSL_GLOABL"></span>
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_SSL"></span>
+                    <md-button class="md-primary"
+                               ng-click="vm.goToHttps()">
+                        {{ 'FILTER.CARD.ACTION.GO_TO_HTTPS' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div ng-if="!vm.device.sslEnabled && vm.device.filterMode === 'ADVANCED'"
+                 style="margin-left: 16px; margin-bottom: 16px;"
+                 layout="row"
+                 layout-align="start center">
+                <div>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div layout="column" layout-align="center start">
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_SSL_DEVICE"></span>
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_SSL"></span>
+                    <md-button class="md-primary"
+                               ng-click="vm.activateSsl()">
+                        {{ 'FILTER.CARD.ACTION.ACTIVATE_SSL' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div ng-if="!vm.dnsEnabled && vm.device.filterMode === 'PLUG_AND_PLAY'"
+                 style="margin-left: 16px; margin-bottom: 16px;"
+                 layout="row"
+                 layout-align="start center">
+                <div>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div layout="column" layout-align="center start">
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_DNS_1"></span>
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_DNS_2"></span>
+                    <md-button class="md-primary"
+                               ng-click="vm.goToDns()">
+                        {{ 'FILTER.CARD.ACTION.GO_TO_DNS' | translate }}
+                    </md-button>
+                </div>
+            </div>
+
+            <div ng-if="!vm.device.malwareFilterEnabled"
+                 style="margin-left: 16px; margin-bottom: 16px;"
+                 layout="row"
+                 layout-align="start center">
+                <div>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div layout="column">
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_MALWARE"></span>
+                </div>
+            </div>
+
+            <div ng-if="vm.device.filterMode === 'NONE'"
+                 style="margin-left: 16px; margin-bottom: 16px;"
+                 layout="row"
+                 layout-align="start center">
+                <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                <div layout="column">
+                    <span style="margin-left: 5px;" translate="FILTER.CARD.WARN_NO_FILTER"></span>
+                </div>
+            </div>
+
+        </div>
+
+    </eb-card-content>
+</eb-card>

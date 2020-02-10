@@ -1,0 +1,19 @@
+<div layout-padding layout="column">
+    <div>
+        <p>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PROCESS.TEXT1' | translate }}</p>
+        <ol>
+            <li ng-show="!vm.dhcpShouldBeOnRouter">{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PROCESS.STEP1' | translate }}</li>
+            <li>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PROCESS.STEP2' | translate }}</li>
+            <li>{{ 'ADMINCONSOLE.NETWORK_WIZARD.AUTO.TAB.PROCESS.STEP3' | translate }}</li>
+        </ol>
+    </div>
+
+    <div layout="row" layout-xs="column" layout-align="end center">
+        <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.nextStep()" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate }}
+        </md-button>
+    </div>
+</div>

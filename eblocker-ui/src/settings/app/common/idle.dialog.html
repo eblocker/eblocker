@@ -1,0 +1,41 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.DIALOG.EDIT_DEVICE_NAME.TITLE' | translate }}"
+           layout-padding
+           style="max-width: 800px;">
+    <md-dialog-content layout="column">
+        <div idle-countdown="idle.countdown" layout="column" layout-align="center center" layout-padding>
+            <div>
+                <h2>{{ 'IDLE.DIALOG.TITLE' | translate }}</h2>
+            </div>
+            <div>
+                <p>{{ 'IDLE.DIALOG.TEXT' | translate:{'countdown': idle.countdown}:"messageformat" }}</p>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"
+                       layout-align="center center"
+                       layout-xs="column"
+                       layout-align-xs="center center"
+                       style="padding-right: 16px;">
+        <md-button class="md-raised md-primary md-accent" ng-click="idle.resume()">{{ 'IDLE.DIALOG.BUTTON.RESUME' | translate }}</md-button>
+    </md-dialog-actions>
+</md-dialog>
+
+
+
+
+
+
+
+<!--<md-dialog>-->
+    <!--<md-dialog-content class="md-dialog-content " layout="column" layout-align="center center">-->
+        <!--<div idle-countdown="idle.countdown" layout="column" layout-align="center center">-->
+            <!--<h2>{{ 'IDLE.DIALOG.TITLE' | translate }}</h2>-->
+            <!--<p>{{ 'IDLE.DIALOG.TEXT' | translate:{'countdown': idle.countdown}:"messageformat" }}</p>-->
+        <!--</div>-->
+    <!--</md-dialog-content>-->
+    <!--<md-dialog-actions layout="row" layout-align="center center">-->
+        <!--<md-button class="md-raised md-primary md-accent" ng-click="idle.resume()">{{ 'IDLE.DIALOG.BUTTON.RESUME' | translate }}</md-button>-->
+    <!--</md-dialog-actions>-->
+<!--</md-dialog>-->
+

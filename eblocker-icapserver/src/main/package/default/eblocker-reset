@@ -1,0 +1,8 @@
+# Default configuration for eblocker-reset
+
+THUMBDRIVE_DEVICE="/dev/sda1"
+MOUNT_DIR="/mnt"
+EBLOCKER_RESET_FILE="$MOUNT_DIR/eblocker-factory-reset.txt"
+EBLOCKER_SELFCHECK_FILE="$MOUNT_DIR/eblocker-self-check.txt"
+EBLOCKER_STATUS_FILE="$MOUNT_DIR/eblocker-status.html"
+LOGGING_CONSOLE="/dev/tty0"

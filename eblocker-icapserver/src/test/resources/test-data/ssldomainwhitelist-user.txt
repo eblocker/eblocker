@@ -1,0 +1,28 @@
+bundesbank.de_Deutsche Bundesbank
+ecb.europa.eu_European Central Bank
+bayernlb.de_Bayern LB
+commerzbank.com_Commerzbank AG
+commerzbank.de_Commerzbank AG (deutsch)
+dzbank.de_DZ Bank
+hypovereinsbank.de_Hypovereinsbank
+lbbw-business.de_Landesbank Baden Württemberg Business Portal
+lbbw-markets.de_Landesbank Baden Württemberg Market Portal
+nordlb.de_Nord LB
+helaba.de_Helaba Invest
+postbank.de_Postbank
+haspa.de_Hamburger Sparkasse
+nrwbank.de_NRW Bank
+ing-diba.de_ING DiBa
+deka.de_DekaBank
+internetbanking.hsh-nordbank-banking.de_HSH Nordbank Internetbanking
+wgzbank.de_WGZ Bank
+rentenbank.de_Landwirtschaftliche Rentenbank
+pfandbriefbank.com_Deutsche Pfandbriefbank
+hypothekenbankfrankfurt.com_Hypothekenbank Frankfurt
+dkb.de_Deutsche Kreditbank
+l-bank.de_Landeskreditbank Baden-Württemberg - Förderbank
+itunes.apple.com_Apple iOS App Store
+courier.push.apple.com_Apple iOS App Store
+xp.apple.com_Apple iOS App Store
+s.mzstatic.com_Apple iOS App Store
+trac.bmb-dev.de_Development Server

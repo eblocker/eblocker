@@ -1,0 +1,12 @@
+<div layout-margin layout="column" layout-align="center center">
+    <div>
+        <p ng-bind-html="vm.param.tosText | htmlSafe"></p>
+        <p>
+            <span>{{'ADMINCONSOLE.ACTIVATION.TAB.TOS.VERSION_TAG' |translate}}</span>
+            <span>{{vm.param.tosVersion}}</span>
+            <span>{{'ADMINCONSOLE.ACTIVATION.TAB.TOS.SEPARATOR' |translate}}</span>
+            <span>{{vm.param.tosDateDisplay }}</span>
+        </p>
+    </div>
+</div>
+

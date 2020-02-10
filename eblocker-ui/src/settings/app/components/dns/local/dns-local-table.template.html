@@ -1,0 +1,33 @@
+<!-- ICON -->
+<div flex class="column-xs">
+    <md-icon ng-class="{'eb-table-icon-active': !entry.builtin}" md-svg-src="/img/icons/ic_list_black.svg"></md-icon>
+    <md-tooltip ng-show="entry.builtin" md-delay="300">{{'ADMINCONSOLE.DNS_LOCAL.TOOLTIP.LOCAL_BUILTIN' | translate }}</md-tooltip>
+    <md-tooltip ng-hide="entry.builtin" md-delay="300">{{'ADMINCONSOLE.DNS_LOCAL.TOOLTIP.LOCAL_CUSTOM' | translate }}</md-tooltip>
+</div>
+
+<!-- NAME -->
+<div flex>
+    <span ng-show="entry.name !== undefined && entry.name !== ''">{{entry.name}}</span>
+</div>
+
+<!-- IPv4 -->
+<div flex>
+    <span ng-show="entry.ipAddress !== undefined && entry.ipAddress !== ''">{{entry.ipAddress}}</span>
+</div>
+
+<!-- IPv6 -->
+<div ng-if="vm.templateCallback.isIp6FeatureEnabled()" flex>
+    <span ng-show="entry.ip6Address !== undefined && entry.ip6Address !== ''">{{entry.ip6Address}}</span>
+</div>
+
+<!-- EDIT -->
+<div flex="5" flex-xs="10">
+    <div ng-hide="entry.builtin">
+        <md-icon class="content-eb-orange icon-pointer"
+                 ng-click="vm.templateCallback.edit($event, entry)"
+                 md-svg-src="/img/icons/ic_edit_black.svg"
+                 aria-label="Edit entry">
+        </md-icon>
+        <md-tooltip md-delay="300">{{'ADMINCONSOLE.DNS_LOCAL.TOOLTIP.EDIT' | translate}}</md-tooltip>
+    </div>
+</div>

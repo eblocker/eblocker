@@ -1,0 +1,11 @@
+<div layout="column" layout-fill>
+    <div class="md-padding">
+        <md-tabs md-selected="vm.selectedIndex" md-border-bottom md-swipe-content>
+            <md-tab ng-repeat="subState in vm.subStates track by $index"
+                    label="{{subState.translationKey | translate}}"
+                    ng-click="vm.switchTab(subState)">
+            </md-tab>
+        </md-tabs>
+        <div ui-view></div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+#!/bin/bash
+#
+# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+#Tell squid to reconfigure with squid-eblocker.conf
+SQUID=squid
+SQUID_BINARY=/usr/sbin/$SQUID
+CERTVALIDATOR_SERVICE=certvalidator
+CONFDIR=/opt/eblocker-icap/network
+#first copy temp acl files (which are written by the icapserver) to the squid folder
+CONF_SRC=$CONFDIR/squid-eblocker.conf
+CONF_DST=/etc/$SQUID/squid.conf
+MIMETYPES_SRC=$CONFDIR/mimetypes
+MIMETYPES_DST=/etc/$SQUID/mimetypes
+DISABLEDCLIENTS_SRC=$CONFDIR/disabledclients
+DISABLEDCLIENTS_DST=/etc/$SQUID/disabledclients
+MOBILECLIENTS_SRC=$CONFDIR/mobileClients
+MOBILECLIENTS_DST=/etc/$SQUID/mobileClients
+MOBILECLIENTSPRIVATENETWORKACCESS_SRC=$CONFDIR/mobileClientsPrivateNetworkAccess
+MOBILECLIENTSPRIVATENETWORKACCESS_DST=/etc/$SQUID/mobileClientsPrivateNetworkAccess
+TORCLIENTS_SRC=$CONFDIR/torclients
+TORCLIENTS_DST=/etc/$SQUID/torclients
+SSLCLIENTS_SRC=$CONFDIR/sslclients
+SSLCLIENTS_DST=/etc/$SQUID/sslclients
+VPN_ACL_SRC=$CONFDIR/openvpn
+VPN_ACL_DST=/etc/$SQUID
+SSLDOMAINWHITELIST_SRC=$CONFDIR/ssldomainwhitelist
+SSLDOMAINWHITELIST_DST=/etc/$SQUID/ssldomainwhitelist
+IPWHITELIST_SRC=$CONFDIR/ipwhitelist
+IPWHITELIST_DST=/etc/$SQUID/ipwhitelist
+PARENTALCONTROLFILTER_SRC=$CONFDIR/parentalcontrolfilter
+PARENTALCONTROLFILTER_DST=/etc/$SQUID/parentalcontrolfilter
+XFORWARDDOMAINS_SRC=$CONFDIR/xforward.domains
+XFORWARDDOMAINS_DST=/etc/$SQUID/xforward.domains
+XFORWARDIPS_SRC=$CONFDIR/xforward.ips
+XFORWARDIPS_DST=/etc/$SQUID/xforward.ips
+
+#make sure the config file is ready (exists)
+if test ! -f $CONF_SRC
+then
+    echo "Could not find prepared squid config file here: $CONF_SRC does not exist." 1>&2
+    exit 1
+fi
+
+
+#make sure that all ACL files exist
+if test ! -f $MIMETYPES_SRC
+then
+    echo "Could not apply mimetypes configuration: Config file '$MIMETYPES_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $DISABLEDCLIENTS_SRC
+then
+    echo "Could not apply torclients configuration: Config file '$DISABLEDCLIENTS_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $MOBILECLIENTS_SRC
+then
+    echo "Could not apply mobile clients configuration: Config file 'MOBILECLIENTS_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $MOBILECLIENTSPRIVATENETWORKACCESS_SRC
+then
+    echo "Could not apply mobile clients private network access configuration: Config file '$MOBILECLIENTSPRIVATENETWORKACCESS_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $TORCLIENTS_SRC
+then
+    echo "Could not apply torclients configuration: Config file '$TORCLIENTS_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $SSLCLIENTS_SRC
+then
+    echo "Could not apply sslclients configuration: Config file '$SSLCLIENTS_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $SSLDOMAINWHITELIST_SRC
+then
+    echo "Could not apply ssldomainwhitelist configuration: Config file '$SSLDOMAINWHITELIST_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $IPWHITELIST_SRC
+then
+    echo "Could not apply ipwhitelist configuration: Config file '$IPWHITELIST_SRC' does not exist." 1>&2
+    exit 1
+fi
+
+if test ! -f $PARENTALCONTROLFILTER_SRC
+then
+    #echo "Could not apply parentalcontrolfilkter configuration: Config file '$PARENTALCONTROLFILTER_SRC' does not exist." 1>&2
+    touch $PARENTALCONTROLFILTER_SRC
+    chown icapd $PARENTALCONTROLFILTER_SRC
+    chgrp icapd $PARENTALCONTROLFILTER_SRC
+fi
+
+if test ! -f $XFORWARDDOMAINS_SRC
+then
+   echo "Could not apply x-forward domains configuration: Config file '$XFORWARDDOMAINS_SRC' does not exist." 1>&2
+   exit 1
+fi
+
+if test ! -f $XFORWARDIPS_SRC
+then
+   echo "Could not apply x-forward ips configuration: Config file '$XFORWARDIPS_SRC' does not exist." 1>&2
+   exit 1
+fi
+
+
+
+#all files exist, so copy now
+cp $CONF_SRC $CONF_DST
+cp $MIMETYPES_SRC $MIMETYPES_DST
+cp $DISABLEDCLIENTS_SRC $DISABLEDCLIENTS_DST
+cp $MOBILECLIENTS_SRC $MOBILECLIENTS_DST
+cp $MOBILECLIENTSPRIVATENETWORKACCESS_SRC $MOBILECLIENTSPRIVATENETWORKACCESS_DST
+cp $TORCLIENTS_SRC $TORCLIENTS_DST
+cp $SSLCLIENTS_SRC $SSLCLIENTS_DST
+find $VPN_ACL_SRC -maxdepth 1 -name vpn\*.acl -exec cp {} $VPN_ACL_DST \;
+cp $SSLDOMAINWHITELIST_SRC $SSLDOMAINWHITELIST_DST
+cp $IPWHITELIST_SRC $IPWHITELIST_DST
+cp $PARENTALCONTROLFILTER_SRC $PARENTALCONTROLFILTER_DST
+cp $XFORWARDDOMAINS_SRC $XFORWARDDOMAINS_DST
+cp $XFORWARDIPS_SRC $XFORWARDIPS_DST
+
+# make sure certificate-validator is running
+if ! service $CERTVALIDATOR_SERVICE status;
+then
+    echo "Certificate-Validator not running... starting it" 1>&2
+    service $CERTVALIDATOR_SERVICE start
+
+    wait_seconds=30
+    # wait until service is available
+    while [ "$wait_seconds" -gt 0 ] && ! nc -z 127.0.0.1 7443; do
+        echo "waiting for certvalidator ..." 1>&2
+        let wait_seconds--
+        sleep 1
+    done
+    if [ "$wait_seconds" = 0 ];
+    then
+        echo "Waiting for certvalidator timed out. Continuing..." 1>&2
+    fi
+fi
+
+#make sure squid is running
+pidsquid=$(pidof $SQUID_BINARY)
+if [ "$pidsquid" = "" ]; # squid is not running
+then
+    echo "Squid was not running...starting it" 1>&2
+    service $SQUID start
+else
+   #Tell squid to reconfigure with new configuration
+   service $SQUID reload
+fi

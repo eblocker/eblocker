@@ -1,0 +1,4 @@
+http_port 8080 ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/opt/eblocker-icap/keys/ssl/eblocker.cert key=/opt/eblocker-icap/keys/ssl/eblocker.key
+
+# workaround for https://bugs.squid-cache.org/show_bug.cgi?id=4253
+request_header_access Surrogate-Capability deny all

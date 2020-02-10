@@ -1,0 +1,154 @@
+<div>
+
+    <div style="padding-bottom: 0;">
+        <h3>{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.HEADER' | translate }}</h3>
+    </div>
+
+    <div>
+        <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.TEXT1"></p>
+    </div>
+
+    <div layout-padding>
+        <md-button type="button" ng-click="vm.testConnectionToggleShowMore()" class="md-primary">
+            <span ng-hide="vm.testConnectionShowMore">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.MORE' | translate }}</span>
+            <span ng-show="vm.testConnectionShowMore">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.LESS' | translate }}</span>
+        </md-button>
+
+        <div ng-show="vm.testConnectionShowMore" layout-padding>
+            <p translate="ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.MORE1"></p>
+        </div>
+    </div>
+
+
+    <div class="config-frame md-whiteframe-z1" layout="column">
+        <!-- Connection Test -->
+        <div layout="row" layout-align="start center"
+             layout-xs="column" layout-align-xs="center center">
+
+            <div flex-gt-xs="40"
+                 layout="row" layout-align="start center">
+                <md-button type="button"
+                           ng-if="!vm.isTestingConnection"
+                           ng-click="vm.testConnection()"
+                           class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.TEST_CONNECTION' | translate }}
+                </md-button>
+
+                <md-button type="button"
+                           ng-if="vm.isTestingConnection"
+                           ng-click="vm.cancelTestConnection()"
+                           class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL_TEST_CONNECTION' | translate }}
+                </md-button>
+            </div>
+
+            <div hide-gt-xs style="padding-bottom: 8px;"></div>
+
+            <!-- Testing connection  IN PROGRESS -->
+            <div flex="50" flex-xs="100" ng-show="vm.isTestingConnection" layout="row" layout-align="start center">
+                <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+                <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_WAITING' | translate}}</span>
+            </div>
+
+            <!-- Testing connection DONE -->
+            <div flex="50" ng-show="!vm.isTestingConnection && (vm.connectionOk || vm.connectionError)"
+                 layout="row" layout-align="start center">
+                <!-- Testing connection SUCCESS -->
+                <div layout="row" layout-align="center center" ng-show="vm.connectionOk">
+                    <span class="content-ok" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_SUCCESS' | translate}}</span>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                </div>
+                <!-- Testing connection ERROR -->
+                <div layout="row" layout-align="center center" ng-show="vm.connectionError">
+                    <span class="content-error" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_ERROR' | translate}}</span>
+                    <md-icon class="content-error" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+                </div>
+            </div>
+
+            <div flex="auto" ng-show="!vm.isTestingConnection && !(vm.connectionOk || vm.connectionError)"
+                 layout="row" layout-align="start center">
+                <span style="font-style: italic;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.RECOMMENDED' | translate}}</span>
+            </div>
+        </div>
+
+        <!-- Hostname Test -->
+        <div ng-show="[vm.ACCESS_OPTIONS.dynDns, vm.ACCESS_OPTIONS.dynDns].includes(vm.accessType)"
+             layout="row" layout-align="start center"
+             layout-xs="column" layout-align-xs="center center">
+            <div flex-gt-xs="40"
+                 layout="row" layout-align="start center">
+                <md-button type="button"
+                           ng-if="!vm.isTestingHostname"
+                           ng-click="vm.testHostname()"
+                           class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.TEST_HOSTNAME' | translate }}
+                </md-button>
+
+                <md-button type="button"
+                           ng-if="vm.isTestingHostname"
+                           ng-click="vm.cancelTestHostname()"
+                           class="md-raised md-secondary">
+                    {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL_TEST_CONNECTION' | translate }}
+                </md-button>
+            </div>
+
+            <div hide-gt-xs style="padding-bottom: 8px;"></div>
+
+            <!-- Testing connection  IN PROGRESS -->
+            <div flex="50" flex-xs="100" ng-show="vm.isTestingHostname" layout="row" layout-align="start center">
+                <md-progress-circular md-mode="indeterminate" md-diameter="32"></md-progress-circular>
+                <span style="margin-left: 20px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_WAITING' | translate}}</span>
+            </div>
+
+            <!-- Testing connection DONE -->
+            <div flex="50" ng-show="!vm.isTestingHostname && (vm.hostnameOk || vm.hostnameError)"
+                 layout="row" layout-align="start center">
+                <!-- Testing hostname SUCCESS -->
+                <div layout="row" layout-align="center center" ng-show="vm.hostnameOk">
+                    <span class="content-ok" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_SUCCESS' | translate}}</span>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                </div>
+                <!-- Testing hostname ERROR -->
+                <div layout="row" layout-align="center center" ng-show="vm.hostnameError">
+                    <span class="content-error" style="margin-right: 10px;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.LABEL_ERROR' | translate}}</span>
+                    <md-icon class="content-error" md-svg-src="/img/icons/ic_close_black_24px.svg"></md-icon>
+                </div>
+            </div>
+
+            <div ng-show="!vm.isTestingHostname && !(vm.hostnameOk || vm.hostnameError)"
+                 layout="row" layout-align="start center">
+                <span style="font-style: italic;">{{ 'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_CONNECTION_TEST.RECOMMENDED' | translate}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div hide-xs layout="row" layout-align="end center">
+        <md-button type="button" ng-click="vm.openCloseWizardDialog()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+        </md-button>
+
+        <md-button type="button" ng-click="vm.prevStep()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-secondary">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+        </md-button>
+        <md-button type="button" ng-click="vm.launchVpnServer()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-primary md-accent">
+            {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.START_MOBILE' | translate }}
+        </md-button>
+    </div>
+
+    <div hide-gt-xs layout-xs="column" layout-align-xs="center center">
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.resetConnectionTestVars();vm.prevStep()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.PREV' | translate }}
+            </md-button>
+            <md-button type="button" ng-click="vm.resetConnectionTestVars();vm.launchVpnServer()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.NEXT' | translate }}
+            </md-button>
+        </div>
+        <div layout="row" layout-align="end center">
+            <md-button type="button" ng-click="vm.openCloseWizardDialog()" ng-disabled="vm.isTestingConnection || vm.isTestingHostname" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.VPN_HOME_WIZARD.ACTION.CANCEL' | translate }}
+            </md-button>
+        </div>
+    </div>
+
+</div>

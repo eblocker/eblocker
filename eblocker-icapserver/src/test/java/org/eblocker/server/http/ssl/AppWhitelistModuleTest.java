@@ -104,7 +104,7 @@ public class AppWhitelistModuleTest {
     @Test
     public void testParseFromJSONFile() throws IOException{
         String jsonInput = IOUtils.toString(ClassLoader.getSystemResource(TEST_JSON_OUTPUT_FILE));
-        List<AppWhitelistModule> parsedModules = objectMapper.readValue(jsonInput, new TypeReference<Collection<AppWhitelistModule>>(){});
+        List<AppWhitelistModule> parsedModules = objectMapper.readValue(jsonInput, new TypeReference<List<AppWhitelistModule>>(){});
 
         assertEquals(7, parsedModules.size());
         assertTrue(parsedModules.containsAll(modules));

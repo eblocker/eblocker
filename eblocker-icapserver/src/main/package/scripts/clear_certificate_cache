@@ -16,7 +16,7 @@
 # permissions and limitations under the License.
 #
 
-# Call this script whenever a new CA is generated, see man page of ssl_crtd:
+# Call this script whenever a new CA is generated, see man page of security_file_certgen:
 #
 #    Certificates are stored in this database in signed form. After any
 #    change to the signing CA in squid.conf be sure to erase and
@@ -24,11 +24,11 @@
 #
 
 SQUID_CERT_DB='/var/lib/ssl_db'
-SQUID_CERT_DEAMON='/usr/lib/squid/ssl_crtd'
+SQUID_CERT_DEAMON='/usr/lib/squid/security_file_certgen'
 
 if [ -d $SQUID_CERT_DB ];
 then
     rm -r $SQUID_CERT_DB
 fi
-$SQUID_CERT_DEAMON -c -s $SQUID_CERT_DB
+$SQUID_CERT_DEAMON -c -s $SQUID_CERT_DB -M 4MB
 chown -R proxy $SQUID_CERT_DB

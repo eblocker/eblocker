@@ -17,7 +17,7 @@ acl sslwhitelist ssl::server_name "/etc/squid/ssldomainwhitelist"
 acl ipwhitelist dst "/etc/squid/ipwhitelist"
 
 #certificate mimicking
-sslcrtd_program /usr/lib/squid/ssl_crtd -s /var/lib/ssl_db -M 4MB sslcrtd_children 8 startup=1 idle=1
+sslcrtd_program /usr/lib/squid/security_file_certgen -s /var/lib/ssl_db -M 4MB sslcrtd_children 8 startup=1 idle=1
 
 #eblocker certificate validator
 sslcrtvalidator_program ttl=600 nc -q0 127.0.0.1 7443

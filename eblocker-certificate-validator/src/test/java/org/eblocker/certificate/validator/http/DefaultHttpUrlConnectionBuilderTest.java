@@ -149,7 +149,8 @@ public class DefaultHttpUrlConnectionBuilderTest {
 
     @Test(expected = java.net.SocketTimeoutException.class)
     public void testConnectionTimeout() throws IOException {
-        HttpURLConnection connection = builder.setUrl("http://192.168.0.0:18080/get").setConnectionTimeout(50).get();
+        // 192.0.2.0/24 is reserved for documentation according to RFC 5737
+        HttpURLConnection connection = builder.setUrl("http://192.0.2.1:18080/get").setConnectionTimeout(50).get();
         connection.getResponseCode();
     }
 }

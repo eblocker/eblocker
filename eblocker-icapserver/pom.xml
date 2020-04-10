@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.eblocker</groupId>
 		<artifactId>eblocker-parent</artifactId>
-		<version>2.5-SNAPSHOT</version>
+		<version>2.5.0</version>
 		<relativePath>../eblocker-parent</relativePath>
 	</parent>
 	<artifactId>eblocker-icapserver</artifactId>

@@ -275,11 +275,18 @@ public class SSLContextHandler {
         try {
             certificate.checkValidity();
             certificate.verify(issuer.getPublicKey());
-            return true;
+            return isValidityPeriodShorterThan(certificate, 825);
         } catch (GeneralSecurityException e) {
             log.debug("certificate validation failed", e);
             return false;
         }
+    }
+
+    private boolean isValidityPeriodShorterThan(X509Certificate certificate, int maxValidityInDays) {
+        java.util.Date notBefore = certificate.getNotBefore();
+        java.util.Date notAfter = certificate.getNotAfter();
+        long certificateValidity = ChronoUnit.DAYS.between(notBefore.toInstant(), notAfter.toInstant());
+        return certificateValidity < maxValidityInDays;
     }
 
     private X509Certificate getFirstEntryFromKeyStore(EblockerResource eBlockerCertificateResource) {
@@ -323,7 +330,7 @@ public class SSLContextHandler {
 
             log.info("Creating signed SSL certificate with currentIPAddress: {}", currentIPAddress);
 
-            LocalDate notAfter = LocalDateTime.ofInstant(sslService.getCa().getCertificate().getNotAfter().toInstant(), ZoneId.systemDefault()).toLocalDate();
+            LocalDate notAfter = getNotAfter();
             long validDays = ChronoUnit.DAYS.between(LocalDate.now(), notAfter);
             log.info("root certificate is valid until {} ({} days)", notAfter, validDays);
 
@@ -343,6 +350,12 @@ public class SSLContextHandler {
         } catch (IOException | CryptoException e) {
             throw new SslContextException("failed to generate webserver certificate", e);
         }
+    }
+
+    private LocalDate getNotAfter() {
+        LocalDate caNotAfter = LocalDateTime.ofInstant(sslService.getCa().getCertificate().getNotAfter().toInstant(), ZoneId.systemDefault()).toLocalDate();
+        LocalDate maxNotAfter = LocalDate.now().plusDays(824);
+        return caNotAfter.isAfter(maxNotAfter) ? maxNotAfter : caNotAfter;
     }
 
     private SSLContext createSslContext(String keyStorePath) {

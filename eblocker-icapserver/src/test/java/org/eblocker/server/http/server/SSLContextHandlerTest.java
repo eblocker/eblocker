@@ -38,6 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -255,6 +258,11 @@ public class SSLContextHandlerTest {
         Assert.assertTrue(PKI.verifyCertificateSignature(usedKeyPair.getCertificate(), eblockerCa.getCertificate()));
 
         checkCertificate(controlBarHostName, controlBarHostName, defaultLocalNames[0], defaultLocalNames[1], ip.toString(), emergencyIp, vpnIp.toString());
+
+        LocalDate usedCertNotBefore = LocalDateTime.ofInstant(usedKeyPair.getCertificate().getNotBefore().toInstant(), ZoneId.systemDefault()).toLocalDate();
+        Assert.assertTrue(usedCertNotBefore.isEqual(LocalDate.now()));
+        LocalDate usedCertNotAfter = LocalDateTime.ofInstant(usedKeyPair.getCertificate().getNotAfter().toInstant(), ZoneId.systemDefault()).toLocalDate();
+        Assert.assertTrue(usedCertNotAfter.isBefore(LocalDate.now().plusDays(825)));
     }
 
     @Test
@@ -331,7 +339,7 @@ public class SSLContextHandlerTest {
         Mockito.when(sslService.getRenewalCa()).thenReturn(renewalEblockerCa);
         Mockito.when(sslService.isRenewalCaAvailable()).thenReturn(true);
         Mockito.when(sslService.isSslEnabled()).thenReturn(true);
-        
+
         setupKeyStore();
 
         stateListener.onInit(true);

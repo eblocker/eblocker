@@ -141,7 +141,7 @@ public class OpenVpnServerService {
         return result;
     }
 
-    public boolean vpnServerControl(String mode, String... parameter) {
+    private boolean vpnServerControl(String mode, String... parameter) {
         try {
             List<String> list = new ArrayList<>(Arrays.asList(mode));
             list.addAll(Arrays.asList(parameter));
@@ -264,5 +264,25 @@ public class OpenVpnServerService {
 
     public void setOpenVpnExternalAddressType(ExternalAddressType type) {
         dataSource.setOpenVpnExternalAddressType(type);
+    }
+
+    public boolean stopOpenVpnServer() {
+        return vpnServerControl("stop");
+    }
+
+    public boolean getOpenVpnServerStatus() {
+        return vpnServerControl("status");
+    }
+
+    public boolean purgeOpenVpnServer() {
+        return vpnServerControl("purge");
+    }
+
+    public boolean createClientCertificate(String deviceId, String eBlockerRegisteredBy, String eBlockerShortDeviceId, String eBlockerName) {
+        return vpnServerControl("create-client", deviceId, eBlockerRegisteredBy, eBlockerShortDeviceId, eBlockerName);
+    }
+
+    public boolean revokeClientCertificate(String deviceId) {
+        return vpnServerControl("revoke", deviceId);
     }
 }

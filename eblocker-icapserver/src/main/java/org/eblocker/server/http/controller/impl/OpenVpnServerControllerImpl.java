@@ -161,7 +161,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
                     throw new InternalServerErrorException(e);
                 }
             } else {
-                result.setRunning(!openVpnServerService.vpnServerControl("stop"));
+                result.setRunning(!openVpnServerService.stopOpenVpnServer());
                 if (!result.isRunning()) {
                     stopOpenVpnServer();
                 }
@@ -207,7 +207,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         // first we set 'first-run' to true. So if anything goes wrong during the purge, the next restart
         // of eBlocker mobile should clean up anything that is left.
         openVpnServerService.setOpenVpnServerfirstRun(true);
-        result = openVpnServerService.vpnServerControl("stop");
+        result = openVpnServerService.stopOpenVpnServer();
         if (result) {
             try {
                 // save consistent reset-state in redis: to avoid eBlocker mobile to be re-enabled
@@ -218,7 +218,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             }
             // even if port forwarding has not been removed, we have already disabled the server,
             // so we want to continue the reset.
-            result = openVpnServerService.vpnServerControl("purge");
+            result = openVpnServerService.purgeOpenVpnServer();
         }
 
         return result;
@@ -410,7 +410,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             return true;
         }
 
-        boolean result = openVpnServerService.vpnServerControl("revoke", deviceId);
+        boolean result = openVpnServerService.revokeClientCertificate(deviceId);
 
         if (result) {
             log.info("revoke of {} successfull.", deviceId);
@@ -430,11 +430,11 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     }
 
     private boolean obtainServerStatus() {
-        return openVpnServerService.vpnServerControl("status");
+        return openVpnServerService.getOpenVpnServerStatus();
     }
 
     private boolean setCertificate(String deviceId) {
-        if (openVpnServerService.vpnServerControl("create-client", deviceId,
+        if (openVpnServerService.createClientCertificate(deviceId,
                 deviceRegistrationProperties.getDeviceRegisteredBy(),
                 deviceRegistrationProperties.getDeviceId().substring(0, 8),
                 NormalizationUtils.normalizeStringForShellScript(deviceRegistrationProperties.getDeviceName()))) {

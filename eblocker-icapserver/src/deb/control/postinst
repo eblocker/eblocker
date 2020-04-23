@@ -30,6 +30,17 @@ disable_armbian_ramlog() {
     echo "ENABLED=false" > /etc/default/armbian-ramlog
 }
 
+import_openvpn_easy_rsa_ca() {
+    if [ -d /etc/openvpn/easy-rsa/ ] ; then
+        (cd /etc/openvpn/easy-rsa/keys/ && \
+             cp ca.key ca.crt crl.pem eblocker.key eblocker.crt /opt/eblocker-icap/keys/mobile/ && \
+             cp crl.pem /etc/openvpn/ && \
+             cp device:*.crt device:*.key /opt/eblocker-icap/keys/mobile/clients/ && \
+             chown -R icapd:icapd /opt/eblocker-icap/keys/mobile/)
+        rm -rf /etc/openvpn/easy-rsa/
+    fi
+}
+
 if [ "$1" = configure ] ; then
 
     # Import previous ca key / cert
@@ -57,6 +68,8 @@ if [ "$1" = configure ] ; then
     divert_dhcp_defaults
 
     disable_armbian_ramlog
+
+    import_openvpn_easy_rsa_ca
 
     if pgrep apt-get; then
         # Reboot the machine after apt-get is finished:

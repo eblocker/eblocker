@@ -5,7 +5,7 @@ Priority: optional
 Architecture: all
 Breaks: unattended-upgrades
 Replaces: unattended-upgrades
-Depends: oracle-java8-jdk | openjdk-8-jdk, redis-server, eblocker-network-tools, eblocker-certificate-validator (>= 1.10), eblocker-ui, isc-dhcp-client, isc-dhcp-server, tshark, openvpn, ipset, sysstat, easy-rsa, netcat, curl, traceroute, squidssl, eblocker-led, iputils-ping
+Depends: oracle-java8-jdk | openjdk-8-jdk, redis-server, eblocker-network-tools, eblocker-certificate-validator (>= 1.10), eblocker-ui, isc-dhcp-client, isc-dhcp-server, tshark, openvpn, ipset, sysstat, netcat, curl, traceroute, squidssl, eblocker-led, iputils-ping
 Maintainer: eBlocker Open Source UG <dev@eblocker.org>
 Description: eBlocker Device - Server
 Distribution: development

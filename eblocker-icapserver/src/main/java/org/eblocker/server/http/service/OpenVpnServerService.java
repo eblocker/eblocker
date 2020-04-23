@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.openvpn.server.OpenVpnCa;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
@@ -56,7 +58,7 @@ public class OpenVpnServerService {
     private final ScheduledExecutorService executorService;
     private final EventLogger eventLogger;
     private final String openVpnServerCommand;
-    private final DeviceRegistrationProperties deviceRegistrationProperties;
+    private final OpenVpnCa openVpnCa;
     private final int port;
     private final String portForwardingDescription;
     private final int portForwardingTempDuration;
@@ -74,12 +76,12 @@ public class OpenVpnServerService {
                                 DnsService dnsService,
                                 @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                                 EventLogger eventLogger,
-                                DeviceRegistrationProperties deviceRegistrationProperties,
                                 @Named("openvpn.server.command") String openVpnServerCommand,
                                 @Named("openvpn.server.port") int port,
                                 @Named("openvpn.server.portforwarding.duration.initial") int tempDuration,
                                 @Named("openvpn.server.portforwarding.duration.use") int duration,
-                                @Named("openvpn.server.portforwarding.description")String portForwardingDescription) {
+                                @Named("openvpn.server.portforwarding.description")String portForwardingDescription,
+                                OpenVpnCa openVpnCa) {
         this.scriptRunner = scriptRunner;
         this.dataSource = dataSource;
         this.upnpService = upnpService;
@@ -93,7 +95,7 @@ public class OpenVpnServerService {
         this.duration = duration;
         this.portForwardingTempDuration = tempDuration;
         this.eventLogger = eventLogger;
-        this.deviceRegistrationProperties = deviceRegistrationProperties;
+        this.openVpnCa = openVpnCa;
     }
 
     @SubSystemInit
@@ -123,12 +125,19 @@ public class OpenVpnServerService {
             return false;
         }
 
-        if (isOpenVpnServerfirstRun() && !vpnServerControl("init",
-                deviceRegistrationProperties.getDeviceRegisteredBy(),
-                deviceRegistrationProperties.getDeviceId().substring(0, 8),
-                NormalizationUtils.normalizeStringForShellScript(deviceRegistrationProperties.getDeviceName()))) {
-            log.error("OpenVPN-server could not be initialized.");
-            return false;
+        if (isOpenVpnServerfirstRun()) {
+            try {
+                openVpnCa.generateCa();
+                openVpnCa.generateServerCertificate();
+            } catch (Exception e) {
+                log.error("OpenVPN CA could not be initialized.", e);
+                openVpnCa.tearDown();
+                return false;
+            }
+            if (!vpnServerControl("init")) {
+                log.error("OpenVPN-server could not be initialized.");
+                return false;
+            }
         }
 
         if (vpnServerControl("start")) {
@@ -141,12 +150,9 @@ public class OpenVpnServerService {
         return result;
     }
 
-    public boolean vpnServerControl(String mode, String... parameter) {
+    private boolean vpnServerControl(String mode) {
         try {
-            List<String> list = new ArrayList<>(Arrays.asList(mode));
-            list.addAll(Arrays.asList(parameter));
-
-            return (scriptRunner.runScript(openVpnServerCommand, list.toArray(new String[0])) == 0);
+            return (scriptRunner.runScript(openVpnServerCommand, mode) == 0);
         } catch (IOException e) {
             log.error("Could not {} openVPN server", mode, e);
         } catch (InterruptedException e) {
@@ -264,5 +270,42 @@ public class OpenVpnServerService {
 
     public void setOpenVpnExternalAddressType(ExternalAddressType type) {
         dataSource.setOpenVpnExternalAddressType(type);
+    }
+
+    public boolean stopOpenVpnServer() {
+        return vpnServerControl("stop");
+    }
+
+    public boolean getOpenVpnServerStatus() {
+        return vpnServerControl("status");
+    }
+
+    public boolean purgeOpenVpnServer() {
+        openVpnCa.tearDown();
+        return vpnServerControl("purge");
+    }
+
+    public boolean createClientCertificate(String deviceId) {
+        try {
+            openVpnCa.generateClientCertificate(deviceId);
+        } catch (Exception e) {
+            log.error("Could not generate client certificate for " + deviceId, e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean revokeClientCertificate(String deviceId) {
+        try {
+            openVpnCa.revokeClientCertificate(deviceId);
+        } catch (Exception e) {
+            log.error("Could not revoke client certificate for " + deviceId, e);
+            return false;
+        }
+        return vpnServerControl("update-crl");
+    }
+
+    public Set<String> getDeviceIdsWithCertificates() throws IOException {
+        return openVpnCa.getActiveClientIds();
     }
 }

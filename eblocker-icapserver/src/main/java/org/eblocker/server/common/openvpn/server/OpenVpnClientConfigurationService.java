@@ -39,6 +39,7 @@ public class OpenVpnClientConfigurationService {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
 
     private final OpenVpnServerService openVpnServerService;
+    private final OpenVpnCa openVpnCa;
     private final String windowsClientTemplatePath;
     private final String unixClientTemplatePath;
     private final String openVpnServerPath;
@@ -48,6 +49,7 @@ public class OpenVpnClientConfigurationService {
     @Inject
     public OpenVpnClientConfigurationService (
             OpenVpnServerService openVpnServerService,
+            OpenVpnCa openVpnCa,
             @Named("openvpn.server.path") String openVpnServerPath,
             @Named("openvpn.server.client.windows-template") String windowsClientTemplatePath,
             @Named("openvpn.server.client.unix-template") String unixClientTemplatePath,
@@ -57,6 +59,7 @@ public class OpenVpnClientConfigurationService {
         this.windowsClientTemplatePath = windowsClientTemplatePath;
         this.unixClientTemplatePath = unixClientTemplatePath;
         this.openVpnServerService = openVpnServerService;
+        this.openVpnCa = openVpnCa;
         this.macosClientTemplatePath = macosClientTemplatePath;
     }
 
@@ -83,10 +86,10 @@ public class OpenVpnClientConfigurationService {
         try {
             outputStream.write(remoteString.getBytes());
             outputStream.write(readFileWithNewLine(path));
-            outputStream.write(createTag(extractLinesFromFile(String.format("%s/ca.crt", openVpnServerPath)), "ca"));
-            outputStream.write(createTag(extractLinesFromFile(String.format("%s/easy-rsa/keys/%s.crt", openVpnServerPath, deviceName)), "cert"));
-            outputStream.write(createTag(extractLinesFromFile(String.format("%s/easy-rsa/keys/%s.key", openVpnServerPath, deviceName)), "key"));
-            outputStream.write(createTag(extractLinesFromFile(String.format("%s/ta.key", openVpnServerPath)), "tls-auth"));
+            outputStream.write(createTag(extractLinesFromFile(openVpnCa.getCaCertificatePath()), "ca"));
+            outputStream.write(createTag(extractLinesFromFile(openVpnCa.getClientCertificatePath(deviceName)), "cert"));
+            outputStream.write(createTag(extractLinesFromFile(openVpnCa.getClientKeyPath(deviceName)), "key"));
+            outputStream.write(createTag(extractLinesFromFile(Paths.get(openVpnServerPath, "ta.key")), "tls-auth"));
         }
         catch (Exception e) {
             log.error("Error creating ovpn-profile.", e);
@@ -132,15 +135,13 @@ public class OpenVpnClientConfigurationService {
         return baos.toByteArray();
     }
 
-    private List<String> extractLinesFromFile(String path) throws IOException {
+    private List<String> extractLinesFromFile(Path path) throws IOException {
         String beginDelimiter = "-----BEGIN";
         String endDelimiter = "-----END";
         List<String> result = new ArrayList<>();
         boolean validLine = false;
 
-        Path fullpath = Paths.get(path);
-
-        List<String> lines = Files.readAllLines(fullpath);
+        List<String> lines = Files.readAllLines(path);
 
         for (String line: lines) {
             String currentLine = line.trim() + newLine;

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,11 +50,7 @@ import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.http.utils.NormalizationUtils;
 
 public class OpenVpnServerControllerImplTest {
-    private static final String OPENVPN_TEST_PATH = "test-data";
-    private static final String registrationEmailAddress = "test@test.test";
     private static final String registrationEblockerName = "my eBlocker (the white cube)";
-    private static final String registrationEblockerDeviceId = "15ae0432a0be0d0143401ee4d7c7a9a5114b6c13ba37ea6f0642451a75c1fcd2";
-    private static final String registrationEblockerDeviceIdSbustring = registrationEblockerDeviceId.substring(0, 8);
 
     private OpenVpnServerService openVpnServerService;
     private OpenVpnServerControllerImpl controller;
@@ -61,7 +58,6 @@ public class OpenVpnServerControllerImplTest {
     private DnsService dnsService;
     private DynDnsService dynDnsService;
     private Response response;
-    private String testPath;
     private OpenVpnClientConfigurationService openVpnClientConfigurationService;
     private SquidConfigController squidConfigController;
     private String deviceId = "device:001122334455";
@@ -70,7 +66,7 @@ public class OpenVpnServerControllerImplTest {
     private NetworkStateMachine networkStateMachine;
 
     @Before
-    public void setup() throws URISyntaxException {
+    public void setup() throws URISyntaxException, IOException {
         deviceService = Mockito.mock(DeviceService.class);
         dnsService = Mockito.mock(DnsService.class);
         dynDnsService = Mockito.mock(DynDnsService.class);
@@ -78,18 +74,13 @@ public class OpenVpnServerControllerImplTest {
         openVpnServerService = Mockito.mock(OpenVpnServerService.class);
 
         Mockito.when(openVpnServerService.isOpenVpnServerEnabled()).thenReturn(true);
+        Mockito.when(openVpnServerService.getDeviceIdsWithCertificates()).thenReturn(Collections.singleton(deviceId));
         squidConfigController = Mockito.mock(SquidConfigController.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
-        Mockito.when(deviceRegistrationProperties.getDeviceRegisteredBy()).thenReturn(registrationEmailAddress);
         Mockito.when(deviceRegistrationProperties.getDeviceName()).thenReturn(registrationEblockerName);
-        Mockito.when(deviceRegistrationProperties.getDeviceId()).thenReturn(registrationEblockerDeviceId);
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
 
-        testPath = new File(ClassLoader.getSystemResource(OPENVPN_TEST_PATH).toURI()).toString();
-
-
         controller = new OpenVpnServerControllerImpl(
-                testPath,
                 openVpnServerService,
                 openVpnClientConfigurationService,
                 deviceService,
@@ -215,23 +206,17 @@ public class OpenVpnServerControllerImplTest {
         Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS))
                 .thenReturn("test-xyz".getBytes());
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("vpn.hh.eblocker.com");
-        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId, registrationEmailAddress,
-                registrationEblockerDeviceIdSbustring,
-                NormalizationUtils.normalizeStringForShellScript(registrationEblockerName))).thenReturn(true);
+        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId)).thenReturn(true);
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.WINDOWS.toString());
 
         ByteBuf buffer = (ByteBuf) controller.downloadClientConf(request, response);
         byte[] bytes = new byte[buffer.readableBytes()];
         buffer.readBytes(bytes);
         assertArrayEquals("test-xyz".getBytes(), bytes);
-        Mockito.verify(openVpnServerService).createClientCertificate(newDeviceId, registrationEmailAddress,
-                registrationEblockerDeviceIdSbustring,
-                NormalizationUtils.normalizeStringForShellScript(registrationEblockerName));
+        Mockito.verify(openVpnServerService).createClientCertificate(newDeviceId);
 
         // Certificate creation failed
-        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId, registrationEmailAddress,
-                registrationEblockerDeviceIdSbustring,
-                NormalizationUtils.normalizeStringForShellScript(registrationEblockerName))).thenReturn(false);
+        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId)).thenReturn(false);
         assertNull(controller.downloadClientConf(request, response));
     }
 
@@ -264,15 +249,6 @@ public class OpenVpnServerControllerImplTest {
         assertNull(controller.downloadClientConf(request, response));
 
         assertEquals(400, response.getResponseStatus().code());
-    }
-
-    @Test
-    public void getCertificates() {
-        Request request = Mockito.mock(Request.class);
-        List<String> actual = controller.getCertificates(request, new Response());
-
-        assertEquals(1, actual.size());
-        assertEquals(deviceId, actual.get(0));
     }
 
     @Test

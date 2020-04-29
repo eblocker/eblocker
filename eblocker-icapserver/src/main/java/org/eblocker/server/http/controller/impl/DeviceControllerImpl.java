@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DeviceControllerImpl implements DeviceController {
-	private static final String DEVICE_EBLOCKER_VENDOR = "eBlocker GmbH";
+	private static final String DEVICE_EBLOCKER_VENDOR = "eBlocker";
 	private static final Logger log = LoggerFactory.getLogger(DeviceControllerImpl.class);
 	private final AnonymousService anonymousService;
     private final DeviceOnlineStatusCache deviceOnlineStatusCache;

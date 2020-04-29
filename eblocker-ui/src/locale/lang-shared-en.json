@@ -26,7 +26,7 @@
                 "LABEL_CONNECTED" : "Connected",
                 "LABEL_TOR" : "Tor Network",
                 "TITLE" : "IP Anonymization",
-                "TOR_CHECK_URL" : "https://www.eBlocker.com/en/privacy-check/"
+                "TOR_CHECK_URL" : "https://www.eBlocker.org/en/privacy-check/"
             },
             "NOTIFICATION" : {
                 "CONNECTION_DOWN" : "VPN {{name}} has been disconnected.",
@@ -63,7 +63,7 @@
                         "CANCEL" : "Cancel",
                         "OK" : "Activate Tor"
                     },
-                    "MORE_INFO_URL" : "https://www.eBlocker.com/en/tor_info",
+                    "MORE_INFO_URL" : "https://www.eBlocker.org/en/tor_info",
                     "MORE_INFO_URL_TEXT" : "Additional Information",
                     "SHOW_WARNINGS_CAPTION" : "Do not show this warning again",
                     "TITLE" : "Activate Tor for this device"
@@ -116,3 +116,4 @@
         }
     }
 }
+

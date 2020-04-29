@@ -992,18 +992,12 @@
                 "LABEL_CHOICE" : "Select your operating system:",
                 "NOTIFY_NO_DEVICE" : "Unable to detect your device.",
                 "TITLE" : "1. Download OpenVPN app",
-                "VPN_FILE_NAME" : {
-                    "ANDROID" : "openvpn",
-                    "IOS" : "openvpn-connect",
-                    "MAC" : "Tunnelblick_3.7.6a_build_5080.dmg",
-                    "WINDOWS" : "openvpn-install-latest-stable.exe"
-                },
                 "VPN_URL" : {
                     "ANDROID" : "https://play.google.com/store/apps/details?id=net.openvpn.openvpn",
                     "IOS" : "https://itunes.apple.com/de/app/openvpn-connect/id590379981?mt=8",
-                    "MAC" : "https://tunnelblick.net/release/Tunnelblick_3.7.6a_build_5080.dmg",
+                    "MAC" : "https://tunnelblick.net/",
                     "OTHER" : "",
-                    "WINDOWS" : "http://build.openvpn.net/downloads/releases/latest/openvpn-install-latest-stable.exe"
+                    "WINDOWS" : "http://build.openvpn.net/downloads/releases/latest/"
                 }
             },
             "CONNECT_ANDROID" : {

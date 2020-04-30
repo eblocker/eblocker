@@ -81,7 +81,6 @@
                     "AGREE_NO_REGISTRATION": "Ohne Aktivierung fortfahren.",
                     "DATE_FORMAT" : "D. MMM YYYY",
                     "ERROR_LOADING_TOS" : "Lizenzbestimmungen konnten nicht geladen werden. Es wird eine Internet-Verbindung benötigt.",
-                    "EULA_URL" : "https://www.eBlocker.org/de/eula/",
                     "HEADING" : "eBlocker Lizenzbestimmungen (EULA)",
                     "LABEL" : "Lizenzbestimmungen",
                     "NEW_WINDOW" : "In neuem Fenster öffnen",
@@ -1475,7 +1474,6 @@
                     "TOS" : {
                         "AGREE_TEXT" : "Ich habe die Lizenzbestimmungen (EULA) gelesen und stimme diesen zu.",
                         "DATE_FORMAT" : "D. MMM YYYY",
-                        "EULA_URL" : "https://www.eBlocker.org/de/eula/",
                         "HEADING" : "eBlocker Lizenzbestimmungen (EULA)",
                         "LABEL" : "Lizenzbestimmungen",
                         "NEW_WINDOW" : "In neuem Fenster öffnen",

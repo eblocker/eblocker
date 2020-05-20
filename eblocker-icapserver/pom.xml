@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.eblocker</groupId>
 		<artifactId>eblocker-parent</artifactId>
-		<version>2.5-SNAPSHOT</version>
+		<version>2.5.1</version>
 		<relativePath>../eblocker-parent</relativePath>
 	</parent>
 	<artifactId>eblocker-icapserver</artifactId>
@@ -442,6 +442,8 @@
 									<paths>
 										<path>/opt/eblocker-icap/network</path>
 										<path>/opt/eblocker-icap/keys</path>
+										<path>/opt/eblocker-icap/keys/mobile</path>
+										<path>/opt/eblocker-icap/keys/mobile/clients</path>
 										<path>/opt/eblocker-icap/keys/ssl</path>
 										<path>/opt/eblocker-icap/registration</path>
 										<path>/opt/eblocker-icap/tmp</path>

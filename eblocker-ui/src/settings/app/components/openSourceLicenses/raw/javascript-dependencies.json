@@ -59,7 +59,7 @@
 {"name":"inherits","version":"2.0.4","repository":"http://github.com/isaacs/inherits","summary":"ISC"},
 {"name":"ipaddr.js","version":"1.9.0","repository":"http://github.com/whitequark/ipaddr.js","summary":"MIT"},
 {"name":"isarray","version":"0.0.1","repository":"http://github.com/juliangruber/isarray","summary":"MIT"},
-{"name":"jquery","version":"3.4.1","repository":"https://github.com/jquery/jquery","summary":"MIT"},
+{"name":"jquery","version":"3.5.0","repository":"https://github.com/jquery/jquery","summary":"MIT"},
 {"name":"jquery-ui","version":"1.12.1","repository":"http://github.com/jquery/jquery-ui","summary":"MIT"},
 {"name":"jquery-ui-dist","version":"1.12.1","repository":"http://github.com/jquery/jquery-ui","summary":"MIT"},
 {"name":"jquery-ui-touch-punch","version":"0.2.3","repository":"https://github.com/furf/jquery-ui-touch-punch","summary":"Dual licensed under the MIT or GPL Version 2 licenses."},

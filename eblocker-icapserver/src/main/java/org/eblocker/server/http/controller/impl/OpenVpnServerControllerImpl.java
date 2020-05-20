@@ -57,7 +57,6 @@ import com.google.inject.name.Named;
 
 public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
-    private final String openVpnServerPath;
     private final OpenVpnServerService openVpnServerService;
     private final DeviceService deviceService;
     private final DynDnsService dynDnsService;
@@ -67,8 +66,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     private final NetworkStateMachine networkStateMachine;
 
     @Inject
-    public OpenVpnServerControllerImpl(@Named("openvpn.server.path") String openVpnServerPath,
-                                       OpenVpnServerService openVpnServerService,
+    public OpenVpnServerControllerImpl(OpenVpnServerService openVpnServerService,
                                        OpenVpnClientConfigurationService openVpnClientConfigurationService,
                                        DeviceService deviceService,
                                        DynDnsService dynDnsService,
@@ -76,7 +74,6 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
                                        DeviceRegistrationProperties deviceRegistrationProperties,
                                        NetworkStateMachine networkStateMachine) {
         this.openVpnServerService = openVpnServerService;
-        this.openVpnServerPath = openVpnServerPath;
         this.dynDnsService = dynDnsService;
         this.openVpnClientConfigurationService = openVpnClientConfigurationService;
         this.squidConfigController = squidConfigController;
@@ -161,7 +158,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
                     throw new InternalServerErrorException(e);
                 }
             } else {
-                result.setRunning(!openVpnServerService.vpnServerControl("stop"));
+                result.setRunning(!openVpnServerService.stopOpenVpnServer());
                 if (!result.isRunning()) {
                     stopOpenVpnServer();
                 }
@@ -207,7 +204,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         // first we set 'first-run' to true. So if anything goes wrong during the purge, the next restart
         // of eBlocker mobile should clean up anything that is left.
         openVpnServerService.setOpenVpnServerfirstRun(true);
-        result = openVpnServerService.vpnServerControl("stop");
+        result = openVpnServerService.stopOpenVpnServer();
         if (result) {
             try {
                 // save consistent reset-state in redis: to avoid eBlocker mobile to be re-enabled
@@ -218,14 +215,14 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             }
             // even if port forwarding has not been removed, we have already disabled the server,
             // so we want to continue the reset.
-            result = openVpnServerService.vpnServerControl("purge");
+            result = openVpnServerService.purgeOpenVpnServer();
         }
 
         return result;
     }
 
     @Override
-    public List<String> getCertificates(Request request, Response response) {
+    public List<String> getCertificates(Request request, Response response) throws IOException {
         return getCertificates();
     }
 
@@ -405,12 +402,17 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     }
 
     private boolean revoke(String deviceId) {
-        if (!getCertificates().contains(deviceId)) {
-            log.info("Device {} has no certificates", deviceId);
-            return true;
+        try {
+            if (!getCertificates().contains(deviceId)) {
+                log.info("Device {} has no certificates", deviceId);
+                return true;
+            }
+        } catch (IOException e) {
+            log.error("Could not get list of active certificates. Could not revoke certificate for " + deviceId, e);
+            return false;
         }
 
-        boolean result = openVpnServerService.vpnServerControl("revoke", deviceId);
+        boolean result = openVpnServerService.revokeClientCertificate(deviceId);
 
         if (result) {
             log.info("revoke of {} successfull.", deviceId);
@@ -430,14 +432,11 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     }
 
     private boolean obtainServerStatus() {
-        return openVpnServerService.vpnServerControl("status");
+        return openVpnServerService.getOpenVpnServerStatus();
     }
 
     private boolean setCertificate(String deviceId) {
-        if (openVpnServerService.vpnServerControl("create-client", deviceId,
-                deviceRegistrationProperties.getDeviceRegisteredBy(),
-                deviceRegistrationProperties.getDeviceId().substring(0, 8),
-                NormalizationUtils.normalizeStringForShellScript(deviceRegistrationProperties.getDeviceName()))) {
+        if (openVpnServerService.createClientCertificate(deviceId)) {
             log.info("setCertificates of {} successfull.", deviceId);
             return true;
         } else {
@@ -446,20 +445,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         }
     }
 
-    private List<String> getCertificates () {
-        String path = openVpnServerPath + "/easy-rsa/keys";
-        List<String> clientCertificates = new ArrayList<>();
-        File dir = new File(path);
-
-        if (dir.exists()) {
-            File[] certificates = dir.listFiles((dir1, name) -> name.matches("device:\\w{12}\\.crt$"));
-
-            if (certificates != null) {
-                for (File certificate : certificates) {
-                    clientCertificates.add(certificate.getName().split(".crt")[0]);
-                }
-            }
-        }
-        return clientCertificates;
+    private List<String> getCertificates() throws IOException {
+        return new ArrayList<String>(openVpnServerService.getDeviceIdsWithCertificates());
     }
 }

@@ -76,6 +76,6 @@ public class ExceptionLogger implements Postprocessor {
                 response.getResponseStatus().reasonPhrase() + " for " +
                 request.getHttpMethod().name() + " " +
                 request.getUrl() + " caused by " +
-                e.getMessage();
+                e.getClass().getName() + ": " + e.getMessage();
     }
 }

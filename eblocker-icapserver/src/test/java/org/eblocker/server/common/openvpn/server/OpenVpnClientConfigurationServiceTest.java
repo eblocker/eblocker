@@ -25,6 +25,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.eblocker.server.common.data.OperatingSystemType;
 import org.eblocker.server.http.service.OpenVpnServerService;
@@ -40,6 +41,7 @@ public class OpenVpnClientConfigurationServiceTest {
 
     private OpenVpnClientConfigurationService controller;
     private OpenVpnServerService openVpnServerService;
+    private OpenVpnCa openVpnCa;
     private String testPath;
 
     @Rule public ExpectedException thrown= ExpectedException.none();
@@ -51,16 +53,27 @@ public class OpenVpnClientConfigurationServiceTest {
         Mockito.when(openVpnServerService.getOpenVpnMappedPort()).thenReturn(1194);
         testPath = new File(ClassLoader.getSystemResource(OPENVPN_TEST_PATH).toURI()).toString();
 
-        String windowsClientConfigTemplate = FileSystems.getDefault().getPath(testPath, "openvpn-server-client.windows-template.conf").toString();
-        String unixClientConfigTemplate = FileSystems.getDefault().getPath(testPath, "openvpn-server-client.unix-template.conf").toString();
-        String macosClientConfigTemplate = FileSystems.getDefault().getPath(testPath, "openvpn-server-client.macos-template.conf").toString();
+        openVpnCa = Mockito.mock(OpenVpnCa.class);
+        Mockito.when(openVpnCa.getCaCertificatePath()).thenReturn(Paths.get(testPath, "ca.crt"));
+        prepareClientPaths(openVpnCa, deviceName);
+        prepareClientPaths(openVpnCa, "asa");
+
+        String windowsClientConfigTemplate = Paths.get(testPath, "openvpn-server-client.windows-template.conf").toString();
+        String unixClientConfigTemplate    = Paths.get(testPath, "openvpn-server-client.unix-template.conf").toString();
+        String macosClientConfigTemplate   = Paths.get(testPath, "openvpn-server-client.macos-template.conf").toString();
 
         controller = new OpenVpnClientConfigurationService (
                 openVpnServerService,
+                openVpnCa,
                 testPath,
                 windowsClientConfigTemplate,
                 unixClientConfigTemplate,
                 macosClientConfigTemplate);
+    }
+
+    private void prepareClientPaths(OpenVpnCa openVpnCa, String deviceName) {
+        Mockito.when(openVpnCa.getClientCertificatePath(deviceName)).thenReturn(Paths.get(testPath, deviceName + ".crt"));
+        Mockito.when(openVpnCa.getClientKeyPath(deviceName)).thenReturn(Paths.get(testPath, deviceName + ".key"));
     }
 
     @Test

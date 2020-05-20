@@ -31,7 +31,7 @@ public interface OpenVpnServerController {
     public VpnServerStatus getOpenVpnServerStatus(Request request, Response response);
     public VpnServerStatus setOpenVpnServerStatus(Request request, Response response);
     public boolean resetOpenVpnServerStatus(Request request, Response response);
-    public List<String> getCertificates(Request request, Response response);
+    public List<String> getCertificates(Request request, Response response) throws IOException;
     public String generateDownloadUrl(Request request, Response response) throws IOException;
     public String getOpenVpnFileName(Request request, Response response) throws IOException;
     public Object downloadClientConf(Request request, Response response) throws IOException;

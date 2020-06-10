@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/perl -w
 #
 # Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
 #
@@ -16,11 +16,53 @@
 # permissions and limitations under the License.
 #
 
-CONFDIR=/opt/eblocker-icap/network
+my $CONFDIR='/opt/eblocker-icap/network';
+my $IPTABLES='/usr/sbin/iptables';
+my $IPTABLES_RESTORE='/usr/sbin/iptables-restore';
+
+# This is equivalent to 'iptables-restore -n'
+# (which on Raspbian Buster sometimes ignores positions of rules to be inserted)
+sub apply_configuration_delta {
+    my ($filename) = @_;
+    open(F, $filename) or die "Could not open $filename: $!";
+    my $table;
+    while(my $line = <F>) {
+        chomp($line);
+        if ($line =~ /^\*([a-z]+)$/) {
+            $table = $1;
+        } elsif ($line eq 'COMMIT') {
+            undef $table;
+        } else {
+            my @args = split(/\s+/, $line);
+            if (scalar(@args) == 0) {
+                warn "Ignoring empty line in $filename\n";
+            } else {
+                unless (defined $table) {
+                    die "Cannot apply iptables command '$line' while table is undefined.";
+                }
+                unshift(@args, $IPTABLES, '-t', $table);
+                if (system(@args) != 0) {
+                    die "Command '".join(' ', @args)."' failed: $?";
+                }
+            }
+        }
+    }
+    close(F);
+}
+
+sub apply_configuration_full {
+    my ($filename) = @_;
+    if (system($IPTABLES_RESTORE, $filename) != 0) {
+        die "iptables-restore $filename failed: $?";
+    }
+}
+
 
 # Install firewall configuration
-if [ -f $CONFDIR/firewall.conf.delta  ]; then
-    iptables-restore -n < $CONFDIR/firewall.conf.delta
-elif [ -f $CONFDIR/firewall.conf ]; then
-    iptables-restore < $CONFDIR/firewall.conf
-fi
+if (-f "$CONFDIR/firewall.conf.delta") {
+    apply_configuration_delta("$CONFDIR/firewall.conf.delta");
+} elsif (-f "$CONFDIR/firewall.conf") {
+    apply_configuration_full("$CONFDIR/firewall.conf");
+} else {
+    die "Neither firewall.conf nor firewall.conf.delta exists in $CONFDIR. Cannot apply firewall configuration.\n";
+}

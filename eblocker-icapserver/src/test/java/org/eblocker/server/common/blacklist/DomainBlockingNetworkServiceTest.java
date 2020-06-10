@@ -59,7 +59,7 @@ public class DomainBlockingNetworkServiceTest {
         workerGroup.shutdownGracefully(100, 100, TimeUnit.MILLISECONDS).awaitUninterruptibly();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 10000)
     public void testRun() throws IOException {
         networkService.init();
 

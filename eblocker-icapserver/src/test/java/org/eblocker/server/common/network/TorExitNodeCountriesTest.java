@@ -54,7 +54,7 @@ public class TorExitNodeCountriesTest {
 	public void getExitNodeCountries() {
 		Set<ExitNodeCountry> exitNodeCountries = countries.getExitNodeCountries();
 		assertTrue(exitNodeCountries.contains(new ExitNodeCountry("Germany", "de")));
-		assertTrue(exitNodeCountries.contains(new ExitNodeCountry("Saint Kitts And Nevis", "kn")));
+		assertTrue(exitNodeCountries.contains(new ExitNodeCountry("Cayman Islands", "ky")));
 		assertFalse(exitNodeCountries.contains(new ExitNodeCountry("Fantasy Land", "xy")));
 	}
 }

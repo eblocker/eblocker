@@ -3,7 +3,7 @@ Version: [[version]]
 Section: misc
 Priority: optional
 Architecture: all
-Depends: oracle-java8-jdk | openjdk-8-jdk
+Depends: openjdk-11-jdk-headless | oracle-java8-jdk | openjdk-8-jdk
 Maintainer: eBlocker Open Source UG <dev@eblocker.org>
 Description: eBlocker Squid external TLS certificate validator
 Distribution: development

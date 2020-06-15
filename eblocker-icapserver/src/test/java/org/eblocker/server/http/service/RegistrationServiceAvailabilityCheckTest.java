@@ -93,7 +93,7 @@ public class RegistrationServiceAvailabilityCheckTest {
         mockPingResult("1.1.1.1", 0);
         mockHttpResult("https://www.eblocker.com", true);
         mockHttpResult("https://www.google.com", true);
-        Mockito.when(registrationClient.getTosContainer()).thenThrow(Exception.class);
+        Mockito.when(registrationClient.getTosContainer()).thenThrow(new RuntimeException());
         Mockito.when(registrationProperties.getRegistrationState()).thenReturn(RegistrationState.NEW);
 
         initService();
@@ -109,7 +109,7 @@ public class RegistrationServiceAvailabilityCheckTest {
         mockPingResult("1.1.1.1", 0);
         mockHttpResult("https://www.eblocker.com", true);
         mockHttpResult("https://www.google.com", true);
-        Mockito.when(registrationClient.getTosContainer()).thenThrow(Exception.class);
+        Mockito.when(registrationClient.getTosContainer()).thenThrow(new RuntimeException());
         Mockito.when(registrationProperties.getRegistrationState()).thenReturn(RegistrationState.NEW);
 
         initService();
@@ -134,7 +134,7 @@ public class RegistrationServiceAvailabilityCheckTest {
         mockPingResult("1.1.1.1", 1);
         mockHttpResult("https://www.eblocker.com", false);
         mockHttpResult("https://www.google.com", false);
-        Mockito.when(registrationClient.getTosContainer()).thenThrow(Exception.class);
+        Mockito.when(registrationClient.getTosContainer()).thenThrow(new RuntimeException());
         Mockito.when(registrationProperties.getRegistrationState()).thenReturn(RegistrationState.NEW);
 
         initService();
@@ -150,7 +150,7 @@ public class RegistrationServiceAvailabilityCheckTest {
         mockPingResult("1.1.1.1", 0);
         mockHttpResult("https://www.eblocker.com", false);
         mockHttpResult("https://www.google.com", false);
-        Mockito.when(registrationClient.getTosContainer()).thenThrow(Exception.class);
+        Mockito.when(registrationClient.getTosContainer()).thenThrow(new RuntimeException());
         Mockito.when(registrationProperties.getRegistrationState()).thenReturn(RegistrationState.NEW);
 
         initService();
@@ -178,7 +178,7 @@ public class RegistrationServiceAvailabilityCheckTest {
         mockPingResult("1.1.1.1", 0);
         mockHttpResult("https://www.eblocker.com", true);
         mockHttpResult("https://www.google.com", true);
-        Mockito.when(registrationClient.getTosContainer()).thenThrow(Exception.class);
+        Mockito.when(registrationClient.getTosContainer()).thenThrow(new RuntimeException());
         Mockito.when(registrationProperties.getRegistrationState()).thenReturn(RegistrationState.NEW);
 
         initService();

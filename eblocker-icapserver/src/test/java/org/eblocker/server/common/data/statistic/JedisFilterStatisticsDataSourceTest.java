@@ -245,7 +245,7 @@ public class JedisFilterStatisticsDataSourceTest {
         try (Jedis jedis = JEDIS_POOL.getResource()) {
             jedis.set("stats_total_reset", String.valueOf(reset.toEpochMilli()));
         }
-        Assert.assertEquals(reset, filterStatisticsDataSource.getLastResetTotalCounters());
+        Assert.assertEquals(reset.toEpochMilli(), filterStatisticsDataSource.getLastResetTotalCounters().toEpochMilli());
     }
 
     @Test

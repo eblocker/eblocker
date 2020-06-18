@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-top</artifactId>
-        <version>2.3.10</version>
+        <version>2.3.11</version>
         <relativePath>../../eblocker-top/</relativePath>
     </parent>
     <groupId>org.eblocker</groupId>
@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>org.eblocker</groupId>
                 <artifactId>eblocker-registration-api</artifactId>
-                <version>2.6.1</version>
+                <version>2.6.2</version>
             </dependency>
             <dependency>
                 <groupId>org.eblocker</groupId>

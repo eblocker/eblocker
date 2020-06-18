@@ -837,9 +837,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         url: slashOptionSubState + 'analysis',
         parent: filterState.name,
         tabOrder: 3,
-        requiredLicense: function() {
-            return 'EXP';
-        },
+        requiredLicense: filter.requiredLicense,
         translationKey: 'ADMINCONSOLE.FILTER_ANALYSIS.LABEL',
         component: 'analysisComponent'
     };

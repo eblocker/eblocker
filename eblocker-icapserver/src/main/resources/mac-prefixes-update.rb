@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/env ruby
 #
 # Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
 #
@@ -26,7 +26,7 @@ puts "Writing mac-prefixes.txt..."
 File.open('mac-prefixes.txt', 'w') do |file|
   oui.each_line do |line|
     if line =~ /\s*([0-9A-F]{2})-([0-9A-F]{2})-([0-9A-F]{2})\s+\(hex\)\s+(.*)/
-      file.puts(["#$1#$2#$3".downcase, $4.chomp].join(':'))
+      file.puts(["#$1#$2#$3".downcase, $4.rstrip].join(':'))
     end
   end
 end

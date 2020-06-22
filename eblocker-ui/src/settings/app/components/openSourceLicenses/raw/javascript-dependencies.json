@@ -4,7 +4,7 @@
 {"name":"abbrev","version":"1.1.1","repository":"ssh://git@github.com/isaacs/abbrev-js","summary":"ISC"},
 {"name":"accepts","version":"1.3.7","repository":"https://github.com/jshttp/accepts","summary":"MIT"},
 {"name":"ajv","version":"6.6.1","repository":"https://github.com/epoberezkin/ajv","summary":"MIT"},
-{"name":"angular","version":"1.7.9","repository":"https://github.com/angular/angular.js","summary":"MIT"},
+{"name":"angular","version":"1.8.0","repository":"https://github.com/angular/angular.js","summary":"MIT"},
 {"name":"angular-animate","version":"1.7.5","repository":"https://github.com/angular/angular.js","summary":"MIT"},
 {"name":"angular-aria","version":"1.7.5","repository":"https://github.com/angular/angular.js","summary":"MIT"},
 {"name":"angular-bootstrap","version":"0.12.2","repository":"https://github.com/angular-ui/bootstrap","summary":"MIT"},

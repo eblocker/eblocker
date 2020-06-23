@@ -18,6 +18,5 @@ or set an alias in your shell:
 
     alias gulp='node/node node_modules/.bin/gulp'
 
-If you run the Icapserver as described in the [eblocker-icapserver
-README](../eblocker-icapserver/), you should be able to access the UI
-at [localhost:3000](http://localhost:3000/).
+If you run the Icapserver as described in the [eblocker README](../README.md),
+you should be able to access the UI at [localhost:3000](http://localhost:3000/).

@@ -44,4 +44,20 @@
         </div>
 
     </div>
+
+    <div class="config-frame md-whiteframe-z1" layout="column">
+
+        <h3>{{'ADMINCONSOLE.DEVICES_DISCOVERY.AUTO_ENABLE_NEW_DEVICES.HEADER' | translate}}</h3>
+
+        <!-- SCAN DEVICES -->
+        <div layout="row" layout-align="start center">
+            <div>
+                <div layout="row">
+                     <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.isAutoEnableNewDevices" class="md-primary switch-word-break" ng-change="vm.setAutoEnableNewDevices()">
+            {{ vm.isAutoEnableNewDevices ? 'ADMINCONSOLE.DEVICES_DISCOVERY.AUTO_ENABLE_NEW_DEVICES.ENABLED' : 'ADMINCONSOLE.DEVICES_DISCOVERY.AUTO_ENABLE_NEW_DEVICES.DISABLED' | translate }}
+                    </md-switch>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

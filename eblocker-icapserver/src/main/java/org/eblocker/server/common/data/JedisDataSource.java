@@ -79,6 +79,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_DNT_HEADER_STATE = "dnt_header_enabled";
     private static final String KEY_DO_NOT_SHOW_REMINDER = "do_not_show_reminder";
     private static final String KEY_SHOW_SPLASH_SCREEN = "showSplashScreen";
+    private static final String KEY_AUTO_ENABLE_NEW_DEVICES = "autoEnableNewDevices";
     private static final String KEY_COMPRESSION_MODE = "compression_mode";
     private static final String KEY_LAST_SSL_DEFAULT_WHITELIST_UPDATE = "ssl_default_whitelist_date";
     private static final String KEY_LAST_APPMODULES_DEFAULT_FILE_UPDATE = "appmodules_default_json_file_update";
@@ -1133,6 +1134,23 @@ public class JedisDataSource implements DataSource {
         return true;
     }
 
+    @Override
+    public void setAutoEnableNewDevices(boolean autoEnableNewDevices) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_AUTO_ENABLE_NEW_DEVICES, autoEnableNewDevices ? VALUE_TRUE : VALUE_FALSE);
+        }
+    }
+
+    @Override
+    public boolean isAutoEnableNewDevices() {
+        try (Jedis jedis = pool.getResource()) {
+            String autoEnableNewDevices = jedis.get(KEY_AUTO_ENABLE_NEW_DEVICES);
+            if (autoEnableNewDevices != null) {
+                return autoEnableNewDevices.equals(VALUE_TRUE);
+            }
+        } // default
+        return true;
+    }
     @Override
     public CompressionMode getCompressionMode() {
         try(Jedis jedis = pool.getResource()) {

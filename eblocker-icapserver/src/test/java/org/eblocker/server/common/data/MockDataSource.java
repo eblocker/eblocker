@@ -546,18 +546,28 @@ public class MockDataSource implements DataSource {
     @Override
     public void setOpenVpnPortForwardingMode(PortForwardingMode mode) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setShowSplashScreen(boolean show) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public boolean isShowSplashScreen() {
         // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setAutoEnableNewDevices(boolean autoEnableNewDevices) {
+
+    }
+
+    @Override
+    public boolean isAutoEnableNewDevices() {
         return false;
     }
 

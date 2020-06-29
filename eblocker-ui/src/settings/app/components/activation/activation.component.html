@@ -69,6 +69,14 @@
 
             <md-tab ng-disabled="!vm.isStepAllowed(4)">
                 <!-- TAB 4 -->
+                <md-tab-label>{{'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.LABEL' | translate}}</md-tab-label>
+                <md-tab-body>
+                    <ng-include src="'app/components/activation/auto-enable-new-devices-tab.component.html'"></ng-include>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-disabled="!vm.isStepAllowed(5)">
+                <!-- TAB 5 -->
                 <md-tab-label>{{ 'ADMINCONSOLE.ACTIVATION.TAB.LICENSE.LABEL' | translate }}</md-tab-label>
                 <md-tab-body>
                     <ng-include src="'app/components/activation/license-tab.component.html'"></ng-include>

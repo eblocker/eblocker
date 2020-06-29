@@ -18,6 +18,7 @@ package org.eblocker.server.http.controller.impl;
 
 import org.eblocker.server.common.PauseDeviceController;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.ShowWelcomeFlags;
 import org.eblocker.server.common.data.TestDeviceFactory;
@@ -66,6 +67,7 @@ public class DeviceControllerImplTest {
 	private DeviceScanningService deviceScanningService;
 	private DeviceService deviceService;
 	private DeviceRegistrationProperties deviceRegistrationProperties;
+	private DeviceFactory deviceFactory;
 	private FeatureToggleRouter featureToggleRouter;
 	private NetworkInterfaceWrapper networkInterfaceWrapper;
 	private NetworkStateMachine networkStateMachine;
@@ -82,6 +84,7 @@ public class DeviceControllerImplTest {
 		deviceScanningService = Mockito.mock(DeviceScanningService.class);
 		deviceService = Mockito.mock(DeviceService.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
+        deviceFactory = Mockito.mock(DeviceFactory.class);
 
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
@@ -105,17 +108,18 @@ public class DeviceControllerImplTest {
 		tdf.commit();
 
 		controller = new DeviceControllerImpl(
-				anonymousService,
-				deviceOnlineStatusCache,
-				devicePermissionsService,
-				deviceScanningService,
-				deviceService,
+                anonymousService,
+                deviceOnlineStatusCache,
+                devicePermissionsService,
+                deviceScanningService,
+                deviceService,
                 deviceRegistrationProperties,
-				featureToggleRouter,
-				networkInterfaceWrapper,
-				networkStateMachine,
-				openVpnService,
-				pauseDeviceController);
+                featureToggleRouter,
+                networkInterfaceWrapper,
+                networkStateMachine,
+                openVpnService,
+                pauseDeviceController,
+                deviceFactory);
 	}
 
 

@@ -385,7 +385,12 @@
             },
             "LABEL" : "Device Discovery",
             "SCAN_HEADER_AUTO" : "Automatic device discovery",
-            "SCAN_HEADER_MAN" : "Manual device discovery"
+            "SCAN_HEADER_MAN" : "Manual device discovery",
+            "AUTO_ENABLE_NEW_DEVICES" : {
+                "HEADER": "Automatic enabling of new devices",
+                "ENABLED": "eBlocker will automatically enable new devices",
+                "DISABLED": "eBlocker will not automatically enable new devices"
+            }
         },
         "DEVICES_LIST" : {
             "ACTION" : {

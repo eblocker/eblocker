@@ -385,7 +385,12 @@
             },
             "LABEL" : "Geräte suchen",
             "SCAN_HEADER_AUTO" : "Automatische Suche nach neuen Geräten",
-            "SCAN_HEADER_MAN" : "Manuelle Suche nach neuen Geräten"
+            "SCAN_HEADER_MAN" : "Manuelle Suche nach neuen Geräten",
+            "AUTO_ENABLE_NEW_DEVICES" : {
+                "HEADER" : "Automatisches Aktivieren von neuen Geräten",
+                "ENABLED" : "Der eBlocker wird neue Geräte automatisch aktivieren",
+                "DISABLED" : "Der eBlocker wird neue Geräte nicht automatisch aktivieren"
+            }
         },
         "DEVICES_LIST" : {
             "ACTION" : {

@@ -45,6 +45,10 @@ public interface DeviceController {
 
     void setScanningInterval(Request request, Response response);
 
+    Boolean isAutoEnableNewDevices(Request request, Response response);
+
+    void setAutoEnableNewDevices(Request request, Response response);
+
     RemainingPause getPauseByDeviceId(Request request, Response response);
 
     RemainingPause setPauseByDeviceId(Request request, Response response);

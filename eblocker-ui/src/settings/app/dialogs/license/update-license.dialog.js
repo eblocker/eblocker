@@ -26,7 +26,7 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
 
     vm.confirmed = false;
 
-    vm.licenseKey = '';
+    vm.licenseKey = 'FAMLFT-OPENSOURCE';
 
     vm.emailAddress = '';
 

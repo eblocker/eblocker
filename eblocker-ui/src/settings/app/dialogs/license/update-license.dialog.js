@@ -144,9 +144,9 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
             if (angular.isDefined(response.data) && response.data.needsConfirmation) {
                 vm.confirmationMsgKeys = response.data.confirmationMsgKeys;
                 vm.doConfirm = true;
-                vm.processing = false;
-                vm.confirmed = true;
-                vm.nextStep();
+            vm.processing = false;
+            vm.confirmed = true;
+            vm.nextStep();
             } else {
                 $mdDialog.hide(response);
             }

@@ -36,9 +36,11 @@ function Controller(DeviceService, $interval) {
         vm.deviceScanningInterval = 10; // default
         getScanningInterval();
         isScanningAvailable();
+        isAutoEnableNewDevices();
     };
 
     vm.setScanningInterval = setScanningInterval;
+    vm.setAutoEnableNewDevices = setAutoEnableNewDevices;
     vm.scanDevices = scanDevices;
 
 
@@ -56,6 +58,16 @@ function Controller(DeviceService, $interval) {
         DeviceService.isScanningAvailable().then(function(response) {
             vm.scanningAvailable = response.data;
         });
+    }
+
+    function isAutoEnableNewDevices() {
+        DeviceService.isAutoEnableNewDevices().then(function(response) {
+            vm.isAutoEnableNewDevices = response.data;
+        });
+    }
+
+    function setAutoEnableNewDevices() {
+        DeviceService.setAutoEnableNewDevices(vm.isAutoEnableNewDevices);
     }
 
     function scanDevices() {

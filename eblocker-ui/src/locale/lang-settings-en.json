@@ -1484,6 +1484,19 @@
                         "NEW_WINDOW" : "Open in new window",
                         "SEPARATOR" : "-",
                         "VERSION_TAG" : "Version:"
+                    },
+                    "SETUP" : {
+                        "LABEL" : "Setup",
+                        "TEXT1" : "eBlocker activation",
+                        "AUTO_ENABLE_NEW_DEVICES_ENABLED" : {
+                            "TITLE" : "Automatically activate new devices",
+                            "TEXT" : "In diesem Modus wird der eBlocker für neue Geräte automatisch aktiviert (nicht empfohlen)."
+                        },
+                        "AUTO_ENABLE_NEW_DEVICES_DISABLED" : {
+                            "TITLE" : "Do not automatically activate new devices",
+                            "TEXT" : "In diesem Modus ist der eBlocker für neue Geräte nicht aktiviert (empfohlen). Bitte aktiven Sie die Geräte jeweils manuell im eBlocker (Settings>Devices)."
+                        },
+                        "SAVE": "Save"
                     }
                 },
                 "TITLE" : "Activate License"

@@ -101,6 +101,7 @@
                     </md-tab-body>
                 </md-tab>
 
+                <div ng-if="false">
                 <md-tab ng-disabled="!vm.isStepAllowed(2)">
                     <!-- TAB 2 -->
                     <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.CONFIRM.LABEL' | translate }}</md-tab-label>
@@ -133,6 +134,36 @@
                             </md-button>
                         </div>
 
+                    </md-tab-body>
+                </md-tab>
+                </div>
+
+                <md-tab ng-disabled="!vm.isStepAllowed(2)">
+                    <!-- TAB 1 -->
+                    <md-tab-label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.LABEL' | translate }}</md-tab-label>
+                    <md-tab-body>
+                        <div class="config-frame md-whiteframe-z1" layout="column">
+                            <h4>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.TEXT1' | translate }}</h4>
+
+                            <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.isAutoEnableNewDevices">
+                                <md-radio-button class="md-accent" value="true">
+                                    <h4 style="margin: 0;">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.AUTO_ENABLE_NEW_DEVICES_ENABLED.TITLE' | translate }}</h4>
+                                    <div>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.AUTO_ENABLE_NEW_DEVICES_ENABLED.TEXT' | translate }}</div>
+                                </md-radio-button>
+
+                                <md-radio-button class="md-accent" value="false">
+                                    <h4 style="margin: 0;">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.AUTO_ENABLE_NEW_DEVICES_DISABLED.TITLE' | translate }}</h4>
+                                    <div>{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.AUTO_ENABLE_NEW_DEVICES_DISABLED.TEXT' | translate }}</div>
+                                </md-radio-button>
+                            </md-radio-group>
+
+                            <div layout="row" layout-align="end center">
+                                <md-button type="button" class="md-raised md-secondary" ng-click="vm.cancel()" ng-disabled="vm.processing">{{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ACTION.CANCEL' | translate }}</md-button>
+                                <md-button type="button" class="md-raised md-primary md-accent" ng-click="vm.setup()" ng-disabled="vm.processing">
+                                 {{ 'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.SETUP.SAVE' | translate }}
+                                </md-button>
+                            </div>
+                        </div>
                     </md-tab-body>
                 </md-tab>
             </md-tabs>

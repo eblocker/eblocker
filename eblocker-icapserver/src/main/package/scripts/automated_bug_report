@@ -47,7 +47,7 @@ fi
     echo $SEP >> $FILE
     echo "List of services running:" >> $FILE
     echo $SEP >> $FILE
-    service --status-all 2>/dev/null | sed 's/arpread/process0/g' | sed 's/arpwrite/process1/g' | sed 's/icapserver/process2/g' | sed 's/ntp/process3/g' | sed 's/redis-server/process4/g' | sed 's/redsocks/process5/g' | sed 's/squid/process6/g' >> $FILE
+    service --status-all 2>/dev/null >> $FILE
 ### System ###
     echo $SEP >> $FILE
     echo "System status:" >> $FILE
@@ -124,13 +124,6 @@ fi
     echo $SEP >> $FILE
     echo "Registration status: " >> $FILE
     echo $REGISTRATION >> $FILE
-
-
-    #FIXME disabled showing the last update log in the report
-    #echo $SEP >> $FILE
-    #echo "Last update log:" >> $FILE
-    #cat /var/log/eblocker/install-eblocker-updates.log >> $FILE
-
 
 ### TLS ###
     echo $SEP >> $FILE

@@ -300,9 +300,10 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
             case 2:
                 return licenseAgreed;
             case 3:
+            case 4:
                 return licenseAgreed && vm.timezoneSet;
             default:
-                return vm.isTosValid() || vm.registrationAvailable;
+                return false;
         }
     }
 

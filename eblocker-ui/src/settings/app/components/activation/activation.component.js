@@ -50,7 +50,9 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
         // configuredSettings.serial = !vm.setupWizardInfo.needSerialNumber;
         vm.registrationAvailable = vm.setupWizardInfo.registrationAvailable;
 
-        vm.registrationUserData = {};
+        vm.registrationUserData = {
+            licenseKey: 'FAMLFT-OPENSOURCE'
+        };
         setTosContent();
     };
 

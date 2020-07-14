@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 export default function UpdateLicenseDialogController($mdDialog, RegistrationService, $translate, TosService,
-                                                      UrlService, $window, $timeout, $q, LanguageService) {
+                                                      UrlService, $window, $timeout, $q, LanguageService, DeviceService) {
     'ngInject';
 
     const vm = this;
@@ -30,6 +30,8 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
 
     vm.emailAddress = '';
 
+    vm.isAutoEnableNewDevices = 'false';
+
     setTosContent();
 
     // vm.licenseForm.licenseKey.$error = undefined;
@@ -40,9 +42,6 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
         }
     };
 
-    // if server responds with needsConfirmation, doConfirm will update the Dialog's template
-    // to show the confirm-dialog
-    vm.doConfirm = false;
     vm.nextStep = nextStep;
     vm.prevStep = prevStep;
     vm.isStepAllowed = isStepAllowed;
@@ -61,12 +60,12 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
 
     function isStepAllowed(nextStep) {
         if (nextStep === 0) {
-            return !vm.doConfirm;
+            return true;
         } else if (nextStep === 1) {
             // If no tos has been loaded user cannot proceed.
-            return vm.isTosConfirmed && vm.isTosValid() && !vm.doConfirm;
-        } else if (nextStep === 2)  {
-            return vm.doConfirm && vm.isTosConfirmed && vm.isTosValid();
+            return vm.isTosConfirmed && vm.isTosValid();
+        } else if (nextStep === 1 || nextStep == 2) {
+            return vm.isTosConfirmed && vm.isTosValid() && vm.confirmed;
         }
         return true;
     }
@@ -120,6 +119,14 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
         $mdDialog.cancel();
     };
 
+    vm.setup = function () {
+        DeviceService.setAutoEnableNewDevices(vm.isAutoEnableNewDevices == 'true').then(function (response) {
+            $mdDialog.hide(response)
+        }, function(data) {
+            logger.error('setupAction failed ', data);
+        });
+    }
+
     vm.ok = function () {
 
         // if vm.confirmed, then we have already validated the form and we can send it again.
@@ -141,6 +148,7 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
             confirmed: vm.confirmed,
             tosVersion: vm.tos.licenseVersion
         }).then(function (response) {
+<<<<<<< HEAD
             if (angular.isDefined(response.data) && response.data.needsConfirmation) {
                 vm.confirmationMsgKeys = response.data.confirmationMsgKeys;
                 vm.doConfirm = true;
@@ -150,13 +158,17 @@ export default function UpdateLicenseDialogController($mdDialog, RegistrationSer
             } else {
                 $mdDialog.hide(response);
             }
+=======
+            vm.processing = false;
+            vm.confirmed = true;
+            vm.nextStep();
+>>>>>>> 941ca29ed88d8f2a8355cd8df5f2144a14f25310
         }, function (backendErrorKey) {
             // ** backendErrorKey is just the last part of the translation key, concated with rest in template
             vm.backendErrorKey = backendErrorKey;
             vm.licenseForm.licenseKey.$setValidity('backend', false);
             vm.processing = false;
             // jump back to license key tab
-            vm.doConfirm = false;
             vm.currentStep = 1;
             vm.confirmed = false;
         });

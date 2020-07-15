@@ -26,7 +26,7 @@ export default {
 
 function Controller(logger, StateService, STATES, $translate, settings, TimezoneService, NotificationService, // jshint ignore: line
                     SetupService, TosService, RegistrationService, UrlService, $window, DialogService, LanguageService,
-                    $timeout, $q) {
+                    DeviceService, $timeout, $q) {
     'ngInject';
 
     const vm = this;
@@ -40,6 +40,8 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     vm.isTosConfirmed = false;
     vm.isNoRegistrationConfirmed = false;
     vm.timezoneSet = false;
+    vm.isAutoEnableNewDevices = false;
+    vm.isAutoEnableNewDevicesSet = false;
 
     vm.languages = settings.getSupportedLanguageList();
     vm.locale = settings.locale();
@@ -212,6 +214,20 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     }
     // END TAB DEVICE
 
+    // TAB AUTO ENABLE NEW DEVICES
+
+    vm.submitAutoEnableNewDevicesForm = submitAutoEnableNewDevicesForm;
+    function submitAutoEnableNewDevicesForm() {
+        DeviceService.setAutoEnableNewDevices(vm.isAutoEnableNewDevices).then(function (response) {
+            vm.isAutoEnableNewDevicesSet = true;
+            nextStep();
+        }, function(data) {
+            logger.error('setAutoEnableNewDevices failed ', data);
+        });
+    }
+
+    // END TAB AUTO ENABLE NEW DEVICES
+
     // TAB LICENSE
     vm.submitLicenseForm = submitLicenseForm;
     function submitLicenseForm() {
@@ -303,8 +319,12 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
                 return licenseAgreed;
             case 3:
                 return licenseAgreed && vm.timezoneSet;
+            case 4:
+                return licenseAgreed && vm.timezoneSet;
+            case 5:
+                return licenseAgreed && vm.timezoneSet && vm.isAutoEnableNewDevicesSet;
             default:
-                return vm.isTosValid() || vm.registrationAvailable;
+                return false;
         }
     }
 

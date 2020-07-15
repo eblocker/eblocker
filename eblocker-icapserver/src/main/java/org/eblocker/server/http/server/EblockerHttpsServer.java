@@ -1738,6 +1738,17 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/devices/scanningInterval", deviceController)
             .action("setScanningInterval", HttpMethod.POST)
             .name("adminconsole.devices.set.scanning.interval");
+
+        server
+            .uri("/api/adminconsole/devices/autoEnableNewDevices", deviceController)
+            .action("isAutoEnableNewDevices", HttpMethod.GET)
+            .name("adminconsole.devices.get.auto.enable.new.devices");
+
+        server
+            .uri("/api/adminconsole/devices/autoEnableNewDevices", deviceController)
+            .action("setAutoEnableNewDevices", HttpMethod.POST)
+            .name("adminconsole.devices.set.auto.enable.new.devices");
+
         server
             .uri("/api/adminconsole/devices/{deviceId}", deviceController)
             .action("getDeviceById", HttpMethod.GET)

@@ -18,6 +18,7 @@ package org.eblocker.server.http.controller.impl;
 
 import org.eblocker.server.common.PauseDeviceController;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IconSettings;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.ShowWelcomeFlags;
@@ -61,6 +62,7 @@ public class DeviceControllerImpl implements DeviceController {
 	private final NetworkStateMachine networkStateMachine;
 	private final OpenVpnService openVpnService;
 	private final PauseDeviceController pauseDeviceController;
+	private final DeviceFactory deviceFactory;
 
 	@Inject
 	public DeviceControllerImpl(AnonymousService anonymousService,
@@ -73,8 +75,8 @@ public class DeviceControllerImpl implements DeviceController {
                                 NetworkInterfaceWrapper networkInterfaceWrapper,
                                 NetworkStateMachine networkStateMachine,
                                 OpenVpnService openVpnService,
-                                PauseDeviceController pauseDeviceController
-                                ) {
+                                PauseDeviceController pauseDeviceController,
+                                DeviceFactory deviceFactory) {
 		this.anonymousService = anonymousService;
 		this.deviceOnlineStatusCache = deviceOnlineStatusCache;
 		this.devicePermissionsService = devicePermissionsService;
@@ -86,7 +88,8 @@ public class DeviceControllerImpl implements DeviceController {
 		this.networkStateMachine = networkStateMachine;
 		this.openVpnService = openVpnService;
 		this.pauseDeviceController = pauseDeviceController;
-	}
+        this.deviceFactory = deviceFactory;
+    }
 
 	@Override
     public Object deleteDevice(Request request, Response response) {
@@ -292,6 +295,17 @@ public class DeviceControllerImpl implements DeviceController {
         if (interval >= 0) {
             deviceScanningService.setScanningInterval(interval);
         }
+    }
+
+    @Override
+    public Boolean isAutoEnableNewDevices(Request request, Response response) {
+	    return deviceFactory.isAutoEnableNewDevices();
+    }
+
+    @Override
+    public void setAutoEnableNewDevices(Request request, Response response) {
+        Boolean isAutoEnableNewDevices = request.getBodyAs(Boolean.class);
+        deviceFactory.setAutoEnableNewDevices(isAutoEnableNewDevices);
     }
 
     @Override

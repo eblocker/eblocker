@@ -56,7 +56,17 @@ public class DeviceFactoryTest {
     }
 
     @Test
-    public void testCreateDevice() {
+    public void testCreateDeviceWithAutoEnabling() {
+        createDeviceAndAssert(true);
+    }
+
+    @Test
+    public void testCreateDeviceWithoutAutoEnabling() {
+        createDeviceAndAssert(false);
+    }
+
+    private void createDeviceAndAssert(boolean enableNewDevices) {
+        Mockito.when(dataSource.isAutoEnableNewDevices()).thenReturn(enableNewDevices);
         String deviceId = "dev:00:11:22:33:44:55";
         List<IpAddress> ipAddresses = new ArrayList<>();
         ipAddresses.add(IpAddress.parse("1.2.3.4"));
@@ -66,7 +76,7 @@ public class DeviceFactoryTest {
         Assert.assertEquals(deviceId, device.getId());
         Assert.assertEquals(ipAddresses, device.getIpAddresses());
         Assert.assertEquals(fixed, device.isIpAddressFixed());
-        Assert.assertEquals(false, device.isEnabled());
+        Assert.assertEquals(enableNewDevices, device.isEnabled());
     }
 
     @Test

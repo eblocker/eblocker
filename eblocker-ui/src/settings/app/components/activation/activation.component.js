@@ -52,7 +52,9 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
         // configuredSettings.serial = !vm.setupWizardInfo.needSerialNumber;
         vm.registrationAvailable = vm.setupWizardInfo.registrationAvailable;
 
-        vm.registrationUserData = {};
+        vm.registrationUserData = {
+            licenseKey: 'FAMLFT-OPENSOURCE'
+        };
         setTosContent();
     };
 
@@ -316,6 +318,7 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
             case 2:
                 return licenseAgreed;
             case 3:
+            case 4:
                 return licenseAgreed && vm.timezoneSet;
             case 4:
                 return licenseAgreed && vm.timezoneSet;

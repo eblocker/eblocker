@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-You need Java (≥ 8), Maven and Redis.
+You need Java 11, Maven and Redis.
 
 In the following sections it is assumed that you install everything below a source directory, e.g.
 

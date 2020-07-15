@@ -66,7 +66,7 @@ public class DeviceFactoryTest {
         Assert.assertEquals(deviceId, device.getId());
         Assert.assertEquals(ipAddresses, device.getIpAddresses());
         Assert.assertEquals(fixed, device.isIpAddressFixed());
-        Assert.assertEquals(true, device.isEnabled());
+        Assert.assertEquals(false, device.isEnabled());
     }
 
     @Test

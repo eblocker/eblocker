@@ -318,6 +318,7 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
             case 2:
                 return licenseAgreed;
             case 3:
+            case 4:
                 return licenseAgreed && vm.timezoneSet;
             case 4:
                 return licenseAgreed && vm.timezoneSet;

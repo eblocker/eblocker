@@ -16,6 +16,16 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.Certificate;
 import org.eblocker.server.common.data.DashboardSslStatus;
@@ -37,20 +47,11 @@ import org.eblocker.server.http.controller.SSLController;
 import org.eblocker.server.http.model.SslWhitelistEntryDto;
 import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.UserAgentService;
+import org.eblocker.server.http.service.FailedConnectionSuggestionService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.SSLWhitelistService;
+import org.eblocker.server.http.service.UserAgentService;
 import org.eblocker.server.http.service.UserService;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.PKI;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -83,6 +84,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
     private final SslService sslService;
     private final SSLWhitelistService whitelistDomainStore;
     private final SslCertificateClientInstallationTracker tracker;
+    private final FailedConnectionSuggestionService failedConnectionSuggestionService;
     private final NetworkStateMachine networkStateMachine;
     private final SquidWarningService squidWarningService;
 
@@ -90,18 +92,19 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
 
     @Inject
     public SSLControllerImpl(
-            SslService sslService,
-            SSLWhitelistService whitelistDomainStore,
-            SslCertificateClientInstallationTracker tracker,
-            DeviceService deviceService,
-            SessionStore sessionStore,
-            PageContextStore pageContextStore,
-            UserService userService,
-            ParentalControlService parentalControlService,
-            SquidWarningService squidWarningService,
-            NetworkStateMachine networkStateMachine,
-            ObjectMapper objectMapper,
-            UserAgentService userAgentService) {
+        SslService sslService,
+        SSLWhitelistService whitelistDomainStore,
+        SslCertificateClientInstallationTracker tracker,
+        DeviceService deviceService,
+        SessionStore sessionStore,
+        PageContextStore pageContextStore,
+        UserService userService,
+        ParentalControlService parentalControlService,
+        SquidWarningService squidWarningService,
+        FailedConnectionSuggestionService failedConnectionSuggestionService,
+        NetworkStateMachine networkStateMachine,
+        ObjectMapper objectMapper,
+        UserAgentService userAgentService) {
         super(sessionStore, pageContextStore);
         this.sslService = sslService;
         this.whitelistDomainStore = whitelistDomainStore;
@@ -110,6 +113,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         this.parentalControlService = parentalControlService;
         this.tracker = tracker;
         this.squidWarningService = squidWarningService;
+        this.failedConnectionSuggestionService = failedConnectionSuggestionService;
         this.networkStateMachine = networkStateMachine;
         this.objectMapper = objectMapper;
         this.userAgentService = userAgentService;
@@ -498,7 +502,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
 
     @Override
     public Suggestions getFailedConnections(Request request, Response response) {
-        return squidWarningService.getFailedConnectionsByAppModules();
+        return failedConnectionSuggestionService.getFailedConnectionsByAppModules();
     }
 
     @Override

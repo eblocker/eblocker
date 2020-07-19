@@ -16,14 +16,11 @@
  */
 package org.eblocker.server.common.squid;
 
+import com.google.common.collect.Lists;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
-import org.eblocker.server.http.ssl.AppWhitelistModule;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +33,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -49,7 +45,6 @@ public class SquidWarningServiceTest {
     private final long UPDATE_TASK_FIXED_RATE = 900;
     private String IGNORED_ERRORS = "ignored:0, ignored:1";
 
-    private AppModuleService appModuleService;
     private TestClock clock;
     private DataSource dataSource;
     private DeviceService deviceService;
@@ -60,8 +55,6 @@ public class SquidWarningServiceTest {
 
     @Before
     public void setUp() {
-        appModuleService = Mockito.mock(AppModuleService.class);
-
         clock = new TestClock(ZonedDateTime.of(2018, 1, 15, 16, 40, 0, 0, ZoneId.systemDefault()));
 
         dataSource = Mockito.mock(DataSource.class);
@@ -73,7 +66,7 @@ public class SquidWarningServiceTest {
         Mockito.when(squidCacheLogReader.pollFailedConnections()).thenReturn(Collections.emptyList());
 
 
-        squidWarningService = new SquidWarningService(MAX_BACKLOG_DAYS, IGNORED_ERRORS, UPDATE_TASK_INITIAL_DELAY, UPDATE_TASK_FIXED_RATE, appModuleService, clock, dataSource, deviceService, scheduledExecutorService, squidCacheLogReader, squidConfigController);
+        squidWarningService = new SquidWarningService(MAX_BACKLOG_DAYS, IGNORED_ERRORS, UPDATE_TASK_INITIAL_DELAY, UPDATE_TASK_FIXED_RATE, clock, dataSource, deviceService, scheduledExecutorService, squidCacheLogReader, squidConfigController);
     }
 
     @Test
@@ -128,76 +121,6 @@ public class SquidWarningServiceTest {
         Mockito.verify(future).cancel(false);
         Mockito.verify(squidConfigController).updateSquidConfig();
         Mockito.verify(dataSource).delete(FailedConnectionsEntity.class);
-    }
-
-    @Test
-    public void testSuggestions() {
-        Mockito.when(deviceService.getDeviceById("device:000000000000")).thenReturn(createDevice("device:000000000000", false, false, true));
-        Mockito.when(deviceService.getDeviceById("device:000000000001")).thenReturn(createDevice("device:000000000001", false, true, true));
-        Mockito.when(deviceService.getDeviceById("device:000000000002")).thenReturn(createDevice("device:000000000002", true, false, true));
-        Mockito.when(deviceService.getDeviceById("device:000000000003")).thenReturn(createDevice("device:000000000003", true, true, true));
-        Mockito.when(deviceService.getDeviceById("device:000000000013")).thenReturn(createDevice("device:000000000013", true, true, true));
-
-        Mockito.when(dataSource.get(FailedConnectionsEntity.class)).thenReturn(new FailedConnectionsEntity(new ArrayList<>(Arrays.asList(
-            new FailedConnection(Arrays.asList("device:000000000000", "device:000000000001", "device:000000000002", "device:000000000003"), Arrays.asList("test.com"), Arrays.asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("global0.com"), Arrays.asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("global1.com"), Arrays.asList("error:1"), ZonedDateTime.of(2018, 1, 14, 2, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("global2.com"), Arrays.asList("error:2"), ZonedDateTime.of(2018, 1, 14, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("global3.com"), Arrays.asList("error:3"), ZonedDateTime.of(2018, 1, 14, 4, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("global4.com"), Arrays.asList("error:4"), ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000013"), Arrays.asList("api.global0.com"), Arrays.asList("error:1"), ZonedDateTime.of(2018, 1, 14, 12, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000013"), Arrays.asList("shared-cdn.com", "shared-cdn2.com"), Arrays.asList("error:5"), ZonedDateTime.of(2018, 1, 12, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("test.com"), Arrays.asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000013"), Arrays.asList("fancy-pants.com"), Arrays.asList("error:11"), ZonedDateTime.of(2018, 4, 13, 10, 35, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000013"), Arrays.asList("fancy.com", "pants.com", "fancy-pants.com"), Arrays.asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(Arrays.asList("device:000000000003"), Arrays.asList("pants.com"), Arrays.asList("error:12"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant())
-        ))));
-
-        // note: app modules use "name" as key instead of id :/
-        Mockito.when(appModuleService.getAll()).thenReturn(Arrays.asList(
-            createAppModule(0, "app0", false, false, "global0.com", "shared-cdn.com"),
-            createAppModule(1, "app1", false, true, "global1.com"),
-            createAppModule(2, "app2", true, false, "global2.com", "shared-cdn.com"),
-            createAppModule(3, "app3", true, true, "global3.com"),
-            createAppModule(4, "app4", false, false, "global4.com")));
-
-        clock.setZonedDateTime(ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.systemDefault()));
-        Suggestions suggestions = squidWarningService.getFailedConnectionsByAppModules();
-
-        Assert.assertEquals(4, suggestions.getDomains().size());
-        Assert.assertNotNull(suggestions.getDomains().get("test.com"));
-        Assert.assertEquals(Arrays.asList("test.com"), suggestions.getDomains().get("test.com").getDomains());
-        Assert.assertEquals(Arrays.asList("device:000000000003"), suggestions.getDomains().get("test.com").getDeviceIds());
-        Assert.assertEquals(Sets.newHashSet("error:0", "error:10"), new HashSet<>(suggestions.getDomains().get("test.com").getErrors()));
-        Assert.assertEquals(ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getDomains().get("test.com").getLastOccurrence());
-
-        Assert.assertEquals(Arrays.asList("fancy.com"), suggestions.getDomains().get("fancy.com").getDomains());
-        Assert.assertEquals(Arrays.asList("device:000000000013"), suggestions.getDomains().get("fancy.com").getDeviceIds());
-        Assert.assertEquals(Arrays.asList("error:10"), suggestions.getDomains().get("fancy.com").getErrors());
-        Assert.assertEquals(ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getDomains().get("fancy.com").getLastOccurrence());
-
-        Assert.assertEquals(Arrays.asList("pants.com"), suggestions.getDomains().get("pants.com").getDomains());
-        Assert.assertEquals(Sets.newHashSet("device:000000000003", "device:000000000013"), new HashSet<>(suggestions.getDomains().get("pants.com").getDeviceIds()));
-        Assert.assertEquals(Sets.newHashSet("error:10", "error:12"), new HashSet<>(suggestions.getDomains().get("pants.com").getErrors()));
-        Assert.assertEquals(ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getDomains().get("pants.com").getLastOccurrence());
-
-        Assert.assertEquals(Arrays.asList("fancy-pants.com"), suggestions.getDomains().get("fancy-pants.com").getDomains());
-        Assert.assertEquals(Arrays.asList("device:000000000013"), suggestions.getDomains().get("fancy-pants.com").getDeviceIds());
-        Assert.assertEquals(Sets.newHashSet("error:10", "error:11"), new HashSet<>(suggestions.getDomains().get("fancy-pants.com").getErrors()));
-        Assert.assertEquals(ZonedDateTime.of(2018, 4, 13, 10, 35, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getDomains().get("fancy-pants.com").getLastOccurrence());
-
-        Assert.assertEquals(2, suggestions.getModules().size());
-        Assert.assertNotNull(suggestions.getModules().get(0));
-        Assert.assertEquals(Sets.newHashSet("api.global0.com", "global0.com", "shared-cdn.com", "shared-cdn2.com"), Sets.newHashSet(suggestions.getModules().get(0).getDomains()));
-        Assert.assertEquals(Sets.newHashSet("device:000000000003", "device:000000000013"), Sets.newHashSet(suggestions.getModules().get(0).getDeviceIds()));
-        Assert.assertEquals(Sets.newHashSet("error:0", "error:1", "error:5"), Sets.newHashSet(suggestions.getModules().get(0).getErrors()));
-        Assert.assertEquals(ZonedDateTime.of(2018, 1, 14, 12, 0, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getModules().get(0).getLastOccurrence());
-
-        Assert.assertNotNull(suggestions.getModules().get(4));
-        Assert.assertEquals(Arrays.asList("global4.com"), suggestions.getModules().get(4).getDomains());
-        Assert.assertEquals(Arrays.asList("device:000000000003"), suggestions.getModules().get(4).getDeviceIds());
-        Assert.assertEquals(Arrays.asList("error:4"), suggestions.getModules().get(4).getErrors());
-        Assert.assertEquals(ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant(), suggestions.getModules().get(4).getLastOccurrence());
     }
 
     @Test
@@ -389,10 +312,6 @@ public class SquidWarningServiceTest {
             certificate ? "-----BEGIN CERTIFICATE-----\nMIIDgDCCAmigAwIBAgIULjOrzH+polOlicnqXEWhjHtyD9gwDQYJKoZIhvcNAQEL\nBQAwLjEsMCoGA1UEAwwjZUJsb2NrZXIgLSBNeSBlQmxvY2tlciAtIDIwMTcvMDcv\nMTgwHhcNMTcwNTE3MDAwMDAwWhcNMTgwNTE3MjM1OTU5WjBcMSEwHwYDVQQLExhE\nb21haW4gQ29udHJvbCBWYWxpZGF0ZWQxHjAcBgNVBAsTFUVzc2VudGlhbFNTTCBX\naWxkY2FyZDEXMBUGA1UEAwwOKi5lYmxvY2tlci5jb20wggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQDdd5HuLu6r9Ms0Umd3ot0ylpnPDyS3P1wialohf+bB\nZjsWDtHqzntT6IDnka84wLv3ZuzMHBklL4lFSJ59VydeioOyF9qBdP15J4AxV04p\nW09OFc2jASSgfFP/w1oHVXakA1IuZ3qyjJ5Jg8XzMvnNVl5BzRR7T5rcD5P09OK9\nZ4HD0wCKX+b2o8zC43zRgIws9cTW08wzp9f28P99MV5zfP0KmfnQOiGE6wBW/930\nrnPVHKB8oF3Q1jZmJVRsAUf/n/UkPcq7FVKlFOVxke1XfhfvU4olIAEPZ+nNgjDY\nV+DOENR/Ez4rKt5nKr99fjLK+u9jocm8+3Z9Rpaa2gLLAgMBAAGjaDBmMCcGA1Ud\nEQQgMB6CDiouZWJsb2NrZXIuY29tggxlYmxvY2tlci5jb20wDgYDVR0PAQH/BAQD\nAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAA\nMA0GCSqGSIb3DQEBCwUAA4IBAQCfr3YhE5mF2cIxH5lTk1X6XyJTJ8hJM/egRZWP\n0/zGXqzfq87CZ4MLs85MubQBjVPDN6mdtI1YGD4SxCwImOf/TE9as3q0kKpg1nIS\nxCcba3Huc7W6o8i/w1/gPwFwHcxBqk8peKtdvIQGkBb8N8hXIll9XYsCi0Ra60M4\nJshS1g+WjCpCUkiN4f0HLmio6ODheHV1n4S9DczBtqRosd4uZ+PvhnVxQjWLdykB\ntqmpvYgCDb4f94IVhBnsyD17NzGrZD0C/qgP/RbhWzNHXkcVzcvqcXQk+aeIA0Xn\nV7g8gnXTURmBY2J76epMOW/KsX3iNPdtENy0znze7rNtgkyA\n-----END CERTIFICATE-----\n" : null
         )));
         squidWarningService.update();
-    }
-
-    private AppWhitelistModule createAppModule(int id, String name, boolean enabled, boolean hidden, String... domains) {
-        return new AppWhitelistModule(id, name, null, Arrays.asList(domains), null, null, null, null, enabled, null, null, null, null, hidden);
     }
 
     private Device createDevice(String id, boolean enabled, boolean sslEnabled, boolean sslRecordErrorsEnabled) {

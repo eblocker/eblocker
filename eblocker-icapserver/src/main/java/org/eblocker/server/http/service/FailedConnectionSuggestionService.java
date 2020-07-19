@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.squid.FailedConnection;
 import org.eblocker.server.common.squid.SquidWarningService;
-import org.eblocker.server.common.squid.Suggestions;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
+import org.eblocker.server.http.ssl.Suggestions;
 
 import java.time.Instant;
 import java.util.ArrayList;

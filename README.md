@@ -101,3 +101,43 @@ You can also start this class with Maven:
     mvn exec:exec
 
 Now you should be able to access the settings app at <http://localhost:3000/>.
+
+# Miscellaneous
+
+## Create a new device
+
+Publish a new ARP_IN event:
+
+    redis-cli  PUBLISH arp:in "2/a4:83:e7:51:1c:ef/172.20.10.8/a4:83:e7:51:1c:88/172.20.10.5"
+
+where the first IP is from your local subnet (the second IP does not matter). For even more devices, you need to change the MAC and the first IP.
+
+## Update lists
+
+Fork/clone eblocker-lists and run
+
+    mvn package -Pupdate-lists
+    
+After that, copy the result to your local installation:
+
+    rm -r /opt/eblocker-lists/lists
+    cp -r target/package/eblocker-lists/lists /opt/eblocker-lists/
+    
+## Create SSL errors
+
+You can use the following script to simulate the detection of an SSL error:
+
+    NOW=`date +"%Y/%m/%d %T"`
+    if [ -z "$1" ]
+      then
+        STAMP=`date +%Y-%m-%d-%H-%M-%S`
+        DOMAIN="$STAMP-autogen.com"
+    else
+        DOMAIN=$1
+    fi
+    /bin/echo "$NOW kid1| eblkr: 20:X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY log_addr: 172.20.10.6:57608 host: 169.50.46.74 sni: $DOMAIN cert: FOO" >> /var/log/squid/cache.log
+    
+Either pass a domain name as argument or let the script generate a name based on the current timestamp.
+
+
+

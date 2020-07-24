@@ -16,20 +16,17 @@
  */
 package org.eblocker.server.common.squid;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.util.UrlUtils;
-import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.ssl.AppWhitelistModule;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.PKI;
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,16 +44,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class SquidWarningService {
@@ -66,7 +58,6 @@ public class SquidWarningService {
     private final Set<String> ignoredErrors;
     private final long updateTaskInitialDelay;
     private final long updateTaskFixedRate;
-    private final AppModuleService appModuleService;
     private final Clock clock;
     private final DataSource dataSource;
     private final DeviceService deviceService;
@@ -81,7 +72,6 @@ public class SquidWarningService {
                                @Named("squid.ssl.error.ignored") String ignoredErrors,
                                @Named("executor.squidWarning.startupDelay") long updateTaskInitialDelay,
                                @Named("executor.squidWarning.fixedRate") long updateTaskFixedRate,
-                               AppModuleService appModuleService,
                                Clock clock,
                                DataSource dataSource,
                                DeviceService deviceService,
@@ -92,7 +82,6 @@ public class SquidWarningService {
         this.ignoredErrors = splitAndTrim(ignoredErrors);
         this.updateTaskInitialDelay = updateTaskInitialDelay;
         this.updateTaskFixedRate = updateTaskFixedRate;
-        this.appModuleService = appModuleService;
         this.clock = clock;
         this.dataSource = dataSource;
         this.deviceService = deviceService;
@@ -135,18 +124,8 @@ public class SquidWarningService {
         return dataSource.getSslRecordErrors();
     }
 
-    public Suggestions getFailedConnectionsByAppModules() {
-        List<FailedConnection> failedConnections = filterDisabledDevices(update());
 
-        Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule = createConnectionsByAppModule(failedConnections);
-
-        Map<String, FailedConnection> domains = createDomainSuggestions(connectionsByAppModule);
-        Map<Integer, FailedConnection> modules = createModuleSuggestions(connectionsByAppModule);
-
-        return new Suggestions(domains, modules);
-    }
-
-   public synchronized void clearFailedConnections() {
+    public synchronized void clearFailedConnections() {
         log.debug("removing all failed connections");
         cacheLogReader.pollFailedConnections();
         dataSource.delete(FailedConnectionsEntity.class);
@@ -204,7 +183,7 @@ public class SquidWarningService {
         clearFailedConnections();
     }
 
-    synchronized List<FailedConnection> update() {
+    public synchronized List<FailedConnection> update() {
         if (!dataSource.getSslRecordErrors()) {
             log.debug("recording errors disabled");
         }
@@ -222,78 +201,6 @@ public class SquidWarningService {
         }
 
         return failedConnections;
-    }
-
-    private Map<AppWhitelistModule, List<FailedConnection>> createConnectionsByAppModule(List<FailedConnection> failedConnections) {
-        List<AppWhitelistModule> appModules = appModuleService.getAll();
-        return failedConnections.stream()
-            .map(fc -> new Tuple<>(findAppModules(appModules, fc.getDomains()), fc))
-            .flatMap(this::flatModules)
-            .collect(Collectors.groupingBy(t -> t.u, Collectors.mapping(t -> t.v, Collectors.toList())))
-            .entrySet().stream()
-            .collect(Collectors.toMap(e -> e.getKey().orElse(null), Map.Entry::getValue));
-    }
-
-    private Stream<Tuple<Optional<AppWhitelistModule>, FailedConnection>> flatModules(Tuple<List<AppWhitelistModule>, FailedConnection> t) {
-        if (t.u.isEmpty()) {
-            return Stream.of(new Tuple<>(Optional.empty(), t.v));
-        } else {
-            return t.u.stream().map(u -> new Tuple<>(Optional.of(u), t.v));
-        }
-    }
-
-    private Map<String, FailedConnection> createDomainSuggestions(Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule) {
-        List<FailedConnection> failedConnections = connectionsByAppModule.get(null);
-        if (failedConnections == null) {
-            return Collections.emptyMap();
-        }
-
-        return failedConnections.stream()
-            .flatMap(c -> c.getDomains().stream().map(d -> new Tuple<>(d, c)))
-            .map(t -> new Tuple<>(t.u, new FailedConnection(t.v.getDeviceIds(), Collections.singletonList(t.u), t.v.getErrors(), t.v.getLastOccurrence())))
-            .collect(Collectors.groupingBy(
-                t -> t.u,
-                Collectors.mapping(
-                    t -> t.v,
-                    Collectors.collectingAndThen(Collectors.toList(), this::mergeFailedConnections))));
-    }
-
-    private FailedConnection mergeFailedConnections(List<FailedConnection> failedConnections) {
-        Instant lastOccurrence = Instant.ofEpochMilli(0);
-        Set<String> deviceIds = new TreeSet<>();
-        Set<String> domains = new TreeSet<>();
-        Set<String> errors = new TreeSet<>();
-        for(FailedConnection connection : failedConnections) {
-            if (lastOccurrence.isBefore(connection.getLastOccurrence())) {
-                lastOccurrence = connection.getLastOccurrence();
-            }
-            deviceIds.addAll(connection.getDeviceIds());
-            domains.addAll(connection.getDomains());
-            errors.addAll(connection.getErrors());
-        }
-        return new FailedConnection(new ArrayList<>(deviceIds), new ArrayList<>(domains), new ArrayList<>(errors), lastOccurrence);
-    }
-
-    private Map<Integer, FailedConnection> createModuleSuggestions(Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule) {
-        return connectionsByAppModule.entrySet().stream()
-            .filter(e -> e.getKey() != null)
-            .filter(m -> !m.getKey().isEnabled() && !m.getKey().isHidden())
-            .collect(Collectors.toMap(m -> m.getKey().getId(), e -> mergeFailedConnections(e.getValue())));
-    }
-
-    private List<FailedConnection> filterDisabledDevices(List<FailedConnection> failedConnections) {
-        Predicate<String> activeDevice = id -> {
-            Device device = deviceService.getDeviceById(id);
-            return device != null && device.isEnabled() && device.isSslEnabled() && device.isSslRecordErrorsEnabled();
-        };
-
-        return failedConnections.stream()
-            .map(c -> {
-                List<String> activeDeviceIds = c.getDeviceIds().stream().filter(activeDevice).collect(Collectors.toList());
-                return activeDeviceIds.equals(c.getDomains()) ? c : new FailedConnection(activeDeviceIds, c.getDomains(), c.getErrors(), c.getLastOccurrence());
-            })
-            .filter(c -> !c.getDeviceIds().isEmpty())
-            .collect(Collectors.toList());
     }
 
     private boolean insertUpdateNewEntries(List<FailedConnection> failedConnections) {
@@ -405,13 +312,6 @@ public class SquidWarningService {
         return null;
     }
 
-    private List<AppWhitelistModule> findAppModules(List<AppWhitelistModule> appModules, List<String> domains) {
-        Predicate<String> whitelistsAnyDomain = whitelistedDomain -> domains.stream().anyMatch(domain -> UrlUtils.isSameDomain(whitelistedDomain, domain));
-        return appModules.stream()
-            .filter(module -> module.getWhitelistedDomains().stream().anyMatch(whitelistsAnyDomain))
-            .collect(Collectors.toList());
-    }
-
     private Set<String> splitAndTrim(String input) {
         Set<String> values = new HashSet<>();
         for (String value : input.split(",")) {
@@ -419,20 +319,4 @@ public class SquidWarningService {
         }
         return values;
     }
-
-    private class Tuple<U, V> {
-        U u;
-        V v;
-
-        public Tuple(U u, V v) {
-            this.u = u;
-            this.v = v;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + u.toString() + ", " + v.toString() + ")";
-        }
-    }
-
 }

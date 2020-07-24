@@ -16,12 +16,11 @@
  */
 package org.eblocker.server.http.controller;
 
+import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.Certificate;
 import org.eblocker.server.common.data.DashboardSslStatus;
-
-import org.eblocker.server.common.squid.Suggestions;
-import io.netty.buffer.ByteBuf;
+import org.eblocker.server.http.ssl.Suggestions;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

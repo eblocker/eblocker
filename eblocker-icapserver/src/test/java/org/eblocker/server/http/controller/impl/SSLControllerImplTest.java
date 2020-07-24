@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.Certificate;
 import org.eblocker.server.common.data.DashboardSslStatus;
@@ -37,10 +40,12 @@ import org.eblocker.server.common.ssl.SslTestUtils;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.controller.impl.SSLControllerImpl.SslState;
 import org.eblocker.server.http.model.SslWhitelistEntryDto;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.eblocker.server.http.service.*;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.FailedConnectionSuggestionService;
+import org.eblocker.server.http.service.ParentalControlService;
+import org.eblocker.server.http.service.SSLWhitelistService;
+import org.eblocker.server.http.service.UserAgentService;
+import org.eblocker.server.http.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -79,6 +84,7 @@ public class SSLControllerImplTest {
     private UserService userService;
     private ParentalControlService parentalControlService;
     private SquidWarningService squidWarningService;
+    private FailedConnectionSuggestionService failedConnectionSuggestionService;
     private NetworkStateMachine networkStateMachine;
     private CertificateAndKey unitTestCaCertificateAndKey;
     private UserAgentService userAgentService;
@@ -96,6 +102,7 @@ public class SSLControllerImplTest {
         parentalControlService = Mockito.mock(ParentalControlService.class);
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
         squidWarningService = Mockito.mock(SquidWarningService.class);
+        failedConnectionSuggestionService = Mockito.mock(FailedConnectionSuggestionService.class);
         userAgentService = Mockito.mock(UserAgentService.class);
         objectMapper = new ObjectMapper();
 
@@ -109,6 +116,7 @@ public class SSLControllerImplTest {
             userService,
             parentalControlService,
             squidWarningService,
+            failedConnectionSuggestionService,
             networkStateMachine,
             objectMapper,
             userAgentService

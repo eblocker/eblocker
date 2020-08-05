@@ -303,7 +303,10 @@ public interface DataSource {
     void setShowSplashScreen(boolean show);
     boolean isShowSplashScreen();
 
-	CompressionMode getCompressionMode();
+    void setAutoEnableNewDevices(boolean autoEnableNewDevices);
+    boolean isAutoEnableNewDevices();
+
+    CompressionMode getCompressionMode();
 	void setCompressionMode(CompressionMode compressionMode);
 
     boolean getSslRecordErrors();

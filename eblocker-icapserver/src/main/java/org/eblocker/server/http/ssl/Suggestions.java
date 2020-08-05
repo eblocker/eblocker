@@ -14,7 +14,9 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.common.squid;
+package org.eblocker.server.http.ssl;
+
+import org.eblocker.server.common.squid.FailedConnection;
 
 import java.util.Map;
 

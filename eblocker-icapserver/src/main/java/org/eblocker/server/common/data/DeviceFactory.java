@@ -60,10 +60,22 @@ public class DeviceFactory {
         device.setId(deviceId);
         device.setIpAddresses(ipAddresses);
         String hardwareAddressPrefix = device.getHardwareAddressPrefix();
-        device.setEnabled(!isDisabledByDefault(hardwareAddressPrefix));
+        device.setEnabled(isEnabledByDefault(hardwareAddressPrefix));
         device.setIpAddressFixed(fixed);
         device.setName(createNameForNewDevice(hardwareAddressPrefix));
         return device;
+    }
+
+    private boolean isEnabledByDefault(String hardwareAddressPrefix) {
+        return isAutoEnableNewDevices() && !isDisabledByDefaultBasedOnMac(hardwareAddressPrefix);
+    }
+
+    public void setAutoEnableNewDevices(boolean isAutoEnableNewDevices) {
+        dataSource.setAutoEnableNewDevices(isAutoEnableNewDevices);
+    }
+
+    public boolean isAutoEnableNewDevices() {
+        return dataSource.isAutoEnableNewDevices();
     }
 
     public String createNameForNewDevice(String hardwareAddressPrefix) {
@@ -91,8 +103,7 @@ public class DeviceFactory {
         return "";
     }
 
-   private boolean isDisabledByDefault(String macAdressPrefix){
+   private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix){
        return disabledByDefault.getVendor(macAdressPrefix) != null;
    }
-
 }

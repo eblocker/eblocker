@@ -37,6 +37,18 @@
                     "SERIAL_NUMBER_LABEL" : "Device Serial Number",
                     "SERIAL_NUMBER_WRONG_FORMAT" : "The device serial number is not in the expected format."
                 },
+                "AUTO_ENABLE_NEW_DEVICES" : {
+                    "LABEL" : "New Devices",
+                    "TEXT1" : "Automatic activation of new devices",
+                    "AUTO_ENABLE_NEW_DEVICES_ENABLED" : {
+                        "TITLE" : "Automatically enable new devices",
+                        "TEXT" : "Using this mode, eBlocker will be automatically enabled for new devices detected in your network (not recommended)."
+                    },
+                    "AUTO_ENABLE_NEW_DEVICES_DISABLED" : {
+                        "TITLE" : "Do not automatically enable new devices",
+                        "TEXT" : "Using this mode, eBlocker will not be automatically enabled for new devices detected in your network (recommended). Please enable new devices manually in Settings>Devices."
+                    }
+                },
                 "LICENSE" : {
                     "EMAIL_IMPORTANCE_EXPLAIN_PART1" : "If your eBlocker was purchased on eBlocker.com, please use the email address to which the license key was sent.",
                     "EMAIL_IMPORTANCE_EXPLAIN_PART2" : "If you did <br>not</b> purchase the eBlocker on eBlocker.com or build eBlocker yourself, please enter a long-term valid email. This will only be used for administrative purposes, such as sending a license key, and for support.",
@@ -385,7 +397,12 @@
             },
             "LABEL" : "Device Discovery",
             "SCAN_HEADER_AUTO" : "Automatic device discovery",
-            "SCAN_HEADER_MAN" : "Manual device discovery"
+            "SCAN_HEADER_MAN" : "Manual device discovery",
+            "AUTO_ENABLE_NEW_DEVICES" : {
+                "HEADER": "Automatic enabling of new devices",
+                "ENABLED": "eBlocker will automatically enable new devices",
+                "DISABLED": "eBlocker will not automatically enable new devices"
+            }
         },
         "DEVICES_LIST" : {
             "ACTION" : {

@@ -37,6 +37,18 @@
                     "SERIAL_NUMBER_LABEL" : "Seriennummer des Gerätes",
                     "SERIAL_NUMBER_WRONG_FORMAT" : "Die Seriennummer ist nicht im erwarteten Format."
                 },
+                "AUTO_ENABLE_NEW_DEVICES" : {
+                    "LABEL" : "Neue Geräte",
+                    "TEXT1" : "Automatische Aktivierung neuer Geräte",
+                    "AUTO_ENABLE_NEW_DEVICES_ENABLED" : {
+                        "TITLE" : "Neue Geräte automatisch aktivieren",
+                        "TEXT" : "In diesem Modus wird der eBlocker für neue Geräte automatisch aktiviert (nicht empfohlen)."
+                    },
+                    "AUTO_ENABLE_NEW_DEVICES_DISABLED" : {
+                        "TITLE" : "Neue Geräte nicht automatisch aktivieren",
+                        "TEXT" : "In diesem Modus ist der eBlocker für neue Geräte nicht aktiviert (empfohlen). Bitte aktivieren Sie die Geräte jeweils manuell im eBlocker (Einstellungen>Geräte)."
+                    }
+                },
                 "LICENSE" : {
                     "EMAIL_IMPORTANCE_EXPLAIN_PART1" : "Wenn Ihr eBlocker auf eBlocker.com gekauft wurde, verwenden Sie bitte die E-Mail Adresse, an die der Lizenzschlüssel gesendet wurde.",
                     "EMAIL_IMPORTANCE_EXPLAIN_PART2" : "Falls Sie den eBlocker <b>nicht</b> auf eBlocker.com erworben oder selbst gebaut haben, geben Sie bitte eine langfristig gültige E-Mail ein. Diese wird ausschließlich für administrative Zwecke, wie die Zusendung eines Lizenzschlüssels, sowie im Supportfall verwendet.",
@@ -385,7 +397,12 @@
             },
             "LABEL" : "Geräte suchen",
             "SCAN_HEADER_AUTO" : "Automatische Suche nach neuen Geräten",
-            "SCAN_HEADER_MAN" : "Manuelle Suche nach neuen Geräten"
+            "SCAN_HEADER_MAN" : "Manuelle Suche nach neuen Geräten",
+            "AUTO_ENABLE_NEW_DEVICES" : {
+                "HEADER" : "Automatisches Aktivieren von neuen Geräten",
+                "ENABLED" : "Der eBlocker wird neue Geräte automatisch aktivieren",
+                "DISABLED" : "Der eBlocker wird neue Geräte nicht automatisch aktivieren"
+            }
         },
         "DEVICES_LIST" : {
             "ACTION" : {

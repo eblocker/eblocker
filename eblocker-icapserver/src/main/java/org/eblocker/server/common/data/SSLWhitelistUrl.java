@@ -18,6 +18,7 @@ package org.eblocker.server.common.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,16 +61,23 @@ public class SSLWhitelistUrl {
 
 
     @Override
-    public boolean equals(Object url2){
-        if(url2 instanceof SSLWhitelistUrl){
-            return (this.hashCode() == url2.hashCode());
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
         }
-        return false;
+
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+
+        SSLWhitelistUrl that = (SSLWhitelistUrl) other;
+
+        return Objects.equals(this.name, that.name) && Objects.equals(this.url, that.url);
     }
 
     @Override
     public int hashCode(){
-        return (this.name+this.url).hashCode();
+        return Objects.hash(name, url);
     }
 
     @Override

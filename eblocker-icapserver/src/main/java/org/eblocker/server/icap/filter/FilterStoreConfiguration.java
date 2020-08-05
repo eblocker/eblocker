@@ -19,6 +19,9 @@ package org.eblocker.server.icap.filter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class FilterStoreConfiguration {
 
     private final Integer id;
@@ -100,5 +103,31 @@ public class FilterStoreConfiguration {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilterStoreConfiguration that = (FilterStoreConfiguration) o;
+        return builtin == that.builtin &&
+                version == that.version &&
+                learnForAllDomains == that.learnForAllDomains &&
+                enabled == that.enabled &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                category == that.category &&
+                Arrays.equals(resources, that.resources) &&
+                learningMode == that.learningMode &&
+                format == that.format &&
+                Arrays.equals(ruleFilters, that.ruleFilters);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, name, category, builtin, version, learningMode, format, learnForAllDomains, enabled);
+        result = 31 * result + Arrays.hashCode(resources);
+        result = 31 * result + Arrays.hashCode(ruleFilters);
+        return result;
     }
 }

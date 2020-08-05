@@ -19,6 +19,8 @@ package org.eblocker.server.common.blocker;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class ExternalDefinition {
     private int id;
     private String name;
@@ -172,5 +174,31 @@ public class ExternalDefinition {
 
     public String getFilterType() {
         return this.filterType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExternalDefinition that = (ExternalDefinition) o;
+        return id == that.id &&
+                enabled == that.enabled &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                category == that.category &&
+                type == that.type &&
+                Objects.equals(referenceId, that.referenceId) &&
+                format == that.format &&
+                Objects.equals(url, that.url) &&
+                updateInterval == that.updateInterval &&
+                updateStatus == that.updateStatus &&
+                Objects.equals(updateError, that.updateError) &&
+                Objects.equals(file, that.file) &&
+                Objects.equals(filterType, that.filterType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, category, type, referenceId, format, url, updateInterval, updateStatus, updateError, file, enabled, filterType);
     }
 }

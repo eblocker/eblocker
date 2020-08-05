@@ -55,7 +55,6 @@ public class SchemaMigrationVersion47 implements SchemaMigration {
     }
 
     private void updateFilterPaths() {
-        //ExternalDefinition.class, FilterStoreConfiguration.class, ParentalControlFilterMetaData.class;
         dataSource.getAll(ExternalDefinition.class).forEach(this::updateExternalDefinition);
         dataSource.getAll(FilterStoreConfiguration.class).forEach(this::updateFilterStoreConfiguration);
         dataSource.getAll(ParentalControlFilterMetaData.class).forEach(this::updatePCFilterMetaData);

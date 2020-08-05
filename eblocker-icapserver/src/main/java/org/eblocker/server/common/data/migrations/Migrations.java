@@ -183,6 +183,7 @@ public class Migrations {
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion44.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion45.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion46.class);
+			migrationMultiBinder.addBinding().to(SchemaMigrationVersion47.class);
         }
     }
 }

@@ -197,19 +197,28 @@ public class ParentalControlFilterMetaData {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        ParentalControlFilterMetaData that = (ParentalControlFilterMetaData) o;
-
-        return Objects.equals(id, that.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ParentalControlFilterMetaData metaData = (ParentalControlFilterMetaData) o;
+        return builtin == metaData.builtin &&
+                disabled == metaData.disabled &&
+                Objects.equals(id, metaData.id) &&
+                Objects.equals(name, metaData.name) &&
+                Objects.equals(description, metaData.description) &&
+                Objects.equals(filenames, metaData.filenames) &&
+                Objects.equals(version, metaData.version) &&
+                Objects.equals(date, metaData.date) &&
+                Objects.equals(format, metaData.format) &&
+                category == metaData.category &&
+                Objects.equals(filterType, metaData.filterType) &&
+                Objects.equals(size, metaData.size) &&
+                Objects.equals(queryTransformations, metaData.queryTransformations) &&
+                Objects.equals(customerCreatedName, metaData.customerCreatedName) &&
+                Objects.equals(customerCreatedDescription, metaData.customerCreatedDescription);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hash(id, name, description, filenames, version, date, format, category, filterType, builtin, size, queryTransformations, disabled, customerCreatedName, customerCreatedDescription);
     }
-
 }

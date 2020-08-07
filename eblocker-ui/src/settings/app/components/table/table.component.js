@@ -70,7 +70,7 @@ export default {
 };
 
 function Controller(logger, $scope, $window, $translate, StateService, TableService, ArrayUtilsService, // jshint ignore: line
-                    WindowEventService) {
+                    WindowEventService, $interval) {
     'ngInject';
 
     const vm = this;
@@ -179,7 +179,12 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
 
             // ** need to fire resize, so that angular-material renders the table correctly.
             // Otherwise only first couple of entries are visible (height is set correctly)
+
             WindowEventService.fireEvent('resize');
+            $interval(function () {
+                // On Safari another resize event is necessary
+                WindowEventService.fireEvent('resize');
+            }, 300);
         }
         return ret;
     }
@@ -259,6 +264,10 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
             // height of the scrollable container, but angular-material did not correctly update the number
             // of rendered items. Not sure what causes this bug. Resize event forces re-render and fixes the issue.
             WindowEventService.fireEvent('resize');
+            $interval(function () {
+                // On Safari another resize event is necessary
+                WindowEventService.fireEvent('resize');
+            }, 300);
 
             vm.oldLargeVisibleItem = largeTableNumVisible;
             vm.oldSmallVisibleItem = smallTableNumVisible;

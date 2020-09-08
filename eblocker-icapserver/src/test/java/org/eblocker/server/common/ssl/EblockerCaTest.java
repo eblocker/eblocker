@@ -64,8 +64,8 @@ public class EblockerCaTest {
 
     @Test
     public void getServerNotValidAfter() {
-        Instant maxNotAfter = Instant.now().plus(825, ChronoUnit.DAYS);
         Instant serverNotAfter = eblockerCa.getServerNotValidAfter().toInstant();
+        Instant maxNotAfter = Instant.now().plus(825, ChronoUnit.DAYS);
         Assert.assertFalse(serverNotAfter.isAfter(maxNotAfter));
     }
 }

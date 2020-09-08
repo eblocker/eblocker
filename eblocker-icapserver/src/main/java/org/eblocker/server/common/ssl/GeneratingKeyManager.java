@@ -123,7 +123,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
     }
 
     private X509Certificate generateCertificate(Parameters parameters) throws CryptoException, IOException {
-        CertificateAndKey cak = eblockerCa.generateServerCertificate(parameters.names.get(0), keyPair, eblockerCa.getCertificate().getNotAfter(), parameters.names);
+        CertificateAndKey cak = eblockerCa.generateServerCertificate(parameters.names.get(0), keyPair, eblockerCa.getServerNotValidAfter(), parameters.names);
         return cak.getCertificate();
     }
 

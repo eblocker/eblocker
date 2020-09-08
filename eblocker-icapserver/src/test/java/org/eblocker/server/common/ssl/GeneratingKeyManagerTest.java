@@ -37,6 +37,8 @@ import java.security.KeyPair;
 import java.security.Principal;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -169,6 +171,15 @@ public class GeneratingKeyManagerTest {
         Assert.assertEquals(2, chain[0].getSubjectAlternativeNames().size());
         Assert.assertTrue(chain[0].getSubjectAlternativeNames().contains(Arrays.asList(2, hostname)));
         Assert.assertTrue(chain[0].getSubjectAlternativeNames().contains(Arrays.asList(2, DEFAULT_NAME)));
+        assertExpiration(chain[0]);
+    }
+
+    private void assertExpiration(X509Certificate certificate) {
+        Instant notBefore = certificate.getNotBefore().toInstant();
+        Instant notAfter = certificate.getNotAfter().toInstant();
+        Instant notAfterCA = eblockerCa.getCertificate().getNotAfter().toInstant();
+        Assert.assertFalse(notAfter.isAfter(notAfterCA));
+        Assert.assertFalse(notAfter.isAfter(notBefore.plus(825, ChronoUnit.DAYS)));
     }
 
     private SSLSocket createMockSslSocket(String hostname, String ipAddress, int port) throws UnknownHostException {

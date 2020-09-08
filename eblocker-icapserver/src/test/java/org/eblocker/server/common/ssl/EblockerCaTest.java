@@ -21,8 +21,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -60,4 +62,10 @@ public class EblockerCaTest {
         Assert.assertTrue(serverCertificateAndKey.getCertificate().getSubjectAlternativeNames().contains(Arrays.asList(7, "10.10.10.10")));
     }
 
+    @Test
+    public void getServerNotValidAfter() {
+        Instant maxNotAfter = Instant.now().plus(825, ChronoUnit.DAYS);
+        Instant serverNotAfter = eblockerCa.getServerNotValidAfter().toInstant();
+        Assert.assertFalse(serverNotAfter.isAfter(maxNotAfter));
+    }
 }

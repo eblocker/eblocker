@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.icap.transaction;
 
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.session.Session;
@@ -24,17 +31,12 @@ import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.resources.OnePixelImage;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.icap.service.SurrogateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 
 public abstract class AbstractTransaction implements Transaction, TransactionIdentifier {
 	private static final Logger log = LoggerFactory.getLogger(AbstractTransaction.class);
@@ -55,22 +57,22 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     private String userAgent = null;
     private String redirectTarget = null;
     private Decision decision = Decision.NO_DECISION;
-	private String baseUrl = null;
-	private FilterResult filterResult = null;
-	private PageContext pageContext;
-	private Injections injections;
-	private ContentEncoding contentEncoding;
-	private StringBuilder content;
+    private String baseUrl = null;
+    private FilterResult filterResult = null;
+    private PageContext pageContext;
+    private Injections injections;
+    private ContentEncoding contentEncoding;
+    private StringBuilder content;
+    private static SurrogateService surrogateService = new SurrogateService();
 
-
-	public AbstractTransaction(boolean isRequest, boolean isResponse) {
+    public AbstractTransaction(boolean isRequest, boolean isResponse) {
         this.isRequest = isRequest;
         this.isResponse = isResponse;
     }
 
-	@Override
+    @Override
     public String getSessionId() {
-		return session.getSessionId();
+        return session.getSessionId();
 	}
 
     @Override
@@ -221,21 +223,28 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
             return;
         }
 
-		if (log.isDebugEnabled()) {
-			logHeaders();
-		}
+        if (log.isDebugEnabled()) {
+            logHeaders();
+        }
 
-		byte[] image = OnePixelImage.get(baseUrl + "/redirect/prepare?url=" + UrlUtils.urlEncode(getUrl()));
+        String url = getUrl();
+        Optional<FullHttpResponse> surrogate = surrogateService.surrogateForBlockedUrl(url);
+        if (surrogate.isPresent()) {
+            log.info("Returning surrogate for " + url);
+            setResponse(surrogate.get());
+        } else {
+            byte[] image = OnePixelImage.get(baseUrl + "/redirect/prepare?url=" + UrlUtils.urlEncode(url));
 
-		FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
-		httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, OnePixelImage.MIME_TYPE);
-		httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, image.length);
-		setResponse(httpResponse);
+            FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
+            httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, OnePixelImage.MIME_TYPE);
+            httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, image.length);
+            setResponse(httpResponse);
+        }
 
-		this.complete = true;
-		this.headersChanged = true;
-		this.contentChanged = true;
-	}
+        this.complete = true;
+        this.headersChanged = true;
+        this.contentChanged = true;
+    }
 
 	@Override
 	public void noContent() {

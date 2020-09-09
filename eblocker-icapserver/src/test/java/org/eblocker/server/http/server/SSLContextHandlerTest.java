@@ -262,7 +262,7 @@ public class SSLContextHandlerTest {
         LocalDate usedCertNotBefore = LocalDateTime.ofInstant(usedKeyPair.getCertificate().getNotBefore().toInstant(), ZoneId.systemDefault()).toLocalDate();
         Assert.assertTrue(usedCertNotBefore.isEqual(LocalDate.now()));
         LocalDate usedCertNotAfter = LocalDateTime.ofInstant(usedKeyPair.getCertificate().getNotAfter().toInstant(), ZoneId.systemDefault()).toLocalDate();
-        Assert.assertTrue(usedCertNotAfter.isBefore(LocalDate.now().plusDays(SSLContextHandler.MAX_VALIDITY_IN_DAYS)));
+        Assert.assertFalse(usedCertNotAfter.isAfter(LocalDate.now().plusDays(EblockerCa.MAX_VALIDITY_SERVER_IN_DAYS)));
     }
 
     @Test

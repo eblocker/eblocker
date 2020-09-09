@@ -51,13 +51,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,7 +70,6 @@ import java.util.stream.Collectors;
 @SubSystemService(SubSystem.HTTPS_SERVER)
 public class SSLContextHandler {
     private static final Logger log = LoggerFactory.getLogger(SSLContextHandler.class);
-    public static final int MAX_VALIDITY_IN_DAYS = 825;
 
     private final String keyStorePath;
     private final String renewalKeyStorePath;
@@ -276,18 +272,18 @@ public class SSLContextHandler {
         try {
             certificate.checkValidity();
             certificate.verify(issuer.getPublicKey());
-            return isValidityPeriodShorterThan(certificate, MAX_VALIDITY_IN_DAYS);
+            return isValidityPeriodNotLongerThan(certificate, EblockerCa.MAX_VALIDITY_SERVER_IN_DAYS);
         } catch (GeneralSecurityException e) {
             log.debug("certificate validation failed", e);
             return false;
         }
     }
 
-    private boolean isValidityPeriodShorterThan(X509Certificate certificate, int maxValidityInDays) {
-        java.util.Date notBefore = certificate.getNotBefore();
-        java.util.Date notAfter = certificate.getNotAfter();
-        long certificateValidity = ChronoUnit.DAYS.between(notBefore.toInstant(), notAfter.toInstant());
-        return certificateValidity < maxValidityInDays;
+    private boolean isValidityPeriodNotLongerThan(X509Certificate certificate, int maxValidityInDays) {
+        Instant notBefore = certificate.getNotBefore().toInstant();
+        Instant notAfter = certificate.getNotAfter().toInstant();
+        Instant maxNotAfter = notBefore.plus(maxValidityInDays, ChronoUnit.DAYS);
+        return !notAfter.isAfter(maxNotAfter);
     }
 
     private X509Certificate getFirstEntryFromKeyStore(EblockerResource eBlockerCertificateResource) {
@@ -331,16 +327,13 @@ public class SSLContextHandler {
 
             log.info("Creating signed SSL certificate with currentIPAddress: {}", currentIPAddress);
 
-            LocalDate notAfter = getNotAfter();
-            long validDays = ChronoUnit.DAYS.between(LocalDate.now(), notAfter);
-            log.info("root certificate is valid until {} ({} days)", notAfter, validDays);
+            Date notAfter = ca.getServerNotValidAfter();
 
-            //start running the script (block until finished)
-            log.info("Creating webserver certificate which is valid for: {} days", validDays);
+            log.info("Creating webserver certificate which is valid until: {}", notAfter.toInstant());
 
             List<String> subjectAlternativeNames = new ArrayList<>(getSubjectAlternativeNames());
             CertificateAndKey certificateAndKey = ca.generateServerCertificate(controlBarHostName,
-                Date.from(notAfter.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant()),
+                notAfter,
                 subjectAlternativeNames);
 
             try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
@@ -351,13 +344,6 @@ public class SSLContextHandler {
         } catch (IOException | CryptoException e) {
             throw new SslContextException("failed to generate webserver certificate", e);
         }
-    }
-
-    private LocalDate getNotAfter() {
-        LocalDate caNotAfter = LocalDateTime.ofInstant(sslService.getCa().getCertificate().getNotAfter().toInstant(), ZoneId.systemDefault()).toLocalDate();
-        int recommendedNotAfterInDays = MAX_VALIDITY_IN_DAYS - 1;
-        LocalDate maxNotAfter = LocalDate.now().plusDays(recommendedNotAfterInDays);
-        return caNotAfter.isAfter(maxNotAfter) ? maxNotAfter : caNotAfter;
     }
 
     private SSLContext createSslContext(String keyStorePath) {

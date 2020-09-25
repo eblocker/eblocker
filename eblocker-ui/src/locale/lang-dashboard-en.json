@@ -892,7 +892,11 @@
             "FF_ADD_CERT" : {
                 "IMAGE_1": "en/firefox-01-EN.png",
                 "STEP_1" : "Click on {{'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate}} to download the eBlocker certificate for Firefox",
-                "STEP_2" : "In the following dialog select \"Trust this CA to identify websites.\",",
+		"STEP_2" : "Save the file to disk",
+		"STEP_3" : "Open the Certificate Manager at Firefox > „Options“ > „Privacy & Security“ > „Certificates“ > „View Certificates...“",
+		"STEP_4" : "Select the tab <b>Authorities</b> und klick  „Import...“",
+		"STEP_5" : "Select the previously saved certificate file",
+                "STEP_6" : "In the following dialog select „Trust this CA to identify websites“",
                 "TITLE" : "Install HTTPS certificate in Firefox"
             },
             "FF_ADD_OS" : {
@@ -916,17 +920,18 @@
                 "EXPLAIN_IOS" : "To install the certificate in iOS you need to use Safari. Please open the HTTPS wizard again in Safari."
             },
             "IOS_ADD_CERT" : {
-                "STEP_2" : "The iOS settings open automatically and show the profile of the eBlocker certificate",
-                "STEP_3" : "Follow the instructions and confirm three times \"Install\"",
-                "STEP_4" : "Click \"Done\"",
-                "STEP_5" : "The certificate is now stored in iOS and must still be activated",
+                "STEP_2" : "Tap „Allow“ in the alert box to allow the download of the configuration profile",
+		"STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „Profiles“ > „Downloaded Profile“",
+                "STEP_4" : "Tap „Install“, enter your code and confirm again with „Install“",
+                "STEP_5" : "Tap „Done“",
+                "STEP_6" : "The certificate is now stored in iOS and must still be activated",
                 "TITLE" : "Install HTTPS certificate (iOS)"
             },
             "IOS_TEST_CERT" : {
                 "EXPLAIN" : "The installed certificate needs to be activated",
                 "NOTE" : "The eBlocker certificate is now installed on iOS. Most browsers and applications are now able to access the eBlocker certificate.",
-                "STEP_1" : "In the iOS settings go to: \"General\" > \"About\" > \"Certificate Trust Settings\"",
-                "STEP_2" : "Move the switch next to the certificate \"eBlocker...\" to the right",
+                "STEP_1" : "In the iOS settings go to: „General“ > „About“ > „Certificate Trust Settings“",
+                "STEP_2" : "Move the switch next to the certificate „eBlocker...“ to the right",
                 "TITLE" : "Activate HTTPS certificate (iOS)"
             },
             "LABEL_CERT_FAIL" : "Certificate may not have been installed",

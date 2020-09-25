@@ -108,7 +108,7 @@ Now you should be able to access the settings app at <http://localhost:3000/>.
 
 Publish a new ARP_IN event:
 
-    redis-cli  PUBLISH arp:in "2/a4:83:e7:51:1c:ef/172.20.10.8/a4:83:e7:51:1c:88/172.20.10.5"
+    redis-cli  PUBLISH arp:in "2/a483e7511cef/172.20.10.8/a483e7511c88/172.20.10.5"
 
 where the first IP is from your local subnet (the second IP does not matter). For even more devices, you need to change the MAC and the first IP.
 

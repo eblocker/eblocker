@@ -22,6 +22,7 @@ export default function DeviceService($http, $q, DataCachingService) {
     const PATH_SCAN = PATH + '/scanningInterval';
     const PATH_SCAN_DEV = PATH + '/scan';
     const PATH_AUTO_ENABLE_NEW_DEVICES = PATH + '/autoEnableNewDevices';
+    const PATH_AUTO_ENABLE_NEW_DEVICES_AFTER_ACTIVATION = PATH + '/autoEnableNewDevicesAfterActivation';
 
     let devicesCache;
 
@@ -132,12 +133,21 @@ export default function DeviceService($http, $q, DataCachingService) {
         });
     }
 
+    function setAutoEnableNewDevicesAfterActivation(autoEnableNewDevices) {
+        return $http.post(PATH_AUTO_ENABLE_NEW_DEVICES_AFTER_ACTIVATION, autoEnableNewDevices)
+            .then(function success(response) {
+                return response;
+            }, function error(response) {
+                return $q.reject(response);
+            });
+    }
+
     function scan() {
         return $http.post(PATH_SCAN_DEV).then(function success(response) {
             return response;
         }, function error(response) {
             return $q.reject(response);
-        }).finally(function() {
+        }).finally(function () {
             invalidateCache();
         });
     }
@@ -237,6 +247,7 @@ export default function DeviceService($http, $q, DataCachingService) {
         isScanningAvailable: isScanningAvailable,
         isAutoEnableNewDevices: isAutoEnableNewDevices,
         setAutoEnableNewDevices: setAutoEnableNewDevices,
+        setAutoEnableNewDevicesAfterActivation: setAutoEnableNewDevicesAfterActivation,
         invalidateCache: invalidateCache,
         setDisplayValues: setDisplayValues,
         resetDevice: resetDevice,

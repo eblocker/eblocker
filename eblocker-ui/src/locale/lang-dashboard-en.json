@@ -924,7 +924,7 @@
 		"STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „Profiles“ > „Downloaded Profile“",
                 "STEP_4" : "Tap „Install“, enter your code and confirm again with „Install“",
                 "STEP_5" : "Tap „Done“",
-                "STEP_6" : "The certificate is now stored in iOS and must still be activated",
+                "STEP_6" : "The certificate must now be activated (Continue)",
                 "TITLE" : "Install HTTPS certificate (iOS)"
             },
             "IOS_TEST_CERT" : {

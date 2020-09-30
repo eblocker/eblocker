@@ -139,5 +139,13 @@ You can use the following script to simulate the detection of an SSL error:
     
 Either pass a domain name as argument or let the script generate a name based on the current timestamp.
 
+## Reset local development environment
+
+To reset the local development environment up to the point where the activation wizard appears:
+ 
+ 1. Stop the icapserver and the Redis server
+ 1. Remove the Redis DB `$src/redis/dump.rdb`
+ 1. Remove the file `/opt/eblocker-icap/registration/registration.properties`
+
 
 

@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.PauseDeviceController;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -30,10 +32,12 @@ import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.RemainingPause;
 import org.eblocker.server.http.controller.DeviceController;
-import org.eblocker.server.http.service.*;
+import org.eblocker.server.http.service.AnonymousService;
+import org.eblocker.server.http.service.DeviceOnlineStatusCache;
+import org.eblocker.server.http.service.DevicePermissionsService;
+import org.eblocker.server.http.service.DeviceScanningService;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.google.inject.Inject;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -299,13 +303,20 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Boolean isAutoEnableNewDevices(Request request, Response response) {
-	    return deviceFactory.isAutoEnableNewDevices();
+        return deviceFactory.isAutoEnableNewDevices();
     }
 
     @Override
     public void setAutoEnableNewDevices(Request request, Response response) {
         Boolean isAutoEnableNewDevices = request.getBodyAs(Boolean.class);
         deviceFactory.setAutoEnableNewDevices(isAutoEnableNewDevices);
+    }
+
+    @Override
+    public void setAutoEnableNewDevicesAndResetExisting(Request request, Response response) {
+        Boolean isAutoEnableNewDevices = request.getBodyAs(Boolean.class);
+        deviceFactory.setAutoEnableNewDevices(isAutoEnableNewDevices);
+        deviceService.setEnabledForAllButCurrentDevice(isAutoEnableNewDevices, getCurrentDevice(request));
     }
 
     @Override
@@ -316,7 +327,7 @@ public class DeviceControllerImpl implements DeviceController {
     }
 
     @Override
-    public RemainingPause setPauseByDeviceId(Request request, Response response){
+    public RemainingPause setPauseByDeviceId(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
         Device device = deviceService.getDeviceById(deviceId);
         RemainingPause pause = request.getBodyAs(RemainingPause.class);
@@ -325,24 +336,21 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public RemainingPause getPauseCurrentDevice(Request request, Response response) {
-        IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
-        Device device = deviceService.getDeviceByIp(ipAddress);
+        Device device = getCurrentDevice(request);
         return getPause(device);
 	}
 
-	@Override
+    @Override
     public RemainingPause pauseCurrentDevice(Request request, Response response){
-        IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
         RemainingPause pause = request.getBodyAs(RemainingPause.class);
-        Device device = deviceService.getDeviceByIp(ipAddress);
+        Device device = getCurrentDevice(request);
         return setPause(device, pause);
 	}
 
     @Override
     public RemainingPause pauseCurrentDeviceIfNotYetPausing(Request request, Response response) {
-        IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
         RemainingPause pause = request.getBodyAs(RemainingPause.class);
-        Device device = deviceService.getDeviceByIp(ipAddress);
+        Device device = getCurrentDevice(request);
 
         RemainingPause remainingPause = getPause(device);
         if (remainingPause == null) {
@@ -393,31 +401,31 @@ public class DeviceControllerImpl implements DeviceController {
 
 	@Override
     public boolean getShowWarnings(Request request, Response response) {
-		Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
-		return device == null || device.getAreDeviceMessagesSettingsDefault();
-	}
+        Device device = getCurrentDevice(request);
+        return device == null || device.getAreDeviceMessagesSettingsDefault();
+    }
 
 	@Override
     public Object postShowWarnings(Request request, Response response) {
-		Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
-		if (device != null) {
-			Map<String, Boolean> map = request.getBodyAs(Map.class);
-			device.setAreDeviceMessagesSettingsDefault(map.get("showWarnings"));
-			deviceService.updateDevice(device);
-			return device;
-		}
-		return null;
-	}
+        Device device = getCurrentDevice(request);
+        if (device != null) {
+            Map<String, Boolean> map = request.getBodyAs(Map.class);
+            device.setAreDeviceMessagesSettingsDefault(map.get("showWarnings"));
+            deviceService.updateDevice(device);
+            return device;
+        }
+        return null;
+    }
 
-	@Override
-    public void logoutUserFromDevice(Request request, Response response){
-		Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
-		if (device != null) {
-			deviceService.logoutUser(device);
-		} else {
-			throw new BadRequestException("Logout failed, device unknown");
-		}
-	}
+    @Override
+    public void logoutUserFromDevice(Request request, Response response) {
+        Device device = getCurrentDevice(request);
+        if (device != null) {
+            deviceService.logoutUser(device);
+        } else {
+            throw new BadRequestException("Logout failed, device unknown");
+        }
+    }
 
 	@Override
 	public Device getCurrentDevice(Request request, Response response){
@@ -426,19 +434,19 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public boolean getPauseDialogStatus(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         return device == null || device.isShowPauseDialog();
     }
 
     @Override
     public boolean getPauseDialogStatusDoNotShowAgain(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         return device == null || device.isShowPauseDialogDoNotShowAgain();
     }
 
     @Override
     public void updatePauseDialogStatusDoNotShowAgain(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         if (device != null) {
             Map<String, Boolean> map = request.getBodyAs(Map.class);
             device.setShowPauseDialogDoNotShowAgain(map.get("doNotShowPauseDialogAgain"));
@@ -448,7 +456,7 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public void updatePauseDialogStatus(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         if (device != null) {
             Map<String, Boolean> map = request.getBodyAs(Map.class);
             device.setShowPauseDialog(map.get("showPauseDialog"));
@@ -458,13 +466,13 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public IconSettings getIconSettings(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         return new IconSettings(device);
     }
 
     @Override
     public IconSettings setIconSettings(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         IconSettings iconSettings = request.getBodyAs(IconSettings.class);
         Device changedDevice = deviceService.setIconSettings(device, iconSettings);
         return new IconSettings(changedDevice);
@@ -472,7 +480,7 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Device.DisplayIconPosition setIconPosition(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         Device.DisplayIconPosition iconPosition = Device.DisplayIconPosition.valueOf(request.getHeader("iconPos"));
         return deviceService.setIconPosition(device, iconPosition);
     }
@@ -497,8 +505,13 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public IconSettings resetIconSettings(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        Device device = getCurrentDevice(request);
         Device resettedDevice = deviceService.resetIconSettings(device);
         return new IconSettings(resettedDevice);
+    }
+
+    private Device getCurrentDevice(Request request) {
+        IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
+        return deviceService.getDeviceByIp(ipAddress);
     }
 }

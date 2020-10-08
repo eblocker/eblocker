@@ -20,7 +20,6 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IconSettings;
 import org.eblocker.server.common.data.ShowWelcomeFlags;
 import org.eblocker.server.common.util.RemainingPause;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -48,6 +47,8 @@ public interface DeviceController {
     Boolean isAutoEnableNewDevices(Request request, Response response);
 
     void setAutoEnableNewDevices(Request request, Response response);
+
+    void setAutoEnableNewDevicesAndResetExisting(Request request, Response response);
 
     RemainingPause getPauseByDeviceId(Request request, Response response);
 

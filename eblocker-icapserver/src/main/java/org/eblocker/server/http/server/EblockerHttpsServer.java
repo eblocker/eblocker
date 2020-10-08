@@ -16,13 +16,27 @@
  */
 package org.eblocker.server.http.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.name.Named;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
+import io.netty.handler.ssl.SslContext;
 import org.eblocker.server.common.BaseModule;
 import org.eblocker.server.common.data.IpAddressModule;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.ServiceNotAvailableException;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemShutdown;
+import org.eblocker.server.common.status.StartupStatusReporter;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
 import org.eblocker.server.http.controller.AuthenticationController;
@@ -75,20 +89,6 @@ import org.eblocker.server.http.controller.boot.DiagnosticsReportController;
 import org.eblocker.server.http.controller.boot.SystemStatusController;
 import org.eblocker.server.http.exceptions.restexpress.ServiceNotAvailableServiceException;
 import org.eblocker.server.http.security.SecurityProcessor;
-import org.eblocker.server.common.network.BaseURLs;
-import org.eblocker.server.common.status.StartupStatusReporter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.name.Named;
-import io.netty.channel.Channel;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.JdkSslContext;
-import io.netty.handler.ssl.SslContext;
 import org.restexpress.Request;
 import org.restexpress.RestExpress;
 import org.restexpress.pipeline.Preprocessor;
@@ -1748,6 +1748,11 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/devices/autoEnableNewDevices", deviceController)
             .action("setAutoEnableNewDevices", HttpMethod.POST)
             .name("adminconsole.devices.set.auto.enable.new.devices");
+
+        server
+            .uri("/api/adminconsole/devices/autoEnableNewDevicesAfterActivation", deviceController)
+            .action("setAutoEnableNewDevicesAndResetExisting", HttpMethod.POST)
+            .name("adminconsole.devices.set.auto.enable.new.devices.after.activation");
 
         server
             .uri("/api/adminconsole/devices/{deviceId}", deviceController)

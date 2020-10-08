@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -35,8 +37,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.icap.resources.DefaultEblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.restexpress.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,16 +276,28 @@ public class DeviceService {
         listeners.forEach(listener -> listener.onChange(device));
     }
 
+    public void setEnabledForAllButCurrentDevice(boolean enabled, Device currentDevice) {
+        getDevices(true).stream()
+            .filter(device -> device.isEnabled() != enabled)
+            .filter(device -> !device.equals(currentDevice))
+            .forEach(device -> {
+                device.setEnabled(enabled);
+                updateDevice(device);
+            });
+    }
+
     public interface DeviceChangeListener {
         void onChange(Device device);
+
         void onDelete(Device device);
+
         void onReset(Device device);
     }
 
-	public void logoutUser(Device device) {
-		device.setOperatingUser(DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID);
-		updateDevice(device);
-	}
+    public void logoutUser(Device device) {
+        device.setOperatingUser(DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID);
+        updateDevice(device);
+    }
 
     public Device resetIconSettings(Device device) {
         device.setIconMode(DisplayIconMode.getDefault());

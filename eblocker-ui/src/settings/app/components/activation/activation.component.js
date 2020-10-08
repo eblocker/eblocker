@@ -218,11 +218,11 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
 
     vm.submitAutoEnableNewDevicesForm = submitAutoEnableNewDevicesForm;
     function submitAutoEnableNewDevicesForm() {
-        DeviceService.setAutoEnableNewDevices(vm.isAutoEnableNewDevices).then(function (response) {
+        DeviceService.setAutoEnableNewDevicesAfterActivation(vm.isAutoEnableNewDevices).then(function (response) {
             vm.isAutoEnableNewDevicesSet = true;
             nextStep();
-        }, function(data) {
-            logger.error('setAutoEnableNewDevices failed ', data);
+        }, function (data) {
+            logger.error('setAutoEnableNewDevicesAfterActivation failed ', data);
         });
     }
 

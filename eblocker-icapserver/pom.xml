@@ -321,6 +321,22 @@
 							</resources>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>copy-resources-systemd</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/package/systemd</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/package/systemd</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
 					<execution>
 						<id>copy-configuration</id>
 					</execution>
@@ -430,6 +446,14 @@
 										<prefix>/etc/default</prefix>
 									</mapper>
 								</data>
+                                <data>
+                                    <src>${project.build.directory}/package/systemd/</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/etc/systemd/system/icapserver.service.d</prefix>
+                                    </mapper>
+                                </data>
 								<data>
 									<type>template</type>
 									<mapper>

@@ -891,7 +891,11 @@
             "FF_ADD_CERT" : {
                 "IMAGE_1": "de/firefox-CA.png",
                 "STEP_1" : "Laden Sie hier das eBlocker-Zertifikat für Firefox",
-                "STEP_2" : "Wählen Sie im folgenden Dialog: „Dieser CA vertrauen, um Websites zu identifizieren“",
+		"STEP_2" : "Speichern Sie die Datei",
+		"STEP_3" : "Öffnen Sie die Zertifikatsverwaltung unter Firefox > „Einstellungen“ > „Datenschutz & Sicherheit“ > „Zertifikate“ > „Zertifikate anzeigen“",
+		"STEP_4" : "Wählen Sie das Tab <b>Zertifizierungsstellen</b> und klicken Sie „Importieren...“",
+		"STEP_5" : "Wählen Sie die zuvor gespeicherte Zertifikatsdatei aus",
+                "STEP_6" : "Wählen Sie im folgenden Dialog: „Dieser CA vertrauen, um Websites zu identifizieren“",
                 "TITLE" : "HTTPS-Zertifikat in Firefox hinterlegen"
             },
             "FF_ADD_OS" : {
@@ -915,10 +919,11 @@
                 "EXPLAIN_IOS" : "Um das Zertifikat in iOS zu hinterlegen, muss der Safari Browser verwendet werden. Bitte öffnen Sie Safari und führen Sie den HTTPS-Assistenten erneut aus."
             },
             "IOS_ADD_CERT" : {
-                "STEP_2" : "Es öffnet sich automatisch die iOS-Einstellungen und es wird Ihnen das Profil des eBlocker-Zertifikats angezeigt",
-                "STEP_3" : "Folgen Sie den Anweisungen und bestätigen Sie dreimal „Installieren“",
-                "STEP_4" : "Klicken Sie auf „Fertig“",
-                "STEP_5" : "Das Zertifikat ist jetzt in iOS hinterlegt und muss noch aktiviert werden",
+                "STEP_2" : "Tippen Sie auf „Zulassen“, um das Konfigurationsprofil zu laden",
+		"STEP_3" : "Öffnen Sie die iOS Einstellungen und wählen Sie das eBlocker-Profil unter „Allgemein“ > „Profile“ > „Geladenes Profil“ aus",
+                "STEP_4" : "Tippen Sie auf „Installieren“, geben Sie Ihren Code ein und bestätigen Sie erneut mit „Installieren“",
+                "STEP_5" : "Tippen Sie auf „Fertig“",
+                "STEP_6" : "Das Zertifikat muss jetzt noch aktiviert werden (Weiter)",
                 "TITLE" : "HTTPS-Zertifikat hinterlegen (iOS)"
             },
             "IOS_TEST_CERT" : {

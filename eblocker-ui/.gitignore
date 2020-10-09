@@ -12,6 +12,3 @@ build/
 
 # language file created to dynamically import lang files with random file name (avoid caching)
 src/shared/locale/langFileNames.js
-
-# should not update anymore, but it does. So for now ignore it.
-package-lock.json

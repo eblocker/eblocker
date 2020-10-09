@@ -2545,24 +2545,25 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Dies ist das erste Open Source Release",
-                "GREETINGS" : "Mit besten Grüßen",
+                "INTRO" : "Dies ist das erste Open Source Release, das wir gemeinsam mit unserer großartigen Community entwickelt haben.",
+                "GREETINGS" : "Danke für deine Unterstützung und bleib geschützt ;-)",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Neuerungen:",
-                    "LI_1" : "Erstes Release auf Open Source Code",
-                    "LI_2" : "Aktuelles Debian Buster Linux (inkl. Security Patches)",
-                    "LI_3" : "Release nur für Raspberry Pi Familie"
+                    "HEAD" : "Wichtigste Neuerungen:",
+                    "LI_1" : "eBlockerOS basiert vollständig auf Open Source Code",
+		    "LI_2" : "Aktualisierung des Linux Betriebssystems inkl. umfangreicher Sicherheitspatches",
+		    "LI_3" : "Zahlreiche Verbesserungen und Aktualisierungen",
+		    "LI_4" : "Gleicher Leistungsumfang inkl. lizensierter Filter, wie beim ehemals kommerziellen eBlocker"
                 },
-                "LINK_PRE" : "Hilfe bekommst du auf unseren Hilfe-Seiten: ",
-                "LINK_TEXT" : "https://eBlocker.org/de/help/",
-                "LINK_URL" : "https://eBlocker.org/de/help/",
-                "OUTRO" : "",
+                "LINK_PRE" : "Weitere Details zu den Änderungen findest du in den ",
+                "LINK_TEXT" : "Release Notes",
+                "LINK_URL" : "https://eblocker.org/release-notes/2-5/",
+                "OUTRO" : "<a href=\"https://eblocker.org/spendenmoeglichkeiten/\" target=\"_blank\" class=\"orange\">Bitte spende für den Betrieb</a>, wenn dir eBlocker gefällt.",
                 "SIGN" : "Dein eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.5.1"
+                "TITLE" : "eBlockerOS Release 2.5"
             },
-            "MENU_LABEL" : "Neu in eBlockerOS 2.5.1",
+            "MENU_LABEL" : "Neu in eBlockerOS 2.5",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.5.1"
+                "TITLE" : "eBlockerOS Release 2.5"
             }
         },
         "SSL" : {

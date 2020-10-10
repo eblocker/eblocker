@@ -17,7 +17,7 @@
 {
     "google-analytics.com": [
         ["google-analytics.com/ga.js", "google-analytics_ga.js"],
-        ["google-analytics.com/analytics.js", "google-analytics_ga.js"],
+        ["google-analytics.com/analytics.js", "google-analytics_analytics.js"],
         ["google-analytics.com/inpage_linkid.js", "google-analytics_inpage_linkid.js"],
         ["google-analytics.com/plugins/ga/inpage_linkid.js", "google-analytics_inpage_linkid.js"],
         ["google-analytics.com/cx/api.js", "google-analytics_cx_api.js"],

@@ -360,6 +360,8 @@
                 "GENERATE" : "Save Settings",
                 "UPLOAD" : "Restore Settings..."
             },
+	    "DATA_DEVICE_SETTINGS" : "Device settings",
+	    "DATA_TOR_SETTINGS" : "Tor settings",
             "DATA_TRUSTED_APPS" : "Trusted apps",
             "DATA_TRUSTED_SITES" : "Trusted websites",
             "ERROR" : {

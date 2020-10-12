@@ -360,6 +360,8 @@
                 "GENERATE" : "Einstellungen sichern",
                 "UPLOAD" : "Wiederherstellen..."
             },
+	    "DATA_DEVICE_SETTINGS" : "Geräteeinstellungen",
+	    "DATA_TOR_SETTINGS" : "Einstellungen für Tor",
             "DATA_TRUSTED_APPS" : "Vertrauenswürdige Apps",
             "DATA_TRUSTED_SITES" : "Vertrauenswürdige Websites",
             "ERROR" : {

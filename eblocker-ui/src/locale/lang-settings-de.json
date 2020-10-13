@@ -1465,8 +1465,7 @@
                         "LABEL" : "Lizenzschlüssel",
                         "LICENSE_KEY_LABEL" : "Lizenzschlüssel",
                         "TEXT1" : "Geben Sie den Lizenzschlüssel und die E-Mail-Adresse ein, um eine neue Lizenz auf Ihrem eBlocker zu aktivieren.",
-                        "TEXT2" : "Falls die Lizenz online gekauft wurde, geben sie unbedingt die beim Kauf verwendete E-Mail-Adresse ein.",
-                        "TEXT3" : "In allen anderen Fällen geben Sie bitte eine gültige, langfristig verwendbare Adresse ein. Diese wird ausschließlich verwendet, wenn Sie die Lizenz zurücksetzen möchten."
+                        "TEXT2" : "Ihre E-Mail verwenden wir nur im Ausnahmefall, falls wir Sie über ein Sicherheitsproblem informieren müssen. Sie wird ansonsten nicht verwendet, streng nach <a href=\"https://eblocker.org/de/privacy-policy/\" target=\"_blank\" class=\"orange\">unserer Datenschutzerklärung</a> verarbeitet und nicht an Dritte weitergegeben."
                     },
                     "CONFIRM" : {
                         "CONFIRM" : "Sind Sie sicher, dass Sie diese Lizenz aktivieren möchten?",

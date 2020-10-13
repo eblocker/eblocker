@@ -1465,8 +1465,7 @@
                         "LABEL" : "License Key",
                         "LICENSE_KEY_LABEL" : "License Key",
                         "TEXT1" : "Enter license key and email address to activate a new license on your eBlocker.",
-                        "TEXT2" : "If purchased online, you must enter the same email address used at purchase.",
-                        "TEXT3" : "In all other cases, please provide a valid, permanent email address. It will only be used to reset the license on your demand."
+                        "TEXT2" : "We will only use your e-mail in exceptional cases if we need to inform you about a security issue. Otherwise it will not be used, processed strictly in accordance with <a href=\"https://eblocker.org/en/privacy-policy/\" target=\"_blank\" class=\"orange\">our privacy policy</a> and not passed on to third parties."
                     },
                     "CONFIRM" : {
                         "CONFIRM" : "Are you sure that you want to activate this license?",

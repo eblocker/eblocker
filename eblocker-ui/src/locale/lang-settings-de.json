@@ -41,17 +41,16 @@
                     "LABEL" : "Neue Geräte",
                     "TEXT1" : "Automatische Aktivierung neuer Geräte",
                     "AUTO_ENABLE_NEW_DEVICES_ENABLED" : {
-                        "TITLE" : "Neue Geräte automatisch aktivieren",
-                        "TEXT" : "In diesem Modus wird der eBlocker für neue Geräte automatisch aktiviert (nicht empfohlen)."
+                        "TITLE" : "Neue Geräte automatisch aktivieren (nicht empfohlen)",
+                        "TEXT" : "In diesem Modus wird der eBlocker für neue Geräte automatisch aktiviert."
                     },
                     "AUTO_ENABLE_NEW_DEVICES_DISABLED" : {
-                        "TITLE" : "Neue Geräte nicht automatisch aktivieren",
-                        "TEXT" : "In diesem Modus ist der eBlocker für neue Geräte nicht aktiviert (empfohlen). Bitte aktivieren Sie die Geräte jeweils manuell im eBlocker (Einstellungen>Geräte)."
+                        "TITLE" : "Neue Geräte nicht automatisch aktivieren (empfohlen)",
+                        "TEXT" : "In diesem Modus wird der eBlocker für neue Geräte nicht aktiviert. Bitte aktivieren Sie die Geräte jeweils manuell im eBlocker (Einstellungen>Geräte)."
                     }
                 },
                 "LICENSE" : {
-                    "EMAIL_IMPORTANCE_EXPLAIN_PART1" : "Wenn Ihr eBlocker auf eBlocker.com gekauft wurde, verwenden Sie bitte die E-Mail Adresse, an die der Lizenzschlüssel gesendet wurde.",
-                    "EMAIL_IMPORTANCE_EXPLAIN_PART2" : "Falls Sie den eBlocker <b>nicht</b> auf eBlocker.com erworben oder selbst gebaut haben, geben Sie bitte eine langfristig gültige E-Mail ein. Diese wird ausschließlich für administrative Zwecke, wie die Zusendung eines Lizenzschlüssels, sowie im Supportfall verwendet.",
+                    "EMAIL_IMPORTANCE_EXPLAIN" : "Ihre E-Mail verwenden wir nur im Ausnahmefall, falls wir Sie über ein Sicherheitsproblem informieren müssen. Sie wird ansonsten nicht verwendet, streng nach <a href=\"https://eblocker.org/de/privacy-policy/\" target=\"_blank\" class=\"orange\">unserer Datenschutzerklärung</a> verarbeitet und nicht an Dritte weitergegeben.",
                     "EMAIL_LABEL" : "E-Mail",
                     "ERROR" : {
                         "ERROR_REGISTER_CONFIRM_EMAIL_MISMATCH" : "Die E-Mail Adressen stimmen nicht überein. Bitte stellen Sie sicher, dass Sie Ihre E-Mail Adresse zweimal eingeben.",
@@ -82,7 +81,7 @@
                     "PLEASE_LET_US_KNOW" : "kontaktieren Sie uns bitte.",
                     "REGISTERING_STATUS_LABEL" : "Aktivierungsdaten werden übermittelt...",
                     "REGISTRATION_ERROR_INVALID_EMAIL" : "Ihre E-Mail Adresse ist nicht korrekt.",
-                    "REGISTRATION_PURPOSE_EXPLAIN" : "Bitte geben Sie den Lizenzschlüssel und Ihre E-Mail-Adresse ein. Damit ist die Aktivierung Ihres eBlockers abgeschlossen."
+                    "REGISTRATION_PURPOSE_EXPLAIN" : "Bitte bestätigen Sie den Lizenzschlüssel und geben Sie Ihre E-Mail-Adresse ein. Damit ist die Aktivierung Ihres eBlockers abgeschlossen."
                 },
                 "TIME_LANG" : {
                     "INTRO" : "Bitte wählen Sie die Zeitzone, in welcher der eBlocker genutzt wird.",
@@ -103,11 +102,8 @@
                 "WELCOME" : {
                     "GREETING" : "Willkommen bei eBlocker!",
                     "INTRO_PART1" : "In wenigen Schritten ist Ihr eBlocker eingerichtet und einsatzbereit.",
-                    "INTRO_PART2_ASK_FOR_SERIAL" : "Bitte halten Sie dazu Ihren Lizenzschlüssel und die Seriennummer Ihres eBlockers bereit.",
-                    "INTRO_PART2_NOT_ASK_FOR_SERIAL" : "Bitte halten Sie den Lizenzschlüssel für Ihren eBlocker bereit.",
                     "LABEL" : "Willkommen",
-                    "PLEASE_SELECT_LANGUAGE" : "Select language / Sprache wählen",
-                    "THANKS_FOR_PURCHASING_EBLOCKER" : "Wenn Sie Hilfe benötigen, besuchen Sie bitte eblocker.org/de/help. Wir helfen gerne weiter."
+                    "PLEASE_SELECT_LANGUAGE" : "Select language / Sprache wählen"
                 }
             },
             "TOOLBAR" : {
@@ -135,14 +131,9 @@
                 "TEXT1" : "Es gibt zur Zeit keine Aktualisierungen."
             },
             "FINISH" : {
-                "EMAIL" : "",
-                "FORUM" : " Support Forum ",
-                "FORUM_URL" : "https://eBlocker.org/community/",
                 "HEADER" : "Fertig!",
                 "TEXT1" : "Herzlichen Glückwunsch! Ihr eBlocker wurde erfolgreich aktiviert.",
-                "TEXT2" : "Weitere Einstellungen können Sie jederzeit unter dem Zahnrad oben rechts vornehmen. Im Dashboard eBlocker.box kann jedes Gerät individuell vom Nutzer gesteuert werden.",
-                "TEXT3" : "Bei Fragen oder Problemen nutzen Sie eBlocker.org/de/help",
-                "TEXT4" : "Als letzten Schritt prüft der eBlocker, ob eine Softwareaktualisierung vorliegt."
+                "TEXT2" : "Als letzten Schritt prüft der eBlocker, ob eine Softwareaktualisierung vorliegt."
             },
             "FOUND_UPDATES" : {
                 "FAIL" : "Aktualisierungsprozess konnte nicht gestartet werden.",

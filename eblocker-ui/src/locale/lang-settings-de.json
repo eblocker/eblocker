@@ -1925,9 +1925,7 @@
         "LICENSE" : {
             "ACTION" : {
                 "ACTIVATE_EBLOCKER" : "eBlocker aktivieren",
-                "ACTIVATE_LICENSE" : "Neue Lizenz aktivieren",
-                "BUY_LICENSE" : "Lizenzen vergleichen",
-                "TRANSFER_LICENSE" : "Lizenz übertragen"
+                "ACTIVATE_LICENSE" : "Neue Lizenz aktivieren"
             },
             "DEVICE_NAME" : {
                 "LABEL" : "Gerätename",
@@ -1935,9 +1933,7 @@
             },
             "LABEL" : "Lizenz",
             "LABEL_ACTIVATE_LICENSE" : "Eine neue eBlocker Lizenz aktivieren:",
-            "LABEL_BUY_LINK" : "Neue Lizenz kaufen oder aktuelle Lizenz erweitern:",
             "LABEL_SETUP_WIZARD" : "eBlocker Lizenz aktivieren:",
-            "LABEL_TRANSFER_LINK" : "Aktuelle Lizenz auf anderes Gerät übertragen:",
             "LICENSE_TYPE" : {
                 "LABEL" : "Lizenztyp",
                 "PRODUCT_TYPE" : {
@@ -1952,7 +1948,6 @@
             "NOTIFICATION" : {
                 "INFO_ENTER_LICENSE" : "Lizenz erfolgreich aktiviert bis {{validNotAfter | translate}}"
             },
-            "PURCHASE_NEW_URL" : "https://www.eBlocker.org/ebl/de/shop",
             "REGISTERED_BY" : {
                 "LABEL" : "Aktiviert für",
                 "UNREGISTERED" : "-"
@@ -1969,7 +1964,6 @@
                     "REVOKED" : "Die Lizenz ist ungültig."
                 }
             },
-            "TRANSFER_URL" : "https://www.eBlocker.org/ebl/de/license-transfer",
             "VALID_FROM" : {
                 "DATE_FORMAT" : "D. MMM YYYY",
                 "LABEL" : "Aktiviert am",

@@ -3,22 +3,21 @@
 
     <form name="vm.autoEnableNewDevicesForm" ng-submit="vm.submitAutoEnableNewDevicesForm()">
         <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.isAutoEnableNewDevices">
-            <md-radio-button class="md-accent" ng-value="true">
-                <h4 style="margin: 0;">{{
-                    'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_ENABLED.TITLE' | translate
-                    }}</h4>
-                <div>{{ 'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_ENABLED.TEXT' |
-                    translate
-                    }}
-                </div>
-            </md-radio-button>
-
             <md-radio-button class="md-accent" ng-value="false">
                 <h4 style="margin: 0;">{{
                     'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_DISABLED.TITLE' |
                     translate
                     }}</h4>
                 <div>{{ 'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_DISABLED.TEXT' |
+                    translate
+                    }}
+                </div>
+            </md-radio-button>
+            <md-radio-button class="md-accent" ng-value="true">
+                <h4 style="margin: 0;">{{
+                    'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_ENABLED.TITLE' | translate
+                    }}</h4>
+                <div>{{ 'ADMINCONSOLE.ACTIVATION.TAB.AUTO_ENABLE_NEW_DEVICES.AUTO_ENABLE_NEW_DEVICES_ENABLED.TEXT' |
                     translate
                     }}
                 </div>

@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.SSLWhitelistUrl;
 import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
@@ -27,19 +34,13 @@ import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class AppModuleService extends Observable {
     private final int tempAppModuleId;
     private final int standardAppModuleId;
     private final int userAppModuleId;
+    private final int autoSSLAppModuleId;
 
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
@@ -76,13 +78,14 @@ public class AppModuleService extends Observable {
 
     @Inject
     public AppModuleService(
-            DataSource dataSource,
-            ObjectMapper objectMapper,
-            AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
-            @Named("appmodules.file.path") String appModulesFilePath,
-            @Named("appmodules.id.temp") int tempAppModuleId,
-            @Named("appmodules.id.standard") int standardAppModuleId,
-            @Named("appmodules.id.user") int userAppModuleId) {
+        DataSource dataSource,
+        ObjectMapper objectMapper,
+        AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
+        @Named("appmodules.file.path") String appModulesFilePath,
+        @Named("appmodules.id.temp") int tempAppModuleId,
+        @Named("appmodules.id.standard") int standardAppModuleId,
+        @Named("appmodules.id.user") int userAppModuleId,
+        @Named("appmodules.id.autossl") int autoSSLAppModuleId) {
         this.dataSource = dataSource;
         this.objectMapper = objectMapper;
         this.appModuleRemovalMessageProvider = appModuleRemovalMessageProvider;
@@ -90,6 +93,7 @@ public class AppModuleService extends Observable {
         this.tempAppModuleId = tempAppModuleId;
         this.standardAppModuleId = standardAppModuleId;
         this.userAppModuleId = userAppModuleId;
+        this.autoSSLAppModuleId = autoSSLAppModuleId;
     }
 
     @SubSystemInit
@@ -185,31 +189,37 @@ public class AppModuleService extends Observable {
     public int getTempAppModuleId() {
         return tempAppModuleId;
     }
+
     public int getStandardAppModuleId() {
         return standardAppModuleId;
     }
+
     public int getUserAppModuleId() {
         return userAppModuleId;
+    }
+
+    public AppWhitelistModule getAutoSslAppModule() {
+        return get(autoSSLAppModuleId);
     }
 
     private void provideDefaultAppModules() {
         AppWhitelistModule module = get(tempAppModuleId);
         if (module == null) {
             module = new AppWhitelistModule(
-                    tempAppModuleId,
-                    "INTERNAL_USE_ONLY_TEST_RECORDING",
-                    Collections.emptyMap(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyMap(),
-                    false,
-                    false,
-                    true,
-                    false,
-                    null,
-                    false,
-                    true
+                tempAppModuleId,
+                "INTERNAL_USE_ONLY_TEST_RECORDING",
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                false,
+                false,
+                true,
+                false,
+                null,
+                false,
+                true
             );
             dataSource.save(module, tempAppModuleId);
         }
@@ -236,22 +246,46 @@ public class AppModuleService extends Observable {
         module = get(userAppModuleId);
         if (module == null) {
             module = new AppWhitelistModule(
-                    userAppModuleId,
-                    "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
-                    Collections.emptyMap(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyMap(),
-                    true,
-                    true,
-                    true,
-                    false,
-                    null,
-                    false,
-                    true
+                userAppModuleId,
+                "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                true,
+                true,
+                true,
+                false,
+                null,
+                false,
+                true
             );
             dataSource.save(module, userAppModuleId);
+        }
+        module = get(autoSSLAppModuleId);
+        if (module == null) {
+            Map<String, String> description = new HashMap<>();
+            description.put("de", "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten.");
+            description
+                .put("en", "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear.");
+            module = new AppWhitelistModule(
+                autoSSLAppModuleId,
+                "App Compatibility Helper",
+                description,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                false,
+                false,
+                true,
+                false,
+                null,
+                false,
+                false
+            );
+            dataSource.save(module, autoSSLAppModuleId);
         }
     }
 
@@ -264,7 +298,8 @@ public class AppModuleService extends Observable {
      */
     private boolean isStaticModule(AppWhitelistModule module) {
         return module.getId().equals(userAppModuleId) ||
-            module.getId().equals(tempAppModuleId);
+            module.getId().equals(tempAppModuleId) ||
+            module.getId().equals(autoSSLAppModuleId);
     }
 
     /**

@@ -213,7 +213,7 @@ public class SSLControllerImplTest {
     @Test
     public void testRemoveWhitelistedUrl() throws Exception {
         String url = "www.value.url";
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("name", "value-name");
         map.put("url", url);
         // Request containing URL
@@ -264,7 +264,7 @@ public class SSLControllerImplTest {
         // Response
         Response response = Mockito.mock(Response.class);
         // Actual call to controller
-         controller.markCertificateStatus(request, response);
+        controller.markCertificateStatus(request, response);
         // Verify
         Mockito.verify(request).getAttachment(eq(txIdKey));
         Mockito.verify(request).getHeader(eq("User-Agent"));
@@ -357,7 +357,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sslService, times(2)).getCa();
         Mockito.verify(ca).getCertificate();
         assertEquals("/CN=unit-test-root",
-                result.getDistinguishedName().toString());
+            result.getDistinguishedName().toString());
         assertEquals(new BigInteger("113402347514200015148051599106157440534"), result.getSerialNumber());
         Assert.assertTrue(result.getNotAfter().after(new Date()));
         Assert.assertTrue(result.getNotBefore().before(new Date()));
@@ -387,7 +387,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sslService, times(2)).getRenewalCa();
         Mockito.verify(ca).getCertificate();
         assertEquals("/CN=unit-test-root",
-                result.getDistinguishedName().toString());
+            result.getDistinguishedName().toString());
         assertEquals(new BigInteger("113402347514200015148051599106157440534"), result.getSerialNumber());
         Assert.assertTrue(result.getNotAfter().after(new Date()));
         Assert.assertTrue(result.getNotBefore().before(new Date()));
@@ -480,30 +480,30 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-                userModuleId,
-                associatedProfileId,
-                "userName",
-                "userNameKey",
+            userModuleId,
+            associatedProfileId,
+            "userName",
+            "userNameKey",
             null, null,
             false,
-                null,
-                Collections.emptyMap(),
+            null,
+            Collections.emptyMap(),
             null, null, null);
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-                userProfileModuleId,
-                "userProfileModuleName",
-                "userProfileModuleDescription",
-                "userProfileModuleNameKey",
-                "userProfileModuleDescriptionKey",
-                false,
-                false,
-                Collections.emptySet(),
-                Collections.emptySet(),
-                InternetAccessRestrictionMode.WHITELIST,
-                Collections.emptySet(),
-                Collections.emptyMap(),
+            userProfileModuleId,
+            "userProfileModuleName",
+            "userProfileModuleDescription",
+            "userProfileModuleNameKey",
+            "userProfileModuleDescriptionKey",
+            false,
+            false,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            InternetAccessRestrictionMode.WHITELIST,
+            Collections.emptySet(),
+            Collections.emptyMap(),
             null,
             false,
             null);
@@ -521,7 +521,7 @@ public class SSLControllerImplTest {
         // Parental Control Service
         when(parentalControlService.getProfile(eq(associatedProfileId))).thenReturn(profile);
         // Actual call to controller
-        assertTrue (controller.setDeviceStatus(request, null));
+        assertTrue(controller.setDeviceStatus(request, null));
         // Verify
         Mockito.verify(request).getBodyAs(any());
         Mockito.verify(request).getAttachment(eq(txIdKey));
@@ -592,18 +592,18 @@ public class SSLControllerImplTest {
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-                userProfileModuleId,
-                "userProfileModuleName",
-                "userProfileModuleDescription",
-                "userProfileModuleNameKey",
-                "userProfileModuleDescriptionKey",
-                false,
-                false,
-                Collections.emptySet(),
-                Collections.emptySet(),
-                InternetAccessRestrictionMode.WHITELIST,
-                Collections.emptySet(),
-                Collections.emptyMap(),
+            userProfileModuleId,
+            "userProfileModuleName",
+            "userProfileModuleDescription",
+            "userProfileModuleNameKey",
+            "userProfileModuleDescriptionKey",
+            false,
+            false,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            InternetAccessRestrictionMode.WHITELIST,
+            Collections.emptySet(),
+            Collections.emptyMap(),
             null,
             false,
             null);
@@ -660,14 +660,14 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-                userModuleId,
-                associatedProfileId,
-                "userName",
-                "userNameKey",
+            userModuleId,
+            associatedProfileId,
+            "userName",
+            "userNameKey",
             null, null,
             false,
-                null,
-                Collections.emptyMap(),
+            null,
+            Collections.emptyMap(),
             null,
             null,
             null);
@@ -724,32 +724,32 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-                userModuleId,
-                associatedProfileId,
-                "userName",
-                "userNameKey",
+            userModuleId,
+            associatedProfileId,
+            "userName",
+            "userNameKey",
             null, null,
             false,
-                null,
-                Collections.emptyMap(),
+            null,
+            Collections.emptyMap(),
             null,
             null,
             null);
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-                userProfileModuleId,
-                "userProfileModuleName",
-                "userProfileModuleDescription",
-                "userProfileModuleNameKey",
-                "userProfileModuleDescriptionKey",
-                false,
-                false,
-                Collections.emptySet(),
-                Collections.emptySet(),
-                InternetAccessRestrictionMode.WHITELIST,
-                Collections.emptySet(),
-                Collections.emptyMap(),
+            userProfileModuleId,
+            "userProfileModuleName",
+            "userProfileModuleDescription",
+            "userProfileModuleNameKey",
+            "userProfileModuleDescriptionKey",
+            false,
+            false,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            InternetAccessRestrictionMode.WHITELIST,
+            Collections.emptySet(),
+            Collections.emptyMap(),
             null,
             false,
             null);

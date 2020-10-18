@@ -26,10 +26,9 @@ public class FailedConnectionSuggestionService {
     private final AppModuleService appModuleService;
     private final DeviceService deviceService;
 
-    @Inject
-    FailedConnectionSuggestionService(SquidWarningService squidWarningService,
-                                      AppModuleService appModuleService,
-                                      DeviceService deviceService) {
+    @Inject FailedConnectionSuggestionService(SquidWarningService squidWarningService,
+                                              AppModuleService appModuleService,
+                                              DeviceService deviceService) {
 
         this.squidWarningService = squidWarningService;
         this.appModuleService = appModuleService;
@@ -37,9 +36,11 @@ public class FailedConnectionSuggestionService {
     }
 
     public Suggestions getFailedConnectionsByAppModules() {
-        List<FailedConnection> failedConnections = filterDisabledDevices(squidWarningService.update());
+        List<FailedConnection> failedConnections = filterDisabledDevices(squidWarningService.updatedFailedConnections());
 
         Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule = createConnectionsByAppModule(failedConnections);
+
+        addSslErrorsCollectingApp(connectionsByAppModule, failedConnections);
 
         Map<String, FailedConnection> domains = createDomainSuggestions(connectionsByAppModule);
         Map<Integer, FailedConnection> modules = createModuleSuggestions(connectionsByAppModule);
@@ -48,7 +49,10 @@ public class FailedConnectionSuggestionService {
     }
 
     private Map<AppWhitelistModule, List<FailedConnection>> createConnectionsByAppModule(List<FailedConnection> failedConnections) {
-        List<AppWhitelistModule> appModules = appModuleService.getAll();
+        AppWhitelistModule autoSslAppModule = appModuleService.getAutoSslAppModule();
+        List<AppWhitelistModule> appModules = appModuleService.getAll().stream()
+            .filter(appModule -> !appModule.equals(autoSslAppModule))
+            .collect(Collectors.toList());
         return failedConnections.stream()
             .map(fc -> new Tuple<>(findAppModules(appModules, fc.getDomains()), fc))
             .flatMap(this::flatModules)
@@ -62,6 +66,20 @@ public class FailedConnectionSuggestionService {
             return Stream.of(new Tuple<>(Optional.empty(), t.v));
         } else {
             return t.u.stream().map(u -> new Tuple<>(Optional.of(u), t.v));
+        }
+    }
+
+    private void addSslErrorsCollectingApp(Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule, List<FailedConnection> failedConnections) {
+        AppWhitelistModule sslErrorsCollectingApp = appModuleService.getAutoSslAppModule();
+
+        if (sslErrorsCollectingApp != null && !sslErrorsCollectingApp.isEnabled()) {
+            List<String> whitelistedDomains = sslErrorsCollectingApp.getWhitelistedDomains();
+            List<FailedConnection> sslErrorCollectingAppFailedCollections = failedConnections.stream()
+                .filter(fc -> fc.getDomains().stream().anyMatch(whitelistedDomains::contains))
+                .collect(Collectors.toList());
+            if (!sslErrorCollectingAppFailedCollections.isEmpty()) {
+                connectionsByAppModule.put(sslErrorsCollectingApp, sslErrorCollectingAppFailedCollections);
+            }
         }
     }
 

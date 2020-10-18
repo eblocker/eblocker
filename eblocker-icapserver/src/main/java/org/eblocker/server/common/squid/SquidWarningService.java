@@ -64,6 +64,7 @@ public class SquidWarningService {
     private final ScheduledExecutorService executorService;
     private final SquidCacheLogReader cacheLogReader;
     private final SquidConfigController squidConfigController;
+    private final List<FailedConnectionsListener> listeners = new ArrayList<>();
 
     private Future<?> updateTask;
 
@@ -120,15 +121,19 @@ public class SquidWarningService {
         }
     }
 
+    public void addListener(FailedConnectionsListener listener) {
+        listeners.add(listener);
+    }
+
     public boolean isEnabled() {
         return dataSource.getSslRecordErrors();
     }
-
 
     public synchronized void clearFailedConnections() {
         log.debug("removing all failed connections");
         cacheLogReader.pollFailedConnections();
         dataSource.delete(FailedConnectionsEntity.class);
+        notifyFailedConnectionListenersOnReset();
     }
 
     public synchronized void clearFailedConnections(Device device) {
@@ -169,7 +174,7 @@ public class SquidWarningService {
         cacheLogReader.start();
 
         log.info("scheduling update task");
-        updateTask = executorService.scheduleAtFixedRate(this::update, updateTaskInitialDelay, updateTaskFixedRate, TimeUnit.SECONDS);
+        updateTask = executorService.scheduleAtFixedRate(this::updateFailedConnections, updateTaskInitialDelay, updateTaskFixedRate, TimeUnit.SECONDS);
     }
 
     private void stop() throws IOException {
@@ -183,19 +188,39 @@ public class SquidWarningService {
         clearFailedConnections();
     }
 
-    public synchronized List<FailedConnection> update() {
+    private void updateFailedConnections() {
+        List<FailedConnectionLogEntry> failedConnectionLogEntries = fetchFailedConnectionLogEntries();
+        if (failedConnectionLogEntries.isEmpty()) {
+            log.debug("No new failed connections");
+            return;
+        } else {
+            mergeInNewFailedConnections(failedConnectionLogEntries);
+        }
+    }
+
+    private List<FailedConnectionLogEntry> fetchFailedConnectionLogEntries() {
         if (!dataSource.getSslRecordErrors()) {
             log.debug("recording errors disabled");
         }
 
         log.debug("running update");
 
+        List<FailedConnectionLogEntry> newFailedConnections = cacheLogReader.pollFailedConnections();
+        if (newFailedConnections.isEmpty()) {
+            log.debug("No new failed connections");
+        }
+        return newFailedConnections;
+    }
+
+    private synchronized List<FailedConnection> mergeInNewFailedConnections(List<FailedConnectionLogEntry> failedConnectionLogEntries) {
         List<FailedConnection> failedConnections = load();
-        boolean modified = insertUpdateNewEntries(failedConnections);
+
+        boolean modified = insertUpdateNewEntries(failedConnections, failedConnectionLogEntries);
         modified |= removeOldEntries(failedConnections);
         if (modified) {
             log.debug("update finished - writing changes to db");
             save(failedConnections);
+            notifyFailedConnectionListenersOnChange(failedConnections);
         } else {
             log.debug("update finished - no changes");
         }
@@ -203,9 +228,35 @@ public class SquidWarningService {
         return failedConnections;
     }
 
-    private boolean insertUpdateNewEntries(List<FailedConnection> failedConnections) {
+    public List<FailedConnection> updatedFailedConnections() {
+        List<FailedConnectionLogEntry> failedConnectionLogEntries = fetchFailedConnectionLogEntries();
+
+        return mergeInNewFailedConnections(failedConnectionLogEntries);
+    }
+
+    private void notifyFailedConnectionListenersOnChange(List<FailedConnection> failedConnections) {
+        listeners.forEach(listener -> {
+            try {
+                listener.onChange(failedConnections);
+            } catch (Exception e) {
+                log.error("Exception while calling FailedConnectionsListener", e);
+            }
+        });
+    }
+
+    private void notifyFailedConnectionListenersOnReset() {
+        listeners.forEach(listener -> {
+            try {
+                listener.onReset();
+            } catch (Exception e) {
+                log.error("Exception while calling FailedConnectionsListener", e);
+            }
+        });
+    }
+
+    private boolean insertUpdateNewEntries(List<FailedConnection> failedConnections, List<FailedConnectionLogEntry> polledFailedConnections) {
         boolean modified = false;
-        for(FailedConnectionLogEntry entry : cacheLogReader.pollFailedConnections()) {
+        for (FailedConnectionLogEntry entry : polledFailedConnections) {
             List<String> domains = getDomains(entry);
             if (domains.isEmpty()) {
                 log.warn("could not extract any domain from failed log entry");
@@ -289,7 +340,7 @@ public class SquidWarningService {
         try {
             X509Certificate certificate = PKI.loadCertificate(new ByteArrayInputStream(pem.getBytes()));
             String cn = PKI.getCN(certificate);
-            List<String> altNames = certificate.getSubjectAlternativeNames().stream().map(n->(String) n.get(1)).collect(Collectors.toList());
+            List<String> altNames = certificate.getSubjectAlternativeNames().stream().map(n -> (String) n.get(1)).collect(Collectors.toList());
 
             LinkedHashSet<String> domains = new LinkedHashSet<>();
             domains.add(cn);
@@ -303,7 +354,7 @@ public class SquidWarningService {
 
     private ListIterator findFailedConnections(List<FailedConnection> connections, List<String> domains) {
         ListIterator<FailedConnection> i = connections.listIterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             FailedConnection connection = i.next();
             if (connection.getDomains().equals(domains)) {
                 return i;
@@ -318,5 +369,11 @@ public class SquidWarningService {
             values.add(value.trim());
         }
         return values;
+    }
+
+    public interface FailedConnectionsListener {
+        void onChange(List<FailedConnection> failedConnections);
+
+        void onReset();
     }
 }

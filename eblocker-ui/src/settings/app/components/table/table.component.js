@@ -184,7 +184,7 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
             $interval(function () {
                 // On Safari another resize event is necessary
                 WindowEventService.fireEvent('resize');
-            }, 300);
+            }, 300, 1);
         }
         return ret;
     }
@@ -267,7 +267,7 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
             $interval(function () {
                 // On Safari another resize event is necessary
                 WindowEventService.fireEvent('resize');
-            }, 300);
+            }, 300, 1);
 
             vm.oldLargeVisibleItem = largeTableNumVisible;
             vm.oldSmallVisibleItem = smallTableNumVisible;

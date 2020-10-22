@@ -113,7 +113,10 @@
         "DATE": {
             "DATE_FORMAT" : "MM/DD/YYYY",
             "ERROR": "Invalid date"
-        }
+        },
+	"HELP": {
+	    "URL" : "https://eblocker.org/en/help"
+	}
     }
 }
 

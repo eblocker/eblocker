@@ -20,7 +20,7 @@ export default {
     controllerAs: 'ctrl'
 };
 
-function HelpController($window) {
+function HelpController($translate, $window) {
     'ngInject';
     'use strict';
 
@@ -29,7 +29,8 @@ function HelpController($window) {
     vm.handleClick = handleClick;
 
     function handleClick() {
-        $window.open('http://www.eblocker.com/help');
+        const link = $translate.instant('SHARED.HELP.URL');
+        $window.open(link, '_blank');
     }
 
 }

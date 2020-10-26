@@ -97,7 +97,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         Injections injections = transaction.getInjections();
 
         Device device = deviceService.getDeviceById(session.getDeviceId());
-        if(pageContext != null && baseURLs.isSetupUrl(pageContext.getUrl())){//if the user goes to the setup.eblocker.com, always show the icon
+        if(pageContext != null && baseURLs.isSetupUrl(pageContext.getUrl())){//if the user goes to the setup.eblocker.org, always show the icon
             injections.inject(insertIcon(0, false, getIconPosition(device), transaction, session, pageContext));
         } else {
             if (device != null) {

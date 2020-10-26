@@ -174,7 +174,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
         }));
 
         it('should handle a 204 (no content)', function(done) {
-            $httpBackend.when('GET', 'http://setup.eblocker.com/_check_/pattern-blocker')
+            $httpBackend.when('GET', 'http://setup.eblocker.org/_check_/pattern-blocker')
             .respond(function(method, url, data, headers){
                 return [204, 'data', {/* headers */}, 'No Content'];
             });
@@ -204,7 +204,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
         });
 
         it('should handle a 404 (not found)', function(done) {
-            $httpBackend.when('GET', 'http://setup.eblocker.com/_check_/pattern-blocker')
+            $httpBackend.when('GET', 'http://setup.eblocker.org/_check_/pattern-blocker')
             .respond(function(method, url, data, headers){
                 return [404, 'not found', {/* headers */}, 'Not Found'];
             });
@@ -234,7 +234,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
         });
 
         it('should handle a network error as such', function(done) {
-            $httpBackend.when('GET', 'http://setup.eblocker.com/_check_/pattern-blocker')
+            $httpBackend.when('GET', 'http://setup.eblocker.org/_check_/pattern-blocker')
             .respond(function(method, url, data, headers){
                 return [-1, '', {/* headers */}, ''];
             });
@@ -283,7 +283,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             }));
 
             it('should handle a 204 (no content)', function(done) {
-                $httpBackend.when('GET', protocol + '://setup.eblocker.com/_check_/routing')
+                $httpBackend.when('GET', protocol + '://setup.eblocker.org/_check_/routing')
                 .respond(function(method, url, data, headers){
                     return [204, 'data', {/* headers */}, 'No Content'];
                 });
@@ -313,7 +313,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a 404 (not found)', function(done) {
-                $httpBackend.when('GET', protocol + '://setup.eblocker.com/_check_/routing')
+                $httpBackend.when('GET', protocol + '://setup.eblocker.org/_check_/routing')
                 .respond(function(method, url, data, headers){
                     return [404, 'not found', {/* headers */}, 'Not Found'];
                 });
@@ -343,7 +343,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a network error as such', function(done) {
-                $httpBackend.when('GET', protocol + '://setup.eblocker.com/_check_/routing')
+                $httpBackend.when('GET', protocol + '://setup.eblocker.org/_check_/routing')
                 .respond(function(method, url, data, headers){
                     return [-1, '', {/* headers */}, ''];
                 });
@@ -388,7 +388,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             }));
 
             it('should handle a 200', function(done) {
-                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [200, 'data', {/* headers */}, 'No Content'];
                 });
@@ -418,7 +418,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a 404 (not found)', function(done) {
-                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [404, 'not found', {/* headers */}, 'Not Found'];
                 });
@@ -448,7 +448,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a network error as such', function(done) {
-                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://ads.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [-1, '', {/* headers */}, ''];
                 });
@@ -493,7 +493,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             }));
 
             it('should handle a 200', function(done) {
-                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [200, 'data', {/* headers */}, 'No Content'];
                 });
@@ -523,7 +523,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a 404 (not found)', function(done) {
-                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [404, 'not found', {/* headers */}, 'Not Found'];
                 });
@@ -553,7 +553,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a network error as such', function(done) {
-                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.com/_check_/domain-blocker')
+                $httpBackend.when('GET', 'http://tracker.domainblockercheck.eblocker.org/_check_/domain-blocker')
                 .respond(function(method, url, data, headers){
                     return [-1, '', {/* headers */}, ''];
                 });
@@ -598,7 +598,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             }));
 
             it('should handle a 204 (no content)', function(done) {
-                $httpBackend.when('GET', 'http://controlbar.eblocker.com/api/check/route')// TODO: insert actual domain
+                $httpBackend.when('GET', 'http://controlbar.eblocker.org/api/check/route')// TODO: insert actual domain
                 .respond(function(method, url, data, headers){
                     return [204, 'data', {/* headers */}, 'No Content'];// TODO: verify content/http-code
                 });
@@ -628,7 +628,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a 404 (not found)', function(done) {
-                $httpBackend.when('GET', 'http://controlbar.eblocker.com/api/check/route')
+                $httpBackend.when('GET', 'http://controlbar.eblocker.org/api/check/route')
                 .respond(function(method, url, data, headers){
                     return [404, 'not found', {/* headers */}, 'Not Found'];
                 });
@@ -658,7 +658,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a network error as such', function(done) {
-                $httpBackend.when('GET', 'http://controlbar.eblocker.com/api/check/route')
+                $httpBackend.when('GET', 'http://controlbar.eblocker.org/api/check/route')
                 .respond(function(method, url, data, headers){
                     return [-1, '', {/* headers */}, ''];
                 });
@@ -703,7 +703,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             }));
 
             it('should handle a 204 (no content)', function(done) {
-                $httpBackend.when('GET', 'http://dnscheck.eblocker.com/api/check/route')// TODO: insert actual domain
+                $httpBackend.when('GET', 'http://dnscheck.eblocker.org/api/check/route')// TODO: insert actual domain
                 .respond(function(method, url, data, headers){
                     return [204, 'data', {/* headers */}, 'No Content'];// TODO: verify content/http-code
                 });
@@ -733,7 +733,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a 404 (not found)', function(done) {
-                $httpBackend.when('GET', 'http://dnscheck.eblocker.com/api/check/route')
+                $httpBackend.when('GET', 'http://dnscheck.eblocker.org/api/check/route')
                 .respond(function(method, url, data, headers){
                     return [404, 'not found', {/* headers */}, 'Not Found'];
                 });
@@ -763,7 +763,7 @@ describe('App: dashboard; ConnectionTestService', function() { // jshint ignore:
             });
 
             it('should handle a network error as such', function(done) {
-                $httpBackend.when('GET', 'http://dnscheck.eblocker.com/api/check/route')
+                $httpBackend.when('GET', 'http://dnscheck.eblocker.org/api/check/route')
                 .respond(function(method, url, data, headers){
                     return [-1, '', {/* headers */}, ''];
                 });

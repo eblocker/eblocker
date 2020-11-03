@@ -54,7 +54,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function updateSetTimeDialog(event, config) {
+    function updateSetTimeDialog(event, config, updateIntervalHours) {
         return $mdDialog.show({
             controller: 'SetUpdateTimeDialogController',
             controllerAs: 'vm',
@@ -63,7 +63,8 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             targetEvent: event,
             clickOutsideToClose: false,
             locals:{
-                config: config
+                config: config,
+                updateIntervalHours: updateIntervalHours
             }
         });
     }

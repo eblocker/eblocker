@@ -14,8 +14,9 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function SetUpdateTimeDialogController(logger, $scope, $mdDialog, $translate, config, LanguageService,
-        UpdateService) {
+export default function SetUpdateTimeDialogController(logger, $scope, $mdDialog, $translate,
+						      config, updateIntervalHours,
+						      LanguageService, UpdateService) {
     'ngInject';
 
     const vm = this;
@@ -87,7 +88,7 @@ export default function SetUpdateTimeDialogController(logger, $scope, $mdDialog,
     function setEndTime() {
         if (isUpdateStartTimeSet()) {
             vm.update.endTime = angular.copy(vm.update.beginTime);
-            vm.update.endTime.setHours(vm.update.endTime.getHours() + 1);
+            vm.update.endTime.setHours(vm.update.endTime.getHours() + updateIntervalHours);
             setDisplayTimes();
         }
     }

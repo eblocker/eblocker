@@ -26,6 +26,8 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
 
     const vm = this;
 
+    const updateIntervalHours = 2;
+
     vm.osVersion = {
         value: '-'
     };
@@ -244,7 +246,7 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
     function setEndTime() {
         if (isUpdateStartTimeSet()) {
             vm.update.endTime = angular.copy(vm.update.beginTime);
-            vm.update.endTime.setHours(vm.update.endTime.getHours() + 1);
+            vm.update.endTime.setHours(vm.update.endTime.getHours() + updateIntervalHours);
         }
     }
 
@@ -266,13 +268,13 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         vm.update = {
             beginTime: new Date()
         };
-        vm.update.beginTime.setHours(3);
-        vm.update.beginTime.setMinutes(0);
+        vm.update.beginTime.setHours(2);
+        vm.update.beginTime.setMinutes(30);
         setEndTime();
     }
 
     function openSetUpdateTimeDialog(event) {
-        return DialogService.updateSetTimeDialog(event, vm.update).then(function success(update) {
+        return DialogService.updateSetTimeDialog(event, vm.update, updateIntervalHours).then(function success(update) {
             vm.update = update;
             evaluateStatus(update);
         });

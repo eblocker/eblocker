@@ -77,8 +77,8 @@ export default function UpdateService($http, LanguageService) {
             updatingStatus.progress = 0;
             if (updatingStatus.updateablePackages.length > 0) {
                 updatingStatus.progress = Math.floor(100 /
-                    (updatingStatus.updateablePackages.length * 3 + 1) *
-                    // 3 steps for each package: Preparing to unpack, unpack, setting up
+                    (updatingStatus.updateablePackages.length * 4 + 1) *
+                    // 4 steps for each package: Download, preparing to unpack, unpack, setting up
                     // Additional step to prevent showing 100% while the last step actually just started
                     updatingStatus.updateProgress.length); // All steps made so far
             }

@@ -55,10 +55,10 @@ public class DebianUpdaterTest {
     private final String availableUpdatesString2 = "Inst kpartx [0.5.0+git1.656f8865-5ubuntu2.3] (0.5.0+git1.656f8865-5ubuntu2.4 Ubuntu:16.04/xenial-updates [amd64])\n"
             + "Conf kpartx (0.5.0+git1.656f8865-5ubuntu2.4 Ubuntu:16.04/xenial-updates [amd64])"
             + "foo bar";
-    private final String updateProgressString1 = "Preparing to unpack .../eblocker-lists_1.0.0~20170222084502_all.deb ...\n"
+    private final String updateProgressString1 = "Get:1 https://apt.stage.eblocker.com/eblocker-lists buster/main armhf eblocker-lists all 2.5.3~daily+20201103071505 [38.2 MB]\n"
+            + "Preparing to unpack .../eblocker-lists_1.0.0~20170222084502_all.deb ...\n"
             + "Unpacking eblocker-lists (1.0.0~20170222084502) over (1.0.0~20170221084503) ...\n"
-            + "Setting up eblocker-lists (1.0.0~20170222084502) ..\n"
-            + "Installing foo bar (0.1.2~20170222084502) ..";
+            + "Setting up eblocker-lists (1.0.0~20170222084502) ..\n";
     private final String updateProgressString2 = "insserv: script tor.distrib: service tor already provided!\n"
             + "insserv: script tor.site: service tor already provided!\n"
             + "insserv: script redsocks.distrib: service redsocks already provided!";

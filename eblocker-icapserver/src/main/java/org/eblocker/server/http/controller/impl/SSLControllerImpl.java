@@ -190,7 +190,8 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         throw new NotFoundException();
     }
 
-    /** Download the renewal certificate in order to install it in the
+    /**
+     * Download the renewal certificate in order to install it in the
      * browser or system;
      * and enable ssl for the requesting device automatically
      */
@@ -225,7 +226,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
     public void setSSLState(Request request, Response response) {
         SslState sslState = request.getBodyAs(SslState.class);
 
-        log.info(" SSL state now: {} != before: {} ",sslState.isEnabled(), sslService.isSslEnabled());
+        log.info(" SSL state now: {} != before: {} ", sslState.isEnabled(), sslService.isSslEnabled());
 
         //reinit SSL context and certificates (if necessary)
         if (sslState.isEnabled()) { //SSL got enabled
@@ -237,14 +238,14 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
                     throw new EblockerException("certificate generation failed", e);
                 }
             }
-			sslService.enableSsl();
-		} else { //ssl got disabled
-			//Delete certificates and unbind HTTPS server?
-			sslService.disableSsl();
+            sslService.enableSsl();
+        } else { //ssl got disabled
+            //Delete certificates and unbind HTTPS server?
+            sslService.disableSsl();
             userAgentService.turnOffCloakingForAllDevices(deviceService.getDevices(false));
-			squidWarningService.clearFailedConnections();
-		}
-	}
+            squidWarningService.clearFailedConnections();
+        }
+    }
 
     @Override
     public boolean getSSLState(Request request, Response response) {
@@ -263,7 +264,8 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
     public Integer removeAllWhitelistedUrl(Request request, Response resp) {
         Integer count = 0;
         try {
-            List<SSLWhitelistUrl> urls = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<List<SSLWhitelistUrl>>(){});
+            List<SSLWhitelistUrl> urls = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<List<SSLWhitelistUrl>>() {
+            });
             for (SSLWhitelistUrl url : urls) {
                 log.info("Remove whitelisted SSL url {} | {}", url.getName(), url.getUrl());
                 whitelistDomainStore.removeDomain(url.getUrl());
@@ -283,7 +285,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
             log.debug("Add whitelisted SSL url {} | {}", entry.getLabel(), domain);
             whitelistDomainStore.addDomain(domain, entry.getLabel());
         }
-	}
+    }
 
     @Override
     public void markCertificateStatus(Request request, Response response) {
@@ -480,7 +482,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
             log.info("unable to set current certificate in dashboard status: no certificate available.");
         }
 
-	    // Status of renewal SSL certificate
+        // Status of renewal SSL certificate
         Certificate renewalCert = getRenewalCertificate();
         if (renewalCert != null) {
             result.setRenewalCertificate(renewalCert);
@@ -496,7 +498,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         } else {
             log.info("No renewal certificate available.");
         }
-	    result.setCaRenewWeeks(sslService.getCaRenewWeeks());
+        result.setCaRenewWeeks(sslService.getCaRenewWeeks());
         return result;
     }
 

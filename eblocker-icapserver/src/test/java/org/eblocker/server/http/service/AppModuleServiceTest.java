@@ -25,12 +25,24 @@ import org.restexpress.exception.ConflictException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
@@ -43,7 +55,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
         List<AppWhitelistModule> builtinModules = appModuleService.getAll();
         assertNotNull(builtinModules);
-        assertEquals(7, builtinModules.size());
+        assertEquals(8, builtinModules.size());
 
         Map<Integer, AppWhitelistModule> map = builtinModules.stream().collect(Collectors.toMap(AppWhitelistModule::getId, Function.identity()));
         assertTrue(map.containsKey(1));
@@ -53,6 +65,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(map.containsKey(appModuleService.getTempAppModuleId()));
         assertTrue(map.containsKey(appModuleService.getStandardAppModuleId()));
         assertTrue(map.containsKey(appModuleService.getUserAppModuleId()));
+        assertTrue(map.containsKey(appModuleService.getAutoSslAppModule().getId()));
         assertEquals("OSX Softwareupdates", map.get(1).getName());
         assertEquals("Facebook Messenger App", map.get(2).getName());
         assertEquals("OSX App Store", map.get(3).getName());
@@ -529,7 +542,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         AppModuleService appModuleService = createService(resourcePath);
 
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        assertEquals(3, modules.size()); // TEMP, STANDARD and USER modules are always there!
+        assertEquals(4, modules.size()); // TEMP, STANDARD, USER, and auto-SSL modules are always there!
     }
 
     @Test
@@ -540,7 +553,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         AppModuleService appModuleService = createService(resourcePath);
 
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        assertEquals(3, modules.size()); // TEMP, STANDARD and USER modules are always there!
+        assertEquals(4, modules.size()); // TEMP, STANDARD, USER, and auto-SSL modules are always there!
     }
 
     @Test
@@ -709,13 +722,14 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
     private AppModuleService createService(Path builtinAppModulesPath) {
         AppModuleService service = new AppModuleService(
-                dataSource,
-                objectMapper,
-                appModuleRemovalMessageProvider,
-                builtinAppModulesPath == null ? null : builtinAppModulesPath.toString(),
-                0,
-                9999,
-                9998
+            dataSource,
+            objectMapper,
+            appModuleRemovalMessageProvider,
+            builtinAppModulesPath == null ? null : builtinAppModulesPath.toString(),
+            0,
+            9999,
+            9998,
+            9997
         );
         service.init();
         return service;

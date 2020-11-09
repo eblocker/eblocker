@@ -60,11 +60,10 @@ public class SquidWarningServiceTest {
         dataSource = Mockito.mock(DataSource.class);
         deviceService = Mockito.mock(DeviceService.class);
         scheduledExecutorService = Mockito.mock(ScheduledExecutorService.class);
-        squidConfigController= Mockito.mock(SquidConfigController.class);
+        squidConfigController = Mockito.mock(SquidConfigController.class);
 
         squidCacheLogReader = Mockito.mock(SquidCacheLogReader.class);
         Mockito.when(squidCacheLogReader.pollFailedConnections()).thenReturn(Collections.emptyList());
-
 
         squidWarningService = new SquidWarningService(MAX_BACKLOG_DAYS, IGNORED_ERRORS, UPDATE_TASK_INITIAL_DELAY, UPDATE_TASK_FIXED_RATE, clock, dataSource, deviceService, scheduledExecutorService, squidCacheLogReader, squidConfigController);
     }
@@ -132,7 +131,7 @@ public class SquidWarningServiceTest {
 
         clock.setZonedDateTime(ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.systemDefault()));
 
-        squidWarningService.update();
+        squidWarningService.updatedFailedConnections();
 
         ArgumentCaptor<FailedConnectionsEntity> captor = ArgumentCaptor.forClass(FailedConnectionsEntity.class);
         Mockito.verify(dataSource).save(captor.capture());
@@ -202,7 +201,7 @@ public class SquidWarningServiceTest {
         Assert.assertEquals(1, connections.size());
         Assert.assertEquals(Lists.newArrayList("device:000000000001"), connections.get(0).getDeviceIds());
         Assert.assertEquals(Lists.newArrayList("random.com"), connections.get(0).getDomains());
-        Assert.assertEquals( Lists.newArrayList("error:0"), connections.get(0).getErrors());
+        Assert.assertEquals(Lists.newArrayList("error:0"), connections.get(0).getErrors());
         Assert.assertEquals(clock.instant(), connections.get(0).getLastOccurrence());
     }
 
@@ -227,7 +226,7 @@ public class SquidWarningServiceTest {
             new FailedConnectionLogEntry(clock.instant().minusSeconds(1), "error:0", "device:000000000002", null, "blog.com", null),          // new error
             new FailedConnectionLogEntry(clock.instant().minusSeconds(10), "error:1", "device:000000000003", null, "blog.com", null)));       // additional error; but recording disabled for this device
 
-        squidWarningService.update();
+        squidWarningService.updatedFailedConnections();
 
         ArgumentCaptor<FailedConnectionsEntity> captor = ArgumentCaptor.forClass(FailedConnectionsEntity.class);
         Mockito.verify(dataSource).save(captor.capture());
@@ -269,7 +268,7 @@ public class SquidWarningServiceTest {
 
         Mockito.when(squidCacheLogReader.pollFailedConnections()).thenReturn(Collections.emptyList());
 
-        squidWarningService.update();
+        squidWarningService.updatedFailedConnections();
 
         Mockito.verify(dataSource, Mockito.never()).save(FailedConnectionsEntity.class);
     }
@@ -308,10 +307,18 @@ public class SquidWarningServiceTest {
         Mockito.reset(dataSource);
         Mockito.when(squidCacheLogReader.pollFailedConnections()).thenReturn(Collections.singletonList(new FailedConnectionLogEntry(clock.instant(), "error:0", "device:000000000000",
             host ? "host.com" : null,
-            sni ? "sni.com": null,
-            certificate ? "-----BEGIN CERTIFICATE-----\nMIIDgDCCAmigAwIBAgIULjOrzH+polOlicnqXEWhjHtyD9gwDQYJKoZIhvcNAQEL\nBQAwLjEsMCoGA1UEAwwjZUJsb2NrZXIgLSBNeSBlQmxvY2tlciAtIDIwMTcvMDcv\nMTgwHhcNMTcwNTE3MDAwMDAwWhcNMTgwNTE3MjM1OTU5WjBcMSEwHwYDVQQLExhE\nb21haW4gQ29udHJvbCBWYWxpZGF0ZWQxHjAcBgNVBAsTFUVzc2VudGlhbFNTTCBX\naWxkY2FyZDEXMBUGA1UEAwwOKi5lYmxvY2tlci5jb20wggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQDdd5HuLu6r9Ms0Umd3ot0ylpnPDyS3P1wialohf+bB\nZjsWDtHqzntT6IDnka84wLv3ZuzMHBklL4lFSJ59VydeioOyF9qBdP15J4AxV04p\nW09OFc2jASSgfFP/w1oHVXakA1IuZ3qyjJ5Jg8XzMvnNVl5BzRR7T5rcD5P09OK9\nZ4HD0wCKX+b2o8zC43zRgIws9cTW08wzp9f28P99MV5zfP0KmfnQOiGE6wBW/930\nrnPVHKB8oF3Q1jZmJVRsAUf/n/UkPcq7FVKlFOVxke1XfhfvU4olIAEPZ+nNgjDY\nV+DOENR/Ez4rKt5nKr99fjLK+u9jocm8+3Z9Rpaa2gLLAgMBAAGjaDBmMCcGA1Ud\nEQQgMB6CDiouZWJsb2NrZXIuY29tggxlYmxvY2tlci5jb20wDgYDVR0PAQH/BAQD\nAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAA\nMA0GCSqGSIb3DQEBCwUAA4IBAQCfr3YhE5mF2cIxH5lTk1X6XyJTJ8hJM/egRZWP\n0/zGXqzfq87CZ4MLs85MubQBjVPDN6mdtI1YGD4SxCwImOf/TE9as3q0kKpg1nIS\nxCcba3Huc7W6o8i/w1/gPwFwHcxBqk8peKtdvIQGkBb8N8hXIll9XYsCi0Ra60M4\nJshS1g+WjCpCUkiN4f0HLmio6ODheHV1n4S9DczBtqRosd4uZ+PvhnVxQjWLdykB\ntqmpvYgCDb4f94IVhBnsyD17NzGrZD0C/qgP/RbhWzNHXkcVzcvqcXQk+aeIA0Xn\nV7g8gnXTURmBY2J76epMOW/KsX3iNPdtENy0znze7rNtgkyA\n-----END CERTIFICATE-----\n" : null
+            sni ? "sni.com" : null,
+            certificate ?
+                "-----BEGIN CERTIFICATE-----\nMIIDgDCCAmigAwIBAgIULjOrzH+polOlicnqXEWhjHtyD9gwDQYJKoZIhvcNAQEL\nBQAwLjEsMCoGA1UEAwwjZUJsb2NrZXIgLSBNeSBlQmxvY2tlciAtIDIwMTcvMDcv\nMTgwHhcNMTcwNTE3MDAwMDAwWhcNMTgwNTE3MjM1OTU5WjBcMSEwHwYDVQQLExhE"
+                    + "\nb21haW4gQ29udHJvbCBWYWxpZGF0ZWQxHjAcBgNVBAsTFUVzc2VudGlhbFNTTCBX\naWxkY2FyZDEXMBUGA1UEAwwOKi5lYmxvY2tlci5jb20wggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQDdd5HuLu6r9Ms0Umd3ot0ylpnPDyS3P1wialohf+bB"
+                    + "\nZjsWDtHqzntT6IDnka84wLv3ZuzMHBklL4lFSJ59VydeioOyF9qBdP15J4AxV04p\nW09OFc2jASSgfFP/w1oHVXakA1IuZ3qyjJ5Jg8XzMvnNVl5BzRR7T5rcD5P09OK9\nZ4HD0wCKX+b2o8zC43zRgIws9cTW08wzp9f28P99MV5zfP0KmfnQOiGE6wBW/930\nrnPVHKB8oF3Q1jZmJVRsAUf/n"
+                    + "/UkPcq7FVKlFOVxke1XfhfvU4olIAEPZ+nNgjDY\nV+DOENR/Ez4rKt5nKr99fjLK+u9jocm8+3Z9Rpaa2gLLAgMBAAGjaDBmMCcGA1Ud\nEQQgMB6CDiouZWJsb2NrZXIuY29tggxlYmxvY2tlci5jb20wDgYDVR0PAQH/BAQD"
+                    + "\nAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAA\nMA0GCSqGSIb3DQEBCwUAA4IBAQCfr3YhE5mF2cIxH5lTk1X6XyJTJ8hJM/egRZWP\n0/zGXqzfq87CZ4MLs85MubQBjVPDN6mdtI1YGD4SxCwImOf/TE9as3q0kKpg1nIS\nxCcba3Huc7W6o8i/w1"
+                    + "/gPwFwHcxBqk8peKtdvIQGkBb8N8hXIll9XYsCi0Ra60M4\nJshS1g+WjCpCUkiN4f0HLmio6ODheHV1n4S9DczBtqRosd4uZ+PvhnVxQjWLdykB\ntqmpvYgCDb4f94IVhBnsyD17NzGrZD0C/qgP/RbhWzNHXkcVzcvqcXQk+aeIA0Xn\nV7g8gnXTURmBY2J76epMOW/KsX3iNPdtENy0znze7rNtgkyA\n"
+                    + "-----END CERTIFICATE-----\n" :
+                null
         )));
-        squidWarningService.update();
+        squidWarningService.updatedFailedConnections();
     }
 
     private Device createDevice(String id, boolean enabled, boolean sslEnabled, boolean sslRecordErrorsEnabled) {

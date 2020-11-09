@@ -16,6 +16,15 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Sets;
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Hashing;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.IpAddress;
@@ -37,15 +46,6 @@ import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.UserService;
-import org.eblocker.registration.ProductFeature;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Sets;
-import com.google.common.hash.BloomFilter;
-import com.google.common.hash.Hashing;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,6 +206,22 @@ public class DomainBlockingService {
         }
     }
 
+    /**
+     * Decide whether this domain is blocked by the device-independent malware/ads/tracker filters
+     * <p>
+     * Do not use this method for actual blocking as it ignores device-specific settings!
+     */
+    public Decision isDomainBlockedByMalwareAdsTrackersFilters(String domain) {
+        try {
+            DomainFilter<String> filter = createDomainBlockedByMalwareAdsTrackersFilter();
+            logger.debug("using filter: {}", filter.getName());
+            return (Decision) filter.isBlocked(domain);
+        } catch (ExecutionException e) {
+            logger.error("failed to create filter: ", e);
+            return new Decision(false, domain, null, null, 0, null);
+        }
+    }
+
     public List<CachingFilter.Stats> getCacheStats(boolean includeDomains) {
         return getCachingFilters()
             .sorted((a, b) -> {
@@ -225,9 +241,16 @@ public class DomainBlockingService {
 
     private Filter createDeviceFilter(Device device) throws ExecutionException {
         DeviceConfig deviceConfig = new DeviceConfig(device);
-        FilterConfig filterConfig = new FilterConfig(deviceConfig);
+        FilterConfig filterConfig = FilterConfig.createFilterConfigForDevice(deviceConfig, isSslEnabledGlobally());
         DomainFilter<String> filter = filtersByConfig.get(filterConfig, () -> createFilter(filterConfig));
         return new Filter(filter, filterConfig, deviceConfig.getUser().getId(), deviceConfig.getProfile().getId());
+    }
+
+    private Filter createDomainBlockedByMalwareAdsTrackersFilter() throws ExecutionException {
+        FilterConfig filterConfig = FilterConfig.createFilterConfigForDomainFiltering();
+
+        DomainFilter<String> filter = filtersByConfig.get(filterConfig, () -> createFilter(filterConfig));
+        return new Filter(filter, filterConfig, -1, -1);
     }
 
     private DomainFilter<String> createFilter(FilterConfig filterConfig) {
@@ -317,7 +340,7 @@ public class DomainBlockingService {
     private DomainFilter<String> createHostnameFilters(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById, BloomFilter<String> topLevelBloomFilter) {
         List<DomainFilter<String>> filters = new ArrayList<>();
         Map<QueryTransformation, Set<Integer>> queryTransformationsById = getIdsByQueryTransformations(ids, metaDataById);
-        for(Map.Entry<QueryTransformation, Set<Integer>> e : queryTransformationsById.entrySet()) {
+        for (Map.Entry<QueryTransformation, Set<Integer>> e : queryTransformationsById.entrySet()) {
             DomainFilter<String> filter = combineFilters(e.getValue(), metaDataById, topLevelBloomFilter);
             if (e.getKey() != null) {
                 filter = Filters.replace(e.getKey().getRegex(), e.getKey().getReplacement(), filter);
@@ -363,13 +386,13 @@ public class DomainBlockingService {
                     Set<Integer> associatedIds = transformationsById.computeIfAbsent(null, k -> new HashSet<>());
                     associatedIds.add(metadata.getId());
                 } else {
-                for(QueryTransformation transformation : transformations) {
-                    Set<Integer> associatedIds = transformationsById.computeIfAbsent(transformation, k -> new HashSet<>());
-                    associatedIds.add(metadata.getId());
-                }
+                    for (QueryTransformation transformation : transformations) {
+                        Set<Integer> associatedIds = transformationsById.computeIfAbsent(transformation, k -> new HashSet<>());
+                        associatedIds.add(metadata.getId());
+                    }
                 }
             }
-        );
+                                                                            );
         return transformationsById;
     }
 
@@ -436,7 +459,7 @@ public class DomainBlockingService {
 
         Map<Device, FilterConfig> configByEnabledDevice = deviceService.getDevices(false).stream()
             .filter(Device::isEnabled)
-            .collect(Collectors.toMap(Function.identity(), device -> new FilterConfig(new DeviceConfig(device))));
+            .collect(Collectors.toMap(Function.identity(), device -> FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally())));
 
         Set<Device> domainFilteredDevices = filterDomainFilteredDevices(configByEnabledDevice);
         Set<Device> parentalControlledDevices = filterParentalControlFilteredDevices(configByEnabledDevice);
@@ -489,7 +512,7 @@ public class DomainBlockingService {
             return;
         }
 
-        FilterConfig currentConfig = new FilterConfig(new DeviceConfig(device));
+        FilterConfig currentConfig = FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally());
         if (currentConfig.equals(filter.getConfig())) {
             logger.debug("configuration unchanged");
             return;
@@ -683,7 +706,7 @@ public class DomainBlockingService {
                 attributes.containsKey(ATTRIBUTE_ADD_PROFILE_ID) ? profileId : null,
                 delegateDecision.getFilter().getListId(),
                 userId,
-                (String)attributes.get(ATTRIBUTE_TARGET));
+                (String) attributes.get(ATTRIBUTE_TARGET));
         }
 
         @Override
@@ -720,38 +743,58 @@ public class DomainBlockingService {
         }
     }
 
-    private class FilterConfig {
-        private final FilterMode filterMode;
-        private final boolean sslEnabled;
+    private static class FilterConfig {
+        private FilterMode filterMode;
+        private boolean sslEnabled;
 
-        private final boolean filterAds;
-        private final boolean filterTrackers;
-        private final boolean filterMalware;
-        private final Integer customBlacklistId;
-        private final Integer customWhitelistId;
+        private boolean filterAds;
+        private boolean filterTrackers;
+        private boolean filterMalware;
+        private Integer customBlacklistId;
+        private Integer customWhitelistId;
 
-        private final boolean parentalControlUrlControlModeEnabled;
-        private final boolean parentalControlDefaultDeny;
-        private final Set<Integer> parentalControlPermittedIds;
-        private final Set<Integer> parentalControlProhibitedIds;
+        private boolean parentalControlUrlControlModeEnabled;
+        private boolean parentalControlDefaultDeny;
+        private Set<Integer> parentalControlPermittedIds;
+        private Set<Integer> parentalControlProhibitedIds;
 
-        public FilterConfig(DeviceConfig deviceConfig) {
+        public static FilterConfig createFilterConfigForDevice(DeviceConfig deviceConfig, boolean sslEnabledGlobally) {
+            FilterConfig config = new FilterConfig();
             Device device = deviceConfig.getDevice();
-            this.filterMode = FilterModeUtils.getEffectiveFilterMode(isSslEnabledGlobally(), device);
-            this.sslEnabled = device.isSslEnabled();
-            this.filterAds = device.isFilterPlugAndPlayAdsEnabled();
-            this.filterTrackers = device.isFilterPlugAndPlayTrackersEnabled();
-            this.filterMalware = device.isMalwareFilterEnabled();
+            config.filterMode = FilterModeUtils.getEffectiveFilterMode(sslEnabledGlobally, device);
+            config.sslEnabled = device.isSslEnabled();
+            config.filterAds = device.isFilterPlugAndPlayAdsEnabled();
+            config.filterTrackers = device.isFilterPlugAndPlayTrackersEnabled();
+            config.filterMalware = device.isMalwareFilterEnabled();
 
             UserModule user = deviceConfig.getUser();
-            this.customBlacklistId = user.getCustomBlacklistId();
-            this.customWhitelistId = user.getCustomWhitelistId();
+            config.customBlacklistId = user.getCustomBlacklistId();
+            config.customWhitelistId = user.getCustomWhitelistId();
 
             UserProfileModule profile = deviceConfig.getProfile();
-            this.parentalControlUrlControlModeEnabled = profile.isControlmodeUrls();
-            this.parentalControlDefaultDeny = UserProfileModule.InternetAccessRestrictionMode.WHITELIST == profile.getInternetAccessRestrictionMode();
-            this.parentalControlPermittedIds = profile.getAccessibleSitesPackages();
-            this.parentalControlProhibitedIds = profile.getInaccessibleSitesPackages();
+            config.parentalControlUrlControlModeEnabled = profile.isControlmodeUrls();
+            config.parentalControlDefaultDeny = UserProfileModule.InternetAccessRestrictionMode.WHITELIST == profile.getInternetAccessRestrictionMode();
+            config.parentalControlPermittedIds = profile.getAccessibleSitesPackages();
+            config.parentalControlProhibitedIds = profile.getInaccessibleSitesPackages();
+            return config;
+        }
+
+        public static FilterConfig createFilterConfigForDomainFiltering() {
+            FilterConfig config = new FilterConfig();
+            config.filterMode = FilterMode.PLUG_AND_PLAY;
+            config.sslEnabled = true;
+            config.filterAds = true;
+            config.filterTrackers = true;
+            config.filterMalware = true;
+
+            config.customBlacklistId = null;
+            config.customWhitelistId = null;
+
+            config.parentalControlUrlControlModeEnabled = false;
+            config.parentalControlDefaultDeny = false;
+            config.parentalControlPermittedIds = Collections.emptySet();
+            config.parentalControlProhibitedIds = Collections.emptySet();
+            return config;
         }
 
         public FilterMode getFilterMode() {

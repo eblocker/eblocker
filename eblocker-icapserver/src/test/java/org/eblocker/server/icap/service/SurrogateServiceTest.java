@@ -36,6 +36,16 @@ public class SurrogateServiceTest {
     }
 
     @Test
+    public void testQueryMatch() {
+        assertTrue(surrogateService.surrogateForBlockedUrl("googletagmanager.com/gtm.js?id=GTM-W9MC85").isPresent());
+    }
+
+    @Test
+    public void testHandlesNullUrl() {
+        assertFalse(surrogateService.surrogateForBlockedUrl(null).isPresent());
+    }
+
+    @Test
     public void testAll() {
         surrogateService.getUrlToSurrogate().entrySet().forEach(e -> {
             assertTrue(surrogateService.surrogateForBlockedUrl(e.getKey()).isPresent());

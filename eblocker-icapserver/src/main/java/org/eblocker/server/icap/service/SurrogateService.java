@@ -44,7 +44,7 @@ public class SurrogateService {
 
     private Optional<String> surrogateForUrl(String url) {
         return urlToSurrogate.entrySet().stream()
-            .filter(e -> url.endsWith(e.getKey()))
+            .filter(e -> url.contains(e.getKey()))
             .findFirst()
             .map(Map.Entry::getValue);
     }

@@ -53,37 +53,37 @@ export default function ConnectionTestService($http, $q) {
     }
 
     function makePatternBlockerTestRequest() {
-        return makeTestRequest('http', 'setup.eblocker.com/_check_/pattern-blocker').then(
+        return makeTestRequest('http', 'setup.eblocker.org/_check_/pattern-blocker').then(
                 getResponseProcessor('patternBlockerTest', 204),
                 getResponseProcessor('patternBlockerTest', 204));
     }
 
     function makeHttpRoutingTestRequest(protocol) {
-        return makeTestRequest(protocol, 'setup.eblocker.com/_check_/routing').then(
+        return makeTestRequest(protocol, 'setup.eblocker.org/_check_/routing').then(
                 getResponseProcessor(protocol === 'https' ? 'httpsRoutingTest' : 'httpRoutingTest', 204),
                 getResponseProcessor(protocol === 'https' ? 'httpsRoutingTest' : 'httpRoutingTest', 204));
     }
 
     function makeAdsDomainBlockerTestRequest() {
-        return makeTestRequest('http', 'ads.domainblockercheck.eblocker.com/_check_/domain-blocker').then(
+        return makeTestRequest('http', 'ads.domainblockercheck.eblocker.org/_check_/domain-blocker').then(
                 getResponseProcessor('adsDomainBlockerTest', 200),
                 getResponseProcessor('adsDomainBlockerTest', 200));
     }
 
     function makeTrackerDomainBlockerTestRequest() {
-        return makeTestRequest('http', 'tracker.domainblockercheck.eblocker.com/_check_/domain-blocker').then(
+        return makeTestRequest('http', 'tracker.domainblockercheck.eblocker.org/_check_/domain-blocker').then(
                 getResponseProcessor('trackerDomainBlockerTest', 200),
                 getResponseProcessor('trackerDomainBlockerTest', 200));
     }
 
     function makeDnsFirewallTestRequest() {
-        return makeTestRequest('http', 'dnscheck.eblocker.com/api/check/route').then(
+        return makeTestRequest('http', 'dnscheck.eblocker.org/api/check/route').then(
                 getResponseProcessor('dnsFirewallTest', 204),
                 getResponseProcessor('dnsFirewallTest', 204));
     }
 
     function makeRoutingTestRequest() {
-        return makeTestRequest('http', 'controlbar.eblocker.com/api/check/route').then(
+        return makeTestRequest('http', 'controlbar.eblocker.org/api/check/route').then(
                 getResponseProcessor('routingTest', 204),
                 getResponseProcessor('routingTest', 204));
     }

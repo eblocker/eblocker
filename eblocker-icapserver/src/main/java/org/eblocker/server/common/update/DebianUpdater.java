@@ -215,7 +215,7 @@ public class DebianUpdater implements SystemUpdater {
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
 
-                    if (line.matches("^Preparing.*|^Unpacking.*|^Installing.*|^Setting.*")) {
+                    if (line.matches("^Get:\\d+ http.*|^Preparing to unpack .*|^Unpacking .*|^Setting up .*")) {
                         log.info("Progress:" + line);
                         updateProgress.add(line);
                     }

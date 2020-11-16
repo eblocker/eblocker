@@ -113,7 +113,10 @@
         "DATE": {
             "DATE_FORMAT" : "DD.MM.YYYY",
             "ERROR": "Ungültiges Datum"
-        }
+        },
+	"HELP": {
+	    "URL" : "https://eblocker.org/help"
+	}
     }
 }
 

@@ -17,16 +17,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SubSystemService(value = SubSystem.SERVICES)
-public class SSLErrorsToAppModuleService implements SquidWarningService.FailedConnectionsListener {
+public class AutoTrustAppService implements SquidWarningService.FailedConnectionsListener {
 
     private final AppModuleService appModuleService;
     private final DomainBlockingService domainBlockingService;
     private final Map<String, Instant> pendingDomains = new ConcurrentHashMap<>();
 
     @Inject
-    public SSLErrorsToAppModuleService(SquidWarningService squidWarningService,
-                                       AppModuleService appModuleService,
-                                       DomainBlockingService domainBlockingService) {
+    public AutoTrustAppService(SquidWarningService squidWarningService,
+                               AppModuleService appModuleService,
+                               DomainBlockingService domainBlockingService) {
         this.appModuleService = appModuleService;
         this.domainBlockingService = domainBlockingService;
 
@@ -39,8 +39,8 @@ public class SSLErrorsToAppModuleService implements SquidWarningService.FailedCo
     }
 
     private void updateFromAllFailedConnections(List<FailedConnection> failedConnections) {
-        AppWhitelistModule sslErrorsCollectingAppModule = getAutoSslAppModule();
-        List<String> existingWhitelistedDomains = sslErrorsCollectingAppModule.getWhitelistedDomains();
+        AppWhitelistModule autoTrustAppModule = getAutoTrustAppModule();
+        List<String> existingWhitelistedDomains = autoTrustAppModule.getWhitelistedDomains();
 
         List<SSLWhitelistUrl> newWhiteListUrls = new LinkedList<>();
         failedConnections.forEach(fc -> fc.getDomains().forEach(domain -> {
@@ -52,7 +52,7 @@ public class SSLErrorsToAppModuleService implements SquidWarningService.FailedCo
         }));
 
         if (!newWhiteListUrls.isEmpty()) {
-            appModuleService.addDomainsToModule(newWhiteListUrls, sslErrorsCollectingAppModule.getId());
+            appModuleService.addDomainsToModule(newWhiteListUrls, autoTrustAppModule.getId());
         }
     }
 
@@ -71,12 +71,12 @@ public class SSLErrorsToAppModuleService implements SquidWarningService.FailedCo
 
     @Override
     public void onReset() {
-        AppWhitelistModule autoSslAppModule = getAutoSslAppModule();
-        autoSslAppModule.setWhitelistedDomains(Collections.emptyList());
-        appModuleService.update(autoSslAppModule, autoSslAppModule.getId());
+        AppWhitelistModule autoTrustAppModule = getAutoTrustAppModule();
+        autoTrustAppModule.setWhitelistedDomains(Collections.emptyList());
+        appModuleService.update(autoTrustAppModule, autoTrustAppModule.getId());
     }
 
-    private AppWhitelistModule getAutoSslAppModule() {
+    private AppWhitelistModule getAutoTrustAppModule() {
         return appModuleService.getAutoSslAppModule();
     }
 }

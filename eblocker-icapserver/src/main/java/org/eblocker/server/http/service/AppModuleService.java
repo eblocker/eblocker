@@ -67,7 +67,7 @@ public class AppModuleService extends Observable {
     private final int tempAppModuleId;
     private final int standardAppModuleId;
     private final int userAppModuleId;
-    private final int autoSSLAppModuleId;
+    private final int autoTrustAppModuleId;
 
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
@@ -85,7 +85,7 @@ public class AppModuleService extends Observable {
         @Named("appmodules.id.temp") int tempAppModuleId,
         @Named("appmodules.id.standard") int standardAppModuleId,
         @Named("appmodules.id.user") int userAppModuleId,
-        @Named("appmodules.id.autossl") int autoSSLAppModuleId) {
+        @Named("appmodules.id.autotrust") int autoTrustAppModuleId) {
         this.dataSource = dataSource;
         this.objectMapper = objectMapper;
         this.appModuleRemovalMessageProvider = appModuleRemovalMessageProvider;
@@ -93,7 +93,7 @@ public class AppModuleService extends Observable {
         this.tempAppModuleId = tempAppModuleId;
         this.standardAppModuleId = standardAppModuleId;
         this.userAppModuleId = userAppModuleId;
-        this.autoSSLAppModuleId = autoSSLAppModuleId;
+        this.autoTrustAppModuleId = autoTrustAppModuleId;
     }
 
     @SubSystemInit
@@ -199,7 +199,7 @@ public class AppModuleService extends Observable {
     }
 
     public AppWhitelistModule getAutoSslAppModule() {
-        return get(autoSSLAppModuleId);
+        return get(autoTrustAppModuleId);
     }
 
     private void provideDefaultAppModules() {
@@ -263,15 +263,15 @@ public class AppModuleService extends Observable {
             );
             dataSource.save(module, userAppModuleId);
         }
-        module = get(autoSSLAppModuleId);
+        module = get(autoTrustAppModuleId);
         if (module == null) {
             Map<String, String> description = new HashMap<>();
             description.put("de", "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten.");
             description
                 .put("en", "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear.");
             module = new AppWhitelistModule(
-                autoSSLAppModuleId,
-                "App Compatibility Helper",
+                autoTrustAppModuleId,
+                "Auto Trust App",
                 description,
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -285,7 +285,7 @@ public class AppModuleService extends Observable {
                 false,
                 false
             );
-            dataSource.save(module, autoSSLAppModuleId);
+            dataSource.save(module, autoTrustAppModuleId);
         }
     }
 
@@ -299,7 +299,7 @@ public class AppModuleService extends Observable {
     private boolean isStaticModule(AppWhitelistModule module) {
         return module.getId().equals(userAppModuleId) ||
             module.getId().equals(tempAppModuleId) ||
-            module.getId().equals(autoSSLAppModuleId);
+            module.getId().equals(autoTrustAppModuleId);
     }
 
     /**

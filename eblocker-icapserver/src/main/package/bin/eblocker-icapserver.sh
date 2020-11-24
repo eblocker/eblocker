@@ -32,11 +32,18 @@ if [ -r $EBLOCKER_RESET_CONFIG ]; then
     fi
 fi
 
+SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')
+
+if [ "$SYSTEM_MEMORY_IN_MB" -gt 1500 ]; then
+    MAX_JVM_HEAP_SIZE_IN_MB=1024
+else
+    MAX_JVM_HEAP_SIZE_IN_MB=384
+fi
 
 if [ $SELF_CHECK -eq 1 ]; then
     # Run the self-check:
     exec java -cp $BASEDIR/lib/${project.build.finalName}.jar org.eblocker.server.app.SelfCheckApp
 else
     # Run the ICAP server:
-    exec java -Xmx384m -Dlog4j.configuration=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
+    exec java -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m -Dlog4j.configuration=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
 fi

@@ -17,40 +17,40 @@
 package org.eblocker.server.icap.filter;
 
 public enum FilterPriority {
-	
-	HIGHEST,
-	HIGH,
-	MEDIUM,
-	LOW,
-	LOWEST,
-	
-	DEFAULT,
-	;
 
-	public boolean isHigherOrEqual(FilterPriority priority) {
-		return this.compareTo(priority) <= 0;
-	}
-	
-	public boolean isHigher(FilterPriority priority) {
-		return this.compareTo(priority) < 0;
-	}
-	
-	
-	public boolean isLowerOrEqual(FilterPriority priority) {
-		return this.compareTo(priority) >= 0;
-	}
-	
-	public boolean isLower(FilterPriority priority) {
-		return this.compareTo(priority) > 0;
-	}
+    HIGHEST,
+    HIGH,
+    MEDIUM,
+    LOW,
+    LOWEST,
 
-	public static FilterPriority fromName(String name) {
-		for (FilterPriority priority: FilterPriority.values()) {
-			if (priority.name().equals(name)) {
-				return priority;
-			}
-		}
-		return null;
-	}
-	
+    DEFAULT,
+    ;
+
+    public boolean isHigherOrEqual(FilterPriority priority) {
+        return this.compareTo(priority) <= 0;
+    }
+
+    public boolean isHigher(FilterPriority priority) {
+        return this.compareTo(priority) < 0;
+    }
+
+
+    public boolean isLowerOrEqual(FilterPriority priority) {
+        return this.compareTo(priority) >= 0;
+    }
+
+    public boolean isLower(FilterPriority priority) {
+        return this.compareTo(priority) > 0;
+    }
+
+    public static FilterPriority fromName(String name) {
+        for (FilterPriority priority : FilterPriority.values()) {
+            if (priority.name().equals(name)) {
+                return priority;
+            }
+        }
+        return null;
+    }
+
 }

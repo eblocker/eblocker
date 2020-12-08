@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import com.google.inject.Inject;
 
 public class SchemaMigrationVersion26 implements SchemaMigration {
 
@@ -40,7 +40,7 @@ public class SchemaMigrationVersion26 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         dataSource.getAll(ParentalControlFilterMetaData.class).forEach(metaData -> {
             if ("domainblacklist".equals(metaData.getFormat())) {
                 metaData.setFormat("domainblacklist/string");

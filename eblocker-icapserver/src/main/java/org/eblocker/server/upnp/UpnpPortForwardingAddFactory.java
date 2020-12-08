@@ -21,5 +21,5 @@ import org.fourthline.cling.model.meta.Service;
 
 public interface UpnpPortForwardingAddFactory {
     UpnpPortForwardingAdd create(Service service, ControlPoint controlPoint, UpnpPortForwarding portForwarding,
-            UpnpManagementService callingService);
+                                 UpnpManagementService callingService);
 }

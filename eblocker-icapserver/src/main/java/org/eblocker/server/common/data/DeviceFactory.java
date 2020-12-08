@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.common.data;
 
+import com.google.inject.Inject;
+import org.eblocker.server.icap.resources.DefaultEblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.icap.resources.DefaultEblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import com.google.inject.Inject;
 
 public class DeviceFactory {
     private static final Logger log = LoggerFactory.getLogger(DeviceFactory.class);
@@ -46,7 +45,7 @@ public class DeviceFactory {
 
         disabledByDefault = new MacPrefix();
         disabledByDefault.addInputStream(
-                ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES_DISABLED_BY_DEFAULT));
+            ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES_DISABLED_BY_DEFAULT));
 
         try {
             macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
@@ -80,7 +79,7 @@ public class DeviceFactory {
 
     public String createNameForNewDevice(String hardwareAddressPrefix) {
         String vendor = macPrefix.getVendor(hardwareAddressPrefix);
-        if (vendor==null || "".equals(vendor)){
+        if (vendor == null || "".equals(vendor)) {
             // No vendor found, use "Device" instead
             if (DEFAULT_NAME_DEVICE_KEY_DE.equalsIgnoreCase(dataSource.getCurrentLanguage().getId())) {
                 vendor = DEFAULT_NAME_DEVICE_DE;
@@ -91,10 +90,10 @@ public class DeviceFactory {
         vendor = new StringBuilder().append(vendor).append(DEFAULT_NAME_NUMBER_PREFIX).toString();
         // Find small yet unique integer
         Set<String> existingDeviceNames = dataSource.getDevices().stream().map(iterDev -> iterDev.getName())
-                .collect(Collectors.toSet());
+            .collect(Collectors.toSet());
         for (int deviceNumber = 1; deviceNumber < Integer.MAX_VALUE; deviceNumber++) {
             String potentialName = new StringBuilder().append(vendor).append(deviceNumber)
-                    .append(DEFAULT_NAME_NUMBER_POSTFIX).toString();
+                .append(DEFAULT_NAME_NUMBER_POSTFIX).toString();
             if (existingDeviceNames.contains(potentialName)) {
                 continue;
             }
@@ -103,7 +102,7 @@ public class DeviceFactory {
         return "";
     }
 
-   private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix){
-       return disabledByDefault.getVendor(macAdressPrefix) != null;
-   }
+    private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix) {
+        return disabledByDefault.getVendor(macAdressPrefix) != null;
+    }
 }

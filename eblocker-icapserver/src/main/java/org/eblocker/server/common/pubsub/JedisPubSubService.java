@@ -28,30 +28,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class JedisPubSubService implements PubSubService {
-	private final Logger logger = LoggerFactory.getLogger(JedisPubSubService.class);
+    private final Logger logger = LoggerFactory.getLogger(JedisPubSubService.class);
 
-	private final JedisPool pool;
-	private final int retryDelay;
+    private final JedisPool pool;
+    private final int retryDelay;
 
-	private ConcurrentMap<Subscriber, String> channelBySubscriber = new ConcurrentHashMap<>(32, .75f, 2);
+    private ConcurrentMap<Subscriber, String> channelBySubscriber = new ConcurrentHashMap<>(32, .75f, 2);
 
-	@Inject
-	public JedisPubSubService(JedisPool pool, @Named("jedis.pubsub.retry.delay") int retryDelay) {
-		this.pool = pool;
-		this.retryDelay = retryDelay;
-	}
+    @Inject
+    public JedisPubSubService(JedisPool pool, @Named("jedis.pubsub.retry.delay") int retryDelay) {
+        this.pool = pool;
+        this.retryDelay = retryDelay;
+    }
 
-	@Override
-	public void publish(String channel, String message) {
-		try (Jedis jedis = pool.getResource()) {
-			jedis.publish(channel, message);
-		}
-	}
+    @Override
+    public void publish(String channel, String message) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.publish(channel, message);
+        }
+    }
 
-	@Override
-	public void subscribeAndLoop(String channel, Subscriber subscriber) {
+    @Override
+    public void subscribeAndLoop(String channel, Subscriber subscriber) {
         channelBySubscriber.put(subscriber, channel);
-	    while(channelBySubscriber.containsKey(subscriber)) {
+        while (channelBySubscriber.containsKey(subscriber)) {
             try (Jedis jedis = pool.getResource()) {
                 jedis.subscribe(new JedisSubscriberWrapper(subscriber), channel);
             } catch (JedisConnectionException e) {
@@ -64,12 +64,12 @@ public class JedisPubSubService implements PubSubService {
                 }
             }
         }
-	}
+    }
 
-	@Override
-	public void unsubscribe(Subscriber subscriber) {
-		// unsubscribe must happen from the same thread as the subscribe so there's no other way than using
-		// a marker message for shutdown
-		publish(channelBySubscriber.remove(subscriber), JedisSubscriberWrapper.UNSUBSCRIBE_REQUEST);
-	}
+    @Override
+    public void unsubscribe(Subscriber subscriber) {
+        // unsubscribe must happen from the same thread as the subscribe so there's no other way than using
+        // a marker message for shutdown
+        publish(channelBySubscriber.remove(subscriber), JedisSubscriberWrapper.UNSUBSCRIBE_REQUEST);
+    }
 }

@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.http.security;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.ProductInfoService;
-import org.eblocker.server.http.service.UserService;
-import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.SystemUpdater;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.ProductInfoService;
+import org.eblocker.server.http.service.UserService;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ServiceException;
 import org.restexpress.exception.UnauthorizedException;
@@ -78,23 +78,23 @@ public class SecurityService {
 
     @Inject
     public SecurityService(
-            JsonWebTokenHandler tokenHandler,
-            @Named("authentication.token.user.validity.seconds") long tokenUserValiditySeconds,
-            @Named("authentication.token.dashboard.validity.seconds") long tokenDashboardValiditySeconds,
-            @Named("authentication.passwordReset.validity.seconds") long passwordResetValiditySeconds,
-            @Named("authentication.passwordReset.gracePeriod.seconds") long passwordResetGracePeriodSeconds,
-            DataSource dataSource,
-            SystemUpdater systemUpdater,
-            AutomaticUpdater automaticUpdater,
-            ScriptRunner scriptRunner,
-            @Named("prepare.shutdown.command")String prepareShutdownScript,
-            EventLogger eventLogger,
-            DeviceService deviceService,
-            UserService userService,
-            ProductInfoService productInfoService,
-            @Named("authentication.passwordFailed.maxPenalty.seconds") long passwordFailedMaxPenaltySeconds,
-            @Named("authentication.passwordFailed.penaltyIncrement.seconds") long passwordFailedPenaltyIncrementSeconds,
-            Clock clock
+        JsonWebTokenHandler tokenHandler,
+        @Named("authentication.token.user.validity.seconds") long tokenUserValiditySeconds,
+        @Named("authentication.token.dashboard.validity.seconds") long tokenDashboardValiditySeconds,
+        @Named("authentication.passwordReset.validity.seconds") long passwordResetValiditySeconds,
+        @Named("authentication.passwordReset.gracePeriod.seconds") long passwordResetGracePeriodSeconds,
+        DataSource dataSource,
+        SystemUpdater systemUpdater,
+        AutomaticUpdater automaticUpdater,
+        ScriptRunner scriptRunner,
+        @Named("prepare.shutdown.command") String prepareShutdownScript,
+        EventLogger eventLogger,
+        DeviceService deviceService,
+        UserService userService,
+        ProductInfoService productInfoService,
+        @Named("authentication.passwordFailed.maxPenalty.seconds") long passwordFailedMaxPenaltySeconds,
+        @Named("authentication.passwordFailed.penaltyIncrement.seconds") long passwordFailedPenaltyIncrementSeconds,
+        Clock clock
 
     ) {
         this.tokenHandler = tokenHandler;
@@ -178,7 +178,7 @@ public class SecurityService {
             semaphore.acquire();
             long secondsToWait = passwordEntryInSeconds(ip);
             semaphore.release();
-            if (secondsToWait>0) {
+            if (secondsToWait > 0) {
                 // Need to wait longer
                 throw new UnauthorizedException("error.credentials.too.soon");
             }
@@ -189,8 +189,8 @@ public class SecurityService {
                 // Depends on number of previous failed logins
                 int previousFailedLogins = failedPasswordAttempts.getOrDefault(ip, 0);
                 long nextPasswordEntryInSeconds = Math.min(
-                        (previousFailedLogins + 1) * passwordFailedPenaltyIncrementSeconds,
-                        passwordFailedMaxPenaltySeconds);
+                    (previousFailedLogins + 1) * passwordFailedPenaltyIncrementSeconds,
+                    passwordFailedMaxPenaltySeconds);
 
                 nextPasswordEntryPermittedAt.put(ip, clock.instant().plusSeconds(nextPasswordEntryInSeconds));
 
@@ -224,7 +224,7 @@ public class SecurityService {
         Map<String, String> details = new HashMap<>();
         details.put("ipAddress", ipAddress.toString());
         Device device = deviceService.getDeviceByIp(ipAddress);
-        if (device != null){
+        if (device != null) {
             details.put("deviceName", device.getName());
             int userId = device.getOperatingUser();
             // Only if FAM-feature is available, otherwise there are no users
@@ -275,19 +275,18 @@ public class SecurityService {
         } catch (IOException e) {
             restoreAutoUpdateState(autoUpdateActivated);
             throw new ServiceException("error.password.reset.update.unknown", e);
-        }
-        catch (InterruptedException  e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             restoreAutoUpdateState(autoUpdateActivated);
             throw new ServiceException("error.password.reset.update.unknown", e);
         }
 
-        Date validTill = new Date(System.currentTimeMillis() + 1000L*passwordResetValiditySeconds);
+        Date validTill = new Date(System.currentTimeMillis() + 1000L * passwordResetValiditySeconds);
         PasswordResetToken passwordResetToken = new PasswordResetToken(
-                UUID.randomUUID().toString(),
-                validTill,
-                passwordResetGracePeriodSeconds,
-                autoUpdateActivated
+            UUID.randomUUID().toString(),
+            validTill,
+            passwordResetGracePeriodSeconds,
+            autoUpdateActivated
         );
 
         dataSource.save(passwordResetToken);
@@ -299,7 +298,7 @@ public class SecurityService {
         } catch (IOException e) {
             throw new ServiceException("error.password.reset.cannot.prepare.shutdown", e);
 
-        } catch (InterruptedException  e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new ServiceException("error.password.reset.cannot.prepare.shutdown", e);
         }

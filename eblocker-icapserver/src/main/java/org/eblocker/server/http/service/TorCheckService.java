@@ -16,19 +16,19 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.TorCheckSite;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.eblocker.server.common.data.TorCheckSite;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * This service provides a list of sites for checking whether a Tor connection is used
@@ -45,6 +45,7 @@ public class TorCheckService {
 
     /**
      * Returns a list of Tor checking sites.
+     *
      * @param includeSSL set to false if only HTTP URLs shall be returned
      */
     public List<TorCheckSite> getSites(boolean includeSSL) {

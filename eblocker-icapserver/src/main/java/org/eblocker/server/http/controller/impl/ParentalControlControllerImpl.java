@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UsageAccount;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -28,7 +29,6 @@ import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlSearchEngineConfigService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.ParentalControlUsageService;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -42,110 +42,110 @@ import java.util.Set;
 
 public class ParentalControlControllerImpl extends SessionContextController implements ParentalControlController {
 
-	private static final Logger log = LoggerFactory.getLogger(ParentalControlControllerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ParentalControlControllerImpl.class);
 
-	private final ParentalControlService parentalControlService;
-	private final ParentalControlUsageService parentalControlUsageService;
-	private final ParentalControlSearchEngineConfigService searchEngineConfigService;
-	private final DeviceService deviceService;
+    private final ParentalControlService parentalControlService;
+    private final ParentalControlUsageService parentalControlUsageService;
+    private final ParentalControlSearchEngineConfigService searchEngineConfigService;
+    private final DeviceService deviceService;
 
-	@Inject
-	public ParentalControlControllerImpl(
-            SessionStore sessionStore, PageContextStore pageContextStore,
-            ParentalControlService parentalControlService, ParentalControlUsageService parentalControlUsageService,
-            ParentalControlSearchEngineConfigService searchEngineConfigService,
-            DeviceService deviceService) {
-		super(sessionStore, pageContextStore);
-		this.parentalControlService = parentalControlService;
-		this.parentalControlUsageService = parentalControlUsageService;
-		this.searchEngineConfigService = searchEngineConfigService;
-		this.deviceService = deviceService;
-	}
+    @Inject
+    public ParentalControlControllerImpl(
+        SessionStore sessionStore, PageContextStore pageContextStore,
+        ParentalControlService parentalControlService, ParentalControlUsageService parentalControlUsageService,
+        ParentalControlSearchEngineConfigService searchEngineConfigService,
+        DeviceService deviceService) {
+        super(sessionStore, pageContextStore);
+        this.parentalControlService = parentalControlService;
+        this.parentalControlUsageService = parentalControlUsageService;
+        this.searchEngineConfigService = searchEngineConfigService;
+        this.deviceService = deviceService;
+    }
 
-	// Create profile
-	@Override
-	public UserProfileModule storeNewProfile(Request request, Response response) {
-		log.info("storeNewProfile");
-		UserProfileModule profile = request.getBodyAs(UserProfileModule.class);
-		return parentalControlService.storeNewProfile(profile);
-	}
+    // Create profile
+    @Override
+    public UserProfileModule storeNewProfile(Request request, Response response) {
+        log.info("storeNewProfile");
+        UserProfileModule profile = request.getBodyAs(UserProfileModule.class);
+        return parentalControlService.storeNewProfile(profile);
+    }
 
-	// Read profiles
-	@Override
-	public List<UserProfileModule> getProfiles(Request request, Response response) {
-		log.info("getProfiles");
-		return parentalControlService.getProfiles();
-	}
+    // Read profiles
+    @Override
+    public List<UserProfileModule> getProfiles(Request request, Response response) {
+        log.info("getProfiles");
+        return parentalControlService.getProfiles();
+    }
 
-	// Update profile
-	@Override
-	public UserProfileModule updateProfile(Request request, Response response) {
-		log.info("updateProfile");
-		UserProfileModule profile = request.getBodyAs(UserProfileModule.class);
-		return parentalControlService.updateProfile(profile);
-	}
+    // Update profile
+    @Override
+    public UserProfileModule updateProfile(Request request, Response response) {
+        log.info("updateProfile");
+        UserProfileModule profile = request.getBodyAs(UserProfileModule.class);
+        return parentalControlService.updateProfile(profile);
+    }
 
-	// Delete profile
-	@Override
-	public void deleteProfile(Request request, Response response) {
-		log.info("deleteProfile");
+    // Delete profile
+    @Override
+    public void deleteProfile(Request request, Response response) {
+        log.info("deleteProfile");
         String idString = request.getHeader("id", "No profile module ID provided");
 
-		int profileId = Integer.valueOf(idString);
-		parentalControlService.deleteProfile(profileId);
-	}
+        int profileId = Integer.valueOf(idString);
+        parentalControlService.deleteProfile(profileId);
+    }
 
     @Override
-	public void deleteAllProfiles(Request request, Response response) {
-		log.info("deleteAllProfiles");
+    public void deleteAllProfiles(Request request, Response response) {
+        log.info("deleteAllProfiles");
         List<Integer> ids = request.getBodyAs(List.class);
         ids.forEach(id -> parentalControlService.deleteProfile(id));
-	}
+    }
 
-	/**
-	 * REST method - GET /userprofiles/unique
-	 */
-	@Override
-	public void isUnique(Request request, Response response){
-		log.debug("GET /userprofiles/unique");
-		String idString = request.getHeader("id");
-		Integer id = null;
-		if (idString != null && !idString.isEmpty()) {
-			try {
-				id = Integer.valueOf(idString);
-			} catch (NumberFormatException e) {
-				throw new BadRequestException("Invalid numerical format");
-			}
-		}
-		String name = request.getHeader("name", "No module name provided");
+    /**
+     * REST method - GET /userprofiles/unique
+     */
+    @Override
+    public void isUnique(Request request, Response response) {
+        log.debug("GET /userprofiles/unique");
+        String idString = request.getHeader("id");
+        Integer id = null;
+        if (idString != null && !idString.isEmpty()) {
+            try {
+                id = Integer.valueOf(idString);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException("Invalid numerical format");
+            }
+        }
+        String name = request.getHeader("name", "No module name provided");
 
-		if (!parentalControlService.isUniqueCustomerCreatedName(id, name)) {
-			throw new ConflictException("Name is not unique");
-		}
-	}
+        if (!parentalControlService.isUniqueCustomerCreatedName(id, name)) {
+            throw new ConflictException("Name is not unique");
+        }
+    }
 
-	@Override
-	public Set<Integer> getProfilesBeingUpdated(Request request, Response response) {
-		return parentalControlService.getProfilesBeingUpdated();
-	}
+    @Override
+    public Set<Integer> getProfilesBeingUpdated(Request request, Response response) {
+        return parentalControlService.getProfilesBeingUpdated();
+    }
 
-	@Override
-	public boolean startUsage(Request request, Response response) {
-		Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
-		return parentalControlUsageService.startUsage(device);
-	}
+    @Override
+    public boolean startUsage(Request request, Response response) {
+        Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
+        return parentalControlUsageService.startUsage(device);
+    }
 
-	@Override
-	public void stopUsage(Request request, Response response) {
-		Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
-		parentalControlUsageService.stopUsage(device);
-	}
+    @Override
+    public void stopUsage(Request request, Response response) {
+        Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
+        parentalControlUsageService.stopUsage(device);
+    }
 
-	@Override
-	public UsageAccount getUsage(Request request, Response response) {
-		Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
-		return parentalControlUsageService.getUsageAccount(device);
-	}
+    @Override
+    public UsageAccount getUsage(Request request, Response response) {
+        Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
+        return parentalControlUsageService.getUsageAccount(device);
+    }
 
     @Override
     public UsageAccount getUsageByUserId(Request request, Response response) {
@@ -153,8 +153,8 @@ public class ParentalControlControllerImpl extends SessionContextController impl
         return parentalControlUsageService.getUsageAccount(userId);
     }
 
-	@Override
-	public Map<String, SearchEngineConfiguration> getSearchEngineConfiguration(Request request, Response response) {
+    @Override
+    public Map<String, SearchEngineConfiguration> getSearchEngineConfiguration(Request request, Response response) {
         return searchEngineConfigService.getConfigByLanguage();
     }
 

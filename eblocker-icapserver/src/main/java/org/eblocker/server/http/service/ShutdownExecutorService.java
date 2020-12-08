@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Singleton;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-
-import com.google.inject.Singleton;
 
 @Singleton
 public class ShutdownExecutorService {
@@ -29,11 +29,11 @@ public class ShutdownExecutorService {
     public ShutdownExecutorService() {
         executorServices = new HashSet<>();
     }
-    
+
     public synchronized void addExecutorService(ExecutorService service) {
         executorServices.add(service);
     }
-    
+
     public void shutdownExecutorServices() {
         for (ExecutorService executorService : executorServices) {
             executorService.shutdownNow();

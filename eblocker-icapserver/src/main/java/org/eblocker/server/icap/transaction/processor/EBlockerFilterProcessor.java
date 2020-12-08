@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.page.PageContext;
@@ -31,10 +35,6 @@ import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,34 +43,34 @@ import java.util.UUID;
 @RequireFeature(ProductFeature.PRO)
 @Singleton
 public class EBlockerFilterProcessor implements TransactionProcessor {
-	private static final Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
-	private static final Logger log = LoggerFactory.getLogger(EBlockerFilterProcessor.class);
+    private static final Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
+    private static final Logger log = LoggerFactory.getLogger(EBlockerFilterProcessor.class);
 
-	private final FilterManager filterManager;
-	private final TransactionCache transactionCache;
-	private final DataSource dataSource;
-	private final FeatureService featureService;
-	private final String connectionTestPatternBlockerUrl;
+    private final FilterManager filterManager;
+    private final TransactionCache transactionCache;
+    private final DataSource dataSource;
+    private final FeatureService featureService;
+    private final String connectionTestPatternBlockerUrl;
 
-	@Inject
-	public EBlockerFilterProcessor(
-			FilterManager filterManager,
-			TransactionCache transactionCache,
-			DataSource dataSource,
-			FeatureServiceSubscriber featureService,
-			@Named("connection.test.patternblocker.url") String connectionTestPatternBlockerUrl
-	) {
-	    this.filterManager = filterManager;
-		this.transactionCache = transactionCache;
-		this.dataSource = dataSource;
-		this.featureService = featureService;
-		this.connectionTestPatternBlockerUrl = connectionTestPatternBlockerUrl;
-	}
+    @Inject
+    public EBlockerFilterProcessor(
+        FilterManager filterManager,
+        TransactionCache transactionCache,
+        DataSource dataSource,
+        FeatureServiceSubscriber featureService,
+        @Named("connection.test.patternblocker.url") String connectionTestPatternBlockerUrl
+    ) {
+        this.filterManager = filterManager;
+        this.transactionCache = transactionCache;
+        this.dataSource = dataSource;
+        this.featureService = featureService;
+        this.connectionTestPatternBlockerUrl = connectionTestPatternBlockerUrl;
+    }
 
-	@Override
-	public boolean process(Transaction transaction) {
-	    if (Decision.PASS.equals(transaction.getDecision())) {
-	        return true;
+    @Override
+    public boolean process(Transaction transaction) {
+        if (Decision.PASS.equals(transaction.getDecision())) {
+            return true;
         }
 
         Session session = transaction.getSession();
@@ -78,63 +78,63 @@ public class EBlockerFilterProcessor implements TransactionProcessor {
             return true;
         }
 
-	    PageContext pageContext = transaction.getPageContext();
-		// is "eblocker-filter" ads or tracking filter ?
-		if (!session.isBlockTrackings()
-				|| pageContext != null && (pageContext.getWhiteListConfig().isAds() || pageContext.getWhiteListConfig().isTrackers())) {
-			return true;
-		}
+        PageContext pageContext = transaction.getPageContext();
+        // is "eblocker-filter" ads or tracking filter ?
+        if (!session.isBlockTrackings()
+            || pageContext != null && (pageContext.getWhiteListConfig().isAds() || pageContext.getWhiteListConfig().isTrackers())) {
+            return true;
+        }
 
-		Filter eBlockerFilter = filterManager.getFilter(Category.EBLOCKER);
-		FilterResult result = eBlockerFilter.filter(transaction);
-		transaction.setDecision(result.getDecision());
-		transaction.setFilterResult(result);
-		if (!result.getDecision().equals(Decision.NO_DECISION)) {
-			FILTER_LOG.info("{}\tEB\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
-		}
-		switch (result.getDecision()) {
-			case BLOCK:
-				session.incrementBlockedTrackings(transaction);
+        Filter eBlockerFilter = filterManager.getFilter(Category.EBLOCKER);
+        FilterResult result = eBlockerFilter.filter(transaction);
+        transaction.setDecision(result.getDecision());
+        transaction.setFilterResult(result);
+        if (!result.getDecision().equals(Decision.NO_DECISION)) {
+            FILTER_LOG.info("{}\tEB\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
+        }
+        switch (result.getDecision()) {
+            case BLOCK:
+                session.incrementBlockedTrackings(transaction);
                 transaction.block();
                 return false;
 
-			case NO_CONTENT:
+            case NO_CONTENT:
                 if (featureService.getGoogleCaptivePortalRedirectorState() || isConnectionCheckUrl(transaction.getUrl())) {
-					transaction.noContent();
-					return false;
-				} else {
-					return true;
-				}
+                    transaction.noContent();
+                    return false;
+                } else {
+                    return true;
+                }
 
-			case REDIRECT:
-				session.incrementBlockedTrackings(transaction);
-				if (result.getValue() != null) {
-					log.debug("Skipping tracking server. Immediate redirect to target URL {}", result.getValue());
+            case REDIRECT:
+                session.incrementBlockedTrackings(transaction);
+                if (result.getValue() != null) {
+                    log.debug("Skipping tracking server. Immediate redirect to target URL {}", result.getValue());
                     transaction.redirect(result.getValue());
-     			} else {
-					transaction.setRedirectTarget(result.getValue());
-					UUID uuid = transactionCache.add(transaction);
-					String orginalDomain = UrlUtils.getDomain(UrlUtils.getHostname(transaction.getUrl()));
-					String baseURL = transaction.getBaseUrl();
-					FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-NO-TARGET>>");
+                } else {
+                    transaction.setRedirectTarget(result.getValue());
+                    UUID uuid = transactionCache.add(transaction);
+                    String orginalDomain = UrlUtils.getDomain(UrlUtils.getHostname(transaction.getUrl()));
+                    String baseURL = transaction.getBaseUrl();
+                    FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-NO-TARGET>>");
                     transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain);
-             	}
-				return false;
+                }
+                return false;
 
-			case ASK:
+            case ASK:
                 return ask(transaction, session, result);
 
-			default:
-				return true;
+            default:
+                return true;
 
-		}
-	}
+        }
+    }
 
     private boolean isConnectionCheckUrl(String url) {
         return url.endsWith(connectionTestPatternBlockerUrl);
     }
 
-	private boolean ask(Transaction transaction, Session session, FilterResult result) {
+    private boolean ask(Transaction transaction, Session session, FilterResult result) {
         Decision userDecision = dataSource.getRedirectDecision(session.getSessionId(), transaction.getDomain());
         switch (userDecision) {
 

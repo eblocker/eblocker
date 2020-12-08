@@ -35,7 +35,13 @@ import org.mockito.Mockito;
 import org.restexpress.exception.BadRequestException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserServiceTest {
@@ -65,18 +71,18 @@ public class UserServiceTest {
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
         deviceService = new DeviceService(dataSource, sslService, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory);
+            networkInterfaceWrapper, deviceFactory);
         deviceService.init();
 
         users = new ArrayList<>();
         users.add(createMockUser(1, "system", 1, true));
         users.add(createMockUser(100, "alice", 100));
         users.add(createMockUser(101, "bob", 102));
-        Mockito.when(dataSource.getAll(UserModule.class)).then(i->copyUsers(users));
+        Mockito.when(dataSource.getAll(UserModule.class)).then(i -> copyUsers(users));
         // mock saving a user
         Mockito.when(
-                dataSource.save(Mockito.any(UserModule.class), Mockito.anyInt()))
-                .then(AdditionalAnswers.returnsFirstArg());
+            dataSource.save(Mockito.any(UserModule.class), Mockito.anyInt()))
+            .then(AdditionalAnswers.returnsFirstArg());
 
         // Mock device
         Device device = new Device();
@@ -92,22 +98,22 @@ public class UserServiceTest {
         List<UserProfileModule> profiles = new ArrayList<>();
 
         UserProfileModule profileS = new UserProfileModule(1, "profileS",
-                "descriptionS", "nameKeyS", "descriptionKeyS", true, false,null,
-                null, null, null, null, null, false, null);
+            "descriptionS", "nameKeyS", "descriptionKeyS", true, false, null,
+            null, null, null, null, null, false, null);
         Mockito.when(dataSource.get(UserProfileModule.class, 1)).thenReturn(
-                profileS);
+            profileS);
         profiles.add(profileS);
         UserProfileModule profileA = new UserProfileModule(100, "profileA",
-                "descriptionA", "nameKeyA", "descriptionKeyA", false, false,null,
-                null, null, null, null, null, false, null);
+            "descriptionA", "nameKeyA", "descriptionKeyA", false, false, null,
+            null, null, null, null, null, false, null);
         Mockito.when(dataSource.get(UserProfileModule.class, 100)).thenReturn(
-                profileA);
+            profileA);
         profiles.add(profileA);
         UserProfileModule profileB = new UserProfileModule(102, "profileB",
-                "descriptionB", "nameKeyB", "descriptionKeyB", false, false,null,
-                null, null, null, null, null, false, null);
+            "descriptionB", "nameKeyB", "descriptionKeyB", false, false, null,
+            null, null, null, null, null, false, null);
         Mockito.when(dataSource.get(UserProfileModule.class, 102)).thenReturn(
-                profileB);
+            profileB);
         profiles.add(profileB);
 
         Mockito.when(dataSource.getAll(UserProfileModule.class)).thenReturn(profiles);
@@ -124,31 +130,31 @@ public class UserServiceTest {
     }
 
     private UserModule createMockUser(int userId, String userName,
-            int associatedProfileId) {
-        return new UserModule(userId, associatedProfileId, userName, userName,null, null,
+                                      int associatedProfileId) {
+        return new UserModule(userId, associatedProfileId, userName, userName, null, null,
             false, null, Collections.emptyMap(), null, null, null);
     }
 
     private UserModule createMockUser(int userId, String userName,
-            int associatedProfileId, boolean systemUser) {
-        return new UserModule(userId, associatedProfileId, userName, userName,null, null,
+                                      int associatedProfileId, boolean systemUser) {
+        return new UserModule(userId, associatedProfileId, userName, userName, null, null,
             systemUser, null, Collections.emptyMap(), null, null, null);
     }
 
     private UserModule createMockUser(int userId, String userName,
-            int associatedProfileId, boolean hasPin, byte[] pin) {
-        return new UserModule(userId, associatedProfileId, userName, userName,null, null,
+                                      int associatedProfileId, boolean hasPin, byte[] pin) {
+        return new UserModule(userId, associatedProfileId, userName, userName, null, null,
             false, pin, Collections.emptyMap(), null, null, null);
     }
 
-    private List<UserModule> copyUsers(Collection<UserModule> users){
+    private List<UserModule> copyUsers(Collection<UserModule> users) {
         return users.stream().map(this::copyUser).collect(Collectors.toList());
     }
 
     private UserModule copyUser(UserModule user) {
         return new UserModule(user.getId(), user.getAssociatedProfileId(),
-                user.getName(), user.getNameKey(), null, user.getUserRole(), user.isSystem(),  user.getPin(),
-                new HashMap<>(user.getWhiteListConfigByDomains()), null, null, null);
+            user.getName(), user.getNameKey(), null, user.getUserRole(), user.isSystem(), user.getPin(),
+            new HashMap<>(user.getWhiteListConfigByDomains()), null, null, null);
     }
 
     @Test
@@ -161,7 +167,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteUser(){
+    public void testDeleteUser() {
         UserModule deletedUser = users.get(1);
         userService.deleteUser(deletedUser.getId());
         // make sure proper methods have been called
@@ -229,7 +235,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUser(){
+    public void testUpdateUser() {
         UserModule user = users.get(1);
 
         // update user (change profile)
@@ -282,7 +288,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUserPin(){
+    public void testUpdateUserPin() {
         UserModule user = users.get(1);
 
         // setup updated user (changing profile)
@@ -349,7 +355,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUserRoleParentToChild(){
+    public void testUpdateUserRoleParentToChild() {
         UserModule user = users.get(1);
 
         user.setUserRole(UserRole.PARENT);
@@ -364,11 +370,11 @@ public class UserServiceTest {
             null);
 
         // make sure proper methods have been called
-        Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()),Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
+        Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()), Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
     }
 
     @Test
-    public void testUpdateUserRoleChildToParent(){
+    public void testUpdateUserRoleChildToParent() {
 
         UserModule user = users.get(1);
 
@@ -389,10 +395,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testCreateChildUser(){
-        UserModule user = userService.createUser(102,"Test user", "Name key", null, UserRole.CHILD, null);
+    public void testCreateChildUser() {
+        UserModule user = userService.createUser(102, "Test user", "Name key", null, UserRole.CHILD, null);
         // make sure proper methods have been called
-        Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()),Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
+        Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()), Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
     }
 
 }

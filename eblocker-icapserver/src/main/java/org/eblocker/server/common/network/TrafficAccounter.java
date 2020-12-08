@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.data.TrafficAccount;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,9 +132,9 @@ public class TrafficAccounter {
 
     private List<TrafficAccount> extractCounters(List<String> dump) {
         return dump.stream()
-                .map(this::extractCounter)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .map(this::extractCounter)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     private TrafficAccount extractCounter(String line) {
@@ -189,12 +189,12 @@ public class TrafficAccounter {
     private void updateTotals(List<TrafficAccount> counters) {
         // update totals
         Map<String, TrafficAccount> countersByMac = counters.stream()
-                .collect(Collectors.groupingBy(TrafficAccount::getMac, counterCollector()));
+            .collect(Collectors.groupingBy(TrafficAccount::getMac, counterCollector()));
         countersByMac.values().forEach(this::updateCounter);
 
         // remove any unreferenced lastUpdate counter
         Iterator i = lastUpdateByMac.keySet().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             if (!countersByMac.containsKey(i.next())) {
                 i.remove();
             }
@@ -232,7 +232,7 @@ public class TrafficAccounter {
             super(message);
         }
 
-        IpTablesException(String message, Throwable cause){
+        IpTablesException(String message, Throwable cause) {
             super(message, cause);
         }
     }
@@ -265,8 +265,8 @@ public class TrafficAccounter {
             @Override
             public Set<Characteristics> characteristics() {
                 return Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.CONCURRENT,
-                        Collector.Characteristics.UNORDERED,
-                        Collector.Characteristics.IDENTITY_FINISH));
+                    Collector.Characteristics.UNORDERED,
+                    Collector.Characteristics.IDENTITY_FINISH));
             }
         };
     }

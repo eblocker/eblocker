@@ -63,14 +63,14 @@ public class ParentalControlFilterListsService {
 
     @Inject
     public ParentalControlFilterListsService(
-            @Named("parentalcontrol.filterlists.file.path") String filePath,
-            @Named("parentalcontrol.filterlists.file.customercreated.path") String customFiltersPath,
-            DataSource dataSource,
-            FileSystemWatchService fileSystemWatchService,
-            ObjectMapper objectMapper,
-            ParentalControlService parentalControlService,
-            DomainBlacklistService domainBlacklistService,
-            BlacklistCompiler blacklistCompiler) throws IOException {
+        @Named("parentalcontrol.filterlists.file.path") String filePath,
+        @Named("parentalcontrol.filterlists.file.customercreated.path") String customFiltersPath,
+        DataSource dataSource,
+        FileSystemWatchService fileSystemWatchService,
+        ObjectMapper objectMapper,
+        ParentalControlService parentalControlService,
+        DomainBlacklistService domainBlacklistService,
+        BlacklistCompiler blacklistCompiler) throws IOException {
         this.filePath = Paths.get(filePath);
         this.customFiltersPath = Paths.get(customFiltersPath);
         this.dataSource = dataSource;
@@ -176,9 +176,9 @@ public class ParentalControlFilterListsService {
     }
 
     // Function to delete a filter list
-    public synchronized void deleteFilterList(int filterListId){
+    public synchronized void deleteFilterList(int filterListId) {
         ParentalControlFilterMetaData dbFilterList = dataSource.get(ParentalControlFilterMetaData.class, filterListId);
-        if (dbFilterList.isBuiltin()){
+        if (dbFilterList.isBuiltin()) {
             throw new BadRequestException("Cannot filter list " + filterListId + ", because it is a built-in filter list.");
         }
 
@@ -190,7 +190,7 @@ public class ParentalControlFilterListsService {
             tryDelete(getCustomBloomFilterPath(filterListId));
             dataSource.delete(ParentalControlFilterMetaData.class, filterListId);
             domainBlacklistService.setFilters(loadMetaData());
-        } else{
+        } else {
             throw new BadRequestException("Filter in use by a user profile, cannot be removed");
         }
     }
@@ -345,7 +345,8 @@ public class ParentalControlFilterListsService {
     }
 
     private Set<ParentalControlFilterMetaData> readMetaDataFile() throws IOException {
-        return objectMapper.readValue(filePath.toFile(), new TypeReference<Set<ParentalControlFilterMetaData>>() {});
+        return objectMapper.readValue(filePath.toFile(), new TypeReference<Set<ParentalControlFilterMetaData>>() {
+        });
     }
 
     private void updateFilters(Collection<ParentalControlFilterMetaData> metaData) {
@@ -357,7 +358,8 @@ public class ParentalControlFilterListsService {
     }
 
     private List<String> readCustomerCreatedFilter(int id) throws IOException {
-        return objectMapper.readValue(getCustomFilterFile(id).toFile(), new TypeReference<List<String>>() {});
+        return objectMapper.readValue(getCustomFilterFile(id).toFile(), new TypeReference<List<String>>() {
+        });
     }
 
     private void saveCustomerCreatedFilter(int id, List<String> filter) throws IOException {

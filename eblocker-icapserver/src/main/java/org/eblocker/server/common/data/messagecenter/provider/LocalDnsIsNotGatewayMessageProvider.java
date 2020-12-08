@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.IpUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider  {
+public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider {
 
     private final EblockerDnsServer dnsServer;
     private final NetworkServices networkServices;

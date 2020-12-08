@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.backup.AppModulesBackupProvider;
 import org.eblocker.server.http.backup.BackupProvider;
@@ -23,7 +24,6 @@ import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import java.util.jar.Manifest;
 
 /**
  * This service exports/imports configuration to/from a JAR file.
- *
+ * <p>
  * The configuration version is written to the JAR's manifest file.
  */
 public class ConfigurationBackupService {
@@ -60,18 +60,18 @@ public class ConfigurationBackupService {
 
     @Inject
     public ConfigurationBackupService(DataSource dataSource, AppModulesBackupProvider appModulesBackupProvider,
-            DevicesBackupProvider devicesBackupProvider, TorConfigBackupProvider torConfigBackupProvider) {
+                                      DevicesBackupProvider devicesBackupProvider, TorConfigBackupProvider torConfigBackupProvider) {
         this(dataSource);
 
         versionizedBackupProviders.put(OLD_VERSION_1_ONLY_APP_MODULES,
-                new ArrayList<BackupProvider>(Arrays.asList(appModulesBackupProvider)));
+            new ArrayList<BackupProvider>(Arrays.asList(appModulesBackupProvider)));
 
         versionizedBackupProviders.put(OLD_VERSION_2_APP_MODULES_AND_DEVICES,
-                new ArrayList<BackupProvider>(Arrays.asList(appModulesBackupProvider, devicesBackupProvider)));
+            new ArrayList<BackupProvider>(Arrays.asList(appModulesBackupProvider, devicesBackupProvider)));
 
         versionizedBackupProviders.put(OLD_VERSION_3_APP_MODULES_DEVICES_TOR,
-                new ArrayList<BackupProvider>(
-                        Arrays.asList(appModulesBackupProvider, devicesBackupProvider, torConfigBackupProvider)));
+            new ArrayList<BackupProvider>(
+                Arrays.asList(appModulesBackupProvider, devicesBackupProvider, torConfigBackupProvider)));
     }
 
     public ConfigurationBackupService(DataSource dataSource, BackupProvider backupProvider) {
@@ -106,7 +106,7 @@ public class ConfigurationBackupService {
                 throw new UnsupportedBackupVersionException(version);
             }
             int schemaVersion = Integer.parseInt((String)
-                    manifest.getMainAttributes().getOrDefault(CURRENT_SCHEMA_VERSION, FALLBACK_SCHEMA_VERSION));
+                manifest.getMainAttributes().getOrDefault(CURRENT_SCHEMA_VERSION, FALLBACK_SCHEMA_VERSION));
             for (BackupProvider provider : versionizedBackupProviders.get(version)) {
                 provider.importConfiguration(jarStream, schemaVersion);
             }

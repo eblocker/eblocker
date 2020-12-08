@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DeviceService;
 
 public class DeviceServiceScheduler extends FixedRateScheduler {
 
     @Inject
     public DeviceServiceScheduler(DeviceService deviceService,
-            @Named("executor.deviceServiceCacheRefresh.startupDelay") long startupDelay,
-            @Named("executor.deviceServiceCacheRefresh.fixedRate") long fixedRate) {
+                                  @Named("executor.deviceServiceCacheRefresh.startupDelay") long startupDelay,
+                                  @Named("executor.deviceServiceCacheRefresh.fixedRate") long fixedRate) {
         super(deviceService::refresh, startupDelay, fixedRate);
     }
 }

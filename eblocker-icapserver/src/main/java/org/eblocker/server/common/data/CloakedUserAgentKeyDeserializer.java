@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class CloakedUserAgentKeyDeserializer  extends KeyDeserializer {
+public class CloakedUserAgentKeyDeserializer extends KeyDeserializer {
     private static final Logger log = LoggerFactory.getLogger(CloakedUserAgentKeyDeserializer.class);
-    
+
     @Override
     public CloakedUserAgentKey deserializeKey(String s, DeserializationContext deserializationContext) throws IOException {
         try {

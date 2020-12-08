@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class InitialDelayOnlyScheduler extends AbstractScheduler {
-    
+
     public InitialDelayOnlyScheduler(Runnable command, long initialDelayInSeconds) {
         super(command, initialDelayInSeconds);
     }

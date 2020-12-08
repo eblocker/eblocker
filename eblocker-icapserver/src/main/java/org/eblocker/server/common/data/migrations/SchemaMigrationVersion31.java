@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class SchemaMigrationVersion31 implements SchemaMigration {
     public void migrate() {
         int oldStandardUserId = DefaultEntities.PARENTAL_CONTROL_DEFAULT_USER_ID;
         UserModuleOld oldStandardUser = userMigrationService.get(UserModuleOld.class, oldStandardUserId);
-        for(Device device : dataSource.getDevices()) {
+        for (Device device : dataSource.getDevices()) {
             /*
              * Create and set new, device specific system user for all devices.
              * Copy all relevant settings from "old" standard user.

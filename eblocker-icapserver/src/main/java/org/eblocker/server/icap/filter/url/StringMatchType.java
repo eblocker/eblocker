@@ -17,20 +17,20 @@
 package org.eblocker.server.icap.filter.url;
 
 public enum StringMatchType {
-	REGEX,
+    REGEX,
     DOMAIN,
-	CONTAINS,
-	STARTSWITH,
-	ENDSWITH,
-	EQUALS;
+    CONTAINS,
+    STARTSWITH,
+    ENDSWITH,
+    EQUALS;
 
     public static StringMatchType fromName(String name) {
-		for (StringMatchType substringMatchType: StringMatchType.values()) {
-			if (substringMatchType.name().equals(name)) {
-				return substringMatchType;
-			}
-		}
-		return null;
-	}
+        for (StringMatchType substringMatchType : StringMatchType.values()) {
+            if (substringMatchType.name().equals(name)) {
+                return substringMatchType;
+            }
+        }
+        return null;
+    }
 
 }

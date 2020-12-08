@@ -16,16 +16,12 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.eblocker.server.http.controller.UserController;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleTransport;
+import org.eblocker.server.http.controller.UserController;
 import org.eblocker.server.http.controller.converter.UserModuleConverter;
+import org.eblocker.server.http.service.UserService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -33,8 +29,11 @@ import org.restexpress.exception.ConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.http.service.UserService;
-import com.google.inject.Inject;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserControllerImpl implements UserController {
     private static final Logger log = LoggerFactory.getLogger(UserControllerImpl.class);

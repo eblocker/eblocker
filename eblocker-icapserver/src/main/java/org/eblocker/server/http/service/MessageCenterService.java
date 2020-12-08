@@ -16,28 +16,43 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageProvider;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
+import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.CertificateExpirationMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.CertificateUntrustedMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.DailyNewsMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.EventMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.LicenseExpirationMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.LocalDnsIsNotGatewayMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.MessageProviderMessageId;
+import org.eblocker.server.common.data.messagecenter.provider.ReleaseNotesMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.RouterCompatibilityMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.SslSupportMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.UnreliableDnsServerMessageProvider;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageProvider;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
-import org.eblocker.server.common.data.messagecenter.provider.*;
 import org.restexpress.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -79,46 +94,46 @@ public class MessageCenterService {
 
     @Inject
     public MessageCenterService(
-            DataSource dataSource,
-            EventMessageProvider eventMessageProvider,
-            SslSupportMessageProvider sslSupportMessageProvider,
-            LicenseExpirationMessageProvider licenseExpirationMessageProvider,
-            ReleaseNotesMessageProvider releaseNotesMessageProvider,
-            RouterCompatibilityMessageProvider routerCompatibilityMessageProvider,
-            DailyNewsMessageProvider dailyNewsMessageProvider,
-            CertificateExpirationMessageProvider certificateExpirationMessageProvider,
-            CertificateUntrustedMessageProvider certificateUntrustedMessageProvider,
-            LocalDnsIsNotGatewayMessageProvider localDnsIsNotGatewayMessageProvider,
-            UnreliableDnsServerMessageProvider unreliableDnsServerMessageProvider,
-            AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
-            ProductInfoService productInfoService,
-            DeviceService deviceService,
-            UserService userService,
-            ParentalControlService parentalControlService ) {
+        DataSource dataSource,
+        EventMessageProvider eventMessageProvider,
+        SslSupportMessageProvider sslSupportMessageProvider,
+        LicenseExpirationMessageProvider licenseExpirationMessageProvider,
+        ReleaseNotesMessageProvider releaseNotesMessageProvider,
+        RouterCompatibilityMessageProvider routerCompatibilityMessageProvider,
+        DailyNewsMessageProvider dailyNewsMessageProvider,
+        CertificateExpirationMessageProvider certificateExpirationMessageProvider,
+        CertificateUntrustedMessageProvider certificateUntrustedMessageProvider,
+        LocalDnsIsNotGatewayMessageProvider localDnsIsNotGatewayMessageProvider,
+        UnreliableDnsServerMessageProvider unreliableDnsServerMessageProvider,
+        AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
+        ProductInfoService productInfoService,
+        DeviceService deviceService,
+        UserService userService,
+        ParentalControlService parentalControlService) {
         this(dataSource,
-                Arrays.asList(
-                        eventMessageProvider,
-                        sslSupportMessageProvider,
-                        licenseExpirationMessageProvider,
-                        releaseNotesMessageProvider,
-                        routerCompatibilityMessageProvider,
-                        dailyNewsMessageProvider,
-                        certificateExpirationMessageProvider,
-                        certificateUntrustedMessageProvider,
-                        localDnsIsNotGatewayMessageProvider,
-                        unreliableDnsServerMessageProvider,
-                        appModuleRemovalMessageProvider
-                ),
-                productInfoService,
-                deviceService,
-                userService,
-                parentalControlService
+            Arrays.asList(
+                eventMessageProvider,
+                sslSupportMessageProvider,
+                licenseExpirationMessageProvider,
+                releaseNotesMessageProvider,
+                routerCompatibilityMessageProvider,
+                dailyNewsMessageProvider,
+                certificateExpirationMessageProvider,
+                certificateUntrustedMessageProvider,
+                localDnsIsNotGatewayMessageProvider,
+                unreliableDnsServerMessageProvider,
+                appModuleRemovalMessageProvider
+            ),
+            productInfoService,
+            deviceService,
+            userService,
+            parentalControlService
         );
     }
 
     public MessageCenterService(DataSource dataSource, List<MessageProvider> messageProviders,
-            ProductInfoService productInfoService, DeviceService deviceService, UserService userService,
-            ParentalControlService parentalControlService) {
+                                ProductInfoService productInfoService, DeviceService deviceService, UserService userService,
+                                ParentalControlService parentalControlService) {
         this.dataSource = dataSource;
         this.messageProviders = messageProviders;
         this.productInfoService = productInfoService;
@@ -143,7 +158,7 @@ public class MessageCenterService {
             if (opUser != null) {
                 UserProfileModule opUserProfile = parentalControlService.getProfile(opUser.getAssociatedProfileId());
                 if (opUserProfile != null && (opUserProfile.isControlmodeMaxUsage() || opUserProfile.isControlmodeTime()
-                        || opUserProfile.isControlmodeUrls())) {
+                    || opUserProfile.isControlmodeUrls())) {
                     return Collections.emptyList();
                 }
             }
@@ -160,7 +175,7 @@ public class MessageCenterService {
                     messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.ALERT) &&
                     dev != null &&
                     !dev.isMessageShowAlert())
-                ) {
+            ) {
                 messages.add(messageContainer.getMessage());
             }
         }
@@ -215,7 +230,7 @@ public class MessageCenterService {
      * Find the responsible provider for the current message
      */
     private MessageProvider getProvider(MessageContainer messageContainer) {
-        for (MessageProvider provider: messageProviders) {
+        for (MessageProvider provider : messageProviders) {
             if (provider.isResponsibleFor(messageContainer)) {
                 return provider;
             }
@@ -230,16 +245,16 @@ public class MessageCenterService {
      */
     public void updateMessages() {
         synchronized (cache) {
-            for (MessageProvider provider: messageProviders) {
+            for (MessageProvider provider : messageProviders) {
                 provider.update(cache);
             }
         }
         List<MessageContainer> previous = dataSource.getAll(MessageContainer.class);
-        for (MessageContainer messageContainer: cache.values()) {
+        for (MessageContainer messageContainer : cache.values()) {
             save(messageContainer);
         }
         previous.removeAll(cache.values());
-        for (MessageContainer messageContainer: previous) {
+        for (MessageContainer messageContainer : previous) {
             dataSource.delete(MessageContainer.class, messageContainer.getMessage().getId());
         }
         LOG.info("Currently there are {} messages", cache.size());

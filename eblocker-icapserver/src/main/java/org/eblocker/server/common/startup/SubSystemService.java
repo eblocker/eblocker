@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface SubSystemService {
     SubSystem value();
+
     int initPriority() default 0;
+
     boolean allowUninitializedCalls() default true;
 }

@@ -53,23 +53,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DeviceControllerImpl implements DeviceController {
-	private static final String DEVICE_EBLOCKER_VENDOR = "eBlocker";
-	private static final Logger log = LoggerFactory.getLogger(DeviceControllerImpl.class);
-	private final AnonymousService anonymousService;
+    private static final String DEVICE_EBLOCKER_VENDOR = "eBlocker";
+    private static final Logger log = LoggerFactory.getLogger(DeviceControllerImpl.class);
+    private final AnonymousService anonymousService;
     private final DeviceOnlineStatusCache deviceOnlineStatusCache;
-	private final DevicePermissionsService devicePermissionsService;
-	private final DeviceScanningService deviceScanningService;
-	private final DeviceService deviceService;
+    private final DevicePermissionsService devicePermissionsService;
+    private final DeviceScanningService deviceScanningService;
+    private final DeviceService deviceService;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final FeatureToggleRouter featureToggleRouter;
-	private final NetworkInterfaceWrapper networkInterfaceWrapper;
-	private final NetworkStateMachine networkStateMachine;
-	private final OpenVpnService openVpnService;
-	private final PauseDeviceController pauseDeviceController;
-	private final DeviceFactory deviceFactory;
+    private final NetworkInterfaceWrapper networkInterfaceWrapper;
+    private final NetworkStateMachine networkStateMachine;
+    private final OpenVpnService openVpnService;
+    private final PauseDeviceController pauseDeviceController;
+    private final DeviceFactory deviceFactory;
 
-	@Inject
-	public DeviceControllerImpl(AnonymousService anonymousService,
+    @Inject
+    public DeviceControllerImpl(AnonymousService anonymousService,
                                 DeviceOnlineStatusCache deviceOnlineStatusCache,
                                 DevicePermissionsService devicePermissionsService,
                                 DeviceScanningService deviceScanningService,
@@ -81,32 +81,32 @@ public class DeviceControllerImpl implements DeviceController {
                                 OpenVpnService openVpnService,
                                 PauseDeviceController pauseDeviceController,
                                 DeviceFactory deviceFactory) {
-		this.anonymousService = anonymousService;
-		this.deviceOnlineStatusCache = deviceOnlineStatusCache;
-		this.devicePermissionsService = devicePermissionsService;
-		this.deviceScanningService = deviceScanningService;
-		this.deviceService = deviceService;
-		this.deviceRegistrationProperties = deviceRegistrationProperties;
-		this.featureToggleRouter = featureToggleRouter;
-		this.networkInterfaceWrapper = networkInterfaceWrapper;
-		this.networkStateMachine = networkStateMachine;
-		this.openVpnService = openVpnService;
-		this.pauseDeviceController = pauseDeviceController;
+        this.anonymousService = anonymousService;
+        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
+        this.devicePermissionsService = devicePermissionsService;
+        this.deviceScanningService = deviceScanningService;
+        this.deviceService = deviceService;
+        this.deviceRegistrationProperties = deviceRegistrationProperties;
+        this.featureToggleRouter = featureToggleRouter;
+        this.networkInterfaceWrapper = networkInterfaceWrapper;
+        this.networkStateMachine = networkStateMachine;
+        this.openVpnService = openVpnService;
+        this.pauseDeviceController = pauseDeviceController;
         this.deviceFactory = deviceFactory;
     }
 
-	@Override
+    @Override
     public Object deleteDevice(Request request, Response response) {
-		String deviceId = request.getHeader("deviceId");
-		Device device = new Device();
-		device.setId(deviceId);
+        String deviceId = request.getHeader("deviceId");
+        Device device = new Device();
+        device.setId(deviceId);
 
-		if (deviceService.delete(device) != null) {
-		    networkStateMachine.deviceStateChanged();
+        if (deviceService.delete(device) != null) {
+            networkStateMachine.deviceStateChanged();
         }
 
-		return device;
-	}
+        return device;
+    }
 
     @Override
     public Device resetDevice(Request request, Response response) {
@@ -118,41 +118,41 @@ public class DeviceControllerImpl implements DeviceController {
         return resettedDevice;
     }
 
-	@Override
+    @Override
     public List<Device> getAllDevices(Request request, Response response) {
-		IpAddress requestIPAddress = ControllerUtils.getRequestIPAddress(request);
-		String eBlockerId = "device:"+networkInterfaceWrapper.getHardwareAddressHex();
+        IpAddress requestIPAddress = ControllerUtils.getRequestIPAddress(request);
+        String eBlockerId = "device:" + networkInterfaceWrapper.getHardwareAddressHex();
 
-		Collection<Device> devices = deviceService.getDevices(true);
+        Collection<Device> devices = deviceService.getDevices(true);
         List<Device> result = new ArrayList<>(devices.size());
-		for (Device device : devices) {
-			if (device.getIpAddresses().contains(requestIPAddress)) {
-				device.markAsCurrentDevice();
-			}
-			deviceOnlineStatusCache.setOnlineStatus(device);
+        for (Device device : devices) {
+            if (device.getIpAddresses().contains(requestIPAddress)) {
+                device.markAsCurrentDevice();
+            }
+            deviceOnlineStatusCache.setOnlineStatus(device);
 
-			if (device.getId().equals(eBlockerId)) {
-			    // eBlocker itself should not be in this list. If it is, remove it.
+            if (device.getId().equals(eBlockerId)) {
+                // eBlocker itself should not be in this list. If it is, remove it.
                 // TODO: This is not a good solution. The whole Device/Controller/Service has to be refactored. After refactoring, eBlocker should be a device like all others.
-			    deviceService.delete(device);
+                deviceService.delete(device);
             } else {
                 result.add(device);
             }
-		}
-		// Add eblocker
-		Device eblockerDevice = new Device();
-		eblockerDevice.setIpAddresses(networkInterfaceWrapper.getAddresses().stream()
+        }
+        // Add eblocker
+        Device eblockerDevice = new Device();
+        eblockerDevice.setIpAddresses(networkInterfaceWrapper.getAddresses().stream()
             .filter(ip -> featureToggleRouter.isIp6Enabled() || ip.isIpv4())
             .collect(Collectors.toList()));
-		eblockerDevice.setId(eBlockerId);
-		eblockerDevice.setName(deviceRegistrationProperties.getDeviceName());
-		eblockerDevice.setVendor(DEVICE_EBLOCKER_VENDOR);
-		eblockerDevice.setOnline(true);
-		eblockerDevice.setIsEblocker(true);
-		result.add(eblockerDevice);
+        eblockerDevice.setId(eBlockerId);
+        eblockerDevice.setName(deviceRegistrationProperties.getDeviceName());
+        eblockerDevice.setVendor(DEVICE_EBLOCKER_VENDOR);
+        eblockerDevice.setOnline(true);
+        eblockerDevice.setIsEblocker(true);
+        result.add(eblockerDevice);
 
-		return result;
-	}
+        return result;
+    }
 
     @Override
     public Device getDeviceById(Request request, Response response) {
@@ -166,14 +166,14 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Object updateDevice(Request request, Response response) {
-		String deviceId = request.getHeader("deviceId");
-		Device device = request.getBodyAs(Device.class);
-		device.setId(deviceId);
+        String deviceId = request.getHeader("deviceId");
+        Device device = request.getBodyAs(Device.class);
+        device.setId(deviceId);
 
         updateDevice(device);
 
         return device;
-	}
+    }
 
     @Override
     public Object updateCurrentDevice(Request request, Response response) {
@@ -213,7 +213,7 @@ public class DeviceControllerImpl implements DeviceController {
         // Was a paused device reactivated (via console)?
         if (device.isEnabled() && device.isPaused() && !current.isEnabled() && current.isPaused()) {
             // Cancel pause by setting remaining pause to 0 (it remains paused if the pause is now != 0)
-            device.setPaused(pauseDeviceController.pauseDevice(device, 0).getPausing()!=0);
+            device.setPaused(pauseDeviceController.pauseDevice(device, 0).getPausing() != 0);
             // return since the device was only unpaused and the pauseDeviceController makes relevant calls to deviceService
             return;
         }
@@ -223,9 +223,9 @@ public class DeviceControllerImpl implements DeviceController {
         deviceService.updateDevice(device);
 
         if ((current.isEnabled() != device.isEnabled())
-                || (current.isSslEnabled() != device.isSslEnabled())
-                // If the DHCP config needs rewriting:
-                || (current.isIpAddressFixed() != device.isIpAddressFixed())) {
+            || (current.isSslEnabled() != device.isSslEnabled())
+            // If the DHCP config needs rewriting:
+            || (current.isIpAddressFixed() != device.isIpAddressFixed())) {
             networkStateMachine.deviceStateChanged(device); //adapt firewall and also heal device if in automode
         }
 
@@ -236,27 +236,27 @@ public class DeviceControllerImpl implements DeviceController {
                 anonymousService.disableVpn(device);
             }
         } else {
-			// TOR/VPN management
-			if (!device.isUseAnonymizationService()) {
-				anonymousService.disableTor(device);
-				anonymousService.disableVpn(device);
-			} else if (device.isRoutedThroughTor()) {
-				anonymousService.enableTor(device);
-			} else if (device.getUseVPNProfileID() != null) {
-				VpnProfile profile = openVpnService.getVpnProfileById(device.getUseVPNProfileID());
-				if (profile != null) {
-					anonymousService.enableVpn(device, profile);
-				} else {
-					log.warn("cannot activate non-existing vpn profile {} for {} - resetting", device.getUseVPNProfileID(), device.getId());
-					device.setUseVPNProfileID(null);
-					device.setUseAnonymizationService(false);
-					deviceService.updateDevice(device);
+            // TOR/VPN management
+            if (!device.isUseAnonymizationService()) {
+                anonymousService.disableTor(device);
+                anonymousService.disableVpn(device);
+            } else if (device.isRoutedThroughTor()) {
+                anonymousService.enableTor(device);
+            } else if (device.getUseVPNProfileID() != null) {
+                VpnProfile profile = openVpnService.getVpnProfileById(device.getUseVPNProfileID());
+                if (profile != null) {
+                    anonymousService.enableVpn(device, profile);
+                } else {
+                    log.warn("cannot activate non-existing vpn profile {} for {} - resetting", device.getUseVPNProfileID(), device.getId());
+                    device.setUseVPNProfileID(null);
+                    device.setUseAnonymizationService(false);
+                    deviceService.updateDevice(device);
 
-					anonymousService.disableTor(device);
-					anonymousService.disableVpn(device);
-				}
-			}
-		}
+                    anonymousService.disableTor(device);
+                    anonymousService.disableVpn(device);
+                }
+            }
+        }
 
         deviceOnlineStatusCache.setOnlineStatus(device);
     }
@@ -279,18 +279,18 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Object scanDevices(Request request, Response response) {
-	    deviceScanningService.scan();
-		return true;
-	}
+        deviceScanningService.scan();
+        return true;
+    }
 
     @Override
-	public boolean isScanningAvailable(Request request, Response response) {
+    public boolean isScanningAvailable(Request request, Response response) {
         return deviceScanningService.isScanAvailable();
     }
 
     @Override
     public Long getScanningInterval(Request request, Response response) {
-	    return deviceScanningService.getScanningInterval();
+        return deviceScanningService.getScanningInterval();
     }
 
     @Override
@@ -338,14 +338,14 @@ public class DeviceControllerImpl implements DeviceController {
     public RemainingPause getPauseCurrentDevice(Request request, Response response) {
         Device device = getCurrentDevice(request);
         return getPause(device);
-	}
+    }
 
     @Override
-    public RemainingPause pauseCurrentDevice(Request request, Response response){
+    public RemainingPause pauseCurrentDevice(Request request, Response response) {
         RemainingPause pause = request.getBodyAs(RemainingPause.class);
         Device device = getCurrentDevice(request);
         return setPause(device, pause);
-	}
+    }
 
     @Override
     public RemainingPause pauseCurrentDeviceIfNotYetPausing(Request request, Response response) {
@@ -399,13 +399,13 @@ public class DeviceControllerImpl implements DeviceController {
         }
     }
 
-	@Override
+    @Override
     public boolean getShowWarnings(Request request, Response response) {
         Device device = getCurrentDevice(request);
         return device == null || device.getAreDeviceMessagesSettingsDefault();
     }
 
-	@Override
+    @Override
     public Object postShowWarnings(Request request, Response response) {
         Device device = getCurrentDevice(request);
         if (device != null) {
@@ -427,10 +427,10 @@ public class DeviceControllerImpl implements DeviceController {
         }
     }
 
-	@Override
-	public Device getCurrentDevice(Request request, Response response){
-	    return deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
-	}
+    @Override
+    public Device getCurrentDevice(Request request, Response response) {
+        return deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+    }
 
     @Override
     public boolean getPauseDialogStatus(Request request, Response response) {

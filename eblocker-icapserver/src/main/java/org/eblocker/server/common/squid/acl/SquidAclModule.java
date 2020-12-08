@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.squid.acl;
 
-import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.http.service.DeviceService;
 
 public class SquidAclModule extends AbstractModule {
 

@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.upnp;
 
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.meta.Action;
@@ -82,11 +82,11 @@ public class UpnpManagementService {
 
     @Inject
     public UpnpManagementService(NetworkInterfaceWrapper networkInterfaceWrapper, UpnpService upnpService,
-            UpnpPortForwardingAddFactory upnpPortForwardingAddFactory,
-            UpnpPortForwardingDeleteFactory upnpPortForwardingDeleteFactory,
-            UpnpActionCallbackFactory upnpActionCallbackFactory, UpnpActionInvocationFactory upnpActionInvocationFacory,
-            @Named("openvpn.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
-            @Named("openvpn.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
+                                 UpnpPortForwardingAddFactory upnpPortForwardingAddFactory,
+                                 UpnpPortForwardingDeleteFactory upnpPortForwardingDeleteFactory,
+                                 UpnpActionCallbackFactory upnpActionCallbackFactory, UpnpActionInvocationFactory upnpActionInvocationFacory,
+                                 @Named("openvpn.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
+                                 @Named("openvpn.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
         this.discoveryWaitingTime = upnpDiscoveryWaitingTime;
         this.maxDiscoverySteps = upnpDiscoveryMaxSteps;
         activePortForwardings = new ArrayList<>();
@@ -103,24 +103,24 @@ public class UpnpManagementService {
     }
 
     public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, String description,
-            boolean force) {
+                                                            boolean force) {
         return addPortForwarding(externalPort, internalPort, 0, description, force);
     }
 
     public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, int duration,
-            String description, boolean force) {
+                                                            String description, boolean force) {
         String eblockerIp = networkInterfaceWrapper.getFirstIPv4Address().toString();
 
         List<UpnpPortForwarding> portForwardings = new ArrayList<>();
         portForwardings.add(new UpnpPortForwarding(externalPort, internalPort, eblockerIp, duration, description,
-                Protocol.TCP, true));
+            Protocol.TCP, true));
         portForwardings.add(new UpnpPortForwarding(externalPort, internalPort, eblockerIp, duration, description,
-                Protocol.UDP, true));
+            Protocol.UDP, true));
         return addPortForwardings(portForwardings, force);
     }
 
     public synchronized List<UpnpPortForwardingResult> addPortForwardings(List<UpnpPortForwarding> portForwardings,
-            boolean force) {
+                                                                          boolean force) {
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (UpnpPortForwarding portForwarding : portForwardings) {
             results.addAll(addPortForwarding(portForwarding, force));
@@ -149,7 +149,7 @@ public class UpnpManagementService {
     }
 
     public synchronized List<UpnpPortForwardingResult> addPortForwarding(UpnpPortForwarding portForwarding,
-            boolean force) {
+                                                                         boolean force) {
         Collection<Device> gatewayDevices = getGatewayDevices();
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (Device gatewayDevice : gatewayDevices) {
@@ -182,7 +182,7 @@ public class UpnpManagementService {
 
     private UpnpPortForwardingResult installPortForwarding(UpnpPortForwarding portForwarding, Service service) {
         UpnpPortForwardingAdd upnpPortForwardingAdd = upnpPortForwardingAddFactory.create(service,
-                upnpService.getControlPoint(), portForwarding, this);
+            upnpService.getControlPoint(), portForwarding, this);
         upnpPortForwardingAdd.run();
         return upnpPortForwardingAdd.getResult();
     }
@@ -193,7 +193,7 @@ public class UpnpManagementService {
             // Only port and protocol needed for identification, other
             // attributes can change
             if (existingForwarding.getExternalPort().equals(forwarding.getExternalPort())
-                    && existingForwarding.getProtocol().equals(forwarding.getProtocol())) {
+                && existingForwarding.getProtocol().equals(forwarding.getProtocol())) {
                 existingForwarding.setDescription(forwarding.getDescription());
                 existingForwarding.setInternalClient(forwarding.getInternalClient());
                 existingForwarding.setInternalPort(forwarding.getInternalPort());
@@ -262,10 +262,10 @@ public class UpnpManagementService {
                     // If there is one with identical ports and host, it really
                     // is a failure.
                     result.setSuccess(!existingForwardings.stream()
-                            .filter(e -> e == result.getCorrespondingPortForwarding()).findAny().isPresent());
+                        .filter(e -> e == result.getCorrespondingPortForwarding()).findAny().isPresent());
                     if (result.isSuccess()) {
                         log.debug("Error during removal considered success due to forwarding not existing anymore",
-                                result);
+                            result);
                         // This forwarding was not removed from the cached list
                         // of forwardings since it was not considered a success
                         // yet, do it now
@@ -293,8 +293,8 @@ public class UpnpManagementService {
                 // Forwarding lost for some unknown reason
                 refresh.add(expectedForwarding);
                 log.debug("Watchdog: Refresh forwarding ext port {} int port {} int host {}",
-                        expectedForwarding.getExternalPort(), expectedForwarding.getInternalPort(),
-                        expectedForwarding.getInternalClient());
+                    expectedForwarding.getExternalPort(), expectedForwarding.getInternalPort(),
+                    expectedForwarding.getInternalClient());
             }
         }
         // All forwardings in refresh must be refreshed
@@ -311,7 +311,7 @@ public class UpnpManagementService {
         List<UpnpPortForwarding> toBeDeleted = new ArrayList<>();
         for (UpnpPortForwarding forwarding : activePortForwardings) {
             if (forwarding.getInternalClient().equals(ip.toString())
-                    && !forwarding.getInternalClient().equals(newIp.toString())) {
+                && !forwarding.getInternalClient().equals(newIp.toString())) {
                 toBeDeleted.add(forwarding);
                 UpnpPortForwarding newForwarding = new UpnpPortForwarding(forwarding);
                 newForwarding.setInternalClient(newIp.toString());
@@ -325,7 +325,7 @@ public class UpnpManagementService {
 
     private UpnpPortForwardingResult deletePortForwarding(UpnpPortForwarding portForwarding, Service service) {
         UpnpPortForwardingDelete upnpPortForwardingDelete = upnpPortForwardingDeleteFactory.create(service,
-                upnpService.getControlPoint(), portForwarding, this);
+            upnpService.getControlPoint(), portForwarding, this);
         upnpPortForwardingDelete.run();
         return upnpPortForwardingDelete.getResult();
     }
@@ -371,15 +371,15 @@ public class UpnpManagementService {
         newForwarding.setDescription(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_DESCRIPTION));
         newForwarding.setEnabled(getBooleanValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_ENABLED));
         newForwarding
-                .setExternalPort(getUIntTwoBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_EXTERNAL_PORT));
+            .setExternalPort(getUIntTwoBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_EXTERNAL_PORT));
         newForwarding
-                .setInternalClient(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_INTERNAL_CLIENT));
+            .setInternalClient(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_INTERNAL_CLIENT));
         newForwarding
-                .setInternalPort(getUIntTwoBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_INTERNAL_PORT));
+            .setInternalPort(getUIntTwoBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_INTERNAL_PORT));
         newForwarding.setLeaseDurationSeconds(
-                getUIntFourBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_DURATION));
+            getUIntFourBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_DURATION));
         newForwarding.setProtocol(PortMapping.Protocol
-                .valueOf(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_PROTOCOL)));
+            .valueOf(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_PROTOCOL)));
         newForwarding.setRemoteHost(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_REMOTE_HOST));
 
         return newForwarding;
@@ -390,12 +390,12 @@ public class UpnpManagementService {
     }
 
     private UnsignedIntegerTwoBytes getUIntTwoBytesValue(final ActionInvocation<?> response,
-            final String argumentName) {
+                                                         final String argumentName) {
         return (UnsignedIntegerTwoBytes) response.getOutput(argumentName).getValue();
     }
 
     private UnsignedIntegerFourBytes getUIntFourBytesValue(final ActionInvocation<?> response,
-            final String argumentName) {
+                                                           final String argumentName) {
         return (UnsignedIntegerFourBytes) response.getOutput(argumentName).getValue();
     }
 
@@ -411,9 +411,9 @@ public class UpnpManagementService {
         List<UpnpPortForwarding> existingForwardings = getPortForwardings();
 
         return existingForwardings.stream()
-                .filter(f -> (f.getExternalPort().equals(extPort)
-                        || (f.getInternalPort().equals(intPort) && f.getInternalClient().equals(eblockerIp))))
-                .collect(Collectors.toList());
+            .filter(f -> (f.getExternalPort().equals(extPort)
+                || (f.getInternalPort().equals(intPort) && f.getInternalClient().equals(eblockerIp))))
+            .collect(Collectors.toList());
     }
 
 }

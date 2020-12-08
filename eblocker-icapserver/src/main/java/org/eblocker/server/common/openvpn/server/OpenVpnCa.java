@@ -49,13 +49,13 @@ public class OpenVpnCa {
     private static final int CA_KEY_SIZE = 2048;
 
     private static final String SERVER_NAME = "eBlocker Mobile Server";
-    private static final int SERVER_VALIDITY_DAYS = 10*365;
+    private static final int SERVER_VALIDITY_DAYS = 10 * 365;
     private static final int SERVER_KEY_SIZE = 2048;
 
-    private static final int CLIENT_VALIDITY_DAYS = 10*365;
+    private static final int CLIENT_VALIDITY_DAYS = 10 * 365;
     private static final int CLIENT_KEY_SIZE = 2048;
 
-    private static final int CRL_VALIDITY_DAYS = 10*365;
+    private static final int CRL_VALIDITY_DAYS = 10 * 365;
 
     private static final Logger log = LoggerFactory.getLogger(OpenVpnCa.class);
 
@@ -101,6 +101,7 @@ public class OpenVpnCa {
 
     /**
      * Read current CRL and add the given certificate.
+     *
      * @param clientId
      * @throws CryptoException
      * @throws IOException
@@ -141,11 +142,11 @@ public class OpenVpnCa {
     public Set<String> getActiveClientIds() throws IOException {
         Set<String> result = new HashSet<>();
         Files.newDirectoryStream(clientsPath, "*" + CERT_EXTENSION)
-                .forEach(path -> {
-                    String filename = path.getFileName().toString();
-                    String basename = filename.substring(0, filename.length() - CERT_EXTENSION.length());
-                    result.add(basename);
-                });
+            .forEach(path -> {
+                String filename = path.getFileName().toString();
+                String basename = filename.substring(0, filename.length() - CERT_EXTENSION.length());
+                result.add(basename);
+            });
         return result;
     }
 
@@ -172,6 +173,7 @@ public class OpenVpnCa {
     public Path getServerCertificatePath() {
         return basePath.resolve(SERVER_CERT_FILE_NAME);
     }
+
     public Path getServerKeyPath() {
         return basePath.resolve(SERVER_KEY_FILE_NAME);
     }
@@ -208,8 +210,8 @@ public class OpenVpnCa {
         X509CRL crl = PKI.loadCrl(instream(getCrlPath()));
         Set<RevocationInfo> entries = PKI.getRevocationInfoEntries(crl);
         return entries.stream()
-                .map(OpenVpnCa::ensureRevocationReason)
-                .collect(Collectors.toSet());
+            .map(OpenVpnCa::ensureRevocationReason)
+            .collect(Collectors.toSet());
     }
 
     private static RevocationInfo ensureRevocationReason(RevocationInfo entry) {
@@ -223,9 +225,9 @@ public class OpenVpnCa {
     private void deleteAllClientFiles() {
         try {
             Files.newDirectoryStream(clientsPath)
-                    .forEach(path -> {
-                        path.toFile().delete();
-                    });
+                .forEach(path -> {
+                    path.toFile().delete();
+                });
         } catch (IOException e) {
             log.error("Could not delete client keys/certificates", e);
         }

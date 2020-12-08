@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.data.DataSource;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.registration.ProductInfo;
-import com.google.inject.Inject;
 
 /**
  * Creates EblockerDnsServerState based on current config
@@ -49,7 +49,7 @@ public class SchemaMigrationVersion19 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         ProductInfo productInfo = dataSource.get(ProductInfo.class, 0);
         if (productInfo != null) {
             List<String> features = new ArrayList<>(Arrays.asList(productInfo.getProductFeatures()));
@@ -65,13 +65,13 @@ public class SchemaMigrationVersion19 implements SchemaMigration {
             if (features.contains(ProductFeature.PRO.name()) && !features.contains(ProductFeature.BAS.name())) {
                 features.add(ProductFeature.BAS.name());
             }
-            ProductInfo modifiedProductInfo = new ProductInfo(productInfo.getProductId(), 
-                    productInfo.getProductName(),
-                    features.toArray(new String[0]));
+            ProductInfo modifiedProductInfo = new ProductInfo(productInfo.getProductId(),
+                productInfo.getProductName(),
+                features.toArray(new String[0]));
 
             dataSource.save(modifiedProductInfo, 0);
         }
         dataSource.setVersion("19");
     }
-    
+
 }

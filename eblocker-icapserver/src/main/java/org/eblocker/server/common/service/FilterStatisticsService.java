@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.FilterStats;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.parentalcontrol.Category;
@@ -26,9 +29,6 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -89,7 +89,7 @@ public class FilterStatisticsService {
         int numberOfBins = minutes / binSizeMinutes + (minutes % binSizeMinutes != 0 ? 1 : 0);
 
         List<FilterStats.Bin> bins = new ArrayList<>(numberOfBins);
-        for(int i = 0; i < numberOfBins; ++i) {
+        for (int i = 0; i < numberOfBins; ++i) {
             Instant startBin = start.plus(i * binSizeMinutes, ChronoUnit.MINUTES);
             Instant stopBin = start.plus((i + 1) * binSizeMinutes, ChronoUnit.MINUTES);
             bins.add(new FilterStats.Bin(startBin, stopBin));
@@ -113,7 +113,7 @@ public class FilterStatisticsService {
         }
 
         FilterStats.Bin summary = new FilterStats.Bin(start, end);
-        for(FilterStats.Bin bin : bins) {
+        for (FilterStats.Bin bin : bins) {
             summary.setQueries(summary.getQueries() + bin.getQueries());
             summary.setBlockedQueries(summary.getBlockedQueries() + bin.getBlockedQueries());
             bin.getBlockedQueriesByReason().forEach((k, v) -> summary.getBlockedQueriesByReason().merge(k, v, (a, b) -> a + b));
@@ -133,7 +133,7 @@ public class FilterStatisticsService {
         StatisticsCounter counter;
         while ((counter = counters.poll()) != null) {
             updateCounters.add(counter);
-            totalCounters.add(new TotalCounter(counter.getType(), counter.getName(), counter.getReason(),counter.getValue()));
+            totalCounters.add(new TotalCounter(counter.getType(), counter.getName(), counter.getReason(), counter.getValue()));
         }
         statisticsDataSource.incrementCounters(updateCounters);
         statisticsDataSource.incrementTotalCounters(totalCounters);
@@ -170,7 +170,7 @@ public class FilterStatisticsService {
             .forEach(metaData -> categoryByReason.put(
                 metaData.getId().toString(),
                 mapFilterlistCategory(metaData.getCategory())));
-        for(FilterStats.Category category : FilterStats.Category.values()) {
+        for (FilterStats.Category category : FilterStats.Category.values()) {
             categoryByReason.put(category.name(), category);
         }
         categoryByReason.put(null, FilterStats.Category.PARENTAL_CONTROL);

@@ -16,20 +16,20 @@
  */
 package org.eblocker.server.icap.transaction;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.icap.filter.FilterResult;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 
 public interface Transaction extends TransactionContext, TransactionIdentifier {
 
     Session getSession();
 
-	void setSession(Session session);
+    void setSession(Session session);
 
     boolean isRequest();
 
@@ -50,41 +50,41 @@ public interface Transaction extends TransactionContext, TransactionIdentifier {
      */
     void setResponse(FullHttpResponse httpResponse);
 
-	String getUserReference();
+    String getUserReference();
 
-	String getContentType();
+    String getContentType();
 
-	boolean isPreview();
+    boolean isPreview();
 
-	boolean isContentChanged();
+    boolean isContentChanged();
 
-	boolean isHeadersChanged();
+    boolean isHeadersChanged();
 
-	boolean isComplete();
+    boolean isComplete();
 
-	void setComplete(boolean complete);
+    void setComplete(boolean complete);
 
-	void block();
+    void block();
 
-	void noContent();
+    void noContent();
 
-	void redirect(String targetUrl);
+    void redirect(String targetUrl);
 
-	void setRedirectTarget(String redirectTarget);
+    void setRedirectTarget(String redirectTarget);
 
-	void setDecision(Decision decision);
+    void setDecision(Decision decision);
 
-	String getBaseUrl();
+    String getBaseUrl();
 
-	void setBaseUrl(String baseUrl);
+    void setBaseUrl(String baseUrl);
 
-	void setFilterResult(FilterResult result);
+    void setFilterResult(FilterResult result);
 
-	FilterResult getFilterResult();
+    FilterResult getFilterResult();
 
     void setContentChanged(boolean changed);
 
-	void setHeadersChanged(boolean changed);
+    void setHeadersChanged(boolean changed);
 
     PageContext getPageContext();
 

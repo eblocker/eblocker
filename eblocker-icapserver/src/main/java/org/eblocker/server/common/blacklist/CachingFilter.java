@@ -75,8 +75,8 @@ public class CachingFilter<T> implements DomainFilter<T> {
         if (decision == null) {
             decision = filter.isBlocked(domain);
             if (cacheMode == CacheMode.ALL
-                    || !decision.isBlocked() && cacheMode == CacheMode.NON_BLOCKED
-                    || decision.isBlocked() && cacheMode == CacheMode.BLOCKED) {
+                || !decision.isBlocked() && cacheMode == CacheMode.NON_BLOCKED
+                || decision.isBlocked() && cacheMode == CacheMode.BLOCKED) {
                 loads.incrementAndGet();
                 cache.put(domain, decision);
             }

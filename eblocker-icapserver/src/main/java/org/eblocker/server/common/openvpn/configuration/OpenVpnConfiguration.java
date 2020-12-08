@@ -46,6 +46,7 @@ public class OpenVpnConfiguration {
     /**
      * Retrieves a map which keys are option which are stored on disk. Values for these keys will always be null for
      * profiles version 2. In version 1 this holds the actual content to be inlined.
+     *
      * @return
      */
     public Map<String, String> getInlinedContentByName() {

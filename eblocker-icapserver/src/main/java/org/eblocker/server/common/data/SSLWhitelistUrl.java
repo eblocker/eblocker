@@ -31,31 +31,31 @@ public class SSLWhitelistUrl {
     private String name;
     private String url;
 
-    public SSLWhitelistUrl(@JsonProperty("name") String name, @JsonProperty("url") String url){
+    public SSLWhitelistUrl(@JsonProperty("name") String name, @JsonProperty("url") String url) {
         this.name = name;
         // The URL might contain protocol, path, file extension and much more. Use a regular expression
 
         Matcher matcher = pattern.matcher(url);
-        if (matcher.find()){
-        	this.url = matcher.group(1);
-		} else {
-			this.url = url;
-		}
+        if (matcher.find()) {
+            this.url = matcher.group(1);
+        } else {
+            this.url = url;
+        }
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void setUrl(String url){
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public String getUrl(){
+    public String getUrl() {
         return url;
     }
 
@@ -76,21 +76,21 @@ public class SSLWhitelistUrl {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(name, url);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return getUrl() + DOMAIN_NAME_SEPARATOR + getName();
     }
 
     public static SSLWhitelistUrl fromString(String string) {
-	    String[] parts = string.split(SSLWhitelistUrl.DOMAIN_NAME_SEPARATOR);
-	    if (parts.length == 2) {
-	    	return new SSLWhitelistUrl(parts[1], parts[0]);
-	    } else {
-	    	return null;
-	    }
+        String[] parts = string.split(SSLWhitelistUrl.DOMAIN_NAME_SEPARATOR);
+        if (parts.length == 2) {
+            return new SSLWhitelistUrl(parts[1], parts[0]);
+        } else {
+            return null;
+        }
     }
 }

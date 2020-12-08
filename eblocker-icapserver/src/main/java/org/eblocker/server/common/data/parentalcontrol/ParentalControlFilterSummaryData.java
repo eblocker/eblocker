@@ -26,127 +26,127 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ParentalControlFilterSummaryData {
-	private Integer id;
-	private final Map<String, String> name;
-	private final Map<String, String> description;
-	private String customerCreatedName;
-	private String customerCreatedDescription;
-	private final String version;
-	private Date lastUpdate;
-	private final String filterType;// Black-/Whitelist
-	private String format;// Domainlist/BPJM-Format
-	private final Boolean builtin;
-	private boolean disabled;
-	private List<String> domains;
-	private transient Supplier<Stream<String>> domainsStreamSupplier;
+    private Integer id;
+    private final Map<String, String> name;
+    private final Map<String, String> description;
+    private String customerCreatedName;
+    private String customerCreatedDescription;
+    private final String version;
+    private Date lastUpdate;
+    private final String filterType;// Black-/Whitelist
+    private String format;// Domainlist/BPJM-Format
+    private final Boolean builtin;
+    private boolean disabled;
+    private List<String> domains;
+    private transient Supplier<Stream<String>> domainsStreamSupplier;
     private Category category;
 
-	@JsonCreator
-	@SuppressWarnings("unused")
-	public ParentalControlFilterSummaryData(
-			@JsonProperty("id") Integer id,
-			@JsonProperty("name") Map<String, String> name,
-			@JsonProperty("description") Map<String, String> description,
-			@JsonProperty("version") String version,
-			@JsonProperty("lastUpdate") Date lastUpdate,
-			@JsonProperty("filterType") String filterType,
-			@JsonProperty("builtin") boolean builtin,
-            @JsonProperty("disabled") boolean disabled,
-			@JsonProperty("domains") List<String> domains,
-			@JsonProperty("customerCreatedName") String customerCreatedName,
-			@JsonProperty("customerCreatedDescription") String customerCreatedDescription,
-            @JsonProperty("category") Category category) {
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.version = version;
-		this.lastUpdate = lastUpdate;
-		this.filterType = filterType;
-		this.builtin = builtin;
-		this.disabled = disabled;
-		this.domains = domains;
-		this.customerCreatedName = customerCreatedName;
-		this.customerCreatedDescription = customerCreatedDescription;
-		this.category = category;
-	}
+    @JsonCreator
+    @SuppressWarnings("unused")
+    public ParentalControlFilterSummaryData(
+        @JsonProperty("id") Integer id,
+        @JsonProperty("name") Map<String, String> name,
+        @JsonProperty("description") Map<String, String> description,
+        @JsonProperty("version") String version,
+        @JsonProperty("lastUpdate") Date lastUpdate,
+        @JsonProperty("filterType") String filterType,
+        @JsonProperty("builtin") boolean builtin,
+        @JsonProperty("disabled") boolean disabled,
+        @JsonProperty("domains") List<String> domains,
+        @JsonProperty("customerCreatedName") String customerCreatedName,
+        @JsonProperty("customerCreatedDescription") String customerCreatedDescription,
+        @JsonProperty("category") Category category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.version = version;
+        this.lastUpdate = lastUpdate;
+        this.filterType = filterType;
+        this.builtin = builtin;
+        this.disabled = disabled;
+        this.domains = domains;
+        this.customerCreatedName = customerCreatedName;
+        this.customerCreatedDescription = customerCreatedDescription;
+        this.category = category;
+    }
 
-	public ParentalControlFilterSummaryData(ParentalControlFilterMetaData filterList) {
-		this.id = filterList.getId();
-		this.name = filterList.getName();
-		this.description = filterList.getDescription();
-		this.version = filterList.getVersion();
-		this.lastUpdate = filterList.getDate();
-		this.filterType = filterList.getFilterType();
-		this.builtin = filterList.isBuiltin();
-		this.disabled = filterList.isDisabled();
-		this.customerCreatedName = filterList.getCustomerCreatedName();
-		this.customerCreatedDescription = filterList.getCustomerCreatedDescription();
-		this.category = filterList.getCategory();
-	}
+    public ParentalControlFilterSummaryData(ParentalControlFilterMetaData filterList) {
+        this.id = filterList.getId();
+        this.name = filterList.getName();
+        this.description = filterList.getDescription();
+        this.version = filterList.getVersion();
+        this.lastUpdate = filterList.getDate();
+        this.filterType = filterList.getFilterType();
+        this.builtin = filterList.isBuiltin();
+        this.disabled = filterList.isDisabled();
+        this.customerCreatedName = filterList.getCustomerCreatedName();
+        this.customerCreatedDescription = filterList.getCustomerCreatedDescription();
+        this.category = filterList.getCategory();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id){
-		this.id=id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Map<String, String> getName() {
-		return name;
-	}
+    public Map<String, String> getName() {
+        return name;
+    }
 
-	public Map<String, String> getDescription() {
-		return description;
-	}
+    public Map<String, String> getDescription() {
+        return description;
+    }
 
-	public String getCustomerCreatedName() {
-		return customerCreatedName;
-	}
+    public String getCustomerCreatedName() {
+        return customerCreatedName;
+    }
 
-	public void setCustomerCreatedName(String customerCreatedName) {
-		this.customerCreatedName = customerCreatedName;
-	}
+    public void setCustomerCreatedName(String customerCreatedName) {
+        this.customerCreatedName = customerCreatedName;
+    }
 
-	public String getCustomerCreatedDescription() {
-		return customerCreatedDescription;
-	}
+    public String getCustomerCreatedDescription() {
+        return customerCreatedDescription;
+    }
 
-	public void setCustomerCreatedDescription(String customerCreatedDescription) {
-		this.customerCreatedDescription = customerCreatedDescription;
-	}
+    public void setCustomerCreatedDescription(String customerCreatedDescription) {
+        this.customerCreatedDescription = customerCreatedDescription;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public Date getLastUpdate() {
-		return lastUpdate;
-	}
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
 
-	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
-	public String getFilterType() {
-		return filterType;
-	}
+    public String getFilterType() {
+        return filterType;
+    }
 
-	public String getFormat() {
-		return format;
-	}
+    public String getFormat() {
+        return format;
+    }
 
-	public void setFormat(String format) {
-		this.format = format;
-	}
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-	public boolean isBuiltin() {
-		return builtin;
-	}
+    public boolean isBuiltin() {
+        return builtin;
+    }
 
-	public List<String> getDomains() {
-		return domains;
-	}
+    public List<String> getDomains() {
+        return domains;
+    }
 
     public Supplier<Stream<String>> getDomainsStreamSupplier() {
         return domainsStreamSupplier;
@@ -158,7 +158,7 @@ public class ParentalControlFilterSummaryData {
     }
 
     public Category getCategory() {
-	    return this.category;
+        return this.category;
     }
 
     public boolean isDisabled() {
@@ -169,20 +169,20 @@ public class ParentalControlFilterSummaryData {
         this.disabled = disabled;
     }
 
-	@Override
-	public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
 
-		ParentalControlFilterSummaryData that = (ParentalControlFilterSummaryData) o;
+        ParentalControlFilterSummaryData that = (ParentalControlFilterSummaryData) o;
 
-		return id != null ? id.equals(that.id) : that.id == null;
-	}
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
 
-	@Override
-	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
-	}
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

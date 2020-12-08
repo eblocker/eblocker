@@ -80,6 +80,7 @@ public abstract class IpAddress {
     }
 
     public abstract boolean isIpv4();
+
     public abstract boolean isIpv6();
 
     protected abstract String generateStringRepresentation();

@@ -35,11 +35,11 @@ public class SubSystemDetails {
 
     @JsonCreator
     public SubSystemDetails(
-            @JsonProperty("name") String name,
-            @JsonProperty("status") String status,
-            @JsonProperty("order") int order,
-            @JsonProperty("msgKey") String msgKey,
-            @JsonProperty("msgContext") Map<String, Object> msgContext
+        @JsonProperty("name") String name,
+        @JsonProperty("status") String status,
+        @JsonProperty("order") int order,
+        @JsonProperty("msgKey") String msgKey,
+        @JsonProperty("msgContext") Map<String, Object> msgContext
     ) {
         this.name = name;
         this.status = status;

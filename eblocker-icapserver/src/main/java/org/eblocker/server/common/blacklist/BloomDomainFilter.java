@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 public class BloomDomainFilter<T> implements DomainFilter<T> {
 
-    private static final byte[] MAGIC_BYTES =  {  0x65, 0x42, 0x6c, 0x6b, 0x42, 0x6c, 0x6d };
+    private static final byte[] MAGIC_BYTES = {0x65, 0x42, 0x6c, 0x6b, 0x42, 0x6c, 0x6d};
     private static final byte FILE_FORMAT_VERSION = 0x01;
 
     private final DomainFilter<T> filter;

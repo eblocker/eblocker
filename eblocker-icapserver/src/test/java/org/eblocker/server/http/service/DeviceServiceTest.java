@@ -76,12 +76,12 @@ public class DeviceServiceTest {
 
         devices = new ArrayList<>();
         devices.add(createMockDevice(GATEWAY_ID, "192.168.1.1", 100, true, true, true, false));
-        devices.add(createMockDevice(DEVICE_CONFLICT_ID, new String[] { EBLOCKER_IP, "192.168.1.7" }, false, true, false, false));
+        devices.add(createMockDevice(DEVICE_CONFLICT_ID, new String[]{EBLOCKER_IP, "192.168.1.7"}, false, true, false, false));
         devices.add(createMockDevice(DEVICE_ONLINE_ID, "192.168.1.8", 100, true, true, false, false));
         devices.add(createMockDevice(DEVICE_OFFLINE_ID, "192.168.1.4", false, false, false, false));
-        devices.add(createMockDevice(DEVICE_MULTIPLE_IPS_ID, new String[] { "192.168.1.5", "192.168.1.6" }, true, true, false, false));
-        Mockito.when(dataSource.getDevices()).then(i->copyDevices(devices));
-        Mockito.doAnswer(m->{
+        devices.add(createMockDevice(DEVICE_MULTIPLE_IPS_ID, new String[]{"192.168.1.5", "192.168.1.6"}, true, true, false, false));
+        Mockito.when(dataSource.getDevices()).then(i -> copyDevices(devices));
+        Mockito.doAnswer(m -> {
             Device device = m.getArgument(0);
             int i = devices.indexOf(device);
             if (i == -1) {
@@ -93,23 +93,23 @@ public class DeviceServiceTest {
         }).when(dataSource).save(Mockito.any(Device.class));
 
         // Mock user
-		UserModule user = new UserModule(100, 100, "user", "user", null, null, false,
-				null, Collections.emptyMap(), null, null, null);
+        UserModule user = new UserModule(100, 100, "user", "user", null, null, false,
+            null, Collections.emptyMap(), null, null, null);
         Mockito.when(dataSource.get(UserModule.class, 100)).thenReturn(user);
         UserModule userNext = new UserModule(nextUserId, 101, "user2", "user2", null, null, false, null, Collections.emptyMap(), null,
-                null, null);
+            null, null);
         Mockito.when(dataSource.get(UserModule.class, nextUserId)).thenReturn(userNext);
 
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse(EBLOCKER_IP));
         // setup device service
         deviceService = new DeviceService(dataSource, sslService, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory);
+            networkInterfaceWrapper, deviceFactory);
         deviceService.init();
         deviceService.addListener(listener);
     }
 
     @Test
-    public void testListenerRegistered(){
+    public void testListenerRegistered() {
         Mockito.verify(networkInterfaceWrapper).addIpAddressChangeListener(Mockito.any(IpAddressChangeListener.class));
     }
 
@@ -123,6 +123,7 @@ public class DeviceServiceTest {
         // well
         Assert.assertFalse(devices.get(1).isIpAddressFixed());
     }
+
     @Test
     public void testEblockerRemovesDeviceIpWithConflictOnListenerCall() {
         // Device is not removed, only the eBlocker's IP is removed from the IPs
@@ -134,7 +135,7 @@ public class DeviceServiceTest {
         Assert.assertFalse(devices.get(1).isIpAddressFixed());
 
         // This device was not present during startup and thus is still conflicting
-        devices.add(createMockDevice(DEVICE_CONFLICT_ID_2, new String[] { EBLOCKER_IP}, false, true, false, false));
+        devices.add(createMockDevice(DEVICE_CONFLICT_ID_2, new String[]{EBLOCKER_IP}, false, true, false, false));
 
         // Call the listener
         ArgumentCaptor<IpAddressChangeListener> captor = ArgumentCaptor.forClass(IpAddressChangeListener.class);
@@ -149,7 +150,7 @@ public class DeviceServiceTest {
 
     @Test
     public void testGetDeviceById() {
-        for(Device device : devices) {
+        for (Device device : devices) {
             Device retrievedDevice = deviceService.getDeviceById(device.getId());
             Assert.assertNotNull(retrievedDevice);
             Assert.assertEquals(device.getId(), retrievedDevice.getId());
@@ -158,8 +159,8 @@ public class DeviceServiceTest {
 
     @Test
     public void testGetDeviceByIp() {
-        for(Device device : devices) {
-            for(IpAddress ip : device.getIpAddresses()) {
+        for (Device device : devices) {
+            for (IpAddress ip : device.getIpAddresses()) {
                 Device retrievedDevice = deviceService.getDeviceByIp(ip);
                 Assert.assertNotNull(retrievedDevice);
                 Assert.assertEquals(device.getId(), retrievedDevice.getId());
@@ -265,7 +266,7 @@ public class DeviceServiceTest {
     }
 
     @Test
-    public void testDeleteOfflineDevice(){
+    public void testDeleteOfflineDevice() {
         Device device = devices.get(3);
 
         deviceService.delete(device);
@@ -315,7 +316,7 @@ public class DeviceServiceTest {
     }
 
     @Test
-    public void testUpdateOperatingUserNotExisting(){
+    public void testUpdateOperatingUserNotExisting() {
         // ensure original device is in cache
         Device device = devices.get(0);
         Device retrievedDevice = deviceService.getDeviceById(device.getId());
@@ -324,14 +325,14 @@ public class DeviceServiceTest {
         Assert.assertEquals(device.getIpAddresses(), retrievedDevice.getIpAddresses());
 
         // setup updated device referencing non-existing user
-        device = createMockDevice(devices.get(0).getId(), "192.168.1.1", devices.get(0).getOperatingUser()+1, true, true, false, false);
+        device = createMockDevice(devices.get(0).getId(), "192.168.1.1", devices.get(0).getOperatingUser() + 1, true, true, false, false);
 
         // update device
-        try{
-			deviceService.updateDevice(device);
-			Assert.fail();
-        }catch(Exception e){
-        	// Exception was expected
+        try {
+            deviceService.updateDevice(device);
+            Assert.fail();
+        } catch (Exception e) {
+            // Exception was expected
         }
 
         // check it has not been updated
@@ -349,7 +350,7 @@ public class DeviceServiceTest {
     }
 
     @Test
-    public void testUpdateIpConflict(){
+    public void testUpdateIpConflict() {
 
         // adding a new device with known IP
         Device device = createMockDevice("device:0000000000fe", "192.168.1.4", devices.get(0).getOperatingUser(), true, true, false, false);
@@ -373,7 +374,7 @@ public class DeviceServiceTest {
     }
 
     @Test
-    public void testUpdateIpConflictMultipleIps(){
+    public void testUpdateIpConflictMultipleIps() {
         // adding a new device with second ip of device 5
         Device device = createMockDevice("device:0000000000fe", "192.168.1.6", devices.get(0).getOperatingUser(), true, true, false, false);
 
@@ -426,12 +427,12 @@ public class DeviceServiceTest {
         Assert.assertEquals(6, retrievedDevices.size());
         Assert.assertTrue(retrievedDevices.contains(newDevice));
     }
-    
+
     @Test
-    public void testResetDevice(){
+    public void testResetDevice() {
         DeviceChangeListener listener = Mockito.mock(DeviceChangeListener.class);
 
-        Mockito.doAnswer(m->{
+        Mockito.doAnswer(m -> {
             Device device = m.getArgument(0);
             device.setAssignedUser(nextUserId);
             device.setDefaultSystemUser(nextUserId);
@@ -442,17 +443,17 @@ public class DeviceServiceTest {
         deviceService.addListener(listener);
 
         deviceService.resetDevice(DEVICE_ONLINE_ID);
-        
+
         Device device = devices.get(2);
 
         Mockito.verify(listener).onReset(Mockito.eq(device));
         Assert.assertEquals(nextUserId, device.getAssignedUser());
         Assert.assertEquals(nextUserId, device.getDefaultSystemUser());
-        Assert.assertEquals(nextUserId,  device.getOperatingUser());
+        Assert.assertEquals(nextUserId, device.getOperatingUser());
     }
 
     private Device createMockDevice(String id, String ip, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {
-        return createMockDevice(id, new String[] { ip }, online, ipAddressFixed, isGateway, isEblocker);
+        return createMockDevice(id, new String[]{ip}, online, ipAddressFixed, isGateway, isEblocker);
     }
 
     private Device createMockDevice(String id, String[] ips, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {
@@ -468,10 +469,10 @@ public class DeviceServiceTest {
         return device;
     }
 
-    private Device createMockDevice(String id, String ip, int operatingUser, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker){
-    	Device device = createMockDevice(id, ip, online, ipAddressFixed, isGateway, isEblocker);
-    	device.setOperatingUser(operatingUser);
-    	device.setAssignedUser(operatingUser);
+    private Device createMockDevice(String id, String ip, int operatingUser, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {
+        Device device = createMockDevice(id, ip, online, ipAddressFixed, isGateway, isEblocker);
+        device.setOperatingUser(operatingUser);
+        device.setAssignedUser(operatingUser);
         return device;
     }
 

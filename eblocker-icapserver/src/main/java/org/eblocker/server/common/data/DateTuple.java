@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DateTuple {
     private int year;

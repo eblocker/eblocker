@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -26,12 +27,10 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,6 @@ import java.util.stream.Collectors;
  * reachable their responses will be picked up by {@link NeighborDiscoveryListener}.
  *
  * @see NeighborDiscoveryListener
- *
  */
 public class Ip6NetworkScan {
     private static final Logger log = LoggerFactory.getLogger(Ip6NetworkScan.class);
@@ -83,10 +81,10 @@ public class Ip6NetworkScan {
             .collect(Collectors.toList());
 
         Collection<Device> devices = deviceService.getDevices(false);
-        for(Device device : devices) {
+        for (Device device : devices) {
             Set<Ip6Address> ip6Addresses = device.getIpAddresses().stream()
                 .filter(IpAddress::isIpv6)
-                .map(ip -> (Ip6Address)ip)
+                .map(ip -> (Ip6Address) ip)
                 .collect(Collectors.toSet());
             if (ip6Addresses.isEmpty()) {
                 continue;

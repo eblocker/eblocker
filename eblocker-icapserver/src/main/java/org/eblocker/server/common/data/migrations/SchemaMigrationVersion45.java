@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.blocker.Format;
@@ -24,10 +28,6 @@ import org.eblocker.server.common.blocker.UpdateInterval;
 import org.eblocker.server.common.blocker.UpdateStatus;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public class SchemaMigrationVersion45 implements SchemaMigration {
             .filter(d -> !definitionsByReferenceId.containsKey(d.getId()))
             .collect(Collectors.toList());
 
-        for(ParentalControlFilterMetaData metadata : customMetadata) {
+        for (ParentalControlFilterMetaData metadata : customMetadata) {
             log.info("Creating external definition for custom filter: {}", metadata.getId());
             int id = dataSource.nextId(ExternalDefinition.class);
             Path path = localStoragePath.resolve(id + ":" + Type.DOMAIN);
@@ -115,7 +115,8 @@ public class SchemaMigrationVersion45 implements SchemaMigration {
             // create source file from copy
             try (InputStream in = Files.newInputStream(customFiltersPath.resolve(Integer.toString(metadata.getId())))) {
                 try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path))) {
-                    List<String> lines = objectMapper.readValue(in, new TypeReference<List<String>>() {});
+                    List<String> lines = objectMapper.readValue(in, new TypeReference<List<String>>() {
+                    });
                     lines.forEach(writer::println);
                 }
             } catch (IOException e) {

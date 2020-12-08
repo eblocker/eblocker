@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.data.statistic;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.BlockedDomainsStats;
 import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.parentalcontrol.Category;
@@ -25,9 +28,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -187,7 +187,7 @@ public class BlockedDomainsStatisticService {
 
         long elapsed = System.currentTimeMillis() - start;
         log.info("writing blocked domains stats to disk finished in {}ms", elapsed);
-   }
+    }
 
     public synchronized BlockedDomainsStats resetStats(String deviceId) {
         String id = normalizeDeviceId(deviceId);
@@ -234,7 +234,7 @@ public class BlockedDomainsStatisticService {
             .filter(name -> !"reset".equals(name))
             .collect(Collectors.toList());
 
-        for(String name : names) {
+        for (String name : names) {
             String[] tokens = name.split(":");
             String deviceId = tokens[0];
             Category category = Category.valueOf(tokens[1]);

@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.common.squid;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -29,6 +36,7 @@ import org.eblocker.server.common.squid.acl.SquidAcl;
 import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
@@ -36,14 +44,6 @@ import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.PKI;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-/**This class is able to rewrite ACL files which are used in the squid config file; In addition it is able to tell squid, that the configuration changed and
+/**
+ * This class is able to rewrite ACL files which are used in the squid config file; In addition it is able to tell squid, that the configuration changed and
  * a reload is neccessary.
  */
 @SubSystemService(value = SubSystem.HTTPS_SERVER)
@@ -110,7 +111,7 @@ public class SquidConfigController {
     private final Environment environment;
 
     private final Set<String> javascriptMimeTypes = new HashSet<>(); //default Mimetypes to be used when we need Javascript filtering
-    private boolean enableJavascriptFiltering=false;
+    private boolean enableJavascriptFiltering = false;
 
     private final int graceTimeBeforeReloads;
     private final int minimumTimeBetweenReloads;
@@ -196,15 +197,15 @@ public class SquidConfigController {
 
         this.environment = environment;
 
-        if(!ResourceHandler.exists(squidConfigStaticFile)){
+        if (!ResourceHandler.exists(squidConfigStaticFile)) {
             log.error("Squid static config filepart does not exist at {}", confStaticFilePath);
         }
 
-        if(!ResourceHandler.exists(squidConfigTemplateFile)){
+        if (!ResourceHandler.exists(squidConfigTemplateFile)) {
             log.error("Squid template config filepart does not exist at {}", confTemplateFilePath);
         }
 
-        if(!squidMimeACLFileExists()){
+        if (!squidMimeACLFileExists()) {
             log.info("Squid mime types acl file does not exist at {}. Creating it.", mimeAclFilePath);
             ResourceHandler.create(this.mimeTypesAcl);
         }
@@ -302,9 +303,12 @@ public class SquidConfigController {
 
     /**
      * Check if the mime type acl file for the squid config exists
+     *
      * @return
      */
-    private boolean squidMimeACLFileExists() {return ResourceHandler.exists(mimeTypesAcl);}
+    private boolean squidMimeACLFileExists() {
+        return ResourceHandler.exists(mimeTypesAcl);
+    }
 
     /**
      * Rewrite the list of MAC addresses for filtered devices. These devices
@@ -334,7 +338,8 @@ public class SquidConfigController {
 
     //------MIME Type management---------------------
 
-    /**Set the default Javascript Mime types to use, when the filtering of Javascript is needed for some functions of the ICAP server
+    /**
+     * Set the default Javascript Mime types to use, when the filtering of Javascript is needed for some functions of the ICAP server
      * FIXME: load these Javascript mime types from configuration.properties (and not hardcoded like here?!)
      */
     private void initJavascriptMimeTypes() {
@@ -356,15 +361,16 @@ public class SquidConfigController {
         addDefaultMimeTypes(filteredMimeTypes);
 
         //if e.g. WebRTC is enabled we have to also send Javascripts to the Icapserver
-        if(enableJavascriptFiltering){
+        if (enableJavascriptFiltering) {
             addJavascriptMimeTypes(filteredMimeTypes);
         }
         //write MimeType acl file
-        writeMimeTypeAcl(filteredMimeTypes,mimeTypesAcl);
+        writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
     }
 
     /**
      * Add the default MIME types (HTML) to the set
+     *
      * @param filteredMimeTypes
      */
     private void addDefaultMimeTypes(Set<String> filteredMimeTypes) {
@@ -374,6 +380,7 @@ public class SquidConfigController {
 
     /**
      * Adds all Javascript MIME types to the set
+     *
      * @param filteredMimeTypes
      */
     private void addJavascriptMimeTypes(Set<String> filteredMimeTypes) {
@@ -382,20 +389,22 @@ public class SquidConfigController {
 
     /**
      * Remove all Javascript MIME types from the set
+     *
      * @param mimeTypes
      */
-    private void removeJavascriptMimeTypes(Set<String> mimeTypes){
+    private void removeJavascriptMimeTypes(Set<String> mimeTypes) {
         mimeTypes.removeAll(javascriptMimeTypes);
     }
 
     /**
      * Write a set of Mime type strings to the squid acl file
+     *
      * @param filteredMimeTypes
      * @param mimeTypeAclFile
      */
-    private synchronized void writeMimeTypeAcl(Set<String> filteredMimeTypes, SimpleResource mimeTypeAclFile){
-        if(ResourceHandler.exists(mimeTypeAclFile)){
-            ResourceHandler.replaceContent(mimeTypeAclFile,filteredMimeTypes);//write lines of mimetype strings to mimetype acl file
+    private synchronized void writeMimeTypeAcl(Set<String> filteredMimeTypes, SimpleResource mimeTypeAclFile) {
+        if (ResourceHandler.exists(mimeTypeAclFile)) {
+            ResourceHandler.replaceContent(mimeTypeAclFile, filteredMimeTypes);//write lines of mimetype strings to mimetype acl file
         }
     }
 
@@ -426,19 +435,20 @@ public class SquidConfigController {
 
     /**
      * Enabled/disable providing of Javascript files to the ICAP server through Squid
+     *
      * @param enabled
      */
-    public void setSendJavascriptToIcapserver(boolean enabled){
-        if(enableJavascriptFiltering != enabled) {//state changed -> apply this setting
+    public void setSendJavascriptToIcapserver(boolean enabled) {
+        if (enableJavascriptFiltering != enabled) {//state changed -> apply this setting
             enableJavascriptFiltering = enabled;
             if (enabled) {
                 log.debug("Enabling Javascript Mimetypes...");
                 addJavascriptMimeTypes(filteredMimeTypes);
-                writeMimeTypeAcl(filteredMimeTypes,mimeTypesAcl);
+                writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
             } else {
                 log.debug("Disabling Javascript Mimetypes...");
                 removeJavascriptMimeTypes(filteredMimeTypes);
-                writeMimeTypeAcl(filteredMimeTypes,mimeTypesAcl);
+                writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
             }
             //reconfigure
             tellSquidToReloadConfig();
@@ -447,9 +457,10 @@ public class SquidConfigController {
 
     /**
      * Check whether Javascript files are sent to the ICAP server
+     *
      * @return
      */
-    public boolean isSendJavascriptToIcapserverEnabled(){
+    public boolean isSendJavascriptToIcapserverEnabled() {
         return enableJavascriptFiltering;
     }
 
@@ -462,12 +473,13 @@ public class SquidConfigController {
 
     /**
      * Rewrite the squid config (without reload event) WITHOUT VPN stuff
+     *
      * @param sslReady
      * @return
      */
-    private boolean updateSquidConfig(boolean sslReady){ //handy for the sslcontroller
+    private boolean updateSquidConfig(boolean sslReady) { //handy for the sslcontroller
         String squidConfContent = constructSquidConfigString(sslReady, dataSource.getAll(OpenVpnClientState.class));
-        if(squidConfContent != null) {
+        if (squidConfContent != null) {
             return writeSquidConfig(squidConfContent);
         }
         return false;
@@ -475,9 +487,10 @@ public class SquidConfigController {
 
     /**
      * This function will reconstruct the squid.conf and take into account the active vpnclients.
+     *
      * @return
      */
-    public boolean updateSquidConfig(){
+    public boolean updateSquidConfig() {
         String squidConfigContent = constructSquidConfigString(sslService.isSslEnabled(), dataSource.getAll(OpenVpnClientState.class));
         writeSquidConfig(squidConfigContent);
         tellSquidToReloadConfig();
@@ -488,17 +501,18 @@ public class SquidConfigController {
     /**
      * Pure writing of content string to local squid config file in /opt/eblocker....
      * Note: New config will only be applied when tellSquidToReconfigure() is called after this method.
+     *
      * @param content the content for the squid.conf file
      */
-    private synchronized boolean writeSquidConfig(String content){
-        if(content == null)
+    private synchronized boolean writeSquidConfig(String content) {
+        if (content == null)
             return false;
 
         //overwrite local squid config file with finished merged file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(squidConfigFilePath))) {
             writer.write(content);
         } catch (IOException e) {
-            log.error("Overriding the Squid config file {} did not work", squidConfigFilePath,e);
+            log.error("Overriding the Squid config file {} did not work", squidConfigFilePath, e);
             return false;
         }
 
@@ -510,16 +524,17 @@ public class SquidConfigController {
      * Take the template part of the squid config and expand it depending on whether SSL support is enabled or not,
      * and concat it to the static part of the config and then write it.
      * It will be copied when running the squid reconfigure script
+     *
      * @param sslReady whether squid should do SSL bumping or not (should only be true, if the root CA and private key exist already !!! -> otherwise Squid will fail and terminate!!!)
      * @return
      */
     private String constructSquidConfigString(boolean sslReady, Collection<OpenVpnClientState> vpnClients) {
         //template exists?
-        if(!ResourceHandler.exists(squidConfigTemplateFile)){
+        if (!ResourceHandler.exists(squidConfigTemplateFile)) {
             log.error("Squid config template file can not be found here {}", squidConfigTemplateFile.getPath());
             return null;
         }
-        if(!ResourceHandler.exists(squidConfigStaticFile)){
+        if (!ResourceHandler.exists(squidConfigStaticFile)) {
             log.error("Squid config static file part can not be found here {}", squidConfigStaticFile.getPath());
             return null;
         }
@@ -549,7 +564,7 @@ public class SquidConfigController {
 
         if (vpnClients != null && !vpnClients.isEmpty()) { //if there are some active vpn clients, add the necessary part to the squid config
             String vpnConfigPart = createVpnOptions(vpnClients);
-            if(vpnConfigPart != null){
+            if (vpnConfigPart != null) {
                 configContent.append(vpnConfigPart);
             }
         }
@@ -583,7 +598,7 @@ public class SquidConfigController {
     }
 
     private String createVpnOptions(Collection<OpenVpnClientState> vpnClients) {
-        if(vpnClients != null && !vpnClients.isEmpty()) {
+        if (vpnClients != null && !vpnClients.isEmpty()) {
 
             StringBuilder squidConfigContent = new StringBuilder();
             //now start adding VPN link local address substitution part
@@ -619,7 +634,7 @@ public class SquidConfigController {
 
     // This puts the current IP address into the configuration directive "err_html_text".
     // In Squid's error templates, we can then use the placeholder %L to get the IP address.
-	private String createErrHtmlOption() {
+    private String createErrHtmlOption() {
         try {
             Map<String, Object> dynamicConfig = new LinkedHashMap<>(); // must ensure order to get exact match in unit test :(
             if (openVpnServerService.isOpenVpnServerEnabled()) {
@@ -642,7 +657,7 @@ public class SquidConfigController {
         update |= disabledClientsAcl.update();
         update |= mobileClientsAcl.update();
         update |= mobileClientsPrivateNetworkAccessAcl.update();
-        for(SquidAcl acl : vpnAcls.values()) {
+        for (SquidAcl acl : vpnAcls.values()) {
             update |= acl.update();
         }
 

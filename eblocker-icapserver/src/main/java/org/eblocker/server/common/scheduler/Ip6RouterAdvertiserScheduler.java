@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.network.Ip6RouterAdvertiser;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.network.Ip6RouterAdvertiser;
 
 public class Ip6RouterAdvertiserScheduler extends FixedRateScheduler {
 

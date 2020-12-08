@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class SslSupportMessageProvider extends AbstractMessageProvider {
             messageContainers.put(MessageProviderMessageId.MESSAGE_SSL_SUPPORT_INSTALL_ID.getId(), messageContainer);
         }
         Collection<Device> devices = deviceService.getDevices(false);
-        for (Device device: devices) {
+        for (Device device : devices) {
             if (device.isSslEnabled()) {
                 messageContainer.getVisibility().hideForDevice(device.getId());
             }

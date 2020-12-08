@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.util;
 
-import org.eblocker.server.common.exceptions.EblockerException;
 import org.apache.commons.io.Charsets;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,7 +158,7 @@ public class UrlUtils {
         String targetUrlParam = null;
         URL targetUrl = null;
 
-        for (NameValuePair entry: URLEncodedUtils.parse(requestUrl, Charsets.UTF_8)) {
+        for (NameValuePair entry : URLEncodedUtils.parse(requestUrl, Charsets.UTF_8)) {
             String name = entry.getName();
             String value = entry.getValue();
             if (urlParam != null && !urlParam.equals(name) || value == null) {
@@ -171,9 +171,9 @@ public class UrlUtils {
                 urlString = value;
             } else if (urlParam != null) {
                 if (value.startsWith("//")) {
-                    urlString = "http:"+value;
+                    urlString = "http:" + value;
                 } else if (isUrlWithoutProtocol(value)) {
-                    urlString = "http://"+value;
+                    urlString = "http://" + value;
                 }
             }
             if (urlString != null) {
@@ -197,16 +197,16 @@ public class UrlUtils {
     }
 
     public static boolean isSameDomain(String domain, String hostname) {
-        return (hostname!=null
-                    && domain !=null
-                    && (
-                            hostname.equals(domain)
-                        ||
-                            hostname.length()>domain.length()
-                            && hostname.endsWith(domain)
-                            && hostname.charAt(hostname.length()-domain.length()-1)=='.'
-                        )
-                    );
+        return (hostname != null
+            && domain != null
+            && (
+            hostname.equals(domain)
+                ||
+                hostname.length() > domain.length()
+                    && hostname.endsWith(domain)
+                    && hostname.charAt(hostname.length() - domain.length() - 1) == '.'
+        )
+        );
     }
 
     /**

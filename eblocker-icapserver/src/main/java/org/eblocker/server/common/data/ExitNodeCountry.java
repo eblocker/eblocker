@@ -16,32 +16,31 @@
  */
 package org.eblocker.server.common.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-/**This class is used to wrap the map of TOR exit node country names -> country codes to an object than can be used to easily generate a
+/**
+ * This class is used to wrap the map of TOR exit node country names -> country codes to an object than can be used to easily generate a
  * JSON representation. So basically it has no functionality, it just stores and wraps the information.
- *
  */
 public class ExitNodeCountry {
 
     private String name;
     private String code;
 
-    public ExitNodeCountry(String name, String code){
-        this.name=name;
-        this.code=code;
+    public ExitNodeCountry(String name, String code) {
+        this.name = name;
+        this.code = code;
     }
 
     @JsonProperty
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     @JsonProperty
-    public String getCode(){
+    public String getCode() {
         return code;
     }
 
@@ -54,22 +53,22 @@ public class ExitNodeCountry {
         if (obj == this) {
             return true;
         }
-    	if (obj.getClass() != getClass()) {
-    		return false;
-    	}
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
 
-    	ExitNodeCountry rhs = (ExitNodeCountry) obj;
-    	return new EqualsBuilder()
-    				.append(name, rhs.name)
-    				.append(code, rhs.code)
-    				.isEquals();
+        ExitNodeCountry rhs = (ExitNodeCountry) obj;
+        return new EqualsBuilder()
+            .append(name, rhs.name)
+            .append(code, rhs.code)
+            .isEquals();
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return new HashCodeBuilder(35, 13)
-        		.append(name)
-        		.append(code)
-        		.toHashCode();
+            .append(name)
+            .append(code)
+            .toHashCode();
     }
 }

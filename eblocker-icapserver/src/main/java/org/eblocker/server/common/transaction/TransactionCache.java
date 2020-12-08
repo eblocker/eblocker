@@ -25,45 +25,45 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionCache {
 
-	private final int size;
-	
-	private int cursor;
-	
-	private UUID[] keys;
-	
-	private Map<UUID,TransactionContext> cache;
+    private final int size;
 
-	@Inject
-	public TransactionCache(@Named("transaction.cache.size") int size) {
-		this.size = size;
-	}
-	
-	public UUID add(TransactionContext transaction) {
-		UUID uuid = UUID.randomUUID();
-		synchronized (this) {
-			if (cache == null) {
-				cursor = 0;
-				keys = new UUID[size];
-				cache = new ConcurrentHashMap<>();
-			}
-			cursor++;
-			if (cursor == size) cursor = 0;
-			if (keys[cursor] != null) {
-				cache.remove(keys[cursor]);
-			}
-			keys[cursor] = uuid;
-			cache.put(uuid, new ImmutableTransactionContext(transaction));
-		}
-		return uuid;
-	}
-	
-	public TransactionContext get(UUID uuid) {
-		synchronized(this) {
-			if (cache == null) {
-				return null;
-			}
-			return cache.get(uuid);
-		}
-	}
-	
+    private int cursor;
+
+    private UUID[] keys;
+
+    private Map<UUID, TransactionContext> cache;
+
+    @Inject
+    public TransactionCache(@Named("transaction.cache.size") int size) {
+        this.size = size;
+    }
+
+    public UUID add(TransactionContext transaction) {
+        UUID uuid = UUID.randomUUID();
+        synchronized (this) {
+            if (cache == null) {
+                cursor = 0;
+                keys = new UUID[size];
+                cache = new ConcurrentHashMap<>();
+            }
+            cursor++;
+            if (cursor == size) cursor = 0;
+            if (keys[cursor] != null) {
+                cache.remove(keys[cursor]);
+            }
+            keys[cursor] = uuid;
+            cache.put(uuid, new ImmutableTransactionContext(transaction));
+        }
+        return uuid;
+    }
+
+    public TransactionContext get(UUID uuid) {
+        synchronized (this) {
+            if (cache == null) {
+                return null;
+            }
+            return cache.get(uuid);
+        }
+    }
+
 }

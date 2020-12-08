@@ -40,16 +40,16 @@ public class LocaleSettings {
 
     @JsonCreator
     public LocaleSettings(
-            @JsonProperty("name") String name,
-            @JsonProperty("country") String country,
-            @JsonProperty("language") String language,
-            @JsonProperty("timezone") String timezone,
-            @JsonProperty("clock24") Boolean clock24) {
-        this.name = name == null ? DEFAULT_NAME : name ;
-        this.country = country == null ? DEFAULT_COUNTRY : country ;
+        @JsonProperty("name") String name,
+        @JsonProperty("country") String country,
+        @JsonProperty("language") String language,
+        @JsonProperty("timezone") String timezone,
+        @JsonProperty("clock24") Boolean clock24) {
+        this.name = name == null ? DEFAULT_NAME : name;
+        this.country = country == null ? DEFAULT_COUNTRY : country;
         this.language = language == null ? DEFAULT_LANGUAGE : language;
         this.timezone = timezone == null ? DEFAULT_TIMEZONE : timezone;
-        this.clock24 = clock24 == null ? true: clock24;
+        this.clock24 = clock24 == null ? true : clock24;
     }
 
     public String getName() {

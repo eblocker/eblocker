@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 
 import java.util.stream.Collectors;
 
@@ -47,16 +47,16 @@ public class SchemaMigrationVersion27 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         // set default filter mode for devices
-        for(Device device : dataSource.getDevices()) {
+        for (Device device : dataSource.getDevices()) {
             FilterMode filterMode = device.isSslEnabled() ? FilterMode.ADVANCED : FilterMode.PLUG_AND_PLAY;
             device.setFilterMode(filterMode);
             dataSource.save(device);
         }
 
         // create dashboard card for all users
-        for(UserModuleOld user : userMigrationService.getAll()) {
+        for (UserModuleOld user : userMigrationService.getAll()) {
             if (user.getDashboardCards().stream().anyMatch(this::isDnsFilterStatisticCard)) {
                 user.setDashboardCards(user.getDashboardCards().stream()
                     .map(card -> {

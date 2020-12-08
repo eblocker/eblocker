@@ -27,8 +27,8 @@ public class MessageContainer {
 
     @JsonCreator
     public MessageContainer(
-            @JsonProperty("message") MessageCenterMessage message,
-            @JsonProperty("visibility") MessageVisibility visibility) {
+        @JsonProperty("message") MessageCenterMessage message,
+        @JsonProperty("visibility") MessageVisibility visibility) {
         this.message = message;
         this.visibility = visibility;
     }

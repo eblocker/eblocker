@@ -16,24 +16,24 @@
  */
 package org.eblocker.server.common.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
+
 import java.util.List;
 
-import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UpdatingStatus {
-	private boolean updating = false;
-	private boolean downloading = false;
-	private boolean checking = false;
-	private boolean updatesAvailable = false;
-	private boolean automaticUpdatesActivated = false;
-	private boolean disabled = false;
-	private String lastAutomaticUpdate="";
-	private String nextAutomaticUpdate="";
-	private String projectVersion;
-	private String listsPacketVersion;
-	private List<String> updateProgress;
-	private List<String> updateablePackages;
+    private boolean updating = false;
+    private boolean downloading = false;
+    private boolean checking = false;
+    private boolean updatesAvailable = false;
+    private boolean automaticUpdatesActivated = false;
+    private boolean disabled = false;
+    private String lastAutomaticUpdate = "";
+    private String nextAutomaticUpdate = "";
+    private String projectVersion;
+    private String listsPacketVersion;
+    private List<String> updateProgress;
+    private List<String> updateablePackages;
 
     @SuppressWarnings("unused")
     private int beginHour;
@@ -44,12 +44,12 @@ public class UpdatingStatus {
     @SuppressWarnings("unused")
     private int endMin;
 
-	@JsonProperty
-	public boolean isUpdating() {
-		return updating;
-	}
+    @JsonProperty
+    public boolean isUpdating() {
+        return updating;
+    }
 
-	@JsonProperty
+    @JsonProperty
     public boolean isDownloading() {
         return downloading;
     }
@@ -73,69 +73,69 @@ public class UpdatingStatus {
         return updateProgress;
     }
 
-	@JsonProperty
-	public String getLastAutomaticUpdate(){
-		return lastAutomaticUpdate;
-	}
-
-	@JsonProperty
-	public String getNextAutomaticUpdate(){
-		return nextAutomaticUpdate;
-	}
-
-	@JsonProperty
-	public boolean getUpdatesAvailable(){
-	    return updatesAvailable;
-	}
-
-	@JsonProperty
-	public boolean isAutomaticUpdatesActivated(){
-		return automaticUpdatesActivated;
-	}
-
-	@JsonProperty
-	public String getProjectVersion(){
-		return projectVersion;
-	}
-
-	public void setProjectVersion(String projectVersion){
-		this.projectVersion =projectVersion;
-	}
-
-	@JsonProperty
-	public String getListsPacketVersion(){
-		return this.listsPacketVersion;
-	}
+    @JsonProperty
+    public String getLastAutomaticUpdate() {
+        return lastAutomaticUpdate;
+    }
 
     @JsonProperty
-    public List<String> getUpdateablePackages(){
+    public String getNextAutomaticUpdate() {
+        return nextAutomaticUpdate;
+    }
+
+    @JsonProperty
+    public boolean getUpdatesAvailable() {
+        return updatesAvailable;
+    }
+
+    @JsonProperty
+    public boolean isAutomaticUpdatesActivated() {
+        return automaticUpdatesActivated;
+    }
+
+    @JsonProperty
+    public String getProjectVersion() {
+        return projectVersion;
+    }
+
+    public void setProjectVersion(String projectVersion) {
+        this.projectVersion = projectVersion;
+    }
+
+    @JsonProperty
+    public String getListsPacketVersion() {
+        return this.listsPacketVersion;
+    }
+
+    @JsonProperty
+    public List<String> getUpdateablePackages() {
         return this.updateablePackages;
     }
 
-	public void setListsPacketVersion(String listsPacketVersion){
-		this.listsPacketVersion = listsPacketVersion;
-	}
+    public void setListsPacketVersion(String listsPacketVersion) {
+        this.listsPacketVersion = listsPacketVersion;
+    }
 
-	public void setConfig(AutomaticUpdaterConfiguration config){
-		if(config != null){
-			this.beginHour=config.getBeginHour();
-			this.beginMin=config.getBeginMin();
-			this.endHour=config.getEndHour();
-			this.endMin=config.getEndMin();
-		}
-	}
+    public void setConfig(AutomaticUpdaterConfiguration config) {
+        if (config != null) {
+            this.beginHour = config.getBeginHour();
+            this.beginMin = config.getBeginMin();
+            this.endHour = config.getEndHour();
+            this.endMin = config.getEndMin();
+        }
+    }
 
-	public void setLastAutomaticUpdate(String lastUpdate){
-		this.lastAutomaticUpdate = lastUpdate;
-	}
+    public void setLastAutomaticUpdate(String lastUpdate) {
+        this.lastAutomaticUpdate = lastUpdate;
+    }
 
-	public void setNextAutomaticUpdate(String nextUpdate){
-		this.nextAutomaticUpdate = nextUpdate;
-	}
+    public void setNextAutomaticUpdate(String nextUpdate) {
+        this.nextAutomaticUpdate = nextUpdate;
+    }
 
-	public void setUpdating(boolean updating) {
-		this.updating = updating;
-	}
+    public void setUpdating(boolean updating) {
+        this.updating = updating;
+    }
 
     public void setDownloading(boolean downloading) {
         this.downloading = downloading;
@@ -153,9 +153,9 @@ public class UpdatingStatus {
         this.updatesAvailable = updatesAvailable;
     }
 
-	public void activateAutomaticUpdates(boolean autoUpdates){
-		this.automaticUpdatesActivated=autoUpdates;
-	}
+    public void activateAutomaticUpdates(boolean autoUpdates) {
+        this.automaticUpdatesActivated = autoUpdates;
+    }
 
     public void setUpdateProgress(List<String> list) {
         updateProgress = list;

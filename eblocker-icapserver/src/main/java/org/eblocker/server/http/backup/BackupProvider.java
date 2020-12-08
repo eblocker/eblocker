@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.IpAddressModule;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -24,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.IpAddressModule;
 
 import java.io.IOException;
 import java.util.jar.JarInputStream;
@@ -47,7 +47,7 @@ public abstract class BackupProvider {
     }
 
     /**
-     *  Use settings similar to those of RestExpress's JacksonJsonProcessor
+     * Use settings similar to those of RestExpress's JacksonJsonProcessor
      *
      * @param objectMapper
      */
@@ -66,5 +66,6 @@ public abstract class BackupProvider {
     }
 
     public abstract void exportConfiguration(JarOutputStream outputStream) throws IOException;
+
     public abstract void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 }

@@ -16,6 +16,23 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.strategicgains.syntaxe.ValidationEngine;
+import org.eblocker.server.common.data.UpdatingStatus;
+import org.eblocker.server.common.update.AutomaticUpdater;
+import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
+import org.eblocker.server.common.update.SystemUpdater;
+import org.eblocker.server.common.update.SystemUpdater.State;
+import org.eblocker.server.http.controller.UpdateController;
+import org.eblocker.server.http.service.RegistrationService;
+import org.eblocker.server.http.service.SystemStatusService;
+import org.restexpress.Request;
+import org.restexpress.Response;
+import org.restexpress.exception.BadRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -25,49 +42,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.eblocker.server.http.controller.UpdateController;
-import org.eblocker.server.http.service.RegistrationService;
-
-import org.eblocker.server.http.service.SystemStatusService;
-import org.eblocker.server.common.data.UpdatingStatus;
-import org.restexpress.Request;
-import org.restexpress.Response;
-import org.restexpress.exception.BadRequestException;
-
-import org.eblocker.server.common.update.AutomaticUpdater;
-import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
-import org.eblocker.server.common.update.SystemUpdater;
-import org.eblocker.server.common.update.SystemUpdater.State;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.strategicgains.syntaxe.ValidationEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class UpdateControllerImpl implements UpdateController {
-	private static final Logger LOG = LoggerFactory.getLogger(UpdateControllerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateControllerImpl.class);
 
-	private final SystemUpdater systemUpdater;
-	private final AutomaticUpdater automaticUpdater;
-	private final RegistrationService registrationService;
-	private final SystemStatusService systemStatusService;
-	private final int secondsBetweenUpdateRequests;
-	private Instant lastUpdateRequest = null;
+    private final SystemUpdater systemUpdater;
+    private final AutomaticUpdater automaticUpdater;
+    private final RegistrationService registrationService;
+    private final SystemStatusService systemStatusService;
+    private final int secondsBetweenUpdateRequests;
+    private Instant lastUpdateRequest = null;
 
-	@Inject
-	public UpdateControllerImpl(
-			SystemUpdater systemUpdater,
-			AutomaticUpdater autoUpdater,
-			RegistrationService registrationService,
-            SystemStatusService systemStatusService,
-			@Named("update.seconds.between.requests") int secondsBetweenUpdateRequests
-	) {
-		this.systemUpdater = systemUpdater;
-		this.automaticUpdater = autoUpdater;
-		this.registrationService = registrationService;
-		this.systemStatusService = systemStatusService;
-		this.secondsBetweenUpdateRequests = secondsBetweenUpdateRequests;
-	}
+    @Inject
+    public UpdateControllerImpl(
+        SystemUpdater systemUpdater,
+        AutomaticUpdater autoUpdater,
+        RegistrationService registrationService,
+        SystemStatusService systemStatusService,
+        @Named("update.seconds.between.requests") int secondsBetweenUpdateRequests
+    ) {
+        this.systemUpdater = systemUpdater;
+        this.automaticUpdater = autoUpdater;
+        this.registrationService = registrationService;
+        this.systemStatusService = systemStatusService;
+        this.secondsBetweenUpdateRequests = secondsBetweenUpdateRequests;
+    }
 
     @Override
     public UpdatingStatus getUpdatingStatus(Request request, Response response) throws IOException, InterruptedException {
@@ -80,78 +78,78 @@ public class UpdateControllerImpl implements UpdateController {
     }
 
 
-	@Override
-	public UpdatingStatus getAutoUpdateInformation(Request request, Response response) throws IOException, InterruptedException{
-		UpdatingStatus status = getUpdatingStatus(request,response);
-		status.setConfig(automaticUpdater.getConfiguration());
-		return status;
-	}
+    @Override
+    public UpdatingStatus getAutoUpdateInformation(Request request, Response response) throws IOException, InterruptedException {
+        UpdatingStatus status = getUpdatingStatus(request, response);
+        status.setConfig(automaticUpdater.getConfiguration());
+        return status;
+    }
 
-	@Override
-	public UpdatingStatus setAutomaticUpdatesStatus(Request request, Response response) throws IOException, InterruptedException{
-		UpdatingStatus status = request.getBodyAs(UpdatingStatus.class);
-		automaticUpdater.setActivated(status.isAutomaticUpdatesActivated());
-		return getAutoUpdateInformation(request,response);
-	}
+    @Override
+    public UpdatingStatus setAutomaticUpdatesStatus(Request request, Response response) throws IOException, InterruptedException {
+        UpdatingStatus status = request.getBodyAs(UpdatingStatus.class);
+        automaticUpdater.setActivated(status.isAutomaticUpdatesActivated());
+        return getAutoUpdateInformation(request, response);
+    }
 
-	@Override
-	public UpdatingStatus setAutomaticUpdatesConfig(Request request, Response response) throws IOException, InterruptedException{
-		AutomaticUpdaterConfiguration config = request.getBodyAs(AutomaticUpdaterConfiguration.class);
-		List<String> errors = ValidationEngine.validate(config);
-		if(errors.isEmpty()){
-			automaticUpdater.setNewConfiguration(config);
-			return getAutoUpdateInformation(request,response);
-		}
-		return null;
-	}
+    @Override
+    public UpdatingStatus setAutomaticUpdatesConfig(Request request, Response response) throws IOException, InterruptedException {
+        AutomaticUpdaterConfiguration config = request.getBodyAs(AutomaticUpdaterConfiguration.class);
+        List<String> errors = ValidationEngine.validate(config);
+        if (errors.isEmpty()) {
+            automaticUpdater.setNewConfiguration(config);
+            return getAutoUpdateInformation(request, response);
+        }
+        return null;
+    }
 
-	@Override
-	public UpdatingStatus setUpdatingStatus(Request request, Response response) throws IOException, InterruptedException {
-		UpdatingStatus status = request.getBodyAs(UpdatingStatus.class);
-		if (status.isUpdating() && systemUpdater.getUpdateStatus() == State.IDLING) {
-			systemUpdater.startUpdate();
-			status.setUpdating(true);
-		}
-		return status;
-	}
+    @Override
+    public UpdatingStatus setUpdatingStatus(Request request, Response response) throws IOException, InterruptedException {
+        UpdatingStatus status = request.getBodyAs(UpdatingStatus.class);
+        if (status.isUpdating() && systemUpdater.getUpdateStatus() == State.IDLING) {
+            systemUpdater.startUpdate();
+            status.setUpdating(true);
+        }
+        return status;
+    }
 
-	@Override
-	public UpdatingStatus downloadUpdates(Request request, Response response) throws IOException, InterruptedException {
-	    UpdatingStatus status = getUpdatingStatus(request, response);
+    @Override
+    public UpdatingStatus downloadUpdates(Request request, Response response) throws IOException, InterruptedException {
+        UpdatingStatus status = getUpdatingStatus(request, response);
 
         if (status.isIdling()) {
-	        systemUpdater.startDownload();
-	        status.setDownloading(true);
-	    }
-	    return status;
-	}
+            systemUpdater.startDownload();
+            status.setDownloading(true);
+        }
+        return status;
+    }
 
-	@Override
-	public UpdatingStatus getUpdatesCheckStatus(Request request, Response response) throws IOException, InterruptedException {
-	    Instant now = new Date().toInstant();
-	    // If there was a request and it was less than a threshold ago...
-	    if (lastUpdateRequest!=null && Duration.between(lastUpdateRequest, now).getSeconds() < secondsBetweenUpdateRequests) {
-	        // ... avoid too frequent requests
-	        throw new BadRequestException("Requests too frequent");
-	    }
-	    lastUpdateRequest = now;
-		try {
-			registrationService.checkAndExecuteUpgrade();
-		} catch (Exception e) {
-			LOG.error("Cannot check for license upgrades", e);
-		}
+    @Override
+    public UpdatingStatus getUpdatesCheckStatus(Request request, Response response) throws IOException, InterruptedException {
+        Instant now = new Date().toInstant();
+        // If there was a request and it was less than a threshold ago...
+        if (lastUpdateRequest != null && Duration.between(lastUpdateRequest, now).getSeconds() < secondsBetweenUpdateRequests) {
+            // ... avoid too frequent requests
+            throw new BadRequestException("Requests too frequent");
+        }
+        lastUpdateRequest = now;
+        try {
+            registrationService.checkAndExecuteUpgrade();
+        } catch (Exception e) {
+            LOG.error("Cannot check for license upgrades", e);
+        }
 
-		UpdatingStatus status = getUpdatingStatus(request, response);
+        UpdatingStatus status = getUpdatingStatus(request, response);
 
         if (status.isIdling()) {
             status.setUpdatesAvailable(systemUpdater.updatesAvailable());
             status.setChecking(true);
         }
         return status;
-	}
+    }
 
-    private String formatDate(LocalDateTime time){
-        if(time == null)
+    private String formatDate(LocalDateTime time) {
+        if (time == null)
             return null;
 
         ZonedDateTime zdt = time.atZone(TimeZone.getDefault().toZoneId());

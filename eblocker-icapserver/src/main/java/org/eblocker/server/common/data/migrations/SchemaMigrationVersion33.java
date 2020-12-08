@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
 import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

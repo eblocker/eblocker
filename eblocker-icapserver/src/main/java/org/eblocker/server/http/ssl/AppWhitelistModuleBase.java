@@ -20,19 +20,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class will be a container for the information needed for the App/User-Agent modules which bundle
  * whitelistable URLs to enable using certain Apps or Software with the SSL feature. This is useful for applications, which
  * use HPKP to pin a public key and make sure by this to only establish TLS connections with specific TLS certificates (public keys)
- *
+ * <p>
  * Also contained are IPs to be whitelisted for the respective app to work since some apps use their proprietary protocoll over
  * a standard HTTPS port which cannot be whitelisted via regular SSL-whitelisting.
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AppWhitelistModuleBase{
+public abstract class AppWhitelistModuleBase {
 
     private Integer id;
     protected String name;
@@ -50,17 +51,17 @@ public abstract class AppWhitelistModuleBase{
 
     @JsonCreator
     public AppWhitelistModuleBase(
-            @JsonProperty("id") Integer id,
-            @JsonProperty("name") String name,
-            @JsonProperty("description") Map<String, String> description,
-            @JsonProperty("labels") Map<String, String> labels,
-            @JsonProperty("enabledPerDefault") Boolean enabledPerDefault,
-            @JsonProperty("enabled") Boolean enabled,
-            @JsonProperty("builtin") Boolean builtin,
-            @JsonProperty("modified") Boolean modified,
-            @JsonProperty("version") String version,
-            @JsonProperty("updatedVersionAvailable") Boolean updatedVersionAvailable,
-            @JsonProperty("hidden") Boolean hidden
+        @JsonProperty("id") Integer id,
+        @JsonProperty("name") String name,
+        @JsonProperty("description") Map<String, String> description,
+        @JsonProperty("labels") Map<String, String> labels,
+        @JsonProperty("enabledPerDefault") Boolean enabledPerDefault,
+        @JsonProperty("enabled") Boolean enabled,
+        @JsonProperty("builtin") Boolean builtin,
+        @JsonProperty("modified") Boolean modified,
+        @JsonProperty("version") String version,
+        @JsonProperty("updatedVersionAvailable") Boolean updatedVersionAvailable,
+        @JsonProperty("hidden") Boolean hidden
     ) {
         this.id = id;
         this.name = name;
@@ -103,7 +104,7 @@ public abstract class AppWhitelistModuleBase{
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -111,7 +112,7 @@ public abstract class AppWhitelistModuleBase{
         this.description = description;
     }
 
-    public Map<String,String> getDescription(){
+    public Map<String, String> getDescription() {
         return description;
     }
 
@@ -119,7 +120,7 @@ public abstract class AppWhitelistModuleBase{
         this.enabled = enabled;
     }
 
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -135,7 +136,7 @@ public abstract class AppWhitelistModuleBase{
         this.enabledPerDefault = enabledPerDefault;
     }
 
-    public boolean isEnabledPerDefault(){
+    public boolean isEnabledPerDefault() {
         return enabledPerDefault;
     }
 

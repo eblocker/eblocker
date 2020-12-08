@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.network.TrafficAccounter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.network.TrafficAccounter;
 
 public class TrafficAccounterScheduler extends FixedRateScheduler {
 
     @Inject
     public TrafficAccounterScheduler(TrafficAccounter trafficAccounter,
-            @Named("executor.trafficAccounter.startupDelay") long startupDelay,
-            @Named("executor.trafficAccounter.fixedRate") long fixedRate) {
+                                     @Named("executor.trafficAccounter.startupDelay") long startupDelay,
+                                     @Named("executor.trafficAccounter.fixedRate") long fixedRate) {
         super(trafficAccounter::update, startupDelay, fixedRate);
     }
 }

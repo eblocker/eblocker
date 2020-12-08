@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.UpdatingStatus;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -23,9 +26,6 @@ import org.eblocker.server.common.data.systemstatus.SubSystemDetails;
 import org.eblocker.server.common.data.systemstatus.SubSystemStatus;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
 import org.eblocker.server.common.update.SystemUpdater;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,12 +91,12 @@ public class SystemStatusService {
             }
         }
         return new SystemStatusDetails(
-                new Date(),
-                (updatingState == null || !updatingState.isUpdating() ? executionState :  ExecutionState.UPDATING),
-                warnings.stream().map(Throwable::getMessage).collect(Collectors.toList()),
-                details.values(),
-                projectVersion,
-                updatingState
+            new Date(),
+            (updatingState == null || !updatingState.isUpdating() ? executionState : ExecutionState.UPDATING),
+            warnings.stream().map(Throwable::getMessage).collect(Collectors.toList()),
+            details.values(),
+            projectVersion,
+            updatingState
         );
     }
 
@@ -159,17 +159,18 @@ public class SystemStatusService {
 
     private SubSystemDetails details(SubSystem subSystem, SubSystemStatus status, Map<String, Object> msgContext) {
         return new SubSystemDetails(
-                subSystem.name(),
-                status.name(),
-                subSystem.getOrder(),
-                MSG_KEY_PREFIX + subSystem.name() + MSG_KEY_SEPARATOR + status.name(),
-                msgContext
+            subSystem.name(),
+            status.name(),
+            subSystem.getOrder(),
+            MSG_KEY_PREFIX + subSystem.name() + MSG_KEY_SEPARATOR + status.name(),
+            msgContext
         );
     }
 
     public List<Exception> getWarnings() {
         return warnings;
     }
+
     public void setUpdatingStatus(UpdatingStatus state) {
         this.updatingState = state;
     }

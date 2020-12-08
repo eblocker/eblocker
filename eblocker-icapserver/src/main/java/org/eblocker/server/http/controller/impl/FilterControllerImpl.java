@@ -16,101 +16,101 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eblocker.server.http.controller.FilterController;
+import com.google.inject.Inject;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
+import org.eblocker.server.http.controller.FilterController;
+import org.eblocker.server.http.server.SessionContextController;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.http.server.SessionContextController;
-import com.google.inject.Inject;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides access to filter stats and configuration
  */
 public class FilterControllerImpl extends SessionContextController implements FilterController {
     @SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(FilterControllerImpl.class);
-	
-	@Inject
-	public FilterControllerImpl(SessionStore sessionStore, PageContextStore pageContextStore) {
-		super(sessionStore, pageContextStore);
-	}
+    private static final Logger log = LoggerFactory.getLogger(FilterControllerImpl.class);
 
-	/**
-	 * Returns the total number of blocked URLs for the badge at the eBlocker icon.
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	@Override
-	public Object getBadge(Request request, Response response) throws IOException {
-		PageContext pageContext = getPageContext(request);
-		int totalBlocked = 0;
-		if (pageContext != null) {
-			totalBlocked = pageContext.getBlockedAds() + pageContext.getBlockedTrackings();
-		}
-		response.addHeader("Cache-Control", "private, no-cache, no-store");
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		return Collections.singletonMap("badge", totalBlocked);
-	}
+    @Inject
+    public FilterControllerImpl(SessionStore sessionStore, PageContextStore pageContextStore) {
+        super(sessionStore, pageContextStore);
+    }
 
-	@Override
-	public Object getStats(Request request, Response response) {
-		Map<String, Integer> result = new HashMap<String, Integer>();
+    /**
+     * Returns the total number of blocked URLs for the badge at the eBlocker icon.
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public Object getBadge(Request request, Response response) throws IOException {
+        PageContext pageContext = getPageContext(request);
+        int totalBlocked = 0;
+        if (pageContext != null) {
+            totalBlocked = pageContext.getBlockedAds() + pageContext.getBlockedTrackings();
+        }
+        response.addHeader("Cache-Control", "private, no-cache, no-store");
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        return Collections.singletonMap("badge", totalBlocked);
+    }
 
-		Session session = getSession(request);
-		//log.info("Session (filter-controller): "+session.getSessionId()+" user-agent: "+session.getUserAgent()+" outgoing-user-agent: "+session.getOutgoingUserAgent());
-		result.put("adsBlocked", session.getBlockedAds());
-		result.put("trackingsBlocked", session.getBlockedTrackings());
+    @Override
+    public Object getStats(Request request, Response response) {
+        Map<String, Integer> result = new HashMap<String, Integer>();
 
-		PageContext pageContext = getPageContext(request);
-		result.put("adsBlockedOnPage", pageContext == null ? 0 : pageContext.getBlockedAds());
-		result.put("trackingsBlockedOnPage", pageContext == null ? 0 : pageContext.getBlockedTrackings());
-		return result;
-	}
-	
-	@Override
-	public Object getBlockedAdsSet(Request request, Response response){
-		PageContext pageContext = getPageContext(request);
-		//log.info("blocked ads on page:"+pageContext.getBlockedAds());
-		if(pageContext == null)
-			return null;
-		return pageContext.getBlockedAdsSet();
-	}
-	
-	@Override
-	public Object getBlockedTrackingsSet(Request request, Response response){
-		PageContext pageContext = getPageContext(request);
-		if(pageContext == null)
-			return null;
-		return pageContext.getBlockedTrackingsSet();
-	}
-	
-	@Override
-	public Object getConfig(Request request, Response response) {
-		Map<String, Boolean> result = new HashMap<String, Boolean>();
-		result.put("blockAds", getSession(request).isBlockAds());
-		result.put("blockTrackings", getSession(request).isBlockTrackings());
-		return result;
-	}
-	
-	@Override
-	public Object putConfig(Request request, Response response) {
-		@SuppressWarnings("unchecked")
-		Map<String, Boolean> config = request.getBodyAs(Map.class);
-		getSession(request).setBlockAds(config.get("blockAds"));
-		getSession(request).setBlockTrackings(config.get("blockTrackings"));
-		return config;
-	}
+        Session session = getSession(request);
+        //log.info("Session (filter-controller): "+session.getSessionId()+" user-agent: "+session.getUserAgent()+" outgoing-user-agent: "+session.getOutgoingUserAgent());
+        result.put("adsBlocked", session.getBlockedAds());
+        result.put("trackingsBlocked", session.getBlockedTrackings());
+
+        PageContext pageContext = getPageContext(request);
+        result.put("adsBlockedOnPage", pageContext == null ? 0 : pageContext.getBlockedAds());
+        result.put("trackingsBlockedOnPage", pageContext == null ? 0 : pageContext.getBlockedTrackings());
+        return result;
+    }
+
+    @Override
+    public Object getBlockedAdsSet(Request request, Response response) {
+        PageContext pageContext = getPageContext(request);
+        //log.info("blocked ads on page:"+pageContext.getBlockedAds());
+        if (pageContext == null)
+            return null;
+        return pageContext.getBlockedAdsSet();
+    }
+
+    @Override
+    public Object getBlockedTrackingsSet(Request request, Response response) {
+        PageContext pageContext = getPageContext(request);
+        if (pageContext == null)
+            return null;
+        return pageContext.getBlockedTrackingsSet();
+    }
+
+    @Override
+    public Object getConfig(Request request, Response response) {
+        Map<String, Boolean> result = new HashMap<String, Boolean>();
+        result.put("blockAds", getSession(request).isBlockAds());
+        result.put("blockTrackings", getSession(request).isBlockTrackings());
+        return result;
+    }
+
+    @Override
+    public Object putConfig(Request request, Response response) {
+        @SuppressWarnings("unchecked")
+        Map<String, Boolean> config = request.getBodyAs(Map.class);
+        getSession(request).setBlockAds(config.get("blockAds"));
+        getSession(request).setBlockTrackings(config.get("blockTrackings"));
+        return config;
+    }
 }

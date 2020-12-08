@@ -17,36 +17,36 @@
 package org.eblocker.server.icap.transaction.processor;
 
 
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.icap.transaction.Transaction;
+import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
 public class IgnoreEBlockerProcessor implements TransactionProcessor {
-	@SuppressWarnings("unused")
-	private final static Logger log = LoggerFactory.getLogger(IgnoreEBlockerProcessor.class);
+    @SuppressWarnings("unused")
+    private final static Logger log = LoggerFactory.getLogger(IgnoreEBlockerProcessor.class);
 
-	@SuppressWarnings("unused")
-	private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
+    @SuppressWarnings("unused")
+    private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
 
-	private final BaseURLs baseURLs;
+    private final BaseURLs baseURLs;
 
-	@Inject
-	public IgnoreEBlockerProcessor(BaseURLs baseURLs) {
-		this.baseURLs = baseURLs;
+    @Inject
+    public IgnoreEBlockerProcessor(BaseURLs baseURLs) {
+        this.baseURLs = baseURLs;
 
-	}
+    }
 
-	@Override
-	public boolean process(Transaction transaction) {
-		if (baseURLs.matchesAny(transaction.getUrl())) {
-			transaction.setComplete(true);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean process(Transaction transaction) {
+        if (baseURLs.matchesAny(transaction.getUrl())) {
+            transaction.setComplete(true);
+            return false;
+        }
+        return true;
+    }
 }

@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.common.base.Joiner;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.dns.DnsRating;
 import org.eblocker.server.common.data.dns.DnsResolvers;
 import org.eblocker.server.common.data.dns.NameServerStats;
@@ -24,10 +28,6 @@ import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.http.service.DnsStatisticsService;
-import com.google.common.base.Joiner;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public class UnreliableDnsServerMessageProvider extends AbstractMessageProvider 
         DnsResolvers resolvers = dnsServer.getDnsResolvers();
         String resolver = resolvers.getDefaultResolver();
         List<String> nameServers;
-        switch(resolver) {
+        switch (resolver) {
             case "tor":
                 nameServers = Collections.singletonList("127.0.0.1");
                 break;

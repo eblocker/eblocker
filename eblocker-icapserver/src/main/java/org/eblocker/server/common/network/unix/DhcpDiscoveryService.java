@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

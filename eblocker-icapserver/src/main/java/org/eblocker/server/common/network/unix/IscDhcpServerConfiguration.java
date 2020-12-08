@@ -41,11 +41,11 @@ public class IscDhcpServerConfiguration {
         // Lease-time: Default time, given to devices when they ask
         // Take (user-supplied) value from configuration unless too short (i.e. shorter than default lease time)
         writer.append("default-lease-time ")
-                .append(c.getLeaseTime() < DEFAULT_LEASE_TIME ? DEFAULT_LEASE_TIME : c.getLeaseTime()).append(";\n");
+            .append(c.getLeaseTime() < DEFAULT_LEASE_TIME ? DEFAULT_LEASE_TIME : c.getLeaseTime()).append(";\n");
         // Lease-time: Maximum time, granted to devices asking for a timeframe
         writer.append("max-lease-time ")
-                .append(c.getLeaseTime() < DEFAULT_MAX_LEASE_TIME ? DEFAULT_MAX_LEASE_TIME : c.getLeaseTime())
-                .append(";\n\n");
+            .append(c.getLeaseTime() < DEFAULT_MAX_LEASE_TIME ? DEFAULT_MAX_LEASE_TIME : c.getLeaseTime())
+            .append(";\n\n");
         // Make the server authoritative for the network segments that
         // are configured, and tell it to send DHCPNAKs to bogus requests
         writer.append("authoritative;\n");
@@ -70,7 +70,7 @@ public class IscDhcpServerConfiguration {
         // Here, write down several ranges
         for (DhcpRange range : c.getRanges()) {
             writer.append("  range ").append(range.getFirstIpAddress()).append(" ").append(range.getLastIpAddress())
-                    .append(";\n");
+                .append(";\n");
         }
 
         writer.append("  option routers ");
@@ -109,9 +109,9 @@ public class IscDhcpServerConfiguration {
                     writerExcluded.append(" { hardware ethernet ");
                     writerExcluded.append(device.getHardwareAddress(true));
                     if (localIpAddresses.size() == 1
-                            && device.isIpAddressFixed()
-                            && !localIpAddresses.get(0).equals(c.getIpAddress())
-                            && !device.isGateway()) {
+                        && device.isIpAddressFixed()
+                        && !localIpAddresses.get(0).equals(c.getIpAddress())
+                        && !device.isGateway()) {
                         writerExcluded.append("; fixed-address ").append(localIpAddresses.get(0));
                     }
                     writerExcluded.append("; }\n");
@@ -129,14 +129,14 @@ public class IscDhcpServerConfiguration {
                 List<String> localIpAddresses = getLocalIpv4Addresses(device, NetworkUtils.getIPv4NetworkAddress(c.getIpAddress(), c.getNetmask()), c.getNetmask());
 
                 if (localIpAddresses.size() == 1
-                        && device.isIpAddressFixed()
-                        && !localIpAddresses.get(0).equals(c.getIpAddress())
-                        && !device.isGateway()
-                        && device.isEnabled()) {
+                    && device.isIpAddressFixed()
+                    && !localIpAddresses.get(0).equals(c.getIpAddress())
+                    && !device.isGateway()
+                    && device.isEnabled()) {
                     writer.append("host ").append(device.getHardwareAddress(false)).append(" {\n")
-                            .append("  hardware ethernet ").append(device.getHardwareAddress(true)).append(";\n")
-                            .append("  fixed-address ").append(localIpAddresses.get(0)).append(";\n")
-                            .append("}\n");
+                        .append("  hardware ethernet ").append(device.getHardwareAddress(true)).append(";\n")
+                        .append("  fixed-address ").append(localIpAddresses.get(0)).append(";\n")
+                        .append("}\n");
                 }
             }
         }

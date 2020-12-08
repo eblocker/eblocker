@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.http.service;
 
-import java.io.IOException;
-
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.server.app.DeviceProperties;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.network.TelnetConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.app.DeviceProperties;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import java.io.IOException;
 
 /**
  * Communicates with the service eblocker-led to control the RGB LED.

@@ -48,17 +48,17 @@ public class MessageCenterMessage {
 
     @JsonCreator
     public MessageCenterMessage(
-            @JsonProperty("id") Integer id,
-            @JsonProperty("titleKey") String titleKey,
-            @JsonProperty("contentKey") String contentKey,
-            @JsonProperty("actionButtonLabelKey") String actionButtonLabelKey,
-            @JsonProperty("actionButtonUrlKey") String actionButtonUrlKey,
-            @JsonProperty("titles") Map<String, String> titles,
-            @JsonProperty("contents") Map<String, String> contents,
-            @JsonProperty("context") Map<String, String> context,
-            @JsonProperty("date") Date date,
-            @JsonProperty("showDoNotShowAgain") Boolean showDoNotShowAgain,
-            @JsonProperty("messageSeverity") MessageSeverity messageSeverity) {
+        @JsonProperty("id") Integer id,
+        @JsonProperty("titleKey") String titleKey,
+        @JsonProperty("contentKey") String contentKey,
+        @JsonProperty("actionButtonLabelKey") String actionButtonLabelKey,
+        @JsonProperty("actionButtonUrlKey") String actionButtonUrlKey,
+        @JsonProperty("titles") Map<String, String> titles,
+        @JsonProperty("contents") Map<String, String> contents,
+        @JsonProperty("context") Map<String, String> context,
+        @JsonProperty("date") Date date,
+        @JsonProperty("showDoNotShowAgain") Boolean showDoNotShowAgain,
+        @JsonProperty("messageSeverity") MessageSeverity messageSeverity) {
         this.id = id == null ? 0 : id;
         this.titleKey = titleKey;
         this.contentKey = contentKey;

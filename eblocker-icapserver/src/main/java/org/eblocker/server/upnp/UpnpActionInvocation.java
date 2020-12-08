@@ -16,12 +16,11 @@
  */
 package org.eblocker.server.upnp;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.meta.Action;
 import org.fourthline.cling.model.meta.RemoteService;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 public class UpnpActionInvocation extends ActionInvocation<RemoteService> {
     @Inject

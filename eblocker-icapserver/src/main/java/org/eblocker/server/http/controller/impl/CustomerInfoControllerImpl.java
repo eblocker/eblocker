@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import org.eblocker.registration.CustomerInfo;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.http.controller.CustomerInfoController;
 import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.service.CustomerInfoService;
-import org.eblocker.registration.CustomerInfo;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -57,7 +57,8 @@ public class CustomerInfoControllerImpl extends SessionContextController impleme
     @Override
     public void save(Request request, Response response) {
         try {
-            CustomerInfo customInfo = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<CustomerInfo>(){});
+            CustomerInfo customInfo = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<CustomerInfo>() {
+            });
             customerInfoService.save(customInfo);
         } catch (IOException e) {
             log.debug("Cannot get customer info from request body.", e);

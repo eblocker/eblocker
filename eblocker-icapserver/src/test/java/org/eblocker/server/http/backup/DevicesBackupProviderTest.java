@@ -18,6 +18,7 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.DisplayIconMode;
 import org.eblocker.server.common.data.FilterMode;
@@ -25,7 +26,6 @@ import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
-import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
@@ -90,8 +90,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setHasRootCAInstalled(true);
         computerBefore.setIconMode(DisplayIconMode.ON);
         computerBefore.setIconPosition(DisplayIconPosition.RIGHT);
-            List<IpAddress> ipAddressesBefore = new ArrayList<>();
-            ipAddressesBefore.add(Ip4Address.parse("192.168.0.2"));
+        List<IpAddress> ipAddressesBefore = new ArrayList<>();
+        ipAddressesBefore.add(Ip4Address.parse("192.168.0.2"));
         computerBefore.setIpAddresses(ipAddressesBefore);
         computerBefore.setIpAddressFixed(true);
         computerBefore.setIsVpnClient(true);
@@ -111,12 +111,12 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setSslEnabled(true);
         computerBefore.setSslRecordErrorsEnabled(true);
         computerBefore.setUseAnonymizationService(true);
-            Integer vpnProfileId = 1122;
+        Integer vpnProfileId = 1122;
         computerBefore.setUseVPNProfileID(vpnProfileId);
         computerBefore.setVendor("Computer-Company, Inc.");
 
         List<Device> devicesBefore = new ArrayList<Device>(
-                Arrays.asList(eblockerBefore, gatewayBefore, computerBefore));
+            Arrays.asList(eblockerBefore, gatewayBefore, computerBefore));
 
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devicesBefore);
 
@@ -140,10 +140,10 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setName("Mein Computer modifiziert");
         // More attributes
         computerAfter.setAreDeviceMessagesSettingsDefault(false);
-            int computerAfterAssignedUser = 1230;
+        int computerAfterAssignedUser = 1230;
         computerAfter.setAssignedUser(computerAfterAssignedUser);
         computerAfter.setControlBarAutoMode(false);
-            int computerAfterDefaultSystemUser = 12340;
+        int computerAfterDefaultSystemUser = 12340;
         computerAfter.setDefaultSystemUser(computerAfterDefaultSystemUser);
         computerAfter.setEnabled(false);
         computerAfter.setFilterMode(FilterMode.NONE);
@@ -152,8 +152,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setHasRootCAInstalled(false);
         computerAfter.setIconMode(DisplayIconMode.OFF);
         computerAfter.setIconPosition(DisplayIconPosition.LEFT);
-            List<IpAddress> ipAddressesAfter = new ArrayList<>();
-            ipAddressesAfter.add(Ip4Address.parse("192.168.0.22"));
+        List<IpAddress> ipAddressesAfter = new ArrayList<>();
+        ipAddressesAfter.add(Ip4Address.parse("192.168.0.22"));
         computerAfter.setIpAddresses(ipAddressesAfter);
         computerAfter.setIpAddressFixed(false);
         computerAfter.setIsVpnClient(false);
@@ -162,7 +162,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setMessageShowInfo(false);
         computerAfter.setMobilePrivateNetworkAccess(false);
         computerAfter.setMobileState(false);
-            int computerAfterOperatingUser = 123450;
+        int computerAfterOperatingUser = 123450;
         computerAfter.setOperatingUser(computerAfterOperatingUser);
         computerAfter.setPaused(false);// The pause does not survive the backup
         computerAfter.setRouteThroughTor(false);
@@ -179,11 +179,11 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Mockito.when(deviceService.getDeviceById(Mockito.eq(computerAfter.getId()))).thenReturn(computerAfter);
 
         Mockito.when(
-                deviceFactory.createDevice(Mockito.eq("device:11:11:11:11:11:11"), Mockito.any(), Mockito.anyBoolean()))
-                .thenReturn(gatewayAfter);
+            deviceFactory.createDevice(Mockito.eq("device:11:11:11:11:11:11"), Mockito.any(), Mockito.anyBoolean()))
+            .thenReturn(gatewayAfter);
         Mockito.when(
-                deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
-                .thenReturn(computerAfter);
+            deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
+            .thenReturn(computerAfter);
 
         exportAndImportWithDevicesBackupProvider(dataSource, provider);
 
@@ -203,7 +203,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertTrue(restoredDevice.isOnline());// The device stayed online
         Assert.assertEquals(computerBefore.getName(), restoredDevice.getName());
         Assert.assertEquals(computerBefore.getAreDeviceMessagesSettingsDefault(),
-                restoredDevice.getAreDeviceMessagesSettingsDefault());
+            restoredDevice.getAreDeviceMessagesSettingsDefault());
         // User References of existing device are not restored
         Assert.assertEquals(computerAfterAssignedUser, restoredDevice.getAssignedUser());
         Assert.assertEquals(computerBefore.isControlBarAutoMode(), restoredDevice.isControlBarAutoMode());
@@ -212,9 +212,9 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(computerBefore.isEnabled(), restoredDevice.isEnabled());
         Assert.assertEquals(computerBefore.getFilterMode(), restoredDevice.getFilterMode());
         Assert.assertEquals(computerBefore.isFilterPlugAndPlayAdsEnabled(),
-                restoredDevice.isFilterPlugAndPlayAdsEnabled());
+            restoredDevice.isFilterPlugAndPlayAdsEnabled());
         Assert.assertEquals(computerBefore.isFilterPlugAndPlayTrackersEnabled(),
-                restoredDevice.isFilterPlugAndPlayTrackersEnabled());
+            restoredDevice.isFilterPlugAndPlayTrackersEnabled());
         // No guarantee the installed certificate is still used by the eBlocker
         Assert.assertFalse(restoredDevice.hasRootCAInstalled());
         Assert.assertEquals(computerBefore.getIconMode(), restoredDevice.getIconMode());
@@ -228,7 +228,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(computerBefore.isMessageShowAlert(), restoredDevice.isMessageShowAlert());
         Assert.assertEquals(computerBefore.isMessageShowInfo(), restoredDevice.isMessageShowInfo());
         Assert.assertEquals(computerBefore.isMobilePrivateNetworkAccess(),
-                restoredDevice.isMobilePrivateNetworkAccess());
+            restoredDevice.isMobilePrivateNetworkAccess());
         Assert.assertEquals(computerBefore.isEblockerMobileEnabled(), restoredDevice.isEblockerMobileEnabled());
         // User References of existing device are not restored
         Assert.assertEquals(computerAfterOperatingUser, restoredDevice.getOperatingUser());
@@ -239,7 +239,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(computerBefore.isShowDnsFilterInfoDialog(), restoredDevice.isShowDnsFilterInfoDialog());
         Assert.assertEquals(computerBefore.isShowPauseDialog(), restoredDevice.isShowPauseDialog());
         Assert.assertEquals(computerBefore.isShowPauseDialogDoNotShowAgain(),
-                restoredDevice.isShowPauseDialogDoNotShowAgain());
+            restoredDevice.isShowPauseDialogDoNotShowAgain());
         Assert.assertEquals(computerBefore.isShowWelcomePage(), restoredDevice.isShowWelcomePage());
         Assert.assertEquals(computerBefore.isSslEnabled(), restoredDevice.isSslEnabled());
         Assert.assertEquals(computerBefore.isSslRecordErrorsEnabled(), restoredDevice.isSslRecordErrorsEnabled());
@@ -263,11 +263,11 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setAssignedUser(123);
         computerBefore.setDefaultSystemUser(1234);
         computerBefore.setOperatingUser(12345);
-            Integer vpnProfileId = 1122;
+        Integer vpnProfileId = 1122;
         computerBefore.setUseVPNProfileID(vpnProfileId);
 
         List<Device> devicesBefore = new ArrayList<Device>(
-                Arrays.asList(computerBefore));
+            Arrays.asList(computerBefore));
 
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devicesBefore);
         Mockito.doAnswer(new Answer<Void>() {
@@ -286,11 +286,11 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setName("Name of producer (No. 1)");
 
         Mockito.when(
-                deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
-                .thenReturn(computerAfter);
+            deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
+            .thenReturn(computerAfter);
 
         exportAndImportWithDevicesBackupProvider(dataSource, provider);
-        
+
         // Verify computer has been restored correctly
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);
         Mockito.verify(deviceService).updateDevice(argCaptor.capture());

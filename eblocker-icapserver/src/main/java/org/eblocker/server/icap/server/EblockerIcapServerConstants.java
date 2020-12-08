@@ -22,8 +22,8 @@ public class EblockerIcapServerConstants {
 
     public static final String SERVICE_TAG = "Eblocker-0.1";
 
-	private EblockerIcapServerConstants() {
-	}
-	
-	
+    private EblockerIcapServerConstants() {
+    }
+
+
 }

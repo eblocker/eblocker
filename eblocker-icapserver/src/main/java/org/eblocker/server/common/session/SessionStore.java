@@ -16,127 +16,127 @@
  */
 package org.eblocker.server.common.session;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
+import org.eblocker.server.common.transaction.TransactionIdentifier;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.UserAgentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
-
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.UserAgentService;
-import org.eblocker.server.common.transaction.TransactionIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 
 @Singleton
 public class SessionStore {
-	private static final Logger log = LoggerFactory.getLogger(SessionStore.class);
-	private final Map<String, SessionImpl> store = new ConcurrentHashMap<>();
-	private static final long MILLIS_TO_KEEP = 24*3600*1000L;
-	private final NetworkInterfaceWrapper networkInterface;
-	private final DeviceService deviceService;
+    private static final Logger log = LoggerFactory.getLogger(SessionStore.class);
+    private final Map<String, SessionImpl> store = new ConcurrentHashMap<>();
+    private static final long MILLIS_TO_KEEP = 24 * 3600 * 1000L;
+    private final NetworkInterfaceWrapper networkInterface;
+    private final DeviceService deviceService;
     private final UserAgentService userAgentService;
 
-	@Inject
-	public SessionStore(
-	    NetworkInterfaceWrapper networkInterface,
+    @Inject
+    public SessionStore(
+        NetworkInterfaceWrapper networkInterface,
         DeviceService deviceService,
         UserAgentService userAgentService
     ) {
-		log.info("Creating a session store");
-		this.networkInterface = networkInterface;
-		this.deviceService = deviceService;
-		this.userAgentService = userAgentService;
-	}
+        log.info("Creating a session store");
+        this.networkInterface = networkInterface;
+        this.deviceService = deviceService;
+        this.userAgentService = userAgentService;
+    }
 
-	public Session getSession(TransactionIdentifier transactionId) {
-    	String userAgent = SessionIdUtil.normalizeUserAgent(transactionId.getUserAgent());
-    	IpAddress ip = SessionIdUtil.normalizeIp(transactionId.getOriginalClientIP(), networkInterface.getFirstIPv4Address());
+    public Session getSession(TransactionIdentifier transactionId) {
+        String userAgent = SessionIdUtil.normalizeUserAgent(transactionId.getUserAgent());
+        IpAddress ip = SessionIdUtil.normalizeIp(transactionId.getOriginalClientIP(), networkInterface.getFirstIPv4Address());
 
-    	Device device = deviceService.getDeviceByIp(ip);
-		if (device == null) {
-			log.error("Could not find a device with IP {}. Cannot retrieve session", ip);
-			throw new EblockerException("Can not retrieve a session for an unknown device (IP = " + ip + ")");
-		}
+        Device device = deviceService.getDeviceByIp(ip);
+        if (device == null) {
+            log.error("Could not find a device with IP {}. Cannot retrieve session", ip);
+            throw new EblockerException("Can not retrieve a session for an unknown device (IP = " + ip + ")");
+        }
 
-    	String sessionId = SessionIdUtil.getSessionId(ip, userAgent, device.getOperatingUser());
-    	Session session = store.get(sessionId);
-    	if (session == null) {
-    		session = createSession(sessionId, userAgent, ip, device.getId(), device.getOperatingUser());
-    	}
-		setLoggingContext(session);
-    	session.markUsed();
-    	return session;
-	}
+        String sessionId = SessionIdUtil.getSessionId(ip, userAgent, device.getOperatingUser());
+        Session session = store.get(sessionId);
+        if (session == null) {
+            session = createSession(sessionId, userAgent, ip, device.getId(), device.getOperatingUser());
+        }
+        setLoggingContext(session);
+        session.markUsed();
+        return session;
+    }
 
-	/**Return the session with sessionId. If there is none, return null.
-	 * @param sessionId
-	 * @return
-	 */
-	public Session findSession(String sessionId){
-		Session session = store.get(sessionId);
-		if(session != null){
-			setLoggingContext(session);
-			session.markUsed();
-		}
-		return session;
-	}
+    /**
+     * Return the session with sessionId. If there is none, return null.
+     *
+     * @param sessionId
+     * @return
+     */
+    public Session findSession(String sessionId) {
+        Session session = store.get(sessionId);
+        if (session != null) {
+            setLoggingContext(session);
+            session.markUsed();
+        }
+        return session;
+    }
 
-	private Session createSession(String sessionId, String userAgent, IpAddress ip, String deviceId, Integer userId) {
-		SessionImpl session;
-		synchronized(store) {
-	    	session = store.get(sessionId);
-	    	if (session == null) {
-	    		session = new SessionImpl(
-	    		    sessionId,
+    private Session createSession(String sessionId, String userAgent, IpAddress ip, String deviceId, Integer userId) {
+        SessionImpl session;
+        synchronized (store) {
+            session = store.get(sessionId);
+            if (session == null) {
+                session = new SessionImpl(
+                    sessionId,
                     userAgent,
                     ip,
                     deviceId,
                     userId,
                     userAgentService.getUserAgentInfo(userAgent)
                 );
-	    		store.put(sessionId,  session);
-	    	}
-	    	session.markUsed();
+                store.put(sessionId, session);
+            }
+            session.markUsed();
             String cloakedUserAgent = userAgentService.getCloakedUserAgent(userId, deviceId);
             session.setOutgoingUserAgent(cloakedUserAgent);
-		}
-		return session;
-	}
+        }
+        return session;
+    }
 
-	protected void purgeSessions() {
-		Date purge = new Date(new Date().getTime()-MILLIS_TO_KEEP);
+    protected void purgeSessions() {
+        Date purge = new Date(new Date().getTime() - MILLIS_TO_KEEP);
 
-		synchronized(store) {
-			//List<String> purgedSessions = new LinkedList<String>();
-			for (Entry<String,SessionImpl> entry: store.entrySet()) {
-				if (entry.getValue().getLastUsed().before(purge)) {
-					String oldSessionKey = MDC.get("SESSION");
-					MDC.put("SESSION", (entry.getValue() == null ? "--------" : entry.getValue().getShortId()));
-					log.info("Purging session from memory");
-					//purgedSessions.add(entry.getKey());
-					store.remove(entry.getKey());
-					MDC.put("SESSION", oldSessionKey);
-				}
-			}
-			//tell useragentspoofprocessor that sessions got purged
-			//UserAgentSpoofProcessor.purgeSessions(purgedSessions)
-		}
+        synchronized (store) {
+            //List<String> purgedSessions = new LinkedList<String>();
+            for (Entry<String, SessionImpl> entry : store.entrySet()) {
+                if (entry.getValue().getLastUsed().before(purge)) {
+                    String oldSessionKey = MDC.get("SESSION");
+                    MDC.put("SESSION", (entry.getValue() == null ? "--------" : entry.getValue().getShortId()));
+                    log.info("Purging session from memory");
+                    //purgedSessions.add(entry.getKey());
+                    store.remove(entry.getKey());
+                    MDC.put("SESSION", oldSessionKey);
+                }
+            }
+            //tell useragentspoofprocessor that sessions got purged
+            //UserAgentSpoofProcessor.purgeSessions(purgedSessions)
+        }
 
-	}
+    }
 
-	private void setLoggingContext(Session session) {
-		// From now on, we know the corresponding page context
-		MDC.put("SESSION", (session == null ? "--------" : session.getShortId()));
-	}
+    private void setLoggingContext(Session session) {
+        // From now on, we know the corresponding page context
+        MDC.put("SESSION", (session == null ? "--------" : session.getShortId()));
+    }
 
 }

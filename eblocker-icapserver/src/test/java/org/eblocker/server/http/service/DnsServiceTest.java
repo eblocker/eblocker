@@ -154,10 +154,10 @@ public class DnsServiceTest {
         String firstServer = "first.example";
         String secondServer = "second.example";
         List<String> listNames = Arrays.asList("eblocker.org", "eblocker.org", "eblocker.org", "eblocker.org",
-                "eblocker.org");
+            "eblocker.org");
         NameServerStats firstResponse = new NameServerStats("a", 1, 2, 3, 4, 5L, 6L, 7L, 8L, null, null, null);
         NameServerStats secondResponse = new NameServerStats("aa", 11, 12, 13, 14, 15L, 16L, 17L, 18L, null, null,
-                null);
+            null);
         Mockito.when(dnsStatisticsService.testNameServer(firstServer, listNames)).thenReturn(firstResponse);
         Mockito.when(dnsStatisticsService.testNameServer(secondServer, listNames)).thenReturn(secondResponse);
 
@@ -180,7 +180,7 @@ public class DnsServiceTest {
         service.getResolverStats(resolver, hours, lengthValue);
 
         Mockito.verify(dnsStatisticsService).getResolverStatistics(Mockito.eq(resolver), Mockito.any(Instant.class),
-                Mockito.eq(Long.parseLong(lengthValue)), Mockito.eq(ChronoUnit.MINUTES));
+            Mockito.eq(Long.parseLong(lengthValue)), Mockito.eq(ChronoUnit.MINUTES));
     }
 
 }

@@ -27,8 +27,8 @@ public class Credentials {
 
     @JsonCreator
     public Credentials(
-            @JsonProperty("currentPassword") String currentPassword,
-            @JsonProperty("newPassword") String newPassword
+        @JsonProperty("currentPassword") String currentPassword,
+        @JsonProperty("newPassword") String newPassword
     ) {
         this.currentPassword = currentPassword;
         this.newPassword = newPassword;

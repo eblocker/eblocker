@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.common;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 
 public class ConfigurableModule extends AbstractModule {
     private static Logger log = LoggerFactory.getLogger(ConfigurableModule.class);
@@ -73,7 +72,7 @@ public class ConfigurableModule extends AbstractModule {
         return ClassLoader.getSystemResourceAsStream(configFile);
     }
 
-    private String loadCurrentProjectVersion(){
+    private String loadCurrentProjectVersion() {
         //Read the current project version from the MANIFEST.MF file (maven injects this information while building the jar file)
         String projectVersion = getClass().getPackage().getImplementationVersion();
         if (projectVersion == null) {
@@ -82,8 +81,9 @@ public class ConfigurableModule extends AbstractModule {
         return projectVersion;
     }
 
-    @Provides @Named("project.version")
-    public String getCurrentProjectVersion(){
+    @Provides
+    @Named("project.version")
+    public String getCurrentProjectVersion() {
         return projectVersion;
     }
 

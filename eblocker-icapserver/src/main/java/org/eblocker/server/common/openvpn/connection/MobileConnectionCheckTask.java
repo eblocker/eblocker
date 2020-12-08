@@ -16,10 +16,6 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.registration.MobileConnectionCheck;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.bootstrap.Bootstrap;
@@ -38,6 +34,10 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.FixedLengthFrameDecoder;
+import org.eblocker.registration.MobileConnectionCheck;
+import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.http.service.OpenVpnServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +194,7 @@ public class MobileConnectionCheckTask implements Runnable {
 
     private void issueRequests() {
         log.info("requesting {} connections", numberOfMessages);
-        for(int i = 0; i < numberOfMessagesProtocol; ++i) {
+        for (int i = 0; i < numberOfMessagesProtocol; ++i) {
             if (udpEnabled) {
                 MobileConnectionCheck udpTest = deviceRegistrationClient
                     .requestMobileConnectionCheck(MobileConnectionCheck.Protocol.UDP, mappedPort, secret);
@@ -232,7 +232,7 @@ public class MobileConnectionCheckTask implements Runnable {
             .filter(test -> test.getState() == MobileConnectionCheck.State.PENDING)
             .collect(Collectors.toList());
 
-        for(int i = 0; i < pollTries; ++i) {
+        for (int i = 0; i < pollTries; ++i) {
             log.info("fetching results for {} tests", pendingTests.size());
             List<MobileConnectionCheck> resolvedTests = pendingTests.parallelStream()
                 .map(test -> deviceRegistrationClient.getMobileConnectionCheck(test.getId()))

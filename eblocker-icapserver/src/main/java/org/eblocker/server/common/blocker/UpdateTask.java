@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.eblocker.server.common.blocker.parser.DomainParser;
 import org.eblocker.server.common.blocker.parser.EtcHostsParser;
 import org.eblocker.server.common.blocker.parser.SquidAclParser;
@@ -28,9 +31,6 @@ import org.eblocker.server.icap.filter.FilterDefinitionFormat;
 import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +199,7 @@ public class UpdateTask implements Runnable {
             mapToPatternFilterCategory(category),
             false,
             System.currentTimeMillis(),
-            new String[] { path.toString() },
+            new String[]{path.toString()},
             learningMode,
             definitionFormat,
             true,

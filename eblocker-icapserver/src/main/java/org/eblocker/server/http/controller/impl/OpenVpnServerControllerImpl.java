@@ -16,44 +16,40 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.io.File;
+import com.google.inject.Inject;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.common.data.openvpn.ExternalAddressType;
+import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
+import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
+import org.eblocker.server.common.openvpn.server.VpnServerStatus;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
+import org.eblocker.server.http.service.DynDnsService;
+import org.eblocker.server.http.service.OpenVpnServerService;
+import org.eblocker.server.http.utils.NormalizationUtils;
+import org.restexpress.Request;
+import org.restexpress.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.core.UriBuilder;
-
-import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.common.data.openvpn.ExternalAddressType;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
-import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
-import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.http.service.DynDnsService;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
-import org.eblocker.server.common.openvpn.server.VpnServerStatus;
-import org.eblocker.server.common.squid.SquidConfigController;
-import org.restexpress.Request;
-import org.restexpress.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.http.controller.OpenVpnServerController;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.server.http.utils.NormalizationUtils;
-import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
@@ -210,7 +206,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
                 // save consistent reset-state in redis: to avoid eBlocker mobile to be re-enabled
                 // when the ICAP server boots after the reset.
                 openVpnServerService.disableOpenVpnServer();
-            } catch(UpnpPortForwardingException e){
+            } catch (UpnpPortForwardingException e) {
                 log.error("Unable to reset port forwarding during eBlocker mobile reset", e);
             }
             // even if port forwarding has not been removed, we have already disabled the server,
@@ -306,10 +302,10 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
 
     private String generateDownloadFileName(Device device, OperatingSystemType osType) {
         return String.format("eBlockerMobile-%s-%s-%s.ovpn",
-                NormalizationUtils.normalizeStringForFilename(deviceRegistrationProperties.getDeviceName(), 12,
-                        "My_eBlocker"),
-                NormalizationUtils.normalizeStringForFilename(device.getName(), 12, device.getId()),
-                osType.getFriendyName());
+            NormalizationUtils.normalizeStringForFilename(deviceRegistrationProperties.getDeviceName(), 12,
+                "My_eBlocker"),
+            NormalizationUtils.normalizeStringForFilename(device.getName(), 12, device.getId()),
+            osType.getFriendyName());
     }
 
     @Override
@@ -331,8 +327,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         if (type != null) {
             try {
                 osType = OperatingSystemType.valueOf(type);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 log.warn("Unkown operating system.", e);
             }
         }

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.http.ssl.AppWhitelistModule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.http.ssl.AppWhitelistModule;
 
 import java.util.List;
 import java.util.Map;

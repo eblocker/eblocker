@@ -21,13 +21,13 @@ import org.eblocker.server.icap.filter.FilterResult;
 
 public class NotLearningFilter extends LearningFilter {
 
-	private final static String NOT_LEARNING_FILTER_DEF = "<<NOT-LEARNING-FILTER>>";
+    private final static String NOT_LEARNING_FILTER_DEF = "<<NOT-LEARNING-FILTER>>";
 
-	public NotLearningFilter() {
-		super(NOT_LEARNING_FILTER_DEF, false);
-	}
-	
-	protected FilterResult doLearn(FilterResult result, TransactionContext context) {
-		return result;
-	}
+    public NotLearningFilter() {
+        super(NOT_LEARNING_FILTER_DEF, false);
+    }
+
+    protected FilterResult doLearn(FilterResult result, TransactionContext context) {
+        return result;
+    }
 }

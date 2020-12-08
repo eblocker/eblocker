@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.openvpn.configuration;
 
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class OpenVpnConfigurator {
     private final Map<String, Option> defaultOptionsByName;
     private final Provider<OpenVpnConfigurationParser> parserProvider;
 
-    public enum OptionState { ACTIVE, BLACKLISTED, IGNORED, FILE_REQUIRED }
+    public enum OptionState {ACTIVE, BLACKLISTED, IGNORED, FILE_REQUIRED}
 
     @Inject
     public OpenVpnConfigurator(@Named("openvpn.configuration.options.blacklist") String optionsBlacklist,
@@ -87,9 +87,9 @@ public class OpenVpnConfigurator {
         userOptionsByState.put(OptionState.IGNORED, Collections.emptySet());
 
         userOptionsByState.putAll(userOptions.stream()
-            .flatMap( o -> {
+            .flatMap(o -> {
                 if (o instanceof OptionsGroup) {
-                    return Stream.concat(Stream.of(o), ((OptionsGroup)o).getOptions().stream());
+                    return Stream.concat(Stream.of(o), ((OptionsGroup) o).getOptions().stream());
                 }
                 return Stream.of(o);
             })
@@ -134,12 +134,12 @@ public class OpenVpnConfigurator {
                 && o instanceof SimpleOption
                 && ((SimpleOption) o).getArguments().length == 1
                 && ((SimpleOption) o).getArguments()[0].matches("tun.+"))) {
-            setOption(options, new SimpleOption(-1, "dev", new String[] { "tun" }));
+            setOption(options, new SimpleOption(-1, "dev", new String[]{"tun"}));
         }
 
         // override auth-user-pass option if present
         if (configuration.getUserOptions().stream().anyMatch(o -> AUTH_USER_PASS_OPTION_NAME.equals(o.getName()))) {
-            setOption(options, new SimpleOption(-1, AUTH_USER_PASS_OPTION_NAME, new String[]{ credentialFile }));
+            setOption(options, new SimpleOption(-1, AUTH_USER_PASS_OPTION_NAME, new String[]{credentialFile}));
         }
 
         return options;
@@ -169,6 +169,7 @@ public class OpenVpnConfigurator {
 
     /**
      * Checks if configuration fulfils minimal requirements for an openvpn configuration.
+     *
      * @param configuration Configuration to check.
      * @return A list containing message keys for invalid configurations. Will be empty if configuration seems ok.
      */
@@ -206,8 +207,8 @@ public class OpenVpnConfigurator {
         if (option == null) {
             return VPN_CONFIG_ERROR_OPTION_DEV_MISSING;
         } else if (!(option instanceof SimpleOption)
-                || ((SimpleOption)option).getArguments() == null
-                || !((SimpleOption)option).getArguments()[0].matches("tun.*")) {
+            || ((SimpleOption) option).getArguments() == null
+            || !((SimpleOption) option).getArguments()[0].matches("tun.*")) {
             return VPN_CONFIG_ERROR_OPTION_DEV_TUN_SUPPORTED;
         }
         return null;
@@ -239,7 +240,7 @@ public class OpenVpnConfigurator {
 
     private boolean findValidRemoteOption(List<Option> options) {
         Option option = findOptionByName(options, "remote").orElse(null);
-        return option instanceof SimpleOption && ((SimpleOption)option).getArguments() != null;
+        return option instanceof SimpleOption && ((SimpleOption) option).getArguments() != null;
     }
 
     private String validateInlineOptions(List<Option> options) {
@@ -257,12 +258,12 @@ public class OpenVpnConfigurator {
         String defaultConfig = ResourceHandler.load(new SimpleResource(defaultOpenVpnConfigFile));
         List<Option> options = parseConfig(defaultConfig);
         return options.stream().collect(Collectors.toMap(
-                Option::getName,
-                Function.identity(),
-                (u, v) -> {
-                    throw new IllegalStateException();
-                },
-                LinkedHashMap::new));
+            Option::getName,
+            Function.identity(),
+            (u, v) -> {
+                throw new IllegalStateException();
+            },
+            LinkedHashMap::new));
     }
 
     private Set<String> readInlineOptions(String inlineOptionsFile) {
@@ -287,8 +288,8 @@ public class OpenVpnConfigurator {
     private boolean isSpecialInlineOption(Option option) {
         return optionsInline.contains(option.getName())
             && option instanceof SimpleOption
-            && ((SimpleOption)option).getArguments() != null && ((SimpleOption)option).getArguments().length >= 1
-            && "[inline]".equals(((SimpleOption)option).getArguments()[0]);
+            && ((SimpleOption) option).getArguments() != null && ((SimpleOption) option).getArguments().length >= 1
+            && "[inline]".equals(((SimpleOption) option).getArguments()[0]);
     }
 
     private boolean isWhiteListed(Option option) {
@@ -309,8 +310,8 @@ public class OpenVpnConfigurator {
         }
         SimpleOption simpleOption = (SimpleOption) option;
         return AUTH_USER_PASS_OPTION_NAME.equals(simpleOption.getName())
-                && simpleOption.getArguments() != null
-                && ((SimpleOption)option).getArguments().length == 1;
+            && simpleOption.getArguments() != null
+            && ((SimpleOption) option).getArguments().length == 1;
     }
 
     private boolean isAuthOptionWithoutFileReference(Option option) {
@@ -319,7 +320,7 @@ public class OpenVpnConfigurator {
         }
         SimpleOption simpleOption = (SimpleOption) option;
         return AUTH_USER_PASS_OPTION_NAME.equals(option.getName())
-                && (simpleOption.getArguments() == null || simpleOption.getArguments().length == 0);
+            && (simpleOption.getArguments() == null || simpleOption.getArguments().length == 0);
     }
 
     private void setOption(List<Option> options, Option option) {
@@ -338,7 +339,7 @@ public class OpenVpnConfigurator {
     }
 
     private Integer findOptionIndexByName(List<Option> options, String name) {
-        for(int i = 0; i < options.size(); ++i) {
+        for (int i = 0; i < options.size(); ++i) {
             if (options.get(i).getName().equals(name)) {
                 return i;
             }

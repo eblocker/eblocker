@@ -18,17 +18,17 @@ package org.eblocker.server.common.network;
 
 public class ArpMessageParsingException extends Exception {
 
-	public ArpMessageParsingException(String message) {
-		super(message);
-	}
+    public ArpMessageParsingException(String message) {
+        super(message);
+    }
 
-	public ArpMessageParsingException(String message, Exception cause) {
-		super(message, cause);
-	}
+    public ArpMessageParsingException(String message, Exception cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7275507562094620304L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7275507562094620304L;
 
 }

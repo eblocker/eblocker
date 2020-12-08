@@ -16,9 +16,6 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.http.server.SSLContextHandler;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -33,11 +30,13 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.http.server.SSLContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-
 import java.security.cert.X509Certificate;
 
 @Singleton

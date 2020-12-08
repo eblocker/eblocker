@@ -36,7 +36,7 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
 
     public String getName() {
         StringBuilder sb = new StringBuilder("(or");
-        for(DomainFilter filter : filters) {
+        for (DomainFilter filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }

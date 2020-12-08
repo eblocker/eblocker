@@ -33,10 +33,10 @@ public class PasswordResetToken {
 
     @JsonCreator
     public PasswordResetToken(
-            @JsonProperty("resetToken") String resetToken,
-            @JsonProperty("validTill") Date validTill,
-            @JsonProperty("shutdownGracePeriod") Long shutdownGracePeriod,
-            @JsonProperty("autoUpdateActive") Boolean autoUpdateActive) {
+        @JsonProperty("resetToken") String resetToken,
+        @JsonProperty("validTill") Date validTill,
+        @JsonProperty("shutdownGracePeriod") Long shutdownGracePeriod,
+        @JsonProperty("autoUpdateActive") Boolean autoUpdateActive) {
         this.resetToken = resetToken;
         this.validTill = validTill;
         this.shutdownGracePeriod = shutdownGracePeriod == null ? 300L : shutdownGracePeriod;

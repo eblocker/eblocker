@@ -22,10 +22,10 @@ import java.util.Map;
 
 public class TemplateExpander {
 
-	public static String expand(String resource, Map<String,String> context) {
-	    StringReplacer replacer = new StringReplacer();
-	    context.forEach(replacer::add);
-	    return replacer.replace(resource);
-	}
+    public static String expand(String resource, Map<String, String> context) {
+        StringReplacer replacer = new StringReplacer();
+        context.forEach(replacer::add);
+        return replacer.replace(resource);
+    }
 
 }

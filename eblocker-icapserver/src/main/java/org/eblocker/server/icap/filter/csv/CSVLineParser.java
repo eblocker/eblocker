@@ -16,84 +16,82 @@
  */
 package org.eblocker.server.icap.filter.csv;
 
-import java.util.Arrays;
-
 import org.eblocker.server.icap.filter.Filter;
+import org.eblocker.server.icap.filter.FilterLineParser;
+import org.eblocker.server.icap.filter.FilterPriority;
+import org.eblocker.server.icap.filter.FilterType;
 import org.eblocker.server.icap.filter.url.StringMatchType;
 import org.eblocker.server.icap.filter.url.UrlFilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.icap.filter.FilterLineParser;
-import org.eblocker.server.icap.filter.FilterPriority;
-import org.eblocker.server.icap.filter.FilterType;
+import java.util.Arrays;
 
 public class CSVLineParser implements FilterLineParser {
-	private static final Logger log = LoggerFactory.getLogger(CSVLineParser.class);
-	
-	private static final String EMPTY = "-";
-	
-	@Override
-	public Filter parseLine(String line) {
-		if (line == null || line.isEmpty() || line.startsWith("#")) {
-			return null;
-		}
-		
-		// 0    1        2      3               4                 5                       6                       7
-		// TYPE PRIORITY DOMAIN REGEX/MATCHTYPE PATTERN/SUBSTRING REFERRERDOMAINWHITELIST REFERRERDOMAINBLACKLIST REDIRECTPARAM
-		String[] fields = line.split("\\t");
-		if (fields.length < 8) {
-			log.warn("Invalid CSV filter definition: not enough fields [{}]", line);
-			return null;
-		}
-		
-		FilterType type = FilterType.fromName(fields[0]);
-		if (type == null) {
-			log.warn("Invalid CSV filter definition: no or invalid type {} [{}]", fields[0], line);
-			return null;
-		}
-		
-		FilterPriority priority = FilterPriority.fromName(fields[1]);
-		if (priority == null) {
-			log.warn("Invalid CSV filter definition: no or invalid priority {} [{}]", fields[1], line);
-			return null;
-		}
-		
-		String domain = (isEmpty(fields[2]) ? null : fields[2]);
-		
-		UrlFilterFactory filterFactory = UrlFilterFactory.getInstance()
-				.setDefinition(line)
-				.setType(type)
-				.setPriority(priority)
-				.setDomain(domain)
-				;
-		
-		StringMatchType matchType = StringMatchType.fromName(fields[3]);
-		if (matchType == null) {
-			log.warn("Invalid CSV filter definition: no or invalid substring matchtype {} [{}]", fields[3], line);
-			return null;
-		}
-		filterFactory.setStringMatchType(matchType)
-			.setMatchString(fields[4]);
-			
-		if (!isEmpty(fields[5])) {
-			filterFactory.setReferrerDomainWhiteList(Arrays.asList(fields[5].split("\\|")));
-		}
-		
-		if (!isEmpty(fields[6])) {
-			filterFactory.setReferrerDomainBlackList(Arrays.asList(fields[6].split("\\|")));
-		}
+    private static final Logger log = LoggerFactory.getLogger(CSVLineParser.class);
 
-		if (!isEmpty(fields[7])) {
-			filterFactory.setRedirectParam(fields[7]);
-		}
+    private static final String EMPTY = "-";
 
-		return filterFactory.build();
-		
-	}
-	
-	private boolean isEmpty(String field) {
-		return (field == null || field.isEmpty() || EMPTY.equals(field));
-	}
+    @Override
+    public Filter parseLine(String line) {
+        if (line == null || line.isEmpty() || line.startsWith("#")) {
+            return null;
+        }
+
+        // 0    1        2      3               4                 5                       6                       7
+        // TYPE PRIORITY DOMAIN REGEX/MATCHTYPE PATTERN/SUBSTRING REFERRERDOMAINWHITELIST REFERRERDOMAINBLACKLIST REDIRECTPARAM
+        String[] fields = line.split("\\t");
+        if (fields.length < 8) {
+            log.warn("Invalid CSV filter definition: not enough fields [{}]", line);
+            return null;
+        }
+
+        FilterType type = FilterType.fromName(fields[0]);
+        if (type == null) {
+            log.warn("Invalid CSV filter definition: no or invalid type {} [{}]", fields[0], line);
+            return null;
+        }
+
+        FilterPriority priority = FilterPriority.fromName(fields[1]);
+        if (priority == null) {
+            log.warn("Invalid CSV filter definition: no or invalid priority {} [{}]", fields[1], line);
+            return null;
+        }
+
+        String domain = (isEmpty(fields[2]) ? null : fields[2]);
+
+        UrlFilterFactory filterFactory = UrlFilterFactory.getInstance()
+            .setDefinition(line)
+            .setType(type)
+            .setPriority(priority)
+            .setDomain(domain);
+
+        StringMatchType matchType = StringMatchType.fromName(fields[3]);
+        if (matchType == null) {
+            log.warn("Invalid CSV filter definition: no or invalid substring matchtype {} [{}]", fields[3], line);
+            return null;
+        }
+        filterFactory.setStringMatchType(matchType)
+            .setMatchString(fields[4]);
+
+        if (!isEmpty(fields[5])) {
+            filterFactory.setReferrerDomainWhiteList(Arrays.asList(fields[5].split("\\|")));
+        }
+
+        if (!isEmpty(fields[6])) {
+            filterFactory.setReferrerDomainBlackList(Arrays.asList(fields[6].split("\\|")));
+        }
+
+        if (!isEmpty(fields[7])) {
+            filterFactory.setRedirectParam(fields[7]);
+        }
+
+        return filterFactory.build();
+
+    }
+
+    private boolean isEmpty(String field) {
+        return (field == null || field.isEmpty() || EMPTY.equals(field));
+    }
 
 }

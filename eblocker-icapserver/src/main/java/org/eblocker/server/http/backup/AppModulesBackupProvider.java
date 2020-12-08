@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

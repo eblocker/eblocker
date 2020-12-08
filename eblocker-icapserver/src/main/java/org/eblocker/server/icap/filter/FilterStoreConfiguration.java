@@ -111,16 +111,16 @@ public class FilterStoreConfiguration {
         if (o == null || getClass() != o.getClass()) return false;
         FilterStoreConfiguration that = (FilterStoreConfiguration) o;
         return builtin == that.builtin &&
-                version == that.version &&
-                learnForAllDomains == that.learnForAllDomains &&
-                enabled == that.enabled &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                category == that.category &&
-                Arrays.equals(resources, that.resources) &&
-                learningMode == that.learningMode &&
-                format == that.format &&
-                Arrays.equals(ruleFilters, that.ruleFilters);
+            version == that.version &&
+            learnForAllDomains == that.learnForAllDomains &&
+            enabled == that.enabled &&
+            Objects.equals(id, that.id) &&
+            Objects.equals(name, that.name) &&
+            category == that.category &&
+            Arrays.equals(resources, that.resources) &&
+            learningMode == that.learningMode &&
+            format == that.format &&
+            Arrays.equals(ruleFilters, that.ruleFilters);
     }
 
     @Override

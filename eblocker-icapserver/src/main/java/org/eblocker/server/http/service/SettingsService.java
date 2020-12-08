@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Language;
 import org.eblocker.server.common.data.LocaleSettings;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.time.ZoneId;
 import java.util.Locale;
@@ -90,11 +90,11 @@ public class SettingsService {
     public LocaleSettings getLocaleSettings() {
         Locale locale = getLocale();
         return new LocaleSettings(
-                locale.getDisplayName(),
-                locale.getCountry(),
-                locale.getLanguage(),
-                getTimeZone().getId(),
-                getClock24()
+            locale.getDisplayName(),
+            locale.getCountry(),
+            locale.getLanguage(),
+            getTimeZone().getId(),
+            getClock24()
         );
     }
 

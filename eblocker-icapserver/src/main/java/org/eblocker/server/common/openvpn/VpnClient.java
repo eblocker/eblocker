@@ -27,15 +27,25 @@ import java.util.Set;
 
 public interface VpnClient extends Closeable {
     VpnProfile getProfile();
+
     Set<String> getDeviceIds();
+
     void addDevices(Collection<Device> devices);
+
     void stopDevices(Collection<Device> devices);
+
     void start();
+
     void stop();
+
     boolean isUp();
+
     boolean isStopped();
+
     boolean isClosed();
+
     Integer getExitStatus();
+
     List<String> getLog();
 
 

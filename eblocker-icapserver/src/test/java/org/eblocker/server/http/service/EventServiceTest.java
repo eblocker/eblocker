@@ -16,11 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.List;
-
+import org.eblocker.server.common.data.events.Event;
+import org.eblocker.server.common.data.events.EventDataSource;
+import org.eblocker.server.common.data.events.Events;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,16 +26,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import org.eblocker.server.common.data.events.Event;
-import org.eblocker.server.common.data.events.EventDataSource;
-import org.eblocker.server.common.data.events.Events;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class EventServiceTest {
     private EventService service;
 
     @Mock
     private EventDataSource dataSource;
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -51,13 +50,16 @@ public class EventServiceTest {
     @Test
     public void getEventsSince() throws InterruptedException {
         // create some events, a few milliseconds apart:
-        Event e1 = Events.networkInterfaceDown();    Thread.sleep(3);
-        Event e2 = Events.networkInterfaceUp();      Thread.sleep(3);
-        Event e3 = Events.powerFailure();            Thread.sleep(3);
+        Event e1 = Events.networkInterfaceDown();
+        Thread.sleep(3);
+        Event e2 = Events.networkInterfaceUp();
+        Thread.sleep(3);
+        Event e3 = Events.powerFailure();
+        Thread.sleep(3);
         Event e4 = Events.networkInterfaceDown();
-        
+
         Mockito.when(dataSource.getEvents()).thenReturn(Arrays.asList(e4, e3, e2, e1));
-        
+
         List<Event> events = service.getEventsSince(e2);
         assertEquals(2, events.size());
         assertEquals(e4, events.get(0));

@@ -24,7 +24,7 @@ public enum CompressionMode {
     }
 
     public static CompressionMode failSafeValueOf(String mode) {
-        for (CompressionMode compressionMode: CompressionMode.values()) {
+        for (CompressionMode compressionMode : CompressionMode.values()) {
             if (compressionMode.name().equals(mode)) {
                 return compressionMode;
             }

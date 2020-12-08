@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.common.data.events;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Logs events. This class should be threadsafe.
- * 
+ * <p>
  * Events are appended to a queue and saved to Redis in a
  * background thread. This de-couples adding events from
  * I/O operations.
@@ -42,7 +41,7 @@ public class DataSourceEventLogger implements EventLogger {
     public DataSourceEventLogger(EventDataSource dataSource, @Named("unlimitedCachePoolExecutor") Executor executor) {
         queue = new LinkedBlockingQueue<>();
         executor.execute(() -> {
-            for (;;) {
+            for (; ; ) {
                 try {
                     Event event = queue.take(); // blocks until the next event becomes available
                     dataSource.addEvent(event);
@@ -54,11 +53,11 @@ public class DataSourceEventLogger implements EventLogger {
             }
         });
     }
-    
+
     @Override
     public void log(Event event) {
         boolean appended = queue.offer(event);
-        if (! appended) {
+        if (!appended) {
             log.error("Could not append event to event log");
         }
     }

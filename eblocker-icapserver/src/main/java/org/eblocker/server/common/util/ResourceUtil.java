@@ -16,43 +16,43 @@
  */
 package org.eblocker.server.common.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceUtil {
-	private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Map.Entry;
 
-	public static String loadResource(String name) {
-		try {
-			ClassLoader classLLoader = ClassLoader.getSystemClassLoader();
-			InputStream in = classLLoader.getResourceAsStream(name);
-			if (in == null) {
-				String msg = "Cannot load resource "+name;
-				log.error(msg);
-				throw new EblockerException(msg);
-			}
-			return IOUtils.toString(in);
-		} catch (IOException e) {
-			String msg = "Cannot open resource file "+name+": "+e.getMessage();
-			log.error(msg);
-			throw new EblockerException(msg, e);
-		}
-	}
-	
-	public static String loadResource(String name, Map<String,String> context) {
-		String resource = loadResource(name);
-		for (Entry<String,String> entry: context.entrySet()) {
-			//TODO: Cache regex pattern for re-use
-			resource = resource.replaceAll(entry.getKey(), entry.getValue());
-		}
-		return resource;
-	}
+public class ResourceUtil {
+    private static final Logger log = LoggerFactory.getLogger(ResourceUtil.class);
+
+    public static String loadResource(String name) {
+        try {
+            ClassLoader classLLoader = ClassLoader.getSystemClassLoader();
+            InputStream in = classLLoader.getResourceAsStream(name);
+            if (in == null) {
+                String msg = "Cannot load resource " + name;
+                log.error(msg);
+                throw new EblockerException(msg);
+            }
+            return IOUtils.toString(in);
+        } catch (IOException e) {
+            String msg = "Cannot open resource file " + name + ": " + e.getMessage();
+            log.error(msg);
+            throw new EblockerException(msg, e);
+        }
+    }
+
+    public static String loadResource(String name, Map<String, String> context) {
+        String resource = loadResource(name);
+        for (Entry<String, String> entry : context.entrySet()) {
+            //TODO: Cache regex pattern for re-use
+            resource = resource.replaceAll(entry.getKey(), entry.getValue());
+        }
+        return resource;
+    }
 
 }

@@ -19,44 +19,44 @@ package org.eblocker.server.common.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetupPageNetworkInfo {
-	private boolean automatic; // if true, ARP spoofing is performed
-	private String ipAddress; // static IP address of eBlocker
-	private String gateway; // IP address of gateway
-	private String userIpAddress;
+    private boolean automatic; // if true, ARP spoofing is performed
+    private String ipAddress; // static IP address of eBlocker
+    private String gateway; // IP address of gateway
+    private String userIpAddress;
 
-	@JsonProperty
-	public boolean isAutomatic() {
-		return automatic;
-	}
+    @JsonProperty
+    public boolean isAutomatic() {
+        return automatic;
+    }
 
-	public void setAutomatic(boolean automatic) {
-		this.automatic = automatic;
-	}
+    public void setAutomatic(boolean automatic) {
+        this.automatic = automatic;
+    }
 
-	@JsonProperty
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    @JsonProperty
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	@JsonProperty
-	public String getGateway() {
-		return gateway;
-	}
+    @JsonProperty
+    public String getGateway() {
+        return gateway;
+    }
 
-	public void setGateway(String gateway) {
-		this.gateway = gateway;
-	}
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
+    }
 
-	@JsonProperty
-	public String getUserIpAddress() {
-	    return userIpAddress;
-	}
+    @JsonProperty
+    public String getUserIpAddress() {
+        return userIpAddress;
+    }
 
-	public void setUserIpAddress(String userIpAddress) {
-	    this.userIpAddress = userIpAddress;
-	}
+    public void setUserIpAddress(String userIpAddress) {
+        this.userIpAddress = userIpAddress;
+    }
 }

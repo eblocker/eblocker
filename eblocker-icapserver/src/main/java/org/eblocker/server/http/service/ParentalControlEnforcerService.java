@@ -27,8 +27,8 @@ public class ParentalControlEnforcerService {
 
     @Inject
     public ParentalControlEnforcerService(
-            ParentalControlAccessRestrictionsService restrictions,
-            NetworkStateMachine networkStateMachine) {
+        ParentalControlAccessRestrictionsService restrictions,
+        NetworkStateMachine networkStateMachine) {
         restrictions.addListener(blockedDevices -> networkStateMachine.deviceStateChanged());
     }
 }

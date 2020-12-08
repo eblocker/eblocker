@@ -24,8 +24,12 @@ import java.util.List;
 
 public interface BlockerController {
     List<Blocker> getBlockers(Request request, Response response);
+
     Blocker getBlockerById(Request request, Response response);
+
     Blocker createBlocker(Request request, Response response);
+
     Blocker updateBlocker(Request request, Response response);
+
     void removeBlocker(Request request, Response response);
 }

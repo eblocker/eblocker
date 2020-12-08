@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.service.DashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion32 implements SchemaMigration {
     private static final Logger log = LoggerFactory.getLogger(SchemaMigrationVersion32.class);
@@ -63,7 +62,7 @@ public class SchemaMigrationVersion32 implements SchemaMigration {
         for (UserModuleOld user : users) {
             // Get the eBlocker Mobile-card
             Optional<DashboardCard> eblMobileCard = user.getDashboardCards().stream()
-                    .filter(c -> c.getId() == eblMobileCardId).findFirst();
+                .filter(c -> c.getId() == eblMobileCardId).findFirst();
             if (!eblMobileCard.isPresent()) {
                 // error - the user should have such a card
                 // But the DashbordService will make sure that she gets one!
@@ -74,12 +73,12 @@ public class SchemaMigrationVersion32 implements SchemaMigration {
 
                     // New card with required feature updated
                     DashboardCard newCard = new DashboardCard(card.getId(), ProductFeature.BAS.name(), card.getTranslateSuffix(),
-                            card.getHtml(), card.isVisible(), card.isAlwaysVisible(), card.getDefaultPos(),
-                            card.getCustomPos());
+                        card.getHtml(), card.isVisible(), card.isAlwaysVisible(), card.getDefaultPos(),
+                        card.getCustomPos());
 
                     // Keep every card but replace the eBlocker Mobile Card
                     user.setDashboardCards(user.getDashboardCards().stream()
-                            .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
+                        .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
                     userMigrationService.save(user, user.getId());
                 }
             }

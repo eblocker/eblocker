@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.DataSource;
 
 @Singleton
 public class SplashService {

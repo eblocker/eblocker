@@ -16,6 +16,16 @@
  */
 package org.eblocker.server.icap.filter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.CryptoService;
+import org.eblocker.crypto.CryptoServiceFactory;
+import org.eblocker.crypto.json.JSONCryptoHandler;
+import org.eblocker.crypto.keys.KeyWrapper;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
@@ -30,16 +40,6 @@ import org.eblocker.server.icap.filter.url.UrlLineParser;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.CryptoService;
-import org.eblocker.crypto.CryptoServiceFactory;
-import org.eblocker.crypto.json.JSONCryptoHandler;
-import org.eblocker.crypto.keys.KeyWrapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class FilterManager {
         this.systemKey = systemKey;
         this.tmpDir = Paths.get(tmpDir);
     }
-    
+
     @SubSystemInit
     public void init() {
         configurations = dataSource.getAll(FilterStoreConfiguration.class);
@@ -161,7 +161,7 @@ public class FilterManager {
 
     /**
      * Updates a filter configuration.
-     *
+     * <p>
      * !! ONLY SUPPORTS ENABLE/DISABLE CURRENTLY !!
      */
     public synchronized FilterStoreConfiguration updateFilter(FilterStoreConfiguration configuration) {
@@ -214,7 +214,7 @@ public class FilterManager {
     }
 
     private int indexOfConfiguration(int id) {
-        for(int i = 0; i < configurations.size(); ++i) {
+        for (int i = 0; i < configurations.size(); ++i) {
             if (configurations.get(i).getId() == id) {
                 return i;
             }
@@ -236,7 +236,7 @@ public class FilterManager {
                 filtersByCategory.computeIfAbsent(configuration.getCategory(), k -> new ArrayList<>()).add(filterStore.getFilter());
             }
         }
-        for(Map.Entry<Category, List<Filter>> e : filtersByCategory.entrySet()) {
+        for (Map.Entry<Category, List<Filter>> e : filtersByCategory.entrySet()) {
             if (e.getValue().size() > 1) {
                 cache.filterByCategory.put(e.getKey(), new FilterList(e.getValue()));
             } else {
@@ -265,7 +265,7 @@ public class FilterManager {
             try {
                 save(filterStore, configuration);
             } catch (Exception e) {
-                log.error( "Cannot save current filter configuration: {} ({})", configuration.getId(), configuration.getName(), e);
+                log.error("Cannot save current filter configuration: {} ({})", configuration.getId(), configuration.getName(), e);
             }
         }
     }
@@ -273,7 +273,7 @@ public class FilterManager {
     private void checkAndApplyDefaultConfigurationUpdates() {
         Map<Integer, FilterStoreConfiguration> defaultConfigurationsById = loadDefaultConfigurations();
 
-        for(ListIterator<FilterStoreConfiguration> i = configurations.listIterator(); i.hasNext(); ) {
+        for (ListIterator<FilterStoreConfiguration> i = configurations.listIterator(); i.hasNext(); ) {
             FilterStoreConfiguration configuration = i.next();
             if (configuration.isBuiltin()) {
                 int id = configuration.getId();
@@ -292,7 +292,7 @@ public class FilterManager {
             }
         }
 
-        for(FilterStoreConfiguration configuration : defaultConfigurationsById.values()) {
+        for (FilterStoreConfiguration configuration : defaultConfigurationsById.values()) {
             log.debug("inserting new default configuration id: {} key: {} name: {}", configuration.getId(), configuration.getId(), configuration.getName());
             dataSource.save(configuration, configuration.getId());
             configurations.add(configuration);
@@ -307,9 +307,10 @@ public class FilterManager {
         }
     }
 
-    private Map<Integer, FilterStoreConfiguration> loadDefaultConfigurations()  {
+    private Map<Integer, FilterStoreConfiguration> loadDefaultConfigurations() {
         try (InputStream in = ResourceHandler.getInputStream(new SimpleResource(defaultFilterStoreConfigurations))) {
-            List<FilterStoreConfiguration> configurations = objectMapper.readValue(in, new TypeReference<List<FilterStoreConfiguration>>() {});
+            List<FilterStoreConfiguration> configurations = objectMapper.readValue(in, new TypeReference<List<FilterStoreConfiguration>>() {
+            });
             return configurations.stream().collect(Collectors.toMap(FilterStoreConfiguration::getId, Function.identity()));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -321,7 +322,7 @@ public class FilterManager {
         return filterStore != null ? filterStore : createFilterStore(configuration);
     }
 
-	private FilterStore load(FilterStoreConfiguration configuration) {
+    private FilterStore load(FilterStoreConfiguration configuration) {
         Path path = getPath(configuration);
         if (!path.toFile().exists()) {
             return null;
@@ -355,7 +356,7 @@ public class FilterManager {
 
     private FilterStore createFilterStore(FilterStoreConfiguration configuration) {
         FilterDomainContainer container;
-        switch(configuration.getLearningMode()) {
+        switch (configuration.getLearningMode()) {
             case ASYNCHRONOUS:
                 container = new AsynchronousLearningFilter(configuration.isLearnForAllDomains());
                 break;
@@ -405,14 +406,14 @@ public class FilterManager {
         Map<Boolean, List<EblockerResource>> resourceExists = Stream.of(resources)
             .map(SimpleResource::new)
             .collect(Collectors.partitioningBy(ResourceHandler::exists));
-        resourceExists.get(false).forEach(resource -> log.error("missing filter resource: {}", resource) );
+        resourceExists.get(false).forEach(resource -> log.error("missing filter resource: {}", resource));
         return resourceExists.get(true);
     }
 
     private List<Filter> filterRules(List<Filter> filters, String[] ruleFilters) {
         Predicate<Filter> cspPredicate = fad -> fad instanceof UrlFilter && ((UrlFilter) fad).getContentSecurityPolicies() != null;
         List<Predicate<Filter>> predicates = new ArrayList<>();
-        for(String rule : ruleFilters) {
+        for (String rule : ruleFilters) {
             if ("csp".equals(rule)) {
                 predicates.add(cspPredicate);
             } else if ("!csp".equals(rule)) {
@@ -446,7 +447,7 @@ public class FilterManager {
 
     private List<Filter> parseFilterDefinitions(FilterParser parser, List<EblockerResource> resources) throws IOException {
         List<Filter> filters = new ArrayList<>();
-        for(EblockerResource resource : resources) {
+        for (EblockerResource resource : resources) {
             filters.addAll(parser.parse(ResourceHandler.getInputStream(resource)));
         }
         return filters;
@@ -475,7 +476,7 @@ public class FilterManager {
             }
             configurations.stream()
                 .filter(configuration -> FilterLearningMode.ASYNCHRONOUS == configuration.getLearningMode())
-                .map(configuration -> ((Runnable)cache.storeById.get(configuration.getId()).getFilter()))
+                .map(configuration -> ((Runnable) cache.storeById.get(configuration.getId()).getFilter()))
                 .forEach(Runnable::run);
         };
     }

@@ -19,21 +19,22 @@ package org.eblocker.server.icap.transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-/** This class collects Strings which shall be injected into HTTP Responses before the last body tag
+/**
+ * This class collects Strings which shall be injected into HTTP Responses before the last body tag
  */
 public class Injections {
 
     private List<String> injections = new ArrayList<String>();
 
-    public Injections(){
+    public Injections() {
 
     }
 
-    public void inject(String injection){
+    public void inject(String injection) {
         injections.add(injection);
     }
 
-    public List<String> getInjections(){
+    public List<String> getInjections() {
         return injections;
     }
 }

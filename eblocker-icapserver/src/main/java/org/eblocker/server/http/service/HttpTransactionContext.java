@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import io.netty.handler.codec.http.HttpRequest;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.common.util.UrlUtils;
-import io.netty.handler.codec.http.HttpRequest;
 
 public class HttpTransactionContext implements TransactionContext {
 

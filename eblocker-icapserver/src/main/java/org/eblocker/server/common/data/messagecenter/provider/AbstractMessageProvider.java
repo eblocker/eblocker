@@ -49,37 +49,37 @@ public abstract class AbstractMessageProvider implements MessageProvider {
 
     protected MessageContainer createMessage(int id, String title, String content, String label, String url) {
         return new MessageContainer(
-                new MessageCenterMessage(
-                        id,
-                        title,
-                        content,
-                        label,
-                        url,
-                        Collections.emptyMap(),
-                        Collections.emptyMap(),
-                        Collections.emptyMap(),
-                        new Date(),
-                        true,
-                        MessageSeverity.INFO
-                )
+            new MessageCenterMessage(
+                id,
+                title,
+                content,
+                label,
+                url,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                new Date(),
+                true,
+                MessageSeverity.INFO
+            )
         );
     }
 
     protected MessageContainer createMessage(int id, String title, String content, String label, String url, Map<String, String> context, boolean showDoNotShowAgain, MessageSeverity messageSeverity) {
         return new MessageContainer(
-                new MessageCenterMessage(
-                        id,
-                        title,
-                        content,
-                        label,
-                        url,
-                        Collections.emptyMap(),
-                        Collections.emptyMap(),
-                        context,
-                        new Date(),
-                        showDoNotShowAgain,
-                        messageSeverity
-                )
+            new MessageCenterMessage(
+                id,
+                title,
+                content,
+                label,
+                url,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                context,
+                new Date(),
+                showDoNotShowAgain,
+                messageSeverity
+            )
         );
     }
 

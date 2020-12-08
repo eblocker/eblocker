@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Funnels;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

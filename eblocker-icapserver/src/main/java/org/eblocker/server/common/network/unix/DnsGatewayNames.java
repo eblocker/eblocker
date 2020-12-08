@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -23,10 +27,6 @@ import org.eblocker.server.common.data.dns.DnsQuery;
 import org.eblocker.server.common.data.dns.DnsRecordType;
 import org.eblocker.server.common.data.dns.DnsResponse;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +120,7 @@ public class DnsGatewayNames {
 
         Map<String, LocalDnsRecord> localDnsRecordsByName = dnsServer.getLocalDnsRecords().stream()
             .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
-        for(int i = 0; i < gatewayNames.size(); ++i) {
+        for (int i = 0; i < gatewayNames.size(); ++i) {
             updateLocalRecords(localDnsRecordsByName, gatewayNames.get(i), responses.subList(i * 2, (i + 1) * 2));
         }
         dnsServer.setLocalDnsRecords(new ArrayList<>(localDnsRecordsByName.values()));
@@ -129,7 +129,7 @@ public class DnsGatewayNames {
     private void updateLocalRecords(Map<String, LocalDnsRecord> localDnsRecordsByName, String name, List<DnsResponse> responses) {
         Ip4Address ip4 = null;
         Ip6Address ip6 = null;
-        for(DnsResponse response : responses) {
+        for (DnsResponse response : responses) {
             if (response.getStatus() == 0 && response.getIpAddress() != null) {
                 if (response.getRecordType() == DnsRecordType.A) {
                     ip4 = (Ip4Address) response.getIpAddress();

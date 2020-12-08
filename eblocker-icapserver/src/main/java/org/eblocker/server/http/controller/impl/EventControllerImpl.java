@@ -16,31 +16,31 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.events.Event;
+import org.eblocker.server.http.controller.EventController;
+import org.eblocker.server.http.service.EventService;
+import org.restexpress.Request;
+import org.restexpress.Response;
+import org.restexpress.exception.BadRequestException;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.eblocker.server.common.data.events.Event;
-import org.restexpress.Request;
-import org.restexpress.Response;
-import org.restexpress.exception.BadRequestException;
-
-import org.eblocker.server.http.controller.EventController;
-import org.eblocker.server.http.service.EventService;
-import com.google.inject.Inject;
-
 /**
  * Allows loading of events for display
  */
 public class EventControllerImpl implements EventController {
-    
+
     private static final long DAYS_IN_WEEK = 7;
     private final EventService service;
 
     public enum EventDeletionMode {
         ALL, WEEK, UNKNOWN;
+
         public static EventDeletionMode getMode(String modeString) {
             for (EventDeletionMode mode : EventDeletionMode.values()) {
                 if (mode.toString().equals(modeString)) {
@@ -50,7 +50,7 @@ public class EventControllerImpl implements EventController {
             return UNKNOWN;
         }
     }
-    
+
     @Inject
     public EventControllerImpl(EventService service) {
         this.service = service;
@@ -63,7 +63,7 @@ public class EventControllerImpl implements EventController {
     public List<Event> getEvents(Request request, Response response) {
         return service.getEvents();
     }
-    
+
     /**
      * Deleted events according to a condition
      */
@@ -72,15 +72,15 @@ public class EventControllerImpl implements EventController {
         Predicate<Event> deletionPredicate;
         EventDeletionMode mode = EventDeletionMode.getMode(request.getHeader("mode"));
         switch (mode) {
-        case ALL:
-            service.deleteAllEvents();
-            return;
-        case WEEK:
-            Instant now = new Date().toInstant();
-            deletionPredicate = event -> Duration.between(event.getTimestamp(), now).toDays() > DAYS_IN_WEEK;
-            break;
-        default:
-            throw new BadRequestException("unsupported mode " + request.getHeader("mode"));
+            case ALL:
+                service.deleteAllEvents();
+                return;
+            case WEEK:
+                Instant now = new Date().toInstant();
+                deletionPredicate = event -> Duration.between(event.getTimestamp(), now).toDays() > DAYS_IN_WEEK;
+                break;
+            default:
+                throw new BadRequestException("unsupported mode " + request.getHeader("mode"));
         }
         service.delete(deletionPredicate);
     }

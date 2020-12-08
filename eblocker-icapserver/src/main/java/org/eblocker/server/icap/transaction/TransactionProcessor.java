@@ -18,13 +18,13 @@ package org.eblocker.server.icap.transaction;
 
 public interface TransactionProcessor {
 
-	/**
-	 * Returns false, if processing should be interrupted here.
-	 *
-	 * All other results have to be stored in the transaction object.
-	 *
-	 * @param transaction
-	 * @return
-	 */
-	boolean process(Transaction transaction);
+    /**
+     * Returns false, if processing should be interrupted here.
+     * <p>
+     * All other results have to be stored in the transaction object.
+     *
+     * @param transaction
+     * @return
+     */
+    boolean process(Transaction transaction);
 }

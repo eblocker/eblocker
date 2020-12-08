@@ -18,9 +18,9 @@ package org.eblocker.server.icap.filter;
 
 public enum FilterLearningMode {
 
-	NONE,
-	SYNCHRONOUS,
-	ASYNCHRONOUS,
-	;
+    NONE,
+    SYNCHRONOUS,
+    ASYNCHRONOUS,
+    ;
 
 }

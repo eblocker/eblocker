@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.registration.ProductInfo;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.registration.ProductInfo;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class ProductInfoService {
     }
 
     @SubSystemInit
-    public void init(){
+    public void init() {
         productInfo = dataSource.get(ProductInfo.class, KEY);
     }
 
@@ -66,7 +66,7 @@ public class ProductInfoService {
         if (productInfo == null || productInfo.getProductFeatures() == null) {
             return false;
         }
-        for (String productFeature: productInfo.getProductFeatures()) {
+        for (String productFeature : productInfo.getProductFeatures()) {
             if (productFeature.equalsIgnoreCase(feature.name())) {
                 return true;
             }

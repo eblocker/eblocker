@@ -20,7 +20,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class NormalizationUtilsTest {
 
@@ -57,18 +58,18 @@ public class NormalizationUtilsTest {
             String cleanChar = NormalizationUtils.normalizeStringForShellScript(dirtyChar);
 //            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
             if (i == 9 // Character Tabulation,
-                    || i == 10 // Line Feed,
-                    || i == 11 // Vertical Tab,
-                    || i == 12 // Form Feed,
-                    || i == 13 // Carriage Return,
-                    || i == 32 // and Space
+                || i == 10 // Line Feed,
+                || i == 11 // Vertical Tab,
+                || i == 12 // Form Feed,
+                || i == 13 // Carriage Return,
+                || i == 32 // and Space
             ) { // are turned into underscores
                 assertEquals("_", cleanChar);
             } else if ((i >= 48 && i <= 57) // Numbers,
-                    || (i >= 65 && i <= 90) // Uppercase,
-                    || i == 95 // Underscore,
-                    || (i >= 97 && i <= 122) // and Lowercase
-                    ) {
+                || (i >= 65 && i <= 90) // Uppercase,
+                || i == 95 // Underscore,
+                || (i >= 97 && i <= 122) // and Lowercase
+            ) {
                 // are not changed
                 assertEquals(dirtyChar, cleanChar);
             } else if (i >= 192 && i <= 197) {
@@ -125,8 +126,8 @@ public class NormalizationUtilsTest {
         }
 
         // All unicode characters - they are only changed to safe characters
-        for(int i = 0x00;i<0x10FFFF;i++){
-            String unicodeChar = Character.toString((char)i);
+        for (int i = 0x00; i < 0x10FFFF; i++) {
+            String unicodeChar = Character.toString((char) i);
             String cleanedUnicodeChar = NormalizationUtils.normalizeStringForShellScript(unicodeChar);
             assertTrue(allClean.contains(cleanedUnicodeChar));
         }
@@ -151,18 +152,18 @@ public class NormalizationUtilsTest {
             String cleanChar = NormalizationUtils.normalizeStringForFilename(dirtyChar, 1, "");
 //            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
             if (i == 9 // Character Tabulation,
-                    || i == 10 // Line Feed,
-                    || i == 11 // Vertical Tab,
-                    || i == 12 // Form Feed,
-                    || i == 13 // Carriage Return,
-                    || i == 32 // and Space
+                || i == 10 // Line Feed,
+                || i == 11 // Vertical Tab,
+                || i == 12 // Form Feed,
+                || i == 13 // Carriage Return,
+                || i == 32 // and Space
             ) { // are turned into underscores
                 assertEquals("_", cleanChar);
             } else if ((i >= 48 && i <= 57) // Numbers,
-                    || (i >= 65 && i <= 90) // Uppercase,
-                    || i == 95 // Underscore,
-                    || (i >= 97 && i <= 122) // and Lowercase
-                    ) {
+                || (i >= 65 && i <= 90) // Uppercase,
+                || i == 95 // Underscore,
+                || (i >= 97 && i <= 122) // and Lowercase
+            ) {
                 // are not changed
                 assertEquals(dirtyChar, cleanChar);
             } else if (i >= 192 && i <= 197) {
@@ -219,19 +220,19 @@ public class NormalizationUtilsTest {
         }
 
         // All unicode characters - they are only changed to safe characters
-        for(int i = 0x00;i<0x10FFFF;i++){
-            String unicodeChar = Character.toString((char)i);
+        for (int i = 0x00; i < 0x10FFFF; i++) {
+            String unicodeChar = Character.toString((char) i);
             String cleanedUnicodeChar = NormalizationUtils.normalizeStringForShellScript(unicodeChar);
             assertTrue(allClean.contains(cleanedUnicodeChar));
         }
 
         // Strings are shortened
         assertEquals("Vollstandige",
-                NormalizationUtils.normalizeStringForFilename("Vollständiger Satz wird schön gekürzt", 12, ""));
+            NormalizationUtils.normalizeStringForFilename("Vollständiger Satz wird schön gekürzt", 12, ""));
 
         // Fallback String is used
         assertEquals("fallback", NormalizationUtils.normalizeStringForFilename(null, 10, "fallback"));
-        assertEquals("fallback", NormalizationUtils.normalizeStringForFilename("",   10, "fallback"));
+        assertEquals("fallback", NormalizationUtils.normalizeStringForFilename("", 10, "fallback"));
         assertEquals("fallback", NormalizationUtils.normalizeStringForFilename("ß′¹²³¼½¬{[]}", 10, "fallback"));
     }
 }

@@ -36,6 +36,6 @@ public class DnsQuery {
 
     @Override
     public String toString() {
-        return recordType.name() + ":" +name;
+        return recordType.name() + ":" + name;
     }
 }

@@ -16,36 +16,36 @@
  */
 package org.eblocker.server.common.page;
 
-import org.eblocker.server.common.data.IpAddress;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.eblocker.server.common.data.IpAddress;
 
 import java.util.concurrent.ExecutionException;
 
 public class PageContexts {
-	private Cache<String, PageContext> cache;
+    private Cache<String, PageContext> cache;
 
-	public PageContexts(int size) {
-		cache = CacheBuilder.newBuilder().maximumSize(size).build();
-	}
+    public PageContexts(int size) {
+        cache = CacheBuilder.newBuilder().maximumSize(size).build();
+    }
 
-	public PageContext add(PageContext parentContext, String key, IpAddress ip) {
-	    if (key == null) {
-	        return null;
+    public PageContext add(PageContext parentContext, String key, IpAddress ip) {
+        if (key == null) {
+            return null;
         }
 
-		try {
-			return cache.get(key, () -> new PageContext(parentContext, key, ip));
-		} catch (ExecutionException e) {
-		    throw new IllegalStateException("failed to add new page context", e);
-		}
-	}
-	
-	public PageContext get(String key) {
-	    if (key == null) {
-	        return null;
+        try {
+            return cache.get(key, () -> new PageContext(parentContext, key, ip));
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("failed to add new page context", e);
         }
-		return cache.getIfPresent(key);
-	}
-	
+    }
+
+    public PageContext get(String key) {
+        if (key == null) {
+            return null;
+        }
+        return cache.getIfPresent(key);
+    }
+
 }

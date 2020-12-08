@@ -16,62 +16,62 @@
  */
 package org.eblocker.server.common.system.unix;
 
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
 /**
  * Runs a script with a sudo wrapper.
- * 
+ * <p>
  * Since we can not send the SIGTERM signal to the script in order to stop it
  * (the script runs as root, this server does not), we need a special kill script.
  */
 public class ScriptRunnerUnix implements ScriptRunner {
-	private final String scriptWrapperPath;
-	private final String killProcessCommand;
+    private final String scriptWrapperPath;
+    private final String killProcessCommand;
     private final Executor executor;
 
-	@Inject
-	public ScriptRunnerUnix(@Named("script.wrapper.path") String scriptWrapperPath,
+    @Inject
+    public ScriptRunnerUnix(@Named("script.wrapper.path") String scriptWrapperPath,
                             @Named("kill.process.command") String killProcessCommand,
                             @Named("unlimitedCachePoolExecutor") Executor executor
-			) {
-		this.scriptWrapperPath = scriptWrapperPath;
-		this.killProcessCommand = killProcessCommand;
-		this.executor = executor;
-	}
+    ) {
+        this.scriptWrapperPath = scriptWrapperPath;
+        this.killProcessCommand = killProcessCommand;
+        this.executor = executor;
+    }
 
-	@Override
-	public int runScript(String scriptName, String... arguments) throws IOException, InterruptedException {
-		LoggingProcess p = startScript(scriptName, arguments);
-		return p.waitFor();
-	}
+    @Override
+    public int runScript(String scriptName, String... arguments) throws IOException, InterruptedException {
+        LoggingProcess p = startScript(scriptName, arguments);
+        return p.waitFor();
+    }
 
-	@Override
-	public LoggingProcess startScript(String scriptName, String... arguments) throws IOException {
-		LoggingProcess p = new LoggingProcessUnix(scriptName, executor);
-		p.start(createScriptWrapperArguments(scriptName, arguments));
-		return p;
-	}
+    @Override
+    public LoggingProcess startScript(String scriptName, String... arguments) throws IOException {
+        LoggingProcess p = new LoggingProcessUnix(scriptName, executor);
+        p.start(createScriptWrapperArguments(scriptName, arguments));
+        return p;
+    }
 
-	@Override
-	public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException {
-		int pid = loggingProcess.getPid();
-		String[] args = {scriptWrapperPath, killProcessCommand, Integer.toString(pid)};
-		LoggingProcess p = new LoggingProcessUnix(killProcessCommand, executor);
-		p.start(args);
-		p.waitFor();
-	}
+    @Override
+    public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException {
+        int pid = loggingProcess.getPid();
+        String[] args = {scriptWrapperPath, killProcessCommand, Integer.toString(pid)};
+        LoggingProcess p = new LoggingProcessUnix(killProcessCommand, executor);
+        p.start(args);
+        p.waitFor();
+    }
 
-	private String[] createScriptWrapperArguments(String scriptName, String... arguments) {
-		String[] args = new String[2 + arguments.length];
-		args[0] = scriptWrapperPath;
-		args[1] = scriptName;
-		System.arraycopy(arguments, 0, args, 2, arguments.length);
-		return args;
-	}
+    private String[] createScriptWrapperArguments(String scriptName, String... arguments) {
+        String[] args = new String[2 + arguments.length];
+        args[0] = scriptWrapperPath;
+        args[1] = scriptName;
+        System.arraycopy(arguments, 0, args, 2, arguments.length);
+        return args;
+    }
 }

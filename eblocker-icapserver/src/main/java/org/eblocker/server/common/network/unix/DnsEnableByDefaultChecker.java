@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.dns.DnsCheckDone;
 import org.eblocker.server.common.network.NetworkServices;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

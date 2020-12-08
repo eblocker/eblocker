@@ -16,37 +16,38 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.service.FeatureService;
 import org.eblocker.server.common.service.FeatureServiceSubscriber;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**This processor will remove the HTTP-Referrer-Header from the Requests
+/**
+ * This processor will remove the HTTP-Referrer-Header from the Requests
  */
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton
-public class ReferrerRemoveProcessor implements TransactionProcessor{
+public class ReferrerRemoveProcessor implements TransactionProcessor {
     private static final Logger log = LoggerFactory.getLogger(ReferrerRemoveProcessor.class);
     private static final String REFERRER_HEADER = "Referer";
     private final FeatureService featureService;
 
     @Inject
-    public ReferrerRemoveProcessor(FeatureServiceSubscriber featureService){
+    public ReferrerRemoveProcessor(FeatureServiceSubscriber featureService) {
         this.featureService = featureService;
     }
 
     @Override
     public boolean process(Transaction transaction) {
-        if(featureService.getHTTPRefererRemovingState()) {
+        if (featureService.getHTTPRefererRemovingState()) {
             if (transaction.isResponse())//just for requests, because they contain the http header
                 return false;
 
@@ -54,8 +55,8 @@ public class ReferrerRemoveProcessor implements TransactionProcessor{
             //get HTTP Header
             HttpHeaders headers = request.headers();
 
-			if (headers.get(REFERRER_HEADER) != null // Referrer Header exists
-					&& transaction.isThirdParty()) {
+            if (headers.get(REFERRER_HEADER) != null // Referrer Header exists
+                && transaction.isThirdParty()) {
                 //remove Referrer Header
                 headers.remove(REFERRER_HEADER);
                 log.debug("Removed HTTP Referrer Header!");

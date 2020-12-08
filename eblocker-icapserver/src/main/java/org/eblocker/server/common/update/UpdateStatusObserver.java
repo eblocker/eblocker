@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.update;
 
-import org.eblocker.server.common.data.systemstatus.ExecutionState;
-import org.eblocker.server.http.service.SystemStatusService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.systemstatus.ExecutionState;
+import org.eblocker.server.http.service.SystemStatusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

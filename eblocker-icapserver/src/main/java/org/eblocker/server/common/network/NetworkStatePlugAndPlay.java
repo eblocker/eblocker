@@ -25,20 +25,20 @@ import org.eblocker.server.common.data.NetworkStateId;
  */
 public class NetworkStatePlugAndPlay extends NetworkState {
 
-	@Override
-	public void onExit(NetworkServices services) {
-		services.disableArpSpoofer();
-	}
+    @Override
+    public void onExit(NetworkServices services) {
+        services.disableArpSpoofer();
+    }
 
-	@Override
-	public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
-		services.enableDhcpClient();
-		services.enableArpSpoofer();
-	}
+    @Override
+    public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+        services.enableDhcpClient();
+        services.enableArpSpoofer();
+    }
 
-	@Override
-	public NetworkStateId getId() {
-		return NetworkStateId.PLUG_AND_PLAY;
-	}
+    @Override
+    public NetworkStateId getId() {
+        return NetworkStateId.PLUG_AND_PLAY;
+    }
 
 }

@@ -38,7 +38,7 @@ public class ExceptionLogger implements Postprocessor {
             return;
         }
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             // Log stack trace only in debug mode
             log.error(getLogMessage(request, response, e), e);
         } else {
@@ -72,10 +72,10 @@ public class ExceptionLogger implements Postprocessor {
 
     private String getLogMessage(Request request, Response response, Throwable e) {
         return "Returning " +
-                response.getResponseStatus().code() + " " +
-                response.getResponseStatus().reasonPhrase() + " for " +
-                request.getHttpMethod().name() + " " +
-                request.getUrl() + " caused by " +
-                e.getClass().getName() + ": " + e.getMessage();
+            response.getResponseStatus().code() + " " +
+            response.getResponseStatus().reasonPhrase() + " for " +
+            request.getHttpMethod().name() + " " +
+            request.getUrl() + " caused by " +
+            e.getClass().getName() + ": " + e.getMessage();
     }
 }

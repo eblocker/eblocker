@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.icap.transaction;
 
-import org.eblocker.server.common.recorder.TransactionRecorder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.eblocker.server.common.recorder.TransactionRecorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +42,9 @@ public class TransactionHandler extends ChannelInboundHandlerAdapter {
         TransactionProcessorsConfiguration configuration,
         TransactionRecorder transactionRecorder
     ) {
-		log.info("Creating new TransactionHandler");
-		this.configuration = configuration;
-		this.transactionRecorder = transactionRecorder;
+        log.info("Creating new TransactionHandler");
+        this.configuration = configuration;
+        this.transactionRecorder = transactionRecorder;
     }
 
     @Override

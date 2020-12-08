@@ -16,30 +16,28 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.io.IOException;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.controller.FactoryResetController;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.IOException;
 
 public class FactoryResetControllerImpl implements FactoryResetController {
-	private static final Logger log = LoggerFactory.getLogger(FactoryResetControllerImpl.class);
-	private ScriptRunner scriptRunner;
-	private String factoryResetScript;
+    private static final Logger log = LoggerFactory.getLogger(FactoryResetControllerImpl.class);
+    private ScriptRunner scriptRunner;
+    private String factoryResetScript;
 
-	@Inject
+    @Inject
     public FactoryResetControllerImpl(ScriptRunner scriptRunner,
-            @Named("factory.reset.command") String factoryResetScript) {
-		this.scriptRunner=scriptRunner;
-		this.factoryResetScript = factoryResetScript;
-	}
+                                      @Named("factory.reset.command") String factoryResetScript) {
+        this.scriptRunner = scriptRunner;
+        this.factoryResetScript = factoryResetScript;
+    }
 
     @Override
     public void factoryReset(Request request, Response response) throws IOException, InterruptedException {

@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.Table;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -36,14 +38,11 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.common.collect.Table;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.xml.bind.DatatypeConverter;
-
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,11 +97,11 @@ public class NeighborDiscoveryListener implements Runnable {
             }
 
             if (parsedMessage.getIcmpType() == RouterSolicitation.ICMP_TYPE) {
-                replyToRouterSolicitation((RouterSolicitation)parsedMessage);
+                replyToRouterSolicitation((RouterSolicitation) parsedMessage);
             }
 
             if (parsedMessage.getIcmpType() == RouterAdvertisement.ICMP_TYPE) {
-                routerAdvertisementCache.addEntry((RouterAdvertisement)parsedMessage);
+                routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
 
             String deviceId = "device:" + DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
@@ -123,7 +122,7 @@ public class NeighborDiscoveryListener implements Runnable {
             }
 
             log.trace("updated arp response table entry for {}: {}", device.getId(), arpResponseTable.row(device.getHardwareAddress(false)));
-            synchronized(arpResponseTable) {
+            synchronized (arpResponseTable) {
                 arpResponseTable.put(device.getHardwareAddress(false), parsedMessage.getSourceAddress(), clock.millis());
             }
         } catch (MessageException e) {
@@ -134,7 +133,7 @@ public class NeighborDiscoveryListener implements Runnable {
     private void replyToRouterSolicitation(RouterSolicitation solicitation) {
         if (networkInterface.getAddresses().stream()
             .filter(IpAddress::isIpv6)
-            .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address)ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
+            .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address) ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
             return;
         }
 
@@ -185,7 +184,7 @@ public class NeighborDiscoveryListener implements Runnable {
             case RouterSolicitation.ICMP_TYPE:
                 return parseRouterSolicitation(reader, sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress);
             case RouterAdvertisement.ICMP_TYPE:
-                return parseRouterAdvertisement(reader, sourceHardwareAddress, sourceAddress,destinationHardwareAddress, destinationAddress);
+                return parseRouterAdvertisement(reader, sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress);
             case NeighborSolicitation.ICMP_TYPE:
                 return parseNeighborSolicitation(reader, sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress);
             case NeighborAdvertisement.ICMP_TYPE:
@@ -201,7 +200,7 @@ public class NeighborDiscoveryListener implements Runnable {
                                                        byte[] destinationHardwareAddress,
                                                        Ip6Address destinationAddress) throws MessageException {
         List<Option> options = parseOptions(reader);
-        return new RouterSolicitation(sourceHardwareAddress,sourceAddress,destinationHardwareAddress, destinationAddress, options);
+        return new RouterSolicitation(sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress, options);
     }
 
     private RouterAdvertisement parseRouterAdvertisement(MessageReader reader,
@@ -229,7 +228,7 @@ public class NeighborDiscoveryListener implements Runnable {
                                                            Ip6Address destinationAddress) throws MessageException {
         Ip6Address targetAddress = reader.nextIp6Address();
         List<Option> options = parseOptions(reader);
-        return new NeighborSolicitation(sourceHardwareAddress,sourceAddress, destinationHardwareAddress, destinationAddress, targetAddress, options);
+        return new NeighborSolicitation(sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress, targetAddress, options);
     }
 
     private NeighborAdvertisement parseNeighborAdvertisement(MessageReader reader,
@@ -242,7 +241,7 @@ public class NeighborDiscoveryListener implements Runnable {
         boolean override = reader.nextBoolean();
         Ip6Address targetAddress = reader.nextIp6Address();
         List<Option> options = parseOptions(reader);
-        return new NeighborAdvertisement(sourceHardwareAddress,sourceAddress,destinationHardwareAddress, destinationAddress, router, solicited, override, targetAddress, options);
+        return new NeighborAdvertisement(sourceHardwareAddress, sourceAddress, destinationHardwareAddress, destinationAddress, router, solicited, override, targetAddress, options);
     }
 
     private List<Option> parseOptions(MessageReader reader) throws MessageException {
@@ -275,7 +274,7 @@ public class NeighborDiscoveryListener implements Runnable {
                     long lifetime = reader.nextLong();
                     int dnsServersCount = reader.nextInt();
                     List<Ip6Address> dnsServers = new ArrayList<>(dnsServersCount);
-                    for(int i = 0; i < dnsServersCount; ++i) {
+                    for (int i = 0; i < dnsServersCount; ++i) {
                         dnsServers.add(reader.nextIp6Address());
                     }
                     options.add(new RecursiveDnsServerOption(lifetime, dnsServers));

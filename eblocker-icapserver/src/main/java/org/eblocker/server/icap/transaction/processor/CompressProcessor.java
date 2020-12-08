@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.data.CompressionMode;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.service.FeatureService;
@@ -24,13 +31,6 @@ import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.transaction.ContentEncoding;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +93,8 @@ public class CompressProcessor implements TransactionProcessor {
                 break;
             case BROTLI:
             case UNKNOWN:
-                throw new IllegalStateException("cannot encode " + encoding);        }
+                throw new IllegalStateException("cannot encode " + encoding);
+        }
 
         transaction.getResponse().release();
         transaction.setResponse(httpResponse);
@@ -130,7 +131,7 @@ public class CompressProcessor implements TransactionProcessor {
             }
 
             String[] acceptedEncodings = acceptEncodingValue.split(",");
-            for(String encoding : acceptedEncodings) {
+            for (String encoding : acceptedEncodings) {
                 switch (encoding.trim()) {
                     case HttpHeaders.Values.GZIP:
                         return ContentEncoding.GZIP;

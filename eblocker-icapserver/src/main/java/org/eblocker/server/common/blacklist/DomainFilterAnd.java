@@ -38,7 +38,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
 
     public String getName() {
         StringBuilder sb = new StringBuilder("(and");
-        for(DomainFilter filter : filters) {
+        for (DomainFilter filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }
@@ -70,7 +70,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         FilterDecision<T> decision = new FilterDecision<>(domain, false, this);
-        for(DomainFilter<T> filter : filters) {
+        for (DomainFilter<T> filter : filters) {
             decision = filter.isBlocked(domain);
             if (!decision.isBlocked()) {
                 break;

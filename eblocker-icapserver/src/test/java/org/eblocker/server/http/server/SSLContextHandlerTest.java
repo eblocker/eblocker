@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.server;
 
+import com.google.common.io.ByteStreams;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.ssl.EblockerCa;
@@ -23,9 +26,6 @@ import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.ssl.SslTestUtils;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
-import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +54,7 @@ public class SSLContextHandlerTest {
     private final String emergencyIp = "169.169.169.169";
     private final Ip4Address ip = Ip4Address.parse("10.10.10.10");
     private final Ip4Address vpnIp = Ip4Address.parse("10.8.0.1");
-    private final String[] defaultLocalNames = { "eblocker.test", "another.test" };
+    private final String[] defaultLocalNames = {"eblocker.test", "another.test"};
     private final String keyStorePassword = "unit-test";
 
     private Path keyStorePath;
@@ -410,7 +410,7 @@ public class SSLContextHandlerTest {
         Assert.assertEquals(controlBarHostName, PKI.getCN(certificateAndKey.getCertificate()));
 
         List<String> expectedAltNames = new ArrayList<>();
-        for(String altName : alternativeNames) {
+        for (String altName : alternativeNames) {
             expectedAltNames.add("DNS:" + altName);
             if (altName.matches("\\d+\\.\\d+\\.\\d+\\.\\d+")) {
                 expectedAltNames.add("IP:" + altName);
@@ -422,7 +422,7 @@ public class SSLContextHandlerTest {
     }
 
     private String mapSubjectAlternativeName(List<?> altName) {
-        if (((Integer) altName.get(0)) == 2 ) {
+        if (((Integer) altName.get(0)) == 2) {
             return "DNS:" + altName.get(1);
         } else if ((Integer) altName.get(0) == 7) {
             return "IP:" + altName.get(1);

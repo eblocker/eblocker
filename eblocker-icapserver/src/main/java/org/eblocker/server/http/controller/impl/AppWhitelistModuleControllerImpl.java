@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.http.ssl.AppWhitelistModuleDisplay;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -33,8 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/** This class handles all the configurations of which AppWhitelistModules are enabled
- *  and usable in the system. It also handles the user generated modules.
+/**
+ * This class handles all the configurations of which AppWhitelistModules are enabled
+ * and usable in the system. It also handles the user generated modules.
  */
 public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleController {
 
@@ -44,18 +45,18 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
 
     @Inject
     public AppWhitelistModuleControllerImpl(
-            AppModuleService appModuleService
-    ){
+        AppModuleService appModuleService
+    ) {
         this.appModuleService = appModuleService;
     }
 
     /**
      * REST method - GET /appmodules/id/{id}
-     *
+     * <p>
      * Get one AppWhitelistModule by id
      */
     @Override
-    public AppWhitelistModuleDisplay read(Request request, Response response){
+    public AppWhitelistModuleDisplay read(Request request, Response response) {
         LOG.debug("GET /appmodules/id/{id}");
         String idString = request.getHeader("id", "No app module ID provided");
         int id;
@@ -73,11 +74,11 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
 
     /**
      * REST method - DELETE /appmodules/id/{id}
-     *
+     * <p>
      * Delete one AppWhitelistModule by id
      */
     @Override
-    public void delete(Request request, Response response){
+    public void delete(Request request, Response response) {
         LOG.debug("DELETE /appmodules/id/{id}");
         String idString = request.getHeader("id", "No app module ID provided");
         int id;
@@ -91,11 +92,11 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
 
     /**
      * REST method - POST /appmodules/id
-     *
+     * <p>
      * Create one AppWhitelistModule
      */
     @Override
-    public AppWhitelistModuleDisplay create(Request request, Response response){
+    public AppWhitelistModuleDisplay create(Request request, Response response) {
         LOG.debug("POST /appmodules/id");
         AppWhitelistModuleDisplay tmpl = request.getBodyAs(AppWhitelistModuleDisplay.class);
         AppWhitelistModule module = new AppWhitelistModule(tmpl);
@@ -104,11 +105,11 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
 
     /**
      * REST method - PUT /appmodules/id/{id}
-     *
+     * <p>
      * Update one AppWhitelistModule by id
      */
     @Override
-    public AppWhitelistModuleDisplay update(Request request, Response response){
+    public AppWhitelistModuleDisplay update(Request request, Response response) {
         LOG.debug("PUT /appmodules/id/{id}");
         String idString = request.getHeader("id", "No app module ID provided");
         int id;
@@ -123,41 +124,41 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
 
     /**
      * REST method - GET /appmodules/{id}
-     *
+     * <p>
      * Get all AppWhitelistModules
      */
     @Override
-    public List<AppWhitelistModuleDisplay> getAppWhitelistModules(Request request, Response response){
+    public List<AppWhitelistModuleDisplay> getAppWhitelistModules(Request request, Response response) {
         LOG.debug("GET /appmodules/all");
         return appModuleService.getAll().stream().map(module -> new AppWhitelistModuleDisplay(module)).collect(Collectors.toList());
     }
 
     /**
      * REST method - GET /appmodules/onlyenabled
-     *
+     * <p>
      * Get a set of only the enabled modules
      */
-	@Override
+    @Override
     public List<AppWhitelistModuleDisplay> getOnlyEnabledAppWhitelistModules(
-            Request request, Response response) {
-		LOG.debug("GET /appmodules/onlyenabled");
+        Request request, Response response) {
+        LOG.debug("GET /appmodules/onlyenabled");
 
-		List<AppWhitelistModuleDisplay> res = appModuleService.getAll().stream()
-				.filter(AppWhitelistModule::isEnabled)
-                .map(module -> new AppWhitelistModuleDisplay(module))
-				.collect(Collectors.toList());
-		return res;
-	}
+        List<AppWhitelistModuleDisplay> res = appModuleService.getAll().stream()
+            .filter(AppWhitelistModule::isEnabled)
+            .map(module -> new AppWhitelistModuleDisplay(module))
+            .collect(Collectors.toList());
+        return res;
+    }
 
     /**
      * REST method - PUT /appmodules/enable
-     *
+     * <p>
      * User enabled an AppWhitelistModule and therefore adds it to the SSLWhite
      */
     @Override
-    public void enableAppWhitelistModule(Request request, Response response){
+    public void enableAppWhitelistModule(Request request, Response response) {
         LOG.debug("PUT /appmodules/enable");
-        Map<String,String> map = request.getBodyAs(Map.class);
+        Map<String, String> map = request.getBodyAs(Map.class);
 
         Integer id = Integer.parseInt(map.get("id"));
         boolean enabled = Boolean.parseBoolean(map.get("setEnabled"));
@@ -169,7 +170,7 @@ public class AppWhitelistModuleControllerImpl implements AppWhitelistModuleContr
      * REST method - GET /appmodules/unique
      */
     @Override
-    public void isUnique(Request request, Response response){
+    public void isUnique(Request request, Response response) {
         LOG.debug("GET /appmodules/unique");
         String idString = request.getHeader("id");
         Integer id = null;

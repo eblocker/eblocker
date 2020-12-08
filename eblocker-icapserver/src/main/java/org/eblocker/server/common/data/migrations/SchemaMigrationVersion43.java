@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -23,12 +24,11 @@ import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.dashboard.AccessRight;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.http.service.DashboardCardService;
-import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SchemaMigrationVersion43 implements SchemaMigration {
 

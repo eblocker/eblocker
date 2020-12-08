@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.inject.Inject;
 
 /**
  * Initializes FilterStoreConfiguration and ExternalDefinition sequence.

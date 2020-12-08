@@ -16,16 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
-import org.eblocker.server.common.ssl.EblockerCa;
-import org.eblocker.server.common.ssl.GeneratingKeyManager;
-import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -47,13 +37,22 @@ import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
+import org.eblocker.server.common.ssl.EblockerCa;
+import org.eblocker.server.common.ssl.GeneratingKeyManager;
+import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -185,7 +184,7 @@ public class AccessDeniedService {
 
                 GeneratingKeyManager keyManager = new GeneratingKeyManager(sslService.getCa(), keyPair, keyManagerCacheMaxSize, keyManagerCacheConcurrencyLevel, keyManagerDefaultNames);
                 SSLContext sslContext = SSLContext.getInstance("TLS");  //NOSONAR: Lesser security is acceptable here and excluding old clients should be avoided
-                sslContext.init(new KeyManager[] { keyManager }, null, null);
+                sslContext.init(new KeyManager[]{keyManager}, null, null);
 
                 SslContext nettySslContext = new JdkSslContext(sslContext, false, ClientAuth.NONE);
                 AddAttributeHandler addHttpsSchemeHandler = new AddAttributeHandler(Collections.singletonMap(
@@ -207,7 +206,7 @@ public class AccessDeniedService {
                         }
                     }).bind().awaitUninterruptibly();
 
-            } catch (NoSuchAlgorithmException  | KeyManagementException | IOException | CryptoException e) {
+            } catch (NoSuchAlgorithmException | KeyManagementException | IOException | CryptoException e) {
                 log.error("failed to setup ssl listener", e);
             }
         }

@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
 
 import javax.net.ssl.ExtendedSSLSession;
 import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.X509ExtendedKeyManager;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyPair;
@@ -79,7 +78,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
         try {
             Parameters parameters = decodeParameters(s);
             X509Certificate certificate = cache.get(parameters, () -> generateCertificate(parameters));
-            return new X509Certificate[] { certificate };
+            return new X509Certificate[]{certificate};
         } catch (ExecutionException e) {
             throw new CertificateGenerationException("failed to generate certificate", e);
         }
@@ -111,7 +110,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
         }
 
         List<String> names = new ArrayList<>();
-        names.add(((SNIHostName)session.getRequestedServerNames().get(0)).getAsciiName());
+        names.add(((SNIHostName) session.getRequestedServerNames().get(0)).getAsciiName());
         names.addAll(defaultNames);
         return names;
     }
@@ -153,7 +152,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
     private String encodeParameters(List<String> names) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%08x", names.size()));
-        for(String name : names) {
+        for (String name : names) {
             sb.append(String.format("%08x", name.length()));
             sb.append(name);
         }
@@ -165,7 +164,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
         Parameters parameters = new Parameters();
         parameters.names = new ArrayList<>(size);
         int offset = 8;
-        for(int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             int length = Integer.parseInt(encoded.substring(offset, offset + 8), 16);
             parameters.names.add(encoded.substring(offset + 8, offset + 8 + length));
             offset += 8 + length;

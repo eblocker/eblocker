@@ -16,21 +16,21 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.DisplayIconMode;
-import org.eblocker.server.common.page.PageContext;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.ReminderService;
-import org.eblocker.server.common.util.StringReplacer;
-import org.eblocker.server.icap.transaction.Injections;
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.DisplayIconMode;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.common.page.PageContext;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.common.util.StringReplacer;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.ReminderService;
+import org.eblocker.server.icap.transaction.Injections;
+import org.eblocker.server.icap.transaction.Transaction;
+import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
                                   DeviceService deviceService,
                                   DeviceRegistrationProperties deviceRegistrationProperties,
                                   ReminderService reminderService
-                                  ) {
+    ) {
         this.template = "<style id=\"eblocker-style\" type=\"text/css\">" + minCss + "</style>\n" +
             template +
             "<script id=\"eblocker-script\" type=\"text/javascript\">" + minJs + "</script>";
@@ -97,7 +97,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         Injections injections = transaction.getInjections();
 
         Device device = deviceService.getDeviceById(session.getDeviceId());
-        if(pageContext != null && baseURLs.isSetupUrl(pageContext.getUrl())){//if the user goes to the setup.eblocker.org, always show the icon
+        if (pageContext != null && baseURLs.isSetupUrl(pageContext.getUrl())) {//if the user goes to the setup.eblocker.org, always show the icon
             injections.inject(insertIcon(0, false, getIconPosition(device), transaction, session, pageContext));
         } else {
             if (device != null) {
@@ -147,6 +147,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
 
     /**
      * Check whether this response is HTML or not
+     *
      * @param transaction
      * @return
      */
@@ -156,7 +157,8 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         return (contentType != null) && (contentType.contains("text/html") || contentType.contains("text/xhtml"));
     }
 
-    /**Insert the eBlocker icon (and control bar) into the html content
+    /**
+     * Insert the eBlocker icon (and control bar) into the html content
      *
      * @param showForSeconds -1 for never; 0 for always; and positive value for amount of second
      * @param transaction
@@ -164,7 +166,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
      * @param pageContext
      * @return
      */
-    private String insertIcon(int showForSeconds, boolean showWelcome, Device.DisplayIconPosition iconPosition, Transaction transaction, Session session, PageContext pageContext){
+    private String insertIcon(int showForSeconds, boolean showWelcome, Device.DisplayIconPosition iconPosition, Transaction transaction, Session session, PageContext pageContext) {
         if (showForSeconds == -1) {
             //do nothing
             return null;
@@ -175,7 +177,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         log.debug("Inserting toolbar with link to {}", controlBarUrl);
         boolean reminderEnabled =
             deviceRegistrationProperties.isLicenseAboutToExpire() &&
-            reminderService.isReminderNeeded();
+                reminderService.isReminderNeeded();
 
         return getInlay(
             pageContext == null ? "no-page" : pageContext.getId(),
@@ -188,7 +190,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
             reminderEnabled,
             showWelcome
         );
-	}
+    }
 
     private static String getIconPositionString(Device.DisplayIconPosition position) {
         if (position == Device.DisplayIconPosition.LEFT) {
@@ -204,8 +206,8 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         return ICON_POSITION_ATTRIBUTE_RIGHT;
     }
 
-	protected static String getInlay(
-	    String pageContextId,
+    protected static String getInlay(
+        String pageContextId,
         String template,
         String baseUrl,
         String controlBarUrl,
@@ -226,7 +228,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
             .add(TAG_EBLOCKER_REMINDER_ENABLED, reminderEnabled ? "true" : "false")
             .add(TAG_EBLOCKER_WELCOME_ENABLED, showWelcome ? "true" : "false");
 
-        if(showForSeconds == 0) {
+        if (showForSeconds == 0) {
             //always show, so comment the start of the timeout, which will hide everything
             replacer
                 .add(TAG_EBLOCKER_ICON_HIDE, "false")

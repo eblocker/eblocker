@@ -57,7 +57,7 @@ public class SecurityProcessor implements Preprocessor {
 
         String authnHeader = request.getHeader(HttpHeaderNames.AUTHORIZATION.toString());
         LOG.debug("Found authn header: {}", authnHeader);
-        if (authnHeader == null || ! authnHeader.startsWith(AUTHN_PREFIX)) {
+        if (authnHeader == null || !authnHeader.startsWith(AUTHN_PREFIX)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Request for resource {} comes without valid authentication header {}", routeName, authnHeader == null ? "<null>" : authnHeader);
             }

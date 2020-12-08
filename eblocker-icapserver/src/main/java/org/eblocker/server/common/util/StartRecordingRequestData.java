@@ -22,36 +22,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StartRecordingRequestData {
-	private final String recordingStatus;
-	private final String targetID;
-	private final Integer timeLimit;
-	private final Integer sizeLimit;
+    private final String recordingStatus;
+    private final String targetID;
+    private final Integer timeLimit;
+    private final Integer sizeLimit;
 
-	@JsonCreator
-	public StartRecordingRequestData(
-			@JsonProperty("recordingStatus") String recordingStatus,
-			@JsonProperty("targetID") String targetID,
-			@JsonProperty("timeLimit") int timeLimit,
-			@JsonProperty("sizeLimit") int sizeLimit) {
-		this.recordingStatus = recordingStatus;
-		this.targetID = targetID;
-		this.timeLimit = timeLimit;
-		this.sizeLimit = sizeLimit;
-	}
+    @JsonCreator
+    public StartRecordingRequestData(
+        @JsonProperty("recordingStatus") String recordingStatus,
+        @JsonProperty("targetID") String targetID,
+        @JsonProperty("timeLimit") int timeLimit,
+        @JsonProperty("sizeLimit") int sizeLimit) {
+        this.recordingStatus = recordingStatus;
+        this.targetID = targetID;
+        this.timeLimit = timeLimit;
+        this.sizeLimit = sizeLimit;
+    }
 
-	public String getRecordingStatus() {
-		return this.recordingStatus;
-	}
+    public String getRecordingStatus() {
+        return this.recordingStatus;
+    }
 
-	public String getTargetID() {
-		return this.targetID;
-	}
+    public String getTargetID() {
+        return this.targetID;
+    }
 
-	public int getTimeLimit() {
-		return this.timeLimit;
-	}
+    public int getTimeLimit() {
+        return this.timeLimit;
+    }
 
-	public int getSizeLimit() {
-		return this.sizeLimit;
-	}
+    public int getSizeLimit() {
+        return this.sizeLimit;
+    }
 }

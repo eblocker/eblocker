@@ -27,10 +27,10 @@ import org.eblocker.server.common.data.NetworkStateId;
  */
 public class NetworkStateLocalDhcp extends NetworkState {
 
-	@Override
-	public void onExit(NetworkServices services) {
-		services.disableDhcpServer();
-	}
+    @Override
+    public void onExit(NetworkServices services) {
+        services.disableDhcpServer();
+    }
 
     @Override
     public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
@@ -41,15 +41,15 @@ public class NetworkStateLocalDhcp extends NetworkState {
         services.enableDhcpServer(startDhcpServer);
     }
 
-	@Override
-	public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
-		services.enableStaticIp(configuration);
-		services.configureDhcpServer(configuration);
-	}
+    @Override
+    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+        services.enableStaticIp(configuration);
+        services.configureDhcpServer(configuration);
+    }
 
-	@Override
-	public NetworkStateId getId() {
-		return NetworkStateId.LOCAL_DHCP;
-	}
+    @Override
+    public NetworkStateId getId() {
+        return NetworkStateId.LOCAL_DHCP;
+    }
 
 }

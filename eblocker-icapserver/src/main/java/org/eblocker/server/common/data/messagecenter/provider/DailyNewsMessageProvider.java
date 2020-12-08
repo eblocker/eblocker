@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -132,14 +132,15 @@ public class DistinguishedName {
 
     /**
      * Extract relative distinguished names from a rfc 2253 dn
+     *
      * @param dn to parse
      * @return relative distinguished names with attribute type as key and attribute value as value
      */
     private static Map<String, String> getRdns(String dn) {
         return Arrays.asList(dn.split(",")).stream()
-                .map(rdn-> rdn.split("="))
-                .collect(Collectors.toMap(
-                        rdn->rdn[0].trim(),
-                        rdn->Rdn.unescapeValue(rdn[1].trim()).toString()));
+            .map(rdn -> rdn.split("="))
+            .collect(Collectors.toMap(
+                rdn -> rdn[0].trim(),
+                rdn -> Rdn.unescapeValue(rdn[1].trim()).toString()));
     }
 }

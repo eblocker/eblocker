@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.common.system.unix;
 
-import java.io.IOException;
-import java.util.Scanner;
-import java.util.concurrent.Executor;
-
-import org.eblocker.server.common.system.CommandRunner;
-import org.eblocker.server.common.system.LoggingProcess;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.CommandRunner;
+import org.eblocker.server.common.system.LoggingProcess;
+
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.concurrent.Executor;
 
 @Singleton
 public class CommandRunnerUnix implements CommandRunner {
@@ -48,7 +48,7 @@ public class CommandRunnerUnix implements CommandRunner {
 
         Scanner scanner;
 
-        for (String stdout; (stdout = loggingProcess.pollStdout()) != null;) {
+        for (String stdout; (stdout = loggingProcess.pollStdout()) != null; ) {
             scanner = new Scanner(stdout);
             while (scanner.hasNextLine()) {
                 result += scanner.nextLine() + "\n";

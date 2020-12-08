@@ -16,12 +16,10 @@
  */
 package org.eblocker.server.http.service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.registration.UpsellInfoWrapper;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.dns.DnsResolvers;
@@ -34,9 +32,10 @@ import org.eblocker.server.common.ssl.SslService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.registration.UpsellInfoWrapper;
-import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Singleton
 public class ProductMigrationService {
@@ -67,8 +66,7 @@ public class ProductMigrationService {
         UserService userService,
         ParentalControlService parentalControlService,
         LicenseExpirationService licenseExpirationService,
-        ProductInfoService productInfoService)
-    {
+        ProductInfoService productInfoService) {
         this.deviceService = deviceService;
         this.sslService = sslService;
         this.torController = torController;
@@ -96,8 +94,8 @@ public class ProductMigrationService {
         for (ProductFeature feature : relevantFeatures) {
             // ...that was available...
             if (oldFeatures.contains(feature.name())
-                    // ...and is not available anymore...
-                    && !newFeatures.contains(feature.name())) {
+                // ...and is not available anymore...
+                && !newFeatures.contains(feature.name())) {
                 // ...it is a downgrade
                 return true;
             }
@@ -122,8 +120,8 @@ public class ProductMigrationService {
         for (ProductFeature feature : relevantFeatures) {
             // ...that was available...
             if (oldFeatures.contains(feature.name())
-                    // ...and is not available anymore...
-                    && !newFeatures.contains(feature.name())) {
+                // ...and is not available anymore...
+                && !newFeatures.contains(feature.name())) {
                 // ...it is a removed feature
                 result.add(feature);
             }
@@ -223,8 +221,7 @@ public class ProductMigrationService {
                 productInfoService.removeFeature(ProductFeature.FAM);
                 changeProductDeactivateFamilyFeatures();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Downgrading expired license failed.", e);
         }
     }

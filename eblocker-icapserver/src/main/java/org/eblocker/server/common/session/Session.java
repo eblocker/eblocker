@@ -16,89 +16,90 @@
  */
 package org.eblocker.server.common.session;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserAgent;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
 public interface Session {
 
-	String getSessionId();
+    String getSessionId();
 
-	String getUserAgent();
+    String getUserAgent();
 
-	String getOutgoingUserAgent();
+    String getOutgoingUserAgent();
 
-	void setOutgoingUserAgent(String userAgent);
+    void setOutgoingUserAgent(String userAgent);
 
-	UserAgent getCustomUserAgent();
+    UserAgent getCustomUserAgent();
 
-	void setCustomUserAgent(String userAgent);
+    void setCustomUserAgent(String userAgent);
 
-	//String getEditedUserAgent();
+    //String getEditedUserAgent();
 
-	//void setEditedUserAgent(String editedUserAgent);
+    //void setEditedUserAgent(String editedUserAgent);
 
-	IpAddress getIp();
+    IpAddress getIp();
 
-	String getShortId();
+    String getShortId();
 
-	Integer getUserId();
+    Integer getUserId();
 
-	String getDeviceId();
+    String getDeviceId();
 
-	String getAppId();
+    String getAppId();
 
-	void setAppId(String appId);
+    void setAppId(String appId);
 
-	void markUsed();
+    void markUsed();
 
-	Decision popForwardDecision(String url);
+    Decision popForwardDecision(String url);
 
-	void addForwardDecision(String url, Decision decison);
+    void addForwardDecision(String url, Decision decison);
 
-	PageContext createPageContext(PageContext parentContext, String url);
+    PageContext createPageContext(PageContext parentContext, String url);
 
-	PageContext getPageContext(String url);
+    PageContext getPageContext(String url);
 
-	boolean isBlockAds();
+    boolean isBlockAds();
 
-	void setBlockAds(boolean blockAds);
+    void setBlockAds(boolean blockAds);
 
-	int getBlockedAds();
+    int getBlockedAds();
 
-	void incrementBlockedAds(TransactionContext transaction);
+    void incrementBlockedAds(TransactionContext transaction);
 
-	boolean isBlockTrackings();
+    boolean isBlockTrackings();
 
-	void setBlockTrackings(boolean blockTrackings);
+    void setBlockTrackings(boolean blockTrackings);
 
-	int getBlockedTrackings();
+    int getBlockedTrackings();
 
-	void incrementBlockedTrackings(TransactionContext transaction);
+    void incrementBlockedTrackings(TransactionContext transaction);
 
-	boolean isUseDomainWhiteList();
+    boolean isUseDomainWhiteList();
 
-	void setUseDomainWhiteList(boolean useDomainWhiteList);
+    void setUseDomainWhiteList(boolean useDomainWhiteList);
 
-	boolean isTorWorking();
+    boolean isTorWorking();
 
-	void setTorIsWorking(boolean working);
+    void setTorIsWorking(boolean working);
 
-	/**
-	 * All the fields that represent an error, or warning state should be combined here to show a warning icon on the eBlocker icon
-	 * @return
+    /**
+     * All the fields that represent an error, or warning state should be combined here to show a warning icon on the eBlocker icon
+     *
+     * @return
      */
-	boolean isWarningState();
+    boolean isWarningState();
 
-	boolean isWhatIfMode();
+    boolean isWhatIfMode();
 
-	void setWhatIfMode(boolean whatIfMode);
+    void setWhatIfMode(boolean whatIfMode);
 
-	UserAgentInfo getUserAgentInfo();
+    UserAgentInfo getUserAgentInfo();
 
     boolean isPatternFiltersEnabled();
 

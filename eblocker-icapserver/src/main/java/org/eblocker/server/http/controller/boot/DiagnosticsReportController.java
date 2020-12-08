@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.controller.boot;
 
-import org.eblocker.server.http.service.DiagnosticsReportService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.http.service.DiagnosticsReportService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.NotFoundException;
@@ -33,17 +33,17 @@ public class DiagnosticsReportController {
 
     private final DiagnosticsReportService diagnosticsReportService;
 
-	@Inject
-	public DiagnosticsReportController(DiagnosticsReportService diagnosticsReportService) {
-	    this.diagnosticsReportService = diagnosticsReportService;
-	}
+    @Inject
+    public DiagnosticsReportController(DiagnosticsReportService diagnosticsReportService) {
+        this.diagnosticsReportService = diagnosticsReportService;
+    }
 
-	@SuppressWarnings("unused")
-	public void startReport(Request request, Response response) throws IOException {
-	    diagnosticsReportService.startGeneration(request.getRemoteAddress().getAddress().getHostAddress());
-	}
+    @SuppressWarnings("unused")
+    public void startReport(Request request, Response response) throws IOException {
+        diagnosticsReportService.startGeneration(request.getRemoteAddress().getAddress().getHostAddress());
+    }
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public ByteBuf getReport(Request request, Response response) throws IOException {
         switch (diagnosticsReportService.getStatus()) {
             case FINISHED:

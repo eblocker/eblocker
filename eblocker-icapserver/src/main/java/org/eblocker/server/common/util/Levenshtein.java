@@ -36,7 +36,7 @@ import java.util.function.Function;
  */
 public class Levenshtein<T> {
 
-    public enum Operation { NO_OPERATION, DELETE, INSERT, SUBSTITUTE }
+    public enum Operation {NO_OPERATION, DELETE, INSERT, SUBSTITUTE}
 
     private CostFunctions costFunctions = new CostFunctions();
 
@@ -49,16 +49,16 @@ public class Levenshtein<T> {
 
         d[0][0] = new DistanceMatrixEntry(0, Operation.NO_OPERATION, 0, 0);
 
-        for(int i = 1; i < d.length; ++i) {
+        for (int i = 1; i < d.length; ++i) {
             d[i][0] = new DistanceMatrixEntry(i, Operation.DELETE, i, 0);
         }
 
-        for(int i = 1; i < d[0].length; ++i) {
+        for (int i = 1; i < d[0].length; ++i) {
             d[0][i] = new DistanceMatrixEntry(i, Operation.INSERT, 0, i);
         }
 
-        for(int i = 1; i < d.length; ++i) {
-            for(int j = 1; j < d[i].length; ++j) {
+        for (int i = 1; i < d.length; ++i) {
+            for (int j = 1; j < d[i].length; ++j) {
 
                 Function<Integer, Integer> cost;
                 Operation operation;
@@ -71,9 +71,9 @@ public class Levenshtein<T> {
                 }
 
                 d[i][j] = minimum(
-                        new DistanceMatrixEntry(costFunctions.deletion.apply(d[i - 1][j].distance), Operation.DELETE, i, j),
-                        new DistanceMatrixEntry(costFunctions.insertion.apply(d[i][j - 1].distance), Operation.INSERT, i, j),
-                        new DistanceMatrixEntry(cost.apply(d[i - 1][j - 1].distance), operation, i, j));
+                    new DistanceMatrixEntry(costFunctions.deletion.apply(d[i - 1][j].distance), Operation.DELETE, i, j),
+                    new DistanceMatrixEntry(costFunctions.insertion.apply(d[i][j - 1].distance), Operation.INSERT, i, j),
+                    new DistanceMatrixEntry(cost.apply(d[i - 1][j - 1].distance), operation, i, j));
             }
         }
 
@@ -135,7 +135,7 @@ public class Levenshtein<T> {
 
     private static DistanceMatrixEntry minimum(DistanceMatrixEntry... entries) {
         DistanceMatrixEntry minimum = entries[0];
-        for(int i = 1; i < entries.length; ++i) {
+        for (int i = 1; i < entries.length; ++i) {
             if (entries[i].distance <= minimum.distance) {
                 minimum = entries[i];
             }
@@ -151,7 +151,7 @@ public class Levenshtein<T> {
             path.addFirst(d[i][j]);
             int di = 0;
             int dj = 0;
-            switch(d[i][j].operation) {
+            switch (d[i][j].operation) {
                 case NO_OPERATION:
                 case SUBSTITUTE:
                     di = -1;

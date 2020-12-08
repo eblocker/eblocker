@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
 
 public class SchemaMigrationVersion5 implements SchemaMigration {
 
@@ -43,13 +43,13 @@ public class SchemaMigrationVersion5 implements SchemaMigration {
      */
     public void migrate() {
         dataSource.getDevices().stream()
-                .filter(d -> Integer.valueOf(DefaultEntities.VPN_PROFILE_DELETION)
-                        .equals(d.getUseVPNProfileID()))
-                .forEach(d->{
-                    d.setUseVPNProfileID(null);
-                    d.setUseAnonymizationService(d.isRoutedThroughTor());
-                    dataSource.save(d);
-                });
+            .filter(d -> Integer.valueOf(DefaultEntities.VPN_PROFILE_DELETION)
+                .equals(d.getUseVPNProfileID()))
+            .forEach(d -> {
+                d.setUseVPNProfileID(null);
+                d.setUseAnonymizationService(d.isRoutedThroughTor());
+                dataSource.save(d);
+            });
         dataSource.setVersion("5");
     }
 }

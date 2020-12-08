@@ -23,10 +23,12 @@ public class URLMessage extends Message {
         super(status, message);
         this.url = url;
     }
+
     @Override
     public String render() {
         return String.format(super.render(), String.format("<a href=\"%s\">%s</a>", url, url));
     }
+
     @Override
     public String toString() {
         return String.format(render(), url);

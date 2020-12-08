@@ -22,6 +22,8 @@ import org.restexpress.Response;
 
 public interface MobileConnectionCheckController {
     void start(Request request, Response response);
+
     void stop(Request request, Response response);
+
     MobileConnectionCheckStatus getStatus(Request request, Response response);
 }

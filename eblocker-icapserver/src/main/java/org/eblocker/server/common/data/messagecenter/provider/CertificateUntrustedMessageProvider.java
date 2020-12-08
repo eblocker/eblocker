@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 
 import java.util.Collections;
 import java.util.Map;

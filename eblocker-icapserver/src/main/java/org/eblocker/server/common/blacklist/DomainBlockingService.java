@@ -392,7 +392,7 @@ public class DomainBlockingService {
                     }
                 }
             }
-                                                                            );
+        );
         return transformationsById;
     }
 

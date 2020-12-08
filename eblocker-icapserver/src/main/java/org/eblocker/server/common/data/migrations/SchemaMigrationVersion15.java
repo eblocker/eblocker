@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.dns.DnsServerConfig;
 import org.eblocker.server.common.data.dns.EblockerDnsServerState;
-import com.google.inject.Inject;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Creates EblockerDnsServerState based on current config

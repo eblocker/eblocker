@@ -16,6 +16,11 @@
  */
 package org.eblocker.server.common.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.time.DayOfWeek;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,11 +28,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserProfileModule {
@@ -43,7 +43,7 @@ public class UserProfileModule {
         }
     }
 
-	// General attributes
+    // General attributes
     private Integer id;
     private String name;
     private String description;
@@ -72,24 +72,24 @@ public class UserProfileModule {
     private Set<Integer> inaccessibleSitesPackages;
     private Set<InternetAccessContingent> internetAccessContingents;
     private Map<DayOfWeek, Integer> maxUsageTimeByDay;
-    
+
     @JsonCreator
     public UserProfileModule(
-            @JsonProperty("id") Integer id,
-            @JsonProperty("name") String name,
-            @JsonProperty("description") String description,
-            @JsonProperty("nameKey") String nameKey,
-            @JsonProperty("descriptionKey") String descriptionKey,
-            @JsonProperty("standard") Boolean standard,
-            @JsonProperty("hidden") Boolean hidden,
-            @JsonProperty("accessibleSitesPackages") Set<Integer> accessibleSitesPackages,
-            @JsonProperty("inaccessibleSitesPackages") Set<Integer> inaccessibleSitesPackages,
-            @JsonProperty("internetAccessRestrictionMode") InternetAccessRestrictionMode internetAccessRestrictionMode,
-            @JsonProperty("internetAccessContingents") Set<InternetAccessContingent> internetAccessContingents,
-            @JsonProperty("maxUsageTimeByDay") Map<DayOfWeek, Integer> maxUsageTimeByDay,
-            @JsonProperty("parentalControlSettingValidated") Boolean isParentalControlSettingValidated,
-            @JsonProperty("internetBlocked") Boolean internetBlocked,
-            @JsonProperty("bonusTimeUsage") BonusTimeUsage bonusTimeUsage
+        @JsonProperty("id") Integer id,
+        @JsonProperty("name") String name,
+        @JsonProperty("description") String description,
+        @JsonProperty("nameKey") String nameKey,
+        @JsonProperty("descriptionKey") String descriptionKey,
+        @JsonProperty("standard") Boolean standard,
+        @JsonProperty("hidden") Boolean hidden,
+        @JsonProperty("accessibleSitesPackages") Set<Integer> accessibleSitesPackages,
+        @JsonProperty("inaccessibleSitesPackages") Set<Integer> inaccessibleSitesPackages,
+        @JsonProperty("internetAccessRestrictionMode") InternetAccessRestrictionMode internetAccessRestrictionMode,
+        @JsonProperty("internetAccessContingents") Set<InternetAccessContingent> internetAccessContingents,
+        @JsonProperty("maxUsageTimeByDay") Map<DayOfWeek, Integer> maxUsageTimeByDay,
+        @JsonProperty("parentalControlSettingValidated") Boolean isParentalControlSettingValidated,
+        @JsonProperty("internetBlocked") Boolean internetBlocked,
+        @JsonProperty("bonusTimeUsage") BonusTimeUsage bonusTimeUsage
     ) {
         this.id = id;
         this.name = name;
@@ -108,7 +108,7 @@ public class UserProfileModule {
         this.internetBlocked = internetBlocked == null ? false : internetBlocked; // requirement for parental control card: should only be set by UI
         this.bonusTimeUsage = bonusTimeUsage;
     }
-    
+
     //Getters and setters------------------------------------
 
     public void setId(Integer id) {
@@ -168,48 +168,48 @@ public class UserProfileModule {
     }
 
     public void setAccessibleSitesPackages(Set<Integer> accessibleSitesPackages) {
-    	Set<Integer> tmpPackageList = new HashSet<>();
-    	for (Integer filter : accessibleSitesPackages) {
-    		if (filter != null) {
-    			tmpPackageList.add(filter);
-    		}
-    	}
-    	this.accessibleSitesPackages = tmpPackageList;
-    }
-    
-    public Set<Integer> getAccessibleSitesPackages() {
-    	return accessibleSitesPackages;
-    }
-    
-    public void setInaccessibleSitesPackages(Set<Integer> inaccessibleSitesPackages) {
-    	Set<Integer> tmpPackageList = new HashSet<>();
-    	for (Integer filter : inaccessibleSitesPackages) {
-    		if (filter != null) {
-    			tmpPackageList.add(filter);
-    		}
-    	}
-    	this.inaccessibleSitesPackages = tmpPackageList;
-    }
-    
-    public Set<Integer> getInaccessibleSitesPackages() {
-    	return inaccessibleSitesPackages;
-    }
-    
-    public Set<InternetAccessContingent> getInternetAccessContingents(){
-    	return this.internetAccessContingents;
-    }
-    
-    public void setInternetAccessContingents(Set<InternetAccessContingent> internetAccessContingents) {
-		this.internetAccessContingents = internetAccessContingents;
+        Set<Integer> tmpPackageList = new HashSet<>();
+        for (Integer filter : accessibleSitesPackages) {
+            if (filter != null) {
+                tmpPackageList.add(filter);
+            }
+        }
+        this.accessibleSitesPackages = tmpPackageList;
     }
 
-	public boolean isBuiltin() {
-		return this.builtin;
-	}
-	
-	public void setBuiltin(boolean builtin) {
-		this.builtin = builtin;
-	}
+    public Set<Integer> getAccessibleSitesPackages() {
+        return accessibleSitesPackages;
+    }
+
+    public void setInaccessibleSitesPackages(Set<Integer> inaccessibleSitesPackages) {
+        Set<Integer> tmpPackageList = new HashSet<>();
+        for (Integer filter : inaccessibleSitesPackages) {
+            if (filter != null) {
+                tmpPackageList.add(filter);
+            }
+        }
+        this.inaccessibleSitesPackages = tmpPackageList;
+    }
+
+    public Set<Integer> getInaccessibleSitesPackages() {
+        return inaccessibleSitesPackages;
+    }
+
+    public Set<InternetAccessContingent> getInternetAccessContingents() {
+        return this.internetAccessContingents;
+    }
+
+    public void setInternetAccessContingents(Set<InternetAccessContingent> internetAccessContingents) {
+        this.internetAccessContingents = internetAccessContingents;
+    }
+
+    public boolean isBuiltin() {
+        return this.builtin;
+    }
+
+    public void setBuiltin(boolean builtin) {
+        this.builtin = builtin;
+    }
 
     public boolean isControlmodeUrls() {
         return controlmodeUrls;
@@ -220,12 +220,12 @@ public class UserProfileModule {
     }
 
     public boolean isControlmodeTime() {
-		return controlmodeTime;
-	}
+        return controlmodeTime;
+    }
 
-	public void setControlmodeTime(boolean controlmodeTime) {
-		this.controlmodeTime = controlmodeTime;
-	}
+    public void setControlmodeTime(boolean controlmodeTime) {
+        this.controlmodeTime = controlmodeTime;
+    }
 
     public boolean isControlmodeMaxUsage() {
         return controlmodeMaxUsage;
@@ -236,15 +236,15 @@ public class UserProfileModule {
     }
 
     public InternetAccessRestrictionMode getInternetAccessRestrictionMode() {
-		return internetAccessRestrictionMode;
-	}
+        return internetAccessRestrictionMode;
+    }
 
-	public void setInternetAccessRestrictionMode(
-            InternetAccessRestrictionMode internetAccessRestrictionMode) {
-		this.internetAccessRestrictionMode = internetAccessRestrictionMode;
-	}
+    public void setInternetAccessRestrictionMode(
+        InternetAccessRestrictionMode internetAccessRestrictionMode) {
+        this.internetAccessRestrictionMode = internetAccessRestrictionMode;
+    }
 
-	public Map<DayOfWeek, Integer> getMaxUsageTimeByDay() {
+    public Map<DayOfWeek, Integer> getMaxUsageTimeByDay() {
         return maxUsageTimeByDay;
     }
 
@@ -269,22 +269,22 @@ public class UserProfileModule {
     }
 
     @Override
-	public boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-		UserProfileModule that = (UserProfileModule) o;
-		return builtin == that.builtin &&
-				standard == that.standard &&
-				Objects.equals(id, that.id) &&
-				Objects.equals(nameKey, that.nameKey);
-	}
+        UserProfileModule that = (UserProfileModule) o;
+        return builtin == that.builtin &&
+            standard == that.standard &&
+            Objects.equals(id, that.id) &&
+            Objects.equals(nameKey, that.nameKey);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, nameKey, builtin, standard);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nameKey, builtin, standard);
+    }
 
     public boolean isParentalControlSettingValidated() {
         return parentalControlSettingValidated;
@@ -304,9 +304,9 @@ public class UserProfileModule {
 
     public UserProfileModule copy() {
         UserProfileModule copy = new UserProfileModule(this.getId(), this.getName(), this.getDescription(),
-                this.getNameKey(), this.getDescriptionKey(), this.isStandard(), this.isHidden(),
-                this.getAccessibleSitesPackages(), this.getInaccessibleSitesPackages(), this.getInternetAccessRestrictionMode(),
-                this.getInternetAccessContingents(), this.maxUsageTimeByDay, this.parentalControlSettingValidated,
+            this.getNameKey(), this.getDescriptionKey(), this.isStandard(), this.isHidden(),
+            this.getAccessibleSitesPackages(), this.getInaccessibleSitesPackages(), this.getInternetAccessRestrictionMode(),
+            this.getInternetAccessContingents(), this.maxUsageTimeByDay, this.parentalControlSettingValidated,
             this.internetBlocked, this.bonusTimeUsage);
         copy.controlmodeMaxUsage = this.isControlmodeMaxUsage();
         copy.controlmodeTime = this.isControlmodeTime();

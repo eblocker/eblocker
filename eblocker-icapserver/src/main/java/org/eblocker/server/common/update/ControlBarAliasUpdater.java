@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.update;
 
-import org.eblocker.server.common.network.InetAddressWrapper;
-import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.network.InetAddressWrapper;
+import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

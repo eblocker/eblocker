@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.events.EventLogger;
-import org.eblocker.server.common.data.events.Events;
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.TosContainer;
 import org.eblocker.registration.UpgradeInfo;
+import org.eblocker.server.common.data.events.EventLogger;
+import org.eblocker.server.common.data.events.Events;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +45,10 @@ public class RegistrationService {
 
     @Inject
     public RegistrationService(
-            DeviceRegistrationClient client,
-            DeviceRegistrationProperties properties,
-            EventLogger eventLogger,
-            ReminderService reminderService
+        DeviceRegistrationClient client,
+        DeviceRegistrationProperties properties,
+        EventLogger eventLogger,
+        ReminderService reminderService
     ) {
         this.client = client;
         this.properties = properties;
@@ -56,7 +56,7 @@ public class RegistrationService {
         this.reminderService = reminderService;
     }
 
-    public TosContainer getTosContainer(){
+    public TosContainer getTosContainer() {
         return client.getTosContainer();
     }
 
@@ -64,10 +64,10 @@ public class RegistrationService {
         UpgradeInfo upgradeInfo = client.isUpgradeAvailable();
         if (upgradeInfo.isUpgradeAvailable()) {
             DeviceRegistrationRequest deviceRegistrationRequest = properties.generateRequest(
-                    null,
-                    null,
-                    null,
-                    null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null
             );

@@ -16,14 +16,13 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.time.Clock;
-
-import org.eblocker.server.http.controller.TimestampController;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.LocalTimestamp;
+import org.eblocker.server.http.controller.TimestampController;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
-import com.google.inject.Inject;
+import java.time.Clock;
 
 /**
  * A controller that can return timestamps for the client
@@ -36,7 +35,7 @@ public class TimestampControllerImpl implements TimestampController {
     public TimestampControllerImpl(Clock clock) {
         this.clock = clock;
     }
-    
+
     @Override
     public Object getLocalTimestamp(Request request, Response response) {
         return new LocalTimestamp(clock.instant());

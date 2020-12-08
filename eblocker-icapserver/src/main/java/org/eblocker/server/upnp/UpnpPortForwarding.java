@@ -28,7 +28,7 @@ public class UpnpPortForwarding extends PortMapping {
     }
 
     public UpnpPortForwarding(int externalPort, int internalPort, String internalHostIp, int durationSeconds, String description,
-            Protocol protocol, boolean permanent) {
+                              Protocol protocol, boolean permanent) {
         super();
         this.setExternalPort(new UnsignedIntegerTwoBytes(externalPort));
         this.setInternalPort(new UnsignedIntegerTwoBytes(internalPort));
@@ -65,7 +65,7 @@ public class UpnpPortForwarding extends PortMapping {
         final int prime = 31;
         int result = 1;
         result = prime * getExternalPort().hashCode() * getInternalPort().hashCode() * getInternalClient().hashCode()
-                * getProtocol().hashCode();
+            * getProtocol().hashCode();
         return result;
     }
 

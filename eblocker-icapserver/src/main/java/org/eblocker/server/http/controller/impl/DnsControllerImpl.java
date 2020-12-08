@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.dns.DnsResolvers;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
 import org.eblocker.server.common.data.dns.NameServerStats;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.service.DnsService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -65,8 +65,8 @@ public class DnsControllerImpl implements DnsController {
     public List<LocalDnsRecord> setLocalDnsRecords(Request request, Response response) {
         try {
             List<LocalDnsRecord> records = objectMapper.readValue(request.getBodyAsStream(),
-                    new TypeReference<List<LocalDnsRecord>>() {
-                    });
+                new TypeReference<List<LocalDnsRecord>>() {
+                });
             return dnsService.setLocalDnsRecords(records);
         } catch (IOException e) {
             throw new BadRequestException("failed to parse body", e);
@@ -95,7 +95,7 @@ public class DnsControllerImpl implements DnsController {
     @Override
     public Object getResolverStats(Request request, Response response) {
         String resolver = ControllerUtils.getQueryParameter(request, "resolver",
-                dnsService.getDnsResolvers().getDefaultResolver());
+            dnsService.getDnsResolvers().getDefaultResolver());
         int hours = Integer.parseInt(ControllerUtils.getQueryParameter(request, "hours", "4"));
         String lengthValue = request.getHeader("length");
 

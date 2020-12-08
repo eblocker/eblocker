@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
 
 import java.util.Set;
 
@@ -47,7 +47,7 @@ public class SchemaMigrationVersion7 implements SchemaMigration {
 
     private void deleteUserMessageVisibilities() {
         Set<String> keys = dataSource.keys(DefaultEntities.MESSAGE_DELETION_KEY);
-        for (String key: keys) {
+        for (String key : keys) {
             dataSource.delete(key);
         }
     }

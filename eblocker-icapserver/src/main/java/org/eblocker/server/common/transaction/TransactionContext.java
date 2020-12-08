@@ -17,22 +17,22 @@
 package org.eblocker.server.common.transaction;
 
 public interface TransactionContext {
-	
-	String getSessionId();
 
-	String getUrl();
+    String getSessionId();
 
-	String getDomain();
+    String getUrl();
 
-	String getReferrer();
+    String getDomain();
 
-	String getReferrerHostname();
+    String getReferrer();
 
-	String getAccept();
-	
-	Decision getDecision();
-	
-	String getRedirectTarget();
+    String getReferrerHostname();
 
-	boolean isThirdParty();
+    String getAccept();
+
+    Decision getDecision();
+
+    String getRedirectTarget();
+
+    boolean isThirdParty();
 }

@@ -28,228 +28,228 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 public class SessionImpl implements Session {
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(SessionImpl.class);
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
-	private final String sessionId;
-	private Date lastUsed;
+    private final String sessionId;
+    private Date lastUsed;
 
-	private final String userAgent;
-	private final IpAddress ip;
-	private final Integer userId;
-	private final String deviceId;
+    private final String userAgent;
+    private final IpAddress ip;
+    private final Integer userId;
+    private final String deviceId;
     private final UserAgentInfo userAgentInfo;
 
-	private String appId;
-	private String outgoingUserAgent = null;
-	private UserAgent customUserAgent =null;
+    private String appId;
+    private String outgoingUserAgent = null;
+    private UserAgent customUserAgent = null;
 
-	private boolean isUsingTor;
-	private boolean torError;
+    private boolean isUsingTor;
+    private boolean torError;
 
-	private boolean patternFiltersEnabled;
+    private boolean patternFiltersEnabled;
 
-	private boolean blockAds;
-	private int blockedAds;
+    private boolean blockAds;
+    private int blockedAds;
 
-	private boolean blockTrackings;
-	private int blockedTrackings;
+    private boolean blockTrackings;
+    private int blockedTrackings;
 
-	private boolean useDomainWhiteList;
+    private boolean useDomainWhiteList;
 
-	private ForwardDecisionStore forwardDecisions;
-	private PageContexts pageContexts;
+    private ForwardDecisionStore forwardDecisions;
+    private PageContexts pageContexts;
 
-	private boolean whatIfMode = false;
-
-
-	protected SessionImpl(String sessionId, String userAgent, IpAddress ip, String deviceId, Integer userId, UserAgentInfo userAgentInfo) {
-
-		this.sessionId = sessionId;
-		this.lastUsed = new Date();
-
-		this.userAgent = userAgent;
-		this.userAgentInfo = userAgentInfo == null ? UserAgentInfo.getDefault() : userAgentInfo;
-		//this.editedUserAgent = userAgent;
-		this.ip = ip;
-		this.userId = userId;
-
-		this.deviceId = deviceId;
-		this.appId = null;
-
-		this.isUsingTor = false;
-
-		this.blockAds = true;
-		this.blockedAds = 0;
-
-		this.blockTrackings = true;
-		this.blockedTrackings = 0;
-
-		this.useDomainWhiteList = true;
-
-		this.forwardDecisions = new ForwardDecisionStore();
-		this.pageContexts = new PageContexts(128);
-
-	}
-
-	@Override
-	public String getSessionId() {
-		return sessionId;
-	}
-
-	@Override
-	public String getShortId() {
-		return sessionId.substring(0, 8);
-	}
-
-	public Date getLastUsed() {
-		return lastUsed;
-	}
-
-	@Override
-	public void markUsed() {
-		lastUsed = new Date();
-	}
-
-	@Override
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	@Override
-	public IpAddress getIp() {
-		return ip;
-	}
+    private boolean whatIfMode = false;
 
 
-	@Override
-	public Integer getUserId() {
-		return userId;
-	}
+    protected SessionImpl(String sessionId, String userAgent, IpAddress ip, String deviceId, Integer userId, UserAgentInfo userAgentInfo) {
 
-	public String getDeviceId() {
-		return deviceId;
-	}
+        this.sessionId = sessionId;
+        this.lastUsed = new Date();
 
-	public String getAppId() {
-		return appId;
-	}
+        this.userAgent = userAgent;
+        this.userAgentInfo = userAgentInfo == null ? UserAgentInfo.getDefault() : userAgentInfo;
+        //this.editedUserAgent = userAgent;
+        this.ip = ip;
+        this.userId = userId;
 
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
+        this.deviceId = deviceId;
+        this.appId = null;
 
-	@Override
-	public String getOutgoingUserAgent() {
-		return outgoingUserAgent;
-	}
+        this.isUsingTor = false;
 
-	@Override
-	public void setOutgoingUserAgent(String outgoingUserAgent) {
-		this.outgoingUserAgent = outgoingUserAgent;
-	}
+        this.blockAds = true;
+        this.blockedAds = 0;
 
-	@Override
-	public Decision popForwardDecision(String url) {
-		return forwardDecisions.popDecision(url);
-	}
+        this.blockTrackings = true;
+        this.blockedTrackings = 0;
 
-	@Override
-	public void addForwardDecision(String url, Decision decision) {
-		forwardDecisions.addDecision(url, decision);
-	}
+        this.useDomainWhiteList = true;
 
-	@Override
-	public PageContext createPageContext(PageContext parentContext, String url) {
-		return pageContexts.add(parentContext, url, ip);
-	}
+        this.forwardDecisions = new ForwardDecisionStore();
+        this.pageContexts = new PageContexts(128);
 
-	@Override
-	public PageContext getPageContext(String url) {
-		return pageContexts.get(url);
-	}
+    }
 
-	@Override
-	public boolean isBlockAds() {
-		return blockAds;
-	}
+    @Override
+    public String getSessionId() {
+        return sessionId;
+    }
 
-	@Override
-	public void setBlockAds(boolean blockAds) {
-		this.blockAds = blockAds;
-	}
+    @Override
+    public String getShortId() {
+        return sessionId.substring(0, 8);
+    }
 
-	@Override
-	public int getBlockedAds() {
-		return blockedAds;
-	}
+    public Date getLastUsed() {
+        return lastUsed;
+    }
 
-	@Override
-	public void incrementBlockedAds(TransactionContext transaction) {
-		blockedAds++;
+    @Override
+    public void markUsed() {
+        lastUsed = new Date();
+    }
 
-		PageContext pageContext = getPageContext(transaction.getReferrer());
-		if (pageContext != null) {
-			pageContext.incrementBlockedAds(transaction.getUrl());
-		}
+    @Override
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    @Override
+    public IpAddress getIp() {
+        return ip;
+    }
+
+
+    @Override
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    @Override
+    public String getOutgoingUserAgent() {
+        return outgoingUserAgent;
+    }
+
+    @Override
+    public void setOutgoingUserAgent(String outgoingUserAgent) {
+        this.outgoingUserAgent = outgoingUserAgent;
+    }
+
+    @Override
+    public Decision popForwardDecision(String url) {
+        return forwardDecisions.popDecision(url);
+    }
+
+    @Override
+    public void addForwardDecision(String url, Decision decision) {
+        forwardDecisions.addDecision(url, decision);
+    }
+
+    @Override
+    public PageContext createPageContext(PageContext parentContext, String url) {
+        return pageContexts.add(parentContext, url, ip);
+    }
+
+    @Override
+    public PageContext getPageContext(String url) {
+        return pageContexts.get(url);
+    }
+
+    @Override
+    public boolean isBlockAds() {
+        return blockAds;
+    }
+
+    @Override
+    public void setBlockAds(boolean blockAds) {
+        this.blockAds = blockAds;
+    }
+
+    @Override
+    public int getBlockedAds() {
+        return blockedAds;
+    }
+
+    @Override
+    public void incrementBlockedAds(TransactionContext transaction) {
+        blockedAds++;
+
+        PageContext pageContext = getPageContext(transaction.getReferrer());
+        if (pageContext != null) {
+            pageContext.incrementBlockedAds(transaction.getUrl());
+        }
 		/*else{
 			createPageContext(transaction.getReferrer());
 		}*/
-	}
+    }
 
-	@Override
-	public boolean isBlockTrackings() {
-		return blockTrackings;
-	}
+    @Override
+    public boolean isBlockTrackings() {
+        return blockTrackings;
+    }
 
-	@Override
-	public void setBlockTrackings(boolean blockTrackings) {
-		this.blockTrackings = blockTrackings;
-	}
+    @Override
+    public void setBlockTrackings(boolean blockTrackings) {
+        this.blockTrackings = blockTrackings;
+    }
 
-	@Override
-	public int getBlockedTrackings() {
-		return blockedTrackings;
-	}
+    @Override
+    public int getBlockedTrackings() {
+        return blockedTrackings;
+    }
 
-	@Override
-	public void incrementBlockedTrackings(TransactionContext transaction) {
-		blockedTrackings++;
-		PageContext pageContext = getPageContext(transaction.getReferrer());
-		if (pageContext != null) {
-			pageContext.incrementBlockedTrackings(transaction.getUrl());
-		}
-	}
+    @Override
+    public void incrementBlockedTrackings(TransactionContext transaction) {
+        blockedTrackings++;
+        PageContext pageContext = getPageContext(transaction.getReferrer());
+        if (pageContext != null) {
+            pageContext.incrementBlockedTrackings(transaction.getUrl());
+        }
+    }
 
-	@Override
-	public boolean isUseDomainWhiteList() {
-		return useDomainWhiteList;
-	}
+    @Override
+    public boolean isUseDomainWhiteList() {
+        return useDomainWhiteList;
+    }
 
-	@Override
-	public void setUseDomainWhiteList(boolean useDomainWhiteList) {
-		this.useDomainWhiteList = useDomainWhiteList;
-	}
-
-
-	@Override
-	public void setTorIsWorking(boolean working) {
-		torError=working;
-	}
-
-	@Override
-	public boolean isTorWorking(){
-		return torError;
-	}
+    @Override
+    public void setUseDomainWhiteList(boolean useDomainWhiteList) {
+        this.useDomainWhiteList = useDomainWhiteList;
+    }
 
 
-	@Override
-	public boolean isWarningState(){
-		/*  TODO:
-		 * Add all the fields, that represent errors or warning here
-		 */
-		return isTorWorking();
-	}
+    @Override
+    public void setTorIsWorking(boolean working) {
+        torError = working;
+    }
+
+    @Override
+    public boolean isTorWorking() {
+        return torError;
+    }
+
+
+    @Override
+    public boolean isWarningState() {
+        /*  TODO:
+         * Add all the fields, that represent errors or warning here
+         */
+        return isTorWorking();
+    }
 
     @Override
     public boolean isWhatIfMode() {
@@ -267,16 +267,16 @@ public class SessionImpl implements Session {
     }
 
     @Override
-	public UserAgent getCustomUserAgent() {
-		return this.customUserAgent;
-	}
+    public UserAgent getCustomUserAgent() {
+        return this.customUserAgent;
+    }
 
-	@Override
-	public void setCustomUserAgent(String userAgent) {
-		this.customUserAgent=new UserAgent(userAgent);
-	}
+    @Override
+    public void setCustomUserAgent(String userAgent) {
+        this.customUserAgent = new UserAgent(userAgent);
+    }
 
-	@Override
+    @Override
     public boolean isPatternFiltersEnabled() {
         return patternFiltersEnabled;
     }

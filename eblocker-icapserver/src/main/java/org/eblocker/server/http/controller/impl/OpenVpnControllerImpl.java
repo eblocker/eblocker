@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.OpenVpnConfigurationViewModel;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
@@ -34,9 +37,6 @@ import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.service.AnonymousService;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.commons.io.IOUtils;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -56,9 +56,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** This is the REST-Controller to provide the interface between frontend and backend for handling the routing of client
- *  traffic through OpenVPN instances (user configured VPN services).
- *
+/**
+ * This is the REST-Controller to provide the interface between frontend and backend for handling the routing of client
+ * traffic through OpenVPN instances (user configured VPN services).
  */
 public class OpenVpnControllerImpl implements OpenVpnController {
     @SuppressWarnings("unused")
@@ -90,7 +90,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     @Override
     public VpnProfile createProfile(Request request, Response response) {
         OpenVpnProfile profile = request.getBodyAs(OpenVpnProfile.class);
-        if (profile == null){
+        if (profile == null) {
             profile = new OpenVpnProfile();
         }
         try {
@@ -129,12 +129,12 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
         // disable vpn and reset devices
         deviceService.getDevices(true).stream()
-                .filter(d->id.equals(d.getUseVPNProfileID()))
-                .forEach(d->{
-                    anonymousService.disableVpn(d);
-                    d.setUseVPNProfileID(null);
-                    deviceService.updateDevice(d);
-                });
+            .filter(d -> id.equals(d.getUseVPNProfileID()))
+            .forEach(d -> {
+                anonymousService.disableVpn(d);
+                d.setUseVPNProfileID(null);
+                deviceService.updateDevice(d);
+            });
 
         openVpnService.deleteVpnProfile(id);
     }
@@ -234,7 +234,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
             anonymousService.disableVpn(device);
         }
     }
-    
+
     /*
      * This function is only called by the squid error page and it is assumed to
      * activate/deactivate VPN for the current device
@@ -317,12 +317,12 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
         Map<OpenVpnConfigurator.OptionState, Set<Option>> userOptionsByState = configurator.getUserOptionsByState(configuration.getUserOptions());
         model.setActiveOptions(configurator.getActiveConfiguration(configuration, "credentials.txt", new HashMap<>()).stream()
-                .map(o -> mapActiveOption(configuration, userOptionsByState, o)).collect(Collectors.toList()));
+            .map(o -> mapActiveOption(configuration, userOptionsByState, o)).collect(Collectors.toList()));
         model.setBlacklistedOptions(mapOptions(userOptionsByState.get(OpenVpnConfigurator.OptionState.BLACKLISTED)));
         model.setIgnoredOptions(mapOptions(userOptionsByState.get(OpenVpnConfigurator.OptionState.IGNORED)));
         model.setRequiredFiles(userOptionsByState.get(OpenVpnConfigurator.OptionState.FILE_REQUIRED).stream()
-                .map(o -> mapInliningRequiredOption(configuration, (SimpleOption) o))
-                .collect(Collectors.toList()));
+            .map(o -> mapInliningRequiredOption(configuration, (SimpleOption) o))
+            .collect(Collectors.toList()));
         model.setCredentialsRequired(configurator.credentialsRequired(configuration));
         model.setValidationErrors(configurator.validateConfiguration(configuration));
         return model;
@@ -340,9 +340,9 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
     private OpenVpnConfigurationViewModel.ConfigLine mapActiveOption(OpenVpnConfiguration configuration,
                                                                      Map<OpenVpnConfigurator.OptionState,
-                                                                             Set<Option>> userOptionsByState,
+                                                                         Set<Option>> userOptionsByState,
                                                                      Option option) {
-        Optional <Option> userOption = findOptionByName(configuration.getUserOptions(), option.getName());
+        Optional<Option> userOption = findOptionByName(configuration.getUserOptions(), option.getName());
         boolean isEblockerOption = findOptionByName(configurator.getEblockerOptions(), option.getName()).isPresent();
         Option newOption = option;
 
@@ -360,7 +360,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
                 line.overriddenLineNumber = overwrittenUserOption.getLineNumber();
                 line.overriddenLine = overwrittenUserOption.toString();
             }
-        }  else {
+        } else {
             line.source = "user";
         }
 
@@ -371,7 +371,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     }
 
     private Optional<Option> findOptionByName(Collection<Option> options, String name) {
-        return options.stream().filter(o->o.getName().equals(name)).findAny();
+        return options.stream().filter(o -> o.getName().equals(name)).findAny();
     }
 
     private OpenVpnConfigurationViewModel.ConfigLine mapOption(Option option) {

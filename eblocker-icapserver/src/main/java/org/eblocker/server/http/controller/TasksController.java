@@ -27,7 +27,9 @@ import java.util.Map;
 
 public interface TasksController {
     TasksViewConfig getViewConfig(Request request, Response response);
+
     TasksViewConfig setViewConfig(Request request, Response response);
+
     Map<String, Collection<LogEntry>> getLog(Request request, Response response);
 
     Map<String, PoolStats> getPoolStats(Request request, Response response);

@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -24,8 +26,6 @@ import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

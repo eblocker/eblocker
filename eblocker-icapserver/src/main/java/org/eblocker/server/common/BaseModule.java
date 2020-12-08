@@ -16,39 +16,40 @@
  */
 package org.eblocker.server.common;
 
-import java.io.IOException;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.JedisDataSource;
-import org.eblocker.crypto.keys.KeyWrapper;
-import org.eblocker.crypto.keys.SystemKey;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-
+import org.eblocker.crypto.keys.KeyWrapper;
+import org.eblocker.crypto.keys.SystemKey;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.JedisDataSource;
 import redis.clients.jedis.JedisPool;
+
+import java.io.IOException;
 
 /**
  * Module for dependency injection of common base classes.
  */
 public class BaseModule extends ConfigurableModule {
-	public BaseModule() throws IOException {
-	    super();
-	}
+    public BaseModule() throws IOException {
+        super();
+    }
 
-	@Override
-	protected void configure() {
-	    super.configure();
-		bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).in(Scopes.SINGLETON);
-		bind(JedisPool.class).toProvider(JedisPoolProvider.class).in(Scopes.SINGLETON);
-		bind(DataSource.class).to(JedisDataSource.class);
-	}
+    @Override
+    protected void configure() {
+        super.configure();
+        bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).in(Scopes.SINGLETON);
+        bind(JedisPool.class).toProvider(JedisPoolProvider.class).in(Scopes.SINGLETON);
+        bind(DataSource.class).to(JedisDataSource.class);
+    }
 
-	@Provides @Named("systemKey") @Singleton
-	public KeyWrapper provideSystemKeyWrapper(@Named("keyService.systemKey.path") String systemKeyPath) {
-		return new SystemKey(systemKeyPath);
-	}
+    @Provides
+    @Named("systemKey")
+    @Singleton
+    public KeyWrapper provideSystemKeyWrapper(@Named("keyService.systemKey.path") String systemKeyPath) {
+        return new SystemKey(systemKeyPath);
+    }
 
 }

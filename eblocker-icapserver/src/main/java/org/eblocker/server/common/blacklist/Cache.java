@@ -62,7 +62,7 @@ class Cache {
      * Get latest versions of all file filters
      */
     public List<CachedFileFilter> getFileFilters() {
-        return index.getFilters().values().stream().map(f->f.get(0)).collect(Collectors.toList());
+        return index.getFilters().values().stream().map(f -> f.get(0)).collect(Collectors.toList());
     }
 
     /**
@@ -108,7 +108,7 @@ class Cache {
 
         List<CachedFileFilter> filters = index.getFilters().computeIfAbsent(id, k -> new ArrayList<>());
         int i = 0;
-        while(i < filters.size() && version < filters.get(i).getKey().getVersion()) {
+        while (i < filters.size() && version < filters.get(i).getKey().getVersion()) {
             ++i;
         }
         filters.add(i, importedFilter);
@@ -199,7 +199,8 @@ class Cache {
         index.setFormat(CACHE_FORMAT);
 
         // update filter meta data
-        ObjectReader filtersReader = objectMapper.readerFor(new TypeReference<Map<Integer, List<CachedFileFilter>>>() {});
+        ObjectReader filtersReader = objectMapper.readerFor(new TypeReference<Map<Integer, List<CachedFileFilter>>>() {
+        });
 
         Map<Integer, List<CachedFileFilter>> cachedFilters = filtersReader.readValue(node.get("filters"));
         Map<Integer, List<CachedFileFilter>> updatedFilters = cachedFilters.values().stream()

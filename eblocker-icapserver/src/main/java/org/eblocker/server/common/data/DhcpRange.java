@@ -17,23 +17,23 @@
 package org.eblocker.server.common.data;
 
 public class DhcpRange {
-	private final String firstIpAddress;
-	private final String lastIpAddress;
-	
-	public DhcpRange(String firstIpAddress, String lastIpAddress) {
-		this.firstIpAddress = firstIpAddress;
-		this.lastIpAddress = lastIpAddress;
-	}
+    private final String firstIpAddress;
+    private final String lastIpAddress;
 
-	public String getFirstIpAddress() {
-		return firstIpAddress;
-	}
+    public DhcpRange(String firstIpAddress, String lastIpAddress) {
+        this.firstIpAddress = firstIpAddress;
+        this.lastIpAddress = lastIpAddress;
+    }
 
-	public String getLastIpAddress() {
-		return lastIpAddress;
-	}
+    public String getFirstIpAddress() {
+        return firstIpAddress;
+    }
 
-	public boolean isEmpty() {
-		return lastIpAddress == null && firstIpAddress == null;
-	}
+    public String getLastIpAddress() {
+        return lastIpAddress;
+    }
+
+    public boolean isEmpty() {
+        return lastIpAddress == null && firstIpAddress == null;
+    }
 }

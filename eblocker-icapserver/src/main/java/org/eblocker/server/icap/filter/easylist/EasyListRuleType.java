@@ -16,84 +16,84 @@
  */
 package org.eblocker.server.icap.filter.easylist;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eblocker.server.icap.filter.FilterPriority;
 import org.eblocker.server.icap.filter.FilterType;
 import org.eblocker.server.icap.filter.url.StringMatchType;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public enum EasyListRuleType {
-	COMMENT          (null,    "^!.*$"),
-	TITLE            (null,    "^\\[.*\\]$"),
+    COMMENT(null, "^!.*$"),
+    TITLE(null, "^\\[.*\\]$"),
 
-	ELEMENT_HIDE     (null,    "^(.*)#\\??#(.*)$"),
-	ELEMENT_NOHIDE   (null,    "^(.*)#@#(.*)$"),
+    ELEMENT_HIDE(null, "^(.*)#\\??#(.*)$"),
+    ELEMENT_NOHIDE(null, "^(.*)#@#(.*)$"),
 
-	EXCEPTION_EXACT  (FilterPriority.HIGH,   "^@@\\|(.*)\\|$", FilterType.PASS,  "^", "$", StringMatchType.EQUALS),
-	EXCEPTION_BEGIN  (FilterPriority.MEDIUM, "^@@\\|(.*)$",    FilterType.PASS,  "^", "",  StringMatchType.STARTSWITH),
-	EXCEPTION_END    (FilterPriority.MEDIUM, "^@@(.*)\\|?$",   FilterType.PASS,  "",  "$", StringMatchType.ENDSWITH),
-    EXCEPTION_REGEX  (FilterPriority.MEDIUM, "^@@/(.*)/$",     FilterType.PASS,  "",  "",  StringMatchType.REGEX),
-	EXCEPTION        (FilterPriority.MEDIUM, "^@@(.*)$",       FilterType.PASS,  "",  "",  StringMatchType.CONTAINS),
+    EXCEPTION_EXACT(FilterPriority.HIGH, "^@@\\|(.*)\\|$", FilterType.PASS, "^", "$", StringMatchType.EQUALS),
+    EXCEPTION_BEGIN(FilterPriority.MEDIUM, "^@@\\|(.*)$", FilterType.PASS, "^", "", StringMatchType.STARTSWITH),
+    EXCEPTION_END(FilterPriority.MEDIUM, "^@@(.*)\\|?$", FilterType.PASS, "", "$", StringMatchType.ENDSWITH),
+    EXCEPTION_REGEX(FilterPriority.MEDIUM, "^@@/(.*)/$", FilterType.PASS, "", "", StringMatchType.REGEX),
+    EXCEPTION(FilterPriority.MEDIUM, "^@@(.*)$", FilterType.PASS, "", "", StringMatchType.CONTAINS),
 
-	BLOCKING_EXACT   (FilterPriority.HIGH,   "^\\|(.*)\\|$",   FilterType.BLOCK, "",  "",  StringMatchType.EQUALS),
-	BLOCKING_BEGIN   (FilterPriority.LOW,    "^\\|(.*)$",      FilterType.BLOCK, "^", "",  StringMatchType.STARTSWITH),
-	BLOCKING_END     (FilterPriority.LOW,    "^(.*)\\|$",      FilterType.BLOCK, "",  "$", StringMatchType.ENDSWITH),
-    BLOCKING_REGEX   (FilterPriority.LOW,    "^/(.*)/$",       FilterType.BLOCK, "",  "",  StringMatchType.REGEX),
-	BLOCKING         (FilterPriority.LOW,    "^(.*)$",         FilterType.BLOCK, "", "",   StringMatchType.CONTAINS),
-	;
+    BLOCKING_EXACT(FilterPriority.HIGH, "^\\|(.*)\\|$", FilterType.BLOCK, "", "", StringMatchType.EQUALS),
+    BLOCKING_BEGIN(FilterPriority.LOW, "^\\|(.*)$", FilterType.BLOCK, "^", "", StringMatchType.STARTSWITH),
+    BLOCKING_END(FilterPriority.LOW, "^(.*)\\|$", FilterType.BLOCK, "", "$", StringMatchType.ENDSWITH),
+    BLOCKING_REGEX(FilterPriority.LOW, "^/(.*)/$", FilterType.BLOCK, "", "", StringMatchType.REGEX),
+    BLOCKING(FilterPriority.LOW, "^(.*)$", FilterType.BLOCK, "", "", StringMatchType.CONTAINS),
+    ;
 
-	private final FilterPriority priority;
-	private final Pattern pattern;
+    private final FilterPriority priority;
+    private final Pattern pattern;
 
-	private final FilterType type;
-	private final String regexPrefix;
-	private final String regexPostfix;
-	private final StringMatchType substringMatchType;
+    private final FilterType type;
+    private final String regexPrefix;
+    private final String regexPostfix;
+    private final StringMatchType substringMatchType;
 
-	private EasyListRuleType(FilterPriority priority, String regex) {
-		this.priority = priority;
-		this.pattern = Pattern.compile(regex);
-		this.type = FilterType.PASS;
-		this.regexPrefix = null;
-		this.regexPostfix = null;
-		this.substringMatchType = null;
-	}
+    private EasyListRuleType(FilterPriority priority, String regex) {
+        this.priority = priority;
+        this.pattern = Pattern.compile(regex);
+        this.type = FilterType.PASS;
+        this.regexPrefix = null;
+        this.regexPostfix = null;
+        this.substringMatchType = null;
+    }
 
-	private EasyListRuleType(FilterPriority priority, String regex, FilterType type, String regexPrefix, String regexPostfix, StringMatchType substringMatchType) {
-		this.priority = priority;
-		this.pattern = Pattern.compile(regex);
-		this.type = type;
-		this.regexPrefix = regexPrefix;
-		this.regexPostfix = regexPostfix;
-		this.substringMatchType = substringMatchType;
-	}
+    private EasyListRuleType(FilterPriority priority, String regex, FilterType type, String regexPrefix, String regexPostfix, StringMatchType substringMatchType) {
+        this.priority = priority;
+        this.pattern = Pattern.compile(regex);
+        this.type = type;
+        this.regexPrefix = regexPrefix;
+        this.regexPostfix = regexPostfix;
+        this.substringMatchType = substringMatchType;
+    }
 
-	public FilterPriority getPriority() {
-		return priority;
-	}
+    public FilterPriority getPriority() {
+        return priority;
+    }
 
-	public Matcher matcher(String definition) {
-		return pattern.matcher(definition);
-	}
+    public Matcher matcher(String definition) {
+        return pattern.matcher(definition);
+    }
 
-	public FilterType getType() {
-		return type;
-	}
+    public FilterType getType() {
+        return type;
+    }
 
-	public String getRegexPrefix() {
-		return regexPrefix;
-	}
+    public String getRegexPrefix() {
+        return regexPrefix;
+    }
 
-	public String getRegexPostfix() {
-		return regexPostfix;
-	}
+    public String getRegexPostfix() {
+        return regexPostfix;
+    }
 
-	public StringMatchType getSubstringMatchType() {
-		return substringMatchType;
-	}
+    public StringMatchType getSubstringMatchType() {
+        return substringMatchType;
+    }
 
-	public boolean isExplicitRegularExpression() {
-	    return this == EXCEPTION_REGEX || this == BLOCKING_REGEX;
-	}
+    public boolean isExplicitRegularExpression() {
+        return this == EXCEPTION_REGEX || this == BLOCKING_REGEX;
+    }
 }

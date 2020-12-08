@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.TosContainer;
 import org.eblocker.server.http.controller.TosController;
 import org.eblocker.server.http.service.RegistrationService;
-import org.eblocker.registration.TosContainer;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** This controller can just answer the question if the setup wizard was done before
- *
+/**
+ * This controller can just answer the question if the setup wizard was done before
  */
 public class TosControllerImpl implements TosController {
 
@@ -35,7 +35,7 @@ public class TosControllerImpl implements TosController {
     private final RegistrationService registrationService;
 
     @Inject
-    public TosControllerImpl(RegistrationService registrationService){
+    public TosControllerImpl(RegistrationService registrationService) {
         this.registrationService = registrationService;
     }
 

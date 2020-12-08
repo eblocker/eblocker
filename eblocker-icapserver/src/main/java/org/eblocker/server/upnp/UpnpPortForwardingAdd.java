@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.upnp;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
@@ -23,9 +25,6 @@ import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.igd.callback.PortMappingAdd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 public class UpnpPortForwardingAdd extends PortMappingAdd {
     private static final Logger log = LoggerFactory.getLogger(UpnpPortForwardingAdd.class);
@@ -35,7 +34,7 @@ public class UpnpPortForwardingAdd extends PortMappingAdd {
 
     @Inject
     public UpnpPortForwardingAdd(@Assisted Service service, @Assisted ControlPoint controlPoint,
-            @Assisted UpnpPortForwarding portForwarding, @Assisted UpnpManagementService callingService) {
+                                 @Assisted UpnpPortForwarding portForwarding, @Assisted UpnpManagementService callingService) {
         super(service, controlPoint, portForwarding);
         result = new UpnpPortForwardingResult(portForwarding);
         this.service = service;

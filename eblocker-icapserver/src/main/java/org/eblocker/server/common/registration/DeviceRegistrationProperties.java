@@ -17,11 +17,11 @@
 
 package org.eblocker.server.common.registration;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.util.DateUtil;
+import com.google.common.base.Strings;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.keys.KeyWrapper;
 import org.eblocker.crypto.pki.CertificateAndKey;
@@ -29,13 +29,12 @@ import org.eblocker.crypto.pki.PKI;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.system.CpuInfo;
-import com.google.common.base.Strings;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
+import org.eblocker.server.common.util.DateUtil;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,19 +129,19 @@ public class DeviceRegistrationProperties {
 
     @Inject
     public DeviceRegistrationProperties(@Named("systemKey") KeyWrapper systemKey,
-            @Named("registration.properties") String registrationProperties,
-            @Named("registration.license.key") String licenseKey,
-            @Named("registration.license.cert") String licenseCert,
-            @Named("registration.truststore.resource") String truststore,
-            @Named("registration.truststore.password") String truststorePassword,
-            @Named("registration.truststore.copy") String truststoreCopy,
-            @Named("registration.keySize") int keySize,
-            @Named("registration.default.type") int defaultRegistrationType,
-            @Named("registration.warning.period") int warningPeriodDays,
-            @Named("registration.lifetime.indicator") String lifetimeIndicator,
-            @Named("tmpDir") String tmpDir,
-            CpuInfo cpuInfo,
-            DeviceRegistrationLicenseState licenseState) throws ParseException {
+                                        @Named("registration.properties") String registrationProperties,
+                                        @Named("registration.license.key") String licenseKey,
+                                        @Named("registration.license.cert") String licenseCert,
+                                        @Named("registration.truststore.resource") String truststore,
+                                        @Named("registration.truststore.password") String truststorePassword,
+                                        @Named("registration.truststore.copy") String truststoreCopy,
+                                        @Named("registration.keySize") int keySize,
+                                        @Named("registration.default.type") int defaultRegistrationType,
+                                        @Named("registration.warning.period") int warningPeriodDays,
+                                        @Named("registration.lifetime.indicator") String lifetimeIndicator,
+                                        @Named("tmpDir") String tmpDir,
+                                        CpuInfo cpuInfo,
+                                        DeviceRegistrationLicenseState licenseState) throws ParseException {
         this.password = Hex.encodeHex(systemKey.get());
         this.registrationProperties = new SimpleResource(registrationProperties);
         this.licenseKey = new SimpleResource(licenseKey);
@@ -189,8 +188,8 @@ public class DeviceRegistrationProperties {
             decodedLicenseCredentials = PKI.generateSelfSignedCertificateRequest(deviceId, keySize);
             licenseCredentials = Base64.encodeBase64String(encodeKeyStore(decodedLicenseCredentials, LICENSE_KEY_ALIAS));
 
-        } catch (CryptoException|IOException e) {
-            String msg = "Cannot generate initial device keys: "+e.getMessage();
+        } catch (CryptoException | IOException e) {
+            String msg = "Cannot generate initial device keys: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -212,7 +211,7 @@ public class DeviceRegistrationProperties {
             return true;
 
         } catch (Exception e) {
-            String msg = "Cannot read registration properties, purging all registration data: "+e.getMessage();
+            String msg = "Cannot read registration properties, purging all registration data: " + e.getMessage();
             log.warn(msg, e);
             return false;
 
@@ -222,11 +221,11 @@ public class DeviceRegistrationProperties {
     private void doLoad() {
         log.info("Loading registration configuration from file " + registrationProperties.getPath());
         Properties properties = new Properties();
-        try (InputStream in = ResourceHandler.getInputStream(registrationProperties)){
+        try (InputStream in = ResourceHandler.getInputStream(registrationProperties)) {
             properties.load(new InputStreamReader(in, StandardCharsets.UTF_8));
 
         } catch (IOException e) {
-            String msg = "Cannot load registration properties: "+e.getMessage();
+            String msg = "Cannot load registration properties: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -280,7 +279,7 @@ public class DeviceRegistrationProperties {
         properties.setProperty(PROP_LICENSE_CRED, licenseCredentials);
         properties.setProperty(PROP_LICENSE_TYPE, licenseType.toString());
         if (hasBeenRegisteredBefore()) {
-             if (licenseType.isSubscription()) {
+            if (licenseType.isSubscription()) {
                 properties.setProperty(PROP_LICENSE_NVA, format.format(licenseNotValidAfter));
                 properties.setProperty(PROP_LICENSE_AUTO, Boolean.toString(licenseAutoRenewal));
             }
@@ -297,7 +296,7 @@ public class DeviceRegistrationProperties {
             }
             ResourceHandler.replaceContent(registrationProperties, temp);
         } catch (IOException e) {
-            String msg = "Cannot create temp file to store new registration properties: "+e.getMessage();
+            String msg = "Cannot create temp file to store new registration properties: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -373,7 +372,7 @@ public class DeviceRegistrationProperties {
             return Hex.encodeHexString(digest);
 
         } catch (NoSuchAlgorithmException e) {
-            String msg = "Cannot generate registration ID: "+e.getMessage();
+            String msg = "Cannot generate registration ID: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -385,8 +384,8 @@ public class DeviceRegistrationProperties {
             PKI.generateKeyStore(certificateAndKey, alias, password, baos);
             return baos.toByteArray();
 
-        } catch (CryptoException|IOException e) {
-            String msg = "Cannot generate key store "+alias+" from key and certificate: "+e.getMessage();
+        } catch (CryptoException | IOException e) {
+            String msg = "Cannot generate key store " + alias + " from key and certificate: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -397,8 +396,8 @@ public class DeviceRegistrationProperties {
             ByteArrayInputStream bais = new ByteArrayInputStream(encodedKeyStore);
             return PKI.loadKeyStore(alias, bais, password);
 
-        } catch (IOException|CryptoException e) {
-            String msg = "Cannot decode key store '"+alias+"': "+e.getMessage();
+        } catch (IOException | CryptoException e) {
+            String msg = "Cannot decode key store '" + alias + "': " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -409,8 +408,8 @@ public class DeviceRegistrationProperties {
             ByteArrayInputStream bais = new ByteArrayInputStream(encodedKeyStore);
             return PKI.loadKeyStore(bais, password);
 
-        } catch (IOException|CryptoException e) {
-            String msg = "Cannot decode key store: "+e.getMessage();
+        } catch (IOException | CryptoException e) {
+            String msg = "Cannot decode key store: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -422,8 +421,8 @@ public class DeviceRegistrationProperties {
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 return (X509Certificate) cf.generateCertificate(in);
             }
-        } catch (IOException|CertificateException e) {
-            String msg = "Cannot decode certificate: "+e.getMessage();
+        } catch (IOException | CertificateException e) {
+            String msg = "Cannot decode certificate: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -456,7 +455,7 @@ public class DeviceRegistrationProperties {
         }
 
         String subject = decodedLicenseCredentials.getCertificate().getSubjectX500Principal().getName();
-        log.info("Subject of license certificate: "+subject);
+        log.info("Subject of license certificate: " + subject);
 
         return subject.toLowerCase().contains(deviceId.toLowerCase());
     }
@@ -466,19 +465,19 @@ public class DeviceRegistrationProperties {
     }
 
     public DeviceRegistrationRequest generateRequest(String email, String deviceName, String licenseKey,
-            String serialNumber, Boolean isConfirmed, String tosVersion) {
+                                                     String serialNumber, Boolean isConfirmed, String tosVersion) {
         try {
             this.tosVersion = tosVersion;
             return new DeviceRegistrationRequest(
-                    email, deviceName, licenseKey, deviceId, serialNumber,
-                    decodedDeviceCredentials.getCertificate().getEncoded(),
-                    decodedLicenseCredentials.getCertificate().getEncoded(),
-                    isConfirmed,
-                    tosVersion
-                    );
+                email, deviceName, licenseKey, deviceId, serialNumber,
+                decodedDeviceCredentials.getCertificate().getEncoded(),
+                decodedLicenseCredentials.getCertificate().getEncoded(),
+                isConfirmed,
+                tosVersion
+            );
 
         } catch (CertificateEncodingException e) {
-            String msg = "Cannot encode device certificate: "+e.getMessage();
+            String msg = "Cannot encode device certificate: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -487,7 +486,7 @@ public class DeviceRegistrationProperties {
     /*
      * Checks and returns true if the license certificate has been revoked. Revocation is assumed when a certificate error occurs although the certificate is not expired.
      */
-    public void acquireRevokationState () {
+    public void acquireRevokationState() {
         try {
             if (!isExpired() && (registrationState == RegistrationState.OK || registrationState == RegistrationState.REVOKED)) {
                 makeLicenseCredentialsAvailable();
@@ -498,7 +497,7 @@ public class DeviceRegistrationProperties {
                 }
             }
         } catch (Exception e) {
-            String msg = "Cannot verify license revocation state: "+e.getMessage();
+            String msg = "Cannot verify license revocation state: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -549,8 +548,8 @@ public class DeviceRegistrationProperties {
                 PKI.storeCertificate(decodedLicenseCredentials.getCertificate(), Files.newOutputStream(temp));
                 ResourceHandler.replaceContent(licenseCert, temp);
 
-            } catch (CryptoException|IOException e) {
-                String msg = "Cannot create temp file to store new license certificate: "+e.getMessage();
+            } catch (CryptoException | IOException e) {
+                String msg = "Cannot create temp file to store new license certificate: " + e.getMessage();
                 log.error(msg);
                 throw new EblockerException(msg, e);
             }
@@ -560,8 +559,8 @@ public class DeviceRegistrationProperties {
                 PKI.storePrivateKey(decodedLicenseCredentials.getKey(), Files.newOutputStream(temp));
                 ResourceHandler.replaceContent(licenseKey, temp);
 
-            } catch (CryptoException|IOException e) {
-                String msg = "Cannot create temp file to store new license key: "+e.getMessage();
+            } catch (CryptoException | IOException e) {
+                String msg = "Cannot create temp file to store new license key: " + e.getMessage();
                 log.error(msg);
                 throw new EblockerException(msg, e);
             }
@@ -573,8 +572,8 @@ public class DeviceRegistrationProperties {
                     PKI.storeCertificates(certificates, out);
                 }
                 ResourceHandler.replaceContent(truststoreCopy, temp);
-            } catch (CryptoException|IOException e) {
-                String msg = "Cannot create temp file to store copy of truststore: "+e.getMessage();
+            } catch (CryptoException | IOException e) {
+                String msg = "Cannot create temp file to store copy of truststore: " + e.getMessage();
                 log.error(msg);
                 throw new EblockerException(msg, e);
             }
@@ -588,7 +587,7 @@ public class DeviceRegistrationProperties {
             ResourceHandler.replaceContent(licenseCert, temp);
 
         } catch (IOException e) {
-            String msg = "Cannot create temp file to store new license certificate: "+e.getMessage();
+            String msg = "Cannot create temp file to store new license certificate: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -599,7 +598,7 @@ public class DeviceRegistrationProperties {
             ResourceHandler.replaceContent(licenseKey, temp);
 
         } catch (IOException e) {
-            String msg = "Cannot create temp file to store new license key: "+e.getMessage();
+            String msg = "Cannot create temp file to store new license key: " + e.getMessage();
             log.error(msg);
             throw new EblockerException(msg, e);
         }
@@ -652,7 +651,7 @@ public class DeviceRegistrationProperties {
         return (licenseNotValidAfter.getTime() - new Date().getTime() <= 0);
     }
 
-    public Long getLicenseRemainingDays(){
+    public Long getLicenseRemainingDays() {
         if (licenseNotValidAfter == null) {
             return null;
         }

@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
@@ -25,6 +27,7 @@ import org.eblocker.server.common.data.messagecenter.IconState;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.data.openvpn.VpnStatus;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
@@ -41,9 +44,6 @@ import org.eblocker.server.http.service.MessageCenterService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.UserService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import org.eblocker.server.common.network.BaseURLs;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -69,16 +69,16 @@ public class ControlBarControllerImpl extends SessionContextController implement
 
     @Inject
     public ControlBarControllerImpl(
-            BaseURLs baseURLs,
-            SessionStore sessionStore,
-            PageContextStore pageContextStore,
-            DeviceService deviceService,
-            ParentalControlService parentalControlService,
-            UserService userService,
-            OpenVpnService openVpnService,
-            MessageCenterService messageCenterService,
-            @Named("network.vpn.subnet.ip") String vpnSubnet,
-            @Named("network.vpn.subnet.netmask") String vpnNetmask
+        BaseURLs baseURLs,
+        SessionStore sessionStore,
+        PageContextStore pageContextStore,
+        DeviceService deviceService,
+        ParentalControlService parentalControlService,
+        UserService userService,
+        OpenVpnService openVpnService,
+        MessageCenterService messageCenterService,
+        @Named("network.vpn.subnet.ip") String vpnSubnet,
+        @Named("network.vpn.subnet.netmask") String vpnNetmask
     ) {
         super(sessionStore, pageContextStore);
         this.baseURLs = baseURLs;
@@ -152,15 +152,15 @@ public class ControlBarControllerImpl extends SessionContextController implement
         }
         UserProfileModule profile = parentalControlService.getProfile(operatingUser.getAssociatedProfileId());
         return new DeviceDTO(
-                deviceId,
-                device.getIpAddresses().stream().map(IpAddress::toString).collect(Collectors.toList()),
-                device.getAssignedUser(),
-                device.getOperatingUser(),
-                profile,
-                device.getFilterMode(),
-                device.isFilterPlugAndPlayAdsEnabled(),
-                device.isFilterPlugAndPlayTrackersEnabled(),
-                device.isSslEnabled()
+            deviceId,
+            device.getIpAddresses().stream().map(IpAddress::toString).collect(Collectors.toList()),
+            device.getAssignedUser(),
+            device.getOperatingUser(),
+            profile,
+            device.getFilterMode(),
+            device.isFilterPlugAndPlayAdsEnabled(),
+            device.isFilterPlugAndPlayTrackersEnabled(),
+            device.isSslEnabled()
         );
     }
 
@@ -257,7 +257,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
             return new IconState("info", "TOR");
         } else {
             VpnStatus status = openVpnService.getStatusByDevice(device);
-            if (status!=null && status.isActive()){
+            if (status != null && status.isActive()) {
                 return new IconState("info", "VPN");
             }
         }

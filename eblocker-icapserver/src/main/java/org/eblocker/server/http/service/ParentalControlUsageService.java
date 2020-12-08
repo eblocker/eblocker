@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.common.collect.Range;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.BonusTimeUsage;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -29,10 +33,6 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.TrafficAccounter;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.common.collect.Range;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,8 +190,9 @@ public class ParentalControlUsageService {
      * be positive. A negative bonus could result in bad user experience. If bonus is large negative number
      * The parent would have to continuously click on "+10 min" until the value is positive again. So to reduce
      * the actual online time for that day, the parent has to update the profile's online time in the settings.
+     *
      * @param profileId the profile to which the bonus is added
-     * @param min bonus time in minutes
+     * @param min       bonus time in minutes
      * @return the updated user profile
      */
     public UserProfileModule addBonusTimeForToday(int profileId, int min) {
@@ -220,7 +221,7 @@ public class ParentalControlUsageService {
 
     /**
      * MUST NOT BE CALLED BY ANYONE BESIDES ParentalControlContingentEnforcerService !
-     *
+     * <p>
      * Checks all devices if internet access is allowed. If a device exceeded its limit while being active a new
      * event will be inserted. This is to avoid instant exhaustion if a limited is raised at a later point. The newly
      * inserted event will _not_ cause any listener to be notified!
@@ -232,9 +233,9 @@ public class ParentalControlUsageService {
 
         // account usage
         devicesByUsers.keySet().stream()
-                .map(userService::getUserById)
-                .filter(Objects::nonNull)
-                .forEach(this::accountUsage);
+            .map(userService::getUserById)
+            .filter(Objects::nonNull)
+            .forEach(this::accountUsage);
     }
 
     private void checkIdleTimeOut(int userId, List<Device> devices) {
@@ -251,16 +252,16 @@ public class ParentalControlUsageService {
 
         // get latest instant of activity of any device assigned to this user
         ZonedDateTime lastActivity =
-                devices != null ?
-                        devices.stream()
-                                .map(trafficAccounter::getTrafficAccount)
-                                .filter(Objects::nonNull)
-                                .map(TrafficAccount::getLastActivity)
-                                .map(Date::toInstant)
-                                .map(i -> i.atZone(clock.getZone()))
-                                .max(ZonedDateTime::compareTo)
-                                .orElse(ZonedDateTime.now(clock))
-                        : ZonedDateTime.now(clock);
+            devices != null ?
+                devices.stream()
+                    .map(trafficAccounter::getTrafficAccount)
+                    .filter(Objects::nonNull)
+                    .map(TrafficAccount::getLastActivity)
+                    .map(Date::toInstant)
+                    .map(i -> i.atZone(clock.getZone()))
+                    .max(ZonedDateTime::compareTo)
+                    .orElse(ZonedDateTime.now(clock))
+                : ZonedDateTime.now(clock);
 
         // disable access if enough time has elasped since last activity
         UsageChangeEvent event = events.peekLast();
@@ -307,8 +308,8 @@ public class ParentalControlUsageService {
         accountsById.put(id, usageAccount);
 
         logger.info("internet usage account user: {}: active: {} accounted time: {} used time: {} limit: {}",
-                user.getId(), active, duration.accounted.toMinutes(), duration.used.toMinutes(),
-                limit);
+            user.getId(), active, duration.accounted.toMinutes(), duration.used.toMinutes(),
+            limit);
 
         return allowed;
     }
@@ -319,7 +320,7 @@ public class ParentalControlUsageService {
 
     private Map<Integer, Deque<UsageChangeEvent>> loadStoredEvents() {
         return dataSource.getAll(UsageChangeEvents.class).stream()
-                .collect(Collectors.toMap(e->e.getId(), e->e.getEvents()));
+            .collect(Collectors.toMap(e -> e.getId(), e -> e.getEvents()));
     }
 
     private void notifyListeners() {
@@ -380,18 +381,17 @@ public class ParentalControlUsageService {
      */
     private void removeOldEvents(Deque<UsageChangeEvent> events, LocalDate today) {
         Iterator<UsageChangeEvent> i = events.iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             UsageChangeEvent event = i.next();
             if (event.getTime().isBefore(today.atStartOfDay())) {
                 i.remove();
-             }
+            }
         }
     }
 
     /**
      * Converts queue of start/stop events into lists of ranges in which usage has been enabled. If last event is
      * a start event a range ending now will be included.
-     *
      */
     private List<Range<LocalDateTime>> getUsageRanges(Queue<UsageChangeEvent> events, LocalDateTime now) {
         if (events.isEmpty()) {
@@ -406,7 +406,7 @@ public class ParentalControlUsageService {
 
         List<Range<LocalDateTime>> ranges = new ArrayList<>();
         Iterator<UsageChangeEvent> i = events.iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             UsageChangeEvent event = i.next();
             if (!event.isActive()) {
                 ranges.add(Range.closedOpen(start.getTime(), event.getTime())); //NOSONAR: start cannot be null
@@ -427,7 +427,7 @@ public class ParentalControlUsageService {
      */
     private List<Range<LocalDateTime>> createMinimumUsageIntervals(List<Range<LocalDateTime>> intervals) {
         List<Range<LocalDateTime>> minimumIntervals = new ArrayList<>(intervals);
-        for(int i = 0; i < minimumIntervals.size(); ) {
+        for (int i = 0; i < minimumIntervals.size(); ) {
             Range<LocalDateTime> current = minimumIntervals.get(i);
             Range<LocalDateTime> next = i + 1 < minimumIntervals.size() ? minimumIntervals.get(i + 1) : null;
 
@@ -469,11 +469,11 @@ public class ParentalControlUsageService {
 
     private Duration sumIntervals(List<Range<LocalDateTime>> intervals) {
         return Duration.of(intervals.stream()
-                .map(r->Duration.between(
-                        r.lowerEndpoint().atZone(clock.getZone()),
-                        r.upperEndpoint().atZone(clock.getZone())))
-                .mapToLong(Duration::toNanos)
-                .sum(), ChronoUnit.NANOS);
+            .map(r -> Duration.between(
+                r.lowerEndpoint().atZone(clock.getZone()),
+                r.upperEndpoint().atZone(clock.getZone())))
+            .mapToLong(Duration::toNanos)
+            .sum(), ChronoUnit.NANOS);
     }
 
     private class UsageDuration {

@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common.openvpn.configuration;
 
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -25,6 +23,8 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -153,7 +153,7 @@ public class OpenVpnFileOptionValidator {
                 throw new ValidationException("missing username or password");
             }
         } catch (IOException e) {
-          throw new ValidationException("no username/password file", e);
+            throw new ValidationException("no username/password file", e);
         }
     }
 

@@ -29,9 +29,9 @@ public class CredentialsDTO {
 
     @JsonCreator
     public CredentialsDTO(
-            @JsonProperty("id") Integer id,
-            @JsonProperty("pin") String pin,
-            @JsonProperty("newPin") String newPin) {
+        @JsonProperty("id") Integer id,
+        @JsonProperty("pin") String pin,
+        @JsonProperty("newPin") String newPin) {
         this.id = id;
         this.pin = pin;
         this.newPin = newPin;

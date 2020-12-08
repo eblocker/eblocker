@@ -16,7 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import static java.util.stream.Collectors.toMap;
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.ExitNodeCountry;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,9 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.ExitNodeCountry;
-import com.google.inject.Inject;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Creates EblockerDnsServerState based on current config
@@ -62,9 +62,9 @@ public class SchemaMigrationVersion17 implements SchemaMigration {
 
         Locale lang = Locale.forLanguageTag("en");
         Map<String, String> nameToCode = Arrays.asList(Locale.getISOCountries()).stream()
-                .map(code -> new Locale("", code))
-                .map(locale -> new ExitNodeCountry(locale.getDisplayCountry(lang), locale.getCountry().toLowerCase()))
-                .collect(toMap(c -> c.getName(), c -> c.getCode().toLowerCase()));
+            .map(code -> new Locale("", code))
+            .map(locale -> new ExitNodeCountry(locale.getDisplayCountry(lang), locale.getCountry().toLowerCase()))
+            .collect(toMap(c -> c.getName(), c -> c.getCode().toLowerCase()));
 
         // Try to convert from country names to country codes
         if (oldCountries != null) {

@@ -31,131 +31,131 @@ import java.util.TreeSet;
  * Contains parameters needed for configuring a DHCP server
  */
 public class DhcpServerConfiguration {
-	private String ipAddress;
-	private String netmask;
-	private String gateway;
-	private String nameServerPrimary;
-	private String nameServerSecondary;
-	private DhcpRange range;
-	private Set<Device> devices;
-	private int leaseTime = IscDhcpServerConfiguration.DEFAULT_LEASE_TIME;
+    private String ipAddress;
+    private String netmask;
+    private String gateway;
+    private String nameServerPrimary;
+    private String nameServerSecondary;
+    private DhcpRange range;
+    private Set<Device> devices;
+    private int leaseTime = IscDhcpServerConfiguration.DEFAULT_LEASE_TIME;
 
-	private List<DhcpRange> ranges = new ArrayList<>();
+    private List<DhcpRange> ranges = new ArrayList<>();
 
-	/**
-	 * The machine's IP address
-	 */
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    /**
+     * The machine's IP address
+     */
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	/**
-	 * Netmask of the IP address
-	 */
-	public String getNetmask() {
-		return netmask;
-	}
+    /**
+     * Netmask of the IP address
+     */
+    public String getNetmask() {
+        return netmask;
+    }
 
-	/**
-	 * The gateway's IP address
-	 */
-	public String getGateway() {
-		return gateway;
-	}
+    /**
+     * The gateway's IP address
+     */
+    public String getGateway() {
+        return gateway;
+    }
 
-	/**
-	 * The primary name server. This field is optional. If it is not set,
-	 * the gateway's address is used.
-	 */
-	public String getNameServerPrimary() {
-		return nameServerPrimary;
-	}
+    /**
+     * The primary name server. This field is optional. If it is not set,
+     * the gateway's address is used.
+     */
+    public String getNameServerPrimary() {
+        return nameServerPrimary;
+    }
 
-	/**
-	 * The secondary name server. This field is optional.
-	 */
-	public String getNameServerSecondary() {
-		return nameServerSecondary;
-	}
+    /**
+     * The secondary name server. This field is optional.
+     */
+    public String getNameServerSecondary() {
+        return nameServerSecondary;
+    }
 
-	/**
-	 * The range of IP addresses that the DHCP server should assign to clients.
-	 * This field is optional.
-	 */
-	public DhcpRange getRange() {
-		return range;
-	}
+    /**
+     * The range of IP addresses that the DHCP server should assign to clients.
+     * This field is optional.
+     */
+    public DhcpRange getRange() {
+        return range;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
-	public void setNetmask(String netmask) {
-		this.netmask = netmask;
-	}
+    public void setNetmask(String netmask) {
+        this.netmask = netmask;
+    }
 
-	public void setGateway(String gateway) {
-		this.gateway = gateway;
-	}
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
+    }
 
-	public void setRange(DhcpRange range) {
-		this.range = range;
-	}
+    public void setRange(DhcpRange range) {
+        this.range = range;
+    }
 
-	public void setNameServerPrimary(String nameServerPrimary) {
-		this.nameServerPrimary = nameServerPrimary;
-	}
+    public void setNameServerPrimary(String nameServerPrimary) {
+        this.nameServerPrimary = nameServerPrimary;
+    }
 
-	public void setNameServerSecondary(String nameServerSecondary) {
-		this.nameServerSecondary = nameServerSecondary;
-	}
+    public void setNameServerSecondary(String nameServerSecondary) {
+        this.nameServerSecondary = nameServerSecondary;
+    }
 
-	public Set<Device> getDevices() {
-		return devices;
-	}
+    public Set<Device> getDevices() {
+        return devices;
+    }
 
-	public void setDevices(Set<Device> devices) {
-		this.devices = devices;
+    public void setDevices(Set<Device> devices) {
+        this.devices = devices;
 
-		if (range!=null){
-			// Here, create the gaps
+        if (range != null) {
+            // Here, create the gaps
 
-			TreeSet<Integer> numIps = new TreeSet<>();
-			// Sorted list of all IPs of static devices
-			for (Device device : this.devices) {
-				if (device.isIpAddressFixed()) {
-				    device.getIpAddresses().stream()
+            TreeSet<Integer> numIps = new TreeSet<>();
+            // Sorted list of all IPs of static devices
+            for (Device device : this.devices) {
+                if (device.isIpAddressFixed()) {
+                    device.getIpAddresses().stream()
                         .filter(IpAddress::isIpv4)
                         .map(IpAddress::toString)
                         .map(IpUtils::convertIpStringToInt)
                         .forEach(numIps::add);
-				}
-			}
-			// Also add eBlocker's IP to make sure it is not assigned to any device
-			numIps.add(IpUtils.convertIpStringToInt(ipAddress));
+                }
+            }
+            // Also add eBlocker's IP to make sure it is not assigned to any device
+            numIps.add(IpUtils.convertIpStringToInt(ipAddress));
 
-			// Go through range, make gaps
-			int lastFixedIp = IpUtils.convertIpStringToInt(range.getFirstIpAddress()) - 1;
-			int rangeFirstIpNumerical = IpUtils.convertIpStringToInt(range.getFirstIpAddress());
-			int rangeLastIpNumerical = IpUtils.convertIpStringToInt(range.getLastIpAddress());
+            // Go through range, make gaps
+            int lastFixedIp = IpUtils.convertIpStringToInt(range.getFirstIpAddress()) - 1;
+            int rangeFirstIpNumerical = IpUtils.convertIpStringToInt(range.getFirstIpAddress());
+            int rangeLastIpNumerical = IpUtils.convertIpStringToInt(range.getLastIpAddress());
 
-			for (Integer numIp : numIps) {
-				if (numIp >= rangeFirstIpNumerical && numIp <= rangeLastIpNumerical) {
-					int curFixedIp = numIp;
-					// If there is an unused IP in the gap
-					if (curFixedIp - lastFixedIp > 1) {
-						addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), IpUtils.convertIpIntToString(curFixedIp - 1)));
-					}
-					lastFixedIp = curFixedIp;
-				}
-			}
-			// Last range
-			if (rangeLastIpNumerical - lastFixedIp >= 1) {
-				addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), range.getLastIpAddress()));
-			}
+            for (Integer numIp : numIps) {
+                if (numIp >= rangeFirstIpNumerical && numIp <= rangeLastIpNumerical) {
+                    int curFixedIp = numIp;
+                    // If there is an unused IP in the gap
+                    if (curFixedIp - lastFixedIp > 1) {
+                        addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), IpUtils.convertIpIntToString(curFixedIp - 1)));
+                    }
+                    lastFixedIp = curFixedIp;
+                }
+            }
+            // Last range
+            if (rangeLastIpNumerical - lastFixedIp >= 1) {
+                addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), range.getLastIpAddress()));
+            }
 
-		}
-	}
+        }
+    }
 
     public void addRange(DhcpRange range) {
         ranges.add(range);

@@ -34,10 +34,10 @@ public class JsonWebToken {
 
     @JsonCreator
     public JsonWebToken(
-            @JsonProperty("token") String token,
-            @JsonProperty("appContext") AppContext appContext,
-            @JsonProperty("expiresOn") Long expiresOn,
-            @JsonProperty("passwordRequired") Boolean passwordRequired) {
+        @JsonProperty("token") String token,
+        @JsonProperty("appContext") AppContext appContext,
+        @JsonProperty("expiresOn") Long expiresOn,
+        @JsonProperty("passwordRequired") Boolean passwordRequired) {
         this.token = token;
         this.appContext = appContext;
         this.expiresOn = expiresOn == null ? 0 : expiresOn;

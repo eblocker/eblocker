@@ -25,8 +25,8 @@ public class LedSettings {
 
     @JsonCreator
     public LedSettings(
-            @JsonProperty("hardwareAvailable") boolean hardwareAvailable,
-            @JsonProperty("brightness") float brightness) {
+        @JsonProperty("hardwareAvailable") boolean hardwareAvailable,
+        @JsonProperty("brightness") float brightness) {
         this.hardwareAvailable = hardwareAvailable;
         this.brightness = brightness;
     }

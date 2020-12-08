@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.dns.DnsDataSource;
 import org.eblocker.server.common.data.dns.DnsDataSourceDnsResponse;
 import org.eblocker.server.common.data.dns.DnsQuery;
 import org.eblocker.server.common.data.dns.DnsResponse;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

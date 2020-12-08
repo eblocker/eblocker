@@ -16,20 +16,20 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.events.Event;
+import org.eblocker.server.common.data.events.EventDataSource;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.eblocker.server.common.data.events.Event;
-import org.eblocker.server.common.data.events.EventDataSource;
-import com.google.inject.Inject;
-
 /**
  * Provides access to events
  */
 public class EventService {
-    
+
     private EventDataSource dataSource;
 
     @Inject
@@ -53,8 +53,8 @@ public class EventService {
         Instant last = lastSeen.getTimestamp();
         List<Event> events = dataSource.getEvents();
         return events.stream()
-                     .filter(e -> e.getTimestamp().compareTo(last) > 0)
-                     .collect(Collectors.toList());
+            .filter(e -> e.getTimestamp().compareTo(last) > 0)
+            .collect(Collectors.toList());
     }
 
     public void deleteAllEvents() {
@@ -69,7 +69,7 @@ public class EventService {
      */
     public void delete(Predicate<Event> predicate) {
         long numberDesiredElements = dataSource.getEvents().stream().filter(predicate.negate())
-                .count();
+            .count();
         dataSource.trimEventsAfter(numberDesiredElements);
     }
 }

@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class DashboardService {
         List<UserModuleOld> users = dataSource.getAll(UserModuleOld.class);
         for (UserModuleOld user : users) {
             List<DashboardCard> newCards = new ArrayList<>();
-            for(DashboardCard card : user.getDashboardCards()) {
+            for (DashboardCard card : user.getDashboardCards()) {
                 DashboardCard newCard = new DashboardCard(card.getId(), card.getRequiredFeature(), card.getTranslateSuffix(), card.getHtml(), card.isVisible(), false, card.getDefaultPos(), card.getCustomPos());
                 newCards.add(newCard);
             }
@@ -71,6 +71,7 @@ public class DashboardService {
      * This method fixes this issue for new cards, where the user may have already re-ordered the old ones.
      * This would result in the new card not being shown in the UI (could be fixed in UI as well, but we should
      * initially set and save a custom position, if required).
+     *
      * @return a dashboard card. The custom position is set or null, if no card has a custom position set
      */
     public DashboardCard normalizeCustomPosition(List<DashboardCard> cards, DashboardCard card) {
@@ -101,12 +102,11 @@ public class DashboardService {
     }
 
     /**
-     *
-     * @param card Card which custom position will be set
+     * @param card         Card which custom position will be set
      * @param numOfColumns Current scenario: 1 (we have only one column, small screens), 2 (.. medium screens), 3 (three
      *                     columns, large screens)
-     * @param newColumn The column in which the card is sorted (e.g. for numOfColumns 3 newColumn can be 1-3.
-     * @param newOrder The highest order within the column, so that the card can be put at the end of the column
+     * @param newColumn    The column in which the card is sorted (e.g. for numOfColumns 3 newColumn can be 1-3.
+     * @param newOrder     The highest order within the column, so that the card can be put at the end of the column
      * @return
      */
     private DashboardCard normalizeCustomPosForColumn(DashboardCard card, int numOfColumns, int newColumn, int newOrder) {
@@ -126,7 +126,7 @@ public class DashboardService {
             new DashboardCardPosition[3]);
     }
 
-    private int getMaxOrderNumberForColumns (List<DashboardCard> cards, int numOfColumns) {
+    private int getMaxOrderNumberForColumns(List<DashboardCard> cards, int numOfColumns) {
         int order = 0; // start at zero, new card will get maxNum + 1
         for (DashboardCard card : cards) {
             if (hasCustomPositionForColumns(card, numOfColumns)) {
@@ -289,7 +289,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 14),
             new DashboardCardPosition(2, 7),
-            new DashboardCardPosition(2, 6) };
+            new DashboardCardPosition(2, 6)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -332,7 +332,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 9),
             new DashboardCardPosition(2, 5),
-            new DashboardCardPosition(3, 4) };
+            new DashboardCardPosition(3, 4)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -349,7 +349,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 10),
             new DashboardCardPosition(1, 6),
-            new DashboardCardPosition(3, 4) };
+            new DashboardCardPosition(3, 4)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -366,7 +366,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 7),
             new DashboardCardPosition(2, 5),
-            new DashboardCardPosition(2, 4) };
+            new DashboardCardPosition(2, 4)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -383,7 +383,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 6),
             new DashboardCardPosition(2, 3),
-            new DashboardCardPosition(2, 2) };
+            new DashboardCardPosition(2, 2)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -400,7 +400,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 5),
             new DashboardCardPosition(1, 3),
-            new DashboardCardPosition(3, 1) };
+            new DashboardCardPosition(3, 1)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -440,7 +440,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 2),
             new DashboardCardPosition(2, 2),
-            new DashboardCardPosition(2, 3) };
+            new DashboardCardPosition(2, 3)};
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);

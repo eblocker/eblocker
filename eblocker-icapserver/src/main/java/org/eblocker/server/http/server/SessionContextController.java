@@ -16,35 +16,33 @@
  */
 package org.eblocker.server.http.server;
 
-import org.eblocker.server.common.data.IpAddress;
 import com.google.common.net.HttpHeaders;
-
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
-import org.restexpress.Request;
-
 import org.eblocker.server.http.utils.ControllerUtils;
+import org.restexpress.Request;
 
 public class SessionContextController {
 
-	private SessionStore sessionStore;
-	private PageContextStore pageContextStore;
+    private SessionStore sessionStore;
+    private PageContextStore pageContextStore;
 
-	public SessionContextController(SessionStore sessionStore, PageContextStore pageContextStore) {
-		this.sessionStore = sessionStore;
-		this.pageContextStore = pageContextStore;
-	}
+    public SessionContextController(SessionStore sessionStore, PageContextStore pageContextStore) {
+        this.sessionStore = sessionStore;
+        this.pageContextStore = pageContextStore;
+    }
 
-	protected Session getSession(Request request) {
-		return sessionStore.getSession((TransactionIdentifier) request.getAttachment("transactionIdentifier"));
-	}
+    protected Session getSession(Request request) {
+        return sessionStore.getSession((TransactionIdentifier) request.getAttachment("transactionIdentifier"));
+    }
 
-	protected PageContext getPageContext(Request request) {
-		return getPageContext(request, true);
-	}
+    protected PageContext getPageContext(Request request) {
+        return getPageContext(request, true);
+    }
 
     protected boolean isPageContextValid(Request request) {
         IpAddress reqIp = ControllerUtils.getRequestIPAddress(request);
@@ -57,22 +55,22 @@ public class SessionContextController {
         return false;
     }
 
-	protected PageContext getPageContext(Request request, boolean autoCreate) {
-		PageContext pageContext = pageContextStore.get(request.getHeader("pageContextId"));
-		if (pageContext == null && autoCreate) {
-			pageContext = pageContextStore.create(null, getSession(request), request.getHeader(HttpHeaders.REFERER));
-			if (pageContext == null) {
-				// Try again with request URL - in case there is no referrer
-				// This is only really needed in standalone test environments.
-				// In all other cases - where the icon was embedded by a real ICAP server -,
-				// there should either be a valid page context or a referrer.
-				pageContext = pageContextStore.create(null, getSession(request), request.getUrl());
-			}
-		}
-		if (pageContext == null && !autoCreate) {
-			return null;
-		}
-		return pageContext;
-	}
+    protected PageContext getPageContext(Request request, boolean autoCreate) {
+        PageContext pageContext = pageContextStore.get(request.getHeader("pageContextId"));
+        if (pageContext == null && autoCreate) {
+            pageContext = pageContextStore.create(null, getSession(request), request.getHeader(HttpHeaders.REFERER));
+            if (pageContext == null) {
+                // Try again with request URL - in case there is no referrer
+                // This is only really needed in standalone test environments.
+                // In all other cases - where the icon was embedded by a real ICAP server -,
+                // there should either be a valid page context or a referrer.
+                pageContext = pageContextStore.create(null, getSession(request), request.getUrl());
+            }
+        }
+        if (pageContext == null && !autoCreate) {
+            return null;
+        }
+        return pageContext;
+    }
 
 }

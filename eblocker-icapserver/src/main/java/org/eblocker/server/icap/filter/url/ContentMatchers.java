@@ -37,11 +37,11 @@ class ContentMatchers {
             Properties properties = new Properties();
             properties.load(ResourceHandler.getInputStream(new SimpleResource("content-matcher.properties")));
             return properties.stringPropertyNames().stream()
-                    .map(key -> key.substring(0, key.indexOf(".")))
-                    .distinct()
-                    .collect(Collectors.toMap(
-                            Function.identity(),
-                            name -> createMatcher(name, properties)));
+                .map(key -> key.substring(0, key.indexOf(".")))
+                .distinct()
+                .collect(Collectors.toMap(
+                    Function.identity(),
+                    name -> createMatcher(name, properties)));
         } catch (IOException e) {
             throw new IllegalStateException("failed to initialize content matchers", e);
         }

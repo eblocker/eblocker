@@ -33,38 +33,38 @@ import java.util.regex.Pattern;
  * Provides access to nameserver configuration of the system.
  */
 public class DnsConfiguration {
-	private final String resolvConfReadPath;
-	private final String resolvConfWritePath;
-	private static final Pattern nameserverPattern = Pattern.compile("^\\s*nameserver\\s+((\\d+\\.){3}(\\d+))$");
-	
-	@Inject
-	public DnsConfiguration(@Named("network.unix.nameserver.config.read.path") String resolvConfReadPath,
-			@Named("network.unix.nameserver.config.write.path") String resolvConfWritePath) {
-		this.resolvConfReadPath = resolvConfReadPath;
-		this.resolvConfWritePath = resolvConfWritePath;
-	}
+    private final String resolvConfReadPath;
+    private final String resolvConfWritePath;
+    private static final Pattern nameserverPattern = Pattern.compile("^\\s*nameserver\\s+((\\d+\\.){3}(\\d+))$");
 
-	public List<String> getNameserverAddresses() throws IOException {
-		List<String> nameserverAddresses = new ArrayList<>();
-		try (BufferedReader reader = new BufferedReader(new FileReader(resolvConfReadPath))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				Matcher matcher = nameserverPattern.matcher(line);
-				if (matcher.matches()) {
-					nameserverAddresses.add(matcher.group(1));
-				}
-			}
-		}
-		return nameserverAddresses;
-	}
+    @Inject
+    public DnsConfiguration(@Named("network.unix.nameserver.config.read.path") String resolvConfReadPath,
+                            @Named("network.unix.nameserver.config.write.path") String resolvConfWritePath) {
+        this.resolvConfReadPath = resolvConfReadPath;
+        this.resolvConfWritePath = resolvConfWritePath;
+    }
 
-	public void setNameserverAddresses(List<String> nameserverAddresses) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(resolvConfWritePath))) {
-			for (String address : nameserverAddresses) {
-				writer.append("nameserver ");
-				writer.append(address);
-				writer.newLine();
-			}
-		}
-	}
+    public List<String> getNameserverAddresses() throws IOException {
+        List<String> nameserverAddresses = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(resolvConfReadPath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = nameserverPattern.matcher(line);
+                if (matcher.matches()) {
+                    nameserverAddresses.add(matcher.group(1));
+                }
+            }
+        }
+        return nameserverAddresses;
+    }
+
+    public void setNameserverAddresses(List<String> nameserverAddresses) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(resolvConfWritePath))) {
+            for (String address : nameserverAddresses) {
+                writer.append("nameserver ");
+                writer.append(address);
+                writer.newLine();
+            }
+        }
+    }
 }

@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.time.Instant;
 import java.util.ArrayList;

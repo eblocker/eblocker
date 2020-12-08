@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.Table;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -27,14 +30,10 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.IpUtils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.common.collect.Table;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.time.Clock;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -181,7 +180,7 @@ public class IpAddressValidator {
         }
 
         void sendMessages(Device device) {
-            for(IpAddress ipAddress : device.getIpAddresses()) {
+            for (IpAddress ipAddress : device.getIpAddresses()) {
                 byte[] hardwareAddress = DatatypeConverter.parseHexBinary(device.getHardwareAddress(false));
                 if (ipAddress.isIpv4()) {
                     sendArpMessage(hardwareAddress, (Ip4Address) ipAddress);

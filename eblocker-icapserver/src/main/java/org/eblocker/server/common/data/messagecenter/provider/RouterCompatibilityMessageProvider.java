@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -48,13 +48,13 @@ public class RouterCompatibilityMessageProvider extends AbstractMessageProvider 
         if (problematicProvider) {
             if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId())) {
                 messageContainers.put(MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId(),
-                        createMessage(
-                                MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId(),
-                                MESSAGE_ROUTER_PROBLEMATIC_TITLE,
-                                MESSAGE_ROUTER_PROBLEMATIC_CONTENT,
-                                MESSAGE_ROUTER_PROBLEMATIC_LABEL,
-                                MESSAGE_ROUTER_PROBLEMATIC_URL
-                        ));
+                    createMessage(
+                        MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId(),
+                        MESSAGE_ROUTER_PROBLEMATIC_TITLE,
+                        MESSAGE_ROUTER_PROBLEMATIC_CONTENT,
+                        MESSAGE_ROUTER_PROBLEMATIC_LABEL,
+                        MESSAGE_ROUTER_PROBLEMATIC_URL
+                    ));
             }
         } else {
             if (messageContainers.containsKey(MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId())) {

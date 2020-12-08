@@ -16,31 +16,29 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,7 +84,7 @@ public class BlockerService {
     @SubSystemInit
     public void init() {
         List<ExternalDefinition> definitions = dataSource.getAll(ExternalDefinition.class);
-        for(ExternalDefinition definition : definitions) {
+        for (ExternalDefinition definition : definitions) {
             if (definition.getUpdateStatus() == UpdateStatus.INITIAL_UPDATE) {
                 log.warn("interrupted update: {}", definition.getId());
                 definition.setUpdateStatus(UpdateStatus.INITIAL_UPDATE_FAILED);

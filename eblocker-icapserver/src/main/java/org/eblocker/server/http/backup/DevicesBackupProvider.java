@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class DevicesBackupProvider extends BackupProvider {
 
     @Inject
     public DevicesBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory,
-            OpenVpnService openVpnService) {
+                                 OpenVpnService openVpnService) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.deviceFactory = deviceFactory;
@@ -68,7 +68,8 @@ public class DevicesBackupProvider extends BackupProvider {
         List<Device> devicesToRestore = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(DEVICES_ENTRY)) {
-            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<List<Device>>(){});
+            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<List<Device>>() {
+            });
             inputStream.closeEntry();
         } else {
             throw new EblockerException("Expected entry " + DEVICES_ENTRY + ", got " + entry.getName());
@@ -90,7 +91,7 @@ public class DevicesBackupProvider extends BackupProvider {
 
             if (existingDevice == null) {
                 existingDevice = deviceFactory.createDevice(deviceToRestore.getId(),
-                        Collections.emptyList(), deviceToRestore.isIpAddressFixed());
+                    Collections.emptyList(), deviceToRestore.isIpAddressFixed());
                 userService.restoreDefaultSystemUserAsUsers(existingDevice);
             }
 
@@ -112,7 +113,7 @@ public class DevicesBackupProvider extends BackupProvider {
                 existingDevice.setFilterMode(deviceToRestore.getFilterMode());
                 existingDevice.setFilterPlugAndPlayAdsEnabled(deviceToRestore.isFilterPlugAndPlayAdsEnabled());
                 existingDevice
-                        .setFilterPlugAndPlayTrackersEnabled(deviceToRestore.isFilterPlugAndPlayTrackersEnabled());
+                    .setFilterPlugAndPlayTrackersEnabled(deviceToRestore.isFilterPlugAndPlayTrackersEnabled());
                 // No guarantee the certificate is still the same
                 existingDevice.setHasRootCAInstalled(false);
                 existingDevice.setIconMode(deviceToRestore.getIconMode());
@@ -155,7 +156,7 @@ public class DevicesBackupProvider extends BackupProvider {
                     // VPN Profile can be used and tor is not used, use no
                     // anonymization
                     existingDevice.setUseAnonymizationService(
-                            deviceToRestore.isUseAnonymizationService() && deviceToRestore.isRoutedThroughTor());
+                        deviceToRestore.isUseAnonymizationService() && deviceToRestore.isRoutedThroughTor());
                 } else {
                     // Copy value
                     existingDevice.setUseVPNProfileID(deviceToRestore.getUseVPNProfileID());

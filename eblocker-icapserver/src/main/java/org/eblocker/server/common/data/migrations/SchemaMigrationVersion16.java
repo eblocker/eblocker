@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.data.messagecenter.provider.MessageProviderMessageId;
-import com.google.inject.Inject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +60,7 @@ public class SchemaMigrationVersion16 implements SchemaMigration {
     @Override
     public void migrate() {
         List<MessageContainer> messageContainers = dataSource.getAll(MessageContainer.class);
-        for (MessageContainer messageContainer: messageContainers) {
+        for (MessageContainer messageContainer : messageContainers) {
             if (messageContainer.getMessage() != null) {
                 MessageCenterMessage message = messageContainer.getMessage();
                 int id = message.getId();

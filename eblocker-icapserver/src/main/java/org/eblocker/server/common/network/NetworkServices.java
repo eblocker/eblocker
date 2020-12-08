@@ -24,50 +24,57 @@ import org.eblocker.server.common.data.NetworkConfiguration;
  * services of the OS.
  */
 public interface NetworkServices {
-	NetworkConfiguration getCurrentNetworkConfiguration();
+    NetworkConfiguration getCurrentNetworkConfiguration();
 
-	void enableArpSpoofer();
+    void enableArpSpoofer();
 
-	void disableArpSpoofer();
+    void disableArpSpoofer();
 
-	void enableDhcpServer(boolean start);
-	void configureDhcpServer(NetworkConfiguration configuration);
-	void disableDhcpServer();
+    void enableDhcpServer(boolean start);
 
-	void enableDhcpClient();
+    void configureDhcpServer(NetworkConfiguration configuration);
 
-	void enableStaticIp(NetworkConfiguration configuration);
-	void configureEblockerDns(NetworkConfiguration configuration);
-	void setNameserverAddresses(NetworkConfiguration configuration);
+    void disableDhcpServer();
 
-	void enableIp6(boolean ip6Enabled);
+    void enableDhcpClient();
 
-	/**
-	 * Write the firewall configuration
-	 * @param masquerade should SNAT or masquerading be enabled?
-	 */
+    void enableStaticIp(NetworkConfiguration configuration);
+
+    void configureEblockerDns(NetworkConfiguration configuration);
+
+    void setNameserverAddresses(NetworkConfiguration configuration);
+
+    void enableIp6(boolean ip6Enabled);
+
+    /**
+     * Write the firewall configuration
+     *
+     * @param masquerade should SNAT or masquerading be enabled?
+     */
     void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableOpenVpnServer, boolean enableMalwareSet);
 
-	void applyNetworkConfiguration(NetworkConfiguration networkConfiguration);
+    void applyNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
-	/**
-	 * Restore "normal" ARP cache of device
-	 * @param device
-	 * @return true if ARP messages were sent
+    /**
+     * Restore "normal" ARP cache of device
+     *
+     * @param device
+     * @return true if ARP messages were sent
      */
-	boolean healDevice(Device device);
+    boolean healDevice(Device device);
 
-	/**
-	 * Retrieve the OS's current gateway and store it
-	 */
-	void updateGateway();
+    /**
+     * Retrieve the OS's current gateway and store it
+     */
+    void updateGateway();
 
-	/**
-	 * Retrieve DHCP-status
-	 * @return true if the eBlocker is the DHCP server
-	 */
-	boolean getDHCPActive();
+    /**
+     * Retrieve DHCP-status
+     *
+     * @return true if the eBlocker is the DHCP server
+     */
+    boolean getDHCPActive();
 
-	void addListener(NetworkChangeListener listener);
+    void addListener(NetworkChangeListener listener);
 
 }

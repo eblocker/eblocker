@@ -26,28 +26,32 @@ import java.util.List;
 public interface EventDataSource {
     /**
      * Adds an event on top of the stack
+     *
      * @param event
      */
     public void addEvent(Event event);
-    
+
     /**
      * Returns all events. The events are sorted in chronologically reversed order.
+     *
      * @return
      */
     public List<Event> getEvents();
 
     /**
      * Saves an event that was last seen by the user
+     *
      * @param event
      */
     public void setLastEventSeen(Event event);
 
     /**
      * Retrieves an event that was last seen by the user
+     *
      * @return
      */
     public Event getLastEventSeen();
-    
+
     /**
      * Deletes all events
      */

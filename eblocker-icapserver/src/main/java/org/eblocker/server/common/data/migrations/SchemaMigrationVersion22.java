@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
-import com.google.inject.Inject;
 
 /**
  * Sets name servers enabled flag for all existing openvpn client profiles
@@ -43,7 +43,7 @@ public class SchemaMigrationVersion22 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         dataSource.getAll(OpenVpnProfile.class).forEach(
             profile -> {
                 profile.setNameServersEnabled(true);

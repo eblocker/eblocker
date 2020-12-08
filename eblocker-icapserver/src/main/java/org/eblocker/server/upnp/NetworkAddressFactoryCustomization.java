@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.upnp;
 
-import org.eblocker.server.common.util.IpUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.EblockerModule;
+import org.eblocker.server.common.util.IpUtils;
 
 import java.net.InetAddress;
 import java.util.Arrays;

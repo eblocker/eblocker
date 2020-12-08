@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.VersionInfo;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.http.service.VersionService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,9 +59,9 @@ public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
 
     @Inject
     public ReleaseNotesMessageProvider(
-            VersionService versionService,
-            EventLogger eventLogger,
-            @Named("project.version") String currentVersion
+        VersionService versionService,
+        EventLogger eventLogger,
+        @Named("project.version") String currentVersion
     ) {
         this.versionService = versionService;
         this.eventLogger = eventLogger;
@@ -105,8 +105,8 @@ public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
         // Compare
         VersionInfo versionInfo = versionService.get();
         if (versionInfo != null &&
-                versionInfo.getVersionEBlockerOs() != null &&
-                versionInfo.getVersionEBlockerOs().equals(currentVersion)) {
+            versionInfo.getVersionEBlockerOs() != null &&
+            versionInfo.getVersionEBlockerOs().equals(currentVersion)) {
             // No update. No need for a release note message
             return null;
         }
@@ -160,8 +160,8 @@ public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
         String[] oldVersionSegments = oldVersion.split("\\.");
         String[] newVersionSegments = newVersion.split("\\.");
         return (oldVersionSegments.length >= 2 && newVersionSegments.length >= 2
-                && !(oldVersionSegments[0].equals(newVersionSegments[0])
-                        && oldVersionSegments[1].equals(newVersionSegments[1])));
+            && !(oldVersionSegments[0].equals(newVersionSegments[0])
+            && oldVersionSegments[1].equals(newVersionSegments[1])));
     }
 
 }

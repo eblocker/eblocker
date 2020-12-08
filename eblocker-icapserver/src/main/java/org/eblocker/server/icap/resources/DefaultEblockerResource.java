@@ -20,36 +20,36 @@ import java.nio.charset.Charset;
 
 public enum DefaultEblockerResource implements EblockerResource {
 
-	//
-	// Static resources, which should normally change only by on update of the software
-	//
-	ONE_PIXEL_SVG("classpath:block-artefacts/1px.svg"),
-	ONE_PIXEL_PNG("classpath:block-artefacts/1px.png"),
-	MAC_PREFIXES("classpath:mac-prefixes.txt"),
-	MAC_PREFIXES_DISABLED_BY_DEFAULT("classpath:mac-prefixes-disabled-by-default.txt"),
-	;
-	
-	private String path;
-	
-	private Charset charset = Charset.forName("UTF-8");
-	
-	private DefaultEblockerResource(String path) {
-		this.path = path;
-	}
-	
-	@Override
-	public String getName() {
-		return this.name();
-	}
-	
-	@Override
-	public String getPath() {
-		return path;
-	}
+    //
+    // Static resources, which should normally change only by on update of the software
+    //
+    ONE_PIXEL_SVG("classpath:block-artefacts/1px.svg"),
+    ONE_PIXEL_PNG("classpath:block-artefacts/1px.png"),
+    MAC_PREFIXES("classpath:mac-prefixes.txt"),
+    MAC_PREFIXES_DISABLED_BY_DEFAULT("classpath:mac-prefixes-disabled-by-default.txt"),
+    ;
 
-	@Override
-	public Charset getCharset() {
-		return charset;
-	}
+    private String path;
+
+    private Charset charset = Charset.forName("UTF-8");
+
+    private DefaultEblockerResource(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
+
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public Charset getCharset() {
+        return charset;
+    }
 
 }

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class SchemaMigrationVersion35 implements SchemaMigration {
         Set<Integer> sharedBlacklistIds = getSharedListsIds(users, UserModuleOld::getCustomBlacklistId);
         Set<Integer> sharedWhitelistIds = getSharedListsIds(users, UserModuleOld::getCustomWhitelistId);
 
-        for(UserModuleOld user : users) {
+        for (UserModuleOld user : users) {
             boolean modified = false;
             if (sharedBlacklistIds.contains(user.getCustomBlacklistId())) {
                 modified = true;

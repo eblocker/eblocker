@@ -30,7 +30,7 @@ import java.util.Set;
 
 /**
  * This class provides consistency checks for data stored in redis and tries to repair them.
- *
+ * <p>
  * Checks are run before migrations so it must depend solely on jedis to avoid conflicts due to entity changes between versions
  */
 public class JedisConsistencyCheck {

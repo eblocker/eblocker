@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.recorder;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.icap.transaction.Transaction;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ConflictException;
 import org.restexpress.exception.NotFoundException;
@@ -35,7 +35,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -76,13 +78,13 @@ public class TransactionRecorder {
 
     @Inject
     public TransactionRecorder(
-            @Named("highPrioScheduledExecutor") ScheduledExecutorService scheduledExecutorService,
-            DataSource dataSource,
-            BaseURLs baseURLs,
-            @Named("transactionRecorder.default.size") int defaultTransactionRecorderSizeLimit,
-            @Named("transactionRecorder.default.time") int defaultTransactionRecorderTimeLimit,
-            @Named("transactionRecorder.max.size") int maxTransactionRecorderSizeLimit,
-            @Named("transactionRecorder.max.time") int maxTransactionRecorderTimeLimit
+        @Named("highPrioScheduledExecutor") ScheduledExecutorService scheduledExecutorService,
+        DataSource dataSource,
+        BaseURLs baseURLs,
+        @Named("transactionRecorder.default.size") int defaultTransactionRecorderSizeLimit,
+        @Named("transactionRecorder.default.time") int defaultTransactionRecorderTimeLimit,
+        @Named("transactionRecorder.max.size") int maxTransactionRecorderSizeLimit,
+        @Named("transactionRecorder.max.time") int maxTransactionRecorderTimeLimit
     ) {
         this.scheduledExecutorService = scheduledExecutorService;
         this.dataSource = dataSource;
@@ -145,13 +147,13 @@ public class TransactionRecorder {
 
     public TransactionRecorderInfo getInfo() {
         return new TransactionRecorderInfo(
-                deviceId,
-                maxSeconds,
-                maxBytes,
-                active,
-                startTime == null ? 0L : (System.currentTimeMillis()-startTime.getTime())/1000L,
-                gatheredBytes,
-                n == null ? 0 : n.get()
+            deviceId,
+            maxSeconds,
+            maxBytes,
+            active,
+            startTime == null ? 0L : (System.currentTimeMillis() - startTime.getTime()) / 1000L,
+            gatheredBytes,
+            n == null ? 0 : n.get()
         );
     }
 
@@ -183,17 +185,17 @@ public class TransactionRecorder {
 
     public List<RecordedTransaction> getRecordedTransactions() {
         return dataSource.getAll(RecordedTransaction.class).
-                stream().
-                sorted(Comparator.comparingInt(RecordedTransaction::getId)).
-                collect(Collectors.toList());
+            stream().
+            sorted(Comparator.comparingInt(RecordedTransaction::getId)).
+            collect(Collectors.toList());
     }
 
     public List<RecordedTransaction> getRecordedTransactions(String domain) {
         return dataSource.getAll(RecordedTransaction.class).
-                stream().
-                filter(t -> t.getDomain().equals(domain)).
-                sorted(Comparator.comparingInt(RecordedTransaction::getId)).
-                collect(Collectors.toList());
+            stream().
+            filter(t -> t.getDomain().equals(domain)).
+            sorted(Comparator.comparingInt(RecordedTransaction::getId)).
+            collect(Collectors.toList());
     }
 
 }

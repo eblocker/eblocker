@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.TasksViewConfig;
 import org.eblocker.server.common.executor.LogEntry;
 import org.eblocker.server.common.executor.LoggingExecutorService;
 import org.eblocker.server.common.executor.PoolStats;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import java.util.Arrays;
 import java.util.Collection;

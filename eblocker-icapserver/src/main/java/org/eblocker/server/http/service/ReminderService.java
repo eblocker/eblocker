@@ -16,26 +16,24 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.ExpirationDate;
+import org.eblocker.server.common.data.NextReminderSelection;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.registration.RegistrationState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
-
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.registration.RegistrationState;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.ExpirationDate;
-import org.eblocker.server.common.data.NextReminderSelection;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
-import org.slf4j.Logger;
 
 @Singleton
 public class ReminderService {
@@ -90,7 +88,7 @@ public class ReminderService {
         dataSource.setDoNotShowReminder(nextReminderSelection.isDoNotShowAgain());
 
         if (when.equals(NEXT_REMINDER_IN_DAY)) {
-            long offset = (long)nextOffsetMin + (long)rand.nextInt(nextOffsetMax - nextOffsetMin);
+            long offset = (long) nextOffsetMin + (long) rand.nextInt(nextOffsetMax - nextOffsetMin);
             nextReminder = new Date().toInstant().plus(offset, ChronoUnit.SECONDS);
         } else if (when.equals(NEXT_REMINDER_IN_WEEK)) {
             nextReminder = new Date().toInstant().plus(Period.ofWeeks(1));
@@ -113,7 +111,7 @@ public class ReminderService {
             // User does not wish to be shown a reminder
             return false;
         }
-        if (nextReminder==null){
+        if (nextReminder == null) {
             // No reminder was shown yet and the user could not make a decision
             // yet
             // Show first message - but only after 6 PM local time

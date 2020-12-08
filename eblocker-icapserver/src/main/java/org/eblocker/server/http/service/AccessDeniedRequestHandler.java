@@ -16,21 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.blacklist.DomainBlockingService;
-import org.eblocker.server.common.data.AccessRestriction;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.parentalcontrol.Category;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import org.eblocker.server.common.malware.MalwareFilterService;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.common.session.SessionStore;
-import org.eblocker.server.common.transaction.TransactionContext;
-import org.eblocker.server.common.transaction.TransactionIdentifier;
-import org.eblocker.server.common.util.UrlUtils;
-import org.eblocker.server.icap.resources.OnePixelImage;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -48,6 +33,21 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AttributeKey;
+import org.eblocker.server.common.blacklist.DomainBlockingService;
+import org.eblocker.server.common.data.AccessRestriction;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.parentalcontrol.Category;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
+import org.eblocker.server.common.malware.MalwareFilterService;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.common.session.SessionStore;
+import org.eblocker.server.common.transaction.TransactionContext;
+import org.eblocker.server.common.transaction.TransactionIdentifier;
+import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.icap.resources.OnePixelImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

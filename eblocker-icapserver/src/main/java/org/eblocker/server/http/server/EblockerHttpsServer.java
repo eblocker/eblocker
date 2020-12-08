@@ -105,13 +105,12 @@ import javax.net.ssl.SSLContext;
 /**
  * This RestExpress server provides a REST JSON API for the toolbar
  * and admin interface.
- *
+ * <p>
  * It also serves static files.
- *
+ * <p>
  * The server responds to both http and https requests. If setting up the SSL context
  * has failed, however, only http requests are processed. This allows the user to see
  * error logs and probably reset the unit to a usable state.
- *
  */
 @SubSystemService(SubSystem.HTTP_SERVER)
 @SuppressWarnings("squid:S1192")
@@ -153,17 +152,17 @@ public class EblockerHttpsServer implements Preprocessor {
     private final SplashController splashController;
     private StartupStatusReporter startupStatusReporter;
     private BaseURLs baseUrls;
-	private final ParentalControlFilterListsController filterListsController;
-	private final TimestampController timestampController;
-	private final TransactionRecorderController transactionRecorderController;
-	private final UserController userController;
-	private final DomainBlockingController domainBlockingController;
-	private final EventController eventController;
-	private final SettingsController settingsController;
-	private final PageContextController pageContextController;
-	private final ReminderController reminderController;
-	private final DnsController dnsController;
-	private final ProductMigrationController productMigrationController;
+    private final ParentalControlFilterListsController filterListsController;
+    private final TimestampController timestampController;
+    private final TransactionRecorderController transactionRecorderController;
+    private final UserController userController;
+    private final DomainBlockingController domainBlockingController;
+    private final EventController eventController;
+    private final SettingsController settingsController;
+    private final PageContextController pageContextController;
+    private final ReminderController reminderController;
+    private final DnsController dnsController;
+    private final ProductMigrationController productMigrationController;
     private final DashboardCardController dashboardCardController;
     private final CustomerInfoController customerInfoController;
     private final FeatureController featureController;
@@ -245,12 +244,12 @@ public class EblockerHttpsServer implements Preprocessor {
                                TasksController tasksController,
                                ConnectionCheckController connectionCheckController,
                                BlockerController blockerController
-								){
-		// Set up SerializationProvider to make sure special characters like "&"
-		// are transported to the frontend without encoding
-		// Adding processors mimicks the functionality of DefaultSerializationProvider
-		SerializationProvider serializationProvider = new NullSerializationProvider();
-		serializationProvider.add(new JacksonJsonProcessor(false) {
+    ) {
+        // Set up SerializationProvider to make sure special characters like "&"
+        // are transported to the frontend without encoding
+        // Adding processors mimicks the functionality of DefaultSerializationProvider
+        SerializationProvider serializationProvider = new NullSerializationProvider();
+        serializationProvider.add(new JacksonJsonProcessor(false) {
             @Override
             protected void initializeMapper(ObjectMapper mapper) {
                 super.initializeMapper(mapper);
@@ -280,22 +279,22 @@ public class EblockerHttpsServer implements Preprocessor {
         this.systemStatusController = systemStatusController;
         this.sslContextHandler = sslContextHandler;
 
-		this.deviceController = deviceController;
-		this.redirectController = redirectController;
-		this.networkController = networkController;
-		this.parentalControlController = parentalControlController;
-		this.userController = userController;
-		this.domainBlockingController = domainBlockingController;
-		this.filterController = filterController;
-		this.userAgentController = userAgentController;
-		this.anonymousController = anonymousController;
-		this.domainWhiteListController = domainWhiteListController;
-		this.deviceRegistrationController = deviceRegistrationController;
-		this.factoryResetController = factoryResetController;
-		this.updateController = updateController;
-		this.sslController = sslController;
-		this.recordingController = recordingController;
-		this.featureToggleController = featureToggleController;
+        this.deviceController = deviceController;
+        this.redirectController = redirectController;
+        this.networkController = networkController;
+        this.parentalControlController = parentalControlController;
+        this.userController = userController;
+        this.domainBlockingController = domainBlockingController;
+        this.filterController = filterController;
+        this.userAgentController = userAgentController;
+        this.anonymousController = anonymousController;
+        this.domainWhiteListController = domainWhiteListController;
+        this.deviceRegistrationController = deviceRegistrationController;
+        this.factoryResetController = factoryResetController;
+        this.updateController = updateController;
+        this.sslController = sslController;
+        this.recordingController = recordingController;
+        this.featureToggleController = featureToggleController;
 
         this.languageController = languageController;
         this.setupWizardController = setupWizardController;
@@ -329,19 +328,19 @@ public class EblockerHttpsServer implements Preprocessor {
         this.dashboardCardController = dashboardCardController;
         this.customerInfoController = customerInfoController;
 
-		this.featureController = featureController;
-		this.mobileConnectionCheckController = mobileConnectionCheckController;
-		this.mobileDnsCheckController = mobileDnsCheckController;
+        this.featureController = featureController;
+        this.mobileConnectionCheckController = mobileConnectionCheckController;
+        this.mobileDnsCheckController = mobileDnsCheckController;
 
-		this.tosController = tosController;
-		this.filterStatisticsController = filterStatisticsController;
-		this.configBackupController = configBackupController;
-		this.customDomainFilterConfigController = customDomainFilterConfigController;
+        this.tosController = tosController;
+        this.filterStatisticsController = filterStatisticsController;
+        this.configBackupController = configBackupController;
+        this.customDomainFilterConfigController = customDomainFilterConfigController;
 
-		this.ledSettingsController = ledSettingsController;
-		this.tasksController = tasksController;
-		this.connectionCheckController = connectionCheckController;
-		this.blockerController = blockerController;
+        this.ledSettingsController = ledSettingsController;
+        this.tasksController = tasksController;
+        this.connectionCheckController = connectionCheckController;
+        this.blockerController = blockerController;
 
         setUpRoutes();
 
@@ -378,7 +377,6 @@ public class EblockerHttpsServer implements Preprocessor {
     /**
      * Call this method to inform the HTTP server that its IP address changed.
      * This will generate a new SSL certificate for the HTTPS server and use this from now on.
-     *
      */
     private void updateSSLContext() {
         SSLContext newSSLContext = sslContextHandler.getSSLContext();
@@ -404,7 +402,7 @@ public class EblockerHttpsServer implements Preprocessor {
     }
 
     private void unbindHttpsChannel() {
-        if(httpsChannel != null) {
+        if (httpsChannel != null) {
             log.info("Unbinding open HTTPS port");
             httpsChannel.close().awaitUninterruptibly();
         }
@@ -440,9 +438,9 @@ public class EblockerHttpsServer implements Preprocessor {
 
         addRecordingRoutes();
 
-		addAuthenticationRoutes();
-		addVpnRoutes();
-		addOpenVpnServerRoutes();
+        addAuthenticationRoutes();
+        addVpnRoutes();
+        addOpenVpnServerRoutes();
 
         addControlBarRoutes();
 
@@ -603,7 +601,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("public.timestamp.route");
 
         server
-            .uri("/api/localtimestamp",  timestampController)
+            .uri("/api/localtimestamp", timestampController)
             .action("getLocalTimestamp", HttpMethod.GET)
             .name("dashboard.timestamp.route");
 
@@ -780,11 +778,11 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
             .uri("/api/ssl/device/status", sslController)
-            .action("setDeviceStatus",  HttpMethod.POST)
+            .action("setDeviceStatus", HttpMethod.POST)
             .name("dashboard.sll.device.status.post");
 
         server
-            .uri("/api/ssl/status",  sslController)
+            .uri("/api/ssl/status", sslController)
             .action("getSslDashboardStatus", HttpMethod.GET)
             .name("dashboard.ssl.status.get");
 
@@ -809,7 +807,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("ssl.error.recording.enabled.set");
     }
 
-    private void addRecordingRoutes(){
+    private void addRecordingRoutes() {
         // Controls start and stop of recording
         // Only used from within the console
         server
@@ -929,8 +927,8 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("getConfiguration", HttpMethod.GET)
             .name("public.network.config.get.route");
         server
-            .uri("/network/setupPageInfo",  networkController)
-            .action("getSetupPageInfo",  HttpMethod.GET)
+            .uri("/network/setupPageInfo", networkController)
+            .action("getSetupPageInfo", HttpMethod.GET)
             .name("public.network.config.setuppage.get.route");
 
         // Only used from within console
@@ -959,7 +957,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("parentalcontrol.store.profile.route");
         // Read profiles
         server
-            .uri("/userprofiles",  parentalControlController)
+            .uri("/userprofiles", parentalControlController)
             .action("getProfiles", HttpMethod.GET)
             .name("public.parentalcontrol.get.profiles.route");
         // Update profile
@@ -1004,7 +1002,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("errorpage.parentalcontrol.searchEngine.get");
     }
 
-    private void addUserRoutes(){
+    private void addUserRoutes() {
         // Create user
         server
             .uri("/users", userController)
@@ -1046,22 +1044,22 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // Reset PIN
         server
-            .uri("/users/{id}/pin",  userController)
-            .action("resetPin",  HttpMethod.DELETE)
+            .uri("/users/{id}/pin", userController)
+            .action("resetPin", HttpMethod.DELETE)
             .name("console.parentalcontrol.user.reset.pin.route");
 
     }
 
-	private void addDomainBlackListRoutes() {
-		server
-				.uri("/blacklist/cache", domainBlockingController)
-				.action("getCacheStats", HttpMethod.GET)
-				.name("debug.blacklist.cache.stats");
-		server
-				.uri("/blacklist/cache", domainBlockingController)
-				.action("clearCaches", HttpMethod.DELETE)
-				.name("debug.blacklist.cache.clear");
-	}
+    private void addDomainBlackListRoutes() {
+        server
+            .uri("/blacklist/cache", domainBlockingController)
+            .action("getCacheStats", HttpMethod.GET)
+            .name("debug.blacklist.cache.stats");
+        server
+            .uri("/blacklist/cache", domainBlockingController)
+            .action("clearCaches", HttpMethod.DELETE)
+            .name("debug.blacklist.cache.clear");
+    }
 
     private void addUserAgentRoutes() {
         //
@@ -1247,7 +1245,7 @@ public class EblockerHttpsServer implements Preprocessor {
         // Only used from within console
         server
             .uri("/devices/scan", deviceController)
-            .action("scanDevices",  HttpMethod.POST)
+            .action("scanDevices", HttpMethod.POST)
             .name("console.devices.scan.route");
 
         server
@@ -1379,7 +1377,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("public.whitelist.update.route");
     }
 
-    private void addUserMessagesRoutes(){
+    private void addUserMessagesRoutes() {
         // controlbar and dashboard
         server
             .uri("/messages", messageCenterController)
@@ -1418,7 +1416,7 @@ public class EblockerHttpsServer implements Preprocessor {
 
     }
 
-    private void addAuthenticationRoutes(){
+    private void addAuthenticationRoutes() {
 
         // public: Must be available before user is logged in.
         server
@@ -1427,7 +1425,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("public.authentication.login.route");
 
         server
-            .uri("/authentication/wait",  authenticationController)
+            .uri("/authentication/wait", authenticationController)
             .action("passwordEntryInSeconds", HttpMethod.GET)
             .name("public.authentication.wait.route");
 
@@ -1566,7 +1564,7 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // Must be available without authentication, if user lost password
         server
-            .uri("/api/adminconsole/authentication/wait",  authenticationController)
+            .uri("/api/adminconsole/authentication/wait", authenticationController)
             .action("passwordEntryInSeconds", HttpMethod.GET)
             .name("adminconsole.authentication.wait.route")
             .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
@@ -1675,8 +1673,8 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("setPin", HttpMethod.POST)
             .name("adminconsole.parentalcontrol.user.set.pin.route");
         server
-            .uri("/api/adminconsole/users/{id}/pin",  userController)
-            .action("resetPin",  HttpMethod.DELETE)
+            .uri("/api/adminconsole/users/{id}/pin", userController)
+            .action("resetPin", HttpMethod.DELETE)
             .name("adminconsole.parentalcontrol.user.reset.pin.route");
 
         // ** New Adminconsole: UserProfiles
@@ -1685,7 +1683,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("storeNewProfile", HttpMethod.POST)
             .name("adminconsole.store.profile.route");
         server
-            .uri("/api/adminconsole/userprofiles",  parentalControlController)
+            .uri("/api/adminconsole/userprofiles", parentalControlController)
             .action("getProfiles", HttpMethod.GET)
             .name("adminconsole.parentalcontrol.get.profiles.route");
         server
@@ -1724,11 +1722,11 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("adminconsole.devices.route");
         server
             .uri("/api/adminconsole/devices/scan", deviceController)
-            .action("isScanningAvailable",  HttpMethod.GET)
+            .action("isScanningAvailable", HttpMethod.GET)
             .name("adminconsole.devices.scan.available.route");
         server
             .uri("/api/adminconsole/devices/scan", deviceController)
-            .action("scanDevices",  HttpMethod.POST)
+            .action("scanDevices", HttpMethod.POST)
             .name("adminconsole.devices.scan.route");
         server
             .uri("/api/adminconsole/devices/scanningInterval", deviceController)
@@ -1767,7 +1765,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("deleteDevice", HttpMethod.DELETE)
             .name("adminconsole.devices.delete.route");
         server
-            .uri("/api/adminconsole/devices/reset/{deviceId}",  deviceController)
+            .uri("/api/adminconsole/devices/reset/{deviceId}", deviceController)
             .action("resetDevice", HttpMethod.PUT)
             .name("adminconsole.devices.reset.route");
 
@@ -1781,7 +1779,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("setSSLState", HttpMethod.POST)
             .name("adminconsole.ssl.status.set.route");
         server
-            .uri("/api/adminconsole/ssl/status/renewal",  sslController)
+            .uri("/api/adminconsole/ssl/status/renewal", sslController)
             .action("getSslDashboardStatus", HttpMethod.GET)
             .name("adminconsole.ssl.status.renewal.get");
         server
@@ -2010,7 +2008,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("adminconsole.controlbar.filterlists.get.route");
         server
             .uri("/api/adminconsole/filterlists/{id}/domains", filterListsController)
-            .action("getFilterListDomains",  HttpMethod.GET)
+            .action("getFilterListDomains", HttpMethod.GET)
             .name("adminconsole.parentalcontrol.filterlists.getdomains.route");
         server
             .uri("/api/adminconsole/filterlists/{id}/update", filterListsController)
@@ -2057,8 +2055,8 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("getConfiguration", HttpMethod.GET)
             .name("adminconsole.network.config.get.route");
         server
-            .uri("/api/adminconsole/network/setupPageInfo",  networkController)
-            .action("getSetupPageInfo",  HttpMethod.GET)
+            .uri("/api/adminconsole/network/setupPageInfo", networkController)
+            .action("getSetupPageInfo", HttpMethod.GET)
             .name("adminconsole.network.config.setuppage.get.route");
         server
             .uri("/api/adminconsole/network", networkController)
@@ -2223,7 +2221,7 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
             .uri("/api/adminconsole/openvpn/dns", mobileDnsCheckController)
-            .action("check",  HttpMethod.POST)
+            .action("check", HttpMethod.POST)
             .name("adminconsole.vpn.test.dns");
 
 
@@ -2359,27 +2357,27 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
             .uri("/controlbar/user", controlBarController)
-            .action("getUser",  HttpMethod.GET)
+            .action("getUser", HttpMethod.GET)
             .name("public.controlbar.user.route");
 
         server
             .uri("/controlbar/users", controlBarController)
-            .action("getUsers",  HttpMethod.GET)
+            .action("getUsers", HttpMethod.GET)
             .name("public.controlbar.users.route");
 
         server
             .uri("/controlbar/device", controlBarController)
-            .action("getDevice",  HttpMethod.GET)
+            .action("getDevice", HttpMethod.GET)
             .name("public.controlbar.device.route");
 
         server
-            .uri("/controlbar/deviceRestrictions",  controlBarController)
-            .action("getDeviceRestrictions",  HttpMethod.GET)
+            .uri("/controlbar/deviceRestrictions", controlBarController)
+            .action("getDeviceRestrictions", HttpMethod.GET)
             .name("public.controlbar.device.restrictions.route");
 
         server
             .uri("/controlbar/operatinguser", controlBarController)
-            .action("setOperatingUser",  HttpMethod.PUT)
+            .action("setOperatingUser", HttpMethod.PUT)
             .name("public.controlbar.device.route");
 
         // ** New Controlbar, with 'api' prefix
@@ -2416,7 +2414,7 @@ public class EblockerHttpsServer implements Preprocessor {
         // ** New Controlbar: General "get * by device"
         server
             .uri("/api/controlbar/device", controlBarController)
-            .action("getDevice",  HttpMethod.GET)
+            .action("getDevice", HttpMethod.GET)
             .name("controlbar.device.getDevice.route");
         server
             .uri("/api/controlbar/device/ads/{deviceId}", deviceController)
@@ -2430,11 +2428,11 @@ public class EblockerHttpsServer implements Preprocessor {
         // ** New Controlbar: Users
         server
             .uri("/api/controlbar/users", controlBarController)
-            .action("getUsers",  HttpMethod.GET)
+            .action("getUsers", HttpMethod.GET)
             .name("controlbar.users.getUsers.route");
         server
             .uri("/api/controlbar/users/operatinguser", controlBarController)
-            .action("setOperatingUser",  HttpMethod.PUT)
+            .action("setOperatingUser", HttpMethod.PUT)
             .name("controlbar.users.setOperatingUser.route");
         server
             .uri("/api/controlbar/users/{id}/changepin", userController)
@@ -2587,7 +2585,7 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // ** New Controlbar: Ssl
         server
-            .uri("/api/controlbar/ssl/status",  sslController)
+            .uri("/api/controlbar/ssl/status", sslController)
             .action("getSslDashboardStatus", HttpMethod.GET)
             .name("controlbar.ssl.status.get");
     }
@@ -2632,7 +2630,7 @@ public class EblockerHttpsServer implements Preprocessor {
         // Only used from within console
         server
             .uri("/filterlists/{id}/domains", filterListsController)
-            .action("getFilterListDomains",  HttpMethod.GET)
+            .action("getFilterListDomains", HttpMethod.GET)
             .name("console.parentalcontrol.filterlists.getdomains.route");
 
         // Only used from within console
@@ -2672,9 +2670,8 @@ public class EblockerHttpsServer implements Preprocessor {
 
     /**
      * Record and analyze HTTP(S) connections
-     *
      */
-    private void addTransactionRecorderRoutes(){
+    private void addTransactionRecorderRoutes() {
         // Only used from within console
         server
             .uri("/recorder", transactionRecorderController)
@@ -2802,7 +2799,7 @@ public class EblockerHttpsServer implements Preprocessor {
             .name("dashboard.parentalcontrol.usage.by.id");
 
         server
-            .uri("/api/dashboard/userprofiles",  parentalControlController)
+            .uri("/api/dashboard/userprofiles", parentalControlController)
             .action("getProfiles", HttpMethod.GET)
             .name("dashboard.parentalcontrol.get.profiles.route");
 
@@ -2894,11 +2891,11 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
             .uri("/api/dashboard/users", userController)
-            .action("getUsers",  HttpMethod.GET)
+            .action("getUsers", HttpMethod.GET)
             .name("dashboard.users.getUsers.route");
         server
             .uri("/api/dashboard/users/operatinguser", controlBarController)
-            .action("setOperatingUser",  HttpMethod.PUT)
+            .action("setOperatingUser", HttpMethod.PUT)
             .name("dashboard.users.setOperatingUser.route");
         server
             .uri("/api/dashboard/users/{id}/changepin", userController)
@@ -2952,8 +2949,8 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // Dashboard setting / setup card
         server
-            .uri("/api/dashboard/network/info",  networkController)
-            .action("getSetupPageInfo",  HttpMethod.GET)
+            .uri("/api/dashboard/network/info", networkController)
+            .action("getSetupPageInfo", HttpMethod.GET)
             .name("dashboard.network.config.get.route");
         server
             .uri("/api/dashboard/registration", deviceRegistrationController)

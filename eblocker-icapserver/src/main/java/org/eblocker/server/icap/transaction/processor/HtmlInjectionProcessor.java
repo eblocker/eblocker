@@ -16,16 +16,17 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Singleton;
 import org.eblocker.server.common.util.HtmlUtils;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/** This class will collect all the content that is about to get injected into HTML responses
+/**
+ * This class will collect all the content that is about to get injected into HTML responses
  */
 @Singleton
 public class HtmlInjectionProcessor implements TransactionProcessor {
@@ -40,7 +41,7 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
             return false;
         }
 
-        if(!isHTML(transaction)) {
+        if (!isHTML(transaction)) {
             return true;
         }
 
@@ -56,13 +57,14 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
 
     /**
      * Perform the injection before the last closing body tag
+     *
      * @param transaction
      * @param content
      * @param injections
      */
     private void inject(StringBuilder content, List<String> injections) {
         StringBuilder injectionTotal = new StringBuilder();
-        for(String injection : injections){
+        for (String injection : injections) {
             injectionTotal.append(injection);
         }
 
@@ -72,6 +74,7 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
 
     /**
      * Check whether this response is HTML or not
+     *
      * @param transaction
      * @return
      */

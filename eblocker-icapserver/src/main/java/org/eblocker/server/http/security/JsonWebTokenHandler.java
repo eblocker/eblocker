@@ -19,10 +19,10 @@ package org.eblocker.server.http.security;
 import com.auth0.jwt.JWTSigner;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JWTVerifyException;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.network.BaseURLs;
 import org.restexpress.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +48,9 @@ public class JsonWebTokenHandler {
 
     @Inject
     public JsonWebTokenHandler(
-            @Named("authentication.token.squid.validity.seconds") long tokenSquidValiditySeconds,
-            @Named("authentication.token.system.validity.seconds") long tokenSystemValiditySeconds,
-            BaseURLs baseURLs
+        @Named("authentication.token.squid.validity.seconds") long tokenSquidValiditySeconds,
+        @Named("authentication.token.system.validity.seconds") long tokenSystemValiditySeconds,
+        BaseURLs baseURLs
     ) {
         this.tokenSquidValiditySeconds = tokenSquidValiditySeconds;
         this.tokenSystemValiditySeconds = tokenSystemValiditySeconds;
@@ -64,7 +64,7 @@ public class JsonWebTokenHandler {
     public TokenInfo verifyToken(String encodedToken) {
         try {
             JWTVerifier jwtVerifier = new JWTVerifier(secret, audience, issuer);
-            Map<String,Object> claims = jwtVerifier.verify(encodedToken);
+            Map<String, Object> claims = jwtVerifier.verify(encodedToken);
             return new TokenInfo(claims);
 
         } catch (JWTVerifyException | SignatureException e) {
@@ -107,4 +107,4 @@ public class JsonWebTokenHandler {
         return System.currentTimeMillis() / 1000L;
     }
 
- }
+}

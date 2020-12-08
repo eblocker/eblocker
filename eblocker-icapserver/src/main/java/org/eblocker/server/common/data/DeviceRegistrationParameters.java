@@ -23,51 +23,51 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Parameters users must enter to register their eBlocker.
  */
 public class DeviceRegistrationParameters {
-	private final String emailAddress;
-	private final String deviceName;
-	private final String licenseKey;
-	private final String serialNumber;
-	private final Boolean confirmed;
-	private final String tosVersion;
-	private final Boolean fallback;
+    private final String emailAddress;
+    private final String deviceName;
+    private final String licenseKey;
+    private final String serialNumber;
+    private final Boolean confirmed;
+    private final String tosVersion;
+    private final Boolean fallback;
 
-	@JsonCreator
-	public DeviceRegistrationParameters(
-			@JsonProperty("emailAddress") String emailAddress,
-			@JsonProperty("deviceName") String deviceName,
-			@JsonProperty("licenseKey") String licenseKey,
-			@JsonProperty("serialNumber") String serialNumber,
-            @JsonProperty("confirmed") Boolean confirmed,
-            @JsonProperty("tosVersion") String tosVersion,
-            @JsonProperty("fallbackRegistration") boolean fallback) {
-		this.emailAddress = emailAddress;
-		this.deviceName = deviceName;
-		this.licenseKey = licenseKey;
-		this.serialNumber = serialNumber;
-		this.confirmed = confirmed;
-		this.tosVersion = tosVersion;
-		this.fallback = fallback;
-	}
+    @JsonCreator
+    public DeviceRegistrationParameters(
+        @JsonProperty("emailAddress") String emailAddress,
+        @JsonProperty("deviceName") String deviceName,
+        @JsonProperty("licenseKey") String licenseKey,
+        @JsonProperty("serialNumber") String serialNumber,
+        @JsonProperty("confirmed") Boolean confirmed,
+        @JsonProperty("tosVersion") String tosVersion,
+        @JsonProperty("fallbackRegistration") boolean fallback) {
+        this.emailAddress = emailAddress;
+        this.deviceName = deviceName;
+        this.licenseKey = licenseKey;
+        this.serialNumber = serialNumber;
+        this.confirmed = confirmed;
+        this.tosVersion = tosVersion;
+        this.fallback = fallback;
+    }
 
-	public String getDeviceName() {
-		return deviceName;
-	}
+    public String getDeviceName() {
+        return deviceName;
+    }
 
-	public String getLicenseKey() {
-		return licenseKey;
-	}
+    public String getLicenseKey() {
+        return licenseKey;
+    }
 
-	public String getEmailAddress() {
-		return emailAddress;
-	}
+    public String getEmailAddress() {
+        return emailAddress;
+    }
 
-	public String getSerialNumber() {
-		return serialNumber;
-	}
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
-	public Boolean isConfirmed() {
-		return confirmed;
-	}
+    public Boolean isConfirmed() {
+        return confirmed;
+    }
 
     public String getTosVersion() {
         return tosVersion;

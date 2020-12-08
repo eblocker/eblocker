@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
@@ -25,7 +26,6 @@ import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

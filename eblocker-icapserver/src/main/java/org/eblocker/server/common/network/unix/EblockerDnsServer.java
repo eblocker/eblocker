@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
@@ -41,10 +45,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +146,7 @@ public class EblockerDnsServer {
     }
 
     @SubSystemInit
-    public void init(){
+    public void init() {
         loadState();
 
         // update built-in local entries
@@ -278,8 +278,7 @@ public class EblockerDnsServer {
     private void addNonLocalNameServer(List<String> nameServerList, String nameServer) {
         if ("127.0.0.1".equals(nameServer)) {
             log.error("Using 127.0.0.1 as nameserver is not allowed, resolvconf seems to be in an invalid state");
-        }
-        else {
+        } else {
             addNonNull(nameServerList, nameServer);
         }
     }
@@ -309,13 +308,13 @@ public class EblockerDnsServer {
     public synchronized DnsResolvers setDnsResolvers(DnsResolvers dnsResolvers) {
         ResolverConfig customResolverConfig = new ResolverConfig();
         List<NameServer> customNameServers = dnsResolvers.getCustomNameServers().stream()
-                .map(NameServer::parse)
-                .collect(Collectors.toList());
+            .map(NameServer::parse)
+            .collect(Collectors.toList());
         customResolverConfig.setNameServers(customNameServers);
 
         if (RESOLVER_MODE_RANDOM.equals(dnsResolvers.getCustomResolverMode())
-                || RESOLVER_MODE_ROUND_ROBIN.equals(dnsResolvers.getCustomResolverMode())) {
-                customResolverConfig.getOptions().put(ResolverConfig.OPTION_KEY_ORDER, dnsResolvers.getCustomResolverMode());
+            || RESOLVER_MODE_ROUND_ROBIN.equals(dnsResolvers.getCustomResolverMode())) {
+            customResolverConfig.getOptions().put(ResolverConfig.OPTION_KEY_ORDER, dnsResolvers.getCustomResolverMode());
         }
 
         DnsServerConfig config = getConfig();
@@ -390,8 +389,8 @@ public class EblockerDnsServer {
         DnsServerConfig config = getConfig();
         config.getResolverConfigs().remove(key);
         config.setResolverConfigNameByIp(config.getResolverConfigNameByIp().entrySet().stream()
-                .filter(e -> !e.getValue().equals(key))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            .filter(e -> !e.getValue().equals(key))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         saveConfig(config);
     }
 
@@ -451,7 +450,7 @@ public class EblockerDnsServer {
 
     private Map<String, String> createResolverConfigNameByIpMapping() {
         Map<String, String> nameByIp = new HashMap<>();
-        for(Map.Entry<String, String> e : state.getResolverByDeviceId().entrySet()) {
+        for (Map.Entry<String, String> e : state.getResolverByDeviceId().entrySet()) {
             Device device = deviceService.getDeviceById(e.getKey());
             device.getIpAddresses().forEach(ip -> nameByIp.put(ip.toString(), e.getValue()));
         }
@@ -511,9 +510,9 @@ public class EblockerDnsServer {
 
         Splitter splitter = Splitter.on(',').trimResults().omitEmptyStrings();
         config.getResolverConfigs().put(RESOLVER_CUSTOM,
-                createResolverConfig(splitter.splitToList(defaultCustomNameServers)));
+            createResolverConfig(splitter.splitToList(defaultCustomNameServers)));
         config.getResolverConfigs().put(RESOLVER_TOR,
-                createResolverConfig(splitter.splitToList(defaultTorNameServers)));
+            createResolverConfig(splitter.splitToList(defaultTorNameServers)));
 
         config.setLocalDnsRecords(getBuiltinLocalDnsRecords());
         config.setFilteredPeers(Collections.emptySet());
@@ -526,7 +525,7 @@ public class EblockerDnsServer {
     private ResolverConfig createResolverConfig(List<String> nameservers) {
         ResolverConfig config = new ResolverConfig();
         config.setNameServers(nameservers.stream()
-                .map(NameServer::parse).collect(Collectors.toList()));
+            .map(NameServer::parse).collect(Collectors.toList()));
         return config;
     }
 

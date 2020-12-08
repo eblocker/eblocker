@@ -16,24 +16,25 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.UserRole;
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
-import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.http.service.DashboardCardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SchemaMigrationVersion39 implements SchemaMigration {
 
@@ -81,7 +82,7 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
                     oldCard.getCustomPos()[0] : oldCard.getDefaultPos()[0];
                 DashboardCardPosition positionsTwo = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 1 && oldCard.getCustomPos()[1] != null ?
                     oldCard.getCustomPos()[1] : oldCard.getDefaultPos()[1];
-                DashboardCardPosition positionsThree = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 2 && oldCard.getCustomPos()[2] != null?
+                DashboardCardPosition positionsThree = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 2 && oldCard.getCustomPos()[2] != null ?
                     oldCard.getCustomPos()[2] : oldCard.getDefaultPos()[2];
 
                 UiCardColumnPosition[] positions = new UiCardColumnPosition[3];
@@ -145,7 +146,7 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
             forEach(card -> dashboardCardService.saveNewDashboardCard(card));
     }
 
-    private boolean containsCard(List<UiCard> source,  UiCard contains) {
+    private boolean containsCard(List<UiCard> source, UiCard contains) {
         return source.stream().anyMatch(card -> contains.getName().equals(card.getName()));
     }
 
@@ -164,8 +165,8 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
             new UiCard(nextId(), "WHITELIST_DNS", ProductFeature.PRO.name(), getDefaultRoles(), null),
             new UiCard(nextId(), "BLOCKER_STATISTICS_TOTAL", ProductFeature.PRO.name(), getDefaultRoles(), null),
             new UiCard(nextId(), "ONLINE_TIME", ProductFeature.FAM.name(), getAllRoles(), null),
-            new UiCard(nextId(), "USER", ProductFeature.FAM.name(), getAllRoles(),null)
-            );
+            new UiCard(nextId(), "USER", ProductFeature.FAM.name(), getAllRoles(), null)
+        );
     }
 
     private int nextId() {

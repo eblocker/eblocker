@@ -37,13 +37,13 @@ public class TransactionRecorderInfo {
 
     @JsonCreator
     public TransactionRecorderInfo(
-            @JsonProperty("deviceId") String deviceId,
-            @JsonProperty("timeLimitSeconds") Long timeLimitSeconds,
-            @JsonProperty("sizeLimitBytes") Long sizeLimitBytes,
-            @JsonProperty("active") Boolean active,
-            @JsonProperty("runningTime") Long runningTime,
-            @JsonProperty("gatheredBytes") Long gatheredBytes,
-            @JsonProperty("gatheredRequests") Integer gatheredRequests) {
+        @JsonProperty("deviceId") String deviceId,
+        @JsonProperty("timeLimitSeconds") Long timeLimitSeconds,
+        @JsonProperty("sizeLimitBytes") Long sizeLimitBytes,
+        @JsonProperty("active") Boolean active,
+        @JsonProperty("runningTime") Long runningTime,
+        @JsonProperty("gatheredBytes") Long gatheredBytes,
+        @JsonProperty("gatheredRequests") Integer gatheredRequests) {
         this.deviceId = deviceId;
         this.timeLimitSeconds = timeLimitSeconds == null ? -1 : timeLimitSeconds;
         this.sizeLimitBytes = sizeLimitBytes == null ? -1 : sizeLimitBytes;

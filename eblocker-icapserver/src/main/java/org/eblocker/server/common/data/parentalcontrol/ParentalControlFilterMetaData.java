@@ -45,20 +45,20 @@ public class ParentalControlFilterMetaData {
     }
 
     public ParentalControlFilterMetaData(
-            Integer id,
-            Map<String, String> name,
-            Map<String, String> description,
-            Category category,
-            List<String> filenames,
-            String version,
-            Date date,
-            String format,
-            String filterType,
-            boolean builtin,
-            boolean disabled,
-            List<QueryTransformation> queryTransformations,
-            String customerCreatedName,
-            String customerCreatedDescription) {
+        Integer id,
+        Map<String, String> name,
+        Map<String, String> description,
+        Category category,
+        List<String> filenames,
+        String version,
+        Date date,
+        String format,
+        String filterType,
+        boolean builtin,
+        boolean disabled,
+        List<QueryTransformation> queryTransformations,
+        String customerCreatedName,
+        String customerCreatedDescription) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -201,20 +201,20 @@ public class ParentalControlFilterMetaData {
         if (o == null || getClass() != o.getClass()) return false;
         ParentalControlFilterMetaData metaData = (ParentalControlFilterMetaData) o;
         return builtin == metaData.builtin &&
-                disabled == metaData.disabled &&
-                Objects.equals(id, metaData.id) &&
-                Objects.equals(name, metaData.name) &&
-                Objects.equals(description, metaData.description) &&
-                Objects.equals(filenames, metaData.filenames) &&
-                Objects.equals(version, metaData.version) &&
-                Objects.equals(date, metaData.date) &&
-                Objects.equals(format, metaData.format) &&
-                category == metaData.category &&
-                Objects.equals(filterType, metaData.filterType) &&
-                Objects.equals(size, metaData.size) &&
-                Objects.equals(queryTransformations, metaData.queryTransformations) &&
-                Objects.equals(customerCreatedName, metaData.customerCreatedName) &&
-                Objects.equals(customerCreatedDescription, metaData.customerCreatedDescription);
+            disabled == metaData.disabled &&
+            Objects.equals(id, metaData.id) &&
+            Objects.equals(name, metaData.name) &&
+            Objects.equals(description, metaData.description) &&
+            Objects.equals(filenames, metaData.filenames) &&
+            Objects.equals(version, metaData.version) &&
+            Objects.equals(date, metaData.date) &&
+            Objects.equals(format, metaData.format) &&
+            category == metaData.category &&
+            Objects.equals(filterType, metaData.filterType) &&
+            Objects.equals(size, metaData.size) &&
+            Objects.equals(queryTransformations, metaData.queryTransformations) &&
+            Objects.equals(customerCreatedName, metaData.customerCreatedName) &&
+            Objects.equals(customerCreatedDescription, metaData.customerCreatedDescription);
     }
 
     @Override

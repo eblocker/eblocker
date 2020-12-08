@@ -22,5 +22,6 @@ import org.restexpress.Response;
 
 public interface LedSettingsController {
     public LedSettings getSettings(Request request, Response response);
+
     public void updateSettings(Request request, Response response);
 }

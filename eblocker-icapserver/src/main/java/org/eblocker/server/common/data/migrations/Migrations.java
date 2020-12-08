@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.BaseModule;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.exceptions.EblockerException;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.multibindings.Multibinder;
+import org.eblocker.server.common.BaseModule;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,103 +35,103 @@ import java.util.Set;
 /**
  * Migrations can update the Redis database during installation of software updates.
  * They are run oncy by the postinstall script.
- *
+ * <p>
  * Migrations can only update the database to higher version numbers.
- *
+ * <p>
  * Since the user can skip software updates, migrations must also handle updates
  * that span more than one release.
  */
 public class Migrations {
-	private static final Logger log = LoggerFactory.getLogger(Migrations.class);
+    private static final Logger log = LoggerFactory.getLogger(Migrations.class);
 
-	private DataSource dataSource;
-	private Map<String, SchemaMigration> migrationsBySourceVersion;
-	private String targetVerison;
+    private DataSource dataSource;
+    private Map<String, SchemaMigration> migrationsBySourceVersion;
+    private String targetVerison;
 
-	@Inject
-	public Migrations(DataSource dataSource, Set<SchemaMigration> schemaMigrations) {
-		this.dataSource = dataSource;
-		setupSchemaMigrations(schemaMigrations);
-	}
+    @Inject
+    public Migrations(DataSource dataSource, Set<SchemaMigration> schemaMigrations) {
+        this.dataSource = dataSource;
+        setupSchemaMigrations(schemaMigrations);
+    }
 
-	private void setupSchemaMigrations(Set<SchemaMigration> schemaMigrations) {
-		buildSchemaMigrationsMap(schemaMigrations);
-		checkMigrationsPath();
-	}
+    private void setupSchemaMigrations(Set<SchemaMigration> schemaMigrations) {
+        buildSchemaMigrationsMap(schemaMigrations);
+        checkMigrationsPath();
+    }
 
-	public String migrateToLatestSchema() {
-		String version = dataSource.getVersion();
-		log.info("data source version: {}", version);
-		log.info("migrations version: {}", targetVerison);
-		if (targetVerison.equals(version)) {
-			log.info("nothing to do");
-			return version;
-		}
+    public String migrateToLatestSchema() {
+        String version = dataSource.getVersion();
+        log.info("data source version: {}", version);
+        log.info("migrations version: {}", targetVerison);
+        if (targetVerison.equals(version)) {
+            log.info("nothing to do");
+            return version;
+        }
 
-		SchemaMigration migration = migrationsBySourceVersion.get(version);
-		if (migration == null) {
-			log.error("no migration path found for source version {} to {}!", version, targetVerison);
-			throw new EblockerException("no migration path found for source version " + version + " to " + targetVerison);
-		}
+        SchemaMigration migration = migrationsBySourceVersion.get(version);
+        if (migration == null) {
+            log.error("no migration path found for source version {} to {}!", version, targetVerison);
+            throw new EblockerException("no migration path found for source version " + version + " to " + targetVerison);
+        }
 
-		while(migration != null) {
-			log.info("running migration from {} to {}", migration.getSourceVersion(), migration.getTargetVersion());
-			migration.migrate();
-			migration = migrationsBySourceVersion.get(migration.getTargetVersion());
-		}
-		log.info("migrations done!");
-		return dataSource.getVersion();
-	}
+        while (migration != null) {
+            log.info("running migration from {} to {}", migration.getSourceVersion(), migration.getTargetVersion());
+            migration.migrate();
+            migration = migrationsBySourceVersion.get(migration.getTargetVersion());
+        }
+        log.info("migrations done!");
+        return dataSource.getVersion();
+    }
 
 
-	/**
-	 * Builds map by source version and checks each source verison is just used once
-	 */
-	private void buildSchemaMigrationsMap(Set<SchemaMigration> schemaMigrations) {
-		migrationsBySourceVersion = new HashMap<>();
-		for(SchemaMigration migration : schemaMigrations) {
-			if (migrationsBySourceVersion.put(migration.getSourceVersion(), migration) != null) {
-				log.error("duplicate schema migration with source version {}", migration.getSourceVersion());
-				throw new EblockerException("duplicate schema migration with source version " + migration.getSourceVersion());
-			}
-		}
-	}
+    /**
+     * Builds map by source version and checks each source verison is just used once
+     */
+    private void buildSchemaMigrationsMap(Set<SchemaMigration> schemaMigrations) {
+        migrationsBySourceVersion = new HashMap<>();
+        for (SchemaMigration migration : schemaMigrations) {
+            if (migrationsBySourceVersion.put(migration.getSourceVersion(), migration) != null) {
+                log.error("duplicate schema migration with source version {}", migration.getSourceVersion());
+                throw new EblockerException("duplicate schema migration with source version " + migration.getSourceVersion());
+            }
+        }
+    }
 
-	/**
-	 * Checks if migrations are linear
-	 */
-	private void checkMigrationsPath() {
-		Set<SchemaMigration> usedMigrations = new HashSet<>();
+    /**
+     * Checks if migrations are linear
+     */
+    private void checkMigrationsPath() {
+        Set<SchemaMigration> usedMigrations = new HashSet<>();
 
-		SchemaMigration migration = migrationsBySourceVersion.get(null);
-		if (migration == null) {
-			log.error("no migration for empty database found!");
-			throw new EblockerException("no migration for empty database found!");
-		}
+        SchemaMigration migration = migrationsBySourceVersion.get(null);
+        if (migration == null) {
+            log.error("no migration for empty database found!");
+            throw new EblockerException("no migration for empty database found!");
+        }
 
-		while(migration != null) {
+        while (migration != null) {
             targetVerison = migration.getTargetVersion();
             usedMigrations.add(migration);
-			SchemaMigration nextMigration = migrationsBySourceVersion.get(migration.getTargetVersion());
+            SchemaMigration nextMigration = migrationsBySourceVersion.get(migration.getTargetVersion());
             log.info("found migration from {} to {}", migration.getSourceVersion(), migration.getTargetVersion());
             migration = nextMigration;
-		}
+        }
 
-		if (usedMigrations.size() != migrationsBySourceVersion.size()) {
-			log.error("expected {} migrations but found {}!", migrationsBySourceVersion.size(), usedMigrations.size());
-			throw new EblockerException("unused migration found!");
-		}
-	}
+        if (usedMigrations.size() != migrationsBySourceVersion.size()) {
+            log.error("expected {} migrations but found {}!", migrationsBySourceVersion.size(), usedMigrations.size());
+            throw new EblockerException("unused migration found!");
+        }
+    }
 
-	public static String run() throws IOException {
-		Injector injector = Guice.createInjector(new MigrationsModule());
-		return injector.getInstance(Migrations.class).migrateToLatestSchema();
-	}
+    public static String run() throws IOException {
+        Injector injector = Guice.createInjector(new MigrationsModule());
+        return injector.getInstance(Migrations.class).migrateToLatestSchema();
+    }
 
-	private static class MigrationsModule extends BaseModule {
-		MigrationsModule() throws IOException {
-			super();
-		}
+    private static class MigrationsModule extends BaseModule {
+        MigrationsModule() throws IOException {
+            super();
+        }
 
         @Override
         protected void configure() {
@@ -183,7 +183,7 @@ public class Migrations {
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion44.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion45.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion46.class);
-			migrationMultiBinder.addBinding().to(SchemaMigrationVersion47.class);
+            migrationMultiBinder.addBinding().to(SchemaMigrationVersion47.class);
         }
     }
 }

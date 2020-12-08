@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.TasksViewConfig;
 import org.eblocker.server.common.executor.LogEntry;
 import org.eblocker.server.common.executor.PoolStats;
 import org.eblocker.server.http.controller.TasksController;
 import org.eblocker.server.http.service.TasksService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

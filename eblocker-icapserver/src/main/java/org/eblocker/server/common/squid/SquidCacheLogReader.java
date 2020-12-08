@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.squid;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.util.TailReader;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public class SquidCacheLogReader {
     public List<FailedConnectionLogEntry> pollFailedConnections() {
         List<FailedConnectionLogEntry> entries = new ArrayList<>();
         FailedConnectionLogEntry entry;
-        while((entry = failedConnectionLogEntries.poll()) != null) {
+        while ((entry = failedConnectionLogEntries.poll()) != null) {
             entries.add(entry);
         }
         return entries;
@@ -105,7 +105,7 @@ public class SquidCacheLogReader {
     private void readSquidLog() {
         try {
             String line;
-            while((line = squidLogReader.readLine()) != null) {
+            while ((line = squidLogReader.readLine()) != null) {
                 log.debug("read cache log line: {}", line);
                 FailedConnectionLogEntry connection = parseLine(line);
                 if (connection != null) {

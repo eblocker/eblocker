@@ -18,8 +18,10 @@ package org.eblocker.server.icap.filter;
 
 public interface FilterContainer extends Filter {
 
-	boolean resolveReferences(FilterStore store);
-	void remove(Filter filter);
-	void add(Filter filter);
+    boolean resolveReferences(FilterStore store);
+
+    void remove(Filter filter);
+
+    void add(Filter filter);
 
 }

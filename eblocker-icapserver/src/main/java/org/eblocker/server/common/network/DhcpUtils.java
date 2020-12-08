@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
-import org.eblocker.server.common.util.IpUtils;
 import com.google.common.base.Splitter;
+import org.eblocker.server.common.util.IpUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;

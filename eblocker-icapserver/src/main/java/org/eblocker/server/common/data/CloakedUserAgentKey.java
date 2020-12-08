@@ -29,7 +29,7 @@ public class CloakedUserAgentKey implements Serializable {
         this.userId = userId;
         this.isCustom = isCustom;
     }
-    
+
     @Override
     public String toString() {
         return "{" +
@@ -68,7 +68,7 @@ public class CloakedUserAgentKey implements Serializable {
         if (o == null || !(o instanceof CloakedUserAgentKey)) {
             return false;
         }
-        CloakedUserAgentKey other = (CloakedUserAgentKey)o;
+        CloakedUserAgentKey other = (CloakedUserAgentKey) o;
 
         return other.getDeviceId().equals(this.deviceId)
             && other.getUserId().equals(this.userId);

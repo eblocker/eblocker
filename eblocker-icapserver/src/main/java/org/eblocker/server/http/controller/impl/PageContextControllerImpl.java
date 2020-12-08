@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.http.controller.PageContextController;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -53,8 +53,8 @@ public class PageContextControllerImpl implements PageContextController {
 
     public List<Node> getPageContextTree(Request request, Response response) {
         Map<PageContext, Node> nodes = pageContextStore.getContexts().stream()
-                .map(Node::new)
-                .collect(Collectors.toMap(Node::getContext, Function.identity()));
+            .map(Node::new)
+            .collect(Collectors.toMap(Node::getContext, Function.identity()));
 
         List<Node> rootNodes = new ArrayList<>();
         nodes.values().forEach(node -> {

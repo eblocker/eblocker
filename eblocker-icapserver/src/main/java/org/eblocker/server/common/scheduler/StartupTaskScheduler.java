@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.util.StartupTask;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.util.StartupTask;
 
 public class StartupTaskScheduler extends InitialDelayOnlyScheduler {
 
     @Inject
     public StartupTaskScheduler(StartupTask startupTask,
-            @Named("executor.startupTask.startupDelay") long startupDelay) {
-        
+                                @Named("executor.startupTask.startupDelay") long startupDelay) {
+
         super(startupTask, startupDelay);
     }
 }

@@ -82,7 +82,7 @@ public class SchemaMigrationVersion47 implements SchemaMigration {
         List<String> filenames = pcFilterMetaData.getFilenames();
         List<String> filenamesNew = new ArrayList<>(filenames.size());
         if (filenames != null) {
-            for (String filename: filenames) {
+            for (String filename : filenames) {
                 if (filename.contains(ICAPSERVER_PATH_OLD)) {
                     filenamesNew.add(filename.replace(ICAPSERVER_PATH_OLD, ICAPSERVER_PATH_NEW));
                     modified = true;
@@ -108,6 +108,7 @@ public class SchemaMigrationVersion47 implements SchemaMigration {
     /**
      * We cannot load the entities, since the package com.brightmammoth does not exist any more.
      * So we must work directly on the JSON strings.
+     *
      * @param key
      */
     private void updatePackageName(String key) {

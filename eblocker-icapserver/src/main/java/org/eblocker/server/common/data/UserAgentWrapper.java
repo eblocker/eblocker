@@ -23,22 +23,22 @@ public class UserAgentWrapper extends ModelObject {
     private String agentName;
     private String agentSpec;
     private Boolean isCustomUserAgent;
-    
-	public UserAgentWrapper(@JsonProperty("agentSpec") String agentSpec,
+
+    public UserAgentWrapper(@JsonProperty("agentSpec") String agentSpec,
                             @JsonProperty("agentName") String agentName,
                             @JsonProperty("isCustomUserAgent") Boolean isCustomUserAgent) {
-		this.agentSpec = agentSpec;
-		this.agentName = agentName;
-		this.isCustomUserAgent = isCustomUserAgent;
-	}
+        this.agentSpec = agentSpec;
+        this.agentName = agentName;
+        this.isCustomUserAgent = isCustomUserAgent;
+    }
 
-	public String getAgentSpec() {
-		return agentSpec;
-	}
+    public String getAgentSpec() {
+        return agentSpec;
+    }
 
-	public void setAgentSpec(String agentSpec) {
-		this.agentSpec = agentSpec;
-	}
+    public void setAgentSpec(String agentSpec) {
+        this.agentSpec = agentSpec;
+    }
 
     public String getAgentName() {
         return agentName;

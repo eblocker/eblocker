@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.dns;
 
-import org.eblocker.server.common.data.IpAddress;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.IpAddress;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +27,7 @@ public class NameServer {
 
     private static final Pattern FULL_SPEC_PATTERN = Pattern.compile("(tcp|udp):(?:(\\d+\\.\\d+\\.\\d+\\.\\d+)|\\[([a-f0-9:]+)\\]):(\\d+)");
 
-    public enum Protocol { UDP, TCP }
+    public enum Protocol {UDP, TCP}
 
     private final Protocol protocol;
     private final IpAddress address;

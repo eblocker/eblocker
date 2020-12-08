@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 
 public class PCAccessRestrictionsServiceScheduler extends FixedRateScheduler {
-    
+
     @Inject
     public PCAccessRestrictionsServiceScheduler(
-            ParentalControlAccessRestrictionsService command,
-            @Named("executor.parentalControlAccessRestrictionsService.startupDelay") long startupDelay,
-            @Named("executor.parentalControlAccessRestrictionsService.fixedRate") long fixedRate) {
+        ParentalControlAccessRestrictionsService command,
+        @Named("executor.parentalControlAccessRestrictionsService.startupDelay") long startupDelay,
+        @Named("executor.parentalControlAccessRestrictionsService.fixedRate") long fixedRate) {
         super(command, startupDelay, fixedRate);
     }
 

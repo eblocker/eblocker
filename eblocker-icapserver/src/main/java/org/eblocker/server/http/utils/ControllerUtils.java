@@ -25,7 +25,7 @@ public class ControllerUtils {
     public static IpAddress getRequestIPAddress(Request request) {
         if (request != null) {
             HttpTransactionIdentifier identifier = (HttpTransactionIdentifier) request
-                    .getAttachment("transactionIdentifier");
+                .getAttachment("transactionIdentifier");
             if (identifier != null) {
                 return identifier.getOriginalClientIP();
             }

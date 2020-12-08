@@ -19,7 +19,7 @@ package org.eblocker.server.common.scheduler;
 public abstract class AbstractScheduler implements Scheduler {
     protected final Runnable command;
     protected final long initialDelay;
-    
+
     public AbstractScheduler(Runnable command, long initialDelayInSeconds) {
         this.command = command;
         this.initialDelay = initialDelayInSeconds;

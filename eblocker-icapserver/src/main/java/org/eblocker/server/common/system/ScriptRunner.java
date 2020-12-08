@@ -22,31 +22,34 @@ import java.io.IOException;
  * Runs external scripts.
  */
 public interface ScriptRunner {
-	/**
-	 * Runs a script. This method waits for the script to terminate.
-	 * @param scriptName name of the script
-	 * @return return value of the script. Usually, a zero exit value indicates success, while non-zero
-	 * values indicate failure.
-	 * @throws IOException 
-	 * @throws InterruptedException 
-	 */
-	public int runScript(String scriptName, String... arguments) throws IOException, InterruptedException;
-	
-	/**
-	 * Starts a script.
-	 * NOTE: you are responsible for calling stopScript(), otherwise there will be two threads leaking
-	 * per call!
-	 * @param scriptName
-	 * @return the running LoggingProcess
-	 * @throws IOException 
-	 */
-	public LoggingProcess startScript(String scriptName, String... arguments) throws IOException;
+    /**
+     * Runs a script. This method waits for the script to terminate.
+     *
+     * @param scriptName name of the script
+     * @return return value of the script. Usually, a zero exit value indicates success, while non-zero
+     * values indicate failure.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public int runScript(String scriptName, String... arguments) throws IOException, InterruptedException;
 
-	/**
-	 * Stops a script
-	 * @param loggingProcess the process to be stopped
-	 * @throws IOException
-	 * @throws InterruptedException 
-	 */
-	public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException;
+    /**
+     * Starts a script.
+     * NOTE: you are responsible for calling stopScript(), otherwise there will be two threads leaking
+     * per call!
+     *
+     * @param scriptName
+     * @return the running LoggingProcess
+     * @throws IOException
+     */
+    public LoggingProcess startScript(String scriptName, String... arguments) throws IOException;
+
+    /**
+     * Stops a script
+     *
+     * @param loggingProcess the process to be stopped
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException;
 }

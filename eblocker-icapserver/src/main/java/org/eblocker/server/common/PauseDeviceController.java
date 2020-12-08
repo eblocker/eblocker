@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.util.RemainingPause;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-/**This object is able to pause the eBlocker on a specific device for a certain amount of time.
+/**
+ * This object is able to pause the eBlocker on a specific device for a certain amount of time.
  */
 public class PauseDeviceController {
     private static final Logger log = LoggerFactory.getLogger(PauseDeviceController.class);
@@ -40,7 +41,7 @@ public class PauseDeviceController {
     private final NetworkStateMachine networkStateMachine;
     private final DeviceService deviceService;
 
-	private Map<String, DeviceReactivator> deviceReactivators;
+    private Map<String, DeviceReactivator> deviceReactivators;
 
     @Inject
     public PauseDeviceController(NetworkStateMachine networkStateMachine,
@@ -53,47 +54,47 @@ public class PauseDeviceController {
         this.deviceReactivators = new HashMap<>();
     }
 
-	public synchronized RemainingPause getRemainingPause(Device device) {
-		DeviceReactivator reactivator = deviceReactivators.get(device.getId());
-		if (reactivator != null) {
-			return new RemainingPause(reactivator.getSecondsUntilReactivation());
-		}
-		return new RemainingPause(0L);
-	}
+    public synchronized RemainingPause getRemainingPause(Device device) {
+        DeviceReactivator reactivator = deviceReactivators.get(device.getId());
+        if (reactivator != null) {
+            return new RemainingPause(reactivator.getSecondsUntilReactivation());
+        }
+        return new RemainingPause(0L);
+    }
 
     private class DeviceReactivator implements Runnable {
-    	private String associatedDeviceId;
-    	private ScheduledFuture<?> associatedFuture;
+        private String associatedDeviceId;
+        private ScheduledFuture<?> associatedFuture;
 
-    	public DeviceReactivator(String deviceId) {
-    		this.associatedDeviceId = deviceId;
-    	}
+        public DeviceReactivator(String deviceId) {
+            this.associatedDeviceId = deviceId;
+        }
 
-    	public void setAssociatedFuture(ScheduledFuture<?> associatedFuture) {
-    		this.associatedFuture = associatedFuture;
-    	}
+        public void setAssociatedFuture(ScheduledFuture<?> associatedFuture) {
+            this.associatedFuture = associatedFuture;
+        }
 
-    	public boolean replaceAssociatedFuture(ScheduledFuture<?> newFuture) {
-    		if (associatedFuture.cancel(false)) {
-        		associatedFuture = newFuture;
-        		return true;
-    		}
-    		return false;
-    	}
+        public boolean replaceAssociatedFuture(ScheduledFuture<?> newFuture) {
+            if (associatedFuture.cancel(false)) {
+                associatedFuture = newFuture;
+                return true;
+            }
+            return false;
+        }
 
-    	public long getSecondsUntilReactivation() {
-    	    return associatedFuture.getDelay(TimeUnit.SECONDS);
-    	}
+        public long getSecondsUntilReactivation() {
+            return associatedFuture.getDelay(TimeUnit.SECONDS);
+        }
 
-    	public void runPrematurely() {
-			if (associatedFuture.cancel(false)) {
-				run();
-			}
-    	}
+        public void runPrematurely() {
+            if (associatedFuture.cancel(false)) {
+                run();
+            }
+        }
 
-		@Override
-		public void run() {
-    	    synchronized (PauseDeviceController.this) {
+        @Override
+        public void run() {
+            synchronized (PauseDeviceController.this) {
                 // Pause ends for associated device
                 log.info("Reenabling eBlocker for device {} again...", associatedDeviceId);
 
@@ -103,7 +104,7 @@ public class PauseDeviceController {
                 reactivateDevice(associatedDevice);
 
             }
-		}
+        }
     }
 
     public synchronized void reactivateDevice(Device device) {
@@ -117,58 +118,59 @@ public class PauseDeviceController {
 
     /**
      * Pause a device or cancels a pause if the given time is 0
+     *
      * @param device
      * @param timeInSeconds the time in seconds from now when the device should be enabled again.
      * @return
      */
     public synchronized RemainingPause pauseDevice(Device device, long timeInSeconds) {
-		String deviceId = device.getId();
+        String deviceId = device.getId();
         DeviceReactivator reactivator = deviceReactivators.get(deviceId);
 
         if (reactivator != null) {
-    		// Device already paused
-			if (timeInSeconds == 0) {
-    			// Reactivate eBlocker for this device (cancel the pause)
-				reactivator.runPrematurely();
+            // Device already paused
+            if (timeInSeconds == 0) {
+                // Reactivate eBlocker for this device (cancel the pause)
+                reactivator.runPrematurely();
 
-				return new RemainingPause(0L);
-    		} else {
-				// set new remaining pause
-				long newDelay = timeInSeconds;
-    			// Cancel previous ScheduledFuture
-				ScheduledFuture<?> newFuture = executorService.schedule(reactivator, newDelay, TimeUnit.SECONDS);
-				if (reactivator.replaceAssociatedFuture(newFuture)) {
-					// Replacing went well, first Future is cancelled
-					return new RemainingPause(reactivator.getSecondsUntilReactivation());
-				} else {
-					// Replacing did not go well
-					log.error("Increasing pause for device {} {} failed...", deviceId, device);
-					// If canceling failed, return the remaining time of the current AssociatedFuture
-					return new RemainingPause(reactivator.getSecondsUntilReactivation());
-				}
-    		}
-		} else if (device.isEnabled() && timeInSeconds > 0) {
-			// Device not already paused - start pause
+                return new RemainingPause(0L);
+            } else {
+                // set new remaining pause
+                long newDelay = timeInSeconds;
+                // Cancel previous ScheduledFuture
+                ScheduledFuture<?> newFuture = executorService.schedule(reactivator, newDelay, TimeUnit.SECONDS);
+                if (reactivator.replaceAssociatedFuture(newFuture)) {
+                    // Replacing went well, first Future is cancelled
+                    return new RemainingPause(reactivator.getSecondsUntilReactivation());
+                } else {
+                    // Replacing did not go well
+                    log.error("Increasing pause for device {} {} failed...", deviceId, device);
+                    // If canceling failed, return the remaining time of the current AssociatedFuture
+                    return new RemainingPause(reactivator.getSecondsUntilReactivation());
+                }
+            }
+        } else if (device.isEnabled() && timeInSeconds > 0) {
+            // Device not already paused - start pause
             reactivator = new DeviceReactivator(deviceId);
 
             log.info("Disabling device now...");
             device.setPaused(true);
-			device.setEnabled(false);
-			deviceService.updateDevice(device);
+            device.setEnabled(false);
+            deviceService.updateDevice(device);
 
-			networkStateMachine.deviceStateChanged(device);
+            networkStateMachine.deviceStateChanged(device);
 
-			log.info("removing all references from squid acl files for device...");
+            log.info("removing all references from squid acl files for device...");
 
-			ScheduledFuture<?> newFuture = executorService.schedule(reactivator, timeInSeconds, TimeUnit.SECONDS);
-			reactivator.setAssociatedFuture(newFuture);
+            ScheduledFuture<?> newFuture = executorService.schedule(reactivator, timeInSeconds, TimeUnit.SECONDS);
+            reactivator.setAssociatedFuture(newFuture);
 
-			deviceReactivators.put(deviceId, reactivator);
+            deviceReactivators.put(deviceId, reactivator);
 
-			return new RemainingPause(reactivator.getSecondsUntilReactivation());
-		} else {
-			// Device was disabled, stays disabled.
-			return new RemainingPause(0L);
-		}
+            return new RemainingPause(reactivator.getSecondsUntilReactivation());
+        } else {
+            // Device was disabled, stays disabled.
+            return new RemainingPause(0L);
+        }
     }
 }

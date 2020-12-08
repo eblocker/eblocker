@@ -16,6 +16,19 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.RecordedSSLAppData;
+import org.eblocker.server.common.data.RecordedSSLHandshake;
+import org.eblocker.server.common.data.RecordedUrl;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.StartRecordingRequestData;
+import org.eblocker.server.common.util.TextLineProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
@@ -24,20 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eblocker.server.common.util.StartRecordingRequestData;
-import org.eblocker.server.common.util.TextLineProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.RecordedSSLAppData;
-import org.eblocker.server.common.data.RecordedSSLHandshake;
-import org.eblocker.server.common.data.RecordedUrl;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class RecordingService {
     private static final Logger log = LoggerFactory.getLogger(RecordingService.class);
@@ -62,13 +61,13 @@ public class RecordingService {
 
     @Inject
     public RecordingService(
-            @Named("recording.default.size") int defaultRecordingSizeLimit,
-            @Named("recording.default.time") int defaultRecordingTimeLimit,
-            @Named("recording.recording.file.path") String recordingFilePath,
-            @Named("recording.analysis.handshakes.file.path") String analysisFileHandshakesPath,
-            @Named("recording.analysis.data.file.path") String analysisFileDataPath, DataSource dataSource,
-            ScriptRunner scriptRunner, AppModuleService appModuleService, TextLineProvider textLineProvider,
-            Clock clock) {
+        @Named("recording.default.size") int defaultRecordingSizeLimit,
+        @Named("recording.default.time") int defaultRecordingTimeLimit,
+        @Named("recording.recording.file.path") String recordingFilePath,
+        @Named("recording.analysis.handshakes.file.path") String analysisFileHandshakesPath,
+        @Named("recording.analysis.data.file.path") String analysisFileDataPath, DataSource dataSource,
+        ScriptRunner scriptRunner, AppModuleService appModuleService, TextLineProvider textLineProvider,
+        Clock clock) {
         this.defaultRecordingSizeLimit = defaultRecordingSizeLimit;
         this.defaultRecordingTimeLimit = defaultRecordingTimeLimit;
         this.recordingFilePath = recordingFilePath;
@@ -179,7 +178,7 @@ public class RecordingService {
 
             // check if the recording must be stopped either due to time limit
             boolean overTime = this.clock.instant()
-                    .isAfter(this.recordingStartTime.plusSeconds(this.recordingTimeLimit));
+                .isAfter(this.recordingStartTime.plusSeconds(this.recordingTimeLimit));
             // or size limit
             File recordingFile = new File(this.recordingFilePath);
             long recordingFileSize = recordingFile.length() / (1024 * 1024);

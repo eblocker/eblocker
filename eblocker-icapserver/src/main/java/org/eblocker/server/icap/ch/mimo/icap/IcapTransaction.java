@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.icap.ch.mimo.icap;
 
-import org.eblocker.server.common.data.IpAddress;
+import ch.mimo.netty.handler.codec.icap.IcapMethod;
+import ch.mimo.netty.handler.codec.icap.IcapRequest;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.icap.transaction.AbstractTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.mimo.netty.handler.codec.icap.IcapMethod;
-import ch.mimo.netty.handler.codec.icap.IcapRequest;
-
 public class IcapTransaction extends AbstractTransaction {
-	private static final Logger log = LoggerFactory.getLogger(IcapTransaction.class);
+    private static final Logger log = LoggerFactory.getLogger(IcapTransaction.class);
 
     private IcapRequest icapRequest;
 
@@ -47,50 +46,50 @@ public class IcapTransaction extends AbstractTransaction {
 
     @Override
     public FullHttpResponse getResponse() {
-    	return icapRequest.getHttpResponse();
+        return icapRequest.getHttpResponse();
     }
 
-	@Override
-	protected void doSetHttpRequest(FullHttpRequest httpRequest) {
+    @Override
+    protected void doSetHttpRequest(FullHttpRequest httpRequest) {
         icapRequest.setHttpRequest(httpRequest);
-	}
+    }
 
     @Override
     protected void doSetHttpResponse(FullHttpResponse httpResponse) {
         icapRequest.setHttpResponse(httpResponse);
-     }
+    }
 
     @Override
     public String toString() {
         return icapRequest.toString();
     }
 
-	@Override
-	public boolean isPreview() {
-		if (!icapRequest.isPreviewMessage()) return false;
-		//
-		//FIXME: This is not the correct approach!
-		//       A continued message (i.e. a preview, for which we requested the complete content)
-		//       is still marked as "preview", because the header remains the same.
-		//       We need a better way to distinguish between actual preview and continued message.
-		//
-		int actualContentSize = 0;
-		if (icapRequest.getMethod().equals(IcapMethod.REQMOD)) {
-			actualContentSize = icapRequest.getHttpRequest().content().readableBytes();
-		} else if (icapRequest.getMethod().equals(IcapMethod.RESPMOD)) {
-			actualContentSize = icapRequest.getHttpResponse().content().readableBytes();
-		}
-		return actualContentSize <= icapRequest.getPreviewAmount();
-	}
+    @Override
+    public boolean isPreview() {
+        if (!icapRequest.isPreviewMessage()) return false;
+        //
+        //FIXME: This is not the correct approach!
+        //       A continued message (i.e. a preview, for which we requested the complete content)
+        //       is still marked as "preview", because the header remains the same.
+        //       We need a better way to distinguish between actual preview and continued message.
+        //
+        int actualContentSize = 0;
+        if (icapRequest.getMethod().equals(IcapMethod.REQMOD)) {
+            actualContentSize = icapRequest.getHttpRequest().content().readableBytes();
+        } else if (icapRequest.getMethod().equals(IcapMethod.RESPMOD)) {
+            actualContentSize = icapRequest.getHttpResponse().content().readableBytes();
+        }
+        return actualContentSize <= icapRequest.getPreviewAmount();
+    }
 
-	@Override
-	public IpAddress getOriginalClientIP() {
+    @Override
+    public IpAddress getOriginalClientIP() {
         String originalClientIP = icapRequest.getHeader("X-Client-IP");
         if (originalClientIP == null || originalClientIP.isEmpty()) {
             log.warn("Cannot determine original client IP from X-Client-IP header. Using 0.0.0.0 as work around");
             return IpAddress.parse("0.0.0.0");
         }
-		return IpAddress.parse(originalClientIP);
-	}
+        return IpAddress.parse(originalClientIP);
+    }
 
 }

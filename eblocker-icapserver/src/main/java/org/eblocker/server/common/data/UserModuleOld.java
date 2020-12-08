@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.http.security.PasswordUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.security.PasswordUtil;
 
 import java.time.LocalDate;
 import java.util.HashMap;

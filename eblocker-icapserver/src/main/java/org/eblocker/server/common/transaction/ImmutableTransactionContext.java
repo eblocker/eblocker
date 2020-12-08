@@ -19,83 +19,83 @@ package org.eblocker.server.common.transaction;
 
 public class ImmutableTransactionContext implements TransactionContext {
 
-	private final String sessionId;
-	private final String url;
-	private final String referrer;
-	private final String domain;
-	private final String accept;
-	private final String referrerHostname;
-	private final Decision decision;
-	private final String redirectTarget;
-	private final boolean thirdParty;
+    private final String sessionId;
+    private final String url;
+    private final String referrer;
+    private final String domain;
+    private final String accept;
+    private final String referrerHostname;
+    private final Decision decision;
+    private final String redirectTarget;
+    private final boolean thirdParty;
 
-	public ImmutableTransactionContext(String sessionId, String url, String referrer, String domain, String referrerHostname, String accept, Decision decision, String redirectTarget, boolean thirdParty) {
-		this.sessionId = sessionId;
-		this.url = url;
-		this.referrer = referrer;
-		this.domain = domain;
-		this.referrerHostname = referrerHostname;
-		this.accept = accept;
-		this.decision = decision;
-		this.redirectTarget = redirectTarget;
-		this.thirdParty = thirdParty;
-	}
+    public ImmutableTransactionContext(String sessionId, String url, String referrer, String domain, String referrerHostname, String accept, Decision decision, String redirectTarget, boolean thirdParty) {
+        this.sessionId = sessionId;
+        this.url = url;
+        this.referrer = referrer;
+        this.domain = domain;
+        this.referrerHostname = referrerHostname;
+        this.accept = accept;
+        this.decision = decision;
+        this.redirectTarget = redirectTarget;
+        this.thirdParty = thirdParty;
+    }
 
-	public ImmutableTransactionContext(TransactionContext context) {
-		sessionId = context.getSessionId();
-		url = context.getUrl();
-		referrer = context.getReferrer();
-		domain = context.getDomain();
-		referrerHostname = context.getReferrerHostname();
-		accept = context.getAccept();
-		decision = context.getDecision();
-		redirectTarget = context.getRedirectTarget();
-		this.thirdParty = context.isThirdParty();
-	}
-	
-	@Override
-	public String getUrl() {
-		return url;
-	}
+    public ImmutableTransactionContext(TransactionContext context) {
+        sessionId = context.getSessionId();
+        url = context.getUrl();
+        referrer = context.getReferrer();
+        domain = context.getDomain();
+        referrerHostname = context.getReferrerHostname();
+        accept = context.getAccept();
+        decision = context.getDecision();
+        redirectTarget = context.getRedirectTarget();
+        this.thirdParty = context.isThirdParty();
+    }
 
-	@Override
-	public String getReferrer() {
-		return referrer;
-	}
+    @Override
+    public String getUrl() {
+        return url;
+    }
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
 
-	@Override
-	public String getReferrerHostname() {
-		return referrerHostname;
-	}
+    @Override
+    public String getDomain() {
+        return domain;
+    }
 
-	@Override
-	public String getAccept() {
-		return accept;
-	}
+    @Override
+    public String getReferrerHostname() {
+        return referrerHostname;
+    }
 
-	@Override
-	public String getSessionId() {
-		return sessionId;
-	}
+    @Override
+    public String getAccept() {
+        return accept;
+    }
 
-	@Override
-	public Decision getDecision() {
-		return decision;
-	}
+    @Override
+    public String getSessionId() {
+        return sessionId;
+    }
 
-	@Override
-	public String getRedirectTarget() {
-		return redirectTarget;
-	}
+    @Override
+    public Decision getDecision() {
+        return decision;
+    }
 
-	@Override
-	public boolean isThirdParty() {
-		return thirdParty;
-	}
+    @Override
+    public String getRedirectTarget() {
+        return redirectTarget;
+    }
+
+    @Override
+    public boolean isThirdParty() {
+        return thirdParty;
+    }
 
 }

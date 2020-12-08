@@ -16,20 +16,22 @@
  */
 package org.eblocker.server.common.data.events;
 
+import org.eblocker.server.common.data.NetworkStateId;
+
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
-
-import org.eblocker.server.common.data.NetworkStateId;
 
 /**
  * Factory methods for events
  */
 public class Events {
     private static final String KEY_USER_NAME = "userName";
+
     private static Event eventOfType(EventType type) {
         return eventOfType(type, Collections.emptyMap());
     }
+
     private static Event eventOfType(EventType type, Map<String, String> details) {
         Instant now = Instant.now();
         Event event = new Event();
@@ -38,6 +40,7 @@ public class Events {
         event.setEventDetails(details);
         return event;
     }
+
     public static Event networkInterfaceDown() {
         return eventOfType(EventType.NETWORK_INTERFACE_DOWN);
     }
@@ -58,44 +61,46 @@ public class Events {
         return eventOfType(EventType.LICENSE_UPGRADE_FAILED);
     }
 
-    public static Event networkModeChange(NetworkStateId current){
-    	switch (current) {
-		case PLUG_AND_PLAY:
-			return eventOfType(EventType.NETWORK_MODE_PNP);
-		case EXTERNAL_DHCP:
-			return eventOfType(EventType.NETWORK_MODE_EXTERNAL_DHCP);
-		case LOCAL_DHCP:
-			return eventOfType(EventType.NETWORK_MODE_LOCAL_DHCP);
+    public static Event networkModeChange(NetworkStateId current) {
+        switch (current) {
+            case PLUG_AND_PLAY:
+                return eventOfType(EventType.NETWORK_MODE_PNP);
+            case EXTERNAL_DHCP:
+                return eventOfType(EventType.NETWORK_MODE_EXTERNAL_DHCP);
+            case LOCAL_DHCP:
+                return eventOfType(EventType.NETWORK_MODE_LOCAL_DHCP);
 
-		default:
-			break;
-		}
-		return null;
+            default:
+                break;
+        }
+        return null;
     }
 
-    public static Event systemEvent(Boolean reboot){
-    	if (reboot){
-    		return eventOfType(EventType.REBOOT_CONSOLE);
-    	}
-    	return eventOfType(EventType.SHUTDOWN_CONSOLE);
+    public static Event systemEvent(Boolean reboot) {
+        if (reboot) {
+            return eventOfType(EventType.REBOOT_CONSOLE);
+        }
+        return eventOfType(EventType.SHUTDOWN_CONSOLE);
     }
 
-    public static Event serverIcapServerStarted(){
-    	return eventOfType(EventType.ICAP_SERVER_STARTED);
+    public static Event serverIcapServerStarted() {
+        return eventOfType(EventType.ICAP_SERVER_STARTED);
     }
-    public static Event serverIcapServerStartedWithWarnings(){
+
+    public static Event serverIcapServerStartedWithWarnings() {
         return eventOfType(EventType.ICAP_SERVER_STARTED_WITH_WARNINGS);
     }
-	public static Event licenseExpired() {
-		return eventOfType(EventType.LICENSE_EXPIRED);
-	}
 
-	public static Event updateEblockerOsInstalled(){
-		return eventOfType(EventType.UPDATE_EBLOCKER_OS_INSTALLED);
-	}
+    public static Event licenseExpired() {
+        return eventOfType(EventType.LICENSE_EXPIRED);
+    }
 
-	public static Event redisBackupFailed() {
-	    return eventOfType(EventType.REDIS_BACKUP_FAILED);
+    public static Event updateEblockerOsInstalled() {
+        return eventOfType(EventType.UPDATE_EBLOCKER_OS_INSTALLED);
+    }
+
+    public static Event redisBackupFailed() {
+        return eventOfType(EventType.REDIS_BACKUP_FAILED);
     }
 
     public static Event redisBackupRestored() {
@@ -105,20 +110,20 @@ public class Events {
     public static Event redisBackupRestoreFailed() {
         return eventOfType(EventType.REDIS_BACKUP_RESTORE_FAILED);
     }
-    
+
     public static Event adminPasswordChanged(Map<String, String> details) {
         return eventOfType(details.containsKey(KEY_USER_NAME) ? EventType.ADMIN_PASSWORD_CHANGED_BY_USER
-                : EventType.ADMIN_PASSWORD_CHANGED, details);
+            : EventType.ADMIN_PASSWORD_CHANGED, details);
     }
 
     public static Event adminPasswordRemoved(Map<String, String> details) {
         return eventOfType(details.containsKey(KEY_USER_NAME) ? EventType.ADMIN_PASSWORD_REMOVED_BY_USER
-                : EventType.ADMIN_PASSWORD_REMOVED, details);
+            : EventType.ADMIN_PASSWORD_REMOVED, details);
     }
 
     public static Event adminPasswordReset(Map<String, String> details) {
         return eventOfType(details.containsKey(KEY_USER_NAME) ? EventType.ADMIN_PASSWORD_RESET_BY_USER
-                : EventType.ADMIN_PASSWORD_RESET, details);
+            : EventType.ADMIN_PASSWORD_RESET, details);
     }
 
     public static Event upnpPortForwardingFailed() {

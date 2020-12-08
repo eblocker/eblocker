@@ -33,9 +33,9 @@ public class MessageVisibility {
 
     @JsonCreator
     public MessageVisibility(
-            @JsonProperty("messageId") Integer messageId,
-            @JsonProperty("doNotShowAgain") Boolean doNotShowAgain,
-            @JsonProperty("notForDevices") Set<String> notForDevices) {
+        @JsonProperty("messageId") Integer messageId,
+        @JsonProperty("doNotShowAgain") Boolean doNotShowAgain,
+        @JsonProperty("notForDevices") Set<String> notForDevices) {
         this.messageId = messageId == null ? -1 : messageId;
         this.doNotShowAgain = doNotShowAgain == null ? true : doNotShowAgain;
         this.notForDevices = notForDevices == null ? new HashSet<>() : new HashSet<>(notForDevices);

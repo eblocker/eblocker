@@ -16,10 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.*;
-import org.eblocker.registration.CustomerInfo;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.registration.CustomerInfo;
 import org.eblocker.server.common.data.DataSource;
 
 @Singleton

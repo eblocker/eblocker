@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +46,11 @@ public class ShutdownService {
 
     @Inject
     public ShutdownService(
-            SystemStatusService systemStatusService,
-            ScriptRunner scriptRunner,
-            @Named("shutdown.command")String shutdownScript,
-            @Named("reboot.command")String rebootScript,
-            ShutdownExecutorService shutdownExecutorService
+        SystemStatusService systemStatusService,
+        ScriptRunner scriptRunner,
+        @Named("shutdown.command") String shutdownScript,
+        @Named("reboot.command") String rebootScript,
+        ShutdownExecutorService shutdownExecutorService
     ) {
         this.systemStatusService = systemStatusService;
         this.scriptRunner = scriptRunner;
@@ -90,7 +90,7 @@ public class ShutdownService {
     /**
      *
      */
-    private void shutdownOrReboot(boolean reboot)  {
+    private void shutdownOrReboot(boolean reboot) {
         String script = reboot ? rebootScript : shutdownScript;
         if (eventLogger != null) {
             eventLogger.log(Events.systemEvent(reboot));
@@ -111,12 +111,12 @@ public class ShutdownService {
                 scriptRunner.runScript(script);
 
             } catch (IOException e) {
-                String msg = "Cannot execute " + (reboot ? "reboot" : "shutdown") +" command " + script;
+                String msg = "Cannot execute " + (reboot ? "reboot" : "shutdown") + " command " + script;
                 LOG.error(msg, e);
                 throw new EblockerException(msg, e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                String msg = "Cannot execute " + (reboot ? "reboot" : "shutdown") +" command " + script;
+                String msg = "Cannot execute " + (reboot ? "reboot" : "shutdown") + " command " + script;
                 LOG.error(msg, e);
                 throw new EblockerException(msg, e);
             }

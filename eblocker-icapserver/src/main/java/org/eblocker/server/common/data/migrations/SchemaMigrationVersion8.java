@@ -16,14 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.Set;
-
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import com.google.inject.Inject;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Set;
 
 public class SchemaMigrationVersion8 implements SchemaMigration {
 
@@ -60,6 +59,6 @@ public class SchemaMigrationVersion8 implements SchemaMigration {
 
     private void initParentalControlFilterMetaDataSequence() {
         dataSource.setIdSequence(ParentalControlFilterMetaData.class,
-                DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_FILTER_METADATA);
+            DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_FILTER_METADATA);
     }
 }

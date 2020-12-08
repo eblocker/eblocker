@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.*;
-import org.eblocker.server.common.session.UserAgentInfo;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
@@ -27,6 +25,7 @@ import org.eblocker.server.common.data.CloakedUserAgentConfig;
 import org.eblocker.server.common.data.CloakedUserAgentKey;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.session.UserAgentInfo;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -49,11 +48,11 @@ public class UserAgentService {
         @Named("useragent.cache.size") int size,
         @Named("useragent.regex.browser") String regexBrowser,
         @Named("useragent.regex.msie") String regexMsie
-  ) {
+    ) {
 
         this.datasource = datasource;
         CloakedUserAgentConfig config = datasource.get(CloakedUserAgentConfig.class);
-        this.cloakedUserAgentConfig =  config == null ? new CloakedUserAgentConfig() : config;
+        this.cloakedUserAgentConfig = config == null ? new CloakedUserAgentConfig() : config;
         userAgentInfoCache = CacheBuilder.newBuilder().maximumSize(size).build();
         patternBrowser = Pattern.compile(regexBrowser);
         patternMsie = Pattern.compile(regexMsie);

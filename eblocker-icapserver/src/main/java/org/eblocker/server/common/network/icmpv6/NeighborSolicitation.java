@@ -19,7 +19,6 @@ package org.eblocker.server.common.network.icmpv6;
 import org.eblocker.server.common.data.Ip6Address;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.util.List;
 
 public class NeighborSolicitation extends NeighborDiscoveryMessage {

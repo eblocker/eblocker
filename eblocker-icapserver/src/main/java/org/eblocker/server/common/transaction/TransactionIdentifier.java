@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.IpAddress;
 
 // TODO: Should we rename this to SessionIdentifier?
 public interface TransactionIdentifier {
-	String getUserAgent();
-	IpAddress getOriginalClientIP();
+    String getUserAgent();
+
+    IpAddress getOriginalClientIP();
 }

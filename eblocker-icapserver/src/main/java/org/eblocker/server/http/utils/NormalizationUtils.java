@@ -26,10 +26,10 @@ public class NormalizationUtils {
 
     public static String normalizeStringForShellScript(String dirty) {
         String clean = Normalizer.normalize(dirty, Normalizer.Form.NFD).replaceAll("\\s+", "_")
-                .replaceAll("[^a-zA-Z0-9_]", "");
+            .replaceAll("[^a-zA-Z0-9_]", "");
         return clean;
     }
-    
+
     public static String normalizeStringForFilename(String dirty, int maxLength, String defaultClean) {
         if (dirty == null) {
             return defaultClean;

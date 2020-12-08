@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.startup;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
 import com.google.inject.Binding;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
@@ -24,6 +23,7 @@ import com.google.inject.spi.ConstructorBinding;
 import com.google.inject.spi.DefaultBindingTargetVisitor;
 import com.google.inject.spi.InstanceBinding;
 import com.google.inject.spi.LinkedKeyBinding;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class SubSystemServiceIndex {
     public void scan(Map<Key<?>, Binding<?>> bindings) {
         servicesBySubSytem = bindings.values()
             .stream()
-            .map(binding -> (Class<?>)binding.acceptTargetVisitor(new DefaultBindingTargetVisitor<Object, Class<?>>() {
+            .map(binding -> (Class<?>) binding.acceptTargetVisitor(new DefaultBindingTargetVisitor<Object, Class<?>>() {
                 @Override
                 public Class<?> visit(InstanceBinding<?> binding) {
                     return binding.getKey().getTypeLiteral().getRawType();

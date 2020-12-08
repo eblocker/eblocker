@@ -16,11 +16,30 @@
  */
 package org.eblocker.server.common.registration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.Collections;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.io.IOUtils;
+import org.eblocker.registration.DeviceRegistrationRequest;
+import org.eblocker.registration.DeviceRegistrationResponse;
+import org.eblocker.registration.DynDnsEntry;
+import org.eblocker.registration.MobileConnectionCheck;
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.registration.TosContainer;
+import org.eblocker.registration.UpgradeInfo;
+import org.eblocker.registration.UpsellInfoWrapper;
+import org.eblocker.registration.error.ClientRequestError;
+import org.eblocker.registration.error.ClientRequestException;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.exceptions.NetworkConnectionException;
+import org.eblocker.server.http.service.SettingsService;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.glassfish.jersey.SslConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
@@ -33,32 +52,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import org.eblocker.server.http.service.SettingsService;
-import org.eblocker.registration.DeviceRegistrationRequest;
-import org.eblocker.registration.DeviceRegistrationResponse;
-import org.eblocker.registration.DynDnsEntry;
-import org.eblocker.registration.ProductInfo;
-import org.eblocker.registration.TosContainer;
-import org.eblocker.registration.MobileConnectionCheck;
-import org.eblocker.registration.UpgradeInfo;
-import org.eblocker.registration.UpsellInfoWrapper;
-import org.eblocker.registration.error.ClientRequestError;
-import org.eblocker.registration.error.ClientRequestException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.commons.io.IOUtils;
-import org.glassfish.jersey.SslConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.exceptions.NetworkConnectionException;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.Collections;
 
 public class DeviceRegistrationClient {
 
@@ -98,26 +96,26 @@ public class DeviceRegistrationClient {
 
     @Inject
     public DeviceRegistrationClient(
-            @Named("baseurl.my") String registrationUrlDomain,
-            @Named("registration.backend.url.path") String registrationUrlPath,
-            @Named("baseurl.api") String deviceUrlDomain,
-            @Named("registration.device.url.path") String deviceUrlPath,
-            @Named("baseurl.my") String tosUrlDomain,
-            @Named("registration.tos.url.path") String tosUrlPath,
-            @Named("registration.device.serialnumber") boolean addDeviceCertificateSerialNumber,
-            @Named("registration.device.id") boolean addDeviceId,
-            @Named("registration.truststore.resource") String trustStoreResource,
-            @Named("registration.truststore.password") String trustStorePassword,
-            @Named("registration.connection.connectTimeout") int connectTimeout,
-            @Named("registration.connection.readTimeout") int readTimeout,
-            @Named("baseurl.api") String mobileConnectionCheckUrlDomain,
-            @Named("mobile.connection.check.url.path") String mobileConnectionCheckUrlPath,
-            @Named("dyndns.ip.update.path") String dynDnsIpUpdatePath,
-            @Named("mobile.dns.check.url.path") String mobileDnsCheckUrlPath,
-            DeviceRegistrationProperties deviceRegistrationProperties,
-            SettingsService settingsService,
-            ObjectMapper objectMapper,
-            @Named("project.version") String eBlockerOsVersion
+        @Named("baseurl.my") String registrationUrlDomain,
+        @Named("registration.backend.url.path") String registrationUrlPath,
+        @Named("baseurl.api") String deviceUrlDomain,
+        @Named("registration.device.url.path") String deviceUrlPath,
+        @Named("baseurl.my") String tosUrlDomain,
+        @Named("registration.tos.url.path") String tosUrlPath,
+        @Named("registration.device.serialnumber") boolean addDeviceCertificateSerialNumber,
+        @Named("registration.device.id") boolean addDeviceId,
+        @Named("registration.truststore.resource") String trustStoreResource,
+        @Named("registration.truststore.password") String trustStorePassword,
+        @Named("registration.connection.connectTimeout") int connectTimeout,
+        @Named("registration.connection.readTimeout") int readTimeout,
+        @Named("baseurl.api") String mobileConnectionCheckUrlDomain,
+        @Named("mobile.connection.check.url.path") String mobileConnectionCheckUrlPath,
+        @Named("dyndns.ip.update.path") String dynDnsIpUpdatePath,
+        @Named("mobile.dns.check.url.path") String mobileDnsCheckUrlPath,
+        DeviceRegistrationProperties deviceRegistrationProperties,
+        SettingsService settingsService,
+        ObjectMapper objectMapper,
+        @Named("project.version") String eBlockerOsVersion
     ) {
         this.registrationUrl = registrationUrlDomain + registrationUrlPath;
         this.deviceUrl = deviceUrlDomain + deviceUrlPath;
@@ -149,7 +147,7 @@ public class DeviceRegistrationClient {
         }
     }
 
-    private <U,V> V post(String url, U payload, SSLContext sslContext, Class<V> clazz) {
+    private <U, V> V post(String url, U payload, SSLContext sslContext, Class<V> clazz) {
         Client client = ClientBuilder.newBuilder()
             .sslContext(sslContext)
             // Uncomment the following line for JUL logging
@@ -241,7 +239,7 @@ public class DeviceRegistrationClient {
     }
 
     public ProductInfo getProductInfo() {
-        return get(registrationUrl+"/"+deviceRegistrationProperties.getDeviceId()+"/product", createSSLContext(), ProductInfo.class);
+        return get(registrationUrl + "/" + deviceRegistrationProperties.getDeviceId() + "/product", createSSLContext(), ProductInfo.class);
     }
 
     public MobileConnectionCheck requestMobileConnectionCheck(MobileConnectionCheck.Protocol protocol, int port, byte[] secret) {
@@ -299,18 +297,18 @@ public class DeviceRegistrationClient {
 
     private SSLContext createSSLContext() {
         return SslConfigurator.
-                newInstance().
-                trustStore(trustStore).
-                createSSLContext();
+            newInstance().
+            trustStore(trustStore).
+            createSSLContext();
     }
 
     private SSLContext createSSLContextForDevice() {
         return SslConfigurator.
-                newInstance().
-                trustStore(trustStore).
-                keyStore(deviceRegistrationProperties.getDeviceKeyStore()).
-                keyPassword(deviceRegistrationProperties.getPassword()).
-                createSSLContext();
+            newInstance().
+            trustStore(trustStore).
+            keyStore(deviceRegistrationProperties.getDeviceKeyStore()).
+            keyPassword(deviceRegistrationProperties.getPassword()).
+            createSSLContext();
     }
 
     private KeyStore loadKeyStoreResource(String resourcePath, String password) {
@@ -320,8 +318,8 @@ public class DeviceRegistrationClient {
             keyStore.load(is, password.toCharArray());
             return keyStore;
 
-        } catch (GeneralSecurityException|IOException e) {
-            String msg = "Cannot load keyStore "+resourcePath+": "+e.getMessage();
+        } catch (GeneralSecurityException | IOException e) {
+            String msg = "Cannot load keyStore " + resourcePath + ": " + e.getMessage();
             LOG.error(msg);
             throw new EblockerException(msg, e);
         }

@@ -65,7 +65,8 @@ public class ExternalDefinition {
         this.updateError = updateError;
         this.file = file;
         this.enabled = enabled;
-        this.filterType = filterType == null ? "blacklist" : filterType;;
+        this.filterType = filterType == null ? "blacklist" : filterType;
+        ;
     }
 
     public int getId() {
@@ -182,19 +183,19 @@ public class ExternalDefinition {
         if (o == null || getClass() != o.getClass()) return false;
         ExternalDefinition that = (ExternalDefinition) o;
         return id == that.id &&
-                enabled == that.enabled &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                category == that.category &&
-                type == that.type &&
-                Objects.equals(referenceId, that.referenceId) &&
-                format == that.format &&
-                Objects.equals(url, that.url) &&
-                updateInterval == that.updateInterval &&
-                updateStatus == that.updateStatus &&
-                Objects.equals(updateError, that.updateError) &&
-                Objects.equals(file, that.file) &&
-                Objects.equals(filterType, that.filterType);
+            enabled == that.enabled &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(description, that.description) &&
+            category == that.category &&
+            type == that.type &&
+            Objects.equals(referenceId, that.referenceId) &&
+            format == that.format &&
+            Objects.equals(url, that.url) &&
+            updateInterval == that.updateInterval &&
+            updateStatus == that.updateStatus &&
+            Objects.equals(updateError, that.updateError) &&
+            Objects.equals(file, that.file) &&
+            Objects.equals(filterType, that.filterType);
     }
 
     @Override

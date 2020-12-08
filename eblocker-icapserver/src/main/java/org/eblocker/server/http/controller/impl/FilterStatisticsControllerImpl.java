@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.BlockedDomainsStats;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterStats;
@@ -27,9 +29,6 @@ import org.eblocker.server.common.util.FilterModeUtils;
 import org.eblocker.server.http.controller.FilterStatisticsController;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.eblocker.server.common.data.*;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;

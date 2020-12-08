@@ -16,18 +16,16 @@
  */
 package org.eblocker.server.common.network;
 
-import java.io.IOException;
-import java.net.InetAddress;
-
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceInfo;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * A service that registers the HTTP admin console as a Zeroconf (AKA Bonjour) service
@@ -45,9 +43,9 @@ public class ZeroconfRegistrationService {
 
     @Inject
     public ZeroconfRegistrationService(@Named("httpPort") int httpPort,
-                                      @Named("zeroconf.service.default.name") String serviceName,
-                                      DeviceRegistrationProperties deviceRegistrationProperties,
-                                      NetworkInterfaceWrapper networkInterface) {
+                                       @Named("zeroconf.service.default.name") String serviceName,
+                                       DeviceRegistrationProperties deviceRegistrationProperties,
+                                       NetworkInterfaceWrapper networkInterface) {
         this.httpPort = httpPort;
         this.serviceDefaultName = serviceName;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
@@ -68,7 +66,7 @@ public class ZeroconfRegistrationService {
             log.info("Registered Zeroconf/Bonjour service of type {} at port {}", SERVICE_TYPE, httpPort);
         } catch (IOException e) {
             log.error("Could not register Zeroconf/Bonjour HTTP service", e);
-        }        
+        }
     }
 
     /**

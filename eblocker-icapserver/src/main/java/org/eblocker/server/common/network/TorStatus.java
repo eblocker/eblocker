@@ -24,17 +24,17 @@ public enum TorStatus {
      * Tor is in the bootstrapping phase.
      */
     BOOTSTRAPPING,
-    
+
     /**
      * Tor is ready but might be dormant.
      */
     READY,
-    
+
     /**
      * A circuit has been established.
      */
     CIRCUIT_ESTABLISHED,
-    
+
     /**
      * Tor does not have enough directory information to build a circuit.
      * It might help to allow exit nodes from more countries.

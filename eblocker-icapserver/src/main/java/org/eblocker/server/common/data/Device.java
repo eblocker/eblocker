@@ -27,48 +27,47 @@ import java.util.regex.Pattern;
 
 /**
  * Represents a network device. A device has a unique MAC address and optionally an IP address.
- *
  */
 public class Device extends ModelObject {
 
-	public static final String ID_PREFIX = "device:";
-	private static Pattern pattern = Pattern.compile(ID_PREFIX + "([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})");
+    public static final String ID_PREFIX = "device:";
+    private static Pattern pattern = Pattern.compile(ID_PREFIX + "([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})");
 
-	private List<IpAddress> ipAddresses = Collections.emptyList();
-	private boolean enabled = true;
-	private boolean paused = false;
-	private boolean useAnonymizationService;
-	private boolean routeThroughTor=false;
-	private Integer useVPNProfileID;
-	private FilterMode filterMode = FilterMode.AUTOMATIC;
-	private boolean filterPlugAndPlayAdsEnabled = true;
-	private boolean filterPlugAndPlayTrackersEnabled = true;
-	private boolean malwareFilterEnabled = true;
-	private boolean sslEnabled = false;
-	private boolean sslRecordErrorsEnabled = true;
-	private boolean hasDownloadedRootCA = false;
+    private List<IpAddress> ipAddresses = Collections.emptyList();
+    private boolean enabled = true;
+    private boolean paused = false;
+    private boolean useAnonymizationService;
+    private boolean routeThroughTor = false;
+    private Integer useVPNProfileID;
+    private FilterMode filterMode = FilterMode.AUTOMATIC;
+    private boolean filterPlugAndPlayAdsEnabled = true;
+    private boolean filterPlugAndPlayTrackersEnabled = true;
+    private boolean malwareFilterEnabled = true;
+    private boolean sslEnabled = false;
+    private boolean sslRecordErrorsEnabled = true;
+    private boolean hasDownloadedRootCA = false;
     private DisplayIconMode iconMode = DisplayIconMode.getDefault();
     private DisplayIconPosition iconPosition = DisplayIconPosition.getDefault();
-	private String name;//optional
-	private String vendor;
-	private boolean isCurrentDevice=false;//just use this boolean temporarily to avoid looping over all devices again (does not have to be saved to redis)
-	private boolean areDeviceMessagesSettingsDefault=true;
-	@JsonProperty
-	private boolean isOnline=false;
-	private boolean isGateway=false;
-	private boolean isEblocker=false;
-	// About DHCP
-	private boolean ipAddressFixed=true;
-	// For parental control
+    private String name;//optional
+    private String vendor;
+    private boolean isCurrentDevice = false;//just use this boolean temporarily to avoid looping over all devices again (does not have to be saved to redis)
+    private boolean areDeviceMessagesSettingsDefault = true;
+    @JsonProperty
+    private boolean isOnline = false;
+    private boolean isGateway = false;
+    private boolean isEblocker = false;
+    // About DHCP
+    private boolean ipAddressFixed = true;
+    // For parental control
 
-	private Integer assignedUser;
-	private Integer operatingUser;
-	// Setting an invalid default value to ensure that the int value is never undefined.
+    private Integer assignedUser;
+    private Integer operatingUser;
+    // Setting an invalid default value to ensure that the int value is never undefined.
     // MUST be replaced with an ID of an existing user, before the device is used anywhere.
     // Latest the next restart - UserService.init() - will generate and set a valid default system user.
-	private int defaultSystemUser = -1;
+    private int defaultSystemUser = -1;
 
-	private boolean isVpnClient=false;
+    private boolean isVpnClient = false;
 
     private boolean messageShowInfo = true;
     private boolean messageShowAlert = true;
@@ -89,148 +88,150 @@ public class Device extends ModelObject {
     public enum DisplayIconPosition {
         LEFT,
         RIGHT;
+
         public static DisplayIconPosition getDefault() {
             return RIGHT;
         }
     }
 
-	@JsonProperty
-	/**
-	 * Extracts the MAC address from the device ID.
-	 * @return MAC address (in the range from 00:00:00:00:00:00 up to ff:ff:ff:ff:ff:ff)
-	 */
-	public String getHardwareAddress() {
-		return getHardwareAddress(true);
-	}
+    @JsonProperty
+    /**
+     * Extracts the MAC address from the device ID.
+     * @return MAC address (in the range from 00:00:00:00:00:00 up to ff:ff:ff:ff:ff:ff)
+     */
+    public String getHardwareAddress() {
+        return getHardwareAddress(true);
+    }
 
-	public String getHardwareAddress(boolean colonSeparated) {
-		if (getId() == null) {
-			return null;
-		}
-		Matcher matcher = pattern.matcher(this.getId());
-		if (matcher.matches()) {
-			if (colonSeparated) {
-				return String.format("%s:%s:%s:%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
-			} else {
-				return String.format("%s%s%s%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
-			}
-		} else {
-			return null;
-		}
-	}
+    public String getHardwareAddress(boolean colonSeparated) {
+        if (getId() == null) {
+            return null;
+        }
+        Matcher matcher = pattern.matcher(this.getId());
+        if (matcher.matches()) {
+            if (colonSeparated) {
+                return String.format("%s:%s:%s:%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
+            } else {
+                return String.format("%s%s%s%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
+            }
+        } else {
+            return null;
+        }
+    }
 
-	public String getHardwareAddressPrefix() {
-		if (getId() == null) {
-			return null;
-		}
-		Matcher matcher = pattern.matcher(this.getId());
-		if (matcher.matches()) {
-			return String.format("%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3));
-		} else {
-			return null;
-		}
-	}
+    public String getHardwareAddressPrefix() {
+        if (getId() == null) {
+            return null;
+        }
+        Matcher matcher = pattern.matcher(this.getId());
+        if (matcher.matches()) {
+            return String.format("%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3));
+        } else {
+            return null;
+        }
+    }
 
-	public List<IpAddress> getIpAddresses() {
-		return new ArrayList<>(ipAddresses);
-	}
+    public List<IpAddress> getIpAddresses() {
+        return new ArrayList<>(ipAddresses);
+    }
 
-	public void setIpAddresses(List<IpAddress> ipAddresses) {
-		this.ipAddresses = ipAddresses;
-	}
+    public void setIpAddresses(List<IpAddress> ipAddresses) {
+        this.ipAddresses = ipAddresses;
+    }
 
-	public void setName(String name){
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getName(){
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public boolean isPaused() {
-	    return paused;
-	}
+    public boolean isPaused() {
+        return paused;
+    }
 
-	public void setPaused(boolean paused) {
-	    this.paused = paused;
-	}
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
 
-	/**
-	 * Returns true if the device has an IP address
-	 * @return
-	 */
-	public boolean isActive() {
-	    return !ipAddresses.isEmpty();
-	}
+    /**
+     * Returns true if the device has an IP address
+     *
+     * @return
+     */
+    public boolean isActive() {
+        return !ipAddresses.isEmpty();
+    }
 
-	public String getVendor() {
-		return vendor;
-	}
+    public String getVendor() {
+        return vendor;
+    }
 
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
-	}
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
 
-	public boolean getAreDeviceMessagesSettingsDefault() {
-		return this.areDeviceMessagesSettingsDefault;
-	}
+    public boolean getAreDeviceMessagesSettingsDefault() {
+        return this.areDeviceMessagesSettingsDefault;
+    }
 
-	public void setAreDeviceMessagesSettingsDefault(boolean settings) {
-		this.areDeviceMessagesSettingsDefault = settings;
-	}
+    public void setAreDeviceMessagesSettingsDefault(boolean settings) {
+        this.areDeviceMessagesSettingsDefault = settings;
+    }
 
-	public void setOnline(boolean online){
-		this.isOnline = online;
-	}
+    public void setOnline(boolean online) {
+        this.isOnline = online;
+    }
 
-	public boolean isOnline() {
-		return isOnline;
-	}
+    public boolean isOnline() {
+        return isOnline;
+    }
 
-	@JsonProperty
-	public boolean isGateway() {
-		return this.isGateway;
-	}
+    @JsonProperty
+    public boolean isGateway() {
+        return this.isGateway;
+    }
 
-	public void setIsGateway(boolean isGateway) {
-		this.isGateway = isGateway;
-	}
+    public void setIsGateway(boolean isGateway) {
+        this.isGateway = isGateway;
+    }
 
-	public void markAsCurrentDevice(){
-		this.isCurrentDevice=true;
-	}
+    public void markAsCurrentDevice() {
+        this.isCurrentDevice = true;
+    }
 
-	public boolean isCurrentDevice(){
-		return isCurrentDevice;
-	}
+    public boolean isCurrentDevice() {
+        return isCurrentDevice;
+    }
 
-	public String toString() {
-		return "Device(" + getHardwareAddress() + ", IPs: " + Joiner.on(',').join(ipAddresses) + ")";
-	}
+    public String toString() {
+        return "Device(" + getHardwareAddress() + ", IPs: " + Joiner.on(',').join(ipAddresses) + ")";
+    }
 
-	public boolean isUseAnonymizationService() {
-		return useAnonymizationService;
-	}
+    public boolean isUseAnonymizationService() {
+        return useAnonymizationService;
+    }
 
-	public void setUseAnonymizationService(boolean useAnonymizationService) {
-		this.useAnonymizationService = useAnonymizationService;
-	}
+    public void setUseAnonymizationService(boolean useAnonymizationService) {
+        this.useAnonymizationService = useAnonymizationService;
+    }
 
-	public boolean isRoutedThroughTor(){
-		return routeThroughTor;
-	}
+    public boolean isRoutedThroughTor() {
+        return routeThroughTor;
+    }
 
-	public void setRouteThroughTor(boolean useTor){
-		this.routeThroughTor = useTor;
-	}
+    public void setRouteThroughTor(boolean useTor) {
+        this.routeThroughTor = useTor;
+    }
 
     public FilterMode getFilterMode() {
         return filterMode;
@@ -264,13 +265,13 @@ public class Device extends ModelObject {
         this.malwareFilterEnabled = malwareFilterEnabled;
     }
 
-    public boolean isSslEnabled(){
-		return sslEnabled;
-	}
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
 
-	public void setSslEnabled(boolean sslEnabled){
-		this.sslEnabled=sslEnabled;
-	}
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
 
     public boolean isSslRecordErrorsEnabled() {
         return sslRecordErrorsEnabled;
@@ -281,12 +282,12 @@ public class Device extends ModelObject {
     }
 
     public void setIconMode(DisplayIconMode iconMode) {
-		this.iconMode = iconMode;
-	}
+        this.iconMode = iconMode;
+    }
 
-	public DisplayIconMode getIconMode() {
-		if(iconMode != null)
-			return iconMode;
+    public DisplayIconMode getIconMode() {
+        if (iconMode != null)
+            return iconMode;
         else
             return DisplayIconMode.getDefault();
     }
@@ -302,49 +303,50 @@ public class Device extends ModelObject {
         return DisplayIconPosition.getDefault();
     }
 
-	/**
-	 * Did this device download the current root CA certificate already?
-	 * @return
+    /**
+     * Did this device download the current root CA certificate already?
+     *
+     * @return
      */
-	public boolean hasRootCAInstalled() {
-		return hasDownloadedRootCA;
-	}
+    public boolean hasRootCAInstalled() {
+        return hasDownloadedRootCA;
+    }
 
-	public void setHasRootCAInstalled(boolean installed){
-		this.hasDownloadedRootCA = installed;
-	}
+    public void setHasRootCAInstalled(boolean installed) {
+        this.hasDownloadedRootCA = installed;
+    }
 
-	public Integer getUseVPNProfileID() {
-		return useVPNProfileID;
-	}
+    public Integer getUseVPNProfileID() {
+        return useVPNProfileID;
+    }
 
-	public void setUseVPNProfileID(Integer vpnProfileID){
-		this.useVPNProfileID = vpnProfileID;
-	}
+    public void setUseVPNProfileID(Integer vpnProfileID) {
+        this.useVPNProfileID = vpnProfileID;
+    }
 
-	public boolean isIpAddressFixed() {
-		return ipAddressFixed;
-	}
+    public boolean isIpAddressFixed() {
+        return ipAddressFixed;
+    }
 
-	public void setIpAddressFixed(boolean fixed) {
-		this.ipAddressFixed = fixed;
-	}
+    public void setIpAddressFixed(boolean fixed) {
+        this.ipAddressFixed = fixed;
+    }
 
-	public int getAssignedUser() {
-		return assignedUser == null ? defaultSystemUser : assignedUser;
-	}
+    public int getAssignedUser() {
+        return assignedUser == null ? defaultSystemUser : assignedUser;
+    }
 
-	public void setAssignedUser(int assignedUser) {
-		this.assignedUser = assignedUser;
-	}
+    public void setAssignedUser(int assignedUser) {
+        this.assignedUser = assignedUser;
+    }
 
-	public int getOperatingUser() {
-		return operatingUser == null ? defaultSystemUser : operatingUser;
-	}
+    public int getOperatingUser() {
+        return operatingUser == null ? defaultSystemUser : operatingUser;
+    }
 
-	public void setOperatingUser(int operatingUser) {
-		this.operatingUser = operatingUser;
-	}
+    public void setOperatingUser(int operatingUser) {
+        this.operatingUser = operatingUser;
+    }
 
     public int getDefaultSystemUser() {
         return defaultSystemUser;
@@ -355,30 +357,30 @@ public class Device extends ModelObject {
     }
 
     public boolean isEblocker() {
-	    return isEblocker;
-	}
+        return isEblocker;
+    }
 
-	public void setIsEblocker(boolean isEblocker) {
-		this.isEblocker = isEblocker;
-	}
+    public void setIsEblocker(boolean isEblocker) {
+        this.isEblocker = isEblocker;
+    }
 
-	public String getUserFriendlyName() {
-		if (name != null && !name.isEmpty()) {
-			return name;
-		}
-		if (!ipAddresses.isEmpty()) {
-			return ipAddresses.get(0).toString();
-		}
-		return getHardwareAddress();
-	}
+    public String getUserFriendlyName() {
+        if (name != null && !name.isEmpty()) {
+            return name;
+        }
+        if (!ipAddresses.isEmpty()) {
+            return ipAddresses.get(0).toString();
+        }
+        return getHardwareAddress();
+    }
 
-	public boolean isVpnClient() {
-	    return this.isVpnClient;
-	}
+    public boolean isVpnClient() {
+        return this.isVpnClient;
+    }
 
-	public void setIsVpnClient(boolean flag) {
-	    this.isVpnClient = flag;
-	}
+    public void setIsVpnClient(boolean flag) {
+        this.isVpnClient = flag;
+    }
 
     public boolean isMessageShowInfo() {
         return messageShowInfo;
@@ -437,17 +439,17 @@ public class Device extends ModelObject {
     }
 
     public boolean isControlBarAutoMode() {
-	    return controlBarAutoMode;
+        return controlBarAutoMode;
     }
 
     public void setControlBarAutoMode(boolean controlBarAutoMode) {
-	    this.controlBarAutoMode = controlBarAutoMode;
+        this.controlBarAutoMode = controlBarAutoMode;
     }
 
     public void setMobileState(boolean state) {
         this.mobileState = state;
     }
- 
+
     public boolean isEblockerMobileEnabled() {
         return mobileState;
     }

@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Language;
 import org.eblocker.server.common.data.LocaleSettings;
 import org.eblocker.server.common.network.TorExitNodeCountries;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.controller.SettingsController;
 import org.eblocker.server.http.service.SettingsService;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
@@ -82,7 +82,7 @@ public class SettingsControllerImpl implements SettingsController {
         String langID = localeSettings.getLanguage();
         String langName = localeSettings.getName();
 
-        if(langID != null && !langID.equals("") && langName != null && !langName.equals("")) {
+        if (langID != null && !langID.equals("") && langName != null && !langName.equals("")) {
             Language lang = new Language(langID, langName);
             log.info("Setting language id: {} name: {}", lang.getId(), lang.getName());
             dataSource.setCurrentLanguage(lang);

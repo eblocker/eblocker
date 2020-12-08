@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufOutputStream;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
 import org.eblocker.server.http.service.ConfigurationBackupService;
-import com.google.inject.Inject;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufOutputStream;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -58,7 +57,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             buffer.release();
             throw new EblockerException("Could not write backup");
         }
-        return  buffer;
+        return buffer;
     }
 
     @Override

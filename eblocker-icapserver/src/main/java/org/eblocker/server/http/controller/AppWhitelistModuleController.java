@@ -17,7 +17,6 @@
 package org.eblocker.server.http.controller;
 
 import org.eblocker.server.http.ssl.AppWhitelistModuleDisplay;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -35,7 +34,7 @@ public interface AppWhitelistModuleController {
     List<AppWhitelistModuleDisplay> getAppWhitelistModules(Request request, Response response);
 
     List<AppWhitelistModuleDisplay> getOnlyEnabledAppWhitelistModules(
-            Request request, Response response);
+        Request request, Response response);
 
     void enableAppWhitelistModule(Request request, Response response);
 

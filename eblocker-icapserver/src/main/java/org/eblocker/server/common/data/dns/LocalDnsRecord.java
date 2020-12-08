@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.dns;
 
-import org.eblocker.server.common.data.Ip4Address;
-import org.eblocker.server.common.data.Ip6Address;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.Ip4Address;
+import org.eblocker.server.common.data.Ip6Address;
 
 public class LocalDnsRecord {
 

@@ -353,24 +353,30 @@ public class EblockerModule extends BaseModule {
     /**
      * A clock for the recording service
      */
-    @Provides public Clock provideClock(){
+    @Provides
+    public Clock provideClock() {
         return Clock.systemUTC();
     }
 
     /**
      * A clock that is in the default time zone
+     *
      * @return
      */
-    @Provides @Named("localClock")
-    public Clock provideLocalClock(){
+    @Provides
+    @Named("localClock")
+    public Clock provideLocalClock() {
         return Clock.systemDefaultZone();
     }
 
     /**
      * Use this scheduled executor for long running and possibly CPU intensive tasks
+     *
      * @return
      */
-    @Provides @Named("lowPrioScheduledExecutor") @Singleton
+    @Provides
+    @Named("lowPrioScheduledExecutor")
+    @Singleton
     public ScheduledExecutorService provideLowPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService) {
         ScheduledExecutorService result = Executors.newScheduledThreadPool(2);
         shutdownExecutorService.addExecutorService(result);
@@ -380,28 +386,36 @@ public class EblockerModule extends BaseModule {
     /**
      * Use this scheduled executor for short tasks that are relatively urgent but take
      * at most a few seconds to complete
+     *
      * @return
      */
-    @Provides @Named("highPrioScheduledExecutor") @Singleton
+    @Provides
+    @Named("highPrioScheduledExecutor")
+    @Singleton
     public ScheduledExecutorService provideHighPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService) {
         ScheduledExecutorService result = Executors.newScheduledThreadPool(3);
         shutdownExecutorService.addExecutorService(result);
         return new LoggingExecutorService("highPrioScheduledExecutor", result);
     }
 
-    @Provides @Named("unlimitedCachePoolExecutor") @Singleton
+    @Provides
+    @Named("unlimitedCachePoolExecutor")
+    @Singleton
     public Executor provideUnlimitedCachePoolExecutor(@Named("unlimitedCachePoolExecutorService") ExecutorService executorService) {
         return executorService;
     }
 
-    @Provides @Named("unlimitedCachePoolExecutorService") @Singleton
+    @Provides
+    @Named("unlimitedCachePoolExecutorService")
+    @Singleton
     public ExecutorService provideUnlimitedCachePoolExecutorService(ShutdownExecutorService shutdownExecutorService) {
         ExecutorService result = Executors.newCachedThreadPool();
         shutdownExecutorService.addExecutorService(result);
         return new LoggingExecutorService("unlimitedCachePoolExecutor", result);
     }
 
-    @Provides @Named("toolbarInlayTemplate")
+    @Provides
+    @Named("toolbarInlayTemplate")
     public String provideToolbarInlayTemplate() {
         String name = "toolbarInlayTemplate";
         String path = getProperty("resource.toolbarInlayTemplate.path");
@@ -412,7 +426,8 @@ public class EblockerModule extends BaseModule {
         return ResourceHandler.load(new SimpleResource(name, path, Charset.forName(charsetName)));
     }
 
-    @Provides @Named("toolbarInlayMinJs")
+    @Provides
+    @Named("toolbarInlayMinJs")
     public String provideToolbarInlayMinifiedJs() {
         String name = "toolbarInlayMinJs";
         String path = getProperty("resource.toolbarInlayMinJs.path");
@@ -423,7 +438,8 @@ public class EblockerModule extends BaseModule {
         return ResourceHandler.load(new SimpleResource(name, path, Charset.forName(charsetName)));
     }
 
-    @Provides @Named("toolbarInlayMinCss")
+    @Provides
+    @Named("toolbarInlayMinCss")
     public String provideToolbarInlayMinifiedCss() {
         String name = "toolbarInlayMinCss";
         String path = getProperty("resource.toolbarInlayMinCss.path");
@@ -434,7 +450,8 @@ public class EblockerModule extends BaseModule {
         return ResourceHandler.load(new SimpleResource(name, path, Charset.forName(charsetName)));
     }
 
-    @Provides @Named("toolbarYoutubeInlayTemplate")
+    @Provides
+    @Named("toolbarYoutubeInlayTemplate")
     public String provideToolbarYoutubeInlayTemplate() {
         String name = "toolbarYoutubeInlayTemplate";
         String path = getProperty("resource.toolbarInlayTemplate.youtube.path");
@@ -445,17 +462,22 @@ public class EblockerModule extends BaseModule {
         return ResourceHandler.load(new SimpleResource(name, path, Charset.forName(charsetName)));
     }
 
-    @Provides @Named("arpProbeCache") @Singleton
+    @Provides
+    @Named("arpProbeCache")
+    @Singleton
     public ConcurrentMap<String, Long> provideArpProbeCache() {
         return new ConcurrentHashMap<>(64, 0.75f, 1);
     }
 
-    @Provides @Named("arpResponseTable") @Singleton
+    @Provides
+    @Named("arpResponseTable")
+    @Singleton
     public Table<String, IpAddress, Long> provideArpResponseTable() {
         return HashBasedTable.create();
     }
 
-    @Provides @Named("http.server.aliases.map")
+    @Provides
+    @Named("http.server.aliases.map")
     public Map<String, String> httpAliasesMap() {
         Map<String, String> map = new HashMap<>();
         String httpAliases = getProperty("http.server.aliases");
@@ -463,7 +485,7 @@ public class EblockerModule extends BaseModule {
         if (httpAliases != null) {
             String prefix = "http.server.alias.";
             String[] aliases = httpAliases.split("\\s");
-            for (String alias: aliases) {
+            for (String alias : aliases) {
                 String regex = getProperty(prefix + alias + ".regex");
                 String path = getProperty(prefix + alias + ".path");
                 map.put(regex, httpAliasPrefix + path);
@@ -472,7 +494,9 @@ public class EblockerModule extends BaseModule {
         return map;
     }
 
-    @Provides @Named("malware.filter.ipset") @Singleton
+    @Provides
+    @Named("malware.filter.ipset")
+    @Singleton
     public IpSetConfig provideMalwareFilterIpSet(@Named("malware.filter.ipset.name") String name,
                                                  @Named("malware.filter.ipset.type") String type,
                                                  @Named("malware.filter.ipset.maxSize") int maxSize) {
@@ -484,7 +508,8 @@ public class EblockerModule extends BaseModule {
      * because it calls the overridden methods in its constructor so setting member variables is not possible. Actual
      * customization is moved to an extra class for testability: {@link NetworkAddressFactoryCustomization}
      */
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public UpnpService provideUpnpService(NetworkAddressFactoryCustomization customization) {
         return new UpnpServiceImpl(new DefaultUpnpServiceConfiguration() {
             @Override
@@ -504,253 +529,305 @@ public class EblockerModule extends BaseModule {
         });
     }
 
-    @Provides @Singleton @Named("nettyBossEventGroupLoop")
+    @Provides
+    @Singleton
+    @Named("nettyBossEventGroupLoop")
     public NioEventLoopGroup provideNettyBossEventGroupLoop(@Named("unlimitedCachePoolExecutor") Executor executor) {
         return new NioEventLoopGroup(2, executor);
     }
 
-    @Provides @Singleton @Named("nettyWorkerEventGroupLoop")
+    @Provides
+    @Singleton
+    @Named("nettyWorkerEventGroupLoop")
     public NioEventLoopGroup provideNettyWorkerEventGroupLoop(@Named("unlimitedCachePoolExecutor") Executor executor) {
         return new NioEventLoopGroup(2 * Runtime.getRuntime().availableProcessors(), executor);
     }
 
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public AnonymousController anonymousController() {
         return ControllerWrapperFactory.wrap(AnonymousController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public AppWhitelistModuleController appWhitelistModuleController() {
         return ControllerWrapperFactory.wrap(AppWhitelistModuleController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public AuthenticationController authenticationController() {
         return ControllerWrapperFactory.wrap(AuthenticationController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ControlBarController controlBarController() {
         return ControllerWrapperFactory.wrap(ControlBarController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DeviceController deviceController() {
         return ControllerWrapperFactory.wrap(DeviceController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DeviceRegistrationController deviceRegistrationController() {
         return ControllerWrapperFactory.wrap(DeviceRegistrationController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DnsController dnsController() {
         return ControllerWrapperFactory.wrap(DnsController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DomainBlockingController domainBlacklistController() {
         return ControllerWrapperFactory.wrap(DomainBlockingController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DomainWhiteListController domainWhiteListController() {
         return ControllerWrapperFactory.wrap(DomainWhiteListController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DashboardCardController dashboardCardController() {
         return ControllerWrapperFactory.wrap(DashboardCardController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public CustomerInfoController customerInfoController() {
         return ControllerWrapperFactory.wrap(CustomerInfoController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventController eventController() {
         return ControllerWrapperFactory.wrap(EventController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public FactoryResetController factoryResetController() {
         return ControllerWrapperFactory.wrap(FactoryResetController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public FeatureController featureController() {
         return ControllerWrapperFactory.wrap(FeatureController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public FeatureToggleController featureToggleController() {
         return ControllerWrapperFactory.wrap(FeatureToggleController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MobileConnectionCheckController mobileConnectionCheckController() {
         return ControllerWrapperFactory.wrap(MobileConnectionCheckController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MobileDnsCheckController mobileDnsCheckController() {
         return ControllerWrapperFactory.wrap(MobileDnsCheckController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public FilterController filterController() {
         return ControllerWrapperFactory.wrap(FilterController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public LanguageController languageController() {
         return ControllerWrapperFactory.wrap(LanguageController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MessageCenterController messageCenterController() {
         return ControllerWrapperFactory.wrap(MessageCenterController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public NetworkController networkController() {
         return ControllerWrapperFactory.wrap(NetworkController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public OpenVpnController openVpnController() {
         return ControllerWrapperFactory.wrap(OpenVpnController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public OpenVpnServerController openVpnServerController() {
         return ControllerWrapperFactory.wrap(OpenVpnServerController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public PageContextController pageContextController() {
         return ControllerWrapperFactory.wrap(PageContextController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ParentalControlController parentalControlController() {
         return ControllerWrapperFactory.wrap(ParentalControlController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ParentalControlFilterListsController parentalControlFilterListsController() {
         return ControllerWrapperFactory.wrap(ParentalControlFilterListsController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public RecordingController recordingController() {
         return ControllerWrapperFactory.wrap(RecordingController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public RedirectController redirectController() {
         return ControllerWrapperFactory.wrap(RedirectController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ReminderController reminderController() {
         return ControllerWrapperFactory.wrap(ReminderController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public SplashController splashController() {
         return ControllerWrapperFactory.wrap(SplashController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public SSLController sslController() {
         return ControllerWrapperFactory.wrap(SSLController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ProductMigrationController productMigrationController() {
         return ControllerWrapperFactory.wrap(ProductMigrationController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public SettingsController settingsController() {
         return ControllerWrapperFactory.wrap(SettingsController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public SetupWizardController setupWizardController() {
         return ControllerWrapperFactory.wrap(SetupWizardController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TimestampController timestampController() {
         return ControllerWrapperFactory.wrap(TimestampController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TimezoneController timezoneController() {
         return ControllerWrapperFactory.wrap(TimezoneController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TransactionRecorderController transactionRecorderController() {
         return ControllerWrapperFactory.wrap(TransactionRecorderController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public UpdateController updateController() {
         return ControllerWrapperFactory.wrap(UpdateController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public UserAgentController userAgentController() {
         return ControllerWrapperFactory.wrap(UserAgentController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public UserController userController() {
         return ControllerWrapperFactory.wrap(UserController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TosController tosController() {
         return ControllerWrapperFactory.wrap(TosController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public CustomDomainFilterConfigController customDomainFilterController() {
         return ControllerWrapperFactory.wrap(CustomDomainFilterConfigController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public FilterStatisticsController filterStatisticsController() {
         return ControllerWrapperFactory.wrap(FilterStatisticsController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ConfigurationBackupController configurationBackupController() {
         return ControllerWrapperFactory.wrap(ConfigurationBackupController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public LedSettingsController ledSettingsController() {
         return ControllerWrapperFactory.wrap(LedSettingsController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TasksController tasksController() {
         return ControllerWrapperFactory.wrap(TasksController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public ConnectionCheckController connectionCheckController() {
         return ControllerWrapperFactory.wrap(ConnectionCheckController.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public BlockerController blockerController() {
         return ControllerWrapperFactory.wrap(BlockerController.class);
     }

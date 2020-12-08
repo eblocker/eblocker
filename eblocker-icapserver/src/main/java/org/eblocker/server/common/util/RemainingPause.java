@@ -22,17 +22,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RemainingPause {
-	private final Long pausing;
-	private boolean pausingAllowed;
+    private final Long pausing;
+    private boolean pausingAllowed;
 
-	@JsonCreator
-	public RemainingPause(@JsonProperty("pausing") Long pausing) {
-		this.pausing = pausing;
-	}
+    @JsonCreator
+    public RemainingPause(@JsonProperty("pausing") Long pausing) {
+        this.pausing = pausing;
+    }
 
-	public Long getPausing() {
-		return pausing;
-	}
+    public Long getPausing() {
+        return pausing;
+    }
 
     public boolean isPausingAllowed() {
         return pausingAllowed;

@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.network.icmpv6.EchoRequest;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
-import com.google.inject.Inject;
 
 import java.util.Random;
 
@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class Ip6MulticastPing {
 
-    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[] { 51, 51, 0, 0, 0, 1 };
+    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{51, 51, 0, 0, 0, 1};
 
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;

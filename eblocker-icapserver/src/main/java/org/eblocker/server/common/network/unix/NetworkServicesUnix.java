@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
@@ -27,8 +29,6 @@ import org.eblocker.server.common.network.DhcpServerConfiguration;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServicesBase;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,169 +46,169 @@ import java.util.concurrent.ScheduledExecutorService;
 public class NetworkServicesUnix extends NetworkServicesBase {
     private static final Logger log = LoggerFactory.getLogger(NetworkServicesUnix.class);
 
-	private final DnsConfiguration dnsConfiguration;
-	private final NetworkInterfaceConfiguration interfaceConfiguration;
-	private final IscDhcpServer dhcpServer;
-	private final FirewallConfiguration firewallConfiguration;
-	private final String applyNetworkConfigurationCommand;
-	private final String applyFirewallConfigurationCommand;
-	private final String enableIp6Command;
-	private final ScriptRunner scriptRunner;
-	
-	@Inject
-	public NetworkServicesUnix(
-			DataSource dataSource,
-			DnsConfiguration dnsConfiguration,
-			NetworkInterfaceConfiguration interfaceConfiguration,
-			IscDhcpServer dhcpServer,
-			FirewallConfiguration firewallConfiguration,
-			@Named("highPrioScheduledExecutor") ScheduledExecutorService executorService,
-			NetworkInterfaceWrapper networkInterface,
-			ArpSpoofer arpSpoofer,
-			ScriptRunner scriptRunner,
-			@Named("executor.arpSpoofer.startupDelay") long arpSpoofer_startupDelay,
-			@Named("executor.arpSpoofer.fixedDelay") long arpSpoofer_fixedDelay,
-			@Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand,
-			@Named("network.unix.apply.firewall.configuration.command") String applyFirewallConfigurationCommand,
-            @Named("network.unix.enable.ip6") String enableIp6Command,
-			EblockerDnsServer eblockerDnsServer
-			) {
-		super(dataSource, executorService, networkInterface, arpSpoofer, arpSpoofer_startupDelay, arpSpoofer_fixedDelay, eblockerDnsServer);
-		this.dnsConfiguration = dnsConfiguration;
-		this.interfaceConfiguration = interfaceConfiguration;
-		this.dhcpServer = dhcpServer;
-		this.firewallConfiguration = firewallConfiguration;
-		this.scriptRunner = scriptRunner;
-		this.applyNetworkConfigurationCommand = applyNetworkConfigurationCommand;
-		this.applyFirewallConfigurationCommand = applyFirewallConfigurationCommand;
-		this.enableIp6Command = enableIp6Command;
-	}
+    private final DnsConfiguration dnsConfiguration;
+    private final NetworkInterfaceConfiguration interfaceConfiguration;
+    private final IscDhcpServer dhcpServer;
+    private final FirewallConfiguration firewallConfiguration;
+    private final String applyNetworkConfigurationCommand;
+    private final String applyFirewallConfigurationCommand;
+    private final String enableIp6Command;
+    private final ScriptRunner scriptRunner;
 
-	@Override
-	public void configureDhcpServer(NetworkConfiguration cfg) {
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress(cfg.getIpAddress());
-		config.setNetmask(cfg.getNetworkMask());
-		config.setGateway(cfg.getGateway());
-		if (cfg.getDhcpRangeFirst() != null && cfg.getDhcpRangeLast() != null) {
-			config.setRange(new DhcpRange(cfg.getDhcpRangeFirst(), cfg.getDhcpRangeLast()));
-		}
+    @Inject
+    public NetworkServicesUnix(
+        DataSource dataSource,
+        DnsConfiguration dnsConfiguration,
+        NetworkInterfaceConfiguration interfaceConfiguration,
+        IscDhcpServer dhcpServer,
+        FirewallConfiguration firewallConfiguration,
+        @Named("highPrioScheduledExecutor") ScheduledExecutorService executorService,
+        NetworkInterfaceWrapper networkInterface,
+        ArpSpoofer arpSpoofer,
+        ScriptRunner scriptRunner,
+        @Named("executor.arpSpoofer.startupDelay") long arpSpoofer_startupDelay,
+        @Named("executor.arpSpoofer.fixedDelay") long arpSpoofer_fixedDelay,
+        @Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand,
+        @Named("network.unix.apply.firewall.configuration.command") String applyFirewallConfigurationCommand,
+        @Named("network.unix.enable.ip6") String enableIp6Command,
+        EblockerDnsServer eblockerDnsServer
+    ) {
+        super(dataSource, executorService, networkInterface, arpSpoofer, arpSpoofer_startupDelay, arpSpoofer_fixedDelay, eblockerDnsServer);
+        this.dnsConfiguration = dnsConfiguration;
+        this.interfaceConfiguration = interfaceConfiguration;
+        this.dhcpServer = dhcpServer;
+        this.firewallConfiguration = firewallConfiguration;
+        this.scriptRunner = scriptRunner;
+        this.applyNetworkConfigurationCommand = applyNetworkConfigurationCommand;
+        this.applyFirewallConfigurationCommand = applyFirewallConfigurationCommand;
+        this.enableIp6Command = enableIp6Command;
+    }
 
-		if (!cfg.isDnsServer()) {
-			config.setNameServerPrimary(cfg.getNameServerPrimary());
-			config.setNameServerSecondary(cfg.getNameServerSecondary());
-		} else {
-			config.setNameServerPrimary(cfg.getIpAddress());
-			config.setNameServerSecondary(null);
-		}
+    @Override
+    public void configureDhcpServer(NetworkConfiguration cfg) {
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress(cfg.getIpAddress());
+        config.setNetmask(cfg.getNetworkMask());
+        config.setGateway(cfg.getGateway());
+        if (cfg.getDhcpRangeFirst() != null && cfg.getDhcpRangeLast() != null) {
+            config.setRange(new DhcpRange(cfg.getDhcpRangeFirst(), cfg.getDhcpRangeLast()));
+        }
 
-		config.setDevices(getDevices());
+        if (!cfg.isDnsServer()) {
+            config.setNameServerPrimary(cfg.getNameServerPrimary());
+            config.setNameServerSecondary(cfg.getNameServerSecondary());
+        } else {
+            config.setNameServerPrimary(cfg.getIpAddress());
+            config.setNameServerSecondary(null);
+        }
+
+        config.setDevices(getDevices());
         if (cfg.isExpertMode()) {
             config.setLeaseTime(cfg.getDhcpLeaseTime());
         }
-		dhcpServer.setConfiguration(config);
-	}
+        dhcpServer.setConfiguration(config);
+    }
 
-	@Override
-	public void enableDhcpServer(boolean start) {
-		dhcpServer.enable(start);
-	}
+    @Override
+    public void enableDhcpServer(boolean start) {
+        dhcpServer.enable(start);
+    }
 
-	@Override
-	public void disableDhcpServer() {
-		dhcpServer.disable();
-	}
+    @Override
+    public void disableDhcpServer() {
+        dhcpServer.disable();
+    }
 
-	@Override
-	public void enableDhcpClient() {
-		try {
-			interfaceConfiguration.enableDhcp();
-		} catch (IOException e) {
-			throw new EblockerException("Could not enable DHCP client", e);
-		}
-	}
+    @Override
+    public void enableDhcpClient() {
+        try {
+            interfaceConfiguration.enableDhcp();
+        } catch (IOException e) {
+            throw new EblockerException("Could not enable DHCP client", e);
+        }
+    }
 
-	@Override
-	public void enableStaticIp(NetworkConfiguration configuration) {
-		setStaticIpAddresses(configuration);
-	}
+    @Override
+    public void enableStaticIp(NetworkConfiguration configuration) {
+        setStaticIpAddresses(configuration);
+    }
 
-	private void setStaticIpAddresses(NetworkConfiguration configuration) {
-		try {
-			interfaceConfiguration.enableStatic(configuration.getIpAddress(), configuration.getNetworkMask(), configuration.getGateway());
-		} catch (IOException e) {
-			throw new EblockerException("Could not enable static IP address", e);
-		}
-	}
+    private void setStaticIpAddresses(NetworkConfiguration configuration) {
+        try {
+            interfaceConfiguration.enableStatic(configuration.getIpAddress(), configuration.getNetworkMask(), configuration.getGateway());
+        } catch (IOException e) {
+            throw new EblockerException("Could not enable static IP address", e);
+        }
+    }
 
-	@Override
-	public synchronized void applyNetworkConfiguration(NetworkConfiguration configuration) {
-		super.applyNetworkConfiguration(configuration);
-		int status = executeCommand(applyNetworkConfigurationCommand);
+    @Override
+    public synchronized void applyNetworkConfiguration(NetworkConfiguration configuration) {
+        super.applyNetworkConfiguration(configuration);
+        int status = executeCommand(applyNetworkConfigurationCommand);
         if (status != 0) {
             throw new EblockerException("Command '" + applyNetworkConfigurationCommand + "' terminated with exit status: " + status);
         }
-	}
+    }
 
-	/**
-	 * Executes and waits for a command.
+    /**
+     * Executes and waits for a command.
      *
-	 * @param command
-	 */
-	private int executeCommand(String command) {
-		try {
-			return scriptRunner.runScript(command);
-		} catch (Exception e) {
-			throw new EblockerException("Could not run command '" + command + "'", e);
-		}
-	}
+     * @param command
+     */
+    private int executeCommand(String command) {
+        try {
+            return scriptRunner.runScript(command);
+        } catch (Exception e) {
+            throw new EblockerException("Could not run command '" + command + "'", e);
+        }
+    }
 
-	@Override
-	public void setNameserverAddresses(NetworkConfiguration configuration) {
-		List<String> nameservers = new ArrayList<>();
+    @Override
+    public void setNameserverAddresses(NetworkConfiguration configuration) {
+        List<String> nameservers = new ArrayList<>();
 
-		if (configuration.getNameServerPrimary() != null) {
-			nameservers.add(configuration.getNameServerPrimary());
-		}
+        if (configuration.getNameServerPrimary() != null) {
+            nameservers.add(configuration.getNameServerPrimary());
+        }
 
-		if (configuration.getNameServerSecondary() != null) {
-			nameservers.add(configuration.getNameServerSecondary());
-		}
+        if (configuration.getNameServerSecondary() != null) {
+            nameservers.add(configuration.getNameServerSecondary());
+        }
 
-		// fallback: use gateway as nameserver
-		if (nameservers.size() == 0) {
-			nameservers.add(configuration.getGateway());
-		}
+        // fallback: use gateway as nameserver
+        if (nameservers.size() == 0) {
+            nameservers.add(configuration.getGateway());
+        }
 
-		try {
-			dnsConfiguration.setNameserverAddresses(nameservers);
-			notifyListeners(l -> l.onNameServersChange(nameservers));
-		} catch (IOException e) {
-			throw new EblockerException("Could not set nameserver addresses to " + nameservers, e);
-		}
-	}
+        try {
+            dnsConfiguration.setNameserverAddresses(nameservers);
+            notifyListeners(l -> l.onNameServersChange(nameservers));
+        } catch (IOException e) {
+            throw new EblockerException("Could not set nameserver addresses to " + nameservers, e);
+        }
+    }
 
-	@Override
-	protected List<String> getNativeNameServerAddresses() {
-		try {
-			return dnsConfiguration.getNameserverAddresses();
-		} catch (IOException e) {
-		    log.error("Cannot get native nameserver addresses", e);
-			return Collections.emptyList();
-		}
-	}
+    @Override
+    protected List<String> getNativeNameServerAddresses() {
+        try {
+            return dnsConfiguration.getNameserverAddresses();
+        } catch (IOException e) {
+            log.error("Cannot get native nameserver addresses", e);
+            return Collections.emptyList();
+        }
+    }
 
-	@Override
-	protected synchronized void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients,
+    @Override
+    protected synchronized void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients,
                                                boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
                                                boolean enableEblockerMobile, boolean enableMalwareSet) {
-	    try {
+        try {
             firewallConfiguration.enable(allDevices, vpnClients, masquerade, enableSSL, enableEblockerDns,
                 enableEblockerMobile, enableMalwareSet, () -> executeCommand(applyFirewallConfigurationCommand) == 0);
         } catch (IOException e) {
-	        log.error("i/o error applying firewall rules", e);
+            log.error("i/o error applying firewall rules", e);
         }
-	}
+    }
 
     @Override
     public void enableIp6(boolean ip6Enabled) {

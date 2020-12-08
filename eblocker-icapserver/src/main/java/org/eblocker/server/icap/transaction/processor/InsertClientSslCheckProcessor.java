@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.util.StringReplacer;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.util.StringReplacer;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.server.common.network.BaseURLs;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton

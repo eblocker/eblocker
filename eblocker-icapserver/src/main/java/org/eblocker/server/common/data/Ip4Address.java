@@ -36,7 +36,7 @@ public class Ip4Address extends IpAddress {
         }
 
         byte[] address = new byte[4];
-        for(int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             int value = Integer.parseInt(fields[i]);
             if (value < 0 || value > 255) {
                 throw new IllegalArgumentException("not an ipv4 address: " + ip);

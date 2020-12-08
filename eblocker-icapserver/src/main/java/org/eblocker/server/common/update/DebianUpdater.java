@@ -16,6 +16,18 @@
  */
 package org.eblocker.server.common.update;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.UpdatingStatus;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.registration.RegistrationState;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,35 +39,22 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 
-import org.eblocker.server.common.data.UpdatingStatus;
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.registration.RegistrationState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 public class DebianUpdater implements SystemUpdater {
-	private static final Logger log = LoggerFactory.getLogger(DebianUpdater.class);
-	private final DeviceRegistrationProperties deviceRegistrationProperties;
-	private final ScriptRunner scriptRunner;
-	private final String updatesStartCommand;
-	private final String updatesRunningCommand;
-	private final String updatesDownloadStartCommand;
-	private final String updatesDownloadRunningCommand;
-	private final String updatesCheckCommand;
-	private final String updatesRunningInfoCommand;
-	private final DataSource dataSource;
-	private LocalDateTime lastUpdate;
-	private LoggingProcess updatesCheckRunner;
-	private LoggingProcess updatesRunningInfoRunner;
-	private ArrayList<String> updateProgress = new ArrayList<>();
-	private ArrayList<String> updateablePackages = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(DebianUpdater.class);
+    private final DeviceRegistrationProperties deviceRegistrationProperties;
+    private final ScriptRunner scriptRunner;
+    private final String updatesStartCommand;
+    private final String updatesRunningCommand;
+    private final String updatesDownloadStartCommand;
+    private final String updatesDownloadRunningCommand;
+    private final String updatesCheckCommand;
+    private final String updatesRunningInfoCommand;
+    private final DataSource dataSource;
+    private LocalDateTime lastUpdate;
+    private LoggingProcess updatesCheckRunner;
+    private LoggingProcess updatesRunningInfoRunner;
+    private ArrayList<String> updateProgress = new ArrayList<>();
+    private ArrayList<String> updateablePackages = new ArrayList<>();
     private final String projectVersion;
     private final String pinEblockerListsCommand;
     private final String unpinEblockerListsCommand;
@@ -65,108 +64,107 @@ public class DebianUpdater implements SystemUpdater {
     private final UpdateStatusObserver updateStatusObserver;
 
     @Inject
-	public DebianUpdater(DeviceRegistrationProperties deviceRegistrationProperties,
-						 ScriptRunner scriptRunner,
-						 DataSource dataSource,
+    public DebianUpdater(DeviceRegistrationProperties deviceRegistrationProperties,
+                         ScriptRunner scriptRunner,
+                         DataSource dataSource,
                          UpdateStatusObserver updateStatusObserver,
-    					 @Named("updates.start.command") String updatesStartCommand,
-						 @Named("updates.running.command") String updatesRunningCommand,
-	                     @Named("updates.downloadStart.command") String updatesDownloadStartCommand,
-	                     @Named("updates.downloadRunning.command") String updatesDownloadRunningCommand,
-	                     @Named("updates.check.command") String updatesCheckCommand,
-	                     @Named("updates.running.info.command") String updatesRunningInfoCommand,
-	                     @Named("pin.eblocker-lists.command") String pinEblockerListsCommand,
-	                     @Named("unpin.eblocker-lists.command") String unpinEblockerListsCommand,
-	                     @Named("eblocker-lists.pinning.filename") String eBlockerListsPinningFilename,
-	                     @Named("eblocker-lists.pinning.version") String eBlockerListsPinningVersion,
-	                     @Named("project.version") String projectVersion) {
+                         @Named("updates.start.command") String updatesStartCommand,
+                         @Named("updates.running.command") String updatesRunningCommand,
+                         @Named("updates.downloadStart.command") String updatesDownloadStartCommand,
+                         @Named("updates.downloadRunning.command") String updatesDownloadRunningCommand,
+                         @Named("updates.check.command") String updatesCheckCommand,
+                         @Named("updates.running.info.command") String updatesRunningInfoCommand,
+                         @Named("pin.eblocker-lists.command") String pinEblockerListsCommand,
+                         @Named("unpin.eblocker-lists.command") String unpinEblockerListsCommand,
+                         @Named("eblocker-lists.pinning.filename") String eBlockerListsPinningFilename,
+                         @Named("eblocker-lists.pinning.version") String eBlockerListsPinningVersion,
+                         @Named("project.version") String projectVersion) {
 
-		this.scriptRunner = scriptRunner;
-		this.dataSource=dataSource;
-		this.updateStatusObserver = updateStatusObserver;
-		this.updatesStartCommand = updatesStartCommand;
-		this.updatesRunningCommand = updatesRunningCommand;
-		this.updatesDownloadStartCommand = updatesDownloadStartCommand;
-		this.updatesDownloadRunningCommand = updatesDownloadRunningCommand;
-		this.updatesCheckCommand = updatesCheckCommand;
-		this.updatesRunningInfoCommand = updatesRunningInfoCommand;
-		this.deviceRegistrationProperties = deviceRegistrationProperties;
-		this.lastUpdate = dataSource.getLastUpdateTime();
+        this.scriptRunner = scriptRunner;
+        this.dataSource = dataSource;
+        this.updateStatusObserver = updateStatusObserver;
+        this.updatesStartCommand = updatesStartCommand;
+        this.updatesRunningCommand = updatesRunningCommand;
+        this.updatesDownloadStartCommand = updatesDownloadStartCommand;
+        this.updatesDownloadRunningCommand = updatesDownloadRunningCommand;
+        this.updatesCheckCommand = updatesCheckCommand;
+        this.updatesRunningInfoCommand = updatesRunningInfoCommand;
+        this.deviceRegistrationProperties = deviceRegistrationProperties;
+        this.lastUpdate = dataSource.getLastUpdateTime();
         this.pinEblockerListsCommand = pinEblockerListsCommand;
         this.unpinEblockerListsCommand = unpinEblockerListsCommand;
         this.eBlockerListsPinningFilename = eBlockerListsPinningFilename;
         this.eBlockerListsPinningVersion = eBlockerListsPinningVersion;
         this.projectVersion = projectVersion;
-  	}
+    }
 
-	@Override
-	public synchronized void startUpdate() throws IOException, InterruptedException, EblockerException {
+    @Override
+    public synchronized void startUpdate() throws IOException, InterruptedException, EblockerException {
         if (deviceReady()) {
             log.info("Running update scripts");
-			lastUpdate = LocalDateTime.now();
-			dataSource.saveLastUpdateTime(lastUpdate);
+            lastUpdate = LocalDateTime.now();
+            dataSource.saveLastUpdateTime(lastUpdate);
 
-			updateProgress = new ArrayList<String>();
+            updateProgress = new ArrayList<String>();
             updatesRunningInfoRunner = scriptRunner.startScript(updatesRunningInfoCommand);
 
-			scriptRunner.runScript(updatesStartCommand);
-			updateStatusObserver.updateStarted(this);
+            scriptRunner.runScript(updatesStartCommand);
+            updateStatusObserver.updateStarted(this);
         } else {
             log.info("There are currently updates or downloads running...");
-		}
-	}
+        }
+    }
 
-	@Override
-	public synchronized State getUpdateStatus() throws IOException, InterruptedException {
-		int returnCode = scriptRunner.runScript(updatesRunningCommand);
-		if (returnCode == 0) {
-		    wasUpdating = true;
-			return State.UPDATING;
-		}
-		else {
-		    if (updatesRunningInfoRunner != null) {
-		        // Isn't updating anymore, but some progress could be left to save
-		        getUpdateProgress();
-		        scriptRunner.stopScript(updatesRunningInfoRunner);
-		        updatesRunningInfoRunner = null;
-		    }
-		}
-		// Update just stopped, clear list of available updates
-		if (wasUpdating) {
-		    wasUpdating = false;
-		    updateablePackages.clear();
-		}
+    @Override
+    public synchronized State getUpdateStatus() throws IOException, InterruptedException {
+        int returnCode = scriptRunner.runScript(updatesRunningCommand);
+        if (returnCode == 0) {
+            wasUpdating = true;
+            return State.UPDATING;
+        } else {
+            if (updatesRunningInfoRunner != null) {
+                // Isn't updating anymore, but some progress could be left to save
+                getUpdateProgress();
+                scriptRunner.stopScript(updatesRunningInfoRunner);
+                updatesRunningInfoRunner = null;
+            }
+        }
+        // Update just stopped, clear list of available updates
+        if (wasUpdating) {
+            wasUpdating = false;
+            updateablePackages.clear();
+        }
 
-		returnCode = scriptRunner.runScript(updatesDownloadRunningCommand);
-		if (returnCode == 0) {
-		    return State.DOWNLOADING;
-		}
+        returnCode = scriptRunner.runScript(updatesDownloadRunningCommand);
+        if (returnCode == 0) {
+            return State.DOWNLOADING;
+        }
 
-		if (updatesCheckRunner != null && updatesCheckRunner.isAlive()) {
-		    return State.CHECKING;
-		}
+        if (updatesCheckRunner != null && updatesCheckRunner.isAlive()) {
+            return State.CHECKING;
+        }
 
-		return State.IDLING;
-	}
+        return State.IDLING;
+    }
 
-	@Override
-	public LocalDateTime getLastUpdateTime() {
-		return lastUpdate;
-	}
+    @Override
+    public LocalDateTime getLastUpdateTime() {
+        return lastUpdate;
+    }
 
-	@Override
-	public void startDownload() throws IOException, InterruptedException {
+    @Override
+    public void startDownload() throws IOException, InterruptedException {
         if (deviceReady()) {
             log.info("Running download scripts");
             scriptRunner.runScript(updatesDownloadStartCommand);
         } else {
             log.info("There are currently updates or downloads running ...");
-	    }
-	}
+        }
+    }
 
-	@Override
-	public boolean updatesAvailable() throws IOException, InterruptedException {
-	    if (deviceReady()){
+    @Override
+    public boolean updatesAvailable() throws IOException, InterruptedException {
+        if (deviceReady()) {
             log.info("Running check for updates scripts");
             updateablePackages = new ArrayList<String>();
             updatesCheckRunner = scriptRunner.startScript(updatesCheckCommand);
@@ -175,18 +173,18 @@ public class DebianUpdater implements SystemUpdater {
         }
 
         return !updatesAvailablePackages().isEmpty();
-	}
+    }
 
-	@Override
-	public List<String> updatesAvailablePackages() {
-	    if (updatesCheckRunner != null && !updatesCheckRunner.isAlive()) {
+    @Override
+    public List<String> updatesAvailablePackages() {
+        if (updatesCheckRunner != null && !updatesCheckRunner.isAlive()) {
             // Returning true only if exit value is 0 is more correct in a technical perspective, but as a fallback it might be better to return true when
             // the state is unclear to allow further update steps in this case. Returning a more detailed return value could also be an option here.
             if (updatesCheckRunner.exitValue() != 1) {
                 String line = null;
                 Scanner scanner = null;
 
-                for (String stdout; (stdout = updatesCheckRunner.pollStdout()) != null;) {
+                for (String stdout; (stdout = updatesCheckRunner.pollStdout()) != null; ) {
                     scanner = new Scanner(stdout);
                     while (scanner.hasNextLine()) {
                         line = scanner.nextLine();
@@ -201,16 +199,16 @@ public class DebianUpdater implements SystemUpdater {
             }
         }
 
-	    return updateablePackages;
-	}
+        return updateablePackages;
+    }
 
-	@Override
+    @Override
     public List<String> getUpdateProgress() {
-	    if (updatesRunningInfoRunner != null) {
+        if (updatesRunningInfoRunner != null) {
             String line = null;
             Scanner scanner = null;
 
-            for (String stdout; (stdout = updatesRunningInfoRunner.pollStdout()) != null;) {
+            for (String stdout; (stdout = updatesRunningInfoRunner.pollStdout()) != null; ) {
                 scanner = new Scanner(stdout);
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
@@ -224,15 +222,15 @@ public class DebianUpdater implements SystemUpdater {
             }
         }
 
-	    return updateProgress;
-	}
+        return updateProgress;
+    }
 
-	@Override
-	public boolean invalidLicense() {
-	    RegistrationState state = deviceRegistrationProperties.getRegistrationState();
-	    return (RegistrationState.REVOKED == state || RegistrationState.INVALID == state || RegistrationState.OK_UNREGISTERED
+    @Override
+    public boolean invalidLicense() {
+        RegistrationState state = deviceRegistrationProperties.getRegistrationState();
+        return (RegistrationState.REVOKED == state || RegistrationState.INVALID == state || RegistrationState.OK_UNREGISTERED
             == state);
-	}
+    }
 
     @Override
     public boolean pinEblockerListsPackage() throws IOException, InterruptedException {
@@ -291,8 +289,8 @@ public class DebianUpdater implements SystemUpdater {
         return status;
     }
 
-    private String formatDate(LocalDateTime time){
-        if(time == null)
+    private String formatDate(LocalDateTime time) {
+        if (time == null)
             return null;
 
         ZonedDateTime zdt = time.atZone(TimeZone.getDefault().toZoneId());

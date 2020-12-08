@@ -25,7 +25,7 @@ public class VersionInfo {
 
     @JsonCreator
     public VersionInfo(
-            @JsonProperty("versionEBlockerOs") String versionEBlockerOs
+        @JsonProperty("versionEBlockerOs") String versionEBlockerOs
     ) {
         this.versionEBlockerOs = versionEBlockerOs;
     }

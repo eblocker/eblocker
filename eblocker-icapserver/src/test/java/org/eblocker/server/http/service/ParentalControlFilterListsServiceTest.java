@@ -294,24 +294,52 @@ public class ParentalControlFilterListsServiceTest {
         Mockito.verify(blacklistCompiler).compile(Mockito.eq(1), Mockito.eq("test-customer-name"), Mockito.any(Supplier.class), Mockito.anyString(), Mockito.anyString());
     }
 
+    @Test
+    public void testPreserveDisabledState() throws IOException {
+        ParentalControlFilterMetaData metadata = new ParentalControlFilterMetaData(
+            9,
+            Collections.singletonMap("en", "name"),
+            Collections.singletonMap("en", "desc"),
+            Category.ADS,
+            Collections.singletonList("domains.txt"),
+            "123",
+            new Date(),
+            "domainblacklist/string",
+            "blacklist",
+            true,
+            false,
+            Collections.singletonList(new QueryTransformation("x", "y")),
+            null,
+            null
+        );
+
+        setupMetadataDisk(metadata); // built-in filter is enabled by default...
+        metadata.setDisabled(true);
+        setupMetadataDB(metadata);   // ... but was disabled by user
+        createService();
+
+        ArgumentCaptor<ParentalControlFilterMetaData> savedMetadataCaptor = ArgumentCaptor.forClass(ParentalControlFilterMetaData.class);
+        Mockito.verify(dataSource).save(savedMetadataCaptor.capture(), Mockito.eq(9));
+        Assert.assertTrue(savedMetadataCaptor.getValue().isDisabled());
+    }
+
     private void setupMetadata(ParentalControlFilterMetaData... metaData) throws IOException {
-        if (System.getProperty("os.name").startsWith("Mac OS")) {
-            try {
-                // On MacOS: Sleep at least one second, to ensure that the time stamp of the file has changed.
-                Thread.sleep(1000L);
-            } catch (InterruptedException e) {
-                //
-            }
-        }
+        setupMetadataDisk(metaData);
+        setupMetadataDB(metaData);
+    }
 
+    private void setupMetadataDB(ParentalControlFilterMetaData... metaData) {
         List<ParentalControlFilterMetaData> metadataList = metaData != null ? Arrays.asList(metaData) : Collections.emptyList();
-        try (OutputStream out = Files.newOutputStream(metaDataPath)) {
-            objectMapper.writeValue(out, metadataList);
-        }
-
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(metadataList);
         for(ParentalControlFilterMetaData d : metadataList) {
             Mockito.when(dataSource.get(ParentalControlFilterMetaData.class, d.getId())).thenReturn(d);
+        }
+    }
+
+    private void setupMetadataDisk(ParentalControlFilterMetaData... metaData) throws IOException {
+        List<ParentalControlFilterMetaData> metadataList = metaData != null ? Arrays.asList(metaData) : Collections.emptyList();
+        try (OutputStream out = Files.newOutputStream(metaDataPath)) {
+            objectMapper.writeValue(out, metadataList);
         }
     }
 

@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.blacklist.BlacklistCompiler;
 import org.eblocker.server.common.blacklist.DomainBlacklistService;
 import org.eblocker.server.common.data.DataSource;
@@ -23,10 +27,6 @@ import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ConflictException;
 import org.slf4j.Logger;
@@ -321,14 +321,27 @@ public class ParentalControlFilterListsService {
 
         // remove all built-in metadata which won't be updated
         Set<Integer> metaDataIds = metaData.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
-        loadMetaData().stream()
+        Collection<ParentalControlFilterMetaData> currentMetaData = loadMetaData();
+
+        preserveDisabledState(currentMetaData, metaData);
+
+        currentMetaData.stream()
             .filter(ParentalControlFilterMetaData::isBuiltin)
             .map(ParentalControlFilterMetaData::getId)
             .filter(id -> !metaDataIds.contains(id))
             .forEach(id -> dataSource.delete(ParentalControlFilterMetaData.class, id));
 
         // save new metadata
-        metaData.forEach(m->dataSource.save(m, m.getId()));
+        metaData.forEach(m -> dataSource.save(m, m.getId()));
+    }
+
+    private void preserveDisabledState(Collection<ParentalControlFilterMetaData> currentMetaData, Set<ParentalControlFilterMetaData> loadedMetaData) {
+        currentMetaData.forEach(currentFilter -> {
+            loadedMetaData.stream()
+                .filter(md -> md.getId().equals(currentFilter.getId()))
+                .findFirst()
+                .ifPresent(md -> md.setDisabled(currentFilter.isDisabled()));
+        });
     }
 
     private Set<ParentalControlFilterMetaData> readMetaDataFile() throws IOException {

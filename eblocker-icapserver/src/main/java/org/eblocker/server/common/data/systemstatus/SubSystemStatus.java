@@ -24,5 +24,5 @@ public enum SubSystemStatus {
     ERROR,
     OFF,
     ;
-    
+
 }

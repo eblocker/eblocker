@@ -85,13 +85,13 @@ public class LoggingExecutorService implements ScheduledExecutorService {
     }
 
     public <T> List<Future<T>> invokeAll(
-        Collection<? extends Callable<T>> tasks) throws InterruptedException {
+            Collection<? extends Callable<T>> tasks) throws InterruptedException {
         return executorService.invokeAll(tasks.stream().map(this::decorate).collect(Collectors.toList()));
     }
 
     public <T> List<Future<T>> invokeAll(
-        Collection<? extends Callable<T>> tasks, long timeout,
-        TimeUnit unit) throws InterruptedException {
+            Collection<? extends Callable<T>> tasks, long timeout,
+            TimeUnit unit) throws InterruptedException {
         return executorService.invokeAll(tasks.stream().map(this::decorate).collect(Collectors.toList()), timeout, unit);
     }
 
@@ -111,25 +111,25 @@ public class LoggingExecutorService implements ScheduledExecutorService {
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay,
                                        TimeUnit unit) {
-        return ((ScheduledExecutorService)executorService).schedule(decorate(command, schedule("future", unit, delay, null)), delay, unit);
+        return ((ScheduledExecutorService) executorService).schedule(decorate(command, schedule("future", unit, delay, null)), delay, unit);
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay,
                                            TimeUnit unit) {
-        return ((ScheduledExecutorService)executorService).schedule(decorate(callable, schedule("future", unit, delay, null)), delay, unit);
+        return ((ScheduledExecutorService) executorService).schedule(decorate(callable, schedule("future", unit, delay, null)), delay, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period,
                                                   TimeUnit unit) {
-        return ((ScheduledExecutorService)executorService).scheduleAtFixedRate(decorate(command, schedule("fixed", unit, initialDelay, period)), initialDelay, period, unit);
+        return ((ScheduledExecutorService) executorService).scheduleAtFixedRate(decorate(command, schedule("fixed", unit, initialDelay, period)), initialDelay, period, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay,
                                                      TimeUnit unit) {
-        return ((ScheduledExecutorService)executorService).scheduleWithFixedDelay(decorate(command, schedule("delay", unit, initialDelay, delay)), initialDelay, delay, unit);
+        return ((ScheduledExecutorService) executorService).scheduleWithFixedDelay(decorate(command, schedule("delay", unit, initialDelay, delay)), initialDelay, delay, unit);
     }
 
     public String getName() {
@@ -217,7 +217,7 @@ public class LoggingExecutorService implements ScheduledExecutorService {
                 throw e;
             } finally {
                 long stop = System.currentTimeMillis();
-                long elapsed = stop -  start;
+                long elapsed = stop - start;
                 log.debug("executor {}-{}: finished: {} in {}ms", name, threadId, taskName, elapsed);
                 entry.update(start, stop, exception);
             }

@@ -29,15 +29,15 @@ import static org.junit.Assert.assertTrue;
 
 public class UrlUtilsTest {
 
-	@Test
-	public void testGetHostname() {
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com/"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com/hello?foo=bar"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80/"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80/hello?foo=bar"));
-		assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com//index.html"));
+    @Test
+    public void testGetHostname() {
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com/"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com/hello?foo=bar"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80/"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com:80/hello?foo=bar"));
+        assertEquals("www.example.com", UrlUtils.getHostname("http://www.example.com//index.html"));
         assertEquals("www.example.com", UrlUtils.getHostname("http://user:password@www.example.com"));
         assertEquals("www.example.com", UrlUtils.getHostname("http://user:password@www.example.com/"));
         assertEquals("www.example.com", UrlUtils.getHostname("http://user:password@www.example.com/hello?foo=bar"));
@@ -47,12 +47,12 @@ public class UrlUtilsTest {
         assertEquals("www.example.com", UrlUtils.getHostname("http://user:password@www.example.com//index.html"));
 
         assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com/"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com/hello?foo=bar"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80/"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80/hello?foo=bar"));
-		assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com//index.html"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com/"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com/hello?foo=bar"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80/"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com:80/hello?foo=bar"));
+        assertEquals("www.example.com", UrlUtils.getHostname("https://www.example.com//index.html"));
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com"));
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com/"));
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com/hello?foo=bar"));
@@ -60,38 +60,38 @@ public class UrlUtilsTest {
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com:80/"));
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com:80/hello?foo=bar"));
         assertEquals("www.example.com", UrlUtils.getHostname("https://user:password@www.example.com//index.html"));
-	}
+    }
 
-	@Test
-	public void testIsUkStyleDomain() {
-		assertTrue(UrlUtils.isUkStyleTdl("www.guardian.co.uk"));
-		assertTrue(UrlUtils.isUkStyleTdl("foobar.guardian.co.uk"));
-		assertTrue(UrlUtils.isUkStyleTdl("guardian.co.uk"));
-		assertTrue(UrlUtils.isUkStyleTdl("guardian.com.au"));
+    @Test
+    public void testIsUkStyleDomain() {
+        assertTrue(UrlUtils.isUkStyleTdl("www.guardian.co.uk"));
+        assertTrue(UrlUtils.isUkStyleTdl("foobar.guardian.co.uk"));
+        assertTrue(UrlUtils.isUkStyleTdl("guardian.co.uk"));
+        assertTrue(UrlUtils.isUkStyleTdl("guardian.com.au"));
 
-		assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.com"));
-		assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.de"));
-		assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.bmb.de"));
-		assertFalse(UrlUtils.isUkStyleTdl("www.cox.de"));
-	}
+        assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.com"));
+        assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.de"));
+        assertFalse(UrlUtils.isUkStyleTdl("www.brightmammoth.bmb.de"));
+        assertFalse(UrlUtils.isUkStyleTdl("www.cox.de"));
+    }
 
-	@Test
-	public void getDomain() {
-		assertEquals("example.com", UrlUtils.getDomain("www.example.com"));
-		assertEquals("example.co.uk", UrlUtils.getDomain("www.example.co.uk"));
-		assertEquals("example.com", UrlUtils.getDomain("example.com"));
-		assertEquals("example.co.uk", UrlUtils.getDomain("example.co.uk"));
+    @Test
+    public void getDomain() {
+        assertEquals("example.com", UrlUtils.getDomain("www.example.com"));
+        assertEquals("example.co.uk", UrlUtils.getDomain("www.example.co.uk"));
+        assertEquals("example.com", UrlUtils.getDomain("example.com"));
+        assertEquals("example.co.uk", UrlUtils.getDomain("example.co.uk"));
 
-		assertNull(UrlUtils.getDomain("example.com.")); // invalid hostname with trailing dot
-		assertNull(UrlUtils.getDomain("com")); // no hostname
+        assertNull(UrlUtils.getDomain("example.com.")); // invalid hostname with trailing dot
+        assertNull(UrlUtils.getDomain("com")); // no hostname
 
-		assertEquals("co.uk", UrlUtils.getDomain("co.uk")); // not ideal, but what do you expect for an invalid FQDN...
-	}
+        assertEquals("co.uk", UrlUtils.getDomain("co.uk")); // not ideal, but what do you expect for an invalid FQDN...
+    }
 
-	@Test(expected= EblockerException.class)
-	public void testInvalidHostname() {
-		UrlUtils.getHostname("foo.bar");
-	}
+    @Test(expected = EblockerException.class)
+    public void testInvalidHostname() {
+        UrlUtils.getHostname("foo.bar");
+    }
 
     @Test
     public void testIsUrl() {
@@ -111,77 +111,77 @@ public class UrlUtilsTest {
     }
 
     @Test
-	public void testIsUrlWithoutProtocol() {
-		assertFalse(UrlUtils.isUrlWithoutProtocol(null));
-		assertFalse(UrlUtils.isUrlWithoutProtocol(""));
-		assertFalse(UrlUtils.isUrlWithoutProtocol("localhost"));
-		assertFalse(UrlUtils.isUrlWithoutProtocol("foo/bar"));
-		assertFalse(UrlUtils.isUrlWithoutProtocol("1234567890abcdef"));
+    public void testIsUrlWithoutProtocol() {
+        assertFalse(UrlUtils.isUrlWithoutProtocol(null));
+        assertFalse(UrlUtils.isUrlWithoutProtocol(""));
+        assertFalse(UrlUtils.isUrlWithoutProtocol("localhost"));
+        assertFalse(UrlUtils.isUrlWithoutProtocol("foo/bar"));
+        assertFalse(UrlUtils.isUrlWithoutProtocol("1234567890abcdef"));
 
-		assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar"));
-		assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar.baz"));
-		assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar.baz/path/to/file.ext?query=blubb"));
+        assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar"));
+        assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar.baz"));
+        assertTrue(UrlUtils.isUrlWithoutProtocol("foo.bar.baz/path/to/file.ext?query=blubb"));
 
-		assertFalse(UrlUtils.isUrlWithoutProtocol("http://foo.bar.baz/path/to/file.ext?query=blubb"));
-	}
+        assertFalse(UrlUtils.isUrlWithoutProtocol("http://foo.bar.baz/path/to/file.ext?query=blubb"));
+    }
 
-	@Test
-	public void testFindUrlParameter_simple() throws UnsupportedEncodingException {
-		String targetUrl1 = "http://www.example.com";
-		String targetUrl2 = "https://www.example.com?aaa=123&bbb=&bbb=456&bbb=%3f+%3f";
-		String targetUrl3 = "//www.example.com";
-		String targetUrl4 = "www.example.com";
+    @Test
+    public void testFindUrlParameter_simple() throws UnsupportedEncodingException {
+        String targetUrl1 = "http://www.example.com";
+        String targetUrl2 = "https://www.example.com?aaa=123&bbb=&bbb=456&bbb=%3f+%3f";
+        String targetUrl3 = "//www.example.com";
+        String targetUrl4 = "www.example.com";
 
-		// simple url, single param
-		String requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // simple url, single param
+        String requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// complex URL, single param
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8");
+        // complex URL, single param
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// two URL params
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8")+"&blipp="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // two URL params
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8") + "&blipp=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null)); // find the first one
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null)); // find the first one
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// single multi-valued URL params
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8")+"&blupp="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // single multi-valued URL params
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8") + "&blupp=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// no URL params
-		requestUrl = "http://foo.bar/quark?blubb=quark&blipp=other";
+        // no URL params
+        requestUrl = "http://foo.bar/quark?blubb=quark&blipp=other";
 
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// target URL without "http" --> Only found, when correct param is specified!
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl3, "UTF-8");
+        // target URL without "http" --> Only found, when correct param is specified!
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl3, "UTF-8");
 
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// target URL without "http://" --> Only found, when correct param is specified!
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl4, "UTF-8");
+        // target URL without "http://" --> Only found, when correct param is specified!
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl4, "UTF-8");
 
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, null));
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "blipp"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, null));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "blipp"));
 
-		// url with illegal encodings
+        // url with illegal encodings
         requestUrl = "https://www.example.com/?abc=%u2018%20&x=%FGhello%gg&url=" + URLEncoder.encode(targetUrl1, "UTF-8");
         assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "url"));
 
@@ -196,54 +196,54 @@ public class UrlUtilsTest {
         assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "url"));
     }
 
-	@Test
-	public void testFindUrlParameter_inQueryParameter() throws UnsupportedEncodingException {
-		String targetUrl1 = "http://www.example.com";
-		String targetUrl2 = "https://www.example.com?aaa=123&bbb=&bbb=456&bbb=%3f+%3f";
-		String targetUrl3 = "//www.example.com";
-		String targetUrl4 = "www.example.com";
+    @Test
+    public void testFindUrlParameter_inQueryParameter() throws UnsupportedEncodingException {
+        String targetUrl1 = "http://www.example.com";
+        String targetUrl2 = "https://www.example.com?aaa=123&bbb=&bbb=456&bbb=%3f+%3f";
+        String targetUrl3 = "//www.example.com";
+        String targetUrl4 = "www.example.com";
 
-		// simple url, single param
-		String requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // simple url, single param
+        String requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// complex URL, single param
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8");
+        // complex URL, single param
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// two URL params
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8")+"&blipp="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // two URL params
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8") + "&blipp=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// single multi-valued URL params
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl2, "UTF-8")+"&blupp="+URLEncoder.encode(targetUrl1, "UTF-8");
+        // single multi-valued URL params
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl2, "UTF-8") + "&blupp=" + URLEncoder.encode(targetUrl1, "UTF-8");
 
-		assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl2, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// no URL params
-		requestUrl = "http://foo.bar/quark?blubb=quark&blipp=other";
+        // no URL params
+        requestUrl = "http://foo.bar/quark?blubb=quark&blipp=other";
 
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// target URL without "http" --> Only found, when correct param is specified!
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl3, "UTF-8");
+        // target URL without "http" --> Only found, when correct param is specified!
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl3, "UTF-8");
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
-		// target URL without "http://" --> Only found, when correct param is specified!
-		requestUrl = "http://foo.bar/quark?blubb="+URLEncoder.encode(targetUrl4, "UTF-8");
+        // target URL without "http://" --> Only found, when correct param is specified!
+        requestUrl = "http://foo.bar/quark?blubb=" + URLEncoder.encode(targetUrl4, "UTF-8");
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blubb"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&blipp"));
 
         // url with illegal encodings
         requestUrl = "https://www.example.com/?abc=%u2018%20&x=%FGhello%gg&url=" + URLEncoder.encode(targetUrl1, "UTF-8");
@@ -262,110 +262,110 @@ public class UrlUtilsTest {
         assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&url"));
     }
 
-	@Test
-	public void testFindUrlParameter_atEndOfUrl() throws UnsupportedEncodingException {
-		String marker = "%3f";
-		String targetUrl1 = "http://www.example.com";
+    @Test
+    public void testFindUrlParameter_atEndOfUrl() throws UnsupportedEncodingException {
+        String marker = "%3f";
+        String targetUrl1 = "http://www.example.com";
 
-		// simple url, single param
-		String requestUrl = "http://foo.bar/quark;blubb;blibb&a=b&c=d;"+marker+targetUrl1;
+        // simple url, single param
+        String requestUrl = "http://foo.bar/quark;blubb;blibb&a=b&c=d;" + marker + targetUrl1;
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "END_OF_URL&%3f"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&foobar"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "END_OF_URL&%3f"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&foobar"));
 
-		// simple url, single param
-		requestUrl = "http://foo.bar/quark;blubb;blibb&a=b&c=d;"+marker+targetUrl1;
+        // simple url, single param
+        requestUrl = "http://foo.bar/quark;blubb;blibb&a=b&c=d;" + marker + targetUrl1;
 
-		assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "END_OF_URL&%3f"));
-		assertEquals(null,       UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&foobar"));
+        assertEquals(targetUrl1, UrlUtils.findUrlParameter(requestUrl, "END_OF_URL&%3f"));
+        assertEquals(null, UrlUtils.findUrlParameter(requestUrl, "QUERY_PARAMETER&foobar"));
 
-	}
+    }
 
-	@Test
-	public void testIsInvalidDomain(){
-		String url = "bla.de";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+    @Test
+    public void testIsInvalidDomain() {
+        String url = "bla.de";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = ".";
-		assertTrue(UrlUtils.isInvalidDomain(url));
+        url = ".";
+        assertTrue(UrlUtils.isInvalidDomain(url));
 
-		url = "..";
-		assertTrue(UrlUtils.isInvalidDomain(url));
+        url = "..";
+        assertTrue(UrlUtils.isInvalidDomain(url));
 
-		url = "de";
-		assertTrue(UrlUtils.isInvalidDomain(url));
+        url = "de";
+        assertTrue(UrlUtils.isInvalidDomain(url));
 
-		url = "http://www.bla.de";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+        url = "http://www.bla.de";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = "http://www.bla.de/";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+        url = "http://www.bla.de/";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = "http://www.bla..de/";
-		assertTrue(UrlUtils.isInvalidDomain(url));
+        url = "http://www.bla..de/";
+        assertTrue(UrlUtils.isInvalidDomain(url));
 
-		url = "bla.de/blubb";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+        url = "bla.de/blubb";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = "http://www.bla.de/blubb.html#fasel";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+        url = "http://www.bla.de/blubb.html#fasel";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = "http://user:pass@bla.de/blubb";
-		assertFalse(UrlUtils.isInvalidDomain(url));
+        url = "http://user:pass@bla.de/blubb";
+        assertFalse(UrlUtils.isInvalidDomain(url));
 
-		url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
-		assertFalse(UrlUtils.isInvalidDomain(url));
-	}
+        url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
+        assertFalse(UrlUtils.isInvalidDomain(url));
+    }
 
-	@Test
-	public void testFindDomainInString(){
-		String url = "http://www.foo.bar/fourty.seven?eleven=true";
-		assertEquals("www.foo.bar", UrlUtils.findDomainInString(url));
+    @Test
+    public void testFindDomainInString() {
+        String url = "http://www.foo.bar/fourty.seven?eleven=true";
+        assertEquals("www.foo.bar", UrlUtils.findDomainInString(url));
 
-		url = "https://username:password@members.paysite.com/services/purchase.php?item=47&variation=11";
-		assertEquals("members.paysite.com", UrlUtils.findDomainInString(url));
+        url = "https://username:password@members.paysite.com/services/purchase.php?item=47&variation=11";
+        assertEquals("members.paysite.com", UrlUtils.findDomainInString(url));
 
-		url = "http://teatime.uk/serve.php&milk=true";
-		assertEquals("teatime.uk", UrlUtils.findDomainInString(url));
+        url = "http://teatime.uk/serve.php&milk=true";
+        assertEquals("teatime.uk", UrlUtils.findDomainInString(url));
 
-		url = "bla.de";
-		assertEquals("bla.de", UrlUtils.findDomainInString(url));
+        url = "bla.de";
+        assertEquals("bla.de", UrlUtils.findDomainInString(url));
 
-		url = ".";
-		assertEquals(null, UrlUtils.findDomainInString(url));
+        url = ".";
+        assertEquals(null, UrlUtils.findDomainInString(url));
 
-		url = "..";
-		assertEquals(null, UrlUtils.findDomainInString(url));
+        url = "..";
+        assertEquals(null, UrlUtils.findDomainInString(url));
 
-		url = "de";
-		assertEquals(null, UrlUtils.findDomainInString(url));
+        url = "de";
+        assertEquals(null, UrlUtils.findDomainInString(url));
 
-		url = "http://www.bla.de";
-		assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
+        url = "http://www.bla.de";
+        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
 
-		url = "http://www.bla.de/";
-		assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
+        url = "http://www.bla.de/";
+        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
 
-		url = "http://www.bla..de/";
-		assertEquals(null, UrlUtils.findDomainInString(url));
+        url = "http://www.bla..de/";
+        assertEquals(null, UrlUtils.findDomainInString(url));
 
-		url = "bla.de/blubb";
-		assertEquals("bla.de", UrlUtils.findDomainInString(url));
+        url = "bla.de/blubb";
+        assertEquals("bla.de", UrlUtils.findDomainInString(url));
 
-		url = "http://www.bla.de/blubb.html#fasel";
-		assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
+        url = "http://www.bla.de/blubb.html#fasel";
+        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
 
-		url = "http://user:pass@bla.de/blubb";
-		assertEquals("bla.de", UrlUtils.findDomainInString(url));
+        url = "http://user:pass@bla.de/blubb";
+        assertEquals("bla.de", UrlUtils.findDomainInString(url));
 
-		url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
-		assertEquals("bla.de", UrlUtils.findDomainInString(url));
-	}
+        url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
+        assertEquals("bla.de", UrlUtils.findDomainInString(url));
+    }
 
-	@Test
-	public void testIsSameDomain(){
-		assertTrue(UrlUtils.isSameDomain("facebook.com", "www.facebook.com"));
-		assertTrue(UrlUtils.isSameDomain("facebook.com", "facebook.com"));
-		assertFalse(UrlUtils.isSameDomain("bad-facebook.com", "www.facebook.com"));
-	}
+    @Test
+    public void testIsSameDomain() {
+        assertTrue(UrlUtils.isSameDomain("facebook.com", "www.facebook.com"));
+        assertTrue(UrlUtils.isSameDomain("facebook.com", "facebook.com"));
+        assertFalse(UrlUtils.isSameDomain("bad-facebook.com", "www.facebook.com"));
+    }
 }

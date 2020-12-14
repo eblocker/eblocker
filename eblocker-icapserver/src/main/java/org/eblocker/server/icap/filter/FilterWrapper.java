@@ -16,58 +16,58 @@
  */
 package org.eblocker.server.icap.filter;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.transaction.TransactionContext;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.transaction.TransactionContext;
 
 public class FilterWrapper extends AbstractFilter implements FilterContainer {
 
-	public static Filter wrap(Filter filter) {
-		return new FilterWrapper(filter);
-	}
+    public static Filter wrap(Filter filter) {
+        return new FilterWrapper(filter);
+    }
 
-	private Filter wrapped;
+    private Filter wrapped;
 
-	@JsonCreator
-	private FilterWrapper(@JsonProperty("priority") FilterPriority priority, @JsonProperty("definition") String definition) {
-		super(priority, definition);
-		wrapped = null;
-	}
+    @JsonCreator
+    private FilterWrapper(@JsonProperty("priority") FilterPriority priority, @JsonProperty("definition") String definition) {
+        super(priority, definition);
+        wrapped = null;
+    }
 
-	private FilterWrapper(Filter filter) {
-		super(filter.getPriority(), filter.getDefinition());
-		this.wrapped = filter;
-	}
+    private FilterWrapper(Filter filter) {
+        super(filter.getPriority(), filter.getDefinition());
+        this.wrapped = filter;
+    }
 
-	@Override
-	protected FilterResult doFilter(TransactionContext context) {
-		return wrapped.filter(context);
-	}
+    @Override
+    protected FilterResult doFilter(TransactionContext context) {
+        return wrapped.filter(context);
+    }
 
-	@Override
-	public String toString() {
-		return getMatches()+"/"+(wrapped == null ? "<null>" : wrapped.toString());
-	}
+    @Override
+    public String toString() {
+        return getMatches() + "/" + (wrapped == null ? "<null>" : wrapped.toString());
+    }
 
-	@Override
-	public boolean resolveReferences(FilterStore store) {
-		wrapped = store.get(getDefinition());
-		return wrapped != null;
-	}
+    @Override
+    public boolean resolveReferences(FilterStore store) {
+        wrapped = store.get(getDefinition());
+        return wrapped != null;
+    }
 
-	@Override
-	public void remove(Filter filter) {
-		throw new EblockerException("Cannot remove reference from wrapping filter");
-	}
+    @Override
+    public void remove(Filter filter) {
+        throw new EblockerException("Cannot remove reference from wrapping filter");
+    }
 
-	@Override
-	public void add(Filter filter) {
-		throw new EblockerException("Cannot add new reference to wrapping filter");
-	}
+    @Override
+    public void add(Filter filter) {
+        throw new EblockerException("Cannot add new reference to wrapping filter");
+    }
 
-	@JsonIgnore
+    @JsonIgnore
     @Override
     public String getDomain() {
         return wrapped.getDomain();

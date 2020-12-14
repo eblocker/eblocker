@@ -17,12 +17,11 @@
 package org.eblocker.server.icap.filter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
 @JsonSubTypes({
@@ -35,90 +34,90 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 })
 */
 public abstract class AbstractFilter implements Filter {
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
-	
-	@JsonProperty("priority")
-	private final FilterPriority priority;
-	
-	@JsonProperty("definition")
-	private final String definition;
-	
-	@JsonProperty("matches")
-	private int matches = 0;
-	
-	public AbstractFilter(FilterPriority priority, String definition) {
-		this.priority = priority;
-		this.definition = definition;
-	}
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
-	@Override
-	final public FilterResult filter(TransactionContext context) {
-		FilterResult result = doFilter(context);
-		if (result.getDecision() != Decision.NO_DECISION) {
-			matches++;
-		}
-		return result;
-	}
+    @JsonProperty("priority")
+    private final FilterPriority priority;
 
-	abstract protected FilterResult doFilter(TransactionContext context);
+    @JsonProperty("definition")
+    private final String definition;
 
-	@Override
-	public FilterPriority getPriority() {
-		return priority;
-	}
-	
-	@Override
-	public String getDefinition() {
-		return definition;
-	}
+    @JsonProperty("matches")
+    private int matches = 0;
 
-	@JsonIgnore
+    public AbstractFilter(FilterPriority priority, String definition) {
+        this.priority = priority;
+        this.definition = definition;
+    }
+
+    @Override
+    final public FilterResult filter(TransactionContext context) {
+        FilterResult result = doFilter(context);
+        if (result.getDecision() != Decision.NO_DECISION) {
+            matches++;
+        }
+        return result;
+    }
+
+    abstract protected FilterResult doFilter(TransactionContext context);
+
+    @Override
+    public FilterPriority getPriority() {
+        return priority;
+    }
+
+    @Override
+    public String getDefinition() {
+        return definition;
+    }
+
+    @JsonIgnore
     @Override
     public String getDomain() {
         return null;
     }
 
     @Override
-	public int getMatches() {
-		return matches;
-	}
+    public int getMatches() {
+        return matches;
+    }
 
-	@Override
-	public int compareTo(Filter other) {
-		int c = this.priority.compareTo(other.getPriority());
-		if (c == 0) {
-			c = other.getDefinition().compareTo(this.definition);
-		}
-		return c;
-	}
+    @Override
+    public int compareTo(Filter other) {
+        int c = this.priority.compareTo(other.getPriority());
+        if (c == 0) {
+            c = other.getDefinition().compareTo(this.definition);
+        }
+        return c;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + definition.hashCode();
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + definition.hashCode();
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Filter))
-			return false;
-		Filter other = (Filter) obj;
-		if (!definition.equals(other.getDefinition()))
-			return false;
-		return true;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append(matches).append("\t").append(priority).append("\t").append(definition);
-		return s.toString();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Filter))
+            return false;
+        Filter other = (Filter) obj;
+        if (!definition.equals(other.getDefinition()))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(matches).append("\t").append(priority).append("\t").append(definition);
+        return s.toString();
+    }
 }

@@ -16,12 +16,8 @@
  */
 package org.eblocker.server.http.service;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.dns.DnsResolvers;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
@@ -29,8 +25,12 @@ import org.eblocker.server.common.data.dns.NameServerStats;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class DnsService {
@@ -41,7 +41,7 @@ public class DnsService {
 
     @Inject
     public DnsService(NetworkServices networkServices, NetworkStateMachine networkStateMachine,
-            EblockerDnsServer dnsServer, DnsStatisticsService dnsStatisticsService) {
+                      EblockerDnsServer dnsServer, DnsStatisticsService dnsStatisticsService) {
         this.networkServices = networkServices;
         this.networkStateMachine = networkStateMachine;
         this.dnsServer = dnsServer;

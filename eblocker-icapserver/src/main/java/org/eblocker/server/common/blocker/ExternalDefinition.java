@@ -65,7 +65,8 @@ public class ExternalDefinition {
         this.updateError = updateError;
         this.file = file;
         this.enabled = enabled;
-        this.filterType = filterType == null ? "blacklist" : filterType;;
+        this.filterType = filterType == null ? "blacklist" : filterType;
+        ;
     }
 
     public int getId() {
@@ -178,8 +179,10 @@ public class ExternalDefinition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ExternalDefinition that = (ExternalDefinition) o;
         return id == that.id &&
                 enabled == that.enabled &&

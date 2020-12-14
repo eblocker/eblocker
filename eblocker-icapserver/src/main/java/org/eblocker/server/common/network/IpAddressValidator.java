@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.Table;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -27,14 +30,10 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.IpUtils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.common.collect.Table;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.time.Clock;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -89,8 +88,8 @@ public class IpAddressValidator {
         log.debug("sending requests");
         MessageSender sender = new MessageSender();
         deviceService.getDevices(false).stream()
-            .filter(device -> !device.isVpnClient())
-            .forEach(sender::sendMessages);
+                .filter(device -> !device.isVpnClient())
+                .forEach(sender::sendMessages);
     }
 
     private void checkResponses() {
@@ -104,18 +103,18 @@ public class IpAddressValidator {
                 log.trace("response table: {}", arpResponseTable);
             }
             arpResponseTable.rowMap().entrySet().stream()
-                .map(row -> recentlyActiveIpAddresses(now, row))
-                .filter(e -> !e.ipAddresses.isEmpty())   // only care about online devices
-                .forEach(this::dropInactive);
+                    .map(row -> recentlyActiveIpAddresses(now, row))
+                    .filter(e -> !e.ipAddresses.isEmpty())   // only care about online devices
+                    .forEach(this::dropInactive);
         }
     }
 
     private RecentActivity recentlyActiveIpAddresses(long now, Map.Entry<String, Map<IpAddress, Long>> row) {
         return new RecentActivity(row.getKey(),
-            row.getValue().entrySet().stream()
-                .filter(e -> now - e.getValue() < recentActivityThreshold)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet()));
+                row.getValue().entrySet().stream()
+                        .filter(e -> now - e.getValue() < recentActivityThreshold)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toSet()));
     }
 
     private void dropInactive(RecentActivity recentActivity) {
@@ -132,8 +131,8 @@ public class IpAddressValidator {
             if (deviceIpAddresses.stream().anyMatch(ip -> recentActivity.ipAddresses.contains(ip))) {
                 // Preserve vpn ip addresses for mobile clients
                 deviceIpAddresses.stream()
-                    .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
-                    .forEach(newIpAddresses::add);
+                        .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
+                        .forEach(newIpAddresses::add);
             } else {
                 log.debug("ignoring vpn client {}", recentActivity.hwAddress);
                 return;
@@ -141,7 +140,7 @@ public class IpAddressValidator {
         }
 
         if (recentActivity.ipAddresses.size() == deviceIpAddresses.size()
-            && recentActivity.ipAddresses.containsAll(deviceIpAddresses)) {
+                && recentActivity.ipAddresses.containsAll(deviceIpAddresses)) {
             log.trace("{}: ip-addresses unchanged", recentActivity.hwAddress);
             return;
         }
@@ -155,14 +154,14 @@ public class IpAddressValidator {
 
         Map<IpAddress, Long> row = arpResponseTable.row(recentActivity.hwAddress);
         deviceIpAddresses.stream()
-            .filter(ip -> !recentActivity.ipAddresses.contains(ip))
-            .forEach(row::remove);
+                .filter(ip -> !recentActivity.ipAddresses.contains(ip))
+                .forEach(row::remove);
     }
 
     private void keepIpAddresses(Device device, Set<IpAddress> newIpAddresses) {
         device.setIpAddresses(device.getIpAddresses().stream()
-            .filter(newIpAddresses::contains)
-            .collect(Collectors.toList()));
+                .filter(newIpAddresses::contains)
+                .collect(Collectors.toList()));
     }
 
     private class MessageSender {
@@ -181,7 +180,7 @@ public class IpAddressValidator {
         }
 
         void sendMessages(Device device) {
-            for(IpAddress ipAddress : device.getIpAddresses()) {
+            for (IpAddress ipAddress : device.getIpAddresses()) {
                 byte[] hardwareAddress = DatatypeConverter.parseHexBinary(device.getHardwareAddress(false));
                 if (ipAddress.isIpv4()) {
                     sendArpMessage(hardwareAddress, (Ip4Address) ipAddress);
@@ -203,12 +202,12 @@ public class IpAddressValidator {
 
         private void sendNeighborDiscoverySolicitation(byte[] targetHardwareAddress, Ip6Address targetIpAddress) {
             NeighborSolicitation solicitation = new NeighborSolicitation(
-                eblockerHardwareAddress,
-                eblockerIp6LinkLocalAddress,
-                targetHardwareAddress,
-                targetIpAddress,
-                targetIpAddress,
-                sourceLinkLayerAddressOption);
+                    eblockerHardwareAddress,
+                    eblockerIp6LinkLocalAddress,
+                    targetHardwareAddress,
+                    targetIpAddress,
+                    targetIpAddress,
+                    sourceLinkLayerAddressOption);
             pubSubService.publish("ip6:out", solicitation.toString());
         }
     }

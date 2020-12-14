@@ -16,10 +16,10 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.eblocker.certificate.validator.http.DefaultHttpUrlConnectionBuilderFactory;
-import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import org.bouncycastle.util.io.TeeInputStream;
 import org.bouncycastle.util.io.TeeOutputStream;
+import org.eblocker.certificate.validator.http.DefaultHttpUrlConnectionBuilderFactory;
+import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,7 +277,7 @@ public class CertificateValidatorApp {
     void runServer() throws IOException {
         ServerSocket serverSocket = new ServerSocket(serverPort, 0, InetAddress.getByName("127.0.0.1"));
         STATUS_LOG.info("listening on port {}", serverPort);
-        while(true) { // NOSONAR, serve until killed
+        while (true) { // NOSONAR, serve until killed
             try {
                 Socket socket = serverSocket.accept();
                 STATUS_LOG.info("connection from {}", socket.getRemoteSocketAddress());

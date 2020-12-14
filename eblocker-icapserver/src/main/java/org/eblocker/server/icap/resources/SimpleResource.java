@@ -19,42 +19,42 @@ package org.eblocker.server.icap.resources;
 import java.nio.charset.Charset;
 
 public class SimpleResource implements EblockerResource {
-	
-	private final String name;
-	private final String path;
-	private final Charset charset;
-	
-	public SimpleResource(String path) {
-		this.name = path;
-		this.path = path;
-		this.charset = Charset.forName("UTF-8");
-	}
 
-	public SimpleResource(String name, String path) {
-		this.name = name;
-		this.path = path;
-		this.charset = Charset.forName("UTF-8");
-	}
+    private final String name;
+    private final String path;
+    private final Charset charset;
 
-	public SimpleResource(String name, String path, Charset charset) {
-		this.name = name;
-		this.path = path;
-		this.charset = charset;
-	}
+    public SimpleResource(String path) {
+        this.name = path;
+        this.path = path;
+        this.charset = Charset.forName("UTF-8");
+    }
 
-	@Override
-	public String getPath() {
-		return path;
-	}
+    public SimpleResource(String name, String path) {
+        this.name = name;
+        this.path = path;
+        this.charset = Charset.forName("UTF-8");
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    public SimpleResource(String name, String path, Charset charset) {
+        this.name = name;
+        this.path = path;
+        this.charset = charset;
+    }
 
-	@Override
-	public Charset getCharset() {
-		return charset;
-	}
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Charset getCharset() {
+        return charset;
+    }
 
 }

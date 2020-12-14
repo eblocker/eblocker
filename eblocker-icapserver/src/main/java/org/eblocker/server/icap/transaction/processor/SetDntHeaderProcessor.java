@@ -16,39 +16,39 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.service.FeatureService;
 import org.eblocker.server.common.service.FeatureServiceSubscriber;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.List;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton
-public class SetDntHeaderProcessor implements TransactionProcessor{
+public class SetDntHeaderProcessor implements TransactionProcessor {
     private static final String DNT_HEADER = "DNT";
     private static final String DNT_VALUE = "1";
     private final FeatureService featureService;
 
     @Inject
-    public SetDntHeaderProcessor(FeatureServiceSubscriber featureService){
+    public SetDntHeaderProcessor(FeatureServiceSubscriber featureService) {
         this.featureService = featureService;
     }
 
     @Override
     public boolean process(Transaction transaction) {
-        if(featureService.getDntHeaderState()) {
+        if (featureService.getDntHeaderState()) {
             if (transaction.isResponse()) {
                 // just for requests, because they contain the http header
                 return true;
             }
             List<String> dntHeaders = transaction.getRequest().headers().getAll(DNT_HEADER);
             boolean dntHeaderSet = false;
-            if (dntHeaders.size()!=1){
+            if (dntHeaders.size() != 1) {
                 // no header or multiple headers set
                 dntHeaderSet = true;
             } else {

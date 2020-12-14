@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 
 public class SchemaMigrationVersion29 implements SchemaMigration {
 

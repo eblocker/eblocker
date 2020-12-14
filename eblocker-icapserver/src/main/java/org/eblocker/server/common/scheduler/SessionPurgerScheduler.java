@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.session.SessionPurger;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.session.SessionPurger;
 
 public class SessionPurgerScheduler extends FixedDelayScheduler {
 
     @Inject
     public SessionPurgerScheduler(SessionPurger sessionPurger,
-            @Named("executor.sessionPurger.startupDelay") long startupDelay,
-            @Named("executor.sessionPurger.fixedDelay") long fixedDelay) {
-        
+                                  @Named("executor.sessionPurger.startupDelay") long startupDelay,
+                                  @Named("executor.sessionPurger.fixedDelay") long fixedDelay) {
+
         super(sessionPurger, startupDelay, fixedDelay);
     }
 }

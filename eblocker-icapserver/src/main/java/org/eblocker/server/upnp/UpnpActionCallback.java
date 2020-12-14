@@ -16,13 +16,12 @@
  */
 package org.eblocker.server.upnp;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.fourthline.cling.controlpoint.ActionCallback;
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 public class UpnpActionCallback extends ActionCallback {
 

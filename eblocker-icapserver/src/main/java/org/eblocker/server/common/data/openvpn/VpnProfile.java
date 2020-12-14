@@ -16,46 +16,54 @@
  */
 package org.eblocker.server.common.data.openvpn;
 
-/** This interface can model VPNProfiles. It has quite a huge API to be quite general for future additional implementations of not only OpenVPN,
+/**
+ * This interface can model VPNProfiles. It has quite a huge API to be quite general for future additional implementations of not only OpenVPN,
  * so you dont have to make use of all the available methods, just return a good default value or nullpointer when you dont need a certain method.
  */
 public interface VpnProfile {
 
     /**
      * Get the unique ID of this VpnProfile (which will also be used as the marker for the IP packets in the iptables mangle table)
+     *
      * @return
      */
     Integer getId();
 
     /**
-     *  Get the name of this VPN Profile
+     * Get the name of this VPN Profile
+     *
      * @return
      */
     String getName();
 
     /**
      * Set the name
+     *
      * @param name
      */
     void setName(String name);
 
     /**
      * Get the description for this VPN Profile
+     *
      * @return
      */
     String getDescription();
 
     /**
      * Set the description of this VPN client profile (or the server)
+     *
      * @param desc
      */
     void setDescription(String desc);
 
     /**
      * Get the client config file
+     *
      * @return client config file if available, otherwise null
-
-    File getConfigFile(); */
+     * <p>
+     * File getConfigFile();
+     */
 
     boolean isEnabled();
 
@@ -83,12 +91,14 @@ public interface VpnProfile {
 
     /**
      * Get the login credentials for this VPN account (if needed)
+     *
      * @return login credentials container, null if they are not needed
      */
     VpnLoginCredentials getLoginCredentials();
 
     /**
      * Set the login credentials for this VPN client instance
+     *
      * @param loginCredentials
      */
     void setLoginCredentials(VpnLoginCredentials loginCredentials);

@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
@@ -28,10 +32,6 @@ import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,46 +52,46 @@ import java.util.TreeSet;
 import static org.mockito.Mockito.when;
 
 public class FirewallConfigurationTest {
-	private FirewallConfiguration configuration;
-	private MockDataSource dataSource;
-	private ParentalControlAccessRestrictionsService restrictionsService;
-	private String malwareIpSet;
-	private Environment environment;
-	private File configFullFile;
-	private File configDeltaFile;
-	private NetworkServices networkServices;
+    private FirewallConfiguration configuration;
+    private MockDataSource dataSource;
+    private ParentalControlAccessRestrictionsService restrictionsService;
+    private String malwareIpSet;
+    private Environment environment;
+    private File configFullFile;
+    private File configDeltaFile;
+    private NetworkServices networkServices;
 
-	@Before
-	public void setUp() throws Exception {
-		configFullFile = File.createTempFile("firewall", ".conf");
-		configFullFile.deleteOnExit();
+    @Before
+    public void setUp() throws Exception {
+        configFullFile = File.createTempFile("firewall", ".conf");
+        configFullFile.deleteOnExit();
 
-		configDeltaFile = File.createTempFile("firewall", ".conf.delta");
-		configDeltaFile.deleteOnExit();
+        configDeltaFile = File.createTempFile("firewall", ".conf.delta");
+        configDeltaFile.deleteOnExit();
 
-		dataSource = new MockDataSource();
-		dataSource.setGateway("192.168.0.1");
-		environment = Mockito.mock(Environment.class);
-		Mockito.when(environment.isServer()).thenReturn(false);
+        dataSource = new MockDataSource();
+        dataSource.setGateway("192.168.0.1");
+        environment = Mockito.mock(Environment.class);
+        Mockito.when(environment.isServer()).thenReturn(false);
 
-		malwareIpSet = "unit-test";
+        malwareIpSet = "unit-test";
 
-		networkServices = createNetworkServicesMock("10.8.0.1");
-		restrictionsService = createAccessRestrictionsMock();
-		configuration = new FirewallConfiguration(
-				configFullFile.toString(),
-				configDeltaFile.toString(),
-				"eth2",
-				"tun33",
-				"10.8.0.0",
-				"255.255.255.0",
-				1234,
-				3333,
-				12345,
-				"169.254.7.53/32",
-				"10.0.0.0/8",
-				"172.16.0.0/12",
-				"192.168.0.0/16",
+        networkServices = createNetworkServicesMock("10.8.0.1");
+        restrictionsService = createAccessRestrictionsMock();
+        configuration = new FirewallConfiguration(
+                configFullFile.toString(),
+                configDeltaFile.toString(),
+                "eth2",
+                "tun33",
+                "10.8.0.0",
+                "255.255.255.0",
+                1234,
+                3333,
+                12345,
+                "169.254.7.53/32",
+                "10.0.0.0/8",
+                "172.16.0.0/12",
+                "192.168.0.0/16",
                 "169.254.0.0/16",
                 13,
                 3000,
@@ -100,52 +100,52 @@ public class FirewallConfigurationTest {
                 3003,
                 3004,
                 "139.59.206.208",
-				malwareIpSet,
-				1194,
-				networkServices,
-				dataSource,
-				restrictionsService,
-				environment
-		);
-	}
+                malwareIpSet,
+                1194,
+                networkServices,
+                dataSource,
+                restrictionsService,
+                environment
+        );
+    }
 
-	private NetworkServices createNetworkServicesMock(String vpnIpAddress) {
-		NetworkConfiguration networkConfiguration = Mockito.mock(NetworkConfiguration.class);
-		when(networkConfiguration.getIpAddress()).thenReturn("192.168.0.10");
-		when(networkConfiguration.getNetworkMask()).thenReturn("255.255.255.0");
-		when(networkConfiguration.getVpnIpAddress()).thenReturn(vpnIpAddress);
-		NetworkServices networkServices = Mockito.mock(NetworkServices.class);
-		when(networkServices.getCurrentNetworkConfiguration()).thenReturn(networkConfiguration);
-		return networkServices;
-	}
+    private NetworkServices createNetworkServicesMock(String vpnIpAddress) {
+        NetworkConfiguration networkConfiguration = Mockito.mock(NetworkConfiguration.class);
+        when(networkConfiguration.getIpAddress()).thenReturn("192.168.0.10");
+        when(networkConfiguration.getNetworkMask()).thenReturn("255.255.255.0");
+        when(networkConfiguration.getVpnIpAddress()).thenReturn(vpnIpAddress);
+        NetworkServices networkServices = Mockito.mock(NetworkServices.class);
+        when(networkServices.getCurrentNetworkConfiguration()).thenReturn(networkConfiguration);
+        return networkServices;
+    }
 
-	private ParentalControlAccessRestrictionsService createAccessRestrictionsMock() {
-		ParentalControlAccessRestrictionsService enforcerService = Mockito.mock(ParentalControlAccessRestrictionsService.class);
-		when(enforcerService.isAccessPermitted(Mockito.any())).thenReturn(true);
-		return enforcerService;
-	}
+    private ParentalControlAccessRestrictionsService createAccessRestrictionsMock() {
+        ParentalControlAccessRestrictionsService enforcerService = Mockito.mock(ParentalControlAccessRestrictionsService.class);
+        when(enforcerService.isAccessPermitted(Mockito.any())).thenReturn(true);
+        return enforcerService;
+    }
 
-	@Test
-	public void testEnable() throws IOException {
-		configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
+    @Test
+    public void testEnable() throws IOException {
+        configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
 
-		assertEqualContent("test-data/firewall.conf", configFullFile);
-	}
+        assertEqualContent("test-data/firewall.conf", configFullFile);
+    }
 
-	@Test
-	public void testMasquerade() throws IOException {
-		configuration.enable(new HashSet<>(), new HashSet<>(), true, true, false, true, true, () -> true);
+    @Test
+    public void testMasquerade() throws IOException {
+        configuration.enable(new HashSet<>(), new HashSet<>(), true, true, false, true, true, () -> true);
 
         assertEqualContent("test-data/firewall-masquerade.conf", configFullFile);
-	}
+    }
 
-	@Test
-	public void testDiff() throws IOException {
-		configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
+    @Test
+    public void testDiff() throws IOException {
+        configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
         assertEqualContent("test-data/firewall.conf", configFullFile);
-		configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
+        configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
         assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
-	}
+    }
 
     @Test
     public void testApplyFailure() throws IOException {
@@ -162,11 +162,11 @@ public class FirewallConfigurationTest {
         assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
     }
 
-	@Test
-	public void testDiffSsl() throws IOException {
+    @Test
+    public void testDiffSsl() throws IOException {
         Device a = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", false);
         Device b = TestDeviceFactory.createDevice("bb1122334455", "192.168.0.23", false);
-        Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24",true);
+        Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24", true);
         Device d = TestDeviceFactory.createDevice("dd11223344ff", Arrays.asList("192.168.0.25", "10.8.0.5"), true);
 
         //activate SSL for the devices c and d
@@ -174,19 +174,19 @@ public class FirewallConfigurationTest {
         d.setSslEnabled(true);
 
         Set<Device> allDevices = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
-        allDevices.addAll(Arrays.asList(a,b,c,d));
+        allDevices.addAll(Arrays.asList(a, b, c, d));
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
 
-		// create initial fw-config
-		configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
+        // create initial fw-config
+        configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
         assertEqualContent("test-data/firewall-excluded-devices.conf", configFullFile);
 
         // disable ssl and check delta
-		configuration.enable(allDevices, new HashSet<>(), false, false, false, true, true, () -> true);
+        configuration.enable(allDevices, new HashSet<>(), false, false, false, true, true, () -> true);
         assertEqualContent("test-data/firewall-diff-ssl-disabled.conf", configDeltaFile);
 
         // re-enable ssl and check delta
-		configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
+        configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
         assertEqualContent("test-data/firewall-diff-ssl-enabled.conf", configDeltaFile);
 
         // switch device a <-> c and  b <-> d and check delta
@@ -200,27 +200,27 @@ public class FirewallConfigurationTest {
         d.setEnabled(false);
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
         assertEqualContent("test-data/firewall-diff-ssl-switch.conf", configDeltaFile);
-	}
+    }
 
-	@Test
-	public void testEnableWithExcludedDevices() throws IOException {
+    @Test
+    public void testEnableWithExcludedDevices() throws IOException {
         Device a = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", false);
-		Device b = TestDeviceFactory.createDevice("bb1122334455", "192.168.0.23", false);
-		Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24", true);
-		Device d = TestDeviceFactory.createDevice("dd11223344ff", Arrays.asList("192.168.0.25", "10.8.0.5"), true);
+        Device b = TestDeviceFactory.createDevice("bb1122334455", "192.168.0.23", false);
+        Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24", true);
+        Device d = TestDeviceFactory.createDevice("dd11223344ff", Arrays.asList("192.168.0.25", "10.8.0.5"), true);
 
         //activate SSL for the devices c and d
-		c.setSslEnabled(true);
-		d.setSslEnabled(true);
+        c.setSslEnabled(true);
+        d.setSslEnabled(true);
 
         Set<Device> allDevices = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
-        allDevices.addAll(Arrays.asList(a,b,c,d));
-		configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
+        allDevices.addAll(Arrays.asList(a, b, c, d));
+        configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
 
-		assertEqualContent("test-data/firewall-excluded-devices.conf", configFullFile);
-	}
+        assertEqualContent("test-data/firewall-excluded-devices.conf", configFullFile);
+    }
 
-	@Test
+    @Test
     public void testWithDevicesWithoutIpAddresses() throws IOException {
         Device a = TestDeviceFactory.createDevice("aa25e78b8602", (String) null, true);
         Device b = TestDeviceFactory.createDevice("bb1122334455", (String) null, false);
@@ -232,15 +232,15 @@ public class FirewallConfigurationTest {
         d.setSslEnabled(true);
 
         Set<Device> allDevices = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
-        allDevices.addAll(Arrays.asList(a,b,c,d));
+        allDevices.addAll(Arrays.asList(a, b, c, d));
         configuration.enable(allDevices, new HashSet<>(), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall.conf", configFullFile);
     }
 
-	@Test
-	public void testEnabledVPNProfile() throws IOException{
-		VpnProfile profile = new OpenVpnProfile(1,"OpenVPN profile 1");
+    @Test
+    public void testEnabledVPNProfile() throws IOException {
+        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
         dataSource.addVPNProfile(profile);
 
         OpenVpnClientState client = new OpenVpnClientState();
@@ -248,18 +248,18 @@ public class FirewallConfigurationTest {
         client.setState(OpenVpnClientState.State.ACTIVE);
         client.setVirtualInterfaceName("tun0");
         client.setLinkLocalIpAddress("169.254.8.1");
-		client.setRoute(1);
+        client.setRoute(1);
 
-		configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
+        configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-noclients.conf", configFullFile);
 
-		dataSource.removeAllVPNProfiles();
-	}
+        dataSource.removeAllVPNProfiles();
+    }
 
-	@Test
-	public void testActiveVPNProfileWithOneClient() throws IOException{
-        VpnProfile profile = new OpenVpnProfile(1,"OpenVPN profile 1");
+    @Test
+    public void testActiveVPNProfileWithOneClient() throws IOException {
+        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
         dataSource.addVPNProfile(profile);
 
         OpenVpnClientState client = new OpenVpnClientState();
@@ -267,22 +267,21 @@ public class FirewallConfigurationTest {
         client.setState(OpenVpnClientState.State.ACTIVE);
         client.setVirtualInterfaceName("tun0");
         client.setLinkLocalIpAddress("169.254.8.1");
-		client.setRoute(1);
+        client.setRoute(1);
 
+        Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
+        client.setDevices(Collections.singleton(device.getId()));
 
-		Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
-		client.setDevices(Collections.singleton(device.getId()));
-
-		configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
+        configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-oneclient.conf", configFullFile);
 
         dataSource.removeAllVPNProfiles();
-	}
+    }
 
     @Test
-    public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException{
-        VpnProfile profile = new OpenVpnProfile(1,"OpenVPN profile 1");
+    public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException {
+        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
         dataSource.addVPNProfile(profile);
 
         OpenVpnClientState client = new OpenVpnClientState();
@@ -303,8 +302,8 @@ public class FirewallConfigurationTest {
     }
 
     @Test
-    public void testActiveVPNProfileWhileRestart() throws IOException{
-        VpnProfile profile = new OpenVpnProfile(1,"OpenVPN profile 1");
+    public void testActiveVPNProfileWhileRestart() throws IOException {
+        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
         dataSource.addVPNProfile(profile);
 
         OpenVpnClientState client = new OpenVpnClientState();
@@ -324,22 +323,22 @@ public class FirewallConfigurationTest {
         dataSource.removeAllVPNProfiles();
     }
 
-	@Test
-	public void testStableIterationOrder() throws IOException {
-	    // create some devices
+    @Test
+    public void testStableIterationOrder() throws IOException {
+        // create some devices
         Device a = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         Device b = TestDeviceFactory.createDevice("bb1122334455", "192.168.0.23", true);
-        Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24",true);
-        Device d = TestDeviceFactory.createDevice("dd11223344ff", "192.168.0.25",true);
+        Device c = TestDeviceFactory.createDevice("cc11223344ff", "192.168.0.24", true);
+        Device d = TestDeviceFactory.createDevice("dd11223344ff", "192.168.0.25", true);
         List<Device> devices = Arrays.asList(a, b, c, d);
 
         // create initial config and store it for later assertions
         configuration.enable(new LinkedHashSet<>(devices), Collections.emptyList(), false, true, false, false, true, () -> true);
-        String expected =  FileUtils.readFileToString(configFullFile);
+        String expected = FileUtils.readFileToString(configFullFile);
 
         // create all device permutations and check they all generate exact the same rules
         Collection<List<Device>> permutations = Collections2.permutations(devices);
-        for(List<Device> permutation : permutations) {
+        for (List<Device> permutation : permutations) {
             configuration.enable(new LinkedHashSet<>(permutation), Collections.emptyList(), false, true, false, false, true, () -> true);
             Assert.assertEquals(expected, FileUtils.readFileToString(configFullFile));
             assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
@@ -353,13 +352,13 @@ public class FirewallConfigurationTest {
         assertEqualContent("test-data/firewall-server-openvpn-server-disabled.conf", configFullFile);
     }
 
-	@Test
-	public void testEblockerMobileServerEnabledButServerNotReadyYet_EB1_2251() throws EblockerException, IOException {
-	    networkServices = createNetworkServicesMock(null);
-	    List<Device> devices = setUpEblockerMobileTest();
-	    configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
+    @Test
+    public void testEblockerMobileServerEnabledButServerNotReadyYet_EB1_2251() throws EblockerException, IOException {
+        networkServices = createNetworkServicesMock(null);
+        List<Device> devices = setUpEblockerMobileTest();
+        configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
         assertEqualContent("test-data/firewall-server-openvpn-server-disabled.conf", configFullFile);
-	}
+    }
 
     @Test
     public void testEblockerMobileServerEnabled() throws EblockerException, IOException {
@@ -372,33 +371,33 @@ public class FirewallConfigurationTest {
         Mockito.when(environment.isServer()).thenReturn(true);
 
         configuration = new FirewallConfiguration(
-            configFullFile.toString(),
-            configDeltaFile.toString(),
-            "eth2",
-            "tun33",
-            "10.8.0.0",
-            "255.255.255.0",
-            1234,
-            3333,
-            12345,
-            "169.254.7.53/32",
-            "10.0.0.0/8",
-            "172.16.0.0/12",
-            "192.168.0.0/16",
-            "169.254.0.0/16",
-            13,
-            3000,
-            3443,
-            "169.254.93.109",
-            3003,
-            3004,
-            "139.59.206.208",
-            malwareIpSet,
-            1194,
-            networkServices,
-            dataSource,
-            restrictionsService,
-            environment
+                configFullFile.toString(),
+                configDeltaFile.toString(),
+                "eth2",
+                "tun33",
+                "10.8.0.0",
+                "255.255.255.0",
+                1234,
+                3333,
+                12345,
+                "169.254.7.53/32",
+                "10.0.0.0/8",
+                "172.16.0.0/12",
+                "192.168.0.0/16",
+                "169.254.0.0/16",
+                13,
+                3000,
+                3443,
+                "169.254.93.109",
+                3003,
+                3004,
+                "139.59.206.208",
+                malwareIpSet,
+                1194,
+                networkServices,
+                dataSource,
+                restrictionsService,
+                environment
         );
 
         Device a = TestDeviceFactory.createDevice("aa11223344ff", "192.168.0.21", true);
@@ -412,7 +411,7 @@ public class FirewallConfigurationTest {
         return Arrays.asList(a, b, c);
     }
 
-	@Test
+    @Test
     public void testTorClientsDnsEnabled() throws IOException {
         Device a = createTorDevice("aa25e78b8602", "192.168.0.22", true, true, true);
         Device b = createTorDevice("bb1122334455", "192.168.0.23", true, true, false);
@@ -493,11 +492,11 @@ public class FirewallConfigurationTest {
         assertEqualContent("test-data/firewall-access-restrictions.conf", configFullFile);
     }
 
-	private void assertEqualContent(String expectedClassPathResource, File actualFile) throws IOException {
-		String expected = IOUtils.toString(ClassLoader.getSystemResource(expectedClassPathResource));
-		String actual = FileUtils.readFileToString(actualFile);
-		Assert.assertEquals(expected, actual);
-	}
+    private void assertEqualContent(String expectedClassPathResource, File actualFile) throws IOException {
+        String expected = IOUtils.toString(ClassLoader.getSystemResource(expectedClassPathResource));
+        String actual = FileUtils.readFileToString(actualFile);
+        Assert.assertEquals(expected, actual);
+    }
 
     private Device createTorDevice(String hwAddress, String ipAddress, boolean enabled, boolean useAnonymizationService, boolean routeThroughTor) {
         return createTorDevice(hwAddress, Collections.singletonList(ipAddress), enabled, useAnonymizationService, routeThroughTor);

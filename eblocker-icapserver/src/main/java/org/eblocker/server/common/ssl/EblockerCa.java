@@ -69,6 +69,7 @@ public class EblockerCa {
      * Returns the end of the maximum lifetime of a server certificate.
      * A server certificate can not be valid longer than the CA.
      * In addition its lifetime can not be longer than 825 days.
+     *
      * @return
      */
     public Date getServerNotValidAfter() {

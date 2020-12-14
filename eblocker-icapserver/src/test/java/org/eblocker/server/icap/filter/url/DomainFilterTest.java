@@ -30,7 +30,7 @@ public class DomainFilterTest {
     public void test() {
         String url = "http://world.most.annoying.ads/image/large/overlay";
         Assert.assertEquals(Decision.BLOCK, filter("world.most.annoying.ads", FilterType.BLOCK, url));
-        Assert.assertEquals(Decision.BLOCK, filter("most.annoying.ads", FilterType.BLOCK , url));
+        Assert.assertEquals(Decision.BLOCK, filter("most.annoying.ads", FilterType.BLOCK, url));
         Assert.assertEquals(Decision.BLOCK, filter("annoying.ads", FilterType.BLOCK, url));
         Assert.assertEquals(Decision.NO_DECISION, filter("world.annoying.ads", FilterType.BLOCK, url));
     }
@@ -38,10 +38,10 @@ public class DomainFilterTest {
     private Decision filter(String domain, FilterType type, String url) {
         TransactionContext context = new TestContext(url);
         Filter filter = UrlFilterFactory.getInstance()
-            .setStringMatchType(StringMatchType.DOMAIN)
-            .setDomain(domain)
-            .setType(type)
-            .build();
+                .setStringMatchType(StringMatchType.DOMAIN)
+                .setDomain(domain)
+                .setType(type)
+                .build();
         return filter.filter(context).getDecision();
     }
 

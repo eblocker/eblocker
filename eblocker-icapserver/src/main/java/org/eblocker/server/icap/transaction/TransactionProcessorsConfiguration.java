@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.icap.transaction;
 
-import org.eblocker.server.common.RequireFeature;
-import org.eblocker.server.http.service.ProductInfoService;
-import org.eblocker.server.icap.transaction.processor.RuntimeLoggingProcessor;
-import org.eblocker.registration.ProductInfo;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.RequireFeature;
+import org.eblocker.server.http.service.ProductInfoService;
+import org.eblocker.server.icap.transaction.processor.RuntimeLoggingProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,9 @@ public class TransactionProcessorsConfiguration {
 
     @Inject
     public TransactionProcessorsConfiguration(
-        ProductInfoService productInfoService,
-        @Named("requestProcessors") List<TransactionProcessor> requestProcessors,
-        @Named("responseProcessors") List<TransactionProcessor> responseProcessors
+            ProductInfoService productInfoService,
+            @Named("requestProcessors") List<TransactionProcessor> requestProcessors,
+            @Named("responseProcessors") List<TransactionProcessor> responseProcessors
     ) {
         this.productInfoService = productInfoService;
         this.optimizeLogEnabled = LoggerFactory.getLogger("OPTIMIZE").isInfoEnabled();
@@ -103,7 +103,7 @@ public class TransactionProcessorsConfiguration {
             return true;
         }
 
-        for(String featureName : productFeatures) {
+        for (String featureName : productFeatures) {
             if (featureName.equals(requireFeature.value().name())) {
                 return true;
             }

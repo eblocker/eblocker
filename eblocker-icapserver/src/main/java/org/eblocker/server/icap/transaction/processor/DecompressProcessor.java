@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
-import org.eblocker.server.icap.transaction.ContentEncoding;
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.icap.transaction.TransactionProcessor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.brotli.dec.BrotliInputStream;
+import org.eblocker.server.icap.transaction.ContentEncoding;
+import org.eblocker.server.icap.transaction.Transaction;
+import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

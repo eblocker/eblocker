@@ -34,38 +34,38 @@ public class ScriptRunnerUnixTest {
     private Executor executor;
     private ScriptRunnerUnix runner;
 
-	@Before
-	public void setUp() throws Exception {
-	    executor = Executors.newFixedThreadPool(2);
-		String wrapperPath = ClassLoader.getSystemResource("test-data/script-runner/scriptWrapper.sh").toURI().getPath();
-		new File(wrapperPath).setExecutable(true); // Maven seems to ignore file permissions when copying test resources
-		runner = new ScriptRunnerUnix(wrapperPath, "killCommand", executor);
-	}
+    @Before
+    public void setUp() throws Exception {
+        executor = Executors.newFixedThreadPool(2);
+        String wrapperPath = ClassLoader.getSystemResource("test-data/script-runner/scriptWrapper.sh").toURI().getPath();
+        new File(wrapperPath).setExecutable(true); // Maven seems to ignore file permissions when copying test resources
+        runner = new ScriptRunnerUnix(wrapperPath, "killCommand", executor);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test(expected=IOException.class)
-	public void wrapperNotFound() throws Exception {
-		new ScriptRunnerUnix("noWrapper", "killCommand", executor).runScript("noScript");
-	}
-	
-	@Test
-	public void testReturnValue() throws Exception {
-		int retVal = runner.runScript("foobar");
-		assertEquals(42, retVal);
-	}
+    @Test(expected = IOException.class)
+    public void wrapperNotFound() throws Exception {
+        new ScriptRunnerUnix("noWrapper", "killCommand", executor).runScript("noScript");
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testNullArgument() throws Exception {
-		runner.runScript(null);
-	}
+    @Test
+    public void testReturnValue() throws Exception {
+        int retVal = runner.runScript("foobar");
+        assertEquals(42, retVal);
+    }
 
-	@Test
-	public void testStopScript() throws IOException, InterruptedException {
-	    LoggingProcess p = Mockito.mock(LoggingProcess.class);
-	    runner.stopScript(p);
-	}
+    @Test(expected = NullPointerException.class)
+    public void testNullArgument() throws Exception {
+        runner.runScript(null);
+    }
+
+    @Test
+    public void testStopScript() throws IOException, InterruptedException {
+        LoggingProcess p = Mockito.mock(LoggingProcess.class);
+        runner.stopScript(p);
+    }
 
 }

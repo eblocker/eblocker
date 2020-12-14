@@ -16,43 +16,43 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton
 public class ForwardDecisionProcessor implements TransactionProcessor {
-	@SuppressWarnings("unused")
-	private final static Logger log = LoggerFactory.getLogger(ForwardDecisionProcessor.class);
-	private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
+    @SuppressWarnings("unused")
+    private final static Logger log = LoggerFactory.getLogger(ForwardDecisionProcessor.class);
+    private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
 
-	@Override
-	public boolean process(Transaction transaction) {
-	    Session session = transaction.getSession();
-		Decision decision = session.popForwardDecision(transaction.getUrl());
-		if (decision != Decision.NO_DECISION) {
-			FILTER_LOG.info("{}\tFW\t{}\t{}\t{}", session.getShortId(), decision, transaction.getUrl(), "<<FORWARD-DECISION>>");
-		}
+    @Override
+    public boolean process(Transaction transaction) {
+        Session session = transaction.getSession();
+        Decision decision = session.popForwardDecision(transaction.getUrl());
+        if (decision != Decision.NO_DECISION) {
+            FILTER_LOG.info("{}\tFW\t{}\t{}\t{}", session.getShortId(), decision, transaction.getUrl(), "<<FORWARD-DECISION>>");
+        }
 
-		switch (decision) {
+        switch (decision) {
 
-			case BLOCK:
+            case BLOCK:
                 transaction.block();
                 return false;
 
-			case PASS:
-				return false;
+            case PASS:
+                return false;
 
-			default:
-				return true;
+            default:
+                return true;
 
-		}
-	}
+        }
+    }
 }

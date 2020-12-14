@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 @Singleton
 public class PageContextProcessor implements TransactionProcessor {

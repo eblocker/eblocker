@@ -71,9 +71,9 @@ public class JedisDnsDataSource implements DnsDataSource {
 
             Map<String, List<ResolverEvent>> eventsByResolver = getEventsByResolver(jedis, keys);
             Pipeline pipeline = jedis.pipelined();
-            for(Map.Entry<String, List<ResolverEvent>> e : eventsByResolver.entrySet()) {
+            for (Map.Entry<String, List<ResolverEvent>> e : eventsByResolver.entrySet()) {
                 int index = findLastIndexBefore(t, e.getValue());
-                for(int i = 0; i <= index; ++i) {
+                for (int i = 0; i <= index; ++i) {
                     pipeline.lpop(KEY_PREFIX_EVENTS + e.getKey());
                 }
             }
@@ -108,18 +108,18 @@ public class JedisDnsDataSource implements DnsDataSource {
     private Map<String, List<ResolverEvent>> getEventsByResolver(Jedis jedis, Collection<String> keys) {
         Pipeline pipeline = jedis.pipelined();
         Map<String, Response<List<String>>> responsesByKeys = keys.stream()
-            .collect(Collectors.toMap(key -> key.split(":")[1], key -> pipeline.lrange(key, 0, -1)));
+                .collect(Collectors.toMap(key -> key.split(":")[1], key -> pipeline.lrange(key, 0, -1)));
         pipeline.sync();
 
         return responsesByKeys.entrySet().stream()
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                e -> e.getValue().get().stream().map(ResolverEvent::new).collect(Collectors.toList())));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().get().stream().map(ResolverEvent::new).collect(Collectors.toList())));
     }
 
     private Integer findLastIndexBefore(Instant t, List<ResolverEvent> events) {
         int i = 0;
-        while(i < events.size() && events.get(i).getInstant().isBefore(t)) {
+        while (i < events.size() && events.get(i).getInstant().isBefore(t)) {
             ++i;
         }
         return i - 1;

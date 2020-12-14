@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.data.messagecenter.provider.MessageProviderMessageId;
-import com.google.inject.Inject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,15 +35,15 @@ public class SchemaMigrationVersion16 implements SchemaMigration {
     private final DataSource dataSource;
 
     private static final List<Integer> ALERT_MESSAGE_IDS = Arrays.asList(
-        MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId(),
-        MessageProviderMessageId.MESSAGE_LICENSE_EXPIRED_ID.getId(),
-        MessageProviderMessageId.MESSAGE_CERTIFICATE_EXPIRATION_WARNING.getId(),
-        MessageProviderMessageId.MESSAGE_CERTIFICATE_UNTRUSTED_WARNING.getId()
+            MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId(),
+            MessageProviderMessageId.MESSAGE_LICENSE_EXPIRED_ID.getId(),
+            MessageProviderMessageId.MESSAGE_CERTIFICATE_EXPIRATION_WARNING.getId(),
+            MessageProviderMessageId.MESSAGE_CERTIFICATE_UNTRUSTED_WARNING.getId()
     );
 
     @Inject
     public SchemaMigrationVersion16(
-        DataSource dataSource) {
+            DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -60,26 +60,26 @@ public class SchemaMigrationVersion16 implements SchemaMigration {
     @Override
     public void migrate() {
         List<MessageContainer> messageContainers = dataSource.getAll(MessageContainer.class);
-        for (MessageContainer messageContainer: messageContainers) {
+        for (MessageContainer messageContainer : messageContainers) {
             if (messageContainer.getMessage() != null) {
                 MessageCenterMessage message = messageContainer.getMessage();
                 int id = message.getId();
                 if (ALERT_MESSAGE_IDS.contains(id)) {
                     messageContainer = new MessageContainer(
-                        new MessageCenterMessage(
-                            message.getId(),
-                            message.getTitleKey(),
-                            message.getContentKey(),
-                            message.getActionButtonLabelKey(),
-                            message.getActionButtonUrlKey(),
-                            message.getTitles(),
-                            message.getContents(),
-                            message.getContext(),
-                            message.getDate(),
-                            message.isShowDoNotShowAgain(),
-                            MessageSeverity.ALERT
-                        ),
-                        messageContainer.getVisibility()
+                            new MessageCenterMessage(
+                                    message.getId(),
+                                    message.getTitleKey(),
+                                    message.getContentKey(),
+                                    message.getActionButtonLabelKey(),
+                                    message.getActionButtonUrlKey(),
+                                    message.getTitles(),
+                                    message.getContents(),
+                                    message.getContext(),
+                                    message.getDate(),
+                                    message.isShowDoNotShowAgain(),
+                                    MessageSeverity.ALERT
+                            ),
+                            messageContainer.getVisibility()
                     );
                     dataSource.save(messageContainer, id);
                 }

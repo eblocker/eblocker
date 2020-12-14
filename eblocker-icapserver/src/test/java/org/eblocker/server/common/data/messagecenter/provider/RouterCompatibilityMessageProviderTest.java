@@ -22,7 +22,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RouterCompatibilityMessageProviderTest {
 
@@ -38,7 +39,6 @@ public class RouterCompatibilityMessageProviderTest {
 
         assertEquals(0, messageContainers.size());
 
-
         //
         // Problematic router detected
         //
@@ -50,7 +50,6 @@ public class RouterCompatibilityMessageProviderTest {
         MessageContainer messageContainer = messageContainers.get(MessageProviderMessageId.MESSAGE_ROUTER_PROBLEMATIC_ID.getId());
         assertNotNull(messageContainer);
 
-
         //
         // Problematic router disappeared
         //
@@ -60,7 +59,6 @@ public class RouterCompatibilityMessageProviderTest {
 
         assertEquals(0, messageContainers.size());
 
-
         //
         // Problematic router is back
         //
@@ -69,7 +67,6 @@ public class RouterCompatibilityMessageProviderTest {
         routerCompatibilityMessageProvider.doUpdate(messageContainers);
 
         assertEquals(1, messageContainers.size());
-
 
         //
         // New message provider, without detection result

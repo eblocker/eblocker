@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.WhiteListConfig;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion33Test {
 
@@ -41,42 +40,42 @@ public class SchemaMigrationVersion33Test {
     private SchemaMigration migration;
 
     private UserMigrationService userMigrationService;
-//    private JedisPool jedisPool;
-//    private Jedis jedis;
-//    private ObjectMapper objectMapper;
+    //    private JedisPool jedisPool;
+    //    private Jedis jedis;
+    //    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         dashboardService = new DashboardService(dataSource);
 
-//        jedis = Mockito.mock(Jedis.class);
-//        jedisPool = Mockito.mock(JedisPool.class);
-//        objectMapper = new ObjectMapper();
+        //        jedis = Mockito.mock(Jedis.class);
+        //        jedisPool = Mockito.mock(JedisPool.class);
+        //        objectMapper = new ObjectMapper();
         userMigrationService = Mockito.mock(UserMigrationService.class); // new UserMigrationService(jedisPool, objectMapper);
 
         // Mocks
         // DNS Statistics card for Alice still has old feature "WOL" required
         UserModuleOld userA = generateUserModule(1, 1, "alice", true, ProductFeature.WOL);
-//        String userAJson = objectMapper.writeValueAsString(userA);
+        //        String userAJson = objectMapper.writeValueAsString(userA);
         // eBlocker Mobile card for Bob already has new feature "PRO" required
         UserModuleOld userB = generateUserModule(2, 2, "bob", false, null);
-//        String userBJson = objectMapper.writeValueAsString(userB);
+        //        String userBJson = objectMapper.writeValueAsString(userB);
         List<UserModuleOld> userList = new ArrayList<>();
         userList.add(userA);
         userList.add(userB);
 
         Mockito.when(userMigrationService.getAll()).thenReturn(userList);
 
-//        TreeSet<String> keys = new TreeSet<>();
-//        keys.add("UserModule:1");
-//        keys.add("UserModule:2");
+        //        TreeSet<String> keys = new TreeSet<>();
+        //        keys.add("UserModule:1");
+        //        keys.add("UserModule:2");
 
         // Mock direct access to data store
-//        Mockito.when(jedis.get("UserModule:1")).thenReturn(userAJson);
-//        Mockito.when(jedis.get("UserModule:2")).thenReturn(userBJson);
-//        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
-//        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
+        //        Mockito.when(jedis.get("UserModule:1")).thenReturn(userAJson);
+        //        Mockito.when(jedis.get("UserModule:2")).thenReturn(userBJson);
+        //        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
+        //        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
 
         migration = new SchemaMigrationVersion33(dataSource, dashboardService, userMigrationService);
     }
@@ -112,7 +111,7 @@ public class SchemaMigrationVersion33Test {
     }
 
     private UserModuleOld generateUserModule(int id, int associatedProfileId, String name, boolean changeRequiredFeature,
-            ProductFeature newRequiredFeatre) {
+                                             ProductFeature newRequiredFeatre) {
         DashboardService realDashboardService = new DashboardService(dataSource);
         List<DashboardCard> dashboardCards = realDashboardService.generateDashboardCards();
         // The DNS Statistics card is expected to still show "WOL" as the

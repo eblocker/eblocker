@@ -16,9 +16,6 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.util.UrlUtils;
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import io.netty.channel.ChannelFutureListener;
@@ -29,11 +26,13 @@ import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
-
 import java.math.BigInteger;
 
 @ChannelHandler.Sharable
@@ -97,8 +96,8 @@ public class SslTestRequestHandler extends SimpleChannelInboundHandler<HttpReque
     private HttpResponse createResponse(HttpRequest request) {
         HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
         response.headers()
-            .set("Access-Control-Allow-Origin", "*")
-            .set("Content-Type", "text/plain");
+                .set("Access-Control-Allow-Origin", "*")
+                .set("Content-Type", "text/plain");
         return response;
     }
 

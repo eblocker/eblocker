@@ -36,7 +36,7 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
 
     public String getName() {
         StringBuilder sb = new StringBuilder("(or");
-        for(DomainFilter filter : filters) {
+        for (DomainFilter filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }
@@ -57,10 +57,10 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return Stream.of(filters)
-            .map(filter -> filter.isBlocked(domain))
-            .filter(FilterDecision::isBlocked)
-            .findFirst()
-            .orElse(new FilterDecision<>(domain, false, this));
+                .map(filter -> filter.isBlocked(domain))
+                .filter(FilterDecision::isBlocked)
+                .findFirst()
+                .orElse(new FilterDecision<>(domain, false, this));
     }
 
     @Override

@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller;
 
-import java.io.IOException;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
+
+import java.io.IOException;
 
 public interface FactoryResetController {
     void factoryReset(Request request, Response response) throws IOException, InterruptedException;

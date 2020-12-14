@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.WhiteListConfig;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,10 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class SchemaMigrationVersion31Test {
 
@@ -56,17 +59,17 @@ public class SchemaMigrationVersion31Test {
         int userId = 1003; // id for new default system user
         UserModuleOld standardUser = createStandardUser(null, null, null);
         setMocks(
-            standardUser,
-            userId,
-            createDeviceForUser(standardUser, standardUser, null)
+                standardUser,
+                userId,
+                createDeviceForUser(standardUser, standardUser, null)
         );
 
         migration.migrate();
 
         verifyMocks(
-            userId, // expected assigned user
-            userId, // expected operating user
-            userId  // expected (new) default system user
+                userId, // expected assigned user
+                userId, // expected operating user
+                userId  // expected (new) default system user
         );
     }
 
@@ -76,17 +79,17 @@ public class SchemaMigrationVersion31Test {
         UserModuleOld standardUser = createStandardUser(null, null, null);
         UserModuleOld realUser = createRealUser(2345);
         setMocks(
-            standardUser,
-            userId,
-            createDeviceForUser(realUser, realUser, null)
+                standardUser,
+                userId,
+                createDeviceForUser(realUser, realUser, null)
         );
 
         migration.migrate();
 
         verifyMocks(
-            realUser.getId(), // expected assigned user
-            realUser.getId(), // expected operating user
-            userId            // expected (new) default system user
+                realUser.getId(), // expected assigned user
+                realUser.getId(), // expected operating user
+                userId            // expected (new) default system user
         );
     }
 
@@ -97,17 +100,17 @@ public class SchemaMigrationVersion31Test {
         UserModuleOld assignedUser = createRealUser(777);
         UserModuleOld operatingUser = createRealUser(9999);
         setMocks(
-            standardUser,
-            userId,
-            createDeviceForUser(assignedUser, operatingUser, null)
+                standardUser,
+                userId,
+                createDeviceForUser(assignedUser, operatingUser, null)
         );
 
         migration.migrate();
 
         verifyMocks(
-            assignedUser.getId(), // expected assigned user
-            operatingUser.getId(), // expected operating user
-            userId            // expected (new) default system user
+                assignedUser.getId(), // expected assigned user
+                operatingUser.getId(), // expected operating user
+                userId            // expected (new) default system user
         );
     }
 
@@ -117,9 +120,9 @@ public class SchemaMigrationVersion31Test {
         UserModuleOld standardUser = createStandardUser(null, null, null);
         UserModuleOld systemUser = createSystemUser(userId);
         setMocks(
-            standardUser,
-            userId,
-            createDeviceForUser(systemUser, systemUser, systemUser)
+                standardUser,
+                userId,
+                createDeviceForUser(systemUser, systemUser, systemUser)
         );
 
         migration.migrate();
@@ -159,57 +162,57 @@ public class SchemaMigrationVersion31Test {
     }
 
     private UserModuleOld createStandardUser(
-        Map<String, WhiteListConfig> whiteListConfigByDomains,
-        List<DashboardCard> dashboardCards,
-        Integer plugAndPlayFilterWhitelistId
+            Map<String, WhiteListConfig> whiteListConfigByDomains,
+            List<DashboardCard> dashboardCards,
+            Integer plugAndPlayFilterWhitelistId
     ) {
         return new UserModuleOld(
-            DefaultEntities.PARENTAL_CONTROL_DEFAULT_USER_ID,
-            1,
-            "old-standard-user",
-            "name-key",
-            null,
-            null,
-            true,
-            null,
-            whiteListConfigByDomains,
-            dashboardCards,
-            plugAndPlayFilterWhitelistId,
-            null
+                DefaultEntities.PARENTAL_CONTROL_DEFAULT_USER_ID,
+                1,
+                "old-standard-user",
+                "name-key",
+                null,
+                null,
+                true,
+                null,
+                whiteListConfigByDomains,
+                dashboardCards,
+                plugAndPlayFilterWhitelistId,
+                null
         );
     }
 
     private UserModuleOld createRealUser(int userId) {
         return new UserModuleOld(
-            userId,
-            1,
-            "real-user-" + userId,
-            "name-key",
-            null,
-            null,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null
+                userId,
+                1,
+                "real-user-" + userId,
+                "name-key",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 
     private UserModuleOld createSystemUser(int userId) {
         return new UserModuleOld(
-            userId,
-            1,
-            "system-user-" + userId,
-            "name-key",
-            null,
-            null,
-            true,
-            null,
-            null,
-            null,
-            null,
-            null
+                userId,
+                1,
+                "system-user-" + userId,
+                "name-key",
+                null,
+                null,
+                true,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 

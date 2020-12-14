@@ -16,14 +16,16 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.data.DataSource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ProductInfoServiceTest {
 

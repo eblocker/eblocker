@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.dns.DnsServerConfig;
 import org.eblocker.server.common.data.dns.EblockerDnsServerState;
-import com.google.inject.Inject;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Creates EblockerDnsServerState based on current config
@@ -39,8 +38,8 @@ public class SchemaMigrationVersion15 implements SchemaMigration {
 
     @Inject
     public SchemaMigrationVersion15(
-        DataSource dataSource,
-        JedisPool jedisPool) {
+            DataSource dataSource,
+            JedisPool jedisPool) {
         this.dataSource = dataSource;
         this.jedisPool = jedisPool;
     }
@@ -80,12 +79,12 @@ public class SchemaMigrationVersion15 implements SchemaMigration {
 
     private Map<String, String> mapToResolverById(Map<String, String> resolverByIp) {
         Map<String, String> deviceIdByIp = dataSource.getDevices().stream()
-            .filter(d -> !d.getIpAddresses().isEmpty())
-            .collect(Collectors.toMap(d -> d.getIpAddresses().get(0).toString(), Device::getId));
+                .filter(d -> !d.getIpAddresses().isEmpty())
+                .collect(Collectors.toMap(d -> d.getIpAddresses().get(0).toString(), Device::getId));
 
         return resolverByIp.entrySet().stream()
-            .map(e -> new AbstractMap.SimpleEntry<>(deviceIdByIp.get(e.getKey()), e.getValue()))
-            .filter(e -> e.getKey() != null)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(e -> new AbstractMap.SimpleEntry<>(deviceIdByIp.get(e.getKey()), e.getValue()))
+                .filter(e -> e.getKey() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

@@ -62,14 +62,14 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testConnectionOk() throws InterruptedException {
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1600, 64, "8.8.8.8", 5, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1500, 64, "8.8.8.8", 6, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1400, 64, "8.8.8.8", 7, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1300, 64, "8.8.8.8", 8, 112, 25.2f)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1600, 64, "8.8.8.8", 5, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1500, 64, "8.8.8.8", 6, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1400, 64, "8.8.8.8", 7, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1300, 64, "8.8.8.8", 8, 112, 25.2f)
         );
 
         keepAlive.start();
@@ -81,18 +81,18 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testConnectionFlakyButAboveThreshold() throws InterruptedException {
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1600, 5),
-            lineNoReply(System.currentTimeMillis() - 1500, 6),
-            lineNoReply(System.currentTimeMillis() - 1400, 7),
-            lineNoReply(System.currentTimeMillis() - 1300, 8),
-            lineReply(System.currentTimeMillis() - 1200, 64, "8.8.8.8", 9, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1100, 10),
-            lineNoReply(System.currentTimeMillis() - 1000, 11),
-            lineNoReply(System.currentTimeMillis() - 900, 12)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1600, 5),
+                lineNoReply(System.currentTimeMillis() - 1500, 6),
+                lineNoReply(System.currentTimeMillis() - 1400, 7),
+                lineNoReply(System.currentTimeMillis() - 1300, 8),
+                lineReply(System.currentTimeMillis() - 1200, 64, "8.8.8.8", 9, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1100, 10),
+                lineNoReply(System.currentTimeMillis() - 1000, 11),
+                lineNoReply(System.currentTimeMillis() - 900, 12)
         );
 
         keepAlive.start();
@@ -104,16 +104,16 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testConnectionDead() throws InterruptedException {
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1600, 5),
-            lineNoReply(System.currentTimeMillis() - 1500, 6),
-            lineNoReply(System.currentTimeMillis() - 1400, 7),
-            lineNoReply(System.currentTimeMillis() - 1300, 8),
-            lineNoReply(System.currentTimeMillis() - 1100, 9),
-            lineNoReply(System.currentTimeMillis() - 1000, 10)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1600, 5),
+                lineNoReply(System.currentTimeMillis() - 1500, 6),
+                lineNoReply(System.currentTimeMillis() - 1400, 7),
+                lineNoReply(System.currentTimeMillis() - 1300, 8),
+                lineNoReply(System.currentTimeMillis() - 1100, 9),
+                lineNoReply(System.currentTimeMillis() - 1000, 10)
         );
 
         keepAlive.start();
@@ -160,15 +160,15 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testStopAfterCallback() throws InterruptedException, IOException {
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1600, 5),
-            lineNoReply(System.currentTimeMillis() - 1500, 6),
-            lineNoReply(System.currentTimeMillis() - 1400, 7),
-            lineNoReply(System.currentTimeMillis() - 1300, 8),
-            lineNoReply(System.currentTimeMillis() - 1200, 9)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1600, 5),
+                lineNoReply(System.currentTimeMillis() - 1500, 6),
+                lineNoReply(System.currentTimeMillis() - 1400, 7),
+                lineNoReply(System.currentTimeMillis() - 1300, 8),
+                lineNoReply(System.currentTimeMillis() - 1200, 9)
         );
         keepAlive.start();
         Mockito.verify(executor).execute(executorCaptor.capture());
@@ -181,21 +181,21 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testNoRepeatedCallbacks() throws InterruptedException, IOException {
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1600, 5),
-            lineNoReply(System.currentTimeMillis() - 1500, 6),
-            lineNoReply(System.currentTimeMillis() - 1400, 7),
-            lineNoReply(System.currentTimeMillis() - 1300, 8),
-            lineNoReply(System.currentTimeMillis() - 1200, 9),
-            lineReply(System.currentTimeMillis() - 1100, 64, "8.8.8.8", 10, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1000, 11),
-            lineNoReply(System.currentTimeMillis() - 900, 12),
-            lineNoReply(System.currentTimeMillis() - 800, 13),
-            lineNoReply(System.currentTimeMillis() - 700, 14),
-            lineNoReply(System.currentTimeMillis() - 600, 15)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1600, 5),
+                lineNoReply(System.currentTimeMillis() - 1500, 6),
+                lineNoReply(System.currentTimeMillis() - 1400, 7),
+                lineNoReply(System.currentTimeMillis() - 1300, 8),
+                lineNoReply(System.currentTimeMillis() - 1200, 9),
+                lineReply(System.currentTimeMillis() - 1100, 64, "8.8.8.8", 10, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1000, 11),
+                lineNoReply(System.currentTimeMillis() - 900, 12),
+                lineNoReply(System.currentTimeMillis() - 800, 13),
+                lineNoReply(System.currentTimeMillis() - 700, 14),
+                lineNoReply(System.currentTimeMillis() - 600, 15)
         );
 
         keepAlive.start();
@@ -210,20 +210,20 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testStopTwice() throws InterruptedException, IOException {
         Mockito.doAnswer(im -> {
-                keepAlive.stop();
-                return null;
+            keepAlive.stop();
+            return null;
         }).when(callback).run();
 
         setupProcessOutput(
-            lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
-            lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
-            lineNoReply(System.currentTimeMillis() - 1600, 5),
-            lineNoReply(System.currentTimeMillis() - 1500, 6),
-            lineNoReply(System.currentTimeMillis() - 1400, 7),
-            lineNoReply(System.currentTimeMillis() - 1300, 8),
-            lineNoReply(System.currentTimeMillis() - 1200, 9)
+                lineReply(System.currentTimeMillis() - 2000, 64, "8.8.8.8", 1, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1900, 64, "8.8.8.8", 2, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1800, 64, "8.8.8.8", 3, 112, 25.2f),
+                lineReply(System.currentTimeMillis() - 1700, 64, "8.8.8.8", 4, 112, 25.2f),
+                lineNoReply(System.currentTimeMillis() - 1600, 5),
+                lineNoReply(System.currentTimeMillis() - 1500, 6),
+                lineNoReply(System.currentTimeMillis() - 1400, 7),
+                lineNoReply(System.currentTimeMillis() - 1300, 8),
+                lineNoReply(System.currentTimeMillis() - 1200, 9)
         );
 
         keepAlive.start();

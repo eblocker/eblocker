@@ -18,6 +18,7 @@ package org.eblocker.server.common.network.icmpv6;
 
 public abstract class Option {
     private int type;
+
     public Option(int type) {
         this.type = type;
     }

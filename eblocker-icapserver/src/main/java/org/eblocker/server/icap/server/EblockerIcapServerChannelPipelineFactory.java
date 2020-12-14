@@ -16,22 +16,20 @@
  */
 package org.eblocker.server.icap.server;
 
-import org.eblocker.server.icap.logging.EblockerLoggingHandler;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-
 import ch.mimo.netty.handler.codec.icap.IcapChunkAggregator;
 import ch.mimo.netty.handler.codec.icap.IcapChunkSeparator;
 import ch.mimo.netty.handler.codec.icap.IcapRequestDecoder;
 import ch.mimo.netty.handler.codec.icap.IcapResponseEncoder;
-
-import org.eblocker.server.icap.ch.mimo.icap.IcapRequestHandler;
-import org.eblocker.server.icap.ch.mimo.icap.IcapResponseHandler;
-import org.eblocker.server.icap.transaction.TransactionHandler;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import org.eblocker.server.icap.ch.mimo.icap.IcapRequestHandler;
+import org.eblocker.server.icap.ch.mimo.icap.IcapResponseHandler;
+import org.eblocker.server.icap.logging.EblockerLoggingHandler;
+import org.eblocker.server.icap.transaction.TransactionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +37,22 @@ public class EblockerIcapServerChannelPipelineFactory extends ChannelInitializer
 
     private static final Logger ICAP_LOG = LoggerFactory.getLogger("ICAP");
 
-	// Configuration parameters:
-	@Inject @Named("maxAggregationSize")   long maxAggregationSize;
-	@Inject @Named("maxInitialLineLength") int maxInitialLineLength;
-	@Inject @Named("maxIcapHeaderSize")    int maxIcapHeaderSize;
-	@Inject @Named("maxHttpHeaderSize")    int maxHttpHeaderSize;
-	@Inject @Named("maxChunkSize")         int maxChunkSize;
+    // Configuration parameters:
+    @Inject
+    @Named("maxAggregationSize")
+    long maxAggregationSize;
+    @Inject
+    @Named("maxInitialLineLength")
+    int maxInitialLineLength;
+    @Inject
+    @Named("maxIcapHeaderSize")
+    int maxIcapHeaderSize;
+    @Inject
+    @Named("maxHttpHeaderSize")
+    int maxHttpHeaderSize;
+    @Inject
+    @Named("maxChunkSize")
+    int maxChunkSize;
 
     private ChannelHandler logger = new EblockerLoggingHandler();
     private ChannelHandler icapRequestor = new IcapRequestHandler();

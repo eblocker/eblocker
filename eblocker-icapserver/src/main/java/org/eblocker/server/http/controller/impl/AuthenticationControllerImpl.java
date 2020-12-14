@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.SessionStore;
@@ -28,9 +31,6 @@ import org.eblocker.server.http.security.SecurityService;
 import org.eblocker.server.http.security.TokenInfo;
 import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -40,7 +40,7 @@ public class AuthenticationControllerImpl extends SessionContextController imple
 
     @Inject
     public AuthenticationControllerImpl(SecurityService securityService, SessionStore sessionStore,
-            PageContextStore pageContextStore) {
+                                        PageContextStore pageContextStore) {
         super(sessionStore, pageContextStore);
         this.securityService = securityService;
     }

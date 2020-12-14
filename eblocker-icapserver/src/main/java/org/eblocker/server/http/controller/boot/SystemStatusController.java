@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.controller.boot;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.UnauthorizedException;

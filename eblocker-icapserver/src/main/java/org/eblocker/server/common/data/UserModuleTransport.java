@@ -24,104 +24,104 @@ import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserModuleTransport {
-	private Integer id;
-	private Integer associatedProfileId;
-	private String name;
-	private String nameKey;
-	private LocalDate birthday;
+    private Integer id;
+    private Integer associatedProfileId;
+    private String name;
+    private String nameKey;
+    private LocalDate birthday;
     private UserRole userRole;
-	private boolean system;
-	private boolean containsPin;
-	private String oldPin;
-	private String newPin;
+    private boolean system;
+    private boolean containsPin;
+    private String oldPin;
+    private String newPin;
 
     @JsonCreator
-	public UserModuleTransport(@JsonProperty("id") Integer id,
-			@JsonProperty("associatedProfileId") Integer associatedProfileId,
-			@JsonProperty("name") String name,
-			@JsonProperty("nameKey") String nameKey,
-			@JsonProperty("birthday") LocalDate birthday,
-			@JsonProperty("userRole") UserRole userRole,
-			@JsonProperty("system") boolean system,
-			@JsonProperty("containsPin") boolean containsPin,
-			@JsonProperty("oldPin") String oldPin,
-			@JsonProperty("newPin") String newPin) {
-		this.id = id;
-		this.associatedProfileId = associatedProfileId;
-		this.name = name;
-		this.nameKey = nameKey;
-		this.birthday = birthday;
-		this.userRole = userRole;
-		this.system = system;
-		this.containsPin = containsPin;
-		this.oldPin = oldPin;
+    public UserModuleTransport(@JsonProperty("id") Integer id,
+                               @JsonProperty("associatedProfileId") Integer associatedProfileId,
+                               @JsonProperty("name") String name,
+                               @JsonProperty("nameKey") String nameKey,
+                               @JsonProperty("birthday") LocalDate birthday,
+                               @JsonProperty("userRole") UserRole userRole,
+                               @JsonProperty("system") boolean system,
+                               @JsonProperty("containsPin") boolean containsPin,
+                               @JsonProperty("oldPin") String oldPin,
+                               @JsonProperty("newPin") String newPin) {
+        this.id = id;
+        this.associatedProfileId = associatedProfileId;
+        this.name = name;
+        this.nameKey = nameKey;
+        this.birthday = birthday;
+        this.userRole = userRole;
+        this.system = system;
+        this.containsPin = containsPin;
+        this.oldPin = oldPin;
 
-		this.newPin = newPin;
-	}
+        this.newPin = newPin;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getAssociatedProfileId() {
-		return associatedProfileId;
-	}
+    public Integer getAssociatedProfileId() {
+        return associatedProfileId;
+    }
 
-	public void setAssociatedProfileId(Integer associatedProfileId) {
-		this.associatedProfileId = associatedProfileId;
-	}
+    public void setAssociatedProfileId(Integer associatedProfileId) {
+        this.associatedProfileId = associatedProfileId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getNameKey() {
-		return nameKey;
-	}
+    public String getNameKey() {
+        return nameKey;
+    }
 
-	public void setNameKey(String nameKey) {
-		this.nameKey = nameKey;
-	}
+    public void setNameKey(String nameKey) {
+        this.nameKey = nameKey;
+    }
 
-	public boolean isSystem() {
-		return system;
-	}
+    public boolean isSystem() {
+        return system;
+    }
 
-	public void setSystem(boolean system) {
-		this.system = system;
-	}
+    public void setSystem(boolean system) {
+        this.system = system;
+    }
 
-	public boolean containsPin() {
-		return containsPin;
-	}
+    public boolean containsPin() {
+        return containsPin;
+    }
 
-	public void setContainsPin(boolean containsPin) {
-		this.containsPin= containsPin;
-	}
+    public void setContainsPin(boolean containsPin) {
+        this.containsPin = containsPin;
+    }
 
-	public String getOldPin() {
-		return oldPin;
-	}
+    public String getOldPin() {
+        return oldPin;
+    }
 
-	public void setOldPin(String oldPin) {
-		this.oldPin = oldPin;
-	}
+    public void setOldPin(String oldPin) {
+        this.oldPin = oldPin;
+    }
 
-	public String getNewPin() {
-		return newPin;
-	}
+    public String getNewPin() {
+        return newPin;
+    }
 
-	public void setNewPin(String newPin) {
-		this.newPin = newPin;
-	}
+    public void setNewPin(String newPin) {
+        this.newPin = newPin;
+    }
 
     public LocalDate getBirthday() {
         return birthday;

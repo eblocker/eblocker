@@ -43,7 +43,7 @@ public class LoggingProcessUnixTest {
     public void testWaitFor() throws IOException, InterruptedException {
         LoggingProcessUnix process = new LoggingProcessUnix("testWaitFor", executorService);
         long start = System.currentTimeMillis();
-        process.start(new String[] { "/bin/bash", "-c", "sleep 1"});
+        process.start(new String[]{ "/bin/bash", "-c", "sleep 1" });
         Assert.assertEquals(0, process.waitFor());
         long elapsed = System.currentTimeMillis() - start;
         Assert.assertTrue(elapsed >= 1000);
@@ -52,7 +52,7 @@ public class LoggingProcessUnixTest {
     @Test
     public void testGetPid() throws IOException, InterruptedException {
         LoggingProcessUnix process = new LoggingProcessUnix("testGetPid", executorService);
-        process.start(new String[] { "/bin/bash", "-c", "echo $$"});
+        process.start(new String[]{ "/bin/bash", "-c", "echo $$" });
         Assert.assertEquals(0, process.waitFor());
         String output = process.pollStdout();
         Assert.assertNotNull(output);
@@ -62,7 +62,7 @@ public class LoggingProcessUnixTest {
     @Test(timeout = 5000)
     public void testPollStdout() throws IOException, InterruptedException {
         LoggingProcessUnix process = new LoggingProcessUnix("testPollStdout", executorService);
-        process.start(new String[] { "/bin/bash", "-c", "sleep 1; echo line 1; sleep 1; echo line 2"});
+        process.start(new String[]{ "/bin/bash", "-c", "sleep 1; echo line 1; sleep 1; echo line 2" });
         Assert.assertNull(process.pollStdout());
         Thread.sleep(1200);
         Assert.assertEquals("line 1", process.pollStdout());
@@ -75,7 +75,7 @@ public class LoggingProcessUnixTest {
     @Test(timeout = 5000)
     public void testTakeStdout() throws IOException, InterruptedException {
         LoggingProcessUnix process = new LoggingProcessUnix("testTakeStdout", executorService);
-        process.start(new String[] { "/bin/bash", "-c", "sleep 1; echo line 1; sleep 1; echo line 2"});
+        process.start(new String[]{ "/bin/bash", "-c", "sleep 1; echo line 1; sleep 1; echo line 2" });
         Assert.assertEquals("line 1", process.takeStdout());
         Assert.assertEquals("line 2", process.takeStdout());
         Assert.assertNull(process.takeStdout());

@@ -18,7 +18,7 @@ package org.eblocker.server.common.data.openvpn;
 
 public enum PortForwardingMode {
     AUTO, MANUAL;
-    
+
     public static PortForwardingMode getDefault() {
         return AUTO;
     }

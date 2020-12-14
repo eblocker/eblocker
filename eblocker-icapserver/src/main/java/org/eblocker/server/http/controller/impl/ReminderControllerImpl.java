@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.eblocker.server.http.controller.ReminderController;
 import org.eblocker.server.common.data.ExpirationDate;
 import org.eblocker.server.common.data.NextReminderSelection;
+import org.eblocker.server.http.controller.ReminderController;
+import org.eblocker.server.http.service.ReminderService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.http.service.ReminderService;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class ReminderControllerImpl implements ReminderController {
@@ -41,7 +40,7 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @SuppressWarnings("unused")
-    public ExpirationDate getExpirationDate(Request request, Response response){
+    public ExpirationDate getExpirationDate(Request request, Response response) {
         return reminderService.getExpirationDate();
     }
 

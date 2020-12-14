@@ -36,7 +36,6 @@ public class SplashControllerImpl implements SplashController {
         this.splashService = splashService;
     }
 
-
     @Override
     public boolean get(Request request, Response response) {
         return splashService.get();

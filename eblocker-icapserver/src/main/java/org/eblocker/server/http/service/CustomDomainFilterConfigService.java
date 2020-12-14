@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -55,8 +55,8 @@ public class CustomDomainFilterConfigService {
         }
 
         return new CustomDomainFilterConfig(
-            getDomains(user.getCustomBlacklistId()),
-            getDomains(user.getCustomWhitelistId()));
+                getDomains(user.getCustomBlacklistId()),
+                getDomains(user.getCustomWhitelistId()));
     }
 
     public CustomDomainFilterConfig setCustomDomainFilterConfig(int userId, CustomDomainFilterConfig customDomainFilterConfig) {
@@ -66,9 +66,9 @@ public class CustomDomainFilterConfigService {
         }
 
         Integer blacklistId = updateDnsFilter(user.getCustomBlacklistId(), userId, "blacklist", customDomainFilterConfig
-            .getBlacklistedDomains());
+                .getBlacklistedDomains());
         Integer whitelistId = updateDnsFilter(user.getCustomWhitelistId(), userId, "whitelist", customDomainFilterConfig
-            .getWhitelistedDomains());
+                .getWhitelistedDomains());
         if (!Objects.equals(blacklistId, user.getCustomBlacklistId()) || !Objects.equals(whitelistId, user.getCustomWhitelistId())) {
             userService.updateUser(user.getId(), blacklistId, whitelistId);
         }
@@ -102,34 +102,34 @@ public class CustomDomainFilterConfigService {
         Instant now = Instant.now();
         if (data == null) {
             data = filterListsService.createFilterList(
-                new ParentalControlFilterSummaryData(
-                    null,
-                    null,
-                    null,
-                    now.toString(),
-                    Date.from(now),
-                    type,
-                    false,
-                    false,
-                    new ArrayList<>(domains),
-                    "user-" + userId + "-" + type,
-                    "user-" + userId + "-" + type,
-                    Category.CUSTOM),
-                type);
+                    new ParentalControlFilterSummaryData(
+                            null,
+                            null,
+                            null,
+                            now.toString(),
+                            Date.from(now),
+                            type,
+                            false,
+                            false,
+                            new ArrayList<>(domains),
+                            "user-" + userId + "-" + type,
+                            "user-" + userId + "-" + type,
+                            Category.CUSTOM),
+                    type);
         } else {
             data = new ParentalControlFilterSummaryData(
-                data.getId(),
-                data.getName(),
-                data.getDescription(),
-                now.toString(),
-                Date.from(now),
-                data.getFilterType(),
-                data.isBuiltin(),
-                data.isDisabled(),
-                new ArrayList<>(domains),
-                data.getCustomerCreatedName(),
-                data.getCustomerCreatedDescription(),
-                data.getCategory());
+                    data.getId(),
+                    data.getName(),
+                    data.getDescription(),
+                    now.toString(),
+                    Date.from(now),
+                    data.getFilterType(),
+                    data.isBuiltin(),
+                    data.isDisabled(),
+                    new ArrayList<>(domains),
+                    data.getCustomerCreatedName(),
+                    data.getCustomerCreatedDescription(),
+                    data.getCategory());
             data = filterListsService.updateFilterList(data, data.getFilterType());
         }
 

@@ -50,20 +50,21 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
             }
         }).start();
 
-        Thread subscriberThread = new Thread(()->service.subscribeAndLoop(CHANNEL, new Subscriber() {
+        Thread subscriberThread = new Thread(() -> service.subscribeAndLoop(CHANNEL, new Subscriber() {
             boolean exceptionThrown = false;
-                    @Override
-                    public void process(String message) {
-                        if (!exceptionThrown) {
-                            // this is the first received message, just throw an exception
-                            exceptionThrown = true;
-                            throw new IllegalStateException();
-                        }
-                        // second exception, we can quit now: unsubscribe and stop message publisher
-                        service.unsubscribe(this);
-                        runPublisher = false;
-                    }
-                }));
+
+            @Override
+            public void process(String message) {
+                if (!exceptionThrown) {
+                    // this is the first received message, just throw an exception
+                    exceptionThrown = true;
+                    throw new IllegalStateException();
+                }
+                // second exception, we can quit now: unsubscribe and stop message publisher
+                service.unsubscribe(this);
+                runPublisher = false;
+            }
+        }));
         subscriberThread.start();
         subscriberThread.join();
 

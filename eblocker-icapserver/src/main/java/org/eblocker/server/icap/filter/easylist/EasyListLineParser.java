@@ -36,53 +36,53 @@ import java.util.stream.Collectors;
 
 public class EasyListLineParser implements FilterLineParser {
 
-	public static final Logger log = LoggerFactory.getLogger(EasyListLineParser.class);
+    public static final Logger log = LoggerFactory.getLogger(EasyListLineParser.class);
 
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile(
-	    "~?(csp=|domain=|" +
-        String.join("|", BooleanOption.allOptions()) +
-        ").*"
+    private static final Pattern OPTIONS_PATTERN = Pattern.compile(
+            "~?(csp=|domain=|" +
+                    String.join("|", BooleanOption.allOptions()) +
+                    ").*"
     );
 
-	private String definition;
+    private String definition;
 
-	private EasyListRuleType ruleType;
+    private EasyListRuleType ruleType;
 
-	private String[] ruleGroups;
+    private String[] ruleGroups;
 
-	private String domain;
+    private String domain;
 
-	private String matchString;
+    private String matchString;
 
-	private boolean useRegex;
+    private boolean useRegex;
 
-	private boolean domainOnly;
+    private boolean domainOnly;
 
-	protected String[] options = new String[]{};
+    protected String[] options = new String[]{};
 
     private List<String> referrerDomainWhiteList = new ArrayList<>();
 
     private List<String> referrerDomainBlackList = new ArrayList<>();
 
-	protected FilterType type;
+    protected FilterType type;
 
     private Map<BooleanOption, Boolean> booleanOptions = new EnumMap<>(BooleanOption.class);
 
     private String contentSecurityPolicies;
 
     public EasyListLineParser() {
-	}
+    }
 
-	@Override
-	public Filter parseLine(String definition) {
-		this.definition = definition;
-		return doParse();
-	}
+    @Override
+    public Filter parseLine(String definition) {
+        this.definition = definition;
+        return doParse();
+    }
 
-	private Filter doParse() {
-		if (definition == null) {
-			return null;
-		}
+    private Filter doParse() {
+        if (definition == null) {
+            return null;
+        }
 
         //
         // A dollar sign indicates a list of comma separated options.
@@ -91,7 +91,7 @@ public class EasyListLineParser implements FilterLineParser {
         String definitionWithoutOptions = definition;
         if (definition.contains("$")) {
             int dollar = definition.lastIndexOf('$');
-            String potentialOptions = definition.substring(dollar+1);
+            String potentialOptions = definition.substring(dollar + 1);
             if (OPTIONS_PATTERN.matcher(potentialOptions).matches()) {
                 options = potentialOptions.split(",");
                 parseOptions();
@@ -99,103 +99,102 @@ public class EasyListLineParser implements FilterLineParser {
             }
         }
 
-        for (EasyListRuleType easyListRuleType: EasyListRuleType.values()) {
-			Matcher matcher = easyListRuleType.matcher(definitionWithoutOptions);
-			if (matcher.matches()) {
-				ruleType = easyListRuleType;
-				ruleGroups = new String[matcher.groupCount()];
-				for (int i = 0; i < ruleGroups.length; i++) {
-					ruleGroups[i] = matcher.group(i+1);
-				}
-				break;
-			}
-		}
-
-		if (ruleType == null) {
-			log.warn("Found EASYLIST definition of unknown format, ignoring this line: [{}]", definition);
-			return null;
-		}
-
-
-		switch (ruleType) {
-
-		case COMMENT:
-		case TITLE:
-		case ELEMENT_HIDE:
-		case ELEMENT_NOHIDE:
-			// Silently skip these lines.
-			return null;
-
-		default:
-			break;
-
-		}
-
-		type = ruleType.getType();
-
-		normalizeMatchString();
-		if (Boolean.TRUE.equals(booleanOptions.get(BooleanOption.WEB_SOCKET))) {
-		    log.info("filtering websockets unsupported, dropping rule: {}", definition);
-		    return null;
+        for (EasyListRuleType easyListRuleType : EasyListRuleType.values()) {
+            Matcher matcher = easyListRuleType.matcher(definitionWithoutOptions);
+            if (matcher.matches()) {
+                ruleType = easyListRuleType;
+                ruleGroups = new String[matcher.groupCount()];
+                for (int i = 0; i < ruleGroups.length; i++) {
+                    ruleGroups[i] = matcher.group(i + 1);
+                }
+                break;
+            }
         }
 
-		StringMatchType matchType;
-		if (domainOnly) {
+        if (ruleType == null) {
+            log.warn("Found EASYLIST definition of unknown format, ignoring this line: [{}]", definition);
+            return null;
+        }
+
+        switch (ruleType) {
+
+            case COMMENT:
+            case TITLE:
+            case ELEMENT_HIDE:
+            case ELEMENT_NOHIDE:
+                // Silently skip these lines.
+                return null;
+
+            default:
+                break;
+
+        }
+
+        type = ruleType.getType();
+
+        normalizeMatchString();
+        if (Boolean.TRUE.equals(booleanOptions.get(BooleanOption.WEB_SOCKET))) {
+            log.info("filtering websockets unsupported, dropping rule: {}", definition);
+            return null;
+        }
+
+        StringMatchType matchType;
+        if (domainOnly) {
             matchType = StringMatchType.DOMAIN;
         } else if (useRegex) {
-			matchString = ruleType.getRegexPrefix() + matchString + ruleType.getRegexPostfix();
-			matchType = StringMatchType.REGEX;
+            matchString = ruleType.getRegexPrefix() + matchString + ruleType.getRegexPostfix();
+            matchType = StringMatchType.REGEX;
 
-		} else {
-			matchType = ruleType.getSubstringMatchType();
-		}
+        } else {
+            matchType = ruleType.getSubstringMatchType();
+        }
 
         UrlFilterFactory filterFactory = UrlFilterFactory.getInstance()
-            .setPriority(ruleType.getPriority())
-            .setDefinition(definition)
-            .setDomain(domain)
-            .setStringMatchType(matchType)
-            .setMatchString(matchString)
-            .setType(type)
-            .setReferrerDomainWhiteList(referrerDomainWhiteList)
-            .setReferrerDomainBlackList(referrerDomainBlackList)
-            .setThirdParty(booleanOptions.get(BooleanOption.THIRD_PARTY))
-            .setDocument(booleanOptions.get(BooleanOption.DOCUMENT))
-            .setImage(booleanOptions.get(BooleanOption.IMAGE))
-            .setScript(booleanOptions.get(BooleanOption.SCRIPT))
-            .setStylesheet(booleanOptions.get(BooleanOption.STYLESHEET))
-            .setSubDocument(booleanOptions.get(BooleanOption.SUB_DOCUMENT))
-            .setContentSecurityPolicies(contentSecurityPolicies);
+                .setPriority(ruleType.getPriority())
+                .setDefinition(definition)
+                .setDomain(domain)
+                .setStringMatchType(matchType)
+                .setMatchString(matchString)
+                .setType(type)
+                .setReferrerDomainWhiteList(referrerDomainWhiteList)
+                .setReferrerDomainBlackList(referrerDomainBlackList)
+                .setThirdParty(booleanOptions.get(BooleanOption.THIRD_PARTY))
+                .setDocument(booleanOptions.get(BooleanOption.DOCUMENT))
+                .setImage(booleanOptions.get(BooleanOption.IMAGE))
+                .setScript(booleanOptions.get(BooleanOption.SCRIPT))
+                .setStylesheet(booleanOptions.get(BooleanOption.STYLESHEET))
+                .setSubDocument(booleanOptions.get(BooleanOption.SUB_DOCUMENT))
+                .setContentSecurityPolicies(contentSecurityPolicies);
 
-		return filterFactory
-				.build();
-	}
+        return filterFactory
+                .build();
+    }
 
-	private void normalizeMatchString() {
-		matchString = ruleGroups[0];
+    private void normalizeMatchString() {
+        matchString = ruleGroups[0];
 
-		final boolean isRegex = ruleType.isExplicitRegularExpression();
+        final boolean isRegex = ruleType.isExplicitRegularExpression();
 
         //
-		// Remove trailing star. According to the EASYLIST rules, a trailing star has no meaning.
-		// Unless there is a trailing pipe, a rule anyway implies a "*" at the end.
-		//
-		if (matchString.endsWith("*")) {
-			matchString = matchString.substring(0, matchString.length()-1);
-		}
+        // Remove trailing star. According to the EASYLIST rules, a trailing star has no meaning.
+        // Unless there is a trailing pipe, a rule anyway implies a "*" at the end.
+        //
+        if (matchString.endsWith("*")) {
+            matchString = matchString.substring(0, matchString.length() - 1);
+        }
 
-		//
-		// The following characters require us to use REGEX for the rule.
-		// The characters themselves will be replaced later.
-		// For now, we set only the flag.
-		//
-		if (matchString.startsWith("|") || matchString.contains("^") || matchString.contains("*")) {
-			useRegex = true;
-		}
+        //
+        // The following characters require us to use REGEX for the rule.
+        // The characters themselves will be replaced later.
+        // For now, we set only the flag.
+        //
+        if (matchString.startsWith("|") || matchString.contains("^") || matchString.contains("*")) {
+            useRegex = true;
+        }
 
-		//
-		// Deactivated following rules, as I do not understand them anymore.
-		//
+        //
+        // Deactivated following rules, as I do not understand them anymore.
+        //
 		/*
 		if (matchString.contains("|*|")) {
 			matchString = matchString.replaceAll("\\|\\*\\|", "*");
@@ -205,63 +204,63 @@ public class EasyListLineParser implements FilterLineParser {
 		}
 		*/
 
-		//
-		// Escape some single characters, which have a special meaning in REGEX patterns.
-		//
-		if (useRegex && !isRegex) {
-			if (matchString.contains(".")) {
-				matchString = matchString.replaceAll("\\.", "\\\\.");
-			}
-			if (matchString.contains("?")) {
-				matchString = matchString.replaceAll("\\?", "\\\\?");
-			}
-			if (matchString.contains("[")) {
-				matchString = matchString.replaceAll("\\[", "\\\\[");
-			}
-			if (matchString.contains("]")) {
-				matchString = matchString.replaceAll("\\]", "\\\\]");
-			}
-			if (matchString.contains("(")) {
-				matchString = matchString.replaceAll("\\(", "\\\\(");
-			}
-			if (matchString.contains(")")) {
-				matchString = matchString.replaceAll("\\)", "\\\\)");
-			}
-		}
+        //
+        // Escape some single characters, which have a special meaning in REGEX patterns.
+        //
+        if (useRegex && !isRegex) {
+            if (matchString.contains(".")) {
+                matchString = matchString.replaceAll("\\.", "\\\\.");
+            }
+            if (matchString.contains("?")) {
+                matchString = matchString.replaceAll("\\?", "\\\\?");
+            }
+            if (matchString.contains("[")) {
+                matchString = matchString.replaceAll("\\[", "\\\\[");
+            }
+            if (matchString.contains("]")) {
+                matchString = matchString.replaceAll("\\]", "\\\\]");
+            }
+            if (matchString.contains("(")) {
+                matchString = matchString.replaceAll("\\(", "\\\\(");
+            }
+            if (matchString.contains(")")) {
+                matchString = matchString.replaceAll("\\)", "\\\\)");
+            }
+        }
 
-		//
-		// A GLOB star has to be replaced with a REGEX dot-star.
-		//
-		if (!isRegex && matchString.contains("*")) {
-			matchString = matchString.replaceAll("\\*", ".*");
-		}
+        //
+        // A GLOB star has to be replaced with a REGEX dot-star.
+        //
+        if (!isRegex && matchString.contains("*")) {
+            matchString = matchString.replaceAll("\\*", ".*");
+        }
 
-		//
-		// A leading pipe indicates that the pattern starts with a basic hostname.
-		// The rules matches http and https protocol, and an optional leading "www." in front of the basic hostname.
-		//
-		if (matchString.startsWith("|")) {
-			domain = EasyListLineParserUtils.findDomain(ruleGroups[0].substring(1));
-			if (domain == null) {
-				log.info("Found no hostname in BEGIN or EXACT rule in filter {} with definition {}", matchString, definition);
-			} else if (domain.contains("*")) {
-			    // TODO: LearningFilter does not support domain wild cards (EB1-758)
-				domain = null;
-			}
-			matchString = "http(s)?://([a-zA-Z0-9\\-]+\\.)*"+matchString.substring(1);
-		}
+        //
+        // A leading pipe indicates that the pattern starts with a basic hostname.
+        // The rules matches http and https protocol, and an optional leading "www." in front of the basic hostname.
+        //
+        if (matchString.startsWith("|")) {
+            domain = EasyListLineParserUtils.findDomain(ruleGroups[0].substring(1));
+            if (domain == null) {
+                log.info("Found no hostname in BEGIN or EXACT rule in filter {} with definition {}", matchString, definition);
+            } else if (domain.contains("*")) {
+                // TODO: LearningFilter does not support domain wild cards (EB1-758)
+                domain = null;
+            }
+            matchString = "http(s)?://([a-zA-Z0-9\\-]+\\.)*" + matchString.substring(1);
+        }
 
-		//
-		// Escape remaining pipe characters, which have a special meaning in REGEX patterns.
-		//
-		if (useRegex && !isRegex) {
-			if (matchString.contains("|")) {
-				matchString = matchString.replaceAll("\\|", "\\\\|");
-			}
-		}
+        //
+        // Escape remaining pipe characters, which have a special meaning in REGEX patterns.
+        //
+        if (useRegex && !isRegex) {
+            if (matchString.contains("|")) {
+                matchString = matchString.replaceAll("\\|", "\\\\|");
+            }
+        }
 
-		//
-		// The ^ indicates a separator character. Anything except letter, digit or _-.%
+        //
+        // The ^ indicates a separator character. Anything except letter, digit or _-.%
         //
         if (matchString.contains("^") && !isRegex) {
             int index = matchString.indexOf('^');
@@ -272,13 +271,13 @@ public class EasyListLineParser implements FilterLineParser {
                 matchString = matchString.replaceAll("\\^", "([^a-zA-Z0-9_.%-]|\\$)");
             }
         }
-	}
+    }
 
     private void parseOptions() {
         //
         // Parse (some) options.
         //
-        for (String option: options) {
+        for (String option : options) {
             if (option.startsWith("domain=")) {
                 String[] domains = option.substring("domain=".length()).split("\\|");
                 for (String referrerDomain : domains) {
@@ -291,7 +290,7 @@ public class EasyListLineParser implements FilterLineParser {
             } else if (option.startsWith("csp=")) {
                 contentSecurityPolicies = option.substring("csp=".length());
             } else {
-                for(BooleanOption bOption : BooleanOption.values()) {
+                for (BooleanOption bOption : BooleanOption.values()) {
                     if (bOption.option().equals(option)) {
                         booleanOptions.put(bOption, Boolean.TRUE);
                     } else if (("~" + bOption.option()).equals(option)) {
@@ -303,34 +302,34 @@ public class EasyListLineParser implements FilterLineParser {
     }
 
     @Override
-	public String toString() {
-		StringBuilder s = new StringBuilder();
+    public String toString() {
+        StringBuilder s = new StringBuilder();
 
-		s.append("EasyListRule ==> [\n");
-		s.append("  type     : ").append(ruleType).append("\n");
-		s.append("  filter   : ").append(definition).append("\n");
-		s.append("  domain : ").append(domain).append("\n");
-		s.append("]");
+        s.append("EasyListRule ==> [\n");
+        s.append("  type     : ").append(ruleType).append("\n");
+        s.append("  filter   : ").append(definition).append("\n");
+        s.append("  domain : ").append(domain).append("\n");
+        s.append("]");
 
-		return s.toString();
-	}
+        return s.toString();
+    }
 
-	private enum BooleanOption {
-		THIRD_PARTY("third-party"),
-		SCRIPT("script"),
-		IMAGE("image"),
-		STYLESHEET("stylesheet"),
-		OBJECT("object"),
-		XML_HTTP_REQUEST("xmlhttprequest"),
-		OBJECT_SUB_REQUEST("object-subrequest"),
-		SUB_DOCUMENT("subdocument"),
-		PING("ping"),
-		WEB_SOCKET("websocket"),
-		DOCUMENT("document"),
-		ELEM_HIDE("elemhide"),
-		GENERIC_HIDE("generichide"),
-		GENERIC_BLOCK("genericblock"),
-		OTHER("other"),
+    private enum BooleanOption {
+        THIRD_PARTY("third-party"),
+        SCRIPT("script"),
+        IMAGE("image"),
+        STYLESHEET("stylesheet"),
+        OBJECT("object"),
+        XML_HTTP_REQUEST("xmlhttprequest"),
+        OBJECT_SUB_REQUEST("object-subrequest"),
+        SUB_DOCUMENT("subdocument"),
+        PING("ping"),
+        WEB_SOCKET("websocket"),
+        DOCUMENT("document"),
+        ELEM_HIDE("elemhide"),
+        GENERIC_HIDE("generichide"),
+        GENERIC_BLOCK("genericblock"),
+        OTHER("other"),
         COLLAPSE("collapse"),
         POPUP("popup"),
         WEBRTC("webrtc"),
@@ -339,22 +338,21 @@ public class EasyListLineParser implements FilterLineParser {
         MEDIA("media"),
         FONT("font");
 
+        private final String option;
 
-		private final String option;
-
-		BooleanOption(String option) {
-			this.option = option;
-		}
-
-		String option() {
-			return option;
-		}
-
-		private static Set<String> allOptions() {
-            return Arrays.stream(BooleanOption.values())
-                .map(BooleanOption::option)
-                .collect(Collectors.toSet());
+        BooleanOption(String option) {
+            this.option = option;
         }
-	}
+
+        String option() {
+            return option;
+        }
+
+        private static Set<String> allOptions() {
+            return Arrays.stream(BooleanOption.values())
+                    .map(BooleanOption::option)
+                    .collect(Collectors.toSet());
+        }
+    }
 }
 

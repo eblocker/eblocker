@@ -16,13 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserProfileModule;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -30,8 +26,13 @@ import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 public class SchemaMigrationVersion3Test {
 
@@ -58,36 +59,36 @@ public class SchemaMigrationVersion3Test {
         SchemaMigrationVersion3 migration = new SchemaMigrationVersion3(dataSource, jedisPool);
         assertEquals("3", migration.getTargetVersion());
     }
-    
-    @Test
-    public void testBuiltinProfiles(){
-    	UserProfileModule defaultProfile = SchemaMigrationVersion3.createDefaultProfile();
-    	assertEquals(true,  defaultProfile.isBuiltin());
-    	assertEquals(false, defaultProfile.isControlmodeTime());
-    	assertEquals(false, defaultProfile.isControlmodeUrls());
-    	assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, defaultProfile.getInternetAccessRestrictionMode());
-    	assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID), defaultProfile.getId());
-    	
-    	UserProfileModule fullProfile = SchemaMigrationVersion3.createFullProfile();
-    	assertEquals(true, fullProfile.isBuiltin());
-    	assertEquals(false, fullProfile.isControlmodeTime());
-    	assertEquals(true, fullProfile.isControlmodeUrls());
-    	assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, fullProfile.getInternetAccessRestrictionMode());
-    	assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_FULL_PROFILE_ID), fullProfile.getId());
-    	
-    	UserProfileModule mediumProfile = SchemaMigrationVersion3.createMediumProfile();
-    	assertEquals(true, mediumProfile.isBuiltin());
-    	assertEquals(true, mediumProfile.isControlmodeTime());
-    	assertEquals(true, mediumProfile.isControlmodeUrls());
-    	assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, mediumProfile.getInternetAccessRestrictionMode());
-    	assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID), mediumProfile.getId());
 
-    	UserProfileModule lowProfile = SchemaMigrationVersion3.createLowProfile();
-    	assertEquals(true, lowProfile.isBuiltin());
-    	assertEquals(true, lowProfile.isControlmodeTime());
-    	assertEquals(true, lowProfile.isControlmodeUrls());
-    	assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, lowProfile.getInternetAccessRestrictionMode());
-    	assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_LOW_PROFILE_ID), lowProfile.getId());
+    @Test
+    public void testBuiltinProfiles() {
+        UserProfileModule defaultProfile = SchemaMigrationVersion3.createDefaultProfile();
+        assertEquals(true, defaultProfile.isBuiltin());
+        assertEquals(false, defaultProfile.isControlmodeTime());
+        assertEquals(false, defaultProfile.isControlmodeUrls());
+        assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, defaultProfile.getInternetAccessRestrictionMode());
+        assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID), defaultProfile.getId());
+
+        UserProfileModule fullProfile = SchemaMigrationVersion3.createFullProfile();
+        assertEquals(true, fullProfile.isBuiltin());
+        assertEquals(false, fullProfile.isControlmodeTime());
+        assertEquals(true, fullProfile.isControlmodeUrls());
+        assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, fullProfile.getInternetAccessRestrictionMode());
+        assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_FULL_PROFILE_ID), fullProfile.getId());
+
+        UserProfileModule mediumProfile = SchemaMigrationVersion3.createMediumProfile();
+        assertEquals(true, mediumProfile.isBuiltin());
+        assertEquals(true, mediumProfile.isControlmodeTime());
+        assertEquals(true, mediumProfile.isControlmodeUrls());
+        assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, mediumProfile.getInternetAccessRestrictionMode());
+        assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID), mediumProfile.getId());
+
+        UserProfileModule lowProfile = SchemaMigrationVersion3.createLowProfile();
+        assertEquals(true, lowProfile.isBuiltin());
+        assertEquals(true, lowProfile.isControlmodeTime());
+        assertEquals(true, lowProfile.isControlmodeUrls());
+        assertEquals(UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, lowProfile.getInternetAccessRestrictionMode());
+        assertEquals(Integer.valueOf(DefaultEntities.PARENTAL_CONTROL_LOW_PROFILE_ID), lowProfile.getId());
     }
 
     @Test
@@ -103,25 +104,25 @@ public class SchemaMigrationVersion3Test {
         Mockito.verify(dataSource).setVersion("3");
         Mockito.verify(dataSource).setIdSequence(UserProfileModule.class, DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_USER_PROFILE_MODULE);
     }
-    
+
     @Test
     public void testDevicesAreUpdated() {
-    	Set<Device> deviceStore = new HashSet<>();
-    	for (int i = 0; i < 10; i++) {
-    		Device tmpDevice = new Device();
-    		tmpDevice.setId(String.valueOf(i));
-			deviceStore.add(tmpDevice);
-		}
-    	
-    	when(dataSource.getDevices()).thenReturn(deviceStore);
-    	
-    	SchemaMigrationVersion3 migration = new SchemaMigrationVersion3(dataSource, jedisPool);
-    	migration.migrate();
-    	
-    	Mockito.verify(dataSource).getDevices();
-    	for (Device device : deviceStore) {
-			Mockito.verify(jedis).hset(device.getId(), DefaultEntities.PARENTAL_CONTROL_KEY_USER_PROFILE_ID, String.valueOf(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID));
-		}
+        Set<Device> deviceStore = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            Device tmpDevice = new Device();
+            tmpDevice.setId(String.valueOf(i));
+            deviceStore.add(tmpDevice);
+        }
+
+        when(dataSource.getDevices()).thenReturn(deviceStore);
+
+        SchemaMigrationVersion3 migration = new SchemaMigrationVersion3(dataSource, jedisPool);
+        migration.migrate();
+
+        Mockito.verify(dataSource).getDevices();
+        for (Device device : deviceStore) {
+            Mockito.verify(jedis).hset(device.getId(), DefaultEntities.PARENTAL_CONTROL_KEY_USER_PROFILE_ID, String.valueOf(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID));
+        }
     }
 
 }

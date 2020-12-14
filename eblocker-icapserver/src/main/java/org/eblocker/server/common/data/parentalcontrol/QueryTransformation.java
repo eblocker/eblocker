@@ -49,7 +49,7 @@ public class QueryTransformation {
         }
         QueryTransformation that = (QueryTransformation) o;
         return Objects.equals(regex, that.regex) &&
-            Objects.equals(replacement, that.replacement);
+                Objects.equals(replacement, that.replacement);
     }
 
     @Override

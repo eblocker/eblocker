@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -24,8 +26,6 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,13 +62,13 @@ public class IpAddressValidatorTest {
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.7.1"));
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::192:168:7:1"));
         Mockito.when(networkInterface.getHardwareAddressHex()).thenReturn("001122334455");
-        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 });
+        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 });
 
         devices = Arrays.asList(
-            createDevice("00aabbccddee", Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), false),
-            createDevice("00ff00112233", Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), false),
-            createDevice("008800000001", Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), true),
-            createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10")), true));
+                createDevice("00aabbccddee", Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), false),
+                createDevice("00ff00112233", Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), false),
+                createDevice("008800000001", Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), true),
+                createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10")), true));
 
         deviceService = Mockito.mock(DeviceService.class);
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices);
@@ -78,16 +78,16 @@ public class IpAddressValidatorTest {
         Mockito.when(deviceService.getDeviceById("device:008800000201")).thenReturn(devices.get(3));
 
         validator = new IpAddressValidator(
-            60,
-            arpResponseTable,
-            "10.8.0.0",
-            "255.255.255.0",
-            clock,
-            deviceService,
-            featureToggleRouter,
-            networkInterface,
-            networkStateMachine,
-            pubSubService);
+                60,
+                arpResponseTable,
+                "10.8.0.0",
+                "255.255.255.0",
+                clock,
+                deviceService,
+                featureToggleRouter,
+                networkInterface,
+                networkStateMachine,
+                pubSubService);
     }
 
     @Test

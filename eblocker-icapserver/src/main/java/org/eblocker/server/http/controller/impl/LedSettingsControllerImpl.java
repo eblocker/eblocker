@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.LedSettings;
 import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.service.StatusLedService;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;

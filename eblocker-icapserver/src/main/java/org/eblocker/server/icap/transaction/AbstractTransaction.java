@@ -39,9 +39,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 public abstract class AbstractTransaction implements Transaction, TransactionIdentifier {
-	private static final Logger log = LoggerFactory.getLogger(AbstractTransaction.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractTransaction.class);
 
-	private Session session = null;
+    private Session session = null;
     private boolean isRequest = false;
     private boolean isResponse = false;
 
@@ -73,7 +73,7 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     @Override
     public String getSessionId() {
         return session.getSessionId();
-	}
+    }
 
     @Override
     public Session getSession() {
@@ -81,13 +81,13 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     }
 
     @Override
-	public void setSession(Session session) {
-		this.session = session;
-	}
+    public void setSession(Session session) {
+        this.session = session;
+    }
 
-	@Override
+    @Override
     public String getUrl() {
-        if (getRequest() != null){
+        if (getRequest() != null) {
             return getRequest().getUri();
         }
         return null;
@@ -95,51 +95,51 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
 
     @Override
     public String getReferrer() {
-        if (referrer == null && getRequest() != null){
-        	referrer = getRequest().headers().get(HttpHeaders.Names.REFERER);
+        if (referrer == null && getRequest() != null) {
+            referrer = getRequest().headers().get(HttpHeaders.Names.REFERER);
         }
         return referrer;
     }
 
     @Override
-	public String getAccept() {
-		if (accept == null && getRequest() != null) {
-			accept = getRequest().headers().get(HttpHeaders.Names.ACCEPT);
-		}
-		return accept;
-	}
+    public String getAccept() {
+        if (accept == null && getRequest() != null) {
+            accept = getRequest().headers().get(HttpHeaders.Names.ACCEPT);
+        }
+        return accept;
+    }
 
     @Override
     public String getUserAgent() {
-        if (userAgent == null && getRequest() != null){
-        	userAgent = getRequest().headers().get(HttpHeaders.Names.USER_AGENT);
+        if (userAgent == null && getRequest() != null) {
+            userAgent = getRequest().headers().get(HttpHeaders.Names.USER_AGENT);
         }
         return userAgent;
     }
 
     @Override
     public String getDomain() {
-    	if (domain == null) {
-    		domain = UrlUtils.getDomain(UrlUtils.getHostname(getUrl()));
-    	}
-    	return domain;
+        if (domain == null) {
+            domain = UrlUtils.getDomain(UrlUtils.getHostname(getUrl()));
+        }
+        return domain;
     }
 
-	@Override
-	public String getReferrerHostname() {
-    	if (referrerHostname == null) {
-    		getReferrer();
-    		if (referrer != null) {
-    		    try {
+    @Override
+    public String getReferrerHostname() {
+        if (referrerHostname == null) {
+            getReferrer();
+            if (referrer != null) {
+                try {
                     referrerHostname = UrlUtils.getHostname(referrer);
                 } catch (EblockerException e) {
-    		        // ignore malformed referrer header
+                    // ignore malformed referrer header
                     log.debug("malformed referrer header", e);
                 }
-    		}
-    	}
-    	return referrerHostname;
-	}
+            }
+        }
+        return referrerHostname;
+    }
 
     @Override
     public boolean isRequest() {
@@ -153,8 +153,8 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
 
     @Override
     public String getUserReference() {
-    	HttpHeaders headers = getRequest().headers();
-    	return headers.get("Client");
+        HttpHeaders headers = getRequest().headers();
+        return headers.get("Client");
     }
 
     protected abstract void doSetHttpResponse(FullHttpResponse httpResponse);
@@ -179,13 +179,13 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         contentChanged = true;
     }
 
-	@Override
-	public String getContentType() {
-		if (getResponse() == null) {
-			return null;
-		}
-		return getResponse().headers().get(HttpHeaders.Names.CONTENT_TYPE);
-	}
+    @Override
+    public String getContentType() {
+        if (getResponse() == null) {
+            return null;
+        }
+        return getResponse().headers().get(HttpHeaders.Names.CONTENT_TYPE);
+    }
 
     @Override
     public boolean isContentChanged() {
@@ -208,17 +208,17 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     }
 
     @Override
-	public boolean isComplete() {
-		return complete;
-	}
+    public boolean isComplete() {
+        return complete;
+    }
 
-	@Override
-	public void setComplete(boolean complete) {
-		this.complete = complete;
-	}
+    @Override
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 
-	@Override
-	public void block() {
+    @Override
+    public void block() {
         if (session.isWhatIfMode()) {
             return;
         }
@@ -246,82 +246,82 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         this.contentChanged = true;
     }
 
-	@Override
-	public void noContent() {
-		if (log.isDebugEnabled()) {
-			logHeaders();
-		}
-		FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
-		httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, 0);
-		httpResponse.headers().add("Access-Control-Allow-Origin", "*");
-		setResponse(httpResponse);
-		this.complete = true;
+    @Override
+    public void noContent() {
+        if (log.isDebugEnabled()) {
+            logHeaders();
+        }
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, 0);
+        httpResponse.headers().add("Access-Control-Allow-Origin", "*");
+        setResponse(httpResponse);
+        this.complete = true;
         this.headersChanged = true;
         this.contentChanged = true;
-	}
+    }
 
-	@Override
-	public void redirect(String targetUrl) {
+    @Override
+    public void redirect(String targetUrl) {
         if (session.isWhatIfMode()) {
             return;
         }
-		if (log.isDebugEnabled()) {
-			logHeaders();
-		}
-		FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.SEE_OTHER);
-		httpResponse.headers().add(HttpHeaders.Names.LOCATION, targetUrl);
-		setResponse(httpResponse);
-		this.complete = true;
+        if (log.isDebugEnabled()) {
+            logHeaders();
+        }
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.SEE_OTHER);
+        httpResponse.headers().add(HttpHeaders.Names.LOCATION, targetUrl);
+        setResponse(httpResponse);
+        this.complete = true;
         this.headersChanged = true;
         this.contentChanged = true;
-	}
+    }
 
-	@Override
-	public String getRedirectTarget() {
-		return redirectTarget;
-	}
+    @Override
+    public String getRedirectTarget() {
+        return redirectTarget;
+    }
 
-	@Override
-	public void setRedirectTarget(String redirectTarget) {
-		this.redirectTarget = redirectTarget;
-	}
+    @Override
+    public void setRedirectTarget(String redirectTarget) {
+        this.redirectTarget = redirectTarget;
+    }
 
-	@Override
-	public Decision getDecision() {
-		return decision;
-	}
+    @Override
+    public Decision getDecision() {
+        return decision;
+    }
 
-	@Override
-	public void setDecision(Decision decision) {
-		this.decision = decision;
-	}
+    @Override
+    public void setDecision(Decision decision) {
+        this.decision = decision;
+    }
 
-	@Override
-	public boolean isThirdParty() {
-		if (thirdParty == null) {
-			thirdParty = !UrlUtils.isSameDomain(getDomain(), getReferrerHostname());
-		}
-		return thirdParty;
-	}
+    @Override
+    public boolean isThirdParty() {
+        if (thirdParty == null) {
+            thirdParty = !UrlUtils.isSameDomain(getDomain(), getReferrerHostname());
+        }
+        return thirdParty;
+    }
 
-	@Override
-	public String getBaseUrl() {
-		return baseUrl;
-	}
+    @Override
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-	}
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
-	@Override
-	public FilterResult getFilterResult() {
-		return filterResult;
-	}
+    @Override
+    public FilterResult getFilterResult() {
+        return filterResult;
+    }
 
-	@Override
-	public void setFilterResult(FilterResult filterResult) {
-		this.filterResult = filterResult;
-	}
+    @Override
+    public void setFilterResult(FilterResult filterResult) {
+        this.filterResult = filterResult;
+    }
 
     @Override
     public PageContext getPageContext() {
@@ -364,11 +364,11 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     }
 
     private void logHeaders() {
-		if (log.isDebugEnabled()) {
-			for (Entry<String, String> header: getRequest().headers()) {
-				log.debug("    {} => {}", header.getKey(), header.getValue());
-			}
-		}
-	}
+        if (log.isDebugEnabled()) {
+            for (Entry<String, String> header : getRequest().headers()) {
+                log.debug("    {} => {}", header.getKey(), header.getValue());
+            }
+        }
+    }
 
 }

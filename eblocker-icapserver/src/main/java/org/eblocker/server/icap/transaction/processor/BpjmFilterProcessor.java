@@ -16,9 +16,13 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.http.service.DeviceService;
@@ -28,10 +32,6 @@ import org.eblocker.server.icap.filter.bpjm.BpjmFilterDecision;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.server.common.network.BaseURLs;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 @Singleton
 public class BpjmFilterProcessor implements TransactionProcessor {
@@ -81,12 +81,12 @@ public class BpjmFilterProcessor implements TransactionProcessor {
         BpjmFilterDecision decision = bpjmFilterService.isBlocked(url);
         if (decision.isBlocked()) {
             transaction.redirect(baseUrls.selectURLForPage(url)
-                + redirectPage
-                + "?target=" + UrlUtils.urlEncode(url)
-                + "&listId=" + filterId
-                + "&domain=" + decision.getDomain()
-                + "&profileId=" + profile.getId()
-                + "&userId=" + user.getId());
+                    + redirectPage
+                    + "?target=" + UrlUtils.urlEncode(url)
+                    + "&listId=" + filterId
+                    + "&domain=" + decision.getDomain()
+                    + "&profileId=" + profile.getId()
+                    + "&userId=" + user.getId());
             return false;
         }
         return true;

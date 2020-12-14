@@ -16,49 +16,51 @@
  */
 package org.eblocker.server.common.update;
 
+import org.eblocker.server.common.data.UpdatingStatus;
+import org.eblocker.server.common.exceptions.EblockerException;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.eblocker.server.common.data.UpdatingStatus;
-import org.eblocker.server.common.exceptions.EblockerException;
-
 /**
  * Runs system updates. Only one instance should exist.
- *
+ * <p>
  * System updates usually take a few seconds (or minutes), so this is an asynchronous interface.
  * You can start an update and ask if an update is in progress. Updates can also be cancelled.
  */
 public interface SystemUpdater {
-	public enum State {
-		IDLING, UPDATING, CANCELLING_UPDATE, DOWNLOADING, CHECKING;
-	}
+    public enum State {
+        IDLING, UPDATING, CANCELLING_UPDATE, DOWNLOADING, CHECKING;
+    }
 
-	/**
-	 * Starts an update. If the current state is not State.NOT_UPDATING or the device is not registered or the subscription is not valid,
-	 * calling this method has no effect.
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws EblockerException
-	 */
-	void startUpdate() throws IOException, InterruptedException, EblockerException;
-
-	/**
-	 *
-	 * @return the update state
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	State getUpdateStatus() throws IOException, InterruptedException;
-
-	/**
-	 * Get the last time an update was executed.
-	 * @return
+    /**
+     * Starts an update. If the current state is not State.NOT_UPDATING or the device is not registered or the subscription is not valid,
+     * calling this method has no effect.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws EblockerException
      */
-	LocalDateTime getLastUpdateTime();
+    void startUpdate() throws IOException, InterruptedException, EblockerException;
+
+    /**
+     * @return the update state
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    State getUpdateStatus() throws IOException, InterruptedException;
+
+    /**
+     * Get the last time an update was executed.
+     *
+     * @return
+     */
+    LocalDateTime getLastUpdateTime();
 
     /**
      * Starts downloading new updates
+     *
      * @return the update state
      * @throws InterruptedException
      * @throws IOException
@@ -67,6 +69,7 @@ public interface SystemUpdater {
 
     /**
      * Checks whether new updates are available.
+     *
      * @return the update state
      * @throws InterruptedException
      * @throws IOException
@@ -75,12 +78,14 @@ public interface SystemUpdater {
 
     /**
      * Returns a list of package updates
+     *
      * @return A list of new updates. The list is empty if no updates are available.
      */
     List<String> updatesAvailablePackages();
 
     /**
      * Returns a list of notable update progress events
+     *
      * @return A list like  "Unpacked ...,  Installed ..." or an empty list if no progress was made.
      */
     List<String> getUpdateProgress();
@@ -88,22 +93,24 @@ public interface SystemUpdater {
     /**
      * Checks whether the license is invalid, i.e. invalid registration credentials or license revoked. No new revocation test call will be made but cached data will be
      * used.
+     *
      * @return True if the license is invalid, false if not.
      */
     boolean invalidLicense();
 
     /**
      * Creates a apt-pinning file named for eblocker lists to prevent upgrading eblocker lists.
+     *
      * @return True if the successful, otherwise false.
      */
     boolean pinEblockerListsPackage() throws IOException, InterruptedException;
 
     /**
      * Delete the pinning of the eblocker-lists package
+     *
      * @return True if the successful, otherwise false.
      */
     boolean unpinEblockerListsPackage() throws IOException, InterruptedException;
-
 
     UpdatingStatus getUpdatingStatus() throws IOException, InterruptedException;
 }

@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import java.time.Duration;
 import java.util.Date;
@@ -50,8 +50,8 @@ public class LicenseExpirationMessageProvider extends AbstractMessageProvider {
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final EventLogger eventLogger;
 
-	private final int expirationWarningThresholdWeek;
-	private final int expirationWarningThresholdDay;
+    private final int expirationWarningThresholdWeek;
+    private final int expirationWarningThresholdDay;
 
     private static final Set<Integer> MESSAGE_IDS = new HashSet<>();
 
@@ -61,10 +61,10 @@ public class LicenseExpirationMessageProvider extends AbstractMessageProvider {
     }
 
     @Inject
-	public LicenseExpirationMessageProvider(DeviceRegistrationProperties deviceRegistrationProperties,
-			EventLogger eventLogger,
-			@Named("license.expiration.warning.threshold.day") int licenseExpirationWarningThresholdDay,
-			@Named("license.expiration.warning.threshold.week") int licenseExpirationWarningThresholdWeek) {
+    public LicenseExpirationMessageProvider(DeviceRegistrationProperties deviceRegistrationProperties,
+                                            EventLogger eventLogger,
+                                            @Named("license.expiration.warning.threshold.day") int licenseExpirationWarningThresholdDay,
+                                            @Named("license.expiration.warning.threshold.week") int licenseExpirationWarningThresholdWeek) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.eventLogger = eventLogger;
         this.expirationWarningThresholdWeek = licenseExpirationWarningThresholdWeek;
@@ -111,30 +111,30 @@ public class LicenseExpirationMessageProvider extends AbstractMessageProvider {
                 //
                 // Soon expiring
                 //
-            	// How soon?
-            	Duration duration = Duration.between(new Date().toInstant(), deviceRegistrationProperties.getLicenseNotValidAfter().toInstant());
-            	long remainingDays = duration.toDays();
-            	// Is there a less-urgent message to remove?
-            	if (messageContainers.containsKey(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId())){
-            		MessageContainer currentMessage = messageContainers.get(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId());
-					if (currentMessage.getMessage().getContentKey().equals(MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT)
-							&& remainingDays <= expirationWarningThresholdWeek
-						|| currentMessage.getMessage().getContentKey().equals(MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT)
-							&& remainingDays <= expirationWarningThresholdDay) {
-						messageContainers.remove(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId());
-					}
-            	}
+                // How soon?
+                Duration duration = Duration.between(new Date().toInstant(), deviceRegistrationProperties.getLicenseNotValidAfter().toInstant());
+                long remainingDays = duration.toDays();
+                // Is there a less-urgent message to remove?
+                if (messageContainers.containsKey(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId())) {
+                    MessageContainer currentMessage = messageContainers.get(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId());
+                    if (currentMessage.getMessage().getContentKey().equals(MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT)
+                            && remainingDays <= expirationWarningThresholdWeek
+                            || currentMessage.getMessage().getContentKey().equals(MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT)
+                            && remainingDays <= expirationWarningThresholdDay) {
+                        messageContainers.remove(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId());
+                    }
+                }
 
-            	if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId())) {
+                if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId())) {
                     messageContainers.put(MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId(),
                             createMessage(
                                     MessageProviderMessageId.MESSAGE_LICENSE_EXPIRING_ID.getId(),
                                     MESSAGE_LICENSE_EXPIRING_TITLE,
-									(remainingDays <= expirationWarningThresholdDay
-											? MESSAGE_LICENSE_EXPIRING_DAY_CONTENT
-											: (remainingDays <= expirationWarningThresholdWeek
-													? MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT
-													: MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT)),
+                                    (remainingDays <= expirationWarningThresholdDay
+                                            ? MESSAGE_LICENSE_EXPIRING_DAY_CONTENT
+                                            : (remainingDays <= expirationWarningThresholdWeek
+                                            ? MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT
+                                            : MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT)),
                                     MESSAGE_LICENSE_EXPIRING_LABEL,
                                     MESSAGE_LICENSE_EXPIRING_URL,
                                     context,

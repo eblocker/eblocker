@@ -16,14 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
-
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
@@ -33,19 +28,19 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.openvpn.server.OpenVpnCa;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.upnp.UpnpManagementService;
 import org.eblocker.server.upnp.UpnpPortForwardingResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.http.utils.NormalizationUtils;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 @Singleton
 @SubSystemService(value = SubSystem.SERVICES)
@@ -70,7 +65,7 @@ public class OpenVpnServerService {
     private static final String ERROR_MSG_POTENTIALLY_CONFLICITNG_FORWARDINGS = "ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFLICTING_FORWARDINGS";
 
     @Inject
-    public OpenVpnServerService(ScriptRunner scriptRunner,DataSource dataSource,
+    public OpenVpnServerService(ScriptRunner scriptRunner, DataSource dataSource,
                                 UpnpManagementService upnpService,
                                 EblockerDnsServer dnsServer,
                                 DnsService dnsService,
@@ -80,7 +75,7 @@ public class OpenVpnServerService {
                                 @Named("openvpn.server.port") int port,
                                 @Named("openvpn.server.portforwarding.duration.initial") int tempDuration,
                                 @Named("openvpn.server.portforwarding.duration.use") int duration,
-                                @Named("openvpn.server.portforwarding.description")String portForwardingDescription,
+                                @Named("openvpn.server.portforwarding.description") String portForwardingDescription,
                                 OpenVpnCa openVpnCa) {
         this.scriptRunner = scriptRunner;
         this.dataSource = dataSource;

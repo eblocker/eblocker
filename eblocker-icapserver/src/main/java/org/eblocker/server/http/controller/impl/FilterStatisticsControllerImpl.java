@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.BlockedDomainsStats;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterStats;
@@ -27,9 +29,6 @@ import org.eblocker.server.common.util.FilterModeUtils;
 import org.eblocker.server.http.controller.FilterStatisticsController;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.eblocker.server.common.data.*;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class FilterStatisticsControllerImpl implements FilterStatisticsControlle
         Instant endTime = now.plusMinutes(offset).toInstant();
 
         LOG.info("Filter Stats from {} to {} / {} - {} / {} - {}",
-            startTime, endTime, binSizeMinutes, diagramWidth, minuteOfDay, offset);
+                startTime, endTime, binSizeMinutes, diagramWidth, minuteOfDay, offset);
         return filterStatisticsService.getStatistics(startTime, endTime, binSizeMinutes, type, ipAddress);
     }
 

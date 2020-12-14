@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.parentalcontrol.SearchEngineConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.parentalcontrol.SearchEngineConfiguration;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -119,7 +119,7 @@ public class ParentalControlSearchEngineConfigServiceTest {
     private void assertConfig(Map<String, SearchEngineConfiguration> expected, Map<String, SearchEngineConfiguration> actual) {
         Assert.assertNotNull(actual);
         Assert.assertEquals(expected.size(), actual.size());
-        for(Map.Entry<String, SearchEngineConfiguration> e : expected.entrySet()) {
+        for (Map.Entry<String, SearchEngineConfiguration> e : expected.entrySet()) {
             SearchEngineConfiguration a = actual.get(e.getKey());
             Assert.assertNotNull(a);
             Assert.assertEquals(e.getValue().getIframe(), a.getIframe());

@@ -56,7 +56,7 @@ public class FileSystemWatchService {
         Path directory = path.getParent();
         if (!watchedDirectories.contains(directory)) {
             log.debug("registering directory {}", directory);
-            WatchKey key = directory.register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY}, modifier);
+            WatchKey key = directory.register(watchService, new WatchEvent.Kind[]{ StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY }, modifier);
             watchKeys.put(key, directory);
             watchedDirectories.add(directory);
         }

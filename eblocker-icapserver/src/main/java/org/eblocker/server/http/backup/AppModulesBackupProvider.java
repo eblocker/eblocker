@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +45,11 @@ public class AppModulesBackupProvider extends BackupProvider {
     public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         List<AppWhitelistModule> allModules = appModuleService.getAll();
         List<AppWhitelistModule> modifiedModules = allModules.stream()
-            .filter(AppWhitelistModule::isModified)
-            .filter(module -> module.getId() != appModuleService.getTempAppModuleId())
-            .collect(Collectors.toList());
+                .filter(AppWhitelistModule::isModified)
+                .filter(module -> module.getId() != appModuleService.getTempAppModuleId())
+                .collect(Collectors.toList());
         Map<Integer, Boolean> enabledStates = allModules.stream()
-            .collect(Collectors.toMap(AppWhitelistModule::getId, AppWhitelistModule::isEnabled));
+                .collect(Collectors.toMap(AppWhitelistModule::getId, AppWhitelistModule::isEnabled));
         AppModulesBackup backup = new AppModulesBackup(modifiedModules, enabledStates);
 
         JarEntry entry = new JarEntry(APP_MODULES_ENTRY);

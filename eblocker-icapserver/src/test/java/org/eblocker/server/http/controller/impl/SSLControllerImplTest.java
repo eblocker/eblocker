@@ -107,19 +107,19 @@ public class SSLControllerImplTest {
         objectMapper = new ObjectMapper();
 
         controller = new SSLControllerImpl(
-            sslService,
-            whitelistDomainStore,
-            tracker,
-            deviceService,
-            sessionStore,
-            pageContextStore,
-            userService,
-            parentalControlService,
-            squidWarningService,
-            failedConnectionSuggestionService,
-            networkStateMachine,
-            objectMapper,
-            userAgentService
+                sslService,
+                whitelistDomainStore,
+                tracker,
+                deviceService,
+                sessionStore,
+                pageContextStore,
+                userService,
+                parentalControlService,
+                squidWarningService,
+                failedConnectionSuggestionService,
+                networkStateMachine,
+                objectMapper,
+                userAgentService
         );
 
         // load unit test ca
@@ -272,7 +272,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sessionStore).getSession(eq(txId));
         Mockito.verify(session).getDeviceId();
         Mockito.verify(tracker)
-            .markCertificateAsInstalled(eq(deviceId), eq(userAgent), eq(new BigInteger(serialNumber)), eq(false));
+                .markCertificateAsInstalled(eq(deviceId), eq(userAgent), eq(new BigInteger(serialNumber)), eq(false));
         Mockito.verify(response).addHeader(eq("Access-Control-Allow-Origin"), eq("*"));
         Mockito.verify(response).setResponseCode(eq(HttpResponseStatus.NO_CONTENT.code()));
     }
@@ -357,7 +357,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sslService, times(2)).getCa();
         Mockito.verify(ca).getCertificate();
         assertEquals("/CN=unit-test-root",
-            result.getDistinguishedName().toString());
+                result.getDistinguishedName().toString());
         assertEquals(new BigInteger("113402347514200015148051599106157440534"), result.getSerialNumber());
         Assert.assertTrue(result.getNotAfter().after(new Date()));
         Assert.assertTrue(result.getNotBefore().before(new Date()));
@@ -387,7 +387,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sslService, times(2)).getRenewalCa();
         Mockito.verify(ca).getCertificate();
         assertEquals("/CN=unit-test-root",
-            result.getDistinguishedName().toString());
+                result.getDistinguishedName().toString());
         assertEquals(new BigInteger("113402347514200015148051599106157440534"), result.getSerialNumber());
         Assert.assertTrue(result.getNotAfter().after(new Date()));
         Assert.assertTrue(result.getNotBefore().before(new Date()));
@@ -480,33 +480,33 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-            userModuleId,
-            associatedProfileId,
-            "userName",
-            "userNameKey",
-            null, null,
-            false,
-            null,
-            Collections.emptyMap(),
-            null, null, null);
+                userModuleId,
+                associatedProfileId,
+                "userName",
+                "userNameKey",
+                null, null,
+                false,
+                null,
+                Collections.emptyMap(),
+                null, null, null);
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-            userProfileModuleId,
-            "userProfileModuleName",
-            "userProfileModuleDescription",
-            "userProfileModuleNameKey",
-            "userProfileModuleDescriptionKey",
-            false,
-            false,
-            Collections.emptySet(),
-            Collections.emptySet(),
-            InternetAccessRestrictionMode.WHITELIST,
-            Collections.emptySet(),
-            Collections.emptyMap(),
-            null,
-            false,
-            null);
+                userProfileModuleId,
+                "userProfileModuleName",
+                "userProfileModuleDescription",
+                "userProfileModuleNameKey",
+                "userProfileModuleDescriptionKey",
+                false,
+                false,
+                Collections.emptySet(),
+                Collections.emptySet(),
+                InternetAccessRestrictionMode.WHITELIST,
+                Collections.emptySet(),
+                Collections.emptyMap(),
+                null,
+                false,
+                null);
         profile.setControlmodeMaxUsage(false);
         profile.setControlmodeTime(false);
         profile.setControlmodeUrls(false);
@@ -592,21 +592,21 @@ public class SSLControllerImplTest {
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-            userProfileModuleId,
-            "userProfileModuleName",
-            "userProfileModuleDescription",
-            "userProfileModuleNameKey",
-            "userProfileModuleDescriptionKey",
-            false,
-            false,
-            Collections.emptySet(),
-            Collections.emptySet(),
-            InternetAccessRestrictionMode.WHITELIST,
-            Collections.emptySet(),
-            Collections.emptyMap(),
-            null,
-            false,
-            null);
+                userProfileModuleId,
+                "userProfileModuleName",
+                "userProfileModuleDescription",
+                "userProfileModuleNameKey",
+                "userProfileModuleDescriptionKey",
+                false,
+                false,
+                Collections.emptySet(),
+                Collections.emptySet(),
+                InternetAccessRestrictionMode.WHITELIST,
+                Collections.emptySet(),
+                Collections.emptyMap(),
+                null,
+                false,
+                null);
         profile.setControlmodeMaxUsage(false);
         profile.setControlmodeTime(false);
         profile.setControlmodeUrls(false);
@@ -660,17 +660,17 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-            userModuleId,
-            associatedProfileId,
-            "userName",
-            "userNameKey",
-            null, null,
-            false,
-            null,
-            Collections.emptyMap(),
-            null,
-            null,
-            null);
+                userModuleId,
+                associatedProfileId,
+                "userName",
+                "userNameKey",
+                null, null,
+                false,
+                null,
+                Collections.emptyMap(),
+                null,
+                null,
+                null);
         // Device
         Device device = new Device();
         device.setSslEnabled(false);
@@ -724,35 +724,35 @@ public class SSLControllerImplTest {
         int userModuleId = 23;
         int associatedProfileId = 1337;
         UserModule user = new UserModule(
-            userModuleId,
-            associatedProfileId,
-            "userName",
-            "userNameKey",
-            null, null,
-            false,
-            null,
-            Collections.emptyMap(),
-            null,
-            null,
-            null);
+                userModuleId,
+                associatedProfileId,
+                "userName",
+                "userNameKey",
+                null, null,
+                false,
+                null,
+                Collections.emptyMap(),
+                null,
+                null,
+                null);
         // User Profile Module
         int userProfileModuleId = 24;
         UserProfileModule profile = new UserProfileModule(
-            userProfileModuleId,
-            "userProfileModuleName",
-            "userProfileModuleDescription",
-            "userProfileModuleNameKey",
-            "userProfileModuleDescriptionKey",
-            false,
-            false,
-            Collections.emptySet(),
-            Collections.emptySet(),
-            InternetAccessRestrictionMode.WHITELIST,
-            Collections.emptySet(),
-            Collections.emptyMap(),
-            null,
-            false,
-            null);
+                userProfileModuleId,
+                "userProfileModuleName",
+                "userProfileModuleDescription",
+                "userProfileModuleNameKey",
+                "userProfileModuleDescriptionKey",
+                false,
+                false,
+                Collections.emptySet(),
+                Collections.emptySet(),
+                InternetAccessRestrictionMode.WHITELIST,
+                Collections.emptySet(),
+                Collections.emptyMap(),
+                null,
+                false,
+                null);
         profile.setControlmodeMaxUsage(true);
         profile.setControlmodeTime(true);
         profile.setControlmodeUrls(true);

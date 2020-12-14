@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.network.TorController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.network.TorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,8 @@ public class TorConfigBackupProvider extends BackupProvider {
         Set<String> restoredTorCountries = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(TOR_ENTRY)) {
-            restoredTorCountries = objectMapper.readValue(inputStream, new TypeReference<Set<String>>(){});
+            restoredTorCountries = objectMapper.readValue(inputStream, new TypeReference<Set<String>>() {
+            });
             inputStream.closeEntry();
         } else {
             throw new EblockerException("Expected entry " + TOR_ENTRY + ", got " + entry.getName());

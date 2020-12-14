@@ -16,9 +16,10 @@
  */
 package org.eblocker.server.common.data.dashboard;
 
-import org.eblocker.server.common.data.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.UserRole;
+
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.ScheduledFuture;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.network.ProblematicRouterDetection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.common.network.ProblematicRouterDetection;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.ScheduledFuture;
 
 public class ProblematicRouterDetectionScheduler extends FixedRateScheduler implements Observer {
     private static final Logger log = LoggerFactory.getLogger(ProblematicRouterDetectionScheduler.class);
@@ -34,8 +33,8 @@ public class ProblematicRouterDetectionScheduler extends FixedRateScheduler impl
 
     @Inject
     public ProblematicRouterDetectionScheduler(ProblematicRouterDetection problematicRouterDetection,
-            @Named("executor.problematicRouterDetection.startupDelay") long startupDelay,
-            @Named("executor.problematicRouterDetection.fixedRate") long fixedRate) {
+                                               @Named("executor.problematicRouterDetection.startupDelay") long startupDelay,
+                                               @Named("executor.problematicRouterDetection.fixedRate") long fixedRate) {
         super(problematicRouterDetection, startupDelay, fixedRate);
 
         problematicRouterDetection.addObserver(this); // observe the router detector for successful detections
@@ -50,6 +49,5 @@ public class ProblematicRouterDetectionScheduler extends FixedRateScheduler impl
             problematicRouterDetectionFuture = null;
         }
     }
-
 
 }

@@ -105,7 +105,7 @@ public class ArpSweeperTest {
                 List<String[]> messages = pubSubService.getPublishedMessages();
                 int expectedIp = -1408237567 + (i * 256 + j) % 65534;
                 String message = String.format("1/abcdef012345/172.16.0.2/000000000000/172.16.%d.%d/ffffffffffff",
-                    (expectedIp & 0xff00) >> 8, expectedIp & 0xff);
+                        (expectedIp & 0xff00) >> 8, expectedIp & 0xff);
                 Assert.assertEquals(messages.get(j)[0], "arp:out");
                 Assert.assertEquals(messages.get(j)[1], message);
             }
@@ -134,13 +134,15 @@ public class ArpSweeperTest {
         Assert.assertEquals(1022, pubSubService.getPublishedMessages().size());
     }
 
-    /** Custom mock implementation because Mockito's mocks are really really slow even when resetting after 256 calls ... */
+    /**
+     * Custom mock implementation because Mockito's mocks are really really slow even when resetting after 256 calls ...
+     */
     private class PubSubServiceMock implements PubSubService {
         private final List<String[]> publishedMessages = new ArrayList<>();
 
         @Override
         public void publish(String channel, String message) {
-            publishedMessages.add(new String[] { channel, message });
+            publishedMessages.add(new String[]{ channel, message });
         }
 
         @Override

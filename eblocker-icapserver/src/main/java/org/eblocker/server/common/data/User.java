@@ -18,15 +18,15 @@ package org.eblocker.server.common.data;
 
 @Deprecated
 public class User extends ModelObject {
-	public static final String ID_PREFIX = "user:";
+    public static final String ID_PREFIX = "user:";
 
-	private String name;
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 }

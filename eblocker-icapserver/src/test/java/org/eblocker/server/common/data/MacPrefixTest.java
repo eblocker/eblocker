@@ -16,43 +16,43 @@
  */
 package org.eblocker.server.common.data;
 
-import static org.junit.Assert.*;
-
+import org.eblocker.server.icap.resources.DefaultEblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.eblocker.server.icap.resources.DefaultEblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class MacPrefixTest {
-	private MacPrefix macPrefix;
-	
-	@Before
-	public void setUp() throws Exception {
-		macPrefix = new MacPrefix();
-		macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
-	}
+    private MacPrefix macPrefix;
 
-	@Test
-	public void existing() {
-		assertEquals("XEROX CORPORATION", macPrefix.getVendor("000000abcdef"));
-		assertEquals("RG Nets, Inc.", macPrefix.getVendor("0023fa000000"));
-		assertEquals("杭州德澜科技有限公司（HangZhou Delan Technology Co.,Ltd）", macPrefix.getVendor("3c2c94012345"));
-		assertEquals("IEEE Registration Authority", macPrefix.getVendor("fcffaaffffff"));
-	}
-	
-	@Test
-	public void notExisting() {
-		assertNull(macPrefix.getVendor("ffffff000000"));
-	}
+    @Before
+    public void setUp() throws Exception {
+        macPrefix = new MacPrefix();
+        macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
+    }
 
-	@Test
-	public void nullInput() {
-		assertNull(macPrefix.getVendor(null));
-	}
+    @Test
+    public void existing() {
+        assertEquals("XEROX CORPORATION", macPrefix.getVendor("000000abcdef"));
+        assertEquals("RG Nets, Inc.", macPrefix.getVendor("0023fa000000"));
+        assertEquals("杭州德澜科技有限公司（HangZhou Delan Technology Co.,Ltd）", macPrefix.getVendor("3c2c94012345"));
+        assertEquals("IEEE Registration Authority", macPrefix.getVendor("fcffaaffffff"));
+    }
 
-	@Test
-	public void tooShort() {
-		assertNull(macPrefix.getVendor("0123"));
-	}
+    @Test
+    public void notExisting() {
+        assertNull(macPrefix.getVendor("ffffff000000"));
+    }
+
+    @Test
+    public void nullInput() {
+        assertNull(macPrefix.getVendor(null));
+    }
+
+    @Test
+    public void tooShort() {
+        assertNull(macPrefix.getVendor("0123"));
+    }
 }

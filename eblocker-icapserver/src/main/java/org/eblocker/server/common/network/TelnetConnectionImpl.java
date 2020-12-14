@@ -27,69 +27,69 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TelnetConnectionImpl implements TelnetConnection {
-	private Socket socket;
-	private BufferedReader controlInput;
-	private BufferedWriter controlOutput;
+    private Socket socket;
+    private BufferedReader controlInput;
+    private BufferedWriter controlOutput;
 
-	@Override
-	public void connect(String host, int port) throws IOException {
-		socket = new Socket(host, port);
+    @Override
+    public void connect(String host, int port) throws IOException {
+        socket = new Socket(host, port);
         socket.setKeepAlive(true);
 
         //get input- and outputstream
         controlInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         controlOutput = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-	}
+    }
 
-	@Override
-	public void writeLine(String line) throws IOException {
-	    if (controlOutput == null) {
-	        throw new IOException("Telnet connection not properly set up or not connected.");
-	    }
+    @Override
+    public void writeLine(String line) throws IOException {
+        if (controlOutput == null) {
+            throw new IOException("Telnet connection not properly set up or not connected.");
+        }
 
-		controlOutput.write(line);
+        controlOutput.write(line);
         controlOutput.newLine();
         controlOutput.flush();
-	}
+    }
 
-	@Override
-	public String readLine() throws IOException {
-	    if (controlInput == null) {
-	        throw new IOException("Telnet connection not properly set up or not connected.");
-	    }
+    @Override
+    public String readLine() throws IOException {
+        if (controlInput == null) {
+            throw new IOException("Telnet connection not properly set up or not connected.");
+        }
 
-	    return controlInput.readLine();
-	}
+        return controlInput.readLine();
+    }
 
-	@Override
-	public void close() throws IOException {
-	    if (socket != null) {
-	        socket.close();
-	    }
-	    if (controlInput != null) {
-	        controlInput.close();
-	    }
-	    if (controlOutput != null) {
-	        controlOutput.close();
-	    }
-	}
+    @Override
+    public void close() throws IOException {
+        if (socket != null) {
+            socket.close();
+        }
+        if (controlInput != null) {
+            controlInput.close();
+        }
+        if (controlOutput != null) {
+            controlOutput.close();
+        }
+    }
 
-	@Override
-	public List<String> readAvailableLines() throws IOException {
-		List<String> lines = new ArrayList<>();
-		while (isLineAvailableToRead()) {
-			lines.add(readLine());
-		}
-		return lines;
-	}
+    @Override
+    public List<String> readAvailableLines() throws IOException {
+        List<String> lines = new ArrayList<>();
+        while (isLineAvailableToRead()) {
+            lines.add(readLine());
+        }
+        return lines;
+    }
 
-	@Override
-	public boolean isConnected() {
-		return socket != null && socket.isConnected() && controlInput != null && controlOutput != null;
-	}
+    @Override
+    public boolean isConnected() {
+        return socket != null && socket.isConnected() && controlInput != null && controlOutput != null;
+    }
 
-	@Override
-	public boolean isLineAvailableToRead() throws IOException {
-		return controlInput != null && controlInput.ready();
-	}
+    @Override
+    public boolean isLineAvailableToRead() throws IOException {
+        return controlInput != null && controlInput.ready();
+    }
 }

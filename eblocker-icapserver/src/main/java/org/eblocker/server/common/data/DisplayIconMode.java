@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data;
 
-public enum DisplayIconMode{
-    ON(true,false,true),// This means "on, but only for standard-browsers"
-    ON_ALL_DEVICES(true,false,false),
-    OFF(false,false,false),
-    FIVE_SECONDS(true,true,false),
-    FIVE_SECONDS_BROWSER_ONLY(true,true,true);
+public enum DisplayIconMode {
+    ON(true, false, true),// This means "on, but only for standard-browsers"
+    ON_ALL_DEVICES(true, false, false),
+    OFF(false, false, false),
+    FIVE_SECONDS(true, true, false),
+    FIVE_SECONDS_BROWSER_ONLY(true, true, true);
 
     boolean enabled;
     boolean fiveSeconds;
@@ -32,6 +32,7 @@ public enum DisplayIconMode{
         this.fiveSeconds = fiveSeconds;
         this.browserOnly = browserOnly;
     }
+
     public static DisplayIconMode generateFrom(boolean enabled, boolean fiveSeconds, boolean browserOnly) {
         if (!enabled) {
             return OFF;

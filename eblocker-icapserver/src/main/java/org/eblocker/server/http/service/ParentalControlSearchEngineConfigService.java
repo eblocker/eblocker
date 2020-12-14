@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.parentalcontrol.SearchEngineConfiguration;
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.parentalcontrol.SearchEngineConfiguration;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,8 @@ public class ParentalControlSearchEngineConfigService {
             Instant lastModification = Files.getLastModifiedTime(configPath).toInstant();
             if (lastModification.isAfter(lastUpdate)) {
                 try (InputStream in = Files.newInputStream(configPath)) {
-                    configByLanguage = objectMapper.readValue(in, new TypeReference<Map<String, SearchEngineConfiguration>>() {});
+                    configByLanguage = objectMapper.readValue(in, new TypeReference<Map<String, SearchEngineConfiguration>>() {
+                    });
                     lastUpdate = lastModification;
                 }
                 log.debug("engine configuration updated");

@@ -19,7 +19,6 @@ package org.eblocker.server.common.network.icmpv6;
 import org.eblocker.server.common.data.Ip6Address;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.util.List;
 
 public class RecursiveDnsServerOption extends Option {
@@ -49,7 +48,7 @@ public class RecursiveDnsServerOption extends Option {
         sb.append(lifetime);
         sb.append("/");
         sb.append(dnsServers.size());
-        for(Ip6Address dnsServer : dnsServers) {
+        for (Ip6Address dnsServer : dnsServers) {
             sb.append("/");
             sb.append(DatatypeConverter.printHexBinary(dnsServer.getAddress()).toLowerCase());
         }

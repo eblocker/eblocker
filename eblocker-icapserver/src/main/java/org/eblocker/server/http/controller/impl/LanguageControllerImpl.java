@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Language;
 import org.eblocker.server.common.network.TorExitNodeCountries;
 import org.eblocker.server.http.controller.LanguageController;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
@@ -31,7 +31,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/** This class handles and controls the language settings of the frontend
+/**
+ * This class handles and controls the language settings of the frontend
  */
 public class LanguageControllerImpl implements LanguageController {
 
@@ -44,50 +45,50 @@ public class LanguageControllerImpl implements LanguageController {
     private final TorExitNodeCountries torExitNodeCountries;
 
     @Inject
-    public LanguageControllerImpl(DataSource dataSource, TorExitNodeCountries torExitNodeCountries){
+    public LanguageControllerImpl(DataSource dataSource, TorExitNodeCountries torExitNodeCountries) {
         this.dataSource = dataSource;
         this.torExitNodeCountries = torExitNodeCountries;
         loadLanguages();
     }
 
     private void loadLanguages() {
-        Language english = new Language("en","English");
+        Language english = new Language("en", "English");
         languages.add(english);
 
         currentLanguage = getCurrentLanguage();
 
-        if(currentLanguage == null){//default language
+        if (currentLanguage == null) {//default language
             currentLanguage = english;
         }
 
         log.info("Current language of the frontend is : {}", currentLanguage);
 
         //TODO add more languages here
-        languages.add(new Language("de","Deutsch"));
+        languages.add(new Language("de", "Deutsch"));
     }
 
-    private Set<Language> getAllAvailableLanguages(){
+    private Set<Language> getAllAvailableLanguages() {
         return languages;
     }
 
     @Override
-    public Set<Language> getAllAvailableLanguages(Request request, Response response){
+    public Set<Language> getAllAvailableLanguages(Request request, Response response) {
         //TODO load from redis
         return getAllAvailableLanguages();
     }
 
-    private Language getCurrentLanguage(){
+    private Language getCurrentLanguage() {
         return dataSource.getCurrentLanguage();
     }
 
     @Override
-    public Language getCurrentLanguage(Request request, Response response){
+    public Language getCurrentLanguage(Request request, Response response) {
         return getCurrentLanguage();
     }
 
     @Override
-    public void setLanguage(Request request, Response response){
-        Map<String,String> map = request.getBodyAs(HashMap.class);
+    public void setLanguage(Request request, Response response) {
+        Map<String, String> map = request.getBodyAs(HashMap.class);
         String langID = map.get("id");
 
         log.debug("Received languageID: {}", langID);
@@ -107,17 +108,18 @@ public class LanguageControllerImpl implements LanguageController {
             dataSource.setCurrentLanguage(lang);
             // Language has changed, tell TorExitNodeCountries to update its list
             torExitNodeCountries.createListOfTorCountryCodes();
-        } 
+        }
     }
 
     /**
      * Lookup the language with a given ID
+     *
      * @param langID
      * @return
      */
     private Language findLanguageWithID(String langID) {
-        for(Language lang : languages){
-            if(lang.getId().equals(langID)){
+        for (Language lang : languages) {
+            if (lang.getId().equals(langID)) {
                 return lang;
             }
         }

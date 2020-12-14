@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.DynDnsService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DynDnsService;
 
 public class DynDnsUpdateScheduler extends FixedRateScheduler {
 

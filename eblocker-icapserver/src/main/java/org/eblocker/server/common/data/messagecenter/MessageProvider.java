@@ -24,6 +24,7 @@ public interface MessageProvider {
 
     /**
      * Called when the user clicks the action button of a message.
+     *
      * @param messageId
      * @return Return true if the message should be hidden for the current device
      */

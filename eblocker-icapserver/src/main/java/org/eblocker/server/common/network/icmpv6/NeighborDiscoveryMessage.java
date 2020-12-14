@@ -41,7 +41,7 @@ public abstract class NeighborDiscoveryMessage extends Icmp6Message {
     protected final void toString(StringBuilder sb) {
         super.toString(sb);
         appendParameter(sb);
-        for(Option option : options) {
+        for (Option option : options) {
             sb.append("/");
             option.toString(sb);
         }

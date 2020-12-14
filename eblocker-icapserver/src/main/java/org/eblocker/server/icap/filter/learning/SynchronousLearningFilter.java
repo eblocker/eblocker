@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.icap.filter.learning;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.icap.filter.FilterList;
 import org.eblocker.server.icap.filter.FilterResult;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
 public class SynchronousLearningFilter extends LearningFilter {
 
-	private final static String SYNC_LEARNING_FILTER_DEF = "<<SYNC-LEARNING-FILTER>>";
+    private final static String SYNC_LEARNING_FILTER_DEF = "<<SYNC-LEARNING-FILTER>>";
 
     public SynchronousLearningFilter(Boolean learnForAllDomains) {
         super(SYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains);
@@ -34,11 +34,11 @@ public class SynchronousLearningFilter extends LearningFilter {
 
     @JsonCreator
     @SuppressWarnings("unused")
-	public SynchronousLearningFilter(@JsonProperty("learnForAllDomains") Boolean learnForAllDomains, @JsonProperty("map") Map<String, FilterList> map) {
-		super(SYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains, map);
-	}
+    public SynchronousLearningFilter(@JsonProperty("learnForAllDomains") Boolean learnForAllDomains, @JsonProperty("map") Map<String, FilterList> map) {
+        super(SYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains, map);
+    }
 
-	protected FilterResult doLearn(FilterResult result, TransactionContext context) {
-		return learn(result, context);
-	}
+    protected FilterResult doLearn(FilterResult result, TransactionContext context) {
+        return learn(result, context);
+    }
 }

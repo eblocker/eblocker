@@ -22,10 +22,16 @@ import java.net.MalformedURLException;
 
 public interface HttpUrlConnectionBuilder {
     HttpUrlConnectionBuilder setConnectionTimeout(int connectionTimeout);
+
     HttpUrlConnectionBuilder setReadTimeout(int readTimeout);
+
     HttpUrlConnectionBuilder setUrl(String url) throws MalformedURLException;
+
     HttpUrlConnectionBuilder setRequestProperty(String key, String value);
+
     HttpUrlConnectionBuilder setIfModifiedSince(Long ifModifiedSince);
+
     HttpURLConnection get() throws IOException;
+
     HttpURLConnection post(byte[] content) throws IOException;
 }

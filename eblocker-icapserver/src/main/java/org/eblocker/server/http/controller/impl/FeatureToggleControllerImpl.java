@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.common.service.FeatureToggleRouter;
-import org.eblocker.server.http.controller.FeatureToggleController;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.service.FeatureToggleRouter;
+import org.eblocker.server.http.controller.FeatureToggleController;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

@@ -16,6 +16,6 @@
  */
 package org.eblocker.server.common.blocker;
 
-public enum  BlockerType {
+public enum BlockerType {
     DOMAIN, PATTERN
 }

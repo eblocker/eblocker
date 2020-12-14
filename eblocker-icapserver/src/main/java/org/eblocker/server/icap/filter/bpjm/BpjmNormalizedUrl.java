@@ -18,26 +18,26 @@ package org.eblocker.server.icap.filter.bpjm;
 
 public class BpjmNormalizedUrl {
 
-	private final String domain;
-	private final String path;
-	private final int depth;
-	
-	BpjmNormalizedUrl(String domain, String path, int depth) {
-		this.domain = domain;
-		this.path = path;
-		this.depth = depth;
-	}
+    private final String domain;
+    private final String path;
+    private final int depth;
 
-	public String getDomain() {
-		return domain;
-	}
+    BpjmNormalizedUrl(String domain, String path, int depth) {
+        this.domain = domain;
+        this.path = path;
+        this.depth = depth;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public String getDomain() {
+        return domain;
+    }
 
-	public int getDepth() {
-		return depth;
-	}
+    public String getPath() {
+        return path;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
 
 }

@@ -16,13 +16,14 @@
  */
 package org.eblocker.server.common.util;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class RemainingPauseTest {
-	@Test
-	public void testGetter() {
-		RemainingPause pause = new RemainingPause(100L);
-		assertEquals(100l, (long)pause.getPausing());
-	}
+    @Test
+    public void testGetter() {
+        RemainingPause pause = new RemainingPause(100L);
+        assertEquals(100l, (long) pause.getPausing());
+    }
 }

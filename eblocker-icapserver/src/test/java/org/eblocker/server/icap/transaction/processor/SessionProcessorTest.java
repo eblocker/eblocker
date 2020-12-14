@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.icap.transaction.Transaction;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

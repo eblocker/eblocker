@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Funnels;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,9 +83,9 @@ public class DomainBlacklistService {
 
     public DomainFilter getFilter(Integer id) {
         return getFilterKeys(Collections.singleton(id)).stream()
-            .map(filtersByName::get)
-            .filter(Objects::nonNull)
-            .findAny().orElse(null);
+                .map(filtersByName::get)
+                .filter(Objects::nonNull)
+                .findAny().orElse(null);
     }
 
     /**
@@ -251,9 +251,9 @@ public class DomainBlacklistService {
     private void deleteMarkedFilters() {
         log.info("removing filters marked as deleted");
         cache.getAllFileFilters().stream()
-            .filter(CachedFileFilter::isDeleted)
-            .map(CachedFileFilter::getKey)
-            .forEach(this::deleteFilter);
+                .filter(CachedFileFilter::isDeleted)
+                .map(CachedFileFilter::getKey)
+                .forEach(this::deleteFilter);
     }
 
     private void deleteFilter(CachedFilterKey key) {
@@ -270,24 +270,24 @@ public class DomainBlacklistService {
         Set<CachedFilterKey> newestKeys = cache.getFileFilters().stream().map(CachedFileFilter::getKey).collect(Collectors.toSet());
 
         cache.getAllFileFilters().stream()
-            .map(CachedFileFilter::getKey)
-            .filter(key -> !newestKeys.contains(key))
-            .forEach(key -> {
-                log.debug("marking filter {} as deleted as a newer one exists", key);
-                markFilterAsDeleted(key);
-            });
+                .map(CachedFileFilter::getKey)
+                .filter(key -> !newestKeys.contains(key))
+                .forEach(key -> {
+                    log.debug("marking filter {} as deleted as a newer one exists", key);
+                    markFilterAsDeleted(key);
+                });
     }
 
     private void markNonExistingFiltersAsDeleted(Collection<ParentalControlFilterMetaData> blacklists) {
         Set<Integer> ids = blacklists.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
 
         cache.getAllFileFilters().stream()
-            .map(CachedFileFilter::getKey)
-            .filter(key -> !ids.contains(key.getId()))
-            .forEach(key -> {
-                log.debug("marking filter {} as deleted as it does not exist anymore", key);
-                markFilterAsDeleted(key);
-            });
+                .map(CachedFileFilter::getKey)
+                .filter(key -> !ids.contains(key.getId()))
+                .forEach(key -> {
+                    log.debug("marking filter {} as deleted as it does not exist anymore", key);
+                    markFilterAsDeleted(key);
+                });
     }
 
     private void markFilterAsDeleted(CachedFilterKey key) {
@@ -300,9 +300,9 @@ public class DomainBlacklistService {
 
     private void dropDeletedFiltersFromMemory() {
         cache.getAllFileFilters().stream()
-            .filter(CachedFileFilter::isDeleted)
-            .map(CachedFileFilter::getKey)
-            .forEach(filtersByName::remove);
+                .filter(CachedFileFilter::isDeleted)
+                .map(CachedFileFilter::getKey)
+                .forEach(filtersByName::remove);
     }
 
     // get filter keys of latest cached versions

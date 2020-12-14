@@ -62,8 +62,8 @@ public class LevenshteinTest {
 
     private <T> void applyEditSequence(List<Levenshtein.DistanceMatrixEntry> editSequence, List<T> source, List<T> target) {
         int i = 0;
-        for(Levenshtein.DistanceMatrixEntry e : editSequence) {
-            switch(e.getOperation()) {
+        for (Levenshtein.DistanceMatrixEntry e : editSequence) {
+            switch (e.getOperation()) {
                 case NO_OPERATION:
                     ++i;
                     break;
@@ -81,6 +81,5 @@ public class LevenshteinTest {
             }
         }
     }
-
 
 }

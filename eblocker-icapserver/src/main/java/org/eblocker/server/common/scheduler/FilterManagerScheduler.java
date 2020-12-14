@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.eblocker.server.icap.filter.FilterManager;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.icap.filter.FilterManager;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class FilterManagerScheduler implements Scheduler {
     private final FilterManager filterManager;
@@ -37,7 +37,7 @@ public class FilterManagerScheduler implements Scheduler {
             @Named("executor.asynchronousLearner.fixedDelay") long asynchronousLearnerFixedDelay,
             @Named("executor.filterStoreUpdater.startupDelay") long filterStoreUpdaterStartupDelay,
             @Named("executor.filterStoreUpdater.fixedDelay") long filterStoreUpdaterFixedDelay
-            ) {
+    ) {
         this.filterManager = filterManager;
         this.filterStoreUpdaterStartupDelay = filterStoreUpdaterStartupDelay;
         this.filterStoreUpdaterFixedDelay = filterStoreUpdaterFixedDelay;

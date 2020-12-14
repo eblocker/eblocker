@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.http.service.DashboardService;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class SchemaMigrationVersion38 implements SchemaMigration {
     private final DataSource dataSource;
@@ -57,10 +57,10 @@ public class SchemaMigrationVersion38 implements SchemaMigration {
     }
 
     /**
-     *  Create standard system user if it does not exist. Standard user is a proxy user for all
-     *  unassigned devices. These devices have own user. But the profile of that user cannot be changed
-     *  in the new UI. So we use a standard user to allow the customer to update the standard profile,
-     *  which is used by all users of unassigned devices.
+     * Create standard system user if it does not exist. Standard user is a proxy user for all
+     * unassigned devices. These devices have own user. But the profile of that user cannot be changed
+     * in the new UI. So we use a standard user to allow the customer to update the standard profile,
+     * which is used by all users of unassigned devices.
      */
     private void createAndSaveStandardUser() {
         if (userMigrationService.getAll().stream().noneMatch(this::isStandardUser)) {
@@ -76,18 +76,18 @@ public class SchemaMigrationVersion38 implements SchemaMigration {
     private UserModuleOld createStandardUser(Integer associatedProfileId, String name, String nameKey) {
         Integer newId = dataSource.nextId(UserModule.class);
         UserModuleOld newUser = new UserModuleOld(
-            newId,
-            associatedProfileId,
-            name,
-            nameKey,
-            null,
-            null,
-            true,
-            null,
-            null,
-            dashboardService.generateDashboardCards(),
-            null,
-            null);
+                newId,
+                associatedProfileId,
+                name,
+                nameKey,
+                null,
+                null,
+                true,
+                null,
+                null,
+                dashboardService.generateDashboardCards(),
+                null,
+                null);
         return newUser;
     }
 }

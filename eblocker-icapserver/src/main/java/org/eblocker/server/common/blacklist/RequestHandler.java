@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.service.FilterStatisticsService;
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.Inject;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.service.FilterStatisticsService;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
         String hostname;
         if ("http".equals(proto) || "dns".equals(proto)) {
             hostname = requestedHost;
-        } else if (!"-".equals(sslSni)){
+        } else if (!"-".equals(sslSni)) {
             hostname = sslSni;
         } else {
             logger.debug("id {} no ssl host to check", id);

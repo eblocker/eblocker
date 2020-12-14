@@ -16,45 +16,44 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.util.List;
-
-import org.eblocker.server.http.controller.RecordingController;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.RecordedUrl;
 import org.eblocker.server.common.util.StartRecordingRequestData;
+import org.eblocker.server.http.controller.RecordingController;
+import org.eblocker.server.http.service.RecordingService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.http.service.RecordingService;
-import com.google.inject.Inject;
+import java.util.List;
 
 public class RecordingControllerImpl implements RecordingController {
-	private static final Logger log = LoggerFactory.getLogger(RecordingControllerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(RecordingControllerImpl.class);
 
-	RecordingService recordingService;
-		
-	@Inject
-	public RecordingControllerImpl(RecordingService recordingService
-			) {
-		this.recordingService = recordingService;
-	}
+    RecordingService recordingService;
 
-	@Override
-	public boolean recordingStartStop(Request request, Response resp) {
-		StartRecordingRequestData requestData = request.getBodyAs(StartRecordingRequestData.class);
-		return this.recordingService.recordingStartStop(requestData);
-	}
+    @Inject
+    public RecordingControllerImpl(RecordingService recordingService
+    ) {
+        this.recordingService = recordingService;
+    }
 
-	@Override
-	public boolean getRecordingStatus(Request request, Response resp) {
-		log.info("getRecordingStatus()");
-		return this.recordingService.getRecordingStatus();
-	}
+    @Override
+    public boolean recordingStartStop(Request request, Response resp) {
+        StartRecordingRequestData requestData = request.getBodyAs(StartRecordingRequestData.class);
+        return this.recordingService.recordingStartStop(requestData);
+    }
 
-	@Override
-	public List<RecordedUrl> getRecordedDomainList(Request request, Response response){
-		return this.recordingService.getRecordedDomainList();
-	}
-	
+    @Override
+    public boolean getRecordingStatus(Request request, Response resp) {
+        log.info("getRecordingStatus()");
+        return this.recordingService.getRecordingStatus();
+    }
+
+    @Override
+    public List<RecordedUrl> getRecordedDomainList(Request request, Response response) {
+        return this.recordingService.getRecordedDomainList();
+    }
+
 }

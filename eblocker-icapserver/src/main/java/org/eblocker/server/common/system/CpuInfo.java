@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.system;
 
-
 /**
  * Info about the CPU
  */
 public interface CpuInfo {
-	/**
-	 * Returns a serial number in the format [0-9a-f]+. The length of the serial is not specified.
-	 * @return
-	 */
-	public String getSerial();
+    /**
+     * Returns a serial number in the format [0-9a-f]+. The length of the serial is not specified.
+     *
+     * @return
+     */
+    public String getSerial();
 }

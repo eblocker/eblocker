@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.x500.X500Principal;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -52,10 +51,10 @@ public class IntermediateCertificatesStore {
 
     public List<X509Certificate> get(X500Principal subject, BigInteger serialNumber, byte[] keyId) {
         return intermediateCertificatesBySubject.getOrDefault(subject, Collections.emptyList())
-            .stream()
-            .filter(c -> serialNumber == null || serialNumber.equals(c.getSerialNumber()))
-            .filter(c -> keyId == null || Arrays.equals(keyId, PKI.getSubjectKeyIdentifier(c)))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(c -> serialNumber == null || serialNumber.equals(c.getSerialNumber()))
+                .filter(c -> keyId == null || Arrays.equals(keyId, PKI.getSubjectKeyIdentifier(c)))
+                .collect(Collectors.toList());
     }
 
     public void refresh() {

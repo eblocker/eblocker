@@ -51,10 +51,10 @@ public class BlockedDomainStatisticsDatabaseLoader {
 
     private static DB createOpen(String dbPath) {
         return DBMaker
-            .newFileDB(new File(dbPath))
-            .cacheDisable()
-            .closeOnJvmShutdown()
-            .make();
+                .newFileDB(new File(dbPath))
+                .cacheDisable()
+                .closeOnJvmShutdown()
+                .make();
     }
 
 }

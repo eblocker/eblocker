@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -30,8 +32,6 @@ import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
 import org.eblocker.server.http.service.UserService;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,103 +54,103 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public class ArpListenerTest {
-	private static final String GATEWAY_IP = "192.168.0.1";
+    private static final String GATEWAY_IP = "192.168.0.1";
     private static final String GATEWAY_MAC = "abcdef123456";
 
     private ArpListener listener;
-	private ConcurrentMap<String, Long> arpProbeCache;
-	private Table<String, IpAddress, Long> arpResponseTable;
-	private DataSource dataSource;
-	private DeviceService deviceService;
-	private DeviceOnlineStatusCache deviceOnlineStatusCache;
-	private PubSubService pubSubService;
-	private NetworkInterfaceWrapper networkInterface;
-	private NetworkStateMachine networkStateMachine;
-	private TestClock clock;
-	private DeviceFactory deviceFactory;
+    private ConcurrentMap<String, Long> arpProbeCache;
+    private Table<String, IpAddress, Long> arpResponseTable;
+    private DataSource dataSource;
+    private DeviceService deviceService;
+    private DeviceOnlineStatusCache deviceOnlineStatusCache;
+    private PubSubService pubSubService;
+    private NetworkInterfaceWrapper networkInterface;
+    private NetworkStateMachine networkStateMachine;
+    private TestClock clock;
+    private DeviceFactory deviceFactory;
 
-	protected Subscriber subscriber;
+    protected Subscriber subscriber;
 
     private TestDeviceFactory tdf;
 
     @Before
-	public void setUp() throws Exception {
-		dataSource = Mockito.mock(DataSource.class);
-		deviceService = Mockito.mock(DeviceService.class);
-		deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
-		networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
-		when(networkInterface.getHardwareAddressHex()).thenReturn("caffee012345");
-		when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.0.2"));
-		when(networkInterface.getNetworkPrefixLength(IpAddress.parse("192.168.0.2"))).thenReturn(24);
-		networkStateMachine = Mockito.mock(NetworkStateMachine.class);
-		clock = new TestClock(ZonedDateTime.now());
-		UserService userService = Mockito.mock(UserService.class);
+    public void setUp() throws Exception {
+        dataSource = Mockito.mock(DataSource.class);
+        deviceService = Mockito.mock(DeviceService.class);
+        deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
+        networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
+        when(networkInterface.getHardwareAddressHex()).thenReturn("caffee012345");
+        when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.0.2"));
+        when(networkInterface.getNetworkPrefixLength(IpAddress.parse("192.168.0.2"))).thenReturn(24);
+        networkStateMachine = Mockito.mock(NetworkStateMachine.class);
+        clock = new TestClock(ZonedDateTime.now());
+        UserService userService = Mockito.mock(UserService.class);
 
-		tdf = new TestDeviceFactory(deviceService);
-		tdf.addDevice("012345abcdef", "192.168.0.100", true);
-		tdf.addDevice("012345aaaaaa", "192.168.0.22",true);
-		tdf.addDevice("001122334455", null, false);
-		tdf.commit();
+        tdf = new TestDeviceFactory(deviceService);
+        tdf.addDevice("012345abcdef", "192.168.0.100", true);
+        tdf.addDevice("012345aaaaaa", "192.168.0.22", true);
+        tdf.addDevice("001122334455", null, false);
+        tdf.commit();
 
-		when(dataSource.getGateway()).thenReturn(GATEWAY_IP);
-		Language lang = new Language("de", "German");
-		when(dataSource.getCurrentLanguage()).thenReturn(lang);
+        when(dataSource.getGateway()).thenReturn(GATEWAY_IP);
+        Language lang = new Language("de", "German");
+        when(dataSource.getCurrentLanguage()).thenReturn(lang);
 
         UserModule user = new UserModule(123456, null, null, null, null, null, true, null, null, null, null, null);
         Mockito.when(userService.restoreDefaultSystemUser(any())).thenReturn(user);
 
         pubSubService = new PubSubService() {
-			@Override
-			public void subscribeAndLoop(String channel, Subscriber aSubscriber) {
-				assertEquals("arp:in", channel);
-				subscriber = aSubscriber;
-			}
+            @Override
+            public void subscribeAndLoop(String channel, Subscriber aSubscriber) {
+                assertEquals("arp:in", channel);
+                subscriber = aSubscriber;
+            }
 
-			@Override
-			public void publish(String channel, String message) {
-				fail("publish should never be used by the ArpListener");
-			}
+            @Override
+            public void publish(String channel, String message) {
+                fail("publish should never be used by the ArpListener");
+            }
 
-			@Override
-			public void unsubscribe(Subscriber subscriber) {
-				fail("unsubscribe should never be called by the ArpListener");
-			}
-		};
+            @Override
+            public void unsubscribe(Subscriber subscriber) {
+                fail("unsubscribe should never be called by the ArpListener");
+            }
+        };
 
-		arpProbeCache = new ConcurrentHashMap<>(32, 0.75f, 1);
-		arpResponseTable = HashBasedTable.create();
+        arpProbeCache = new ConcurrentHashMap<>(32, 0.75f, 1);
+        arpResponseTable = HashBasedTable.create();
 
         deviceFactory = new DeviceFactory(dataSource);
 
-		listener = new ArpListener(arpProbeCache, arpResponseTable, dataSource, deviceService, deviceOnlineStatusCache, pubSubService, networkInterface, networkStateMachine, clock, deviceFactory, userService);
-	}
+        listener = new ArpListener(arpProbeCache, arpResponseTable, dataSource, deviceService, deviceOnlineStatusCache, pubSubService, networkInterface, networkStateMachine, clock, deviceFactory, userService);
+    }
 
-	@Test
-	public void testInvalidMessage() {
-		listener.run();
-		subscriber.process("warbl");
-		verifyZeroInteractions(deviceService);
-	}
+    @Test
+    public void testInvalidMessage() {
+        listener.run();
+        subscriber.process("warbl");
+        verifyZeroInteractions(deviceService);
+    }
 
-	@Test
-	public void testResponseMessageSameIP() {
-		listener.run();
-		subscriber.process(response("012345abcdef", "192.168.0.100"));
+    @Test
+    public void testResponseMessageSameIP() {
+        listener.run();
+        subscriber.process(response("012345abcdef", "192.168.0.100"));
         verifyZeroInteractions(networkStateMachine);
         verify(deviceService, never()).updateDevice(any());
         verify(deviceOnlineStatusCache).updateOnlineStatus("device:012345abcdef");
-	}
+    }
 
-	@Test
-	public void testResponseMessageNewIP() {
-	    listener.run();
-	    // before, this device was known but had no IP:
-	    subscriber.process(response("001122334455", "192.168.0.100"));
+    @Test
+    public void testResponseMessageNewIP() {
+        listener.run();
+        // before, this device was known but had no IP:
+        subscriber.process(response("001122334455", "192.168.0.100"));
         Device device = TestDeviceFactory.createDevice("001122334455", "192.168.0.100", false);
         verify(deviceService).updateDevice(device);
-	    verify(deviceOnlineStatusCache).updateOnlineStatus("device:001122334455");
+        verify(deviceOnlineStatusCache).updateOnlineStatus("device:001122334455");
         verify(networkStateMachine).deviceStateChanged();
-	}
+    }
 
     @Test
     public void testResponseMessageNewDevice() {
@@ -179,26 +179,26 @@ public class ArpListenerTest {
         Assert.assertNotEquals("192.168.23.100", device.getIpAddresses().get(0));
     }
 
-	@Test
+    @Test
     public void testRequestMessage() {
-    	listener.run();
-    	subscriber.process("1/012345abcdef/192.168.0.100/ffffffffffff/192.168.0.1");
-    	verifyZeroInteractions(networkStateMachine, deviceService, deviceOnlineStatusCache);
+        listener.run();
+        subscriber.process("1/012345abcdef/192.168.0.100/ffffffffffff/192.168.0.1");
+        verifyZeroInteractions(networkStateMachine, deviceService, deviceOnlineStatusCache);
     }
 
     @Test
     public void testGratuitousRequestNewDevice() {
-    	listener.run();
-    	subscriber.process("1/112345abcdee/192.168.0.100/ffffffffffff/192.168.0.100");
-    	Device device = TestDeviceFactory.createDevice("112345abcdee", "192.168.0.100", true);
-    	verify(deviceService).updateDevice(device);
-    	verify(networkStateMachine).deviceStateChanged();
+        listener.run();
+        subscriber.process("1/112345abcdee/192.168.0.100/ffffffffffff/192.168.0.100");
+        Device device = TestDeviceFactory.createDevice("112345abcdee", "192.168.0.100", true);
+        verify(deviceService).updateDevice(device);
+        verify(networkStateMachine).deviceStateChanged();
     }
 
     @Test
     public void testArpProbe() {
-	    listener.run();
-	    subscriber.process("1/012345aaaaaa/0.0.0.0/000000000000/192.168.0.101");
+        listener.run();
+        subscriber.process("1/012345aaaaaa/0.0.0.0/000000000000/192.168.0.101");
 
         Device device = tdf.getDevice("device:012345aaaaaa");
         verify(deviceService, Mockito.never()).updateDevice(device);
@@ -238,31 +238,31 @@ public class ArpListenerTest {
     }
 
     @Test
-	public void ignoreLocalMessages() {
-		listener.run();
-		subscriber.process("2/caffee012345/192.168.0.100/abcdef012345/192.168.0.99");
-		verifyZeroInteractions(deviceService);
-	}
+    public void ignoreLocalMessages() {
+        listener.run();
+        subscriber.process("2/caffee012345/192.168.0.100/abcdef012345/192.168.0.99");
+        verifyZeroInteractions(deviceService);
+    }
 
-	@Test
-	public void testIpAddressConflictResolving(){
-		//added one device in the setup method first with IP address: 192.168.0.22
-		listener.run();
-		//now add second device with for same IP address
-		// -> this should "deactivate" the first device, which means that the ipAddress of the first device should be "null" afterwards
-		// -> devices with ipAddress == null will be ignored by the ArpSpoofer
-		subscriber.process("2/112345aaaaee/192.168.0.22/abcdef012345/192.168.0.99");
-		Device newDevice = TestDeviceFactory.createDevice("112345aaaaee","192.168.0.22",true);
-		Device existingDevice = TestDeviceFactory.createDevice("012345aaaaaa", (String) null, true);
+    @Test
+    public void testIpAddressConflictResolving() {
+        //added one device in the setup method first with IP address: 192.168.0.22
+        listener.run();
+        //now add second device with for same IP address
+        // -> this should "deactivate" the first device, which means that the ipAddress of the first device should be "null" afterwards
+        // -> devices with ipAddress == null will be ignored by the ArpSpoofer
+        subscriber.process("2/112345aaaaee/192.168.0.22/abcdef012345/192.168.0.99");
+        Device newDevice = TestDeviceFactory.createDevice("112345aaaaee", "192.168.0.22", true);
+        Device existingDevice = TestDeviceFactory.createDevice("012345aaaaaa", (String) null, true);
 
-		InOrder inOrder = Mockito.inOrder(deviceService, networkStateMachine);
-		inOrder.verify(deviceService).updateDevice(newDevice);
-		//inOrder.verify(deviceService).updateDevice(existingDevice);
-		inOrder.verify(networkStateMachine).deviceStateChanged();
+        InOrder inOrder = Mockito.inOrder(deviceService, networkStateMachine);
+        inOrder.verify(deviceService).updateDevice(newDevice);
+        //inOrder.verify(deviceService).updateDevice(existingDevice);
+        inOrder.verify(networkStateMachine).deviceStateChanged();
 
-		Assert.assertEquals(1, newDevice.getIpAddresses().size());
-		Assert.assertTrue(existingDevice.getIpAddresses().isEmpty());
-	}
+        Assert.assertEquals(1, newDevice.getIpAddresses().size());
+        Assert.assertTrue(existingDevice.getIpAddresses().isEmpty());
+    }
 
     @Test
     public void testResponseMessageNewGatewayIP() {

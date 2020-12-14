@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.system.ScriptRunner;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,8 @@ public class RoutingControllerTest {
         rtTablesTempFile.deleteOnExit();
 
         scriptRunner = Mockito.mock(ScriptRunner.class);
-        routingController = new RoutingController(rtTablesPath, rtTablesTempFile.getAbsolutePath(), RT_PREFIX, RT_OFFSET, ROUTE_MIN, ROUTE_MAX, RECONFIGURE_ROUTING_TABLES_SCRIPT, RECONFIGURE_POLICY_SCRIPT, VPN_SET_CLIENT_ROUTE_SCRIPT, VPN_CLEAR_CLIENT_ROUTE_SCRIPT, scriptRunner);
+        routingController = new RoutingController(rtTablesPath, rtTablesTempFile.getAbsolutePath(), RT_PREFIX, RT_OFFSET, ROUTE_MIN, ROUTE_MAX, RECONFIGURE_ROUTING_TABLES_SCRIPT, RECONFIGURE_POLICY_SCRIPT, VPN_SET_CLIENT_ROUTE_SCRIPT,
+                VPN_CLEAR_CLIENT_ROUTE_SCRIPT, scriptRunner);
     }
 
     @Test
@@ -68,7 +69,7 @@ public class RoutingControllerTest {
 
         // check creation
         List<Integer> routes = new ArrayList<>();
-        for(int i = 0; i <= ROUTE_MAX - ROUTE_MIN; ++i) {
+        for (int i = 0; i <= ROUTE_MAX - ROUTE_MIN; ++i) {
             Integer route = routingController.createRoute();
             Assert.assertNotNull(route);
 
@@ -95,7 +96,7 @@ public class RoutingControllerTest {
 
         // check tear-down
         int n = routes.size();
-        for(int k = 0; k < n; ++k) {
+        for (int k = 0; k < n; ++k) {
             routingController.deleteRoute(routes.get(k));
 
             // check setup routing table script call
@@ -113,7 +114,7 @@ public class RoutingControllerTest {
         String[] arguments = new String[2 + n];
         arguments[0] = RT_PREFIX;
         arguments[1] = String.valueOf(RT_OFFSET);
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             arguments[2 + i] = String.valueOf(routes.get(startIndex + i));
         }
         return arguments;
@@ -146,7 +147,7 @@ public class RoutingControllerTest {
     public void testNoDuplicateRoutes() {
         Set<Integer> routes = new HashSet<>();
         int n = ROUTE_MAX - ROUTE_MIN + 1;
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             Integer route = routingController.createRoute();
             Assert.assertNotNull(route);
             Assert.assertTrue(routes.add(route));
@@ -157,7 +158,7 @@ public class RoutingControllerTest {
     public void testAcquireReleaseCycle() {
         Queue<Integer> routes = new LinkedList<>();
         int n = ROUTE_MAX - ROUTE_MIN + 1;
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             Integer route = routingController.createRoute();
             Assert.assertNotNull(route);
             routes.add(route);
@@ -181,7 +182,5 @@ public class RoutingControllerTest {
         routingController.setClientRoute(0, "", "", "", "");
         Mockito.verifyNoMoreInteractions(scriptRunner);
     }
-
-
 
 }

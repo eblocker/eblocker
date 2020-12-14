@@ -78,8 +78,8 @@ public class CrlCacheCertStoreTest {
 
     @Test(expected = CertStoreException.class)
     public void testEngineGetCRLsDistributionPointsExtractionFailure() throws InvalidAlgorithmParameterException, CertStoreException, IOException {
-        X509Certificate certificate  = Mockito.mock(X509Certificate.class);
-        Mockito.when(certificate.getExtensionValue(Mockito.anyString())).thenReturn(new byte[] { 2, 1, 0 });
+        X509Certificate certificate = Mockito.mock(X509Certificate.class);
+        Mockito.when(certificate.getExtensionValue(Mockito.anyString())).thenReturn(new byte[]{ 2, 1, 0 });
 
         X509CRLSelector selector = new X509CRLSelector();
         selector.setCertificateChecking(certificate);

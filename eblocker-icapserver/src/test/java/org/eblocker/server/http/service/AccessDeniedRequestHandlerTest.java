@@ -16,19 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.blacklist.DomainBlockingService;
-import org.eblocker.server.common.data.AccessRestriction;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.parentalcontrol.Category;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import org.eblocker.server.common.malware.MalwareFilterService;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.common.session.SessionStore;
-import org.eblocker.server.common.transaction.TransactionContext;
-import org.eblocker.server.common.transaction.TransactionIdentifier;
-import org.eblocker.server.common.network.BaseURLs;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.DecoderResult;
@@ -41,6 +28,19 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.common.blacklist.DomainBlockingService;
+import org.eblocker.server.common.data.AccessRestriction;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.parentalcontrol.Category;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
+import org.eblocker.server.common.malware.MalwareFilterService;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.common.session.SessionStore;
+import org.eblocker.server.common.transaction.TransactionContext;
+import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class AccessDeniedRequestHandlerTest {
     public void setup() {
         baseURLs = Mockito.mock(BaseURLs.class);
 
-        Mockito.when(baseURLs.selectURLForPage(Mockito.anyString())).then(im -> ((String)im.getArgument(0)).startsWith("https") ? "https://dashboard.eblocker" : "http://dashboard.eblocker");
+        Mockito.when(baseURLs.selectURLForPage(Mockito.anyString())).then(im -> ((String) im.getArgument(0)).startsWith("https") ? "https://dashboard.eblocker" : "http://dashboard.eblocker");
 
         device = createMockDevice("192.168.9.15");
         deviceService = Mockito.mock(DeviceService.class);
@@ -122,7 +122,8 @@ public class AccessDeniedRequestHandlerTest {
         userService = Mockito.mock(UserService.class);
         Mockito.when(userService.getUserById(5)).thenReturn(user);
 
-        handler = new AccessDeniedRequestHandler(baseURLs, deviceService, domainBlockingService, malwareFilterService, listsService, restrictionsService, sessionStore, userService, PARENTAL_CONTROL_REDIRECT_PAGE, ADS_TRACKERS_REDIRECT_PAGE, MALWARE_REDIRECT_PAGE, WHITELISTED_REDIRECT_PAGE);
+        handler = new AccessDeniedRequestHandler(baseURLs, deviceService, domainBlockingService, malwareFilterService, listsService, restrictionsService, sessionStore, userService, PARENTAL_CONTROL_REDIRECT_PAGE, ADS_TRACKERS_REDIRECT_PAGE,
+                MALWARE_REDIRECT_PAGE, WHITELISTED_REDIRECT_PAGE);
     }
 
     @Test
@@ -284,9 +285,9 @@ public class AccessDeniedRequestHandlerTest {
     private FullHttpResponse doRequest(String scheme, String host, String uri, String remoteAddr, String origin) {
         DefaultHttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
         request.headers()
-            .set("Host", host)
-            .set("Referer", "http://random.site")
-            .set("User-Agent", USER_AGENT);
+                .set("Host", host)
+                .set("Referer", "http://random.site")
+                .set("User-Agent", USER_AGENT);
         if (origin != null) {
             request.headers().set("Origin", origin);
         }
@@ -299,7 +300,7 @@ public class AccessDeniedRequestHandlerTest {
 
     private EmbeddedChannel createEmbeddedChannel(String scheme, String remoteAddr) {
         AddAttributeHandler addAttributeHandler = new AddAttributeHandler(Collections.singletonMap(
-            AccessDeniedRequestHandler.SCHEME_KEY, scheme));
+                AccessDeniedRequestHandler.SCHEME_KEY, scheme));
         EmbeddedChannel embeddedChannel = new EmbeddedChannel(addAttributeHandler, handler) {
             @Override
             protected SocketAddress remoteAddress0() {

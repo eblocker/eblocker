@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
@@ -23,8 +24,6 @@ import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.provider.AbstractMessageProvider;
-import org.eblocker.registration.ProductFeature;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -38,8 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MessageCenterServiceTest {
 
@@ -99,7 +103,6 @@ public class MessageCenterServiceTest {
         assertEquals(0, messageCenterService.getMessagesForDevice(DEVICE_ID_2).size());
         assertEquals(0, messageCenterService.getMessagesForDevice(DEVICE_ID_3).size());
 
-
         // Create one message and update
         prov1.setNextAction(MessageAction.CREATE);
         messageCenterService.updateMessages();
@@ -109,7 +112,6 @@ public class MessageCenterServiceTest {
         assertEquals(1, messageCenterService.getMessagesForDevice(DEVICE_ID_2).size());
         assertEquals(1, messageCenterService.getMessagesForDevice(DEVICE_ID_3).size());
 
-
         // Create another message and update
         prov2.setNextAction(MessageAction.CREATE);
         messageCenterService.updateMessages();
@@ -118,7 +120,6 @@ public class MessageCenterServiceTest {
         assertEquals(2, messageCenterService.getMessagesForDevice(DEVICE_ID_1).size());
         assertEquals(2, messageCenterService.getMessagesForDevice(DEVICE_ID_2).size());
         assertEquals(2, messageCenterService.getMessagesForDevice(DEVICE_ID_3).size());
-
 
         // Remove one message and update
         prov1.setNextAction(MessageAction.DELETE);
@@ -148,7 +149,6 @@ public class MessageCenterServiceTest {
         assertEquals(3, messageCenterService.getMessagesForDevice(DEVICE_ID_2).size());
         assertEquals(3, messageCenterService.getMessagesForDevice(DEVICE_ID_3).size());
 
-
         // Some messages seen by some devices
         messageCenterService.executeMessageAction(MSG_1, DEVICE_ID_1);
         messageCenterService.executeMessageAction(MSG_1, DEVICE_ID_2);
@@ -158,7 +158,6 @@ public class MessageCenterServiceTest {
         assertEquals(1, messageCenterService.getMessagesForDevice(DEVICE_ID_1).size());
         assertEquals(2, messageCenterService.getMessagesForDevice(DEVICE_ID_2).size());
         assertEquals(3, messageCenterService.getMessagesForDevice(DEVICE_ID_3).size());
-
 
         // Hide message completely
         messageCenterService.setDoNotShowAgain(MSG_3, true);
@@ -171,7 +170,7 @@ public class MessageCenterServiceTest {
     }
 
     @Test
-    public void testNoMessageForParentalControlledUser(){
+    public void testNoMessageForParentalControlledUser() {
         // Messages are present (to allow MessageCenterService to fail by returning them)
         MessageCenterMessage msg = new MessageCenterMessage(123, null, null, null, null, null, Collections.emptyMap(),
                 Collections.emptyMap(), null, null, null);

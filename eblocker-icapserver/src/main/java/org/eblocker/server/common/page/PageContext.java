@@ -24,118 +24,120 @@ import java.util.Set;
 import java.util.UUID;
 
 public class PageContext {
-	private final String id;
-	private final String url;
-	private final IpAddress ipAddress;
+    private final String id;
+    private final String url;
+    private final IpAddress ipAddress;
 
-	private PageContext parentContext;
-	private Set<String> blockedAdsSet;
-	private Set<String> blockedTrackingsSet;
-	private WhiteListConfig whiteListConfig;
+    private PageContext parentContext;
+    private Set<String> blockedAdsSet;
+    private Set<String> blockedTrackingsSet;
+    private WhiteListConfig whiteListConfig;
 
-	public PageContext(PageContext parentContext, String url, IpAddress ipAddress) {
-		this.id = UUID.randomUUID().toString();
-		this.parentContext = parentContext;
-		this.url = url;
-		this.ipAddress = ipAddress;
-		this.blockedAdsSet = new HashSet<>();
-		this.blockedTrackingsSet = new HashSet<>();
-		
-		reset();
-	}
-	
-	public void reset() {
-		blockedAdsSet.clear();
-		blockedTrackingsSet.clear();
-		whiteListConfig = WhiteListConfig.noWhiteListing();
-	}
+    public PageContext(PageContext parentContext, String url, IpAddress ipAddress) {
+        this.id = UUID.randomUUID().toString();
+        this.parentContext = parentContext;
+        this.url = url;
+        this.ipAddress = ipAddress;
+        this.blockedAdsSet = new HashSet<>();
+        this.blockedTrackingsSet = new HashSet<>();
 
-	public String getId() {
-		return id;
-	}
+        reset();
+    }
 
-	public String getShortId() {
-		return id.substring(0, 8);
-	}
+    public void reset() {
+        blockedAdsSet.clear();
+        blockedTrackingsSet.clear();
+        whiteListConfig = WhiteListConfig.noWhiteListing();
+    }
 
-	public PageContext getParentContext() {
-		return parentContext;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setParentContext(PageContext parentContext) {
-		this.parentContext = parentContext;
-	}
+    public String getShortId() {
+        return id.substring(0, 8);
+    }
 
-	public String getUrl() {
-		return url;
-	}
-	
-	public IpAddress getIpAddress() {
-		return this.ipAddress;
-	}
+    public PageContext getParentContext() {
+        return parentContext;
+    }
 
-	/**Add a new blocked ad url. 
-	 * 
-	 * @param url blocked ad url
-	 */
-	public void incrementBlockedAds(String url){
-		blockedAdsSet.add(url);
-	}
+    public void setParentContext(PageContext parentContext) {
+        this.parentContext = parentContext;
+    }
 
-	/**
-	 * Add a new blocked tracking url.
-	 * @param url blocked tracking url
-	 */
-	public void incrementBlockedTrackings(String url){
-		blockedTrackingsSet.add(url);
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public int getBlockedAds() {
-		return blockedAdsSet.size();
-	}
-	
-	public Set<String> getBlockedAdsSet(){
-		return blockedAdsSet;
-	}
-	
-	public Set<String> getBlockedTrackingsSet(){
-		return blockedTrackingsSet;
-	}
-	
-	public int getBlockedTrackings() {
-		return blockedTrackingsSet.size();
-	}
+    public IpAddress getIpAddress() {
+        return this.ipAddress;
+    }
 
-	public WhiteListConfig getWhiteListConfig() {
-		if (parentContext != null) {
-			return parentContext.getWhiteListConfig();
-		}
-		return whiteListConfig;
-	}
+    /**
+     * Add a new blocked ad url.
+     *
+     * @param url blocked ad url
+     */
+    public void incrementBlockedAds(String url) {
+        blockedAdsSet.add(url);
+    }
 
-	public void setWhiteListConfig(WhiteListConfig whiteListConfig) {
-		this.whiteListConfig = whiteListConfig;
-	}
+    /**
+     * Add a new blocked tracking url.
+     *
+     * @param url blocked tracking url
+     */
+    public void incrementBlockedTrackings(String url) {
+        blockedTrackingsSet.add(url);
+    }
 
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
+    public int getBlockedAds() {
+        return blockedAdsSet.size();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PageContext other = (PageContext) obj;
-		return this.id.equals(other.id);
-	}
-	
-	@Override
-	public String toString() {
-		return "PageContext["+id+"/"+url+"]";
-	}
+    public Set<String> getBlockedAdsSet() {
+        return blockedAdsSet;
+    }
+
+    public Set<String> getBlockedTrackingsSet() {
+        return blockedTrackingsSet;
+    }
+
+    public int getBlockedTrackings() {
+        return blockedTrackingsSet.size();
+    }
+
+    public WhiteListConfig getWhiteListConfig() {
+        if (parentContext != null) {
+            return parentContext.getWhiteListConfig();
+        }
+        return whiteListConfig;
+    }
+
+    public void setWhiteListConfig(WhiteListConfig whiteListConfig) {
+        this.whiteListConfig = whiteListConfig;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PageContext other = (PageContext) obj;
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public String toString() {
+        return "PageContext[" + id + "/" + url + "]";
+    }
 }

@@ -16,31 +16,29 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,7 +84,7 @@ public class BlockerService {
     @SubSystemInit
     public void init() {
         List<ExternalDefinition> definitions = dataSource.getAll(ExternalDefinition.class);
-        for(ExternalDefinition definition : definitions) {
+        for (ExternalDefinition definition : definitions) {
             if (definition.getUpdateStatus() == UpdateStatus.INITIAL_UPDATE) {
                 log.warn("interrupted update: {}", definition.getId());
                 definition.setUpdateStatus(UpdateStatus.INITIAL_UPDATE_FAILED);
@@ -104,8 +102,8 @@ public class BlockerService {
     public List<Blocker> getBlockers() {
         List<ExternalDefinition> definitions = dataSource.getAll(ExternalDefinition.class);
         Map<TypeId, ExternalDefinition> definitionByTypeId = definitions.stream()
-            .filter(definition -> definition.getReferenceId() != null)
-            .collect(Collectors.toMap(definition -> new TypeId(definition.getType(), definition.getReferenceId()), Function.identity()));
+                .filter(definition -> definition.getReferenceId() != null)
+                .collect(Collectors.toMap(definition -> new TypeId(definition.getType(), definition.getReferenceId()), Function.identity()));
 
         List<Blocker> blockers = new ArrayList<>();
         blockers.addAll(getPendingFilters(definitions));
@@ -163,19 +161,19 @@ public class BlockerService {
         }
 
         ExternalDefinition definition = new ExternalDefinition(id,
-            firstValue(blocker.getName()),
-            firstValue(blocker.getDescription()),
-            blocker.getCategory(),
-            mapBlockerType(blocker.getType()),
-            null,
-            blocker.getFormat(),
-            blocker.getUrl(),
-            blocker.getUpdateInterval(),
-            updateStatus,
-            error,
-            path.toString(),
-            true,
-            blocker.getFilterType());
+                firstValue(blocker.getName()),
+                firstValue(blocker.getDescription()),
+                blocker.getCategory(),
+                mapBlockerType(blocker.getType()),
+                null,
+                blocker.getFormat(),
+                blocker.getUrl(),
+                blocker.getUpdateInterval(),
+                updateStatus,
+                error,
+                path.toString(),
+                true,
+                blocker.getFilterType());
         dataSource.save(definition, id);
 
         executorService.submit(updateTaskFactory.create(id));
@@ -278,13 +276,13 @@ public class BlockerService {
     public void update() {
         // tasks are not scheduled individually to avoid blocking the scheduler for other tasks (UpdateTask::run is synchronized)
         List<UpdateTask> tasks = dataSource.getAll(ExternalDefinition.class)
-            .stream()
-            .filter(definition -> definition.getReferenceId() != null)
-            .filter(definition -> definition.getUpdateInterval() == UpdateInterval.DAILY)
-            .filter(definition -> definition.getUpdateStatus() == UpdateStatus.READY || definition.getUpdateStatus() == UpdateStatus.UPDATE_FAILED)
-            .map(ExternalDefinition::getId)
-            .map(updateTaskFactory::create)
-            .collect(Collectors.toList());
+                .stream()
+                .filter(definition -> definition.getReferenceId() != null)
+                .filter(definition -> definition.getUpdateInterval() == UpdateInterval.DAILY)
+                .filter(definition -> definition.getUpdateStatus() == UpdateStatus.READY || definition.getUpdateStatus() == UpdateStatus.UPDATE_FAILED)
+                .map(ExternalDefinition::getId)
+                .map(updateTaskFactory::create)
+                .collect(Collectors.toList());
 
         long start = System.currentTimeMillis();
         log.info("Updating {} custom blockers", tasks.size());
@@ -311,62 +309,62 @@ public class BlockerService {
 
     private List<Blocker> getPendingFilters(List<ExternalDefinition> externalDefinitions) {
         return externalDefinitions.stream()
-            .filter(definition -> definition.getReferenceId() == null)
-            .map(definition -> mapDefinition(definition, null, true))
-            .collect(Collectors.toList());
+                .filter(definition -> definition.getReferenceId() == null)
+                .map(definition -> mapDefinition(definition, null, true))
+                .collect(Collectors.toList());
     }
 
     private Blocker mapDefinition(ExternalDefinition definition, Long lastUpdate, boolean enabled) {
         return new Blocker(definition.getId(),
-            localizedMap(definition.getName()),
-            localizedMap(definition.getDescription()),
-            mapType(definition.getType()),
-            definition.getCategory(),
-            lastUpdate,
-            false,
-            definition.getUrl(),
-            readContent(definition),
-            definition.getFormat(),
-            null,
-            definition.getUpdateInterval(),
-            definition.getUpdateStatus(),
-            enabled,
-            definition.getFilterType());
+                localizedMap(definition.getName()),
+                localizedMap(definition.getDescription()),
+                mapType(definition.getType()),
+                definition.getCategory(),
+                lastUpdate,
+                false,
+                definition.getUrl(),
+                readContent(definition),
+                definition.getFormat(),
+                null,
+                definition.getUpdateInterval(),
+                definition.getUpdateStatus(),
+                enabled,
+                definition.getFilterType());
     }
 
     private List<Blocker> getDomainFilters(Map<TypeId, ExternalDefinition> definitionsByTypeReference) {
         return filterListsService.getParentalControlFilterMetaData()
-            .stream()
-            .map(m -> mapParentControlFilterMetadata(m, definitionsByTypeReference.get(new TypeId(Type.DOMAIN, m.getId()))))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .stream()
+                .map(m -> mapParentControlFilterMetadata(m, definitionsByTypeReference.get(new TypeId(Type.DOMAIN, m.getId()))))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private List<Blocker> getPatternFilters(Map<TypeId, ExternalDefinition> definitionsByTypeReference) {
         return filterManager.getFilterConfigurations()
-            .stream()
-            .map(c -> mapFilterStoreConfiguration(c, definitionsByTypeReference.get(new TypeId(Type.PATTERN, c.getId()))))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .stream()
+                .map(c -> mapFilterStoreConfiguration(c, definitionsByTypeReference.get(new TypeId(Type.PATTERN, c.getId()))))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private Blocker getMalwareUrlFilter() {
         return new Blocker(
-            idCache.getId(new TypeId(Type.MALWARE_URL, 0)),
-            localizedMap("Malware"),
-            Collections.emptyMap(),
-            BlockerType.PATTERN,
-            Category.MALWARE,
-            malwareFilterService.getLastUpdate(),
-            true,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            malwareFilterService.isEnabled(),
-            "blacklist"
+                idCache.getId(new TypeId(Type.MALWARE_URL, 0)),
+                localizedMap("Malware"),
+                Collections.emptyMap(),
+                BlockerType.PATTERN,
+                Category.MALWARE,
+                malwareFilterService.getLastUpdate(),
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                malwareFilterService.isEnabled(),
+                "blacklist"
         );
     }
 
@@ -377,20 +375,20 @@ public class BlockerService {
                 return null;
             }
             return new Blocker(idCache.getId(new TypeId(Type.DOMAIN, metadata.getId())),
-                metadata.getName(),
-                metadata.getDescription(),
-                BlockerType.DOMAIN,
-                category,
-                metadata.getDate().getTime(),
-                metadata.isBuiltin(),
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                !metadata.isDisabled(),
-                metadata.getFilterType());
+                    metadata.getName(),
+                    metadata.getDescription(),
+                    BlockerType.DOMAIN,
+                    category,
+                    metadata.getDate().getTime(),
+                    metadata.isBuiltin(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    !metadata.isDisabled(),
+                    metadata.getFilterType());
         }
 
         return mapDefinition(definition, metadata.getDate().getTime(), !metadata.isDisabled());
@@ -416,8 +414,8 @@ public class BlockerService {
     private Blocker mapFilterStoreConfiguration(FilterStoreConfiguration configuration, ExternalDefinition definition) {
 
         Long lastUpdate = filterManager.getFilterStore(configuration.getId()) != null &&
-            filterManager.getFilterStore(configuration.getId()).getLastUpdate() != null ?
-            filterManager.getFilterStore(configuration.getId()).getLastUpdate().getTime() : new Date().getTime();
+                filterManager.getFilterStore(configuration.getId()).getLastUpdate() != null ?
+                filterManager.getFilterStore(configuration.getId()).getLastUpdate().getTime() : new Date().getTime();
 
         if (definition == null) {
             Category category = mapPatternFilterCategory(configuration.getCategory());
@@ -425,20 +423,20 @@ public class BlockerService {
                 return null;
             }
             return new Blocker(idCache.getId(new TypeId(Type.PATTERN, configuration.getId())),
-                localizedMap(configuration.getName()),
-                Collections.emptyMap(),
-                BlockerType.PATTERN,
-                category,
-                lastUpdate,
-                true,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                configuration.isEnabled(),
-                "blacklist"); // TODO ??
+                    localizedMap(configuration.getName()),
+                    Collections.emptyMap(),
+                    BlockerType.PATTERN,
+                    category,
+                    lastUpdate,
+                    true,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    configuration.isEnabled(),
+                    "blacklist"); // TODO ??
         }
 
         return mapDefinition(definition, lastUpdate, configuration.isEnabled());
@@ -468,17 +466,17 @@ public class BlockerService {
         FilterStoreConfiguration configuration = filterManager.getFilterStoreConfigurationById(id);
         if (configuration.isEnabled() != enabled) {
             FilterStoreConfiguration updatedConfiguration = filterManager.updateFilter(new FilterStoreConfiguration(
-                configuration.getId(),
-                configuration.getName(),
-                configuration.getCategory(),
-                configuration.isBuiltin(),
-                configuration.getVersion(),
-                configuration.getResources(),
-                configuration.getLearningMode(),
-                configuration.getFormat(),
-                configuration.isLearnForAllDomains(),
-                configuration.getRuleFilters(),
-                enabled
+                    configuration.getId(),
+                    configuration.getName(),
+                    configuration.getCategory(),
+                    configuration.isBuiltin(),
+                    configuration.getVersion(),
+                    configuration.getResources(),
+                    configuration.getLearningMode(),
+                    configuration.getFormat(),
+                    configuration.isLearnForAllDomains(),
+                    configuration.getRuleFilters(),
+                    enabled
             ));
             return mapFilterStoreConfiguration(updatedConfiguration, definition);
         }

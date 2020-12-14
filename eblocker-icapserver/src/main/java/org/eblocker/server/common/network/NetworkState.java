@@ -23,27 +23,28 @@ import org.eblocker.server.common.data.NetworkStateId;
  * Represents a configuration state of the network
  */
 public abstract class NetworkState {
-	/**
-	 * Perform all steps that are necessary to leave this state,
-	 * e.g. services must be stopped.
-	 */
-	public abstract void onExit(NetworkServices services);
+    /**
+     * Perform all steps that are necessary to leave this state,
+     * e.g. services must be stopped.
+     */
+    public abstract void onExit(NetworkServices services);
 
-	/**
-	 * Perform all steps that are necessary to enter this state,
-	 * e.g. services must be configured and started.
-	 * @param willReboot true if the system will be rebooted afterwards
-	 */
-	public abstract void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot);
+    /**
+     * Perform all steps that are necessary to enter this state,
+     * e.g. services must be configured and started.
+     *
+     * @param willReboot true if the system will be rebooted afterwards
+     */
+    public abstract void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot);
 
-	/**
-	 * Performs all steps that are necessary to update the configuration.
-	 * The default is to call onExit() and onEntry().
-	 */
-	public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
-		onExit(services);
-		onEntry(services, configuration, willReboot);
-	}
+    /**
+     * Performs all steps that are necessary to update the configuration.
+     * The default is to call onExit() and onEntry().
+     */
+    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+        onExit(services);
+        onEntry(services, configuration, willReboot);
+    }
 
-	public abstract NetworkStateId getId();
+    public abstract NetworkStateId getId();
 }

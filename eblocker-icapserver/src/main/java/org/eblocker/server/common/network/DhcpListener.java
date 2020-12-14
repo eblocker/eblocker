@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.network;
 
-import org.eblocker.server.common.pubsub.Channels;
-import org.eblocker.server.common.pubsub.PubSubService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.pubsub.Channels;
+import org.eblocker.server.common.pubsub.PubSubService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -36,7 +36,7 @@ public class ResourceTestUtil {
     public static Path provideResourceAsFile(String resource) throws IOException {
         String prefix = resource;
         if (resource.contains("/")) {
-            prefix = resource.substring(resource.lastIndexOf("/")+1);
+            prefix = resource.substring(resource.lastIndexOf("/") + 1);
         }
         Path path = Files.createTempFile(getTempDir(), prefix, ".tmp");
         InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);

@@ -47,9 +47,9 @@ public abstract class BaseFilterProcessor implements TransactionProcessor {
 
     protected abstract boolean isPassFinal(Session session, PageContext pageContext, Transaction transaction);
 
-    protected abstract boolean isBlockFinal(Session session, PageContext pageContext,Transaction transaction);
+    protected abstract boolean isBlockFinal(Session session, PageContext pageContext, Transaction transaction);
 
-    protected abstract boolean isRedirectFinal(Session session, PageContext pageContext,Transaction transaction);
+    protected abstract boolean isRedirectFinal(Session session, PageContext pageContext, Transaction transaction);
 
     protected abstract void countBlockedTransaction(Transaction transaction, Session session);
 

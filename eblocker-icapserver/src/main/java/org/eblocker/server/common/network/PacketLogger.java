@@ -24,7 +24,9 @@ import java.io.IOException;
  */
 public interface PacketLogger {
 
-	public void startLogging() throws IOException;
-	public boolean isLogging();
-	public void stopLogging() throws InterruptedException, IOException;
+    public void startLogging() throws IOException;
+
+    public boolean isLogging();
+
+    public void stopLogging() throws InterruptedException, IOException;
 }

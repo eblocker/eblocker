@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.registration.DynDnsEntry;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DynDnsConfig;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.registration.DynDnsEntry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

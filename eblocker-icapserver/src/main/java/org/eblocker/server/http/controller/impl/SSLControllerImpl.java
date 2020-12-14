@@ -92,19 +92,19 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
 
     @Inject
     public SSLControllerImpl(
-        SslService sslService,
-        SSLWhitelistService whitelistDomainStore,
-        SslCertificateClientInstallationTracker tracker,
-        DeviceService deviceService,
-        SessionStore sessionStore,
-        PageContextStore pageContextStore,
-        UserService userService,
-        ParentalControlService parentalControlService,
-        SquidWarningService squidWarningService,
-        FailedConnectionSuggestionService failedConnectionSuggestionService,
-        NetworkStateMachine networkStateMachine,
-        ObjectMapper objectMapper,
-        UserAgentService userAgentService) {
+            SslService sslService,
+            SSLWhitelistService whitelistDomainStore,
+            SslCertificateClientInstallationTracker tracker,
+            DeviceService deviceService,
+            SessionStore sessionStore,
+            PageContextStore pageContextStore,
+            UserService userService,
+            ParentalControlService parentalControlService,
+            SquidWarningService squidWarningService,
+            FailedConnectionSuggestionService failedConnectionSuggestionService,
+            NetworkStateMachine networkStateMachine,
+            ObjectMapper objectMapper,
+            UserAgentService userAgentService) {
         super(sessionStore, pageContextStore);
         this.sslService = sslService;
         this.whitelistDomainStore = whitelistDomainStore;
@@ -425,19 +425,19 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         UserModule user = userService.getUserById(operatingUser);
         if (user == null) {
             throw new BadRequestException(
-                "En-/Disabling SSL for this device not permitted, Parental Control verification failed");
+                    "En-/Disabling SSL for this device not permitted, Parental Control verification failed");
         }
         UserProfileModule userProfile = parentalControlService.getProfile(user.getAssociatedProfileId());
         if (userProfile == null) {
             throw new BadRequestException(
-                "En-/Disabling SSL for this device not permitted, Parental Control verification failed");
+                    "En-/Disabling SSL for this device not permitted, Parental Control verification failed");
         }
         if (!newDeviceSslState && (userProfile.isControlmodeMaxUsage() || userProfile.isControlmodeTime()
-            || userProfile.isControlmodeUrls())) {
+                || userProfile.isControlmodeUrls())) {
             // If SSL is to be activated and Parental Control restrictions
             // apply to the device, no changes permitted
             throw new BadRequestException(
-                "En-/Disabling SSL for this device not permitted due to Parental Control restrictions");
+                    "En-/Disabling SSL for this device not permitted due to Parental Control restrictions");
         }
 
         device.setSslEnabled(newDeviceSslState);

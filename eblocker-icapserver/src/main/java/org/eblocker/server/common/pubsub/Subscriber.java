@@ -20,15 +20,16 @@ package org.eblocker.server.common.pubsub;
  * A class for processing messages delivered by a PubSubService.
  */
 public interface Subscriber {
-	/**
-	 * Process a message delivered by a PubSubService
-	 * @param message
-	 */
-	void process(String message);
+    /**
+     * Process a message delivered by a PubSubService
+     *
+     * @param message
+     */
+    void process(String message);
 
-	default void onSubscribe() {
-	}
+    default void onSubscribe() {
+    }
 
-	default void onUnsubscribe() {
-	}
+    default void onUnsubscribe() {
+    }
 }

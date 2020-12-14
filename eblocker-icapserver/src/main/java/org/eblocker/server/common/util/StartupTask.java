@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.util;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.PauseDeviceController;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
 
 public class StartupTask implements Runnable {
     private DeviceService deviceService;

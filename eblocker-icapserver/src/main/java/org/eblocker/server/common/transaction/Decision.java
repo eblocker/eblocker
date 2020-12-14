@@ -17,15 +17,15 @@
 package org.eblocker.server.common.transaction;
 
 public enum Decision {
-	BLOCK,
-	PASS,
-	REDIRECT,
-	ASK,
-	NO_DECISION,
-	NO_CONTENT,
+    BLOCK,
+    PASS,
+    REDIRECT,
+    ASK,
+    NO_DECISION,
+    NO_CONTENT,
     SET_CSP_HEADER;
 
     Decision() {
-	}
+    }
 }
 

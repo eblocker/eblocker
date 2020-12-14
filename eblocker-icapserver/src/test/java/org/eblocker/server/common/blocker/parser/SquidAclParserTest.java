@@ -28,22 +28,22 @@ public class SquidAclParserTest {
     @Test
     public void parse() {
         List<String> lines = Arrays.asList(
-            "#comment\n",
-            "192.168.1.2\n",
-            "<html>\n",
-            "-not-ok.com\n",
-            "not-ok-.com\n",
-            "..not-ok.com\n",
-            ".is-ok.com\n",
-            "häagen-dazs.com\n",
-            " www.eblocker.com\n",
-            " google.com  #comment\n",
-            "etracker.com\n"
+                "#comment\n",
+                "192.168.1.2\n",
+                "<html>\n",
+                "-not-ok.com\n",
+                "not-ok-.com\n",
+                "..not-ok.com\n",
+                ".is-ok.com\n",
+                "häagen-dazs.com\n",
+                " www.eblocker.com\n",
+                " google.com  #comment\n",
+                "etracker.com\n"
         );
 
         List<String> parsedDomains = new SquidAclParser()
-            .parse(lines.stream())
-            .collect(Collectors.toList());
+                .parse(lines.stream())
+                .collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList("is-ok.com", "häagen-dazs.com", "www.eblocker.com", "google.com", "etracker.com"), parsedDomains);
     }
 }

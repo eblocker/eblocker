@@ -16,19 +16,22 @@
  */
 package org.eblocker.server.http.ssl;
 
-import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.common.util.UrlUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.UrlUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AppWhitelistModule extends AppWhitelistModuleBase {
 
     private List<String> whitelistedDomains;
-    private List<String>  blacklistedDomains;
+    private List<String> blacklistedDomains;
     private List<String> whitelistedIPs;
 
     @JsonCreator
@@ -61,14 +64,14 @@ public class AppWhitelistModule extends AppWhitelistModuleBase {
         whitelistedIPs = new ArrayList<>();
         for (String domainIp : module.getWhitelistedDomainsIps()) {
             String tmpDomainIp = domainIp.trim();
-            if (IpUtils.isIPAddress(tmpDomainIp)){
+            if (IpUtils.isIPAddress(tmpDomainIp)) {
                 this.whitelistedIPs.add(tmpDomainIp);
-            } else if (IpUtils.isIpRange(tmpDomainIp)){
+            } else if (IpUtils.isIpRange(tmpDomainIp)) {
                 this.whitelistedIPs.add(IpUtils.shrinkIpRange(tmpDomainIp, IP_RANGE_RANGE_THRESHOLD));
-            }else{
+            } else {
                 // Is it a domain?
                 String domain = UrlUtils.findDomainInString(tmpDomainIp);
-                if (domain!=null){
+                if (domain != null) {
                     this.whitelistedDomains.add(domain);
                 }
             }
@@ -91,7 +94,7 @@ public class AppWhitelistModule extends AppWhitelistModuleBase {
         this.whitelistedDomains = tmpWhitelistedDomains;
     }
 
-    public List<String> getWhitelistedDomains(){
+    public List<String> getWhitelistedDomains() {
         return whitelistedDomains;
     }
 

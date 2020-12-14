@@ -17,8 +17,8 @@
 package org.eblocker.server.common.data;
 
 import org.eblocker.server.common.data.events.EventLogger;
-import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

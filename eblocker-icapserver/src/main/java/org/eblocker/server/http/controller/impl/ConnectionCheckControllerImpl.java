@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.http.controller.ConnectionCheckController;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.http.controller.ConnectionCheckController;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
-public class ConnectionCheckControllerImpl implements ConnectionCheckController{
+public class ConnectionCheckControllerImpl implements ConnectionCheckController {
 
     public ConnectionCheckControllerImpl() {
         // No dependencies

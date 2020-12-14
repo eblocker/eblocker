@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data.dns;
 
-import org.eblocker.server.common.data.IpAddress;
 import com.google.common.base.Strings;
+import org.eblocker.server.common.data.IpAddress;
 
 public class DnsResponse {
     private final Integer status;

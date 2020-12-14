@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class SchemaMigrationVersion12 implements SchemaMigration {
 
     private void removePin() {
         List<UserModuleOld> users = userMigrationService.getAll();
-        for (UserModuleOld user: users) {
+        for (UserModuleOld user : users) {
             user.setPin(null);
             userMigrationService.save(user, user.getId());
         }

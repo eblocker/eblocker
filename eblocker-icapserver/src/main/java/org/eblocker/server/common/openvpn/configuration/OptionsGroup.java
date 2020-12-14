@@ -40,7 +40,7 @@ public class OptionsGroup extends OptionBase {
         sb.append("<");
         sb.append(getName());
         sb.append(">\n");
-        for(Option option : options) {
+        for (Option option : options) {
             sb.append(option.toString());
             sb.append("\n");
         }

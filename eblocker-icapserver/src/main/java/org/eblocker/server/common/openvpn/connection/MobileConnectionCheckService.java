@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.upnp.UpnpManagementService;
 import org.eblocker.server.upnp.UpnpPortForwardingResult;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,13 +55,13 @@ public class MobileConnectionCheckService {
 
     @Inject
     public MobileConnectionCheckService(UpnpManagementService upnpService,
-            @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
-            Provider<MobileConnectionCheckTask> testTaskProvider,
-            OpenVpnServerService openVpnServerService,
-            DataSource dataSource,
-            @Named("openvpn.server.portforwarding.duration.connectiontest")int portForwardingDuration,
-            @Named("openvpn.server.port") int internalPort,
-            @Named("openvpn.server.portforwarding.description")String portForwardingDescription) {
+                                        @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
+                                        Provider<MobileConnectionCheckTask> testTaskProvider,
+                                        OpenVpnServerService openVpnServerService,
+                                        DataSource dataSource,
+                                        @Named("openvpn.server.portforwarding.duration.connectiontest") int portForwardingDuration,
+                                        @Named("openvpn.server.port") int internalPort,
+                                        @Named("openvpn.server.portforwarding.description") String portForwardingDescription) {
         this.upnpService = upnpService;
         this.executorService = executorService;
         this.testTaskProvider = testTaskProvider;
@@ -87,7 +86,7 @@ public class MobileConnectionCheckService {
         if (task != null) {
             stop();
         }
-        
+
         // If needed, open port
         if (dataSource.getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
             openPort();
@@ -97,7 +96,7 @@ public class MobileConnectionCheckService {
         status = null;
         future = executorService.submit(task);
     }
-    
+
     private void openPort() throws UpnpPortForwardingException {
         int externalPort = openVpnServerService.getOpenVpnTempMappedPort();
         List<UpnpPortForwardingResult> openedPorts = upnpService.addPortForwarding(externalPort, internalPort,

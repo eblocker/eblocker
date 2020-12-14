@@ -16,12 +16,14 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class CertificateExpirationMessageProvider extends AbstractMessageProvider {
@@ -36,14 +38,14 @@ public class CertificateExpirationMessageProvider extends AbstractMessageProvide
         String MESSAGE_CERTIFICATE_EXPIRATION_URL = "MESSAGE_CERTIFICATE_EXPIRATION_URL";
 
         messageContainer = createMessage(
-            MessageProviderMessageId.MESSAGE_CERTIFICATE_EXPIRATION_WARNING.getId(),
-            MESSAGE_CERTIFICATE_EXPIRATION_TITLE,
-            MESSAGE_CERTIFICATE_EXPIRATION_CONTENT,
-            MESSAGE_CERTIFICATE_EXPIRATION_LABEL,
-            MESSAGE_CERTIFICATE_EXPIRATION_URL,
-            Collections.emptyMap(),
-            false,
-            MessageSeverity.ALERT
+                MessageProviderMessageId.MESSAGE_CERTIFICATE_EXPIRATION_WARNING.getId(),
+                MESSAGE_CERTIFICATE_EXPIRATION_TITLE,
+                MESSAGE_CERTIFICATE_EXPIRATION_CONTENT,
+                MESSAGE_CERTIFICATE_EXPIRATION_LABEL,
+                MESSAGE_CERTIFICATE_EXPIRATION_URL,
+                Collections.emptyMap(),
+                false,
+                MessageSeverity.ALERT
         );
     }
 

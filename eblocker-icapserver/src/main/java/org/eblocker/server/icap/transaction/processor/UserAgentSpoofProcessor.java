@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Singleton;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Singleton;
-import io.netty.handler.codec.http.HttpHeaderNames;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton

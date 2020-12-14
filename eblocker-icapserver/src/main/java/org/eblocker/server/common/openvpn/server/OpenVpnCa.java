@@ -49,13 +49,13 @@ public class OpenVpnCa {
     private static final int CA_KEY_SIZE = 2048;
 
     private static final String SERVER_NAME = "eBlocker Mobile Server";
-    private static final int SERVER_VALIDITY_DAYS = 10*365;
+    private static final int SERVER_VALIDITY_DAYS = 10 * 365;
     private static final int SERVER_KEY_SIZE = 2048;
 
-    private static final int CLIENT_VALIDITY_DAYS = 10*365;
+    private static final int CLIENT_VALIDITY_DAYS = 10 * 365;
     private static final int CLIENT_KEY_SIZE = 2048;
 
-    private static final int CRL_VALIDITY_DAYS = 10*365;
+    private static final int CRL_VALIDITY_DAYS = 10 * 365;
 
     private static final Logger log = LoggerFactory.getLogger(OpenVpnCa.class);
 
@@ -101,6 +101,7 @@ public class OpenVpnCa {
 
     /**
      * Read current CRL and add the given certificate.
+     *
      * @param clientId
      * @throws CryptoException
      * @throws IOException
@@ -172,6 +173,7 @@ public class OpenVpnCa {
     public Path getServerCertificatePath() {
         return basePath.resolve(SERVER_CERT_FILE_NAME);
     }
+
     public Path getServerKeyPath() {
         return basePath.resolve(SERVER_KEY_FILE_NAME);
     }

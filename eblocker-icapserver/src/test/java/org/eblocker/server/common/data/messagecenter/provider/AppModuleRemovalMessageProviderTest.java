@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.common.base.Joiner;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
-import com.google.common.base.Joiner;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,14 +46,14 @@ public class AppModuleRemovalMessageProviderTest {
         Mockito.verify(messages, Mockito.never()).remove(MessageProviderMessageId.MESSAGE_APP_MODULES_REMOVAL_ID.getId());
         Mockito.verify(messages, Mockito.never()).put(Mockito.any(), Mockito.any());
     }
-    
+
     @Test
     public void testMessagesGenerated() {
         Set<String> names = new HashSet<>();
         names.add("Alpha-App");
         names.add("Bravo-App");
         names.add("Charlie-App");
-        
+
         Map<String, String> expectedContext = new HashMap<>();
         expectedContext.put("appNames", Joiner.on(", ").join(names));
         MessageContainer expectedMessage = messageProvider.createMessage(
@@ -71,15 +71,15 @@ public class AppModuleRemovalMessageProviderTest {
 
         Mockito.verify(messages).remove(MessageProviderMessageId.MESSAGE_APP_MODULES_REMOVAL_ID.getId());
         Mockito.verify(messages).put(MessageProviderMessageId.MESSAGE_APP_MODULES_REMOVAL_ID.getId(), expectedMessage);
-        
+
         Mockito.reset(messages);
-        
+
         // Create another message to make sure the MessageProvider does not buffer any old names
         Set<String> namesSecond = new HashSet<>();
         namesSecond.add("Aleph-App");
         namesSecond.add("Bet-App");
         namesSecond.add("Gimel-App");
-        
+
         Map<String, String> expectedContextSecond = new HashMap<>();
         expectedContextSecond.put("appNames", Joiner.on(", ").join(namesSecond));
         MessageContainer expectedMessageSecond = messageProvider.createMessage(
@@ -97,7 +97,7 @@ public class AppModuleRemovalMessageProviderTest {
 
         Mockito.verify(messages).remove(MessageProviderMessageId.MESSAGE_APP_MODULES_REMOVAL_ID.getId());
         Mockito.verify(messages).put(MessageProviderMessageId.MESSAGE_APP_MODULES_REMOVAL_ID.getId(), expectedMessageSecond);
-        
+
     }
 
 }

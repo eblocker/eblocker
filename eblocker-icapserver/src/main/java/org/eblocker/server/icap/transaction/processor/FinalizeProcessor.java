@@ -16,24 +16,24 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Singleton;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
 public class FinalizeProcessor implements TransactionProcessor {
 
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(FinalizeProcessor.class);
-	private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(FinalizeProcessor.class);
+    private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
 
-	@Override
-	public boolean process(Transaction transaction) {
-		FILTER_LOG.info("{}\tFI\t{}\t{}\t{}", transaction.getSession().getShortId(), Decision.PASS, transaction.getUrl(), "DEFAULT");
-		transaction.setComplete(true);
-		return false;
-	}
+    @Override
+    public boolean process(Transaction transaction) {
+        FILTER_LOG.info("{}\tFI\t{}\t{}\t{}", transaction.getSession().getShortId(), Decision.PASS, transaction.getUrl(), "DEFAULT");
+        transaction.setComplete(true);
+        return false;
+    }
 }

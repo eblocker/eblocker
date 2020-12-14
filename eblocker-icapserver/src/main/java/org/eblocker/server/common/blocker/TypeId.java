@@ -35,7 +35,7 @@ class TypeId {
             return false;
         TypeId that = (TypeId) o;
         return id == that.id &&
-            type == that.type;
+                type == that.type;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ControllerAImpl implements ControllerA {
 
     @Override
     public void post(String s, int i, List<String> out) {
-        throw new EblockerException("Stupid paramter "+ s);
+        throw new EblockerException("Stupid paramter " + s);
     }
 
 }

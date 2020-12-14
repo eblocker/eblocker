@@ -16,15 +16,27 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.UserRole;
-import org.eblocker.server.common.data.dashboard.AccessRight;
-import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.WhiteListConfig;
-import com.google.inject.name.Named;
+import org.eblocker.server.common.data.dashboard.AccessRight;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
+import org.eblocker.server.common.data.migrations.DefaultEntities;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.http.security.PasswordUtil;
+import org.restexpress.exception.BadRequestException;
+import org.restexpress.exception.ConflictException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,21 +51,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
-
 import java.util.stream.Collectors;
-
-import org.eblocker.server.common.data.migrations.DefaultEntities;
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.http.security.PasswordUtil;
-import org.restexpress.exception.BadRequestException;
-import org.restexpress.exception.ConflictException;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 @SubSystemService(value = SubSystem.EVENT_LISTENER, allowUninitializedCalls = false)
@@ -106,12 +104,12 @@ public class UserService {
     }
 
     public UserModule createUser(
-        Integer associatedProfileId,
-        String name,
-        String nameKey,
-        LocalDate birthday,
-        UserRole userRole,
-        String newPin) {
+            Integer associatedProfileId,
+            String name,
+            String nameKey,
+            LocalDate birthday,
+            UserRole userRole,
+            String newPin) {
 
         if (!isUniqueCustomerCreatedName(null, name)) {
             throw new ConflictException("Name of user must be unique");
@@ -122,23 +120,23 @@ public class UserService {
         checkAndUpdateParentalControlData(nextId, userRole, null);
 
         UserModule newUser = new UserModule(
-            nextId,
-            associatedProfileId,
-            name,
-            nameKey,
-            birthday,
-            userRole,
-            false,
-            null,
-            null,
-            null, // leave null, we need the user created here to create adequate DashboardColumnsView
-            null,
-            null);
+                nextId,
+                associatedProfileId,
+                name,
+                nameKey,
+                birthday,
+                userRole,
+                false,
+                null,
+                null,
+                null, // leave null, we need the user created here to create adequate DashboardColumnsView
+                null,
+                null);
 
         // now set dashboardColumnsView based on new user's role
         newUser.setDashboardColumnsView(getDashboardForUser(newUser, newUser.getUserRole()));
 
-        if (newPin != null){
+        if (newPin != null) {
             // New user was created with PIN
             newUser.changePin(newPin);
         }
@@ -179,7 +177,7 @@ public class UserService {
             throw new BadRequestException("Cannot delete user without valid user id.");
         }
         // make sure it is not a system user
-        if (cache.get(userId).isSystem()){
+        if (cache.get(userId).isSystem()) {
             throw new BadRequestException("Cannot delete user " + userId + ", because it is a system user.");
         }
 
@@ -196,24 +194,24 @@ public class UserService {
                                         UserModule oldUser) {
         // For system user only updating plugAndPlayFilterWhitelistId is allowed
         if (!Objects.equals(oldUser.getAssociatedProfileId(), associatedProfileId)
-            || !Objects.equals(oldUser.getName(), name)
-            || !Objects.equals(oldUser.getNameKey(), nameKey)
-            || newPin != null) {
+                || !Objects.equals(oldUser.getName(), name)
+                || !Objects.equals(oldUser.getNameKey(), nameKey)
+                || newPin != null) {
             throw new BadRequestException("Cannot update user " + id + ", because it is a built-in user.");
         }
         UserModule user = new UserModule(
-            oldUser.getId(),
-            oldUser.getAssociatedProfileId(),
-            oldUser.getName(),
-            oldUser.getNameKey(),
-            oldUser.getBirthday(),
-            oldUser.getUserRole(),
-            oldUser.isSystem(),
-            oldUser.getPin(),
-            oldUser.getWhiteListConfigByDomains(),
-            dashboardColumnsView,
-            oldUser.getCustomBlacklistId(),
-            oldUser.getCustomWhitelistId());
+                oldUser.getId(),
+                oldUser.getAssociatedProfileId(),
+                oldUser.getName(),
+                oldUser.getNameKey(),
+                oldUser.getBirthday(),
+                oldUser.getUserRole(),
+                oldUser.isSystem(),
+                oldUser.getPin(),
+                oldUser.getWhiteListConfigByDomains(),
+                dashboardColumnsView,
+                oldUser.getCustomBlacklistId(),
+                oldUser.getCustomWhitelistId());
         return user;
     }
 
@@ -224,15 +222,15 @@ public class UserService {
                                          String newPin, DashboardColumnsView dashboardColumnsView,
                                          UserModule oldUser) {
         // Check ID of associated profile actually references an existing profile
-        if (dataSource.get(UserProfileModule.class,	associatedProfileId) == null) {
+        if (dataSource.get(UserProfileModule.class, associatedProfileId) == null) {
             throw new BadRequestException("User " + id
-                + " references non-existing profile "
-                + associatedProfileId);
+                    + " references non-existing profile "
+                    + associatedProfileId);
         }
         // Check associated profile can be selected (limbo profile cannot!)
         if (associatedProfileId == DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID) {
             throw new BadRequestException("User " + id + " references unassignable profile "
-                + DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID);
+                    + DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID);
         }
 
         // New name must be unique
@@ -242,18 +240,18 @@ public class UserService {
 
         // Create new instance, to avoid partial changes in cache, if anything goes wrong.
         UserModule user = new UserModule(
-            id,
-            associatedProfileId,
-            name,
-            nameKey,
-            birthday,
-            userRole,
-            false,
-            oldUser.getPin(),
-            oldUser.getWhiteListConfigByDomains(),
-            dashboardColumnsView,
-            oldUser.getCustomBlacklistId(),
-            oldUser.getCustomWhitelistId()
+                id,
+                associatedProfileId,
+                name,
+                nameKey,
+                birthday,
+                userRole,
+                false,
+                oldUser.getPin(),
+                oldUser.getWhiteListConfigByDomains(),
+                dashboardColumnsView,
+                oldUser.getCustomBlacklistId(),
+                oldUser.getCustomWhitelistId()
         );
         if (newPin != null) {
             user.changePin(newPin);
@@ -300,13 +298,13 @@ public class UserService {
         });
     }
 
-    public UserModule getUserById(int id){
-    	UserModule user = cache.get(id);
-    	if (user != null){
-    		return user;
-    	}
-    	refresh();
-    	return cache.get(id);
+    public UserModule getUserById(int id) {
+        UserModule user = cache.get(id);
+        if (user != null) {
+            return user;
+        }
+        refresh();
+        return cache.get(id);
     }
 
     @SubSystemInit
@@ -337,10 +335,10 @@ public class UserService {
         // Find orphaned system users
         //
         Set<Integer> obsoleteSystemUsers = new HashSet<>();
-        for (UserModule user: getUsers(false)) {
+        for (UserModule user : getUsers(false)) {
             if (user.isSystem() && user.getId() != DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID &&
-                !defaultSystemUsers.contains(user.getId()) &&
-                (user.getNameKey() == null || !user.getNameKey().equals(standardUserTranslation))) {
+                    !defaultSystemUsers.contains(user.getId()) &&
+                    (user.getNameKey() == null || !user.getNameKey().equals(standardUserTranslation))) {
                 obsoleteSystemUsers.add(user.getId());
             }
         }
@@ -356,8 +354,8 @@ public class UserService {
         //
         getUsers(false).forEach(user -> {
             if (user.getNameKey() != null && user.getNameKey().equals(standardUserTranslation) &&
-                (!user.getAssociatedProfileId().equals(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID) ||
-                    !user.isSystem())) {
+                    (!user.getAssociatedProfileId().equals(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID) ||
+                            !user.isSystem())) {
                 user.setAssociatedProfileId(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID);
                 user.setSystem(true);
                 saveAndCacheUser(user);
@@ -368,9 +366,9 @@ public class UserService {
         // make sure each user has updated DashboardView
         //
         getUsers(false).
-            stream().
-            filter(user -> user.getAssociatedProfileId() != null).
-            forEach(user -> updateUserDashboardView(user.getId()));
+                stream().
+                filter(user -> user.getAssociatedProfileId() != null).
+                forEach(user -> updateUserDashboardView(user.getId()));
 
         //
         // make sure all visible users have userRole
@@ -399,11 +397,11 @@ public class UserService {
         //   - user is already assigned to another device
         //
         if (cache.get(device.getDefaultSystemUser()) == null ||
-            !cache.get(device.getDefaultSystemUser()).isSystem() ||
-            defaultSystemUsers.contains(device.getDefaultSystemUser())) {
+                !cache.get(device.getDefaultSystemUser()).isSystem() ||
+                defaultSystemUsers.contains(device.getDefaultSystemUser())) {
             UserModule defaultSystemUser = saveAndCacheUser(createDefaultSystemUser(device.getId()));
             LOG.warn("Cannot find valid default system user {} for device {}, created new default system user {}",
-                device.getDefaultSystemUser(), device.getId(), defaultSystemUser.getId());
+                    device.getDefaultSystemUser(), device.getId(), defaultSystemUser.getId());
             device.setDefaultSystemUser(defaultSystemUser.getId());
             foundInconsistencies = true;
         }
@@ -413,9 +411,9 @@ public class UserService {
         //   - assigned user is system user, but is not the correct default system user
         //
         if (cache.get(device.getAssignedUser()) == null ||
-            (cache.get(device.getAssignedUser()).isSystem() && device.getAssignedUser() != device.getDefaultSystemUser())) {
+                (cache.get(device.getAssignedUser()).isSystem() && device.getAssignedUser() != device.getDefaultSystemUser())) {
             LOG.warn("Cannot find valid assigned user {} of device {}, replacing with default system user {}",
-                device.getAssignedUser(), device.getId(), device.getDefaultSystemUser());
+                    device.getAssignedUser(), device.getId(), device.getDefaultSystemUser());
             device.setAssignedUser(device.getDefaultSystemUser());
             foundInconsistencies = true;
         }
@@ -426,10 +424,10 @@ public class UserService {
         //   - assigned user is not system user, but operating user is system user other than virtual "logged-out" user (--> Device cannot be taken by system user!)
         //
         if (cache.get(device.getOperatingUser()) == null ||
-            (cache.get(device.getAssignedUser()).isSystem() && device.getOperatingUser() != device.getAssignedUser()) ||
-            (!cache.get(device.getAssignedUser()).isSystem() && cache.get(device.getOperatingUser()).isSystem() && device.getOperatingUser() != DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID)) {
+                (cache.get(device.getAssignedUser()).isSystem() && device.getOperatingUser() != device.getAssignedUser()) ||
+                (!cache.get(device.getAssignedUser()).isSystem() && cache.get(device.getOperatingUser()).isSystem() && device.getOperatingUser() != DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID)) {
             LOG.warn("Cannot find valid operating user {} of device {}, replacing with assigned user {}",
-                device.getOperatingUser(), device.getId(), device.getAssignedUser());
+                    device.getOperatingUser(), device.getId(), device.getAssignedUser());
             device.setOperatingUser(device.getAssignedUser());
             foundInconsistencies = true;
         }
@@ -441,12 +439,12 @@ public class UserService {
     }
 
     public void addListener(UserChangeListener listener) {
-    	listeners.add(listener);
-	}
+        listeners.add(listener);
+    }
 
-	private void notifyListeners(UserModule user) {
-    	listeners.forEach(listener -> listener.onChange(user));
-	}
+    private void notifyListeners(UserModule user) {
+        listeners.forEach(listener -> listener.onChange(user));
+    }
 
     private void updateCacheEntries(List<UserModule> users) {
         users.forEach(this::cacheUser);
@@ -454,11 +452,12 @@ public class UserService {
 
     /**
      * Removes deleted users from cache
+     *
      * @param users list of all current known users
      */
     private void removeDeletedUsers(List<UserModule> users) {
         Iterator<UserModule> i = cache.values().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             UserModule user = i.next();
             if (!users.contains(user)) {
                 i.remove();
@@ -471,9 +470,9 @@ public class UserService {
     }
 
     private UserModule saveAndCacheUser(UserModule user) {
-    	UserModule savedUser = dataSource.save(user, user.getId());
+        UserModule savedUser = dataSource.save(user, user.getId());
         cacheUser(savedUser);
-    	return savedUser;
+        return savedUser;
     }
 
     private void doReset(Device device) {
@@ -487,8 +486,8 @@ public class UserService {
         // make sure user is not assigned to any device or logged in to any device
         for (Device device : deviceService.getDevices(true)) {
             if (device.getAssignedUser() == userId
-                || device.getOperatingUser() == userId
-                || device.getDefaultSystemUser() == userId) {
+                    || device.getOperatingUser() == userId
+                    || device.getDefaultSystemUser() == userId) {
                 return false;
             }
         }
@@ -504,18 +503,18 @@ public class UserService {
 
     private UserModule createDefaultSystemUser(String name, int userId) {
         return new UserModule(
-            userId,
-            DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
-            name,
-            DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
-            null,
-            null,
-            true,
-            null,
-            new HashMap<>(),
-            getDashboardForUser(null, null),
-            null,
-            null
+                userId,
+                DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
+                name,
+                DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
+                null,
+                null,
+                true,
+                null,
+                new HashMap<>(),
+                getDashboardForUser(null, null),
+                null,
+                null
         );
     }
 
@@ -535,18 +534,18 @@ public class UserService {
             restoredDefaultSystemUser.setDashboardColumnsView(getDashboardForUser(restoredDefaultSystemUser, restoredDefaultSystemUser.getUserRole()));
         } else {
             restoredDefaultSystemUser = new UserModule(
-                userId,
-                DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
-                name,
-                DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
-                null,
-                null,
-                true,
-                defaultSystemUser.getPin(),
-                defaultSystemUser.getWhiteListConfigByDomains() == null ? new HashMap<>() : defaultSystemUser.getWhiteListConfigByDomains(),
-                getDashboardForUser(defaultSystemUser, defaultSystemUser.getUserRole()),
-                defaultSystemUser.getCustomBlacklistId(),
-                defaultSystemUser.getCustomWhitelistId()
+                    userId,
+                    DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
+                    name,
+                    DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
+                    null,
+                    null,
+                    true,
+                    defaultSystemUser.getPin(),
+                    defaultSystemUser.getWhiteListConfigByDomains() == null ? new HashMap<>() : defaultSystemUser.getWhiteListConfigByDomains(),
+                    getDashboardForUser(defaultSystemUser, defaultSystemUser.getUserRole()),
+                    defaultSystemUser.getCustomBlacklistId(),
+                    defaultSystemUser.getCustomWhitelistId()
             );
         }
         defaultSystemUser = saveAndCacheUser(restoredDefaultSystemUser);
@@ -554,53 +553,53 @@ public class UserService {
         return defaultSystemUser;
     }
 
-    public boolean isUniqueCustomerCreatedName(Integer id, String name){
-		Predicate<UserModule> isCustomerCreatedUserWithSameNameButDifferentId = m ->
-				!m.isSystem()
-						&& m.getName() != null
-						&& m.getName().equals(name)
-						&& !m.getId().equals(id);
-		return dataSource.getAll(UserModule.class).stream().noneMatch(isCustomerCreatedUserWithSameNameButDifferentId);
-	}
+    public boolean isUniqueCustomerCreatedName(Integer id, String name) {
+        Predicate<UserModule> isCustomerCreatedUserWithSameNameButDifferentId = m ->
+                !m.isSystem()
+                        && m.getName() != null
+                        && m.getName().equals(name)
+                        && !m.getId().equals(id);
+        return dataSource.getAll(UserModule.class).stream().noneMatch(isCustomerCreatedUserWithSameNameButDifferentId);
+    }
 
-	public void setPin(Integer userId, String newPin){
-		UserModule user = dataSource.get(UserModule.class, userId);
-		if (user==null){
-			throw new BadRequestException("Invalid user id");
-		}
-		if (user.isSystem()){
-			throw new BadRequestException("Cannot set PIN for user "
-					+ user.getId() + ", because it is a built-in user.");
-		}
-		user.changePin(newPin);
-		saveAndCacheUser(user);
-	}
+    public void setPin(Integer userId, String newPin) {
+        UserModule user = dataSource.get(UserModule.class, userId);
+        if (user == null) {
+            throw new BadRequestException("Invalid user id");
+        }
+        if (user.isSystem()) {
+            throw new BadRequestException("Cannot set PIN for user "
+                    + user.getId() + ", because it is a built-in user.");
+        }
+        user.changePin(newPin);
+        saveAndCacheUser(user);
+    }
 
-	public void changePin(Integer userId, String newPin, String oldPin){
-		UserModule oldUser = getUserById(userId);
-		// Does user whose PIN is to be changed exist?
-		if (oldUser == null) {
-			throw new BadRequestException("Invalid user id");
-		}
-		// Can user be changed?
-		if (oldUser.isSystem()){
-			throw new BadRequestException("Cannot change PIN for user "
-					+ oldUser.getId() + ", because it is a built-in user.");
-		}
-		// Is change request authorized by current PIN (oldPin)? If a PIN is currently set, of course
-		if (oldUser.getPin() != null
-				&& (oldPin == null
-					|| !PasswordUtil.verifyPassword(oldPin, oldUser.getPin()))) {
-			throw new BadRequestException("Cannot change PIN for user "
-				+ oldUser.getId() + ", bacause PIN verification failed.");
-		}
-		oldUser.changePin(newPin);
-		saveAndCacheUser(oldUser);
-	}
+    public void changePin(Integer userId, String newPin, String oldPin) {
+        UserModule oldUser = getUserById(userId);
+        // Does user whose PIN is to be changed exist?
+        if (oldUser == null) {
+            throw new BadRequestException("Invalid user id");
+        }
+        // Can user be changed?
+        if (oldUser.isSystem()) {
+            throw new BadRequestException("Cannot change PIN for user "
+                    + oldUser.getId() + ", because it is a built-in user.");
+        }
+        // Is change request authorized by current PIN (oldPin)? If a PIN is currently set, of course
+        if (oldUser.getPin() != null
+                && (oldPin == null
+                || !PasswordUtil.verifyPassword(oldPin, oldUser.getPin()))) {
+            throw new BadRequestException("Cannot change PIN for user "
+                    + oldUser.getId() + ", bacause PIN verification failed.");
+        }
+        oldUser.changePin(newPin);
+        saveAndCacheUser(oldUser);
+    }
 
-	public interface UserChangeListener {
-		void onChange(UserModule user);
-	}
+    public interface UserChangeListener {
+        void onChange(UserModule user);
+    }
 
     private UserModule findUpdatableUser(Integer id) {
         // Load user
@@ -614,7 +613,7 @@ public class UserService {
         return user;
     }
 
-	private void updateDashboardOfAllParents() {
+    private void updateDashboardOfAllParents() {
         getAllParentUsers().forEach((user) -> {
             user.setDashboardColumnsView(getDashboardForUser(user, user.getUserRole()));
             saveAndCacheUser(user);
@@ -623,27 +622,28 @@ public class UserService {
 
     private List<UserModule> getAllParentUsers() {
         return dataSource.getAll(UserModule.class).stream().
-            filter(user -> user.getUserRole() != null && user.getUserRole().equals(UserRole.PARENT)).
-            collect(Collectors.toList());
+                filter(user -> user.getUserRole() != null && user.getUserRole().equals(UserRole.PARENT)).
+                collect(Collectors.toList());
     }
 
     /**
      * Creates the DashboardColumnView for the user based on the user role.
      * Each userRole may get a different set of dashboard cards:
      * Parents can see parental-control-cards. Children can see child-cards (fragFinn, BlindeKuh).
+     *
      * @return dashboardColumnView based on user role
      */
-	private DashboardColumnsView getDashboardForUser(UserModule user, UserRole userRole) {
-	    // make sure that userRoles defaults to OTHER. This prevents a user from missing dashboard cards
+    private DashboardColumnsView getDashboardForUser(UserModule user, UserRole userRole) {
+        // make sure that userRoles defaults to OTHER. This prevents a user from missing dashboard cards
         UserRole tmpUserRole = userRole == null ? UserRole.OTHER : userRole;
         DashboardColumnsView columns;
         List<AccessRight> accessRights = user == null ? Collections.emptyList() : getAccessRulesForUser(user);
 
-         if (user == null || user.getDashboardColumnsView() == null) {
-             columns = dashboardCardService.getNewDashboardCardColumns(tmpUserRole);
-         } else {
-             columns = user.getDashboardColumnsView();
-         }
+        if (user == null || user.getDashboardColumnsView() == null) {
+            columns = dashboardCardService.getNewDashboardCardColumns(tmpUserRole);
+        } else {
+            columns = user.getDashboardColumnsView();
+        }
 
         return dashboardCardService.getUpdatedColumnsView(columns, tmpUserRole, accessRights);
     }
@@ -651,13 +651,14 @@ public class UserService {
     /**
      * when a user has access restrictions, like a frag-finn-user, we explicitly define the cards
      * this user can see. All other cards will be hidden.
+     *
      * @param user
      * @return
      */
     private List<AccessRight> getAccessRulesForUser(UserModule user) {
         List<AccessRight> accessRights = new ArrayList<>();
 
-        UserProfileModule profile = dataSource.get(UserProfileModule.class,	user.getAssociatedProfileId());
+        UserProfileModule profile = dataSource.get(UserProfileModule.class, user.getAssociatedProfileId());
 
         if (profile == null) {
             return Collections.emptyList();
@@ -677,34 +678,35 @@ public class UserService {
     }
 
     /**
-     *  The action create user, update user or delete user, may cause
-     *    - a parental control card to be created or removed
-     *       1) created if:
-     *         a) a CHILD-user is created
-     *         b) a PARENT/OTHER user is updated CHILD
-     *       2) removed if:
-     *         a) a CHILD-user is deleted
-     *         b) a CHILD-user is updated to PARENT / OTHER
-     *    - the parental control card to be added or removed from the dashboardColumnsView of each user
-     *       - easiest way: just re-create the dashboardColumnsView based on all dashboard cards (including the
-     *         new parental control card) and the user role of each user (including the created / updated user)
+     * The action create user, update user or delete user, may cause
+     * - a parental control card to be created or removed
+     * 1) created if:
+     * a) a CHILD-user is created
+     * b) a PARENT/OTHER user is updated CHILD
+     * 2) removed if:
+     * a) a CHILD-user is deleted
+     * b) a CHILD-user is updated to PARENT / OTHER
+     * - the parental control card to be added or removed from the dashboardColumnsView of each user
+     * - easiest way: just re-create the dashboardColumnsView based on all dashboard cards (including the
+     * new parental control card) and the user role of each user (including the created / updated user)
      * New/removed child user results in new/removed dashboard card for that user
      * Caused by: create user, remove user, update user (change of user type to/from child)
-     * @param id user id. Used for child-user to set the referencingUserId on the parental control card
+     *
+     * @param id          user id. Used for child-user to set the referencingUserId on the parental control card
      * @param updatedRole the role of the new user or new role of an user being updated
-     * @param oldRole the old role (only set when user is updated)
+     * @param oldRole     the old role (only set when user is updated)
      */
     private void checkAndUpdateParentalControlData(int id, UserRole updatedRole, UserRole oldRole) {
         if (updatedRole != null && updatedRole.equals(UserRole.CHILD) &&
-            (oldRole == null || !oldRole.equals(UserRole.CHILD))) {
+                (oldRole == null || !oldRole.equals(UserRole.CHILD))) {
             // newRole is CHILD and
             // either: oldRole is null (create)
             // or:     oldRole is not CHILD (update PARENT/OTHER to CHILD)
             dashboardCardService.createParentalControlCard(id, "PARENTAL_CONTROL", "FAM");
             updateDashboardOfAllParents();
         } else if ((updatedRole == null && oldRole == null) ||
-            (updatedRole != null && !updatedRole.equals(UserRole.CHILD) &&
-                oldRole != null && oldRole.equals(UserRole.CHILD))) {
+                (updatedRole != null && !updatedRole.equals(UserRole.CHILD) &&
+                        oldRole != null && oldRole.equals(UserRole.CHILD))) {
             // either: both null (remove user)
             // or:     changed from CHILD to non CHILD (OTHER/PARENT)
             dashboardCardService.removeParentalControlCard(id);

@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.dns.DnsResolvers;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
 import org.eblocker.server.common.data.dns.NameServerStats;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.service.DnsService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;

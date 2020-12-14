@@ -21,15 +21,16 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.Language;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SchemaMigrationVersion24Test {
 
@@ -49,7 +50,7 @@ public class SchemaMigrationVersion24Test {
         devices.add(devBravo);
         devices.add(devCharlie);
         Mockito.when(dataSource.getDevices()).thenReturn(devices, devices, devices, devices);
-        
+
         Language lang = new Language("de", "Deutsch");
         Mockito.when(dataSource.getCurrentLanguage()).thenReturn(lang, lang, lang, lang);
 
@@ -75,7 +76,7 @@ public class SchemaMigrationVersion24Test {
         Device expectedDevAlpha = createDevice("device:1cc11afedcba", "1.1.1.1", "Wavetronix (No. 1)");
         // Device bravo was not changed
         Device expectedDevCharlie = createDevice("device:333333333333", "3.3.3.3", "Gerät (No. 1)");
-        
+
         ArgumentCaptor<Device> captor = ArgumentCaptor.forClass(Device.class);
         // Only two device (alpha, charlie) needed a name
         Mockito.verify(dataSource, Mockito.times(2)).save(captor.capture());
@@ -85,9 +86,9 @@ public class SchemaMigrationVersion24Test {
                 .findAny().get();
         Assert.assertEquals(expectedDevAlpha.getId(), actualDevAlpha.getId());
         Assert.assertEquals(expectedDevAlpha.getName(), actualDevAlpha.getName());
-        
+
         // Device Bravo already had a name; it was skipped
-        
+
         // Check device charlie
         Device actualDevCharlie = captor.getAllValues().stream().filter((device) -> device.getId().endsWith("3"))
                 .findAny().get();
@@ -100,7 +101,7 @@ public class SchemaMigrationVersion24Test {
         // two unnamed devices to see if a candidate name was still available
         Mockito.verify(dataSource, Mockito.times(3)).getDevices();
     }
-    
+
     private Device createDevice(String id, String ipAddress, String name) {
         Device device = new Device();
         device.setId(id);

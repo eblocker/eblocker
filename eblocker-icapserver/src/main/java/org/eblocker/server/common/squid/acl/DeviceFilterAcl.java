@@ -36,9 +36,9 @@ abstract class DeviceFilterAcl extends SquidAcl {
     @Override
     protected final Set<String> getAclEntries() {
         return deviceService.getDevices(false).stream()
-            .filter(this::filter)
-            .flatMap(this::ipAddresses)
-            .collect(Collectors.toSet());
+                .filter(this::filter)
+                .flatMap(this::ipAddresses)
+                .collect(Collectors.toSet());
     }
 
     protected abstract boolean filter(Device device);

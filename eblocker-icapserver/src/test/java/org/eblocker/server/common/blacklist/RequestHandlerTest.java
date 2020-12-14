@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import io.netty.channel.embedded.EmbeddedChannel;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,9 +59,9 @@ public class RequestHandlerTest {
                         false,
                         null,
                         Collections.emptyMap(),
-                    null,
-                    null,
-                    null));
+                        null,
+                        null,
+                        null));
 
         Device device = createMockDevice("device:10101099", "10.10.10.99", 1);
         deviceService = Mockito.mock(DeviceService.class);

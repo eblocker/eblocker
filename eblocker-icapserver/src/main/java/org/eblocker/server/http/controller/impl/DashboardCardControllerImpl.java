@@ -16,7 +16,11 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.common.data.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.page.PageContextStore;
@@ -27,11 +31,6 @@ import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.UserModule;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -74,7 +73,8 @@ public class DashboardCardControllerImpl extends SessionContextController implem
     @Override
     public void setDashboardColumnsView(Request request, Response response) {
         try {
-            DashboardColumnsView columns = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<DashboardColumnsView>(){});
+            DashboardColumnsView columns = objectMapper.readValue(request.getBodyAsStream(), new TypeReference<DashboardColumnsView>() {
+            });
             UserModule user = getUser(request);
             user.setDashboardColumnsView(columns);
             userService.updateUser(user.getId(), columns);

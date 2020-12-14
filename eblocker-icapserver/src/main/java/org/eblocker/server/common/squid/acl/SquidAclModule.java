@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.squid.acl;
 
-import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.http.service.DeviceService;
 
 public class SquidAclModule extends AbstractModule {
 
@@ -39,9 +39,9 @@ public class SquidAclModule extends AbstractModule {
                                      @Named("network.vpn.subnet.ip") String vpnSubnet,
                                      @Named("network.vpn.subnet.netmask") String vpnNetmask) {
         return new DevicePredicateFilterAcl(
-            path, deviceService,
-            device -> device.isEnabled() && device.isVpnClient(),
-            ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
+                path, deviceService,
+                device -> device.isEnabled() && device.isVpnClient(),
+                ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
     }
 
     @Provides
@@ -51,9 +51,9 @@ public class SquidAclModule extends AbstractModule {
                                                          @Named("network.vpn.subnet.ip") String vpnSubnet,
                                                          @Named("network.vpn.subnet.netmask") String vpnNetmask) {
         return new DevicePredicateFilterAcl(
-            path, deviceService,
-            device -> device.isEnabled() && device.isVpnClient() && device.isMobilePrivateNetworkAccess(),
-            ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
+                path, deviceService,
+                device -> device.isEnabled() && device.isVpnClient() && device.isMobilePrivateNetworkAccess(),
+                ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
     }
 
     @Provides

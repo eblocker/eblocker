@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import com.google.inject.Inject;
 
 /**
  * Creates EblockerDnsServerState based on current config

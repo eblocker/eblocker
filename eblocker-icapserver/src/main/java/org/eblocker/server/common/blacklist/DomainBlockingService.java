@@ -224,15 +224,15 @@ public class DomainBlockingService {
 
     public List<CachingFilter.Stats> getCacheStats(boolean includeDomains) {
         return getCachingFilters()
-            .sorted((a, b) -> {
-                int cmp = Integer.compare(a.getName().length(), b.getName().length());
-                if (cmp != 0) {
-                    return cmp;
-                }
-                return a.getName().compareTo(b.getName());
-            })
-            .map(f -> f.getStats(includeDomains))
-            .collect(Collectors.toList());
+                .sorted((a, b) -> {
+                    int cmp = Integer.compare(a.getName().length(), b.getName().length());
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                    return a.getName().compareTo(b.getName());
+                })
+                .map(f -> f.getStats(includeDomains))
+                .collect(Collectors.toList());
     }
 
     public void clearCaches() {
@@ -264,10 +264,10 @@ public class DomainBlockingService {
 
     private Map<Integer, ParentalControlFilterMetaData> getEnabledFilterMetadataById() {
         return filterListsService
-            .getParentalControlFilterMetaData()
-            .stream()
-            .filter(m -> !m.isDisabled())
-            .collect(Collectors.toMap(ParentalControlFilterMetaData::getId, Function.identity()));
+                .getParentalControlFilterMetaData()
+                .stream()
+                .filter(m -> !m.isDisabled())
+                .collect(Collectors.toMap(ParentalControlFilterMetaData::getId, Function.identity()));
     }
 
     private DomainFilter<String> createMalwareFilter(FilterConfig config, Collection<ParentalControlFilterMetaData> metaData) {
@@ -298,8 +298,8 @@ public class DomainBlockingService {
         DomainFilter<String> prohibitedFilter = createHostnameFilters(config.getParentalControlProhibitedIds(), metaDataById, topLevelBloomDomainFilter);
 
         DomainFilter<String> parentalFilter = config.isParentalControlDefaultDeny()
-            ? Filters.or(Filters.not(permittedFilter), prohibitedFilter)
-            : Filters.and(Filters.not(permittedFilter), prohibitedFilter);
+                ? Filters.or(Filters.not(permittedFilter), prohibitedFilter)
+                : Filters.and(Filters.not(permittedFilter), prohibitedFilter);
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(ATTRIBUTE_ADD_PROFILE_ID, Boolean.TRUE);
@@ -352,17 +352,17 @@ public class DomainBlockingService {
 
     private DomainFilter<String> combineFilters(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById, BloomFilter<String> topLevelBloomFilter) {
         Map<String, List<Integer>> metaDataByFormat = ids.stream()
-            .map(metaDataById::get)
-            .filter(Objects::nonNull)
-            .collect(Collectors.groupingBy(
-                ParentalControlFilterMetaData::getFormat,
-                Collectors.mapping(
-                    ParentalControlFilterMetaData::getId,
-                    Collectors.toList())));
+                .map(metaDataById::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(
+                        ParentalControlFilterMetaData::getFormat,
+                        Collectors.mapping(
+                                ParentalControlFilterMetaData::getId,
+                                Collectors.toList())));
 
         List<Integer> fileBasedFilterIds = metaDataByFormat.getOrDefault("domainblacklist/string", Collections.emptyList());
         Map<Boolean, List<Integer>> fileBasedFilterIdsByBuiltin = fileBasedFilterIds.stream()
-            .collect(Collectors.groupingBy(id -> metaDataById.get(id).isBuiltin()));
+                .collect(Collectors.groupingBy(id -> metaDataById.get(id).isBuiltin()));
 
         DomainFilter<String> fileBasedFiltersBuiltIn = createFilter(fileBasedFilterIdsByBuiltin.getOrDefault(true, Collections.emptyList()));
         DomainFilter<String> fileBasedFiltersNotBuiltIn = createFilter(fileBasedFilterIdsByBuiltin.getOrDefault(false, Collections.emptyList()));
@@ -371,28 +371,28 @@ public class DomainBlockingService {
         DomainFilter<byte[]> sha1BasedFilters = createFilter(metaDataByFormat.getOrDefault("domainblacklist/hash-sha1", Collections.emptyList()));
 
         return Filters.or(
-            wrapBloomFilter(topLevelBloomFilter, fileBasedFiltersBuiltIn),
-            fileBasedFiltersNotBuiltIn,
-            Filters.hashing(Hashing.md5(), md5BasedFilters),
-            Filters.hashing(Hashing.sha1(), sha1BasedFilters));
+                wrapBloomFilter(topLevelBloomFilter, fileBasedFiltersBuiltIn),
+                fileBasedFiltersNotBuiltIn,
+                Filters.hashing(Hashing.md5(), md5BasedFilters),
+                Filters.hashing(Hashing.sha1(), sha1BasedFilters));
     }
 
     private Map<QueryTransformation, Set<Integer>> getIdsByQueryTransformations(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById) {
         Map<QueryTransformation, Set<Integer>> transformationsById = new HashMap<>();
         ids.stream().map(metaDataById::get).filter(Objects::nonNull).forEach(
-            metadata -> {
-                List<QueryTransformation> transformations = metadata.getQueryTransformations();
-                if (transformations == null) {
-                    Set<Integer> associatedIds = transformationsById.computeIfAbsent(null, k -> new HashSet<>());
-                    associatedIds.add(metadata.getId());
-                } else {
-                    for (QueryTransformation transformation : transformations) {
-                        Set<Integer> associatedIds = transformationsById.computeIfAbsent(transformation, k -> new HashSet<>());
+                metadata -> {
+                    List<QueryTransformation> transformations = metadata.getQueryTransformations();
+                    if (transformations == null) {
+                        Set<Integer> associatedIds = transformationsById.computeIfAbsent(null, k -> new HashSet<>());
                         associatedIds.add(metadata.getId());
+                    } else {
+                        for (QueryTransformation transformation : transformations) {
+                            Set<Integer> associatedIds = transformationsById.computeIfAbsent(transformation, k -> new HashSet<>());
+                            associatedIds.add(metadata.getId());
+                        }
                     }
                 }
-            }
-                                                                            );
+        );
         return transformationsById;
     }
 
@@ -449,17 +449,17 @@ public class DomainBlockingService {
 
     private Set<Integer> filterByCategory(Collection<ParentalControlFilterMetaData> metaData, EnumSet<Category> categories) {
         return metaData.stream()
-            .filter(m -> categories.contains(m.getCategory()))
-            .map(ParentalControlFilterMetaData::getId)
-            .collect(Collectors.toSet());
+                .filter(m -> categories.contains(m.getCategory()))
+                .map(ParentalControlFilterMetaData::getId)
+                .collect(Collectors.toSet());
     }
 
     private synchronized void updateFilteredDevices() {
         logger.debug("updating dns / squid's list of filtered devices");
 
         Map<Device, FilterConfig> configByEnabledDevice = deviceService.getDevices(false).stream()
-            .filter(Device::isEnabled)
-            .collect(Collectors.toMap(Function.identity(), device -> FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally())));
+                .filter(Device::isEnabled)
+                .collect(Collectors.toMap(Function.identity(), device -> FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally())));
 
         Set<Device> domainFilteredDevices = filterDomainFilteredDevices(configByEnabledDevice);
         Set<Device> parentalControlledDevices = filterParentalControlFilteredDevices(configByEnabledDevice);
@@ -479,9 +479,9 @@ public class DomainBlockingService {
         }
 
         return configByEnabledDevice.entrySet().stream()
-            .filter(e -> e.getValue().parentalControlUrlControlModeEnabled)
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+                .filter(e -> e.getValue().parentalControlUrlControlModeEnabled)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     private Set<Device> filterDomainFilteredDevices(Map<Device, FilterConfig> configByEnabledDevice) {
@@ -491,12 +491,12 @@ public class DomainBlockingService {
 
         boolean hasFamilyFeature = productInfoService.hasFeature(ProductFeature.FAM);
         return configByEnabledDevice.entrySet().stream()
-            .filter(e -> !e.getValue().parentalControlUrlControlModeEnabled || !hasFamilyFeature)
-            .filter(e -> e.getValue().getCustomBlacklistId() != null
-                || e.getValue().getCustomWhitelistId() != null
-                || e.getValue().getFilterMode() == FilterMode.PLUG_AND_PLAY && (e.getValue().isFilterAds() || e.getValue().isFilterTrackers()))
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+                .filter(e -> !e.getValue().parentalControlUrlControlModeEnabled || !hasFamilyFeature)
+                .filter(e -> e.getValue().getCustomBlacklistId() != null
+                        || e.getValue().getCustomWhitelistId() != null
+                        || e.getValue().getFilterMode() == FilterMode.PLUG_AND_PLAY && (e.getValue().isFilterAds() || e.getValue().isFilterTrackers()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     private Set<IpAddress> ipAddresses(Collection<Device> device) {
@@ -701,12 +701,12 @@ public class DomainBlockingService {
             FilterDecision<String> delegateDecision = delegate.isBlocked(domain);
             Map<String, Object> attributes = delegateDecision instanceof AttributeDecision ? ((AttributeDecision<String>) delegateDecision).getAttributes() : Collections.emptyMap();
             return new Decision(
-                delegateDecision.isBlocked(),
-                delegateDecision.getDomain(),
-                attributes.containsKey(ATTRIBUTE_ADD_PROFILE_ID) ? profileId : null,
-                delegateDecision.getFilter().getListId(),
-                userId,
-                (String) attributes.get(ATTRIBUTE_TARGET));
+                    delegateDecision.isBlocked(),
+                    delegateDecision.getDomain(),
+                    attributes.containsKey(ATTRIBUTE_ADD_PROFILE_ID) ? profileId : null,
+                    delegateDecision.getFilter().getListId(),
+                    userId,
+                    (String) attributes.get(ATTRIBUTE_TARGET));
         }
 
         @Override
@@ -849,23 +849,23 @@ public class DomainBlockingService {
                 return false;
             FilterConfig that = (FilterConfig) o;
             return sslEnabled == that.sslEnabled &&
-                filterAds == that.filterAds &&
-                filterTrackers == that.filterTrackers &&
-                filterMalware == that.filterMalware &&
-                parentalControlUrlControlModeEnabled == that.parentalControlUrlControlModeEnabled &&
-                parentalControlDefaultDeny == that.parentalControlDefaultDeny &&
-                filterMode == that.filterMode &&
-                Objects.equals(customBlacklistId, that.customBlacklistId) &&
-                Objects.equals(customWhitelistId, that.customWhitelistId) &&
-                Objects.equals(parentalControlPermittedIds, that.parentalControlPermittedIds) &&
-                Objects.equals(parentalControlProhibitedIds, that.parentalControlProhibitedIds);
+                    filterAds == that.filterAds &&
+                    filterTrackers == that.filterTrackers &&
+                    filterMalware == that.filterMalware &&
+                    parentalControlUrlControlModeEnabled == that.parentalControlUrlControlModeEnabled &&
+                    parentalControlDefaultDeny == that.parentalControlDefaultDeny &&
+                    filterMode == that.filterMode &&
+                    Objects.equals(customBlacklistId, that.customBlacklistId) &&
+                    Objects.equals(customWhitelistId, that.customWhitelistId) &&
+                    Objects.equals(parentalControlPermittedIds, that.parentalControlPermittedIds) &&
+                    Objects.equals(parentalControlProhibitedIds, that.parentalControlProhibitedIds);
         }
 
         @Override
         public int hashCode() {
             return Objects.hash(filterMode, sslEnabled, filterAds, filterTrackers, customBlacklistId, customWhitelistId,
-                parentalControlUrlControlModeEnabled, parentalControlDefaultDeny, parentalControlPermittedIds,
-                parentalControlProhibitedIds);
+                    parentalControlUrlControlModeEnabled, parentalControlDefaultDeny, parentalControlPermittedIds,
+                    parentalControlProhibitedIds);
         }
     }
 }

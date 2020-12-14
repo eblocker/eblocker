@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.statistic;
 
-import org.eblocker.server.common.data.IpAddress;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.IpAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -85,7 +85,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
 
         Predicate<String> keyPredicate = key -> true;
         if (begin != null && end != null) {
-           keyPredicate = new KeyDateTimePredicate(begin, end);
+            keyPredicate = new KeyDateTimePredicate(begin, end);
         }
 
         String keyPattern = String.format(KEY_PATTERN_COUNTER_FORMAT, type, queryIpAddress);
@@ -102,8 +102,8 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
         try (Jedis jedis = jedisPool.getResource()) {
             Pipeline pipeline = jedis.pipelined();
             counters.stream()
-                .map(this::mapCounterToKeyValue)
-                .forEach(t -> pipeline.incrBy(t.key, t.value));
+                    .map(this::mapCounterToKeyValue)
+                    .forEach(t -> pipeline.incrBy(t.key, t.value));
             pipeline.sync();
         } catch (Exception e) {
             log.error("failed to increment statistics counters:", e);
@@ -132,7 +132,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
             }
             List<String> values = jedis.mget(keys);
             List<TotalCounter> totalCounters = new ArrayList<>();
-            for(int i = 0; i < keys.length; ++i) {
+            for (int i = 0; i < keys.length; ++i) {
                 String[] splitKey = keys[i].split(":");
                 if (type == null || type.equals(splitKey[1])) {
                     String reason = splitKey.length > 3 ? splitKey[3] : null;
@@ -148,7 +148,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
     public void incrementTotalCounters(Collection<TotalCounter> totalCounters) {
         try (Jedis jedis = jedisPool.getResource()) {
             Pipeline pipeline = jedis.pipelined();
-            for(TotalCounter counter : totalCounters) {
+            for (TotalCounter counter : totalCounters) {
                 String reason = counter.getReason() != null ? ":" + counter.getReason() : "";
                 pipeline.incrBy(String.format(KEY_PATTERN_COUNTER_TOTAL_FORMAT, counter.getType(), counter.getName(), reason), counter.getValue());
             }
@@ -160,7 +160,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
     public Instant getLastResetTotalCounters() {
         try (Jedis jedis = jedisPool.getResource()) {
             String value = jedis.get(KEY_TOTAL_RESET);
-            return Strings.isNullOrEmpty(value) ? null :Instant.ofEpochMilli(Long.parseLong(value));
+            return Strings.isNullOrEmpty(value) ? null : Instant.ofEpochMilli(Long.parseLong(value));
         }
     }
 
@@ -203,11 +203,11 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
     private Tuple<String, Integer> mapCounterToKeyValue(StatisticsCounter counter) {
         Tuple<String, Integer> tuple = new Tuple<>();
         tuple.key = String.format("%s_stats:%s:%s:%s%s",
-            counter.getType(),
-            DATE_TIME_FORMATTER.format(ZonedDateTime.ofInstant(counter.getInstant(), ZoneId.systemDefault())),
-            counter.getIpAddress(),
-            counter.getName(),
-            counter.getReason() != null ? ":" + counter.getReason() : "");
+                counter.getType(),
+                DATE_TIME_FORMATTER.format(ZonedDateTime.ofInstant(counter.getInstant(), ZoneId.systemDefault())),
+                counter.getIpAddress(),
+                counter.getName(),
+                counter.getReason() != null ? ":" + counter.getReason() : "");
         tuple.value = counter.getValue();
         return tuple;
     }
@@ -274,7 +274,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
             index = 0;
             fetchedKeys.clear();
             int n = 0;
-            for(Iterator<String> i = keys.iterator(); i.hasNext() && n < NUM; ++n) {
+            for (Iterator<String> i = keys.iterator(); i.hasNext() && n < NUM; ++n) {
                 fetchedKeys.add(i.next());
                 i.remove();
             }

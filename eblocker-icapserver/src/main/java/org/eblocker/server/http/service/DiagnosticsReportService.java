@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.http.security.JsonWebTokenHandler;
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class DiagnosticsReportService {
     private static final Logger log = LoggerFactory.getLogger(DiagnosticsReportService.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
 
-    public enum State { NOT_STARTED, PENDING, FINISHED, ERROR }
+    public enum State {NOT_STARTED, PENDING, FINISHED, ERROR}
 
     private final Path diagnosticsReportFile;
     private final ScriptRunner scriptRunner;
@@ -72,8 +72,8 @@ public class DiagnosticsReportService {
         executorService.execute(() -> {
             try {
                 scriptRunner.runScript(reportCreateScript,
-                    tokenHandler.generateSystemToken().getToken(),
-                    remoteAddress);
+                        tokenHandler.generateSystemToken().getToken(),
+                        remoteAddress);
                 STATUS.info("Created diagnostics report!");
                 state = State.FINISHED;
             } catch (InterruptedException e) {

@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.KeepAliveMode;
@@ -35,8 +37,6 @@ import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,9 +58,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** This class makes all the work which is asked for by the OpenVpnController (REST Interface).
- *  It will trigger/tell the other objects to adapt the firewall configuration, rewrite squids config and so on...
- *
+/**
+ * This class makes all the work which is asked for by the OpenVpnController (REST Interface).
+ * It will trigger/tell the other objects to adapt the firewall configuration, rewrite squids config and so on...
  */
 @SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 200)
 public class OpenVpnService {
@@ -117,7 +117,7 @@ public class OpenVpnService {
      */
     private void cleanUpProfiles() {
         dataSource.getAll(OpenVpnProfile.class).stream()
-                .filter(p->p.isTemporary() || p.isDeleted())
+                .filter(p -> p.isTemporary() || p.isDeleted())
                 .map(OpenVpnProfile::getId)
                 .forEach(this::deleteProfile);
     }
@@ -156,9 +156,9 @@ public class OpenVpnService {
 
     private void upgradeConfigurations(Integer version, Consumer<OpenVpnProfile> upgradeMethod) {
         dataSource.getAll(OpenVpnProfile.class).stream()
-            .filter(p -> Objects.equals(version, p.getConfigurationFileVersion()))
-            .filter(p -> profileFiles.hasParsedConfiguration(p.getId()))
-            .forEach(upgradeMethod);
+                .filter(p -> Objects.equals(version, p.getConfigurationFileVersion()))
+                .filter(p -> profileFiles.hasParsedConfiguration(p.getId()))
+                .forEach(upgradeMethod);
     }
 
     /**
@@ -198,16 +198,16 @@ public class OpenVpnService {
         try {
             OpenVpnConfiguration configuration = getProfileClientConfig(profile.getId());
             if (!configuration.getInlinedContentByName().isEmpty()) {
-                for(Map.Entry<String, String> e : configuration.getInlinedContentByName().entrySet()) {
+                for (Map.Entry<String, String> e : configuration.getInlinedContentByName().entrySet()) {
                     profileFiles.writeConfigOptionFile(profile.getId(), e.getKey(), e.getValue().getBytes());
                     e.setValue(null);
                 }
                 profileFiles.writeParsedConfiguration(profile.getId(), configuration);
 
                 List<Option> activeConfiguration = configurator.getActiveConfiguration(
-                    configuration,
-                    profileFiles.getCredentials(profile.getId()),
-                    getOptionFileByOption(profile, configuration));
+                        configuration,
+                        profileFiles.getCredentials(profile.getId()),
+                        getOptionFileByOption(profile, configuration));
                 profileFiles.writeConfigFile(profile.getId(), activeConfiguration);
             }
             profile.setConfigurationFileVersion(2);
@@ -238,10 +238,11 @@ public class OpenVpnService {
 
     /**
      * Get all VPN profiles
+     *
      * @return
      */
-    public Collection<VpnProfile> getVpnProfiles(){
-        return dataSource.getAll(OpenVpnProfile.class).stream().filter(p->!p.isDeleted()).map(this::maskPassword).collect(Collectors.toList());
+    public Collection<VpnProfile> getVpnProfiles() {
+        return dataSource.getAll(OpenVpnProfile.class).stream().filter(p -> !p.isDeleted()).map(this::maskPassword).collect(Collectors.toList());
     }
 
     public OpenVpnProfile saveProfile(OpenVpnProfile profile) throws IOException {
@@ -273,7 +274,7 @@ public class OpenVpnService {
         }
         // only update username if it has been changed
         if (profile.getLoginCredentials() != null && storedProfile.getLoginCredentials() != null &&
-            (storedProfile.getLoginCredentials().getUsername() == null || !storedProfile.getLoginCredentials().getUsername().equals(profile.getLoginCredentials().getUsername()))) {
+                (storedProfile.getLoginCredentials().getUsername() == null || !storedProfile.getLoginCredentials().getUsername().equals(profile.getLoginCredentials().getUsername()))) {
             loginCredentials.setUsername(profile.getLoginCredentials().getUsername());
         }
         storedProfile.setLoginCredentials(loginCredentials);
@@ -389,10 +390,11 @@ public class OpenVpnService {
 
     /**
      * Get a VPN profile for a given ID
+     *
      * @param id
      * @return
      */
-    public VpnProfile getVpnProfileById(int id){
+    public VpnProfile getVpnProfileById(int id) {
         return maskPassword(dataSource.get(OpenVpnProfile.class, id));
     }
 
@@ -417,9 +419,10 @@ public class OpenVpnService {
         }
     }
 
-     /**
+    /**
      * Do not route device through VpnProfile (and the VPN tunnel which belongs to this profile) anymore
      * When this was the last device using this VPN profile, it will automatically get shutdown/stopped
+     *
      * @param device
      */
     public void restoreNormalRoutingForClient(Device device) {
@@ -457,7 +460,7 @@ public class OpenVpnService {
     }
 
     public VpnStatus getStatusByDevice(Device device) {
-        Optional<VpnClient> client = vpnClientsById.values().stream().filter(c->c.getDeviceIds().contains(device.getId())).findFirst();
+        Optional<VpnClient> client = vpnClientsById.values().stream().filter(c -> c.getDeviceIds().contains(device.getId())).findFirst();
         if (client.isPresent()) {
             return createVpnStatus(client.get());
         } else {
@@ -501,13 +504,13 @@ public class OpenVpnService {
     }
 
     private VpnClient getClientByDevice(Device device) {
-        Optional<VpnClient> client = vpnClientsById.values().stream().filter(c->c.getDeviceIds().contains(device.getId())).findFirst();
+        Optional<VpnClient> client = vpnClientsById.values().stream().filter(c -> c.getDeviceIds().contains(device.getId())).findFirst();
         return client.isPresent() ? client.get() : null;
     }
 
     private VpnProfile maskPassword(VpnProfile profile) {
         if (profile != null && profile.getLoginCredentials() != null &&
-            profile.getLoginCredentials().getPassword() != null && !profile.getLoginCredentials().getPassword().isEmpty()) {
+                profile.getLoginCredentials().getPassword() != null && !profile.getLoginCredentials().getPassword().isEmpty()) {
             profile.getLoginCredentials().setPassword(passwordMask);
         }
         return profile;
@@ -515,19 +518,19 @@ public class OpenVpnService {
 
     private void writeConfigFile(VpnProfile profile, OpenVpnConfiguration configuration) throws FileNotFoundException {
         profileFiles.writeConfigFile(profile.getId(),
-            configurator.getActiveConfiguration(configuration,
-                profileFiles.getCredentials(profile.getId()),
-                getOptionFileByOption(profile, configuration)));
+                configurator.getActiveConfiguration(configuration,
+                        profileFiles.getCredentials(profile.getId()),
+                        getOptionFileByOption(profile, configuration)));
     }
 
     private Map<String, String> getOptionFileByOption(VpnProfile profile, OpenVpnConfiguration configuration) {
         return configuration.getInlinedContentByName().keySet().stream()
-            .collect(Collectors.toMap(o -> o, o -> profileFiles.getOptionFile(profile.getId(), o)));
+                .collect(Collectors.toMap(o -> o, o -> profileFiles.getOptionFile(profile.getId(), o)));
     }
 
     private synchronized void cleanCache() {
         log.info("Cleaning client cache ...");
-        for(Iterator<VpnClient> i = vpnClientsById.values().iterator(); i.hasNext(); ) {
+        for (Iterator<VpnClient> i = vpnClientsById.values().iterator(); i.hasNext(); ) {
             VpnClient client = i.next();
             if (!checkCacheEntry(client)) {
                 // remove client from cache
@@ -574,12 +577,12 @@ public class OpenVpnService {
 
     private String getFirstRemoteHost(OpenVpnConfiguration configuration) {
         return configuration.getUserOptions().stream()
-            .filter(o -> "remote".equalsIgnoreCase(o.getName()))
-            .filter(o -> o instanceof SimpleOption)
-            .map(o -> (SimpleOption) o)
-            .filter(o -> o.getArguments().length >= 1)
-            .map(o -> o.getArguments()[0])
-            .findFirst()
-            .orElse(null);
+                .filter(o -> "remote".equalsIgnoreCase(o.getName()))
+                .filter(o -> o instanceof SimpleOption)
+                .map(o -> (SimpleOption) o)
+                .filter(o -> o.getArguments().length >= 1)
+                .map(o -> o.getArguments()[0])
+                .findFirst()
+                .orElse(null);
     }
 }

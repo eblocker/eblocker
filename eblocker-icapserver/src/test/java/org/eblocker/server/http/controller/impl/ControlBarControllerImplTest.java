@@ -16,8 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.TestDeviceFactory;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.SessionStore;
@@ -25,8 +27,6 @@ import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.MessageCenterService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.UserService;
-import org.eblocker.server.common.network.BaseURLs;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -52,22 +52,22 @@ public class ControlBarControllerImplTest {
         SessionStore sessionStore = Mockito.mock(SessionStore.class);
         PageContextStore pageContextStore = Mockito.mock(PageContextStore.class);
 
-       controller = new ControlBarControllerImpl(
-           baseURLs,
-           sessionStore,
-           pageContextStore,
-           deviceService,
-           parentalControlService,
-           userService,
-           openVpnService,
-           messageCenterService,
-           "10.8.0.0",
-           "255.255.255.0");
+        controller = new ControlBarControllerImpl(
+                baseURLs,
+                sessionStore,
+                pageContextStore,
+                deviceService,
+                parentalControlService,
+                userService,
+                openVpnService,
+                messageCenterService,
+                "10.8.0.0",
+                "255.255.255.0");
     }
 
     @Test
     public void testGetConsoleIp() throws JsonProcessingException {
-        Device device = TestDeviceFactory.createDevice("0123456789ab",  "192.168.101.21", true);
+        Device device = TestDeviceFactory.createDevice("0123456789ab", "192.168.101.21", true);
         Request request = ControllerTestUtils.mockRequestByDevice(device);
         Mockito.when(baseURLs.selectIpForPage(false, "http")).thenReturn("http://192.168.101.1");
         Mockito.when(baseURLs.selectIpForPage(false, "https")).thenReturn("https://192.168.101.1");
@@ -83,7 +83,7 @@ public class ControlBarControllerImplTest {
 
     @Test
     public void testGetConsoleIpForVpn() throws JsonProcessingException {
-        Device device = TestDeviceFactory.createDevice("0123456789ab",  "10.8.0.11", true);
+        Device device = TestDeviceFactory.createDevice("0123456789ab", "10.8.0.11", true);
         Request request = ControllerTestUtils.mockRequestByDevice(device);
         Mockito.when(baseURLs.selectIpForPage(true, "http")).thenReturn("http://10.8.0.1");
         Mockito.when(baseURLs.selectIpForPage(true, "https")).thenReturn("https://10.8.0.1");

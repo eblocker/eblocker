@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.openvpn;
 
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +55,14 @@ public class VpnKeepAlive {
 
     @Inject
     public VpnKeepAlive(@Named("kill.process.command") String killCommand,
-                         @Named("ping.process.command") String pingCommand,
-                         @Named("vpn.keepalive.ping.interval") int pingInterval,
-                         @Named("vpn.keepalive.ping.noAnswerThreshold") int noAnswerThreshold,
-                         @Named("unlimitedCachePoolExecutor") Executor executor,
-                         ScriptRunner scriptRunner,
-                         @Assisted("interfaceName") String interfaceName,
-                         @Assisted("target") String target,
-                         @Assisted Runnable connectionDeadCallback) {
+                        @Named("ping.process.command") String pingCommand,
+                        @Named("vpn.keepalive.ping.interval") int pingInterval,
+                        @Named("vpn.keepalive.ping.noAnswerThreshold") int noAnswerThreshold,
+                        @Named("unlimitedCachePoolExecutor") Executor executor,
+                        ScriptRunner scriptRunner,
+                        @Assisted("interfaceName") String interfaceName,
+                        @Assisted("target") String target,
+                        @Assisted Runnable connectionDeadCallback) {
         this.killCommand = killCommand;
         this.pingCommand = pingCommand;
         this.pingInterval = pingInterval;

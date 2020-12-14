@@ -23,8 +23,11 @@ import org.mockito.Mockito;
 
 import java.util.Date;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class JsonWebTokenHandlerTest {
 
@@ -37,6 +40,7 @@ public class JsonWebTokenHandlerTest {
         baseURLs = Mockito.mock(BaseURLs.class);
         when(baseURLs.getHttpsURL()).thenReturn(HTTPS_URL);
     }
+
     @Test
     public void test() {
         AppContext appContext = AppContext.CONSOLE;
@@ -44,9 +48,8 @@ public class JsonWebTokenHandlerTest {
         Date now = new Date();
         long expectedExpiry = now.getTime() / 1000L + validity;
 
-
         JsonWebTokenHandler jsonWebTokenHandler = new JsonWebTokenHandler(
-            600,
+                600,
                 600,
                 baseURLs
         );
@@ -59,7 +62,6 @@ public class JsonWebTokenHandlerTest {
         assertEquals(true, jsonWebToken.isPasswordRequired());
         // This test method should not take more than 5 seconds...
         assertTrue(Math.abs(expectedExpiry - jsonWebToken.getExpiresOn()) < 5);
-
 
         TokenInfo tokenInfo = jsonWebTokenHandler.verifyToken(jsonWebToken.getToken());
 
@@ -87,7 +89,6 @@ public class JsonWebTokenHandlerTest {
 
         assertEquals(AppContext.SYSTEM, tokenInfo.getAppContext());
         assertEquals(systemTokenValidity, tokenInfo.getTokenValiditySeconds());
-
 
         jsonWebToken = jsonWebTokenHandler.generateSquidToken();
         tokenInfo = jsonWebTokenHandler.verifyToken(jsonWebToken.getToken());

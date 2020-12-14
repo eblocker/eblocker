@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.DataSource;
 
 @Singleton
 public class SplashService {
 
     private final DataSource dataSource;
 
-
     @Inject
     public SplashService(
-        DataSource dataSource
+            DataSource dataSource
     ) {
         this.dataSource = dataSource;
     }

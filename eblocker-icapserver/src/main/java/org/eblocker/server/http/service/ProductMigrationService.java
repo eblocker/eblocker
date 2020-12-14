@@ -16,12 +16,10 @@
  */
 package org.eblocker.server.http.service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.registration.UpsellInfoWrapper;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.dns.DnsResolvers;
@@ -34,9 +32,10 @@ import org.eblocker.server.common.ssl.SslService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.registration.UpsellInfoWrapper;
-import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Singleton
 public class ProductMigrationService {
@@ -44,7 +43,7 @@ public class ProductMigrationService {
     private final DeviceRegistrationClient deviceRegistrationClient;
 
     private Set<ProductFeature> relevantFeatures = new HashSet<>(Arrays.asList(
-        ProductFeature.FAM, ProductFeature.PRO, ProductFeature.BAS
+            ProductFeature.FAM, ProductFeature.PRO, ProductFeature.BAS
     ));
 
     private DeviceService deviceService;
@@ -58,17 +57,16 @@ public class ProductMigrationService {
 
     @Inject
     public ProductMigrationService(
-        DeviceService deviceService,
-        SslService sslService,
-        TorController torController,
-        EblockerDnsServer dnsServer,
-        DeviceRegistrationClient deviceRegistrationClient,
-        AnonymousService anonymousService,
-        UserService userService,
-        ParentalControlService parentalControlService,
-        LicenseExpirationService licenseExpirationService,
-        ProductInfoService productInfoService)
-    {
+            DeviceService deviceService,
+            SslService sslService,
+            TorController torController,
+            EblockerDnsServer dnsServer,
+            DeviceRegistrationClient deviceRegistrationClient,
+            AnonymousService anonymousService,
+            UserService userService,
+            ParentalControlService parentalControlService,
+            LicenseExpirationService licenseExpirationService,
+            ProductInfoService productInfoService) {
         this.deviceService = deviceService;
         this.sslService = sslService;
         this.torController = torController;
@@ -223,8 +221,7 @@ public class ProductMigrationService {
                 productInfoService.removeFeature(ProductFeature.FAM);
                 changeProductDeactivateFamilyFeatures();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Downgrading expired license failed.", e);
         }
     }

@@ -32,18 +32,18 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 abstract public class FilterParserTestBase {
-	@SuppressWarnings("unused")
-	private final static Logger log = LoggerFactory.getLogger(FilterParserTestBase.class);
+    @SuppressWarnings("unused")
+    private final static Logger log = LoggerFactory.getLogger(FilterParserTestBase.class);
 
-	private LearningFilter learningFilter;
+    private LearningFilter learningFilter;
 
-	@Before
-	public void load() throws IOException {
-		learningFilter = new LearningFilter(null, true) {
-			@Override
-			protected FilterResult doLearn(FilterResult result,	TransactionContext context) {
-				return result;
-			}
+    @Before
+    public void load() throws IOException {
+        learningFilter = new LearningFilter(null, true) {
+            @Override
+            protected FilterResult doLearn(FilterResult result, TransactionContext context) {
+                return result;
+            }
 
             @Override
             public String toString() {
@@ -51,39 +51,39 @@ abstract public class FilterParserTestBase {
             }
         };
 
-		FilterParser parser = new FilterParser(EasyListLineParser::new);
+        FilterParser parser = new FilterParser(EasyListLineParser::new);
 
         List<Filter> filters = new ArrayList<>();
-		for (InputStream in: getInputStreams()) {
-		    filters.addAll(parser.parse(in));
-		}
+        for (InputStream in : getInputStreams()) {
+            filters.addAll(parser.parse(in));
+        }
 
         FilterStore store = new FilterStore(learningFilter);
-		store.update(filters);
-	}
+        store.update(filters);
+    }
 
-	abstract protected InputStream[] getInputStreams();
+    abstract protected InputStream[] getInputStreams();
 
-	protected void assertFilterResult_beforeLearning(Decision decision, String definition, String url, String referrer) {
-		TransactionContext context = new TestContext(url, referrer, null);
+    protected void assertFilterResult_beforeLearning(Decision decision, String definition, String url, String referrer) {
+        TransactionContext context = new TestContext(url, referrer, null);
 
-		FilterResult result = learningFilter.filter(context);
+        FilterResult result = learningFilter.filter(context);
 
-		assertEquals(decision, result.getDecision());
-		if (definition != null) {
-			assertEquals(definition, result.getDecider().getDefinition());
-		}
-	}
+        assertEquals(decision, result.getDecision());
+        if (definition != null) {
+            assertEquals(definition, result.getDecider().getDefinition());
+        }
+    }
 
-	protected void assertFilterResult_afterLearning(Decision decision, String definition, String url, String referrer) {
-		TransactionContext context = new TestContext(url, referrer, null);
+    protected void assertFilterResult_afterLearning(Decision decision, String definition, String url, String referrer) {
+        TransactionContext context = new TestContext(url, referrer, null);
 
-		learningFilter.learn(null, context);
-		FilterResult result = learningFilter.filter(context);
+        learningFilter.learn(null, context);
+        FilterResult result = learningFilter.filter(context);
 
-		assertEquals(decision, result.getDecision());
-		if (definition != null) {
-			assertEquals(definition, result.getDecider().getDefinition());
-		}
-	}
+        assertEquals(decision, result.getDecision());
+        if (definition != null) {
+            assertEquals(definition, result.getDecider().getDefinition());
+        }
+    }
 }

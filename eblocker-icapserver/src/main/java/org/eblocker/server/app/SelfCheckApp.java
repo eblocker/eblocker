@@ -16,6 +16,22 @@
  */
 package org.eblocker.server.app;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.ConfigurableModule;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.JedisDataSource;
+import org.eblocker.server.common.data.systemstatus.ExecutionState;
+import org.eblocker.server.common.network.TelnetConnection;
+import org.eblocker.server.common.network.TelnetConnectionImpl;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
+import org.eblocker.server.http.service.StatusLedService;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -24,25 +40,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eblocker.server.common.ConfigurableModule;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.JedisDataSource;
-import org.eblocker.server.common.data.systemstatus.ExecutionState;
-import org.eblocker.server.common.network.TelnetConnection;
-import org.eblocker.server.common.network.TelnetConnectionImpl;
-import org.eblocker.server.common.system.ScriptRunner;
-import org.eblocker.server.http.service.StatusLedService;
-import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
 /**
  * eBlocker self-check app.
- *
+ * <p>
  * This program dumps the self-check result to the console and quits.
  */
 public class SelfCheckApp {
@@ -53,15 +53,15 @@ public class SelfCheckApp {
     private final StatusLedService statusLedService;
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-	public static void main(String[] args) throws Exception {
-		Injector injector = Guice.createInjector(new SelfCheckModule());
-		injector.getInstance(SelfCheckApp.class).run();
-	}
+    public static void main(String[] args) throws Exception {
+        Injector injector = Guice.createInjector(new SelfCheckModule());
+        injector.getInstance(SelfCheckApp.class).run();
+    }
 
-	/**
-	 * Provide a custom module that has a script runner
-	 */
-	private static class SelfCheckModule extends ConfigurableModule {
+    /**
+     * Provide a custom module that has a script runner
+     */
+    private static class SelfCheckModule extends ConfigurableModule {
         public SelfCheckModule() throws IOException {
             super();
         }
@@ -76,61 +76,62 @@ public class SelfCheckApp {
 
         // Needed for ScriptRunnerUnix:
         @Provides
-        @Named("unlimitedCachePoolExecutor") @Singleton
+        @Named("unlimitedCachePoolExecutor")
+        @Singleton
         public Executor provideUnlimitedCachePoolExecutor() {
             return executorService;
         }
-	}
+    }
 
-	@Inject
-	public SelfCheckApp(DataSource dataSource,
-	                    @Named("project.version") String version,
-	                    ScriptRunner scriptRunner,
-	                    @Named("show.selfcheck.result.command") String showResultScript,
-	                    StatusLedService statusLedService) {
-		this.dataSource = dataSource;
-		this.version = version;
-		this.scriptRunner = scriptRunner;
-		this.showResultScript = showResultScript;
-		this.statusLedService = statusLedService;
-	}
+    @Inject
+    public SelfCheckApp(DataSource dataSource,
+                        @Named("project.version") String version,
+                        ScriptRunner scriptRunner,
+                        @Named("show.selfcheck.result.command") String showResultScript,
+                        StatusLedService statusLedService) {
+        this.dataSource = dataSource;
+        this.version = version;
+        this.scriptRunner = scriptRunner;
+        this.showResultScript = showResultScript;
+        this.statusLedService = statusLedService;
+    }
 
-	public void run() throws IOException, InterruptedException {
-		File result = File.createTempFile("eblocker-selfcheck", ".txt");
-		result.deleteOnExit();
+    public void run() throws IOException, InterruptedException {
+        File result = File.createTempFile("eblocker-selfcheck", ".txt");
+        result.deleteOnExit();
 
-		try (BufferedWriter w = new BufferedWriter(new FileWriter(result))) {
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(result))) {
 
-			w.newLine();
-			w.newLine();
-			w.append("***********************************\n");
-			w.append("*       eBlocker Self-Check       *\n");
-			w.append("***********************************\n");
-			try {
-				w.append("eBlocker OS version: ");
-				w.append(version);
-				w.newLine();
+            w.newLine();
+            w.newLine();
+            w.append("***********************************\n");
+            w.append("*       eBlocker Self-Check       *\n");
+            w.append("***********************************\n");
+            try {
+                w.append("eBlocker OS version: ");
+                w.append(version);
+                w.newLine();
 
-				w.append("eBlocker DB version: ");
-				w.append(dataSource.getVersion());
-				w.newLine();
+                w.append("eBlocker DB version: ");
+                w.append(dataSource.getVersion());
+                w.newLine();
 
-				w.append("Self-check result:   OK");
-				w.newLine();
-				statusLedService.setStatus(ExecutionState.SELF_CHECK_OK);
-			} catch (Exception e) {
-				w.append("ERROR during self-check: " + e.toString());
-				w.newLine();
+                w.append("Self-check result:   OK");
+                w.newLine();
+                statusLedService.setStatus(ExecutionState.SELF_CHECK_OK);
+            } catch (Exception e) {
+                w.append("ERROR during self-check: " + e.toString());
+                w.newLine();
 
-				w.append("Self-check result:   NOT OK");
-				w.newLine();
+                w.append("Self-check result:   NOT OK");
+                w.newLine();
                 statusLedService.setStatus(ExecutionState.SELF_CHECK_NOT_OK);
-			}
-			w.append("***********************************\n\n");
+            }
+            w.append("***********************************\n\n");
 
-		}
+        }
 
-		scriptRunner.runScript(showResultScript, result.getAbsolutePath());
-		executorService.shutdown();
-	}
+        scriptRunner.runScript(showResultScript, result.getAbsolutePath());
+        executorService.shutdown();
+    }
 }

@@ -16,21 +16,21 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.List;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SchemaMigrationVersion27Test {
 
@@ -58,10 +58,10 @@ public class SchemaMigrationVersion27Test {
     @Test
     public void test_migrate_createDashboardCard() {
         UserModuleOld user = createUser(
-            0,
-            createCard(0, "<dashboard-example-one></dashboard-example-one>"),
-            createCard(1, "<dashboard-dns-statistics></dashboard-dns-statistics>"),
-            createCard(2, "<dashboard-example-two></dashboard-example-two>"));
+                0,
+                createCard(0, "<dashboard-example-one></dashboard-example-one>"),
+                createCard(1, "<dashboard-dns-statistics></dashboard-dns-statistics>"),
+                createCard(2, "<dashboard-example-two></dashboard-example-two>"));
 
         List<UserModuleOld> list = new ArrayList<>();
         list.add(user);
@@ -91,10 +91,10 @@ public class SchemaMigrationVersion27Test {
     @Test
     public void test_migrate_setFilterMode() {
         Device[] devices = {
-            createDevice("device:000000000000", false, false),
-            createDevice("device:000000000001", false, true),
-            createDevice("device:000000000002", true, false),
-            createDevice("device:000000000003", true, true)
+                createDevice("device:000000000000", false, false),
+                createDevice("device:000000000001", false, true),
+                createDevice("device:000000000002", true, false),
+                createDevice("device:000000000003", true, true)
         };
         Mockito.when(dataSource.getDevices()).thenReturn(Sets.newHashSet(devices));
 

@@ -27,19 +27,19 @@ import org.eblocker.server.common.data.NetworkStateId;
  */
 public class NetworkStateExternalDhcp extends NetworkState {
 
-	@Override
-	public void onExit(NetworkServices services) {
-	}
+    @Override
+    public void onExit(NetworkServices services) {
+    }
 
-	@Override
-	public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
-		services.enableStaticIp(configuration);
-		services.setNameserverAddresses(configuration);
-	}
+    @Override
+    public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+        services.enableStaticIp(configuration);
+        services.setNameserverAddresses(configuration);
+    }
 
-	@Override
-	public NetworkStateId getId() {
-		return NetworkStateId.EXTERNAL_DHCP;
-	}
+    @Override
+    public NetworkStateId getId() {
+        return NetworkStateId.EXTERNAL_DHCP;
+    }
 
 }

@@ -29,10 +29,10 @@ public class BpjmModulSerializerTest {
     @Test
     public void test() throws IOException {
         BpjmModul bpjmModul = new BpjmModul(Arrays.asList(
-            new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5(""), 0),
-            new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5("path"), 0),
-            new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5("path/"), 1),
-            new BpjmEntry(BpjmFilterTest.md5("anotherdomain"), BpjmFilterTest.md5("path/file"), 2)
+                new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5(""), 0),
+                new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5("path"), 0),
+                new BpjmEntry(BpjmFilterTest.md5("domain"), BpjmFilterTest.md5("path/"), 1),
+                new BpjmEntry(BpjmFilterTest.md5("anotherdomain"), BpjmFilterTest.md5("path/file"), 2)
         ), System.currentTimeMillis());
 
         ByteArrayOutputStream serializedOut = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class BpjmModulSerializerTest {
         Assert.assertEquals(bpjmModul.getLastModified(), deserializedBpjmModul.getLastModified());
         Assert.assertNotNull(deserializedBpjmModul.getEntries());
         Assert.assertEquals(bpjmModul.getEntries().size(), deserializedBpjmModul.getEntries().size());
-        for(int i = 0; i < bpjmModul.getEntries().size(); ++i) {
+        for (int i = 0; i < bpjmModul.getEntries().size(); ++i) {
             Assert.assertArrayEquals(bpjmModul.getEntries().get(i).getDomainHash(), deserializedBpjmModul.getEntries().get(i).getDomainHash());
             Assert.assertArrayEquals(bpjmModul.getEntries().get(i).getPathHash(), deserializedBpjmModul.getEntries().get(i).getPathHash());
             Assert.assertEquals(bpjmModul.getEntries().get(i).getDepth(), deserializedBpjmModul.getEntries().get(i).getDepth());

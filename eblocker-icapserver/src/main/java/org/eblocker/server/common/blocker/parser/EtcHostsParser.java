@@ -26,14 +26,14 @@ public class EtcHostsParser implements DomainParser {
 
     @Override
     public Stream<String> parse(Stream<String> lines) {
-          return lines
-              .map(line -> line.replaceAll("#.*", ""))
-              .map(String::trim)
-              .filter(line -> !line.isEmpty())
-              .map(PATTERN::matcher)
-              .filter(Matcher::matches)
-              .map(m -> m.group(1))
-              .filter(domain -> !"localhost".equalsIgnoreCase(domain));
+        return lines
+                .map(line -> line.replaceAll("#.*", ""))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(PATTERN::matcher)
+                .filter(Matcher::matches)
+                .map(m -> m.group(1))
+                .filter(domain -> !"localhost".equalsIgnoreCase(domain));
     }
 
 }

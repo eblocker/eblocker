@@ -287,7 +287,6 @@ public class LoggingExecutorServiceTest {
             }
         });
 
-
         // task to be running
         // semaphore to signal task has been started (released by task on start)
         Semaphore runningTaskStartedSemaphore = new Semaphore(1);
@@ -361,7 +360,7 @@ public class LoggingExecutorServiceTest {
         Assert.assertTrue(log.get("task-0").getLastStop() - log.get("task-0").getLastStart() >= 100);
         Assert.assertTrue(log.get("task-0").getLastStop() - log.get("task-0").getLastStart() < 1000);
         Assert.assertNotNull(log.get("task-0").getTotalRuntime());
-        Assert.assertEquals((long)log.get("task-0").getTotalRuntime(), log.get("task-0").getLastStop() - log.get("task-0").getLastStart());
+        Assert.assertEquals((long) log.get("task-0").getTotalRuntime(), log.get("task-0").getLastStop() - log.get("task-0").getLastStart());
         Assert.assertNull(log.get("task-0").getException());
 
         Assert.assertNotNull(log.get("task-1"));
@@ -395,7 +394,7 @@ public class LoggingExecutorServiceTest {
         Assert.assertTrue(log.get("task-3").getLastStop() - log.get("task-3").getLastStart() >= 0);
         Assert.assertTrue(log.get("task-3").getLastStop() - log.get("task-3").getLastStart() < 1000);
         Assert.assertNotNull(log.get("task-3"));
-        Assert.assertEquals((long)log.get("task-3").getTotalRuntime(), log.get("task-3").getLastStop() - log.get("task-3").getLastStart());
+        Assert.assertEquals((long) log.get("task-3").getTotalRuntime(), log.get("task-3").getLastStop() - log.get("task-3").getLastStart());
         Assert.assertNotNull(log.get("task-3").getException());
         Assert.assertTrue(log.get("task-3").getException().contains("RuntimeException"));
 

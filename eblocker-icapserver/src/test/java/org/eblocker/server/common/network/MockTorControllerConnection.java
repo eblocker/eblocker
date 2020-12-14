@@ -23,140 +23,141 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class MockTorControllerConnection implements TelnetConnection {
-	private boolean connected = false;
-	private boolean authenticated = false;
-	private boolean hasCircuit = true;
-	private boolean enoughDirInfo = true;
-	private boolean hasReceivedReloadSignal = false;
-	private boolean hasReceivedNewnymSignal = false;
-	private int bootstrapPhasePercentage = 100;
-	private Queue<String> responses = new ArrayBlockingQueue<String>(16);
+    private boolean connected = false;
+    private boolean authenticated = false;
+    private boolean hasCircuit = true;
+    private boolean enoughDirInfo = true;
+    private boolean hasReceivedReloadSignal = false;
+    private boolean hasReceivedNewnymSignal = false;
+    private int bootstrapPhasePercentage = 100;
+    private Queue<String> responses = new ArrayBlockingQueue<String>(16);
 
-	@Override
-	public void connect(String host, int port) throws IOException {
-		if (host.equals("localhost") && port == 9051) {
-			connected = true;
-		} else {
-			throw new IOException("Connection failed");
-		}
-	}
+    @Override
+    public void connect(String host, int port) throws IOException {
+        if (host.equals("localhost") && port == 9051) {
+            connected = true;
+        } else {
+            throw new IOException("Connection failed");
+        }
+    }
 
-	@Override
-	public boolean isConnected() {
-		return connected;
-	}
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
 
-	@Override
-	public boolean isLineAvailableToRead() throws IOException {
-		return responses != null && responses.size()>0;
-	}
+    @Override
+    public boolean isLineAvailableToRead() throws IOException {
+        return responses != null && responses.size() > 0;
+    }
 
-	@Override
-	public void writeLine(String line) throws IOException {
-		if (! connected) {
-			throw new IOException("Not connected");
-		}
+    @Override
+    public void writeLine(String line) throws IOException {
+        if (!connected) {
+            throw new IOException("Not connected");
+        }
 
-		// process command:
-		if (line.startsWith("authenticate ")) {
-			authenticated = true;
-			responses.add(TorController.RESPONSE_OK);
-			
-		} else if (line.equals("getinfo " + TorController.STATUS_CIRCUIT_ESTABLISHED)) {
-			assert(authenticated);
-			responses.add("250-" + TorController.STATUS_CIRCUIT_ESTABLISHED + "=" + (hasCircuit ? "1" : "0"));
-			responses.add(TorController.RESPONSE_OK);
-			
-		} else if (line.equals("getinfo " + TorController.STATUS_ENOUGH_DIR_INFO)) {
-            assert(authenticated);
+        // process command:
+        if (line.startsWith("authenticate ")) {
+            authenticated = true;
+            responses.add(TorController.RESPONSE_OK);
+
+        } else if (line.equals("getinfo " + TorController.STATUS_CIRCUIT_ESTABLISHED)) {
+            assert (authenticated);
+            responses.add("250-" + TorController.STATUS_CIRCUIT_ESTABLISHED + "=" + (hasCircuit ? "1" : "0"));
+            responses.add(TorController.RESPONSE_OK);
+
+        } else if (line.equals("getinfo " + TorController.STATUS_ENOUGH_DIR_INFO)) {
+            assert (authenticated);
             responses.add("250-" + TorController.STATUS_ENOUGH_DIR_INFO + "=" + (enoughDirInfo ? "1" : "0"));
             responses.add(TorController.RESPONSE_OK);
-            
-		} else if (line.equals("getinfo " + TorController.STATUS_BOOTSTRAP_PHASE)) {
-			assert(authenticated);
-			responses.add("250-status/bootstrap-phase=NOTICE BOOTSTRAP PROGRESS="+bootstrapPhasePercentage+" Testsuffix");
-			responses.add(TorController.RESPONSE_OK);
-			
-		} else if (line.equals(TorController.SUBSCRIBE_STATUS_CLIENT_EVENTS)) {
-			assert(authenticated);
-			responses.add(TorController.RESPONSE_OK);
-			
-		} else if (line.equals(TorController.RECONFIGURE_COMMAND)) {
-		    assert(authenticated);
-		    hasReceivedReloadSignal = true;
-		    responses.add(TorController.RESPONSE_OK);
-		    
+
+        } else if (line.equals("getinfo " + TorController.STATUS_BOOTSTRAP_PHASE)) {
+            assert (authenticated);
+            responses.add("250-status/bootstrap-phase=NOTICE BOOTSTRAP PROGRESS=" + bootstrapPhasePercentage + " Testsuffix");
+            responses.add(TorController.RESPONSE_OK);
+
+        } else if (line.equals(TorController.SUBSCRIBE_STATUS_CLIENT_EVENTS)) {
+            assert (authenticated);
+            responses.add(TorController.RESPONSE_OK);
+
+        } else if (line.equals(TorController.RECONFIGURE_COMMAND)) {
+            assert (authenticated);
+            hasReceivedReloadSignal = true;
+            responses.add(TorController.RESPONSE_OK);
+
         } else if (line.equals(TorController.NEW_IDENTITY_COMMAND)) {
-            assert(authenticated);
+            assert (authenticated);
             hasReceivedNewnymSignal = true;
             responses.add(TorController.RESPONSE_OK);
 
         } else {
-			throw new IOException("Did not understand the command: " + line);
-		}
-	}
-
-	@Override
-	public String readLine() throws IOException {
-		if (! connected) {
-			throw new IOException("Not connected");
-		}
-
-		return responses.poll();
-	}
-
-	@Override
-	public void close() throws IOException {
-	}
-
-	@Override
-	public List<String> readAvailableLines() throws IOException {
-		List<String> lines = new ArrayList<>();
-		while (isLineAvailableToRead()) {
-			lines.add(readLine());
-		}
-		return lines;
-	}
-
-	public void setHasCircuit(boolean hasCircuit) {
-		this.hasCircuit = hasCircuit;
-	}
-
-	public void setBootstrapPhasePercentage(int percentage){
-	    this.bootstrapPhasePercentage = percentage;
+            throw new IOException("Did not understand the command: " + line);
+        }
     }
 
-	/**
-	 * Useful for simulating that Tor has been stopped or restarted
-	 */
-	public void disconnect() {
-	    connected = false;
-	}
+    @Override
+    public String readLine() throws IOException {
+        if (!connected) {
+            throw new IOException("Not connected");
+        }
 
-	/**
-	 * Query whether a reload signal has been received successfully (i.e. in a connected and authenticated state)
-	 * @return
-	 */
-	public boolean hasReceivedReloadSignal() {
-	    return hasReceivedReloadSignal;
-	}
-	
-	public void resetHasReceivedReloadSignal() {
-	    hasReceivedReloadSignal = false;
-	}
-	
-	public boolean hasReceivedNewnymSignal() {
-	    return hasReceivedNewnymSignal;
-	}
-	
-	public void resetHasReceivedNewnymSignal() {
-	    hasReceivedNewnymSignal = false;
-	}
-	
-	public void sendEvent(String eventString){
-		if(eventString != null){
-			responses.add(eventString);
-		}
-	}
+        return responses.poll();
+    }
+
+    @Override
+    public void close() throws IOException {
+    }
+
+    @Override
+    public List<String> readAvailableLines() throws IOException {
+        List<String> lines = new ArrayList<>();
+        while (isLineAvailableToRead()) {
+            lines.add(readLine());
+        }
+        return lines;
+    }
+
+    public void setHasCircuit(boolean hasCircuit) {
+        this.hasCircuit = hasCircuit;
+    }
+
+    public void setBootstrapPhasePercentage(int percentage) {
+        this.bootstrapPhasePercentage = percentage;
+    }
+
+    /**
+     * Useful for simulating that Tor has been stopped or restarted
+     */
+    public void disconnect() {
+        connected = false;
+    }
+
+    /**
+     * Query whether a reload signal has been received successfully (i.e. in a connected and authenticated state)
+     *
+     * @return
+     */
+    public boolean hasReceivedReloadSignal() {
+        return hasReceivedReloadSignal;
+    }
+
+    public void resetHasReceivedReloadSignal() {
+        hasReceivedReloadSignal = false;
+    }
+
+    public boolean hasReceivedNewnymSignal() {
+        return hasReceivedNewnymSignal;
+    }
+
+    public void resetHasReceivedNewnymSignal() {
+        hasReceivedNewnymSignal = false;
+    }
+
+    public void sendEvent(String eventString) {
+        if (eventString != null) {
+            responses.add(eventString);
+        }
+    }
 
 }

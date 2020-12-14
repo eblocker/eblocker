@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class DevicesBackupProvider extends BackupProvider {
 
     @Inject
     public DevicesBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory,
-            OpenVpnService openVpnService) {
+                                 OpenVpnService openVpnService) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.deviceFactory = deviceFactory;
@@ -55,8 +55,8 @@ public class DevicesBackupProvider extends BackupProvider {
     @Override
     public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         List<Device> allDevices = deviceService.getDevices(true).stream()
-            .filter(device -> !device.isEblocker())
-            .collect(Collectors.toList());
+                .filter(device -> !device.isEblocker())
+                .collect(Collectors.toList());
         JarEntry entry = new JarEntry(DEVICES_ENTRY);
         outputStream.putNextEntry(entry);
         outputStream.write(objectMapper.writeValueAsBytes(allDevices));
@@ -68,7 +68,8 @@ public class DevicesBackupProvider extends BackupProvider {
         List<Device> devicesToRestore = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(DEVICES_ENTRY)) {
-            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<List<Device>>(){});
+            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<List<Device>>() {
+            });
             inputStream.closeEntry();
         } else {
             throw new EblockerException("Expected entry " + DEVICES_ENTRY + ", got " + entry.getName());

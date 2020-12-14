@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.CompressionMode;
 import org.eblocker.server.common.service.FeatureServicePublisher;
 import org.eblocker.server.http.controller.FeatureController;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
 import javax.ws.rs.BadRequestException;
-
 import java.nio.charset.StandardCharsets;
 
 @Singleton

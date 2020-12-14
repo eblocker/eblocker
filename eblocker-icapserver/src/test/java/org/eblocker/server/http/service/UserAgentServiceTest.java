@@ -24,17 +24,17 @@ import org.mockito.Mockito;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UserAgentServiceTest {
 
     @Test
     public void testGetUserAgentInfo() {
         UserAgentService userAgentService = new UserAgentService(
-            Mockito.mock(DataSource.class),
-            4,
-            "(Mozilla|Opera)/[0-9.]+\\s.*",
-            ".*(^|;|\\s)(MSIE |Trident/)[0-9.]+(\\s|;|$).*"
+                Mockito.mock(DataSource.class),
+                4,
+                "(Mozilla|Opera)/[0-9.]+\\s.*",
+                ".*(^|;|\\s)(MSIE |Trident/)[0-9.]+(\\s|;|$).*"
 
         );
 
@@ -60,7 +60,7 @@ public class UserAgentServiceTest {
         userAgents.put("", UserAgentInfo.OTHER);
         userAgents.put("xzy", UserAgentInfo.OTHER);
 
-        for (Map.Entry<String, UserAgentInfo> entry: userAgents.entrySet()) {
+        for (Map.Entry<String, UserAgentInfo> entry : userAgents.entrySet()) {
             assertEquals(entry.getKey(), entry.getValue(), userAgentService.getUserAgentInfo(entry.getKey()));
         }
     }

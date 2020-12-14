@@ -16,7 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,41 +25,39 @@ import java.util.Collections;
 import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class TorConfigurationTest extends ConfigurationTestBase {
-	private TorConfiguration configuration;
-	private File torConfig;
-	
-	@Before
-	public void setUp() throws Exception {
-		torConfig = File.createTempFile("tor", ".conf");
-		torConfig.deleteOnExit();
-		String torConfigTemplateFilePath = "classpath:test-data/tor/torrc.template";
-		this.configuration = new TorConfiguration(torConfigTemplateFilePath, getOutFilePath());
-	}
+    private TorConfiguration configuration;
+    private File torConfig;
 
-	@Test
-	public void testUpdateAllExitNodes() throws IOException {
-		configuration.update(Collections.emptySet());
-		compareOutFileWith("test-data/tor/torrc-allCountries.txt");
-	}
-	
-	@Test
-	public void testUpdateSomeExitNodes() throws IOException {
-		// Must use a SortedSet for this test:
-		configuration.update(new TreeSet<String>(asList("aa", "ba", "bb")));
-		compareOutFileWith("test-data/tor/torrc-someCountries.txt");
-	}
+    @Before
+    public void setUp() throws Exception {
+        torConfig = File.createTempFile("tor", ".conf");
+        torConfig.deleteOnExit();
+        String torConfigTemplateFilePath = "classpath:test-data/tor/torrc.template";
+        this.configuration = new TorConfiguration(torConfigTemplateFilePath, getOutFilePath());
+    }
 
-	@Test
-	public void configExitNodeString() {
-		assertEquals("", TorConfiguration.getConfigExitNodeString(Collections.emptySet()));
-		assertEquals("{no}", TorConfiguration.getConfigExitNodeString(Collections.singleton("no")));
-		
-		// Must use a SortedSet for this test:
-		assertEquals("{en},{me},{mu}", TorConfiguration.getConfigExitNodeString(new TreeSet<>(asList("en", "me", "mu"))));
-	}
+    @Test
+    public void testUpdateAllExitNodes() throws IOException {
+        configuration.update(Collections.emptySet());
+        compareOutFileWith("test-data/tor/torrc-allCountries.txt");
+    }
+
+    @Test
+    public void testUpdateSomeExitNodes() throws IOException {
+        // Must use a SortedSet for this test:
+        configuration.update(new TreeSet<String>(asList("aa", "ba", "bb")));
+        compareOutFileWith("test-data/tor/torrc-someCountries.txt");
+    }
+
+    @Test
+    public void configExitNodeString() {
+        assertEquals("", TorConfiguration.getConfigExitNodeString(Collections.emptySet()));
+        assertEquals("{no}", TorConfiguration.getConfigExitNodeString(Collections.singleton("no")));
+
+        // Must use a SortedSet for this test:
+        assertEquals("{en},{me},{mu}", TorConfiguration.getConfigExitNodeString(new TreeSet<>(asList("en", "me", "mu"))));
+    }
 }

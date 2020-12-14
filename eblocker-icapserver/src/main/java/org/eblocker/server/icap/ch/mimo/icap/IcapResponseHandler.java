@@ -22,15 +22,15 @@ import ch.mimo.netty.handler.codec.icap.IcapRequest;
 import ch.mimo.netty.handler.codec.icap.IcapResponse;
 import ch.mimo.netty.handler.codec.icap.IcapResponseStatus;
 import ch.mimo.netty.handler.codec.icap.IcapVersion;
-import org.eblocker.server.common.util.DateUtil;
-import org.eblocker.server.icap.server.EblockerIcapServerConstants;
-import org.eblocker.server.icap.transaction.Transaction;
 import com.google.common.base.Splitter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+import org.eblocker.server.common.util.DateUtil;
+import org.eblocker.server.icap.server.EblockerIcapServerConstants;
+import org.eblocker.server.icap.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +47,8 @@ public class IcapResponseHandler extends ChannelOutboundHandlerAdapter {
             return;
         }
 
-        Transaction transaction = (Transaction)msg;
-        IcapRequest icapRequest = ((IcapTransaction)transaction).getIcapRequest();
+        Transaction transaction = (Transaction) msg;
+        IcapRequest icapRequest = ((IcapTransaction) transaction).getIcapRequest();
         IcapResponse icapResponse = createIcapResponse(transaction, icapRequest);
         if (icapResponse.getStatus() != IcapResponseStatus.CONTINUE) {
             icapRequest.release();
@@ -59,36 +59,36 @@ public class IcapResponseHandler extends ChannelOutboundHandlerAdapter {
     }
 
     private IcapResponse createIcapResponse(Transaction transaction, IcapRequest icapRequest) {
-       	if (transaction.isPreview()) {
+        if (transaction.isPreview()) {
             if (transaction.isComplete()) {
                 if (transaction.isContentChanged()) {
                     // Create response with modified content
                     return createIcapResponse(transaction, IcapResponseStatus.OK);
                 } else if (transaction.isHeadersChanged() && isResponseAllowed(icapRequest, IcapResponseStatus.PARTIAL_CONTENT)) {
                     return createIcapResponse(transaction, IcapResponseStatus.PARTIAL_CONTENT);
-            	} else {
-            		// Full content not needed
-            		return createIcapResponse(transaction, IcapResponseStatus.NO_CONTENT);
-            	}
+                } else {
+                    // Full content not needed
+                    return createIcapResponse(transaction, IcapResponseStatus.NO_CONTENT);
+                }
             } else {
-        		// Request full content from client
-        		return createIcapResponse(transaction, IcapResponseStatus.CONTINUE);
-        	}
-       	}
-       	if (!transaction.isComplete()) {
-        	//log.warn("eBlocker transaction is not marked as complete - continuing anyway: "+transaction.getUriAsString());
+                // Request full content from client
+                return createIcapResponse(transaction, IcapResponseStatus.CONTINUE);
+            }
+        }
+        if (!transaction.isComplete()) {
+            //log.warn("eBlocker transaction is not marked as complete - continuing anyway: "+transaction.getUriAsString());
         }
         if (!transaction.isHeadersChanged() && !transaction.isContentChanged()) {
-        	if (isResponseAllowed(icapRequest, IcapResponseStatus.NO_CONTENT)) {
-        		// Return empty message. Client will process unmodified content.
-        		return createIcapResponse(transaction, IcapResponseStatus.NO_CONTENT);
-        	}
+            if (isResponseAllowed(icapRequest, IcapResponseStatus.NO_CONTENT)) {
+                // Return empty message. Client will process unmodified content.
+                return createIcapResponse(transaction, IcapResponseStatus.NO_CONTENT);
+            }
         }
         // Create response with modified content
-		return createIcapResponse(transaction, IcapResponseStatus.OK);
+        return createIcapResponse(transaction, IcapResponseStatus.OK);
     }
 
-	private IcapResponse createIcapResponse(Transaction transaction, IcapResponseStatus status) {
+    private IcapResponse createIcapResponse(Transaction transaction, IcapResponseStatus status) {
         IcapResponse icapResponse = new DefaultIcapResponse(IcapVersion.ICAP_1_0, status);
         icapResponse.addHeader(IcapHeaders.Names.SERVICE_ID, EblockerIcapServerConstants.SERVICE_ID);
         icapResponse.addHeader(IcapHeaders.Names.DATE, DateUtil.formatCurrentTime());
@@ -110,7 +110,7 @@ public class IcapResponseHandler extends ChannelOutboundHandlerAdapter {
             }
             icapResponse.setUseOriginalBody(0);
         }
-    	return icapResponse;
+        return icapResponse;
     }
 
     private boolean isResponseAllowed(IcapRequest request, IcapResponseStatus status) {
@@ -119,9 +119,9 @@ public class IcapResponseHandler extends ChannelOutboundHandlerAdapter {
         }
 
         return request
-            .getHeaders(IcapHeaders.Names.ALLOW)
-            .stream()
-            .map(ALLOW_SPLITTER::splitToList)
-            .anyMatch(l -> l.contains(String.valueOf(status.getCode())));
+                .getHeaders(IcapHeaders.Names.ALLOW)
+                .stream()
+                .map(ALLOW_SPLITTER::splitToList)
+                .anyMatch(l -> l.contains(String.valueOf(status.getCode())));
     }
 }

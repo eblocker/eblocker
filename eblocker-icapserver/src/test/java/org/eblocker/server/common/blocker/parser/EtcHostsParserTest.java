@@ -28,17 +28,17 @@ public class EtcHostsParserTest {
     @Test
     public void parse() {
         List<String> lines = Arrays.asList(
-            "#comment\n",
-            "127.0.0.1\tlocalhost\n",
-            "\n",
-            " 138.68.124.96 \t www.eblocker.com #another comment\n",
-            "172.217.21.206 google.com  \n",
-            "62.201.164.110 etracker.com\n"
+                "#comment\n",
+                "127.0.0.1\tlocalhost\n",
+                "\n",
+                " 138.68.124.96 \t www.eblocker.com #another comment\n",
+                "172.217.21.206 google.com  \n",
+                "62.201.164.110 etracker.com\n"
         );
 
         List<String> parsedDomains = new EtcHostsParser()
-            .parse(lines.stream())
-            .collect(Collectors.toList());
+                .parse(lines.stream())
+                .collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList("www.eblocker.com", "google.com", "etracker.com"), parsedDomains);
     }
 }

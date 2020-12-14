@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import org.eblocker.server.common.data.WhiteListConfig;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.service.DashboardService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.WhiteListConfig;
-import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion32Test {
 

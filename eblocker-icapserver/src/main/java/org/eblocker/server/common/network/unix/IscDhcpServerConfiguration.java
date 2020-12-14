@@ -145,9 +145,9 @@ public class IscDhcpServerConfiguration {
 
     private static List<String> getLocalIpv4Addresses(Device device, String subnet, String netmask) {
         return device.getIpAddresses().stream()
-            .filter(IpAddress::isIpv4)
-            .map(IpAddress::toString)
-            .filter(ip -> IpUtils.isInSubnet(ip, subnet, netmask))
-            .collect(Collectors.toList());
+                .filter(IpAddress::isIpv4)
+                .map(IpAddress::toString)
+                .filter(ip -> IpUtils.isInSubnet(ip, subnet, netmask))
+                .collect(Collectors.toList());
     }
 }

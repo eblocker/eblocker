@@ -20,13 +20,16 @@ import org.eblocker.server.common.data.CompressionMode;
 
 /**
  * Service interface to retrieve some simple eBlocker feature settings.
- *
  */
 public interface FeatureService {
 
     boolean getWebRTCBlockingState();
+
     boolean getHTTPRefererRemovingState();
+
     boolean getGoogleCaptivePortalRedirectorState();
+
     boolean getDntHeaderState();
+
     CompressionMode getCompressionMode();
 }

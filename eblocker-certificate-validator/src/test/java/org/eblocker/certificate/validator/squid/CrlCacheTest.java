@@ -71,7 +71,7 @@ public class CrlCacheTest {
         Assert.assertEquals(1, crlCache.size());
         Assert.assertNotNull(crl);
         Assert.assertTrue(crl instanceof X509CRL);
-        Assert.assertEquals("CN=Amazon, OU=Server CA 1B, O=Amazon, C=US", ((X509CRL)crl).getIssuerDN().getName());
+        Assert.assertEquals("CN=Amazon, OU=Server CA 1B, O=Amazon, C=US", ((X509CRL) crl).getIssuerDN().getName());
 
         CRL crl2 = crlCache.get("http://127.0.0.1:18080/ca.crl");
         Assert.assertTrue(crl == crl2);

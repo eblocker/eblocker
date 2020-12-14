@@ -16,9 +16,6 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -41,6 +38,9 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.AttributeKey;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -67,36 +67,35 @@ public class DomainBlockingNetworkService {
             @Override
             protected void initChannel(Channel ch) {
                 ch.pipeline()
-                    .addLast("frameDecoder", new LineBasedFrameDecoder(512))
-                    .addLast("stringDecoder", new StringDecoder(StandardCharsets.UTF_8))
-                    .addLast("stringEncoder", new StringEncoder(StandardCharsets.UTF_8))
-                    .addLast("handler", requestHandler);
+                        .addLast("frameDecoder", new LineBasedFrameDecoder(512))
+                        .addLast("stringDecoder", new StringDecoder(StandardCharsets.UTF_8))
+                        .addLast("stringEncoder", new StringEncoder(StandardCharsets.UTF_8))
+                        .addLast("handler", requestHandler);
             }
         };
 
         tcpBootstrap = new ServerBootstrap()
-            .group(bossGroup, workerGroup)
-            .channel(NioServerSocketChannel.class)
-            .childOption(ChannelOption.SO_REUSEADDR, true)
-            .childOption(ChannelOption.TCP_NODELAY, true)
-            .localAddress(host, port)
-            .childHandler(channelInitializer);
-
+                .group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .childOption(ChannelOption.SO_REUSEADDR, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .localAddress(host, port)
+                .childHandler(channelInitializer);
 
         udpBootstrap = new Bootstrap()
-            .group(workerGroup)
-            .channel(NioDatagramChannel.class)
-            .option(ChannelOption.SO_REUSEADDR, true)
-            .localAddress(host, port)
-            .handler(new ChannelInitializer() {
-                @Override
-                protected void initChannel(Channel ch) {
-                    ch.pipeline()
-                        .addLast("udp-decode", new UdpMessageDecoder())
-                        .addLast("udp-encode", new UdpMessageEncoder())
-                        .addLast(channelInitializer);
-                }
-            });
+                .group(workerGroup)
+                .channel(NioDatagramChannel.class)
+                .option(ChannelOption.SO_REUSEADDR, true)
+                .localAddress(host, port)
+                .handler(new ChannelInitializer() {
+                    @Override
+                    protected void initChannel(Channel ch) {
+                        ch.pipeline()
+                                .addLast("udp-decode", new UdpMessageDecoder())
+                                .addLast("udp-encode", new UdpMessageEncoder())
+                                .addLast(channelInitializer);
+                    }
+                });
     }
 
     @SubSystemInit

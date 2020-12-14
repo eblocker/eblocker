@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.DynDnsEntry;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DynDnsConfig;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.registration.DynDnsEntry;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

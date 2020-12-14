@@ -21,9 +21,19 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -76,7 +86,7 @@ public class ConcurrentValidatorAppTest {
                     responses.add(readResponse());
                 }
 
-                for(CertificateValidationResponse response : responses) {
+                for (CertificateValidationResponse response : responses) {
                     assertNotNull(response);
 
                     CertificateValidationRequest request = data.requestsById.get(response.getId());
@@ -131,7 +141,6 @@ public class ConcurrentValidatorAppTest {
 
         return response;
     }
-
 
     /**
      * Simulates the CertificateValidatorApp running as stand alone app,

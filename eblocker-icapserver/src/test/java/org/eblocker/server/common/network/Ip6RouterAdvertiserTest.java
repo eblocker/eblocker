@@ -37,7 +37,7 @@ public class Ip6RouterAdvertiserTest {
     public void setUp() {
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
-        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[] { 0, 1, 2, 3, 4, 5 });
+        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0, 1, 2, 3, 4, 5 });
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::1:2:3:4:5"));
         Mockito.when(networkInterface.getMtu()).thenReturn(1500);
         pubSubService = Mockito.mock(PubSubService.class);
@@ -49,7 +49,7 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
-            Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
+                Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();
         Mockito.verify(pubSubService).publish("ip6:out", "000102030405/fe800000000000010002000300040005/333300000001/ff020000000000000000000000000001/icmp6/134/255/0/0/0/1/120/0/0/1/000102030405/25/120/1/fe800000000000010002000300040005/5/1500");
     }
@@ -58,7 +58,7 @@ public class Ip6RouterAdvertiserTest {
     public void testAdvertisementIp6Disabled() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
-            Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
+                Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();
         Mockito.verify(pubSubService, Mockito.never()).publish(Mockito.anyString(), Mockito.anyString());
     }
@@ -68,7 +68,7 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
-            Ip4Address.parse("10.12.34.5")));
+                Ip4Address.parse("10.12.34.5")));
         advertiser.advertise();
         Mockito.verify(pubSubService, Mockito.never()).publish(Mockito.anyString(), Mockito.anyString());
     }
@@ -78,7 +78,7 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.isUp()).thenReturn(false);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
-            Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
+                Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();
         Mockito.verify(pubSubService, Mockito.never()).publish(Mockito.anyString(), Mockito.anyString());
     }

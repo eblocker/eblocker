@@ -16,23 +16,23 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.ExitNodeCountry;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
+
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.Arrays;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.ExitNodeCountry;
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Provides a mapping from country names to country codes.
@@ -41,31 +41,31 @@ import com.google.inject.Singleton;
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
 public class TorExitNodeCountries {
     private Set<ExitNodeCountry> exitNodeCountries;
-    private Map<String,String> countryCodes;
+    private Map<String, String> countryCodes;
     private DataSource dataSource;
 
-	@Inject
-	public TorExitNodeCountries(DataSource dataSource) {
+    @Inject
+    public TorExitNodeCountries(DataSource dataSource) {
         this.dataSource = dataSource;
 
-	}
+    }
 
-	@SubSystemInit
-	public void init() {
+    @SubSystemInit
+    public void init() {
         createListOfTorCountryCodes();
-	}
+    }
 
-	public Set<String> getCountryCodes(Set<String> names) {
-		return names.stream()
-					.map(countryCodes::get)
-					.filter(Objects::nonNull)
-					.collect(toSet());
-	}
+    public Set<String> getCountryCodes(Set<String> names) {
+        return names.stream()
+                .map(countryCodes::get)
+                .filter(Objects::nonNull)
+                .collect(toSet());
+    }
 
     /**
      * Create list of country codes and names according to language used in the frontend
      */
-    public void createListOfTorCountryCodes(){
+    public void createListOfTorCountryCodes() {
         Locale lang = Locale.forLanguageTag(dataSource.getCurrentLanguage().getId());
         // Set of all countries with their respective code and the name according to language used in the fronted, e.g. (de, Germany)
         exitNodeCountries = Arrays.asList(Locale.getISOCountries()).stream()
@@ -77,7 +77,7 @@ public class TorExitNodeCountries {
                 .collect(toMap(c -> c.getName(), c -> c.getCode().toLowerCase()));
     }
 
-	public Set<ExitNodeCountry> getExitNodeCountries() {
-		return exitNodeCountries;
-	}
+    public Set<ExitNodeCountry> getExitNodeCountries() {
+        return exitNodeCountries;
+    }
 }

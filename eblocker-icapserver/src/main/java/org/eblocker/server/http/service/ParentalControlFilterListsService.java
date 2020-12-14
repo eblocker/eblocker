@@ -86,9 +86,9 @@ public class ParentalControlFilterListsService {
     // Function to read file and return objects
     public Set<ParentalControlFilterSummaryData> getParentalControlFilterLists() {
         return dataSource.getAll(ParentalControlFilterMetaData.class)
-            .stream()
-            .map(ParentalControlFilterSummaryData::new)
-            .collect(Collectors.toSet());
+                .stream()
+                .map(ParentalControlFilterSummaryData::new)
+                .collect(Collectors.toSet());
     }
 
     public ParentalControlFilterSummaryData getFilterById(int id) {
@@ -117,7 +117,7 @@ public class ParentalControlFilterListsService {
     public synchronized ParentalControlFilterSummaryData updateFilterList(ParentalControlFilterSummaryData filterlist, String filterType) {
         try {
             ParentalControlFilterMetaData dbFilterList = dataSource
-                .get(ParentalControlFilterMetaData.class, filterlist.getId());
+                    .get(ParentalControlFilterMetaData.class, filterlist.getId());
             if (dbFilterList == null) {
                 throw new ConflictException("no filter for id: " + filterlist.getId());
             }
@@ -159,26 +159,26 @@ public class ParentalControlFilterListsService {
 
     private ParentalControlFilterMetaData sanitizeBuiltinFilterUpdate(ParentalControlFilterSummaryData filterlist, ParentalControlFilterMetaData dbFilterList) {
         return new ParentalControlFilterMetaData(
-            dbFilterList.getId(),
-            dbFilterList.getName(),
-            dbFilterList.getDescription(),
-            dbFilterList.getCategory(),
-            dbFilterList.getFilenames(),
-            dbFilterList.getVersion(),
-            dbFilterList.getDate(),
-            dbFilterList.getFormat(),
-            dbFilterList.getFilterType(),
-            dbFilterList.isBuiltin(),
-            filterlist.isDisabled(),
-            dbFilterList.getQueryTransformations(),
-            dbFilterList.getCustomerCreatedName(),
-            dbFilterList.getCustomerCreatedDescription());
+                dbFilterList.getId(),
+                dbFilterList.getName(),
+                dbFilterList.getDescription(),
+                dbFilterList.getCategory(),
+                dbFilterList.getFilenames(),
+                dbFilterList.getVersion(),
+                dbFilterList.getDate(),
+                dbFilterList.getFormat(),
+                dbFilterList.getFilterType(),
+                dbFilterList.isBuiltin(),
+                filterlist.isDisabled(),
+                dbFilterList.getQueryTransformations(),
+                dbFilterList.getCustomerCreatedName(),
+                dbFilterList.getCustomerCreatedDescription());
     }
 
     // Function to delete a filter list
-    public synchronized void deleteFilterList(int filterListId){
+    public synchronized void deleteFilterList(int filterListId) {
         ParentalControlFilterMetaData dbFilterList = dataSource.get(ParentalControlFilterMetaData.class, filterListId);
-        if (dbFilterList.isBuiltin()){
+        if (dbFilterList.isBuiltin()) {
             throw new BadRequestException("Cannot filter list " + filterListId + ", because it is a built-in filter list.");
         }
 
@@ -190,7 +190,7 @@ public class ParentalControlFilterListsService {
             tryDelete(getCustomBloomFilterPath(filterListId));
             dataSource.delete(ParentalControlFilterMetaData.class, filterListId);
             domainBlacklistService.setFilters(loadMetaData());
-        } else{
+        } else {
             throw new BadRequestException("Filter in use by a user profile, cannot be removed");
         }
     }
@@ -215,18 +215,18 @@ public class ParentalControlFilterListsService {
 
     public boolean isUniqueCustomerCreatedName(Integer id, String name, String filterType) {
         Predicate<ParentalControlFilterMetaData> isCustomerCreatedListWithSameNameButDifferentId = m -> !m.isBuiltin()
-            && m.getCustomerCreatedName() != null && m.getCustomerCreatedName().equals(name)
-            && !m.getId().equals(id)
-            && m.getFilterType().equals(filterType)
-            && m.getCategory().equals(Category.PARENTAL_CONTROL);
+                && m.getCustomerCreatedName() != null && m.getCustomerCreatedName().equals(name)
+                && !m.getId().equals(id)
+                && m.getFilterType().equals(filterType)
+                && m.getCategory().equals(Category.PARENTAL_CONTROL);
         return dataSource.getAll(ParentalControlFilterMetaData.class).stream()
-            .noneMatch(isCustomerCreatedListWithSameNameButDifferentId);
+                .noneMatch(isCustomerCreatedListWithSameNameButDifferentId);
     }
 
     private boolean isFilterUsed(int id) {
         return dataSource.getAll(UserProfileModule.class).stream()
-            .filter(UserProfileModule::isControlmodeUrls)
-            .anyMatch(p -> p.getAccessibleSitesPackages().contains(id) || p.getInaccessibleSitesPackages().contains(id));
+                .filter(UserProfileModule::isControlmodeUrls)
+                .anyMatch(p -> p.getAccessibleSitesPackages().contains(id) || p.getInaccessibleSitesPackages().contains(id));
     }
 
     private ParentalControlFilterMetaData saveCustomFilter(ParentalControlFilterSummaryData filterlist) throws IOException {
@@ -254,21 +254,21 @@ public class ParentalControlFilterListsService {
         if (filterlist.getDomains() != null) {
             saveCustomerCreatedFilter(filterlist.getId(), filterlist.getDomains());
             blacklistCompiler.compile(filterlist.getId(), filterlist.getCustomerCreatedName(),
-                filterlist.getDomains()
-                    .stream()
-                    .map(this::prependDot)
-                    .distinct()
-                    .collect(Collectors.toList()),
-                fileFilterPath.toString(), bloomFilterPath.toString());
+                    filterlist.getDomains()
+                            .stream()
+                            .map(this::prependDot)
+                            .distinct()
+                            .collect(Collectors.toList()),
+                    fileFilterPath.toString(), bloomFilterPath.toString());
             metaData.setDate(new Date());
         } else if (filterlist.getDomainsStreamSupplier() != null) {
             blacklistCompiler.compile(filterlist.getId(),
-                filterlist.getCustomerCreatedName(),
-                () -> filterlist.getDomainsStreamSupplier()
-                    .get()
-                    .map(this::prependDot),
-                fileFilterPath.toString(),
-                bloomFilterPath.toString());
+                    filterlist.getCustomerCreatedName(),
+                    () -> filterlist.getDomainsStreamSupplier()
+                            .get()
+                            .map(this::prependDot),
+                    fileFilterPath.toString(),
+                    bloomFilterPath.toString());
             metaData.setDate(new Date());
         }
 
@@ -280,7 +280,6 @@ public class ParentalControlFilterListsService {
         domainBlacklistService.setFilters(loadMetaData());
         return savedMetadata;
     }
-
 
     private String prependDot(String value) {
         return value.startsWith(".") ? value : "." + value;
@@ -326,10 +325,10 @@ public class ParentalControlFilterListsService {
         preserveDisabledState(currentMetaData, metaData);
 
         currentMetaData.stream()
-            .filter(ParentalControlFilterMetaData::isBuiltin)
-            .map(ParentalControlFilterMetaData::getId)
-            .filter(id -> !metaDataIds.contains(id))
-            .forEach(id -> dataSource.delete(ParentalControlFilterMetaData.class, id));
+                .filter(ParentalControlFilterMetaData::isBuiltin)
+                .map(ParentalControlFilterMetaData::getId)
+                .filter(id -> !metaDataIds.contains(id))
+                .forEach(id -> dataSource.delete(ParentalControlFilterMetaData.class, id));
 
         // save new metadata
         metaData.forEach(m -> dataSource.save(m, m.getId()));
@@ -338,14 +337,15 @@ public class ParentalControlFilterListsService {
     private void preserveDisabledState(Collection<ParentalControlFilterMetaData> currentMetaData, Set<ParentalControlFilterMetaData> loadedMetaData) {
         currentMetaData.forEach(currentFilter -> {
             loadedMetaData.stream()
-                .filter(md -> md.getId().equals(currentFilter.getId()))
-                .findFirst()
-                .ifPresent(md -> md.setDisabled(currentFilter.isDisabled()));
+                    .filter(md -> md.getId().equals(currentFilter.getId()))
+                    .findFirst()
+                    .ifPresent(md -> md.setDisabled(currentFilter.isDisabled()));
         });
     }
 
     private Set<ParentalControlFilterMetaData> readMetaDataFile() throws IOException {
-        return objectMapper.readValue(filePath.toFile(), new TypeReference<Set<ParentalControlFilterMetaData>>() {});
+        return objectMapper.readValue(filePath.toFile(), new TypeReference<Set<ParentalControlFilterMetaData>>() {
+        });
     }
 
     private void updateFilters(Collection<ParentalControlFilterMetaData> metaData) {
@@ -357,7 +357,8 @@ public class ParentalControlFilterListsService {
     }
 
     private List<String> readCustomerCreatedFilter(int id) throws IOException {
-        return objectMapper.readValue(getCustomFilterFile(id).toFile(), new TypeReference<List<String>>() {});
+        return objectMapper.readValue(getCustomFilterFile(id).toFile(), new TypeReference<List<String>>() {
+        });
     }
 
     private void saveCustomerCreatedFilter(int id, List<String> filter) throws IOException {
@@ -391,7 +392,7 @@ public class ParentalControlFilterListsService {
                 metaData.setDate(Date.from(instant));
             } catch (Exception e) {
                 log.error("expected version to be set and in correct format for old metadata, metadata may be corrupt.",
-                    e);
+                        e);
                 metaData.setDate(new Date());
             }
         }

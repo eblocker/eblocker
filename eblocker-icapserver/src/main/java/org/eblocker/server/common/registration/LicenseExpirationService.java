@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.registration;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = 50)
@@ -32,7 +32,7 @@ public class LicenseExpirationService {
     private final DeviceRegistrationProperties deviceRegistrationProperties;
 
     @Inject
-    public LicenseExpirationService (DeviceRegistrationProperties deviceRegistrationProperties) {
+    public LicenseExpirationService(DeviceRegistrationProperties deviceRegistrationProperties) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
     }
 

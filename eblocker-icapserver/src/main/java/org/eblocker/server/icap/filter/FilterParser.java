@@ -35,9 +35,9 @@ public class FilterParser {
 
     public List<Filter> parse(InputStream in) throws IOException {
         return IOUtils.readLines(in).stream()
-            .map(line -> lineParserSupplier.get().parseLine(line))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(line -> lineParserSupplier.get().parseLine(line))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
 }

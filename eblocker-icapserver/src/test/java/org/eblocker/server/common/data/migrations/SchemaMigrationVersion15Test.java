@@ -54,11 +54,9 @@ public class SchemaMigrationVersion15Test {
         dataSource = Mockito.mock(DataSource.class);
         Mockito.when(dataSource.getDevices()).thenReturn(devices);
 
-
         jedis = Mockito.mock(Jedis.class);
         jedisPool = Mockito.mock(JedisPool.class);
         Mockito.when(jedisPool.getResource()).thenReturn(jedis);
-
 
         migration = new SchemaMigrationVersion15(dataSource, jedisPool);
     }
@@ -131,7 +129,6 @@ public class SchemaMigrationVersion15Test {
 
         Mockito.verify(dataSource).setVersion("15");
     }
-
 
     private Device createDevice(String id, String ipAddress) {
         Device device = new Device();

@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.icap.transaction;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.icap.transaction.processor.RuntimeLoggingProcessor;
-import org.eblocker.registration.ProductFeature;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,14 +44,14 @@ public class TransactionProcessorsConfigurationTest {
     @Before
     public void setup() {
         requestProcessors = Arrays.asList(
-            new UnrestrictedProcessor(),
-            new RestrictedProcessor(),
-            new UnrestrictedProcessor());
+                new UnrestrictedProcessor(),
+                new RestrictedProcessor(),
+                new UnrestrictedProcessor());
 
         responseProcessors = Arrays.asList(
-            new RestrictedProcessor(),
-            new UnrestrictedProcessor(),
-            new RestrictedProcessor());
+                new RestrictedProcessor(),
+                new UnrestrictedProcessor(),
+                new RestrictedProcessor());
 
         productInfoService = Mockito.mock(ProductInfoService.class, Mockito.RETURNS_DEEP_STUBS);
         Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[0]);
@@ -77,7 +77,7 @@ public class TransactionProcessorsConfigurationTest {
 
     @Test
     public void testRestricted() {
-        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[] { ProductFeature.PRO.name() });
+        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[]{ ProductFeature.PRO.name() });
         configuration = new TransactionProcessorsConfiguration(productInfoService, requestProcessors, responseProcessors);
         assertRestricted();
     }
@@ -94,7 +94,7 @@ public class TransactionProcessorsConfigurationTest {
         configuration = new TransactionProcessorsConfiguration(productInfoService, requestProcessors, responseProcessors);
         assertUnrestricted();
 
-        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[] { ProductFeature.PRO.name() });
+        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[]{ ProductFeature.PRO.name() });
         assertRestricted();
 
         Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[0]);
@@ -104,7 +104,7 @@ public class TransactionProcessorsConfigurationTest {
     @Test
     public void testNoFeatureChange() {
         configuration = new TransactionProcessorsConfiguration(productInfoService, requestProcessors, responseProcessors);
-        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[] { ProductFeature.PRO.name() });
+        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[]{ ProductFeature.PRO.name() });
         List<TransactionProcessor> enabledRequestProcessors = configuration.getRequestProcessors();
         List<TransactionProcessor> enabledResponseProcessors = configuration.getResponseProcessors();
 
@@ -130,7 +130,7 @@ public class TransactionProcessorsConfigurationTest {
 
     @Test
     public void testLoggingProcessors() {
-        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[] { ProductFeature.PRO.name() });
+        Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[]{ ProductFeature.PRO.name() });
 
         Logger logger = Logger.getLogger("OPTIMIZE");
         logger.setLevel(Level.INFO);

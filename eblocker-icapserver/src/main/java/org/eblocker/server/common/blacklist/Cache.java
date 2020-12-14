@@ -62,7 +62,7 @@ class Cache {
      * Get latest versions of all file filters
      */
     public List<CachedFileFilter> getFileFilters() {
-        return index.getFilters().values().stream().map(f->f.get(0)).collect(Collectors.toList());
+        return index.getFilters().values().stream().map(f -> f.get(0)).collect(Collectors.toList());
     }
 
     /**
@@ -96,7 +96,7 @@ class Cache {
         if (filterFile != null) {
             String cacheFilterFile = "lists/" + key + ".filter";
             Files.copy(Paths.get(filterFile), Paths.get(cachePath + "/" + cacheFilterFile),
-                StandardCopyOption.REPLACE_EXISTING);
+                    StandardCopyOption.REPLACE_EXISTING);
             importedFilter.setFileFilterFileName(cacheFilterFile);
         }
 
@@ -108,7 +108,7 @@ class Cache {
 
         List<CachedFileFilter> filters = index.getFilters().computeIfAbsent(id, k -> new ArrayList<>());
         int i = 0;
-        while(i < filters.size() && version < filters.get(i).getKey().getVersion()) {
+        while (i < filters.size() && version < filters.get(i).getKey().getVersion()) {
             ++i;
         }
         filters.add(i, importedFilter);
@@ -199,17 +199,18 @@ class Cache {
         index.setFormat(CACHE_FORMAT);
 
         // update filter meta data
-        ObjectReader filtersReader = objectMapper.readerFor(new TypeReference<Map<Integer, List<CachedFileFilter>>>() {});
+        ObjectReader filtersReader = objectMapper.readerFor(new TypeReference<Map<Integer, List<CachedFileFilter>>>() {
+        });
 
         Map<Integer, List<CachedFileFilter>> cachedFilters = filtersReader.readValue(node.get("filters"));
         Map<Integer, List<CachedFileFilter>> updatedFilters = cachedFilters.values().stream()
-            .flatMap(Collection::stream)
-            .map(filter -> {
-                String format = filter.getFileFilterFileName() != null ? "domainblacklist/string" : "domainblacklist/bloom";
-                return new CachedFileFilter(filter.getKey(), filter.getBloomFilterFileName(), filter.getFileFilterFileName(), format, filter.isDeleted());
-            })
-            .sorted(Comparator.comparing(filter -> filter.getKey().getVersion(), Comparator.reverseOrder()))
-            .collect(Collectors.groupingBy(filter -> filter.getKey().getId()));
+                .flatMap(Collection::stream)
+                .map(filter -> {
+                    String format = filter.getFileFilterFileName() != null ? "domainblacklist/string" : "domainblacklist/bloom";
+                    return new CachedFileFilter(filter.getKey(), filter.getBloomFilterFileName(), filter.getFileFilterFileName(), format, filter.isDeleted());
+                })
+                .sorted(Comparator.comparing(filter -> filter.getKey().getVersion(), Comparator.reverseOrder()))
+                .collect(Collectors.groupingBy(filter -> filter.getKey().getId()));
 
         // write upgraded index
         index.setFilters(updatedFilters);

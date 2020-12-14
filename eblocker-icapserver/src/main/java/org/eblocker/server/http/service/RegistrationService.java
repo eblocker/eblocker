@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.events.EventLogger;
-import org.eblocker.server.common.data.events.Events;
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.TosContainer;
 import org.eblocker.registration.UpgradeInfo;
+import org.eblocker.server.common.data.events.EventLogger;
+import org.eblocker.server.common.data.events.Events;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class RegistrationService {
         this.reminderService = reminderService;
     }
 
-    public TosContainer getTosContainer(){
+    public TosContainer getTosContainer() {
         return client.getTosContainer();
     }
 
@@ -68,8 +68,8 @@ public class RegistrationService {
                     null,
                     null,
                     null,
-                null,
-                null
+                    null,
+                    null
             );
             try {
                 DeviceRegistrationResponse response = client.upgrade(deviceRegistrationRequest);

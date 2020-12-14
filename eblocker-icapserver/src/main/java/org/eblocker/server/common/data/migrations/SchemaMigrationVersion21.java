@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.CompressionMode;
 import org.eblocker.server.common.data.DataSource;
-import com.google.inject.Inject;
 
 public class SchemaMigrationVersion21 implements SchemaMigration {
 
@@ -40,7 +40,7 @@ public class SchemaMigrationVersion21 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         dataSource.setDntHeaderState(true);
         dataSource.setCompressionMode(CompressionMode.VPN_CLIENTS_ONLY);
         dataSource.setVersion("21");

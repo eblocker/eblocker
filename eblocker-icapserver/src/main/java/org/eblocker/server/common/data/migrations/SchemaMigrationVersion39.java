@@ -16,24 +16,25 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.UserRole;
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
-import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.http.service.DashboardCardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SchemaMigrationVersion39 implements SchemaMigration {
 
@@ -78,11 +79,11 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
             DashboardCard oldCard = getCardByName(oldUserCards, card.getName());
             if (oldCard != null) {
                 DashboardCardPosition positionsOne = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 0 && oldCard.getCustomPos()[0] != null ?
-                    oldCard.getCustomPos()[0] : oldCard.getDefaultPos()[0];
+                        oldCard.getCustomPos()[0] : oldCard.getDefaultPos()[0];
                 DashboardCardPosition positionsTwo = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 1 && oldCard.getCustomPos()[1] != null ?
-                    oldCard.getCustomPos()[1] : oldCard.getDefaultPos()[1];
-                DashboardCardPosition positionsThree = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 2 && oldCard.getCustomPos()[2] != null?
-                    oldCard.getCustomPos()[2] : oldCard.getDefaultPos()[2];
+                        oldCard.getCustomPos()[1] : oldCard.getDefaultPos()[1];
+                DashboardCardPosition positionsThree = oldCard.getCustomPos() != null && oldCard.getCustomPos().length > 2 && oldCard.getCustomPos()[2] != null ?
+                        oldCard.getCustomPos()[2] : oldCard.getDefaultPos()[2];
 
                 UiCardColumnPosition[] positions = new UiCardColumnPosition[3];
                 positions[0] = new UiCardColumnPosition(card.getId(), positionsOne.getColumn(), positionsOne.getOrder(), oldCard.isVisible(), false);
@@ -107,18 +108,18 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
 
             DashboardColumnsView dashboardColumnsView = new DashboardColumnsView(idPositionMapping);
             UserModule newUser = new UserModule(
-                id,
-                user.getAssociatedProfileId(),
-                user.getName(),
-                user.getNameKey(),
-                user.getBirthday(),
-                user.getUserRole(),
-                user.isSystem(),
-                user.getPin(),
-                user.getWhiteListConfigByDomains(),
-                dashboardColumnsView,
-                user.getCustomBlacklistId(),
-                user.getCustomWhitelistId()
+                    id,
+                    user.getAssociatedProfileId(),
+                    user.getName(),
+                    user.getNameKey(),
+                    user.getBirthday(),
+                    user.getUserRole(),
+                    user.isSystem(),
+                    user.getPin(),
+                    user.getWhiteListConfigByDomains(),
+                    dashboardColumnsView,
+                    user.getCustomBlacklistId(),
+                    user.getCustomWhitelistId()
             );
 
             // delete old user, so that we can save new user with same ID
@@ -141,31 +142,31 @@ public class SchemaMigrationVersion39 implements SchemaMigration {
         List<UiCard> cards = dataSource.getAll(UiCard.class);
 
         generateDashboardCards().stream().
-            filter(card -> !containsCard(cards, card)).
-            forEach(card -> dashboardCardService.saveNewDashboardCard(card));
+                filter(card -> !containsCard(cards, card)).
+                forEach(card -> dashboardCardService.saveNewDashboardCard(card));
     }
 
-    private boolean containsCard(List<UiCard> source,  UiCard contains) {
+    private boolean containsCard(List<UiCard> source, UiCard contains) {
         return source.stream().anyMatch(card -> contains.getName().equals(card.getName()));
     }
 
     private List<UiCard> generateDashboardCards() {
         return Arrays.asList(
-            new UiCard(nextId(), "MESSAGE", ProductFeature.WOL.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "CONSOLE", ProductFeature.WOL.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "ICON", ProductFeature.WOL.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "ANONYMIZATION", ProductFeature.BAS.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "PAUSE", ProductFeature.BAS.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "MOBILE", ProductFeature.BAS.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "SSL", ProductFeature.PRO.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "WHITELIST", ProductFeature.PRO.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "DNS_STATISTICS", ProductFeature.PRO.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "FILTER", ProductFeature.PRO.name(), getDefaultRoles(), null), // This card is currently not visible in the UI. Only the admin is allowed to make the change settings that can be changed with this card.
-            new UiCard(nextId(), "WHITELIST_DNS", ProductFeature.PRO.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "BLOCKER_STATISTICS_TOTAL", ProductFeature.PRO.name(), getDefaultRoles(), null),
-            new UiCard(nextId(), "ONLINE_TIME", ProductFeature.FAM.name(), getAllRoles(), null),
-            new UiCard(nextId(), "USER", ProductFeature.FAM.name(), getAllRoles(),null)
-            );
+                new UiCard(nextId(), "MESSAGE", ProductFeature.WOL.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "CONSOLE", ProductFeature.WOL.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "ICON", ProductFeature.WOL.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "ANONYMIZATION", ProductFeature.BAS.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "PAUSE", ProductFeature.BAS.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "MOBILE", ProductFeature.BAS.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "SSL", ProductFeature.PRO.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "WHITELIST", ProductFeature.PRO.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "DNS_STATISTICS", ProductFeature.PRO.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "FILTER", ProductFeature.PRO.name(), getDefaultRoles(), null), // This card is currently not visible in the UI. Only the admin is allowed to make the change settings that can be changed with this card.
+                new UiCard(nextId(), "WHITELIST_DNS", ProductFeature.PRO.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "BLOCKER_STATISTICS_TOTAL", ProductFeature.PRO.name(), getDefaultRoles(), null),
+                new UiCard(nextId(), "ONLINE_TIME", ProductFeature.FAM.name(), getAllRoles(), null),
+                new UiCard(nextId(), "USER", ProductFeature.FAM.name(), getAllRoles(), null)
+        );
     }
 
     private int nextId() {

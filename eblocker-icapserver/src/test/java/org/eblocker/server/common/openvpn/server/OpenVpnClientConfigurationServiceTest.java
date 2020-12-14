@@ -16,7 +16,13 @@
  */
 package org.eblocker.server.common.openvpn.server;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.http.service.OpenVpnServerService;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,13 +33,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertArrayEquals;
 
 public class OpenVpnClientConfigurationServiceTest {
     private static final String OPENVPN_TEST_PATH = "test-data";
@@ -44,7 +44,8 @@ public class OpenVpnClientConfigurationServiceTest {
     private OpenVpnCa openVpnCa;
     private String testPath;
 
-    @Rule public ExpectedException thrown= ExpectedException.none();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() throws URISyntaxException {
@@ -59,10 +60,10 @@ public class OpenVpnClientConfigurationServiceTest {
         prepareClientPaths(openVpnCa, "asa");
 
         String windowsClientConfigTemplate = Paths.get(testPath, "openvpn-server-client.windows-template.conf").toString();
-        String unixClientConfigTemplate    = Paths.get(testPath, "openvpn-server-client.unix-template.conf").toString();
-        String macosClientConfigTemplate   = Paths.get(testPath, "openvpn-server-client.macos-template.conf").toString();
+        String unixClientConfigTemplate = Paths.get(testPath, "openvpn-server-client.unix-template.conf").toString();
+        String macosClientConfigTemplate = Paths.get(testPath, "openvpn-server-client.macos-template.conf").toString();
 
-        controller = new OpenVpnClientConfigurationService (
+        controller = new OpenVpnClientConfigurationService(
                 openVpnServerService,
                 openVpnCa,
                 testPath,

@@ -18,7 +18,7 @@ package org.eblocker.server.common.openvpn.connection;
 
 public class MobileConnectionCheckStatus {
 
-    public enum State { NOT_STARTED, PENDING_REQUESTS, PENDING_RESULTS, SUCCESS, FAILURE, TIMEOUT_REQUESTS, TIMEOUT_RESULTS, CANCELED, ERROR }
+    public enum State {NOT_STARTED, PENDING_REQUESTS, PENDING_RESULTS, SUCCESS, FAILURE, TIMEOUT_REQUESTS, TIMEOUT_RESULTS, CANCELED, ERROR}
 
     private State state;
     private int tcpMessagesSent;

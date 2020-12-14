@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.openvpn.configuration.OpenVpnConfiguration;
 import org.eblocker.server.common.openvpn.configuration.OpenVpnConfigurationVersion0;
 import org.eblocker.server.common.openvpn.configuration.Option;
 import org.eblocker.server.common.util.FileUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -159,7 +159,7 @@ public class OpenVpnProfileFiles {
 
     public void truncateLogFile(int id) throws IOException {
         Files.write(Paths.get(getLogFile(id)), new byte[0],
-                new OpenOption[] {
+                new OpenOption[]{
                         StandardOpenOption.CREATE,
                         StandardOpenOption.TRUNCATE_EXISTING,
                         StandardOpenOption.WRITE });

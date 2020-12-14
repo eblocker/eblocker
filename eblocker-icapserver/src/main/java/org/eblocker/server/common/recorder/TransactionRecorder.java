@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.recorder;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.icap.transaction.Transaction;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ConflictException;
 import org.restexpress.exception.NotFoundException;
@@ -35,7 +35,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -149,7 +151,7 @@ public class TransactionRecorder {
                 maxSeconds,
                 maxBytes,
                 active,
-                startTime == null ? 0L : (System.currentTimeMillis()-startTime.getTime())/1000L,
+                startTime == null ? 0L : (System.currentTimeMillis() - startTime.getTime()) / 1000L,
                 gatheredBytes,
                 n == null ? 0 : n.get()
         );

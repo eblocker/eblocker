@@ -50,7 +50,7 @@ public class LocalDnsIsNotGatewayMessageProviderTest {
 
     @Test
     public void testConfigOk() {
-        for(int i = 0; i < 16; ++i) {
+        for (int i = 0; i < 16; ++i) {
             if (i == 11) { // skip configuration in which message has to be shown
                 continue;
             }

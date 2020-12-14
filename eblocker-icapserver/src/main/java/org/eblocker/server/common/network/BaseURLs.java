@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.network;
 
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.IpAddress;
+
 /**
  * Since the HTTP server listens on HTTP and HTTPS ports, we have
  * two different base URLs. This class should simplify selecting

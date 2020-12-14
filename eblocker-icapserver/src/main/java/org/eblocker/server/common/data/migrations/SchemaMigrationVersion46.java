@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.Collections;
-
-import org.eblocker.server.common.data.UserProfileModule;
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.UserProfileModule;
+
+import java.util.Collections;
 
 /**
  * Converts custom domain filters to domain filters usable with new blocker api.
@@ -58,32 +58,32 @@ public class SchemaMigrationVersion46 implements SchemaMigration {
     /**
      * In eOS 2.2 or before, users had been able to set Parental Controls restrictions
      * on the so called "Standard Profile" #1.
-     *
+     * <p>
      * This profile is now assigned to all default standard users of all devices.
      * And if there are any restrictions, there will be no dashboard cards for these
      * devices.
-     *
+     * <p>
      * Unfortunately, the profile itself cannot be edited anymore. So there is no easy
      * way out. Therefore, we reset the "Standard Profile" to its default settings.
      * Just in case.
      */
     private void resetParentalControlsStandardProfile() {
         UserProfileModule standardProfile = new UserProfileModule(
-            DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
-            null,
-            null,
-            "PARENTAL_CONTROL_DEFAULT_PROFILE_NAME",
-            "PARENTAL_CONTROL_DEFAULT_PROFILE_DESCRIPTION",
-            true,
-            false,
-            Collections.emptySet(),
-            Collections.emptySet(),
-            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-            Collections.emptySet(),
-            Collections.emptyMap(),
-            null,
-            false,
-            null
+                DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
+                null,
+                null,
+                "PARENTAL_CONTROL_DEFAULT_PROFILE_NAME",
+                "PARENTAL_CONTROL_DEFAULT_PROFILE_DESCRIPTION",
+                true,
+                false,
+                Collections.emptySet(),
+                Collections.emptySet(),
+                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+                Collections.emptySet(),
+                Collections.emptyMap(),
+                null,
+                false,
+                null
         );
         standardProfile.setBuiltin(true);
         standardProfile.setControlmodeTime(false);

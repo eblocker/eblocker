@@ -28,6 +28,6 @@ public class OnePixelImageTest {
     public void get() throws IOException {
         byte[] expectedImage = ByteStreams.toByteArray(ClassLoader.getSystemResourceAsStream("block-artefacts/expected-1px.svg"));
         byte[] image = OnePixelImage.get("https://www.eblocker.com/test?class=OnePixelImageTest");
-        Assert.assertArrayEquals(expectedImage,image);
+        Assert.assertArrayEquals(expectedImage, image);
     }
 }

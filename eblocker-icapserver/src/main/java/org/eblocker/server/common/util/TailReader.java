@@ -47,7 +47,7 @@ public class TailReader extends Reader {
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
-        while(!quit) {
+        while (!quit) {
             int n = tryRead(cbuf, off, len);
             if (n > 0) {
                 return n;

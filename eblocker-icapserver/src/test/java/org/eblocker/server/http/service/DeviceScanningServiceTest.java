@@ -50,19 +50,19 @@ public class DeviceScanningServiceTest {
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.0.11"));
 
         service = new DeviceScanningService(
-            arpSweeper,
-            dataSource,
-            executorService,
-            STARTUP_DELAY,
-            DEFAULT_SCANNING_INTERVAL,
-            "10.0.0.0/8",
-            "172.16.0.0/12",
-            "192.168.0.0/16",
-            "embedded",
-            networkInterface);
+                arpSweeper,
+                dataSource,
+                executorService,
+                STARTUP_DELAY,
+                DEFAULT_SCANNING_INTERVAL,
+                "10.0.0.0/8",
+                "172.16.0.0/12",
+                "192.168.0.0/16",
+                "embedded",
+                networkInterface);
 
         Mockito.when(executorService.scheduleAtFixedRate(Mockito.any(), Mockito.anyLong(), Mockito.anyLong(), Mockito.eq(TimeUnit.MICROSECONDS))).
-            thenAnswer(invocation -> future);
+                thenAnswer(invocation -> future);
     }
 
     @Test
@@ -180,16 +180,16 @@ public class DeviceScanningServiceTest {
     @Test
     public void disableScanningInServerMode() {
         service = new DeviceScanningService(
-            arpSweeper,
-            dataSource,
-            executorService,
-            STARTUP_DELAY,
-            DEFAULT_SCANNING_INTERVAL,
-            "10.0.0.0/8",
-            "172.16.0.0/12",
-            "192.168.0.0/16",
-            "server",
-            networkInterface);
+                arpSweeper,
+                dataSource,
+                executorService,
+                STARTUP_DELAY,
+                DEFAULT_SCANNING_INTERVAL,
+                "10.0.0.0/8",
+                "172.16.0.0/12",
+                "192.168.0.0/16",
+                "server",
+                networkInterface);
 
         service.start();
         Mockito.verifyZeroInteractions(executorService);

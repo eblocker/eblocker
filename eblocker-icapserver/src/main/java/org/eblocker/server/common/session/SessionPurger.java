@@ -20,16 +20,16 @@ import com.google.inject.Inject;
 
 public class SessionPurger implements Runnable {
 
-	private SessionStore sessionStore;
-	
-	@Inject
-	public SessionPurger(SessionStore sessionStore) {
-		this.sessionStore = sessionStore;
-	}
+    private SessionStore sessionStore;
 
-	@Override
-	public void run() {
-		sessionStore.purgeSessions();
-	}
+    @Inject
+    public SessionPurger(SessionStore sessionStore) {
+        this.sessionStore = sessionStore;
+    }
+
+    @Override
+    public void run() {
+        sessionStore.purgeSessions();
+    }
 
 }

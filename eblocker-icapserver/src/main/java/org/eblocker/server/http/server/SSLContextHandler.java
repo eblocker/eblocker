@@ -16,6 +16,12 @@
  */
 package org.eblocker.server.http.server;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.EblockerException;
@@ -26,12 +32,6 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,14 +58,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**This class handles the creation of the signed SSL certificate for the ICAP server
+/**
+ * This class handles the creation of the signed SSL certificate for the ICAP server
  * It is able to return a SSLContext for the RestExpress server
  * You must call the init() method, to make sure the certificates are available, before
  * making use of other methods of this class.
- *
+ * <p>
  * Implemented regeneration of ssl certificate, when DhcpBindListener observes new IP address
  * -> generateSSLCertificate(newIP,...) and set new SSLContext (-> getSSLContext(...)) to EblockerHttpsServer
- *
  */
 @SubSystemService(SubSystem.HTTPS_SERVER)
 public class SSLContextHandler {
@@ -164,19 +164,20 @@ public class SSLContextHandler {
 
     /**
      * Generate a new signed SSL certificate with current IP address and return the SSL context for this new certificate
+     *
      * @return
      */
-    private void notifyIpChange(){
+    private void notifyIpChange() {
         try {
             log.info("Updating the SSL Context...");
-            if(sslService.isCaAvailable()) {
+            if (sslService.isCaAvailable()) {
                 generateSSLCertificate(sslService.getCa(), keyStorePath);
             }
             if (sslService.isSslEnabled()) {
                 listeners.forEach(SslContextChangeListener::onEnable);
             }
         } catch (Exception e) {
-            log.error("Error while updating SSL Context",e);
+            log.error("Error while updating SSL Context", e);
         }
     }
 
@@ -300,12 +301,12 @@ public class SSLContextHandler {
     private List<String> extractAltNames(X509Certificate certificate) throws SslContextException {
         try {
             List<String> altNames = certificate.getSubjectAlternativeNames().stream()
-                .map(this::mapSubjectAlternativeName)
-                .distinct()
-                .collect(Collectors.toList());
+                    .map(this::mapSubjectAlternativeName)
+                    .distinct()
+                    .collect(Collectors.toList());
 
             log.debug("certificates alt names:");
-            altNames.stream().forEach(n->log.debug("    {}", n));
+            altNames.stream().forEach(n -> log.debug("    {}", n));
 
             return altNames;
         } catch (CertificateParsingException e) {
@@ -314,11 +315,11 @@ public class SSLContextHandler {
     }
 
     private String mapSubjectAlternativeName(List<?> altName) {
-        Integer type = (Integer)altName.get(0);
+        Integer type = (Integer) altName.get(0);
         if (type == 2 || type == 7) {
             return (String) altName.get(1);
         }
-       throw new IllegalStateException("unsupported alt name type " + type + " in certificate!");
+        throw new IllegalStateException("unsupported alt name type " + type + " in certificate!");
     }
 
     private boolean generateSSLCertificate(EblockerCa ca, String keyStorePath) throws SslContextException {
@@ -333,8 +334,8 @@ public class SSLContextHandler {
 
             List<String> subjectAlternativeNames = new ArrayList<>(getSubjectAlternativeNames());
             CertificateAndKey certificateAndKey = ca.generateServerCertificate(controlBarHostName,
-                notAfter,
-                subjectAlternativeNames);
+                    notAfter,
+                    subjectAlternativeNames);
 
             try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
                 PKI.generateKeyStore(certificateAndKey, "https", keyStorePassword, keyStoreStream);
@@ -349,7 +350,7 @@ public class SSLContextHandler {
     private SSLContext createSslContext(String keyStorePath) {
         // check keystore existence
         SimpleResource keyStoreResource = new SimpleResource(keyStorePath);
-        if(!ResourceHandler.exists(keyStoreResource)) {
+        if (!ResourceHandler.exists(keyStoreResource)) {
             log.error("Keystore file does not exist here: {}", keyStorePath);
             return null;
         }
@@ -383,6 +384,7 @@ public class SSLContextHandler {
 
     public interface SslContextChangeListener {
         void onEnable();
+
         void onDisable();
     }
 }

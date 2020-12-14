@@ -16,34 +16,34 @@
  */
 package org.eblocker.server.common.session;
 
+import org.eblocker.server.common.transaction.Decision;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eblocker.server.common.transaction.Decision;
-
 public class ForwardDecisionStore {
 
-	private Map<String, Decision> store;
-	
-	public Decision popDecision(String url) {
-		Decision decision = Decision.NO_DECISION;
-		synchronized(this) {
-			if (store != null) {
-				if (store.containsKey(url)) {
-					decision = store.remove(url);
-				}
-			}
-		}
-		return decision;
-	}
-	
-	public void addDecision(String url, Decision decision) {
-		synchronized(this) {
-			if (store == null) {
-				store = new ConcurrentHashMap<>();
-			}
-			store.put(url, decision);
-		}
-	}
+    private Map<String, Decision> store;
+
+    public Decision popDecision(String url) {
+        Decision decision = Decision.NO_DECISION;
+        synchronized (this) {
+            if (store != null) {
+                if (store.containsKey(url)) {
+                    decision = store.remove(url);
+                }
+            }
+        }
+        return decision;
+    }
+
+    public void addDecision(String url, Decision decision) {
+        synchronized (this) {
+            if (store == null) {
+                store = new ConcurrentHashMap<>();
+            }
+            store.put(url, decision);
+        }
+    }
 
 }

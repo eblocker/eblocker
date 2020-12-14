@@ -16,15 +16,14 @@
  */
 package org.eblocker.certificate.validator.squid;
 
+import com.google.common.io.ByteStreams;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
-import com.google.common.io.ByteStreams;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicLong;
-
 
 public class CertificateValidatorTestUtil {
 
@@ -44,8 +43,8 @@ public class CertificateValidatorTestUtil {
 
     public static CertificateValidationRequest createInvalidRequestWithErrors(boolean useConcurrency) throws IOException, CryptoException {
         CertificateValidationRequest request = createValidRequest(useConcurrency);
-        String[] errorNames = new String[]{"SQUID_X509_V_ERR_DOMAIN_MISMATCH"};
-        String[] errorCerts = new String[]{"cert_0"};
+        String[] errorNames = new String[]{ "SQUID_X509_V_ERR_DOMAIN_MISMATCH" };
+        String[] errorCerts = new String[]{ "cert_0" };
 
         CertificateValidationRequest requestWithErrors = new CertificateValidationRequest(getNextId(useConcurrency), null, null, request.getHost(), request.getCert(), errorNames, errorCerts, useConcurrency);
         return requestWithErrors;

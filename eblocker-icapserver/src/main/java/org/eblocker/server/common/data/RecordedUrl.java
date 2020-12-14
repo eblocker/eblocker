@@ -17,70 +17,70 @@
 package org.eblocker.server.common.data;
 
 public class RecordedUrl {
-	private final String recordedDomain;
-	private final String recordedIp;
+    private final String recordedDomain;
+    private final String recordedIp;
 
-	private WhitelistRecommendation recommendation = WhitelistRecommendation.RECOMMENDATION_NONE;
+    private WhitelistRecommendation recommendation = WhitelistRecommendation.RECOMMENDATION_NONE;
 
-	public enum WhitelistRecommendation {
-		RECOMMENDATION_NONE, RECOMMENDATION_WHITELIST, RECOMMENDATION_BUMP;
-	}
+    public enum WhitelistRecommendation {
+        RECOMMENDATION_NONE, RECOMMENDATION_WHITELIST, RECOMMENDATION_BUMP;
+    }
 
-	public RecordedUrl(String ip, String url) {
-		this.recordedDomain = url;
-		this.recordedIp = ip;
-	}
+    public RecordedUrl(String ip, String url) {
+        this.recordedDomain = url;
+        this.recordedIp = ip;
+    }
 
-	public RecordedUrl(RecordedSSLHandshake handshake) {
-		this.recordedDomain = handshake.getServername();
-		this.recordedIp = handshake.getIP();
-	}
+    public RecordedUrl(RecordedSSLHandshake handshake) {
+        this.recordedDomain = handshake.getServername();
+        this.recordedIp = handshake.getIP();
+    }
 
-	public String getRecordedDomain() {
-		return this.recordedDomain;
-	}
+    public String getRecordedDomain() {
+        return this.recordedDomain;
+    }
 
-	public String getRecordedIp() {
-		return this.recordedIp;
-	}
+    public String getRecordedIp() {
+        return this.recordedIp;
+    }
 
-	public WhitelistRecommendation getWhitelistRecommendation() {
-		return this.recommendation;
-	}
+    public WhitelistRecommendation getWhitelistRecommendation() {
+        return this.recommendation;
+    }
 
-	public void adjustWhitelistRecommendation(
-	// TODO: also consider whether the app was whitelisted/bumped
-	// during the recording
-			boolean correspondingAppDataRecorded) {
-		if (this.recommendation == WhitelistRecommendation.RECOMMENDATION_NONE) {
-			if (correspondingAppDataRecorded) {
-				this.recommendation = WhitelistRecommendation.RECOMMENDATION_BUMP;
-			} else {
-				this.recommendation = WhitelistRecommendation.RECOMMENDATION_WHITELIST;
-			}
-		} else if (this.recommendation == WhitelistRecommendation.RECOMMENDATION_BUMP) {
-			if (correspondingAppDataRecorded) {
-				// no adjustment required
-			} else {
-				this.recommendation = WhitelistRecommendation.RECOMMENDATION_WHITELIST;
-			}
-		}
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		RecordedUrl u = (RecordedUrl) o;
-		return (u != null
-		        && this.recommendation == u.getWhitelistRecommendation()
-				&& this.recordedDomain.equals(u.getRecordedDomain()) 
-				&& this.recordedIp.equals(u.getRecordedIp()));
-	}
-	
-	@Override
-	public int hashCode(){
-		return this.getRecordedDomain().hashCode()
-				+ this.getRecordedIp().hashCode()
-				+ this.getWhitelistRecommendation().hashCode();
-	}
+    public void adjustWhitelistRecommendation(
+            // TODO: also consider whether the app was whitelisted/bumped
+            // during the recording
+            boolean correspondingAppDataRecorded) {
+        if (this.recommendation == WhitelistRecommendation.RECOMMENDATION_NONE) {
+            if (correspondingAppDataRecorded) {
+                this.recommendation = WhitelistRecommendation.RECOMMENDATION_BUMP;
+            } else {
+                this.recommendation = WhitelistRecommendation.RECOMMENDATION_WHITELIST;
+            }
+        } else if (this.recommendation == WhitelistRecommendation.RECOMMENDATION_BUMP) {
+            if (correspondingAppDataRecorded) {
+                // no adjustment required
+            } else {
+                this.recommendation = WhitelistRecommendation.RECOMMENDATION_WHITELIST;
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        RecordedUrl u = (RecordedUrl) o;
+        return (u != null
+                && this.recommendation == u.getWhitelistRecommendation()
+                && this.recordedDomain.equals(u.getRecordedDomain())
+                && this.recordedIp.equals(u.getRecordedIp()));
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getRecordedDomain().hashCode()
+                + this.getRecordedIp().hashCode()
+                + this.getWhitelistRecommendation().hashCode();
+    }
 
 }

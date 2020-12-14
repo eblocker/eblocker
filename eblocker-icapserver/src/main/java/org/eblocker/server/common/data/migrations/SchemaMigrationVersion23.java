@@ -16,14 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.http.service.DashboardService;
-import com.google.inject.Inject;
 
 import java.util.List;
-
 
 public class SchemaMigrationVersion23 implements SchemaMigration {
 
@@ -33,9 +32,9 @@ public class SchemaMigrationVersion23 implements SchemaMigration {
 
     @Inject
     public SchemaMigrationVersion23(
-        DataSource dataSource,
-        DashboardService dashboardService,
-        UserMigrationService userMigrationService) {
+            DataSource dataSource,
+            DashboardService dashboardService,
+            UserMigrationService userMigrationService) {
         this.dataSource = dataSource;
         this.dashboardService = dashboardService;
         this.userMigrationService = userMigrationService;
@@ -67,8 +66,8 @@ public class SchemaMigrationVersion23 implements SchemaMigration {
         dataSource.setVersion("23");
     }
 
-    private boolean containsCardWithId(List<DashboardCard> cards, int cardId){
-        return cards.stream().anyMatch(card -> card.getId()==cardId);
+    private boolean containsCardWithId(List<DashboardCard> cards, int cardId) {
+        return cards.stream().anyMatch(card -> card.getId() == cardId);
     }
 
 }

@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.icap.resources;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,67 +25,69 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ResourceLoaderTest {
-	
-	private static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
-	private static final Charset CHARSET_LATIN1 = Charset.forName("ISO-8859-1");
 
-	@Test
-	public void testLoadClassPathResource() {
-		String page = ResourceHandler.load(new SimpleResource("test-data/sample.xhtml"));
-		assertNotNull(page);
-		assertTrue(page.contains("Hello World"));
-		
-		page = ResourceHandler.load(new SimpleResource("classpath:test-data/sample.xhtml"));
-		assertNotNull(page);
-		assertTrue(page.contains("Hello World"));
-	}
+    private static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+    private static final Charset CHARSET_LATIN1 = Charset.forName("ISO-8859-1");
 
-	@Test
-	public void testLoadFileResource() throws IOException {
-		Path temp = Files.createTempFile("test", ".txt");
-		List<String> lines = Arrays.asList("Hello World", "Hallo Welt");
-		Files.write(temp,  lines, CHARSET_UTF8);
-		
-		String page = ResourceHandler.load(new SimpleResource("file:"+temp.toString()));
-		assertNotNull(page);
-		assertTrue(page.contains("Hello World"));
-		assertTrue(page.contains("Hallo Welt"));
-		
-		page = ResourceHandler.load(new SimpleResource(temp.toString()));
-		assertNotNull(page);
-		assertTrue(page.contains("Hello World"));
-		assertTrue(page.contains("Hallo Welt"));
-	}
+    @Test
+    public void testLoadClassPathResource() {
+        String page = ResourceHandler.load(new SimpleResource("test-data/sample.xhtml"));
+        assertNotNull(page);
+        assertTrue(page.contains("Hello World"));
 
-	@Test
-	public void testLoadFileResource_withCharset() throws IOException {
-		Path temp = Files.createTempFile("test", ".txt");
-		List<String> lines = Arrays.asList("Hällö Wörld");
-		Files.write(temp,  lines, CHARSET_UTF8);
-		
-		String page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:"+temp.toString(), CHARSET_LATIN1));
-		assertNotNull(page);
-		assertFalse(page.contains("Hällö Wörld"));
-		
-		page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:"+temp.toString(), CHARSET_UTF8));
-		assertNotNull(page);
-		assertTrue(page.contains("Hällö Wörld"));
-		
-		temp = Files.createTempFile("test", ".txt");
-		lines = Arrays.asList("Hällö Wörld");
-		Files.write(temp,  lines, CHARSET_LATIN1);
-		
-		page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:"+temp.toString(), CHARSET_LATIN1));
-		assertNotNull(page);
-		assertTrue(page.contains("Hällö Wörld"));
-		
-		page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:"+temp.toString(), CHARSET_UTF8));
-		assertNotNull(page);
-		assertFalse(page.contains("Hällö Wörld"));
-		
-	}
+        page = ResourceHandler.load(new SimpleResource("classpath:test-data/sample.xhtml"));
+        assertNotNull(page);
+        assertTrue(page.contains("Hello World"));
+    }
+
+    @Test
+    public void testLoadFileResource() throws IOException {
+        Path temp = Files.createTempFile("test", ".txt");
+        List<String> lines = Arrays.asList("Hello World", "Hallo Welt");
+        Files.write(temp, lines, CHARSET_UTF8);
+
+        String page = ResourceHandler.load(new SimpleResource("file:" + temp.toString()));
+        assertNotNull(page);
+        assertTrue(page.contains("Hello World"));
+        assertTrue(page.contains("Hallo Welt"));
+
+        page = ResourceHandler.load(new SimpleResource(temp.toString()));
+        assertNotNull(page);
+        assertTrue(page.contains("Hello World"));
+        assertTrue(page.contains("Hallo Welt"));
+    }
+
+    @Test
+    public void testLoadFileResource_withCharset() throws IOException {
+        Path temp = Files.createTempFile("test", ".txt");
+        List<String> lines = Arrays.asList("Hällö Wörld");
+        Files.write(temp, lines, CHARSET_UTF8);
+
+        String page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:" + temp.toString(), CHARSET_LATIN1));
+        assertNotNull(page);
+        assertFalse(page.contains("Hällö Wörld"));
+
+        page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:" + temp.toString(), CHARSET_UTF8));
+        assertNotNull(page);
+        assertTrue(page.contains("Hällö Wörld"));
+
+        temp = Files.createTempFile("test", ".txt");
+        lines = Arrays.asList("Hällö Wörld");
+        Files.write(temp, lines, CHARSET_LATIN1);
+
+        page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:" + temp.toString(), CHARSET_LATIN1));
+        assertNotNull(page);
+        assertTrue(page.contains("Hällö Wörld"));
+
+        page = ResourceHandler.load(new SimpleResource("SAMPLE", "file:" + temp.toString(), CHARSET_UTF8));
+        assertNotNull(page);
+        assertFalse(page.contains("Hällö Wörld"));
+
+    }
 
 }

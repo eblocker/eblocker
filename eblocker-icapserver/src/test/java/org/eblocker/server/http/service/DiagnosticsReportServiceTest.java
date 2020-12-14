@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.security.AppContext;
 import org.eblocker.server.http.security.JsonWebToken;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
-import org.eblocker.server.common.system.ScriptRunner;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

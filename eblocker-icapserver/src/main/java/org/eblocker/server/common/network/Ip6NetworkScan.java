@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -26,12 +27,10 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,6 @@ import java.util.stream.Collectors;
  * reachable their responses will be picked up by {@link NeighborDiscoveryListener}.
  *
  * @see NeighborDiscoveryListener
- *
  */
 public class Ip6NetworkScan {
     private static final Logger log = LoggerFactory.getLogger(Ip6NetworkScan.class);
@@ -75,19 +73,19 @@ public class Ip6NetworkScan {
         Ip6Address sourceLinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
 
         List<Ip6Address> networks = networkInterface.getAddresses().stream()
-            .filter(IpAddress::isIpv6)
-            .map(ip -> (Ip6Address) ip)
-            .filter(ip -> !isLinkLocal(ip))
-            .map(ip -> Ip6Utils.getNetworkAddress(ip, networkInterface.getNetworkPrefixLength(ip)))
-            .distinct()
-            .collect(Collectors.toList());
+                .filter(IpAddress::isIpv6)
+                .map(ip -> (Ip6Address) ip)
+                .filter(ip -> !isLinkLocal(ip))
+                .map(ip -> Ip6Utils.getNetworkAddress(ip, networkInterface.getNetworkPrefixLength(ip)))
+                .distinct()
+                .collect(Collectors.toList());
 
         Collection<Device> devices = deviceService.getDevices(false);
-        for(Device device : devices) {
+        for (Device device : devices) {
             Set<Ip6Address> ip6Addresses = device.getIpAddresses().stream()
-                .filter(IpAddress::isIpv6)
-                .map(ip -> (Ip6Address)ip)
-                .collect(Collectors.toSet());
+                    .filter(IpAddress::isIpv6)
+                    .map(ip -> (Ip6Address) ip)
+                    .collect(Collectors.toSet());
             if (ip6Addresses.isEmpty()) {
                 continue;
             }
@@ -95,29 +93,29 @@ public class Ip6NetworkScan {
             log.debug("ip6 addresses of {}: {}", device.getId(), ip6Addresses);
 
             List<Ip6Address> linkLocalAddresses = ip6Addresses.stream()
-                .filter(this::isLinkLocal)
-                .collect(Collectors.toList());
+                    .filter(this::isLinkLocal)
+                    .collect(Collectors.toList());
 
             log.debug("found {} link-local addresses for {}: {}", linkLocalAddresses.size(), device.getId(), linkLocalAddresses);
 
             Set<Ip6Address> generatedAddresses = linkLocalAddresses.stream()
-                .map(ip -> Ip6Utils.getHostAddress(ip, 64))
-                .flatMap(host -> networks.stream().map(net -> Ip6Utils.combine(net, host)))
-                .collect(Collectors.toSet());
+                    .map(ip -> Ip6Utils.getHostAddress(ip, 64))
+                    .flatMap(host -> networks.stream().map(net -> Ip6Utils.combine(net, host)))
+                    .collect(Collectors.toSet());
             log.debug("generated global address for {}: {}", device.getId(), generatedAddresses);
 
             List<Ip6Address> globalAddressCandidates = generatedAddresses.stream()
-                .filter(ip -> !ip6Addresses.contains(ip))
-                .collect(Collectors.toList());
+                    .filter(ip -> !ip6Addresses.contains(ip))
+                    .collect(Collectors.toList());
             log.debug("global address candidates for {}: {}", device.getId(), globalAddressCandidates);
 
             globalAddressCandidates
-                .forEach(ip -> sendNeighborDiscoverySolicitation(
-                    sourceHardwareAddress,
-                    sourceLinkLocalAddress,
-                    DatatypeConverter.parseHexBinary(device.getHardwareAddress(false)),
-                    ip,
-                    sourceLinkLayerAddressOption));
+                    .forEach(ip -> sendNeighborDiscoverySolicitation(
+                            sourceHardwareAddress,
+                            sourceLinkLocalAddress,
+                            DatatypeConverter.parseHexBinary(device.getHardwareAddress(false)),
+                            ip,
+                            sourceLinkLayerAddressOption));
         }
     }
 
@@ -131,12 +129,12 @@ public class Ip6NetworkScan {
                                                    Ip6Address targetIpAddress,
                                                    List<Option> sourceLinkLayerAddressOption) {
         NeighborSolicitation solicitation = new NeighborSolicitation(
-            sourceHardwareAddress,
-            sourceIpAddress,
-            targetHardwareAddress,
-            targetIpAddress,
-            targetIpAddress,
-            sourceLinkLayerAddressOption);
+                sourceHardwareAddress,
+                sourceIpAddress,
+                targetHardwareAddress,
+                targetIpAddress,
+                targetIpAddress,
+                sourceLinkLayerAddressOption);
         pubSubService.publish("ip6:out", solicitation.toString());
     }
 }

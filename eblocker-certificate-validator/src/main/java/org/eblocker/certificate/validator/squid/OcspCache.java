@@ -16,7 +16,6 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
@@ -39,6 +38,7 @@ import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
+import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +113,7 @@ public class OcspCache {
         long start = System.currentTimeMillis();
         long now = clock.millis();
         Iterator<Map.Entry<String, Entry>> i = ocspResponses.asMap().entrySet().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             Map.Entry<String, Entry> e = i.next();
             if (e.getValue().expires < now) {
                 log.debug("{} expired", e.getKey());
@@ -131,7 +131,7 @@ public class OcspCache {
 
     public void writeToStream(OutputStream out) throws IOException {
         DataOutputStream oout = new DataOutputStream(out);
-        for(Map.Entry<String, Entry> e : ocspResponses.asMap().entrySet()) {
+        for (Map.Entry<String, Entry> e : ocspResponses.asMap().entrySet()) {
             oout.writeBoolean(true);
             oout.writeUTF(e.getKey());
             oout.writeLong(e.getValue().expires);
@@ -142,7 +142,7 @@ public class OcspCache {
     }
 
     private void readEntriesFromStreamAsync(InputStream in) {
-        new Thread(()-> {
+        new Thread(() -> {
             try {
                 readEntriesFromStream(in);
             } catch (IOException e) {
@@ -161,7 +161,7 @@ public class OcspCache {
         int readEntries = 0;
         DataInputStream oin = new DataInputStream(in);
         boolean hasEntry = oin.readBoolean();
-        while(hasEntry) {
+        while (hasEntry) {
             String key = oin.readUTF();
             long expires = oin.readLong();
             int length = oin.readInt();
@@ -221,10 +221,10 @@ public class OcspCache {
         HttpURLConnection connection = null;
         try {
             connection = connectionBuilderFactory.create()
-                .setUrl(url)
-                .setRequestProperty("Content-Type", "application/ocsp-request")
-                .setRequestProperty("Accept", "application/ocsp-response")
-                .post(request.getEncoded());
+                    .setUrl(url)
+                    .setRequestProperty("Content-Type", "application/ocsp-request")
+                    .setRequestProperty("Accept", "application/ocsp-response")
+                    .post(request.getEncoded());
 
             if (connection.getResponseCode() != 200) {
                 throw new OcspException("http request failed: " + connection.getResponseCode());

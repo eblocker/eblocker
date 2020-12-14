@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.http.service.DashboardService;
-import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class SchemaMigrationVersion25 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         List<UserModuleOld> users = userMigrationService.getAll();
 
         DashboardCard dashboardCard = dashboardService.generateDnsStatisticsCard();

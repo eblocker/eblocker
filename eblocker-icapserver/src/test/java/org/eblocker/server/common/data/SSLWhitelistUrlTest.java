@@ -18,69 +18,69 @@ package org.eblocker.server.common.data;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SSLWhitelistUrlTest {
 
-	@Test
-	public void domainExtraction() {
+    @Test
+    public void domainExtraction() {
 
-		// Correct case
-		String domain = "bla.de";
-		String domainExpected = "bla.de";
-		String name = "name";
-		SSLWhitelistUrl url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        // Correct case
+        String domain = "bla.de";
+        String domainExpected = "bla.de";
+        String name = "name";
+        SSLWhitelistUrl url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		// Catched by bool SSLWhitelistService.isInvalidDomain()
-		domain = ".";
-		domainExpected = ".";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        // Catched by bool SSLWhitelistService.isInvalidDomain()
+        domain = ".";
+        domainExpected = ".";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		// Catched by bool SSLWhitelistService.isInvalidDomain()
-		domain = "de";
-		domainExpected = "de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        // Catched by bool SSLWhitelistService.isInvalidDomain()
+        domain = "de";
+        domainExpected = "de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		// Correct case
-		domain = "http://www.bla.de";
-		domainExpected = "www.bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        // Correct case
+        domain = "http://www.bla.de";
+        domainExpected = "www.bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		domain = "http://www.bla.de/";
-		domainExpected = "www.bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        domain = "http://www.bla.de/";
+        domainExpected = "www.bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		domain = "bla.de/blubb";
-		domainExpected = "bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        domain = "bla.de/blubb";
+        domainExpected = "bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		domain = "http://www.bla.de/blubb.html#fasel";
-		domainExpected = "www.bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        domain = "http://www.bla.de/blubb.html#fasel";
+        domainExpected = "www.bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		domain = "http://user:pass@bla.de/blubb";
-		domainExpected = "bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
+        domain = "http://user:pass@bla.de/blubb";
+        domainExpected = "bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
 
-		domain = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
-		domainExpected = "bla.de";
-		name = "name";
-		url = new SSLWhitelistUrl(name, domain);
-		assertEquals(domainExpected, url.getUrl());
-	}
+        domain = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
+        domainExpected = "bla.de";
+        name = "name";
+        url = new SSLWhitelistUrl(name, domain);
+        assertEquals(domainExpected, url.getUrl());
+    }
 }

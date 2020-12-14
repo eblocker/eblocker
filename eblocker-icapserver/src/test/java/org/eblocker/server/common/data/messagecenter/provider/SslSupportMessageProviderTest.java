@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class SslSupportMessageProviderTest {
@@ -87,7 +89,6 @@ public class SslSupportMessageProviderTest {
         assertTrue(messageContainer.getVisibility().isForDevice(DEVICE_ID_3));
         assertTrue(messageContainer.getVisibility().isForDevice(DEVICE_ID_4));
 
-
         //
         // Install root CA on devices 1 and 3
         //
@@ -105,7 +106,6 @@ public class SslSupportMessageProviderTest {
         assertTrue(messageContainer.getVisibility().isForDevice(DEVICE_ID_2));
         assertFalse(messageContainer.getVisibility().isForDevice(DEVICE_ID_3));
         assertTrue(messageContainer.getVisibility().isForDevice(DEVICE_ID_4));
-
 
         //
         // Install root CA on devices 2 and 4

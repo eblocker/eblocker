@@ -19,45 +19,44 @@ package org.eblocker.server.common.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-
 /**
  * Base class for all data objects that are stored in the key-value store.
  * Objects are usually stored as a hash under a globally unique identifier.
  */
 public class ModelObject {
-	/**
-	 * A globally unique identifier for this object.
-	 */
-	private String id;
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(13, 17)
-			.append(getId())
-			.toHashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof ModelObject)) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
+    /**
+     * A globally unique identifier for this object.
+     */
+    private String id;
 
-		ModelObject rhs = (ModelObject) obj;
-		return new EqualsBuilder()
-			.append(getId(), rhs.getId())
-			.isEquals();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 17)
+                .append(getId())
+                .toHashCode();
+    }
 
-	public String getId() {
-		return id;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ModelObject)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+        ModelObject rhs = (ModelObject) obj;
+        return new EqualsBuilder()
+                .append(getId(), rhs.getId())
+                .isEquals();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
 }

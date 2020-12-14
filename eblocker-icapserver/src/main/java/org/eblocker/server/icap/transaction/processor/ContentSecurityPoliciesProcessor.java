@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
@@ -25,9 +28,6 @@ import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton
@@ -40,7 +40,7 @@ public class ContentSecurityPoliciesProcessor implements TransactionProcessor {
         this.filterManager = filterManager;
     }
 
-	@Override
+    @Override
     public boolean process(Transaction transaction) {
         Session session = transaction.getSession();
         if (session.isPatternFiltersEnabled()) {

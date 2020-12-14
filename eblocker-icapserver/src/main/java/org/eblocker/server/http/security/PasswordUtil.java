@@ -58,14 +58,14 @@ public class PasswordUtil {
     public static byte[] hashPassword(final char[] password, final byte[] salt) {
         try {
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM);
-            PBEKeySpec keySpec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH*8);
+            PBEKeySpec keySpec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH * 8);
             SecretKey key = secretKeyFactory.generateSecret(keySpec);
-            byte[] saltedHash = new byte[SALT_LENGTH+KEY_LENGTH];
+            byte[] saltedHash = new byte[SALT_LENGTH + KEY_LENGTH];
             System.arraycopy(salt, 0, saltedHash, 0, SALT_LENGTH);
             System.arraycopy(key.getEncoded(), 0, saltedHash, SALT_LENGTH, KEY_LENGTH);
             return saltedHash;
 
-        } catch( NoSuchAlgorithmException | InvalidKeySpecException e ) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             LOG.error("Cannot hash password.", e);
             throw new ServiceException("error.credentials.cannotHashPassword");
         }

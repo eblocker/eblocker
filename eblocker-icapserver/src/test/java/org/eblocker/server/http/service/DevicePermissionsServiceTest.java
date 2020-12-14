@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.http.service;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.InternetAccessContingent;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.data.UserProfileModule.InternetAccessRestrictionMode;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.time.DayOfWeek;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.InternetAccessContingent;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.UserProfileModule;
-import org.eblocker.server.common.data.UserProfileModule.InternetAccessRestrictionMode;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DevicePermissionsServiceTest {
     private DevicePermissionsService service;
@@ -82,7 +82,8 @@ public class DevicePermissionsServiceTest {
         InternetAccessRestrictionMode internetAccessRestrictionMode = InternetAccessRestrictionMode.NONE;
         Set<InternetAccessContingent> internetAccessContingents = Collections.emptySet();
         Map<DayOfWeek, Integer> maxUsageTimeByDay = Collections.emptyMap();
-        return new UserProfileModule(profileId, name, description, nameKey, descriptionKey, standard, hidden, accessibleSitesPackages, inaccessibleSitesPackages, internetAccessRestrictionMode, internetAccessContingents, maxUsageTimeByDay, null, false, null);
+        return new UserProfileModule(profileId, name, description, nameKey, descriptionKey, standard, hidden, accessibleSitesPackages, inaccessibleSitesPackages, internetAccessRestrictionMode, internetAccessContingents, maxUsageTimeByDay, null, false,
+                null);
     }
 
 }

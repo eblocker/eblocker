@@ -16,15 +16,17 @@
  */
 package org.eblocker.server.common;
 
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.Duration;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MockScheduledExecutorServiceTest {
     private MockScheduledExecutorService service;
@@ -52,13 +54,13 @@ public class MockScheduledExecutorServiceTest {
     public void scheduleRunnable() {
         SimpleCommand command = new SimpleCommand();
         ScheduledFuture<?> future = service.schedule(command, 3, TimeUnit.SECONDS);
-        
+
         // not done yet
         assertFalse(command.hasRun);
         assertFalse(future.isDone());
 
         service.elapse(Duration.ofSeconds(3));
-        
+
         // still not done, because the task takes some time
         assertFalse(command.hasRun);
         assertFalse(future.isDone());
@@ -68,7 +70,7 @@ public class MockScheduledExecutorServiceTest {
         // still not done, because the task is still running
         assertFalse(command.hasRun);
         assertFalse(future.isDone());
-        
+
         service.elapse(Duration.ofSeconds(1));
 
         // finally!
@@ -79,11 +81,11 @@ public class MockScheduledExecutorServiceTest {
     @Test
     public void testDelays() {
         SimpleCommand command = new SimpleCommand();
-        
+
         ScheduledFuture<?> future = service.schedule(command, 3, TimeUnit.SECONDS);
-        assertEquals(3L,    future.getDelay(TimeUnit.SECONDS));
+        assertEquals(3L, future.getDelay(TimeUnit.SECONDS));
         assertEquals(3000L, future.getDelay(TimeUnit.MILLISECONDS));
-        
+
         service.elapse(Duration.ofSeconds(1));
         assertEquals(2L, future.getDelay(TimeUnit.SECONDS));
 
@@ -96,12 +98,12 @@ public class MockScheduledExecutorServiceTest {
         // now the command is started (but it still takes 2 seconds to complete)
         assertFalse(command.hasRun);
         assertFalse(future.isDone());
-        
+
         service.elapse(Duration.ofSeconds(2));
         assertTrue(command.hasRun);
         assertTrue(future.isDone());
-}
-    
+    }
+
     @Test
     public void cancelRunnable() {
         SimpleCommand cmd1 = new SimpleCommand();
@@ -109,10 +111,10 @@ public class MockScheduledExecutorServiceTest {
 
         ScheduledFuture<?> future1 = service.schedule(cmd1, 3, TimeUnit.SECONDS);
         ScheduledFuture<?> future2 = service.schedule(cmd2, 3, TimeUnit.SECONDS);
-        
+
         service.elapse(Duration.ofSeconds(4));
         // now the tasks should be running...
-        
+
         assertTrue(future1.cancel(true));
         assertFalse(future2.cancel(false)); // must not be interrupted
 
@@ -124,12 +126,12 @@ public class MockScheduledExecutorServiceTest {
         assertFalse(future2.isCancelled());
         assertFalse(future2.isDone());
         assertFalse(cmd2.hasRun);
-        
+
         // now the second command should be finished
         service.elapse(Duration.ofSeconds(1));
         assertFalse(future2.isCancelled());
         assertTrue(future2.isDone());
         assertTrue(cmd2.hasRun);
-        
+
     }
 }

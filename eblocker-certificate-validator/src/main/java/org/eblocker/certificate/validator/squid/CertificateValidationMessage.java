@@ -20,12 +20,12 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class CertificateValidationMessage {
 
-    private boolean useConcurrency=false;
+    private boolean useConcurrency = false;
     private Long id;
     protected String[] errorName;
     protected final String[] errorCertId;
 
-    public CertificateValidationMessage(Long id, String[] errorName, String[] errorCertId,boolean useConcurrency) {
+    public CertificateValidationMessage(Long id, String[] errorName, String[] errorCertId, boolean useConcurrency) {
         this.id = id;
         this.errorName = errorName == null ? new String[]{} : errorName;
         this.errorCertId = errorCertId == null ? new String[]{} : errorCertId;
@@ -71,16 +71,16 @@ public abstract class CertificateValidationMessage {
 
         StringBuilder s = new StringBuilder();
 
-        if(useConcurrency) {//if using concurrency add the id to the response, otherwise dont do that
+        if (useConcurrency) {//if using concurrency add the id to the response, otherwise dont do that
             s.append(id)
-            .append(" ");
+                    .append(" ");
         }
 
         s.append(getMessage())
-        .append(" ")
-        .append(content.getBytes(StandardCharsets.UTF_8).length)
-        .append(" ")
-        .append(content);
+                .append(" ")
+                .append(content.getBytes(StandardCharsets.UTF_8).length)
+                .append(" ")
+                .append(content);
 
         return s.toString();
     }

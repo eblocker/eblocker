@@ -16,19 +16,19 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.UserModuleOld;
-import java.util.Collections;
-
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserProfileModule.InternetAccessRestrictionMode;
-import com.google.inject.Inject;
+
+import java.util.Collections;
 
 public class SchemaMigrationVersion10 implements SchemaMigration {
 
-	private final DataSource dataSource;
-	private final UserMigrationService userMigrationService;
+    private final DataSource dataSource;
+    private final UserMigrationService userMigrationService;
 
     @Inject
     public SchemaMigrationVersion10(DataSource dataSource,
@@ -48,65 +48,65 @@ public class SchemaMigrationVersion10 implements SchemaMigration {
     }
 
     public void migrate() {
-    	createLimboUser();
-    	setOperatingUser();
+        createLimboUser();
+        setOperatingUser();
         dataSource.setVersion("10");
     }
 
-    static UserProfileModule createLimboProfile(){
-		UserProfileModule limboProfile = new UserProfileModule(
-				DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID,
-				null,
-				null,
-				DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_NAME_KEY,
-				DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_DESCRIPTION_KEY,
-				false,
-				true,
-				Collections.emptySet(),
-				Collections.emptySet(),
-				InternetAccessRestrictionMode.WHITELIST,
-				Collections.emptySet(),
-				Collections.emptyMap(),
-            null,
-            false,
-            null
-		);
-		limboProfile.setBuiltin(true);
-		return limboProfile;
+    static UserProfileModule createLimboProfile() {
+        UserProfileModule limboProfile = new UserProfileModule(
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID,
+                null,
+                null,
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_NAME_KEY,
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_DESCRIPTION_KEY,
+                false,
+                true,
+                Collections.emptySet(),
+                Collections.emptySet(),
+                InternetAccessRestrictionMode.WHITELIST,
+                Collections.emptySet(),
+                Collections.emptyMap(),
+                null,
+                false,
+                null
+        );
+        limboProfile.setBuiltin(true);
+        return limboProfile;
     }
 
-    static UserModuleOld createLimboUserModule(){
-    	return new UserModuleOld(
-    			DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID,
-				DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID,
-				null,
-				DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_NAME_KEY,
-				null,
-				null,
-				true,
+    static UserModuleOld createLimboUserModule() {
+        return new UserModuleOld(
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_ID,
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_PROFILE_ID,
+                null,
+                DefaultEntities.PARENTAL_CONTROL_LIMBO_USER_NAME_KEY,
+                null,
+                null,
+                true,
 
-				null,
-				Collections.emptyMap(),
-            null,
-            null,
-            null
-		);
+                null,
+                Collections.emptyMap(),
+                null,
+                null,
+                null
+        );
     }
 
-    private void createLimboUser(){
-    	// limbo profile
-		UserProfileModule limboProfile = createLimboProfile();
+    private void createLimboUser() {
+        // limbo profile
+        UserProfileModule limboProfile = createLimboProfile();
         dataSource.save(limboProfile, limboProfile.getId());
-    	// actual user
+        // actual user
         UserModuleOld limboUser = createLimboUserModule();
         userMigrationService.save(limboUser, limboUser.getId());
     }
 
-    private void setOperatingUser(){
-    	for (Device device : dataSource.getDevices()) {
-			device.setOperatingUser(device.getAssignedUser());
-			dataSource.save(device);
-		}
+    private void setOperatingUser() {
+        for (Device device : dataSource.getDevices()) {
+            device.setOperatingUser(device.getAssignedUser());
+            dataSource.save(device);
+        }
     }
 
 }

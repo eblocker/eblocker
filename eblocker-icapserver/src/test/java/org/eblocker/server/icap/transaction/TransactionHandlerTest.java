@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.icap.transaction;
 
-import org.eblocker.server.common.recorder.TransactionRecorder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import org.eblocker.server.common.recorder.TransactionRecorder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -63,9 +63,9 @@ public class TransactionHandlerTest {
     public void testRequest() {
         Mockito.when(transaction.isRequest()).thenReturn(true);
         List<TransactionProcessor> requestProcessors = Arrays.asList(
-            successProcessor,
-            successProcessor,
-            successProcessor
+                successProcessor,
+                successProcessor,
+                successProcessor
         );
         Mockito.when(configuration.getRequestProcessors()).thenReturn(requestProcessors);
 
@@ -79,9 +79,9 @@ public class TransactionHandlerTest {
     public void testRequestAbort() {
         Mockito.when(transaction.isRequest()).thenReturn(true);
         List<TransactionProcessor> requestProcessors = Arrays.asList(
-            successProcessor,
-            failProcessor,
-            successProcessor
+                successProcessor,
+                failProcessor,
+                successProcessor
         );
         Mockito.when(configuration.getRequestProcessors()).thenReturn(requestProcessors);
 
@@ -99,7 +99,7 @@ public class TransactionHandlerTest {
         Mockito.when(configuration.getRequestProcessors()).thenReturn(requestProcessors);
 
         int n = 10;
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             handler.channelRead(channelHandlerContext, transaction);
         }
 
@@ -112,9 +112,9 @@ public class TransactionHandlerTest {
     public void testResponse() {
         Mockito.when(transaction.isResponse()).thenReturn(true);
         List<TransactionProcessor> responseProcessors = Arrays.asList(
-            successProcessor,
-            successProcessor,
-            successProcessor
+                successProcessor,
+                successProcessor,
+                successProcessor
         );
         Mockito.when(configuration.getResponseProcessors()).thenReturn(responseProcessors);
 
@@ -128,9 +128,9 @@ public class TransactionHandlerTest {
     public void testResponseAbort() {
         Mockito.when(transaction.isResponse()).thenReturn(true);
         List<TransactionProcessor> responseProcessors = Arrays.asList(
-            successProcessor,
-            failProcessor,
-            successProcessor
+                successProcessor,
+                failProcessor,
+                successProcessor
         );
         Mockito.when(configuration.getResponseProcessors()).thenReturn(responseProcessors);
 
@@ -148,7 +148,7 @@ public class TransactionHandlerTest {
         Mockito.when(configuration.getResponseProcessors()).thenReturn(responseProcessors);
 
         int n = 10;
-        for(int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i) {
             handler.channelRead(channelHandlerContext, transaction);
         }
 

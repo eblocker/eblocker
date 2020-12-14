@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.http.controller.PageContextController;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

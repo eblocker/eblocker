@@ -44,9 +44,9 @@ public class BpjmEntry {
     @Override
     public String toString() {
         return "BpjmEntry{" +
-            "domainHash=" + DatatypeConverter.printHexBinary(domainHash).toLowerCase() +
-            ", pathHash=" + DatatypeConverter.printHexBinary(pathHash).toLowerCase() +
-            ", depth=" + depth +
-            '}';
+                "domainHash=" + DatatypeConverter.printHexBinary(domainHash).toLowerCase() +
+                ", pathHash=" + DatatypeConverter.printHexBinary(pathHash).toLowerCase() +
+                ", depth=" + depth +
+                '}';
     }
 }

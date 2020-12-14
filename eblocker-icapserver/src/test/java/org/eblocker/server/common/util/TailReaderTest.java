@@ -48,11 +48,11 @@ public class TailReaderTest {
 
     @Test(timeout = 5000)
     public void testTailingNoSeek() throws IOException {
-        Files.write(path, new byte[] { (byte) 0x7f });
+        Files.write(path, new byte[]{ (byte) 0x7f });
 
         Reader in = new TailReader(path.toString(), false, SLEEP);
 
-        startGenerator(new byte[] {0, 1, 2, 3, 4}, 150);
+        startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
         Assert.assertEquals(127, in.read());
         Assert.assertEquals(0, in.read());
@@ -65,12 +65,12 @@ public class TailReaderTest {
     @Test(timeout = 5000)
     public void testTailingSeek() throws IOException {
         byte[] bytes = new byte[1024];
-        Arrays.fill(bytes, (byte)0xff);
+        Arrays.fill(bytes, (byte) 0xff);
         Files.write(path, bytes);
 
         Reader in = new TailReader(path.toString(), true, SLEEP);
 
-        startGenerator(new byte[] {0, 1, 2, 3, 4}, 150);
+        startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
         Assert.assertEquals(0, in.read());
         Assert.assertEquals(1, in.read());
@@ -83,7 +83,7 @@ public class TailReaderTest {
     public void testTruncate() throws IOException {
         TailReader in = new TailReader(path.toString(), false, SLEEP);
 
-        startGenerator(new byte[] {0, 1, 2, 3, 4}, 150);
+        startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
         Assert.assertEquals(0, in.read());
         Assert.assertEquals(1, in.read());
@@ -93,7 +93,7 @@ public class TailReaderTest {
 
         Files.write(path, new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
 
-        startGenerator(new byte[] {5, 6, 7, 8, 9}, 150);
+        startGenerator(new byte[]{ 5, 6, 7, 8, 9 }, 150);
 
         Assert.assertEquals(5, in.read());
         Assert.assertEquals(6, in.read());
@@ -106,7 +106,7 @@ public class TailReaderTest {
     public void testRollover() throws IOException {
         Reader in = new TailReader(path.toString(), false, SLEEP);
 
-        startGenerator(new byte[] {0, 1, 2, 3, 4}, 150);
+        startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
         Assert.assertEquals(0, in.read());
         Assert.assertEquals(1, in.read());
@@ -116,7 +116,7 @@ public class TailReaderTest {
 
         Files.write(path, new byte[0], StandardOpenOption.CREATE);
 
-        startGenerator(new byte[] {5, 6, 7, 8, 9}, 150);
+        startGenerator(new byte[]{ 5, 6, 7, 8, 9 }, 150);
 
         Assert.assertEquals(5, in.read());
         Assert.assertEquals(6, in.read());
@@ -131,7 +131,7 @@ public class TailReaderTest {
 
         new Thread(() -> {
             try {
-                startGenerator(new byte[]{0, 1, 2, 3, 4}, 150);
+                startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
                 Thread.sleep(1000);
                 Files.delete(path);
@@ -139,7 +139,7 @@ public class TailReaderTest {
                 Thread.sleep(1000);
                 Files.write(path, new byte[0]);
 
-                startGenerator(new byte[]{5, 6, 7, 8, 9, 10}, 150);
+                startGenerator(new byte[]{ 5, 6, 7, 8, 9, 10 }, 150);
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
@@ -164,7 +164,7 @@ public class TailReaderTest {
         Reader in = new TailReader(path.toString(), false, SLEEP);
 
         Thread.sleep(1000);
-        startGenerator(new byte[] {0, 1, 2, 3, 4}, 150);
+        startGenerator(new byte[]{ 0, 1, 2, 3, 4 }, 150);
 
         Assert.assertEquals(0, in.read());
         Assert.assertEquals(1, in.read());

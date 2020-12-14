@@ -49,31 +49,31 @@ public class OpenVpnConfigurationParserTest {
         Assert.assertEquals("option-no-args", option.getName());
         Assert.assertEquals(1, option.getLineNumber());
         Assert.assertTrue(option instanceof SimpleOption);
-        Assert.assertNull(((SimpleOption)option).getArguments());
+        Assert.assertNull(((SimpleOption) option).getArguments());
 
         // check option with arguments
         option = options.get(1);
         Assert.assertEquals("option-with-args", option.getName());
         Assert.assertEquals(2, option.getLineNumber());
         Assert.assertTrue(option instanceof SimpleOption);
-        Assert.assertNotNull(((SimpleOption)option).getArguments());
-        Assert.assertArrayEquals(new String[]{"0", "1", "2", "3"}, ((SimpleOption)option).getArguments());
+        Assert.assertNotNull(((SimpleOption) option).getArguments());
+        Assert.assertArrayEquals(new String[]{ "0", "1", "2", "3" }, ((SimpleOption) option).getArguments());
 
         // check option with tab separated arguments
         option = options.get(2);
         Assert.assertEquals("option-with-args-tabs", option.getName());
         Assert.assertEquals(4, option.getLineNumber());
         Assert.assertTrue(option instanceof SimpleOption);
-        Assert.assertNotNull(((SimpleOption)option).getArguments());
-        Assert.assertArrayEquals(new String[]{"0", "1", "2", "3"}, ((SimpleOption)option).getArguments());
+        Assert.assertNotNull(((SimpleOption) option).getArguments());
+        Assert.assertArrayEquals(new String[]{ "0", "1", "2", "3" }, ((SimpleOption) option).getArguments());
 
         // check inline option
         option = options.get(3);
         Assert.assertEquals("option-inline", option.getName());
         Assert.assertEquals(5, option.getLineNumber());
         Assert.assertTrue(option instanceof InlineOption);
-        Assert.assertNotNull(((InlineOption)option).getContent());
-        Assert.assertEquals("inline\n  content\n    with\n      indentation!\n", ((InlineOption)option).getContent());
+        Assert.assertNotNull(((InlineOption) option).getContent());
+        Assert.assertEquals("inline\n  content\n    with\n      indentation!\n", ((InlineOption) option).getContent());
 
         // check ignored option
         option = options.get(4);
@@ -95,10 +95,10 @@ public class OpenVpnConfigurationParserTest {
         Assert.assertEquals(2, optionsGroup.getOptions().size());
         Assert.assertEquals(14, optionsGroup.getOptions().get(0).getLineNumber());
         Assert.assertTrue(optionsGroup.getOptions().get(0) instanceof SimpleOption);
-        Assert.assertArrayEquals(new String[]{"group-0", "none", "first"}, ((SimpleOption)optionsGroup.getOptions().get(0)).getArguments());
+        Assert.assertArrayEquals(new String[]{ "group-0", "none", "first" }, ((SimpleOption) optionsGroup.getOptions().get(0)).getArguments());
         Assert.assertEquals(15, optionsGroup.getOptions().get(1).getLineNumber());
         Assert.assertTrue(optionsGroup.getOptions().get(1) instanceof SimpleOption);
-        Assert.assertArrayEquals(new String[]{"group-0", "none", "last"}, ((SimpleOption)optionsGroup.getOptions().get(1)).getArguments());
+        Assert.assertArrayEquals(new String[]{ "group-0", "none", "last" }, ((SimpleOption) optionsGroup.getOptions().get(1)).getArguments());
 
         // check nested options group
         option = options.get(7);
@@ -110,7 +110,7 @@ public class OpenVpnConfigurationParserTest {
         Assert.assertEquals(3, optionsGroup.getOptions().size());
         Assert.assertEquals(18, optionsGroup.getOptions().get(0).getLineNumber());
         Assert.assertTrue(optionsGroup.getOptions().get(0) instanceof SimpleOption);
-        Assert.assertArrayEquals(new String[]{"group-1", "none", "first"}, ((SimpleOption)optionsGroup.getOptions().get(0)).getArguments());
+        Assert.assertArrayEquals(new String[]{ "group-1", "none", "first" }, ((SimpleOption) optionsGroup.getOptions().get(0)).getArguments());
         Assert.assertEquals(19, optionsGroup.getOptions().get(1).getLineNumber());
         Assert.assertTrue(optionsGroup.getOptions().get(1) instanceof OptionsGroup);
         OptionsGroup nestedOptionsGroup = (OptionsGroup) optionsGroup.getOptions().get(1);
@@ -118,12 +118,12 @@ public class OpenVpnConfigurationParserTest {
         Assert.assertEquals(2, nestedOptionsGroup.getOptions().size());
         Assert.assertEquals(20, nestedOptionsGroup.getOptions().get(0).getLineNumber());
         Assert.assertTrue(nestedOptionsGroup.getOptions().get(0) instanceof SimpleOption);
-        Assert.assertArrayEquals(new String[]{"group-2", "group-1", "inner"}, ((SimpleOption)nestedOptionsGroup.getOptions().get(0)).getArguments());
+        Assert.assertArrayEquals(new String[]{ "group-2", "group-1", "inner" }, ((SimpleOption) nestedOptionsGroup.getOptions().get(0)).getArguments());
         Assert.assertTrue(nestedOptionsGroup.getOptions().get(1) instanceof InlineOption);
-        Assert.assertEquals("      Inline content with\n      unbalanced group tags\n      <options-group>\n      </options-group>\n      </options-group>\n", ((InlineOption)nestedOptionsGroup.getOptions().get(1)).getContent());
+        Assert.assertEquals("      Inline content with\n      unbalanced group tags\n      <options-group>\n      </options-group>\n      </options-group>\n", ((InlineOption) nestedOptionsGroup.getOptions().get(1)).getContent());
         Assert.assertEquals(29, optionsGroup.getOptions().get(2).getLineNumber());
         Assert.assertTrue(optionsGroup.getOptions().get(2) instanceof SimpleOption);
-        Assert.assertArrayEquals(new String[]{"group-1", "none", "last"}, ((SimpleOption)optionsGroup.getOptions().get(2)).getArguments());
+        Assert.assertArrayEquals(new String[]{ "group-1", "none", "last" }, ((SimpleOption) optionsGroup.getOptions().get(2)).getArguments());
     }
 
     @Test(expected = OpenVpnConfigurationParser.ParseException.class)

@@ -19,11 +19,11 @@ package org.eblocker.server.icap.resources;
 import java.nio.charset.Charset;
 
 public interface EblockerResource {
-	
-	public String getName();
 
-	public String getPath();
-	
-	public Charset getCharset();
+    public String getName();
+
+    public String getPath();
+
+    public Charset getCharset();
 
 }

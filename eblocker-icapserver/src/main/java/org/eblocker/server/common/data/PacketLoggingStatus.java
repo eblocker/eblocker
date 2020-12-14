@@ -19,24 +19,24 @@ package org.eblocker.server.common.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PacketLoggingStatus {
-	private boolean running;
-	private boolean resultAvailable;
+    private boolean running;
+    private boolean resultAvailable;
 
-	@JsonProperty
-	public boolean isRunning() {
-		return running;
-	}
+    @JsonProperty
+    public boolean isRunning() {
+        return running;
+    }
 
-	public void setRunning(boolean running) {
-		this.running = running;
-	}
-	
-	@JsonProperty
-	public boolean isResultAvailable() {
-		return resultAvailable;
-	}
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
-	public void setResultAvailable(boolean resultAvailable) {
-		this.resultAvailable = resultAvailable;
-	}
+    @JsonProperty
+    public boolean isResultAvailable() {
+        return resultAvailable;
+    }
+
+    public void setResultAvailable(boolean resultAvailable) {
+        this.resultAvailable = resultAvailable;
+    }
 }

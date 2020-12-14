@@ -16,6 +16,16 @@
  */
 package org.eblocker.server.common.status;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -27,20 +37,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 /**
  * Writes a status report to an HTML file during startup
- *
  */
 public class StartupStatusReporter {
     private static final Logger log = LoggerFactory.getLogger(StartupStatusReporter.class);
@@ -114,7 +112,7 @@ public class StartupStatusReporter {
         boolean up = networkInterface.isUp();
 
         messages.add(new Message(up ? MessageStatus.INFO : MessageStatus.WARNING,
-                                 "Network interface is " + (up ? "up" : "DOWN")));
+                "Network interface is " + (up ? "up" : "DOWN")));
     }
 
     public void testDatabaseConnection(DataSource dataSource) throws DatabaseFailureException {

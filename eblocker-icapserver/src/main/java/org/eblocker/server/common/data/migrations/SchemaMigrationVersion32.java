@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.service.DashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion32 implements SchemaMigration {
     private static final Logger log = LoggerFactory.getLogger(SchemaMigrationVersion32.class);

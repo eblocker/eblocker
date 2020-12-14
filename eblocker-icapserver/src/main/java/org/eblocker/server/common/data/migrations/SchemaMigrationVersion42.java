@@ -16,13 +16,14 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.http.service.DashboardCardService;
-import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;

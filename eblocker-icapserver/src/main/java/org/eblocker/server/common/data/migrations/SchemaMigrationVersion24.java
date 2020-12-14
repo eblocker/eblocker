@@ -16,19 +16,17 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.icap.resources.DefaultEblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
-import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 
 public class SchemaMigrationVersion24 implements SchemaMigration {
 
@@ -39,7 +37,7 @@ public class SchemaMigrationVersion24 implements SchemaMigration {
 
     @Inject
     public SchemaMigrationVersion24(
-        DataSource dataSource, DeviceFactory deviceFactory){
+            DataSource dataSource, DeviceFactory deviceFactory) {
         this.dataSource = dataSource;
         this.deviceFactory = deviceFactory;
         this.macPrefix = new MacPrefix();
@@ -61,9 +59,9 @@ public class SchemaMigrationVersion24 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         for (Device device : dataSource.getDevices()) {
-            if (device.getName()==null || "".equals(device.getName())){
+            if (device.getName() == null || "".equals(device.getName())) {
                 device.setName(deviceFactory.createNameForNewDevice(device.getHardwareAddressPrefix()));
                 dataSource.save(device);
             }

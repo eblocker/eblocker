@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 public class OpenVpnClientState {
-    public enum State { INACTIVE, ACTIVE, PENDING_RESTART }
+    public enum State {INACTIVE, ACTIVE, PENDING_RESTART}
 
     private Integer id;
     private State state;

@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.startup;
 
+import com.google.inject.Provider;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.data.systemstatus.SubSystemStatus;
 import org.eblocker.server.http.service.SystemStatusService;
-import com.google.inject.Provider;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,14 +65,14 @@ public class SubSystemUsageInterceptor implements MethodInterceptor {
 
     private boolean isRequiredSubSystemStarted(SystemStatusService statusService, SubSystem subSystem) {
         return !statusService.getSystemStatusDetails().getSubSystemDetails().stream()
-            .filter(d -> d.getOrder() < subSystem.getOrder())
-            .filter(d -> SubSystemStatus.valueOf(d.getStatus()) == SubSystemStatus.STARTING)
-            .findAny()
-            .isPresent();
+                .filter(d -> d.getOrder() < subSystem.getOrder())
+                .filter(d -> SubSystemStatus.valueOf(d.getStatus()) == SubSystemStatus.STARTING)
+                .findAny()
+                .isPresent();
     }
 
     private SubSystemService findSubSystemService(Class<?> clazz) {
-        for(Class<?> i = clazz; i != null; i = i.getSuperclass()) {
+        for (Class<?> i = clazz; i != null; i = i.getSuperclass()) {
             SubSystemService subSystemService = i.getAnnotation(SubSystemService.class);
             if (subSystemService != null) {
                 return subSystemService;

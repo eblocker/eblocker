@@ -16,20 +16,19 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Arrays;
 import java.util.List;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 public class SchemaMigrationVersion35Test {
 
@@ -54,15 +53,15 @@ public class SchemaMigrationVersion35Test {
         Mockito.when(jedisPool.getResource()).thenReturn(jedis);
 
         users = Arrays.asList(
-            new UserModuleOld(0, null, null, null, null, null, false, null, null, null, null, null),
-            new UserModuleOld(1, null, null, null, null, null, false, null, null, null, null, 1),
-            new UserModuleOld(2, null, null, null, null, null, false, null, null, null, 2, null),
-            new UserModuleOld(3, null, null, null, null, null, false, null, null, null, 3, 4),
-            new UserModuleOld(4, null, null, null, null, null, false, null, null, null, null, 100),
-            new UserModuleOld(5, null, null, null, null, null, false, null, null, null, 5, 100),
-            new UserModuleOld(6, null, null, null, null, null, false, null, null, null, 200, null),
-            new UserModuleOld(7, null, null, null, null, null, false, null, null, null, 200, 6),
-            new UserModuleOld(8, null, null, null, null, null, false, null, null, null, 200, 100)
+                new UserModuleOld(0, null, null, null, null, null, false, null, null, null, null, null),
+                new UserModuleOld(1, null, null, null, null, null, false, null, null, null, null, 1),
+                new UserModuleOld(2, null, null, null, null, null, false, null, null, null, 2, null),
+                new UserModuleOld(3, null, null, null, null, null, false, null, null, null, 3, 4),
+                new UserModuleOld(4, null, null, null, null, null, false, null, null, null, null, 100),
+                new UserModuleOld(5, null, null, null, null, null, false, null, null, null, 5, 100),
+                new UserModuleOld(6, null, null, null, null, null, false, null, null, null, 200, null),
+                new UserModuleOld(7, null, null, null, null, null, false, null, null, null, 200, 6),
+                new UserModuleOld(8, null, null, null, null, null, false, null, null, null, 200, 100)
         );
         Mockito.when(userMigrationService.getAll()).thenReturn(users);
 

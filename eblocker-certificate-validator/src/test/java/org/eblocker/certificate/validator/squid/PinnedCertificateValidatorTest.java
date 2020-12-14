@@ -55,7 +55,7 @@ public class PinnedCertificateValidatorTest {
 
     @Test
     public void testPinnedCertificate() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[] { PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 
@@ -69,7 +69,8 @@ public class PinnedCertificateValidatorTest {
 
     @Test
     public void testPinnedCertificateOpenSslError() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[] { PINNED_CERTIFICATE }, new String[] { "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY", "X509_V_ERR_CERT_UNTRUSTED", "X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE" }, new String[] { "cert_0", "cert_0", "cert_0" }, USE_CONCURRENCY);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ PINNED_CERTIFICATE },
+                new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY", "X509_V_ERR_CERT_UNTRUSTED", "X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE" }, new String[]{ "cert_0", "cert_0", "cert_0" }, USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 
@@ -83,7 +84,7 @@ public class PinnedCertificateValidatorTest {
 
     @Test
     public void testNotPinnedCertificate() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[] { NOT_PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ NOT_PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         validator.validate(request, USE_CONCURRENCY);
 
@@ -92,7 +93,7 @@ public class PinnedCertificateValidatorTest {
 
     @Test
     public void testExpiredCertificate() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[] { EXPIRE_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ EXPIRE_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 

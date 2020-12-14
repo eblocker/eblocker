@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.AppModuleService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.AppModuleService;
 
 public class AppModuleServiceScheduler extends FixedDelayScheduler {
 
     @Inject
     public AppModuleServiceScheduler(AppModuleService appModuleService,
-            @Named("executor.appModuleListUpdater.startupDelay") long startupDelay,
-            @Named("executor.appModuleListUpdater.fixedDelay") long fixedDelay) {
+                                     @Named("executor.appModuleListUpdater.startupDelay") long startupDelay,
+                                     @Named("executor.appModuleListUpdater.fixedDelay") long fixedDelay) {
         super(appModuleService.getUpdater(), startupDelay, fixedDelay);
     }
 }

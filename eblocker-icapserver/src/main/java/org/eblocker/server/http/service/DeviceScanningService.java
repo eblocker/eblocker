@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.network.ArpSweeper;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.util.IpUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +77,7 @@ public class DeviceScanningService {
 
     /**
      * Set the interval between device scanning runs in seconds
+     *
      * @param seconds if set to 0, scanning for devices is disabled
      */
     public void setScanningInterval(long seconds) {
@@ -117,6 +118,7 @@ public class DeviceScanningService {
 
     /**
      * Starts ARP sweeper if given interval is greater than zero
+     *
      * @param startupDelay
      * @param interval
      */
@@ -151,7 +153,7 @@ public class DeviceScanningService {
 
     private List<Integer[]> createNetworks(String... networkStrings) {
         List<Integer[]> networks = new ArrayList<>();
-        for(String networkString : networkStrings) {
+        for (String networkString : networkStrings) {
             String[] tokens = networkString.split("/");
             if (tokens.length != 2) {
                 throw new IllegalArgumentException("not a ipv4 net: " + networkString);

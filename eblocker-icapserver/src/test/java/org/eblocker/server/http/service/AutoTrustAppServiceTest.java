@@ -62,7 +62,7 @@ public class AutoTrustAppServiceTest {
         autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now(), "foo.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
-            autoTrustAppModuleId);
+                autoTrustAppModuleId);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class AutoTrustAppServiceTest {
         autoTrustAppService.onChange(newArrayList(failedConnection(lastOccurrence, "foo.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
-            autoTrustAppModuleId);
+                autoTrustAppModuleId);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class AutoTrustAppServiceTest {
         autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now(), "foo.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"),
-            autoTrustAppModuleId);
+                autoTrustAppModuleId);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class AutoTrustAppServiceTest {
         autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now(), "foo.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
-            autoTrustAppModuleId);
+                autoTrustAppModuleId);
     }
 
     @Test
@@ -159,12 +159,12 @@ public class AutoTrustAppServiceTest {
 
     private AppWhitelistModule collectingModule(String... whiteListedDomains) {
         return new AppWhitelistModule(autoTrustAppModuleId, null, null,
-            newArrayList(whiteListedDomains), null, null, null, null, null, null, null,
-            null, null, null);
+                newArrayList(whiteListedDomains), null, null, null, null, null, null, null,
+                null, null, null);
     }
 
     private FailedConnection failedConnection(Instant lastOccurrence, String... domains) {
         return new FailedConnection(newArrayList("device:000000000000"), newArrayList(domains),
-            newArrayList("error:0"), lastOccurrence);
+                newArrayList("error:0"), lastOccurrence);
     }
 }

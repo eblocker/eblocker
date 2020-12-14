@@ -16,71 +16,70 @@
  */
 package org.eblocker.server.common.update;
 
-import java.time.LocalTime;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.strategicgains.syntaxe.annotation.IntegerValidation;
 
+import java.time.LocalTime;
 
-/**This configuration holds the timeframe for automatic updates. It is defined via the beginning time (beginTimeHour:beginTimeMin) and the ending time (endTimeHour:endTimeMin)
+/**
+ * This configuration holds the timeframe for automatic updates. It is defined via the beginning time (beginTimeHour:beginTimeMin) and the ending time (endTimeHour:endTimeMin)
  */
 public class AutomaticUpdaterConfiguration {
 
-	@IntegerValidation(name="BeginHour", min=0,max=23)
-	private int beginTimeHour;
-	@IntegerValidation(name="EndHour", min=0,max=23)
-	private int endTimeHour;
-	@IntegerValidation(name="BeginMin", min=0,max=59)
-	private int beginTimeMin;
-	@IntegerValidation(name="EndMin", min=0,max=59)
-	private int endTimeMin;
+    @IntegerValidation(name = "BeginHour", min = 0, max = 23)
+    private int beginTimeHour;
+    @IntegerValidation(name = "EndHour", min = 0, max = 23)
+    private int endTimeHour;
+    @IntegerValidation(name = "BeginMin", min = 0, max = 59)
+    private int beginTimeMin;
+    @IntegerValidation(name = "EndMin", min = 0, max = 59)
+    private int endTimeMin;
 
+    @JsonProperty
+    public int getBeginHour() {
+        return beginTimeHour;
+    }
 
-	@JsonProperty
-	public int getBeginHour(){
-		return beginTimeHour;
-	}
+    public void setBeginHour(int beginHour) {
+        this.beginTimeHour = beginHour;
+    }
 
-	public void setBeginHour(int beginHour){
-		this.beginTimeHour = beginHour;
-	}
+    @JsonProperty
+    public int getBeginMin() {
+        return beginTimeMin;
+    }
 
-	@JsonProperty
-	public int getBeginMin(){
-		return beginTimeMin;
-	}
+    public void setBeginMin(int beginMin) {
+        this.beginTimeMin = beginMin;
+    }
 
-	public void setBeginMin(int beginMin){
-		this.beginTimeMin = beginMin;
-	}
+    @JsonProperty
+    public int getEndHour() {
+        return endTimeHour;
+    }
 
-	@JsonProperty
-	public int getEndHour(){
-		return endTimeHour;
-	}
+    public void setEndHour(int endHour) {
+        this.endTimeHour = endHour;
+    }
 
-	public void setEndHour(int endHour){
-		this.endTimeHour = endHour;
-	}
+    @JsonProperty
+    public int getEndMin() {
+        return endTimeMin;
+    }
 
-	@JsonProperty
-	public int getEndMin(){
-		return endTimeMin;
-	}
+    public void setEndMin(int endMin) {
+        this.endTimeMin = endMin;
+    }
 
-	public void setEndMin(int endMin){
-		this.endTimeMin = endMin;
-	}
-
-	public LocalTime getNotBefore() {
-	    return LocalTime.of(beginTimeHour, beginTimeMin);
+    public LocalTime getNotBefore() {
+        return LocalTime.of(beginTimeHour, beginTimeMin);
     }
 
     public LocalTime getNotAfter() {
-	    return LocalTime.of(endTimeHour, endTimeMin);
+        return LocalTime.of(endTimeHour, endTimeMin);
     }
 
-	public String toJSONString() {
-		return "{\"beginHour\":"+beginTimeHour+",\"beginMin\":"+beginTimeMin+",\"endHour\":"+endTimeHour+",\"endMin\":"+endTimeMin+"}";
-	}
+    public String toJSONString() {
+        return "{\"beginHour\":" + beginTimeHour + ",\"beginMin\":" + beginTimeMin + ",\"endHour\":" + endTimeHour + ",\"endMin\":" + endTimeMin + "}";
+    }
 }

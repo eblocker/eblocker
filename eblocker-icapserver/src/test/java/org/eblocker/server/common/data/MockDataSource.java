@@ -20,8 +20,8 @@ import org.eblocker.server.common.data.openvpn.ExternalAddressType;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.transaction.Decision;
-import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
+import org.eblocker.server.http.ssl.AppWhitelistModule;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -35,17 +35,17 @@ public class MockDataSource implements DataSource {
     private String gatewayIP;
     private Set<VpnProfile> vpnProfiles = new HashSet<>();
 
-    public void setGatewayIP(String gatewayIP){
+    public void setGatewayIP(String gatewayIP) {
         this.gatewayIP = gatewayIP;
     }
 
-    public void addVPNProfile(VpnProfile profile){
-        if(profile!=null) {
+    public void addVPNProfile(VpnProfile profile) {
+        if (profile != null) {
             vpnProfiles.add(profile);
         }
     }
 
-    public void removeAllVPNProfiles(){
+    public void removeAllVPNProfiles() {
         vpnProfiles.clear();
     }
 
@@ -438,11 +438,11 @@ public class MockDataSource implements DataSource {
 
     }
 
-	@Override
-	public void setIpAddressesFixed(boolean fixed) {
-		// TODO Auto-generated method stub
+    @Override
+    public void setIpAddressesFixed(boolean fixed) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
     @Override
     public boolean getCleanShutdownFlag() {

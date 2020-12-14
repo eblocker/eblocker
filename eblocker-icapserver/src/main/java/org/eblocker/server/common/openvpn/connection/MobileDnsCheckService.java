@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.http.service.OpenVpnServerService;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.http.service.OpenVpnServerService;
 
 @Singleton
 public class MobileDnsCheckService {

@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.ssl;
 
+import com.google.common.io.ByteStreams;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DistinguishedName;
@@ -23,10 +27,6 @@ import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.ssl.SslService.PkiException;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
-import com.google.common.io.ByteStreams;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

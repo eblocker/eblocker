@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.icap.transaction.processor.filter;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.blacklist.BlockedDomainLog;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.service.FilterStatisticsService;
@@ -23,9 +26,6 @@ import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.transaction.Transaction;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 @Singleton
 public class PatternBlockerUtils {

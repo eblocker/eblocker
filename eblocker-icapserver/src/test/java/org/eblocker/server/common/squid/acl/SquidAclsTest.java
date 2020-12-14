@@ -46,13 +46,13 @@ public class SquidAclsTest {
         Files.deleteIfExists(aclPath);
 
         devices = new ArrayList<>();
-        for(int i = 0; i < 16; ++i) {
+        for (int i = 0; i < 16; ++i) {
             devices.add(createMockDevice(String.format("device:%012x", i),
-                (i & 1) != 0,
-                (i & 2) != 0,
-                (i & 4) != 0,
-                (i & 8) != 0,
-                "10.10.10." + (10 + i)));
+                    (i & 1) != 0,
+                    (i & 2) != 0,
+                    (i & 4) != 0,
+                    (i & 8) != 0,
+                    "10.10.10." + (10 + i)));
         }
 
         deviceService = Mockito.mock(DeviceService.class);
@@ -150,7 +150,7 @@ public class SquidAclsTest {
     private void assertContent(String... ipAddresses) throws IOException {
         List<String> lines = Files.readAllLines(aclPath);
         Assert.assertEquals(ipAddresses.length, lines.size());
-        for(String ipAddress : ipAddresses) {
+        for (String ipAddress : ipAddresses) {
             Assert.assertTrue(lines.contains(ipAddress));
         }
     }

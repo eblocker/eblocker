@@ -44,9 +44,9 @@ public class SurrogateService {
 
     private Optional<String> surrogateForUrl(String url) {
         return urlToSurrogate.entrySet().stream()
-            .filter(e -> url.contains(e.getKey()))
-            .findFirst()
-            .map(Map.Entry::getValue);
+                .filter(e -> url.contains(e.getKey()))
+                .findFirst()
+                .map(Map.Entry::getValue);
     }
 
     private FullHttpResponse surrogateAsHttpResponse(String surrogate) {
@@ -71,8 +71,8 @@ public class SurrogateService {
             ObjectMapper mapper = createHJsonMapper();
             Map<String, List<List<String>>> surrogateInfos = mapper.readValue(js, Map.class);
             urlToSurrogate = surrogateInfos.values().stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toMap(l -> l.get(0), l -> l.get(1)));
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toMap(l -> l.get(0), l -> l.get(1)));
         } catch (JsonProcessingException e) {
             log.error("Error while reading surrogates.hjson", e);
         }

@@ -49,7 +49,7 @@ public class BpjmModulSerializer {
         int size = dataIn.readInt();
 
         List<BpjmEntry> entries = new ArrayList<>(size);
-        for(int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             byte[] domainHash = new byte[16];
             dataIn.readFully(domainHash);
             byte[] pathHash = new byte[16];
@@ -67,7 +67,7 @@ public class BpjmModulSerializer {
         dataOut.write(VERSION);
         dataOut.writeLong(bpjmModul.getLastModified());
         dataOut.writeInt(bpjmModul.getEntries().size());
-        for(BpjmEntry e : bpjmModul.getEntries()) {
+        for (BpjmEntry e : bpjmModul.getEntries()) {
             dataOut.write(e.getDomainHash());
             dataOut.write(e.getPathHash());
             dataOut.writeByte(e.getDepth());

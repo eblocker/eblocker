@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.registration;
 
-import org.eblocker.server.common.data.LocaleSettings;
-import org.eblocker.server.http.service.SettingsService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.keys.SystemKey;
 import org.eblocker.crypto.pki.CertificateAndKey;
@@ -26,16 +26,13 @@ import org.eblocker.crypto.util.DateUtil;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
+import org.eblocker.server.common.data.LocaleSettings;
 import org.eblocker.server.common.system.CpuInfo;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.http.service.SettingsService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
-
 import org.mockserver.integration.ClientAndServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +47,8 @@ import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+
+import static org.mockito.Mockito.when;
 
 public abstract class DeviceRegistrationTestBase {
     private static final Logger log = LoggerFactory.getLogger(DeviceRegistrationTestBase.class);
@@ -225,14 +224,14 @@ public abstract class DeviceRegistrationTestBase {
                 licenseType.toString(),
                 Boolean.toString(autoRenewal),
                 null,
-            null,
-            null
+                null,
+                null
         );
     }
 
     protected X509Certificate decode(byte[] encoded) throws CertificateException {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        return (X509Certificate)cf.generateCertificate(new ByteArrayInputStream(encoded));
+        return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(encoded));
     }
 
     private String createResource(String prefix, String postfix) {
@@ -241,8 +240,8 @@ public abstract class DeviceRegistrationTestBase {
             Files.delete(path);
             return path.toString();
         } catch (IOException e) {
-            log.error("Cannot create resource file: "+e.getMessage());
-            throw new IllegalArgumentException("Cannot create resource file: "+e.getMessage(), e);
+            log.error("Cannot create resource file: " + e.getMessage());
+            throw new IllegalArgumentException("Cannot create resource file: " + e.getMessage(), e);
         }
     }
 

@@ -16,16 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
-import org.eblocker.server.common.ssl.EblockerCa;
-import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.server.common.ssl.SslTestUtils;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 import com.google.common.io.ByteStreams;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,6 +24,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
+import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
+import org.eblocker.server.common.ssl.EblockerCa;
+import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.ssl.SslTestUtils;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +47,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
-
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;

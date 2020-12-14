@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
@@ -25,7 +26,6 @@ import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,11 +61,11 @@ public class OpenVpnProfileFilesTest {
     @Test
     public void testFileLocations() {
         Set<String> locations = new HashSet<>();
-        for(int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             String profilePath = profilesPath + "/" + i;
             Assert.assertEquals(profilePath, profileFiles.getDirectory(i));
 
-           checkLocation(locations, profilePath, profileFiles.getConfig(i));
+            checkLocation(locations, profilePath, profileFiles.getConfig(i));
             checkLocation(locations, profilePath, profileFiles.getCredentials(i));
             checkLocation(locations, profilePath, profileFiles.getParsedConfiguration(i));
             checkLocation(locations, profilePath, profileFiles.getLogFile(i));
@@ -97,7 +97,7 @@ public class OpenVpnProfileFilesTest {
 
         List<Option> options = new ArrayList<>();
         options.add(new SimpleOption(1, "option-no-args"));
-        options.add(new SimpleOption(2, "option-with-args", new String[]{"0", "1", "2", "3"}));
+        options.add(new SimpleOption(2, "option-with-args", new String[]{ "0", "1", "2", "3" }));
         profileFiles.writeConfigFile(0, options);
 
         Assert.assertTrue(Files.exists(Paths.get(profileFiles.getConfig(0))));
@@ -113,7 +113,7 @@ public class OpenVpnProfileFilesTest {
 
         Assert.assertFalse(Files.exists(Paths.get(profileFiles.getOptionFile(0, "a"))));
 
-        byte[] content = new byte[] { 0, 1, 2, 3 };
+        byte[] content = new byte[]{ 0, 1, 2, 3 };
         profileFiles.writeConfigOptionFile(0, "a", content);
 
         Assert.assertTrue(Files.exists(Paths.get(profileFiles.getOptionFile(0, "a"))));

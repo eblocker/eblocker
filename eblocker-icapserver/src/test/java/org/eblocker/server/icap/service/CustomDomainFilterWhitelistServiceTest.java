@@ -43,10 +43,10 @@ public class CustomDomainFilterWhitelistServiceTest {
         domainBlacklistService = Mockito.mock(DomainBlacklistService.class);
         Mockito.when(domainBlacklistService.getFilter(0)).thenReturn(new CollectionFilter<>(0, Collections.singleton(".whitelisted.com")));
 
-        users = new UserModule[] {
-            createMockUser(0, 0),
-            createMockUser(1, null),
-            createMockUser(2, 100)
+        users = new UserModule[]{
+                createMockUser(0, 0),
+                createMockUser(1, null),
+                createMockUser(2, 100)
         };
         userService = Mockito.mock(UserService.class);
         Mockito.when(userService.getUserById(0)).thenReturn(users[0]);
@@ -58,10 +58,10 @@ public class CustomDomainFilterWhitelistServiceTest {
 
     @Test
     public void testGetFilter() {
-       DomainFilter<String> filter = service.getWhitelistFilter(0);
-       Assert.assertNotNull(filter);
-       Assert.assertTrue(filter.isBlocked("www.whitelisted.com").isBlocked());
-       Assert.assertEquals(Filters.staticFalse(), service.getWhitelistFilter(1));
+        DomainFilter<String> filter = service.getWhitelistFilter(0);
+        Assert.assertNotNull(filter);
+        Assert.assertTrue(filter.isBlocked("www.whitelisted.com").isBlocked());
+        Assert.assertEquals(Filters.staticFalse(), service.getWhitelistFilter(1));
     }
 
     @Test

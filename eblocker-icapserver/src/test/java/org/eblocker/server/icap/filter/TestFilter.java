@@ -20,49 +20,49 @@ import org.eblocker.server.common.transaction.TransactionContext;
 
 public class TestFilter extends AbstractFilter {
 
-	private final String pattern;
-	
-	private boolean passOnMatch;
-	
-	public TestFilter(String pattern) {
-		super(FilterPriority.HIGHEST, pattern);
-		this.pattern = pattern;
-		this.passOnMatch = false;
-	}
-	
-	public TestFilter(String pattern, boolean passOnMatch) {
-		super(FilterPriority.HIGHEST, pattern);
-		this.pattern = pattern;
-		this.passOnMatch = passOnMatch;
-	}
-	
-	public TestFilter(String pattern, boolean passOnMatch, FilterPriority priority) {
-		super(priority, pattern);
-		this.pattern = pattern;
-		this.passOnMatch = passOnMatch;
-	}
-	
-	public TestFilter(TestFilter filter) {
-		super(filter.getPriority(), filter.pattern);
-		this.pattern = filter.pattern;
-		this.passOnMatch = filter.passOnMatch;
-	}
-	
-	@Override
-	public FilterResult doFilter(TransactionContext context) {
-		String url = context.getUrl();
-		if (url.contains(pattern)) {
-			if (passOnMatch) {
-				return FilterResult.pass(this);
-			} else {
-				return FilterResult.block(this);
-			}
-		}
-		return FilterResult.noDecision(this);
-	}
+    private final String pattern;
 
-	@Override
-	public String toString() {
-		return "TestFilter["+pattern+"]";
-	}
+    private boolean passOnMatch;
+
+    public TestFilter(String pattern) {
+        super(FilterPriority.HIGHEST, pattern);
+        this.pattern = pattern;
+        this.passOnMatch = false;
+    }
+
+    public TestFilter(String pattern, boolean passOnMatch) {
+        super(FilterPriority.HIGHEST, pattern);
+        this.pattern = pattern;
+        this.passOnMatch = passOnMatch;
+    }
+
+    public TestFilter(String pattern, boolean passOnMatch, FilterPriority priority) {
+        super(priority, pattern);
+        this.pattern = pattern;
+        this.passOnMatch = passOnMatch;
+    }
+
+    public TestFilter(TestFilter filter) {
+        super(filter.getPriority(), filter.pattern);
+        this.pattern = filter.pattern;
+        this.passOnMatch = filter.passOnMatch;
+    }
+
+    @Override
+    public FilterResult doFilter(TransactionContext context) {
+        String url = context.getUrl();
+        if (url.contains(pattern)) {
+            if (passOnMatch) {
+                return FilterResult.pass(this);
+            } else {
+                return FilterResult.block(this);
+            }
+        }
+        return FilterResult.noDecision(this);
+    }
+
+    @Override
+    public String toString() {
+        return "TestFilter[" + pattern + "]";
+    }
 }

@@ -25,13 +25,13 @@ import java.util.TimeZone;
 public class DateUtil {
 
     private static final String RFC1123_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-    
+
     private static final String DEFAULT_LANGUAGE = "en";
-    
+
     private static final String DEFAULT_COUNTRY = "US";
-    
+
     private static final String DEFAULT_TIMEZONE_ID = "GMT";
-    
+
     private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
         @Override
         protected DateFormat initialValue() {
@@ -50,7 +50,7 @@ public class DateUtil {
     }
 
     public static boolean isBeforeDays(Date date, Date now, int days) {
-        return date.getTime() < now.getTime() + 1000L*3600*24*days;
+        return date.getTime() < now.getTime() + 1000L * 3600 * 24 * days;
     }
 
 }

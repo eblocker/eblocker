@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.dns;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.TestRedisServer;
 import org.eblocker.server.common.data.Ip4Address;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -64,18 +64,18 @@ public class JedisDnsDataSourceTest {
         try (Jedis jedis = JEDIS_POOL.getResource()) {
             Pipeline pipeline = jedis.pipelined();
             pipeline.rpush("dns_stats:test",
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 0, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 10),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 1, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 20),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 2, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 30),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 3, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 40),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 4, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 5, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 6, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 7, 0, ZoneId.systemDefault()), "8.8.8.8", "timeout"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 8, 0, ZoneId.systemDefault()), "8.8.8.8", "timeout"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 9, 0, ZoneId.systemDefault()), "8.8.8.8", "error"),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 10, 0, ZoneId.systemDefault()), "8.8.4.4", "valid", 20),
-                entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 11, 0, ZoneId.systemDefault()), "9.9.9.9", "valid", 30));
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 0, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 10),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 1, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 20),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 2, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 30),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 3, 0, ZoneId.systemDefault()), "8.8.8.8", "valid", 40),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 4, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 5, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 6, 0, ZoneId.systemDefault()), "8.8.8.8", "invalid"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 7, 0, ZoneId.systemDefault()), "8.8.8.8", "timeout"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 8, 0, ZoneId.systemDefault()), "8.8.8.8", "timeout"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 9, 0, ZoneId.systemDefault()), "8.8.8.8", "error"),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 10, 0, ZoneId.systemDefault()), "8.8.4.4", "valid", 20),
+                    entry(ZonedDateTime.of(2017, 11, 20, 12, 0, 11, 0, ZoneId.systemDefault()), "9.9.9.9", "valid", 30));
             pipeline.sync();
         }
     }
@@ -104,7 +104,7 @@ public class JedisDnsDataSourceTest {
     @Test
     public void deleteEventsBefore() {
         jedisDnsDataSource.deleteEventsBefore(ZonedDateTime.of(2017, 11, 20, 12, 0, 4, 0, ZoneId.systemDefault()).toInstant());
-        try(Jedis jedis = JEDIS_POOL.getResource()) {
+        try (Jedis jedis = JEDIS_POOL.getResource()) {
             Assert.assertEquals(Long.valueOf(8), jedis.llen("dns_stats:test"));
         }
     }
@@ -112,7 +112,7 @@ public class JedisDnsDataSourceTest {
     @Test
     public void deleteEventsBeforeNoDeletions() {
         jedisDnsDataSource.deleteEventsBefore(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant());
-        try(Jedis jedis = JEDIS_POOL.getResource()) {
+        try (Jedis jedis = JEDIS_POOL.getResource()) {
             Assert.assertEquals(Long.valueOf(12), jedis.llen("dns_stats:test"));
         }
     }
@@ -120,7 +120,7 @@ public class JedisDnsDataSourceTest {
     @Test
     public void testAddDnsQuery() {
         jedisDnsDataSource.addDnsQueryQueue("1234", "8.8.8.8", Arrays.asList(new DnsQuery(DnsRecordType.A, "xkcd.org"), new DnsQuery(DnsRecordType.AAAA, "eblocker.com")));
-        try(Jedis jedis = JEDIS_POOL.getResource()) {
+        try (Jedis jedis = JEDIS_POOL.getResource()) {
             Assert.assertEquals(Long.valueOf(1L), jedis.llen("dns_query"));
             Assert.assertEquals("1234,8.8.8.8,A:xkcd.org,AAAA:eblocker.com", jedis.lpop("dns_query"));
         }
@@ -129,7 +129,8 @@ public class JedisDnsDataSourceTest {
     @Test
     public void testPopDnsResult() {
         try (Jedis jedis = JEDIS_POOL.getResource()) {
-            jedis.rpush("dns_response:2345", "{\"responses\":[\"0,A,xkcd.org.,108.168.185.170\",\"0,A,pouet.net.,145.24.145.63\",\"3\",\"\"],\"log\":[\"1511885786.4447541,8.8.8.8,valid,0.059603153\",\"1511885786.743278,8.8.8.8,valid,0.29789187\",\"1517235748.7000978,8.8.8.8,valid,0.032670123\",\"1517236466.824103,8.8.8.8,timeout\"]}");
+            jedis.rpush("dns_response:2345",
+                    "{\"responses\":[\"0,A,xkcd.org.,108.168.185.170\",\"0,A,pouet.net.,145.24.145.63\",\"3\",\"\"],\"log\":[\"1511885786.4447541,8.8.8.8,valid,0.059603153\",\"1511885786.743278,8.8.8.8,valid,0.29789187\",\"1517235748.7000978,8.8.8.8,valid,0.032670123\",\"1517236466.824103,8.8.8.8,timeout\"]}");
         }
 
         DnsDataSourceDnsResponse result = jedisDnsDataSource.popDnsResolutionQueue("2345", 10);
@@ -185,7 +186,7 @@ public class JedisDnsDataSourceTest {
 
         Assert.assertNull(result);
         Assert.assertTrue("Expected elapsed time to to be between 900 and 10000 ms, got " + elapsed,
-            elapsed >= 900 && elapsed < 10000);
+                elapsed >= 900 && elapsed < 10000);
     }
 
     private String entry(ZonedDateTime dt, String nameServer, String status) {

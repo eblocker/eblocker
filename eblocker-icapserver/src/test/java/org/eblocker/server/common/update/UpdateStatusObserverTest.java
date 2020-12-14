@@ -48,20 +48,20 @@ public class UpdateStatusObserverTest {
     public void updateStarted() throws Exception {
         Mockito.when(systemStatusService.getExecutionState()).thenReturn(ExecutionState.RUNNING);
         Mockito.when(scheduledExecutorService.scheduleWithFixedDelay(
-            Mockito.any(),
-            Mockito.eq(FIXED_DELAY),
-            Mockito.eq(FIXED_DELAY),
-            Mockito.eq(TimeUnit.SECONDS))).thenReturn(observerTask);
+                Mockito.any(),
+                Mockito.eq(FIXED_DELAY),
+                Mockito.eq(FIXED_DELAY),
+                Mockito.eq(TimeUnit.SECONDS))).thenReturn(observerTask);
 
         observer.updateStarted(systemUpdater);
 
         ArgumentCaptor<Runnable> runnable = ArgumentCaptor.forClass(Runnable.class);
         Mockito.verify(scheduledExecutorService).scheduleWithFixedDelay(
-            runnable.capture(),
-            Mockito.eq(FIXED_DELAY),
-            Mockito.eq(FIXED_DELAY),
-            Mockito.eq(TimeUnit.SECONDS)
-            );
+                runnable.capture(),
+                Mockito.eq(FIXED_DELAY),
+                Mockito.eq(FIXED_DELAY),
+                Mockito.eq(TimeUnit.SECONDS)
+        );
 
         // The SystemStatusService is notified
         Mockito.verify(systemStatusService).setExecutionState(ExecutionState.UPDATING);

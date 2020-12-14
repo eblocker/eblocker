@@ -38,7 +38,7 @@ public class ExceptionLogger implements Postprocessor {
             return;
         }
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             // Log stack trace only in debug mode
             log.error(getLogMessage(request, response, e), e);
         } else {

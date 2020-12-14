@@ -16,26 +16,27 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DashboardService;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.Test;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mockito;
 
 public class SchemaMigrationVersion39Test {
 
@@ -79,30 +80,28 @@ public class SchemaMigrationVersion39Test {
             return saved;
         });
 
-
         // Mock existing dashboard card list to verify that migration of cards works
         List<DashboardCard> filledList = new ArrayList<>();
         DashboardCardPosition[] defaultPosPause = {
-            new DashboardCardPosition(1, 1),
-            new DashboardCardPosition(1, 1),
-            new DashboardCardPosition(1, 1)};
+                new DashboardCardPosition(1, 1),
+                new DashboardCardPosition(1, 1),
+                new DashboardCardPosition(1, 1) };
         filledList.add(new DashboardCard(-10, null, "PAUSE_CARD", null, true, true, defaultPosPause, null));
         DashboardCardPosition[] defaultPosOt = {
-            new DashboardCardPosition(1, 1),
-            new DashboardCardPosition(1, 1),
-            new DashboardCardPosition(1, 1)};
+                new DashboardCardPosition(1, 1),
+                new DashboardCardPosition(1, 1),
+                new DashboardCardPosition(1, 1) };
         filledList.add(new DashboardCard(-11, null, "ONLINE_TIME_CARD", null, true, true, defaultPosOt, null));
         DashboardCardPosition[] defaultPosSsl = {
-            new DashboardCardPosition(1, 13),
-            new DashboardCardPosition(1, 7),
-            new DashboardCardPosition(2, 5)};
+                new DashboardCardPosition(1, 13),
+                new DashboardCardPosition(1, 7),
+                new DashboardCardPosition(2, 5) };
         filledList.add(new DashboardCard(-12, null, "SSL_CARD", null, true, true, defaultPosSsl, null));
         DashboardCardPosition[] defaultPosMsg = {
-            new DashboardCardPosition(1, 12),
-            new DashboardCardPosition(2, 4),
-            new DashboardCardPosition(3, 2)};
+                new DashboardCardPosition(1, 12),
+                new DashboardCardPosition(2, 4),
+                new DashboardCardPosition(3, 2) };
         filledList.add(new DashboardCard(-13, null, "MESSAGE_CARD", null, true, true, defaultPosMsg, null));
-
 
         List<DashboardCard> completeList = dashboardService.generateDashboardCards();
         userModule = new UserModuleOld(1, 1, "user1", null, null, null, false, null, null, completeList, null, null);
@@ -330,44 +329,45 @@ public class SchemaMigrationVersion39Test {
 
     /**
      * Just set a testable custom position.
+     *
      * @param card
      * @return
      */
     private DashboardCard setCustomPosition(DashboardCard card) {
 
         DashboardCardPosition[] cp = {
-            new DashboardCardPosition(1, card.getId()),
+                new DashboardCardPosition(1, card.getId()),
                 new DashboardCardPosition(2, card.getId()),
                 new DashboardCardPosition(3, card.getId())
         };
 
         return new DashboardCard(card.getId(),
-            card.getRequiredFeature(),
-            card.getTranslateSuffix(),
-            card.getHtml(),
-            card.isVisible(),
-            card.isAlwaysVisible(),
-            card.getDefaultPos(),
-            cp);
+                card.getRequiredFeature(),
+                card.getTranslateSuffix(),
+                card.getHtml(),
+                card.isVisible(),
+                card.isAlwaysVisible(),
+                card.getDefaultPos(),
+                cp);
 
     }
 
     private UiCard getNewCardById(List<UiCard> list, int id) {
         return list.stream()
-            .filter(c -> c.getId() == id).findFirst()
-            .get();
+                .filter(c -> c.getId() == id).findFirst()
+                .get();
     }
 
     private UiCard getCardByName(List<UiCard> list, String name) {
         return list.stream()
-            .filter(c -> c.getName().equals(name)).findFirst()
-            .get();
+                .filter(c -> c.getName().equals(name)).findFirst()
+                .get();
     }
 
     private DashboardCard getOldCardByName(List<DashboardCard> list, String name) {
         return list.stream()
-            .filter(c -> c.getTranslateSuffix().equals(name + "_CARD") || (c.getTranslateSuffix().equals("ANON_CARD") && name.equals("ANONYMIZATION"))).findFirst()
-            .get();
+                .filter(c -> c.getTranslateSuffix().equals(name + "_CARD") || (c.getTranslateSuffix().equals("ANON_CARD") && name.equals("ANONYMIZATION"))).findFirst()
+                .get();
     }
 
 }

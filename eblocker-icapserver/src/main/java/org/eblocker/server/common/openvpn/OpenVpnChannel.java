@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class OpenVpnChannel {
                     String routeNetGateway = parts[2];
                     String routeVpnGateway = parts[3];
                     String trustedIp = parts[4];
-                    List<String> nameServers = parts.length == 6  ? Arrays.asList(parts[5].split(",")) : Collections.emptyList();
+                    List<String> nameServers = parts.length == 6 ? Arrays.asList(parts[5].split(",")) : Collections.emptyList();
                     log.info("VPN client instance with ID: {} using {} just came (back) up.", id, virtualInterfaceName);
                     listener.up(virtualInterfaceName, routeNetGateway, routeVpnGateway, trustedIp, nameServers);
                     break;

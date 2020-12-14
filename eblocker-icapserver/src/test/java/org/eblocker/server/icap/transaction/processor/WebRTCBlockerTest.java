@@ -20,10 +20,6 @@ import ch.mimo.netty.handler.codec.icap.DefaultIcapRequest;
 import ch.mimo.netty.handler.codec.icap.IcapMethod;
 import ch.mimo.netty.handler.codec.icap.IcapRequest;
 import ch.mimo.netty.handler.codec.icap.IcapVersion;
-import org.eblocker.server.common.service.FeatureServiceSubscriber;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.icap.ch.mimo.icap.IcapTransaction;
-import org.eblocker.server.icap.transaction.Transaction;
 import com.google.common.io.ByteStreams;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -33,6 +29,10 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.common.service.FeatureServiceSubscriber;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.icap.ch.mimo.icap.IcapTransaction;
+import org.eblocker.server.icap.transaction.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -121,7 +121,7 @@ public class WebRTCBlockerTest {
 
         assertFalse(processor.process(transaction));
     }
-    
+
     private Transaction makeTransaction(StringBuilder content, boolean preview) {
         IcapRequest request = new DefaultIcapRequest(IcapVersion.ICAP_1_0, IcapMethod.RESPMOD, "/some/path", "myhost");
 
@@ -132,7 +132,7 @@ public class WebRTCBlockerTest {
         transaction = new IcapTransaction(request);
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
 
-        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE,"text/html");
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, "text/html");
 
         FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/some/path");
         transaction.setRequest(httpRequest);

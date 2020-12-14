@@ -16,10 +16,6 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.registration.MobileConnectionCheck;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.bootstrap.Bootstrap;
@@ -38,6 +34,10 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.FixedLengthFrameDecoder;
+import org.eblocker.registration.MobileConnectionCheck;
+import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.http.service.OpenVpnServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,10 +118,9 @@ public class MobileConnectionCheckTask implements Runnable {
         semaphore = new Semaphore(numberOfMessages);
     }
 
-
     public MobileConnectionCheckStatus getStatus() {
         return new MobileConnectionCheckStatus(state, tcpMessagesRequested.get(), tcpMessagesReceived.get(), udpMessagesRequested.get(), udpMessagesReceived
-            .get());
+                .get());
     }
 
     @Override
@@ -168,42 +167,42 @@ public class MobileConnectionCheckTask implements Runnable {
 
     private ChannelFuture setupUdpChannel() {
         return new Bootstrap()
-            .channel(NioDatagramChannel.class)
-            .group(workerGroup)
-            .option(ChannelOption.SO_REUSEADDR, true)
-            .handler(new UdpEchoHandler())
-            .bind(port).awaitUninterruptibly();
+                .channel(NioDatagramChannel.class)
+                .group(workerGroup)
+                .option(ChannelOption.SO_REUSEADDR, true)
+                .handler(new UdpEchoHandler())
+                .bind(port).awaitUninterruptibly();
     }
 
     private ChannelFuture setupTcpChannel() {
         return new ServerBootstrap()
-            .channel(NioServerSocketChannel.class)
-            .group(bossGroup, workerGroup)
-            .childOption(ChannelOption.SO_REUSEADDR, true)
-            .childOption(ChannelOption.TCP_NODELAY, true)
-            .childHandler(new ChannelInitializer() {
-                @Override
-                protected void initChannel(Channel ch) {
-                    ch.pipeline()
-                        .addLast("frame-decoder", new FixedLengthFrameDecoder(secret.length))
-                        .addLast("echo", new TcpEchoHandler());
-                }
-            })
-            .bind(port).awaitUninterruptibly();
+                .channel(NioServerSocketChannel.class)
+                .group(bossGroup, workerGroup)
+                .childOption(ChannelOption.SO_REUSEADDR, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childHandler(new ChannelInitializer() {
+                    @Override
+                    protected void initChannel(Channel ch) {
+                        ch.pipeline()
+                                .addLast("frame-decoder", new FixedLengthFrameDecoder(secret.length))
+                                .addLast("echo", new TcpEchoHandler());
+                    }
+                })
+                .bind(port).awaitUninterruptibly();
     }
 
     private void issueRequests() {
         log.info("requesting {} connections", numberOfMessages);
-        for(int i = 0; i < numberOfMessagesProtocol; ++i) {
+        for (int i = 0; i < numberOfMessagesProtocol; ++i) {
             if (udpEnabled) {
                 MobileConnectionCheck udpTest = deviceRegistrationClient
-                    .requestMobileConnectionCheck(MobileConnectionCheck.Protocol.UDP, mappedPort, secret);
+                        .requestMobileConnectionCheck(MobileConnectionCheck.Protocol.UDP, mappedPort, secret);
                 udpMessagesRequested.incrementAndGet();
                 tests.put(udpTest.getId(), udpTest);
             }
             if (tcpEnabled) {
                 MobileConnectionCheck tcpTest = deviceRegistrationClient
-                    .requestMobileConnectionCheck(MobileConnectionCheck.Protocol.TCP, mappedPort, secret);
+                        .requestMobileConnectionCheck(MobileConnectionCheck.Protocol.TCP, mappedPort, secret);
                 tcpMessagesRequested.incrementAndGet();
                 tests.put(tcpTest.getId(), tcpTest);
             }
@@ -215,7 +214,7 @@ public class MobileConnectionCheckTask implements Runnable {
             log.info("received all messages ({})", numberOfMessages);
         } else {
             throw new TimeoutException("timeout waiting for messages, received " + semaphore.availablePermits() + " of " + numberOfMessages,
-                MobileConnectionCheckStatus.State.TIMEOUT_REQUESTS);
+                    MobileConnectionCheckStatus.State.TIMEOUT_REQUESTS);
         }
     }
 
@@ -229,15 +228,15 @@ public class MobileConnectionCheckTask implements Runnable {
         state = MobileConnectionCheckStatus.State.PENDING_RESULTS;
 
         List<MobileConnectionCheck> pendingTests = tests.values().stream()
-            .filter(test -> test.getState() == MobileConnectionCheck.State.PENDING)
-            .collect(Collectors.toList());
+                .filter(test -> test.getState() == MobileConnectionCheck.State.PENDING)
+                .collect(Collectors.toList());
 
-        for(int i = 0; i < pollTries; ++i) {
+        for (int i = 0; i < pollTries; ++i) {
             log.info("fetching results for {} tests", pendingTests.size());
             List<MobileConnectionCheck> resolvedTests = pendingTests.parallelStream()
-                .map(test -> deviceRegistrationClient.getMobileConnectionCheck(test.getId()))
-                .filter(test -> test.getState() != MobileConnectionCheck.State.PENDING)
-                .collect(Collectors.toList());
+                    .map(test -> deviceRegistrationClient.getMobileConnectionCheck(test.getId()))
+                    .filter(test -> test.getState() != MobileConnectionCheck.State.PENDING)
+                    .collect(Collectors.toList());
             resolvedTests.forEach(test -> tests.put(test.getId(), test));
             pendingTests.removeAll(resolvedTests);
 
@@ -282,10 +281,10 @@ public class MobileConnectionCheckTask implements Runnable {
                 semaphore.release();
                 int count = tcpMessagesReceived.incrementAndGet();
                 log.info("echoed {} bytes to {}:{} ({} / {})", msg.readableBytes(),
-                    remoteAddress,
-                    remotePort,
-                    count,
-                    numberOfMessagesProtocol);
+                        remoteAddress,
+                        remotePort,
+                        count,
+                        numberOfMessagesProtocol);
                 ctx.writeAndFlush(msg.retainedDuplicate()).addListener(ChannelFutureListener.CLOSE);
             } else {
                 log.warn("unexpected message from {}:{}", remoteAddress, remotePort);
@@ -301,10 +300,10 @@ public class MobileConnectionCheckTask implements Runnable {
                 semaphore.release();
                 int count = udpMessagesReceived.incrementAndGet();
                 log.info("echoed {} bytes to {}:{} ({} / {})", packet.content().readableBytes(),
-                    packet.sender().getHostString(),
-                    packet.sender().getPort(),
-                    count,
-                    numberOfMessagesProtocol);
+                        packet.sender().getHostString(),
+                        packet.sender().getPort(),
+                        count,
+                        numberOfMessagesProtocol);
                 ctx.writeAndFlush(new DatagramPacket(packet.content().retainedDuplicate(), packet.sender()));
             } else {
                 log.warn("unexpected {} bytes from {}:{}", packet.content().readableBytes(), packet.sender().getHostString(), packet.sender().getPort());

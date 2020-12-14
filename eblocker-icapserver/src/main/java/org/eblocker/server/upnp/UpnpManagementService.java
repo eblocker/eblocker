@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.upnp;
 
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.meta.Action;
@@ -82,11 +82,11 @@ public class UpnpManagementService {
 
     @Inject
     public UpnpManagementService(NetworkInterfaceWrapper networkInterfaceWrapper, UpnpService upnpService,
-            UpnpPortForwardingAddFactory upnpPortForwardingAddFactory,
-            UpnpPortForwardingDeleteFactory upnpPortForwardingDeleteFactory,
-            UpnpActionCallbackFactory upnpActionCallbackFactory, UpnpActionInvocationFactory upnpActionInvocationFacory,
-            @Named("openvpn.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
-            @Named("openvpn.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
+                                 UpnpPortForwardingAddFactory upnpPortForwardingAddFactory,
+                                 UpnpPortForwardingDeleteFactory upnpPortForwardingDeleteFactory,
+                                 UpnpActionCallbackFactory upnpActionCallbackFactory, UpnpActionInvocationFactory upnpActionInvocationFacory,
+                                 @Named("openvpn.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
+                                 @Named("openvpn.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
         this.discoveryWaitingTime = upnpDiscoveryWaitingTime;
         this.maxDiscoverySteps = upnpDiscoveryMaxSteps;
         activePortForwardings = new ArrayList<>();
@@ -103,12 +103,12 @@ public class UpnpManagementService {
     }
 
     public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, String description,
-            boolean force) {
+                                                            boolean force) {
         return addPortForwarding(externalPort, internalPort, 0, description, force);
     }
 
     public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, int duration,
-            String description, boolean force) {
+                                                            String description, boolean force) {
         String eblockerIp = networkInterfaceWrapper.getFirstIPv4Address().toString();
 
         List<UpnpPortForwarding> portForwardings = new ArrayList<>();
@@ -120,7 +120,7 @@ public class UpnpManagementService {
     }
 
     public synchronized List<UpnpPortForwardingResult> addPortForwardings(List<UpnpPortForwarding> portForwardings,
-            boolean force) {
+                                                                          boolean force) {
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (UpnpPortForwarding portForwarding : portForwardings) {
             results.addAll(addPortForwarding(portForwarding, force));
@@ -149,7 +149,7 @@ public class UpnpManagementService {
     }
 
     public synchronized List<UpnpPortForwardingResult> addPortForwarding(UpnpPortForwarding portForwarding,
-            boolean force) {
+                                                                         boolean force) {
         Collection<Device> gatewayDevices = getGatewayDevices();
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (Device gatewayDevice : gatewayDevices) {
@@ -390,12 +390,12 @@ public class UpnpManagementService {
     }
 
     private UnsignedIntegerTwoBytes getUIntTwoBytesValue(final ActionInvocation<?> response,
-            final String argumentName) {
+                                                         final String argumentName) {
         return (UnsignedIntegerTwoBytes) response.getOutput(argumentName).getValue();
     }
 
     private UnsignedIntegerFourBytes getUIntFourBytesValue(final ActionInvocation<?> response,
-            final String argumentName) {
+                                                           final String argumentName) {
         return (UnsignedIntegerFourBytes) response.getOutput(argumentName).getValue();
     }
 

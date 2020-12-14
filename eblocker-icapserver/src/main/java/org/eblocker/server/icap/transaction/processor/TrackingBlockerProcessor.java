@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.Category;
@@ -30,9 +33,6 @@ import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.eblocker.server.icap.transaction.processor.filter.PatternBlockerUtils;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,45 +59,45 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
         this.transactionCache = transactionCache;
     }
 
-	private boolean askBlockOrRedirect(Transaction transaction, Session session) {
+    private boolean askBlockOrRedirect(Transaction transaction, Session session) {
         Filter redirectFilter = filterManager.getFilter(org.eblocker.server.icap.filter.Category.TRACKER_REDIRECT);
-		FilterResult result = redirectFilter.filter(transaction);
-		// We do not want the redirect filter to overwrite the result of the tracking filter
-		//transaction.setFilterResult(result);
+        FilterResult result = redirectFilter.filter(transaction);
+        // We do not want the redirect filter to overwrite the result of the tracking filter
+        //transaction.setFilterResult(result);
 
-		switch (result.getDecision()) {
+        switch (result.getDecision()) {
 
-		case NO_DECISION:
-			// No decision here means: We follow the previously made "BLOCK" decision from the easylist tracking filter!
-		case BLOCK:
-			session.incrementBlockedTrackings(transaction);
-            transaction.block();
-            patternBlockerUtils.countBlockedDomain(Category.TRACKERS, transaction.getFilterResult(), session, transaction);
-            return false;
-
-		case REDIRECT:
-			session.incrementBlockedTrackings(transaction);
-            patternBlockerUtils.countBlockedDomain(Category.TRACKERS, transaction.getFilterResult(), session, transaction);
-			if (result.getValue() != null) {
-				FILTER_LOG.info("{}\tRE\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
-                transaction.redirect(result.getValue());
-        	} else {
-				FILTER_LOG.info("{}\tRE\t{}\t{}\t{}", session.getShortId(), Decision.BLOCK, transaction.getUrl(), "<<REDIRECT-NO-TARGET>>");
+            case NO_DECISION:
+                // No decision here means: We follow the previously made "BLOCK" decision from the easylist tracking filter!
+            case BLOCK:
+                session.incrementBlockedTrackings(transaction);
                 transaction.block();
-            }
-			return false;
+                patternBlockerUtils.countBlockedDomain(Category.TRACKERS, transaction.getFilterResult(), session, transaction);
+                return false;
 
-		case ASK:
-            return ask(transaction, session, result);
+            case REDIRECT:
+                session.incrementBlockedTrackings(transaction);
+                patternBlockerUtils.countBlockedDomain(Category.TRACKERS, transaction.getFilterResult(), session, transaction);
+                if (result.getValue() != null) {
+                    FILTER_LOG.info("{}\tRE\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
+                    transaction.redirect(result.getValue());
+                } else {
+                    FILTER_LOG.info("{}\tRE\t{}\t{}\t{}", session.getShortId(), Decision.BLOCK, transaction.getUrl(), "<<REDIRECT-NO-TARGET>>");
+                    transaction.block();
+                }
+                return false;
 
-		default:
-			return true;
+            case ASK:
+                return ask(transaction, session, result);
 
-		}
+            default:
+                return true;
 
-	}
+        }
 
-	private boolean ask(Transaction transaction, Session session, FilterResult result) {
+    }
+
+    private boolean ask(Transaction transaction, Session session, FilterResult result) {
         //
         // Do we already have a previously made user decision?
         //
@@ -158,50 +158,49 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
         }
     }
 
-	@Override
-	public boolean process(Transaction transaction) {
+    @Override
+    public boolean process(Transaction transaction) {
         if (Decision.PASS.equals(transaction.getDecision())) {
             return true;
         }
 
-	    Session session = transaction.getSession();
+        Session session = transaction.getSession();
         if (!session.isPatternFiltersEnabled()) {
             return true;
         }
 
-	    PageContext pageContext = transaction.getPageContext();
-		if (!session.isBlockTrackings() || pageContext != null && pageContext.getWhiteListConfig().isTrackers()) {
-			return true;
-		}
+        PageContext pageContext = transaction.getPageContext();
+        if (!session.isBlockTrackings() || pageContext != null && pageContext.getWhiteListConfig().isTrackers()) {
+            return true;
+        }
 
         Filter trackingFilter = filterManager.getFilter(org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER);
-		FilterResult result = trackingFilter.filter(transaction);
-		transaction.setFilterResult(result);
-		if (!result.getDecision().equals(Decision.NO_DECISION)) {
-			FILTER_LOG.info("{}\tTR\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
-		}
-		switch (result.getDecision()) {
+        FilterResult result = trackingFilter.filter(transaction);
+        transaction.setFilterResult(result);
+        if (!result.getDecision().equals(Decision.NO_DECISION)) {
+            FILTER_LOG.info("{}\tTR\t{}\t{}\t{}", session.getShortId(), result.getDecision(), transaction.getUrl(), result.getDecider());
+        }
+        switch (result.getDecision()) {
 
-			case BLOCK:
-				return askBlockOrRedirect(transaction, session);
+            case BLOCK:
+                return askBlockOrRedirect(transaction, session);
 
-			default:
-				return true;
+            default:
+                return true;
 
-		}
-	}
+        }
+    }
 
-	/**
-	 * How should the filter behave, when we cannot find a redirect target URL in the original URL?
-	 *
+    /**
+     * How should the filter behave, when we cannot find a redirect target URL in the original URL?
      */
-	private boolean isBlockingWithoutRedirectTarget() {
-		//
-		// TODO: Returning "true" should resemble the previous behaviour.
-		//       But we can do better: Find out if the request is for an HTML page.
-		//       If so, we can always return a redirect and find out (with JavaScript), if we are in a top level frame.
-		//
-		return true;
-	}
+    private boolean isBlockingWithoutRedirectTarget() {
+        //
+        // TODO: Returning "true" should resemble the previous behaviour.
+        //       But we can do better: Find out if the request is for an HTML page.
+        //       If so, we can always return a redirect and find out (with JavaScript), if we are in a top level frame.
+        //
+        return true;
+    }
 
 }

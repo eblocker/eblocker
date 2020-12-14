@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.User;
-import com.google.inject.Inject;
 
 public class SchemaMigrationVersion1 implements SchemaMigration {
 

@@ -24,9 +24,11 @@ public class Message {
         this.status = status;
         this.text = message;
     }
+
     public String render() {
         return String.format("<div class=\"%s\">%s</div>", status.toString().toLowerCase(), text);
     }
+
     @Override
     public String toString() {
         return String.format("%s: %s", status.toString(), text);

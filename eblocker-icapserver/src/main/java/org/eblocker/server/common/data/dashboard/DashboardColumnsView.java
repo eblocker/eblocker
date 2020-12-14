@@ -18,13 +18,13 @@ package org.eblocker.server.common.data.dashboard;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DashboardColumnsView {
@@ -71,6 +71,7 @@ public class DashboardColumnsView {
     /**
      * All columns (one, two or three) MUST have the same cards. So just return oneColumn for a list of
      * all cards visible within this DashboardColumnsView object.
+     *
      * @return
      */
     public List<UiCardColumnPosition> getOneColumn() {
@@ -89,6 +90,7 @@ public class DashboardColumnsView {
      * All columns must contain the ID in order for contains(...) to return true. If only for one column the ID
      * is contained, this method returns false --> although this would be an inconsistent state. One-column-view,
      * two-column-view, three-column-view: all should contain all cards.
+     *
      * @param id of the card
      * @return true if the card represented by the ID is contained in all three columns. Otherwise false.
      */

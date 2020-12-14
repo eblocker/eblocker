@@ -29,7 +29,8 @@ public class ContentSecurityPoliciesUrlFilterTest {
 
     @Test
     public void test() {
-        assertFilterResult(Decision.SET_CSP_HEADER, "script-src 'self' * 'unsafe-inline", filter(StringMatchType.REGEX, "^http(s)?://[a-zA-Z0-9._-]*merriam-webster\\.com([^a-zA-Z0-9_.%-]|$).*$", FilterType.BLOCK, "script-src 'self' * 'unsafe-inline", "https://www.merriam-webster.com/index.html"));
+        assertFilterResult(Decision.SET_CSP_HEADER, "script-src 'self' * 'unsafe-inline",
+                filter(StringMatchType.REGEX, "^http(s)?://[a-zA-Z0-9._-]*merriam-webster\\.com([^a-zA-Z0-9_.%-]|$).*$", FilterType.BLOCK, "script-src 'self' * 'unsafe-inline", "https://www.merriam-webster.com/index.html"));
         assertFilterResult(Decision.PASS, null, filter(StringMatchType.REGEX, "^http(s)?://[a-zA-Z0-9._-]*merriam-webster\\.com([^a-zA-Z0-9_.%-]|$).*$", FilterType.PASS, "script-src 'self' * 'unsafe-inline", "https://www.merriam-webster.com/index.html"));
         assertFilterResult(Decision.NO_DECISION, null, filter(StringMatchType.REGEX, "^http(s)?://[a-zA-Z0-9._-]*merriam-webster\\.com([^a-zA-Z0-9_.%-]|$).*$", FilterType.BLOCK, "script-src 'self' * 'unsafe-inline", "https://www.xkcd.com/index.html"));
     }
@@ -42,11 +43,11 @@ public class ContentSecurityPoliciesUrlFilterTest {
     private FilterResult filter(StringMatchType matchType, String substring, FilterType type, String contentSecurityPolicies, String url) {
         TransactionContext context = new TestContext(url);
         Filter filter = UrlFilterFactory.getInstance()
-            .setStringMatchType(matchType)
-            .setMatchString(substring)
-            .setType(type)
-            .setContentSecurityPolicies(contentSecurityPolicies)
-            .build();
+                .setStringMatchType(matchType)
+                .setMatchString(substring)
+                .setType(type)
+                .setContentSecurityPolicies(contentSecurityPolicies)
+                .build();
         return filter.filter(context);
     }
 

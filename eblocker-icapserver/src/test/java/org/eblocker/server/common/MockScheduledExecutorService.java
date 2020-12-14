@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,19 +32,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A ScheduledExecutorService for tests where the elapsed time is controlled "manually"
  * with method elapse().
- * 
+ * <p>
  * NOTE: periodic scheduling via scheduleAtFixedRate() or scheduleWithFixedDelay() is not
  * yet implemented.
  */
 public class MockScheduledExecutorService implements ScheduledExecutorService {
     private static final Logger log = LoggerFactory.getLogger(MockScheduledExecutorService.class);
-    
+
     private Duration taskDuration; // how long does a task take to complete
     private Duration serviceAge;   // the "current" age of the service
     private List<ScheduledFutureTask<?>> tasks;
@@ -49,6 +49,7 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
     /**
      * Creates a test ScheduledExecutorService where all tasks take
      * the given duration to complete.
+     *
      * @param taskDuration
      */
     public MockScheduledExecutorService(Duration taskDuration) {
@@ -66,7 +67,9 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
 
     enum TaskState {
         WAITING, RUNNING, DONE, CANCELLED;
-    };
+    }
+
+    ;
 
     class ScheduledFutureTask<T> implements ScheduledFuture<T> {
         private TaskState state = TaskState.WAITING;
@@ -92,7 +95,7 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
         @Override
         public int compareTo(Delayed that) {
             return Long.valueOf(this.getDelay(TimeUnit.NANOSECONDS))
-                     .compareTo(that.getDelay(TimeUnit.NANOSECONDS));
+                    .compareTo(that.getDelay(TimeUnit.NANOSECONDS));
         }
 
         @Override
@@ -129,7 +132,7 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
             notImplemented();
             return null;
         }
-        
+
         private void startIfDue() {
             if (state == TaskState.WAITING) {
                 Duration delay = getCurrentDelay();
@@ -139,7 +142,7 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
                 }
             }
         }
-        
+
         private void finishIfComplete() {
             if (state == TaskState.RUNNING) {
                 Duration delayToCompletion = getCurrentDelay().plus(taskDuration);
@@ -150,29 +153,30 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
                 }
             }
         }
-        
+
         @Override
         public String toString() {
             return String.format("Task [%s] (scheduled: %d, delay: %d, duration: %d, age of service: %d)", state,
-                                 scheduledAfter.getSeconds(), delay.getSeconds(), taskDuration.getSeconds(), serviceAge.getSeconds());
+                    scheduledAfter.getSeconds(), delay.getSeconds(), taskDuration.getSeconds(), serviceAge.getSeconds());
         }
     }
-    
-    
+
     /**
      * Converts a time span to a duration
+     *
      * @param delay number of time units
-     * @param unit time unit
+     * @param unit  time unit
      * @return
      */
     private Duration duration(long delay, TimeUnit unit) {
         return Duration.ofNanos(unit.toNanos(delay));
     }
-    
+
     /**
      * Converts a duration to a number of time units
+     *
      * @param duration
-     * @param unit the unit to convert to
+     * @param unit     the unit to convert to
      * @return
      */
     private long timeUnits(Duration duration, TimeUnit unit) {

@@ -16,120 +16,118 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * Configures ethernet (and loopback) interfaces.
  */
 public class NetworkInterfaceConfiguration {
-	private final String interfacesConfigPath;
-	private final String interfaceName;
-	private final String emergencyIp;
-	private final String emergencyNetmask;
-	private final String anonIp;
-	private final String anonIpMask;
-	
-	private interface InterfaceConfig {
-		void append(BufferedWriter writer) throws IOException;
-	}
-	
-	@Inject
-	public NetworkInterfaceConfiguration(@Named("network.unix.interfaces.config.path") String interfacesConfigPath,
-			@Named("network.interface.name") String interfaceName,
-			@Named("network.emergency.ip") String emergencyIp,
-			@Named("network.emergency.netmask") String emergencyNetmask,
-			@Named("network.unix.anon.source.ip") String anonIpWithRange,
-			@Named("network.unix.anon.source.netmask") String anonIpMask ) {
-		this.interfacesConfigPath = interfacesConfigPath;
-		this.interfaceName = interfaceName;
-		this.emergencyIp = emergencyIp;
-		this.emergencyNetmask = emergencyNetmask;
-		this.anonIp = anonIpWithRange.substring(0, anonIpWithRange.indexOf('/'));
-		this.anonIpMask = anonIpMask;
-	}
-	
+    private final String interfacesConfigPath;
+    private final String interfaceName;
+    private final String emergencyIp;
+    private final String emergencyNetmask;
+    private final String anonIp;
+    private final String anonIpMask;
 
-	public void enableDhcp() throws IOException {
-		writeConfiguration((BufferedWriter writer) -> {
-			writer.append("dhcp");
-			writer.newLine();
-		});
-	}
-	
-	public void enableStatic(String ipAddress, String networkMask, String gateway) throws IOException {
-		writeConfiguration((BufferedWriter writer) -> {
-			writer.append("static");
-			writer.newLine();
+    private interface InterfaceConfig {
+        void append(BufferedWriter writer) throws IOException;
+    }
 
-			writer.append("\taddress ");
-			writer.append(ipAddress);
-			writer.newLine();
+    @Inject
+    public NetworkInterfaceConfiguration(@Named("network.unix.interfaces.config.path") String interfacesConfigPath,
+                                         @Named("network.interface.name") String interfaceName,
+                                         @Named("network.emergency.ip") String emergencyIp,
+                                         @Named("network.emergency.netmask") String emergencyNetmask,
+                                         @Named("network.unix.anon.source.ip") String anonIpWithRange,
+                                         @Named("network.unix.anon.source.netmask") String anonIpMask) {
+        this.interfacesConfigPath = interfacesConfigPath;
+        this.interfaceName = interfaceName;
+        this.emergencyIp = emergencyIp;
+        this.emergencyNetmask = emergencyNetmask;
+        this.anonIp = anonIpWithRange.substring(0, anonIpWithRange.indexOf('/'));
+        this.anonIpMask = anonIpMask;
+    }
 
-			writer.append("\tnetmask ");
-			writer.append(networkMask);
-			writer.newLine();
+    public void enableDhcp() throws IOException {
+        writeConfiguration((BufferedWriter writer) -> {
+            writer.append("dhcp");
+            writer.newLine();
+        });
+    }
 
-			writer.append("\tgateway ");
-			writer.append(gateway);
-			writer.newLine();
-		});
-	}
+    public void enableStatic(String ipAddress, String networkMask, String gateway) throws IOException {
+        writeConfiguration((BufferedWriter writer) -> {
+            writer.append("static");
+            writer.newLine();
 
+            writer.append("\taddress ");
+            writer.append(ipAddress);
+            writer.newLine();
 
-	private void writeConfiguration(InterfaceConfig config) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(interfacesConfigPath))) {
-			writer.append("auto lo");
-			writer.newLine();
-			writer.append("iface lo inet loopback");
-			writer.newLine();
-			writer.newLine();
-			writer.append("auto ");
-			writer.append(interfaceName);
-			writer.newLine();
-			writer.append("allow-hotplug ");
-			writer.append(interfaceName);
-			writer.newLine();
-			writer.append("iface ");
-			writer.append(interfaceName);
-			writer.append(" inet ");
-			config.append(writer);
-			writer.newLine();
+            writer.append("\tnetmask ");
+            writer.append(networkMask);
+            writer.newLine();
 
-			// add emergency IP:
-			writeLinkLocalAddress(interfaceName, ":0", emergencyIp, emergencyNetmask, writer);
+            writer.append("\tgateway ");
+            writer.append(gateway);
+            writer.newLine();
+        });
+    }
 
-			writer.newLine();
+    private void writeConfiguration(InterfaceConfig config) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(interfacesConfigPath))) {
+            writer.append("auto lo");
+            writer.newLine();
+            writer.append("iface lo inet loopback");
+            writer.newLine();
+            writer.newLine();
+            writer.append("auto ");
+            writer.append(interfaceName);
+            writer.newLine();
+            writer.append("allow-hotplug ");
+            writer.append(interfaceName);
+            writer.newLine();
+            writer.append("iface ");
+            writer.append(interfaceName);
+            writer.append(" inet ");
+            config.append(writer);
+            writer.newLine();
 
-			// add anonymous IP
-			writeLinkLocalAddress(interfaceName, ":1", anonIp, anonIpMask, writer);
-		}
-	}
-	
-	private void writeLinkLocalAddress(String interfaceName, String devSuffix, 
+            // add emergency IP:
+            writeLinkLocalAddress(interfaceName, ":0", emergencyIp, emergencyNetmask, writer);
+
+            writer.newLine();
+
+            // add anonymous IP
+            writeLinkLocalAddress(interfaceName, ":1", anonIp, anonIpMask, writer);
+        }
+    }
+
+    private void writeLinkLocalAddress(String interfaceName, String devSuffix,
                                        String linkLocalIp, String netmask, BufferedWriter writer) throws IOException {
-		writer.append("auto ");
-		writer.append(interfaceName);
-		writer.append(devSuffix);
-		writer.newLine();
-		writer.append("allow-hotplug ");
-		writer.append(interfaceName);
-		writer.append(devSuffix);
-		writer.newLine();
-		writer.append("iface ");
-		writer.append(interfaceName);
-		writer.append(devSuffix);
-		writer.append(" inet static");
-		writer.newLine();
-		writer.append("\taddress ");
-		writer.append(linkLocalIp);
-		writer.newLine();
-		writer.append("\tnetmask ");
-		writer.append(netmask);
-		writer.newLine();
-	}
+        writer.append("auto ");
+        writer.append(interfaceName);
+        writer.append(devSuffix);
+        writer.newLine();
+        writer.append("allow-hotplug ");
+        writer.append(interfaceName);
+        writer.append(devSuffix);
+        writer.newLine();
+        writer.append("iface ");
+        writer.append(interfaceName);
+        writer.append(devSuffix);
+        writer.append(" inet static");
+        writer.newLine();
+        writer.append("\taddress ");
+        writer.append(linkLocalIp);
+        writer.newLine();
+        writer.append("\tnetmask ");
+        writer.append(netmask);
+        writer.newLine();
+    }
 }

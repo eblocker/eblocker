@@ -23,7 +23,7 @@ public class IconState {
 
     private final String level;
     private final String msg;
-    
+
     @JsonCreator
     public IconState(
             @JsonProperty("level") String level,
@@ -36,7 +36,7 @@ public class IconState {
         return level;
     }
 
-    public String getMsg(){
+    public String getMsg() {
         return msg;
     }
 }

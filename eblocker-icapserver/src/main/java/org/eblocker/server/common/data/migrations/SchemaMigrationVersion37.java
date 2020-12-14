@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -66,7 +66,7 @@ public class SchemaMigrationVersion37 implements SchemaMigration {
 
     private void update(Jedis jedis, String keyPattern, Function<String, String> updateFunction) {
         Set<String> keys = jedis.keys(keyPattern);
-        for(String key : keys) {
+        for (String key : keys) {
             String json = jedis.get(key);
             String updatedJson = updateFunction.apply(json);
             if (!json.equals(updatedJson)) {

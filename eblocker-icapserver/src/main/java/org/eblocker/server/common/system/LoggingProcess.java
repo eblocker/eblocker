@@ -35,85 +35,89 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A wrapper for processes that should log their stout and stderr streams.
  */
 public abstract class LoggingProcess {
-	private static final Logger log = LoggerFactory.getLogger(LoggingProcess.class);
+    private static final Logger log = LoggerFactory.getLogger(LoggingProcess.class);
 
     private static final String QUIT_MARKER = LoggingProcess.class.getName() + ":QUIT_MARKER:" + Math.random();
 
     private final Semaphore outputReaderSemaphore = new Semaphore(2);
-	private final BlockingQueue<String> stdout = new LinkedBlockingQueue<>();
+    private final BlockingQueue<String> stdout = new LinkedBlockingQueue<>();
     private final AtomicInteger loggerExited = new AtomicInteger();
 
-	abstract class StreamLogger implements Runnable {
-		private InputStream stream;
-		protected String scriptName;
+    abstract class StreamLogger implements Runnable {
+        private InputStream stream;
+        protected String scriptName;
 
-		public StreamLogger(InputStream stream, String scriptName) {
-			this.stream = stream;
-			this.scriptName = scriptName;
-		}
+        public StreamLogger(InputStream stream, String scriptName) {
+            this.stream = stream;
+            this.scriptName = scriptName;
+        }
 
-		@Override
-		public void run() {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			String line;
-			try {
-				while ((line = reader.readLine()) != null) {
-					logLine(line);
-					stdout.add(line);
-				}
-			} catch (IOException e) {
-				log.error("{}: Could not read next line from stream", scriptName, e);
-			} finally {
-			    // only add quit marker if all stream loggers have added their lines to stdout
-			    if (loggerExited.incrementAndGet() == 2) {
+        @Override
+        public void run() {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    logLine(line);
+                    stdout.add(line);
+                }
+            } catch (IOException e) {
+                log.error("{}: Could not read next line from stream", scriptName, e);
+            } finally {
+                // only add quit marker if all stream loggers have added their lines to stdout
+                if (loggerExited.incrementAndGet() == 2) {
                     stdout.add(QUIT_MARKER);
                 }
-			    outputReaderSemaphore.release();
+                outputReaderSemaphore.release();
             }
-		}
+        }
 
-		protected abstract void logLine(String line);
-	}
-	
-	class InfoStreamLogger extends StreamLogger {
-		public InfoStreamLogger(InputStream stream, String scriptName) {
-			super(stream, scriptName);
-		}
-		@Override
-		protected void logLine(String line) {
-			log.info("{}: {}", scriptName, line);
-		}
-	}
+        protected abstract void logLine(String line);
+    }
 
-	class ErrorStreamLogger extends StreamLogger {
-		public ErrorStreamLogger(InputStream stream, String scriptName) {
-			super(stream, scriptName);
-		}
-		@Override
-		protected void logLine(String line) {
-			log.error("{}: {}", scriptName, line);
-		}
-	}
+    class InfoStreamLogger extends StreamLogger {
+        public InfoStreamLogger(InputStream stream, String scriptName) {
+            super(stream, scriptName);
+        }
 
-	protected final String name; // a name that appears in the log
-	private final Executor executor;
-	protected Process process;
+        @Override
+        protected void logLine(String line) {
+            log.info("{}: {}", scriptName, line);
+        }
+    }
 
-	/**
-	 * Creates a process
-	 * @param name name to be shown at the start of each log line
-	 */
-	public LoggingProcess(String name, Executor executor) {
-		this.name = name;
-		this.executor = executor;
-	}
+    class ErrorStreamLogger extends StreamLogger {
+        public ErrorStreamLogger(InputStream stream, String scriptName) {
+            super(stream, scriptName);
+        }
 
-	/**
-	 * Starts a process with the given arguments
-	 * @param args
-	 * @throws IOException
-	 */
-	public void start(String[] args) throws IOException {
+        @Override
+        protected void logLine(String line) {
+            log.error("{}: {}", scriptName, line);
+        }
+    }
+
+    protected final String name; // a name that appears in the log
+    private final Executor executor;
+    protected Process process;
+
+    /**
+     * Creates a process
+     *
+     * @param name name to be shown at the start of each log line
+     */
+    public LoggingProcess(String name, Executor executor) {
+        this.name = name;
+        this.executor = executor;
+    }
+
+    /**
+     * Starts a process with the given arguments
+     *
+     * @param args
+     * @throws IOException
+     */
+    public void start(String[] args) throws IOException {
         try {
             outputReaderSemaphore.acquire(2);
             process = Runtime.getRuntime().exec(args);
@@ -123,43 +127,44 @@ public abstract class LoggingProcess {
             log.error("interrupted", e);
             Thread.currentThread().interrupt();
         }
-	}
+    }
 
-	public void run(String[] args) throws IOException, InterruptedException {
-	    start(args);
-	    waitFor();
-	}
+    public void run(String[] args) throws IOException, InterruptedException {
+        start(args);
+        waitFor();
+    }
 
-	public boolean isAlive() {
-		return process.isAlive();
-	}
+    public boolean isAlive() {
+        return process.isAlive();
+    }
 
-	/**
-	 * Wait for the process to terminate.
-	 * @return the exit value of the process
-	 * @throws InterruptedException
-	 */
-	public int waitFor() throws InterruptedException {
-	    int status = process.waitFor();
-	    if (!outputReaderSemaphore.tryAcquire(2, 3, TimeUnit.SECONDS)) {
+    /**
+     * Wait for the process to terminate.
+     *
+     * @return the exit value of the process
+     * @throws InterruptedException
+     */
+    public int waitFor() throws InterruptedException {
+        int status = process.waitFor();
+        if (!outputReaderSemaphore.tryAcquire(2, 3, TimeUnit.SECONDS)) {
             log.warn("logging process output readers not finished in 3 seconds - output may be missing. Process: {} exit code: {}", name, status);
         }
-		return status;
-	}
+        return status;
+    }
 
-	public abstract int getPid();
+    public abstract int getPid();
 
-	public int exitValue() {
-	    return process.exitValue();
-	}
+    public int exitValue() {
+        return process.exitValue();
+    }
 
     /**
      * Retrieves next line of output, or returns {@code null} if there is none.
      */
-	public String pollStdout() {
-	    String value = stdout.poll();
+    public String pollStdout() {
+        String value = stdout.poll();
         return value != QUIT_MARKER ? value : null; //NOSONAR: exact same marker object is expected
-	}
+    }
 
     /**
      * Retrieves next line of output, waiting if necessary until output becomes available or returns

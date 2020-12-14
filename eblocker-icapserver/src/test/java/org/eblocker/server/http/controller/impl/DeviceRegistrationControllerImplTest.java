@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import org.eblocker.registration.DeviceRegistrationRequest;
+import org.eblocker.registration.DeviceRegistrationResponse;
+import org.eblocker.registration.ProductInfo;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DeviceRegistrationParameters;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
@@ -23,14 +26,11 @@ import org.eblocker.server.common.registration.DeviceRegistrationInfo;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.service.CustomerInfoService;
 import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
 import org.eblocker.server.http.service.ReminderService;
-import org.eblocker.registration.DeviceRegistrationRequest;
-import org.eblocker.registration.DeviceRegistrationResponse;
-import org.eblocker.registration.ProductInfo;
-import org.eblocker.server.common.update.SystemUpdater;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,15 +68,15 @@ public class DeviceRegistrationControllerImplTest {
         systemUpdater = Mockito.mock(SystemUpdater.class);
 
         productInfoService = Mockito.mock(ProductInfoService.class);
-        Mockito.when(productInfoService.get()).thenReturn(new ProductInfo(null, null, new String[] { "WOL" }));
+        Mockito.when(productInfoService.get()).thenReturn(new ProductInfo(null, null, new String[]{ "WOL" }));
 
         sslService = Mockito.mock(SslService.class);
         Mockito.when(sslService.isCaAvailable()).thenReturn(true);
 
         controller = new DeviceRegistrationControllerImpl(FALLBACK_PRODUCT_ID, FALLBACK_PRODUCT_NAME,
-            FALLBACK_PRODUCT_FEATURES, deviceRegistrationProperties, deviceRegistrationClient, productInfoService,
-            reminderService, null, sslService, systemUpdater, null, null, dataSource, customerInfoService,
-            registrationServiceAvailabilityCheck);
+                FALLBACK_PRODUCT_FEATURES, deviceRegistrationProperties, deviceRegistrationClient, productInfoService,
+                reminderService, null, sslService, systemUpdater, null, null, dataSource, customerInfoService,
+                registrationServiceAvailabilityCheck);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DeviceRegistrationControllerImplTest {
         Mockito.when(deviceRegistrationProperties.getRegistrationState()).thenReturn(RegistrationState.OK);
         Mockito.when(deviceRegistrationProperties.getDeviceName()).thenReturn("name");
 
-        ProductInfo productInfo = new ProductInfo("product-id", "product-name", new String[] { "feature" });
+        ProductInfo productInfo = new ProductInfo("product-id", "product-name", new String[]{ "feature" });
         Mockito.when(deviceRegistrationClient.getProductInfo()).thenReturn(productInfo);
 
         DeviceRegistrationInfo info = controller.register(request, response);
@@ -118,7 +118,7 @@ public class DeviceRegistrationControllerImplTest {
         controller.register(request, response);
     }
 
-//    @Test(expected = BadRequestException.class)
+    //    @Test(expected = BadRequestException.class)
     @Test
     public void testFallbackRegistrationNotAvailable() {
         Request request = Mockito.mock(Request.class);
@@ -135,7 +135,7 @@ public class DeviceRegistrationControllerImplTest {
         Assert.assertNotNull(info.getProductInfo());
         Assert.assertEquals(FALLBACK_PRODUCT_ID, info.getProductInfo().getProductId());
         Assert.assertEquals(FALLBACK_PRODUCT_NAME, info.getProductInfo().getProductName());
-        Assert.assertArrayEquals(new String[] { "feature-1", "feature-2", "feature-3", "feature-4"}, info.getProductInfo().getProductFeatures());
+        Assert.assertArrayEquals(new String[]{ "feature-1", "feature-2", "feature-3", "feature-4" }, info.getProductInfo().getProductFeatures());
 
         Mockito.verify(deviceRegistrationProperties).registrationFallback("name");
     }

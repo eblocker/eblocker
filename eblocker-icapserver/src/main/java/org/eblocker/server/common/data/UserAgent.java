@@ -19,20 +19,20 @@ package org.eblocker.server.common.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserAgent extends ModelObject {
-	public static final String ID_PREFIX = "useragent:";
+    public static final String ID_PREFIX = "useragent:";
 
     private String agentSpec;
 
-	public UserAgent(@JsonProperty("agentSpec") String agentSpec) {
-		this.agentSpec = agentSpec;
-	}
+    public UserAgent(@JsonProperty("agentSpec") String agentSpec) {
+        this.agentSpec = agentSpec;
+    }
 
-	public String getAgentSpec() {
-		return agentSpec;
-	}
+    public String getAgentSpec() {
+        return agentSpec;
+    }
 
-	public void setAgentSpec(String agentSpec) {
-		this.agentSpec = agentSpec;
-	}
+    public void setAgentSpec(String agentSpec) {
+        this.agentSpec = agentSpec;
+    }
 
 }

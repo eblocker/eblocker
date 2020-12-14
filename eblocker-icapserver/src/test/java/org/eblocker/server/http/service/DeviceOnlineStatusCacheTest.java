@@ -16,23 +16,21 @@
  */
 package org.eblocker.server.http.service;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.util.stream.Stream;
-
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.data.Device;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.stream.Stream;
 
 public class DeviceOnlineStatusCacheTest {
     private static final int OFFLINE_AFTER_SECONDS = 30;
     private DeviceOnlineStatusCache cache;
     private Clock clock;
-    
 
     @Before
     public void setUp() throws Exception {

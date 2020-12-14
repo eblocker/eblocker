@@ -16,9 +16,6 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.server.http.server.SSLContextHandler;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,6 +24,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
+import org.eblocker.server.http.server.SSLContextHandler;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +37,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -153,13 +152,12 @@ public class SslTestListenersTest {
         }
     }
 
-
     private SSLContext createSslContext(EblockerCa ca) throws Exception {
         CertificateAndKey cak = ca.generateServerCertificate("127.0.0.1", Date.from(ZonedDateTime.now().plusDays(1).toInstant()), Collections.emptyList());
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null, null);
-        keyStore.setKeyEntry("test", cak.getKey(), "password".toCharArray(), new X509Certificate[] { cak.getCertificate() });
+        keyStore.setKeyEntry("test", cak.getKey(), "password".toCharArray(), new X509Certificate[]{ cak.getCertificate() });
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(keyStore, "password".toCharArray());

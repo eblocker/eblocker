@@ -24,27 +24,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MacPrefix {
-	private Map<String, String> prefixToVendor;
-	
-	public MacPrefix() {
-		prefixToVendor = new HashMap<>();
-	}
+    private Map<String, String> prefixToVendor;
 
-	public void addInputStream(InputStream in) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			String prefix = line.substring(0, 6);
-			String vendor = line.substring(7);
-			prefixToVendor.put(prefix,  vendor);
-		}
-	}
+    public MacPrefix() {
+        prefixToVendor = new HashMap<>();
+    }
 
-	public String getVendor(String macAddress) {
-		if (macAddress == null || macAddress.length() < 6) {
-			return null;
-		}
-		return prefixToVendor.get(macAddress.substring(0, 6));
-	}
+    public void addInputStream(InputStream in) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            String prefix = line.substring(0, 6);
+            String vendor = line.substring(7);
+            prefixToVendor.put(prefix, vendor);
+        }
+    }
+
+    public String getVendor(String macAddress) {
+        if (macAddress == null || macAddress.length() < 6) {
+            return null;
+        }
+        return prefixToVendor.get(macAddress.substring(0, 6));
+    }
 
 }

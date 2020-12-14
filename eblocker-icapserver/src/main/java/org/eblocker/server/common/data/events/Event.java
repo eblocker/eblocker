@@ -28,15 +28,15 @@ public class Event {
     private EventType type;
     private Instant timestamp;
     private Map<String, String> eventDetails = null;
-    
+
     public Event() {
         // Needed for convertng from json to an object
     }
-    
+
     public EventType getType() {
         return type;
     }
-    
+
     public void setType(EventType type) {
         this.type = type;
     }
@@ -53,7 +53,7 @@ public class Event {
         return eventDetails;
     }
 
-    public void setEventDetails(Map<String, String> details){
+    public void setEventDetails(Map<String, String> details) {
         this.eventDetails = details;
     }
 
@@ -67,8 +67,8 @@ public class Event {
         if (obj instanceof Event) {
             Event other = (Event) obj;
             return Objects.equals(timestamp, other.timestamp) &&
-                   Objects.equals(type,      other.type) &&
-                   Objects.equals(eventDetails, other.eventDetails);
+                    Objects.equals(type, other.type) &&
+                    Objects.equals(eventDetails, other.eventDetails);
         } else {
             return false;
         }

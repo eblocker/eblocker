@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
@@ -25,6 +27,7 @@ import org.eblocker.server.common.data.messagecenter.IconState;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.data.openvpn.VpnStatus;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
@@ -41,9 +44,6 @@ import org.eblocker.server.http.service.MessageCenterService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.UserService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import org.eblocker.server.common.network.BaseURLs;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -257,7 +257,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
             return new IconState("info", "TOR");
         } else {
             VpnStatus status = openVpnService.getStatusByDevice(device);
-            if (status!=null && status.isActive()){
+            if (status != null && status.isActive()) {
                 return new IconState("info", "VPN");
             }
         }
@@ -268,9 +268,9 @@ public class ControlBarControllerImpl extends SessionContextController implement
         messages = messageCenterService.checkAndReduceSSLUntrustedMessage(messages, device.getId(), session.getUserAgent());
 
         long numAlerts = messages
-            .stream()
-            .filter(messageCenterMessage -> messageCenterMessage.getMessageSeverity().equals(MessageSeverity.ALERT))
-            .count();
+                .stream()
+                .filter(messageCenterMessage -> messageCenterMessage.getMessageSeverity().equals(MessageSeverity.ALERT))
+                .count();
         if (numAlerts > 0) {
             return new IconState("alert", "!");
         }

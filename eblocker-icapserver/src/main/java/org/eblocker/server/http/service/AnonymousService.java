@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -24,8 +26,6 @@ import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,18 +53,18 @@ public class AnonymousService {
     public void init() {
         log.info("restoring vpn states for devices");
         deviceService.getDevices(false)
-            .stream()
-            .filter(Device::isUseAnonymizationService)
-            .filter(device -> device.getUseVPNProfileID() != null)
-            .forEach(device -> {
-                VpnProfile profile = openVpnService.getVpnProfileById(device.getUseVPNProfileID());
-                if (profile != null) {
-                    enableVpn(device, profile);
-                } else {
-                    log.warn("{} uses deleted vpn {}", device.getId(), device.getUseVPNProfileID());
-                    disableVpn(device);
-                }
-            });
+                .stream()
+                .filter(Device::isUseAnonymizationService)
+                .filter(device -> device.getUseVPNProfileID() != null)
+                .forEach(device -> {
+                    VpnProfile profile = openVpnService.getVpnProfileById(device.getUseVPNProfileID());
+                    if (profile != null) {
+                        enableVpn(device, profile);
+                    } else {
+                        log.warn("{} uses deleted vpn {}", device.getId(), device.getUseVPNProfileID());
+                        disableVpn(device);
+                    }
+                });
     }
 
     public void enableTor(Device device) {

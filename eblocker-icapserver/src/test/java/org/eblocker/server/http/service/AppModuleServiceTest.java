@@ -368,7 +368,6 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         Path resourcePath = ResourceTestUtil.provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
         AppModuleService appModuleService = createService(resourcePath);
 
-
         //  The following cases will be tested:
         //    1. new module (id 17)
         //    2. updated modules (id 3)
@@ -493,7 +492,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertEquals(4, observer.size());
         observer.clear();
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        for (AppWhitelistModule module: modules) {
+        for (AppWhitelistModule module : modules) {
             int id = module.getId();
             if (id == 1 || id == 2 || id == 3 || id == 4) {
                 assertFalse(module.isEnabled());
@@ -511,7 +510,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(appModuleService.get(2).isEnabled());
         assertTrue(appModuleService.get(3).isEnabled());
         assertTrue(appModuleService.get(4).isEnabled());
-        assertEquals(defaultSize+15, appModuleService.getAllUrlsFromEnabledModules().size());
+        assertEquals(defaultSize + 15, appModuleService.getAllUrlsFromEnabledModules().size());
 
     }
 
@@ -633,7 +632,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
                         new SSLWhitelistUrl(null, "my.domain1.org"),
                         new SSLWhitelistUrl("", "my.domain2.org"),
                         new SSLWhitelistUrl("My Shiny Domain 3", "my.domain3.org"),
-                         new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
+                        new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
                 ), 3);
 
         module = appModuleService.get(3);
@@ -716,34 +715,34 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(appModuleService.get(idWinUpdates).isEnabled());
 
         // Check that sequence was updated
-        AppWhitelistModule nextModule= appModuleService.save(createAppModule("My Next Module", true));
+        AppWhitelistModule nextModule = appModuleService.save(createAppModule("My Next Module", true));
         assertEquals(Integer.valueOf(idUserDefined + 1), nextModule.getId());
     }
 
     private AppModuleService createService(Path builtinAppModulesPath) {
         AppModuleService service = new AppModuleService(
-            dataSource,
-            objectMapper,
-            appModuleRemovalMessageProvider,
-            builtinAppModulesPath == null ? null : builtinAppModulesPath.toString(),
-            0,
-            9999,
-            9998,
-            9997
+                dataSource,
+                objectMapper,
+                appModuleRemovalMessageProvider,
+                builtinAppModulesPath == null ? null : builtinAppModulesPath.toString(),
+                0,
+                9999,
+                9998,
+                9997
         );
         service.init();
         return service;
     }
 
     private AppWhitelistModule createAppModule(String name, boolean enabledbyDefault) {
-        Map<String,String> description = new HashMap<>();
+        Map<String, String> description = new HashMap<>();
         description.put("de", "description de");
         description.put("en", "description en");
         return new AppWhitelistModule(
                 null,
                 name,
                 description,
-                IntStream.range(0, 10).mapToObj(i -> "domain-"+i+".com").collect(Collectors.toList()),
+                IntStream.range(0, 10).mapToObj(i -> "domain-" + i + ".com").collect(Collectors.toList()),
                 null,
                 null,
                 null,
@@ -772,13 +771,14 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
             observed.forEach((Object element) -> {
                 assertTrue("All elements in the observed list should be AppWhitelistModules",
-                    element instanceof AppWhitelistModule);
+                        element instanceof AppWhitelistModule);
             });
         }
 
         public int size() {
             return observed.size();
         }
+
         public void clear() {
             observed.clear();
         }

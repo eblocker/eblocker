@@ -29,7 +29,7 @@ public class NormalizationUtils {
                 .replaceAll("[^a-zA-Z0-9_]", "");
         return clean;
     }
-    
+
     public static String normalizeStringForFilename(String dirty, int maxLength, String defaultClean) {
         if (dirty == null) {
             return defaultClean;

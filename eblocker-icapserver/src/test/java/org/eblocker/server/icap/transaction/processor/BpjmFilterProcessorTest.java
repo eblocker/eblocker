@@ -19,6 +19,7 @@ package org.eblocker.server.icap.transaction.processor;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -27,7 +28,6 @@ import org.eblocker.server.icap.filter.bpjm.BpjmFilter;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterDecision;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.common.network.BaseURLs;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class BpjmFilterProcessorTest {
 
         bpjmFilterService = Mockito.mock(BpjmFilterService.class);
         Mockito.when(bpjmFilterService.isBlocked(BLOCKED_URL))
-            .thenReturn(new BpjmFilterDecision(true, "evil.org", "index.html", 0));
+                .thenReturn(new BpjmFilterDecision(true, "evil.org", "index.html", 0));
         Mockito.when(bpjmFilterService.isBlocked(NON_BLOCKED_URL)).thenReturn(BpjmFilter.NOT_BLOCKED_DECISION);
 
         Session session = Mockito.mock(Session.class);
@@ -79,16 +79,16 @@ public class BpjmFilterProcessorTest {
         Mockito.when(deviceService.getDeviceById(DEVICE_ID)).thenReturn(device);
 
         profile = new UserProfileModule(PROFILE_ID, null, null, null, null, null, null, null, Collections.emptySet(),
-            UserProfileModule.InternetAccessRestrictionMode.NONE, null, null, null, false, null);
+                UserProfileModule.InternetAccessRestrictionMode.NONE, null, null, null, false, null);
         parentalControlService = Mockito.mock(ParentalControlService.class);
         Mockito.when(parentalControlService.getProfile(PROFILE_ID)).thenReturn(profile);
 
-        UserModule user = new UserModule(USER_ID, PROFILE_ID, null, null, null,null, false, null, null, null, null, null);
+        UserModule user = new UserModule(USER_ID, PROFILE_ID, null, null, null, null, false, null, null, null, null, null);
         userService = Mockito.mock(UserService.class);
         Mockito.when(userService.getUserById(USER_ID)).thenReturn(user);
 
         processor = new BpjmFilterProcessor(BPJM_FILTER_ID, REDIRECT_PAGE, baseUrls, bpjmFilterService, deviceService,
-            parentalControlService, userService);
+                parentalControlService, userService);
     }
 
     @Test
@@ -159,6 +159,5 @@ public class BpjmFilterProcessorTest {
         Mockito.when(transaction.getSession()).thenReturn(session);
         return transaction;
     }
-
 
 }

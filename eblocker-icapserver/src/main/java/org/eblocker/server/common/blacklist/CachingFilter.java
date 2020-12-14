@@ -29,12 +29,9 @@ import java.util.stream.Stream;
 
 public class CachingFilter<T> implements DomainFilter<T> {
 
-    public enum CacheMode {NON_BLOCKED, BLOCKED, ALL}
-
     private final CacheMode cacheMode;
     private final Map<T, FilterDecision<T>> cache;
     private final DomainFilter<T> filter;
-
     private final int cacheMaxSize;
     private final AtomicInteger requests = new AtomicInteger();
     private final AtomicInteger hits = new AtomicInteger();
@@ -102,7 +99,6 @@ public class CachingFilter<T> implements DomainFilter<T> {
         stats.hits = hits.get();
         stats.loads = loads.get();
 
-
         if (includeDomains) {
             Set<FilterDecision<T>> decisions;
             synchronized (cache) {
@@ -110,11 +106,11 @@ public class CachingFilter<T> implements DomainFilter<T> {
             }
 
             stats.cache = decisions.stream()
-                .collect(Collectors.groupingBy(FilterDecision::isBlocked)).entrySet().stream()
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    e -> e.getValue().stream().map(FilterDecision::getDomain).collect(Collectors.toList())
-                ));
+                    .collect(Collectors.groupingBy(FilterDecision::isBlocked)).entrySet().stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            e -> e.getValue().stream().map(FilterDecision::getDomain).collect(Collectors.toList())
+                    ));
         }
 
         return stats;
@@ -126,6 +122,8 @@ public class CachingFilter<T> implements DomainFilter<T> {
         hits.set(0);
         loads.set(0);
     }
+
+    public enum CacheMode {NON_BLOCKED, BLOCKED, ALL}
 
     public static class Stats<T> {
         private String name;

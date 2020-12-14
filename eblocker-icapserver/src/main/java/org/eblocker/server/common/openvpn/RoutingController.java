@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +135,7 @@ public class RoutingController {
 
     private void initializeRoutes(int min, int max) {
         availableRoutes = new TreeSet<>();
-        for(int i = min; i <= max; ++i) {
+        for (int i = min; i <= max; ++i) {
             availableRoutes.add(i);
         }
         allocatedRoutes = new TreeSet<>();

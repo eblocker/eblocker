@@ -16,45 +16,44 @@
  */
 package org.eblocker.server.icap.filter.json;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.icap.filter.FilterStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.icap.filter.FilterStore;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class JSONMarshaller {
-	private static final Logger log = LoggerFactory.getLogger(JSONMarshaller.class);
+    private static final Logger log = LoggerFactory.getLogger(JSONMarshaller.class);
 
-	private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = new ObjectMapper();
 
-	private static ObjectMapper getObjectMapper() {
-		return mapper;
-	}
+    private static ObjectMapper getObjectMapper() {
+        return mapper;
+    }
 
-	public static void marshall(FilterStore store, OutputStream out) {
-		try {
-			getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(out, store);
+    public static void marshall(FilterStore store, OutputStream out) {
+        try {
+            getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(out, store);
 
-		} catch (IOException e) {
-			log.error("Cannot marshall filter store: {}", e.getMessage(), e);
-			throw new EblockerException("Cannot marshall filter store", e);
-		}
-	}
+        } catch (IOException e) {
+            log.error("Cannot marshall filter store: {}", e.getMessage(), e);
+            throw new EblockerException("Cannot marshall filter store", e);
+        }
+    }
 
-	public static FilterStore unmarshall(InputStream in) {
-		try {
-			FilterStore store = getObjectMapper().readValue(in, FilterStore.class);
+    public static FilterStore unmarshall(InputStream in) {
+        try {
+            FilterStore store = getObjectMapper().readValue(in, FilterStore.class);
             return store;
 
-		} catch (IOException e) {
-			log.error("Cannot unmarshall filter store: {}", e.getMessage(), e);
-			throw new EblockerException("Cannot unmarshall filter store", e);
-		}
-	}
+        } catch (IOException e) {
+            log.error("Cannot unmarshall filter store: {}", e.getMessage(), e);
+            throw new EblockerException("Cannot unmarshall filter store", e);
+        }
+    }
 
 }

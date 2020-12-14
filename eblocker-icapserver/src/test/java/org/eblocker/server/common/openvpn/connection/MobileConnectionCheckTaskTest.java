@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.eblocker.registration.MobileConnectionCheck;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.registration.MobileConnectionCheck;
-import io.netty.channel.nio.NioEventLoopGroup;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -75,13 +75,13 @@ public class MobileConnectionCheckTaskTest {
         deviceRegistrationClient = Mockito.mock(DeviceRegistrationClient.class);
         Mockito.when(deviceRegistrationClient.getMobileConnectionCheck(Mockito.anyString())).then(im -> requestedTestsById.get(im.getArgument(0)));
         Mockito.when(deviceRegistrationClient.requestMobileConnectionCheck(
-            Mockito.any(MobileConnectionCheck.Protocol.class), Mockito.eq(PORT), Mockito.any(byte[].class)))
-            .then(im -> {
-                MobileConnectionCheck test = new MobileConnectionCheck(String.valueOf(nextId++), MobileConnectionCheck.State.PENDING, new Date(), im.getArgument(2), im.getArgument(0), "1.2.3.4", PORT);
-                requestedTestsById.put(test.getId(), test);
-                requestsReceivedSignal.countDown();
-                return test;
-            });
+                Mockito.any(MobileConnectionCheck.Protocol.class), Mockito.eq(PORT), Mockito.any(byte[].class)))
+                .then(im -> {
+                    MobileConnectionCheck test = new MobileConnectionCheck(String.valueOf(nextId++), MobileConnectionCheck.State.PENDING, new Date(), im.getArgument(2), im.getArgument(0), "1.2.3.4", PORT);
+                    requestedTestsById.put(test.getId(), test);
+                    requestsReceivedSignal.countDown();
+                    return test;
+                });
 
         openVpnServerService = Mockito.mock(OpenVpnServerService.class);
         Mockito.when(openVpnServerService.getOpenVpnMappedPort()).thenReturn(PORT);
@@ -90,16 +90,16 @@ public class MobileConnectionCheckTaskTest {
         workerGroup = new NioEventLoopGroup(2);
 
         task = new MobileConnectionCheckTask(
-            TIMEOUT_REQUESTS,
-            3,
-            POLL_INTERVAL,
-            POLL_TRIES,
-            "udp, tcp",
-            PORT,
-            openVpnServerService,
-            deviceRegistrationClient,
-            bossGroup,
-            workerGroup);
+                TIMEOUT_REQUESTS,
+                3,
+                POLL_INTERVAL,
+                POLL_TRIES,
+                "udp, tcp",
+                PORT,
+                openVpnServerService,
+                deviceRegistrationClient,
+                bossGroup,
+                workerGroup);
     }
 
     @After
@@ -117,7 +117,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as successful if handler echoes them)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -146,13 +146,13 @@ public class MobileConnectionCheckTaskTest {
         Mockito.reset(deviceRegistrationClient);
         Mockito.when(deviceRegistrationClient.getMobileConnectionCheck(Mockito.anyString())).then(im -> requestedTestsById.get(im.getArgument(0)));
         Mockito.when(deviceRegistrationClient.requestMobileConnectionCheck(
-            Mockito.any(MobileConnectionCheck.Protocol.class), Mockito.eq(routerPort), Mockito.any(byte[].class)))
-            .then(im -> {
-                MobileConnectionCheck test = new MobileConnectionCheck(String.valueOf(nextId++), MobileConnectionCheck.State.PENDING, new Date(), im.getArgument(2), im.getArgument(0), "1.2.3.4", PORT);
-                requestedTestsById.put(test.getId(), test);
-                requestsReceivedSignal.countDown();
-                return test;
-            });
+                Mockito.any(MobileConnectionCheck.Protocol.class), Mockito.eq(routerPort), Mockito.any(byte[].class)))
+                .then(im -> {
+                    MobileConnectionCheck test = new MobileConnectionCheck(String.valueOf(nextId++), MobileConnectionCheck.State.PENDING, new Date(), im.getArgument(2), im.getArgument(0), "1.2.3.4", PORT);
+                    requestedTestsById.put(test.getId(), test);
+                    requestsReceivedSignal.countDown();
+                    return test;
+                });
         Mockito.when(openVpnServerService.getOpenVpnMappedPort()).thenReturn(routerPort);
 
         Future<?> future = EXECUTOR_SERVICE.submit(task);
@@ -162,7 +162,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as successful if handler echoes them)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -193,7 +193,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as failed)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -226,7 +226,7 @@ public class MobileConnectionCheckTaskTest {
 
         // future.get does not wait on thread being finished after interruption but may throw CancellationException
         // right away. THis makes it unsuitable for synchronization and we have to poll
-        while(MobileConnectionCheckStatus.State.CANCELED != task.getStatus().getState()) {
+        while (MobileConnectionCheckStatus.State.CANCELED != task.getStatus().getState()) {
             Thread.sleep(100);
         }
     }
@@ -265,7 +265,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (but do no mark result)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());

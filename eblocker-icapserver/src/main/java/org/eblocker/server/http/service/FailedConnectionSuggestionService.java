@@ -26,9 +26,10 @@ public class FailedConnectionSuggestionService {
     private final AppModuleService appModuleService;
     private final DeviceService deviceService;
 
-    @Inject FailedConnectionSuggestionService(SquidWarningService squidWarningService,
-                                              AppModuleService appModuleService,
-                                              DeviceService deviceService) {
+    @Inject
+    FailedConnectionSuggestionService(SquidWarningService squidWarningService,
+                                      AppModuleService appModuleService,
+                                      DeviceService deviceService) {
 
         this.squidWarningService = squidWarningService;
         this.appModuleService = appModuleService;
@@ -51,14 +52,14 @@ public class FailedConnectionSuggestionService {
     private Map<AppWhitelistModule, List<FailedConnection>> createConnectionsByAppModule(List<FailedConnection> failedConnections) {
         AppWhitelistModule autoSslAppModule = appModuleService.getAutoSslAppModule();
         List<AppWhitelistModule> appModules = appModuleService.getAll().stream()
-            .filter(appModule -> !appModule.equals(autoSslAppModule))
-            .collect(Collectors.toList());
+                .filter(appModule -> !appModule.equals(autoSslAppModule))
+                .collect(Collectors.toList());
         return failedConnections.stream()
-            .map(fc -> new Tuple<>(findAppModules(appModules, fc.getDomains()), fc))
-            .flatMap(this::flatModules)
-            .collect(Collectors.groupingBy(t -> t.u, Collectors.mapping(t -> t.v, Collectors.toList())))
-            .entrySet().stream()
-            .collect(Collectors.toMap(e -> e.getKey().orElse(null), Map.Entry::getValue));
+                .map(fc -> new Tuple<>(findAppModules(appModules, fc.getDomains()), fc))
+                .flatMap(this::flatModules)
+                .collect(Collectors.groupingBy(t -> t.u, Collectors.mapping(t -> t.v, Collectors.toList())))
+                .entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey().orElse(null), Map.Entry::getValue));
     }
 
     private Stream<Tuple<Optional<AppWhitelistModule>, FailedConnection>> flatModules(Tuple<List<AppWhitelistModule>, FailedConnection> t) {
@@ -75,8 +76,8 @@ public class FailedConnectionSuggestionService {
         if (sslErrorsCollectingApp != null && !sslErrorsCollectingApp.isEnabled()) {
             List<String> whitelistedDomains = sslErrorsCollectingApp.getWhitelistedDomains();
             List<FailedConnection> sslErrorCollectingAppFailedCollections = failedConnections.stream()
-                .filter(fc -> fc.getDomains().stream().anyMatch(whitelistedDomains::contains))
-                .collect(Collectors.toList());
+                    .filter(fc -> fc.getDomains().stream().anyMatch(whitelistedDomains::contains))
+                    .collect(Collectors.toList());
             if (!sslErrorCollectingAppFailedCollections.isEmpty()) {
                 connectionsByAppModule.put(sslErrorsCollectingApp, sslErrorCollectingAppFailedCollections);
             }
@@ -90,13 +91,13 @@ public class FailedConnectionSuggestionService {
         }
 
         return failedConnections.stream()
-            .flatMap(c -> c.getDomains().stream().map(d -> new Tuple<>(d, c)))
-            .map(t -> new Tuple<>(t.u, new FailedConnection(t.v.getDeviceIds(), Collections.singletonList(t.u), t.v.getErrors(), t.v.getLastOccurrence())))
-            .collect(Collectors.groupingBy(
-                t -> t.u,
-                Collectors.mapping(
-                    t -> t.v,
-                    Collectors.collectingAndThen(Collectors.toList(), this::mergeFailedConnections))));
+                .flatMap(c -> c.getDomains().stream().map(d -> new Tuple<>(d, c)))
+                .map(t -> new Tuple<>(t.u, new FailedConnection(t.v.getDeviceIds(), Collections.singletonList(t.u), t.v.getErrors(), t.v.getLastOccurrence())))
+                .collect(Collectors.groupingBy(
+                        t -> t.u,
+                        Collectors.mapping(
+                                t -> t.v,
+                                Collectors.collectingAndThen(Collectors.toList(), this::mergeFailedConnections))));
     }
 
     private FailedConnection mergeFailedConnections(List<FailedConnection> failedConnections) {
@@ -117,9 +118,9 @@ public class FailedConnectionSuggestionService {
 
     private Map<Integer, FailedConnection> createModuleSuggestions(Map<AppWhitelistModule, List<FailedConnection>> connectionsByAppModule) {
         return connectionsByAppModule.entrySet().stream()
-            .filter(e -> e.getKey() != null)
-            .filter(m -> !m.getKey().isEnabled() && !m.getKey().isHidden())
-            .collect(Collectors.toMap(m -> m.getKey().getId(), e -> mergeFailedConnections(e.getValue())));
+                .filter(e -> e.getKey() != null)
+                .filter(m -> !m.getKey().isEnabled() && !m.getKey().isHidden())
+                .collect(Collectors.toMap(m -> m.getKey().getId(), e -> mergeFailedConnections(e.getValue())));
     }
 
     private List<FailedConnection> filterDisabledDevices(List<FailedConnection> failedConnections) {
@@ -129,19 +130,19 @@ public class FailedConnectionSuggestionService {
         };
 
         return failedConnections.stream()
-            .map(c -> {
-                List<String> activeDeviceIds = c.getDeviceIds().stream().filter(activeDevice).collect(Collectors.toList());
-                return activeDeviceIds.equals(c.getDomains()) ? c : new FailedConnection(activeDeviceIds, c.getDomains(), c.getErrors(), c.getLastOccurrence());
-            })
-            .filter(c -> !c.getDeviceIds().isEmpty())
-            .collect(Collectors.toList());
+                .map(c -> {
+                    List<String> activeDeviceIds = c.getDeviceIds().stream().filter(activeDevice).collect(Collectors.toList());
+                    return activeDeviceIds.equals(c.getDomains()) ? c : new FailedConnection(activeDeviceIds, c.getDomains(), c.getErrors(), c.getLastOccurrence());
+                })
+                .filter(c -> !c.getDeviceIds().isEmpty())
+                .collect(Collectors.toList());
     }
 
     private List<AppWhitelistModule> findAppModules(List<AppWhitelistModule> appModules, List<String> domains) {
         Predicate<String> whitelistsAnyDomain = whitelistedDomain -> domains.stream().anyMatch(domain -> UrlUtils.isSameDomain(whitelistedDomain, domain));
         return appModules.stream()
-            .filter(module -> module.getWhitelistedDomains().stream().anyMatch(whitelistsAnyDomain))
-            .collect(Collectors.toList());
+                .filter(module -> module.getWhitelistedDomains().stream().anyMatch(whitelistsAnyDomain))
+                .collect(Collectors.toList());
     }
 
     private static class Tuple<U, V> {

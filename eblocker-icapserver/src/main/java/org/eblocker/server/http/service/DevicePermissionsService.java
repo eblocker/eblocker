@@ -16,13 +16,12 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
 
 public class DevicePermissionsService {
     private static final Logger log = LoggerFactory.getLogger(DevicePermissionsService.class);

@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.recorder.TransactionRecorder;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 @Singleton
 public class TransactionRecorderProcessor implements TransactionProcessor {

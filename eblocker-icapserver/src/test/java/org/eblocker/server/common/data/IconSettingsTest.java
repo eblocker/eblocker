@@ -16,13 +16,12 @@
  */
 package org.eblocker.server.common.data;
 
+import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.Device.DisplayIconPosition;
 
 public class IconSettingsTest {
 

@@ -187,7 +187,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 4),
             new DashboardCardPosition(2, 1),
-            new DashboardCardPosition(2, 1)};
+            new DashboardCardPosition(2, 1) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -204,7 +204,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 1),
             new DashboardCardPosition(1, 1),
-            new DashboardCardPosition(1, 1)};
+            new DashboardCardPosition(1, 1) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -221,7 +221,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 13),
             new DashboardCardPosition(1, 7),
-            new DashboardCardPosition(2, 5)};
+            new DashboardCardPosition(2, 5) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -238,7 +238,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 12),
             new DashboardCardPosition(2, 4),
-            new DashboardCardPosition(3, 2)};
+            new DashboardCardPosition(3, 2) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -255,7 +255,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 11),
             new DashboardCardPosition(2, 6),
-            new DashboardCardPosition(3, 3)};
+            new DashboardCardPosition(3, 3) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -272,7 +272,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 8),
             new DashboardCardPosition(1, 4),
-            new DashboardCardPosition(1, 3)};
+            new DashboardCardPosition(1, 3) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -289,7 +289,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 14),
             new DashboardCardPosition(2, 7),
-            new DashboardCardPosition(2, 6)};
+            new DashboardCardPosition(2, 6) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -332,7 +332,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 9),
             new DashboardCardPosition(2, 5),
-            new DashboardCardPosition(3, 4)};
+            new DashboardCardPosition(3, 4) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -349,7 +349,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 10),
             new DashboardCardPosition(1, 6),
-            new DashboardCardPosition(3, 4)};
+            new DashboardCardPosition(3, 4) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -366,7 +366,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 7),
             new DashboardCardPosition(2, 5),
-            new DashboardCardPosition(2, 4)};
+            new DashboardCardPosition(2, 4) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -383,7 +383,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 6),
             new DashboardCardPosition(2, 3),
-            new DashboardCardPosition(2, 2)};
+            new DashboardCardPosition(2, 2) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -400,7 +400,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 5),
             new DashboardCardPosition(1, 3),
-            new DashboardCardPosition(3, 1)};
+            new DashboardCardPosition(3, 1) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);
@@ -440,7 +440,7 @@ public class DashboardService {
         DashboardCardPosition[] defaultPos = {
             new DashboardCardPosition(1, 2),
             new DashboardCardPosition(2, 2),
-            new DashboardCardPosition(2, 3)};
+            new DashboardCardPosition(2, 3) };
         DashboardCardPosition[] customPos = null;
 
         return new DashboardCard(id, requiredFeature, translateSuffix, html, visibility, alwaysVisible, defaultPos, customPos);

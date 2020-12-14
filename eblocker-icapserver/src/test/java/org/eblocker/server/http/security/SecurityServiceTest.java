@@ -19,16 +19,15 @@ package org.eblocker.server.http.security;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.EventType;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.EmbeddedRedisServiceTestBase;
-import org.eblocker.server.http.service.ProductInfoService;
-import org.eblocker.server.http.service.UserService;
 import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.common.update.SystemUpdater.State;
-
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.EmbeddedRedisServiceTestBase;
+import org.eblocker.server.http.service.ProductInfoService;
+import org.eblocker.server.http.service.UserService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -44,7 +43,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
@@ -84,7 +86,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
 
     @Test
     public void test_generateAndVerifyJWT_ok() {
-        generateAndVerifyJWT_ok(s->s.generateToken(new Credentials(null, null), IP_ADDRESS, AppContext.defaultValue()));
+        generateAndVerifyJWT_ok(s -> s.generateToken(new Credentials(null, null), IP_ADDRESS, AppContext.defaultValue()));
     }
 
     private void generateAndVerifyJWT_ok(Function<SecurityService, JsonWebToken> generator) {
@@ -173,7 +175,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
         assertNotNull(renewed);
 
         // renewed is valid at least one second longer than original token
-        assertTrue(1 <= renewed.getExpiresOn()-token.getExpiresOn());
+        assertTrue(1 <= renewed.getExpiresOn() - token.getExpiresOn());
     }
 
     @Test
@@ -255,7 +257,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
 
     }
 
-    @Test(expected=UnauthorizedException.class)
+    @Test(expected = UnauthorizedException.class)
     public void testAttemptTooSoonRejected() {
         SecurityService securityService = createSecurityService();
         Instant first = Instant.ofEpochSecond(1000L);// Trying wrong password
@@ -280,7 +282,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
         }
 
         // We need to wait
-        assertTrue(securityService.passwordEntryInSeconds(IP_ADDRESS)>=1);
+        assertTrue(securityService.passwordEntryInSeconds(IP_ADDRESS) >= 1);
 
         // Second attempt at verification without waiting - even correct password is rejected
         securityService.verifyPassword(new Credentials("mY-s3creT-p@ssw0rD", null), IP_ADDRESS);
@@ -294,7 +296,6 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
         Instant third = second.plusSeconds(1L);// Testing how long to wait
         Instant fourth = third.plusSeconds(1000L);// Successful login
         when(clock.instant()).thenReturn(first, second, third, fourth);
-
 
         // Set new password
         securityService.setPassword(new Credentials(null, "mY-s3creT-p@ssw0rD"), IP_ADDRESS);
@@ -321,6 +322,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
             fail("Expected no UnauthorizedException");
         }
     }
+
     @Test
     public void testPasswordResetEventLogged() throws IOException, InterruptedException {
         when(automaticUpdater.isActivated()).thenReturn(false);
@@ -340,7 +342,7 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
 
         Mockito.verify(eventLogger).log(Mockito.argThat((event ->
             event.getType() == EventType.ADMIN_PASSWORD_RESET &&
-            event.getEventDetails().equals(expectedResetDetails)
+                event.getEventDetails().equals(expectedResetDetails)
         )));
     }
 
@@ -359,27 +361,27 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
 
     private SecurityService createSecurityService(long validity) {
         return new SecurityService(
-                new JsonWebTokenHandler(
-                        validity,
-                        validity,
-                        baseURLs
-                ),
+            new JsonWebTokenHandler(
                 validity,
                 validity,
-                passwordResetValiditySeconds,
-                passwordResetGracePeriodSeconds,
-                dataSource,
-                systemUpdater,
-                automaticUpdater,
-                scriptRunner,
-                "shutdownScript",
-                eventLogger, // Eventlogger
-                deviceService, // Device Service
-                userService, // User Service
-                productInfoService, // ProductInfoService
-                100, // Max time to wait after entering wrong password
-                10, // Increment time to wait after entering wrong password by this number of seconds
-                clock
+                baseURLs
+            ),
+            validity,
+            validity,
+            passwordResetValiditySeconds,
+            passwordResetGracePeriodSeconds,
+            dataSource,
+            systemUpdater,
+            automaticUpdater,
+            scriptRunner,
+            "shutdownScript",
+            eventLogger, // Eventlogger
+            deviceService, // Device Service
+            userService, // User Service
+            productInfoService, // ProductInfoService
+            100, // Max time to wait after entering wrong password
+            10, // Increment time to wait after entering wrong password by this number of seconds
+            clock
         );
     }
 

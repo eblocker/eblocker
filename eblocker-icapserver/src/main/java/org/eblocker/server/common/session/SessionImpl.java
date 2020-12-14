@@ -62,7 +62,6 @@ public class SessionImpl implements Session {
 
     private boolean whatIfMode = false;
 
-
     protected SessionImpl(String sessionId, String userAgent, IpAddress ip, String deviceId, Integer userId, UserAgentInfo userAgentInfo) {
 
         this.sessionId = sessionId;
@@ -120,7 +119,6 @@ public class SessionImpl implements Session {
     public IpAddress getIp() {
         return ip;
     }
-
 
     @Override
     public Integer getUserId() {
@@ -231,7 +229,6 @@ public class SessionImpl implements Session {
         this.useDomainWhiteList = useDomainWhiteList;
     }
 
-
     @Override
     public void setTorIsWorking(boolean working) {
         torError = working;
@@ -241,7 +238,6 @@ public class SessionImpl implements Session {
     public boolean isTorWorking() {
         return torError;
     }
-
 
     @Override
     public boolean isWarningState() {

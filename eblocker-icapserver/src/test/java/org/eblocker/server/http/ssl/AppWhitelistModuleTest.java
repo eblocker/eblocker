@@ -79,7 +79,6 @@ public class AppWhitelistModuleTest {
         descMap2.put("de", "Facebook Messenger App");
         AppWhitelistModule facebookMessengerApp = createAppModule(2, "Facebook Messenger App", urls2, descMap2, false, false);
 
-
         List<String> urls3 = Arrays.asList("s.mzstatic.com",
             "swscan.apple.com",
             "xp.apple.com",

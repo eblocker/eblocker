@@ -78,7 +78,7 @@ public class GeneratingKeyManager extends X509ExtendedKeyManager {
         try {
             Parameters parameters = decodeParameters(s);
             X509Certificate certificate = cache.get(parameters, () -> generateCertificate(parameters));
-            return new X509Certificate[]{certificate};
+            return new X509Certificate[]{ certificate };
         } catch (ExecutionException e) {
             throw new CertificateGenerationException("failed to generate certificate", e);
         }

@@ -51,8 +51,7 @@ public abstract class AbstractFilter implements Filter {
         this.definition = definition;
     }
 
-    @Override
-    final public FilterResult filter(TransactionContext context) {
+    @Override final public FilterResult filter(TransactionContext context) {
         FilterResult result = doFilter(context);
         if (result.getDecision() != Decision.NO_DECISION) {
             matches++;

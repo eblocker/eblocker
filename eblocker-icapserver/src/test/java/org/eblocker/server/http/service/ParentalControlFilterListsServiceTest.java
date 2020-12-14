@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.blacklist.BlacklistCompiler;
 import org.eblocker.server.common.blacklist.DomainBlacklistService;
 import org.eblocker.server.common.data.DataSource;
@@ -24,7 +25,6 @@ import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMeta
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.data.parentalcontrol.QueryTransformation;
 import org.eblocker.server.common.util.FileUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -310,7 +310,7 @@ public class ParentalControlFilterListsServiceTest {
         }
 
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(metadataList);
-        for(ParentalControlFilterMetaData d : metadataList) {
+        for (ParentalControlFilterMetaData d : metadataList) {
             Mockito.when(dataSource.get(ParentalControlFilterMetaData.class, d.getId())).thenReturn(d);
         }
     }
@@ -318,6 +318,5 @@ public class ParentalControlFilterListsServiceTest {
     private ParentalControlFilterListsService createService() throws IOException {
         return new ParentalControlFilterListsService(metaDataPath.toString(), customFiltersPath.toString(), dataSource, fileSystemWatchService, objectMapper, parentalControlService, domainBlacklistService, blacklistCompiler);
     }
-
 
 }

@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.registration.TosContainer;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
-import org.eblocker.server.common.util.HttpClient;
-import org.eblocker.registration.TosContainer;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.HttpClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -186,7 +186,7 @@ public class RegistrationServiceAvailabilityCheckTest {
 
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         long expectedDelay = 2;
-        for(int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 10; ++i) {
             Mockito.verify(scheduledExecutorService).schedule(captor.capture(), Mockito.eq(expectedDelay), Mockito.eq(TimeUnit.MINUTES));
             captor.getValue().run();
             expectedDelay *= 2;

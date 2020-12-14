@@ -33,69 +33,69 @@ import java.util.concurrent.TimeoutException;
 
 public class FilterStoreConcurrentModificationTest {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FilterStoreConcurrentModificationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FilterStoreConcurrentModificationTest.class);
 
-	@Test(timeout = 5000)
-	public void test() throws InterruptedException, TimeoutException, ExecutionException {
-		FilterDomainContainer container = new SynchronousLearningFilter(true);
-		FilterStore store = new FilterStore(container);
+    @Test(timeout = 5000)
+    public void test() throws InterruptedException, TimeoutException, ExecutionException {
+        FilterDomainContainer container = new SynchronousLearningFilter(true);
+        FilterStore store = new FilterStore(container);
 
-		//
-		// Add one filter to the store
-		//
+        //
+        // Add one filter to the store
+        //
         store.update(Collections.singletonList(createBrokenFilter("to-be-removed")));
 
-		//
-		// Next update cycle - add another filter. The first one should be removed.
-		//
-		try {
+        //
+        // Next update cycle - add another filter. The first one should be removed.
+        //
+        try {
             store.update(Collections.singletonList(createBrokenFilter("new-filter")));
-		} catch (ConcurrentModificationException e) {
-			// Ignore the exception!
-			// In real life this would be in a different thread
-			// and also effectively be ignored.
-		}
+        } catch (ConcurrentModificationException e) {
+            // Ignore the exception!
+            // In real life this would be in a different thread
+            // and also effectively be ignored.
+        }
 
-		//
-		// Try again to update the filter store
-		// With the concurrency bug (EB1-679), this call would never return
+        //
+        // Try again to update the filter store
+        // With the concurrency bug (EB1-679), this call would never return
         // Underlying bug should be fixed in (EB1-738) but we just ensure ConcurrentModificationExceptions
         // won't break update threads.
-		//
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<?> future = executor.submit(() -> store.update(Collections.emptyList()));
+        //
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<?> future = executor.submit(() -> store.update(Collections.emptyList()));
 
-		//
-		// Make sure the executor has finished its task.
-		//
-		future.get(2000, TimeUnit.SECONDS);
-	}
+        //
+        // Make sure the executor has finished its task.
+        //
+        future.get(2000, TimeUnit.SECONDS);
+    }
 
-	/*
-	 * The purpose of the broken filter is to simulate a ConcurrentModificationException, when looping over
-	 * all filters to remove the filter from the list.
-	 */
-	private Filter createBrokenFilter(String definition) {
-		Filter filter = new AbstractFilter(FilterPriority.DEFAULT, definition) {
+    /*
+     * The purpose of the broken filter is to simulate a ConcurrentModificationException, when looping over
+     * all filters to remove the filter from the list.
+     */
+    private Filter createBrokenFilter(String definition) {
+        Filter filter = new AbstractFilter(FilterPriority.DEFAULT, definition) {
 
-			@Override
-			protected FilterResult doFilter(TransactionContext context) {
-				return null;
-			}
+            @Override
+            protected FilterResult doFilter(TransactionContext context) {
+                return null;
+            }
 
-			@Override
-			public int hashCode() {
-				LOG.error("###");
-				throw new ConcurrentModificationException("fake exception");
-			}
+            @Override
+            public int hashCode() {
+                LOG.error("###");
+                throw new ConcurrentModificationException("fake exception");
+            }
 
-			@Override
-			public boolean equals(Object o) {
-				LOG.error("###");
-				throw new ConcurrentModificationException("fake exception");
-			}
-		};
-		return filter;
-	}
+            @Override
+            public boolean equals(Object o) {
+                LOG.error("###");
+                throw new ConcurrentModificationException("fake exception");
+            }
+        };
+        return filter;
+    }
 
 }

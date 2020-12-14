@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.ssl;
 
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 
 import java.io.InputStream;
 import java.security.GeneralSecurityException;

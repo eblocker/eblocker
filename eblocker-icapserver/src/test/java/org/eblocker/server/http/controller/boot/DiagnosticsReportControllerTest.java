@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.controller.boot;
 
-import org.eblocker.server.http.service.DiagnosticsReportService;
-import org.eblocker.server.junit.Assert5;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.lang3.RandomUtils;
+import org.eblocker.server.http.service.DiagnosticsReportService;
+import org.eblocker.server.junit.Assert5;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

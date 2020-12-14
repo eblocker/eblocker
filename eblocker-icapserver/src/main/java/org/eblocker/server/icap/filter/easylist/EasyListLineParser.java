@@ -116,7 +116,6 @@ public class EasyListLineParser implements FilterLineParser {
             return null;
         }
 
-
         switch (ruleType) {
 
             case COMMENT:
@@ -338,7 +337,6 @@ public class EasyListLineParser implements FilterLineParser {
         // Not documented at https://adblockplus.org/en/filters, but used in EasyLists:
         MEDIA("media"),
         FONT("font");
-
 
         private final String option;
 

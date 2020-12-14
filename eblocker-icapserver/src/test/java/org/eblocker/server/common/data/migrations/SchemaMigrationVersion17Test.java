@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.eblocker.server.common.data.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.data.DataSource;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SchemaMigrationVersion17Test {
 
@@ -58,7 +57,6 @@ public class SchemaMigrationVersion17Test {
         expectedExitNodes.add("au");
         Mockito.when(dataSource.getCurrentTorExitNodes()).thenReturn(currentExitNodes);
 
-
         migration.migrate();
 
         ArgumentCaptor<Set<String>> captor = ArgumentCaptor.forClass(Set.class);
@@ -73,7 +71,6 @@ public class SchemaMigrationVersion17Test {
         Set<String> currentExitNodes = null;
         Set<String> expectedExitNodes = new HashSet<>();
         Mockito.when(dataSource.getCurrentTorExitNodes()).thenReturn(currentExitNodes);
-
 
         migration.migrate();
 

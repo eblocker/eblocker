@@ -53,7 +53,6 @@ public class NetworkInterfaceConfiguration {
         this.anonIpMask = anonIpMask;
     }
 
-
     public void enableDhcp() throws IOException {
         writeConfiguration((BufferedWriter writer) -> {
             writer.append("dhcp");
@@ -79,7 +78,6 @@ public class NetworkInterfaceConfiguration {
             writer.newLine();
         });
     }
-
 
     private void writeConfiguration(InterfaceConfig config) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(interfacesConfigPath))) {

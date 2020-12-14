@@ -21,73 +21,75 @@ import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.common.util.UrlUtils;
 
 public class TestContext implements TransactionContext {
-	
-	private final String url;
-	
-	private final String referrer;
 
-	private final String accept;
-	
-	public TestContext(String url) {
-		this.url = url;
-		this.referrer = null;
-		this.accept = null;
-	}
+    private final String url;
 
-	public TestContext(String url, String referrer, String accept) {
-		this.url = url;
-		this.referrer = referrer;
-		this.accept = accept;
-	}
+    private final String referrer;
 
-	@Override
-	public String getUrl() {
-		return url;
-	}
+    private final String accept;
 
-	@Override
-	public String getReferrer() {
-		return referrer;
-	}
+    public TestContext(String url) {
+        this.url = url;
+        this.referrer = null;
+        this.accept = null;
+    }
 
-	@Override
-	public String getAccept() {
-		return accept;
-	}
+    public TestContext(String url, String referrer, String accept) {
+        this.url = url;
+        this.referrer = referrer;
+        this.accept = accept;
+    }
 
-	@Override
-	public String getDomain() {
-		if (url == null) return null;
-		return UrlUtils.getDomain(UrlUtils.getHostname(url));
-	}
+    @Override
+    public String getUrl() {
+        return url;
+    }
 
-	@Override
-	public String getReferrerHostname() {
-		if (referrer == null) return null;
-		return UrlUtils.getHostname(referrer);
-	}
+    @Override
+    public String getReferrer() {
+        return referrer;
+    }
 
-	@Override
-	public String getSessionId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getAccept() {
+        return accept;
+    }
 
-	@Override
-	public Decision getDecision() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getDomain() {
+        if (url == null)
+            return null;
+        return UrlUtils.getDomain(UrlUtils.getHostname(url));
+    }
 
-	@Override
-	public String getRedirectTarget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getReferrerHostname() {
+        if (referrer == null)
+            return null;
+        return UrlUtils.getHostname(referrer);
+    }
 
-	@Override
-	public boolean isThirdParty() {
-		return !UrlUtils.isSameDomain(getDomain(), getReferrerHostname());
-	}
-    
+    @Override
+    public String getSessionId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Decision getDecision() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getRedirectTarget() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isThirdParty() {
+        return !UrlUtils.isSameDomain(getDomain(), getReferrerHostname());
+    }
+
 }

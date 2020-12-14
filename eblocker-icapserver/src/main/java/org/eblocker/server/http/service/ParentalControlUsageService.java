@@ -218,7 +218,6 @@ public class ParentalControlUsageService {
             dateTime.getDayOfMonth() == now.getDayOfMonth();
     }
 
-
     /**
      * MUST NOT BE CALLED BY ANYONE BESIDES ParentalControlContingentEnforcerService !
      * <p>

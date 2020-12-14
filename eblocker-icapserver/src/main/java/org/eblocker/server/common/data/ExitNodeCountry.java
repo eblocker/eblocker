@@ -44,7 +44,6 @@ public class ExitNodeCountry {
         return code;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

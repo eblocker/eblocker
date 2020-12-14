@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UserAgentServiceTest {
 
@@ -60,7 +60,7 @@ public class UserAgentServiceTest {
         userAgents.put("", UserAgentInfo.OTHER);
         userAgents.put("xzy", UserAgentInfo.OTHER);
 
-        for (Map.Entry<String, UserAgentInfo> entry: userAgents.entrySet()) {
+        for (Map.Entry<String, UserAgentInfo> entry : userAgents.entrySet()) {
             assertEquals(entry.getKey(), entry.getValue(), userAgentService.getUserAgentInfo(entry.getKey()));
         }
     }

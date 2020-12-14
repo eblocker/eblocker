@@ -874,10 +874,10 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("setAutomaticUpdatesConfig", HttpMethod.POST)
             .name("console.updates.autoupdate.config.set.route");
 
-//		server
-//			.uri("/updates/packetVersion", updateController)
-//			.action("getListsPacketVersion", HttpMethod.GET)
-//			.name("update.updates.packet.version.get.route");
+        //		server
+        //			.uri("/updates/packetVersion", updateController)
+        //			.action("getListsPacketVersion", HttpMethod.GET)
+        //			.name("update.updates.packet.version.get.route");
 
     }
 
@@ -1477,7 +1477,6 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("setLocale", HttpMethod.PUT)
             .name("adminconsole.locale.put.route");
 
-
         // ** New Adminconsole: System status routes
         server
             .uri("/api/adminconsole/systemstatus/shutdown", systemStatusController)
@@ -1622,10 +1621,10 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/updates/status", updateController)
             .action("setUpdatingStatus", HttpMethod.POST)
             .name("adminconsole.updates.status.set.route");
-//        server
-//            .uri("/api/adminconsole/updates/download", updateController)
-//            .action("downloadUpdates", HttpMethod.GET)
-//            .name("adminconsole.updates.download.set.route");
+        //        server
+        //            .uri("/api/adminconsole/updates/download", updateController)
+        //            .action("downloadUpdates", HttpMethod.GET)
+        //            .name("adminconsole.updates.download.set.route");
         server
             .uri("/api/adminconsole/updates/check", updateController)
             .action("getUpdatesCheckStatus", HttpMethod.GET)
@@ -1818,7 +1817,6 @@ public class EblockerHttpsServer implements Preprocessor {
             .action("setErrorRecordingEnabled", HttpMethod.PUT)
             .name("adminconsole.error.recording.enabled.set");
 
-
         // ** New Adminconsole: Trusted apps
         server
             .uri("/api/adminconsole/trustedapps/id", appModulesController)
@@ -1862,7 +1860,6 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/trusteddomains/deleteall", sslController)
             .action("removeAllWhitelistedUrl", HttpMethod.PUT)
             .name("adminconsole.ssl.whitelist.delete.all.route");
-
 
         // ** New Adminconsole: DNS
         server
@@ -2223,7 +2220,6 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/openvpn/dns", mobileDnsCheckController)
             .action("check", HttpMethod.POST)
             .name("adminconsole.vpn.test.dns");
-
 
         // ** New Adminconsole: save customer info (for remind-me-again VPN offer)
         server
@@ -2956,7 +2952,6 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/dashboard/registration", deviceRegistrationController)
             .action("registrationStatus", HttpMethod.GET)
             .name("dashboard.registration.status.route");
-
 
         // ** Dashboard IP-Anon
         server

@@ -184,7 +184,7 @@ public class AccessDeniedService {
 
                 GeneratingKeyManager keyManager = new GeneratingKeyManager(sslService.getCa(), keyPair, keyManagerCacheMaxSize, keyManagerCacheConcurrencyLevel, keyManagerDefaultNames);
                 SSLContext sslContext = SSLContext.getInstance("TLS");  //NOSONAR: Lesser security is acceptable here and excluding old clients should be avoided
-                sslContext.init(new KeyManager[]{keyManager}, null, null);
+                sslContext.init(new KeyManager[]{ keyManager }, null, null);
 
                 SslContext nettySslContext = new JdkSslContext(sslContext, false, ClientAuth.NONE);
                 AddAttributeHandler addHttpsSchemeHandler = new AddAttributeHandler(Collections.singletonMap(

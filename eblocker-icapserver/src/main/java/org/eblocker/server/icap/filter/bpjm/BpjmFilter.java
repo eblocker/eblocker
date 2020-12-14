@@ -63,7 +63,6 @@ public class BpjmFilter {
 
     private final Map<ByteArrays.Key, BpjmEntry[]> entryByDomainHash = new HashMap<>();
 
-
     BpjmFilter(BpjmModul bpjmModul) {
         bpjmModul.getEntries().stream()
             .collect(Collectors.groupingBy(e -> new ByteArrays.Key(e.getDomainHash())))

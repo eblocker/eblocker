@@ -37,7 +37,6 @@ public class ProductMigrationControllerImpl implements ProductMigrationControlle
         this.productMigrationService = productMigrationService;
     }
 
-
     @Override
     public UpsellInfoWrapper getUpsellInfo(Request request, Response response) {
         String feature = request.getHeader("feature");

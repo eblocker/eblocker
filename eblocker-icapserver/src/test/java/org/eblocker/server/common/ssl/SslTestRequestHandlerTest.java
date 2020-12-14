@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.http.service.DeviceService;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -25,6 +23,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ import java.math.BigInteger;
 public class SslTestRequestHandlerTest {
 
     private final String deviceId = "device:000000000001";
-    private final String encodedDeviceId= "device%3a000000000001";
+    private final String encodedDeviceId = "device%3a000000000001";
     private final BigInteger serialNumber = BigInteger.valueOf(12345);
     private final String userAgent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.3) Gecko/20041007 Epiphany/1.4.7";
 

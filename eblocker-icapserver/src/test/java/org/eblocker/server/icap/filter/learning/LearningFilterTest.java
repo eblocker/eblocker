@@ -32,82 +32,81 @@ import static org.junit.Assert.assertEquals;
 
 public class LearningFilterTest {
 
-	private Filter highest_a = new TestFilter("aa", false, FilterPriority.HIGHEST);
-	private Filter high_a = new TestFilter("a", false, FilterPriority.HIGH);
-	private Filter high_b = new TestFilter("bb", false, FilterPriority.HIGH);
-	private Filter medium_b = new TestFilter("b", false, FilterPriority.MEDIUM);
+    private Filter highest_a = new TestFilter("aa", false, FilterPriority.HIGHEST);
+    private Filter high_a = new TestFilter("a", false, FilterPriority.HIGH);
+    private Filter high_b = new TestFilter("bb", false, FilterPriority.HIGH);
+    private Filter medium_b = new TestFilter("b", false, FilterPriority.MEDIUM);
 
+    private TransactionContext aa = new TestContext("http://xxx.yyy.zzz/aa");
+    private TransactionContext bb = new TestContext("http://xxx.yyy.zzz/bb");
+    private TransactionContext kk = new TestContext("http://xxx.yyy.zzz/kk");
 
-	private TransactionContext aa = new TestContext("http://xxx.yyy.zzz/aa");
-	private TransactionContext bb = new TestContext("http://xxx.yyy.zzz/bb");
-	private TransactionContext kk = new TestContext("http://xxx.yyy.zzz/kk");
+    private TransactionContext aa2 = new TestContext("http://lll.mmm.nnn/aa");
+    private TransactionContext bb2 = new TestContext("http://lll.mmm.nnn/bb");
+    private TransactionContext kk2 = new TestContext("http://lll.mmm.nnn/kk");
 
-	private TransactionContext aa2 = new TestContext("http://lll.mmm.nnn/aa");
-	private TransactionContext bb2 = new TestContext("http://lll.mmm.nnn/bb");
-	private TransactionContext kk2 = new TestContext("http://lll.mmm.nnn/kk");
-
-	@Test
-	public void test() {
-		LearningFilter learningFilter = new TestLearningFilter();
+    @Test
+    public void test() {
+        LearningFilter learningFilter = new TestLearningFilter();
 
         learningFilter.add(null, highest_a);
-		learningFilter.add(null, high_a);
-		learningFilter.add(null, high_b);
-		learningFilter.add(null, medium_b);
+        learningFilter.add(null, high_a);
+        learningFilter.add(null, high_b);
+        learningFilter.add(null, medium_b);
 
-		//
-		// Filter list for hostname should contain only the default PASS-BY-DEFAULT filter.
-		// Filter result is "PASS" by default.
-		//
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(aa).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
+        //
+        // Filter list for hostname should contain only the default PASS-BY-DEFAULT filter.
+        // Filter result is "PASS" by default.
+        //
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(aa).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
 
-		//
-		// Process queue --> Filter for "aa" should be added to map; filter for "bb" should still be missing!
-		//
-		learningFilter.learn(null, aa);
-		learningFilter.learn(null, kk);
+        //
+        // Process queue --> Filter for "aa" should be added to map; filter for "bb" should still be missing!
+        //
+        learningFilter.learn(null, aa);
+        learningFilter.learn(null, kk);
 
-		//
-		// Matching request should now be blocked.
-		//
-		assertEquals(Decision.BLOCK, learningFilter.filter(aa).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(bb).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
+        //
+        // Matching request should now be blocked.
+        //
+        assertEquals(Decision.BLOCK, learningFilter.filter(aa).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(bb).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
 
-		//
-		// Process queue --> Filter for "bb" should now also be added
-		//
-		learningFilter.learn(null, bb);
+        //
+        // Process queue --> Filter for "bb" should now also be added
+        //
+        learningFilter.learn(null, bb);
 
-		//
-		// Matching request should now be blocked.
-		//
-		assertEquals(Decision.BLOCK, learningFilter.filter(aa).getDecision());
-		assertEquals(Decision.BLOCK, learningFilter.filter(bb).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
+        //
+        // Matching request should now be blocked.
+        //
+        assertEquals(Decision.BLOCK, learningFilter.filter(aa).getDecision());
+        assertEquals(Decision.BLOCK, learningFilter.filter(bb).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(kk).getDecision());
 
-		//
-		// Filter for other hostname should still be unknown
-		//
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(aa2).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(bb2).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(kk2).getDecision());
+        //
+        // Filter for other hostname should still be unknown
+        //
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(aa2).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(bb2).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(kk2).getDecision());
 
-		//
-		// Process queue --> Filter for other hostname should now also be added
-		//
-		learningFilter.learn(null, aa2);
-		learningFilter.learn(null, bb2);
-		learningFilter.learn(null, kk2);
+        //
+        // Process queue --> Filter for other hostname should now also be added
+        //
+        learningFilter.learn(null, aa2);
+        learningFilter.learn(null, bb2);
+        learningFilter.learn(null, kk2);
 
-		//
-		// Filter for other hostname should still be unknown
-		//
-		assertEquals(Decision.BLOCK, learningFilter.filter(aa2).getDecision());
-		assertEquals(Decision.BLOCK, learningFilter.filter(bb2).getDecision());
-		assertEquals(Decision.NO_DECISION, learningFilter.filter(kk2).getDecision());
-	}
+        //
+        // Filter for other hostname should still be unknown
+        //
+        assertEquals(Decision.BLOCK, learningFilter.filter(aa2).getDecision());
+        assertEquals(Decision.BLOCK, learningFilter.filter(bb2).getDecision());
+        assertEquals(Decision.NO_DECISION, learningFilter.filter(kk2).getDecision());
+    }
 
     @Test
     public void testLearnResultWithHigherPriority() {
@@ -118,7 +117,6 @@ public class LearningFilterTest {
         assertEquals(Decision.PASS, learnResult.getDecision());
         assertEquals(mockFilter, learnResult.getDecider());
     }
-
 
     @Test
     public void testLearnResultWithLowerPriority() {
@@ -142,7 +140,7 @@ public class LearningFilterTest {
 
     @Test
     public void testResolveReferences() {
-	    TransactionContext transactionContext = Mockito.mock(TransactionContext.class);
+        TransactionContext transactionContext = Mockito.mock(TransactionContext.class);
         Filter filter = createMockFilter(FilterPriority.HIGH);
         Mockito.when(filter.getDefinition()).thenReturn("definition");
         Mockito.when(filter.filter(transactionContext)).thenReturn(FilterResult.noDecision(filter));

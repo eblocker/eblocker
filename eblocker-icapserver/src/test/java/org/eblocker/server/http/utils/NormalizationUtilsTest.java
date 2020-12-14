@@ -56,7 +56,7 @@ public class NormalizationUtilsTest {
         for (int i = 0; i < 256; i++) {
             String dirtyChar = Character.toString((char) i);
             String cleanChar = NormalizationUtils.normalizeStringForShellScript(dirtyChar);
-//            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
+            //            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
             if (i == 9 // Character Tabulation,
                 || i == 10 // Line Feed,
                 || i == 11 // Vertical Tab,
@@ -150,7 +150,7 @@ public class NormalizationUtilsTest {
         for (int i = 0; i < 256; i++) {
             String dirtyChar = Character.toString((char) i);
             String cleanChar = NormalizationUtils.normalizeStringForFilename(dirtyChar, 1, "");
-//            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
+            //            System.out.println(i + ": " + Character.toString((char) i) + " normalized: " + cleanChar);
             if (i == 9 // Character Tabulation,
                 || i == 10 // Line Feed,
                 || i == 11 // Vertical Tab,

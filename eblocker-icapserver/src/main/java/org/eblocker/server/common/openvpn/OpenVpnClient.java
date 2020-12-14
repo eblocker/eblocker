@@ -49,7 +49,6 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
-
 public class OpenVpnClient implements VpnClient, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(OpenVpnClient.class);
 
@@ -84,22 +83,21 @@ public class OpenVpnClient implements VpnClient, Closeable {
     private VpnKeepAlive vpnKeepAlive;
     private boolean restartOnExit;
 
-    @Inject
-    OpenVpnClient(@Named("start.openvpn.instance.command") String startInstanceScript,
-                  @Named("kill.process.command") String killProcessScript,
-                  OpenVpnProfileFiles profileFiles,
-                  ScriptRunner scriptRunner,
-                  NetworkStateMachine networkStateMachine,
-                  DataSource dataSource,
-                  SquidConfigController squidConfigController,
-                  RoutingController routingController,
-                  NetworkInterfaceAliases networkInterfaceAliases,
-                  OpenVpnChannelFactory openVpnChannelSubscriberFactory,
-                  @Named("unlimitedCachePoolExecutor") Executor executor,
-                  EblockerDnsServer eblockerDnsServer,
-                  DeviceService deviceService,
-                  VpnKeepAliveFactory vpnKeepAliveFactory,
-                  @Assisted VpnProfile vpnProfile) {
+    @Inject OpenVpnClient(@Named("start.openvpn.instance.command") String startInstanceScript,
+                          @Named("kill.process.command") String killProcessScript,
+                          OpenVpnProfileFiles profileFiles,
+                          ScriptRunner scriptRunner,
+                          NetworkStateMachine networkStateMachine,
+                          DataSource dataSource,
+                          SquidConfigController squidConfigController,
+                          RoutingController routingController,
+                          NetworkInterfaceAliases networkInterfaceAliases,
+                          OpenVpnChannelFactory openVpnChannelSubscriberFactory,
+                          @Named("unlimitedCachePoolExecutor") Executor executor,
+                          EblockerDnsServer eblockerDnsServer,
+                          DeviceService deviceService,
+                          VpnKeepAliveFactory vpnKeepAliveFactory,
+                          @Assisted VpnProfile vpnProfile) {
         this.startInstanceScript = startInstanceScript;
         this.killProcessScript = killProcessScript;
 

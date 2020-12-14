@@ -44,7 +44,8 @@ public class DomainExcluder {
             return whiteList;
         }
         for (String domain : domains) {
-            if (hostname.equals(domain) || hostname.endsWith("." + domain)) return !whiteList;
+            if (hostname.equals(domain) || hostname.endsWith("." + domain))
+                return !whiteList;
         }
         return whiteList;
     }

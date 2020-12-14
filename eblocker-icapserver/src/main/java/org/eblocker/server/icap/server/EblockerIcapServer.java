@@ -72,7 +72,6 @@ public class EblockerIcapServer {
             .localAddress(serverPort)
             .childHandler(pipelineFactory);
 
-
         SocketAddress address = new InetSocketAddress("0.0.0.0", serverPort);
         log.info("Binding ICAP server to address {}", address);
         channelFuture = bootstrap.bind(address);

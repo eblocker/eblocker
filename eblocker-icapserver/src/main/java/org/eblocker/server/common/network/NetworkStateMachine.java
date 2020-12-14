@@ -161,7 +161,6 @@ public class NetworkStateMachine {
             // Log event
             eventLogger.log(Events.networkModeChange(selected.getId()));
 
-
             rebootNeeded = true;//networkstate change -> a reboot is probably a good idea
             current.onExit(services);
             selected.onEntry(services, networkConfiguration, rebootNeeded);

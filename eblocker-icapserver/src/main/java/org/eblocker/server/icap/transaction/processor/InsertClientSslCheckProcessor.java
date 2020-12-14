@@ -44,7 +44,6 @@ public class InsertClientSslCheckProcessor implements TransactionProcessor {
     private static final String TAG_URL_REPORT_ERROR_CURRENT = "@URL_REPORT_ERROR_CURRENT@";
     private static final String TAG_URL_REPORT_ERROR_RENEWAL = "@URL_REPORT_ERROR_RENEWAL@";
 
-
     private final BaseURLs baseURLs;
     private final NetworkInterfaceWrapper networkInterface;
     private final SslService sslService;

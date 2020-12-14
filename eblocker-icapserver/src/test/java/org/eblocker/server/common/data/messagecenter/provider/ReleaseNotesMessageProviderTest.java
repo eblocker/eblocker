@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,8 +52,8 @@ public class ReleaseNotesMessageProviderTest {
         versionService = Mockito.mock(VersionService.class);
         eventLogger = Mockito.mock(EventLogger.class);
         when(versionService.get()).
-                thenReturn(OLD_VERSION_INFO). // first call
-                thenReturn(NEW_VERSION_INFO); // second call (if necessary)
+            thenReturn(OLD_VERSION_INFO). // first call
+            thenReturn(NEW_VERSION_INFO); // second call (if necessary)
     }
 
     @Test
@@ -97,7 +98,7 @@ public class ReleaseNotesMessageProviderTest {
     @Test
     public void test_minorUpdate() throws IOException, InterruptedException {
         ReleaseNotesMessageProvider releaseNotesMessageProvider = new ReleaseNotesMessageProvider(versionService,
-                eventLogger, NEW_VERSION_MINOR_CHANGE);
+            eventLogger, NEW_VERSION_MINOR_CHANGE);
         Map<Integer, MessageContainer> messageContainers = new HashMap<>();
 
         //

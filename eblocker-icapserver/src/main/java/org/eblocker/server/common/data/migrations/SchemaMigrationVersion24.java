@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-
 public class SchemaMigrationVersion24 implements SchemaMigration {
 
     private final DataSource dataSource;

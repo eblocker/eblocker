@@ -25,7 +25,6 @@ public class SplashService {
 
     private final DataSource dataSource;
 
-
     @Inject
     public SplashService(
         DataSource dataSource

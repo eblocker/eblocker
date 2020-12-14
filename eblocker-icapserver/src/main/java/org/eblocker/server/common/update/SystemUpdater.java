@@ -112,6 +112,5 @@ public interface SystemUpdater {
      */
     boolean unpinEblockerListsPackage() throws IOException, InterruptedException;
 
-
     UpdatingStatus getUpdatingStatus() throws IOException, InterruptedException;
 }

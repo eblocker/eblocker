@@ -38,7 +38,6 @@ public class SchemaMigrationVersion4Test {
         migration = new SchemaMigrationVersion4(dataSource);
     }
 
-
     @Test
     public void getSourceVersion() throws Exception {
         Assert.assertEquals("3", migration.getSourceVersion());
@@ -53,7 +52,7 @@ public class SchemaMigrationVersion4Test {
     public void migrate() throws Exception {
         // setup mock full profile
         Set<Integer> filterLists = new HashSet<>(Arrays.asList(0, 1, 2));
-        UserProfileModule profile = new UserProfileModule(DefaultEntities.PARENTAL_CONTROL_FULL_PROFILE_ID, null, null, null, null, false, false,null, filterLists, null, null, null, null, false, null);
+        UserProfileModule profile = new UserProfileModule(DefaultEntities.PARENTAL_CONTROL_FULL_PROFILE_ID, null, null, null, null, false, false, null, filterLists, null, null, null, null, false, null);
         Mockito.when(dataSource.get(UserProfileModule.class, DefaultEntities.PARENTAL_CONTROL_FULL_PROFILE_ID)).thenReturn(profile);
 
         // run migration

@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class MessageContainerTest {
 
@@ -36,24 +36,24 @@ public class MessageContainerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         MessageContainer messageContainer = new MessageContainer(
-                new MessageCenterMessage(
-                        815,
-                        "TITLE_KEY",
-                        "CONTENT_KEY",
-                        "LABEL_KEY",
-                        "URL_KEY",
-                        Collections.emptyMap(),
-                        Collections.emptyMap(),
-                        Collections.emptyMap(),
-                        new Date(),
-                        true,
-                        MessageSeverity.INFO
-                ),
-                new MessageVisibility(
-                        815,
-                        false,
-                        Collections.emptySet()
-                )
+            new MessageCenterMessage(
+                815,
+                "TITLE_KEY",
+                "CONTENT_KEY",
+                "LABEL_KEY",
+                "URL_KEY",
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                new Date(),
+                true,
+                MessageSeverity.INFO
+            ),
+            new MessageVisibility(
+                815,
+                false,
+                Collections.emptySet()
+            )
         );
 
         String json = objectMapper.writeValueAsString(messageContainer);

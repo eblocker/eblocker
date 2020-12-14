@@ -22,7 +22,6 @@ import org.eblocker.server.common.data.Device.DisplayIconPosition;
 
 public class IconSettings {
 
-
     DisplayIconMode iconMode;
 
     private final DisplayIconPosition iconPosition;

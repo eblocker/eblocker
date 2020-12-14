@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.data;
 
-
 import org.apache.commons.lang3.StringUtils;
 
 import javax.naming.ldap.Rdn;

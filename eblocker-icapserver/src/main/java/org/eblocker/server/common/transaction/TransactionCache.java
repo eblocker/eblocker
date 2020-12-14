@@ -47,7 +47,8 @@ public class TransactionCache {
                 cache = new ConcurrentHashMap<>();
             }
             cursor++;
-            if (cursor == size) cursor = 0;
+            if (cursor == size)
+                cursor = 0;
             if (keys[cursor] != null) {
                 cache.remove(keys[cursor]);
             }

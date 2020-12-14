@@ -50,7 +50,7 @@ public class StaticFileControllerTest {
     private static int testDataCacheTime = 10;//in seconds
     private static String dashboardHost = "eblocker.box";
     private static String httpsPath = "https";
-    private static String[] consolePaths = {"/console", "/console/", "/console/bla"};
+    private static String[] consolePaths = { "/console", "/console/", "/console/bla" };
 
     @Before
     public void setUp() throws Exception {
@@ -218,7 +218,7 @@ public class StaticFileControllerTest {
 
     @Test
     public void doNotRedirectFromShortIfRightPathIsGiven() throws IOException {
-        String[] hosts = {"eblocker.box"};
+        String[] hosts = { "eblocker.box" };
         String path = "/dashboard/";
 
         for (String host : hosts) {
@@ -234,7 +234,7 @@ public class StaticFileControllerTest {
 
     @Test
     public void redirectToConsole() throws IOException {
-        String[] hosts = {"192.168.1.2", "controlbar.eblocker.com", "192.168.1.2:3000", "controlbar.eblocker.com:3000"};
+        String[] hosts = { "192.168.1.2", "controlbar.eblocker.com", "192.168.1.2:3000", "controlbar.eblocker.com:3000" };
 
         for (String host : hosts) {
             for (String path : consolePaths) {

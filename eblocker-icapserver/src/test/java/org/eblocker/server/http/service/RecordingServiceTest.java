@@ -16,11 +16,20 @@
  */
 package org.eblocker.server.http.service;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.RecordedUrl;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.StartRecordingRequestData;
+import org.eblocker.server.common.util.TextLineProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-import java.io.FileWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.Writer;
 import java.time.Clock;
 import java.time.Instant;
@@ -28,308 +37,308 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import org.eblocker.server.common.data.IpAddress;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.RecordedUrl;
-import org.eblocker.server.common.util.StartRecordingRequestData;
-import org.eblocker.server.common.util.TextLineProvider;
-import org.eblocker.server.common.system.ScriptRunner;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RecordingServiceTest {
-	@Before
-	public void setUp(){
+    @Before
+    public void setUp() {
 
-	}
-	@After
-	public void tearDown(){
+    }
 
-	}
-	@Test
-	public void getRecordedDomainList(){
-		// Mock ScriptRunner
-		ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
-		try {
-			when(scriptRunner.runScript("processing-script.sh")).thenReturn(0);
-		} catch (Exception e) {
-		}
+    @After
+    public void tearDown() {
 
-		// Mock TextLineProvider
-		TextLineProvider lineProvider = Mockito.mock(TextLineProvider.class);
-		List<String> handshakes = new Vector<String>();
-		handshakes.add("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\twww.firstserver.com\t1");
-		handshakes.add("1.2.3.5\t1235:1235:1235:1235:1235:1235:1235:1235\twww.secondserver.de\t2");
-		handshakes.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\tftp.data.galore\t10");
-		handshakes.add("2.2.2.3\t2223:2223:2223:2223:2223:2223:2223:2223\tftp.data.galore\t11");
-		handshakes.add("2.2.2.4\t2224:2224:2224:2224:2224:2224:2224:2224\tftp.data.galore\t12");
-		handshakes.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\tpics.cdn.match.social\t20");
-		handshakes.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\tpics.cdn.match.social\t21");
-		when(lineProvider.getLines("file-handshakes")).thenReturn(handshakes);
-		List<String> data = new Vector<String>();
-		data.add("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\t1");
-		data.add("1.2.3.6\t1236:1236:1236:1236:1236:1236:1236:1236\t3");
-		data.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\t10");
-		data.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\t10");
-		data.add("2.2.2.3\t2222:2222:2222:2222:2222:2222:2222:2222\t11");
-		data.add("2.2.2.3\t2222:2222:2222:2222:2222:2222:2222:2222\t11");
-		data.add("2.2.2.4\t2222:2222:2222:2222:2222:2222:2222:2222\t12");
-		data.add("2.2.2.4\t2222:2222:2222:2222:2222:2222:2222:2222\t12");
-		data.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\t20");
-		when(lineProvider.getLines("file-data")).thenReturn(data);
+    }
 
-		Clock clock = Clock.systemUTC();
-		// Set up service to be tested with mocked services
-		RecordingService recService = new RecordingService(100, 100,
-				"/invalid/file", "file-handshakes", "file-data",
-				null, scriptRunner, null, lineProvider, clock);
+    @Test
+    public void getRecordedDomainList() {
+        // Mock ScriptRunner
+        ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
+        try {
+            when(scriptRunner.runScript("processing-script.sh")).thenReturn(0);
+        } catch (Exception e) {
+        }
 
-		List<RecordedUrl> result = recService.getRecordedDomainList();
-//		verify(scriptRunner.runScript());
-		assertNotNull(result);
+        // Mock TextLineProvider
+        TextLineProvider lineProvider = Mockito.mock(TextLineProvider.class);
+        List<String> handshakes = new Vector<String>();
+        handshakes.add("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\twww.firstserver.com\t1");
+        handshakes.add("1.2.3.5\t1235:1235:1235:1235:1235:1235:1235:1235\twww.secondserver.de\t2");
+        handshakes.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\tftp.data.galore\t10");
+        handshakes.add("2.2.2.3\t2223:2223:2223:2223:2223:2223:2223:2223\tftp.data.galore\t11");
+        handshakes.add("2.2.2.4\t2224:2224:2224:2224:2224:2224:2224:2224\tftp.data.galore\t12");
+        handshakes.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\tpics.cdn.match.social\t20");
+        handshakes.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\tpics.cdn.match.social\t21");
+        when(lineProvider.getLines("file-handshakes")).thenReturn(handshakes);
+        List<String> data = new Vector<String>();
+        data.add("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\t1");
+        data.add("1.2.3.6\t1236:1236:1236:1236:1236:1236:1236:1236\t3");
+        data.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\t10");
+        data.add("2.2.2.2\t2222:2222:2222:2222:2222:2222:2222:2222\t10");
+        data.add("2.2.2.3\t2222:2222:2222:2222:2222:2222:2222:2222\t11");
+        data.add("2.2.2.3\t2222:2222:2222:2222:2222:2222:2222:2222\t11");
+        data.add("2.2.2.4\t2222:2222:2222:2222:2222:2222:2222:2222\t12");
+        data.add("2.2.2.4\t2222:2222:2222:2222:2222:2222:2222:2222\t12");
+        data.add("3.3.3.3\t3333:3333:3333:3333:3333:3333:3333:3333\t20");
+        when(lineProvider.getLines("file-data")).thenReturn(data);
 
-		RecordedUrl entryFirst = new RecordedUrl("1.2.3.4", "www.firstserver.com");
-		entryFirst.adjustWhitelistRecommendation(true);
-		assertTrue(result.contains(entryFirst));
+        Clock clock = Clock.systemUTC();
+        // Set up service to be tested with mocked services
+        RecordingService recService = new RecordingService(100, 100,
+            "/invalid/file", "file-handshakes", "file-data",
+            null, scriptRunner, null, lineProvider, clock);
 
-		RecordedUrl entrySecond = new RecordedUrl("1.2.3.5", "www.secondserver.de");
-		entrySecond.adjustWhitelistRecommendation(false);
-		assertTrue(result.contains(entrySecond));
+        List<RecordedUrl> result = recService.getRecordedDomainList();
+        //		verify(scriptRunner.runScript());
+        assertNotNull(result);
 
-		// Server with several IPs - could be any of the IPs
-		RecordedUrl entryThirdA = new RecordedUrl("2.2.2.2", "ftp.data.galore");
-		RecordedUrl entryThirdB = new RecordedUrl("2.2.2.3", "ftp.data.galore");
-		RecordedUrl entryThirdC = new RecordedUrl("2.2.2.4", "ftp.data.galore");
-		entryThirdA.adjustWhitelistRecommendation(true);
-		entryThirdB.adjustWhitelistRecommendation(true);
-		entryThirdC.adjustWhitelistRecommendation(true);
-		assertTrue(result.contains(entryThirdA) || result.contains(entryThirdB)
-				|| result.contains(entryThirdC));
+        RecordedUrl entryFirst = new RecordedUrl("1.2.3.4", "www.firstserver.com");
+        entryFirst.adjustWhitelistRecommendation(true);
+        assertTrue(result.contains(entryFirst));
 
-		// Several connections, app data observed for only one connection
-		RecordedUrl entryFourth = new RecordedUrl("3.3.3.3", "pics.cdn.match.social");
-		entryFourth.adjustWhitelistRecommendation(false);
-		assertTrue(result.contains(entryFourth));
-	}
+        RecordedUrl entrySecond = new RecordedUrl("1.2.3.5", "www.secondserver.de");
+        entrySecond.adjustWhitelistRecommendation(false);
+        assertTrue(result.contains(entrySecond));
 
-	@Test
-	public void startStopStopped(){
-		// Mock device
-		Device device = Mockito.mock(Device.class);
-		when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
-		// Mock dataSource
-		DataSource dataSource = Mockito.mock(DataSource.class);
-		when(dataSource.getDevice(anyString())).thenReturn(device);
-		// Mock ScriptRunner
-		ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
-		try {
-			when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
-			when(scriptRunner.runScript("recording_status")).thenReturn(0, -1);
-			when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
-		} catch (Exception e) {
-		}
-		// Mock App Module Service
-		AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
-		doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+        // Server with several IPs - could be any of the IPs
+        RecordedUrl entryThirdA = new RecordedUrl("2.2.2.2", "ftp.data.galore");
+        RecordedUrl entryThirdB = new RecordedUrl("2.2.2.3", "ftp.data.galore");
+        RecordedUrl entryThirdC = new RecordedUrl("2.2.2.4", "ftp.data.galore");
+        entryThirdA.adjustWhitelistRecommendation(true);
+        entryThirdB.adjustWhitelistRecommendation(true);
+        entryThirdC.adjustWhitelistRecommendation(true);
+        assertTrue(result.contains(entryThirdA) || result.contains(entryThirdB)
+            || result.contains(entryThirdC));
 
-		// RecordingRequest (1 minute, 100 MB)
-		StartRecordingRequestData reqStart = new StartRecordingRequestData("start", "1234", 1, 100);
+        // Several connections, app data observed for only one connection
+        RecordedUrl entryFourth = new RecordedUrl("3.3.3.3", "pics.cdn.match.social");
+        entryFourth.adjustWhitelistRecommendation(false);
+        assertTrue(result.contains(entryFourth));
+    }
 
-		// Set up service to be tested with mocked services
-		String recordingFile = null, handshakesFile = null, appDataFile = null;
-		try {
-			recordingFile = File.createTempFile("tmp.", ".recording").toString();
-			handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
-			appDataFile = File.createTempFile("tmp.", "appdata").toString();
-		} catch (Exception e1) {
-		}
-		Clock clock = Clock.systemUTC();
-		RecordingService recService = new RecordingService(100, 100,
-				recordingFile, handshakesFile, appDataFile, dataSource,
-				scriptRunner, appModuleService, null, clock);
+    @Test
+    public void startStopStopped() {
+        // Mock device
+        Device device = Mockito.mock(Device.class);
+        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
+        // Mock dataSource
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        when(dataSource.getDevice(anyString())).thenReturn(device);
+        // Mock ScriptRunner
+        ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
+        try {
+            when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
+            when(scriptRunner.runScript("recording_status")).thenReturn(0, -1);
+            when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
+        } catch (Exception e) {
+        }
+        // Mock App Module Service
+        AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
+        doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
 
-		// Start recording
-		boolean resultStartRecording = recService.recordingStartStop(reqStart);
-		try {
-			verify(scriptRunner).runScript("recording_start", "1.2.3.4");
-		} catch (Exception e) {
-		}
-		assertTrue(resultStartRecording);
+        // RecordingRequest (1 minute, 100 MB)
+        StartRecordingRequestData reqStart = new StartRecordingRequestData("start", "1234", 1, 100);
 
-		// Get status (should be running)
-		boolean resultGetStatusRunning = recService.getRecordingStatus();
-		assertTrue(resultGetStatusRunning);
-		try {
-			verify(scriptRunner).runScript("recording_status");
-		} catch (Exception e) {
-		}
+        // Set up service to be tested with mocked services
+        String recordingFile = null, handshakesFile = null, appDataFile = null;
+        try {
+            recordingFile = File.createTempFile("tmp.", ".recording").toString();
+            handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
+            appDataFile = File.createTempFile("tmp.", "appdata").toString();
+        } catch (Exception e1) {
+        }
+        Clock clock = Clock.systemUTC();
+        RecordingService recService = new RecordingService(100, 100,
+            recordingFile, handshakesFile, appDataFile, dataSource,
+            scriptRunner, appModuleService, null, clock);
 
-		// Stop recording
-		StartRecordingRequestData reqStop = new StartRecordingRequestData("stop", "", 1, 1);
-		boolean resultStopRecording = recService.recordingStartStop(reqStop);
-		try{
-			verify(scriptRunner).runScript("recording_stop", "");
-		} catch (Exception e) {
-		}
-		assertTrue(resultStopRecording);
+        // Start recording
+        boolean resultStartRecording = recService.recordingStartStop(reqStart);
+        try {
+            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+        } catch (Exception e) {
+        }
+        assertTrue(resultStartRecording);
 
-		// Get status (should be stopped now)
-		boolean resultGetStatusStopped = recService.getRecordingStatus();
-		assertFalse(resultGetStatusStopped);
-		try {
-			verify(scriptRunner,times(2)).runScript("recording_status");
-			verify(scriptRunner).runScript("recording_stop", "");
-		} catch (Exception e) {
-		}
-		verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
-	}
+        // Get status (should be running)
+        boolean resultGetStatusRunning = recService.getRecordingStatus();
+        assertTrue(resultGetStatusRunning);
+        try {
+            verify(scriptRunner).runScript("recording_status");
+        } catch (Exception e) {
+        }
 
-	@Test
-	public void stopAfterTime(){
-		// Mock device
-		Device device = Mockito.mock(Device.class);
-		when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
-		// Mock dataSource
-		DataSource dataSource = Mockito.mock(DataSource.class);
-		when(dataSource.getDevice(anyString())).thenReturn(device);
-		// Mock ScriptRunner
-		ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
-		try {
-			when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
-			when(scriptRunner.runScript("recording_status")).thenReturn(0);
-			when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
-		} catch (Exception e) {
-		}
-		// Mock App Module Service
-		AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
-		doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+        // Stop recording
+        StartRecordingRequestData reqStop = new StartRecordingRequestData("stop", "", 1, 1);
+        boolean resultStopRecording = recService.recordingStartStop(reqStop);
+        try {
+            verify(scriptRunner).runScript("recording_stop", "");
+        } catch (Exception e) {
+        }
+        assertTrue(resultStopRecording);
 
-		// RecordingRequest (1 minute, 100 MB)
-		StartRecordingRequestData reqStart = new StartRecordingRequestData(
-				"start", "1234", 1, 100);
+        // Get status (should be stopped now)
+        boolean resultGetStatusStopped = recService.getRecordingStatus();
+        assertFalse(resultGetStatusStopped);
+        try {
+            verify(scriptRunner, times(2)).runScript("recording_status");
+            verify(scriptRunner).runScript("recording_stop", "");
+        } catch (Exception e) {
+        }
+        verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+    }
 
-		// Mock Time
-		Clock clock = Mockito.mock(Clock.class);
-	    Instant first = Instant.ofEpochSecond(1000L);
-	    Instant second = first.plusSeconds(1);
-	    Instant thirdAndAfter = second.plusSeconds(64);
-		when(clock.instant()).thenReturn(first, second, thirdAndAfter);
+    @Test
+    public void stopAfterTime() {
+        // Mock device
+        Device device = Mockito.mock(Device.class);
+        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
+        // Mock dataSource
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        when(dataSource.getDevice(anyString())).thenReturn(device);
+        // Mock ScriptRunner
+        ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
+        try {
+            when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
+            when(scriptRunner.runScript("recording_status")).thenReturn(0);
+            when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
+        } catch (Exception e) {
+        }
+        // Mock App Module Service
+        AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
+        doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
 
-		// Set up service to be tested with mocked services
-		String recordingFile = null, handshakesFile = null, appDataFile = null;
-		try {
-			recordingFile = File.createTempFile("tmp.", ".recording").toString();
-			handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
-			appDataFile = File.createTempFile("tmp.", "appdata").toString();
-		} catch (Exception e1) {
-		}
+        // RecordingRequest (1 minute, 100 MB)
+        StartRecordingRequestData reqStart = new StartRecordingRequestData(
+            "start", "1234", 1, 100);
 
-		RecordingService recService = new RecordingService(100, 100,
-				recordingFile, handshakesFile, appDataFile, dataSource,
-				scriptRunner, appModuleService, null, clock);
+        // Mock Time
+        Clock clock = Mockito.mock(Clock.class);
+        Instant first = Instant.ofEpochSecond(1000L);
+        Instant second = first.plusSeconds(1);
+        Instant thirdAndAfter = second.plusSeconds(64);
+        when(clock.instant()).thenReturn(first, second, thirdAndAfter);
 
-		// Start recording
-		boolean resultStartRecording = recService.recordingStartStop(reqStart);
-		try {
-			verify(scriptRunner).runScript("recording_start", "1.2.3.4");
-		} catch (Exception e) {
-		}
-		assertTrue(resultStartRecording);
+        // Set up service to be tested with mocked services
+        String recordingFile = null, handshakesFile = null, appDataFile = null;
+        try {
+            recordingFile = File.createTempFile("tmp.", ".recording").toString();
+            handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
+            appDataFile = File.createTempFile("tmp.", "appdata").toString();
+        } catch (Exception e1) {
+        }
 
-		// Get status (should be running)
-		boolean resultGetStatusRunning = recService.getRecordingStatus();
-		assertTrue(resultGetStatusRunning);
-		try {
-			verify(scriptRunner).runScript("recording_status");
-		} catch (Exception e) {
-		}
+        RecordingService recService = new RecordingService(100, 100,
+            recordingFile, handshakesFile, appDataFile, dataSource,
+            scriptRunner, appModuleService, null, clock);
 
-		// Get status (should be stopped now)
-		boolean resultGetStatusStopped = recService.getRecordingStatus();
-		assertFalse(resultGetStatusStopped);
-		try {
-			verify(scriptRunner,times(2)).runScript("recording_status");
-			verify(scriptRunner).runScript("recording_stop", "");
-		} catch (Exception e) {
-		}
-		verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
-	}
+        // Start recording
+        boolean resultStartRecording = recService.recordingStartStop(reqStart);
+        try {
+            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+        } catch (Exception e) {
+        }
+        assertTrue(resultStartRecording);
 
-	@Test
-	public void stopAfterSize(){
-		// Mock device
-		Device device = Mockito.mock(Device.class);
-		when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
-		// Mock dataSource
-		DataSource dataSource = Mockito.mock(DataSource.class);
-		when(dataSource.getDevice(anyString())).thenReturn(device);
-		// Mock ScriptRunner
-		ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
-		try {
-			when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
-			when(scriptRunner.runScript("recording_status")).thenReturn(0);
-			when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
-		} catch (Exception e) {
-		}
-		// Mock App Module Service
-		AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
-		doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+        // Get status (should be running)
+        boolean resultGetStatusRunning = recService.getRecordingStatus();
+        assertTrue(resultGetStatusRunning);
+        try {
+            verify(scriptRunner).runScript("recording_status");
+        } catch (Exception e) {
+        }
 
-		// RecordingRequest (10 minutes, 1 MB)
-		StartRecordingRequestData reqStart = new StartRecordingRequestData("start", "1234", 10, 1);
+        // Get status (should be stopped now)
+        boolean resultGetStatusStopped = recService.getRecordingStatus();
+        assertFalse(resultGetStatusStopped);
+        try {
+            verify(scriptRunner, times(2)).runScript("recording_status");
+            verify(scriptRunner).runScript("recording_stop", "");
+        } catch (Exception e) {
+        }
+        verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+    }
 
-		// Set up service to be tested with mocked services
-		String recordingFile = null, handshakesFile = null, appDataFile = null;
-		try {
-			recordingFile = File.createTempFile("tmp.", ".recording").toString();
-			handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
-			appDataFile = File.createTempFile("tmp.", "appdata").toString();
-		} catch (Exception e1) {
-		}
-		Clock clock = Clock.systemUTC();
-		RecordingService recService = new RecordingService(100, 100,
-				recordingFile, handshakesFile, appDataFile, dataSource,
-				scriptRunner, appModuleService, null, clock);
+    @Test
+    public void stopAfterSize() {
+        // Mock device
+        Device device = Mockito.mock(Device.class);
+        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
+        // Mock dataSource
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        when(dataSource.getDevice(anyString())).thenReturn(device);
+        // Mock ScriptRunner
+        ScriptRunner scriptRunner = Mockito.mock(ScriptRunner.class);
+        try {
+            when(scriptRunner.runScript("recording_start", "1.2.3.4")).thenReturn(0);
+            when(scriptRunner.runScript("recording_status")).thenReturn(0);
+            when(scriptRunner.runScript("recording_stop", "")).thenReturn(0);
+        } catch (Exception e) {
+        }
+        // Mock App Module Service
+        AppModuleService appModuleService = Mockito.mock(AppModuleService.class);
+        doNothing().when(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
 
-		// Start recording
-		boolean resultStartRecording = recService.recordingStartStop(reqStart);
-		try {
-			verify(scriptRunner).runScript("recording_start", "1.2.3.4");
-		} catch (Exception e) {
-		}
-		assertTrue(resultStartRecording);
+        // RecordingRequest (10 minutes, 1 MB)
+        StartRecordingRequestData reqStart = new StartRecordingRequestData("start", "1234", 10, 1);
 
-		// Get status (should be running)
-		boolean resultGetStatusRunning = recService.getRecordingStatus();
-		assertTrue(resultGetStatusRunning);
-		try {
-			verify(scriptRunner).runScript("recording_status");
-		} catch (Exception e) {
-		}
+        // Set up service to be tested with mocked services
+        String recordingFile = null, handshakesFile = null, appDataFile = null;
+        try {
+            recordingFile = File.createTempFile("tmp.", ".recording").toString();
+            handshakesFile = File.createTempFile("tmp.", ".handshakes").toString();
+            appDataFile = File.createTempFile("tmp.", "appdata").toString();
+        } catch (Exception e1) {
+        }
+        Clock clock = Clock.systemUTC();
+        RecordingService recService = new RecordingService(100, 100,
+            recordingFile, handshakesFile, appDataFile, dataSource,
+            scriptRunner, appModuleService, null, clock);
 
-		// fill file with data
-		try {
-			Writer wr = new FileWriter(recordingFile);
-			for (int i = 0; i < 1024 * 1024; ++i) {
-				wr.write("23");
-			}
-			wr.close();
-		} catch (Exception e) {
-		}
+        // Start recording
+        boolean resultStartRecording = recService.recordingStartStop(reqStart);
+        try {
+            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+        } catch (Exception e) {
+        }
+        assertTrue(resultStartRecording);
 
-		// Get status (should be stopped now)
-		boolean resultGetStatusStopped = recService.getRecordingStatus();
-		assertFalse(resultGetStatusStopped);
-		try {
-			verify(scriptRunner,times(2)).runScript("recording_status");
-			verify(scriptRunner).runScript("recording_stop", "");
-		} catch (Exception e) {
-		}
-		verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+        // Get status (should be running)
+        boolean resultGetStatusRunning = recService.getRecordingStatus();
+        assertTrue(resultGetStatusRunning);
+        try {
+            verify(scriptRunner).runScript("recording_status");
+        } catch (Exception e) {
+        }
 
-	}
+        // fill file with data
+        try {
+            Writer wr = new FileWriter(recordingFile);
+            for (int i = 0; i < 1024 * 1024; ++i) {
+                wr.write("23");
+            }
+            wr.close();
+        } catch (Exception e) {
+        }
+
+        // Get status (should be stopped now)
+        boolean resultGetStatusStopped = recService.getRecordingStatus();
+        assertFalse(resultGetStatusStopped);
+        try {
+            verify(scriptRunner, times(2)).runScript("recording_status");
+            verify(scriptRunner).runScript("recording_stop", "");
+        } catch (Exception e) {
+        }
+        verify(appModuleService).storeAndActivateEnabledState(anyInt(), anyBoolean());
+
+    }
 }

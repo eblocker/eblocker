@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,67 +30,67 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SchemaMigrationVersion11Test {
-	private DataSource dataSource;
-	List<UserModuleOld> userModules = new ArrayList<>();
+    private DataSource dataSource;
+    List<UserModuleOld> userModules = new ArrayList<>();
     private SchemaMigrationVersion11 migration;
-	private UserMigrationService userMigrationService;
-//    private JedisPool jedisPool;
-//    private Jedis jedis;
+    private UserMigrationService userMigrationService;
+    //    private JedisPool jedisPool;
+    //    private Jedis jedis;
     private ObjectMapper objectMapper;
-	private UserModuleOld userAlice, userBob, userAliceExpected, userBobExpected;
+    private UserModuleOld userAlice, userBob, userAliceExpected, userBobExpected;
 
-	@Before
-	public void setup() {
-		dataSource = Mockito.mock(DataSource.class);
+    @Before
+    public void setup() {
+        dataSource = Mockito.mock(DataSource.class);
 
-//        jedis = Mockito.mock(Jedis.class);
-//        jedisPool = Mockito.mock(JedisPool.class);
-//        objectMapper = new ObjectMapper();
-		userMigrationService = Mockito.mock(UserMigrationService.class); // new UserMigrationService(jedisPool, objectMapper);
+        //        jedis = Mockito.mock(Jedis.class);
+        //        jedisPool = Mockito.mock(JedisPool.class);
+        //        objectMapper = new ObjectMapper();
+        userMigrationService = Mockito.mock(UserMigrationService.class); // new UserMigrationService(jedisPool, objectMapper);
 
-		migration = new SchemaMigrationVersion11(dataSource, userMigrationService);
+        migration = new SchemaMigrationVersion11(dataSource, userMigrationService);
 
-		// Existing users
-		userAlice = new UserModuleOld(1337, 1337, "alice", "alice-key", null, null,false, null, null, null, null, null);
-//        String aliceJson = objectMapper.writeValueAsString(userAlice);
-		userBob = new UserModuleOld(4711, 4711, "bob", "bob-key", null, null, false, null, new HashMap<>(), null, null, null);
-//        String bobJson = objectMapper.writeValueAsString(userBob);
-		userModules.add(userAlice);
-		userModules.add(userBob);
+        // Existing users
+        userAlice = new UserModuleOld(1337, 1337, "alice", "alice-key", null, null, false, null, null, null, null, null);
+        //        String aliceJson = objectMapper.writeValueAsString(userAlice);
+        userBob = new UserModuleOld(4711, 4711, "bob", "bob-key", null, null, false, null, new HashMap<>(), null, null, null);
+        //        String bobJson = objectMapper.writeValueAsString(userBob);
+        userModules.add(userAlice);
+        userModules.add(userBob);
 
-//        TreeSet<String> keys = new TreeSet<>();
-//        keys.add("UserModule:1337");
-//        keys.add("UserModule:4711");
+        //        TreeSet<String> keys = new TreeSet<>();
+        //        keys.add("UserModule:1337");
+        //        keys.add("UserModule:4711");
 
         // Mock direct access to data store
-//        Mockito.when(jedis.get("UserModule:1337")).thenReturn(aliceJson);
-//        Mockito.when(jedis.get("UserModule:4711")).thenReturn(bobJson);
-//        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
-//        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
+        //        Mockito.when(jedis.get("UserModule:1337")).thenReturn(aliceJson);
+        //        Mockito.when(jedis.get("UserModule:4711")).thenReturn(bobJson);
+        //        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
+        //        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
 
-		// Expected users
+        // Expected users
         userAliceExpected = new UserModuleOld(1337, 1337, "alice", "alice-key", null, null, false, null, Collections.emptyMap(), null, null, null);
         userBobExpected = new UserModuleOld(4711, 4711, "bob", "bob-key", null, null, false, null, Collections.emptyMap(), null, null, null);
-	}
+    }
 
-	@Test
-	public void getSourceVersion() throws Exception {
-		Assert.assertEquals("10", migration.getSourceVersion());
-	}
+    @Test
+    public void getSourceVersion() throws Exception {
+        Assert.assertEquals("10", migration.getSourceVersion());
+    }
 
-	@Test
-	public void getTargetVersion() throws Exception {
-		Assert.assertEquals("11", migration.getTargetVersion());
-	}
+    @Test
+    public void getTargetVersion() throws Exception {
+        Assert.assertEquals("11", migration.getTargetVersion());
+    }
 
-	@Test
-	public void testSetWhitelistConfigByDomains() {
-	    Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
+    @Test
+    public void testSetWhitelistConfigByDomains() {
+        Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
 
-	    migration.migrate();
+        migration.migrate();
 
-	    Mockito.verify(userMigrationService).save(userAliceExpected, userAliceExpected.getId());
-	    Mockito.verify(userMigrationService).save(userBobExpected, userBobExpected.getId());
-	}
+        Mockito.verify(userMigrationService).save(userAliceExpected, userAliceExpected.getId());
+        Mockito.verify(userMigrationService).save(userBobExpected, userBobExpected.getId());
+    }
 
 }

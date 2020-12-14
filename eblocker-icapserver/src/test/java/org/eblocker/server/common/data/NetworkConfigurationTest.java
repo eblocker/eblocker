@@ -16,48 +16,48 @@
  */
 package org.eblocker.server.common.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 public class NetworkConfigurationTest {
-	NetworkConfiguration config1;
-	NetworkConfiguration config2;
+    NetworkConfiguration config1;
+    NetworkConfiguration config2;
 
-	@Before
-	public void setUp() throws Exception {
-		config1 = makeNetworkConfiguration();
-		config2 = makeNetworkConfiguration();
-	}
+    @Before
+    public void setUp() throws Exception {
+        config1 = makeNetworkConfiguration();
+        config2 = makeNetworkConfiguration();
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void testEquals() {
-		assertEquals(config1, config1);
-		assertEquals(config1, config2);
-		assertEquals(config2, config1);
-		assertEquals(config2, config2);
-		
-		config2.setIpAddress("192.168.0.22");
-		assertNotEquals(config1, config2);
-	}
-	
-	private NetworkConfiguration makeNetworkConfiguration() {
-		NetworkConfiguration c = new NetworkConfiguration();
-		c.setAutomatic(false);
-		c.setIpAddress("192.168.0.23");
-		c.setNetworkMask("255.255.255.0");
-		c.setGateway("192.168.0.1");
-		c.setNameServerPrimary("192.168.3.20");
-		c.setDhcp(true);
-		c.setDhcpRangeFirst("192.168.0.100");
-		c.setDhcpRangeLast("192.168.0.199");
-		return c;
-	}
+    @Test
+    public void testEquals() {
+        assertEquals(config1, config1);
+        assertEquals(config1, config2);
+        assertEquals(config2, config1);
+        assertEquals(config2, config2);
+
+        config2.setIpAddress("192.168.0.22");
+        assertNotEquals(config1, config2);
+    }
+
+    private NetworkConfiguration makeNetworkConfiguration() {
+        NetworkConfiguration c = new NetworkConfiguration();
+        c.setAutomatic(false);
+        c.setIpAddress("192.168.0.23");
+        c.setNetworkMask("255.255.255.0");
+        c.setGateway("192.168.0.1");
+        c.setNameServerPrimary("192.168.3.20");
+        c.setDhcp(true);
+        c.setDhcpRangeFirst("192.168.0.100");
+        c.setDhcpRangeLast("192.168.0.199");
+        return c;
+    }
 }

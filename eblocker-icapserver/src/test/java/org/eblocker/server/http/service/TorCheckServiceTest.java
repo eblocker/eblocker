@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.http.service;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.data.TorCheckSite;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.eblocker.server.common.data.TorCheckSite;
+import static org.junit.Assert.assertEquals;
 
 public class TorCheckServiceTest {
     private TorCheckService service;
@@ -45,8 +44,8 @@ public class TorCheckServiceTest {
     public void testWithSSL() {
         List<TorCheckSite> result = service.getSites(true);
         assertEquals(
-                Arrays.asList("http://torcheck.xenobite.eu/", "https://torcheck.xenobite.eu/", "https://check.torproject.org/"),
-                getUrls(result));
+            Arrays.asList("http://torcheck.xenobite.eu/", "https://torcheck.xenobite.eu/", "https://check.torproject.org/"),
+            getUrls(result));
     }
 
     private List<String> getUrls(List<TorCheckSite> sites) {

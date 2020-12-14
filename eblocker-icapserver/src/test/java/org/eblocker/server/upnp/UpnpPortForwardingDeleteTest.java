@@ -16,12 +16,6 @@
  */
 package org.eblocker.server.upnp;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
@@ -30,6 +24,11 @@ import org.fourthline.cling.model.meta.ActionArgument;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.Datatype;
 import org.fourthline.cling.support.model.PortMapping.Protocol;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 public class UpnpPortForwardingDeleteTest {
     private UpnpPortForwardingDelete add;

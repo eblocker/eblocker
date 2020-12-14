@@ -121,7 +121,6 @@ public class AutomaticUpdater {
         }
     }
 
-
     /**
      * Loads the timeframe for automatic updates from the redis datasource
      */
@@ -136,7 +135,6 @@ public class AutomaticUpdater {
         }
         return false;
     }
-
 
     /**
      * Start the update process; change this logic to control when updates are performed

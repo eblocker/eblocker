@@ -176,7 +176,6 @@ public class NetworkInterfaceWrapper {
             .flatMap(iface -> Collections.list(iface.getInetAddresses()).stream())
             .collect(Collectors.toSet());
 
-
         // get all addresses which are assigned to the primary interface
         List<IpAddress> assignedIps = addresses.stream()
             .filter(ip -> !subInterfaceAddresses.contains(ip))
@@ -303,6 +302,5 @@ public class NetworkInterfaceWrapper {
     public interface IpAddressChangeListener {
         void onIpAddressChange(IpAddress newIp);
     }
-
 
 }

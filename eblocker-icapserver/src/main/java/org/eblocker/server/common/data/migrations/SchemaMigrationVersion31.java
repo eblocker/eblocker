@@ -25,7 +25,6 @@ import org.eblocker.server.common.data.UserModuleOld;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class SchemaMigrationVersion31 implements SchemaMigration {
 
     private final DataSource dataSource;

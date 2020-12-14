@@ -16,39 +16,41 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.data.DataSource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ProductInfoServiceTest {
 
     private final static ProductInfo PRO = new ProductInfo(
-            "product-id-pro",
-            "product-name-pro",
-            new String[]{ "PRO" }
+        "product-id-pro",
+        "product-name-pro",
+        new String[]{ "PRO" }
     );
 
     private final static ProductInfo FAM = new ProductInfo(
-            "product-id-fam",
-            "product-name-fam",
-            new String[]{ "FAM" }
+        "product-id-fam",
+        "product-name-fam",
+        new String[]{ "FAM" }
     );
 
     private final static ProductInfo NONE = new ProductInfo(
-            "product-id-none",
-            "product-name-none",
-            new String[]{}
+        "product-id-none",
+        "product-name-none",
+        new String[]{}
     );
 
     private final static ProductInfo DEMO = new ProductInfo(
-            "product-id-demo",
-            "product-name-demo",
-            new String[]{ "EVL_BAS", "EVL_PRO", "EVL_FAM", "BAS", "PRO", "FAM" }
+        "product-id-demo",
+        "product-name-demo",
+        new String[]{ "EVL_BAS", "EVL_PRO", "EVL_FAM", "BAS", "PRO", "FAM" }
     );
 
     private final static ProductInfo NULL = null;

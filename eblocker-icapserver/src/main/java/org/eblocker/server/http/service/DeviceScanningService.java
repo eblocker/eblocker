@@ -160,7 +160,7 @@ public class DeviceScanningService {
             }
             int network = IpUtils.convertIpStringToInt(tokens[0]);
             int subnet = IpUtils.convertCidrToNetMask(Integer.parseInt(tokens[1]));
-            networks.add(new Integer[]{network, subnet});
+            networks.add(new Integer[]{ network, subnet });
         }
         return networks;
     }

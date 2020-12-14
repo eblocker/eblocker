@@ -16,6 +16,21 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.TrafficAccount;
+import org.eblocker.server.common.data.UsageChangeEvent;
+import org.eblocker.server.common.data.UsageChangeEvents;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.network.TrafficAccounter;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
+
+import javax.xml.ws.Holder;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,23 +43,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import javax.xml.ws.Holder;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.TrafficAccount;
-import org.eblocker.server.common.data.UsageChangeEvent;
-import org.eblocker.server.common.data.UsageChangeEvents;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.UserProfileModule;
-import org.eblocker.server.common.network.TrafficAccounter;
 
 public class ParentalControlUsageServiceTest {
 
@@ -73,7 +71,7 @@ public class ParentalControlUsageServiceTest {
         maxUsageByDay.put(DayOfWeek.MONDAY, 120);
         maxUsageByDay.put(DayOfWeek.TUESDAY, 120);
         maxUsageByDay.put(DayOfWeek.SUNDAY, 120);
-        UserProfileModule userProfile = new UserProfileModule(1, null, null, null, null, false, false,null, null, null, null, maxUsageByDay, null, false, null);
+        UserProfileModule userProfile = new UserProfileModule(1, null, null, null, null, false, false, null, null, null, null, maxUsageByDay, null, false, null);
         userProfile.setControlmodeMaxUsage(true);
 
         // setup parentalcontrol service mock
@@ -152,7 +150,6 @@ public class ParentalControlUsageServiceTest {
         service.startUsage(device);
         clock.setLocalDateTime(LocalDateTime.of(2017, 3, 7, 0, 15, 0, 0));
         service.stopUsage(device);
-
 
         Assert.assertEquals(Duration.of(15, ChronoUnit.MINUTES), service.getUsageAccount(device).getAccountedTime());
     }
@@ -293,7 +290,7 @@ public class ParentalControlUsageServiceTest {
         service.init();
         // add listener toggling flag to indicate callback has happened
         Holder<Boolean> callbackCalledHolder = new Holder<>(false);
-        service.addChangeListener(()-> callbackCalledHolder.value = true);
+        service.addChangeListener(() -> callbackCalledHolder.value = true);
 
         // enable usage -> call must be called
         clock.setLocalDateTime(LocalDateTime.of(2017, 3, 7, 0, 0, 0, 0));

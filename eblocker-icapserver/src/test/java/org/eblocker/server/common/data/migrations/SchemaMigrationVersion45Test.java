@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.blocker.Format;
@@ -25,7 +26,6 @@ import org.eblocker.server.common.blocker.UpdateStatus;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.util.FileUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

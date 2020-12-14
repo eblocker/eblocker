@@ -24,7 +24,7 @@ public class ContentMatcherTest {
     @Test
     public void testAcceptType() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[] {"type/subtype"}, new String[0]);
+        ContentMatcher matcher = new ContentMatcher(new String[]{ "type/subtype" }, new String[0]);
 
         // test
         Assert.assertFalse(matcher.matches("*/*", null));
@@ -40,7 +40,7 @@ public class ContentMatcherTest {
     @Test
     public void testAcceptAllTypes() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[] {"*/*"}, new String[0]);
+        ContentMatcher matcher = new ContentMatcher(new String[]{ "*/*" }, new String[0]);
 
         // test
         Assert.assertTrue(matcher.matches("*/*", null));
@@ -55,7 +55,7 @@ public class ContentMatcherTest {
     @Test
     public void testAcceptAllSubTypes() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[] {"type/*"}, new String[0]);
+        ContentMatcher matcher = new ContentMatcher(new String[]{ "type/*" }, new String[0]);
 
         // test
         Assert.assertFalse(matcher.matches("*/*", null));
@@ -67,7 +67,6 @@ public class ContentMatcherTest {
         Assert.assertFalse(matcher.matches(null, null));
         Assert.assertFalse(matcher.matches("", null));
     }
-
 
     @Test
     public void testAcceptNothing() {
@@ -88,7 +87,7 @@ public class ContentMatcherTest {
     @Test
     public void testMultipleAccept() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[] {"type/subtype", "type/anothersubtype", "fancy/*"}, new String[0]);
+        ContentMatcher matcher = new ContentMatcher(new String[]{ "type/subtype", "type/anothersubtype", "fancy/*" }, new String[0]);
 
         // test
         Assert.assertFalse(matcher.matches("*/*", null));
@@ -107,7 +106,7 @@ public class ContentMatcherTest {
     @Test
     public void testSuffix() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[0], new String[] { "js" });
+        ContentMatcher matcher = new ContentMatcher(new String[0], new String[]{ "js" });
 
         // test
         Assert.assertTrue(matcher.matches(null, "http://fancy.new.site/random.js"));
@@ -119,7 +118,7 @@ public class ContentMatcherTest {
     @Test
     public void testDisjunction() {
         // setup
-        ContentMatcher matcher = new ContentMatcher(new String[] {"application/javascript"}, new String[] { "js" });
+        ContentMatcher matcher = new ContentMatcher(new String[]{ "application/javascript" }, new String[]{ "js" });
 
         // test
         Assert.assertFalse(matcher.matches(null, null));

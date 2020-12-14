@@ -118,7 +118,6 @@ public class MobileConnectionCheckTask implements Runnable {
         semaphore = new Semaphore(numberOfMessages);
     }
 
-
     public MobileConnectionCheckStatus getStatus() {
         return new MobileConnectionCheckStatus(state, tcpMessagesRequested.get(), tcpMessagesReceived.get(), udpMessagesRequested.get(), udpMessagesReceived
             .get());

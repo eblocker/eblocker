@@ -64,7 +64,7 @@ public class SchemaMigrationVersion8Test {
         // verify migration has been run correctly
         Mockito.verify(jedis).del("test-key");
         Mockito.verify(dataSource).setIdSequence(ParentalControlFilterMetaData.class,
-                DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_FILTER_METADATA);
+            DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_FILTER_METADATA);
         Mockito.verify(dataSource).setVersion("8");
     }
 }

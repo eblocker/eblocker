@@ -237,7 +237,6 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
             collect(Collectors.toList());
     }
 
-
     private void createAndSaveFragFinnCard(List<UserModule> users) {
         // If there is already a FRAG_FINN card, remove it and all references.
         List<UiCard> cards = dataSource.getAll(UiCard.class);

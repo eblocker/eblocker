@@ -80,7 +80,6 @@ public class SchemaMigrationVersion9 implements SchemaMigration {
         Map<Integer, Integer> profileToUser = new HashMap<>();
         Set<Integer> usedProfiles = new HashSet<>();
 
-
         // Find out which profiles are in use
         for (Device device : dataSource.getDevices()) {
             usedProfiles.add(getAssignedUserProfile(device));

@@ -38,7 +38,6 @@ public class PatternFilterStatisticsProcessorTest {
     private PatternFilterStatisticsProcessor processor;
     private SslService sslService;
 
-
     private Device device;
     private Session session;
     private Transaction transaction;

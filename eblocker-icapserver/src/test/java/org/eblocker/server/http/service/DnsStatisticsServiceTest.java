@@ -145,14 +145,14 @@ public class DnsStatisticsServiceTest {
         Assert.assertEquals(30, nameServerStats.getResponseTimeMax());
         Assert.assertEquals(30, nameServerStats.getResponseTimeAverage());
         Assert.assertEquals(30, nameServerStats.getResponseTimeMedian());
- 
+
         //Test unavailable name server
         nameServerStats = nameServerStatsByNameServer.get("10.10.10.10");
         assertEquals(DnsRating.BAD, nameServerStats.getRating());
         assertEquals(DnsReliabilityRating.UNAVAILABLE, nameServerStats.getReliabilityRating());
         assertEquals(DnsResponseTimeRating.UNAVAILABLE, nameServerStats.getResponseTimeRating());
         assertNameServerStat(0, 0, 2, 0, nameServerStats);
-        
+
     }
 
     private void assertNameServerStat(int valid, int invalid, int timeout, int error, NameServerStats stats) {

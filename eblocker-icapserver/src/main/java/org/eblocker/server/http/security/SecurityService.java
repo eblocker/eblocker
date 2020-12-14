@@ -247,7 +247,6 @@ public class SecurityService {
         dataSource.setPasswordHash(PasswordUtil.hashPassword(credentials.getNewPassword()));
     }
 
-
     public void removePassword(Credentials credentials, IpAddress ipAddress) {
         verifyPassword(credentials, ipAddress);
         // Log removal of password in events

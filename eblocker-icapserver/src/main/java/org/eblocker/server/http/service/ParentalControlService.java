@@ -81,7 +81,7 @@ public class ParentalControlService {
             throw new ConflictException("Cannot create new user profile: No new id available");
         }
         profile.setId(id);
-//		profile.setNameKey(null);
+        //		profile.setNameKey(null);
         profile.setDescriptionKey(null);
         profile.setBuiltin(false);
         profile.setStandard(false);
@@ -112,7 +112,7 @@ public class ParentalControlService {
             profile.setNameKey(dbProfile.getNameKey());
             profile.setDescriptionKey(dbProfile.getDescriptionKey());
         } else {
-//			profile.setNameKey(null);
+            //			profile.setNameKey(null);
             profile.setDescriptionKey(null);
         }
         // If new name conflicts with other profile, just reset the name

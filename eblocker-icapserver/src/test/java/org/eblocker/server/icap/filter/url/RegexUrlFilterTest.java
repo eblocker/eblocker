@@ -16,38 +16,37 @@
  */
 package org.eblocker.server.icap.filter.url;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterType;
 import org.eblocker.server.icap.filter.TestContext;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class RegexUrlFilterTest {
 
-	@Test
-	public void test() {
-		String url = "http://world.most.annoying.ads/image/large/overlay";
-		
-		assertEquals(Decision.BLOCK,    filter(".*ads.*", FilterType.BLOCK, url));
-		assertEquals(Decision.PASS,     filter(".*ads.*", FilterType.PASS , url));
-		assertEquals(Decision.NO_DECISION, filter(".*xyz.*", FilterType.BLOCK, url));
-		assertEquals(Decision.NO_DECISION, filter(".*xyt.*", FilterType.PASS , url));
-		
-		assertEquals(Decision.BLOCK,    filter("http://world.*", FilterType.BLOCK, url));
-	}
+    @Test
+    public void test() {
+        String url = "http://world.most.annoying.ads/image/large/overlay";
 
-	private Decision filter(String regex, FilterType type, String url) {
-		TransactionContext context = new TestContext(url);
-		Filter filter = UrlFilterFactory.getInstance()
-				.setStringMatchType(StringMatchType.REGEX)
-				.setMatchString(regex)
-				.setType(type)
-				.build();
-		return filter.filter(context).getDecision();
-	}
+        assertEquals(Decision.BLOCK, filter(".*ads.*", FilterType.BLOCK, url));
+        assertEquals(Decision.PASS, filter(".*ads.*", FilterType.PASS, url));
+        assertEquals(Decision.NO_DECISION, filter(".*xyz.*", FilterType.BLOCK, url));
+        assertEquals(Decision.NO_DECISION, filter(".*xyt.*", FilterType.PASS, url));
+
+        assertEquals(Decision.BLOCK, filter("http://world.*", FilterType.BLOCK, url));
+    }
+
+    private Decision filter(String regex, FilterType type, String url) {
+        TransactionContext context = new TestContext(url);
+        Filter filter = UrlFilterFactory.getInstance()
+            .setStringMatchType(StringMatchType.REGEX)
+            .setMatchString(regex)
+            .setType(type)
+            .build();
+        return filter.filter(context).getDecision();
+    }
 
 }

@@ -64,7 +64,7 @@ public class EBlockerFilterProcessorTest {
         Mockito.when(filterManager.getFilter(Mockito.any(Category.class))).thenReturn(filter);
 
         processor = new EBlockerFilterProcessor(filterManager, transactionCache, dataSource, featureServiceSubscriber,
-                connectionTestPatternBlockerUrl);
+            connectionTestPatternBlockerUrl);
     }
 
     @Test

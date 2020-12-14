@@ -17,11 +17,6 @@
 package org.eblocker.server.common.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +24,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JedisDataSourceTest {
 
@@ -48,7 +47,6 @@ public class JedisDataSourceTest {
 
         dataSource = new JedisDataSource(jedisPool, objectMapper);
     }
-
 
     @Test
     public void testSaveSingularEntity() {
@@ -81,7 +79,7 @@ public class JedisDataSourceTest {
     }
 
     @Test
-    public void testDeviceWithoutPauseFlagNotPaused(){
+    public void testDeviceWithoutPauseFlagNotPaused() {
         String deviceId = "device:112233445566";
 
         // Need to set at least one parameter

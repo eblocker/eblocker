@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.transaction;
 
-
 public class ImmutableTransactionContext implements TransactionContext {
 
     private final String sessionId;

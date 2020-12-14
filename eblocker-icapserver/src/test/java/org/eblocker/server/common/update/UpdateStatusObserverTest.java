@@ -61,7 +61,7 @@ public class UpdateStatusObserverTest {
             Mockito.eq(FIXED_DELAY),
             Mockito.eq(FIXED_DELAY),
             Mockito.eq(TimeUnit.SECONDS)
-            );
+        );
 
         // The SystemStatusService is notified
         Mockito.verify(systemStatusService).setExecutionState(ExecutionState.UPDATING);

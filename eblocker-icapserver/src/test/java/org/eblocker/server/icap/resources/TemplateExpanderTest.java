@@ -16,29 +16,31 @@
  */
 package org.eblocker.server.icap.resources;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TemplateExpanderTest {
 
-	private static final SimpleResource SAMPLE_INLAY = new SimpleResource("classpath:test-data/sample-inlay.xhtml");
-	
-	@Test
-	public void testLoadResourceWithContext() {
-		Map<String,String> context = new HashMap<>();
-		context.put("@LARUM@", "vero");
-		context.put("@LIRUM@", "Lorem");
-		String page = ResourceHandler.load(SAMPLE_INLAY);
-		page = TemplateExpander.expand(page, context);
-		assertNotNull(page);
-		assertTrue(page.contains("Lorem"));
-		assertTrue(page.contains("vero"));
-		assertFalse(page.contains("@LIRUM@"));
-		assertFalse(page.contains("@LARUM@"));
-	}
+    private static final SimpleResource SAMPLE_INLAY = new SimpleResource("classpath:test-data/sample-inlay.xhtml");
+
+    @Test
+    public void testLoadResourceWithContext() {
+        Map<String, String> context = new HashMap<>();
+        context.put("@LARUM@", "vero");
+        context.put("@LIRUM@", "Lorem");
+        String page = ResourceHandler.load(SAMPLE_INLAY);
+        page = TemplateExpander.expand(page, context);
+        assertNotNull(page);
+        assertTrue(page.contains("Lorem"));
+        assertTrue(page.contains("vero"));
+        assertFalse(page.contains("@LIRUM@"));
+        assertFalse(page.contains("@LARUM@"));
+    }
 
 }

@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.xml.ws.Holder;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -71,7 +70,7 @@ public class CustomDomainFilterConfigServiceTest {
             .getCustomDomainFilterConfig(1));
         assertCustomDomainFilter(Collections.singleton("etracker.com"), Collections.emptySet(), customDomainFilterConfigService
             .getCustomDomainFilterConfig(2));
-        assertCustomDomainFilter(Collections.singleton("etracker.com"),  Collections.singleton("eblocker.com"), customDomainFilterConfigService
+        assertCustomDomainFilter(Collections.singleton("etracker.com"), Collections.singleton("eblocker.com"), customDomainFilterConfigService
             .getCustomDomainFilterConfig(3));
     }
 

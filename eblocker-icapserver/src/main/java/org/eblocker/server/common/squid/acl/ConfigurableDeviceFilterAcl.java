@@ -30,9 +30,8 @@ public class ConfigurableDeviceFilterAcl extends DeviceFilterAcl {
 
     private Set<String> deviceIds = Collections.emptySet();
 
-    @Inject
-    ConfigurableDeviceFilterAcl(@Assisted String path,
-                                DeviceService deviceService) {
+    @Inject ConfigurableDeviceFilterAcl(@Assisted String path,
+                                        DeviceService deviceService) {
         super(path, deviceService);
     }
 

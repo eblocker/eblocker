@@ -16,26 +16,26 @@
  */
 package org.eblocker.server.common.data;
 
+import org.eblocker.server.http.service.UserService;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eblocker.server.http.service.UserService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import org.junit.Assert;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
 
 public class DeviceFactoryTest {
     private DeviceFactory deviceFactory;
     private DataSource dataSource;
     private UserService userService;
+
     @Before
     public void setUp() throws IOException {
         // Mock DataSource
@@ -43,7 +43,7 @@ public class DeviceFactoryTest {
         userService = Mockito.mock(UserService.class);
 
         Language lang = new Language("de", "German");
-        UserModule user = new UserModule(123456, null, null, null, null, null,true, null, null, null, null, null);
+        UserModule user = new UserModule(123456, null, null, null, null, null, true, null, null, null, null, null);
 
         Mockito.when(dataSource.getCurrentLanguage()).thenReturn(lang);
         Mockito.when(userService.createDefaultSystemUser(any())).thenReturn(user);
@@ -80,7 +80,7 @@ public class DeviceFactoryTest {
     }
 
     @Test
-    public void testCreateNameForNewDevice(){
+    public void testCreateNameForNewDevice() {
         Set<Device> existingDevices = new HashSet<>();
         Device devA = new Device();
         devA.setName("Dell Inc. (No. 1)");

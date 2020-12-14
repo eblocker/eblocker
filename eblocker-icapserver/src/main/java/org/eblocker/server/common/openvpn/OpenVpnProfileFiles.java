@@ -162,6 +162,6 @@ public class OpenVpnProfileFiles {
             new OpenOption[]{
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.WRITE});
+                StandardOpenOption.WRITE });
     }
 }

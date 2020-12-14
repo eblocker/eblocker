@@ -96,7 +96,7 @@ public class ControlBarAliasUpdaterTest {
 
     @Test
     public void testIpChange() throws UnknownHostException {
-        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{8,8,8,8}));
+        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{ 8, 8, 8, 8 }));
 
         // run initial update task
         tasks.get(0).runnable.run();
@@ -105,7 +105,7 @@ public class ControlBarAliasUpdaterTest {
         Mockito.verify(networkInterfaceAliases).add("8.8.8.8", "255.255.255.255");
 
         // change ip and run next update
-        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{8,8,8,4}));
+        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{ 8, 8, 8, 4 }));
         tasks.get(0).runnable.run();
 
         // check alias has been updated
@@ -115,7 +115,7 @@ public class ControlBarAliasUpdaterTest {
 
     @Test
     public void testNoxIpChange() throws UnknownHostException {
-        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{8,8,8,8}));
+        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{ 8, 8, 8, 8 }));
 
         // run initial update task
         tasks.get(0).runnable.run();
@@ -131,7 +131,7 @@ public class ControlBarAliasUpdaterTest {
     }
 
     @Test
-    public void testUpdateFailure() throws  UnknownHostException {
+    public void testUpdateFailure() throws UnknownHostException {
         Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenThrow(new UnknownHostException("mock-exception"));
 
         // run initial update task
@@ -158,7 +158,7 @@ public class ControlBarAliasUpdaterTest {
 
         // change mock to resolve host successfully and re-run update task
         Mockito.reset(inetAddress);
-        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{8,8,8,8}));
+        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{ 8, 8, 8, 8 }));
         tasks.get(1).runnable.run();
 
         // check alias has been setup
@@ -172,7 +172,7 @@ public class ControlBarAliasUpdaterTest {
 
     @Test
     public void tesAliasIsKeptOnError() throws UnknownHostException {
-        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{8,8,8,8}));
+        Mockito.when(inetAddress.getByName(CONTROL_BAR_HOST_NAME)).thenReturn(InetAddress.getByAddress(CONTROL_BAR_HOST_NAME, new byte[]{ 8, 8, 8, 8 }));
 
         // run initial update task
         tasks.get(0).runnable.run();

@@ -70,7 +70,6 @@ public class SessionIdentifier implements TransactionIdentifier {
         return result;
     }
 
-
     @Override
     public String toString() {
         return "IP: " + IP + " userAgent: " + userAgent;

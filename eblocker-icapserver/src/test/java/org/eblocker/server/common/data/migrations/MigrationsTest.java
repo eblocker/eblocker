@@ -29,11 +29,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MigrationsTest {
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	@Before
-	public void setUp() throws Exception {
-		dataSource = Mockito.mock(DataSource.class);
+    @Before
+    public void setUp() throws Exception {
+        dataSource = Mockito.mock(DataSource.class);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MigrationsTest {
 
     private Set<SchemaMigration> createSchemaMigrations(int source, int target) {
         Set<SchemaMigration> migrations = new HashSet<>();
-        for(int i = source; i < target; ++i) {
+        for (int i = source; i < target; ++i) {
             migrations.add(new TestMigration(i == 0 ? null : String.valueOf(i), String.valueOf(i + 1)));
         }
         return migrations;

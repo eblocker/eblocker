@@ -61,7 +61,7 @@ public class ScriptRunnerUnix implements ScriptRunner {
     @Override
     public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException {
         int pid = loggingProcess.getPid();
-        String[] args = {scriptWrapperPath, killProcessCommand, Integer.toString(pid)};
+        String[] args = { scriptWrapperPath, killProcessCommand, Integer.toString(pid) };
         LoggingProcess p = new LoggingProcessUnix(killProcessCommand, executor);
         p.start(args);
         p.waitFor();

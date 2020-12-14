@@ -51,7 +51,7 @@ import java.util.stream.Stream;
 public class SingleFileFilter implements DomainFilter<String> {
     private static final Logger log = LoggerFactory.getLogger(SingleFileFilter.class);
 
-    private static final byte[] MAGIC_BYTES = {0x65, 0x42, 0x6c, 0x6b, 0x46, 0x6c, 0x74, 0x72};
+    private static final byte[] MAGIC_BYTES = { 0x65, 0x42, 0x6c, 0x6b, 0x46, 0x6c, 0x74, 0x72 };
     private static final byte FILE_FORMAT_VERSION = 0x02;
 
     private static final HashFunction hashFunction = Hashing.sipHash24();

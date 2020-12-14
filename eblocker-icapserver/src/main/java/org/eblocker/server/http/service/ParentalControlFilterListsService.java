@@ -281,7 +281,6 @@ public class ParentalControlFilterListsService {
         return savedMetadata;
     }
 
-
     private String prependDot(String value) {
         return value.startsWith(".") ? value : "." + value;
     }

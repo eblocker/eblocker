@@ -17,66 +17,65 @@
 package org.eblocker.server.common.data.migrations;
 
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.InternetAccessContingent;
+import org.eblocker.server.common.data.UserProfileModule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.eblocker.server.common.data.InternetAccessContingent;
-import org.eblocker.server.common.data.UserProfileModule;
+import static org.mockito.Mockito.eq;
 
 public class SchemaMigrationVersion6Test {
-	private DataSource dataSource;
-	private SchemaMigrationVersion6 migration;
-	
-	private UserProfileModule mediumProfile;
-	List<UserProfileModule> userProfileModules = new ArrayList<>();
+    private DataSource dataSource;
+    private SchemaMigrationVersion6 migration;
 
-	@Before
-	public void setup() {
-		dataSource = Mockito.mock(DataSource.class);
+    private UserProfileModule mediumProfile;
+    List<UserProfileModule> userProfileModules = new ArrayList<>();
 
-		migration = new SchemaMigrationVersion6(dataSource);
+    @Before
+    public void setup() {
+        dataSource = Mockito.mock(DataSource.class);
 
-		// Expected objects
-		
-		// Existing user profiles
-		mediumProfile = Mockito.mock(UserProfileModule.class);
+        migration = new SchemaMigrationVersion6(dataSource);
+
+        // Expected objects
+
+        // Existing user profiles
+        mediumProfile = Mockito.mock(UserProfileModule.class);
         Mockito.when(mediumProfile.getId()).thenReturn(DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID);
-	}
+    }
 
-	@Test
-	public void getSourceVersion() throws Exception {
-		Assert.assertEquals("5", migration.getSourceVersion());
-	}
+    @Test
+    public void getSourceVersion() throws Exception {
+        Assert.assertEquals("5", migration.getSourceVersion());
+    }
 
-	@Test
-	public void getTargetVersion() throws Exception {
-		Assert.assertEquals("6", migration.getTargetVersion());
-	}
+    @Test
+    public void getTargetVersion() throws Exception {
+        Assert.assertEquals("6", migration.getTargetVersion());
+    }
 
-	@Test
-	public void testFacebookRemovedFromMediumProfile() {
+    @Test
+    public void testFacebookRemovedFromMediumProfile() {
         Mockito.when(dataSource.get(eq(UserProfileModule.class),
-                Mockito.eq(DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID))).thenReturn(mediumProfile);
-	    
-	    migration.migrate();
-	    
-        Mockito.verify(dataSource).save(mediumProfile, DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID);	    
-	    
+            Mockito.eq(DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID))).thenReturn(mediumProfile);
+
+        migration.migrate();
+
+        Mockito.verify(dataSource).save(mediumProfile, DefaultEntities.PARENTAL_CONTROL_MEDIUM_PROFILE_ID);
+
         Set<InternetAccessContingent> expectedContingent = new HashSet<>();
         expectedContingent.add(new InternetAccessContingent(8, 16 * 60, 17 * 60, 60)); // Every Weekday, 16-17
         expectedContingent.add(new InternetAccessContingent(9, 10 * 60, 11 * 60, 60)); // Every Weekend, 10-11
         expectedContingent.add(new InternetAccessContingent(9, 16 * 60, 18 * 60, 120)); // Every Weekend, 16-18
-        
+
         Mockito.verify(mediumProfile).setInternetAccessContingents(eq(expectedContingent));
-	}
-	
+    }
+
 }

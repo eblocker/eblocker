@@ -16,33 +16,35 @@
  */
 package org.eblocker.server.common.util;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ResourceUtilTest {
 
-	@Test
-	public void testLoadResource() {
-		String page = ResourceUtil.loadResource("test-data/sample.xhtml");
-		assertNotNull(page);
-		assertTrue(page.contains("Hello World"));
-	}
+    @Test
+    public void testLoadResource() {
+        String page = ResourceUtil.loadResource("test-data/sample.xhtml");
+        assertNotNull(page);
+        assertTrue(page.contains("Hello World"));
+    }
 
-	@Test
-	public void testLoadResourceWithContext() {
-		Map<String,String> context = new HashMap<>();
-		context.put("@LARUM@", "vero");
-		context.put("@LIRUM@", "Lorem");
-		String page = ResourceUtil.loadResource("test-data/sample-inlay.xhtml", context);
-		assertNotNull(page);
-		assertTrue(page.contains("Lorem"));
-		assertTrue(page.contains("vero"));
-		assertFalse(page.contains("@LIRUM@"));
-		assertFalse(page.contains("@LARUM@"));
-	}
+    @Test
+    public void testLoadResourceWithContext() {
+        Map<String, String> context = new HashMap<>();
+        context.put("@LARUM@", "vero");
+        context.put("@LIRUM@", "Lorem");
+        String page = ResourceUtil.loadResource("test-data/sample-inlay.xhtml", context);
+        assertNotNull(page);
+        assertTrue(page.contains("Lorem"));
+        assertTrue(page.contains("vero"));
+        assertFalse(page.contains("@LIRUM@"));
+        assertFalse(page.contains("@LARUM@"));
+    }
 
 }

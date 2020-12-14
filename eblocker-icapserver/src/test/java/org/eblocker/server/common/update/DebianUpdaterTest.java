@@ -16,7 +16,17 @@
  */
 package org.eblocker.server.common.update;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.registration.RegistrationState;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,19 +38,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.registration.RegistrationState;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
-
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DebianUpdaterTest {
     private final String updatesStartCommand = "updatesStartCommand";
@@ -51,17 +52,17 @@ public class DebianUpdaterTest {
     private final String updatesRunningInfoCommand = "updatesRunningInfoCommand";
     private final LocalDateTime lastUpdateTime = LocalDateTime.of(2017, 01, 01, 12, 00);
     private final String availableUpdatesString1 = "Inst libtiff5 [4.0.6-1] (4.0.6-1ubuntu0.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])\n"
-            + "Conf libtiff5 (4.0.6-1ubuntu0.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])\n";
+        + "Conf libtiff5 (4.0.6-1ubuntu0.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])\n";
     private final String availableUpdatesString2 = "Inst kpartx [0.5.0+git1.656f8865-5ubuntu2.3] (0.5.0+git1.656f8865-5ubuntu2.4 Ubuntu:16.04/xenial-updates [amd64])\n"
-            + "Conf kpartx (0.5.0+git1.656f8865-5ubuntu2.4 Ubuntu:16.04/xenial-updates [amd64])"
-            + "foo bar";
+        + "Conf kpartx (0.5.0+git1.656f8865-5ubuntu2.4 Ubuntu:16.04/xenial-updates [amd64])"
+        + "foo bar";
     private final String updateProgressString1 = "Get:1 https://apt.stage.eblocker.com/eblocker-lists buster/main armhf eblocker-lists all 2.5.3~daily+20201103071505 [38.2 MB]\n"
-            + "Preparing to unpack .../eblocker-lists_1.0.0~20170222084502_all.deb ...\n"
-            + "Unpacking eblocker-lists (1.0.0~20170222084502) over (1.0.0~20170221084503) ...\n"
-            + "Setting up eblocker-lists (1.0.0~20170222084502) ..\n";
+        + "Preparing to unpack .../eblocker-lists_1.0.0~20170222084502_all.deb ...\n"
+        + "Unpacking eblocker-lists (1.0.0~20170222084502) over (1.0.0~20170221084503) ...\n"
+        + "Setting up eblocker-lists (1.0.0~20170222084502) ..\n";
     private final String updateProgressString2 = "insserv: script tor.distrib: service tor already provided!\n"
-            + "insserv: script tor.site: service tor already provided!\n"
-            + "insserv: script redsocks.distrib: service redsocks already provided!";
+        + "insserv: script tor.site: service tor already provided!\n"
+        + "insserv: script redsocks.distrib: service redsocks already provided!";
     private final String projectVersion = "1.8.4";
     private final String pinEblockerListsCommand = "pin-eblocker-lists";
     private final String unpinEblockerListsCommand = "unpin-eblocker-lists";
@@ -85,22 +86,22 @@ public class DebianUpdaterTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    DebianUpdater createDebianUpdate () throws IOException, InterruptedException {
+    DebianUpdater createDebianUpdate() throws IOException, InterruptedException {
         return new DebianUpdater(deviceRegistrationProperties,
-                scriptRunner,
-                datasource,
-                updateStatusObserver,
-                updatesStartCommand,
-                updatesRunningCommand,
-                updatesDownloadStartCommand,
-                updatesDownloadRunningCommand,
-                updatesCheckCommand,
-                updatesRunningInfoCommand,
-                pinEblockerListsCommand,
-                unpinEblockerListsCommand,
-                eBlockerListsPinningFilename,
-                eBlockerListsPinningVersion,
-                projectVersion);
+            scriptRunner,
+            datasource,
+            updateStatusObserver,
+            updatesStartCommand,
+            updatesRunningCommand,
+            updatesDownloadStartCommand,
+            updatesDownloadRunningCommand,
+            updatesCheckCommand,
+            updatesRunningInfoCommand,
+            pinEblockerListsCommand,
+            unpinEblockerListsCommand,
+            eBlockerListsPinningFilename,
+            eBlockerListsPinningVersion,
+            projectVersion);
     }
 
     @Test
@@ -314,7 +315,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.UPDATING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.UPDATING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -324,7 +325,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.DOWNLOADING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.DOWNLOADING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -340,7 +341,7 @@ public class DebianUpdaterTest {
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.updatesAvailable();
 
-        assertEquals (SystemUpdater.State.CHECKING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.CHECKING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -350,7 +351,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
 
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
         LoggingProcess updateCheckRunner = Mockito.mock(LoggingProcess.class);
@@ -359,14 +360,14 @@ public class DebianUpdaterTest {
 
         debianUpdate.updatesAvailable();
 
-        assertEquals (SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
     }
 
     @Test
     public void testUpdateProgressNeverRun() throws IOException, InterruptedException {
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertTrue (debianUpdate.getUpdateProgress().isEmpty());
+        assertTrue(debianUpdate.getUpdateProgress().isEmpty());
     }
 
     @Test
@@ -440,7 +441,7 @@ public class DebianUpdaterTest {
 
             String testPath = ClassLoader.getSystemResource(TEST_PATH).getPath();
             Path expectedPinningFile = FileSystems.getDefault().getPath(testPath, eBlockerListsPinningFilename);
-            Path actualPinningFile =  FileSystems.getDefault().getPath(path);
+            Path actualPinningFile = FileSystems.getDefault().getPath(path);
             assertArrayEquals(Files.readAllBytes(expectedPinningFile), Files.readAllBytes(actualPinningFile));
         } finally {
             if (f != null) {

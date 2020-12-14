@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.system.unix;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.system.CommandRunner;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
 
-import org.eblocker.server.common.system.CommandRunner;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class CommandRunnerUnixTest {
 

@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.network.BaseURLs;

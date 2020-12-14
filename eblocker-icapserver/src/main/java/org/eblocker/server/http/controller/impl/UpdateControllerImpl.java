@@ -77,7 +77,6 @@ public class UpdateControllerImpl implements UpdateController {
         return status;
     }
 
-
     @Override
     public UpdatingStatus getAutoUpdateInformation(Request request, Response response) throws IOException, InterruptedException {
         UpdatingStatus status = getUpdatingStatus(request, response);

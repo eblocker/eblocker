@@ -23,7 +23,6 @@ import org.eblocker.server.http.service.DashboardService;
 
 import java.util.List;
 
-
 public class SchemaMigrationVersion20 implements SchemaMigration {
 
     private final DataSource dataSource;

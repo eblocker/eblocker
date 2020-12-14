@@ -543,7 +543,6 @@ public class EblockerModule extends BaseModule {
         return new NioEventLoopGroup(2 * Runtime.getRuntime().availableProcessors(), executor);
     }
 
-
     @Provides
     @Singleton
     public AnonymousController anonymousController() {

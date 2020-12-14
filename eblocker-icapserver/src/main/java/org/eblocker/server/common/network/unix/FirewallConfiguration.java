@@ -157,7 +157,8 @@ public class FirewallConfiguration {
         this.levenshtein = new Levenshtein.Builder<String>().substitutionCost(c -> Integer.MAX_VALUE).build();
     }
 
-    private Map<String, Table> generate(Set<Device> devicesArgument, Collection<OpenVpnClientState> vpnClientArgument, boolean masquerade, boolean enableSSL, boolean enableEblockerDns, boolean enableOpenVpnServer, boolean enableMalwareSet) throws IOException, EblockerException {
+    private Map<String, Table> generate(Set<Device> devicesArgument, Collection<OpenVpnClientState> vpnClientArgument, boolean masquerade, boolean enableSSL, boolean enableEblockerDns, boolean enableOpenVpnServer, boolean enableMalwareSet)
+        throws IOException, EblockerException {
         NetworkConfiguration netConfig = networkServices.getCurrentNetworkConfiguration();
         boolean openVpnServerActive = enableOpenVpnServer && netConfig.getVpnIpAddress() != null;
 

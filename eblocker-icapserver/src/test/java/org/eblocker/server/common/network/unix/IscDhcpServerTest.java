@@ -17,51 +17,52 @@
 package org.eblocker.server.common.network.unix;
 
 //import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.HashSet;
 
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.ConfigurationTestBase;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.system.ScriptRunner;
+import java.util.HashSet;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class IscDhcpServerTest extends ConfigurationTestBase {
-	private IscDhcpServer server;
-	private ScriptRunner scriptRunner;
-	private DhcpServerConfiguration configuration;
+    private IscDhcpServer server;
+    private ScriptRunner scriptRunner;
+    private DhcpServerConfiguration configuration;
 
-	@Before
-	public void setUp() throws Exception {
-		scriptRunner = Mockito.mock(ScriptRunner.class);
-		
-		server = new IscDhcpServer(scriptRunner, getOutFilePath(), "dhcpd-apply-config", "dhcpd-enable", "dhcpd-disable");
+    @Before
+    public void setUp() throws Exception {
+        scriptRunner = Mockito.mock(ScriptRunner.class);
 
-		configuration = new DhcpServerConfiguration();
-		configuration.setIpAddress("192.168.0.2");
-		configuration.setNetmask("255.255.255.0");
-		configuration.setGateway("192.168.0.1");
-		configuration.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
-		configuration.setDevices(new HashSet<Device>());
-	}
+        server = new IscDhcpServer(scriptRunner, getOutFilePath(), "dhcpd-apply-config", "dhcpd-enable", "dhcpd-disable");
 
-	@After
-	public void tearDown() throws Exception {
-	}
+        configuration = new DhcpServerConfiguration();
+        configuration.setIpAddress("192.168.0.2");
+        configuration.setNetmask("255.255.255.0");
+        configuration.setGateway("192.168.0.1");
+        configuration.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
+        configuration.setDevices(new HashSet<Device>());
+    }
 
-	@Test
-	public void setConfiguration() throws Exception {
-		server.setConfiguration(configuration);
-		compareOutFileWith("test-data/dhcpd-extended-minimum.conf");
-		verify(scriptRunner).runScript("dhcpd-apply-config");
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void setConfiguration() throws Exception {
+        server.setConfiguration(configuration);
+        compareOutFileWith("test-data/dhcpd-extended-minimum.conf");
+        verify(scriptRunner).runScript("dhcpd-apply-config");
+    }
 
     @Test
     public void enableServerStart() throws Exception {
@@ -77,28 +78,28 @@ public class IscDhcpServerTest extends ConfigurationTestBase {
         verify(scriptRunner).runScript("dhcpd-enable");
     }
 
-    @Test(expected= EblockerException.class)
+    @Test(expected = EblockerException.class)
     public void enableFailureStart() throws Exception {
-        when(scriptRunner.runScript("dhcpd-enable", "start")).thenReturn(1);        
+        when(scriptRunner.runScript("dhcpd-enable", "start")).thenReturn(1);
         server.enable(true);
     }
 
-    @Test(expected= EblockerException.class)
+    @Test(expected = EblockerException.class)
     public void enableFailure() throws Exception {
-        when(scriptRunner.runScript("dhcpd-enable")).thenReturn(1);        
+        when(scriptRunner.runScript("dhcpd-enable")).thenReturn(1);
         server.enable(false);
     }
 
-	@Test
-	public void disableServer() throws Exception {
-		when(scriptRunner.runScript("dhcpd-disable")).thenReturn(0);
-		server.disable();
-		verify(scriptRunner).runScript("dhcpd-disable");
-	}
+    @Test
+    public void disableServer() throws Exception {
+        when(scriptRunner.runScript("dhcpd-disable")).thenReturn(0);
+        server.disable();
+        verify(scriptRunner).runScript("dhcpd-disable");
+    }
 
-	@Test(expected= EblockerException.class)
-	public void disableFailure() throws Exception {
-		when(scriptRunner.runScript("dhcpd-disable")).thenReturn(1);		
-		server.disable();
-	}
+    @Test(expected = EblockerException.class)
+    public void disableFailure() throws Exception {
+        when(scriptRunner.runScript("dhcpd-disable")).thenReturn(1);
+        server.disable();
+    }
 }

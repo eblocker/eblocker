@@ -199,7 +199,7 @@ public class UpdateTask implements Runnable {
             mapToPatternFilterCategory(category),
             false,
             System.currentTimeMillis(),
-            new String[]{path.toString()},
+            new String[]{ path.toString() },
             learningMode,
             definitionFormat,
             true,
@@ -236,7 +236,6 @@ public class UpdateTask implements Runnable {
                 throw new IllegalArgumentException("format not available for pattern filters: " + format);
         }
     }
-
 
     private class DomainStreamSupplier implements Supplier<Stream<String>> {
         private final Path path;

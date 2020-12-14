@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.icap.filter;
 
-
 public interface FilterDomainContainer extends FilterContainer {
 
     void add(String domain, Filter filter);

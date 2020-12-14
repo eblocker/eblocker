@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 public class HashFileFilter implements DomainFilter<byte[]> {
     private static final Logger log = LoggerFactory.getLogger(HashFileFilter.class);
 
-    private static final byte[] MAGIC_BYTES = {0x65, 0x42, 0x6c, 0x6b, 0x46, 0x6c, 0x74, 0x48};
+    private static final byte[] MAGIC_BYTES = { 0x65, 0x42, 0x6c, 0x6b, 0x46, 0x6c, 0x74, 0x48 };
     private static final byte FILE_FORMAT_VERSION = 0x01;
 
     private final Path storagePath;

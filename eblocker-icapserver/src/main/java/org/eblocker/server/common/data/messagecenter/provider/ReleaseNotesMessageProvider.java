@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 @Singleton
 public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
     private static final String MESSAGE_RELEASE_NOTES_TITLE = "MESSAGE_RELEASE_NOTES_TITLE";

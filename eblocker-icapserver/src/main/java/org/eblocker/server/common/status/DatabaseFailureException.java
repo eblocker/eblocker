@@ -23,5 +23,4 @@ public class DatabaseFailureException extends Exception {
 
     private static final long serialVersionUID = 2304559679696094039L;
 
-
 }

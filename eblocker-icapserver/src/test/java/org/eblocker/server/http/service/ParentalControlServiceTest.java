@@ -68,7 +68,7 @@ public class ParentalControlServiceTest {
     private AtomicInteger id = new AtomicInteger(5);
 
     @Before
-    public void setUp(){
+    public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         userService = Mockito.mock(UserService.class);
         listener = Mockito.mock(ParentalControlService.ParentalControlProfileChangeListener.class);
@@ -82,17 +82,17 @@ public class ParentalControlServiceTest {
         String defaultProfileDescription = "description-default";
         UserProfileModule defaultProfile = new UserProfileModule(
             DEFAULT_PROFILE_ID,
-                "default profile",
-                null,
-                defaultProfileName,
-                defaultProfileDescription,
-                true,
-                false,
-                new HashSet<>(),
-                new HashSet<>(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                new HashSet<>(),
-                new HashMap<>(),
+            "default profile",
+            null,
+            defaultProfileName,
+            defaultProfileDescription,
+            true,
+            false,
+            new HashSet<>(),
+            new HashSet<>(),
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            new HashSet<>(),
+            new HashMap<>(),
             null,
             false,
             null
@@ -111,18 +111,18 @@ public class ParentalControlServiceTest {
         aliceInaccessibleSites.add(4);
         aliceInaccessibleSites.add(5);
         UserProfileModule aliceProfile = new UserProfileModule(
-                ALICE_PROFILE_ID,
-                aliceProfileName,
-                aliceProfileDescription,
-                null,
-                null,
-                false,
-                false,
-                new HashSet<>(),
-                aliceInaccessibleSites,
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                new HashSet<>(),
-                new HashMap<>(),
+            ALICE_PROFILE_ID,
+            aliceProfileName,
+            aliceProfileDescription,
+            null,
+            null,
+            false,
+            false,
+            new HashSet<>(),
+            aliceInaccessibleSites,
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            new HashSet<>(),
+            new HashMap<>(),
             null,
             false,
             null
@@ -139,18 +139,18 @@ public class ParentalControlServiceTest {
         bobAccessContingent.add(new InternetAccessContingent(2, 14, 20, 2));
         bobAccessContingent.add(new InternetAccessContingent(3, 15, 20, 2));
         UserProfileModule bobProfile = new UserProfileModule(
-                BOB_PROFILE_ID,
-                bobProfileName,
-                bobProfileDescription,
-                null,
-                null,
-                false,
-                false,
-                new HashSet<>(),
-                new HashSet<>(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                bobAccessContingent,
-                new HashMap<>(),
+            BOB_PROFILE_ID,
+            bobProfileName,
+            bobProfileDescription,
+            null,
+            null,
+            false,
+            false,
+            new HashSet<>(),
+            new HashSet<>(),
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            bobAccessContingent,
+            new HashMap<>(),
             null,
             false,
             null
@@ -161,18 +161,18 @@ public class ParentalControlServiceTest {
 
         // profile without user
         UserProfileModule unusedProfile = new UserProfileModule(
-                UNUSED_PROFILE_ID,
-                "unused-name",
-                "unsued-description",
-                null,
-                null,
-                false,
-                false,
-                Collections.emptySet(),
-                Collections.emptySet(),
-                UserProfileModule.InternetAccessRestrictionMode.NONE,
-                Collections.emptySet(),
-                Collections.emptyMap(),
+            UNUSED_PROFILE_ID,
+            "unused-name",
+            "unsued-description",
+            null,
+            null,
+            false,
+            false,
+            Collections.emptySet(),
+            Collections.emptySet(),
+            UserProfileModule.InternetAccessRestrictionMode.NONE,
+            Collections.emptySet(),
+            Collections.emptyMap(),
             null,
             false,
             null
@@ -197,7 +197,7 @@ public class ParentalControlServiceTest {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
 
     }
 
@@ -209,7 +209,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void createNewProfile(){
+    public void createNewProfile() {
         // Mock behaviour of dataSource
         List<UserProfileModule> getAllResult = new ArrayList<>();
         getAllResult.add(sampleProfiles.get("default"));
@@ -225,18 +225,18 @@ public class ParentalControlServiceTest {
 
         UserProfileModule bobProfile = sampleProfiles.get("bob");
         UserProfileModule newProfile = new UserProfileModule(
-                null,
-                "john", // unique name
-                bobProfile.getDescription(),
-                null,
-                null,
-                false,
-                false,
-                bobProfile.getAccessibleSitesPackages(),
-                bobProfile.getInaccessibleSitesPackages(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                bobProfile.getInternetAccessContingents(),
-                new HashMap<>(),
+            null,
+            "john", // unique name
+            bobProfile.getDescription(),
+            null,
+            null,
+            false,
+            false,
+            bobProfile.getAccessibleSitesPackages(),
+            bobProfile.getInaccessibleSitesPackages(),
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            bobProfile.getInternetAccessContingents(),
+            new HashMap<>(),
             null,
             false,
             null
@@ -254,7 +254,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void createNewProfileWithProvidedId(){
+    public void createNewProfileWithProvidedId() {
         // Mock behaviour of dataSource
         List<UserProfileModule> getAllResult = new ArrayList<>();
         getAllResult.add(sampleProfiles.get("default"));
@@ -285,7 +285,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void createNewProfileExistingName(){
+    public void createNewProfileExistingName() {
         // Mock behaviour of dataSource
         List<UserProfileModule> getAllResult = new ArrayList<>();
         getAllResult.add(sampleProfiles.get("default"));
@@ -299,18 +299,18 @@ public class ParentalControlServiceTest {
 
         UserProfileModule bobProfile = sampleProfiles.get("bob");
         UserProfileModule newProfile = new UserProfileModule(
-                null,
-                bobProfile.getName(),
-                bobProfile.getDescription(),
-                null,
-                null,
-                false,
-                false,
-                bobProfile.getAccessibleSitesPackages(),
-                bobProfile.getInaccessibleSitesPackages(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                bobProfile.getInternetAccessContingents(),
-                new HashMap<>(),
+            null,
+            bobProfile.getName(),
+            bobProfile.getDescription(),
+            null,
+            null,
+            false,
+            false,
+            bobProfile.getAccessibleSitesPackages(),
+            bobProfile.getInaccessibleSitesPackages(),
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            bobProfile.getInternetAccessContingents(),
+            new HashMap<>(),
             null,
             false,
             null
@@ -331,7 +331,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void getProfiles(){
+    public void getProfiles() {
         // Mock behaviour of dataSource
         List<UserProfileModule> getAllResult = new ArrayList<>();
         getAllResult.add(sampleProfiles.get("default"));
@@ -365,7 +365,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void updateProfile(){
+    public void updateProfile() {
         when(dataSource.get(eq(UserProfileModule.class), eq(BOB_PROFILE_ID))).thenReturn(sampleProfiles.get("bob"));
         when(dataSource.get(eq(UserProfileModule.class), eq(ALICE_PROFILE_ID))).thenReturn(sampleProfiles.get("alice"));
 
@@ -380,18 +380,18 @@ public class ParentalControlServiceTest {
         newBobContingents.add(new InternetAccessContingent(4, 5, 6, 1));
         newBobContingents.add(new InternetAccessContingent(5, 9, 18, 3));
         UserProfileModule newBob = new UserProfileModule(
-                BOB_PROFILE_ID,
-                newBobName,
-                newBobDescription,
-                null,
-                null,
-                false,
-                false,
-                newBobAccessibleSites,
-                newBobInaccessibleSites,
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                newBobContingents,
-                new HashMap<>(),
+            BOB_PROFILE_ID,
+            newBobName,
+            newBobDescription,
+            null,
+            null,
+            false,
+            false,
+            newBobAccessibleSites,
+            newBobInaccessibleSites,
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            newBobContingents,
+            new HashMap<>(),
             null,
             false,
             null
@@ -410,7 +410,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void updateProfileRenameBuiltin(){
+    public void updateProfileRenameBuiltin() {
         when(dataSource.get(eq(UserProfileModule.class), eq(DEFAULT_PROFILE_ID))).thenReturn(sampleProfiles.get("default"));
         when(dataSource.get(eq(UserProfileModule.class), eq(ALICE_PROFILE_ID))).thenReturn(sampleProfiles.get("alice"));
         when(dataSource.get(eq(UserProfileModule.class), eq(BOB_PROFILE_ID))).thenReturn(sampleProfiles.get("bob"));
@@ -419,18 +419,18 @@ public class ParentalControlServiceTest {
 
         // New version of profile "default"
         UserProfileModule newDefault = new UserProfileModule(
-                oldDefault.getId(),
-                null,
-                null,
-                "new-name",
-                "new-description",
-                false,
-                false,
-                oldDefault.getAccessibleSitesPackages(),
-                oldDefault.getInaccessibleSitesPackages(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                oldDefault.getInternetAccessContingents(),
-                new HashMap<>(),
+            oldDefault.getId(),
+            null,
+            null,
+            "new-name",
+            "new-description",
+            false,
+            false,
+            oldDefault.getAccessibleSitesPackages(),
+            oldDefault.getInaccessibleSitesPackages(),
+            UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
+            oldDefault.getInternetAccessContingents(),
+            new HashMap<>(),
             null,
             false,
             null
@@ -456,7 +456,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void deleteProfile(){
+    public void deleteProfile() {
         // Device
         Device device = new Device();
         // Mock behaviour of dataSource
@@ -478,7 +478,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void deleteProfileDeviceAssigned(){
+    public void deleteProfileDeviceAssigned() {
         // Mock behaviour of dataSource
         when(dataSource.get(eq(UserProfileModule.class), eq(ALICE_PROFILE_ID))).thenReturn(sampleProfiles.get("alice"));
         when(dataSource.get(eq(UserProfileModule.class), eq(BOB_PROFILE_ID))).thenReturn(sampleProfiles.get("bob"));
@@ -500,7 +500,7 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void deleteDefaultProfile(){
+    public void deleteDefaultProfile() {
         // Device
         Device device = new Device();
         // Mock behaviour of dataSource

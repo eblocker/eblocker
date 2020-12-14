@@ -16,20 +16,20 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.http.service.DashboardService;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 public class SchemaMigrationVersion23Test {
 
@@ -41,7 +41,7 @@ public class SchemaMigrationVersion23Test {
     private UserMigrationService userMigrationService;
 
     @Before
-    public void setUp()  {
+    public void setUp() {
         DashboardCard presentCard = new DashboardCard(7, "FEAT", "SUFFIX", "<html></html>", true, true, null, null);
         List<DashboardCard> filledList = Collections.singletonList(presentCard);
 

@@ -35,7 +35,6 @@ public enum FilterPriority {
         return this.compareTo(priority) < 0;
     }
 
-
     public boolean isLowerOrEqual(FilterPriority priority) {
         return this.compareTo(priority) >= 0;
     }

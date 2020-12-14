@@ -27,7 +27,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ControllerWrapperFactoryTest {
 
@@ -64,7 +65,7 @@ public class ControllerWrapperFactoryTest {
         //
         // Inject real controller into "A".
         //
-        ((ControllerWrapper<ControllerAImpl>)ctrlA).setControllerImpl(new ControllerAImpl());
+        ((ControllerWrapper<ControllerAImpl>) ctrlA).setControllerImpl(new ControllerAImpl());
 
         //
         // "A" should process calls now.
@@ -87,7 +88,7 @@ public class ControllerWrapperFactoryTest {
         //
         // Inject real controller into "B".
         //
-        ((ControllerWrapper<ControllerBImpl>)ctrlB).setControllerImpl(new ControllerBImpl());
+        ((ControllerWrapper<ControllerBImpl>) ctrlB).setControllerImpl(new ControllerBImpl());
 
         //
         // "A" should still process calls now.

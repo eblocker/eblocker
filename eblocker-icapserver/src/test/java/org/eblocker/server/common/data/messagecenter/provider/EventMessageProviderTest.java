@@ -16,14 +16,12 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.eblocker.server.common.data.events.Event;
+import org.eblocker.server.common.data.events.EventDataSource;
+import org.eblocker.server.common.data.events.Events;
+import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.http.service.EventService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +29,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import org.eblocker.server.common.data.events.Event;
-import org.eblocker.server.common.data.events.EventDataSource;
-import org.eblocker.server.common.data.events.Events;
-import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.http.service.EventService;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class EventMessageProviderTest {
     @Mock
@@ -61,17 +62,19 @@ public class EventMessageProviderTest {
         Mockito.when(dataSource.getEvents()).thenReturn(Collections.emptyList());
         provider.update(containers);
         assertEquals(0, containers.size());
-        
+
         // now add some events (a few milliseconds apart):
-        Event event1 = Events.networkInterfaceDown();    Thread.sleep(3);
-        Event event2 = Events.networkInterfaceUp();      Thread.sleep(3);
+        Event event1 = Events.networkInterfaceDown();
+        Thread.sleep(3);
+        Event event2 = Events.networkInterfaceUp();
+        Thread.sleep(3);
         List<Event> events = Arrays.asList(event2, event1);
         Mockito.when(dataSource.getEvents()).thenReturn(events);
         provider.doUpdate(containers);
         assertEquals(1, containers.size());
         MessageCenterMessage message = containers.get(MessageProviderMessageId.MESSAGE_ALERT_EVENT_ID.getId()).getMessage();
         assertFalse(message.isShowDoNotShowAgain());
-        
+
         // the user clicks the message's action button
         boolean hide = provider.executeAction(MessageProviderMessageId.MESSAGE_ALERT_EVENT_ID.getId());
         assertTrue(hide);
@@ -81,7 +84,7 @@ public class EventMessageProviderTest {
         // now the message disappears:
         provider.update(containers);
         assertEquals(0, containers.size());
-        
+
         // another event comes in:
         Event event3 = Events.powerFailure();
         events = Arrays.asList(event3, event2, event1);

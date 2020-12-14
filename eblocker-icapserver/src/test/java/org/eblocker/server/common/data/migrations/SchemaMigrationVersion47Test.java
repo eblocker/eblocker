@@ -40,6 +40,7 @@ public class SchemaMigrationVersion47Test {
         Mockito.when(jedisPool.getResource()).thenReturn(jedis);
         migration = new SchemaMigrationVersion47(dataSource, jedisPool);
     }
+
     @Test
     public void testUiCard() {
         String key = "UiCard:1";
@@ -73,12 +74,12 @@ public class SchemaMigrationVersion47Test {
 
     @Test
     public void testFilterStoreConfiguration() {
-        FilterStoreConfiguration configuration = createFilterStoreConfiguration(new String[] {
+        FilterStoreConfiguration configuration = createFilterStoreConfiguration(new String[]{
             "/opt/moonshine-icap/conf/easylist/easylist.txt",
             "/opt/moonshine-icap/conf/easylist/easylistgermany.txt",
             "/opt/moonshine-icap/conf/easylist/easyprivacy.txt"
         });
-        FilterStoreConfiguration configurationExpected = createFilterStoreConfiguration(new String[] {
+        FilterStoreConfiguration configurationExpected = createFilterStoreConfiguration(new String[]{
             "/opt/eblocker-icap/conf/easylist/easylist.txt",
             "/opt/eblocker-icap/conf/easylist/easylistgermany.txt",
             "/opt/eblocker-icap/conf/easylist/easyprivacy.txt"
@@ -107,53 +108,53 @@ public class SchemaMigrationVersion47Test {
 
     private ExternalDefinition createExternalDefinition(String file) {
         return new ExternalDefinition(
-                1001,
-                "My Filter",
-                "",
-                Category.PARENTAL_CONTROL,
-                Type.DOMAIN,
-                1004,
-                Format.DOMAINS,
-                null,
-                UpdateInterval.NEVER,
-                UpdateStatus.READY,
-                null,
-                file,
-                true,
-                "whitelist");
+            1001,
+            "My Filter",
+            "",
+            Category.PARENTAL_CONTROL,
+            Type.DOMAIN,
+            1004,
+            Format.DOMAINS,
+            null,
+            UpdateInterval.NEVER,
+            UpdateStatus.READY,
+            null,
+            file,
+            true,
+            "whitelist");
     }
 
     private FilterStoreConfiguration createFilterStoreConfiguration(String[] resources) {
         return new FilterStoreConfiguration(
-                0,
-                "Content Security Policies",
-                org.eblocker.server.icap.filter.Category.CONTENT_SECURITY_POLICIES,
-                true,
-                1L,
-                resources,
-                FilterLearningMode.SYNCHRONOUS,
-                FilterDefinitionFormat.EASYLIST,
-                true,
-                new String[]{"csp"},
-                true
+            0,
+            "Content Security Policies",
+            org.eblocker.server.icap.filter.Category.CONTENT_SECURITY_POLICIES,
+            true,
+            1L,
+            resources,
+            FilterLearningMode.SYNCHRONOUS,
+            FilterDefinitionFormat.EASYLIST,
+            true,
+            new String[]{ "csp" },
+            true
         );
     }
 
     private ParentalControlFilterMetaData createPCFilterMetaData(List<String> filenames) {
         return new ParentalControlFilterMetaData(
-                1004,
-                null,
-                null,
-                org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL,
-                filenames,
-                null,
-                Date.from(Instant.ofEpochSecond(1591457694L)),
-                "domainblacklist/string",
-                "whitelist",
-                false,
-                false,
-                null,
-                "My whitelist",
-                "");
+            1004,
+            null,
+            null,
+            org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL,
+            filenames,
+            null,
+            Date.from(Instant.ofEpochSecond(1591457694L)),
+            "domainblacklist/string",
+            "whitelist",
+            false,
+            false,
+            null,
+            "My whitelist",
+            "");
     }
 }

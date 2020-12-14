@@ -16,9 +16,13 @@
  */
 package org.eblocker.server.common.data;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class RecordedSSLHandshakeTest {
 
@@ -29,7 +33,7 @@ public class RecordedSSLHandshakeTest {
         assertNull(handshake);
 
         handshake = RecordedSSLHandshake
-                .parse("1.2.3.4\t2001:0bd8:85a3:08d3:1319:a82e:0370:7344\twww.server.name\t4711");
+            .parse("1.2.3.4\t2001:0bd8:85a3:08d3:1319:a82e:0370:7344\twww.server.name\t4711");
         assertNotNull(handshake);
         assertEquals("1.2.3.4", handshake.getIP());
         assertEquals("www.server.name", handshake.getServername());
@@ -41,7 +45,7 @@ public class RecordedSSLHandshakeTest {
     @Test
     public void update() {
         RecordedSSLHandshake handshake = RecordedSSLHandshake
-                .parse("1.2.3.4\t2001:0bd8:85a3:08d3:1319:a82e:0370:7344\twww.server.name\t4711");
+            .parse("1.2.3.4\t2001:0bd8:85a3:08d3:1319:a82e:0370:7344\twww.server.name\t4711");
         assertNotNull(handshake);
         // Try to update with mismatching app data
         RecordedSSLAppData mismatchStream = new RecordedSSLAppData("1.2.3.4", 4712);

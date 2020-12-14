@@ -66,7 +66,8 @@ public class IcapTransaction extends AbstractTransaction {
 
     @Override
     public boolean isPreview() {
-        if (!icapRequest.isPreviewMessage()) return false;
+        if (!icapRequest.isPreviewMessage())
+            return false;
         //
         //FIXME: This is not the correct approach!
         //       A continued message (i.e. a preview, for which we requested the complete content)

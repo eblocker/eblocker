@@ -16,20 +16,19 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Arrays;
 import java.util.List;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 public class SchemaMigrationVersion35Test {
 

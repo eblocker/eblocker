@@ -155,7 +155,6 @@ public class SSLWhitelistService implements Observer {
         appModuleService.removeDomainFromModule(url, appModuleService.getUserAppModuleId());
     }
 
-
     /**
      * Writes all URLs to a file in a format that Squid ACL matching understands; that means we have to add a '.' as a prefix for all
      * domains, to make sure that all subdomains (including the domain that was entered) match too.

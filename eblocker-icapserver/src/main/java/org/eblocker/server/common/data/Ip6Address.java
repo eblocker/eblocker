@@ -19,8 +19,8 @@ package org.eblocker.server.common.data;
 public class Ip6Address extends IpAddress {
 
     public static final Ip6Address UNSPECIFIED_ADDRESS = new Ip6Address(new byte[16]);
-    public static final Ip6Address MULTICAST_ALL_NODES_ADDRESS = new Ip6Address(new byte[]{(byte) 0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1});
-    public static final Ip6Address LINK_LOCAL_NETWORK_ADDRESS = new Ip6Address(new byte[]{(byte) 0xfe, (byte) 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    public static final Ip6Address MULTICAST_ALL_NODES_ADDRESS = new Ip6Address(new byte[]{ (byte) 0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+    public static final Ip6Address LINK_LOCAL_NETWORK_ADDRESS = new Ip6Address(new byte[]{ (byte) 0xfe, (byte) 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
     public static final int LINK_LOCAL_NETWORK_PREFIX = 10;
 
     private Ip6Address(byte[] address) {

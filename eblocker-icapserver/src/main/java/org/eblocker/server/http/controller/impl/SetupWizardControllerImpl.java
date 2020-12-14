@@ -41,7 +41,6 @@ public class SetupWizardControllerImpl implements SetupWizardController {
     private final DeviceRegistrationProperties registrationProperties;
     private final RegistrationServiceAvailabilityCheck registrationServiceAvailabilityCheck;
 
-
     @Inject
     public SetupWizardControllerImpl(DeviceProperties deviceProperties,
                                      DeviceRegistrationProperties deviceRegistration,
@@ -76,7 +75,6 @@ public class SetupWizardControllerImpl implements SetupWizardController {
         log.debug("User already finished setup wizard?: " + result);
         return result;
     }
-
 
     /**
      * Should the wizard ask for the serial number, or not?

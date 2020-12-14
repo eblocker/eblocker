@@ -48,7 +48,6 @@ public interface VpnClient extends Closeable {
 
     List<String> getLog();
 
-
     Instant getStopInstant();
 
 }

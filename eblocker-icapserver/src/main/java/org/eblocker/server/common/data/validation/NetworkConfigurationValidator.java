@@ -68,13 +68,11 @@ public class NetworkConfigurationValidator implements Validator<NetworkConfigura
             }
         }
 
-
         // optional fields:
         validateOptionalIPv4Address(cfg.getNameServerPrimary(), "nameServerPrimary", errors);
         validateOptionalIPv4Address(cfg.getNameServerSecondary(), "nameServerSecondary", errors);
         validateOptionalIPv4Address(cfg.getDhcpRangeFirst(), "dhcpRangeFirst", errors);
         validateOptionalIPv4Address(cfg.getDhcpRangeLast(), "dhcpRangeLast", errors);
-
 
         //IMPORTANT: check if addresses are from the same network
         validateSameNetwork(cfg, errors);

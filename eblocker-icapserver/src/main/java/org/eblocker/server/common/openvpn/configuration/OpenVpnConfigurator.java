@@ -134,12 +134,12 @@ public class OpenVpnConfigurator {
                 && o instanceof SimpleOption
                 && ((SimpleOption) o).getArguments().length == 1
                 && ((SimpleOption) o).getArguments()[0].matches("tun.+"))) {
-            setOption(options, new SimpleOption(-1, "dev", new String[]{"tun"}));
+            setOption(options, new SimpleOption(-1, "dev", new String[]{ "tun" }));
         }
 
         // override auth-user-pass option if present
         if (configuration.getUserOptions().stream().anyMatch(o -> AUTH_USER_PASS_OPTION_NAME.equals(o.getName()))) {
-            setOption(options, new SimpleOption(-1, AUTH_USER_PASS_OPTION_NAME, new String[]{credentialFile}));
+            setOption(options, new SimpleOption(-1, AUTH_USER_PASS_OPTION_NAME, new String[]{ credentialFile }));
         }
 
         return options;

@@ -329,7 +329,6 @@ public class SquidConfigController {
         }
     }
 
-
     private synchronized void updateAcl(ConfigurableDeviceFilterAcl acl, Set<Device> devices) {
         acl.setDevices(devices);
         acl.update();
@@ -496,7 +495,6 @@ public class SquidConfigController {
         tellSquidToReloadConfig();
         return true;
     }
-
 
     /**
      * Pure writing of content string to local squid config file in /opt/eblocker....

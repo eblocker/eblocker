@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.WhiteListConfig;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion33Test {
 
@@ -41,42 +40,42 @@ public class SchemaMigrationVersion33Test {
     private SchemaMigration migration;
 
     private UserMigrationService userMigrationService;
-//    private JedisPool jedisPool;
-//    private Jedis jedis;
-//    private ObjectMapper objectMapper;
+    //    private JedisPool jedisPool;
+    //    private Jedis jedis;
+    //    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         dashboardService = new DashboardService(dataSource);
 
-//        jedis = Mockito.mock(Jedis.class);
-//        jedisPool = Mockito.mock(JedisPool.class);
-//        objectMapper = new ObjectMapper();
+        //        jedis = Mockito.mock(Jedis.class);
+        //        jedisPool = Mockito.mock(JedisPool.class);
+        //        objectMapper = new ObjectMapper();
         userMigrationService = Mockito.mock(UserMigrationService.class); // new UserMigrationService(jedisPool, objectMapper);
 
         // Mocks
         // DNS Statistics card for Alice still has old feature "WOL" required
         UserModuleOld userA = generateUserModule(1, 1, "alice", true, ProductFeature.WOL);
-//        String userAJson = objectMapper.writeValueAsString(userA);
+        //        String userAJson = objectMapper.writeValueAsString(userA);
         // eBlocker Mobile card for Bob already has new feature "PRO" required
         UserModuleOld userB = generateUserModule(2, 2, "bob", false, null);
-//        String userBJson = objectMapper.writeValueAsString(userB);
+        //        String userBJson = objectMapper.writeValueAsString(userB);
         List<UserModuleOld> userList = new ArrayList<>();
         userList.add(userA);
         userList.add(userB);
 
         Mockito.when(userMigrationService.getAll()).thenReturn(userList);
 
-//        TreeSet<String> keys = new TreeSet<>();
-//        keys.add("UserModule:1");
-//        keys.add("UserModule:2");
+        //        TreeSet<String> keys = new TreeSet<>();
+        //        keys.add("UserModule:1");
+        //        keys.add("UserModule:2");
 
         // Mock direct access to data store
-//        Mockito.when(jedis.get("UserModule:1")).thenReturn(userAJson);
-//        Mockito.when(jedis.get("UserModule:2")).thenReturn(userBJson);
-//        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
-//        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
+        //        Mockito.when(jedis.get("UserModule:1")).thenReturn(userAJson);
+        //        Mockito.when(jedis.get("UserModule:2")).thenReturn(userBJson);
+        //        Mockito.when(jedisPool.getResource()).thenReturn(jedis);
+        //        Mockito.when(jedis.keys(any(String.class))).thenReturn(keys);
 
         migration = new SchemaMigrationVersion33(dataSource, dashboardService, userMigrationService);
     }
@@ -101,9 +100,9 @@ public class SchemaMigrationVersion33Test {
         // Inspect saved data for User Module "Alice"
         Mockito.verify(userMigrationService, Mockito.times(3)).save(userModule.capture(), Mockito.eq(1));
         Assert.assertEquals(ProductFeature.PRO.name(),
-                userModule.getValue().getDashboardCards().stream()
-                        .filter(c -> c.getId() == dashboardService.generateDnsStatisticsCard().getId()).findFirst()
-                        .get().getRequiredFeature());
+            userModule.getValue().getDashboardCards().stream()
+                .filter(c -> c.getId() == dashboardService.generateDnsStatisticsCard().getId()).findFirst()
+                .get().getRequiredFeature());
 
         // Bob saved twice for reordering the cards, but not for the change of the required feature.
         Mockito.verify(userMigrationService, Mockito.times(2)).save(userModule.capture(), Mockito.eq(2));
@@ -112,20 +111,20 @@ public class SchemaMigrationVersion33Test {
     }
 
     private UserModuleOld generateUserModule(int id, int associatedProfileId, String name, boolean changeRequiredFeature,
-            ProductFeature newRequiredFeatre) {
+                                             ProductFeature newRequiredFeatre) {
         DashboardService realDashboardService = new DashboardService(dataSource);
         List<DashboardCard> dashboardCards = realDashboardService.generateDashboardCards();
         // The DNS Statistics card is expected to still show "WOL" as the
         // required featureset
         if (changeRequiredFeature) {
             DashboardCard oldStatisticsCard = dashboardCards.stream()
-                    .filter(c -> c.getId() == realDashboardService.generateDnsStatisticsCard().getId()).findFirst()
-                    .get();
+                .filter(c -> c.getId() == realDashboardService.generateDnsStatisticsCard().getId()).findFirst()
+                .get();
             DashboardCard newStatisticsCard = new DashboardCard(oldStatisticsCard.getId(), newRequiredFeatre.name(),
-                    oldStatisticsCard.getTranslateSuffix(), oldStatisticsCard.getHtml(), oldStatisticsCard.isVisible(),
-                    oldStatisticsCard.isAlwaysVisible(), oldStatisticsCard.getDefaultPos(), oldStatisticsCard.getCustomPos());
+                oldStatisticsCard.getTranslateSuffix(), oldStatisticsCard.getHtml(), oldStatisticsCard.isVisible(),
+                oldStatisticsCard.isAlwaysVisible(), oldStatisticsCard.getDefaultPos(), oldStatisticsCard.getCustomPos());
             dashboardCards = dashboardCards.stream().map(c -> c.getId() == newStatisticsCard.getId() ? newStatisticsCard : c)
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
         }
 
         Map<String, WhiteListConfig> whiteListConfigByDomains = null;
@@ -134,7 +133,7 @@ public class SchemaMigrationVersion33Test {
         Integer customBlacklistId = null;
         Integer customWhitelistId = null;
         UserModuleOld result = new UserModuleOld(id, associatedProfileId, name, nameKey, null, null, false, pin, whiteListConfigByDomains,
-                dashboardCards, customBlacklistId, customWhitelistId);
+            dashboardCards, customBlacklistId, customWhitelistId);
 
         return result;
     }

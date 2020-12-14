@@ -40,7 +40,6 @@ public class UserMigrationService {
     private final JedisPool jedisPool;
     private final ObjectMapper objectMapper;
 
-
     @Inject
     public UserMigrationService(JedisPool jedisPool,
                                 ObjectMapper objectMapper) {

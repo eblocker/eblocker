@@ -16,6 +16,27 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.dns.DnsResolvers;
+import org.eblocker.server.common.network.TorController;
+import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.registration.DeviceRegistrationClient;
+import org.eblocker.server.common.registration.DeviceRegistrationInfo;
+import org.eblocker.server.common.registration.LicenseExpirationService;
+import org.eblocker.server.common.registration.LicenseExpirationService.LicenseExpirationListener;
+import org.eblocker.server.common.ssl.SslService;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,29 +46,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.dns.DnsResolvers;
-import org.eblocker.server.common.registration.DeviceRegistrationClient;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.network.TorController;
-import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import org.eblocker.server.common.registration.DeviceRegistrationInfo;
-import org.eblocker.server.common.registration.LicenseExpirationService;
-import org.eblocker.server.common.registration.LicenseExpirationService.LicenseExpirationListener;
-import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.registration.ProductInfo;
 
 public class ProductMigrationServiceTest {
     private ProductMigrationService service;
@@ -65,15 +63,15 @@ public class ProductMigrationServiceTest {
     private DeviceRegistrationClient deviceRegistrationClient;
 
     private final static ProductInfo DEMO = new ProductInfo(
-            "product-id-demo",
-            "product-name-demo",
-            new String[]{ "EVL_BAS", "EVL_PRO", "EVL_FAM", "BAS", "PRO", "FAM" }
+        "product-id-demo",
+        "product-name-demo",
+        new String[]{ "EVL_BAS", "EVL_PRO", "EVL_FAM", "BAS", "PRO", "FAM" }
     );
 
     private final static ProductInfo FAM = new ProductInfo(
-            "product-id-demo",
-            "product-name-demo",
-            new String[]{ "BAS", "PRO", "FAM" }
+        "product-id-demo",
+        "product-name-demo",
+        new String[]{ "BAS", "PRO", "FAM" }
     );
 
     @Before
@@ -97,15 +95,15 @@ public class ProductMigrationServiceTest {
 
         licenseExpirationService = Mockito.mock(LicenseExpirationService.class);
         service = new ProductMigrationService(deviceService,
-                sslService,
-                torController,
-                dnsServer,
-                deviceRegistrationClient,
-                anonymousService,
-                userService,
-                parentalControlService,
-                licenseExpirationService,
-                productInfoService);
+            sslService,
+            torController,
+            dnsServer,
+            deviceRegistrationClient,
+            anonymousService,
+            userService,
+            parentalControlService,
+            licenseExpirationService,
+            productInfoService);
 
         // Devices
         deviceAlpha = new Device();
@@ -137,16 +135,16 @@ public class ProductMigrationServiceTest {
         when(userService.restoreDefaultSystemUser(any(), anyInt())).thenReturn(userModule);
         when(userModule.getId()).thenReturn(1);
 
-        ProductInfo oldProdInfo = new ProductInfo("prod-id-old", "prod-name-old", new String[] { "FAM", "BAS", "PRO" });
+        ProductInfo oldProdInfo = new ProductInfo("prod-id-old", "prod-name-old", new String[]{ "FAM", "BAS", "PRO" });
         DeviceRegistrationInfo oldLicense = Mockito.mock(DeviceRegistrationInfo.class);
         Mockito.when(oldLicense.getProductInfo()).thenReturn(oldProdInfo);
-        ProductInfo newProdInfo = new ProductInfo("prod-id-new", "prod-name-new", new String[] {});
+        ProductInfo newProdInfo = new ProductInfo("prod-id-new", "prod-name-new", new String[]{});
         DeviceRegistrationInfo newLicense = Mockito.mock(DeviceRegistrationInfo.class);
         Mockito.when(newLicense.getProductInfo()).thenReturn(newProdInfo);
 
         service.changeProduct(
-                deviceRegistrationInfo(new String[] { "FAM", "BAS", "PRO" }),
-                deviceRegistrationInfo(new String[] { }));
+            deviceRegistrationInfo(new String[]{ "FAM", "BAS", "PRO" }),
+            deviceRegistrationInfo(new String[]{}));
 
         for (Device device : devices) {
             assertBasDisabled(device);
@@ -164,8 +162,8 @@ public class ProductMigrationServiceTest {
         when(userModule.getId()).thenReturn(1);
 
         service.changeProduct(
-                deviceRegistrationInfo(new String[] { "FAM", "BAS", "PRO" }),
-                deviceRegistrationInfo(new String[] { "BAS", "PRO" }));
+            deviceRegistrationInfo(new String[]{ "FAM", "BAS", "PRO" }),
+            deviceRegistrationInfo(new String[]{ "BAS", "PRO" }));
 
         verify(parentalControlService).createDefaultProfile();
         verify(userService).restoreDefaultSystemUser(any(), anyInt());
@@ -178,8 +176,8 @@ public class ProductMigrationServiceTest {
     @Test
     public void testDowngradePRO() {
         service.changeProduct(
-                deviceRegistrationInfo(new String[] { "FAM", "BAS", "PRO" }),
-                deviceRegistrationInfo(new String[] { "FAM", "BAS" }));
+            deviceRegistrationInfo(new String[]{ "FAM", "BAS", "PRO" }),
+            deviceRegistrationInfo(new String[]{ "FAM", "BAS" }));
 
         Mockito.verify(deviceService, Mockito.never()).updateDevice(any());
         assertProDisabled();
@@ -188,8 +186,8 @@ public class ProductMigrationServiceTest {
     @Test
     public void testDowngradeBAS() {
         service.changeProduct(
-                deviceRegistrationInfo(new String[] { "BAS" }),
-                deviceRegistrationInfo(new String[] {  }));
+            deviceRegistrationInfo(new String[]{ "BAS" }),
+            deviceRegistrationInfo(new String[]{}));
 
         for (Device device : devices) {
             assertBasDisabled(device);
@@ -198,9 +196,9 @@ public class ProductMigrationServiceTest {
 
     @Test
     public void testNotDowngrade() {
-        DeviceRegistrationInfo oldLicense = deviceRegistrationInfo(new String[] { "OLD" });
+        DeviceRegistrationInfo oldLicense = deviceRegistrationInfo(new String[]{ "OLD" });
 
-        service.changeProduct(oldLicense, deviceRegistrationInfo(new String[] { "FAM" }));
+        service.changeProduct(oldLicense, deviceRegistrationInfo(new String[]{ "FAM" }));
 
         assertTrue(productInfoService.hasFeature(ProductFeature.BAS));
 
@@ -211,7 +209,7 @@ public class ProductMigrationServiceTest {
     }
 
     @Test
-    public void testExpirationForDemo () {
+    public void testExpirationForDemo() {
         UserModule userModule = mock(UserModule.class);
         when(userService.restoreDefaultSystemUser(any(), anyInt())).thenReturn(userModule);
         when(userModule.getId()).thenReturn(1);
@@ -247,15 +245,15 @@ public class ProductMigrationServiceTest {
         licenseExpirationService = Mockito.mock(LicenseExpirationService.class);
 
         service = new ProductMigrationService(deviceService,
-                sslService,
-                torController,
-                dnsServer,
-                deviceRegistrationClient,
-                anonymousService,
-                userService,
-                parentalControlService,
-                licenseExpirationService,
-                productInfoService);
+            sslService,
+            torController,
+            dnsServer,
+            deviceRegistrationClient,
+            anonymousService,
+            userService,
+            parentalControlService,
+            licenseExpirationService,
+            productInfoService);
 
         ArgumentCaptor<LicenseExpirationListener> captor = ArgumentCaptor.forClass(LicenseExpirationListener.class);
 
@@ -285,7 +283,7 @@ public class ProductMigrationServiceTest {
     }
 
     private DeviceRegistrationInfo deviceRegistrationInfo(String[] features) {
-        ProductInfo prodInfo = new ProductInfo("prod-id-old", "prod-name-old", features );
+        ProductInfo prodInfo = new ProductInfo("prod-id-old", "prod-name-old", features);
         DeviceRegistrationInfo dri = Mockito.mock(DeviceRegistrationInfo.class);
         Mockito.when(dri.getProductInfo()).thenReturn(prodInfo);
 

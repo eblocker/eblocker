@@ -36,7 +36,7 @@ public class FileUtilsTest {
     @After
     public void removeCreatedPaths() {
         Collections.reverse(createdPaths);
-        createdPaths.forEach(p->{
+        createdPaths.forEach(p -> {
             try {
                 Files.deleteIfExists(p);
             } catch (IOException e) {
@@ -64,7 +64,7 @@ public class FileUtilsTest {
 
         // delete directory and check all files are gone
         FileUtils.deleteDirectory(directory);
-        createdPaths.forEach(p-> Assert.assertFalse(Files.exists(p)));
+        createdPaths.forEach(p -> Assert.assertFalse(Files.exists(p)));
     }
 
 }

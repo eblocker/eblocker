@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.network.unix.DhcpDiscoveryService;
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
+import org.eblocker.server.common.network.unix.DhcpDiscoveryService;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

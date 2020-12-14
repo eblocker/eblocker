@@ -49,7 +49,7 @@ public class Assert5 {
         }
     }
 
-    public interface Executable  {
+    public interface Executable {
         void execute() throws Exception;
     }
 }

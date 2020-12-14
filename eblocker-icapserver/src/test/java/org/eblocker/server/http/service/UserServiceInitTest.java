@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.UserRole;
-import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.migrations.DefaultEntities;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +31,14 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class UserServiceInitTest {
 
@@ -45,7 +51,7 @@ public class UserServiceInitTest {
 
     // Existing users
     private final UserModule ALICE = createUser(1001, "Alice", false);
-    private final UserModule BOB   = createUser(1002, "Bob", false);
+    private final UserModule BOB = createUser(1002, "Bob", false);
 
     // Not existing user
     private final UserModule XAVER = createUser(1101, "Xaver", false);

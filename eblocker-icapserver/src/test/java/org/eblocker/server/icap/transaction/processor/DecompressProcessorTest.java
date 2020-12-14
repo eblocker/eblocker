@@ -20,9 +20,6 @@ import ch.mimo.netty.handler.codec.icap.DefaultIcapRequest;
 import ch.mimo.netty.handler.codec.icap.IcapMethod;
 import ch.mimo.netty.handler.codec.icap.IcapRequest;
 import ch.mimo.netty.handler.codec.icap.IcapVersion;
-import org.eblocker.server.icap.ch.mimo.icap.IcapTransaction;
-import org.eblocker.server.icap.transaction.ContentEncoding;
-import org.eblocker.server.icap.transaction.Transaction;
 import com.google.common.io.ByteStreams;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
@@ -33,6 +30,9 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.icap.ch.mimo.icap.IcapTransaction;
+import org.eblocker.server.icap.transaction.ContentEncoding;
+import org.eblocker.server.icap.transaction.Transaction;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -145,7 +145,7 @@ public class DecompressProcessorTest {
         Transaction transaction = new IcapTransaction(request);
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(content));
 
-        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE,"text/html");
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, "text/html");
 
         if (contentEncoding != null) {
             httpResponse.headers().add("Content-Encoding", contentEncoding);

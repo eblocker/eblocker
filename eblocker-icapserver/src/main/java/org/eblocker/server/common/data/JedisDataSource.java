@@ -768,7 +768,6 @@ public class JedisDataSource implements DataSource {
         }
     }
 
-
     @Override
     public void saveLastUpdateTime(LocalDateTime lastUpdate) {
         try (Jedis jedis = pool.getResource()) {
@@ -791,7 +790,6 @@ public class JedisDataSource implements DataSource {
             return null;
         }
     }
-
 
     @Override
     public AutomaticUpdaterConfiguration getAutomaticUpdateConfig() {

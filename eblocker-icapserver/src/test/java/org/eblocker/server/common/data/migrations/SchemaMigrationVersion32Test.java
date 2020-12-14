@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import org.eblocker.server.common.data.WhiteListConfig;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.service.DashboardService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.WhiteListConfig;
-import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SchemaMigrationVersion32Test {
 
@@ -82,9 +81,9 @@ public class SchemaMigrationVersion32Test {
         // Inspect saved data for User Module "Alice"
         Mockito.verify(userMigrationService).save(userModule.capture(), Mockito.eq(1));
         Assert.assertEquals(ProductFeature.BAS.name(),
-                userModule.getValue().getDashboardCards().stream()
-                        .filter(c -> c.getId() == dashboardService.generateEblockerMobileCard().getId()).findFirst()
-                        .get().getRequiredFeature());
+            userModule.getValue().getDashboardCards().stream()
+                .filter(c -> c.getId() == dashboardService.generateEblockerMobileCard().getId()).findFirst()
+                .get().getRequiredFeature());
 
         // There was only this one userModule saved, not the one for Bob
         Mockito.verify(userMigrationService).save(Mockito.any(UserModuleOld.class), Mockito.eq(1));
@@ -99,13 +98,13 @@ public class SchemaMigrationVersion32Test {
         // required featureset
         if (setToPro) {
             DashboardCard oldMobileCard = dashboardCards.stream()
-                    .filter(c -> c.getId() == realDashboardService.generateEblockerMobileCard().getId()).findFirst()
-                    .get();
+                .filter(c -> c.getId() == realDashboardService.generateEblockerMobileCard().getId()).findFirst()
+                .get();
             DashboardCard newMobileCard = new DashboardCard(oldMobileCard.getId(), ProductFeature.PRO.name(),
-                    oldMobileCard.getTranslateSuffix(), oldMobileCard.getHtml(), oldMobileCard.isVisible(),
-                    oldMobileCard.isAlwaysVisible(), oldMobileCard.getDefaultPos(), oldMobileCard.getCustomPos());
+                oldMobileCard.getTranslateSuffix(), oldMobileCard.getHtml(), oldMobileCard.isVisible(),
+                oldMobileCard.isAlwaysVisible(), oldMobileCard.getDefaultPos(), oldMobileCard.getCustomPos());
             dashboardCards = dashboardCards.stream().map(c -> c.getId() == newMobileCard.getId() ? newMobileCard : c)
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
         }
 
         Map<String, WhiteListConfig> whiteListConfigByDomains = null;
@@ -114,7 +113,7 @@ public class SchemaMigrationVersion32Test {
         Integer customBlacklistId = null;
         Integer customWhitelistId = null;
         UserModuleOld result = new UserModuleOld(id, associatedProfileId, name, nameKey, null, null, false, pin, whiteListConfigByDomains,
-                dashboardCards, customBlacklistId, customWhitelistId);
+            dashboardCards, customBlacklistId, customWhitelistId);
 
         return result;
     }

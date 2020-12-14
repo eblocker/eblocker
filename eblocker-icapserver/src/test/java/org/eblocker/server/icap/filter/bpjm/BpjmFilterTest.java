@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;

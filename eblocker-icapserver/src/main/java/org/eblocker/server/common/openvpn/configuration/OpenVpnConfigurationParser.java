@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OpenVpnConfigurationParser {
-    private static final char[] COMMENT_CHARACTERS = {';', '#'};
+    private static final char[] COMMENT_CHARACTERS = { ';', '#' };
 
     private static final Pattern TAG_OPEN_PATTERN = Pattern.compile("<([^/]+.*)>");
     private static final Pattern TAG_CLOSE_PATTERN = Pattern.compile("</(.*)>");

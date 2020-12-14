@@ -140,7 +140,6 @@ public class StaticFileController {
             return null;
         }
 
-
         if (relativePath.equals("index.html") || relativePath.length() == 0) {
             response.addLocationHeader(SETTINGS_URL);
             response.setResponseStatus(HttpResponseStatus.MOVED_PERMANENTLY);
@@ -321,11 +320,16 @@ public class StaticFileController {
      */
     private String getContentType(Path path) {
         String s = path.toString();
-        if (s.endsWith(".png")) return "image/png";
-        if (s.endsWith(".html")) return ContentType.HTML;
-        if (s.endsWith(".js")) return ContentType.JAVASCRIPT;
-        if (s.endsWith(".css")) return ContentType.CSS;
-        if (s.endsWith(".svg")) return "image/svg+xml";
+        if (s.endsWith(".png"))
+            return "image/png";
+        if (s.endsWith(".html"))
+            return ContentType.HTML;
+        if (s.endsWith(".js"))
+            return ContentType.JAVASCRIPT;
+        if (s.endsWith(".css"))
+            return ContentType.CSS;
+        if (s.endsWith(".svg"))
+            return "image/svg+xml";
         return "application/octet-stream";
     }
 

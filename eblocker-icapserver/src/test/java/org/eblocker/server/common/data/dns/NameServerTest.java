@@ -20,7 +20,6 @@ import org.eblocker.server.common.data.IpAddress;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class NameServerTest {
 
     @Test

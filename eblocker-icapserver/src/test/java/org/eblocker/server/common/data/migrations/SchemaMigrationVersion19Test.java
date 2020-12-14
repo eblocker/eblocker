@@ -16,13 +16,12 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.server.common.data.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.registration.ProductInfo;
 
 public class SchemaMigrationVersion19Test {
 
@@ -34,7 +33,7 @@ public class SchemaMigrationVersion19Test {
     @Before
     public void setup() {
         dataSource = Mockito.mock(DataSource.class);
-        
+
         migration = new SchemaMigrationVersion19(dataSource);
     }
 
@@ -50,44 +49,44 @@ public class SchemaMigrationVersion19Test {
 
     @Test
     public void testFamFeatureUserGetsBas() {
-        features = new String[] { "FAM" };
+        features = new String[]{ "FAM" };
         productInfo = createProductInfo(features);
         Mockito.when(dataSource.get(ProductInfo.class, 0)).thenReturn(productInfo);
 
         migration.migrate();
 
-        String[] expectedFeatures = new String[] { "FAM", "BAS" };
+        String[] expectedFeatures = new String[]{ "FAM", "BAS" };
         ProductInfo expectedProductInfo = createProductInfo(expectedFeatures);
         Mockito.verify(dataSource).save(Mockito.eq(expectedProductInfo), Mockito.eq(0));
     }
 
     @Test
     public void testProFeatureUserGetsBas() {
-        features = new String[] { "PRO" };
+        features = new String[]{ "PRO" };
         productInfo = createProductInfo(features);
         Mockito.when(dataSource.get(ProductInfo.class, 0)).thenReturn(productInfo);
 
         migration.migrate();
 
-        String[] expectedFeatures = new String[] { "PRO", "BAS" };
+        String[] expectedFeatures = new String[]{ "PRO", "BAS" };
         ProductInfo expectedProductInfo = createProductInfo(expectedFeatures);
         Mockito.verify(dataSource).save(Mockito.eq(expectedProductInfo), Mockito.eq(0));
     }
 
     @Test
     public void testOtherFeatureUserGetNoBas() {
-        features = new String[] { "Fam", "fam", "Pro", "pro", "FOO", "bar" };
+        features = new String[]{ "Fam", "fam", "Pro", "pro", "FOO", "bar" };
         productInfo = createProductInfo(features);
         Mockito.when(dataSource.get(ProductInfo.class, 0)).thenReturn(productInfo);
 
         migration.migrate();
 
-        String[] expectedFeatures = new String[] { "Fam", "fam", "Pro", "pro", "FOO", "bar" };
+        String[] expectedFeatures = new String[]{ "Fam", "fam", "Pro", "pro", "FOO", "bar" };
         ProductInfo expectedProductInfo = createProductInfo(expectedFeatures);
         Mockito.verify(dataSource).save(Mockito.eq(expectedProductInfo), Mockito.eq(0));
     }
-    
-    private ProductInfo createProductInfo(String[] features){
+
+    private ProductInfo createProductInfo(String[] features) {
         return new ProductInfo("productInfoProductId", "productInfoProductName", features);
     }
 

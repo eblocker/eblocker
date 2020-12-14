@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
 import org.eblocker.server.http.server.HttpTransactionIdentifier;
 import org.eblocker.server.http.service.CustomDomainFilterConfigService;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

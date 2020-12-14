@@ -90,7 +90,8 @@ public class UpdateTaskTest {
     public void testCreateDomainBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/domains.txt")).thenReturn(new ByteArrayInputStream("eblocker.com\netracker.com\n".getBytes()));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterListsService.createFilterList(Mockito.any(ParentalControlFilterSummaryData.class), Mockito.anyString())).thenReturn(new ParentalControlFilterSummaryData(123, null, null, null, null, null, false, false, null, null, null, null));
 
@@ -119,7 +120,8 @@ public class UpdateTaskTest {
     public void testUpdateDomainBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/domains.txt")).thenReturn(new ByteArrayInputStream("eblocker.com\netracker.com\n".getBytes()));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, 123, Format.DOMAINS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, 123, Format.DOMAINS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterListsService.updateFilterList(Mockito.any(ParentalControlFilterSummaryData.class), Mockito.anyString())).thenReturn(new ParentalControlFilterSummaryData(0, null, null, null, null, null, false, false, null, null, null, null));
         Mockito.when(filterListsService.getParentalControlFilterMetaData(123)).thenReturn(new ParentalControlFilterMetaData(
@@ -161,7 +163,8 @@ public class UpdateTaskTest {
     public void testCreatePatternBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/easylist.txt")).thenReturn(new ByteArrayInputStream("eblocker.com\netracker.com\n".getBytes()));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, null, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, null, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterManager.addFilter(Mockito.any(FilterStoreConfiguration.class))).thenReturn(new FilterStoreConfiguration(235, null, null, false, 0, null, null, null, false, null, true));
         Mockito.when(filterManager.getFilterStoreConfigurationById(235)).thenReturn(new FilterStoreConfiguration(
@@ -170,7 +173,7 @@ public class UpdateTaskTest {
             org.eblocker.server.icap.filter.Category.ADS,
             false,
             0,
-            new String[] { sourceFile.toString() },
+            new String[]{ sourceFile.toString() },
             FilterLearningMode.ASYNCHRONOUS,
             FilterDefinitionFormat.EASYLIST,
             true,
@@ -187,7 +190,7 @@ public class UpdateTaskTest {
         Assert.assertEquals(org.eblocker.server.icap.filter.Category.ADS, configuration.getCategory());
         Assert.assertEquals(FilterLearningMode.ASYNCHRONOUS, configuration.getLearningMode());
         Assert.assertEquals(FilterDefinitionFormat.EASYLIST, configuration.getFormat());
-        Assert.assertArrayEquals(new String[] { sourceFile.toString() }, configuration.getResources());
+        Assert.assertArrayEquals(new String[]{ sourceFile.toString() }, configuration.getResources());
         Assert.assertArrayEquals(new String[0], configuration.getRuleFilters());
 
         Assert.assertEquals(2, savedDefinitions.size());
@@ -209,7 +212,7 @@ public class UpdateTaskTest {
             org.eblocker.server.icap.filter.Category.MALWARE,
             false,
             0,
-            new String[] { sourceFile.toString() },
+            new String[]{ sourceFile.toString() },
             FilterLearningMode.SYNCHRONOUS,
             FilterDefinitionFormat.EASYLIST,
             true,
@@ -226,7 +229,7 @@ public class UpdateTaskTest {
         Assert.assertEquals(org.eblocker.server.icap.filter.Category.ADS, configuration.getCategory());
         Assert.assertEquals(FilterLearningMode.ASYNCHRONOUS, configuration.getLearningMode());
         Assert.assertEquals(FilterDefinitionFormat.EASYLIST, configuration.getFormat());
-        Assert.assertArrayEquals(new String[] { sourceFile.toString() }, configuration.getResources());
+        Assert.assertArrayEquals(new String[]{ sourceFile.toString() }, configuration.getResources());
         Assert.assertArrayEquals(new String[0], configuration.getRuleFilters());
 
         Assert.assertEquals(2, savedDefinitions.size());
@@ -239,7 +242,8 @@ public class UpdateTaskTest {
     public void testUpdatePatternBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/easylist.txt")).thenReturn(new ByteArrayInputStream("eblocker.com\netracker.com\n".getBytes()));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, 235, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, 235, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterManager.addFilter(Mockito.any(FilterStoreConfiguration.class))).thenReturn(new FilterStoreConfiguration(235, null, null, false, 0, null, null, null, false, null, true));
 
@@ -257,7 +261,8 @@ public class UpdateTaskTest {
     public void testUpdateFailedBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/easylist.txt")).thenThrow(new IOException("download failed"));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, 235, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.PATTERN, 235, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY, UpdateStatus.READY, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterManager.addFilter(Mockito.any(FilterStoreConfiguration.class))).thenReturn(new FilterStoreConfiguration(235, null, null, false, 0, null, null, null, false, null, true));
 
@@ -362,7 +367,8 @@ public class UpdateTaskTest {
 
         Mockito.when(httpClient.download("http://filter.org/domains.txt")).thenReturn(new ByteArrayInputStream(hosts.getBytes(StandardCharsets.ISO_8859_1)));
 
-        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, null, Format.ETC_HOSTS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true, "blacklist");
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS, Type.DOMAIN, null, Format.ETC_HOSTS, "http://filter.org/domains.txt", UpdateInterval.DAILY, UpdateStatus.NEW, null, sourceFile.toString(), true,
+            "blacklist");
         Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
         Mockito.when(filterListsService.createFilterList(Mockito.any(ParentalControlFilterSummaryData.class), Mockito.anyString())).thenReturn(new ParentalControlFilterSummaryData(123, null, null, null, null, null, false, false, null, null, null, null));
 

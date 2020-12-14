@@ -24,7 +24,6 @@ public class Suggestions {
     private Map<String, FailedConnection> domains;
     private Map<Integer, FailedConnection> modules;
 
-
     public Suggestions(Map<String, FailedConnection> domains, Map<Integer, FailedConnection> modules) {
         this.domains = domains;
         this.modules = modules;

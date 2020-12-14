@@ -19,6 +19,7 @@ package org.eblocker.server.icap.transaction.processor;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -27,7 +28,6 @@ import org.eblocker.server.icap.filter.bpjm.BpjmFilter;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterDecision;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.common.network.BaseURLs;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class BpjmFilterProcessorTest {
         parentalControlService = Mockito.mock(ParentalControlService.class);
         Mockito.when(parentalControlService.getProfile(PROFILE_ID)).thenReturn(profile);
 
-        UserModule user = new UserModule(USER_ID, PROFILE_ID, null, null, null,null, false, null, null, null, null, null);
+        UserModule user = new UserModule(USER_ID, PROFILE_ID, null, null, null, null, false, null, null, null, null, null);
         userService = Mockito.mock(UserService.class);
         Mockito.when(userService.getUserById(USER_ID)).thenReturn(user);
 
@@ -159,6 +159,5 @@ public class BpjmFilterProcessorTest {
         Mockito.when(transaction.getSession()).thenReturn(session);
         return transaction;
     }
-
 
 }

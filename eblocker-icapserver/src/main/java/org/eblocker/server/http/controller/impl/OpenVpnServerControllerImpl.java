@@ -246,7 +246,6 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             return null;
         }
 
-
         if (!getCertificates().contains(device.getId())) {
             if (!setCertificate(device.getId())) {
                 log.error("Could not create certificate for device {}", device.getId());

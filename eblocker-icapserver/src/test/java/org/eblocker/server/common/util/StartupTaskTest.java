@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.common.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.eblocker.server.common.PauseDeviceController;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.PauseDeviceController;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.http.service.DeviceService;
+import java.util.HashSet;
+import java.util.Set;
 
 public class StartupTaskTest {
     private StartupTask startupTask;
@@ -34,7 +33,7 @@ public class StartupTaskTest {
     private PauseDeviceController pauseDeviceController;
     private Device alpha;
     private Device bravo;
-    
+
     @Before
     public void setup() {
         // Mocked device
@@ -44,7 +43,7 @@ public class StartupTaskTest {
         // Device paused, not routed through TOR, SSL disabled
         bravo = Mockito.mock(Device.class);
         Mockito.when(bravo.isPaused()).thenReturn(true);
-        
+
         // Collection of Devices
         Set<Device> devices = new HashSet<>();
         devices.add(alpha);
@@ -52,21 +51,21 @@ public class StartupTaskTest {
 
         deviceService = Mockito.mock(DeviceService.class);
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices);
-        
+
         pauseDeviceController = Mockito.mock(PauseDeviceController.class);
 
         startupTask = new StartupTask(deviceService, pauseDeviceController);
     }
-    
+
     @After
     public void teardown() {
-        
+
     }
-    
+
     @Test
     public void testReenablingPausedDevices() {
         startupTask.run();
-        
+
         Mockito.verify(deviceService).getDevices(Mockito.eq(false));
         // Device alpha not changed, not put back into device service nor squid config controller notified
         Mockito.verify(alpha).isPaused();

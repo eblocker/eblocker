@@ -102,7 +102,6 @@ public class CachingFilter<T> implements DomainFilter<T> {
         stats.hits = hits.get();
         stats.loads = loads.get();
 
-
         if (includeDomains) {
             Set<FilterDecision<T>> decisions;
             synchronized (cache) {

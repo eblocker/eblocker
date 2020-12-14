@@ -28,7 +28,6 @@ import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocket;
 import javax.security.auth.x500.X500Principal;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -68,7 +67,7 @@ public class GeneratingKeyManagerTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testChooseClientAlias() {
-        keyManager.chooseClientAlias(new String[] { "www.eblocker.com"}, new Principal[0], new Socket());
+        keyManager.chooseClientAlias(new String[]{ "www.eblocker.com" }, new Principal[0], new Socket());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -78,7 +77,7 @@ public class GeneratingKeyManagerTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testChooseEngineClientAlias() {
-        keyManager.chooseEngineClientAlias(new String[] { "www.eblocker.com" }, new Principal[0], Mockito.mock(SSLEngine.class));
+        keyManager.chooseEngineClientAlias(new String[]{ "www.eblocker.com" }, new Principal[0], Mockito.mock(SSLEngine.class));
     }
 
     @Test
@@ -132,14 +131,14 @@ public class GeneratingKeyManagerTest {
         List<String> hostnames = new ArrayList<>();
         List<String> ipAddresses = new ArrayList<>();
         List<Socket> sockets = new ArrayList<>();
-        for(int i = 0; i < CACHE_SIZE + 1; ++i) {
+        for (int i = 0; i < CACHE_SIZE + 1; ++i) {
             hostnames.add(i + ".eblocker.com");
             ipAddresses.add("138.68.124." + i);
             sockets.add(createMockSslSocket(hostnames.get(i), ipAddresses.get(i), 443));
         }
 
         List<X509Certificate[]> chains = new ArrayList<>();
-        for(int i = 0; i < hostnames.size(); ++i) {
+        for (int i = 0; i < hostnames.size(); ++i) {
             String key = keyManager.chooseServerAlias("EC_EC", null, sockets.get(i));
             X509Certificate[] chain = keyManager.getCertificateChain(key);
             assertChain(hostnames.get(i), chain);
@@ -147,7 +146,7 @@ public class GeneratingKeyManagerTest {
         }
 
         // last CACHE_SIZE entries must be cached
-        for(int i = 1; i < hostnames.size(); ++i) {
+        for (int i = 1; i < hostnames.size(); ++i) {
             String key = keyManager.chooseServerAlias("EC_EC", null, sockets.get(i));
             X509Certificate[] chain = keyManager.getCertificateChain(key);
             Assert.assertSame(chains.get(i)[0], chain[0]);

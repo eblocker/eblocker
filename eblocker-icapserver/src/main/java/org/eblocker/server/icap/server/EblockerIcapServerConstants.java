@@ -25,5 +25,4 @@ public class EblockerIcapServerConstants {
     private EblockerIcapServerConstants() {
     }
 
-
 }

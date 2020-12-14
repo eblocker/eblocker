@@ -16,19 +16,19 @@
  */
 package org.eblocker.server.common.guice;
 
+import org.eblocker.server.common.BaseModule;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eblocker.server.common.BaseModule;
-
 public class TestBaseModule extends BaseModule {
 
-	public TestBaseModule() throws IOException {
-		super();
-	}
+    public TestBaseModule() throws IOException {
+        super();
+    }
 
-	protected InputStream getConfigurationPropertiesInputStream() {
-		return ClassLoader.getSystemResourceAsStream("configuration-test.properties");
-	}
+    protected InputStream getConfigurationPropertiesInputStream() {
+        return ClassLoader.getSystemResourceAsStream("configuration-test.properties");
+    }
 
 }

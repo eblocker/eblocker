@@ -110,9 +110,9 @@ public class EblockerDnsServerTest {
 
         clientLeaseReader = Mockito.mock(DhcpClientLeaseReader.class);
         Mockito.when(clientLeaseReader.readLease()).thenReturn(
-                new DhcpClientLease("eth0",
-                        "10.10.10.100",
-                        Collections.singletonMap("domain-name-servers", "192.168.3.1, 192.168.3.2, 0.0.0.0")));
+            new DhcpClientLease("eth0",
+                "10.10.10.100",
+                Collections.singletonMap("domain-name-servers", "192.168.3.1, 192.168.3.2, 0.0.0.0")));
 
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse("10.10.10.100"));
@@ -153,21 +153,21 @@ public class EblockerDnsServerTest {
         Assert.assertNotNull(config.getResolverConfigs().get("custom"));
         Assert.assertNull(config.getResolverConfigs().get("custom").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("10.10.10.200"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)),
-                config.getResolverConfigs().get("custom").getNameServers());
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)),
+            config.getResolverConfigs().get("custom").getNameServers());
 
         // check tor-resolver
         Assert.assertNotNull(config.getResolverConfigs().get("tor"));
         Assert.assertNull(config.getResolverConfigs().get("tor").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("127.0.0.1"), 9053)),
-                config.getResolverConfigs().get("tor").getNameServers());
+            config.getResolverConfigs().get("tor").getNameServers());
 
         // check dhcp-resolver
         Assert.assertNotNull(config.getResolverConfigs().get("dhcp"));
         Assert.assertNull(config.getResolverConfigs().get("dhcp").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.1"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53)),
-                config.getResolverConfigs().get("dhcp").getNameServers());
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53)),
+            config.getResolverConfigs().get("dhcp").getNameServers());
 
         // check local entires
         Assert.assertNotNull(config.getLocalDnsRecords());
@@ -213,14 +213,14 @@ public class EblockerDnsServerTest {
         Assert.assertNotNull(config.getResolverConfigs().get("custom"));
         Assert.assertNull(config.getResolverConfigs().get("custom").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("10.10.10.10"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)),
-                config.getResolverConfigs().get("custom").getNameServers());
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)),
+            config.getResolverConfigs().get("custom").getNameServers());
 
         // check tor-resolver
         Assert.assertNotNull(config.getResolverConfigs().get("tor"));
         Assert.assertNull(config.getResolverConfigs().get("tor").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("127.0.0.1"), 9053)),
-                config.getResolverConfigs().get("tor").getNameServers());
+            config.getResolverConfigs().get("tor").getNameServers());
 
         // check dhcp-resolver
         Assert.assertNull(config.getResolverConfigs().get("dhcp"));
@@ -339,9 +339,9 @@ public class EblockerDnsServerTest {
         ResolverConfig resolverConfig = dnsServerConfig.getResolverConfigs().get(EblockerDnsServer.RESOLVER_DHCP);
         Assert.assertEquals(2, resolverConfig.getNameServers().size());
         Assert.assertTrue(resolverConfig.getNameServers()
-                .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.1"), 53)));
+            .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.1"), 53)));
         Assert.assertTrue(resolverConfig.getNameServers()
-                .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.2"), 53)));
+            .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.2"), 53)));
 
         Assert.assertTrue(state.isEnabled());
         Assert.assertTrue(Files.exists(eblockerFlagFilePath));
@@ -380,9 +380,9 @@ public class EblockerDnsServerTest {
         Assert.assertTrue(dnsServerConfig.getResolverConfigs().containsKey(EblockerDnsServer.RESOLVER_CUSTOM));
         ResolverConfig resolverConfig = dnsServerConfig.getResolverConfigs().get(EblockerDnsServer.RESOLVER_CUSTOM);
         Assert.assertTrue(resolverConfig.getNameServers()
-                .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.4"), 53)));
+            .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.4"), 53)));
         Assert.assertTrue(resolverConfig.getNameServers()
-                .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.5"), 53)));
+            .contains(new NameServer(NameServer.Protocol.UDP, Ip4Address.parse("192.168.3.5"), 53)));
 
         Assert.assertTrue(state.isEnabled());
         Assert.assertTrue(Files.exists(eblockerFlagFilePath));
@@ -431,13 +431,13 @@ public class EblockerDnsServerTest {
         ResolverConfig customConfig = new ResolverConfig();
         customConfig.getOptions().put(ResolverConfig.OPTION_KEY_ORDER, "round_robin");
         customConfig.setNameServers(Arrays.asList(
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("10.10.10.10"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)));
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("10.10.10.10"), 53),
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.20"), 53)));
 
         ResolverConfig dhcpConfig = new ResolverConfig();
         dhcpConfig.setNameServers(Arrays.asList(
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.1"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53)));
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.1"), 53),
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53)));
 
         DnsServerConfig serverConfig = new DnsServerConfig();
         serverConfig.setDefaultResolver("custom");
@@ -496,8 +496,8 @@ public class EblockerDnsServerTest {
         Assert.assertNotNull(config.getResolverConfigs().get("custom"));
         Assert.assertEquals("random", config.getResolverConfigs().get("custom").getOptions().get(ResolverConfig.OPTION_KEY_ORDER));
         Assert.assertEquals(Arrays.asList(new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.8"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53)),
-                config.getResolverConfigs().get("custom").getNameServers());
+            new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53)),
+            config.getResolverConfigs().get("custom").getNameServers());
 
         Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
     }
@@ -515,7 +515,7 @@ public class EblockerDnsServerTest {
     public void testGetLocalRecords() {
         // setup mock
         Map<String, LocalDnsRecord> mockLocalRecordByName = new HashMap<>();
-        mockLocalRecordByName.put("ns.eblocker", new LocalDnsRecord("ns.eblocker", false, false,  Ip4Address.parse("10.10.10.100"), null, LOCAL_VPN_IP, null));
+        mockLocalRecordByName.put("ns.eblocker", new LocalDnsRecord("ns.eblocker", false, false, Ip4Address.parse("10.10.10.100"), null, LOCAL_VPN_IP, null));
         mockLocalRecordByName.put("random-device", new LocalDnsRecord("random-device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null));
 
         DnsServerConfig serverConfig = new DnsServerConfig();
@@ -556,7 +556,7 @@ public class EblockerDnsServerTest {
         Assert.assertEquals(CONTROL_BAR_IP_ADDRESS, recordsByName.get(CONTROL_BAR_HOST_NAME).getVpnIpAddress());
         Assert.assertTrue(recordsByName.get(CONTROL_BAR_HOST_NAME).isBuiltin());
         Assert.assertTrue(recordsByName.get(CONTROL_BAR_HOST_NAME).isHidden());
-        for(Map.Entry<String, LocalDnsRecord> e : mockLocalRecordByName.entrySet()) {
+        for (Map.Entry<String, LocalDnsRecord> e : mockLocalRecordByName.entrySet()) {
             Assert.assertNotNull(recordsByName.get(e.getKey()));
             Assert.assertEquals(e.getValue().isBuiltin(), recordsByName.get(e.getKey()).isBuiltin());
             Assert.assertEquals(e.getValue().isHidden(), recordsByName.get(e.getKey()).isHidden());
@@ -598,7 +598,7 @@ public class EblockerDnsServerTest {
         Assert.assertEquals(4, config.getLocalDnsRecords().size());
 
         Map<String, LocalDnsRecord> recordsByName = config.getLocalDnsRecords().stream()
-                .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
+            .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
         // record altered in user config but must still be unmodified
         Assert.assertNotNull(recordsByName.get("ns.unit.test"));
         Assert.assertTrue(recordsByName.get("ns.unit.test").isBuiltin());
@@ -700,14 +700,14 @@ public class EblockerDnsServerTest {
         Mockito.verify(dataSource, Mockito.atLeastOnce()).save(configCaptor.capture());
 
         Optional<DnsServerConfig> configOptional = configCaptor.getAllValues().stream()
-                .filter(o -> o instanceof DnsServerConfig).map(o -> (DnsServerConfig) o).findFirst();
+            .filter(o -> o instanceof DnsServerConfig).map(o -> (DnsServerConfig) o).findFirst();
         Assert.assertTrue(configOptional.isPresent());
         DnsServerConfig config = configOptional.get();
         Assert.assertNotNull(config.getLocalDnsRecords());
         Assert.assertEquals(4, config.getLocalDnsRecords().size());
 
         Map<String, LocalDnsRecord> recordsByName = config.getLocalDnsRecords().stream()
-                .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
+            .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
         // check new record has been inserted
         Assert.assertNotNull(recordsByName.get("ns.unit.test"));
         Assert.assertTrue(recordsByName.get("ns.unit.test").isBuiltin());
@@ -802,11 +802,11 @@ public class EblockerDnsServerTest {
 
         Assert.assertNotNull(config.getResolverConfigs().get("dhcp"));
         Assert.assertEquals(
-                Arrays.asList(
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.8"), 53),
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53),
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("fe80::192:168:3:1"), 53)),
-                config.getResolverConfigs().get("dhcp").getNameServers());
+            Arrays.asList(
+                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.8"), 53),
+                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53),
+                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("fe80::192:168:3:1"), 53)),
+            config.getResolverConfigs().get("dhcp").getNameServers());
     }
 
     @Test
@@ -896,7 +896,7 @@ public class EblockerDnsServerTest {
         Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
 
         eblockerDnsServer.setFilteredPeers(Sets.newHashSet(IpAddress.parse("192.168.9.10"), IpAddress.parse("192.168.9.9")),
-                Sets.newHashSet(IpAddress.parse("192.168.9.12"), IpAddress.parse("192.168.9.11")));
+            Sets.newHashSet(IpAddress.parse("192.168.9.12"), IpAddress.parse("192.168.9.11")));
 
         Mockito.verify(pubSubService, Mockito.never()).publish(CHANNEL_NAME, UPDATE_COMMAND);
         Mockito.verify(dataSource, Mockito.never()).save(DnsServerConfig.class);
@@ -1147,7 +1147,7 @@ public class EblockerDnsServerTest {
 
         // check device-change callback has been registered
         ArgumentCaptor<DeviceService.DeviceChangeListener> listenerCaptor = ArgumentCaptor
-                .forClass(DeviceService.DeviceChangeListener.class);
+            .forClass(DeviceService.DeviceChangeListener.class);
         Mockito.verify(deviceService).addListener(listenerCaptor.capture());
 
         // trigger device change event and check ip is updated
@@ -1160,7 +1160,7 @@ public class EblockerDnsServerTest {
         DnsServerConfig updatedConfig = filterLast(captor, DnsServerConfig.class);
         Assert.assertNotNull(updatedConfig);
         Assert.assertEquals(Collections.singletonMap("192.168.5.10", "unit-test-resolver-name"),
-                updatedConfig.getResolverConfigNameByIp());
+            updatedConfig.getResolverConfigNameByIp());
     }
 
     @Test
@@ -1196,12 +1196,12 @@ public class EblockerDnsServerTest {
         DnsServerConfig updatedConfig = filterLast(captor, DnsServerConfig.class);
         Assert.assertNotNull(updatedConfig);
         Assert.assertEquals(Collections.singletonMap("192.168.5.10", "unit-test-resolver-name"),
-                updatedConfig.getResolverConfigNameByIp());
+            updatedConfig.getResolverConfigNameByIp());
     }
 
     @Test
     public void testSetCustomResolver() {
-        for (String mode : new String[] {"dhcp", "custom", "tor"}) {
+        for (String mode : new String[]{ "dhcp", "custom", "tor" }) {
             DnsServerConfig config = new DnsServerConfig();
             config.setDefaultResolver(mode);
             Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(config);
@@ -1224,23 +1224,23 @@ public class EblockerDnsServerTest {
     }
 
     private void setupDnsServer() {
-        eblockerDnsServer = new EblockerDnsServer(CHANNEL_NAME, 
-            FLUSH_COMMAND, 
-            UPDATE_COMMAND, 
-            DEFAULT_CUSTOM_NAME_SERVERS, 
-            DEFAULT_LOCAL_NAMES, 
-            DEFAULT_TOR_NAME_SERVERS, 
-            eblockerFlagFilePath.toString(), 
-            CONTROL_BAR_HOST_NAME, 
+        eblockerDnsServer = new EblockerDnsServer(CHANNEL_NAME,
+            FLUSH_COMMAND,
+            UPDATE_COMMAND,
+            DEFAULT_CUSTOM_NAME_SERVERS,
+            DEFAULT_LOCAL_NAMES,
+            DEFAULT_TOR_NAME_SERVERS,
+            eblockerFlagFilePath.toString(),
+            CONTROL_BAR_HOST_NAME,
             CONTROL_BAR_IP_ADDRESS,
             VPN_SUBNET_IP,
             VPN_SUBNET_NETMASK,
             clock,
-            dataSource, 
+            dataSource,
             deviceService,
             dhcpBindListener,
-            clientLeaseReader, 
-            networkInterfaceWrapper, 
+            clientLeaseReader,
+            networkInterfaceWrapper,
             pubSubService,
             routerAdvertisementCache);
         eblockerDnsServer.init();
@@ -1258,7 +1258,7 @@ public class EblockerDnsServerTest {
 
     private <T> T filterLast(ArgumentCaptor<?> captor, Class<T> clazz) {
         List<T> filteredValues = filterValues(captor, clazz);
-        for(int i = filteredValues.size() - 1; i >= 0; --i) {
+        for (int i = filteredValues.size() - 1; i >= 0; --i) {
             if (clazz.isInstance(filteredValues.get(i))) {
                 return filteredValues.get(i);
             }
@@ -1273,6 +1273,6 @@ public class EblockerDnsServerTest {
 
     private RouterAdvertisementCache.Entry createRouterAdvertisementEntry(long lastUpdate, int lifetime, int rdnsLifetime, Ip6Address... nameServer) {
         List<Option> options = nameServer.length != 0 ? Collections.singletonList(new RecursiveDnsServerOption(rdnsLifetime, Arrays.asList(nameServer))) : Collections.emptyList();
-        return new RouterAdvertisementCache.Entry(null, lastUpdate,lifetime, new RouterAdvertisement(null, null, null, null, (short)0, false, false, false, null, lifetime, 0, 0, options));
+        return new RouterAdvertisementCache.Entry(null, lastUpdate, lifetime, new RouterAdvertisement(null, null, null, null, (short) 0, false, false, false, null, lifetime, 0, 0, options));
     }
 }

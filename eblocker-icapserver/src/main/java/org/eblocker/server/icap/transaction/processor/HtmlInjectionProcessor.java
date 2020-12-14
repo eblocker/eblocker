@@ -50,7 +50,6 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
             return true;
         }
 
-
         inject(content, transaction.getInjections().getInjections());
         return true;
     }

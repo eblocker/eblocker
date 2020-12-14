@@ -33,7 +33,6 @@ import java.util.SortedSet;
  */
 public interface DataSource {
 
-
     SortedSet<String> getIds(Class<?> entityClass);
 
     <T> T get(Class<T> entityClass, int id);
@@ -86,7 +85,6 @@ public interface DataSource {
      * Returns a sorted set of all devices
      */
     Set<Device> getDevices();
-
 
     /**
      * Returns a sorted set of all ACTIVE devices
@@ -218,14 +216,12 @@ public interface DataSource {
      */
     AutomaticUpdaterConfiguration getAutomaticUpdateConfig();
 
-
     /**
      * Save the new time frame for automatic updates
      *
      * @param configuration
      */
     void save(AutomaticUpdaterConfiguration configuration);
-
 
     /**
      * Save the state of the AutomaticUpdater
@@ -280,7 +276,6 @@ public interface DataSource {
      * @return
      */
     Set<String> getCurrentTorExitNodes();
-
 
     /**
      * Enable or disable the WebRTCBlockerProcessor, to block WebRTC connection establishments because it might

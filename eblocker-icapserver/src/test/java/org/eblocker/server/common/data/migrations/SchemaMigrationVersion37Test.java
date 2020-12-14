@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,8 +65,10 @@ public class SchemaMigrationVersion37Test {
     public void migrate() throws IOException {
         // setup mock data
         Map<String, String> clientStateById = new HashMap<>();
-        clientStateById.put("OpenVpnClientState:0", "{\"id\":0,\"active\":false,\"virtualInterfaceName\":\"tun0\",\"linkLocalInterfaceAlias\":\"eth0:36\",\"linkLocalIpAddress\":\"169.254.8.2\",\"route\":1,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.8.0.5\",\"trustedIp\":\"10.10.10.102\",\"devices\":[\"device:64200c454900\"],\"nameServers\":[]}");
-        clientStateById.put("OpenVpnClientState:1", "{\"id\":1,\"active\":true,\"virtualInterfaceName\":\"tun1\",\"linkLocalInterfaceAlias\":\"eth0:37\",\"linkLocalIpAddress\":\"169.254.8.3\",\"route\":2,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.9.0.5\",\"trustedIp\":\"10.10.20.102\",\"devices\":[\"device:64200c454901\"],\"nameServers\":[]}");
+        clientStateById.put("OpenVpnClientState:0",
+            "{\"id\":0,\"active\":false,\"virtualInterfaceName\":\"tun0\",\"linkLocalInterfaceAlias\":\"eth0:36\",\"linkLocalIpAddress\":\"169.254.8.2\",\"route\":1,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.8.0.5\",\"trustedIp\":\"10.10.10.102\",\"devices\":[\"device:64200c454900\"],\"nameServers\":[]}");
+        clientStateById.put("OpenVpnClientState:1",
+            "{\"id\":1,\"active\":true,\"virtualInterfaceName\":\"tun1\",\"linkLocalInterfaceAlias\":\"eth0:37\",\"linkLocalIpAddress\":\"169.254.8.3\",\"route\":2,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.9.0.5\",\"trustedIp\":\"10.10.20.102\",\"devices\":[\"device:64200c454901\"],\"nameServers\":[]}");
         Mockito.when(jedis.keys("OpenVpnClientState:[0-9]*")).thenReturn(clientStateById.keySet());
         Mockito.when(jedis.get(Mockito.anyString())).then(im -> clientStateById.get(im.getArgument(0)));
 

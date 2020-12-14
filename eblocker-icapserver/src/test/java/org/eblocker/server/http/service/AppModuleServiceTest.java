@@ -368,7 +368,6 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         Path resourcePath = ResourceTestUtil.provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
         AppModuleService appModuleService = createService(resourcePath);
 
-
         //  The following cases will be tested:
         //    1. new module (id 17)
         //    2. updated modules (id 3)
@@ -415,16 +414,16 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         String modName = "Modified Builtin Module";
         List<String> modDomains = Arrays.asList("first.domain.example", "second.domain.example");
         AppWhitelistModule case5Module = new AppWhitelistModule(5, modName, Collections.emptyMap(), modDomains,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, true, "1",
-                false, false);
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, true, "1",
+            false, false);
         dataSource.save(case5Module, case5Module.getId());
 
         Path resourcePath = ResourceTestUtil
-                .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
+            .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
         AppModuleService appModuleService = createService(resourcePath);
 
         Optional<AppWhitelistModule> moduleAfterOpt = appModuleService.getAll().stream()
-                .filter(m -> m.getName().equals(modName)).findAny();
+            .filter(m -> m.getName().equals(modName)).findAny();
         assertTrue(moduleAfterOpt.isPresent());
         AppWhitelistModule moduleAfter = moduleAfterOpt.get();
         assertFalse(moduleAfter.isBuiltin());
@@ -436,24 +435,24 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         String modName = "Modified Builtin Module";
         List<String> modDomains = Arrays.asList("first.domain.example", "second.domain.example");
         AppWhitelistModule case5Module = new AppWhitelistModule(5, modName, Collections.emptyMap(), modDomains,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, true, "1",
-                false, false);
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, true, "1",
+            false, false);
         dataSource.save(case5Module, case5Module.getId());
 
         // The user has already created a second AppModule with the same name
         List<String> modDomainsUserDefined = Arrays.asList("first.user.defined", "second.user.defined");
         AppWhitelistModule case5ModuleUserDefined = new AppWhitelistModule(42, modName, Collections.emptyMap(),
-                modDomainsUserDefined, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false,
-                false, false, true, "1", false, false);
+            modDomainsUserDefined, Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false,
+            false, false, true, "1", false, false);
         dataSource.save(case5ModuleUserDefined, case5ModuleUserDefined.getId());
 
         Path resourcePath = ResourceTestUtil
-                .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
+            .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
         AppModuleService appModuleService = createService(resourcePath);
 
         // Find the original module by its now-modified name with the number appended
         Optional<AppWhitelistModule> moduleAfterOpt = appModuleService.getAll().stream()
-                .filter(m -> m.getName().equals(modName + " #1")).findAny();
+            .filter(m -> m.getName().equals(modName + " #1")).findAny();
         assertTrue(moduleAfterOpt.isPresent());
         AppWhitelistModule moduleAfter = moduleAfterOpt.get();
         assertFalse(moduleAfter.isBuiltin());
@@ -465,16 +464,16 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         String modName = "Not Modified Builtin Module";
         List<String> modDomains = Arrays.asList("first.domain.example", "second.domain.example");
         AppWhitelistModule case5Module = new AppWhitelistModule(5, modName, Collections.emptyMap(), modDomains,
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, false,
-                "1", false, false);
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyMap(), false, false, true, false,
+            "1", false, false);
         dataSource.save(case5Module, case5Module.getId());
 
         Path resourcePath = ResourceTestUtil
-                .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
+            .provideResourceAsFile("test-data/appwhitelistmodules/app-whitelist-modules-test.json");
         AppModuleService appModuleService = createService(resourcePath);
 
         Optional<AppWhitelistModule> moduleAfterOpt = appModuleService.getAll().stream()
-                .filter(m -> m.getName().equals(modName)).findAny();
+            .filter(m -> m.getName().equals(modName)).findAny();
         assertFalse(moduleAfterOpt.isPresent());
     }
 
@@ -493,7 +492,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertEquals(4, observer.size());
         observer.clear();
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        for (AppWhitelistModule module: modules) {
+        for (AppWhitelistModule module : modules) {
             int id = module.getId();
             if (id == 1 || id == 2 || id == 3 || id == 4) {
                 assertFalse(module.isEnabled());
@@ -511,7 +510,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(appModuleService.get(2).isEnabled());
         assertTrue(appModuleService.get(3).isEnabled());
         assertTrue(appModuleService.get(4).isEnabled());
-        assertEquals(defaultSize+15, appModuleService.getAllUrlsFromEnabledModules().size());
+        assertEquals(defaultSize + 15, appModuleService.getAllUrlsFromEnabledModules().size());
 
     }
 
@@ -614,13 +613,13 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
         // Add a domain with label
         appModuleService.addDomainsToModule(
-                Arrays.asList(
-                        new SSLWhitelistUrl("My Domain 1", "my.domain1.org"),
-                        new SSLWhitelistUrl("My Domain 2", "my.domain2.org"),
-                        new SSLWhitelistUrl("My Domain 3", "my.domain3.org"),
-                        new SSLWhitelistUrl("My Domain 4", "my.domain4.org"),
-                        new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
-                ), 3);
+            Arrays.asList(
+                new SSLWhitelistUrl("My Domain 1", "my.domain1.org"),
+                new SSLWhitelistUrl("My Domain 2", "my.domain2.org"),
+                new SSLWhitelistUrl("My Domain 3", "my.domain3.org"),
+                new SSLWhitelistUrl("My Domain 4", "my.domain4.org"),
+                new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
+            ), 3);
 
         module = appModuleService.get(3);
         assertEquals(before + 4, module.getWhitelistedDomains().size());
@@ -629,12 +628,12 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
         // Remove/change labels
         appModuleService.addDomainsToModule(
-                Arrays.asList(
-                        new SSLWhitelistUrl(null, "my.domain1.org"),
-                        new SSLWhitelistUrl("", "my.domain2.org"),
-                        new SSLWhitelistUrl("My Shiny Domain 3", "my.domain3.org"),
-                         new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
-                ), 3);
+            Arrays.asList(
+                new SSLWhitelistUrl(null, "my.domain1.org"),
+                new SSLWhitelistUrl("", "my.domain2.org"),
+                new SSLWhitelistUrl("My Shiny Domain 3", "my.domain3.org"),
+                new SSLWhitelistUrl(null, "swscan.apple.com") // already in rhe list!
+            ), 3);
 
         module = appModuleService.get(3);
         assertEquals(before + 4, module.getWhitelistedDomains().size());
@@ -645,11 +644,11 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
 
         // remove domain
         appModuleService.removeDomainsFromModule(
-                Arrays.asList(
-                        new SSLWhitelistUrl("My Domain 2", "my.domain2.org"),
-                        new SSLWhitelistUrl("My Domain 4", "my.domain4.org"),
-                        new SSLWhitelistUrl(null, "swscan.apple.com")
-                ), 3);
+            Arrays.asList(
+                new SSLWhitelistUrl("My Domain 2", "my.domain2.org"),
+                new SSLWhitelistUrl("My Domain 4", "my.domain4.org"),
+                new SSLWhitelistUrl(null, "swscan.apple.com")
+            ), 3);
 
         module = appModuleService.get(3);
         assertEquals(before + 1, module.getWhitelistedDomains().size());
@@ -716,7 +715,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(appModuleService.get(idWinUpdates).isEnabled());
 
         // Check that sequence was updated
-        AppWhitelistModule nextModule= appModuleService.save(createAppModule("My Next Module", true));
+        AppWhitelistModule nextModule = appModuleService.save(createAppModule("My Next Module", true));
         assertEquals(Integer.valueOf(idUserDefined + 1), nextModule.getId());
     }
 
@@ -736,24 +735,24 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
     }
 
     private AppWhitelistModule createAppModule(String name, boolean enabledbyDefault) {
-        Map<String,String> description = new HashMap<>();
+        Map<String, String> description = new HashMap<>();
         description.put("de", "description de");
         description.put("en", "description en");
         return new AppWhitelistModule(
-                null,
-                name,
-                description,
-                IntStream.range(0, 10).mapToObj(i -> "domain-"+i+".com").collect(Collectors.toList()),
-                null,
-                null,
-                null,
-                enabledbyDefault,
-                false,
-                null,
-                null,
-                null,
-                null,
-                null
+            null,
+            name,
+            description,
+            IntStream.range(0, 10).mapToObj(i -> "domain-" + i + ".com").collect(Collectors.toList()),
+            null,
+            null,
+            null,
+            enabledbyDefault,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null
         );
     }
 
@@ -779,6 +778,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         public int size() {
             return observed.size();
         }
+
         public void clear() {
             observed.clear();
         }

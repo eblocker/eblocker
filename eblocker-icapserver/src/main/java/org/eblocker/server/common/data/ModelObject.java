@@ -19,7 +19,6 @@ package org.eblocker.server.common.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-
 /**
  * Base class for all data objects that are stored in the key-value store.
  * Objects are usually stored as a hash under a globally unique identifier.

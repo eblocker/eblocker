@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserProfileModule;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,6 @@ public class SchemaMigrationVersion36Test {
         dataSource = Mockito.mock(DataSource.class);
         migration = new SchemaMigrationVersion36(dataSource);
     }
-
 
     @Test
     public void getSourceVersion() {

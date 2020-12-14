@@ -16,13 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.net.URI;
-import java.nio.charset.Charset;
-
-import static org.mockito.Mockito.when;
-
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.IpAddressModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
@@ -30,17 +25,22 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpVersion;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.IpAddressModule;
+import org.eblocker.server.http.server.HttpTransactionIdentifier;
 import org.mockito.Mockito;
 import org.restexpress.Request;
 import org.restexpress.response.RawResponseWrapper;
 import org.restexpress.route.RouteMapping;
 import org.restexpress.route.RouteResolver;
 import org.restexpress.serialization.AbstractSerializationProvider;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.http.server.HttpTransactionIdentifier;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.restexpress.serialization.json.JacksonJsonProcessor;
+
+import java.net.URI;
+import java.nio.charset.Charset;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Utility functions for testing controller actions.
@@ -48,40 +48,41 @@ import org.restexpress.serialization.json.JacksonJsonProcessor;
 public class ControllerTestUtils {
 
     private static ObjectMapper mapper;
+
     static {
         mapper = new ObjectMapper();
         mapper.registerModule(new IpAddressModule());
     }
 
-	public static String toJSON(Object object) throws JsonProcessingException {
-		return mapper.writeValueAsString(object);
-	}
+    public static String toJSON(Object object) throws JsonProcessingException {
+        return mapper.writeValueAsString(object);
+    }
 
-	public static Request createRequest(String content, HttpMethod method, String uriStr) {
+    public static Request createRequest(String content, HttpMethod method, String uriStr) {
         ByteBuf contentBuffer = Unpooled.copiedBuffer(content, Charset.defaultCharset());
 
-		FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uriStr, contentBuffer);
+        FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uriStr, contentBuffer);
 
-		URI uri = URI.create(uriStr);
-		String host = uri.getHost();
-		if (host != null) {
-			if (uri.getPort() != -1) {
-				host += ":" + uri.getPort();
-			}
-			HttpHeaders.setHost(httpRequest, host);
-		}
+        URI uri = URI.create(uriStr);
+        String host = uri.getHost();
+        if (host != null) {
+            if (uri.getPort() != -1) {
+                host += ":" + uri.getPort();
+            }
+            HttpHeaders.setHost(httpRequest, host);
+        }
 
-		Request request = wrapHttpRequest(httpRequest);
-		return request;
-	}
+        Request request = wrapHttpRequest(httpRequest);
+        return request;
+    }
 
-	public static Request wrapHttpRequest(FullHttpRequest httpRequest) {
-		org.restexpress.serialization.SerializationProvider serializationProvider = new SerializationProvider();
-		RouteMapping routeMapping = new RouteMapping();
-		RouteResolver routeResolver = new RouteResolver(routeMapping);
-		Request request = new Request(httpRequest, routeResolver , serializationProvider);
-		return request;
-	}
+    public static Request wrapHttpRequest(FullHttpRequest httpRequest) {
+        org.restexpress.serialization.SerializationProvider serializationProvider = new SerializationProvider();
+        RouteMapping routeMapping = new RouteMapping();
+        RouteResolver routeResolver = new RouteResolver(routeMapping);
+        Request request = new Request(httpRequest, routeResolver, serializationProvider);
+        return request;
+    }
 
     /**
      * Mock a request coming from a specific device. Unfortunately, we can only use

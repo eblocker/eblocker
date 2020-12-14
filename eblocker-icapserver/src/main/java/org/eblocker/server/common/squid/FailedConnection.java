@@ -40,7 +40,6 @@ public class FailedConnection {
         this.lastOccurrence = lastOccurrence;
     }
 
-
     public List<String> getDeviceIds() {
         return deviceIds;
     }

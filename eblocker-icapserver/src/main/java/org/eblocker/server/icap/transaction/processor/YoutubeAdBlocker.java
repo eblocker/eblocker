@@ -48,7 +48,8 @@ public class YoutubeAdBlocker implements TransactionProcessor {
 
     @Override
     public boolean process(Transaction transaction) {
-        if (!transaction.isResponse()) return true;//only makes sense for responses
+        if (!transaction.isResponse())
+            return true;//only makes sense for responses
 
         PageContext pageContext = transaction.getPageContext();
 

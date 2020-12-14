@@ -68,7 +68,6 @@ public class LocalDnsRecord {
         return ip6Address;
     }
 
-
     public Ip4Address getVpnIpAddress() {
         return vpnIpAddress;
     }

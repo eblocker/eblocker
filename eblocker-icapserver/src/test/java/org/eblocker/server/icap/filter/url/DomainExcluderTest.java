@@ -16,45 +16,46 @@
  */
 package org.eblocker.server.icap.filter.url;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DomainExcluderTest {
 
-	@Test
-	public void test() {
-		List<String> empty = Collections.emptyList();
-		List<String> domains = Arrays.asList(new String[]{"brightmammoth.com", "eblocker.com"});
-		
-		assertFalse(new DomainExcluder(empty, true).isExcluded("www.brightmammoth.com"));
-		assertFalse(new DomainExcluder(empty, false).isExcluded("www.brightmammoth.com"));
-		
-		assertFalse(new DomainExcluder(domains, true).isExcluded("www.brightmammoth.com"));
-		assertTrue(new DomainExcluder(domains, false).isExcluded("www.brightmammoth.com"));
-		
-		assertFalse(new DomainExcluder(domains, true).isExcluded("www.eblocker.com"));
-		assertTrue(new DomainExcluder(domains, false).isExcluded("www.eblocker.com"));
-		
-		assertFalse(new DomainExcluder(domains, true).isExcluded("brightmammoth.com"));
-		assertTrue(new DomainExcluder(domains, false).isExcluded("brightmammoth.com"));
-		
-		assertFalse(new DomainExcluder(domains, true).isExcluded("some.subdomain.brightmammoth.com"));
-		assertTrue(new DomainExcluder(domains, false).isExcluded("some.subdomain.brightmammoth.com"));
-		
-		assertTrue(new DomainExcluder(domains, true).isExcluded("other.host.org"));
-		assertFalse(new DomainExcluder(domains, false).isExcluded("other.host.org"));
-		
-		assertTrue(new DomainExcluder(domains, true).isExcluded(null));
-		assertFalse(new DomainExcluder(domains, false).isExcluded(null));
-		
-		assertFalse(new DomainExcluder(empty, true).isExcluded(null));
-		assertFalse(new DomainExcluder(empty, false).isExcluded(null));
-		
-	}
+    @Test
+    public void test() {
+        List<String> empty = Collections.emptyList();
+        List<String> domains = Arrays.asList(new String[]{ "brightmammoth.com", "eblocker.com" });
+
+        assertFalse(new DomainExcluder(empty, true).isExcluded("www.brightmammoth.com"));
+        assertFalse(new DomainExcluder(empty, false).isExcluded("www.brightmammoth.com"));
+
+        assertFalse(new DomainExcluder(domains, true).isExcluded("www.brightmammoth.com"));
+        assertTrue(new DomainExcluder(domains, false).isExcluded("www.brightmammoth.com"));
+
+        assertFalse(new DomainExcluder(domains, true).isExcluded("www.eblocker.com"));
+        assertTrue(new DomainExcluder(domains, false).isExcluded("www.eblocker.com"));
+
+        assertFalse(new DomainExcluder(domains, true).isExcluded("brightmammoth.com"));
+        assertTrue(new DomainExcluder(domains, false).isExcluded("brightmammoth.com"));
+
+        assertFalse(new DomainExcluder(domains, true).isExcluded("some.subdomain.brightmammoth.com"));
+        assertTrue(new DomainExcluder(domains, false).isExcluded("some.subdomain.brightmammoth.com"));
+
+        assertTrue(new DomainExcluder(domains, true).isExcluded("other.host.org"));
+        assertFalse(new DomainExcluder(domains, false).isExcluded("other.host.org"));
+
+        assertTrue(new DomainExcluder(domains, true).isExcluded(null));
+        assertFalse(new DomainExcluder(domains, false).isExcluded(null));
+
+        assertFalse(new DomainExcluder(empty, true).isExcluded(null));
+        assertFalse(new DomainExcluder(empty, false).isExcluded(null));
+
+    }
 
 }

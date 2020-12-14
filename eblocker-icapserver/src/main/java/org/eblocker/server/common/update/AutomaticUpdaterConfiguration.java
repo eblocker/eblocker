@@ -21,7 +21,6 @@ import com.strategicgains.syntaxe.annotation.IntegerValidation;
 
 import java.time.LocalTime;
 
-
 /**
  * This configuration holds the timeframe for automatic updates. It is defined via the beginning time (beginTimeHour:beginTimeMin) and the ending time (endTimeHour:endTimeMin)
  */
@@ -35,7 +34,6 @@ public class AutomaticUpdaterConfiguration {
     private int beginTimeMin;
     @IntegerValidation(name = "EndMin", min = 0, max = 59)
     private int endTimeMin;
-
 
     @JsonProperty
     public int getBeginHour() {

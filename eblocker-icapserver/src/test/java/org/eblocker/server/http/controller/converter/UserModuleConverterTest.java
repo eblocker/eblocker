@@ -20,7 +20,10 @@ import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleTransport;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserModuleConverterTest {
 
@@ -61,7 +64,7 @@ public class UserModuleConverterTest {
             "a-name-key",
             null, null,
             false,
-            new byte[]{1, 2, 3, 4, 5, 6},
+            new byte[]{ 1, 2, 3, 4, 5, 6 },
             null,
             null,
             null,

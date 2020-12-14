@@ -290,7 +290,6 @@ public class TorController {
         }
     }
 
-
     /**
      * Check the bootstrap phase and assume that Tor is working, if the percent or state that the bootstrap phase is in is 100%;
      *

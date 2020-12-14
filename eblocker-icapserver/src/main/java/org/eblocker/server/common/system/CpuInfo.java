@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.system;
 
-
 /**
  * Info about the CPU
  */

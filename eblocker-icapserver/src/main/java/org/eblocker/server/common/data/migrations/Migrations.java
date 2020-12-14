@@ -83,7 +83,6 @@ public class Migrations {
         return dataSource.getVersion();
     }
 
-
     /**
      * Builds map by source version and checks each source verison is just used once
      */

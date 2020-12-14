@@ -16,21 +16,21 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.List;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SchemaMigrationVersion27Test {
 

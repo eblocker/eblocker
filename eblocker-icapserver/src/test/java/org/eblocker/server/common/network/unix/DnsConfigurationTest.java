@@ -16,50 +16,50 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class DnsConfigurationTest {
-	DnsConfiguration dnsConfiguration;
+    DnsConfiguration dnsConfiguration;
 
-	@Before
-	public void setUp() throws Exception {
-		String resolvConfPath = ClassLoader.getSystemResource("test-data/resolv.conf").toURI().getPath();
-		dnsConfiguration = new DnsConfiguration(resolvConfPath, null);
-	}
+    @Before
+    public void setUp() throws Exception {
+        String resolvConfPath = ClassLoader.getSystemResource("test-data/resolv.conf").toURI().getPath();
+        dnsConfiguration = new DnsConfiguration(resolvConfPath, null);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void testRead() throws IOException {
-		List<String> result = dnsConfiguration.getNameserverAddresses();
-		assertEquals(2, result.size());
-		assertEquals("192.168.3.20", result.get(0));
-		assertEquals("192.168.3.1",  result.get(1));
-	}
+    @Test
+    public void testRead() throws IOException {
+        List<String> result = dnsConfiguration.getNameserverAddresses();
+        assertEquals(2, result.size());
+        assertEquals("192.168.3.20", result.get(0));
+        assertEquals("192.168.3.1", result.get(1));
+    }
 
-	@Test
-	public void testWrite() throws IOException {
-		File tempFile = File.createTempFile("DnsConfigurationTest", "-resolv.conf");
-		tempFile.deleteOnExit();
-		
-		DnsConfiguration output = new DnsConfiguration(null, tempFile.getAbsolutePath());
-		output.setNameserverAddresses(Arrays.asList("192.168.1.23", "192.168.1.42"));
-		
-		DnsConfiguration input = new DnsConfiguration(tempFile.getAbsolutePath(), null);
-		List<String> result = input.getNameserverAddresses();
-		assertEquals(2, result.size());
-		assertEquals("192.168.1.23", result.get(0));
-		assertEquals("192.168.1.42", result.get(1));		
-	}
+    @Test
+    public void testWrite() throws IOException {
+        File tempFile = File.createTempFile("DnsConfigurationTest", "-resolv.conf");
+        tempFile.deleteOnExit();
+
+        DnsConfiguration output = new DnsConfiguration(null, tempFile.getAbsolutePath());
+        output.setNameserverAddresses(Arrays.asList("192.168.1.23", "192.168.1.42"));
+
+        DnsConfiguration input = new DnsConfiguration(tempFile.getAbsolutePath(), null);
+        List<String> result = input.getNameserverAddresses();
+        assertEquals(2, result.size());
+        assertEquals("192.168.1.23", result.get(0));
+        assertEquals("192.168.1.42", result.get(1));
+    }
 }

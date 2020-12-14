@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.data;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

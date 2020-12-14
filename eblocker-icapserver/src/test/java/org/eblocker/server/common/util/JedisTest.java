@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.util;
 
-import static org.junit.Assert.*;
-
 import org.junit.Ignore;
 import org.junit.Test;
-
 import redis.clients.jedis.Jedis;
+
+import static org.junit.Assert.assertEquals;
 
 public class JedisTest {
 
-	@Ignore @Test
-	public void test() {
-		Jedis jedis = new Jedis("localhost");
-		//jedis.set("foo", "baz");
-		String value = jedis.get("foo");
-		assertEquals("baz", value);
-		
-		jedis.close();
-	}
+    @Ignore @Test
+    public void test() {
+        Jedis jedis = new Jedis("localhost");
+        //jedis.set("foo", "baz");
+        String value = jedis.get("foo");
+        assertEquals("baz", value);
+
+        jedis.close();
+    }
 
 }

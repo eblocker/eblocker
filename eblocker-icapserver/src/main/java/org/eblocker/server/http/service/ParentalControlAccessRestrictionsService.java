@@ -268,7 +268,7 @@ public class ParentalControlAccessRestrictionsService implements Runnable {
                 parentalControlUsageService.stopUsage(device);
             }
         } else {
-//				LOG.info("Access for device {} is still {} based on parental control access rules", device.getUserFriendlyName(), shouldBePermitted ? "GRANTED" : "DENIED");
+            //				LOG.info("Access for device {} is still {} based on parental control access rules", device.getUserFriendlyName(), shouldBePermitted ? "GRANTED" : "DENIED");
             LOG.debug("{} user: {} prev: {} now: {} restrictions: {}", device, user != null ? user.getId() : "<null>", currentlyPermitted, shouldBePermitted, getRestrictions(restrictions), shouldBePermitted);
         }
 

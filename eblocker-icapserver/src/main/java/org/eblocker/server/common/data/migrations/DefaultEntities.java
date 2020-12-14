@@ -107,7 +107,6 @@ public class DefaultEntities {
     //
     public static final String USER_SYSTEM_DEFAULT_NAME_KEY = "SHARED.USER.NAME.SYSTEM_DEFAULT";
 
-
     private DefaultEntities() {
         // To hide default public constructor
     }

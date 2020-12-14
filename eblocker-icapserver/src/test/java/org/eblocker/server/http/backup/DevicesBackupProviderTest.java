@@ -187,8 +187,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
 
         exportAndImportWithDevicesBackupProvider(dataSource, provider);
 
-//        Mockito.verify(deviceService).updateDevice(gatewayAfter);
-//        Mockito.verify(deviceService).updateDevice(computerAfter);
+        //        Mockito.verify(deviceService).updateDevice(gatewayAfter);
+        //        Mockito.verify(deviceService).updateDevice(computerAfter);
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);
         Mockito.verify(deviceService, Mockito.times(2)).updateDevice(argCaptor.capture());
         Device restoredGateway = argCaptor.getAllValues().get(0);
@@ -223,7 +223,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(Ip4Address.parse("192.168.0.22"), restoredDevice.getIpAddresses().get(0));
         Assert.assertEquals(computerBefore.isIpAddressFixed(), restoredDevice.isIpAddressFixed());
         // FUTURE: VPN settings are currently not saved
-//        Assert.assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
+        //        Assert.assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
         Assert.assertEquals(computerBefore.isMalwareFilterEnabled(), restoredDevice.isMalwareFilterEnabled());
         Assert.assertEquals(computerBefore.isMessageShowAlert(), restoredDevice.isMessageShowAlert());
         Assert.assertEquals(computerBefore.isMessageShowInfo(), restoredDevice.isMessageShowInfo());

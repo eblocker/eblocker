@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -25,7 +26,10 @@ import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.http.service.DashboardCardService;
-import org.eblocker.registration.ProductFeature;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,10 +39,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mockito;
 
 public class SchemaMigrationVersion40Test {
 
@@ -83,8 +84,8 @@ public class SchemaMigrationVersion40Test {
         accessibleSitesPackagesProfile2.add(1);
 
         profile1 = new UserProfileModule(101, "Test Profile One", "descr", "TEST_PROFILE", "", false, false, null, inAccessibleSitesPackagesProfile1, UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, false, null, null);
-        profile2 = new UserProfileModule(102, "Test Profile Two", "descr", "TEST_PROFILE", "", false, false, accessibleSitesPackagesProfile2,null, UserProfileModule.InternetAccessRestrictionMode.WHITELIST,null,null,false,null, null);
-        profileStandard = new UserProfileModule(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,"Standard Profile","descr","STANDARD_PROFILE","",true,false,null,null,null,null,null,false,null, null);
+        profile2 = new UserProfileModule(102, "Test Profile Two", "descr", "TEST_PROFILE", "", false, false, accessibleSitesPackagesProfile2, null, UserProfileModule.InternetAccessRestrictionMode.WHITELIST, null, null, false, null, null);
+        profileStandard = new UserProfileModule(DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID, "Standard Profile", "descr", "STANDARD_PROFILE", "", true, false, null, null, null, null, null, false, null, null);
 
         Mockito.when(dataSource.getAll(UserModule.class)).thenReturn(userList);
         Mockito.when(dataSource.get(UserProfileModule.class, profile1.getId())).thenReturn(profile1);
@@ -137,7 +138,7 @@ public class SchemaMigrationVersion40Test {
 
     @Test
     public void testCreationOfFragFinnCard() {
-//        Mockito.when(dataSource.nextId(eq(UiCard.class))).thenReturn(1001);
+        //        Mockito.when(dataSource.nextId(eq(UiCard.class))).thenReturn(1001);
         migration.migrate();
         Mockito.verify(dataSource, Mockito.times(1)).save(Mockito.any(UiCard.class), Mockito.eq(1001));
         assertEquals(1, savedCards.size());

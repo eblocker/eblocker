@@ -82,7 +82,6 @@ public class DomainBlockingNetworkService {
             .localAddress(host, port)
             .childHandler(channelInitializer);
 
-
         udpBootstrap = new Bootstrap()
             .group(workerGroup)
             .channel(NioDatagramChannel.class)

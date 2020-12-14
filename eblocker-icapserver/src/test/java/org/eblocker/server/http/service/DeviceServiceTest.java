@@ -76,10 +76,10 @@ public class DeviceServiceTest {
 
         devices = new ArrayList<>();
         devices.add(createMockDevice(GATEWAY_ID, "192.168.1.1", 100, true, true, true, false));
-        devices.add(createMockDevice(DEVICE_CONFLICT_ID, new String[]{EBLOCKER_IP, "192.168.1.7"}, false, true, false, false));
+        devices.add(createMockDevice(DEVICE_CONFLICT_ID, new String[]{ EBLOCKER_IP, "192.168.1.7" }, false, true, false, false));
         devices.add(createMockDevice(DEVICE_ONLINE_ID, "192.168.1.8", 100, true, true, false, false));
         devices.add(createMockDevice(DEVICE_OFFLINE_ID, "192.168.1.4", false, false, false, false));
-        devices.add(createMockDevice(DEVICE_MULTIPLE_IPS_ID, new String[]{"192.168.1.5", "192.168.1.6"}, true, true, false, false));
+        devices.add(createMockDevice(DEVICE_MULTIPLE_IPS_ID, new String[]{ "192.168.1.5", "192.168.1.6" }, true, true, false, false));
         Mockito.when(dataSource.getDevices()).then(i -> copyDevices(devices));
         Mockito.doAnswer(m -> {
             Device device = m.getArgument(0);
@@ -135,7 +135,7 @@ public class DeviceServiceTest {
         Assert.assertFalse(devices.get(1).isIpAddressFixed());
 
         // This device was not present during startup and thus is still conflicting
-        devices.add(createMockDevice(DEVICE_CONFLICT_ID_2, new String[]{EBLOCKER_IP}, false, true, false, false));
+        devices.add(createMockDevice(DEVICE_CONFLICT_ID_2, new String[]{ EBLOCKER_IP }, false, true, false, false));
 
         // Call the listener
         ArgumentCaptor<IpAddressChangeListener> captor = ArgumentCaptor.forClass(IpAddressChangeListener.class);
@@ -363,7 +363,6 @@ public class DeviceServiceTest {
         Assert.assertEquals(device.getId(), retrievedDevice.getId());
         Assert.assertEquals(device.getIpAddresses(), retrievedDevice.getIpAddresses());
 
-
         // check previous device with that IP has no IP address now
         Device oldDevice = devices.get(3);
         Assert.assertTrue(oldDevice.getIpAddresses().isEmpty());
@@ -385,7 +384,6 @@ public class DeviceServiceTest {
         Assert.assertNotNull(retrievedDevice);
         Assert.assertEquals(device.getId(), retrievedDevice.getId());
         Assert.assertEquals(device.getIpAddresses(), retrievedDevice.getIpAddresses());
-
 
         // check second ip has been removed from previous owner but address is still fixed because the primary address
         // is still there
@@ -453,7 +451,7 @@ public class DeviceServiceTest {
     }
 
     private Device createMockDevice(String id, String ip, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {
-        return createMockDevice(id, new String[]{ip}, online, ipAddressFixed, isGateway, isEblocker);
+        return createMockDevice(id, new String[]{ ip }, online, ipAddressFixed, isGateway, isEblocker);
     }
 
     private Device createMockDevice(String id, String[] ips, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {

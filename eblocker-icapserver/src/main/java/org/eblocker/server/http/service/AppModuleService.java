@@ -442,7 +442,6 @@ public class AppModuleService extends Observable {
         return module;
     }
 
-
     /**
      * Restore all modules that the user has modified or created, for example from a backup.
      * Also restore the enabled states given in the map.
@@ -649,7 +648,6 @@ public class AppModuleService extends Observable {
         Map<Integer, AppWhitelistModule> modulesById = getAll().stream()
             .filter(m -> !isStaticModule(m))  // must not consider static modules (see hard coded modules above)
             .collect(Collectors.toMap(AppWhitelistModule::getId, Function.identity()));
-
 
         List<AppWhitelistModule> newModules = new ArrayList<>();
         for (AppWhitelistModule builtin : builtinModules) {

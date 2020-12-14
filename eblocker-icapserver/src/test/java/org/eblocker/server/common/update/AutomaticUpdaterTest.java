@@ -16,7 +16,13 @@
  */
 package org.eblocker.server.common.update;
 
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.http.service.RegistrationService;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -29,30 +35,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.http.service.RegistrationService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
 
 public class AutomaticUpdaterTest {
-	private Clock localClock;
-	private Random random;
+    private Clock localClock;
+    private Random random;
     private RegistrationService registrationService;
     private DataSource dataSource;
     private SystemUpdater systemUpdater;
     private ScheduledExecutorService executorService;
     private static final ZoneOffset zoneOffsetCET = ZoneOffset.of("+01:00"); // CET in the winter
 
-	@Before
-	public void setup() {
-	    localClock = Mockito.mock(Clock.class);
-	    Mockito.when(localClock.getZone()).thenReturn(ZoneId.of("CET"));
+    @Before
+    public void setup() {
+        localClock = Mockito.mock(Clock.class);
+        Mockito.when(localClock.getZone()).thenReturn(ZoneId.of("CET"));
 
-	    random = Mockito.mock(Random.class);
+        random = Mockito.mock(Random.class);
         Mockito.when(random.nextDouble()).thenReturn(0.25);
 
         registrationService = Mockito.mock(RegistrationService.class);
@@ -63,34 +62,34 @@ public class AutomaticUpdaterTest {
         systemUpdater = Mockito.mock(SystemUpdater.class);
 
         executorService = Mockito.mock(ScheduledExecutorService.class);
-	}
-
-	private AutomaticUpdater createUpdater(int startTimeHour, int startTimeMin, int endTimeHour, int endTimeMin) {
-        String config = createConfiguration(startTimeHour, startTimeMin, endTimeHour, endTimeMin).toJSONString();
-        AutomaticUpdater updater =  new AutomaticUpdater(executorService, systemUpdater, dataSource,new ObjectMapper(), config, localClock, random, registrationService);
-        updater.init();
-        return updater;
-	}
-
-	private AutomaticUpdaterConfiguration createConfiguration(int beginHour, int beginMin, int endHour, int endMin) {
-	    AutomaticUpdaterConfiguration c = new AutomaticUpdaterConfiguration();
-	    c.setBeginHour(beginHour);
-	    c.setBeginMin(beginMin);
-	    c.setEndHour(endHour);
-	    c.setEndMin(endMin);
-	    return c;
     }
 
-	@Test
-    public void testLoadConfigFromDatabase() {
-	    AutomaticUpdaterConfiguration configDb = createConfiguration(6, 0, 7, 0);
-	    Mockito.when(dataSource.getAutomaticUpdateConfig()).thenReturn(configDb);
+    private AutomaticUpdater createUpdater(int startTimeHour, int startTimeMin, int endTimeHour, int endTimeMin) {
+        String config = createConfiguration(startTimeHour, startTimeMin, endTimeHour, endTimeMin).toJSONString();
+        AutomaticUpdater updater = new AutomaticUpdater(executorService, systemUpdater, dataSource, new ObjectMapper(), config, localClock, random, registrationService);
+        updater.init();
+        return updater;
+    }
 
-	    AutomaticUpdater updater = createUpdater(3, 0, 4, 0);
+    private AutomaticUpdaterConfiguration createConfiguration(int beginHour, int beginMin, int endHour, int endMin) {
+        AutomaticUpdaterConfiguration c = new AutomaticUpdaterConfiguration();
+        c.setBeginHour(beginHour);
+        c.setBeginMin(beginMin);
+        c.setEndHour(endHour);
+        c.setEndMin(endMin);
+        return c;
+    }
+
+    @Test
+    public void testLoadConfigFromDatabase() {
+        AutomaticUpdaterConfiguration configDb = createConfiguration(6, 0, 7, 0);
+        Mockito.when(dataSource.getAutomaticUpdateConfig()).thenReturn(configDb);
+
+        AutomaticUpdater updater = createUpdater(3, 0, 4, 0);
 
         // Verify that the DB configuration is used instead of the default configuration:
-	    AutomaticUpdaterConfiguration configOut = updater.getConfiguration();
-	    assertEquals(LocalTime.of(6, 0), configOut.getNotBefore());
+        AutomaticUpdaterConfiguration configOut = updater.getConfiguration();
+        assertEquals(LocalTime.of(6, 0), configOut.getNotBefore());
         assertEquals(LocalTime.of(7, 0), configOut.getNotAfter());
     }
 
@@ -119,96 +118,96 @@ public class AutomaticUpdaterTest {
         assertEquals(LocalDateTime.of(2018, 12, 28, 6, 15, 0), updater.getNextUpdate());
     }
 
-	@Test
+    @Test
     public void testScheduleAndStartUpdates() throws Exception {
-	    LocalDateTime lastUpdate  = LocalDateTime.of(2018, 12, 27, 3, 20, 0);
-	    Instant       bootTime    = LocalDateTime.of(2018, 12, 27, 3, 30, 0).toInstant(zoneOffsetCET);
-	    LocalDateTime nextUpdate  = LocalDateTime.of(2018, 12, 28, 3, 15, 0);
-	    LocalDateTime nextUpdate2 = LocalDateTime.of(2018, 12, 29, 3, 15, 0);
+        LocalDateTime lastUpdate = LocalDateTime.of(2018, 12, 27, 3, 20, 0);
+        Instant bootTime = LocalDateTime.of(2018, 12, 27, 3, 30, 0).toInstant(zoneOffsetCET);
+        LocalDateTime nextUpdate = LocalDateTime.of(2018, 12, 28, 3, 15, 0);
+        LocalDateTime nextUpdate2 = LocalDateTime.of(2018, 12, 29, 3, 15, 0);
 
         Mockito.when(dataSource.getLastUpdateTime()).thenReturn(lastUpdate);
         Mockito.when(localClock.instant()).thenReturn(bootTime);
         AutomaticUpdater updater = createUpdater(3, 0, 4, 0);
-	    updater.start();
+        updater.start();
 
-	    // Updates are scheduled:
+        // Updates are scheduled:
         assertEquals(nextUpdate, updater.getNextUpdate());
         ArgumentCaptor<Runnable> task = ArgumentCaptor.forClass(Runnable.class);
-	    Mockito.verify(executorService).schedule(task.capture(), Mockito.eq(24*60-15+1L), Mockito.eq(TimeUnit.MINUTES));
+        Mockito.verify(executorService).schedule(task.capture(), Mockito.eq(24 * 60 - 15 + 1L), Mockito.eq(TimeUnit.MINUTES));
 
-	    // Run update task (normally the executorService would do this):
+        // Run update task (normally the executorService would do this):
         Mockito.when(localClock.instant()).thenReturn(nextUpdate.toInstant(zoneOffsetCET));
-	    task.getValue().run();
+        task.getValue().run();
 
-	    // Updates were started:
-	    Mockito.verify(systemUpdater).startUpdate();
+        // Updates were started:
+        Mockito.verify(systemUpdater).startUpdate();
 
-	    // And the next update is scheduled:
-	    assertEquals(nextUpdate2, updater.getNextUpdate());
+        // And the next update is scheduled:
+        assertEquals(nextUpdate2, updater.getNextUpdate());
     }
 
     @Test
     public void testCalculateNextUpdate() {
         // Window for updates: 3:00 to 4:00
         LocalTime notBefore = LocalTime.of(3, 0);
-        LocalTime notAfter  = LocalTime.of(4, 0);
+        LocalTime notAfter = LocalTime.of(4, 0);
         LocalDateTime now, earliest, latest;
 
         // We are now BEFORE the time window for updates:
-        now      = LocalDateTime.of(2019, 12, 27, 2, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 2, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 27, 3, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 27, 4, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 27, 4, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
 
         // We are now IN the time window for updates => schedule for next day
-        now      = LocalDateTime.of(2019, 12, 27, 3, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 3, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 28, 3, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 28, 4, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 28, 4, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
 
         // We are now AFTER the time window for updates => schedule for next day
-        now      = LocalDateTime.of(2019, 12, 27, 4, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 4, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 28, 3, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 28, 4, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 28, 4, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
     }
 
     @Test
     public void testCalculateNextUpdateWithDateChange() {
         // Window for updates: 23:00 to 1:00
         LocalTime notBefore = LocalTime.of(23, 0);
-        LocalTime notAfter  = LocalTime.of(1, 0);
+        LocalTime notAfter = LocalTime.of(1, 0);
         LocalDateTime now, earliest, latest;
 
         // We are now BEFORE the time window for updates:
-        now      = LocalDateTime.of(2019, 12, 27, 22, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 22, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 27, 23, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
 
         // We are now IN the time window for updates BEFORE MIDNIGHT => schedule for next day
-        now      = LocalDateTime.of(2019, 12, 27, 23, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 23, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 28, 23, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 29, 1, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 29, 1, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
 
         // We are now IN the time window for updates AFTER MIDNIGHT => schedule for later today or next day
-        now      = LocalDateTime.of(2019, 12, 27, 0, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 0, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 27, 23, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
 
         // We are now AFTER the time window for updates => schedule for later today or next day
-        now      = LocalDateTime.of(2019, 12, 27, 1, 12, 16);
+        now = LocalDateTime.of(2019, 12, 27, 1, 12, 16);
         earliest = LocalDateTime.of(2019, 12, 27, 23, 0, 0);
-        latest   = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
+        latest = LocalDateTime.of(2019, 12, 28, 1, 0, 0);
         assertEquals(earliest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 0.0));
-        assertEquals(latest,   AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
+        assertEquals(latest, AutomaticUpdater.calculateNextUpdate(now, notBefore, notAfter, 1.0));
     }
 }

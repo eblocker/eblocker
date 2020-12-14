@@ -54,7 +54,7 @@ public class SSLContextHandlerTest {
     private final String emergencyIp = "169.169.169.169";
     private final Ip4Address ip = Ip4Address.parse("10.10.10.10");
     private final Ip4Address vpnIp = Ip4Address.parse("10.8.0.1");
-    private final String[] defaultLocalNames = {"eblocker.test", "another.test"};
+    private final String[] defaultLocalNames = { "eblocker.test", "another.test" };
     private final String keyStorePassword = "unit-test";
 
     private Path keyStorePath;

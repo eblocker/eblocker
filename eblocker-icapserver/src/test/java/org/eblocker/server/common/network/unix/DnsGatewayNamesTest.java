@@ -72,8 +72,8 @@ public class DnsGatewayNamesTest {
             new LocalDnsRecord("test.com", false, false, Ip4Address.parse("1.2.3.4"), null, null, null)));
         Mockito.when(dnsResolver.resolve(Mockito.eq("192.168.1.1"), Mockito.anyList()))
             .thenReturn(Arrays.asList(
-                new DnsResponse(0,  DnsRecordType.A, IpAddress.parse("192.168.1.1"), "magnificent.box"),
-                new DnsResponse(0,  DnsRecordType.AAAA, IpAddress.parse("fe80::192:168:1:1"), "magnificent.box"),
+                new DnsResponse(0, DnsRecordType.A, IpAddress.parse("192.168.1.1"), "magnificent.box"),
+                new DnsResponse(0, DnsRecordType.AAAA, IpAddress.parse("fe80::192:168:1:1"), "magnificent.box"),
                 new DnsResponse(3),
                 new DnsResponse(3),
                 new DnsResponse(3),
@@ -102,8 +102,8 @@ public class DnsGatewayNamesTest {
             new LocalDnsRecord("magnificent.box", false, false, Ip4Address.parse("192.168.2.1"), null, null, null)));
         Mockito.when(dnsResolver.resolve(Mockito.eq("192.168.1.1"), Mockito.anyList()))
             .thenReturn(Arrays.asList(
-                new DnsResponse(0,  DnsRecordType.A, IpAddress.parse("192.168.1.1"), "magnificent.box"),
-                new DnsResponse(0,  DnsRecordType.AAAA, IpAddress.parse("fe80::192:168:1:1"), "magnificent.box"),
+                new DnsResponse(0, DnsRecordType.A, IpAddress.parse("192.168.1.1"), "magnificent.box"),
+                new DnsResponse(0, DnsRecordType.AAAA, IpAddress.parse("fe80::192:168:1:1"), "magnificent.box"),
                 new DnsResponse(3),
                 new DnsResponse(3),
                 new DnsResponse(3),
@@ -152,7 +152,6 @@ public class DnsGatewayNamesTest {
         Assert.assertNotNull(recordsByName.get("test.com"));
         Assert.assertEquals(Ip4Address.parse("1.2.3.4"), recordsByName.get("test.com").getIpAddress());
     }
-
 
     @Test
     public void testTooFewResults() {

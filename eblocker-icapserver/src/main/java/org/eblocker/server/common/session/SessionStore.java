@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Singleton
 public class SessionStore {
     private static final Logger log = LoggerFactory.getLogger(SessionStore.class);

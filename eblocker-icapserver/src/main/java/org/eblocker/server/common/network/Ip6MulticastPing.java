@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class Ip6MulticastPing {
 
-    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{51, 51, 0, 0, 0, 1};
+    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{ 51, 51, 0, 0, 0, 1 };
 
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;

@@ -49,7 +49,7 @@ public class SchemaMigrationVersion1Test {
         migration.migrate();
 
         User admin = new User();
-        admin.setId(User.ID_PREFIX+DefaultEntities.DEFAULT_ADMIN_USER_ID);
+        admin.setId(User.ID_PREFIX + DefaultEntities.DEFAULT_ADMIN_USER_ID);
         admin.setName("admin");
 
         Mockito.verify(dataSource).addUser(admin);

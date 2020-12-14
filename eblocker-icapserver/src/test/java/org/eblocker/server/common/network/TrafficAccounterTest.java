@@ -20,8 +20,8 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.TrafficAccount;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -135,7 +135,7 @@ public class TrafficAccounterTest {
         private Map<Device, long[]> devices = new LinkedHashMap<>();
 
         public void setDevice(Device device, long packetsIn, long bytesIn, long packetsOut, long bytesOut) {
-            devices.put(device, new long[] { packetsIn, bytesIn, packetsOut, bytesOut });
+            devices.put(device, new long[]{ packetsIn, bytesIn, packetsOut, bytesOut });
         }
 
         public void removeDevice(Device device) {
@@ -151,7 +151,9 @@ public class TrafficAccounterTest {
                 writer.flush();
             }
             return 0;
-        };
+        }
+
+        ;
     }
 
 }

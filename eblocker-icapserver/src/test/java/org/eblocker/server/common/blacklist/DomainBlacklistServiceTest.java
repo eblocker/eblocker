@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.data.parentalcontrol.Category;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import org.eblocker.server.common.util.FileUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.Funnels;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import org.eblocker.server.common.data.parentalcontrol.Category;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
+import org.eblocker.server.common.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -130,7 +130,8 @@ public class DomainBlacklistServiceTest {
         service.setFilters(Collections.singletonList(createFilterMetaData(0, new Date(2))));
 
         // schedule a dummy job and wait on it to ensure previous task is done
-        executorService.submit(() -> {}).get();
+        executorService.submit(() -> {
+        }).get();
 
         // check update is handled correctly
         Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());

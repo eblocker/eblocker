@@ -24,7 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 public class JedisTest {
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void test() {
         Jedis jedis = new Jedis("localhost");
         //jedis.set("foo", "baz");

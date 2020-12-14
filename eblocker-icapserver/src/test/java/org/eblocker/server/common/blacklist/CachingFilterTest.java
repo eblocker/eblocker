@@ -36,10 +36,10 @@ public class CachingFilterTest {
     public void setup() {
         backingFilter = Mockito.mock(DomainFilter.class);
         Mockito.when(backingFilter.isBlocked(Mockito.anyString()))
-                .thenAnswer(invocationOnMock -> {
-                    String domain = invocationOnMock.getArgument(0);
-                    return new FilterDecision<>(domain, blockedDomains.contains(domain), backingFilter);
-                });
+            .thenAnswer(invocationOnMock -> {
+                String domain = invocationOnMock.getArgument(0);
+                return new FilterDecision<>(domain, blockedDomains.contains(domain), backingFilter);
+            });
     }
 
     @Test

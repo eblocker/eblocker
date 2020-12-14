@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.startup;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Scopes;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.junit.Assert;
 import org.junit.Test;
 

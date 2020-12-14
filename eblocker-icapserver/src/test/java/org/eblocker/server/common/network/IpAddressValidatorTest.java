@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -24,8 +26,6 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class IpAddressValidatorTest {
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.7.1"));
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::192:168:7:1"));
         Mockito.when(networkInterface.getHardwareAddressHex()).thenReturn("001122334455");
-        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 });
+        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0x00, 0x11, 0x22, 0x33, 0x44, 0x55 });
 
         devices = Arrays.asList(
             createDevice("00aabbccddee", Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), false),

@@ -88,14 +88,14 @@ public class HashFileFilterTest {
         HashFileFilter deserialized = new HashFileFilter(storagePath);
 
         // check both return the same results
-        blockedDomains.forEach(domain->Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.forEach(domain->Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        blockedDomains.forEach(domain -> Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
 
         // both must contain the same domains and in exact the same sequence
         Assert.assertEquals(filter.getSize(), deserialized.getSize());
         List<byte[]> domains = filter.getDomains().collect(Collectors.toList());
         List<byte[]> deserializedDomains = deserialized.getDomains().collect(Collectors.toList());
-        for(int i = 0; i < domains.size(); ++i) {
+        for (int i = 0; i < domains.size(); ++i) {
             Assert.assertArrayEquals(domains.get(i), deserializedDomains.get(i));
         }
     }

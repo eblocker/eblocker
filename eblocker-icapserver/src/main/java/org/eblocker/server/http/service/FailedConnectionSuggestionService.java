@@ -26,9 +26,10 @@ public class FailedConnectionSuggestionService {
     private final AppModuleService appModuleService;
     private final DeviceService deviceService;
 
-    @Inject FailedConnectionSuggestionService(SquidWarningService squidWarningService,
-                                              AppModuleService appModuleService,
-                                              DeviceService deviceService) {
+    @Inject
+    FailedConnectionSuggestionService(SquidWarningService squidWarningService,
+                                      AppModuleService appModuleService,
+                                      DeviceService deviceService) {
 
         this.squidWarningService = squidWarningService;
         this.appModuleService = appModuleService;

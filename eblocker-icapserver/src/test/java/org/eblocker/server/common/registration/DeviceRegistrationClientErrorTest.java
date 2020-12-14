@@ -44,8 +44,8 @@ public class DeviceRegistrationClientErrorTest extends DeviceRegistrationTestBas
 
     /**
      * Simulate the start of a device.
-     * @throws ParseException 
      *
+     * @throws ParseException
      */
     private void startDevice() throws IOException, ParseException {
         properties = createDeviceRegistrationProperties();
@@ -71,13 +71,13 @@ public class DeviceRegistrationClientErrorTest extends DeviceRegistrationTestBas
     public void test_unspecificServerErrorWithContent() throws IOException, ParseException {
         getClientAndServer().when(
             request()
-            .withMethod("POST")
-            .withPath("/api/registration")
-            .withHeader(new Header("X-eBlockerOS-Version", VERSION))
+                .withMethod("POST")
+                .withPath("/api/registration")
+                .withHeader(new Header("X-eBlockerOS-Version", VERSION))
         ).respond(
             response()
-            .withStatusCode(400)
-            .withBody("something-went-wrong")
+                .withStatusCode(400)
+                .withBody("something-went-wrong")
         );
         // Start with a fresh device
         startDevice();

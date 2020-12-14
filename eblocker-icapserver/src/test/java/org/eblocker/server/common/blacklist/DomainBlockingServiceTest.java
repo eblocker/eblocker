@@ -155,7 +155,7 @@ public class DomainBlockingServiceTest {
             new ParentalControlFilterMetaData(18, null, null, Category.MALWARE, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
             new ParentalControlFilterMetaData(19, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
             new ParentalControlFilterMetaData(20, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, true, null, null, null)
-                                                                                                                   ));
+        ));
 
         // setup licensed features
         productInfoService = Mockito.mock(ProductInfoService.class);

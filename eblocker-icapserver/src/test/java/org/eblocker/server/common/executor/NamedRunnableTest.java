@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-
 public class NamedRunnableTest {
 
     private static final String NAME = "unit-test";

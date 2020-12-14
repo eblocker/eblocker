@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.openvpn.configuration;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,18 +52,18 @@ public class OpenVpnConfiguratorTest {
         // setup parser / config mock
         parser = Mockito.mock(OpenVpnConfigurationParser.class);
         testEblockerOptions = Arrays.asList(
-                new SimpleOption(1, "option-with-args", new String[]{"4"}),
-                new SimpleOption(2, "eblocker-option")
+            new SimpleOption(1, "option-with-args", new String[]{ "4" }),
+            new SimpleOption(2, "eblocker-option")
         );
         Mockito.when(parser.parse("#default-options")).thenReturn(testEblockerOptions);
 
         testUserOptions = Arrays.asList(
-                new SimpleOption(1, "option-no-args"),
-                new SimpleOption(2, "option-with-args", new String[]{"0", "1", "2", "3"}),
-                new InlineOption(3, "option-inline", "content"),
-                new SimpleOption(4, "option-requiring-inlining", new String[]{"fileName", "additionalArgument"}),
-                new SimpleOption(5, "option-blacklisted"),
-                new SimpleOption(6, "option-ignored"));
+            new SimpleOption(1, "option-no-args"),
+            new SimpleOption(2, "option-with-args", new String[]{ "0", "1", "2", "3" }),
+            new InlineOption(3, "option-inline", "content"),
+            new SimpleOption(4, "option-requiring-inlining", new String[]{ "fileName", "additionalArgument" }),
+            new SimpleOption(5, "option-blacklisted"),
+            new SimpleOption(6, "option-ignored"));
         Mockito.when(parser.parse("test-config")).thenReturn(testUserOptions);
 
         configurator = new OpenVpnConfigurator(TEST_OPTIONS_BLACKLIST_FILE, TEST_OPTIONS_WHITELIST_FILE, TEST_OPTIONS_INLINE_FILE, TEST_OPTIONS_DEFAULT_FILE, () -> parser);
@@ -103,7 +103,7 @@ public class OpenVpnConfiguratorTest {
         Assert.assertSame(testUserOptions.get(0), options.get(0));
         Assert.assertSame(testEblockerOptions.get(0), options.get(1));
         Assert.assertSame(testUserOptions.get(2), options.get(2));
-        assertSimpleOption("option-requiring-inlining", new String[] { "option.option-requiring-inlining", "additionalArgument"}, options.get(3));
+        assertSimpleOption("option-requiring-inlining", new String[]{ "option.option-requiring-inlining", "additionalArgument" }, options.get(3));
         Assert.assertSame(testEblockerOptions.get(1), options.get(4));
     }
 
@@ -113,8 +113,8 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun23"}),
-            new SimpleOption(3, "remote", new String[]{"remote"})));
+            new SimpleOption(2, "dev", new String[]{ "tun23" }),
+            new SimpleOption(3, "remote", new String[]{ "remote" })));
 
         // create active configuration
         List<Option> options = configurator.getActiveConfiguration(configuration, "credentials.txt", Collections.emptyMap());
@@ -168,13 +168,13 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "option-with-args"),
-            new SimpleOption(1, "option-with-args", new String[] { "1" } ),
-            new SimpleOption(1, "eblocker-option", new String[] { "1" }  )
+            new SimpleOption(1, "option-with-args", new String[]{ "1" }),
+            new SimpleOption(1, "eblocker-option", new String[]{ "1" })
         ));
 
         List<Option> activeOptions = configurator.getActiveConfiguration(configuration, null, Collections.emptyMap());
         Assert.assertEquals(2, activeOptions.size());
-        assertSimpleOption("option-with-args", new String[]{"4"}, activeOptions.get(0));
+        assertSimpleOption("option-with-args", new String[]{ "4" }, activeOptions.get(0));
         assertSimpleOption("eblocker-option", null, activeOptions.get(1));
     }
 
@@ -192,7 +192,7 @@ public class OpenVpnConfiguratorTest {
     public void testNoCredentialsRequiredWithExternalCredentials() {
         // setup mock
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
-        configuration.setUserOptions(Arrays.asList(new SimpleOption(1, "auth-user-pass", new String[]{"secret.txt"})));
+        configuration.setUserOptions(Arrays.asList(new SimpleOption(1, "auth-user-pass", new String[]{ "secret.txt" })));
 
         // test
         Assert.assertFalse(configurator.credentialsRequired(configuration));
@@ -219,21 +219,21 @@ public class OpenVpnConfiguratorTest {
 
         // check option has been overridden
         Assert.assertEquals(3, options.size()); // 2 default + 1 auth-user-pass
-        assertSimpleOption("auth-user-pass", new String[]{"credentials.txt"}, options.get(2));
+        assertSimpleOption("auth-user-pass", new String[]{ "credentials.txt" }, options.get(2));
     }
 
     @Test
     public void testOverridingExternalCredentialsOption() {
         // setup config
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
-        configuration.setUserOptions(Arrays.asList(new SimpleOption(1, "auth-user-pass", new String[]{"random-dude-password.txt"})));
+        configuration.setUserOptions(Arrays.asList(new SimpleOption(1, "auth-user-pass", new String[]{ "random-dude-password.txt" })));
 
         // retrieve active configuration
         List<Option> options = configurator.getActiveConfiguration(configuration, "credentials.txt", Collections.emptyMap());
 
         // check option has been overridden
         Assert.assertEquals(3, options.size()); // 2 default + 1 auth-user-pass
-        assertSimpleOption("auth-user-pass", new String[]{"credentials.txt"}, options.get(2));
+        assertSimpleOption("auth-user-pass", new String[]{ "credentials.txt" }, options.get(2));
     }
 
     @Test
@@ -258,9 +258,9 @@ public class OpenVpnConfiguratorTest {
         // create empty config
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
-                new SimpleOption(1, "client"),
-                new SimpleOption(2, "dev", new String[]{"tap"}),
-                new SimpleOption(3, "remote", new String[]{"remote"})));
+            new SimpleOption(1, "client"),
+            new SimpleOption(2, "dev", new String[]{ "tap" }),
+            new SimpleOption(3, "remote", new String[]{ "remote" })));
 
         // validate config
         List<String> errorKeys = configurator.validateConfiguration(configuration);
@@ -277,8 +277,8 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun123"}),
-            new SimpleOption(3, "remote", new String[]{"remote"})));
+            new SimpleOption(2, "dev", new String[]{ "tun123" }),
+            new SimpleOption(3, "remote", new String[]{ "remote" })));
 
         // validate config
         List<String> errorKeys = configurator.validateConfiguration(configuration);
@@ -293,9 +293,9 @@ public class OpenVpnConfiguratorTest {
         // create empty config
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
-                new SimpleOption(1, "client"),
-                new SimpleOption(2, "dev", new String[]{"tun"}),
-                new SimpleOption(3, "remote", new String[]{"remote"})));
+            new SimpleOption(1, "client"),
+            new SimpleOption(2, "dev", new String[]{ "tun" }),
+            new SimpleOption(3, "remote", new String[]{ "remote" })));
 
         // validate config
         List<String> errorKeys = configurator.validateConfiguration(configuration);
@@ -311,7 +311,7 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun"})));
+            new SimpleOption(2, "dev", new String[]{ "tun" })));
 
         // validate config
         List<String> errorKeys = configurator.validateConfiguration(configuration);
@@ -328,10 +328,10 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun"}),
-            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[] { "remote-0" }))),
-            new OptionsGroup(6, "connection", Collections.singletonList(new SimpleOption(7, "remote", new String[] { "remote-1" }))),
-            new SimpleOption(9, "remote", new String[]{"remote"}))
+            new SimpleOption(2, "dev", new String[]{ "tun" }),
+            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[]{ "remote-0" }))),
+            new OptionsGroup(6, "connection", Collections.singletonList(new SimpleOption(7, "remote", new String[]{ "remote-1" }))),
+            new SimpleOption(9, "remote", new String[]{ "remote" }))
         );
 
         // validate config
@@ -348,9 +348,9 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun"}),
-            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[] { "remote-0" }))),
-            new OptionsGroup(6, "connection", Collections.singletonList(new SimpleOption(7, "remote", new String[] { "remote-1" }))))
+            new SimpleOption(2, "dev", new String[]{ "tun" }),
+            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[]{ "remote-0" }))),
+            new OptionsGroup(6, "connection", Collections.singletonList(new SimpleOption(7, "remote", new String[]{ "remote-1" }))))
         );
 
         // validate config
@@ -367,8 +367,8 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun"}),
-            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[] { "remote-0" }))),
+            new SimpleOption(2, "dev", new String[]{ "tun" }),
+            new OptionsGroup(3, "connection", Collections.singletonList(new SimpleOption(4, "remote", new String[]{ "remote-0" }))),
             new OptionsGroup(6, "connection", Collections.singletonList(new SimpleOption(7, "some-option")))
         ));
 
@@ -387,8 +387,8 @@ public class OpenVpnConfiguratorTest {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
         configuration.setUserOptions(Arrays.asList(
             new SimpleOption(1, "client"),
-            new SimpleOption(2, "dev", new String[]{"tun"}),
-            new SimpleOption(3, "remote", new String[]{"remote"}),
+            new SimpleOption(2, "dev", new String[]{ "tun" }),
+            new SimpleOption(3, "remote", new String[]{ "remote" }),
             new SimpleOption(1, "option-inline")));
 
         // validate config
@@ -437,6 +437,6 @@ public class OpenVpnConfiguratorTest {
     private void assertSimpleOption(String expectedName, String[] expectedArguments, Option option) {
         Assert.assertTrue(option instanceof SimpleOption);
         Assert.assertEquals(expectedName, option.getName());
-        Assert.assertArrayEquals(expectedArguments, ((SimpleOption)option).getArguments());
+        Assert.assertArrayEquals(expectedArguments, ((SimpleOption) option).getArguments());
     }
 }

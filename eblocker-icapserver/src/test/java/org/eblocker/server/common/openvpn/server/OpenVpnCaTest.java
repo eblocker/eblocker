@@ -116,17 +116,17 @@ public class OpenVpnCaTest {
         ca.tearDown();
 
         Stream.of(
-                ca.getCaCertificatePath(),
-                caPath.resolve("ca.key"),
-                ca.getServerCertificatePath(),
-                ca.getServerKeyPath(),
-                ca.getCrlPath(),
-                ca.getClientCertificatePath(clientId),
-                ca.getClientKeyPath(clientId))
+            ca.getCaCertificatePath(),
+            caPath.resolve("ca.key"),
+            ca.getServerCertificatePath(),
+            ca.getServerKeyPath(),
+            ca.getCrlPath(),
+            ca.getClientCertificatePath(clientId),
+            ca.getClientKeyPath(clientId))
 
-                .forEach(path -> {
-                    Assert.assertFalse(path.toString() + " should be gone", path.toFile().exists());
-                });
+            .forEach(path -> {
+                Assert.assertFalse(path.toString() + " should be gone", path.toFile().exists());
+            });
     }
 
     @Test

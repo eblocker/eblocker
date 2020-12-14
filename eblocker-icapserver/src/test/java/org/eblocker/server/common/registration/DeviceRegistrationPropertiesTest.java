@@ -23,7 +23,6 @@ import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
 import org.eblocker.server.common.system.CpuInfo;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -41,7 +40,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase {
@@ -57,7 +61,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
 
     protected final static int LICENSE_VALIDITY = 1;
 
-    protected final static String OTHER_CPU_SERIAL =   "fedcba987654";
+    protected final static String OTHER_CPU_SERIAL = "fedcba987654";
 
     private Date earliest; // Registration timestamp must not be BEFORE this date
     private Date latest;   // Registration timestamp must not be AFTER  this date
@@ -340,7 +344,6 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         registeredProperties.store(Files.newBufferedWriter(Paths.get(registrationPropertiesFileName)), "HACKED");
         log.info("registration.properties:\n{}", new String(Files.readAllBytes(Paths.get(registrationPropertiesFileName))));
 
-
         // Simulate restart of registered device by initializing a new instance
         DeviceRegistrationProperties drp2 = createDeviceRegistrationProperties();
 
@@ -398,20 +401,20 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         registerWithSubscriptionLicense();
 
         DeviceRegistrationProperties drp = new DeviceRegistrationProperties(
-                systemKey,
-                registrationPropertiesFileName,
-                licenseKeyFileName,
-                licenseCertFileName,
-                trustStoreResource,
-                trustStorePassword,
-                truststoreCopyFileName,
-                KEY_SIZE,
-                REG_TYPE_1,
-                WARNING_PERIOD,
-                LIFETIME_INDICATOR,
-                Files.createTempDirectory(null).toString(),
-                cpuInfo,
-                revokationState);
+            systemKey,
+            registrationPropertiesFileName,
+            licenseKeyFileName,
+            licenseCertFileName,
+            trustStoreResource,
+            trustStorePassword,
+            truststoreCopyFileName,
+            KEY_SIZE,
+            REG_TYPE_1,
+            WARNING_PERIOD,
+            LIFETIME_INDICATOR,
+            Files.createTempDirectory(null).toString(),
+            cpuInfo,
+            revokationState);
 
         // Initially the registration state is ok
         assertEquals(RegistrationState.OK, drp.getRegistrationState());
@@ -424,7 +427,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         DeviceRegistrationRequest deviceRegistrationRequest = drp.generateRequest(EMAIL, DEVICE_NAME, LICENSE_ID, HARDWARE_ID, CONFIRMED, TOS_VERSION);
         earliest = DateUtil.stripMillis(new Date(), 0);
         DeviceRegistrationResponse deviceRegistrationResponse = simulateBackend(deviceRegistrationRequest, 0, false);
-        latest   = DateUtil.stripMillis(new Date(), 1);
+        latest = DateUtil.stripMillis(new Date(), 1);
         drp.processResponse(deviceRegistrationResponse);
     }
 
@@ -437,10 +440,9 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         DeviceRegistrationRequest deviceRegistrationRequest = drp.generateRequest(EMAIL, DEVICE_NAME, LICENSE_ID, HARDWARE_ID, CONFIRMED, TOS_VERSION);
         earliest = DateUtil.stripMillis(new Date(), 0);
         DeviceRegistrationResponse deviceRegistrationResponse = simulateBackend(deviceRegistrationRequest, licenseValidity, true);
-        latest   = DateUtil.stripMillis(new Date(), 1);
+        latest = DateUtil.stripMillis(new Date(), 1);
         drp.processResponse(deviceRegistrationResponse);
     }
-
 
     private void assertLicenseCredentialsAreAvailable() throws IOException {
         log.debug("licenseKeyFileName:  " + licenseKeyFileName);

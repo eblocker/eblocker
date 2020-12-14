@@ -21,23 +21,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class NetworkInterfaceConfigurationTest extends ConfigurationTestBase {
-	NetworkInterfaceConfiguration configuration;
-	
-	@Before
-	public void setUp() {
-		configuration = new NetworkInterfaceConfiguration(getOutFilePath(), "eth0", "169.254.94.109", "255.255.0.0", 
-				                                          "169.254.7.53/32", "255.255.0.0");
-	}
+    NetworkInterfaceConfiguration configuration;
 
-	@Test
-	public void testEnableDhcp() throws Exception {
-		configuration.enableDhcp();
-		compareOutFileWith("test-data/interfaces-dhcp.conf");
-	}
+    @Before
+    public void setUp() {
+        configuration = new NetworkInterfaceConfiguration(getOutFilePath(), "eth0", "169.254.94.109", "255.255.0.0",
+            "169.254.7.53/32", "255.255.0.0");
+    }
 
-	@Test
-	public void testEnableStatic() throws Exception {
-		configuration.enableStatic("192.168.0.2", "255.255.255.0", "192.168.0.1");
-		compareOutFileWith("test-data/interfaces-static.conf");
-	}
+    @Test
+    public void testEnableDhcp() throws Exception {
+        configuration.enableDhcp();
+        compareOutFileWith("test-data/interfaces-dhcp.conf");
+    }
+
+    @Test
+    public void testEnableStatic() throws Exception {
+        configuration.enableStatic("192.168.0.2", "255.255.255.0", "192.168.0.1");
+        compareOutFileWith("test-data/interfaces-static.conf");
+    }
 }

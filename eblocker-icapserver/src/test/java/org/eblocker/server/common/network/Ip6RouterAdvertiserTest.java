@@ -37,7 +37,7 @@ public class Ip6RouterAdvertiserTest {
     public void setUp() {
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
-        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[] { 0, 1, 2, 3, 4, 5 });
+        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0, 1, 2, 3, 4, 5 });
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::1:2:3:4:5"));
         Mockito.when(networkInterface.getMtu()).thenReturn(1500);
         pubSubService = Mockito.mock(PubSubService.class);

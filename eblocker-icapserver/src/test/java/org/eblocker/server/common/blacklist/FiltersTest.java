@@ -38,18 +38,18 @@ public class FiltersTest {
     @Test
     public void testOr() {
         Assert.assertTrue(StaticFilter.FALSE == Filters.or(new DomainFilter[0]));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.or(new DomainFilter[] { StaticFilter.FALSE, StaticFilter.FALSE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[] { StaticFilter.FALSE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[] { StaticFilter.TRUE, Mockito.mock(DomainFilter.class) }));
+        Assert.assertTrue(StaticFilter.FALSE == Filters.or(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.FALSE }));
+        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.TRUE }));
+        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[]{ StaticFilter.TRUE, Mockito.mock(DomainFilter.class) }));
         Assert.assertTrue(StaticFilter.FALSE == Filters.or());
 
-        DomainFilter[] singleFilter = new DomainFilter[] { Mockito.mock(DomainFilter.class) };
+        DomainFilter[] singleFilter = new DomainFilter[]{ Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(singleFilter[0] == Filters.or(singleFilter));
 
-        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[] { StaticFilter.FALSE, Mockito.mock(DomainFilter.class)};
+        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.FALSE, Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(staticAndNonStaticFilter[1] == Filters.or(staticAndNonStaticFilter));
 
-        DomainFilter[] filters = new DomainFilter[] { Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class)};
+        DomainFilter[] filters = new DomainFilter[]{ Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(filters[0] == Filters.or(filters[0]));
 
         Mockito.when(filters[0].isBlocked("test")).thenReturn(new FilterDecision("test", false, filters[0]));
@@ -65,19 +65,19 @@ public class FiltersTest {
     @Test
     public void testAnd() {
         Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[0]));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[] { StaticFilter.FALSE, StaticFilter.FALSE }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[] { StaticFilter.FALSE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.and(new DomainFilter[] { StaticFilter.TRUE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[] { StaticFilter.FALSE, Mockito.mock(DomainFilter.class) }));
+        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.FALSE }));
+        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.TRUE }));
+        Assert.assertTrue(StaticFilter.TRUE == Filters.and(new DomainFilter[]{ StaticFilter.TRUE, StaticFilter.TRUE }));
+        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, Mockito.mock(DomainFilter.class) }));
         Assert.assertTrue(StaticFilter.FALSE == Filters.and());
 
-        DomainFilter[] singleFilter = new DomainFilter[] { Mockito.mock(DomainFilter.class) };
+        DomainFilter[] singleFilter = new DomainFilter[]{ Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(singleFilter[0] == Filters.and(singleFilter));
 
-        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[] { StaticFilter.TRUE, Mockito.mock(DomainFilter.class)};
+        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.TRUE, Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(staticAndNonStaticFilter[1] == Filters.and(staticAndNonStaticFilter));
 
-        DomainFilter[] filters = new DomainFilter[] { Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class)};
+        DomainFilter[] filters = new DomainFilter[]{ Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class) };
         Assert.assertTrue(filters[0] == Filters.and(filters[0]));
 
         Mockito.when(filters[0].isBlocked("test")).thenReturn(new FilterDecision("test", true, filters[0]));

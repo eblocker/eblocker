@@ -76,7 +76,7 @@ public class BloomDomainFilterTest {
     @Test
     public void testBloomFilteringNonBlockedDomains() {
         // for non-blocked domains the backing-filter must never be called
-        nonBlockedDomains.forEach(domain->Assert.assertFalse(filter.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> Assert.assertFalse(filter.isBlocked(domain).isBlocked()));
         Mockito.verify(domainFilter, Mockito.never()).isBlocked(Mockito.anyString());
     }
 
@@ -88,22 +88,21 @@ public class BloomDomainFilterTest {
             String domain = invocationOnMock.getArgument(0);
             return new FilterDecision<>(domain, domains.contains(domain), domainFilter);
         });
-        domains.forEach(domain->Assert.assertTrue(filter.isBlocked(domain).isBlocked()));
+        domains.forEach(domain -> Assert.assertTrue(filter.isBlocked(domain).isBlocked()));
         Mockito.verify(domainFilter, Mockito.times(domains.size())).isBlocked(Mockito.anyString());
     }
-
 
     @Test
     public void testFalsePositive() throws IOException {
         int size = 200;
 
         Mockito.when(domainFilter.isBlocked(Mockito.anyString()))
-                .then(invocationOnMock ->
-                        new FilterDecision<>(invocationOnMock.getArgument(0), false, domainFilter));
+            .then(invocationOnMock ->
+                new FilterDecision<>(invocationOnMock.getArgument(0), false, domainFilter));
 
         InOrder inOrder = Mockito.inOrder(domainFilter);
         // each false positive must be checked with backing-filter
-        falsePositives.stream().limit(size).forEach(domain->Assert.assertFalse(filter.isBlocked(domain).isBlocked()));
+        falsePositives.stream().limit(size).forEach(domain -> Assert.assertFalse(filter.isBlocked(domain).isBlocked()));
         inOrder.verify(domainFilter, Mockito.times(size)).isBlocked(Mockito.anyString());
     }
 
@@ -121,9 +120,9 @@ public class BloomDomainFilterTest {
             return new FilterDecision<>(domain, domains.contains(domain), domainFilter);
         });
 
-        domains.stream().forEach(domain->Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.stream().forEach(domain->Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
-        falsePositives.stream().forEach(domain->Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        domains.stream().forEach(domain -> Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.stream().forEach(domain -> Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        falsePositives.stream().forEach(domain -> Assert.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
     }
 
     @Test

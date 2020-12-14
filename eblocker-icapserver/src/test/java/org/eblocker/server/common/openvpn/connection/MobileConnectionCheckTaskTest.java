@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.eblocker.registration.MobileConnectionCheck;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.registration.MobileConnectionCheck;
-import io.netty.channel.nio.NioEventLoopGroup;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -117,7 +117,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as successful if handler echoes them)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -162,7 +162,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as successful if handler echoes them)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -193,7 +193,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (and mark them as failed)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());
@@ -226,7 +226,7 @@ public class MobileConnectionCheckTaskTest {
 
         // future.get does not wait on thread being finished after interruption but may throw CancellationException
         // right away. THis makes it unsuitable for synchronization and we have to poll
-        while(MobileConnectionCheckStatus.State.CANCELED != task.getStatus().getState()) {
+        while (MobileConnectionCheckStatus.State.CANCELED != task.getStatus().getState()) {
             Thread.sleep(100);
         }
     }
@@ -265,7 +265,7 @@ public class MobileConnectionCheckTaskTest {
         Assert.assertEquals(MobileConnectionCheckStatus.State.PENDING_REQUESTS, task.getStatus().getState());
 
         // respond to all requests (but do no mark result)
-        for(MobileConnectionCheck test : requestedTestsById.values()) {
+        for (MobileConnectionCheck test : requestedTestsById.values()) {
             byte[] response;
             if (MobileConnectionCheck.Protocol.TCP == test.getProtocol()) {
                 response = sendTcpRequest(test.getSecret());

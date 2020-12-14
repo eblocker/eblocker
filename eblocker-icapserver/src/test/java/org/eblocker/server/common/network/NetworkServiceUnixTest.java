@@ -29,8 +29,8 @@ import org.eblocker.server.common.network.unix.FirewallConfiguration;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkInterfaceConfiguration;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -94,7 +94,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfiguration () throws IOException {
+    public void TestGetCurrentConfiguration() throws IOException {
         TestGetCurrentConfigurationSetup();
         apply();
 
@@ -106,7 +106,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationNoInterface () throws IOException {
+    public void TestGetCurrentConfigurationNoInterface() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(networkInterface.getNetworkPrefixLength(IpAddress.parse("192.168.0.2"))).thenReturn(-1);
@@ -118,7 +118,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationNoDhcpRange () throws IOException {
+    public void TestGetCurrentConfigurationNoDhcpRange() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(dataSource.getDhcpRange()).thenReturn(new DhcpRange(null, null));
@@ -131,7 +131,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationDnsAndAutoMode () throws IOException {
+    public void TestGetCurrentConfigurationDnsAndAutoMode() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(true);
@@ -146,7 +146,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationNoDnsAndAutoMode () throws IOException {
+    public void TestGetCurrentConfigurationNoDnsAndAutoMode() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(false);
@@ -161,7 +161,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationDnsAndLocalDHCP () throws IOException {
+    public void TestGetCurrentConfigurationDnsAndLocalDHCP() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(true);
@@ -176,7 +176,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationNoDnsAndLocalDHCP () throws IOException {
+    public void TestGetCurrentConfigurationNoDnsAndLocalDHCP() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(false);
@@ -191,7 +191,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationDnsAndExternalDHCP () throws IOException {
+    public void TestGetCurrentConfigurationDnsAndExternalDHCP() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(true);
@@ -206,7 +206,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestGetCurrentConfigurationNoDnsAndExternal () throws IOException {
+    public void TestGetCurrentConfigurationNoDnsAndExternal() throws IOException {
         TestGetCurrentConfigurationSetup();
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(false);
@@ -230,7 +230,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestConfigureDhcp () {
+    public void TestConfigureDhcp() {
         DeviceService deviceService = Mockito.mock(DeviceService.class);
         TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
         tdf.addDevice("0123456789ab", "10.2.3.4", true);
@@ -258,7 +258,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestConfigureDhcpRange () {
+    public void TestConfigureDhcpRange() {
         NetworkConfiguration cfg = Mockito.mock(NetworkConfiguration.class);
         Mockito.when(cfg.getIpAddress()).thenReturn("192.168.0.2");
         Mockito.when(cfg.getDhcpRangeFirst()).thenReturn("192.168.0.100");
@@ -277,7 +277,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestConfigureDhcpDnsEnabled () {
+    public void TestConfigureDhcpDnsEnabled() {
         NetworkConfiguration cfg = Mockito.mock(NetworkConfiguration.class);
         Mockito.when(cfg.isDnsServer()).thenReturn(true);
         Mockito.when(cfg.getIpAddress()).thenReturn("192.168.0.2");
@@ -295,7 +295,7 @@ public class NetworkServiceUnixTest {
     }
 
     @Test
-    public void TestConfigureDhcpDnsDisabled () {
+    public void TestConfigureDhcpDnsDisabled() {
         NetworkConfiguration cfg = Mockito.mock(NetworkConfiguration.class);
         Mockito.when(cfg.isDnsServer()).thenReturn(false);
         Mockito.when(cfg.getNameServerPrimary()).thenReturn("1.2.3.4");

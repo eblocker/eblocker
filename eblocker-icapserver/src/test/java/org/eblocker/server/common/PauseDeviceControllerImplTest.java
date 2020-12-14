@@ -39,150 +39,150 @@ import static org.mockito.Mockito.when;
 
 public class PauseDeviceControllerImplTest {
 
-	private long pausingInterval = 300;
-	private Device device;
-	private NetworkStateMachine networkStateMachine;
-	private DeviceService deviceService;
+    private long pausingInterval = 300;
+    private Device device;
+    private NetworkStateMachine networkStateMachine;
+    private DeviceService deviceService;
 
     private MockScheduledExecutorService executorService;
 
-	@Before
-	public void setUp() {
-		device = TestDeviceFactory.createDevice("abcdef012345", "192.168.1.23", true);
+    @Before
+    public void setUp() {
+        device = TestDeviceFactory.createDevice("abcdef012345", "192.168.1.23", true);
 
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
-		Mockito.doNothing().when(networkStateMachine).deviceStateChanged();
-		Mockito.doNothing().when(networkStateMachine).deviceStateChanged(any(Device.class));
+        Mockito.doNothing().when(networkStateMachine).deviceStateChanged();
+        Mockito.doNothing().when(networkStateMachine).deviceStateChanged(any(Device.class));
 
-		deviceService = Mockito.mock(DeviceService.class);
+        deviceService = Mockito.mock(DeviceService.class);
 
-		TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
-		tdf.addDevice(device);
+        TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
+        tdf.addDevice(device);
 
-		executorService = new MockScheduledExecutorService();
-}
+        executorService = new MockScheduledExecutorService();
+    }
 
-	@Test
-	public void pauseDevice() {
-		// Set up controller
-		PauseDeviceController controller = new PauseDeviceController(
-				networkStateMachine, executorService,
-				deviceService);
+    @Test
+    public void pauseDevice() {
+        // Set up controller
+        PauseDeviceController controller = new PauseDeviceController(
+            networkStateMachine, executorService,
+            deviceService);
 
-		// Test: Unpaused device is unpaused
-		RemainingPause resultUnpaused = controller.getRemainingPause(device);
-		assertNotNull(resultUnpaused);
-		assertEquals(Long.valueOf(0), resultUnpaused.getPausing());
+        // Test: Unpaused device is unpaused
+        RemainingPause resultUnpaused = controller.getRemainingPause(device);
+        assertNotNull(resultUnpaused);
+        assertEquals(Long.valueOf(0), resultUnpaused.getPausing());
 
-		// Pause device
-		RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
+        // Pause device
+        RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
 
-		// Test: Paused device is paused
-		assertNotNull(resultPausing);
-		assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
-		assertFalse(device.isEnabled());
-		verify(deviceService).updateDevice(device);
-		verify(networkStateMachine).deviceStateChanged(device);
+        // Test: Paused device is paused
+        assertNotNull(resultPausing);
+        assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
+        assertFalse(device.isEnabled());
+        verify(deviceService).updateDevice(device);
+        verify(networkStateMachine).deviceStateChanged(device);
 
-		executorService.elapse(Duration.ofSeconds(pausingInterval));
+        executorService.elapse(Duration.ofSeconds(pausingInterval));
 
-		// Test: Expired pause is expired
-		RemainingPause resultExpired = controller.getRemainingPause(device);
-		assertNotNull(resultExpired);
-		assertEquals(Long.valueOf(0), resultExpired.getPausing());
-		assertTrue(device.isEnabled());
-		verify(deviceService, times(2)).updateDevice(device);
-		verify(networkStateMachine).deviceStateChanged();
-	}
+        // Test: Expired pause is expired
+        RemainingPause resultExpired = controller.getRemainingPause(device);
+        assertNotNull(resultExpired);
+        assertEquals(Long.valueOf(0), resultExpired.getPausing());
+        assertTrue(device.isEnabled());
+        verify(deviceService, times(2)).updateDevice(device);
+        verify(networkStateMachine).deviceStateChanged();
+    }
 
-	@Test
-	public void repauseDevice() {
-		// Set up controller
-		PauseDeviceController controller = new PauseDeviceController(
-				networkStateMachine, executorService,
-				deviceService);
+    @Test
+    public void repauseDevice() {
+        // Set up controller
+        PauseDeviceController controller = new PauseDeviceController(
+            networkStateMachine, executorService,
+            deviceService);
 
-		// Pause device
-		RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
+        // Pause device
+        RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
 
-		// Test: Paused device is paused
-		assertNotNull(resultPausing);
-		assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
+        // Test: Paused device is paused
+        assertNotNull(resultPausing);
+        assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
 
-		executorService.elapse(Duration.ofSeconds(pausingInterval));
+        executorService.elapse(Duration.ofSeconds(pausingInterval));
 
-		// Test: Expired pause is expired
-		RemainingPause resultExpired = controller.getRemainingPause(device);
-		assertNotNull(resultExpired);
-		assertEquals(Long.valueOf(0), resultExpired.getPausing());
+        // Test: Expired pause is expired
+        RemainingPause resultExpired = controller.getRemainingPause(device);
+        assertNotNull(resultExpired);
+        assertEquals(Long.valueOf(0), resultExpired.getPausing());
 
-		// Pause device again
-		RemainingPause resultRepausing = controller.pauseDevice(device, pausingInterval);
+        // Pause device again
+        RemainingPause resultRepausing = controller.pauseDevice(device, pausingInterval);
 
-		// Paused again device is paused again
-		assertNotNull(resultRepausing);
-		assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
-		assertFalse(device.isEnabled());
-		verify(deviceService, times(3)).updateDevice(device);
-		verify(networkStateMachine, times(2)).deviceStateChanged(device);
+        // Paused again device is paused again
+        assertNotNull(resultRepausing);
+        assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
+        assertFalse(device.isEnabled());
+        verify(deviceService, times(3)).updateDevice(device);
+        verify(networkStateMachine, times(2)).deviceStateChanged(device);
 
         executorService.elapse(Duration.ofSeconds(pausingInterval));
 
         // Test: Expired pause is expired (again)
-		RemainingPause resultExpiredAgain = controller.getRemainingPause(device);
-		assertNotNull(resultExpiredAgain);
-		assertEquals(Long.valueOf(0), resultExpiredAgain.getPausing());
-		assertTrue(device.isEnabled());
-		verify(deviceService, times(4)).updateDevice(device);
-		verify(networkStateMachine, times(2)).deviceStateChanged();
-	}
+        RemainingPause resultExpiredAgain = controller.getRemainingPause(device);
+        assertNotNull(resultExpiredAgain);
+        assertEquals(Long.valueOf(0), resultExpiredAgain.getPausing());
+        assertTrue(device.isEnabled());
+        verify(deviceService, times(4)).updateDevice(device);
+        verify(networkStateMachine, times(2)).deviceStateChanged();
+    }
 
-	@Test
-	public void extendPause() {
-		long delayBeforeExtendingPause = 200;
-
-		// Set up controller
-		PauseDeviceController controller = new PauseDeviceController(
-				networkStateMachine, executorService,
-				deviceService);
-
-		// Test: Unpaused device is unpaused
-		RemainingPause resultUnpaused = controller.getRemainingPause(device);
-		assertNotNull(resultUnpaused);
-		assertEquals(Long.valueOf(0), resultUnpaused.getPausing());
-
-		// Pause device
-		RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
-
-		// Test: Paused device is paused
-		assertNotNull(resultPausing);
-		assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
-		assertFalse(device.isEnabled());
-		verify(deviceService).updateDevice(device);
-		verify(networkStateMachine).deviceStateChanged(device);
-
-		// Extend pause
-		executorService.elapse(Duration.ofSeconds(delayBeforeExtendingPause));
-		RemainingPause resultExtended = controller.pauseDevice(device, pausingInterval);
-		assertNotNull(resultExtended);
-		assertEquals(Long.valueOf(pausingInterval), resultExtended.getPausing());
-
-		// Still pausing...
-		executorService.elapse(Duration.ofSeconds(250));
-		assertFalse(device.isEnabled());
-	}
-
-	@Test
-	public void reenablePausedDevice() {
-	    Device device = Mockito.mock(Device.class);
-	    when(device.isUseAnonymizationService()).thenReturn(false);
-	    when(device.isRoutedThroughTor()).thenReturn(false);
-	    when(device.isSslEnabled()).thenReturn(false);
+    @Test
+    public void extendPause() {
+        long delayBeforeExtendingPause = 200;
 
         // Set up controller
         PauseDeviceController controller = new PauseDeviceController(
-                networkStateMachine, executorService,
-                deviceService);
+            networkStateMachine, executorService,
+            deviceService);
+
+        // Test: Unpaused device is unpaused
+        RemainingPause resultUnpaused = controller.getRemainingPause(device);
+        assertNotNull(resultUnpaused);
+        assertEquals(Long.valueOf(0), resultUnpaused.getPausing());
+
+        // Pause device
+        RemainingPause resultPausing = controller.pauseDevice(device, pausingInterval);
+
+        // Test: Paused device is paused
+        assertNotNull(resultPausing);
+        assertEquals(Long.valueOf(pausingInterval), resultPausing.getPausing());
+        assertFalse(device.isEnabled());
+        verify(deviceService).updateDevice(device);
+        verify(networkStateMachine).deviceStateChanged(device);
+
+        // Extend pause
+        executorService.elapse(Duration.ofSeconds(delayBeforeExtendingPause));
+        RemainingPause resultExtended = controller.pauseDevice(device, pausingInterval);
+        assertNotNull(resultExtended);
+        assertEquals(Long.valueOf(pausingInterval), resultExtended.getPausing());
+
+        // Still pausing...
+        executorService.elapse(Duration.ofSeconds(250));
+        assertFalse(device.isEnabled());
+    }
+
+    @Test
+    public void reenablePausedDevice() {
+        Device device = Mockito.mock(Device.class);
+        when(device.isUseAnonymizationService()).thenReturn(false);
+        when(device.isRoutedThroughTor()).thenReturn(false);
+        when(device.isSslEnabled()).thenReturn(false);
+
+        // Set up controller
+        PauseDeviceController controller = new PauseDeviceController(
+            networkStateMachine, executorService,
+            deviceService);
 
         controller.reactivateDevice(device);
 
@@ -190,10 +190,10 @@ public class PauseDeviceControllerImplTest {
         Mockito.verify(device).setPaused(eq(false));
         Mockito.verify(deviceService).updateDevice(eq(device));
         Mockito.verify(networkStateMachine).deviceStateChanged();
-	}
+    }
 
-	@Test
-	public void reenablePausedDeviceTorRouting() {
+    @Test
+    public void reenablePausedDeviceTorRouting() {
         Device device = Mockito.mock(Device.class);
         when(device.isUseAnonymizationService()).thenReturn(true);
         when(device.isRoutedThroughTor()).thenReturn(true);
@@ -201,8 +201,8 @@ public class PauseDeviceControllerImplTest {
 
         // Set up controller
         PauseDeviceController controller = new PauseDeviceController(
-                networkStateMachine, executorService,
-                deviceService);
+            networkStateMachine, executorService,
+            deviceService);
 
         controller.reactivateDevice(device);
 
@@ -210,10 +210,10 @@ public class PauseDeviceControllerImplTest {
         Mockito.verify(device).setPaused(eq(false));
         Mockito.verify(deviceService).updateDevice(eq(device));
         Mockito.verify(networkStateMachine).deviceStateChanged();
-	}
+    }
 
-	@Test
-	public void reenabledPausedDeviceSslEnabled() {
+    @Test
+    public void reenabledPausedDeviceSslEnabled() {
         Device device = Mockito.mock(Device.class);
         when(device.isUseAnonymizationService()).thenReturn(false);
         when(device.isRoutedThroughTor()).thenReturn(false);
@@ -221,8 +221,8 @@ public class PauseDeviceControllerImplTest {
 
         // Set up controller
         PauseDeviceController controller = new PauseDeviceController(
-                networkStateMachine, executorService,
-                deviceService);
+            networkStateMachine, executorService,
+            deviceService);
 
         controller.reactivateDevice(device);
 
@@ -230,6 +230,6 @@ public class PauseDeviceControllerImplTest {
         Mockito.verify(device).setPaused(eq(false));
         Mockito.verify(deviceService).updateDevice(eq(device));
         Mockito.verify(networkStateMachine).deviceStateChanged();
-	}
+    }
 
 }

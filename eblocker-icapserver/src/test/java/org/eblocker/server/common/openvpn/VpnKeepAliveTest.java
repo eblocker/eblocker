@@ -210,8 +210,8 @@ public class VpnKeepAliveTest {
     @Test(timeout = 5000)
     public void testStopTwice() throws InterruptedException, IOException {
         Mockito.doAnswer(im -> {
-                keepAlive.stop();
-                return null;
+            keepAlive.stop();
+            return null;
         }).when(callback).run();
 
         setupProcessOutput(

@@ -71,7 +71,6 @@ public class HashingFilterTest {
         Assert.assertEquals(SIZE, filter.getSize());
     }
 
-
     @Test(expected = UnsupportedOperationException.class)
     public void getDomains() {
         filter.getDomains();

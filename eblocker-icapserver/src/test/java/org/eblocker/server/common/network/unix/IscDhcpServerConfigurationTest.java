@@ -16,6 +16,15 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import org.apache.commons.io.IOUtils;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.DhcpRange;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.TestDeviceFactory;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.network.DhcpServerConfiguration;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,73 +33,64 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eblocker.server.common.data.IpAddress;
-import org.apache.commons.io.IOUtils;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.DhcpRange;
-import org.eblocker.server.common.data.TestDeviceFactory;
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.network.DhcpServerConfiguration;
-import org.junit.Test;
-
 public class IscDhcpServerConfigurationTest {
 
-	@Test
-	public void enable() throws IOException {
+    @Test
+    public void enable() throws IOException {
 
-		HashSet<Device> devices = new HashSet<>();
-		devices.add(TestDeviceFactory.createDevice("e425e78b8602",
-				"192.168.0.42", false));
-		devices.add(TestDeviceFactory.createDevice("001122334455",
-				"192.168.0.43", false));
+        HashSet<Device> devices = new HashSet<>();
+        devices.add(TestDeviceFactory.createDevice("e425e78b8602",
+            "192.168.0.42", false));
+        devices.add(TestDeviceFactory.createDevice("001122334455",
+            "192.168.0.43", false));
 
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.2");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
-		config.setNameServerPrimary("192.168.3.20");
-		config.setNameServerSecondary("192.168.3.21");
-		config.setDevices(devices);
-		String iscConfig = IscDhcpServerConfiguration.format(config);
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.2");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
+        config.setNameServerPrimary("192.168.3.20");
+        config.setNameServerSecondary("192.168.3.21");
+        config.setDevices(devices);
+        String iscConfig = IscDhcpServerConfiguration.format(config);
 
-		checkResult(iscConfig, "test-data/dhcpd-extended.conf");
-	}
+        checkResult(iscConfig, "test-data/dhcpd-extended.conf");
+    }
 
-	@Test
-	public void minimumConfiguration() throws IOException {
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.2");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
-		config.setDevices(new HashSet<Device>());
-		String iscConfig = IscDhcpServerConfiguration.format(config);
+    @Test
+    public void minimumConfiguration() throws IOException {
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.2");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
+        config.setDevices(new HashSet<Device>());
+        String iscConfig = IscDhcpServerConfiguration.format(config);
 
-		checkResult(iscConfig, "test-data/dhcpd-extended-minimum.conf");
-	}
+        checkResult(iscConfig, "test-data/dhcpd-extended-minimum.conf");
+    }
 
-	@Test(expected= EblockerException.class)
-	public void missingRange() throws IOException {
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.2");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setDevices(new HashSet<Device>());
-		IscDhcpServerConfiguration.format(config);
-	}
+    @Test(expected = EblockerException.class)
+    public void missingRange() throws IOException {
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.2");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setDevices(new HashSet<Device>());
+        IscDhcpServerConfiguration.format(config);
+    }
 
-	private void checkResult(String result, String referenceFile) throws IOException {
-		String expected = IOUtils.toString(ClassLoader.getSystemResource(referenceFile));
-		assertEquals(expected, result);
-	}
+    private void checkResult(String result, String referenceFile) throws IOException {
+        String expected = IOUtils.toString(ClassLoader.getSystemResource(referenceFile));
+        assertEquals(expected, result);
+    }
 
-	@Test
-	public void fixedIPAddress() throws IOException{
-		Device deviceStatic1 = new Device();
-		deviceStatic1.setIpAddressFixed(true);
-		deviceStatic1.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.0.11")));
-		deviceStatic1.setId("device:111111111111");
+    @Test
+    public void fixedIPAddress() throws IOException {
+        Device deviceStatic1 = new Device();
+        deviceStatic1.setIpAddressFixed(true);
+        deviceStatic1.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.0.11")));
+        deviceStatic1.setId("device:111111111111");
 
         Device deviceStatic2 = new Device();
         deviceStatic2.setIpAddressFixed(true);
@@ -102,83 +102,83 @@ public class IscDhcpServerConfigurationTest {
         deviceStatic3.setIpAddresses(Arrays.asList(IpAddress.parse("192.168.0.7"), IpAddress.parse("10.10.10.11")));
         deviceStatic3.setId("device:111111111113");
 
-		Device deviceDynamic = new Device();
-		deviceDynamic.setIpAddressFixed(false);
-		deviceDynamic.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.0.12")));
-		deviceDynamic.setId("device:222222222222");
+        Device deviceDynamic = new Device();
+        deviceDynamic.setIpAddressFixed(false);
+        deviceDynamic.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.0.12")));
+        deviceDynamic.setId("device:222222222222");
 
-	    Device deviceStaticOutsideSubnet = new Device();
-	    deviceStaticOutsideSubnet.setIpAddressFixed(true);
-	    deviceStaticOutsideSubnet.setIpAddresses(Collections.singletonList(IpAddress.parse("10.10.10.10")));
-	    deviceStaticOutsideSubnet.setId("device:333333333333");
+        Device deviceStaticOutsideSubnet = new Device();
+        deviceStaticOutsideSubnet.setIpAddressFixed(true);
+        deviceStaticOutsideSubnet.setIpAddresses(Collections.singletonList(IpAddress.parse("10.10.10.10")));
+        deviceStaticOutsideSubnet.setId("device:333333333333");
 
-		Set<Device> devices = new HashSet<>();
-		devices.add(deviceDynamic);
-		devices.add(deviceStatic1);
+        Set<Device> devices = new HashSet<>();
+        devices.add(deviceDynamic);
+        devices.add(deviceStatic1);
         devices.add(deviceStatic2);
         devices.add(deviceStatic3);
-		devices.add(deviceStaticOutsideSubnet);
+        devices.add(deviceStaticOutsideSubnet);
 
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.2");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
-		config.setDevices(devices);
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.2");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
+        config.setDevices(devices);
 
-		String generatedConfig = IscDhcpServerConfiguration.format(config);
+        String generatedConfig = IscDhcpServerConfiguration.format(config);
 
         checkResult(generatedConfig, "test-data/dhcpd-fixed-ip-addresses.conf");
-	}
+    }
 
-	@Test
-	public void fixedIpAddressesAndDisabledDevices() throws IOException{
-		HashSet<Device> devices = new HashSet<>();
-		devices.add(TestDeviceFactory.createDevice("001122334455", "192.168.0.55", true, true));
-		devices.add(TestDeviceFactory.createDevice("001122334456", "192.168.0.56", true, false));
-		devices.add(TestDeviceFactory.createDevice("001122334457", "192.168.0.57", false, true));
-		devices.add(TestDeviceFactory.createDevice("001122334458", "192.168.0.58", false, false));
+    @Test
+    public void fixedIpAddressesAndDisabledDevices() throws IOException {
+        HashSet<Device> devices = new HashSet<>();
+        devices.add(TestDeviceFactory.createDevice("001122334455", "192.168.0.55", true, true));
+        devices.add(TestDeviceFactory.createDevice("001122334456", "192.168.0.56", true, false));
+        devices.add(TestDeviceFactory.createDevice("001122334457", "192.168.0.57", false, true));
+        devices.add(TestDeviceFactory.createDevice("001122334458", "192.168.0.58", false, false));
 
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.2");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
-		config.setNameServerPrimary("192.168.3.20");
-		config.setNameServerSecondary("192.168.3.21");
-		config.setDevices(devices);
-		String iscConfig = IscDhcpServerConfiguration.format(config);
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.2");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setRange(new DhcpRange("192.168.0.100", "192.168.0.200"));
+        config.setNameServerPrimary("192.168.3.20");
+        config.setNameServerSecondary("192.168.3.21");
+        config.setDevices(devices);
+        String iscConfig = IscDhcpServerConfiguration.format(config);
 
-		checkResult(iscConfig, "test-data/dhcpd-fixed-and-disabled.conf");
-	}
+        checkResult(iscConfig, "test-data/dhcpd-fixed-and-disabled.conf");
+    }
 
-	@Test
-	public void segmentedIpRange() throws IOException {
-		HashSet<Device> devices = new HashSet<>();
-		// One free address
-		devices.add(TestDeviceFactory.createDevice("001122334455", "192.168.0.55", true, true));
-		// No free address
-		devices.add(TestDeviceFactory.createDevice("001122334456", "192.168.0.56", true, true));
-		// One free address
-		devices.add(TestDeviceFactory.createDevice("001122334458", "192.168.0.58", true, true));
-		// Two free addresses
-		devices.add(TestDeviceFactory.createDevice("001122334461", "192.168.0.61", true, true));
-		// Three free addresses
-		// 192.168.0.65 used by eBlocker
-		// Five free addresses
+    @Test
+    public void segmentedIpRange() throws IOException {
+        HashSet<Device> devices = new HashSet<>();
+        // One free address
+        devices.add(TestDeviceFactory.createDevice("001122334455", "192.168.0.55", true, true));
+        // No free address
+        devices.add(TestDeviceFactory.createDevice("001122334456", "192.168.0.56", true, true));
+        // One free address
+        devices.add(TestDeviceFactory.createDevice("001122334458", "192.168.0.58", true, true));
+        // Two free addresses
+        devices.add(TestDeviceFactory.createDevice("001122334461", "192.168.0.61", true, true));
+        // Three free addresses
+        // 192.168.0.65 used by eBlocker
+        // Five free addresses
 
-		DhcpServerConfiguration config = new DhcpServerConfiguration();
-		config.setIpAddress("192.168.0.65");
-		config.setNetmask("255.255.255.0");
-		config.setGateway("192.168.0.1");
-		config.setRange(new DhcpRange("192.168.0.54", "192.168.0.70"));
-		config.setNameServerPrimary("192.168.3.20");
-		config.setNameServerSecondary("192.168.3.21");
-		config.setDevices(devices);
-		String iscConfig = IscDhcpServerConfiguration.format(config);
+        DhcpServerConfiguration config = new DhcpServerConfiguration();
+        config.setIpAddress("192.168.0.65");
+        config.setNetmask("255.255.255.0");
+        config.setGateway("192.168.0.1");
+        config.setRange(new DhcpRange("192.168.0.54", "192.168.0.70"));
+        config.setNameServerPrimary("192.168.3.20");
+        config.setNameServerSecondary("192.168.3.21");
+        config.setDevices(devices);
+        String iscConfig = IscDhcpServerConfiguration.format(config);
 
-		checkResult(iscConfig, "test-data/dhcpd-segmented-ip-range.conf");
-	}
+        checkResult(iscConfig, "test-data/dhcpd-segmented-ip-range.conf");
+    }
 
     @Test
     public void testUserDefinedLeaseTime() throws IOException {

@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
@@ -38,7 +39,6 @@ import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
-import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,8 +61,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
 
 public class EblockerDnsServerTest {
     private final String CHANNEL_NAME = "unit-test-channel";

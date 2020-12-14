@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.registration;
 
-import org.eblocker.server.common.data.LocaleSettings;
-import org.eblocker.server.http.service.SettingsService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.keys.SystemKey;
 import org.eblocker.crypto.pki.CertificateAndKey;
@@ -26,16 +26,13 @@ import org.eblocker.crypto.util.DateUtil;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
+import org.eblocker.server.common.data.LocaleSettings;
 import org.eblocker.server.common.system.CpuInfo;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.http.service.SettingsService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
-
 import org.mockserver.integration.ClientAndServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +47,8 @@ import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+
+import static org.mockito.Mockito.when;
 
 public abstract class DeviceRegistrationTestBase {
     private static final Logger log = LoggerFactory.getLogger(DeviceRegistrationTestBase.class);
@@ -150,20 +149,20 @@ public abstract class DeviceRegistrationTestBase {
         DeviceRegistrationLicenseState licenseState = Mockito.mock(DeviceRegistrationLicenseState.class);
 
         return new DeviceRegistrationProperties(
-                systemKey,
-                registrationPropertiesFileName,
-                licenseKeyFileName,
-                licenseCertFileName,
-                trustStoreResource,
-                trustStorePassword,
-                truststoreCopyFileName,
-                KEY_SIZE,
-                REG_TYPE_1,
-                WARNING_PERIOD,
-                LIFETIME_INDICATOR,
-                Files.createTempDirectory(null).toString(),
-                cpuInfo,
-                licenseState);
+            systemKey,
+            registrationPropertiesFileName,
+            licenseKeyFileName,
+            licenseCertFileName,
+            trustStoreResource,
+            trustStorePassword,
+            truststoreCopyFileName,
+            KEY_SIZE,
+            REG_TYPE_1,
+            WARNING_PERIOD,
+            LIFETIME_INDICATOR,
+            Files.createTempDirectory(null).toString(),
+            cpuInfo,
+            licenseState);
     }
 
     protected DeviceRegistrationClient createDeviceRegistrationClient() throws IOException, ParseException {
@@ -172,43 +171,43 @@ public abstract class DeviceRegistrationTestBase {
 
     protected DeviceRegistrationClient createDeviceRegistrationClient(DeviceRegistrationProperties deviceRegistrationProperties) {
         return new DeviceRegistrationClient(
-                BASE_URL, registrationUrl,
-                BASE_URL, deviceUrl,
-                BASE_URL, tosUrl,
-                true,
-                true,
-                trustStoreResource,
-                trustStorePassword,
-                5000,
-                5000,
-                BASE_URL,
-                mobileConnectionCheckUrl,
-                "",
-                mobileDnsCheckUrl,
-                deviceRegistrationProperties,
-                settingsService,
-                new ObjectMapper(),
-                VERSION
+            BASE_URL, registrationUrl,
+            BASE_URL, deviceUrl,
+            BASE_URL, tosUrl,
+            true,
+            true,
+            trustStoreResource,
+            trustStorePassword,
+            5000,
+            5000,
+            BASE_URL,
+            mobileConnectionCheckUrl,
+            "",
+            mobileDnsCheckUrl,
+            deviceRegistrationProperties,
+            settingsService,
+            new ObjectMapper(),
+            VERSION
         );
     }
 
     protected DeviceRegistrationResponse simulateBackend(DeviceRegistrationRequest deviceRegistrationRequest, int licenseValidty, boolean autoRenewal) throws CertificateException, CryptoException {
         X509Certificate deviceCertificate = PKI.generateSignedCertificate(
-                decode(deviceRegistrationRequest.getEncodedDeviceCertificate()),
-                ORG_NAME,
-                deviceRegistrationRequest.getDeviceId(),
-                DateUtil.addYears(new Date(), 100),
-                deviceIssuer
+            decode(deviceRegistrationRequest.getEncodedDeviceCertificate()),
+            ORG_NAME,
+            deviceRegistrationRequest.getDeviceId(),
+            DateUtil.addYears(new Date(), 100),
+            deviceIssuer
         );
         byte[] licenseCertificate;
         LicenseType licenseType;
         if (licenseValidty > 0) {
             licenseCertificate = PKI.generateSignedCertificate(
-                    decode(deviceRegistrationRequest.getEncodedLicenseCertificate()),
-                    ORG_NAME,
-                    deviceRegistrationRequest.getDeviceId(),
-                    DateUtil.addYears(new Date(), licenseValidty),
-                    licenseIssuer
+                decode(deviceRegistrationRequest.getEncodedLicenseCertificate()),
+                ORG_NAME,
+                deviceRegistrationRequest.getDeviceId(),
+                DateUtil.addYears(new Date(), licenseValidty),
+                licenseIssuer
             ).getEncoded();
             licenseType = LicenseType.SUBSCRIPTION;
         } else {
@@ -217,14 +216,14 @@ public abstract class DeviceRegistrationTestBase {
         }
 
         return new DeviceRegistrationResponse(
-                deviceRegistrationRequest.getEmailAddress(),
-                deviceRegistrationRequest.getDeviceName(),
-                deviceRegistrationRequest.getDeviceId(),
-                deviceCertificate.getEncoded(),
-                licenseCertificate,
-                licenseType.toString(),
-                Boolean.toString(autoRenewal),
-                null,
+            deviceRegistrationRequest.getEmailAddress(),
+            deviceRegistrationRequest.getDeviceName(),
+            deviceRegistrationRequest.getDeviceId(),
+            deviceCertificate.getEncoded(),
+            licenseCertificate,
+            licenseType.toString(),
+            Boolean.toString(autoRenewal),
+            null,
             null,
             null
         );
@@ -232,7 +231,7 @@ public abstract class DeviceRegistrationTestBase {
 
     protected X509Certificate decode(byte[] encoded) throws CertificateException {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        return (X509Certificate)cf.generateCertificate(new ByteArrayInputStream(encoded));
+        return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(encoded));
     }
 
     private String createResource(String prefix, String postfix) {
@@ -241,8 +240,8 @@ public abstract class DeviceRegistrationTestBase {
             Files.delete(path);
             return path.toString();
         } catch (IOException e) {
-            log.error("Cannot create resource file: "+e.getMessage());
-            throw new IllegalArgumentException("Cannot create resource file: "+e.getMessage(), e);
+            log.error("Cannot create resource file: " + e.getMessage());
+            throw new IllegalArgumentException("Cannot create resource file: " + e.getMessage(), e);
         }
     }
 

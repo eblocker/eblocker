@@ -134,13 +134,15 @@ public class ArpSweeperTest {
         Assert.assertEquals(1022, pubSubService.getPublishedMessages().size());
     }
 
-    /** Custom mock implementation because Mockito's mocks are really really slow even when resetting after 256 calls ... */
+    /**
+     * Custom mock implementation because Mockito's mocks are really really slow even when resetting after 256 calls ...
+     */
     private class PubSubServiceMock implements PubSubService {
         private final List<String[]> publishedMessages = new ArrayList<>();
 
         @Override
         public void publish(String channel, String message) {
-            publishedMessages.add(new String[] { channel, message });
+            publishedMessages.add(new String[]{ channel, message });
         }
 
         @Override

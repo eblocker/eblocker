@@ -31,7 +31,7 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
 
     @Before
     public void setUp() throws IOException, ParseException {
-        deviceRegistrationClient =  createDeviceRegistrationClient();
+        deviceRegistrationClient = createDeviceRegistrationClient();
     }
 
     @Test

@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.common.registration;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.CommandRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.system.CommandRunner;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class DeviceRegistrationLicenseStateImplTest {
     private CommandRunner commandRunner;

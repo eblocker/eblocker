@@ -50,8 +50,8 @@ public class OpenVpnChannelTest extends EmbeddedRedisServiceTestBase {
 
         // send messages for two clients to the according channels
         String channelNames[] = {
-                String.format(Channels.VPN_PROFILE_STATUS_IN, 0),
-                String.format(Channels.VPN_PROFILE_STATUS_IN, 1)
+            String.format(Channels.VPN_PROFILE_STATUS_IN, 0),
+            String.format(Channels.VPN_PROFILE_STATUS_IN, 1)
         };
         service.publish(channelNames[0], "pid 51723");
         service.publish(channelNames[0], "unknown-message-log-some-error");

@@ -50,7 +50,7 @@ public class Ip6NetworkScanTest {
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
 
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
-        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[] { 0x00, 0x00, 0x10, 0x10, 0x10, 0x00 });
+        Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0x00, 0x00, 0x10, 0x10, 0x10, 0x00 });
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::10:10:10:00"));
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(
             IpAddress.parse("10.10.10.1"),

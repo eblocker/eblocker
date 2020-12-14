@@ -48,12 +48,12 @@ public class NetworkInterfaceAliasesTest {
 
     @Before
     public void setup() throws SocketException {
-        for (NetworkInterface networkInterface: Collections.list(NetworkInterface.getNetworkInterfaces())) {
+        for (NetworkInterface networkInterface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
             if (INTERFACE_NAME_LOOKUP.contains(networkInterface.getName())) {
                 networkInterfaceName = networkInterface.getName();
             }
         }
-        Assert.assertNotNull("Cannot find any network interface from this list: "+INTERFACE_NAME_LOOKUP.stream().collect(Collectors.joining(", ")), networkInterfaceName);
+        Assert.assertNotNull("Cannot find any network interface from this list: " + INTERFACE_NAME_LOOKUP.stream().collect(Collectors.joining(", ")), networkInterfaceName);
         scriptRunner = Mockito.mock(ScriptRunner.class);
         networkInterfaceAliases = new NetworkInterfaceAliases(networkInterfaceName, ALIAS_MIN, ALIAS_MAX, SCRIPT_ALIAS_ADD, SCRIPT_ALIAS_REMOVE, scriptRunner);
     }
@@ -67,7 +67,6 @@ public class NetworkInterfaceAliasesTest {
         Mockito.verify(scriptRunner).runScript(SCRIPT_ALIAS_ADD, alias, ip, netmask);
         Assert.assertEquals(networkInterfaceName + ":" + ALIAS_MIN, alias);
         Assert.assertTrue(networkInterfaceAliases.getAliasedIps().contains(ip));
-
 
         networkInterfaceAliases.remove(alias);
         Mockito.verify(scriptRunner).runScript(SCRIPT_ALIAS_REMOVE, alias);

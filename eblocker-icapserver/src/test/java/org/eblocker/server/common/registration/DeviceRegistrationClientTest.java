@@ -16,9 +16,14 @@
  */
 package org.eblocker.server.common.registration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import org.eblocker.registration.DeviceRegistrationRequest;
+import org.eblocker.registration.DeviceRegistrationResponse;
+import org.eblocker.registration.RegistrationState;
+import org.eblocker.registration.error.ClientRequestException;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,15 +31,9 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import org.eblocker.registration.DeviceRegistrationRequest;
-import org.eblocker.registration.DeviceRegistrationResponse;
-import org.eblocker.registration.RegistrationState;
-import org.eblocker.registration.error.ClientRequestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 @Ignore("Tests need running eBlocker Backend Server with fresh database")
 public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
@@ -61,7 +60,8 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
     /**
      * Simulate the start of a new device by creating a fresh set of registration properties,
      * including a new device ID.
-     * @throws ParseException 
+     *
+     * @throws ParseException
      */
     private void newDevice() throws IOException, ParseException {
         init();
@@ -69,8 +69,8 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
 
     /**
      * Simulate the start of a device.
-     * @throws ParseException 
      *
+     * @throws ParseException
      */
     private void startDevice() throws IOException, ParseException {
         //
@@ -122,7 +122,7 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         Files.readAllLines(Paths.get(licenseKeyFileName)).forEach(LOG::info);
     }
 
-    @Test(expected=javax.ws.rs.ProcessingException.class)
+    @Test(expected = javax.ws.rs.ProcessingException.class)
     public void test_untrustedServer() throws IOException, GeneralSecurityException, ParseException {
         //
         // Provide a different truststore, so that the backend's server certificate cannot be validated
@@ -163,7 +163,7 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         fail("Expected ClientRequestException exception");
     }
 
-    @Test(expected=ClientRequestException.class)
+    @Test(expected = ClientRequestException.class)
     public void test_invalidRequest() throws IOException, ParseException {
         // Start with a fresh device
         startDevice();

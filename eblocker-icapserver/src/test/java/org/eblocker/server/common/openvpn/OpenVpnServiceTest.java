@@ -94,7 +94,7 @@ public class OpenVpnServiceTest {
             profilesById.put(i.getArgument(1), copyProfile(i.getArgument(0)));
             return i.getArgument(0);
         });
-        Mockito.when(dataSource.getAll(OpenVpnProfile.class)).then(x->new ArrayList<>(profilesById.values()));
+        Mockito.when(dataSource.getAll(OpenVpnProfile.class)).then(x -> new ArrayList<>(profilesById.values()));
 
         profileFiles = Mockito.mock(OpenVpnProfileFiles.class);
         Mockito.when(profileFiles.hasParsedConfiguration(0)).thenReturn(true);
@@ -130,7 +130,7 @@ public class OpenVpnServiceTest {
             new SimpleOption(1, "blacklisted-option"),
             new SimpleOption(2, "ignored-option"),
             new SimpleOption(3, "effective-option"),
-            new SimpleOption(4, "remote", new String[] { "vpn.eblocker.com"})
+            new SimpleOption(4, "remote", new String[]{ "vpn.eblocker.com" })
         );
 
         OpenVpnConfigurationVersion0 oldConfiguration = new OpenVpnConfigurationVersion0();
@@ -169,7 +169,7 @@ public class OpenVpnServiceTest {
         List<Option> options = Arrays.asList(
             new SimpleOption(1, "external-file-option"),
             new SimpleOption(2, "another-file-option"),
-            new SimpleOption(4, "remote", new String[] { "vpn.eblocker.com"})
+            new SimpleOption(4, "remote", new String[]{ "vpn.eblocker.com" })
         );
 
         Map<String, String> inlineContent = new HashMap<>();
@@ -232,9 +232,9 @@ public class OpenVpnServiceTest {
         devicesById.put("2", createDevice(2));
 
         OpenVpnClientState[] states = {
-                createOpenVpnClientState(0, Collections.singleton(devicesById.get("0"))),
-                createOpenVpnClientState(100, Collections.singleton(devicesById.get("1"))),
-                createOpenVpnClientState(2, Collections.emptySet())
+            createOpenVpnClientState(0, Collections.singleton(devicesById.get("0"))),
+            createOpenVpnClientState(100, Collections.singleton(devicesById.get("1"))),
+            createOpenVpnClientState(2, Collections.emptySet())
         };
 
         Mockito.when(dataSource.getDevice(Mockito.anyString())).thenAnswer(invocationOnMock -> devicesById.get(invocationOnMock.getArgument(0)));
@@ -408,7 +408,7 @@ public class OpenVpnServiceTest {
     @Test
     public void testKeepAliveSettings() throws IOException {
         List<Option> options = Arrays.asList(
-            new SimpleOption(1, "remote", new String[] { "vpn.eblocker.com"})
+            new SimpleOption(1, "remote", new String[]{ "vpn.eblocker.com" })
         );
 
         OpenVpnConfiguration oldConfiguration = new OpenVpnConfiguration();
@@ -499,7 +499,7 @@ public class OpenVpnServiceTest {
     @Test
     public void testSetProfileClientConfigKeepAliveTarget() throws IOException, OpenVpnConfigurationParser.ParseException {
         OpenVpnConfiguration configuration = new OpenVpnConfiguration();
-        configuration.setUserOptions(Collections.singletonList(new SimpleOption(1, "remote", new String[] { "vpn.eblocker.com"})));
+        configuration.setUserOptions(Collections.singletonList(new SimpleOption(1, "remote", new String[]{ "vpn.eblocker.com" })));
         Mockito.when(configurator.createConfiguration("remote vpn.eblocker.com")).thenReturn(configuration);
 
         OpenVpnService service = createService();
@@ -721,20 +721,20 @@ public class OpenVpnServiceTest {
     private OpenVpnClient createMockOpenVpnClient(VpnProfile profile) {
         Set<String> deviceIds = new HashSet<>();
         OpenVpnClient client = Mockito.mock(OpenVpnClient.class);
-        Mockito.when(client.getProfile()).then(i->profile);
-        Mockito.when(client.getDeviceIds()).then(i->deviceIds);
+        Mockito.when(client.getProfile()).then(i -> profile);
+        Mockito.when(client.getDeviceIds()).then(i -> deviceIds);
         Mockito.doAnswer(
-                i->deviceIds.addAll(
-                        ((Collection<Device>) i.getArguments()[0]).stream()
-                                .map(Device::getId)
-                                .collect(Collectors.toList())))
-                .when(client).addDevices(Mockito.any());
+            i -> deviceIds.addAll(
+                ((Collection<Device>) i.getArguments()[0]).stream()
+                    .map(Device::getId)
+                    .collect(Collectors.toList())))
+            .when(client).addDevices(Mockito.any());
         Mockito.doAnswer(
-                i->deviceIds.removeAll(
-                        ((Collection<Device>) i.getArguments()[0]).stream()
-                                .map(Device::getId)
-                                .collect(Collectors.toList())))
-                .when(client).stopDevices(Mockito.any());
+            i -> deviceIds.removeAll(
+                ((Collection<Device>) i.getArguments()[0]).stream()
+                    .map(Device::getId)
+                    .collect(Collectors.toList())))
+            .when(client).stopDevices(Mockito.any());
         return client;
     }
 

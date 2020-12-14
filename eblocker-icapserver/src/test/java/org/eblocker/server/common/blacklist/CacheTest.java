@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.util.FileUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +57,7 @@ public class CacheTest {
     @After
     public void tearDown() throws IOException {
         FileUtils.deleteDirectory(Paths.get(cachePath));
-        createdTestFiles.forEach(p->{
+        createdTestFiles.forEach(p -> {
             try {
                 Files.delete(p);
             } catch (IOException e) {

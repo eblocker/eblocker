@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.openvpn.server;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.TestDeviceFactory;
@@ -24,7 +25,6 @@ import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,11 +39,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class OpenVpnAddressListenerTest {
-   private OpenVpnAddressListener listener;
-   private PubSubService pubSubService;
-   private DeviceService deviceService;
-   private EblockerDnsServer dnsServer;
-   private NetworkStateMachine networkStateMachine;
+    private OpenVpnAddressListener listener;
+    private PubSubService pubSubService;
+    private DeviceService deviceService;
+    private EblockerDnsServer dnsServer;
+    private NetworkStateMachine networkStateMachine;
 
     @Before
     public void setUp() throws Exception {
@@ -62,8 +62,8 @@ public class OpenVpnAddressListenerTest {
     public void subscribesToAddressChanges() {
         listener.run();
         Mockito.verify(pubSubService).subscribeAndLoop(
-                Mockito.eq(Channels.VPN_ADDRESS_UPDATE),
-                Mockito.eq(listener));
+            Mockito.eq(Channels.VPN_ADDRESS_UPDATE),
+            Mockito.eq(listener));
     }
 
     @Test

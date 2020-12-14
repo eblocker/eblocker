@@ -153,7 +153,6 @@ public class FilterStatisticsServiceTest {
         Assert.assertNull(totalCounter.getValue().get(1).getReason());
         Assert.assertEquals(1, totalCounter.getValue().get(1).getValue());
 
-
         Assert.assertEquals(instantOf(2018, 5, 22, 13, 31, 0, 0), statsCounter.getValue().get(2).getInstant());
         Assert.assertEquals("dns", statsCounter.getValue().get(2).getType());
         Assert.assertEquals(IpAddress.parse("10.10.10.99"), statsCounter.getValue().get(2).getIpAddress());

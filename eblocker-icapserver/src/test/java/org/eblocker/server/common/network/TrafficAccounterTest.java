@@ -152,8 +152,6 @@ public class TrafficAccounterTest {
             }
             return 0;
         }
-
-        ;
     }
 
 }

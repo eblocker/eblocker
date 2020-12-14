@@ -59,7 +59,6 @@ public class TimezoneControllerImpl implements TimezoneController {
             posixTimezoneStrings = objectMapper.readValue(ResourceHandler.load(jsonFile), Map.class);
         } catch (IOException e) {
             log.error("Error while time zone strings from file.", e);
-            ;
         }
     }
 

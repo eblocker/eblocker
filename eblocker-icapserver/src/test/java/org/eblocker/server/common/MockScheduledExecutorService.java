@@ -69,8 +69,6 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
         WAITING, RUNNING, DONE, CANCELLED;
     }
 
-    ;
-
     class ScheduledFutureTask<T> implements ScheduledFuture<T> {
         private TaskState state = TaskState.WAITING;
         private final Duration delay;          // the initially scheduled delay

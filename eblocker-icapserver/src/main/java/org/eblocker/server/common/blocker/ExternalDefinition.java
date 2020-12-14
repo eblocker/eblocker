@@ -66,7 +66,6 @@ public class ExternalDefinition {
         this.file = file;
         this.enabled = enabled;
         this.filterType = filterType == null ? "blacklist" : filterType;
-        ;
     }
 
     public int getId() {

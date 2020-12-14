@@ -106,7 +106,6 @@ public class DnsStatisticsService {
     public NameServerStats testNameServer(String nameServer, List<String> names) {
         String id = UUID.randomUUID().toString();
         List<DnsQuery> queries = names.stream().map(name -> new DnsQuery(DnsRecordType.A, name)).collect(Collectors.toList());
-        ;
         dnsDataSource.addDnsQueryQueue(id, nameServer, queries);
 
         DnsDataSourceDnsResponse result = dnsDataSource.popDnsResolutionQueue(id, 10 * names.size());

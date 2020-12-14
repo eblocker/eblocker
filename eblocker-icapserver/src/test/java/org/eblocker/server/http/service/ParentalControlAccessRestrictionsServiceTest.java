@@ -326,7 +326,6 @@ public class ParentalControlAccessRestrictionsServiceTest {
         assertEquals(true, restrictionsService.isAccessPermitted(BOB_DEVICE));
         // SquidConfigController was not called to reload the configuration
         verify(changeListener, never()).onChange(anySet());
-        ;
 
         // Second device runs out of time, also written to ACL file
         now = LocalDateTime.of(LocalDate.of(1997, 10, 14), LocalTime.of(18, 6));

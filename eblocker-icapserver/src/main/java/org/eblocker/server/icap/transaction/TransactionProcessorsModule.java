@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.icap.transaction;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import org.eblocker.server.icap.transaction.processor.AdBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.BpjmFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.CompressProcessor;
@@ -45,9 +48,6 @@ import org.eblocker.server.icap.transaction.processor.TrackingBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.UserAgentSpoofProcessor;
 import org.eblocker.server.icap.transaction.processor.WebRTCBlocker;
 import org.eblocker.server.icap.transaction.processor.YoutubeAdBlocker;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,24 +79,24 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                            TrackingBlockerProcessor trackingBlockerProcessor,
                                                            UserAgentSpoofProcessor userAgentSpoofProcessor) {
         return Arrays.asList(
-            sessionProcessor,
-            ignoreEBlockerProcessor,
-            bpjmFilterProcessor,
-            customDomainFilterWhitelistProcessor,
-            pageContextProcessor,
-            setBaseUrlProcessor,
-            redirectToInternalWebsiteProcessor,
-            malwareFilterProcessor,
-            malwarePatternFilterProcessor,
-            forwardDecisionProcessor,
-            userAgentSpoofProcessor,
-            patternFilterStatisticsProcessor,
-            eBlockerFilterProcessor,
-            adBlockerProcessor,
-            trackingBlockerProcessor,
-            referrerRemoveProcessor,
-            setDntHeaderProcessor,
-            finalizeProcessor
+                sessionProcessor,
+                ignoreEBlockerProcessor,
+                bpjmFilterProcessor,
+                customDomainFilterWhitelistProcessor,
+                pageContextProcessor,
+                setBaseUrlProcessor,
+                redirectToInternalWebsiteProcessor,
+                malwareFilterProcessor,
+                malwarePatternFilterProcessor,
+                forwardDecisionProcessor,
+                userAgentSpoofProcessor,
+                patternFilterStatisticsProcessor,
+                eBlockerFilterProcessor,
+                adBlockerProcessor,
+                trackingBlockerProcessor,
+                referrerRemoveProcessor,
+                setDntHeaderProcessor,
+                finalizeProcessor
         );
     }
 
@@ -119,22 +119,22 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             WebRTCBlocker webRTCBlocker,
                                                             YoutubeAdBlocker youtubeAdBlocker) {
         return Arrays.asList(
-            sessionProcessor,
-            ignoreEBlockerProcessor,
-            pageContextProcessor,
-            setBaseUrlProcessor,
-            domainWhiteListProcessor,
-            responseShortCutProcessor,
-            contentSecurityPoliciesProcessor,
-            decompressProcessor,
-            webRTCBlocker,
-            setInjectionsProcessor,
-            insertToolbarProcessor,
-            insertClientSslCheckProcessor,
-            youtubeAdBlocker,
-            htmlInjectionProcessor,
-            compressProcessor,
-            finalizeProcessor
+                sessionProcessor,
+                ignoreEBlockerProcessor,
+                pageContextProcessor,
+                setBaseUrlProcessor,
+                domainWhiteListProcessor,
+                responseShortCutProcessor,
+                contentSecurityPoliciesProcessor,
+                decompressProcessor,
+                webRTCBlocker,
+                setInjectionsProcessor,
+                insertToolbarProcessor,
+                insertClientSslCheckProcessor,
+                youtubeAdBlocker,
+                htmlInjectionProcessor,
+                compressProcessor,
+                finalizeProcessor
         );
     }
 }

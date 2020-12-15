@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.DnsStatisticsService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DnsStatisticsService;
 
 @Singleton
 public class DnsStatisticsScheduler extends FixedRateScheduler {

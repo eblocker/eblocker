@@ -78,7 +78,7 @@ public class DomainBlockingNetworkServiceTest {
         Integer udpPort = networkService.getUdpPort();
         Assert.assertNotNull(udpPort);
         try (DatagramSocket socket = new DatagramSocket()) {
-            socket.send(new DatagramPacket(message,message.length, new InetSocketAddress(HOST, udpPort)));
+            socket.send(new DatagramPacket(message, message.length, new InetSocketAddress(HOST, udpPort)));
             DatagramPacket responsePacket = new DatagramPacket(new byte[65536], 65536);
             socket.receive(responsePacket);
             Assert.assertArrayEquals(message, Arrays.copyOf(responsePacket.getData(), responsePacket.getLength()));

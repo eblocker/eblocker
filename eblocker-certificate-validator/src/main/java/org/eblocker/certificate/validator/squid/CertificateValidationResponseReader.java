@@ -33,11 +33,11 @@ public class CertificateValidationResponseReader extends CertificateValidationMe
         super(useConcurrency);
     }
 
-    public CertificateValidationResponse read(BufferedReader reader)  {
+    public CertificateValidationResponse read(BufferedReader reader) {
         try {
-        	CertificateValidationResponse response = (CertificateValidationResponse) parseMessage(reader);
-        	return response;
-        }catch(Exception e){
+            CertificateValidationResponse response = (CertificateValidationResponse) parseMessage(reader);
+            return response;
+        } catch (Exception e) {
             STATUS_LOG.warn("Caught exception while reading response:", e);
         }
         return null;
@@ -48,7 +48,7 @@ public class CertificateValidationResponseReader extends CertificateValidationMe
         boolean success = messageType.equalsIgnoreCase(CertificateValidationResponse.CERTIFICATE_VALIDATION_RESULT_OK);
 
         return new CertificateValidationResponse(
-				ID,
+                ID,
                 getErrorNames(map),
                 getErrorCertIds(map),
                 useConcurrency,
@@ -57,12 +57,12 @@ public class CertificateValidationResponseReader extends CertificateValidationMe
         );
     }
 
-	public CertificateValidationResponse readSquidFormat(InputStream in) {
+    public CertificateValidationResponse readSquidFormat(InputStream in) {
         Scanner scanner = new Scanner(in);
         scanner.useDelimiter("\\x01");
         String message = scanner.next();
         LOG.debug("message: {}", message);
         BufferedReader reader = new BufferedReader(new StringReader(message), 2048);
         return read(reader);
-	}
+    }
 }

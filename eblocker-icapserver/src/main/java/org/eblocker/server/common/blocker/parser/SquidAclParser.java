@@ -25,11 +25,11 @@ public class SquidAclParser implements DomainParser {
     @Override
     public Stream<String> parse(Stream<String> lines) {
         return lines
-            .map(line -> line.replaceAll("#.*", ""))
-            .map(String::trim)
-            .filter(line -> !line.isEmpty())
-            .filter(line -> !line.startsWith("#"))
-            .map(line -> line.startsWith(".") ? line.substring(1) : line)
-            .filter(InternetDomainName::isValid);
+                .map(line -> line.replaceAll("#.*", ""))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .filter(line -> !line.startsWith("#"))
+                .map(line -> line.startsWith(".") ? line.substring(1) : line)
+                .filter(InternetDomainName::isValid);
     }
 }

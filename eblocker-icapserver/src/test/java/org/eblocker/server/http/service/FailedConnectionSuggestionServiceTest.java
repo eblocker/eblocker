@@ -51,29 +51,29 @@ public class FailedConnectionSuggestionServiceTest {
         when(deviceService.getDeviceById("device:000000000013")).thenReturn(createDevice("device:000000000013", true, true, true));
 
         when(squidWarningService.updatedFailedConnections()).thenReturn(new ArrayList<>(asList(
-            new FailedConnection(asList("device:000000000000", "device:000000000001", "device:000000000002", "device:000000000003"), asList("test.com"), asList("error:0"),
-                ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global0.com"), asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global1.com"), asList("error:1"), ZonedDateTime.of(2018, 1, 14, 2, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global2.com"), asList("error:2"), ZonedDateTime.of(2018, 1, 14, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global3.com"), asList("error:3"), ZonedDateTime.of(2018, 1, 14, 4, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global4.com"), asList("error:4"), ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000013"), asList("api.global0.com"), asList("error:1"), ZonedDateTime.of(2018, 1, 14, 12, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000013"), asList("shared-cdn.com", "shared-cdn2.com"), asList("error:5"), ZonedDateTime.of(2018, 1, 12, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("test.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000013"), asList("fancy-pants.com"), asList("error:11"), ZonedDateTime.of(2018, 4, 13, 10, 35, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000013"), asList("fancy.com", "pants.com", "fancy-pants.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("pants.com"), asList("error:12"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()))));
+                new FailedConnection(asList("device:000000000000", "device:000000000001", "device:000000000002", "device:000000000003"), asList("test.com"), asList("error:0"),
+                        ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global0.com"), asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global1.com"), asList("error:1"), ZonedDateTime.of(2018, 1, 14, 2, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global2.com"), asList("error:2"), ZonedDateTime.of(2018, 1, 14, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global3.com"), asList("error:3"), ZonedDateTime.of(2018, 1, 14, 4, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global4.com"), asList("error:4"), ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000013"), asList("api.global0.com"), asList("error:1"), ZonedDateTime.of(2018, 1, 14, 12, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000013"), asList("shared-cdn.com", "shared-cdn2.com"), asList("error:5"), ZonedDateTime.of(2018, 1, 12, 3, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("test.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000013"), asList("fancy-pants.com"), asList("error:11"), ZonedDateTime.of(2018, 4, 13, 10, 35, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000013"), asList("fancy.com", "pants.com", "fancy-pants.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("pants.com"), asList("error:12"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()))));
 
         // note: app modules use "name" as key instead of id :/
         AppWhitelistModule autoSsl = createAppModule(9997, "Auto-SSL-Test", false, false);
         when(appModuleService.getAll()).thenReturn(asList(
-            createAppModule(0, "app0", false, false, "global0.com", "shared-cdn.com"),
-            createAppModule(1, "app1", false, true, "global1.com"),
-            createAppModule(2, "app2", true, false, "global2.com", "shared-cdn.com"),
-            createAppModule(3, "app3", true, true, "global3.com"),
-            createAppModule(4, "app4", false, false, "global4.com"),
-            autoSsl));
+                createAppModule(0, "app0", false, false, "global0.com", "shared-cdn.com"),
+                createAppModule(1, "app1", false, true, "global1.com"),
+                createAppModule(2, "app2", true, false, "global2.com", "shared-cdn.com"),
+                createAppModule(3, "app3", true, true, "global3.com"),
+                createAppModule(4, "app4", false, false, "global4.com"),
+                autoSsl));
         when(appModuleService.getAutoSslAppModule()).thenReturn(autoSsl);
 
         clock.setZonedDateTime(ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.systemDefault()));
@@ -120,20 +120,20 @@ public class FailedConnectionSuggestionServiceTest {
         when(deviceService.getDeviceById("device:000000000003")).thenReturn(createDevice("device:000000000003", true, true, true));
 
         List<FailedConnection> failedConnections = asList(
-            new FailedConnection(asList("device:000000000003"), asList("global0.com"), asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("global4.com"), asList("error:4"), ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
-            new FailedConnection(asList("device:000000000003"), asList("test.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()));
+                new FailedConnection(asList("device:000000000003"), asList("global0.com"), asList("error:0"), ZonedDateTime.of(2018, 1, 14, 1, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("global4.com"), asList("error:4"), ZonedDateTime.of(2018, 1, 14, 5, 0, 0, 0, ZoneId.systemDefault()).toInstant()),
+                new FailedConnection(asList("device:000000000003"), asList("test.com"), asList("error:10"), ZonedDateTime.of(2018, 4, 13, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant()));
         when(squidWarningService.updatedFailedConnections()).thenReturn(new ArrayList<>(failedConnections));
 
         String[] allDomains = failedConnections.stream().map(FailedConnection::getDomains).flatMap(List::stream).toArray(String[]::new);
 
         // note: app modules use "name" as key instead of id :/
         AppWhitelistModule sslErrorCollectingApp = createAppModule(autoSSLAppModuleId, "SSL collector", false, false,
-            allDomains);
+                allDomains);
         when(appModuleService.getAll()).thenReturn(asList(
-            createAppModule(0, "app0", false, false, "global0.com", "shared-cdn.com"),
-            createAppModule(4, "app4", false, false, "global4.com"),
-            sslErrorCollectingApp));
+                createAppModule(0, "app0", false, false, "global0.com", "shared-cdn.com"),
+                createAppModule(4, "app4", false, false, "global4.com"),
+                sslErrorCollectingApp));
 
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslErrorCollectingApp);
 

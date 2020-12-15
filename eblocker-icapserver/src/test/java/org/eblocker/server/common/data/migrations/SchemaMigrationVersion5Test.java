@@ -73,7 +73,7 @@ public class SchemaMigrationVersion5Test {
         Assert.assertFalse(devices.get(1).isUseAnonymizationService());
         Assert.assertTrue(devices.get(2).isUseAnonymizationService());
         Assert.assertTrue(devices.get(3).isUseAnonymizationService());
-        
+
         // ensure version has been updated
         Mockito.verify(dataSource).setVersion("5");
     }

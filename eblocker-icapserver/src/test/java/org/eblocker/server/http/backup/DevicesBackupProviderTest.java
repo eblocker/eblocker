@@ -18,6 +18,7 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.DisplayIconMode;
 import org.eblocker.server.common.data.FilterMode;
@@ -25,7 +26,6 @@ import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
-import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
@@ -90,8 +90,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setHasRootCAInstalled(true);
         computerBefore.setIconMode(DisplayIconMode.ON);
         computerBefore.setIconPosition(DisplayIconPosition.RIGHT);
-            List<IpAddress> ipAddressesBefore = new ArrayList<>();
-            ipAddressesBefore.add(Ip4Address.parse("192.168.0.2"));
+        List<IpAddress> ipAddressesBefore = new ArrayList<>();
+        ipAddressesBefore.add(Ip4Address.parse("192.168.0.2"));
         computerBefore.setIpAddresses(ipAddressesBefore);
         computerBefore.setIpAddressFixed(true);
         computerBefore.setIsVpnClient(true);
@@ -111,7 +111,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setSslEnabled(true);
         computerBefore.setSslRecordErrorsEnabled(true);
         computerBefore.setUseAnonymizationService(true);
-            Integer vpnProfileId = 1122;
+        Integer vpnProfileId = 1122;
         computerBefore.setUseVPNProfileID(vpnProfileId);
         computerBefore.setVendor("Computer-Company, Inc.");
 
@@ -140,10 +140,10 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setName("Mein Computer modifiziert");
         // More attributes
         computerAfter.setAreDeviceMessagesSettingsDefault(false);
-            int computerAfterAssignedUser = 1230;
+        int computerAfterAssignedUser = 1230;
         computerAfter.setAssignedUser(computerAfterAssignedUser);
         computerAfter.setControlBarAutoMode(false);
-            int computerAfterDefaultSystemUser = 12340;
+        int computerAfterDefaultSystemUser = 12340;
         computerAfter.setDefaultSystemUser(computerAfterDefaultSystemUser);
         computerAfter.setEnabled(false);
         computerAfter.setFilterMode(FilterMode.NONE);
@@ -152,8 +152,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setHasRootCAInstalled(false);
         computerAfter.setIconMode(DisplayIconMode.OFF);
         computerAfter.setIconPosition(DisplayIconPosition.LEFT);
-            List<IpAddress> ipAddressesAfter = new ArrayList<>();
-            ipAddressesAfter.add(Ip4Address.parse("192.168.0.22"));
+        List<IpAddress> ipAddressesAfter = new ArrayList<>();
+        ipAddressesAfter.add(Ip4Address.parse("192.168.0.22"));
         computerAfter.setIpAddresses(ipAddressesAfter);
         computerAfter.setIpAddressFixed(false);
         computerAfter.setIsVpnClient(false);
@@ -162,7 +162,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setMessageShowInfo(false);
         computerAfter.setMobilePrivateNetworkAccess(false);
         computerAfter.setMobileState(false);
-            int computerAfterOperatingUser = 123450;
+        int computerAfterOperatingUser = 123450;
         computerAfter.setOperatingUser(computerAfterOperatingUser);
         computerAfter.setPaused(false);// The pause does not survive the backup
         computerAfter.setRouteThroughTor(false);
@@ -187,8 +187,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
 
         exportAndImportWithDevicesBackupProvider(dataSource, provider);
 
-//        Mockito.verify(deviceService).updateDevice(gatewayAfter);
-//        Mockito.verify(deviceService).updateDevice(computerAfter);
+        //        Mockito.verify(deviceService).updateDevice(gatewayAfter);
+        //        Mockito.verify(deviceService).updateDevice(computerAfter);
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);
         Mockito.verify(deviceService, Mockito.times(2)).updateDevice(argCaptor.capture());
         Device restoredGateway = argCaptor.getAllValues().get(0);
@@ -223,7 +223,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(Ip4Address.parse("192.168.0.22"), restoredDevice.getIpAddresses().get(0));
         Assert.assertEquals(computerBefore.isIpAddressFixed(), restoredDevice.isIpAddressFixed());
         // FUTURE: VPN settings are currently not saved
-//        Assert.assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
+        //        Assert.assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
         Assert.assertEquals(computerBefore.isMalwareFilterEnabled(), restoredDevice.isMalwareFilterEnabled());
         Assert.assertEquals(computerBefore.isMessageShowAlert(), restoredDevice.isMessageShowAlert());
         Assert.assertEquals(computerBefore.isMessageShowInfo(), restoredDevice.isMessageShowInfo());
@@ -263,7 +263,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setAssignedUser(123);
         computerBefore.setDefaultSystemUser(1234);
         computerBefore.setOperatingUser(12345);
-            Integer vpnProfileId = 1122;
+        Integer vpnProfileId = 1122;
         computerBefore.setUseVPNProfileID(vpnProfileId);
 
         List<Device> devicesBefore = new ArrayList<Device>(
@@ -290,7 +290,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
                 .thenReturn(computerAfter);
 
         exportAndImportWithDevicesBackupProvider(dataSource, provider);
-        
+
         // Verify computer has been restored correctly
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);
         Mockito.verify(deviceService).updateDevice(argCaptor.capture());

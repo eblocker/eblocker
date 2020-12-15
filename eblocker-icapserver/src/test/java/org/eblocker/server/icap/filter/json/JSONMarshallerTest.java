@@ -36,65 +36,65 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class JSONMarshallerTest {
-	private static final Logger LOG = LoggerFactory.getLogger(JSONMarshallerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JSONMarshallerTest.class);
 
-	@Test
-	public void test() {
-		FilterStore store = createFilterStore();
-		LOG.debug("store: {}", store);
+    @Test
+    public void test() {
+        FilterStore store = createFilterStore();
+        LOG.debug("store: {}", store);
 
-		String json = marshall(store);
-		LOG.debug("json: {}", json);
+        String json = marshall(store);
+        LOG.debug("json: {}", json);
 
-		FilterStore unmarshalled = unmarshall(json);
-		LOG.debug("unmarshalled: {}", unmarshalled);
+        FilterStore unmarshalled = unmarshall(json);
+        LOG.debug("unmarshalled: {}", unmarshalled);
 
-		assertEquals(store, unmarshalled);
-	}
+        assertEquals(store, unmarshalled);
+    }
 
-	private String marshall(FilterStore store) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONMarshaller.marshall(store, out);
-		return new String(out.toByteArray());
-	}
+    private String marshall(FilterStore store) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        JSONMarshaller.marshall(store, out);
+        return new String(out.toByteArray());
+    }
 
-	private FilterStore unmarshall(String json) {
-		ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes());
-		return JSONMarshaller.unmarshall(in);
-	}
+    private FilterStore unmarshall(String json) {
+        ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes());
+        return JSONMarshaller.unmarshall(in);
+    }
 
-	private FilterStore createFilterStore() {
-		SynchronousLearningFilter learningFilter = new SynchronousLearningFilter(true);
-		FilterStore store = new FilterStore(learningFilter);
-		createLearningFilter(store);
-		return store;
-	}
+    private FilterStore createFilterStore() {
+        SynchronousLearningFilter learningFilter = new SynchronousLearningFilter(true);
+        FilterStore store = new FilterStore(learningFilter);
+        createLearningFilter(store);
+        return store;
+    }
 
-	private void createLearningFilter(FilterStore store) {
-	    List<Filter> filters = new ArrayList<>();
-		filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", null));
-		filters.add(createUrlFilter(store, StringMatchType.REGEX, "foo.*bar", null));
-		filters.add(createUrlFilter(store, StringMatchType.REGEX, "foo.*bar 2", null));
-		filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", "brightmammoth.com"));
-		filters.add(createUrlFilter(store, StringMatchType.CONTAINS, "contains", "brightmammoth.com"));
-		filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", "etracker.com"));
+    private void createLearningFilter(FilterStore store) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", null));
+        filters.add(createUrlFilter(store, StringMatchType.REGEX, "foo.*bar", null));
+        filters.add(createUrlFilter(store, StringMatchType.REGEX, "foo.*bar 2", null));
+        filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", "brightmammoth.com"));
+        filters.add(createUrlFilter(store, StringMatchType.CONTAINS, "contains", "brightmammoth.com"));
+        filters.add(createUrlFilter(store, StringMatchType.REGEX, "hello.*world", "etracker.com"));
         filters.add(createUrlFilter(store, StringMatchType.ENDSWITH, "endswith", "etracker.com"));
 
         store.update(filters);
-	}
+    }
 
-	private Filter createUrlFilter(FilterStore store, StringMatchType matchType, String matchString, String domain) {
-		Filter filter = UrlFilterFactory.getInstance()
-				.setStringMatchType(matchType)
-				.setMatchString(matchString)
-				.setType(FilterType.BLOCK)
-				.setDefinition("definition::"+matchString)
-				.setDomain(domain)
-				.setPriority(FilterPriority.HIGH)
-				.setRedirectParam("redirectUrl")
-				.setReferrerDomainWhiteList(Arrays.asList("white1.com", "white2.com"))
-				.setReferrerDomainBlackList(Arrays.asList("black1.com", "black2.com"))
-				.build();
-		return filter;
-	}
+    private Filter createUrlFilter(FilterStore store, StringMatchType matchType, String matchString, String domain) {
+        Filter filter = UrlFilterFactory.getInstance()
+                .setStringMatchType(matchType)
+                .setMatchString(matchString)
+                .setType(FilterType.BLOCK)
+                .setDefinition("definition::" + matchString)
+                .setDomain(domain)
+                .setPriority(FilterPriority.HIGH)
+                .setRedirectParam("redirectUrl")
+                .setReferrerDomainWhiteList(Arrays.asList("white1.com", "white2.com"))
+                .setReferrerDomainBlackList(Arrays.asList("black1.com", "black2.com"))
+                .build();
+        return filter;
+    }
 }

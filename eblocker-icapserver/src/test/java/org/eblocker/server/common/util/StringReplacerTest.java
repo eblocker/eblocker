@@ -26,9 +26,9 @@ public class StringReplacerTest {
     @Test
     public void find() {
         StringReplacer replacer = new StringReplacer()
-            .add("first", "1st")
-            .add("second", "2nd")
-            .add("third", "3rd");
+                .add("first", "1st")
+                .add("second", "2nd")
+                .add("third", "3rd");
         assertMatch(0, 5, "first", "1st", replacer.find("first second third"));
         assertMatch(6, 12, "second", "2nd", replacer.find(5, "first second third"));
         assertMatch(13, 18, "third", "3rd", replacer.find(12, "first second third"));
@@ -38,9 +38,9 @@ public class StringReplacerTest {
     @Test
     public void findAll() {
         StringReplacer replacer = new StringReplacer()
-            .add("first", "1st")
-            .add("second", "2nd")
-            .add("third", "3rd");
+                .add("first", "1st")
+                .add("second", "2nd")
+                .add("third", "3rd");
 
         List<StringReplacer.Match> matches = replacer.findAll("first second third first second third");
         Assert.assertEquals(6, matches.size());
@@ -56,22 +56,22 @@ public class StringReplacerTest {
     public void replace() {
         Assert.assertEquals("ABCDEF", new StringReplacer().replace("ABCDEF"));
         Assert.assertEquals("ABABBCCC", new StringReplacer()
-            .add("a", "A")
-            .add("ba", "BA")
-            .add("bb", "BB")
-            .add("ccc", "CCC")
-            .replace("ababbccc"));
+                .add("a", "A")
+                .add("ba", "BA")
+                .add("bb", "BB")
+                .add("ccc", "CCC")
+                .replace("ababbccc"));
         Assert.assertEquals("xxAxxBAxxBBxxCCCxx", new StringReplacer()
-            .add("a", "A")
-            .add("ba", "BA")
-            .add("bb", "BB")
-            .add("ccc", "CCC")
-            .replace("xxaxxbaxxbbxxcccxx"));
+                .add("a", "A")
+                .add("ba", "BA")
+                .add("bb", "BB")
+                .add("ccc", "CCC")
+                .replace("xxaxxbaxxbbxxcccxx"));
         Assert.assertEquals("0xdeadbeef", new StringReplacer()
-            .add("dead", "beef")
-            .add("beef", "dead")
-            .add("beefdead", "X")
-            .replace("0xbeefdead"));
+                .add("dead", "beef")
+                .add("beef", "dead")
+                .add("beefdead", "X")
+                .replace("0xbeefdead"));
     }
 
     private void assertMatch(int startIndex, int endIndex, String target, String replacement, StringReplacer.Match match) {

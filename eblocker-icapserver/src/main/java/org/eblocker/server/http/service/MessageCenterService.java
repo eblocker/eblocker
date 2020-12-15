@@ -16,28 +16,43 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageProvider;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
+import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.CertificateExpirationMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.CertificateUntrustedMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.DailyNewsMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.EventMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.LicenseExpirationMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.LocalDnsIsNotGatewayMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.MessageProviderMessageId;
+import org.eblocker.server.common.data.messagecenter.provider.ReleaseNotesMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.RouterCompatibilityMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.SslSupportMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.UnreliableDnsServerMessageProvider;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageProvider;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
-import org.eblocker.server.common.data.messagecenter.provider.*;
 import org.restexpress.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -94,7 +109,7 @@ public class MessageCenterService {
             ProductInfoService productInfoService,
             DeviceService deviceService,
             UserService userService,
-            ParentalControlService parentalControlService ) {
+            ParentalControlService parentalControlService) {
         this(dataSource,
                 Arrays.asList(
                         eventMessageProvider,
@@ -117,8 +132,8 @@ public class MessageCenterService {
     }
 
     public MessageCenterService(DataSource dataSource, List<MessageProvider> messageProviders,
-            ProductInfoService productInfoService, DeviceService deviceService, UserService userService,
-            ParentalControlService parentalControlService) {
+                                ProductInfoService productInfoService, DeviceService deviceService, UserService userService,
+                                ParentalControlService parentalControlService) {
         this.dataSource = dataSource;
         this.messageProviders = messageProviders;
         this.productInfoService = productInfoService;
@@ -152,15 +167,15 @@ public class MessageCenterService {
         for (MessageContainer messageContainer : cache.values()) {
             // Show message if visible and if not Info when info messages are disabled and if not alert when alert messages are disabled
             if (messageContainer.getVisibility().isForDevice(deviceId) &&
-                !(messageContainer.getMessage().getMessageSeverity() != null &&
-                    messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.INFO) &&
-                    dev != null &&
-                    !dev.isMessageShowInfo()) &&
-                !(messageContainer.getMessage().getMessageSeverity() != null &&
-                    messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.ALERT) &&
-                    dev != null &&
-                    !dev.isMessageShowAlert())
-                ) {
+                    !(messageContainer.getMessage().getMessageSeverity() != null &&
+                            messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.INFO) &&
+                            dev != null &&
+                            !dev.isMessageShowInfo()) &&
+                    !(messageContainer.getMessage().getMessageSeverity() != null &&
+                            messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.ALERT) &&
+                            dev != null &&
+                            !dev.isMessageShowAlert())
+            ) {
                 messages.add(messageContainer.getMessage());
             }
         }
@@ -215,7 +230,7 @@ public class MessageCenterService {
      * Find the responsible provider for the current message
      */
     private MessageProvider getProvider(MessageContainer messageContainer) {
-        for (MessageProvider provider: messageProviders) {
+        for (MessageProvider provider : messageProviders) {
             if (provider.isResponsibleFor(messageContainer)) {
                 return provider;
             }
@@ -230,16 +245,16 @@ public class MessageCenterService {
      */
     public void updateMessages() {
         synchronized (cache) {
-            for (MessageProvider provider: messageProviders) {
+            for (MessageProvider provider : messageProviders) {
                 provider.update(cache);
             }
         }
         List<MessageContainer> previous = dataSource.getAll(MessageContainer.class);
-        for (MessageContainer messageContainer: cache.values()) {
+        for (MessageContainer messageContainer : cache.values()) {
             save(messageContainer);
         }
         previous.removeAll(cache.values());
-        for (MessageContainer messageContainer: previous) {
+        for (MessageContainer messageContainer : previous) {
             dataSource.delete(MessageContainer.class, messageContainer.getMessage().getId());
         }
         LOG.info("Currently there are {} messages", cache.size());
@@ -264,12 +279,12 @@ public class MessageCenterService {
         List<MessageCenterMessage> messagesReduced = new ArrayList<>(messages);
 
         if (device == null ||
-            !device.isSslEnabled() ||
-            !sslService.isSslEnabled() ||
-            !sslService.isRenewalCaAvailable() ||
-            isRenewalInstalled == null ||
-            isRenewalInstalled.equals(SslCertificateClientInstallationTracker.Status.INSTALLED) ||
-            isRenewalInstalled.equals(SslCertificateClientInstallationTracker.Status.UNKNOWN)) {
+                !device.isSslEnabled() ||
+                !sslService.isSslEnabled() ||
+                !sslService.isRenewalCaAvailable() ||
+                isRenewalInstalled == null ||
+                isRenewalInstalled.equals(SslCertificateClientInstallationTracker.Status.INSTALLED) ||
+                isRenewalInstalled.equals(SslCertificateClientInstallationTracker.Status.UNKNOWN)) {
             // Do not show SSL expiration message for this device / user agent
             // Default is to show the message.
             int index = getMessageIndex(messagesReduced, MessageProviderMessageId.MESSAGE_CERTIFICATE_EXPIRATION_WARNING.getId());
@@ -288,12 +303,12 @@ public class MessageCenterService {
         List<MessageCenterMessage> messagesReduced = new ArrayList<>(messages);
 
         if (device == null ||
-            !device.isSslEnabled() ||
-            !sslService.isSslEnabled() ||
-            !sslService.isCaAvailable() ||
-            isCaInstalled == null ||
-            isCaInstalled.equals(SslCertificateClientInstallationTracker.Status.INSTALLED) ||
-            isCaInstalled.equals(SslCertificateClientInstallationTracker.Status.UNKNOWN)) {
+                !device.isSslEnabled() ||
+                !sslService.isSslEnabled() ||
+                !sslService.isCaAvailable() ||
+                isCaInstalled == null ||
+                isCaInstalled.equals(SslCertificateClientInstallationTracker.Status.INSTALLED) ||
+                isCaInstalled.equals(SslCertificateClientInstallationTracker.Status.UNKNOWN)) {
             // Do not show SSL untrusted message for this device / user agent
             // Default is to show the message.
             int index = getMessageIndex(messagesReduced, MessageProviderMessageId.MESSAGE_CERTIFICATE_UNTRUSTED_WARNING.getId());

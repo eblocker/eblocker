@@ -16,26 +16,26 @@
  */
 package org.eblocker.server.common.session;
 
-import static org.junit.Assert.*;
-
 import org.eblocker.server.common.transaction.Decision;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class DecisionStoreTest {
 
-	@Test
-	public void test() {
-		ForwardDecisionStore forwardDecisionStore = new ForwardDecisionStore();
-		
-		forwardDecisionStore.addDecision("pass-1", Decision.PASS);
-		forwardDecisionStore.addDecision("pass-2", Decision.PASS);
-		forwardDecisionStore.addDecision("block-1", Decision.PASS);
-		forwardDecisionStore.addDecision("block-1", Decision.BLOCK);
-		
-		assertEquals(Decision.PASS, forwardDecisionStore.popDecision("pass-1"));
-		assertEquals(Decision.PASS, forwardDecisionStore.popDecision("pass-2"));
-		assertEquals(Decision.BLOCK, forwardDecisionStore.popDecision("block-1"));
-		assertEquals(Decision.NO_DECISION, forwardDecisionStore.popDecision("unknown-1"));
-	}
+    @Test
+    public void test() {
+        ForwardDecisionStore forwardDecisionStore = new ForwardDecisionStore();
+
+        forwardDecisionStore.addDecision("pass-1", Decision.PASS);
+        forwardDecisionStore.addDecision("pass-2", Decision.PASS);
+        forwardDecisionStore.addDecision("block-1", Decision.PASS);
+        forwardDecisionStore.addDecision("block-1", Decision.BLOCK);
+
+        assertEquals(Decision.PASS, forwardDecisionStore.popDecision("pass-1"));
+        assertEquals(Decision.PASS, forwardDecisionStore.popDecision("pass-2"));
+        assertEquals(Decision.BLOCK, forwardDecisionStore.popDecision("block-1"));
+        assertEquals(Decision.NO_DECISION, forwardDecisionStore.popDecision("unknown-1"));
+    }
 
 }

@@ -51,7 +51,7 @@ public class DnsResolverTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
 
         List<DnsQuery> queries = Collections.singletonList(new DnsQuery(DnsRecordType.A, "bread.box"));
-        for(int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 100; ++i) {
             resolver.resolve("192.168.1.1", queries);
         }
 

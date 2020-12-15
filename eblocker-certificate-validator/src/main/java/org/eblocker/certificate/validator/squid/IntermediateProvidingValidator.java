@@ -16,13 +16,12 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.eblocker.crypto.pki.PKI;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.eblocker.crypto.pki.PKI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.x500.X500Principal;
-
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.ArrayDeque;
@@ -53,13 +52,13 @@ public class IntermediateProvidingValidator implements CertificateValidator {
         log.debug("trying to fill in intermediate certificates to request {} for {}", request.getId(), request.getCert()[0].getSubjectDN());
         X509Certificate[] chain = addIntermediateCertifcates(request.getCert());
         CertificateValidationRequest completedRequest = new CertificateValidationRequest(request.getId(),
-            request.getProtoVersion(), request.getCipher(), request.getHost(), chain, new String[0], new String[0],
-            useConcurrency);
+                request.getProtoVersion(), request.getCipher(), request.getHost(), chain, new String[0], new String[0],
+                useConcurrency);
         return nextValidator.validate(completedRequest, useConcurrency);
     }
 
     private boolean possibleMissesIntermediateCertificate(CertificateValidationRequest request) {
-        for(String errorName : request.getErrorName()) {
+        for (String errorName : request.getErrorName()) {
             if ("X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY".equals(errorName)) {
                 return true;
             }

@@ -132,8 +132,8 @@ public class BlacklistCompilerTest {
     private List<byte[]> hash(List<String> domains) {
         HashFunction hashFunction = Hashing.sipHash24();
         return domains.stream()
-            .map(domain -> hashFunction.hashString(domain, Charsets.UTF_8))
-            .map(HashCode::asBytes)
-            .collect(Collectors.toList());
+                .map(domain -> hashFunction.hashString(domain, Charsets.UTF_8))
+                .map(HashCode::asBytes)
+                .collect(Collectors.toList());
     }
 }

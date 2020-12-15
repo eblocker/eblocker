@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +52,7 @@ public class DhcpClientLeaseReader {
         String interfaceName = null;
         String fixedAddress = null;
         Map<String, String> options = new HashMap<>();
-        for(i = i + 1; i < lines.size(); ++i) {
+        for (i = i + 1; i < lines.size(); ++i) {
             String line = lines.get(i);
 
             if ("}".equals(line)) {

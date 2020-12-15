@@ -16,11 +16,11 @@
  */
 package org.eblocker.certificate.validator.squid;
 
+import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.eblocker.certificate.validator.http.HttpTestUtils;
 import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilder;
 import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import org.eblocker.crypto.CryptoException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;

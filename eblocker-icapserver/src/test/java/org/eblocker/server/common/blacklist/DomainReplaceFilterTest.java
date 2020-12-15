@@ -73,5 +73,4 @@ public class DomainReplaceFilterTest {
         Assert.assertEquals(expectedFilter, decision.getFilter());
     }
 
-
 }

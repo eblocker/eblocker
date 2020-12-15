@@ -16,24 +16,22 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import java.util.Map;
-
+import com.google.inject.Inject;
+import org.eblocker.server.app.DeviceProperties;
+import org.eblocker.server.common.data.SetupWizardInfo;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
 import org.eblocker.server.http.controller.SetupWizardController;
 import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
-
-import org.eblocker.server.common.data.SetupWizardInfo;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eblocker.server.app.DeviceProperties;
-import com.google.inject.Inject;
+import java.util.Map;
 
-/** This controller can just answer the question if the setup wizard was done before
- *
+/**
+ * This controller can just answer the question if the setup wizard was done before
  */
 public class SetupWizardControllerImpl implements SetupWizardController {
 
@@ -43,24 +41,23 @@ public class SetupWizardControllerImpl implements SetupWizardController {
     private final DeviceRegistrationProperties registrationProperties;
     private final RegistrationServiceAvailabilityCheck registrationServiceAvailabilityCheck;
 
-
     @Inject
     public SetupWizardControllerImpl(DeviceProperties deviceProperties,
                                      DeviceRegistrationProperties deviceRegistration,
-                                     RegistrationServiceAvailabilityCheck registrationServiceAvailabilityCheck){
+                                     RegistrationServiceAvailabilityCheck registrationServiceAvailabilityCheck) {
         this.deviceProperties = deviceProperties;
         this.registrationProperties = deviceRegistration;
         this.registrationServiceAvailabilityCheck = registrationServiceAvailabilityCheck;
     }
 
     @Override
-    public SetupWizardInfo getInfo(Request request, Response response){
+    public SetupWizardInfo getInfo(Request request, Response response) {
         return new SetupWizardInfo(
-            registrationProperties.getRegistrationState() == RegistrationState.NEW,
-            deviceProperties.isSerialNumberAvailable(),
-            deviceProperties.getSerialNumberPattern(),
-            deviceProperties.getSerialnumberExample(),
-            registrationServiceAvailabilityCheck.isRegistrationAvailable()
+                registrationProperties.getRegistrationState() == RegistrationState.NEW,
+                deviceProperties.isSerialNumberAvailable(),
+                deviceProperties.getSerialNumberPattern(),
+                deviceProperties.getSerialnumberExample(),
+                registrationServiceAvailabilityCheck.isRegistrationAvailable()
         );
     }
 
@@ -73,54 +70,54 @@ public class SetupWizardControllerImpl implements SetupWizardController {
      * @return
      */
     @Override
-    public boolean didUserFinishSetupWizard(Request request, Response response){
+    public boolean didUserFinishSetupWizard(Request request, Response response) {
         boolean result = registrationProperties.getRegistrationState() != RegistrationState.NEW;
-        log.debug("User already finished setup wizard?: "+result);
+        log.debug("User already finished setup wizard?: " + result);
         return result;
     }
 
-
-
     /**
      * Should the wizard ask for the serial number, or not?
+     *
      * @param request
      * @param response
      * @return
      */
     @Override
-    public Object askForSerialNumber(Request request, Response response){
+    public Object askForSerialNumber(Request request, Response response) {
         return deviceProperties.isSerialNumberAvailable();
     }
 
     /**
      * Get example for serial number
+     *
      * @param request
      * @param response
      * @return
      */
     @Override
-    public Object getSerialNumberExample(Request request, Response response){
+    public Object getSerialNumberExample(Request request, Response response) {
         return deviceProperties.getSerialnumberExample();
     }
 
     /**
      * Check if the serial number is valid (right format)
+     *
      * @param request
      * @param response
      * @return
      */
     @Override
-    public Object checkSerialNumber(Request request, Response response){
-        Map<String,String> map = request.getBodyAs(Map.class);
+    public Object checkSerialNumber(Request request, Response response) {
+        Map<String, String> map = request.getBodyAs(Map.class);
         String serialNumber = map.get("deviceSerialNumber");
-        if(serialNumber == null){
+        if (serialNumber == null) {
             return false;
         }
         boolean result = deviceProperties.isSerialNumberMatching(serialNumber);
-        if(result){
+        if (result) {
             log.info("Serial number is well formatted.");
-        }
-        else{
+        } else {
             log.info("Serial number is in wrong format.");
         }
 

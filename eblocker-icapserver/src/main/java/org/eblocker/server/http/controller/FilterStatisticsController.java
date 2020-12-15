@@ -23,8 +23,12 @@ import org.restexpress.Response;
 
 public interface FilterStatisticsController {
     FilterStats getStats(Request request, Response response);
+
     FilterStats getTotalStats(Request request, Response response);
+
     void resetTotalStats(Request request, Response response);
+
     BlockedDomainsStats getBlockedDomainsStats(Request request, Response response);
+
     BlockedDomainsStats resetBlockedDomainsStats(Request request, Response response);
 }

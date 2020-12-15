@@ -16,21 +16,21 @@
  */
 package org.eblocker.server.icap.filter;
 
-import org.eblocker.server.common.transaction.TransactionContext;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import org.eblocker.server.common.transaction.TransactionContext;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = As.PROPERTY, property = "@c")
 public interface Filter extends Comparable<Filter> {
 
-	FilterResult filter(TransactionContext context);
+    FilterResult filter(TransactionContext context);
 
-	FilterPriority getPriority();
+    FilterPriority getPriority();
 
-	int getMatches();
+    int getMatches();
 
-	String getDefinition();
+    String getDefinition();
 
-	String getDomain();
+    String getDomain();
 
 }

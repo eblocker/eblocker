@@ -27,10 +27,10 @@ import org.restexpress.pipeline.Postprocessor;
  */
 public class CacheControlPostProcessor implements Postprocessor {
 
-	@Override
-	public void process(Request request, Response response) {
-		if (! response.hasHeader("Cache-Control")) {
-			response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-		}
-	}
+    @Override
+    public void process(Request request, Response response) {
+        if (!response.hasHeader("Cache-Control")) {
+            response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        }
+    }
 }

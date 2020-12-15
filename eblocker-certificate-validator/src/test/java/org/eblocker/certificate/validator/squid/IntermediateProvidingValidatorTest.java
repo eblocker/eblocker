@@ -24,7 +24,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.security.auth.x500.X500Principal;
-
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +53,7 @@ public class IntermediateProvidingValidatorTest {
 
     @Test
     public void testCompletingChainOnlyLeafCertificate() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[] { chain[0] }, new String[] { "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[] { "cert_0" }, true);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0] }, new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[]{ "cert_0" }, true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
@@ -72,7 +71,8 @@ public class IntermediateProvidingValidatorTest {
 
     @Test
     public void testCompletingIncompleteChain() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[] { chain[0], chain[1], chain[3] }, new String[] { "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[] { "cert_0" }, true);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0], chain[1], chain[3] }, new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" },
+                new String[]{ "cert_0" }, true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
@@ -93,7 +93,7 @@ public class IntermediateProvidingValidatorTest {
         X509Certificate level2reIssueCertificate = createMockCertificate(chain[2].getSubjectX500Principal(), chain[3].getSubjectX500Principal());
         Mockito.when(intermediateCertificatesStore.get(chain[2].getSubjectX500Principal(), null, null)).thenReturn(Arrays.asList(chain[2], level2reIssueCertificate));
 
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[] { chain[0] }, new String[] { "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[] { "cert_0" }, true);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0] }, new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[]{ "cert_0" }, true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
@@ -111,7 +111,7 @@ public class IntermediateProvidingValidatorTest {
 
     @Test
     public void testNoError() {
-        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[] { chain[0] }, new String[0], new String[0], true);
+        CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0] }, new String[0], new String[0], true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
@@ -121,11 +121,11 @@ public class IntermediateProvidingValidatorTest {
 
     private X509Certificate[] createCertificateChain(String... subjects) {
         List<X500Principal> principals = new ArrayList<>();
-        for(String subject : subjects) {
+        for (String subject : subjects) {
             principals.add(new X500Principal("cn=" + subject));
         }
         List<X509Certificate> certificates = new ArrayList<>();
-        for(int i = 0; i < subjects.length - 1; ++i) {
+        for (int i = 0; i < subjects.length - 1; ++i) {
             certificates.add(createMockCertificate(principals.get(i), principals.get(i + 1)));
         }
         return certificates.toArray(new X509Certificate[0]);
@@ -137,7 +137,5 @@ public class IntermediateProvidingValidatorTest {
         Mockito.when(certificate.getIssuerX500Principal()).thenReturn(issuer);
         return certificate;
     }
-
-
 
 }

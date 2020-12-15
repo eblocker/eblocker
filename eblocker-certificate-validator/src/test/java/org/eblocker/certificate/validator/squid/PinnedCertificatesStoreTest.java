@@ -16,9 +16,9 @@
  */
 package org.eblocker.certificate.validator.squid;
 
+import com.google.common.collect.Sets;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
-import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,8 +42,8 @@ public class PinnedCertificatesStoreTest {
 
     @BeforeClass
     public static void beforeClass() throws IOException, CryptoException {
-        CERTIFICATES = new X509Certificate[] {
-            CertificateValidatorTestUtil.loadCertificateResource("sample-certs/xkcd.org.cert")
+        CERTIFICATES = new X509Certificate[]{
+                CertificateValidatorTestUtil.loadCertificateResource("sample-certs/xkcd.org.cert")
         };
     }
 
@@ -86,7 +86,7 @@ public class PinnedCertificatesStoreTest {
 
     private void createKeyStore(X509Certificate... certificates) throws IOException, CryptoException {
         String[] aliases = new String[certificates.length];
-        for(int i = 0; i < certificates.length; ++i) {
+        for (int i = 0; i < certificates.length; ++i) {
             aliases[i] = PKI.getCN(certificates[i]);
         }
         try (OutputStream out = Files.newOutputStream(storePath)) {

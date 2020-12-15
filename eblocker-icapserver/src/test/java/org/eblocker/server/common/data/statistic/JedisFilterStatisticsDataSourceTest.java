@@ -102,10 +102,10 @@ public class JedisFilterStatisticsDataSourceTest {
         Assert.assertEquals(14, counters.size());
 
         Comparator<StatisticsCounter> comparator = Comparator
-            .comparing(StatisticsCounter::getInstant)
-            .thenComparing(c -> c.getIpAddress().toString())
-            .thenComparing(StatisticsCounter::getName)
-            .thenComparing(StatisticsCounter::getReason, Comparator.nullsFirst(String::compareTo));
+                .comparing(StatisticsCounter::getInstant)
+                .thenComparing(c -> c.getIpAddress().toString())
+                .thenComparing(StatisticsCounter::getName)
+                .thenComparing(StatisticsCounter::getReason, Comparator.nullsFirst(String::compareTo));
         Collections.sort(counters, comparator);
 
         assertDnsCounter(ZonedDateTime.of(2018, 4, 10, 9, 0, 0, 0, ZoneId.systemDefault()), "192.168.1.10", "blocked_queries", null, 1, counters.get(0));
@@ -131,10 +131,10 @@ public class JedisFilterStatisticsDataSourceTest {
         Assert.assertEquals(4, counters.size());
 
         Comparator<StatisticsCounter> comparator = Comparator
-            .comparing(StatisticsCounter::getInstant)
-            .thenComparing(c -> c.getIpAddress().toString())
-            .thenComparing(StatisticsCounter::getName)
-            .thenComparing(StatisticsCounter::getReason, Comparator.nullsFirst(String::compareTo));
+                .comparing(StatisticsCounter::getInstant)
+                .thenComparing(c -> c.getIpAddress().toString())
+                .thenComparing(StatisticsCounter::getName)
+                .thenComparing(StatisticsCounter::getReason, Comparator.nullsFirst(String::compareTo));
         Collections.sort(counters, comparator);
 
         assertDnsCounter(ZonedDateTime.of(2018, 4, 10, 9, 1, 0, 0, ZoneId.systemDefault()), "fe80::192:168:1:11", "blocked_queries", null, 4, counters.get(0));
@@ -146,11 +146,11 @@ public class JedisFilterStatisticsDataSourceTest {
     @Test
     public void incrementCounters() {
         List<StatisticsCounter> counters = Arrays.asList(
-            new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 5),
-            new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 1),
-            new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 3),
-            new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 6, 0, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "queries", null, 1),
-            new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 7, 0, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "queries", null, 1)
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 0, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 5),
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 1),
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 3),
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 6, 0, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "queries", null, 1),
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 7, 0, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "queries", null, 1)
         );
         filterStatisticsDataSource.incrementCounters(counters);
 
@@ -184,9 +184,9 @@ public class JedisFilterStatisticsDataSourceTest {
         Assert.assertEquals(4, counters.size());
 
         Comparator<TotalCounter> comparator = Comparator
-            .comparing(TotalCounter::getType)
-            .thenComparing(TotalCounter::getName)
-            .thenComparing(TotalCounter::getReason, Comparator.nullsFirst(String::compareTo));
+                .comparing(TotalCounter::getType)
+                .thenComparing(TotalCounter::getName)
+                .thenComparing(TotalCounter::getReason, Comparator.nullsFirst(String::compareTo));
         counters.sort(comparator);
 
         assertTotalCounter("dns", "blocked_queries", null, 12, counters.get(0));
@@ -224,11 +224,11 @@ public class JedisFilterStatisticsDataSourceTest {
     @Test
     public void incrementTotalCounters() {
         List<TotalCounter> counters = Arrays.asList(
-            new TotalCounter("dns", "blocked_queries", "ads", 5),
-            new TotalCounter("dns", "blocked_queries", "ads", 1),
-            new TotalCounter("dns", "blocked_queries", "ads", 3),
-            new TotalCounter("dns", "queries", null, 1),
-            new TotalCounter("dns", "queries", null, 1)
+                new TotalCounter("dns", "blocked_queries", "ads", 5),
+                new TotalCounter("dns", "blocked_queries", "ads", 1),
+                new TotalCounter("dns", "blocked_queries", "ads", 3),
+                new TotalCounter("dns", "queries", null, 1),
+                new TotalCounter("dns", "queries", null, 1)
         );
         filterStatisticsDataSource.incrementTotalCounters(counters);
 

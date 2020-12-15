@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.blacklist.CachingFilter;
 import org.eblocker.server.common.blacklist.DomainBlockingService;
 import org.eblocker.server.http.controller.DomainBlockingController;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

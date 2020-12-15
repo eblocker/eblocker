@@ -33,8 +33,6 @@ import java.util.List;
  *         .add("third", "3rd")
  *         .replace("first second third")
  * </pre>
- *
- *
  */
 public class StringReplacer {
 
@@ -44,12 +42,12 @@ public class StringReplacer {
 
     public StringReplacer add(String target, String replacement) {
         Node previous = root;
-        for(int i = 0; i < target.length(); ++i) {
+        for (int i = 0; i < target.length(); ++i) {
             char c = target.charAt(i);
 
             Node next = null;
             if (previous.next != null) {
-                for(Node node : previous.next) {
+                for (Node node : previous.next) {
                     if (node.c == c) {
                         next = node;
                         break;
@@ -93,11 +91,11 @@ public class StringReplacer {
 
         char[] target = new char[maxDepth];
 
-        for(int i = index; i <= s.length() - minDepth; ++i) {
+        for (int i = index; i <= s.length() - minDepth; ++i) {
             Node previous = root;
             for (int j = 0; j < maxDepth; ++j) {
                 Node next = null;
-                for(Node node : previous.next) {
+                for (Node node : previous.next) {
                     if (node.c == s.charAt(i + j)) {
                         target[j] = node.c;
                         if (node.replacement != null) {
@@ -120,7 +118,7 @@ public class StringReplacer {
         List<Match> matches = new ArrayList<>();
         Match match;
         int index = 0;
-        while((match = find(index, s)) != null) {
+        while ((match = find(index, s)) != null) {
             matches.add(match);
             index = match.getEndIndex();
         }
@@ -130,7 +128,7 @@ public class StringReplacer {
     public String replace(CharSequence s) {
         StringBuilder sb = new StringBuilder();
         int index = 0;
-        while(index < s.length()) {
+        while (index < s.length()) {
             Match match = find(index, s);
             if (match == null) {
                 sb.append(s.subSequence(index, s.length()));

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.data.statistic.BlockedDomainsStatisticService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.statistic.BlockedDomainsStatisticService;
 
 public class BlockedDomainsWriteScheduler extends FixedDelayScheduler {
 

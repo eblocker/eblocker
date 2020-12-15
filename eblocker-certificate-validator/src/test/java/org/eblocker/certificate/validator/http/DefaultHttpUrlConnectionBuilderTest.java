@@ -62,18 +62,18 @@ public class DefaultHttpUrlConnectionBuilderTest {
     public void testGetRequest() throws IOException {
         byte[] responseBody = "<xml></xml>".getBytes();
         SERVER
-            .when(HttpRequest.request()
-                .withMethod("GET")
-                .withHeader("Accept", "application/xml")
-                .withPath("/get"))
-            .respond(HttpResponse.response()
-                .withStatusCode(200)
-                .withBody(responseBody));
+                .when(HttpRequest.request()
+                        .withMethod("GET")
+                        .withHeader("Accept", "application/xml")
+                        .withPath("/get"))
+                .respond(HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody(responseBody));
 
         HttpURLConnection connection = builder
-            .setUrl("http://127.0.0.1:18080/get")
-            .setRequestProperty("Accept", "application/xml")
-            .get();
+                .setUrl("http://127.0.0.1:18080/get")
+                .setRequestProperty("Accept", "application/xml")
+                .get();
 
         Assert.assertEquals(200, connection.getResponseCode());
         Assert.assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
@@ -84,21 +84,21 @@ public class DefaultHttpUrlConnectionBuilderTest {
         byte[] requestBody = "test test test".getBytes();
         byte[] responseBody = "<xml></xml>".getBytes();
         SERVER
-            .when(HttpRequest.request()
-                .withMethod("POST")
-                .withHeader("Accept", "application/xml")
-                .withHeader("Content-Type", "application/text")
-                .withBody(requestBody)
-                .withPath("/post"))
-            .respond(HttpResponse.response()
-                .withStatusCode(200)
-                .withBody(responseBody));
+                .when(HttpRequest.request()
+                        .withMethod("POST")
+                        .withHeader("Accept", "application/xml")
+                        .withHeader("Content-Type", "application/text")
+                        .withBody(requestBody)
+                        .withPath("/post"))
+                .respond(HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody(responseBody));
 
         HttpURLConnection connection = builder
-            .setUrl("http://127.0.0.1:18080/post")
-            .setRequestProperty("Accept", "application/xml")
-            .setRequestProperty("Content-Type", "application/text")
-            .post(requestBody);
+                .setUrl("http://127.0.0.1:18080/post")
+                .setRequestProperty("Accept", "application/xml")
+                .setRequestProperty("Content-Type", "application/text")
+                .post(requestBody);
 
         Assert.assertEquals(200, connection.getResponseCode());
         Assert.assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
@@ -107,22 +107,22 @@ public class DefaultHttpUrlConnectionBuilderTest {
     @Test
     public void testIfModifiedSince() throws IOException {
         SERVER
-            .when(HttpRequest.request()
-                .withMethod("GET")
-                .withPath("/get")
-                .withHeader(NottableString.not("If-Modified-Since"), NottableString.string(".*")))
-            .respond(HttpResponse.response()
-                .withStatusCode(200)
-                .withBody("header-not-present"));
+                .when(HttpRequest.request()
+                        .withMethod("GET")
+                        .withPath("/get")
+                        .withHeader(NottableString.not("If-Modified-Since"), NottableString.string(".*")))
+                .respond(HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody("header-not-present"));
 
         SERVER
-            .when(HttpRequest.request()
-                .withMethod("GET")
-                .withPath("/get")
-                .withHeader("If-Modified-Since", ""))
-            .respond(HttpResponse.response()
-                .withStatusCode(200)
-                .withBody("header-present"));
+                .when(HttpRequest.request()
+                        .withMethod("GET")
+                        .withPath("/get")
+                        .withHeader("If-Modified-Since", ""))
+                .respond(HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody("header-present"));
 
         HttpURLConnection connectionWithoutIfModifiedSince = builder.setUrl("http://127.0.0.1:18080/get").get();
         HttpURLConnection connectionWithIfModifiedSince = builder.setUrl("http://127.0.0.1:18080/get").setIfModifiedSince(System.currentTimeMillis()).get();
@@ -136,12 +136,12 @@ public class DefaultHttpUrlConnectionBuilderTest {
     @Test(expected = java.net.SocketTimeoutException.class)
     public void testReadTimeout() throws IOException {
         SERVER
-            .when(HttpRequest.request()
-                .withMethod("GET")
-                .withPath("/get"))
-            .respond(HttpResponse.response()
-                .withDelay(TimeUnit.SECONDS, 1)
-                .withStatusCode(204));
+                .when(HttpRequest.request()
+                        .withMethod("GET")
+                        .withPath("/get"))
+                .respond(HttpResponse.response()
+                        .withDelay(TimeUnit.SECONDS, 1)
+                        .withStatusCode(204));
 
         HttpURLConnection connection = builder.setUrl("http://127.0.0.1:18080/get").setReadTimeout(50).get();
         connection.getResponseCode();

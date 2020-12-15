@@ -18,11 +18,11 @@ package org.eblocker.certificate.validator.squid;
 
 public class CertificateValidationResponse extends CertificateValidationMessage {
 
-    public final String ERROR_REASON_DEFAULT= "Validated_by_eBlocker_TLS_validator";
+    public final String ERROR_REASON_DEFAULT = "Validated_by_eBlocker_TLS_validator";
     public static final String CERTIFICATE_VALIDATION_RESULT_OK = "OK";
     public static final String CERTIFICATE_VALIDATION_RESULT_FAILURE = "ERR";
 
-    public static final String DEFAULT_ERROR_NAME="X509_V_ERR_CERT_UNTRUSTED";
+    public static final String DEFAULT_ERROR_NAME = "X509_V_ERR_CERT_UNTRUSTED";
 
     private final boolean success;
 
@@ -37,29 +37,29 @@ public class CertificateValidationResponse extends CertificateValidationMessage 
     public CertificateValidationResponse(CertificateValidationRequest request, boolean useConcurrency, boolean success) {
         super(request.getId(), null, null, useConcurrency);
         this.success = success;
-        if(!success){ //no error names specified, but it is not valid, so add default error name
-            this.errorName = new String[]{DEFAULT_ERROR_NAME};
+        if (!success) { //no error names specified, but it is not valid, so add default error name
+            this.errorName = new String[]{ DEFAULT_ERROR_NAME };
         }
-        this.errorReason = new String[]{ERROR_REASON_DEFAULT};
+        this.errorReason = new String[]{ ERROR_REASON_DEFAULT };
     }
 
     public CertificateValidationResponse(CertificateValidationRequest request, boolean useConcurrency, String[] errorName) {
         super(request.getId(), errorName, null, useConcurrency);
         this.success = false;
-        if(errorName == null){//this constructor implies, that the responds is false, so we have to make sure to at least add our default error
-            this.errorName = new String[]{ERROR_REASON_DEFAULT};
+        if (errorName == null) {//this constructor implies, that the responds is false, so we have to make sure to at least add our default error
+            this.errorName = new String[]{ ERROR_REASON_DEFAULT };
         }
-        this.errorReason = new String[]{ERROR_REASON_DEFAULT};
+        this.errorReason = new String[]{ ERROR_REASON_DEFAULT };
 
     }
 
     public CertificateValidationResponse(Long id, String[] errorName, String[] errorCertId, boolean useConcurrency, boolean success, String[] errorReason) {
         super(id, errorName, errorCertId, useConcurrency);
         this.success = success;
-        if(errorName == null){
-            this.errorName = new String[]{ERROR_REASON_DEFAULT};
+        if (errorName == null) {
+            this.errorName = new String[]{ ERROR_REASON_DEFAULT };
         }
-        this.errorReason = errorReason == null ? new String[]{ERROR_REASON_DEFAULT} : errorReason;
+        this.errorReason = errorReason == null ? new String[]{ ERROR_REASON_DEFAULT } : errorReason;
     }
 
     public boolean isSuccess() {
@@ -79,9 +79,9 @@ public class CertificateValidationResponse extends CertificateValidationMessage 
     protected String getContent() {
         StringBuilder s = new StringBuilder();
 
-        if(! isSuccess()) {
+        if (!isSuccess()) {
             //add error_name_XY
-            if(errorName.length > 0) {
+            if (errorName.length > 0) {
                 for (int i = 0; i < errorName.length; i++) {
                     String currErrorName = errorName[i];//.replace("SQUID_","");
                     s.append("error_name_")
@@ -90,7 +90,7 @@ public class CertificateValidationResponse extends CertificateValidationMessage 
                             .append(currErrorName)
                             .append("\n");
                 }
-            }else{ // unsuccessful and no errors -> add default error
+            } else { // unsuccessful and no errors -> add default error
                 s.append("error_name_0=")
                         .append(DEFAULT_ERROR_NAME)
                         .append("\n");

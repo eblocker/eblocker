@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.TestRedisServer;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.JedisDataSource;
 import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;

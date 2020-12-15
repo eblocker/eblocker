@@ -16,6 +16,19 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.SSLWhitelistUrl;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.http.ssl.AppWhitelistModule;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,22 +38,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.http.ssl.AppWhitelistModule;
-import org.eblocker.server.icap.resources.EblockerResource;
-
-import org.eblocker.server.common.data.SSLWhitelistUrl;
-import org.eblocker.server.common.squid.SquidConfigController;
-import org.eblocker.server.common.util.UrlUtils;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-public class SSLWhitelistService implements Observer{
+public class SSLWhitelistService implements Observer {
 
     private static final Logger log = LoggerFactory.getLogger(SSLWhitelistService.class);
 
@@ -57,7 +55,7 @@ public class SSLWhitelistService implements Observer{
                                @Named("ssl.url.whitelist.user.remove.file.path") String userRemoveList,
                                SquidConfigController squidConfigController,
                                AppModuleService appModuleService
-                                   ){
+    ) {
 
         this.appModuleService = appModuleService;
         appModuleService.addObserver(this);
@@ -72,13 +70,13 @@ public class SSLWhitelistService implements Observer{
 
         handleLegacyUserWhitelistFiles(userAddList, userRemoveList);
 
-        if(!ResourceHandler.exists(squidDomainWhitelistAclFile)){
+        if (!ResourceHandler.exists(squidDomainWhitelistAclFile)) {
             //create temporary acl file (which will be copied to squid folde when squidconfigcontroller.tellsquidtoReconfigure()... is called)
             log.info("Temporary Squid acl file for whitelisted domains does not exist here {} ...creating it.", sslWhitelistOnlyDomainsFilePath);
             ResourceHandler.create(squidDomainWhitelistAclFile);
         }
 
-        if(!ResourceHandler.exists(squidIpWhitelistAclFile)){
+        if (!ResourceHandler.exists(squidIpWhitelistAclFile)) {
             //create temporary acl file (which will be copied to squid folde when squidconfigcontroller.tellsquidtoReconfigure()... is called)
             log.info("Temporary Squid acl file for whitelisted IPs does not exist here {} ...creating it.", whitelistIPsFilePath);
             ResourceHandler.create(squidIpWhitelistAclFile);
@@ -129,7 +127,8 @@ public class SSLWhitelistService implements Observer{
 
     /**
      * Add a domain to the SSL domain whitelist
-     * @param url the domain
+     *
+     * @param url  the domain
      * @param name the name of the owner or company or whatever owning the domain (can also be null)
      */
     public void addDomain(String url, String name) throws EblockerException {
@@ -142,23 +141,24 @@ public class SSLWhitelistService implements Observer{
             } else {
                 appModuleService.addDomainToModule(url, name, appModuleService.getUserAppModuleId());
 
-             }
+            }
         }
     }
 
     /**
      * Remove a domain from the list
+     *
      * @param url
      * @return
      */
-    public void removeDomain(String url){
+    public void removeDomain(String url) {
         appModuleService.removeDomainFromModule(url, appModuleService.getUserAppModuleId());
     }
-
 
     /**
      * Writes all URLs to a file in a format that Squid ACL matching understands; that means we have to add a '.' as a prefix for all
      * domains, to make sure that all subdomains (including the domain that was entered) match too.
+     *
      * @param file file to write in (replace the content)
      */
     private void writeOnlyURLsToFile(SimpleResource file) {
@@ -183,12 +183,12 @@ public class SSLWhitelistService implements Observer{
         for (String url : urlList) {
             for (String otherUrl : urlList) {
                 //if not the same url, and otherUrl is subdomain of
-                if (isSubdomainOf(otherUrl,url)) {
+                if (isSubdomainOf(otherUrl, url)) {
                     notNeededUrls.add(otherUrl);
                 }
             }
         }
-        log.info("ssl whitelist domain urls not needed in squid acl anymore: "+notNeededUrls.toString());
+        log.info("ssl whitelist domain urls not needed in squid acl anymore: " + notNeededUrls.toString());
 
         //remove subdomains from list
         urlList.removeAll(notNeededUrls);
@@ -197,17 +197,17 @@ public class SSLWhitelistService implements Observer{
         urlList.removeAll(appModuleService.getBlacklistedDomains());
 
         //prepare format for squid acl file
-        for(String url : urlList){
-            url="."+url;//add the '.' for squid acl matching (to also include all subdomains)
+        for (String url : urlList) {
+            url = "." + url;//add the '.' for squid acl matching (to also include all subdomains)
             results.add(url);
         }
         //sort the list before writing
         Collections.sort(results);
         //write list to file
-        ResourceHandler.replaceContent(file,results);
+        ResourceHandler.replaceContent(file, results);
     }
 
-    private void writeOnlyIPsToFile(SimpleResource file){
+    private void writeOnlyIPsToFile(SimpleResource file) {
         if (!ResourceHandler.exists(file)) {
             ResourceHandler.create(file);
         }
@@ -239,7 +239,7 @@ public class SSLWhitelistService implements Observer{
 
     @Override
     public synchronized void update(Observable observable, Object object) {
-        if(observable instanceof AppModuleService && object != null && object instanceof List<?>) {
+        if (observable instanceof AppModuleService && object != null && object instanceof List<?>) {
             //
             // The following block is just for logging!
             //

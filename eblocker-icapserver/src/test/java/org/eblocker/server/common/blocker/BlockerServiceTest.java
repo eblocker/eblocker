@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
@@ -27,8 +29,6 @@ import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStore;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +37,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.xml.ws.Holder;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -78,49 +77,56 @@ public class BlockerServiceTest {
         localStoragePath = Files.createTempDirectory(BlockerServiceTest.class.getSimpleName());
 
         blockerFiles = Arrays.asList(
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1000"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1001"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1002"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1003"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1004"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1005"),
-            Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1006")
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1000"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1001"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1002"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1003"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1004"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1005"),
+                Files.createTempFile(BlockerServiceTest.class.getSimpleName(), ".1006")
         );
 
         Files.write(blockerFiles.get(6), BLOCKER_SOURCE_CONTENT.getBytes(StandardCharsets.UTF_8));
 
         definitions = Arrays.asList(
-            new ExternalDefinition(1000, "test-0", "description-0", Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.NEW, null, blockerFiles.get(0).toString(), true, "blacklist"),
-            new ExternalDefinition(1001, "test-1", "description-1", Category.TRACKER, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-tracker", UpdateInterval.DAILY, UpdateStatus.READY, null, blockerFiles.get(1).toString(), true, "blacklist"),
-            new ExternalDefinition(1002, "test-2", "description-2", Category.ADS, Type.PATTERN, 200, Format.EASYLIST, "http://unit.test/easylist-ads", UpdateInterval.DAILY, UpdateStatus.READY, null, blockerFiles.get(2).toString(), true, "blacklist"),
-            new ExternalDefinition(1003, "test-3", "description-3", Category.ADS, Type.PATTERN, null, Format.EASYLIST, "http://unit.test/easylist-ads-404", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE_FAILED, null, blockerFiles.get(3).toString(), true, "blacklist"),
-            new ExternalDefinition(1004, "test-4", "description-4", Category.ADS, Type.PATTERN, 206, Format.EASYLIST, "http://unit.test/easylist-ads-4", UpdateInterval.NEVER, UpdateStatus.READY, null, blockerFiles.get(4).toString(), true, "blacklist"),
-            new ExternalDefinition(1005, "test-5", "description-5", Category.ADS, Type.PATTERN, 207, Format.EASYLIST, "http://unit.test/easylist-ads-5", UpdateInterval.DAILY, UpdateStatus.UPDATE_FAILED, null, blockerFiles.get(5).toString(), true, "blacklist"),
-            new ExternalDefinition(1006, "test-6", "description-6", Category.ADS, Type.DOMAIN, 109, Format.DOMAINS, null, UpdateInterval.NEVER, UpdateStatus.READY, null, blockerFiles.get(6).toString(), true, "blacklist")
+                new ExternalDefinition(1000, "test-0", "description-0", Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.NEW, null, blockerFiles.get(0).toString(), true, "blacklist"),
+                new ExternalDefinition(1001, "test-1", "description-1", Category.TRACKER, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-tracker", UpdateInterval.DAILY, UpdateStatus.READY, null, blockerFiles.get(1).toString(), true,
+                        "blacklist"),
+                new ExternalDefinition(1002, "test-2", "description-2", Category.ADS, Type.PATTERN, 200, Format.EASYLIST, "http://unit.test/easylist-ads", UpdateInterval.DAILY, UpdateStatus.READY, null, blockerFiles.get(2).toString(), true, "blacklist"),
+                new ExternalDefinition(1003, "test-3", "description-3", Category.ADS, Type.PATTERN, null, Format.EASYLIST, "http://unit.test/easylist-ads-404", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE_FAILED, null, blockerFiles.get(3).toString(),
+                        true, "blacklist"),
+                new ExternalDefinition(1004, "test-4", "description-4", Category.ADS, Type.PATTERN, 206, Format.EASYLIST, "http://unit.test/easylist-ads-4", UpdateInterval.NEVER, UpdateStatus.READY, null, blockerFiles.get(4).toString(), true, "blacklist"),
+                new ExternalDefinition(1005, "test-5", "description-5", Category.ADS, Type.PATTERN, 207, Format.EASYLIST, "http://unit.test/easylist-ads-5", UpdateInterval.DAILY, UpdateStatus.UPDATE_FAILED, null, blockerFiles.get(5).toString(), true,
+                        "blacklist"),
+                new ExternalDefinition(1006, "test-6", "description-6", Category.ADS, Type.DOMAIN, 109, Format.DOMAINS, null, UpdateInterval.NEVER, UpdateStatus.READY, null, blockerFiles.get(6).toString(), true, "blacklist")
         );
 
         dataSource = Mockito.mock(DataSource.class);
         Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(definitions);
-        Mockito.when(dataSource.get(Mockito.eq(ExternalDefinition.class), Mockito.anyInt())).then(im -> definitions.stream().filter(d -> d.getId() == (int)im.getArgument(1)).findFirst().orElse(null));
+        Mockito.when(dataSource.get(Mockito.eq(ExternalDefinition.class), Mockito.anyInt())).then(im -> definitions.stream().filter(d -> d.getId() == (int) im.getArgument(1)).findFirst().orElse(null));
         AtomicInteger nextId = new AtomicInteger(1100);
         Mockito.when(dataSource.nextId(ExternalDefinition.class)).then(im -> nextId.getAndIncrement());
 
         configurations = Arrays.asList(
-            new FilterStoreConfiguration(200, "test-2", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[] { blockerFiles
-                .get(2).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(201, "builtin-pattern-ADS", org.eblocker.server.icap.filter.Category.ADS, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(202, "builtin-pattern-CONTENT_SECURITY_POLICIES", org.eblocker.server.icap.filter.Category.CONTENT_SECURITY_POLICIES, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(203, "builtin-pattern-EBLOCKER", org.eblocker.server.icap.filter.Category.EBLOCKER, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(204, "builtin-pattern-TRACKER_BLOCKER", org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(205, "builtin-pattern-TRACKER_REDIRECT", org.eblocker.server.icap.filter.Category.TRACKER_REDIRECT, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(206, "test-4", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[] { blockerFiles
-                .get(4).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
-            new FilterStoreConfiguration(207, "test-5", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[] { blockerFiles
-                .get(5).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true)
+                new FilterStoreConfiguration(200, "test-2", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[]{ blockerFiles
+                        .get(2).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
+                new FilterStoreConfiguration(201, "builtin-pattern-ADS", org.eblocker.server.icap.filter.Category.ADS, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
+                new FilterStoreConfiguration(202, "builtin-pattern-CONTENT_SECURITY_POLICIES", org.eblocker.server.icap.filter.Category.CONTENT_SECURITY_POLICIES, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST,
+                        true,
+                        new String[0], true),
+                new FilterStoreConfiguration(203, "builtin-pattern-EBLOCKER", org.eblocker.server.icap.filter.Category.EBLOCKER, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
+                new FilterStoreConfiguration(204, "builtin-pattern-TRACKER_BLOCKER", org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0],
+                        true),
+                new FilterStoreConfiguration(205, "builtin-pattern-TRACKER_REDIRECT", org.eblocker.server.icap.filter.Category.TRACKER_REDIRECT, true, 0, new String[0], FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0],
+                        true),
+                new FilterStoreConfiguration(206, "test-4", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[]{ blockerFiles
+                        .get(4).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true),
+                new FilterStoreConfiguration(207, "test-5", org.eblocker.server.icap.filter.Category.ADS, false, 0, new String[]{ blockerFiles
+                        .get(5).toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true)
         );
         filterManager = Mockito.mock(FilterManager.class);
         Mockito.when(filterManager.getFilterConfigurations()).thenReturn(configurations);
-        Mockito.when(filterManager.getFilterStoreConfigurationById(Mockito.anyInt())).then(im -> configurations.stream().filter(c -> c.getId() == (int)im.getArgument(0)).findFirst().orElse(null));
+        Mockito.when(filterManager.getFilterStoreConfigurationById(Mockito.anyInt())).then(im -> configurations.stream().filter(c -> c.getId() == (int) im.getArgument(0)).findFirst().orElse(null));
 
         FilterStore store = Mockito.mock(FilterStore.class);
         Mockito.when(store.getLastUpdate()).thenReturn(BUILTIN_UPDATE_DATE);
@@ -132,16 +138,27 @@ public class BlockerServiceTest {
 
         filterListsService = Mockito.mock(ParentalControlFilterListsService.class);
         metadata = Arrays.asList(
-            new ParentalControlFilterMetaData(100, null, null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, Collections.singletonList("/tmp/file.1001"), null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", false, false, Collections.emptyList(), "test-1", null),
-            new ParentalControlFilterMetaData(101, map("en", "builtin-domain-ADS", "de", "builtin-domain-ADS"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(102, map("en", "builtin-domain-ADS_TRACKERS_BLOOM_FILTER", "de", "builtin-domain-ADS_TRACKERS_BLOOM_FILTER"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS_TRACKERS_BLOOM_FILTER, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(103, map("en", "custom-domain-CUSTOM", "de", "custom-domain-CUSTOM"), null, org.eblocker.server.common.data.parentalcontrol.Category.CUSTOM, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", false, false, Collections.emptyList(), "custom-domain-CUSTOM", null),
-            new ParentalControlFilterMetaData(104, map("en", "builtin-domain-MALWARE", "de", "builtin-domain-MALWARE"), null, org.eblocker.server.common.data.parentalcontrol.Category.MALWARE, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(105, map("en", "builtin-domain-PARENTAL_CONTROL", "de", "builtin-domain-PARENTAL_CONTROL"), null, org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(106, map("en", "builtin-domain-PARENTAL_CONTROL_BLOOM_FILTER", "de", "builtin-domain-PARENTAL_CONTROL_BLOOM_FILTER"), null, org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL_BLOOM_FILTER, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(107, map("en", "builtin-domain-TOP_LEVEL_BLOOM_FILTER", "de", "builtin-domain-TOP_LEVEL_BLOOM_FILTER"), null, org.eblocker.server.common.data.parentalcontrol.Category.TOP_LEVEL_BLOOM_FILTER, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(108, map("en", "builtin-domain-TRACKERS", "de", "builtin-domain-TRACKERS"), null, org.eblocker.server.common.data.parentalcontrol.Category.TRACKERS, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
-            new ParentalControlFilterMetaData(109, map("en", "custom-domain-PARAMETER", "de", "custom-domain-PARAMETER"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null)
+                new ParentalControlFilterMetaData(100, null, null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, Collections.singletonList("/tmp/file.1001"), null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", false, false,
+                        Collections.emptyList(), "test-1", null),
+                new ParentalControlFilterMetaData(101, map("en", "builtin-domain-ADS", "de", "builtin-domain-ADS"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist",
+                        true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(102, map("en", "builtin-domain-ADS_TRACKERS_BLOOM_FILTER", "de", "builtin-domain-ADS_TRACKERS_BLOOM_FILTER"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS_TRACKERS_BLOOM_FILTER, null,
+                        null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(103, map("en", "custom-domain-CUSTOM", "de", "custom-domain-CUSTOM"), null, org.eblocker.server.common.data.parentalcontrol.Category.CUSTOM, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string",
+                        "blacklist", false, false, Collections.emptyList(), "custom-domain-CUSTOM", null),
+                new ParentalControlFilterMetaData(104, map("en", "builtin-domain-MALWARE", "de", "builtin-domain-MALWARE"), null, org.eblocker.server.common.data.parentalcontrol.Category.MALWARE, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string",
+                        "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(105, map("en", "builtin-domain-PARENTAL_CONTROL", "de", "builtin-domain-PARENTAL_CONTROL"), null, org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL, null, null, BUILTIN_UPDATE_DATE,
+                        "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(106, map("en", "builtin-domain-PARENTAL_CONTROL_BLOOM_FILTER", "de", "builtin-domain-PARENTAL_CONTROL_BLOOM_FILTER"), null,
+                        org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL_BLOOM_FILTER, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(107, map("en", "builtin-domain-TOP_LEVEL_BLOOM_FILTER", "de", "builtin-domain-TOP_LEVEL_BLOOM_FILTER"), null, org.eblocker.server.common.data.parentalcontrol.Category.TOP_LEVEL_BLOOM_FILTER, null, null,
+                        BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(108, map("en", "builtin-domain-TRACKERS", "de", "builtin-domain-TRACKERS"), null, org.eblocker.server.common.data.parentalcontrol.Category.TRACKERS, null, null, BUILTIN_UPDATE_DATE,
+                        "domainblacklist/string",
+                        "blacklist", true, false, Collections.emptyList(), null, null),
+                new ParentalControlFilterMetaData(109, map("en", "custom-domain-PARAMETER", "de", "custom-domain-PARAMETER"), null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, null, null, BUILTIN_UPDATE_DATE, "domainblacklist/string",
+                        "blacklist", true, false, Collections.emptyList(), null, null)
         );
         Mockito.when(filterListsService.getParentalControlFilterMetaData()).thenReturn(metadata);
         Mockito.when(filterListsService.getParentalControlFilterMetaData(Mockito.anyInt())).then(im -> metadata.stream().filter(m -> m.getId() == im.getArgument(0)).findFirst().orElse(null));
@@ -176,7 +193,7 @@ public class BlockerServiceTest {
     @After
     public void tearDown() throws IOException {
         FileUtils.deleteDirectory(localStoragePath);
-        for(Path path : blockerFiles) {
+        for (Path path : blockerFiles) {
             Files.deleteIfExists(path);
         }
     }
@@ -252,21 +269,21 @@ public class BlockerServiceTest {
     public void testDisableCustomDomainBlocker() {
         // return value is not tested it as it would require mocking multiple calls and mutating state
         blockerService.updateBlocker(new Blocker(
-            1001,
-            Collections.singletonMap("en", definitions.get(1).getName()),
-            Collections.singletonMap("de", definitions.get(1).getDescription()),
-            mapType(definitions.get(1).getType()),
-            definitions.get(1).getCategory(),
-            null,
-            false,
-            definitions.get(1).getUrl(),
-            null,
-            definitions.get(1).getFormat(),
-            null,
-            null,
-            null,
-            false,
-            "blacklist"
+                1001,
+                Collections.singletonMap("en", definitions.get(1).getName()),
+                Collections.singletonMap("de", definitions.get(1).getDescription()),
+                mapType(definitions.get(1).getType()),
+                definitions.get(1).getCategory(),
+                null,
+                false,
+                definitions.get(1).getUrl(),
+                null,
+                definitions.get(1).getFormat(),
+                null,
+                null,
+                null,
+                false,
+                "blacklist"
         ));
 
         ArgumentCaptor<ParentalControlFilterSummaryData> metadataCaptor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);
@@ -286,7 +303,7 @@ public class BlockerServiceTest {
     @Test
     public void testDisableBuiltinPatternBlocker() {
         Mockito.when(filterManager.updateFilter(Mockito.any(FilterStoreConfiguration.class))).thenReturn(new FilterStoreConfiguration(1, null, org.eblocker.server.icap.filter.Category.ADS, true, 0, null, null, null, true, null, false));
-        blockerService.updateBlocker(new Blocker(1, null, null, null, null, null, true, null, null, null, null, null, null, false,"blacklist"));
+        blockerService.updateBlocker(new Blocker(1, null, null, null, null, null, true, null, null, null, null, null, null, false, "blacklist"));
 
         ArgumentCaptor<FilterStoreConfiguration> configurationCaptor = ArgumentCaptor.forClass(FilterStoreConfiguration.class);
         Mockito.verify(filterManager).updateFilter(configurationCaptor.capture());
@@ -299,21 +316,21 @@ public class BlockerServiceTest {
     public void testDisableCustomPatternBlocker() {
         Mockito.when(filterManager.updateFilter(Mockito.any(FilterStoreConfiguration.class))).then(im -> im.getArgument(0));
         blockerService.updateBlocker(new Blocker(
-            1002,
-            Collections.singletonMap("en", definitions.get(2).getName()),
-            Collections.singletonMap("en", definitions.get(2).getDescription()),
-            mapType(definitions.get(2).getType()),
-            definitions.get(2).getCategory(),
-            null,
-            false,
-            definitions.get(2).getUrl(),
-            null,
-            definitions.get(2).getFormat(),
-            null,
-            null,
-            null,
-            false,
-            "blacklist"
+                1002,
+                Collections.singletonMap("en", definitions.get(2).getName()),
+                Collections.singletonMap("en", definitions.get(2).getDescription()),
+                mapType(definitions.get(2).getType()),
+                definitions.get(2).getCategory(),
+                null,
+                false,
+                definitions.get(2).getUrl(),
+                null,
+                definitions.get(2).getFormat(),
+                null,
+                null,
+                null,
+                false,
+                "blacklist"
         ));
 
         ArgumentCaptor<FilterStoreConfiguration> configurationCaptor = ArgumentCaptor.forClass(FilterStoreConfiguration.class);
@@ -333,21 +350,21 @@ public class BlockerServiceTest {
     @Test
     public void testDisableNewBlocker() {
         blockerService.updateBlocker(new Blocker(
-            1000,
-            Collections.singletonMap("en", definitions.get(0).getName()),
-            Collections.singletonMap("de", definitions.get(0).getName()),
-            mapType(definitions.get(0).getType()),
-            definitions.get(0).getCategory(),
-            null,
-            false,
-            definitions.get(0).getUrl(),
-            null,
-            definitions.get(0).getFormat(),
-            null,
-            null,
-            null,
-            false,
-            "blacklist"
+                1000,
+                Collections.singletonMap("en", definitions.get(0).getName()),
+                Collections.singletonMap("de", definitions.get(0).getName()),
+                mapType(definitions.get(0).getType()),
+                definitions.get(0).getCategory(),
+                null,
+                false,
+                definitions.get(0).getUrl(),
+                null,
+                definitions.get(0).getFormat(),
+                null,
+                null,
+                null,
+                false,
+                "blacklist"
         ));
 
         ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
@@ -361,21 +378,21 @@ public class BlockerServiceTest {
     @Test
     public void testDisableInitialUpdateFailedBlocker() {
         blockerService.updateBlocker(new Blocker(
-            1003,
-            Collections.singletonMap("en", definitions.get(3).getName()),
-            Collections.singletonMap("en", definitions.get(3).getDescription()),
-            mapType(definitions.get(3).getType()),
-            definitions.get(3).getCategory(),
-            null,
-            false,
-            definitions.get(3).getUrl(),
-            null,
-            definitions.get(3).getFormat(),
-            null,
-            null,
-            null,
-            false,
-            "blacklist"
+                1003,
+                Collections.singletonMap("en", definitions.get(3).getName()),
+                Collections.singletonMap("en", definitions.get(3).getDescription()),
+                mapType(definitions.get(3).getType()),
+                definitions.get(3).getCategory(),
+                null,
+                false,
+                definitions.get(3).getUrl(),
+                null,
+                definitions.get(3).getFormat(),
+                null,
+                null,
+                null,
+                false,
+                "blacklist"
         ));
 
         ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
@@ -403,24 +420,24 @@ public class BlockerServiceTest {
 
     @Test
     public void testCreateDomainBlocker() {
-        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.DOMAINS, null, UpdateInterval.DAILY, null, true,"blacklist"));
+        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
     }
 
     @Test
     public void testCreatePatternBlocker() {
-        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.PATTERN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.EASYLIST, null, UpdateInterval.DAILY, null, true,"blacklist"));
+        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.PATTERN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.EASYLIST, null, UpdateInterval.DAILY, null, true, "blacklist"));
     }
 
     @Test
     public void testCreateDomainBlockerParameter() throws IOException {
-        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, null, "blocked.com", Format.DOMAINS, null, UpdateInterval.DAILY, null, true,"blacklist"));
+        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, null, "blocked.com", Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
         Path path = localStoragePath.resolve("1100:DOMAIN");
         Assert.assertEquals("blocked.com", new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
     }
 
     @Test
     public void testCreateDomainBlockerPattern() throws IOException {
-        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.PATTERN, Category.ADS, null, false, null, "||blocked.com^", Format.EASYLIST, null, UpdateInterval.DAILY, null, true,"blacklist"));
+        testCreateBlocker(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.PATTERN, Category.ADS, null, false, null, "||blocked.com^", Format.EASYLIST, null, UpdateInterval.DAILY, null, true, "blacklist"));
         Path path = localStoragePath.resolve("1100:PATTERN");
         Assert.assertEquals("||blocked.com^", new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
     }
@@ -466,21 +483,21 @@ public class BlockerServiceTest {
     @Test
     public void testUpdateBlockerMetadata() {
         blockerService.updateBlocker(new Blocker(
-            1001,
-            Collections.singletonMap("en","TEST-1"),
-            Collections.emptyMap(),
-            BlockerType.DOMAIN,
-            Category.TRACKER,
-            null,
-            false,
-            "http://unit.test/domains-tracker",
-            null,
-            Format.DOMAINS,
-            null,
-            UpdateInterval.NEVER,
-            null,
-            true,
-            "blacklist"
+                1001,
+                Collections.singletonMap("en", "TEST-1"),
+                Collections.emptyMap(),
+                BlockerType.DOMAIN,
+                Category.TRACKER,
+                null,
+                false,
+                "http://unit.test/domains-tracker",
+                null,
+                Format.DOMAINS,
+                null,
+                UpdateInterval.NEVER,
+                null,
+                true,
+                "blacklist"
         ));
 
         ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
@@ -494,21 +511,21 @@ public class BlockerServiceTest {
     @Test
     public void testUpdateBlockerSourceUrl() {
         blockerService.updateBlocker(new Blocker(
-            1002,
-            Collections.singletonMap("en", "test-1"),
-            Collections.emptyMap(),
-            BlockerType.PATTERN,
-            Category.ADS,
-            null,
-            false,
-            "http://unit.test/easylist-ads-2000",
-            null,
-            Format.EASYLIST,
-            null,
-            UpdateInterval.DAILY,
-            null,
-            true,
-            "blacklist"
+                1002,
+                Collections.singletonMap("en", "test-1"),
+                Collections.emptyMap(),
+                BlockerType.PATTERN,
+                Category.ADS,
+                null,
+                false,
+                "http://unit.test/easylist-ads-2000",
+                null,
+                Format.EASYLIST,
+                null,
+                UpdateInterval.DAILY,
+                null,
+                true,
+                "blacklist"
         ));
 
         ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
@@ -525,21 +542,21 @@ public class BlockerServiceTest {
     @Test
     public void testUpdateBlockerSourceParameter() throws IOException {
         blockerService.updateBlocker(new Blocker(
-            1006,
-            Collections.singletonMap("en", "test-6"),
-            Collections.emptyMap(),
-            BlockerType.DOMAIN,
-            Category.ADS,
-            null,
-            false,
-            null,
-            "fancy-ads.com",
-            Format.EASYLIST,
-            null,
-            UpdateInterval.DAILY,
-            null,
-            true,
-            "blacklist"
+                1006,
+                Collections.singletonMap("en", "test-6"),
+                Collections.emptyMap(),
+                BlockerType.DOMAIN,
+                Category.ADS,
+                null,
+                false,
+                null,
+                "fancy-ads.com",
+                Format.EASYLIST,
+                null,
+                UpdateInterval.DAILY,
+                null,
+                true,
+                "blacklist"
         ));
 
         ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
@@ -615,8 +632,8 @@ public class BlockerServiceTest {
     @Test
     public void testInit() {
         Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(Arrays.asList(
-            new ExternalDefinition(1000, "test-0", null, Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE, null, blockerFiles.get(0).toString(), true,"blacklist"),
-            new ExternalDefinition(1001, "test-1", null, Category.TRACKER, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-tracker", UpdateInterval.DAILY, UpdateStatus.UPDATE, null, blockerFiles.get(1).toString(), true,"blacklist")
+                new ExternalDefinition(1000, "test-0", null, Category.ADS, Type.DOMAIN, null, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE, null, blockerFiles.get(0).toString(), true, "blacklist"),
+                new ExternalDefinition(1001, "test-1", null, Category.TRACKER, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-tracker", UpdateInterval.DAILY, UpdateStatus.UPDATE, null, blockerFiles.get(1).toString(), true, "blacklist")
         ));
 
         blockerService.init();
@@ -664,7 +681,7 @@ public class BlockerServiceTest {
         Assert.assertNull(blocker.getUpdateStatus());
         Assert.assertNull(blocker.getError());
         Assert.assertNotNull(blocker.getLastUpdate());
-        Assert.assertEquals(BUILTIN_UPDATE_DATE.getTime(), (long)blocker.getLastUpdate());
+        Assert.assertEquals(BUILTIN_UPDATE_DATE.getTime(), (long) blocker.getLastUpdate());
     }
 
     private <U, V> Map<U, V> map(U key0, V value0, U key1, V value1) {

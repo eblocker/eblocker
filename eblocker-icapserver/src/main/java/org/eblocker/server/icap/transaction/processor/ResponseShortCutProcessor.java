@@ -16,26 +16,26 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.icap.transaction.TransactionProcessor;
 import com.google.inject.Singleton;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.icap.transaction.Transaction;
+import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ResponseShortCutProcessor implements TransactionProcessor {
 
-	private static final Logger log = LoggerFactory.getLogger(ResponseShortCutProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(ResponseShortCutProcessor.class);
 
-	@Override
-	public boolean process(Transaction transaction) {
-		if (HttpResponseStatus.OK != transaction.getResponse().getStatus()) {
-			log.info("PASS for RESPMOD {} with status code {}", transaction.getUrl(), transaction.getResponse().getStatus().code());
-			transaction.setComplete(true);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean process(Transaction transaction) {
+        if (HttpResponseStatus.OK != transaction.getResponse().getStatus()) {
+            log.info("PASS for RESPMOD {} with status code {}", transaction.getUrl(), transaction.getResponse().getStatus().code());
+            transaction.setComplete(true);
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -25,12 +25,18 @@ import java.util.stream.Stream;
 
 public interface FilterStatisticsDataSource {
     Stream<StatisticsCounter> getCounters();
+
     Stream<StatisticsCounter> getCounters(String type, IpAddress ipAddress, Instant begin, Instant end);
+
     void incrementCounters(Collection<StatisticsCounter> counters);
+
     void deleteCountersBefore(Instant instant);
 
     List<TotalCounter> getTotalCounters(String type);
+
     void incrementTotalCounters(Collection<TotalCounter> totalCounters);
+
     Instant getLastResetTotalCounters();
+
     void resetTotalCounters();
 }

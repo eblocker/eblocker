@@ -16,32 +16,31 @@
  */
 package org.eblocker.server.common.system.unix;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.CpuInfo;
+import org.junit.Test;
 
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.junit.Test;
-
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.system.CpuInfo;
+import static org.junit.Assert.assertEquals;
 
 public class CpuInfoUnixTest {
-	private CpuInfo getCpuInfo(String resource) throws URISyntaxException {
-		URL url = ClassLoader.getSystemResource(resource);
-		return new CpuInfoUnix(url.toURI().getPath());
-	}
+    private CpuInfo getCpuInfo(String resource) throws URISyntaxException {
+        URL url = ClassLoader.getSystemResource(resource);
+        return new CpuInfoUnix(url.toURI().getPath());
+    }
 
-	@Test
-	public void serial() throws Exception {
-		CpuInfo info = getCpuInfo("test-data/cpuinfo.txt");
-		String serial = info.getSerial();
-		assertEquals(serial, "4441551637373137020001359d840f07");
-	}
+    @Test
+    public void serial() throws Exception {
+        CpuInfo info = getCpuInfo("test-data/cpuinfo.txt");
+        String serial = info.getSerial();
+        assertEquals(serial, "4441551637373137020001359d840f07");
+    }
 
-	@Test(expected= EblockerException.class)
-	public void serial404() throws Exception {
-		CpuInfo info = getCpuInfo("test-data/cpuinfo-noserial.txt");
-		info.getSerial();
-	}
+    @Test(expected = EblockerException.class)
+    public void serial404() throws Exception {
+        CpuInfo info = getCpuInfo("test-data/cpuinfo-noserial.txt");
+        info.getSerial();
+    }
 }

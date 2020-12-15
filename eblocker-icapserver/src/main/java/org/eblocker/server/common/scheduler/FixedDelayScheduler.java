@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FixedDelayScheduler extends AbstractScheduler {
     private final long delay;
-    
+
     public FixedDelayScheduler(Runnable command, long initialDelayInSeconds, long delayInSeconds) {
         super(command, initialDelayInSeconds);
         this.delay = delayInSeconds;

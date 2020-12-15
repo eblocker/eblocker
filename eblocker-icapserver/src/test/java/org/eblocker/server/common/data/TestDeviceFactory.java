@@ -34,61 +34,61 @@ import static org.mockito.Mockito.when;
  * Factory for adding devices to a mock DataSource
  */
 public class TestDeviceFactory {
-	private Map<String, Device> devices = new HashMap<>();
-	private DataSource dataSource;
-	private DeviceService deviceService;
+    private Map<String, Device> devices = new HashMap<>();
+    private DataSource dataSource;
+    private DeviceService deviceService;
 
-	public TestDeviceFactory(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public TestDeviceFactory(DeviceService deviceService) {
-		this.deviceService = deviceService;
-	}
-
-	public void addDevice(String hwAddress, String ipAddress, boolean enabled) {
-		Device device = createDevice(hwAddress, ipAddress, enabled);
-		addDevice(device);
-	}
-
-	public void addDevice(Device device) {
-	    devices.put(device.getId(), device);
-		if (dataSource != null) {
-			when(dataSource.getDevice(device.getId())).thenReturn(device);
-		} else {
-			when(deviceService.getDeviceById(device.getId())).thenReturn(device);
-			device.getIpAddresses().forEach(ipAddress -> when(deviceService.getDeviceByIp(ipAddress)).thenReturn(device));
-		}
-
-	}
-
-	public Device getDevice(String id) {
-	    return devices.get(id);
+    public TestDeviceFactory(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-	public void commit() {
-		if (dataSource != null) {
-			when(dataSource.getDeviceIds()).thenReturn(new TreeSet<>(devices.keySet()));
-			when(dataSource.getDevices()).thenReturn(new HashSet<>(devices.values()));
-		} else {
-			when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices.values());
-		}
+    public TestDeviceFactory(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
 
-	}
+    public void addDevice(String hwAddress, String ipAddress, boolean enabled) {
+        Device device = createDevice(hwAddress, ipAddress, enabled);
+        addDevice(device);
+    }
 
-	public static Device createDevice(String hwAddress, String ipAddress, boolean enabled) {
-		return createDevice(hwAddress, ipAddress, null, enabled, true);
-	}
+    public void addDevice(Device device) {
+        devices.put(device.getId(), device);
+        if (dataSource != null) {
+            when(dataSource.getDevice(device.getId())).thenReturn(device);
+        } else {
+            when(deviceService.getDeviceById(device.getId())).thenReturn(device);
+            device.getIpAddresses().forEach(ipAddress -> when(deviceService.getDeviceByIp(ipAddress)).thenReturn(device));
+        }
 
-	public static Device createDevice(String hwAddress, String ipAddress, boolean enabled, boolean fixed) {
-		return createDevice(hwAddress, ipAddress, null, enabled, fixed);
-	}
+    }
 
-	public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled) {
-		return createDevice(hwAddress, ipAddress, name, enabled, true);
-	}
+    public Device getDevice(String id) {
+        return devices.get(id);
+    }
 
-	public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled, boolean fixed) {
+    public void commit() {
+        if (dataSource != null) {
+            when(dataSource.getDeviceIds()).thenReturn(new TreeSet<>(devices.keySet()));
+            when(dataSource.getDevices()).thenReturn(new HashSet<>(devices.values()));
+        } else {
+            when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices.values());
+        }
+
+    }
+
+    public static Device createDevice(String hwAddress, String ipAddress, boolean enabled) {
+        return createDevice(hwAddress, ipAddress, null, enabled, true);
+    }
+
+    public static Device createDevice(String hwAddress, String ipAddress, boolean enabled, boolean fixed) {
+        return createDevice(hwAddress, ipAddress, null, enabled, fixed);
+    }
+
+    public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled) {
+        return createDevice(hwAddress, ipAddress, name, enabled, true);
+    }
+
+    public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled, boolean fixed) {
         Device device = new Device();
         device.setId("device:" + hwAddress);
         device.setName(name);
@@ -101,14 +101,14 @@ public class TestDeviceFactory {
     }
 
     public static Device createDevice(String hwAddress, List<String> ipAddresses, boolean enabled) {
-       Device device = createDevice(hwAddress, (String) null, enabled);
-       if (ipAddresses != null) {
+        Device device = createDevice(hwAddress, (String) null, enabled);
+        if (ipAddresses != null) {
             device.setIpAddresses(ipAddresses.stream().map(IpAddress::parse).collect(Collectors.toList()));
-       }
-       return device;
+        }
+        return device;
     }
 
-	public Set<Device> getDevices() {
-	    return new HashSet<Device>(devices.values());
-	}
+    public Set<Device> getDevices() {
+        return new HashSet<Device>(devices.values());
+    }
 }

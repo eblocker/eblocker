@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.icap.resources;
 
-import org.eblocker.server.common.exceptions.EblockerException;
 import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Bytes;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class OnePixelImage {
-	private static final Logger log = LoggerFactory.getLogger(OnePixelImage.class);
+    private static final Logger log = LoggerFactory.getLogger(OnePixelImage.class);
 
-	public static final String MIME_TYPE = "image/svg+xml";
+    public static final String MIME_TYPE = "image/svg+xml";
 
-	private static final byte[] TARGET_PARAMETER = "@TARGET@".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] TARGET_PARAMETER = "@TARGET@".getBytes(StandardCharsets.UTF_8);
 
-	private static final byte[] IMAGE_TEMPLATE;
+    private static final byte[] IMAGE_TEMPLATE;
     private static final int TARGET_PARAMETER_START_INDEX; // inclusive
     private static final int TARGET_PARAMETER_END_INDEX;  // exclusive
 
@@ -43,7 +43,7 @@ public class OnePixelImage {
             TARGET_PARAMETER_END_INDEX = TARGET_PARAMETER_START_INDEX + TARGET_PARAMETER.length;
         } catch (IOException e) {
             String msg = "Cannot load ONE_PIXEL_SVG resource: " + e.getMessage();
-			log.error(msg, e);
+            log.error(msg, e);
             throw new EblockerException(msg, e);
         }
     }
@@ -51,13 +51,13 @@ public class OnePixelImage {
     private OnePixelImage() {
     }
 
-	public static byte[] get(String target) {
+    public static byte[] get(String target) {
         byte[] encodedTarget = target.getBytes(StandardCharsets.UTF_8);
         byte[] out = new byte[TARGET_PARAMETER_START_INDEX + encodedTarget.length + IMAGE_TEMPLATE.length - TARGET_PARAMETER_END_INDEX];
         System.arraycopy(IMAGE_TEMPLATE, 0, out, 0, TARGET_PARAMETER_START_INDEX);
         System.arraycopy(encodedTarget, 0, out, TARGET_PARAMETER_START_INDEX, encodedTarget.length);
         System.arraycopy(IMAGE_TEMPLATE, TARGET_PARAMETER_END_INDEX, out, TARGET_PARAMETER_START_INDEX + encodedTarget.length, IMAGE_TEMPLATE.length - TARGET_PARAMETER_END_INDEX);
         return out;
-	}
+    }
 
 }

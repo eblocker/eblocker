@@ -20,24 +20,27 @@ import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleTransport;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserModuleConverterTest {
 
     @Test
     public void testNoPin() {
         UserModule user = new UserModule(
-            1000,
-            99,
-            "a-name",
-            "a-name-key",
-            null, null,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null
+                1000,
+                99,
+                "a-name",
+                "a-name-key",
+                null, null,
+                false,
+                null,
+                null,
+                null,
+                null,
+                null
         );
 
         UserModuleTransport userDto = UserModuleConverter.getUserModuleTransport(user);
@@ -55,17 +58,17 @@ public class UserModuleConverterTest {
     @Test
     public void testPin() {
         UserModule user = new UserModule(
-            1000,
-            99,
-            "a-name",
-            "a-name-key",
-            null, null,
-            false,
-            new byte[]{1, 2, 3, 4, 5, 6},
-            null,
-            null,
-            null,
-            null
+                1000,
+                99,
+                "a-name",
+                "a-name-key",
+                null, null,
+                false,
+                new byte[]{ 1, 2, 3, 4, 5, 6 },
+                null,
+                null,
+                null,
+                null
         );
 
         UserModuleTransport userDto = UserModuleConverter.getUserModuleTransport(user);

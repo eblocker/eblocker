@@ -21,6 +21,7 @@ import java.io.IOException;
 public interface CommandRunner {
     /**
      * Runs a command with the given optional arguments and returns the stdio as result. Methods blocks until command has finished
+     *
      * @param command
      * @param arguments
      * @return Standard output of the command
@@ -28,5 +29,6 @@ public interface CommandRunner {
      * @throws InterruptedException
      */
     public String runCommandWithOutput(String command, String... arguments) throws IOException, InterruptedException;
+
     public int runCommand(String command, String... arguments) throws IOException, InterruptedException;
 }

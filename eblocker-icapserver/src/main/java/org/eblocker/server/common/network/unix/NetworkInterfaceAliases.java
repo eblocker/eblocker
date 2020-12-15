@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,8 +122,7 @@ public class NetworkInterfaceAliases {
             logger.info("removed alias for {}", alias);
         } catch (IOException e) {
             logger.error("failed to remove alias {}", alias, e);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             logger.error("Interrupt exception while remove alias", e);
             Thread.currentThread().interrupt();
         }

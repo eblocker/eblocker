@@ -16,6 +16,15 @@
  */
 package org.eblocker.server.common.openvpn.server;
 
+import com.auth0.jwt.internal.org.apache.commons.io.output.ByteArrayOutputStream;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.http.controller.impl.OpenVpnServerControllerImpl;
+import org.eblocker.server.http.service.OpenVpnServerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -24,16 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.auth0.jwt.internal.org.apache.commons.io.output.ByteArrayOutputStream;
-import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.http.controller.impl.OpenVpnServerControllerImpl;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class OpenVpnClientConfigurationService {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
@@ -47,7 +46,7 @@ public class OpenVpnClientConfigurationService {
     private String newLine = "\r\n";
 
     @Inject
-    public OpenVpnClientConfigurationService (
+    public OpenVpnClientConfigurationService(
             OpenVpnServerService openVpnServerService,
             OpenVpnCa openVpnCa,
             @Named("openvpn.server.path") String openVpnServerPath,
@@ -90,12 +89,10 @@ public class OpenVpnClientConfigurationService {
             outputStream.write(createTag(extractLinesFromFile(openVpnCa.getClientCertificatePath(deviceName)), "cert"));
             outputStream.write(createTag(extractLinesFromFile(openVpnCa.getClientKeyPath(deviceName)), "key"));
             outputStream.write(createTag(extractLinesFromFile(Paths.get(openVpnServerPath, "ta.key")), "tls-auth"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error creating ovpn-profile.", e);
-            throw(e);
-        }
-        finally {
+            throw (e);
+        } finally {
             outputStream.close();
         }
 
@@ -106,20 +103,20 @@ public class OpenVpnClientConfigurationService {
     private byte[] createTag(List<String> lines, String tag) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        try (DataOutputStream out = new DataOutputStream(baos)){
+        try (DataOutputStream out = new DataOutputStream(baos)) {
             out.writeBytes(String.format("<%s>%s", tag, newLine));
             for (String element : lines) {
                 out.writeBytes(element);
             }
             out.writeBytes(String.format("</%s>%s", tag, newLine));
         } catch (IOException e) {
-                log.debug("Error parsing file", e);
+            log.debug("Error parsing file", e);
         }
 
         return baos.toByteArray();
     }
 
-    private byte[] readFileWithNewLine(Path path) throws IOException{
+    private byte[] readFileWithNewLine(Path path) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             for (String line : Files.readAllLines(path)) {
@@ -143,7 +140,7 @@ public class OpenVpnClientConfigurationService {
 
         List<String> lines = Files.readAllLines(path);
 
-        for (String line: lines) {
+        for (String line : lines) {
             String currentLine = line.trim() + newLine;
 
             if (validLine) {

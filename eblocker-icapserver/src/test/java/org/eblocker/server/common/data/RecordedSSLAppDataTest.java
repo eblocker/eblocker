@@ -16,19 +16,21 @@
  */
 package org.eblocker.server.common.data;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 public class RecordedSSLAppDataTest {
-	@Test
-	public void parse(){
-		RecordedSSLAppData data = RecordedSSLAppData.parse("1.2.3.4\t4711");
-		assertNull(data);
-		
-		data = RecordedSSLAppData.parse("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\t4711");
-		assertNotNull(data);
-		assertEquals("1.2.3.4", data.getIp());
-		assertEquals(4711, data.getTCPStreamNumber());
-	}
+    @Test
+    public void parse() {
+        RecordedSSLAppData data = RecordedSSLAppData.parse("1.2.3.4\t4711");
+        assertNull(data);
+
+        data = RecordedSSLAppData.parse("1.2.3.4\t1234:1234:1234:1234:1234:1234:1234:1234\t4711");
+        assertNotNull(data);
+        assertEquals("1.2.3.4", data.getIp());
+        assertEquals(4711, data.getTCPStreamNumber());
+    }
 }

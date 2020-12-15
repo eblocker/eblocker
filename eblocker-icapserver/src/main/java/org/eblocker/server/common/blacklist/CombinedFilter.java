@@ -32,7 +32,7 @@ class CombinedFilter<T> implements DomainFilter<T> {
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return filters.parallelStream()
-                .map(f->f.isBlocked(domain))
+                .map(f -> f.isBlocked(domain))
                 .filter(FilterDecision::isBlocked)
                 .findAny()
                 .orElse(new FilterDecision<>(domain, false, this));

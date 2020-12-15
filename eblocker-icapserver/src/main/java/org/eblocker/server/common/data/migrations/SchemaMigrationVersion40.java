@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -25,8 +27,9 @@ import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.http.service.DashboardCardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SchemaMigrationVersion40 implements SchemaMigration {
 
@@ -94,7 +95,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
     private void addLimboRightsToUserCard() {
         List<UiCard> cards = dataSource.getAll(UiCard.class);
         cards.stream().filter(card -> card.getName().equals("USER")).forEach(card -> {
-            UiCard updated =  new UiCard(card.getId(), "USER", ProductFeature.FAM.name(), getAllRoles(), Arrays.asList(AccessRight.USER));
+            UiCard updated = new UiCard(card.getId(), "USER", ProductFeature.FAM.name(), getAllRoles(), Arrays.asList(AccessRight.USER));
             dataSource.delete(UiCard.class, card.getId());
             dataSource.save(updated, updated.getId());
         });
@@ -108,7 +109,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
      */
     private void checkAndUpdateUserProfileRelations(List<UserModule> users) {
 
-        for (UserModule user: users) {
+        for (UserModule user : users) {
             Integer associatedProfileId = user.getAssociatedProfileId();
             UserProfileModule associatedProfile = null;
             UserProfileModule toBeCopied = null;
@@ -123,7 +124,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
             }
 
             // still null? get default profile.
-            if (associatedProfile == null){
+            if (associatedProfile == null) {
                 toBeCopied = dataSource.get(UserProfileModule.class, DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID);
                 associatedProfile = toBeCopied != null ? toBeCopied.copy() : null;
             }
@@ -132,7 +133,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
              * Actually create a new profile and assign the profile to the user
              */
             if (!user.isSystem() && associatedProfile != null &&
-                (associatedProfile.getNameKey() == null || !associatedProfile.getNameKey().equals("PROFILE_FOR_SINGLE_USER"))) {
+                    (associatedProfile.getNameKey() == null || !associatedProfile.getNameKey().equals("PROFILE_FOR_SINGLE_USER"))) {
 
                 /*
                  * These flags (for UI switches) determine whether parental control is active (hasRestrictions)
@@ -154,7 +155,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
                 // update old profile name if not builtin (to avoid name conflict)
                 // cannot delete yet, because is still be assigned
                 if (!associatedProfile.isBuiltin()) {
-                    toBeCopied.setName("Profile_"+ toBeCopied.getId());
+                    toBeCopied.setName("Profile_" + toBeCopied.getId());
                     dataSource.save(toBeCopied, toBeCopied.getId());
                 }
                 // save as new profile
@@ -183,7 +184,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
     private List<AccessRight> getAccessRulesForUser(UserModule user) {
         List<AccessRight> accessRights = new ArrayList<>();
 
-        UserProfileModule profile = dataSource.get(UserProfileModule.class,	user.getAssociatedProfileId());
+        UserProfileModule profile = dataSource.get(UserProfileModule.class, user.getAssociatedProfileId());
 
         Set<Integer> accessible = profile == null ? new HashSet<>() : profile.getAccessibleSitesPackages();
 
@@ -232,15 +233,14 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
 
     private List<UserModule> getAllParentUsers(List<UserModule> users) {
         return users.stream().
-            filter(user -> user.getUserRole() != null && user.getUserRole().equals(UserRole.PARENT)).
-            collect(Collectors.toList());
+                filter(user -> user.getUserRole() != null && user.getUserRole().equals(UserRole.PARENT)).
+                collect(Collectors.toList());
     }
-
 
     private void createAndSaveFragFinnCard(List<UserModule> users) {
         // If there is already a FRAG_FINN card, remove it and all references.
         List<UiCard> cards = dataSource.getAll(UiCard.class);
-        for (UiCard card: cards) {
+        for (UiCard card : cards) {
             if ("FRAG_FINN".equals(card.getName())) {
                 removeCardFromUsers(card, users);
             }
@@ -251,7 +251,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
     }
 
     private void removeCardFromUsers(UiCard card, List<UserModule> users) {
-        for (UserModule user: users) {
+        for (UserModule user : users) {
             if (user.getDashboardColumnsView() != null) {
                 removeCard(card, user.getDashboardColumnsView().getOneColumn());
                 removeCard(card, user.getDashboardColumnsView().getTwoColumn());
@@ -264,7 +264,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
 
     private void removeCard(UiCard card, List<UiCardColumnPosition> positions) {
         UiCardColumnPosition toBeRemoved = null;
-        for (UiCardColumnPosition pos: positions) {
+        for (UiCardColumnPosition pos : positions) {
             if (pos.getId() == card.getId()) {
                 toBeRemoved = pos;
                 break;
@@ -286,7 +286,7 @@ public class SchemaMigrationVersion40 implements SchemaMigration {
             boolean f1 = removeNotExistingCardsFromUser(cardIds, user.getDashboardColumnsView().getOneColumn());
             boolean f2 = removeNotExistingCardsFromUser(cardIds, user.getDashboardColumnsView().getTwoColumn());
             boolean f3 = removeNotExistingCardsFromUser(cardIds, user.getDashboardColumnsView().getThreeColumn());
-            if (f1 || f2 ||f3) {
+            if (f1 || f2 || f3) {
                 dataSource.save(user, user.getId());
             }
         });

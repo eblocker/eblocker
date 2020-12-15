@@ -15,39 +15,41 @@
  * permissions and limitations under the License.
  */
 package org.eblocker.server.common.data;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Simple container class for mapping the language abbrevations (= id -> e.g. 'en' or 'de') to an english name of this language
+/**
+ * Simple container class for mapping the language abbrevations (= id -> e.g. 'en' or 'de') to an english name of this language
  */
 public class Language {
 
     private final String id;//abbrevation
     private final String name;
 
-    public Language(String id, String name){
+    public Language(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
     @JsonProperty
-    public String getId(){
+    public String getId() {
         return id;
     }
 
     @JsonProperty
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     //-------------------------------------------------------------
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id.hashCode();
     }
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         return (object instanceof Language && ((Language) object).getId() == this.id);
     }
 

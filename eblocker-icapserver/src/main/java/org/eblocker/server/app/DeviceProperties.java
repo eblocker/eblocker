@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.app;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +32,10 @@ import java.util.regex.Pattern;
 /**
  * injectable singleton, which reads a properties file (default: <code>/etc/eblocker-device.properties</code>
  * and provides these properties via getter methods.
- *
+ * <p>
  * The purpose of these properties: They should contain information about relevant features that depend on the actual
  * hardware, on which the eBlocker Server is running.
- *
+ * <p>
  * E.g.:
  * <ul>
  *     <li>Is Wifi available?</li>

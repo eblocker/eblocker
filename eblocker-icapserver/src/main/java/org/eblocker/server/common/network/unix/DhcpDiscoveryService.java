@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ public class DhcpDiscoveryService {
         try {
             log.debug("running discovery process with timeout: %d and hardware address: %s", timeout, hardwareAddress);
             LoggingProcess process = scriptRunner
-                .startScript(discoveryCommand, "-w " + timeout, "-h " + hardwareAddress, interfaceName);
+                    .startScript(discoveryCommand, "-w " + timeout, "-h " + hardwareAddress, interfaceName);
             int exitValue = process.waitFor();
             if (exitValue != 0) {
                 throw new DhcpDiscoveryException("discovery script exited with " + exitValue);

@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.OpenVpnConfigurationViewModel;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
@@ -34,9 +37,6 @@ import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.service.AnonymousService;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.commons.io.IOUtils;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -56,9 +56,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** This is the REST-Controller to provide the interface between frontend and backend for handling the routing of client
- *  traffic through OpenVPN instances (user configured VPN services).
- *
+/**
+ * This is the REST-Controller to provide the interface between frontend and backend for handling the routing of client
+ * traffic through OpenVPN instances (user configured VPN services).
  */
 public class OpenVpnControllerImpl implements OpenVpnController {
     @SuppressWarnings("unused")
@@ -90,7 +90,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     @Override
     public VpnProfile createProfile(Request request, Response response) {
         OpenVpnProfile profile = request.getBodyAs(OpenVpnProfile.class);
-        if (profile == null){
+        if (profile == null) {
             profile = new OpenVpnProfile();
         }
         try {
@@ -129,8 +129,8 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
         // disable vpn and reset devices
         deviceService.getDevices(true).stream()
-                .filter(d->id.equals(d.getUseVPNProfileID()))
-                .forEach(d->{
+                .filter(d -> id.equals(d.getUseVPNProfileID()))
+                .forEach(d -> {
                     anonymousService.disableVpn(d);
                     d.setUseVPNProfileID(null);
                     deviceService.updateDevice(d);
@@ -234,7 +234,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
             anonymousService.disableVpn(device);
         }
     }
-    
+
     /*
      * This function is only called by the squid error page and it is assumed to
      * activate/deactivate VPN for the current device
@@ -333,16 +333,16 @@ public class OpenVpnControllerImpl implements OpenVpnController {
             return Collections.emptyList();
         }
         return options.stream()
-            .map(this::mapOption)
-            .sorted(Comparator.comparingInt(a -> a.lineNumber))
-            .collect(Collectors.toList());
+                .map(this::mapOption)
+                .sorted(Comparator.comparingInt(a -> a.lineNumber))
+                .collect(Collectors.toList());
     }
 
     private OpenVpnConfigurationViewModel.ConfigLine mapActiveOption(OpenVpnConfiguration configuration,
                                                                      Map<OpenVpnConfigurator.OptionState,
                                                                              Set<Option>> userOptionsByState,
                                                                      Option option) {
-        Optional <Option> userOption = findOptionByName(configuration.getUserOptions(), option.getName());
+        Optional<Option> userOption = findOptionByName(configuration.getUserOptions(), option.getName());
         boolean isEblockerOption = findOptionByName(configurator.getEblockerOptions(), option.getName()).isPresent();
         Option newOption = option;
 
@@ -360,7 +360,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
                 line.overriddenLineNumber = overwrittenUserOption.getLineNumber();
                 line.overriddenLine = overwrittenUserOption.toString();
             }
-        }  else {
+        } else {
             line.source = "user";
         }
 
@@ -371,7 +371,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     }
 
     private Optional<Option> findOptionByName(Collection<Option> options, String name) {
-        return options.stream().filter(o->o.getName().equals(name)).findAny();
+        return options.stream().filter(o -> o.getName().equals(name)).findAny();
     }
 
     private OpenVpnConfigurationViewModel.ConfigLine mapOption(Option option) {

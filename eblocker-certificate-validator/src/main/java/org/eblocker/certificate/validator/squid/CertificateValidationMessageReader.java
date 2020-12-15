@@ -25,7 +25,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +39,7 @@ public class CertificateValidationMessageReader {
     private static final Logger STATUS_LOG = LoggerFactory.getLogger("STATUS");
 
     private final String END_CERT = "-----END CERTIFICATE-----";
-    private final String BEGIN_CERT ="-----BEGIN CERTIFICATE-----";
+    private final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
 
     protected static final String KEY_REGEX = "(host|proto_version|cipher|cert_\\d+|error_name_\\d+|error_cert_\\d+|error_reason_\\d+)=(.+)";
     protected static final Pattern KEY_PATTERN = Pattern.compile(KEY_REGEX);
@@ -44,52 +48,52 @@ public class CertificateValidationMessageReader {
     protected final Pattern firstLinePattern;
 
     public CertificateValidationMessageReader(boolean useConcurrency) {
-    	this.useConcurrency = useConcurrency;
-    	
-    	firstLinePattern = Pattern.compile((useConcurrency ? "(\\d+) " : "") + "(cert_validate|OK|ERR|BH) (\\d+) (.*)");
+        this.useConcurrency = useConcurrency;
+
+        firstLinePattern = Pattern.compile((useConcurrency ? "(\\d+) " : "") + "(cert_validate|OK|ERR|BH) (\\d+) (.*)");
     }
 
     protected class Header {
-    	long ID = 0;
-    	String messageType;
-    	int bodySize;
-    	String bodyStart;
+        long ID = 0;
+        String messageType;
+        int bodySize;
+        String bodyStart;
     }
-    
+
     protected Header parseHeader(String line) {
         Matcher matcher = firstLinePattern.matcher(line);
         Header result = new Header();
         if (matcher.matches()) {
-        	if (useConcurrency) {
-        		result.ID = Long.parseLong(matcher.group(1));
-        		result.messageType = matcher.group(2);
-        		result.bodySize = Integer.parseInt(matcher.group(3));
-        		result.bodyStart = matcher.group(4);
-        	} else {
-        		result.messageType = matcher.group(1);
-        		result.bodySize = Integer.parseInt(matcher.group(2));
-        		result.bodyStart = matcher.group(3);        		
-        	}
-        	return result;
+            if (useConcurrency) {
+                result.ID = Long.parseLong(matcher.group(1));
+                result.messageType = matcher.group(2);
+                result.bodySize = Integer.parseInt(matcher.group(3));
+                result.bodyStart = matcher.group(4);
+            } else {
+                result.messageType = matcher.group(1);
+                result.bodySize = Integer.parseInt(matcher.group(2));
+                result.bodyStart = matcher.group(3);
+            }
+            return result;
         } else {
-        	return null;
+            return null;
         }
     }
-    
+
     protected CertificateValidationMessage parseMessage(BufferedReader reader) throws IOException {
         List<String> bodyLines = new ArrayList<>();
 
         String headerLine = reader.readLine();
         LOG.debug("Read header line: {}", headerLine);
 
-        if(headerLine == null) {
+        if (headerLine == null) {
             return null; //EOF
         }
 
         Header header = parseHeader(headerLine);
         if (header == null) {
-        	LOG.error("Could not parse message header from line: '{}'", headerLine);
-        	return null;
+            LOG.error("Could not parse message header from line: '{}'", headerLine);
+            return null;
         }
 
         LOG.debug("{}", header.bodyStart.length());
@@ -128,14 +132,15 @@ public class CertificateValidationMessageReader {
         Map<String, String> map = readKeyValues(bodyLines);
         return buildMessage(header.ID, header.messageType, map);
     }
-    
+
     protected CertificateValidationMessage buildMessage(long ID, String messageType, Map<String, String> map) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     /**
      * Apply the Key_Regex to the body content to map the information needed
+     *
      * @param contentLines
      * @return
      */
@@ -144,7 +149,7 @@ public class CertificateValidationMessageReader {
         String key = null;
         StringBuilder multiLineValue = null;
 
-        for (String line: contentLines) {
+        for (String line : contentLines) {
             if (multiLineValue != null) { //multiline value
                 multiLineValue.append("\n").append(line);
                 if (line.equals(END_CERT)) {
@@ -161,7 +166,7 @@ public class CertificateValidationMessageReader {
                         multiLineValue.append(BEGIN_CERT);
 
                     } else {
-                        LOG.debug("put: {} -> {}",key,val);
+                        LOG.debug("put: {} -> {}", key, val);
                         map.put(key, val);//single line value
                     }
 
@@ -174,7 +179,7 @@ public class CertificateValidationMessageReader {
     protected X509Certificate[] getCertificates(Map<String, String> map) {
         List<X509Certificate> certificates = new ArrayList<>();
         int i = 0;
-        while(map.containsKey("cert_"+i)) {
+        while (map.containsKey("cert_" + i)) {
             try {
                 X509Certificate certificate = PKI.loadCertificate(new ByteArrayInputStream(map.get("cert_" + i).getBytes()));
                 certificates.add(certificate);
@@ -200,8 +205,8 @@ public class CertificateValidationMessageReader {
     protected String[] getStringValues(Map<String, String> map, String prefix) {
         List<String> values = new ArrayList<>();
         int i = 0;
-        while (map.containsKey(prefix+i)) {
-            values.add(map.get(prefix+i));
+        while (map.containsKey(prefix + i)) {
+            values.add(map.get(prefix + i));
             i++;
         }
         return values.toArray(new String[values.size()]);
@@ -215,7 +220,7 @@ public class CertificateValidationMessageReader {
     protected Integer[] getIntegerValues(Map<String, String> map, String prefix) {
         List<Integer> values = new ArrayList<>();
         int i = 0;
-        while (map.containsKey(prefix+i)) {
+        while (map.containsKey(prefix + i)) {
             try {
                 values.add(Integer.valueOf(map.get(prefix + i)));
             } catch (NumberFormatException e) {

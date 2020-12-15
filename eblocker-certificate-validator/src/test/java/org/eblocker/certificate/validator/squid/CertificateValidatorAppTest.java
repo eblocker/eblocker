@@ -21,7 +21,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Random;
@@ -32,14 +36,14 @@ import static org.junit.Assert.assertTrue;
 public class CertificateValidatorAppTest {
     private static final Logger LOG = LoggerFactory.getLogger(CertificateValidatorAppTest.class);
 
-    private static final boolean useConcurrency=false;
-    private static final  PipedOutputStream stdinWriter = new PipedOutputStream();
-    private static final  PipedInputStream stdoutReader = new PipedInputStream();
+    private static final boolean useConcurrency = false;
+    private static final PipedOutputStream stdinWriter = new PipedOutputStream();
+    private static final PipedInputStream stdoutReader = new PipedInputStream();
 
     private static CertificateValidationResponseReader responseReader = new CertificateValidationResponseReader(useConcurrency);
 
     @BeforeClass
-    public static void setUp() throws Exception{
+    public static void setUp() throws Exception {
         //
         // Create piped streams as replacement for STDIN and STDOUT
         //
@@ -49,7 +53,7 @@ public class CertificateValidatorAppTest {
         //
         // Start the validator app in it's own thread with the piped streams.
         //
-        Thread validator = new Thread(new CertificateValidationRunner(stdinReader, stdoutWriter,useConcurrency));
+        Thread validator = new Thread(new CertificateValidationRunner(stdinReader, stdoutWriter, useConcurrency));
         validator.start();
 
     }
@@ -70,18 +74,18 @@ public class CertificateValidatorAppTest {
     }
 
     @Test
-    public void testCertError() throws Exception{
+    public void testCertError() throws Exception {
         checkInvalidCertWithErrors();
     }
 
     private void checkValidCert() throws Exception {
-    	CertificateValidationRequest request = CertificateValidatorTestUtil.createValidRequest(useConcurrency);
-    	submitRequest(request, true);
+        CertificateValidationRequest request = CertificateValidatorTestUtil.createValidRequest(useConcurrency);
+        submitRequest(request, true);
     }
 
     private void checkInvalidCert() throws Exception {
-    	CertificateValidationRequest request = CertificateValidatorTestUtil.createInvalidRequest(useConcurrency);
-    	submitRequest(request, false);
+        CertificateValidationRequest request = CertificateValidatorTestUtil.createInvalidRequest(useConcurrency);
+        submitRequest(request, false);
     }
 
     private void checkInvalidCertWithErrors() throws Exception {

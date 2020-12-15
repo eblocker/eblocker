@@ -18,7 +18,9 @@ package org.eblocker.server.http.security;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PasswordUtilTest {
 
@@ -36,8 +38,8 @@ public class PasswordUtilTest {
         assertTrue(PasswordUtil.verifyPassword(password, hash1));
         assertTrue(PasswordUtil.verifyPassword(password, hash2));
 
-        assertFalse(PasswordUtil.verifyPassword(password+"x", hash2));
+        assertFalse(PasswordUtil.verifyPassword(password + "x", hash2));
         assertFalse(PasswordUtil.verifyPassword("x", hash2));
         assertFalse(PasswordUtil.verifyPassword("", hash2));
-     }
+    }
 }

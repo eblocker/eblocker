@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.common.system.ScriptRunner;
 import org.apache.commons.io.IOUtils;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -101,7 +101,7 @@ public class IpSetsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateIpSetTooLarge() throws IOException {
         Set<String> entries = new HashSet<>();
-        for(int i = 0; i <= config.getMaxSize(); ++i) {
+        for (int i = 0; i <= config.getMaxSize(); ++i) {
             entries.add(String.valueOf(i));
         }
         ipSets.updateIpSet(config, entries);

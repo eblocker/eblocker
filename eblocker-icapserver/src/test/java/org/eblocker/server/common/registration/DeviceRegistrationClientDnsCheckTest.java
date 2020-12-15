@@ -31,20 +31,20 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
 
     @Before
     public void setUp() throws IOException, ParseException {
-        deviceRegistrationClient =  createDeviceRegistrationClient();
+        deviceRegistrationClient = createDeviceRegistrationClient();
     }
 
     @Test
     public void testSuccess() {
         getClientAndServer().when(
-            HttpRequest.request()
-                .withMethod("POST")
-                .withPath("/api/mobile/dns")
-                .withBody("helloworld.com")
+                HttpRequest.request()
+                        .withMethod("POST")
+                        .withPath("/api/mobile/dns")
+                        .withBody("helloworld.com")
         ).respond(
-            HttpResponse.response()
-                .withStatusCode(200)
-                .withBody("true")
+                HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody("true")
         );
 
         Assert.assertTrue(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));
@@ -53,14 +53,14 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
     @Test
     public void testFail() {
         getClientAndServer().when(
-            HttpRequest.request()
-                .withMethod("POST")
-                .withPath("/api/mobile/dns")
-                .withBody("helloworld.com")
+                HttpRequest.request()
+                        .withMethod("POST")
+                        .withPath("/api/mobile/dns")
+                        .withBody("helloworld.com")
         ).respond(
-            HttpResponse.response()
-                .withStatusCode(200)
-                .withBody("false")
+                HttpResponse.response()
+                        .withStatusCode(200)
+                        .withBody("false")
         );
 
         Assert.assertFalse(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));

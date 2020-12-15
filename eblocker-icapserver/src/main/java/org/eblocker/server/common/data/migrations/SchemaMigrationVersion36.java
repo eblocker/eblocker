@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserProfileModule;
-import com.google.inject.Inject;
 
 /**
  * "piracy" has been split off from "misc" blacklist so all profiles having "misc" enabled are updated to have the same
@@ -45,7 +45,7 @@ public class SchemaMigrationVersion36 implements SchemaMigration {
 
     @Override
     public void migrate() {
-        for(UserProfileModule profile : dataSource.getAll(UserProfileModule.class)) {
+        for (UserProfileModule profile : dataSource.getAll(UserProfileModule.class)) {
             if (profile.getInaccessibleSitesPackages().contains(0)) {
                 profile.getInaccessibleSitesPackages().add(11);
                 dataSource.save(profile, profile.getId());

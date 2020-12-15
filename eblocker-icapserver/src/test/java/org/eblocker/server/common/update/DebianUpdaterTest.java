@@ -16,7 +16,17 @@
  */
 package org.eblocker.server.common.update;
 
-import static org.junit.Assert.*;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.registration.RegistrationState;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,19 +38,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.registration.RegistrationState;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.system.LoggingProcess;
-import org.eblocker.server.common.system.ScriptRunner;
-
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DebianUpdaterTest {
     private final String updatesStartCommand = "updatesStartCommand";
@@ -85,7 +86,7 @@ public class DebianUpdaterTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    DebianUpdater createDebianUpdate () throws IOException, InterruptedException {
+    DebianUpdater createDebianUpdate() throws IOException, InterruptedException {
         return new DebianUpdater(deviceRegistrationProperties,
                 scriptRunner,
                 datasource,
@@ -314,7 +315,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.UPDATING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.UPDATING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -324,7 +325,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.DOWNLOADING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.DOWNLOADING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -340,7 +341,7 @@ public class DebianUpdaterTest {
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.updatesAvailable();
 
-        assertEquals (SystemUpdater.State.CHECKING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.CHECKING, debianUpdate.getUpdateStatus());
     }
 
     @Test
@@ -350,7 +351,7 @@ public class DebianUpdaterTest {
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertEquals (SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
 
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
         LoggingProcess updateCheckRunner = Mockito.mock(LoggingProcess.class);
@@ -359,14 +360,14 @@ public class DebianUpdaterTest {
 
         debianUpdate.updatesAvailable();
 
-        assertEquals (SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
+        assertEquals(SystemUpdater.State.IDLING, debianUpdate.getUpdateStatus());
     }
 
     @Test
     public void testUpdateProgressNeverRun() throws IOException, InterruptedException {
         DebianUpdater debianUpdate = createDebianUpdate();
 
-        assertTrue (debianUpdate.getUpdateProgress().isEmpty());
+        assertTrue(debianUpdate.getUpdateProgress().isEmpty());
     }
 
     @Test
@@ -440,7 +441,7 @@ public class DebianUpdaterTest {
 
             String testPath = ClassLoader.getSystemResource(TEST_PATH).getPath();
             Path expectedPinningFile = FileSystems.getDefault().getPath(testPath, eBlockerListsPinningFilename);
-            Path actualPinningFile =  FileSystems.getDefault().getPath(path);
+            Path actualPinningFile = FileSystems.getDefault().getPath(path);
             assertArrayEquals(Files.readAllBytes(expectedPinningFile), Files.readAllBytes(actualPinningFile));
         } finally {
             if (f != null) {

@@ -21,59 +21,58 @@ import org.eblocker.server.common.transaction.TransactionIdentifier;
 
 public class SessionIdentifier implements TransactionIdentifier {
 
-	private String userAgent;
-	private IpAddress IP;
-	
-	public SessionIdentifier(IpAddress ip, String userAgent){
-		this.IP=ip;
-		this.userAgent=userAgent;
-	}
-	
-	@Override
-	public String getUserAgent() {
-		return userAgent;
-	}
+    private String userAgent;
+    private IpAddress IP;
 
-	@Override
-	public IpAddress getOriginalClientIP() {
-		return IP;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SessionIdentifier other = (SessionIdentifier) obj;
-		if (IP == null) {
-			if (other.IP != null)
-				return false;
-		} else if (!IP.equals(other.IP))
-			return false;
-		if (userAgent == null) {
-			if (other.userAgent != null)
-				return false;
-		} else if (!userAgent.equals(other.userAgent))
-			return false;
-		return true;
-	}
+    public SessionIdentifier(IpAddress ip, String userAgent) {
+        this.IP = ip;
+        this.userAgent = userAgent;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((IP == null) ? 0 : IP.hashCode());
-		result = prime * result + ((userAgent == null) ? 0 : userAgent.hashCode());
-		return result;
-	}
-	
-	
-	@Override
-	public String toString(){
-		return "IP: "+IP+" userAgent: "+userAgent;
-	}
+    @Override
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    @Override
+    public IpAddress getOriginalClientIP() {
+        return IP;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SessionIdentifier other = (SessionIdentifier) obj;
+        if (IP == null) {
+            if (other.IP != null)
+                return false;
+        } else if (!IP.equals(other.IP))
+            return false;
+        if (userAgent == null) {
+            if (other.userAgent != null)
+                return false;
+        } else if (!userAgent.equals(other.userAgent))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((IP == null) ? 0 : IP.hashCode());
+        result = prime * result + ((userAgent == null) ? 0 : userAgent.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "IP: " + IP + " userAgent: " + userAgent;
+    }
 
 }

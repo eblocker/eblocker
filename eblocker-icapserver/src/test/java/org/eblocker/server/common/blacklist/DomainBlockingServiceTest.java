@@ -122,9 +122,9 @@ public class DomainBlockingServiceTest {
 
         // setup parental control profiles
         profiles = new UserProfileModule[]{
-            new UserProfileModule(0, null, null, null, null, null, null, Collections.emptySet(), Collections.emptySet(), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null),
-            new UserProfileModule(1, null, null, null, null, null, null, Collections.singleton(11), Sets.newHashSet(10, 12, 13, 16, 17), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null),
-            new UserProfileModule(2, null, null, null, null, null, null, Sets.newHashSet(11, 100), Sets.newHashSet(10, 200, 16, 17), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null)
+                new UserProfileModule(0, null, null, null, null, null, null, Collections.emptySet(), Collections.emptySet(), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null),
+                new UserProfileModule(1, null, null, null, null, null, null, Collections.singleton(11), Sets.newHashSet(10, 12, 13, 16, 17), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null),
+                new UserProfileModule(2, null, null, null, null, null, null, Sets.newHashSet(11, 100), Sets.newHashSet(10, 200, 16, 17), UserProfileModule.InternetAccessRestrictionMode.BLACKLIST, null, null, null, false, null)
         };
         profiles[1].setControlmodeUrls(true);
         profiles[2].setControlmodeUrls(true);
@@ -138,24 +138,24 @@ public class DomainBlockingServiceTest {
         // setup parental control filter lists service
         parentalControlFilterListsService = Mockito.mock(ParentalControlFilterListsService.class);
         Mockito.when(parentalControlFilterListsService.getParentalControlFilterMetaData()).thenReturn(Arrays.asList(
-            new ParentalControlFilterMetaData(0, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(1, null, null, Category.TRACKERS, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(2, null, null, Category.CUSTOM, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(3, null, null, Category.CUSTOM, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(10, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(11, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(12, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-md5", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(13, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-sha1", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(14, null, null, Category.ADS_TRACKERS_BLOOM_FILTER, null, null, null, "domainblacklist/bloom", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(15, null, null, Category.PARENTAL_CONTROL_BLOOM_FILTER, null, null, null, "domainblacklist/bloom", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(16, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, false, false,
-                Arrays.asList(new QueryTransformation("^\\.?", "md5.prefix."), new QueryTransformation("$", ".md5.suffix")), null, null),
-            new ParentalControlFilterMetaData(17, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-md5", null, false, false,
-                Arrays.asList(new QueryTransformation("^\\.?", "md5.prefix."), new QueryTransformation("$", ".md5.suffix")), null, null),
-            new ParentalControlFilterMetaData(18, null, null, Category.MALWARE, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(19, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(20, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, true, null, null, null)
-                                                                                                                   ));
+                new ParentalControlFilterMetaData(0, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(1, null, null, Category.TRACKERS, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(2, null, null, Category.CUSTOM, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(3, null, null, Category.CUSTOM, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(10, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(11, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(12, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-md5", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(13, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-sha1", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(14, null, null, Category.ADS_TRACKERS_BLOOM_FILTER, null, null, null, "domainblacklist/bloom", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(15, null, null, Category.PARENTAL_CONTROL_BLOOM_FILTER, null, null, null, "domainblacklist/bloom", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(16, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/string", null, false, false,
+                        Arrays.asList(new QueryTransformation("^\\.?", "md5.prefix."), new QueryTransformation("$", ".md5.suffix")), null, null),
+                new ParentalControlFilterMetaData(17, null, null, Category.PARENTAL_CONTROL, null, null, null, "domainblacklist/hash-md5", null, false, false,
+                        Arrays.asList(new QueryTransformation("^\\.?", "md5.prefix."), new QueryTransformation("$", ".md5.suffix")), null, null),
+                new ParentalControlFilterMetaData(18, null, null, Category.MALWARE, null, null, null, "domainblacklist/string", null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(19, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(20, null, null, Category.ADS, null, null, null, "domainblacklist/string", null, false, true, null, null, null)
+        ));
 
         // setup licensed features
         productInfoService = Mockito.mock(ProductInfoService.class);
@@ -463,7 +463,7 @@ public class DomainBlockingServiceTest {
         Assert.assertFalse(service.isBlocked(enabledParentalControlDevice, "parentalcontrol2.com").isBlocked());
 
         ArgumentCaptor<DomainBlacklistService.Listener> listenerCaptor =
-            ArgumentCaptor.forClass(DomainBlacklistService.Listener.class);
+                ArgumentCaptor.forClass(DomainBlacklistService.Listener.class);
         Mockito.verify(domainBlacklistService).addListener(listenerCaptor.capture());
 
         DomainFilter<String> parentalControlFilter = new CollectionFilter<>(10, Arrays.asList(".parentalcontrol2.com"));
@@ -485,7 +485,7 @@ public class DomainBlockingServiceTest {
         Assert.assertFalse(service.isBlocked(enabledParentalControlDevice, "whitelist.parentalcontrol.com").isBlocked());
 
         ArgumentCaptor<ParentalControlService.ParentalControlProfileChangeListener> listenerCaptor =
-            ArgumentCaptor.forClass(ParentalControlService.ParentalControlProfileChangeListener.class);
+                ArgumentCaptor.forClass(ParentalControlService.ParentalControlProfileChangeListener.class);
         Mockito.verify(parentalControlService).addListener(listenerCaptor.capture());
 
         profiles[1].setAccessibleSitesPackages(Collections.emptySet());
@@ -501,7 +501,7 @@ public class DomainBlockingServiceTest {
         Assert.assertTrue(service.isBlocked(enabledParentalControlDevice, "parentalcontrol.com").isBlocked());
 
         ArgumentCaptor<UserService.UserChangeListener> listenerCaptor =
-            ArgumentCaptor.forClass(UserService.UserChangeListener.class);
+                ArgumentCaptor.forClass(UserService.UserChangeListener.class);
         Mockito.verify(userService).addListener(listenerCaptor.capture());
 
         UserModule user = createMockUser(1, 0, null, null);
@@ -517,7 +517,7 @@ public class DomainBlockingServiceTest {
         Mockito.reset(squidConfigController);
 
         ArgumentCaptor<EblockerDnsServer.Listener> listenerCaptor =
-            ArgumentCaptor.forClass(EblockerDnsServer.Listener.class);
+                ArgumentCaptor.forClass(EblockerDnsServer.Listener.class);
         Mockito.verify(eblockerDnsServer).addListener(listenerCaptor.capture());
 
         Mockito.when(eblockerDnsServer.isEnabled()).thenReturn(false);
@@ -584,8 +584,8 @@ public class DomainBlockingServiceTest {
 
         Assert.assertFalse(service.isBlocked(automaticDevice, "random.ads.com").isBlocked());
         eblockerDnsServerInOrder.verify(eblockerDnsServer).setFilteredPeers(
-            ipAddresses(parentalControlDevice, enabledParentalControlDevice, missingListsDevice),
-            ipAddresses(enabledDevice, disabledCustomDevice));
+                ipAddresses(parentalControlDevice, enabledParentalControlDevice, missingListsDevice),
+                ipAddresses(enabledDevice, disabledCustomDevice));
         Mockito.verify(squidConfigController, Mockito.times(2)).updateDomainFilteredDevices(Collections.emptySet());
 
         Mockito.when(sslService.isSslEnabled()).thenReturn(false);
@@ -593,8 +593,8 @@ public class DomainBlockingServiceTest {
 
         Assert.assertTrue(service.isBlocked(automaticDevice, "random.ads.com").isBlocked());
         eblockerDnsServerInOrder.verify(eblockerDnsServer).setFilteredPeers(
-            ipAddresses(parentalControlDevice, enabledParentalControlDevice, missingListsDevice),
-            ipAddresses(enabledDevice, disabledCustomDevice, automaticDevice));
+                ipAddresses(parentalControlDevice, enabledParentalControlDevice, missingListsDevice),
+                ipAddresses(enabledDevice, disabledCustomDevice, automaticDevice));
         Mockito.verify(squidConfigController, Mockito.times(3)).updateDomainFilteredDevices(Collections.emptySet());
     }
 

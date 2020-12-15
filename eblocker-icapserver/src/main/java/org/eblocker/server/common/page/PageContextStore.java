@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.page;
 
-import org.eblocker.server.common.session.Session;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.session.Session;
 import org.slf4j.MDC;
 
 import java.util.ArrayList;
@@ -29,70 +29,70 @@ import java.util.UUID;
 
 public class PageContextStore {
 
-	private final Cache<String, PageContext> store;
+    private final Cache<String, PageContext> store;
 
-	@Inject
-	public PageContextStore(@Named("pagecontext.cache.size") int size) {
-		store = CacheBuilder.newBuilder().maximumSize(size).build();
-	}
+    @Inject
+    public PageContextStore(@Named("pagecontext.cache.size") int size) {
+        store = CacheBuilder.newBuilder().maximumSize(size).build();
+    }
 
-	public PageContext get(UUID id) {
-		if (id == null) {
-			return null;
-		}
+    public PageContext get(UUID id) {
+        if (id == null) {
+            return null;
+        }
 
-		PageContext pageContext = store.getIfPresent(id.toString());
+        PageContext pageContext = store.getIfPresent(id.toString());
 
-		// From now on, we know the corresponding page context
-		setLoggingContext(pageContext);
+        // From now on, we know the corresponding page context
+        setLoggingContext(pageContext);
 
-		return pageContext;
-	}
+        return pageContext;
+    }
 
-	public PageContext get(String id) {
-		if (id == null) {
-			return null;
-		}
+    public PageContext get(String id) {
+        if (id == null) {
+            return null;
+        }
 
-		PageContext pageContext = store.getIfPresent(id);
+        PageContext pageContext = store.getIfPresent(id);
 
-		// From now on, we know the corresponding page context
-		setLoggingContext(pageContext);
+        // From now on, we know the corresponding page context
+        setLoggingContext(pageContext);
 
-		return pageContext;
-	}
+        return pageContext;
+    }
 
-	public PageContext create(PageContext parentContext, Session session, String url) {
-		PageContext pageContext = session.createPageContext(parentContext, url);
+    public PageContext create(PageContext parentContext, Session session, String url) {
+        PageContext pageContext = session.createPageContext(parentContext, url);
 
-		if(pageContext == null)
-			return null;
+        if (pageContext == null)
+            return null;
 
-		pageContext.reset();
+        pageContext.reset();
 
-		// From now on, we know the corresponding page context
-		setLoggingContext(pageContext);
+        // From now on, we know the corresponding page context
+        setLoggingContext(pageContext);
 
-		store.put(pageContext.getId(), pageContext);
-		return pageContext;
-	}
+        store.put(pageContext.getId(), pageContext);
+        return pageContext;
+    }
 
-	public PageContext find(Session session, String url) {
-		PageContext pageContext = session.getPageContext(url);
+    public PageContext find(Session session, String url) {
+        PageContext pageContext = session.getPageContext(url);
 
-		// From now on, we know the corresponding page context
-		setLoggingContext(pageContext);
+        // From now on, we know the corresponding page context
+        setLoggingContext(pageContext);
 
-		return pageContext;
-	}
+        return pageContext;
+    }
 
-	public Collection<PageContext> getContexts() {
-		return new ArrayList<>(store.asMap().values());
-	}
+    public Collection<PageContext> getContexts() {
+        return new ArrayList<>(store.asMap().values());
+    }
 
-	private void setLoggingContext(PageContext pageContext) {
-		// From now on, we know the corresponding page context
-		MDC.put("PAGE", pageContext == null ? "--------" : pageContext.getShortId());
-	}
+    private void setLoggingContext(PageContext pageContext) {
+        // From now on, we know the corresponding page context
+        MDC.put("PAGE", pageContext == null ? "--------" : pageContext.getShortId());
+    }
 
 }

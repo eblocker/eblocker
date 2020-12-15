@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.backup.AppModulesBackupProvider;
 import org.eblocker.server.http.backup.BackupProvider;
@@ -23,7 +24,6 @@ import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

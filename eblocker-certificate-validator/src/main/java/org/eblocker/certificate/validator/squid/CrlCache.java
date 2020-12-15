@@ -16,11 +16,11 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
+import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,16 +57,16 @@ public class CrlCache {
         this.connectionBuilderFactory = connectionBuilderFactory;
 
         cache = CacheBuilder.newBuilder()
-            .maximumSize(maximumSize)
-            .concurrencyLevel(concurrencyLevel)
-            .removalListener(notification -> log.info("evicted entry: {}", notification.getKey()))
-            .recordStats()
-            .build(new CacheLoader<String, Entry>() {
-                @Override
-                public Entry load(String url) throws Exception {
-                    return downloadCrl(url, null);
-                }
-            });
+                .maximumSize(maximumSize)
+                .concurrencyLevel(concurrencyLevel)
+                .removalListener(notification -> log.info("evicted entry: {}", notification.getKey()))
+                .recordStats()
+                .build(new CacheLoader<String, Entry>() {
+                    @Override
+                    public Entry load(String url) throws Exception {
+                        return downloadCrl(url, null);
+                    }
+                });
     }
 
     public CrlCache(long maximumSize, int concurrencyLevel, long maximumAge, Clock clock, HttpUrlConnectionBuilderFactory connectionBuilderFactory, InputStream in) {
@@ -91,7 +91,7 @@ public class CrlCache {
         log.info("starting refresh");
         long start = System.currentTimeMillis();
         Iterator<Map.Entry<String, Entry>> i = cache.asMap().entrySet().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             Map.Entry<String, Entry> e = i.next();
             if (!refreshEntry(e.getKey(), e.getValue(), clock.millis())) {
                 i.remove();
@@ -131,10 +131,9 @@ public class CrlCache {
         STATUS_LOG.info("size: {} hits: {} loads: {} miss: {} evictions: {}", cache.size(), stats.hitCount(), stats.loadCount(), stats.missCount(), stats.evictionCount());
     }
 
-
     public void writeToStream(OutputStream out) throws IOException {
         DataOutputStream oout = new DataOutputStream(out);
-        for(Map.Entry<String, Entry> e : cache.asMap().entrySet()) {
+        for (Map.Entry<String, Entry> e : cache.asMap().entrySet()) {
             oout.writeBoolean(true);
             oout.writeUTF(e.getKey());
             oout.writeLong(e.getValue().lastCheck);
@@ -153,7 +152,7 @@ public class CrlCache {
     }
 
     private void readEntriesFromStreamAsync(InputStream in) {
-        new Thread(()-> {
+        new Thread(() -> {
             try {
                 readEntriesFromStream(in);
             } catch (IOException e) {
@@ -172,7 +171,7 @@ public class CrlCache {
         DataInputStream oin = new DataInputStream(in);
         try {
             boolean hasEntry = oin.readBoolean();
-            while(hasEntry) {
+            while (hasEntry) {
                 String key = oin.readUTF();
                 long lastCheck = oin.readLong();
                 long lastModified = oin.readLong();
@@ -199,9 +198,9 @@ public class CrlCache {
         try {
             log.debug("downloading crl: {}", url);
             connection = connectionBuilderFactory.create()
-                .setUrl(url)
-                .setIfModifiedSince(lastModified)
-                .get();
+                    .setUrl(url)
+                    .setIfModifiedSince(lastModified)
+                    .get();
 
             if (connection.getResponseCode() == 304) {
                 return null;
@@ -237,6 +236,5 @@ public class CrlCache {
             this.crl = crl;
         }
     }
-
 
 }

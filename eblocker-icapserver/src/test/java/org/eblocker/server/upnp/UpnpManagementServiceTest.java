@@ -16,12 +16,8 @@
  */
 package org.eblocker.server.upnp;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.eblocker.server.common.data.Ip4Address;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.controlpoint.ControlPoint;
 import org.fourthline.cling.model.action.ActionArgumentValue;
@@ -41,7 +37,10 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class UpnpManagementServiceTest {
     UpnpManagementService upnpManagementService;
@@ -63,7 +62,7 @@ public class UpnpManagementServiceTest {
         ControlPoint controlPoint = Mockito.mock(ControlPoint.class);
         upnpService = Mockito.mock(UpnpServiceImpl.class);
         Mockito.when(upnpService.getControlPoint()).thenReturn(controlPoint, controlPoint);
-        
+
         upnpPortForwardingAddFactory = Mockito.mock(UpnpPortForwardingAddFactory.class);
         upnpPortForwardingDeleteFactory = Mockito.mock(UpnpPortForwardingDeleteFactory.class);
         upnpActionCallbackFactory = Mockito.mock(UpnpActionCallbackFactory.class);
@@ -130,10 +129,10 @@ public class UpnpManagementServiceTest {
     public void testAddPortForwardingsGatewayDoesNotAllow() {
         // No device
         Device[] devices = new Device[0];
-        
+
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(Mockito.any(DeviceType.class))).thenReturn(devices);
-        
+
         Registry upnpRegistry = Mockito.mock(Registry.class);
         Collection<Device> gatewayDevices = new ArrayList<>();
         gatewayDevices.add(gatewayDevice);
@@ -184,7 +183,7 @@ public class UpnpManagementServiceTest {
 
         Mockito.verify(upnpRegistry, Mockito.times(2)).getDevices(Mockito.any(DeviceType.class));
         Mockito.verify(gatewayDevice, Mockito.times(2)).findDevices(Mockito.any(DeviceType.class));
-        
+
     }
 
     @Test
@@ -210,13 +209,13 @@ public class UpnpManagementServiceTest {
         UpnpPortForwardingResult resultA = new UpnpPortForwardingResult(forwardingA, true, "");
         Mockito.when(upnpPortForwardingAddA.getResult()).thenReturn(resultA);
         // The method "success" would be called by cling
-        Mockito.doAnswer(new Answer<Void>(){
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }
-            ).when(upnpPortForwardingAddA).run();
+        Mockito.doAnswer(new Answer<Void>() {
+                             @Override
+                             public Void answer(InvocationOnMock invocation) throws Throwable {
+                                 return null;
+                             }
+                         }
+        ).when(upnpPortForwardingAddA).run();
 
         Mockito.when(upnpPortForwardingAddFactory.create(Mockito.any(Service.class), Mockito.any(ControlPoint.class),
                 Mockito.any(UpnpPortForwarding.class), Mockito.any(UpnpManagementService.class)))
@@ -234,7 +233,7 @@ public class UpnpManagementServiceTest {
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE))
                 .thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -256,7 +255,7 @@ public class UpnpManagementServiceTest {
         Mockito.verify(gatewayDevice).findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.IP_SERVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.PPP_SERVICE_TYPE);
-        
+
         Mockito.verify(upnpPortForwardingAddA).run();
         Mockito.verify(upnpPortForwardingAddA).getResult();
     }
@@ -284,13 +283,13 @@ public class UpnpManagementServiceTest {
         UpnpPortForwardingResult resultA = new UpnpPortForwardingResult(forwardingA, true, "");
         Mockito.when(upnpPortForwardingAddA.getResult()).thenReturn(resultA);
         // The method "success" would be called by cling
-        Mockito.doAnswer(new Answer<Void>(){
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }
-            ).when(upnpPortForwardingAddA).run();
+        Mockito.doAnswer(new Answer<Void>() {
+                             @Override
+                             public Void answer(InvocationOnMock invocation) throws Throwable {
+                                 return null;
+                             }
+                         }
+        ).when(upnpPortForwardingAddA).run();
 
         Mockito.when(upnpPortForwardingAddFactory.create(Mockito.any(Service.class), Mockito.any(ControlPoint.class),
                 Mockito.any(UpnpPortForwarding.class), Mockito.any(UpnpManagementService.class)))
@@ -307,7 +306,7 @@ public class UpnpManagementServiceTest {
 
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE)).thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -329,12 +328,12 @@ public class UpnpManagementServiceTest {
         Mockito.verify(gatewayDevice).findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.IP_SERVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.PPP_SERVICE_TYPE);
-        
+
         Mockito.verify(upnpPortForwardingAddA).run();
         Mockito.verify(upnpPortForwardingAddA).getResult();
-        
+
         // Now add a second port forwarding, pretty much the same, only diverging in the description
-        
+
         // Second PortForwarding
         List<UpnpPortForwarding> forwardingsNew = new ArrayList<>();
         String descriptionANew = "descriptionA-New";
@@ -409,10 +408,10 @@ public class UpnpManagementServiceTest {
     public void testRemovePortForwardingsGatewayDoesNotAllow() {
         // No device
         Device[] devices = new Device[0];
-        
+
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(Mockito.any(DeviceType.class))).thenReturn(devices);
-        
+
         Registry upnpRegistry = Mockito.mock(Registry.class);
         Collection<Device> gatewayDevices = new ArrayList<>();
         gatewayDevices.add(gatewayDevice);
@@ -463,7 +462,7 @@ public class UpnpManagementServiceTest {
 
         Mockito.verify(upnpRegistry, Mockito.times(2)).getDevices(Mockito.any(DeviceType.class));
         Mockito.verify(gatewayDevice, Mockito.times(2)).findDevices(Mockito.any(DeviceType.class));
-        
+
     }
 
     @Test
@@ -489,13 +488,13 @@ public class UpnpManagementServiceTest {
         UpnpPortForwardingResult resultA = new UpnpPortForwardingResult(forwardingA, true, "");
         Mockito.when(upnpPortForwardingDeleteA.getResult()).thenReturn(resultA);
         // The method "success" would be called by cling
-        Mockito.doAnswer(new Answer<Void>(){
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }
-            ).when(upnpPortForwardingDeleteA).run();
+        Mockito.doAnswer(new Answer<Void>() {
+                             @Override
+                             public Void answer(InvocationOnMock invocation) throws Throwable {
+                                 return null;
+                             }
+                         }
+        ).when(upnpPortForwardingDeleteA).run();
 
         Mockito.when(upnpPortForwardingDeleteFactory.create(Mockito.any(Service.class), Mockito.any(ControlPoint.class),
                 Mockito.any(UpnpPortForwarding.class), Mockito.any(UpnpManagementService.class)))
@@ -512,7 +511,7 @@ public class UpnpManagementServiceTest {
 
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE)).thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -561,13 +560,13 @@ public class UpnpManagementServiceTest {
         UpnpPortForwardingResult resultA = new UpnpPortForwardingResult(forwardingA, false, "");
         Mockito.when(upnpPortForwardingDeleteA.getResult()).thenReturn(resultA);
 
-        Mockito.doAnswer(new Answer<Void>(){
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }
-            ).when(upnpPortForwardingDeleteA).run();
+        Mockito.doAnswer(new Answer<Void>() {
+                             @Override
+                             public Void answer(InvocationOnMock invocation) throws Throwable {
+                                 return null;
+                             }
+                         }
+        ).when(upnpPortForwardingDeleteA).run();
 
         Mockito.when(upnpPortForwardingDeleteFactory.create(Mockito.any(Service.class), Mockito.any(ControlPoint.class),
                 Mockito.any(UpnpPortForwarding.class), Mockito.any(UpnpManagementService.class)))
@@ -584,7 +583,7 @@ public class UpnpManagementServiceTest {
 
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE)).thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -592,7 +591,7 @@ public class UpnpManagementServiceTest {
         Mockito.when(upnpRegistry.getDevices(Mockito.any(DeviceType.class))).thenReturn(gatewayDeviceList);
 
         Mockito.when(upnpService.getRegistry()).thenReturn(upnpRegistry);
-        
+
         // After the failure, existing forwardings are queried from the router
 
         // Forwardings installed on the router (none)
@@ -604,11 +603,11 @@ public class UpnpManagementServiceTest {
         // Upon invocation, no forwarding can be found
         UpnpActionInvocation firstInvocation = Mockito.mock(UpnpActionInvocation.class);
         Mockito.when(firstInvocation.getFailure()).thenReturn(new ActionException(1, "a"));
-        
+
         Mockito.when(upnpActionInvocationFactory.create(Mockito.any())).thenReturn(firstInvocation);
-        
+
         Action getPortMappingEntryAction = Mockito.mock(Action.class);
-        
+
         Mockito.when(service.getAction(Mockito.eq("GetGenericPortMappingEntry"))).thenReturn(getPortMappingEntryAction);
 
         List<UpnpPortForwardingResult> results = upnpManagementService.removePortForwardings(forwardings);
@@ -627,7 +626,7 @@ public class UpnpManagementServiceTest {
 
         Mockito.verify(upnpPortForwardingDeleteA).run();
         Mockito.verify(upnpPortForwardingDeleteA).getResult();
-        
+
     }
 
     @Test
@@ -662,9 +661,9 @@ public class UpnpManagementServiceTest {
         UpnpPortForwarding secondForwarding = new UpnpPortForwarding(secondForwardingExternalPort,
                 secondForwardingInternalPort, secondForwardingInternalHostIp, secondForwardingDurationSeconds,
                 secondForwardingDescription, secondForwardingProtocol, secondForwardingPermanent);
-        
+
         forwardings.add(secondForwarding);
-        
+
         UpnpActionCallback upnpActionCallback = Mockito.mock(UpnpActionCallback.class);
 
         Mockito.when(upnpActionCallbackFactory.create(Mockito.any(), Mockito.any())).thenReturn(upnpActionCallback, upnpActionCallback, upnpActionCallback);
@@ -676,7 +675,7 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue firstForwardingActionArgumentValueDescription = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(firstForwardingActionArgumentValueDescription.getValue()).thenReturn(firstForwardingDescription);
         Mockito.when(firstInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DESCRIPTION))).thenReturn(firstForwardingActionArgumentValueDescription);
-        
+
         ActionArgumentValue firstForwardingActionArgumentValueDuration = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(firstForwardingActionArgumentValueDuration.getValue()).thenReturn(firstForwarding.getLeaseDurationSeconds());
         Mockito.when(firstInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DURATION))).thenReturn(firstForwardingActionArgumentValueDuration);
@@ -712,7 +711,7 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue secondForwardingActionArgumentValueDescription = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueDescription.getValue()).thenReturn(secondForwardingDescription);
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DESCRIPTION))).thenReturn(secondForwardingActionArgumentValueDescription);
-        
+
         ActionArgumentValue secondForwardingActionArgumentValueDuration = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueDuration.getValue()).thenReturn(secondForwarding.getLeaseDurationSeconds());
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DURATION))).thenReturn(secondForwardingActionArgumentValueDuration);
@@ -740,16 +739,16 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue secondForwardingActionArgumentValueRemoteHost = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueRemoteHost.getValue()).thenReturn(secondForwarding.getRemoteHost());
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_REMOTE_HOST))).thenReturn(secondForwardingActionArgumentValueRemoteHost);
-        
+
         // Upon third invocation, no further forwarding can be found
         UpnpActionInvocation thirdInvocation = Mockito.mock(UpnpActionInvocation.class);
         Mockito.when(thirdInvocation.getFailure()).thenReturn(new ActionException(1, "a"));
-        
+
         Mockito.when(upnpActionInvocationFactory.create(Mockito.any())).thenReturn(firstInvocation, secondInvocation,
                 thirdInvocation);
-        
+
         Action getPortMappingEntryAction = Mockito.mock(Action.class);
-        
+
         org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
         Mockito.when(service.getAction(Mockito.eq("GetGenericPortMappingEntry"))).thenReturn(getPortMappingEntryAction);
 
@@ -765,7 +764,7 @@ public class UpnpManagementServiceTest {
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE))
                 .thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -786,7 +785,7 @@ public class UpnpManagementServiceTest {
         Assert.assertEquals(new UnsignedIntegerTwoBytes(firstForwardingInternalPort), results.get(0).getInternalPort());
         Assert.assertEquals(firstForwardingProtocol, results.get(0).getProtocol());
         Assert.assertEquals(firstForwardingRemoteHost, results.get(0).getRemoteHost());
-        
+
         Assert.assertEquals(secondForwardingDescription, results.get(1).getDescription());
         Assert.assertEquals(new UnsignedIntegerFourBytes(secondForwardingDurationSeconds), results.get(1).getLeaseDurationSeconds());
         Assert.assertEquals(true, results.get(1).isEnabled());
@@ -802,10 +801,10 @@ public class UpnpManagementServiceTest {
         Mockito.verify(gatewayDevice).findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.IP_SERVICE_TYPE);
         Mockito.verify(connectionDevice).findService(UpnpManagementService.PPP_SERVICE_TYPE);
-        
+
         Mockito.verify(service).getAction(Mockito.eq("GetGenericPortMappingEntry"));
         Mockito.verify(upnpActionCallbackFactory, Mockito.times(3)).create(Mockito.any(), Mockito.any());
-        
+
         Mockito.verify(firstInvocation).setInput(Mockito.eq("NewPortMappingIndex"),
                 Mockito.eq(new UnsignedIntegerTwoBytes(0)));
         Mockito.verify(firstInvocation).getFailure();
@@ -817,9 +816,9 @@ public class UpnpManagementServiceTest {
         Mockito.verify(thirdInvocation).setInput(Mockito.eq("NewPortMappingIndex"),
                 Mockito.eq(new UnsignedIntegerTwoBytes(2)));
         Mockito.verify(thirdInvocation).getFailure();
-        
+
         Mockito.verify(upnpActionCallback, Mockito.times(3)).run();
-        
+
     }
 
     @Test
@@ -855,9 +854,9 @@ public class UpnpManagementServiceTest {
         UpnpPortForwarding secondForwarding = new UpnpPortForwarding(secondForwardingExternalPort,
                 secondForwardingInternalPort, secondForwardingInternalHostIp, secondForwardingDurationSeconds,
                 secondForwardingDescription, secondForwardingProtocol, secondForwardingPermanent);
-        
+
         forwardings.add(secondForwarding);
-        
+
         UpnpActionCallback upnpActionCallback = Mockito.mock(UpnpActionCallback.class);
 
         Mockito.when(upnpActionCallbackFactory.create(Mockito.any(), Mockito.any())).thenReturn(upnpActionCallback, upnpActionCallback, upnpActionCallback);
@@ -869,7 +868,7 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue firstForwardingActionArgumentValueDescription = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(firstForwardingActionArgumentValueDescription.getValue()).thenReturn(firstForwardingDescription);
         Mockito.when(firstInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DESCRIPTION))).thenReturn(firstForwardingActionArgumentValueDescription);
-        
+
         ActionArgumentValue firstForwardingActionArgumentValueDuration = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(firstForwardingActionArgumentValueDuration.getValue()).thenReturn(firstForwarding.getLeaseDurationSeconds());
         Mockito.when(firstInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DURATION))).thenReturn(firstForwardingActionArgumentValueDuration);
@@ -905,7 +904,7 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue secondForwardingActionArgumentValueDescription = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueDescription.getValue()).thenReturn(secondForwardingDescription);
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DESCRIPTION))).thenReturn(secondForwardingActionArgumentValueDescription);
-        
+
         ActionArgumentValue secondForwardingActionArgumentValueDuration = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueDuration.getValue()).thenReturn(secondForwarding.getLeaseDurationSeconds());
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_DURATION))).thenReturn(secondForwardingActionArgumentValueDuration);
@@ -933,16 +932,16 @@ public class UpnpManagementServiceTest {
         ActionArgumentValue secondForwardingActionArgumentValueRemoteHost = Mockito.mock(ActionArgumentValue.class);
         Mockito.when(secondForwardingActionArgumentValueRemoteHost.getValue()).thenReturn(secondForwarding.getRemoteHost());
         Mockito.when(secondInvocation.getOutput(Mockito.eq(UpnpManagementService.RESULT_KEY_PORT_MAPPING_REMOTE_HOST))).thenReturn(secondForwardingActionArgumentValueRemoteHost);
-        
+
         // Upon third invocation, no further forwarding can be found
         UpnpActionInvocation thirdInvocation = Mockito.mock(UpnpActionInvocation.class);
         Mockito.when(thirdInvocation.getFailure()).thenReturn(new ActionException(1, "a"));
-        
+
         Mockito.when(upnpActionInvocationFactory.create(Mockito.any())).thenReturn(firstInvocation, secondInvocation,
                 thirdInvocation);
-        
+
         Action getPortMappingEntryAction = Mockito.mock(Action.class);
-        
+
         org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
         Mockito.when(service.getAction(Mockito.eq("GetGenericPortMappingEntry"))).thenReturn(getPortMappingEntryAction);
 
@@ -958,7 +957,7 @@ public class UpnpManagementServiceTest {
         Device gatewayDevice = Mockito.mock(Device.class);
         Mockito.when(gatewayDevice.findDevices(UpnpManagementService.CONNECTION_DEVICE_TYPE))
                 .thenReturn(connectionDevices);
-        
+
         List<Device> gatewayDeviceList = new ArrayList<>();
         gatewayDeviceList.add(gatewayDevice);
 
@@ -966,7 +965,7 @@ public class UpnpManagementServiceTest {
         Mockito.when(upnpRegistry.getDevices(Mockito.any(DeviceType.class))).thenReturn(gatewayDeviceList);
 
         Mockito.when(upnpService.getRegistry()).thenReturn(upnpRegistry);
-        
+
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse(eBlockerIp));
 
         // Scenario: The eBlocker tries to take forwarding away from another device

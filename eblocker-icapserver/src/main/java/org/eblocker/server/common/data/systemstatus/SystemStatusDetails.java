@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.data.systemstatus;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.UpdatingStatus;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import org.eblocker.server.common.data.UpdatingStatus;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SystemStatusDetails {
 
@@ -34,7 +34,7 @@ public class SystemStatusDetails {
     private final List<String> warnings;
 
     private final Collection<SubSystemDetails> subSystemDetails;
-    
+
     private final String projectVersion;
     private final UpdatingStatus updatingStatus;
 
@@ -74,7 +74,7 @@ public class SystemStatusDetails {
         return projectVersion;
     }
 
-    public UpdatingStatus getUpdatingStatus(){
+    public UpdatingStatus getUpdatingStatus() {
         return this.updatingStatus;
     }
 

@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -39,22 +39,22 @@ public class ParentalControlFilterListsControllerImpl implements ParentalControl
     @Inject
     public ParentalControlFilterListsControllerImpl(ParentalControlFilterListsService filterListsService) {
         this.filterListsService = filterListsService;
-     }
+    }
 
     @Override
-    public Set<ParentalControlFilterSummaryData> getFilterLists(Request request, Response response){
+    public Set<ParentalControlFilterSummaryData> getFilterLists(Request request, Response response) {
         log.info("getFilterLists");
         return filterListsService.getParentalControlFilterLists();
     }
 
     @Override
-    public List<ParentalControlFilterMetaData> getFilterMetaData(Request request, Response response){
+    public List<ParentalControlFilterMetaData> getFilterMetaData(Request request, Response response) {
         log.info("getFilterLists");
         return filterListsService.getParentalControlFilterMetaData();
     }
 
     @Override
-    public List<String> getFilterListDomains(Request request, Response response){
+    public List<String> getFilterListDomains(Request request, Response response) {
         log.info("getFilterListDomains");
         String idString = request.getHeader("id", "No filter list ID provided");
 
@@ -63,15 +63,15 @@ public class ParentalControlFilterListsControllerImpl implements ParentalControl
     }
 
     @Override
-    public ParentalControlFilterSummaryData updateFilterList(Request request, Response response){
+    public ParentalControlFilterSummaryData updateFilterList(Request request, Response response) {
         log.info("updateFilterList");
         String filterType = request.getHeader("filterType");
         return filterListsService.updateFilterList(request
-            .getBodyAs(ParentalControlFilterSummaryData.class), filterType);
+                .getBodyAs(ParentalControlFilterSummaryData.class), filterType);
     }
 
     @Override
-    public synchronized void deleteFilterList(Request request, Response response){
+    public synchronized void deleteFilterList(Request request, Response response) {
         log.info("deleteFilterList");
         String idString = request.getHeader("id", "No filter list ID provided");
 
@@ -80,18 +80,18 @@ public class ParentalControlFilterListsControllerImpl implements ParentalControl
     }
 
     @Override
-    public synchronized ParentalControlFilterSummaryData createFilterList(Request request, Response response){
+    public synchronized ParentalControlFilterSummaryData createFilterList(Request request, Response response) {
         log.info("createFilterList");
         String filterType = request.getHeader("filterType");
         return filterListsService.createFilterList(request
-            .getBodyAs(ParentalControlFilterSummaryData.class), filterType);
+                .getBodyAs(ParentalControlFilterSummaryData.class), filterType);
     }
 
     /**
      * REST method - GET /filterlists/unique
      */
     @Override
-    public void isUnique(Request request, Response response){
+    public void isUnique(Request request, Response response) {
         log.debug("GET /filterlists/unique");
         String idString = request.getHeader("id");
         String filterType = request.getHeader("filterType");
@@ -99,12 +99,12 @@ public class ParentalControlFilterListsControllerImpl implements ParentalControl
         if (idString != null && !idString.isEmpty()) {
             try {
                 id = Integer.valueOf(idString);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new BadRequestException("Invalid numerical format");
             }
         }
         String name = request.getHeader("name", "No filter list name provided");
-        if (!filterListsService.isUniqueCustomerCreatedName(id, name, filterType)){
+        if (!filterListsService.isUniqueCustomerCreatedName(id, name, filterType)) {
             throw new ConflictException("Name is not unique");
         }
 

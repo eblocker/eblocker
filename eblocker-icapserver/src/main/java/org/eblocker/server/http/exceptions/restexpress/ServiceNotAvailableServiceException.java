@@ -24,24 +24,21 @@ public class ServiceNotAvailableServiceException extends ServiceException {
     private static final long serialVersionUID = -8484662487466021563L;
     private static final HttpResponseStatus STATUS = HttpResponseStatus.SERVICE_UNAVAILABLE;
 
-    public ServiceNotAvailableServiceException()
-    {
+    public ServiceNotAvailableServiceException() {
         super(STATUS);
     }
 
     /**
      * @param message
      */
-    public ServiceNotAvailableServiceException(String message)
-    {
+    public ServiceNotAvailableServiceException(String message) {
         super(STATUS, message);
     }
 
     /**
      * @param cause
      */
-    public ServiceNotAvailableServiceException(Throwable cause)
-    {
+    public ServiceNotAvailableServiceException(Throwable cause) {
         super(STATUS, cause);
     }
 
@@ -49,8 +46,7 @@ public class ServiceNotAvailableServiceException extends ServiceException {
      * @param message
      * @param cause
      */
-    public ServiceNotAvailableServiceException(String message, Throwable cause)
-    {
+    public ServiceNotAvailableServiceException(String message, Throwable cause) {
         super(STATUS, message, cause);
     }
 

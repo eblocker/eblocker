@@ -18,15 +18,17 @@ package org.eblocker.server.common.status;
 
 public class ErrorMessage extends Message {
     private Throwable throwable;
-    
+
     public ErrorMessage(Throwable throwable) {
         super(MessageStatus.ERROR, "An error occurred: %s");
         this.throwable = throwable;
     }
+
     @Override
     public String render() {
         return String.format(super.render(), String.format("<pre>%s</pre>", throwable.toString()));
     }
+
     @Override
     public String toString() {
         return String.format(super.toString(), throwable.getMessage());

@@ -74,8 +74,8 @@ public class DeviceService {
 
     @Inject
     public DeviceService(DataSource datasource, SslService sslService,
-            DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
-            NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory) {
+                         DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
+                         NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.datasource = datasource;
         this.sslService = sslService;
@@ -105,25 +105,25 @@ public class DeviceService {
     }
 
     public void updateDevice(Device device) {
-    	// Check ID of operating user actually references an existing user
-		if (datasource.get(UserModule.class, device.getOperatingUser()) == null
-				|| datasource.get(UserModule.class, device.getAssignedUser()) == null) {
-			throw new BadRequestException("Device "
-					+ device.getUserFriendlyName()
-					+ " references non-existing operating user "
-					+ device.getOperatingUser()
-					+ " or non-existing assigned user "
-					+ device.getAssignedUser());
-    	}
+        // Check ID of operating user actually references an existing user
+        if (datasource.get(UserModule.class, device.getOperatingUser()) == null
+                || datasource.get(UserModule.class, device.getAssignedUser()) == null) {
+            throw new BadRequestException("Device "
+                    + device.getUserFriendlyName()
+                    + " references non-existing operating user "
+                    + device.getOperatingUser()
+                    + " or non-existing assigned user "
+                    + device.getAssignedUser());
+        }
 
-    	// handle icon visibility (if in auto mode) depending on device and global SSL status
+        // handle icon visibility (if in auto mode) depending on device and global SSL status
         device = updateIconStatus(device);
 
-		if (!device.isSslEnabled()) {
+        if (!device.isSslEnabled()) {
             userAgentService.turnOffCloakingForDevice(device.getAssignedUser(), device.getId());
         }
 
-		datasource.save(device);
+        datasource.save(device);
 
         resolveIpAddressConflicts(device);
         cacheDevice(device);
@@ -135,7 +135,7 @@ public class DeviceService {
     private Device updateIconStatus(Device dev) {
         Device device = dev;
         if (device.isControlBarAutoMode() && device.isSslEnabled() && sslService.isSslEnabled() &&
-            device.getIconMode() == DisplayIconMode.OFF) {
+                device.getIconMode() == DisplayIconMode.OFF) {
             device.setIconMode(DisplayIconMode.ON_ALL_DEVICES);
         } else if (device.isControlBarAutoMode() && (!device.isSslEnabled() || !sslService.isSslEnabled())) {
             device.setIconMode(DisplayIconMode.OFF);
@@ -156,11 +156,12 @@ public class DeviceService {
     }
 
     /**
-    * Take the device and look for other devices in the list with the same IP address;
-    * Resolving the conflict by flagging the other devices (which can not be online with the same IP address at the same time -> assumption)
-    * as inactive.
-    * @param device IP address of device changed, or device was seen for the first time
-    */
+     * Take the device and look for other devices in the list with the same IP address;
+     * Resolving the conflict by flagging the other devices (which can not be online with the same IP address at the same time -> assumption)
+     * as inactive.
+     *
+     * @param device IP address of device changed, or device was seen for the first time
+     */
     private void resolveIpAddressConflicts(Device device) {
         Collection<Device> allDevices = getDevices(false);
         allDevices.remove(device);
@@ -169,7 +170,7 @@ public class DeviceService {
     }
 
     private void resolveIpAddressConflicts(Collection<IpAddress> ips, Collection<Device> allDevices) {
-        for(Device currentDevice : allDevices) {
+        for (Device currentDevice : allDevices) {
             List<IpAddress> currentDeviceIpAddresses = currentDevice.getIpAddresses();
             if (currentDeviceIpAddresses.removeAll(ips)) {
                 if (currentDeviceIpAddresses.isEmpty() || !currentDeviceIpAddresses.get(0).equals(currentDevice.getIpAddresses().get(0))) {
@@ -205,6 +206,7 @@ public class DeviceService {
 
     /**
      * Delete a device from the cache and data source
+     *
      * @param device the device to be deleted
      */
     public Device delete(Device device) {
@@ -225,7 +227,7 @@ public class DeviceService {
     public Set<Device> delete(Predicate<Device> predicate) {
         Set<Device> deletedDevices = new HashSet<>();
         Iterator<Device> i = devicesById.values().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             Device device = i.next();
             if (predicate.test(device)) {
                 delete(device);
@@ -241,6 +243,7 @@ public class DeviceService {
 
     /**
      * Removes deleted devices from cache
+     *
      * @param devices list of all current known devices
      */
     private void removeDeletedDevices(Set<Device> devices) {
@@ -248,7 +251,7 @@ public class DeviceService {
     }
 
     /**
-     *  Removes stale ip-address entries
+     * Removes stale ip-address entries
      */
     private void removeStaleIpAddressEntries() {
         Iterator<Map.Entry<IpAddress, Device>> i = devicesByIp.entrySet().iterator();
@@ -278,12 +281,12 @@ public class DeviceService {
 
     public void setEnabledForAllButCurrentDevice(boolean enabled, Device currentDevice) {
         getDevices(true).stream()
-            .filter(device -> device.isEnabled() != enabled)
-            .filter(device -> !device.equals(currentDevice))
-            .forEach(device -> {
-                device.setEnabled(enabled);
-                updateDevice(device);
-            });
+                .filter(device -> device.isEnabled() != enabled)
+                .filter(device -> !device.equals(currentDevice))
+                .forEach(device -> {
+                    device.setEnabled(enabled);
+                    updateDevice(device);
+                });
     }
 
     public interface DeviceChangeListener {

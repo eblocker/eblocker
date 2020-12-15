@@ -69,8 +69,10 @@ public class JsonWebToken {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         JsonWebToken that = (JsonWebToken) o;
         return Objects.equals(token, that.token);
     }

@@ -16,6 +16,23 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.UserAgent;
+import org.eblocker.server.common.data.UserAgentWrapper;
+import org.eblocker.server.common.page.PageContextStore;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.common.session.SessionStore;
+import org.eblocker.server.http.controller.UserAgentController;
+import org.eblocker.server.http.server.SessionContextController;
+import org.eblocker.server.http.service.UserAgentService;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.restexpress.Request;
+import org.restexpress.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,47 +42,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eblocker.server.common.data.UserAgentWrapper;
-import org.eblocker.server.http.controller.UserAgentController;
-import org.eblocker.server.http.service.UserAgentService;
-import org.eblocker.server.common.data.UserAgent;
-import org.eblocker.server.common.page.PageContextStore;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.common.session.SessionStore;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.restexpress.Request;
-import org.restexpress.Response;
-
-import org.eblocker.server.http.server.SessionContextController;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Provides access to user agent lists, current and outgoing user agent. The predefined user agents are located under the path which is set in configuration.properties (userAgents.predefinedProfiles.file);
  * The structure is: ProfileName#UserAgentString ('#' is used as separator because it should not appear in normal user agent strings)
  */
 public class UserAgentControllerImpl extends SessionContextController implements UserAgentController {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserAgentControllerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserAgentControllerImpl.class);
 
-	private static final String STANDARD_UA = "Off";
-	private static final String CUSTOM_UA = "Custom";
+    private static final String STANDARD_UA = "Off";
+    private static final String CUSTOM_UA = "Custom";
 
-	private final UserAgentService userAgentService;
+    private final UserAgentService userAgentService;
 
-	private final Map<String, UserAgent> userAgents = new HashMap<>();
+    private final Map<String, UserAgent> userAgents = new HashMap<>();
 
-	@Inject
-	public UserAgentControllerImpl(SessionStore sessionStore, PageContextStore pageContextStore, @Named("userAgents.predefinedProfiles.file") String filePath, UserAgentService userAgentService) {
-		super(sessionStore, pageContextStore);
-		this.userAgentService = userAgentService;
-		loadUserAgentsFromFile(filePath);
-	}
+    @Inject
+    public UserAgentControllerImpl(SessionStore sessionStore, PageContextStore pageContextStore, @Named("userAgents.predefinedProfiles.file") String filePath, UserAgentService userAgentService) {
+        super(sessionStore, pageContextStore);
+        this.userAgentService = userAgentService;
+        loadUserAgentsFromFile(filePath);
+    }
 
-	private void loadUserAgentsFromFile(String filePath) {
+    private void loadUserAgentsFromFile(String filePath) {
         try (InputStream fileIn = ResourceHandler.getInputStream(new SimpleResource(filePath))) {
             if (fileIn != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(fileIn));
@@ -80,28 +79,28 @@ public class UserAgentControllerImpl extends SessionContextController implements
         } catch (IOException e) {
             logger.warn("failed to load user agents from file", e);
         }
-	}
+    }
 
-	@Override
-	public Object getAgentList(Request request, Response response) throws IOException {
-		List<String> userAgentIds = new ArrayList<>();
-		userAgentIds.add(STANDARD_UA);
-		for (String key : userAgents.keySet()) { // sorting is done in the frontend
-			userAgentIds.add(key);
-		}
-		return userAgentIds;
-	}
+    @Override
+    public Object getAgentList(Request request, Response response) throws IOException {
+        List<String> userAgentIds = new ArrayList<>();
+        userAgentIds.add(STANDARD_UA);
+        for (String key : userAgents.keySet()) { // sorting is done in the frontend
+            userAgentIds.add(key);
+        }
+        return userAgentIds;
+    }
 
-	private Integer getUserIdFromString(String userId) {
+    private Integer getUserIdFromString(String userId) {
         try {
             return Integer.valueOf(userId);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return null;
         }
     }
 
     @Override
-    public Object setCloakedUserAgentByDeviceId(Request request, Response response){
+    public Object setCloakedUserAgentByDeviceId(Request request, Response response) {
         @SuppressWarnings("unchecked")
         Map<String, Object> config = request.getBodyAs(Map.class);
         Session session = getSession(request);
@@ -158,12 +157,12 @@ public class UserAgentControllerImpl extends SessionContextController implements
     }
 
     private String getUserAgentName(String currOutUA, Boolean isCustom) {
-        if ( currOutUA == null) {
+        if (currOutUA == null) {
             return STANDARD_UA;
-        } else if(!isCustom) {
-            for(String key : userAgents.keySet()){
+        } else if (!isCustom) {
+            for (String key : userAgents.keySet()) {
                 String userAgentString = userAgents.get(key).getAgentSpec();
-                if(userAgentString.equals(currOutUA)){
+                if (userAgentString.equals(currOutUA)) {
                     return key;
                 }
             }

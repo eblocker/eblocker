@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
 
 /**
  * Websites that provide a Tor check

@@ -27,40 +27,40 @@ import static org.junit.Assert.assertEquals;
 
 public class SubstringUrlFilterTest {
 
-	@Test
-	public void test() {
-		String url = "http://world.most.annoying.ads/image/large/overlay";
-		
-		assertEquals(Decision.BLOCK,    filter(StringMatchType.CONTAINS, "ads", FilterType.BLOCK, url));
-		assertEquals(Decision.PASS,     filter(StringMatchType.CONTAINS, "ads", FilterType.PASS, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.CONTAINS, "xyz", FilterType.BLOCK, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.CONTAINS, "xyz", FilterType.PASS, url));
-		
-		assertEquals(Decision.BLOCK,    filter(StringMatchType.STARTSWITH, "http://world", FilterType.BLOCK, url));
-		assertEquals(Decision.PASS,     filter(StringMatchType.STARTSWITH, "http://world", FilterType.PASS, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.STARTSWITH, "ads", FilterType.BLOCK, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.STARTSWITH, "ads", FilterType.PASS, url));
-		
-		assertEquals(Decision.BLOCK,    filter(StringMatchType.ENDSWITH, "large/overlay", FilterType.BLOCK, url));
-		assertEquals(Decision.PASS,     filter(StringMatchType.ENDSWITH, "large/overlay", FilterType.PASS, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.ENDSWITH, "ads", FilterType.BLOCK, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.ENDSWITH, "ads", FilterType.PASS, url));
-		
-		assertEquals(Decision.BLOCK,    filter(StringMatchType.EQUALS, "http://world.most.annoying.ads/image/large/overlay", FilterType.BLOCK, url));
-		assertEquals(Decision.PASS,     filter(StringMatchType.EQUALS, "http://world.most.annoying.ads/image/large/overlay", FilterType.PASS, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.EQUALS, "ads", FilterType.BLOCK, url));
-		assertEquals(Decision.NO_DECISION, filter(StringMatchType.EQUALS, "ads", FilterType.PASS, url));
-		
-	}
-	
-	private Decision filter(StringMatchType matchType, String substring, FilterType type, String url) {
-		TransactionContext context = new TestContext(url);
-		Filter filter = UrlFilterFactory.getInstance()
-				.setStringMatchType(matchType)
-				.setMatchString(substring)
-				.setType(type)
-				.build();
-		return filter.filter(context).getDecision();
-	}
+    @Test
+    public void test() {
+        String url = "http://world.most.annoying.ads/image/large/overlay";
+
+        assertEquals(Decision.BLOCK, filter(StringMatchType.CONTAINS, "ads", FilterType.BLOCK, url));
+        assertEquals(Decision.PASS, filter(StringMatchType.CONTAINS, "ads", FilterType.PASS, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.CONTAINS, "xyz", FilterType.BLOCK, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.CONTAINS, "xyz", FilterType.PASS, url));
+
+        assertEquals(Decision.BLOCK, filter(StringMatchType.STARTSWITH, "http://world", FilterType.BLOCK, url));
+        assertEquals(Decision.PASS, filter(StringMatchType.STARTSWITH, "http://world", FilterType.PASS, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.STARTSWITH, "ads", FilterType.BLOCK, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.STARTSWITH, "ads", FilterType.PASS, url));
+
+        assertEquals(Decision.BLOCK, filter(StringMatchType.ENDSWITH, "large/overlay", FilterType.BLOCK, url));
+        assertEquals(Decision.PASS, filter(StringMatchType.ENDSWITH, "large/overlay", FilterType.PASS, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.ENDSWITH, "ads", FilterType.BLOCK, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.ENDSWITH, "ads", FilterType.PASS, url));
+
+        assertEquals(Decision.BLOCK, filter(StringMatchType.EQUALS, "http://world.most.annoying.ads/image/large/overlay", FilterType.BLOCK, url));
+        assertEquals(Decision.PASS, filter(StringMatchType.EQUALS, "http://world.most.annoying.ads/image/large/overlay", FilterType.PASS, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.EQUALS, "ads", FilterType.BLOCK, url));
+        assertEquals(Decision.NO_DECISION, filter(StringMatchType.EQUALS, "ads", FilterType.PASS, url));
+
+    }
+
+    private Decision filter(StringMatchType matchType, String substring, FilterType type, String url) {
+        TransactionContext context = new TestContext(url);
+        Filter filter = UrlFilterFactory.getInstance()
+                .setStringMatchType(matchType)
+                .setMatchString(substring)
+                .setType(type)
+                .build();
+        return filter.filter(context).getDecision();
+    }
 
 }

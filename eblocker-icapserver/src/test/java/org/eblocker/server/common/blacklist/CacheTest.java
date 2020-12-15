@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.util.FileUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +57,7 @@ public class CacheTest {
     @After
     public void tearDown() throws IOException {
         FileUtils.deleteDirectory(Paths.get(cachePath));
-        createdTestFiles.forEach(p->{
+        createdTestFiles.forEach(p -> {
             try {
                 Files.delete(p);
             } catch (IOException e) {
@@ -121,8 +121,8 @@ public class CacheTest {
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         Assert.assertEquals(5, index.getFormat());
         index.getFilters().values().stream()
-            .flatMap(Collection::stream)
-            .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+                .flatMap(Collection::stream)
+                .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
     @Test
@@ -141,8 +141,8 @@ public class CacheTest {
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         Assert.assertEquals(5, index.getFormat());
         index.getFilters().values().stream()
-            .flatMap(Collection::stream)
-            .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+                .flatMap(Collection::stream)
+                .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
     @Test
@@ -161,8 +161,8 @@ public class CacheTest {
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         Assert.assertEquals(5, index.getFormat());
         index.getFilters().values().stream()
-            .flatMap(Collection::stream)
-            .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+                .flatMap(Collection::stream)
+                .forEach(cachedFileFilter -> Assert.assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
     @Test

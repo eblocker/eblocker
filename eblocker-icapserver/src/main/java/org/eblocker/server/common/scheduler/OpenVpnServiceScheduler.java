@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.openvpn.OpenVpnService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.openvpn.OpenVpnService;
 
 public class OpenVpnServiceScheduler extends FixedRateScheduler {
 
     @Inject
     public OpenVpnServiceScheduler(OpenVpnService openVpnService,
-            @Named("executor.openVpnServiceCacheCleaner.startupDelay") long startupDelay,
-            @Named("executor.openVpnServiceCacheCleaner.fixedRate") long fixedRate) {
+                                   @Named("executor.openVpnServiceCacheCleaner.startupDelay") long startupDelay,
+                                   @Named("executor.openVpnServiceCacheCleaner.fixedRate") long fixedRate) {
         super(openVpnService.getCacheCleaner(), startupDelay, fixedRate);
     }
 }

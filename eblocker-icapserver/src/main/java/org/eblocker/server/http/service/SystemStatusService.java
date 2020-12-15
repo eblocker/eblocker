@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.UpdatingStatus;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -23,9 +26,6 @@ import org.eblocker.server.common.data.systemstatus.SubSystemDetails;
 import org.eblocker.server.common.data.systemstatus.SubSystemStatus;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
 import org.eblocker.server.common.update.SystemUpdater;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class SystemStatusService {
         }
         return new SystemStatusDetails(
                 new Date(),
-                (updatingState == null || !updatingState.isUpdating() ? executionState :  ExecutionState.UPDATING),
+                (updatingState == null || !updatingState.isUpdating() ? executionState : ExecutionState.UPDATING),
                 warnings.stream().map(Throwable::getMessage).collect(Collectors.toList()),
                 details.values(),
                 projectVersion,
@@ -170,6 +170,7 @@ public class SystemStatusService {
     public List<Exception> getWarnings() {
         return warnings;
     }
+
     public void setUpdatingStatus(UpdatingStatus state) {
         this.updatingState = state;
     }

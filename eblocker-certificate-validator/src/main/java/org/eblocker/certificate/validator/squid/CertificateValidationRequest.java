@@ -36,8 +36,8 @@ public class CertificateValidationRequest extends CertificateValidationMessage {
 
     private final X509Certificate[] cert;
 
-    public CertificateValidationRequest(Long id, String protoVersion, String cipher, String host, X509Certificate[] cert, String[] errorName, String[] errorCertId,boolean useConcurrency) {
-        super(id, errorName, errorCertId,useConcurrency);
+    public CertificateValidationRequest(Long id, String protoVersion, String cipher, String host, X509Certificate[] cert, String[] errorName, String[] errorCertId, boolean useConcurrency) {
+        super(id, errorName, errorCertId, useConcurrency);
         this.protoVersion = protoVersion;
         this.cipher = cipher;
         this.host = host;
@@ -78,9 +78,9 @@ public class CertificateValidationRequest extends CertificateValidationMessage {
             try {
                 PKI.storeCertificate(cert[i], out);
                 s.append("cert_")
-                    .append(i)
-                    .append("=")
-                    .append(new String(out.toByteArray(), StandardCharsets.UTF_8));
+                        .append(i)
+                        .append("=")
+                        .append(new String(out.toByteArray(), StandardCharsets.UTF_8));
                 //PEM encoded certificate already contains a terminating \n
 
             } catch (IOException | CryptoException e) {

@@ -19,12 +19,12 @@ package org.eblocker.server.common.data.migrations;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
-
-import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.IOException;
 
 public class SchemaMigrationVersion29Test {
 

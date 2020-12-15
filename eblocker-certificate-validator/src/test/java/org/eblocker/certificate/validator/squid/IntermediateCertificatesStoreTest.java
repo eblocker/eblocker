@@ -58,29 +58,29 @@ public class IntermediateCertificatesStoreTest {
         store.refresh();
 
         Assert.assertEquals(Collections.singletonList(certificates[0]),
-            store.get(certificates[0].getSubjectX500Principal(), null, null));
+                store.get(certificates[0].getSubjectX500Principal(), null, null));
         Assert.assertEquals(
-            Collections.singletonList(certificates[0]),
-            store.get(certificates[0].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[0])));
+                Collections.singletonList(certificates[0]),
+                store.get(certificates[0].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[0])));
         Assert.assertEquals(
-            Collections.singletonList(certificates[0]),
-            store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(), null));
+                Collections.singletonList(certificates[0]),
+                store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(), null));
         Assert.assertEquals(
-            Collections.singletonList(certificates[0]),
-            store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(),
-                PKI.getSubjectKeyIdentifier(certificates[0])));
+                Collections.singletonList(certificates[0]),
+                store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(),
+                        PKI.getSubjectKeyIdentifier(certificates[0])));
 
         Assert.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]),
-            store.get(certificates[1].getSubjectX500Principal(), null, null));
+                store.get(certificates[1].getSubjectX500Principal(), null, null));
         Assert.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]),
-            store.get(certificates[1].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[1])));
+                store.get(certificates[1].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[1])));
         for (int i = 1; i < 4; ++i) {
             Assert.assertEquals(
-                Collections.singletonList(certificates[i]),
-                store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), null));
+                    Collections.singletonList(certificates[i]),
+                    store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), null));
             Assert.assertEquals(
-                Collections.singletonList(certificates[i]),
-                store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), PKI.getSubjectKeyIdentifier(certificates[i])));
+                    Collections.singletonList(certificates[i]),
+                    store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), PKI.getSubjectKeyIdentifier(certificates[i])));
         }
     }
 

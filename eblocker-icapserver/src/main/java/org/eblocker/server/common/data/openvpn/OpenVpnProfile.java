@@ -18,8 +18,8 @@ package org.eblocker.server.common.data.openvpn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/** VpnProfile implementation for OpenVPN Client instances
- *
+/**
+ * VpnProfile implementation for OpenVPN Client instances
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OpenVpnProfile implements VpnProfile {
@@ -138,19 +138,19 @@ public class OpenVpnProfile implements VpnProfile {
     }
 
     @Override
-    public void setLoginCredentials(VpnLoginCredentials loginCredentials){
+    public void setLoginCredentials(VpnLoginCredentials loginCredentials) {
         this.loginCredentials = loginCredentials;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Integer.hashCode(id);
     }
 
     @Override
-    public boolean equals(Object that){
+    public boolean equals(Object that) {
         if (that instanceof OpenVpnProfile) {
-            return this.id == ((OpenVpnProfile)that).id;
+            return this.id == ((OpenVpnProfile) that).id;
         }
         return false;
     }

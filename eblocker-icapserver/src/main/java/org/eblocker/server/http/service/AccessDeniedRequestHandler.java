@@ -16,21 +16,6 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.blacklist.DomainBlockingService;
-import org.eblocker.server.common.data.AccessRestriction;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.UserModule;
-import org.eblocker.server.common.data.parentalcontrol.Category;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import org.eblocker.server.common.malware.MalwareFilterService;
-import org.eblocker.server.common.session.Session;
-import org.eblocker.server.common.session.SessionStore;
-import org.eblocker.server.common.transaction.TransactionContext;
-import org.eblocker.server.common.transaction.TransactionIdentifier;
-import org.eblocker.server.common.util.UrlUtils;
-import org.eblocker.server.icap.resources.OnePixelImage;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -48,6 +33,21 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.AttributeKey;
+import org.eblocker.server.common.blacklist.DomainBlockingService;
+import org.eblocker.server.common.data.AccessRestriction;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.parentalcontrol.Category;
+import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
+import org.eblocker.server.common.malware.MalwareFilterService;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.common.session.Session;
+import org.eblocker.server.common.session.SessionStore;
+import org.eblocker.server.common.transaction.TransactionContext;
+import org.eblocker.server.common.transaction.TransactionIdentifier;
+import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.icap.resources.OnePixelImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,18 +135,18 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
         UserModule user = userService.getUserById(device.getOperatingUser());
         String profileId = user != null && user.getAssociatedProfileId() != null ? String.valueOf(user.getAssociatedProfileId()) : "";
         String location = baseUrl
-            + parentalControlRedirectPage
-            + "?target=" + UrlUtils.urlEncode(url)
-            + "&restrictions=" + UrlUtils.urlEncode(getRestrictions(device))
-            + "&profileId=" + profileId
-            + "&userId=" + userId;
+                + parentalControlRedirectPage
+                + "?target=" + UrlUtils.urlEncode(url)
+                + "&restrictions=" + UrlUtils.urlEncode(getRestrictions(device))
+                + "&profileId=" + profileId
+                + "&userId=" + userId;
         return redirectSvg(location, request);
     }
 
     private String getRestrictions(Device device) {
         return restrictionsService.getAccessRestrictions(device).stream()
-            .map(AccessRestriction::toString)
-            .collect(Collectors.joining(","));
+                .map(AccessRestriction::toString)
+                .collect(Collectors.joining(","));
     }
 
     private HttpResponse handleBlockedDomain(Device device, IpAddress remoteAddress, String url, HttpRequest request) {
@@ -203,43 +203,43 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
 
     private String getAdsTrackerLocation(Category category, DomainBlockingService.Decision decision, String url) {
         return baseURLs.selectURLForPage(url)
-            + adsTrackerRedirectPage
-            + "?target=" + UrlUtils.urlEncode(url)
-            + "&category=" + category
-            + "&domain=" + decision.getDomain();
+                + adsTrackerRedirectPage
+                + "?target=" + UrlUtils.urlEncode(url)
+                + "&category=" + category
+                + "&domain=" + decision.getDomain();
     }
 
     public String getMalwareLocation(DomainBlockingService.Decision decision, List<String> malware, String url) {
         return baseURLs.selectURLForPage(url)
-            + malwareRedirectPage
-            + "?target=" + UrlUtils.urlEncode(url)
-            + "&domain=" + decision.getDomain()
-            + "&malware=" + UrlUtils.urlEncode(String.join(",", malware));
+                + malwareRedirectPage
+                + "?target=" + UrlUtils.urlEncode(url)
+                + "&domain=" + decision.getDomain()
+                + "&malware=" + UrlUtils.urlEncode(String.join(",", malware));
     }
 
     private String getParentalControlLocation(DomainBlockingService.Decision decision, String url) {
         return baseURLs.selectURLForPage(url)
-            + parentalControlRedirectPage
-            + "?target=" + UrlUtils.urlEncode(url)
-            + "&listId=" + decision.getListId()
-            + "&domain=" + decision.getDomain()
-            + "&profileId=" + decision.getProfileId()
-            + "&userId=" + decision.getUserId();
+                + parentalControlRedirectPage
+                + "?target=" + UrlUtils.urlEncode(url)
+                + "&listId=" + decision.getListId()
+                + "&domain=" + decision.getDomain()
+                + "&profileId=" + decision.getProfileId()
+                + "&userId=" + decision.getUserId();
     }
 
     private String getWhitelistedDomainPageLocation(String url) {
         return baseURLs.selectURLForPage(url)
-            + whitelistedRedirectPage
-            + "?target=" + UrlUtils.urlEncode(url);
+                + whitelistedRedirectPage
+                + "?target=" + UrlUtils.urlEncode(url);
     }
 
     private FullHttpResponse redirectSvg(String target, HttpRequest request) {
         byte[] content = OnePixelImage.get(target);
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(content));
         response.headers()
-            .set("Access-Control-Allow-Origin", selectAccessControlAllowOrigin(request))
-            .set("Content-Length", content.length)
-            .set("Content-Type", "image/svg+xml");
+                .set("Access-Control-Allow-Origin", selectAccessControlAllowOrigin(request))
+                .set("Content-Length", content.length)
+                .set("Content-Type", "image/svg+xml");
         return response;
     }
 

@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.http.controller.ProductMigrationController;
-import org.eblocker.server.http.service.ProductMigrationService;
 import com.google.inject.Inject;
 import org.eblocker.registration.UpsellInfoWrapper;
+import org.eblocker.server.http.controller.ProductMigrationController;
+import org.eblocker.server.http.service.ProductMigrationService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
@@ -27,20 +27,19 @@ import org.slf4j.LoggerFactory;
 
 public class ProductMigrationControllerImpl implements ProductMigrationController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ProductMigrationControllerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProductMigrationControllerImpl.class);
 
-	private final ProductMigrationService productMigrationService;
+    private final ProductMigrationService productMigrationService;
 
-	@Inject
-	public ProductMigrationControllerImpl(
-        ProductMigrationService productMigrationService) {
-		this.productMigrationService = productMigrationService;
-	}
-
+    @Inject
+    public ProductMigrationControllerImpl(
+            ProductMigrationService productMigrationService) {
+        this.productMigrationService = productMigrationService;
+    }
 
     @Override
     public UpsellInfoWrapper getUpsellInfo(Request request, Response response) {
-	    String feature = request.getHeader("feature");
+        String feature = request.getHeader("feature");
         UpsellInfoWrapper wrapper = productMigrationService.getUpsellInfo(feature);
         return wrapper;
     }

@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
@@ -41,10 +45,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +146,7 @@ public class EblockerDnsServer {
     }
 
     @SubSystemInit
-    public void init(){
+    public void init() {
         loadState();
 
         // update built-in local entries
@@ -260,16 +260,16 @@ public class EblockerDnsServer {
     private List<String> extractNameServers(List<RouterAdvertisementCache.Entry> advertisements) {
         long now = clock.millis();
         return advertisements.stream()
-            .map(e -> new Tuple<>(e.getLastUpdate(), e.getAdvertisement().getOptions().stream()
-                .filter(o -> RecursiveDnsServerOption.TYPE == o.getType())
-                .map(o -> (RecursiveDnsServerOption) o)
-                .findFirst().orElse(null)))
-            .filter(t -> t.v() != null)
-            .filter(t -> now < t.u + t.v.getLifetime() * 1000)
-            .map(Tuple::v)
-            .flatMap(o -> o.getDnsServers().stream())
-            .map(IpAddress::toString)
-            .collect(Collectors.toList());
+                .map(e -> new Tuple<>(e.getLastUpdate(), e.getAdvertisement().getOptions().stream()
+                        .filter(o -> RecursiveDnsServerOption.TYPE == o.getType())
+                        .map(o -> (RecursiveDnsServerOption) o)
+                        .findFirst().orElse(null)))
+                .filter(t -> t.v() != null)
+                .filter(t -> now < t.u + t.v.getLifetime() * 1000)
+                .map(Tuple::v)
+                .flatMap(o -> o.getDnsServers().stream())
+                .map(IpAddress::toString)
+                .collect(Collectors.toList());
     }
 
     /*
@@ -278,8 +278,7 @@ public class EblockerDnsServer {
     private void addNonLocalNameServer(List<String> nameServerList, String nameServer) {
         if ("127.0.0.1".equals(nameServer)) {
             log.error("Using 127.0.0.1 as nameserver is not allowed, resolvconf seems to be in an invalid state");
-        }
-        else {
+        } else {
             addNonNull(nameServerList, nameServer);
         }
     }
@@ -315,7 +314,7 @@ public class EblockerDnsServer {
 
         if (RESOLVER_MODE_RANDOM.equals(dnsResolvers.getCustomResolverMode())
                 || RESOLVER_MODE_ROUND_ROBIN.equals(dnsResolvers.getCustomResolverMode())) {
-                customResolverConfig.getOptions().put(ResolverConfig.OPTION_KEY_ORDER, dnsResolvers.getCustomResolverMode());
+            customResolverConfig.getOptions().put(ResolverConfig.OPTION_KEY_ORDER, dnsResolvers.getCustomResolverMode());
         }
 
         DnsServerConfig config = getConfig();
@@ -340,11 +339,11 @@ public class EblockerDnsServer {
     public List<LocalDnsRecord> setLocalDnsRecords(List<LocalDnsRecord> localDnsRecords) {
         // create new list of records based on supplied and builtin records
         Map<String, LocalDnsRecord> newRecordsByName = localDnsRecords.stream()
-            .filter(r -> !r.isBuiltin())
-            .map(r -> new LocalDnsRecord(r.getName(), false, false, r.getIpAddress(), r.getIp6Address(), r.getVpnIpAddress(), r.getVpnIp6Address()))
-            .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
+                .filter(r -> !r.isBuiltin())
+                .map(r -> new LocalDnsRecord(r.getName(), false, false, r.getIpAddress(), r.getIp6Address(), r.getVpnIpAddress(), r.getVpnIp6Address()))
+                .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
         Map<String, LocalDnsRecord> builtinRecordsByName = getBuiltinLocalDnsRecords().stream()
-            .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
+                .collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
         newRecordsByName.putAll(builtinRecordsByName);
 
         DnsServerConfig config = getConfig();
@@ -444,14 +443,14 @@ public class EblockerDnsServer {
 
     private void cleanUpResolverByDeviceId() {
         state.setResolverByDeviceId(state.getResolverByDeviceId().entrySet().stream()
-            .filter(e -> deviceService.getDeviceById(e.getKey()) != null)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                .filter(e -> deviceService.getDeviceById(e.getKey()) != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         dataSource.save(state);
     }
 
     private Map<String, String> createResolverConfigNameByIpMapping() {
         Map<String, String> nameByIp = new HashMap<>();
-        for(Map.Entry<String, String> e : state.getResolverByDeviceId().entrySet()) {
+        for (Map.Entry<String, String> e : state.getResolverByDeviceId().entrySet()) {
             Device device = deviceService.getDeviceById(e.getKey());
             device.getIpAddresses().forEach(ip -> nameByIp.put(ip.toString(), e.getValue()));
         }
@@ -583,8 +582,8 @@ public class EblockerDnsServer {
         Ip4Address vpnIp = networkInterface.getVpnIpv4Address();
         Splitter splitter = Splitter.on(',').trimResults().omitEmptyStrings();
         splitter.splitToList(defaultLocalNames).stream()
-            .map(n -> new LocalDnsRecord(n, true, false, localIp, localIp6, vpnIp, null))
-            .forEach(records::add);
+                .map(n -> new LocalDnsRecord(n, true, false, localIp, localIp6, vpnIp, null))
+                .forEach(records::add);
 
         records.add(new LocalDnsRecord(controlBarHostname, true, true, controlBarIpAddress, null, controlBarIpAddress, null));
         return records;

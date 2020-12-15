@@ -16,22 +16,21 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
+import org.eblocker.server.common.data.messagecenter.MessageVisibility;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.service.MessageCenterService;
-import com.google.inject.Inject;
-
-import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
-import org.eblocker.server.common.data.messagecenter.MessageVisibility;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
 
 public class MessageCenterControllerImpl extends SessionContextController implements MessageCenterController {
     private static final Logger log = LoggerFactory.getLogger(MessageCenterControllerImpl.class);
@@ -43,7 +42,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
             SessionStore sessionStore,
             PageContextStore pageContextStore,
             MessageCenterService messageCenterService
-    ){
+    ) {
         super(sessionStore, pageContextStore);
         this.messageCenterService = messageCenterService;
     }
@@ -52,7 +51,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
      * Get all messages for one specific session
      */
     @Override
-    public List<MessageCenterMessage> getMessages(Request request, Response response){
+    public List<MessageCenterMessage> getMessages(Request request, Response response) {
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
         String userAgent = session.getUserAgent();
@@ -66,7 +65,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
 
     /**
      * Get the number of messages for one specific session.
-     *
+     * <p>
      * This is called by the JavaScript code injected into the parent page,
      * therefore we must allow access for all domains.
      */
@@ -83,16 +82,16 @@ public class MessageCenterControllerImpl extends SessionContextController implem
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
-        log.debug("Message ("+ messageVisibility.getMessageId()+") hide button was clicked by IP: "+session.getIp());
+        log.debug("Message (" + messageVisibility.getMessageId() + ") hide button was clicked by IP: " + session.getIp());
         messageCenterService.hideMessage(messageVisibility.getMessageId(), deviceId);
     }
 
     @Override
-    public void executeMessageAction(Request request, Response response){
+    public void executeMessageAction(Request request, Response response) {
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
-        log.debug("Message ("+ messageVisibility.getMessageId()+") action button was clicked by IP: "+session.getIp());
+        log.debug("Message (" + messageVisibility.getMessageId() + ") action button was clicked by IP: " + session.getIp());
         messageCenterService.executeMessageAction(messageVisibility.getMessageId(), deviceId);
     }
 
@@ -101,9 +100,9 @@ public class MessageCenterControllerImpl extends SessionContextController implem
      * plus persist it in Redis
      */
     @Override
-    public void setDoNotShowAgain(Request request, Response response){
+    public void setDoNotShowAgain(Request request, Response response) {
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
-        log.info("Received request: messageId: "+ messageVisibility.getMessageId()+" doNotShowStatus: "+ messageVisibility.isDoNotShowAgain());
+        log.info("Received request: messageId: " + messageVisibility.getMessageId() + " doNotShowStatus: " + messageVisibility.isDoNotShowAgain());
         messageCenterService.setDoNotShowAgain(messageVisibility.getMessageId(), messageVisibility.isDoNotShowAgain());
     }
 

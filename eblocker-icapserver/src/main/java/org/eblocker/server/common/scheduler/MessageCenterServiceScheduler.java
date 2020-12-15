@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.http.service.MessageCenterService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.service.MessageCenterService;
 
 public class MessageCenterServiceScheduler extends FixedRateScheduler {
 
     @Inject
     public MessageCenterServiceScheduler(MessageCenterService messageCenterService,
-            @Named("executor.messageCenterServiceUpdate.startupDelay") long startupDelay,
-            @Named("executor.messageCenterServiceUpdate.fixedRate") long fixedRate) {
+                                         @Named("executor.messageCenterServiceUpdate.startupDelay") long startupDelay,
+                                         @Named("executor.messageCenterServiceUpdate.fixedRate") long fixedRate) {
         super(messageCenterService::updateMessages, startupDelay, fixedRate);
     }
 }

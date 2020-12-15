@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.registration;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.system.CommandRunner;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.CommandRunner;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 public class DeviceRegistrationLicenseStateImpl implements DeviceRegistrationLicenseState {
     private String curlCommand;
@@ -41,7 +41,7 @@ public class DeviceRegistrationLicenseStateImpl implements DeviceRegistrationLic
             @Named("baseurl.apt") String aptUrlDomain,
             @Named("registration.apt.url.path") String aptUrlPath,
             @Named("registration.truststore.copy") String caCertPath
-            ) {
+    ) {
         this.commandRunner = commandRunner;
         this.curlCommand = curlCommand;
         this.licenseKey = new SimpleResource(licenseKey);
@@ -53,6 +53,7 @@ public class DeviceRegistrationLicenseStateImpl implements DeviceRegistrationLic
     /**
      * Checks whether certificate is rejected by the HTTP server in a defensive way, i.e. if the server doesn't reply code 403 explicitly within 3 seconds, RegistrationState.OK is assumed.
      * That could lead to a valid registration assumption for many reasons, e.g. when no internet connection is available and no exception has been thrown.
+     *
      * @return Returns RegistrationState.INVALID if certificate is rejected due to expiration or revocation.
      */
     @Override
@@ -72,8 +73,7 @@ public class DeviceRegistrationLicenseStateImpl implements DeviceRegistrationLic
             if (Integer.parseInt(httpResult) == 403) {
                 return RegistrationState.INVALID;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new EblockerException("Unknown response. Revokation state check failed.", e);
         }
 

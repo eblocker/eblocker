@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.eblocker.server.common.blocker.parser.DomainParser;
 import org.eblocker.server.common.blocker.parser.EtcHostsParser;
 import org.eblocker.server.common.blocker.parser.SquidAclParser;
@@ -28,9 +31,6 @@ import org.eblocker.server.icap.filter.FilterDefinitionFormat;
 import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,18 +135,18 @@ public class UpdateTask implements Runnable {
     private int newDomainBlocker(Category category, String name, String description, Format format, String filterType, Path path) {
         ZonedDateTime now = ZonedDateTime.now(clock);
         ParentalControlFilterSummaryData data = new ParentalControlFilterSummaryData(
-            null,
-            null,
-            null,
-            now.format(DateTimeFormatter.BASIC_ISO_DATE),
-            Date.from(now.toInstant()),
-            filterType,
-            false,
-            false,
-            null,
-            name,
-            description,
-            mapToDomainFilterCategory(category));
+                null,
+                null,
+                null,
+                now.format(DateTimeFormatter.BASIC_ISO_DATE),
+                Date.from(now.toInstant()),
+                filterType,
+                false,
+                false,
+                null,
+                name,
+                description,
+                mapToDomainFilterCategory(category));
         data.setDomainsStreamSupplier(new DomainStreamSupplier(path, format));
         ParentalControlFilterSummaryData savedData = filterListsService.createFilterList(data, "blacklist");
         return savedData.getId();
@@ -174,18 +174,18 @@ public class UpdateTask implements Runnable {
 
         ParentalControlFilterMetaData metadata = filterListsService.getParentalControlFilterMetaData(id);
         ParentalControlFilterSummaryData updatedData = new ParentalControlFilterSummaryData(
-            metadata.getId(),
-            metadata.getName(),
-            metadata.getDescription(),
-            now.format(DateTimeFormatter.BASIC_ISO_DATE),
-            Date.from(now.toInstant()),
-            metadata.getFilterType(),
-            metadata.isBuiltin(),
-            metadata.isDisabled(),
-            null,
-            metadata.getCustomerCreatedName(),
-            metadata.getCustomerCreatedDescription(),
-            metadata.getCategory());
+                metadata.getId(),
+                metadata.getName(),
+                metadata.getDescription(),
+                now.format(DateTimeFormatter.BASIC_ISO_DATE),
+                Date.from(now.toInstant()),
+                metadata.getFilterType(),
+                metadata.isBuiltin(),
+                metadata.isDisabled(),
+                null,
+                metadata.getCustomerCreatedName(),
+                metadata.getCustomerCreatedDescription(),
+                metadata.getCategory());
         updatedData.setDomainsStreamSupplier(new DomainStreamSupplier(path, format));
         filterListsService.updateFilterList(updatedData, metadata.getFilterType());
     }
@@ -194,17 +194,17 @@ public class UpdateTask implements Runnable {
         FilterDefinitionFormat definitionFormat = selectFilterDefinitionFormat(format);
         FilterLearningMode learningMode = category == Category.MALWARE ? FilterLearningMode.SYNCHRONOUS : FilterLearningMode.ASYNCHRONOUS;
         FilterStoreConfiguration configuration = new FilterStoreConfiguration(
-            null,
-            name,
-            mapToPatternFilterCategory(category),
-            false,
-            System.currentTimeMillis(),
-            new String[] { path.toString() },
-            learningMode,
-            definitionFormat,
-            true,
-            new String[0],
-            true);
+                null,
+                name,
+                mapToPatternFilterCategory(category),
+                false,
+                System.currentTimeMillis(),
+                new String[]{ path.toString() },
+                learningMode,
+                definitionFormat,
+                true,
+                new String[0],
+                true);
         FilterStoreConfiguration savedConfiguration = filterManager.addFilter(configuration);
         return savedConfiguration.getId();
     }
@@ -236,7 +236,6 @@ public class UpdateTask implements Runnable {
                 throw new IllegalArgumentException("format not available for pattern filters: " + format);
         }
     }
-
 
     private class DomainStreamSupplier implements Supplier<Stream<String>> {
         private final Path path;

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.recorder;
 
-import org.eblocker.server.icap.transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.icap.transaction.Transaction;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -59,9 +59,9 @@ public class RecordedTransaction {
         this.decider = transaction.getFilterResult() == null || transaction.getFilterResult().getDecider() == null ? "default" : transaction.getFilterResult().getDecider().getDefinition();
         this.headers = new HashMap<>();
         if (transaction.getRequest() != null && transaction.getRequest().headers() != null)
-        for (String name: transaction.getRequest().headers().names()) {
-            headers.put(name, transaction.getRequest().headers().getAll(name));
-        }
+            for (String name : transaction.getRequest().headers().names()) {
+                headers.put(name, transaction.getRequest().headers().getAll(name));
+            }
     }
 
     @JsonCreator

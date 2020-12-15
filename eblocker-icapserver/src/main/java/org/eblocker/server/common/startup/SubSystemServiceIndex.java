@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.startup;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
 import com.google.inject.Binding;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
@@ -24,6 +23,7 @@ import com.google.inject.spi.ConstructorBinding;
 import com.google.inject.spi.DefaultBindingTargetVisitor;
 import com.google.inject.spi.InstanceBinding;
 import com.google.inject.spi.LinkedKeyBinding;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,29 +39,29 @@ public class SubSystemServiceIndex {
 
     public void scan(Map<Key<?>, Binding<?>> bindings) {
         servicesBySubSytem = bindings.values()
-            .stream()
-            .map(binding -> (Class<?>)binding.acceptTargetVisitor(new DefaultBindingTargetVisitor<Object, Class<?>>() {
-                @Override
-                public Class<?> visit(InstanceBinding<?> binding) {
-                    return binding.getKey().getTypeLiteral().getRawType();
-                }
+                .stream()
+                .map(binding -> (Class<?>) binding.acceptTargetVisitor(new DefaultBindingTargetVisitor<Object, Class<?>>() {
+                    @Override
+                    public Class<?> visit(InstanceBinding<?> binding) {
+                        return binding.getKey().getTypeLiteral().getRawType();
+                    }
 
-                @Override
-                public Class<?> visit(LinkedKeyBinding<?> binding) {
-                    return binding.getLinkedKey().getTypeLiteral().getRawType();
-                }
+                    @Override
+                    public Class<?> visit(LinkedKeyBinding<?> binding) {
+                        return binding.getLinkedKey().getTypeLiteral().getRawType();
+                    }
 
-                @Override
-                public Class<?> visit(ConstructorBinding<?> constructorBinding) {
-                    return binding.getKey().getTypeLiteral().getRawType();
-                }
-            }))
-            .filter(Objects::nonNull)
-            .filter(c -> c.isAnnotationPresent(SubSystemService.class))
-            // Sorting services for each subsystem by priority here relies on groupingBy preserving order of elements in
-            // stream. This requires non-concurrent processing.
-            .sorted(Comparator.comparingInt(c -> c.getAnnotation(SubSystemService.class).initPriority()))
-            .collect(Collectors.groupingBy(c -> c.getAnnotation(SubSystemService.class).value()));
+                    @Override
+                    public Class<?> visit(ConstructorBinding<?> constructorBinding) {
+                        return binding.getKey().getTypeLiteral().getRawType();
+                    }
+                }))
+                .filter(Objects::nonNull)
+                .filter(c -> c.isAnnotationPresent(SubSystemService.class))
+                // Sorting services for each subsystem by priority here relies on groupingBy preserving order of elements in
+                // stream. This requires non-concurrent processing.
+                .sorted(Comparator.comparingInt(c -> c.getAnnotation(SubSystemService.class).initPriority()))
+                .collect(Collectors.groupingBy(c -> c.getAnnotation(SubSystemService.class).value()));
     }
 
     public Collection<Class<?>> getRegisteredServices(SubSystem subSystem) {

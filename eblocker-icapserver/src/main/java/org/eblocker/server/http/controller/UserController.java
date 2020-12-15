@@ -17,12 +17,11 @@
 package org.eblocker.server.http.controller;
 
 import org.eblocker.server.common.data.UserModuleTransport;
-import java.util.Map;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface UserController {
     // Create

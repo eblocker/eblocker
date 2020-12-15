@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.xml.ws.Holder;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -68,17 +67,17 @@ public class CustomDomainFilterConfigServiceTest {
     public void getCustomDomainFilter() {
         assertCustomDomainFilter(Collections.emptySet(), Collections.emptySet(), customDomainFilterConfigService.getCustomDomainFilterConfig(0));
         assertCustomDomainFilter(Collections.emptySet(), Collections.singleton("eblocker.com"), customDomainFilterConfigService
-            .getCustomDomainFilterConfig(1));
+                .getCustomDomainFilterConfig(1));
         assertCustomDomainFilter(Collections.singleton("etracker.com"), Collections.emptySet(), customDomainFilterConfigService
-            .getCustomDomainFilterConfig(2));
-        assertCustomDomainFilter(Collections.singleton("etracker.com"),  Collections.singleton("eblocker.com"), customDomainFilterConfigService
-            .getCustomDomainFilterConfig(3));
+                .getCustomDomainFilterConfig(2));
+        assertCustomDomainFilter(Collections.singleton("etracker.com"), Collections.singleton("eblocker.com"), customDomainFilterConfigService
+                .getCustomDomainFilterConfig(3));
     }
 
     @Test
     public void setCustomDomainFilterEmptyNoAction() {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
-            .setCustomDomainFilterConfig(0, new CustomDomainFilterConfig(Collections.emptySet(), Collections.emptySet()));
+                .setCustomDomainFilterConfig(0, new CustomDomainFilterConfig(Collections.emptySet(), Collections.emptySet()));
         assertCustomDomainFilter(Collections.emptySet(), Collections.emptySet(), savedFilter);
         Mockito.verifyZeroInteractions(filterListsService);
         Mockito.verify(userService, Mockito.never()).updateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -87,7 +86,7 @@ public class CustomDomainFilterConfigServiceTest {
     @Test
     public void setCustomDomainFilterEmptyDelete() {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
-            .setCustomDomainFilterConfig(3, new CustomDomainFilterConfig(Collections.emptySet(), Collections.emptySet()));
+                .setCustomDomainFilterConfig(3, new CustomDomainFilterConfig(Collections.emptySet(), Collections.emptySet()));
         assertCustomDomainFilter(Collections.emptySet(), Collections.emptySet(), savedFilter);
         Mockito.verify(filterListsService).deleteFilterList(1);
         Mockito.verify(filterListsService).deleteFilterList(2);
@@ -97,7 +96,7 @@ public class CustomDomainFilterConfigServiceTest {
     @Test
     public void setCustomDomainFilterUpdate() {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
-            .setCustomDomainFilterConfig(3, new CustomDomainFilterConfig(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com")));
+                .setCustomDomainFilterConfig(3, new CustomDomainFilterConfig(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com")));
         assertCustomDomainFilter(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com"), savedFilter);
 
         ArgumentCaptor<ParentalControlFilterSummaryData> captor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);
@@ -132,7 +131,7 @@ public class CustomDomainFilterConfigServiceTest {
     @Test
     public void setCustomDomainFilterCreate() {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
-            .setCustomDomainFilterConfig(0, new CustomDomainFilterConfig(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com")));
+                .setCustomDomainFilterConfig(0, new CustomDomainFilterConfig(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com")));
         assertCustomDomainFilter(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com"), savedFilter);
 
         ArgumentCaptor<ParentalControlFilterSummaryData> captor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);

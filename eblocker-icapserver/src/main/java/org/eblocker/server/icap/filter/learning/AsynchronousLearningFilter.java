@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.icap.filter.learning;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.server.common.transaction.ImmutableTransactionContext;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.icap.filter.FilterList;
 import org.eblocker.server.icap.filter.FilterResult;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,42 +30,42 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AsynchronousLearningFilter extends LearningFilter implements Runnable {
-	private static final Logger log = LoggerFactory.getLogger(AsynchronousLearningFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(AsynchronousLearningFilter.class);
 
-	private static final String ASYNC_LEARNING_FILTER_DEF = "<<ASYNC-LEARNING-FILTER>>";
+    private static final String ASYNC_LEARNING_FILTER_DEF = "<<ASYNC-LEARNING-FILTER>>";
 
-	private final Queue<Entry> queue = new ConcurrentLinkedQueue<>();
+    private final Queue<Entry> queue = new ConcurrentLinkedQueue<>();
 
     public AsynchronousLearningFilter(@JsonProperty("learnForAllDomains") Boolean learnForAllDomains) {
         super(ASYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains);
     }
 
-	@JsonCreator
+    @JsonCreator
     @SuppressWarnings("unused")
-	public AsynchronousLearningFilter(@JsonProperty("learnForAllDomains") Boolean learnForAllDomains, @JsonProperty("map") Map<String, FilterList> map) {
-		super(ASYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains, map);
-	}
+    public AsynchronousLearningFilter(@JsonProperty("learnForAllDomains") Boolean learnForAllDomains, @JsonProperty("map") Map<String, FilterList> map) {
+        super(ASYNC_LEARNING_FILTER_DEF, learnForAllDomains == null ? true : learnForAllDomains, map);
+    }
 
-	protected FilterResult doLearn(FilterResult result, TransactionContext context) {
-		if (!queue.offer(new Entry(result, new ImmutableTransactionContext(context)))) {
-			log.warn("Cannot add current transaction to learning queue of filter - continuing anyway. [{}]", context);
-		}
-		return result;
-	}
+    protected FilterResult doLearn(FilterResult result, TransactionContext context) {
+        if (!queue.offer(new Entry(result, new ImmutableTransactionContext(context)))) {
+            log.warn("Cannot add current transaction to learning queue of filter - continuing anyway. [{}]", context);
+        }
+        return result;
+    }
 
-	@Override
-	public void run() {
-		try {
-		    Entry entry;
-			while ((entry = queue.poll()) != null) {
+    @Override
+    public void run() {
+        try {
+            Entry entry;
+            while ((entry = queue.poll()) != null) {
                 learn(entry.result, entry.context);
-			}
-		} catch (Exception e) {
-			log.error("aborting learning due to exception", e);
-		}
-	}
+            }
+        } catch (Exception e) {
+            log.error("aborting learning due to exception", e);
+        }
+    }
 
-	private class Entry {
+    private class Entry {
         FilterResult result;
         TransactionContext context;
 

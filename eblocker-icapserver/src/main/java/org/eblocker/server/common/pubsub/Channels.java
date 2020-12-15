@@ -18,14 +18,13 @@ package org.eblocker.server.common.pubsub;
 
 /**
  * in/out from the ICAP server's point of view
- *
  */
 public class Channels {
-	public static final String ARP_IN = "arp:in";
-	public static final String ARP_OUT = "arp:out";
-	public static final String DHCP_IN = "dhcp:in";
-	public static final String DHCP_IP_IN = "dhcp_ip:in";
-	public static final String VPN_PROFILE_STATUS_IN = "vpn_profile_status:%s:in";
-	public static final String FEATURES_IN = "features:in";
+    public static final String ARP_IN = "arp:in";
+    public static final String ARP_OUT = "arp:out";
+    public static final String DHCP_IN = "dhcp:in";
+    public static final String DHCP_IP_IN = "dhcp_ip:in";
+    public static final String VPN_PROFILE_STATUS_IN = "vpn_profile_status:%s:in";
+    public static final String FEATURES_IN = "features:in";
     public static final String VPN_ADDRESS_UPDATE = "vpn_address_update:in";
 }

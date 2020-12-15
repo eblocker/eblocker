@@ -25,15 +25,16 @@ public interface DhcpServer {
      * after a reboot.
      */
     void enable(boolean start);
-	
-	/**
-	 * Stops the DHCP server and ensures that it is not started after a reboot.
-	 */
-	public void disable();
-	
-	/**
-	 * Updates the DHCP server's configuration. This might restart the server.
-	 * @param configuration the configuration to apply
-	 */
-	public void setConfiguration(DhcpServerConfiguration configuration);
+
+    /**
+     * Stops the DHCP server and ensures that it is not started after a reboot.
+     */
+    public void disable();
+
+    /**
+     * Updates the DHCP server's configuration. This might restart the server.
+     *
+     * @param configuration the configuration to apply
+     */
+    public void setConfiguration(DhcpServerConfiguration configuration);
 }

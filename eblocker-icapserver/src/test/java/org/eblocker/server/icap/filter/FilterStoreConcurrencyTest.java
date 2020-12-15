@@ -36,85 +36,87 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertTrue;
 
 public class FilterStoreConcurrencyTest {
-	private static final Logger LOG = LoggerFactory.getLogger(FilterStoreConcurrencyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FilterStoreConcurrencyTest.class);
 
-	@Test
-	public void test() {
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    @Test
+    public void test() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 
-		FilterDomainContainer container = new AsynchronousLearningFilter(true);
-		FilterStore store = new FilterStore(container);
-		store.update(Collections.singletonList(createUrlFilter("a")));
+        FilterDomainContainer container = new AsynchronousLearningFilter(true);
+        FilterStore store = new FilterStore(container);
+        store.update(Collections.singletonList(createUrlFilter("a")));
 
-		executor.scheduleWithFixedDelay((Runnable)container, 0L, 100L, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay((Runnable) container, 0L, 100L, TimeUnit.MILLISECONDS);
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		final List<Exception> exceptions = new ArrayList<>();
+        final List<Exception> exceptions = new ArrayList<>();
 
-		final int[] i = new int[]{0};
+        final int[] i = new int[]{ 0 };
 
-		long t0 = new Date().getTime();
+        long t0 = new Date().getTime();
 
-		Thread marshaller = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(1000L);
-				} catch (InterruptedException e) {
-					//
-				}
-				for (int i = 0; i < 100; i++) {
-					try {
-						JSONMarshaller.marshall(store, out);
-					} catch (Exception e) {
-						exceptions.add(e);
-						LOG.debug("JSON run "+i);
-						return;
-					}
-				}
-			}});
-		marshaller.start();
+        Thread marshaller = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    //
+                }
+                for (int i = 0; i < 100; i++) {
+                    try {
+                        JSONMarshaller.marshall(store, out);
+                    } catch (Exception e) {
+                        exceptions.add(e);
+                        LOG.debug("JSON run " + i);
+                        return;
+                    }
+                }
+            }
+        });
+        marshaller.start();
 
-		Thread filterProcessor = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				do {
-					try {
-						Thread.sleep(10L);
-					} catch (InterruptedException e) {
-						//
-					}
-					store.getFilter().filter(new TestContext("http://a.i-"+(i[0]++)+".com"));
-				} while (true);
-			}});
-		filterProcessor.start();
+        Thread filterProcessor = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    try {
+                        Thread.sleep(10L);
+                    } catch (InterruptedException e) {
+                        //
+                    }
+                    store.getFilter().filter(new TestContext("http://a.i-" + (i[0]++) + ".com"));
+                } while (true);
+            }
+        });
+        filterProcessor.start();
 
-		try {
-			marshaller.join();
-		} catch (InterruptedException e) {
-			//
-		}
+        try {
+            marshaller.join();
+        } catch (InterruptedException e) {
+            //
+        }
 
-		long t1 = new Date().getTime();
+        long t1 = new Date().getTime();
 
-		if (!exceptions.isEmpty()) {
-			exceptions.get(0).printStackTrace();
-		}
-		LOG.debug("i="+i[0]+", t="+(t1-t0));
-		assertTrue(exceptions.isEmpty());
-	}
+        if (!exceptions.isEmpty()) {
+            exceptions.get(0).printStackTrace();
+        }
+        LOG.debug("i=" + i[0] + ", t=" + (t1 - t0));
+        assertTrue(exceptions.isEmpty());
+    }
 
-	private Filter createUrlFilter(String matchString) {
-		return UrlFilterFactory.getInstance()
-				.setStringMatchType(StringMatchType.CONTAINS)
-				.setMatchString(matchString)
-				.setType(FilterType.BLOCK)
-				.setDefinition("definition::"+matchString)
-				.setDomain("domain.com")
-				.setPriority(FilterPriority.HIGH)
-				.setRedirectParam("redirectUrl")
-				.build();
+    private Filter createUrlFilter(String matchString) {
+        return UrlFilterFactory.getInstance()
+                .setStringMatchType(StringMatchType.CONTAINS)
+                .setMatchString(matchString)
+                .setType(FilterType.BLOCK)
+                .setDefinition("definition::" + matchString)
+                .setDomain("domain.com")
+                .setPriority(FilterPriority.HIGH)
+                .setRedirectParam("redirectUrl")
+                .build();
     }
 
 }

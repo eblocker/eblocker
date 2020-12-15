@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.IpUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider  {
+public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider {
 
     private final EblockerDnsServer dnsServer;
     private final NetworkServices networkServices;
@@ -51,9 +51,9 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
     protected void doUpdate(Map<Integer, MessageContainer> messageContainers) {
         NetworkConfiguration configuration = networkServices.getCurrentNetworkConfiguration();
         if (dnsServer.isEnabled()
-            && configuration.isAutomatic()
-            && !configuration.isDhcp()
-            && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), configuration.getGateway(), configuration.getNetworkMask())) {
+                && configuration.isAutomatic()
+                && !configuration.isDhcp()
+                && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), configuration.getGateway(), configuration.getNetworkMask())) {
             if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId())) {
                 messageContainers.put(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId(), createMessage());
             }
@@ -67,22 +67,22 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
         int networkMask = IpUtils.convertIpStringToInt(networkMaskString);
         int network = gatewayIpAddress & networkMask;
         return nameServers.stream()
-            .filter(ns -> !ns.equals(gatewayIpAddressString))
-            .filter(ns -> !ns.equals(eblockerIpAddressString))
-            .map(ns -> IpUtils.convertIpStringToInt(ns) & network)
-            .filter(ns -> ns == network)
-            .findAny()
-            .isPresent();
+                .filter(ns -> !ns.equals(gatewayIpAddressString))
+                .filter(ns -> !ns.equals(eblockerIpAddressString))
+                .map(ns -> IpUtils.convertIpStringToInt(ns) & network)
+                .filter(ns -> ns == network)
+                .findAny()
+                .isPresent();
     }
 
     private MessageContainer createMessage() {
         return createMessage(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId(),
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL",
-            Collections.emptyMap(),
-            false,
-            MessageSeverity.ALERT);
+                "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE",
+                "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT",
+                "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL",
+                "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL",
+                Collections.emptyMap(),
+                false,
+                MessageSeverity.ALERT);
     }
 }

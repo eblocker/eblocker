@@ -21,49 +21,49 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPubSub;
 
 public class JedisSubscriberWrapper extends JedisPubSub {
-	private final static Logger logger = LoggerFactory.getLogger(JedisSubscriberWrapper.class);
+    private final static Logger logger = LoggerFactory.getLogger(JedisSubscriberWrapper.class);
     final static String UNSUBSCRIBE_REQUEST = "UNSUBSCRIBE-" + Math.random();
 
-	private Subscriber subscriber;
+    private Subscriber subscriber;
 
-	public JedisSubscriberWrapper(Subscriber subscriber) {
-		this.subscriber = subscriber;
-	}
+    public JedisSubscriberWrapper(Subscriber subscriber) {
+        this.subscriber = subscriber;
+    }
 
-	@Override
-	public void onMessage(String channel, String message) {
-		if (UNSUBSCRIBE_REQUEST.equals(message)) {
-			unsubscribe();
-			return;
-		}
+    @Override
+    public void onMessage(String channel, String message) {
+        if (UNSUBSCRIBE_REQUEST.equals(message)) {
+            unsubscribe();
+            return;
+        }
 
-		try {
-			subscriber.process(message);
-		} catch (Exception e) {
-			logger.error("Caught unchecked exception in channel {}:", channel, e);
-		}
-	}
+        try {
+            subscriber.process(message);
+        } catch (Exception e) {
+            logger.error("Caught unchecked exception in channel {}:", channel, e);
+        }
+    }
 
-	@Override
-	public void onPMessage(String pattern, String channel, String message) {
-	}
+    @Override
+    public void onPMessage(String pattern, String channel, String message) {
+    }
 
-	@Override
-	public void onSubscribe(String channel, int subscribedChannels) {
-		subscriber.onSubscribe();
-	}
+    @Override
+    public void onSubscribe(String channel, int subscribedChannels) {
+        subscriber.onSubscribe();
+    }
 
-	@Override
-	public void onUnsubscribe(String channel, int subscribedChannels) {
-		subscriber.onUnsubscribe();
-	}
+    @Override
+    public void onUnsubscribe(String channel, int subscribedChannels) {
+        subscriber.onUnsubscribe();
+    }
 
-	@Override
-	public void onPUnsubscribe(String pattern, int subscribedChannels) {
-	}
+    @Override
+    public void onPUnsubscribe(String pattern, int subscribedChannels) {
+    }
 
-	@Override
-	public void onPSubscribe(String pattern, int subscribedChannels) {
-	}
+    @Override
+    public void onPSubscribe(String pattern, int subscribedChannels) {
+    }
 
 }

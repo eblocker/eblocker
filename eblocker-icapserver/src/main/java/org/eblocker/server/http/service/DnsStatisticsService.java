@@ -16,6 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.common.collect.SortedMultiset;
+import com.google.common.collect.TreeMultiset;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.dns.DnsDataSource;
 import org.eblocker.server.common.data.dns.DnsDataSourceDnsResponse;
 import org.eblocker.server.common.data.dns.DnsQuery;
@@ -26,11 +31,6 @@ import org.eblocker.server.common.data.dns.DnsResponseTimeRating;
 import org.eblocker.server.common.data.dns.NameServerStats;
 import org.eblocker.server.common.data.dns.ResolverEvent;
 import org.eblocker.server.common.data.dns.ResolverStats;
-import com.google.common.collect.SortedMultiset;
-import com.google.common.collect.TreeMultiset;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class DnsStatisticsService {
         // step through intervals
         Instant last = Instant.now(clock);
         Instant from = start;
-        while(from.isBefore(last)) {
+        while (from.isBefore(last)) {
             Instant to = from.plus(interval, unit);
             List<ResolverEvent> eventsInInterval = eventsBefore(events, to);
             List<NameServerStats> nameServerStats = aggregateEvents(eventsInInterval);
@@ -105,7 +105,7 @@ public class DnsStatisticsService {
 
     public NameServerStats testNameServer(String nameServer, List<String> names) {
         String id = UUID.randomUUID().toString();
-        List<DnsQuery> queries = names.stream().map(name -> new DnsQuery(DnsRecordType.A, name)).collect(Collectors.toList());;
+        List<DnsQuery> queries = names.stream().map(name -> new DnsQuery(DnsRecordType.A, name)).collect(Collectors.toList());
         dnsDataSource.addDnsQueryQueue(id, nameServer, queries);
 
         DnsDataSourceDnsResponse result = dnsDataSource.popDnsResolutionQueue(id, 10 * names.size());
@@ -118,7 +118,7 @@ public class DnsStatisticsService {
 
     private List<ResolverEvent> eventsBefore(Queue<ResolverEvent> events, Instant instant) {
         List<ResolverEvent> eventsBefore = new ArrayList<>();
-        while(!events.isEmpty() && events.peek().getInstant().isBefore(instant)) {
+        while (!events.isEmpty() && events.peek().getInstant().isBefore(instant)) {
             eventsBefore.add(events.poll());
         }
 
@@ -127,10 +127,10 @@ public class DnsStatisticsService {
 
     private List<NameServerStats> aggregateEvents(Collection<ResolverEvent> events) {
         return events.stream()
-            .collect(Collectors.groupingBy(ResolverEvent::getNameServer))
-            .values().stream()
-            .map(this::aggregateSingleNameServerEvents)
-            .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(ResolverEvent::getNameServer))
+                .values().stream()
+                .map(this::aggregateSingleNameServerEvents)
+                .collect(Collectors.toList());
     }
 
     private NameServerStats aggregateSingleNameServerEvents(List<ResolverEvent> events) {
@@ -140,7 +140,7 @@ public class DnsStatisticsService {
         int error = 0;
         long total = 0;
         SortedMultiset<Long> durations = TreeMultiset.create();
-        for(ResolverEvent event : events) {
+        for (ResolverEvent event : events) {
             switch (event.getStatus()) {
                 case "valid":
                     ++valid;
@@ -187,18 +187,18 @@ public class DnsStatisticsService {
         DnsRating rating = rate(reliabilityRating, responseTimeRating);
 
         return new NameServerStats(
-            events.get(0).getNameServer(),
-            valid,
-            invalid,
-            error,
-            timeout,
-            average,
-            median,
-            min,
-            max,
-            rating,
-            reliabilityRating,
-            responseTimeRating
+                events.get(0).getNameServer(),
+                valid,
+                invalid,
+                error,
+                timeout,
+                average,
+                median,
+                min,
+                max,
+                rating,
+                reliabilityRating,
+                responseTimeRating
         );
     }
 
@@ -210,14 +210,14 @@ public class DnsStatisticsService {
 
         boolean odd = size % 2 == 1;
         Iterator<Long> i = values.iterator();
-        for(int left = size / 2; left > 1; --left) {
+        for (int left = size / 2; left > 1; --left) {
             i.next();
         }
         return odd ? i.next() : (i.next() + i.next()) / 2;
     }
 
     private DnsResponseTimeRating rateResponseTime(long t) {
-        for(DnsResponseTimeRating time : DnsResponseTimeRating.values()) {
+        for (DnsResponseTimeRating time : DnsResponseTimeRating.values()) {
             if (t <= time.getLowerBound()) {
                 return time;
             }
@@ -231,7 +231,7 @@ public class DnsStatisticsService {
             return DnsReliabilityRating.HIGH;
         }
         double ratio = (double) valid / (valid + unusable);
-        for(DnsReliabilityRating dnsReliabilityRating : DnsReliabilityRating.values()) {
+        for (DnsReliabilityRating dnsReliabilityRating : DnsReliabilityRating.values()) {
             if (ratio <= dnsReliabilityRating.getLowerBound()) {
                 return dnsReliabilityRating;
             }

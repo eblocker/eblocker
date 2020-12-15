@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.http.security.PasswordUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.http.security.PasswordUtil;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -68,8 +68,8 @@ public class UserModuleOld {
         this.system = system;
         this.pin = pin;
         this.whiteListConfigByDomains = whiteListConfigByDomains == null
-            ? new HashMap<>() /* do not use immutable Collections.emptyMap() here */
-            : whiteListConfigByDomains;
+                ? new HashMap<>() /* do not use immutable Collections.emptyMap() here */
+                : whiteListConfigByDomains;
         this.dashboardCards = dashboardCards;
         this.customBlacklistId = customBlacklistId;
         this.customWhitelistId = customWhitelistId;
@@ -172,9 +172,9 @@ public class UserModuleOld {
         final int prime = 31;
         int result = 1;
         result = prime
-            * result
-            + ((associatedProfileId == null) ? 0 : associatedProfileId
-            .hashCode());
+                * result
+                + ((associatedProfileId == null) ? 0 : associatedProfileId
+                .hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((nameKey == null) ? 0 : nameKey.hashCode());

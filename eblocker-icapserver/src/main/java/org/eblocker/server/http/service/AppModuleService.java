@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,14 +77,14 @@ public class AppModuleService extends Observable {
 
     @Inject
     public AppModuleService(
-        DataSource dataSource,
-        ObjectMapper objectMapper,
-        AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
-        @Named("appmodules.file.path") String appModulesFilePath,
-        @Named("appmodules.id.temp") int tempAppModuleId,
-        @Named("appmodules.id.standard") int standardAppModuleId,
-        @Named("appmodules.id.user") int userAppModuleId,
-        @Named("appmodules.id.autotrust") int autoTrustAppModuleId) {
+            DataSource dataSource,
+            ObjectMapper objectMapper,
+            AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
+            @Named("appmodules.file.path") String appModulesFilePath,
+            @Named("appmodules.id.temp") int tempAppModuleId,
+            @Named("appmodules.id.standard") int standardAppModuleId,
+            @Named("appmodules.id.user") int userAppModuleId,
+            @Named("appmodules.id.autotrust") int autoTrustAppModuleId) {
         this.dataSource = dataSource;
         this.objectMapper = objectMapper;
         this.appModuleRemovalMessageProvider = appModuleRemovalMessageProvider;
@@ -109,10 +108,10 @@ public class AppModuleService extends Observable {
         AppWhitelistModule originalModule = null;
         for (AppWhitelistModule each : list) {
             if (each.getId().equals(userAppModuleId) &&
-                each.getName().equals("INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED")) {
+                    each.getName().equals("INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED")) {
                 originalModule = each;
             } else if (!each.getId().equals(userAppModuleId) &&
-                each.getName().startsWith("INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED")) {
+                    each.getName().startsWith("INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED")) {
                 // add to be merged
                 toBeMerged.add(each);
                 // remove from DB
@@ -124,20 +123,20 @@ public class AppModuleService extends Observable {
         if (originalModule == null && toBeMerged.size() > 0) {
             STATUS.info("Found inconsistent state: no original static app module, but {} broken one(s). Cleaning up..", toBeMerged.size());
             originalModule = new AppWhitelistModule(
-                userAppModuleId,
-                "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyMap(),
-                true,
-                true,
-                true,
-                false,
-                null,
-                false,
-                true
+                    userAppModuleId,
+                    "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
+                    Collections.emptyMap(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyMap(),
+                    true,
+                    true,
+                    true,
+                    false,
+                    null,
+                    false,
+                    true
             );
         }
 
@@ -151,16 +150,16 @@ public class AppModuleService extends Observable {
             for (AppWhitelistModule each : toBeMerged) {
 
                 each.getBlacklistedDomains().stream()
-                    .filter(d -> !oriBlacklist.contains(d))
-                    .forEach(d -> oriBlacklist.add(d));
+                        .filter(d -> !oriBlacklist.contains(d))
+                        .forEach(d -> oriBlacklist.add(d));
 
                 each.getWhitelistedDomains().stream()
-                    .filter(d -> !oriWhitelistDomains.contains(d))
-                    .forEach(d -> oriWhitelistDomains.add(d));
+                        .filter(d -> !oriWhitelistDomains.contains(d))
+                        .forEach(d -> oriWhitelistDomains.add(d));
 
                 each.getWhitelistedIPs().stream()
-                    .filter(d -> !oriWhitelistIps.contains(d))
-                    .forEach(d -> oriWhitelistIps.add(d));
+                        .filter(d -> !oriWhitelistIps.contains(d))
+                        .forEach(d -> oriWhitelistIps.add(d));
 
                 // this may override an existing key, but while we merge we cannot know which key is "worth more",
                 // the one in the original app module or the one in the wrongly created. Ideally each key is unique,
@@ -206,20 +205,20 @@ public class AppModuleService extends Observable {
         AppWhitelistModule module = get(tempAppModuleId);
         if (module == null) {
             module = new AppWhitelistModule(
-                tempAppModuleId,
-                "INTERNAL_USE_ONLY_TEST_RECORDING",
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyMap(),
-                false,
-                false,
-                true,
-                false,
-                null,
-                false,
-                true
+                    tempAppModuleId,
+                    "INTERNAL_USE_ONLY_TEST_RECORDING",
+                    Collections.emptyMap(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyMap(),
+                    false,
+                    false,
+                    true,
+                    false,
+                    null,
+                    false,
+                    true
             );
             dataSource.save(module, tempAppModuleId);
         }
@@ -246,20 +245,20 @@ public class AppModuleService extends Observable {
         module = get(userAppModuleId);
         if (module == null) {
             module = new AppWhitelistModule(
-                userAppModuleId,
-                "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
-                Collections.emptyMap(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyMap(),
-                true,
-                true,
-                true,
-                false,
-                null,
-                false,
-                true
+                    userAppModuleId,
+                    "INTERNAL_USE_ONLY_SINGLE_ENTRIES_USERDEFINED",
+                    Collections.emptyMap(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyMap(),
+                    true,
+                    true,
+                    true,
+                    false,
+                    null,
+                    false,
+                    true
             );
             dataSource.save(module, userAppModuleId);
         }
@@ -268,22 +267,22 @@ public class AppModuleService extends Observable {
             Map<String, String> description = new HashMap<>();
             description.put("de", "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten.");
             description
-                .put("en", "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear.");
+                    .put("en", "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear.");
             module = new AppWhitelistModule(
-                autoTrustAppModuleId,
-                "Auto Trust App",
-                description,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyMap(),
-                false,
-                false,
-                true,
-                false,
-                null,
-                false,
-                false
+                    autoTrustAppModuleId,
+                    "Auto Trust App",
+                    description,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyMap(),
+                    false,
+                    false,
+                    true,
+                    false,
+                    null,
+                    false,
+                    false
             );
             dataSource.save(module, autoTrustAppModuleId);
         }
@@ -293,22 +292,22 @@ public class AppModuleService extends Observable {
      * Used to identify hard coded modules. These modules should not be considered on actions like deletion of app
      * modules from the data store that have been removed from the list. These hard coded app modules are
      * obviously not contained in any list package by definition.
+     *
      * @param module
      * @return
      */
     private boolean isStaticModule(AppWhitelistModule module) {
         return module.getId().equals(userAppModuleId) ||
-            module.getId().equals(tempAppModuleId) ||
-            module.getId().equals(autoTrustAppModuleId);
+                module.getId().equals(tempAppModuleId) ||
+                module.getId().equals(autoTrustAppModuleId);
     }
 
     /**
      * Load all app modules from database.
-     *
      */
     public List<AppWhitelistModule> getAll() {
         List<AppWhitelistModule> modules = dataSource.getAll(AppWhitelistModule.class);
-        for (AppWhitelistModule module: modules) {
+        for (AppWhitelistModule module : modules) {
             loadModuleEnabledState(module);
         }
         return modules;
@@ -325,6 +324,7 @@ public class AppModuleService extends Observable {
 
     /**
      * Save a new user-defined module. The module's ID must be null.
+     *
      * @param module to save. Note: the module is enabled automatically
      * @return
      */
@@ -373,8 +373,9 @@ public class AppModuleService extends Observable {
 
     /**
      * Update an existing module.
+     *
      * @param module the module to update. Note: the enabled state is not updated.
-     * @param id the module's ID
+     * @param id     the module's ID
      * @return
      */
     public AppWhitelistModule update(AppWhitelistModule module, int id) {
@@ -386,7 +387,7 @@ public class AppModuleService extends Observable {
         //
         AppWhitelistModule original = get(module.getId());
         if (original == null) {
-            throw new ConflictException("Cannot find original version of entity with id "+id);
+            throw new ConflictException("Cannot find original version of entity with id " + id);
         }
 
         //
@@ -433,7 +434,7 @@ public class AppModuleService extends Observable {
         //
         if (original.isEnabled() && (
                 !original.getWhitelistedDomains().equals(module.getWhitelistedDomains())
-                || !original.getWhitelistedIPs().equals(module.getWhitelistedIPs()
+                        || !original.getWhitelistedIPs().equals(module.getWhitelistedIPs()
                 ))) {
             activateEnabledState(module);
         }
@@ -441,11 +442,11 @@ public class AppModuleService extends Observable {
         return module;
     }
 
-
     /**
      * Restore all modules that the user has modified or created, for example from a backup.
      * Also restore the enabled states given in the map.
-     * @param modules the modules that the user has modified or created
+     *
+     * @param modules       the modules that the user has modified or created
      * @param enabledStates the enabled states of all modules
      */
     public void restoreModified(List<AppWhitelistModule> modules, Map<Integer, Boolean> enabledStates) {
@@ -453,9 +454,9 @@ public class AppModuleService extends Observable {
 
         // Set the ID sequence
         int maxId = Stream.concat(all.stream(), modules.stream())
-            .mapToInt(AppWhitelistModule::getId)
-            .max()
-            .getAsInt();
+                .mapToInt(AppWhitelistModule::getId)
+                .max()
+                .getAsInt();
         dataSource.setIdSequence(AppWhitelistModule.class, maxId);
 
         // Restore modified modules
@@ -465,15 +466,15 @@ public class AppModuleService extends Observable {
 
         // Restore enabled states of all modules
         List<AppWhitelistModule> modulesModifyState = getAll().stream()
-            .filter(module -> {
-                Boolean shouldEnable = enabledStates.get(module.getId());
-                if (shouldEnable == null) {
-                    return false; // do not modify state
-                } else {
-                    return module.isEnabled() != shouldEnable;
-                }
-            })
-            .collect(Collectors.toList());
+                .filter(module -> {
+                    Boolean shouldEnable = enabledStates.get(module.getId());
+                    if (shouldEnable == null) {
+                        return false; // do not modify state
+                    } else {
+                        return module.isEnabled() != shouldEnable;
+                    }
+                })
+                .collect(Collectors.toList());
 
         modulesModifyState.forEach(module -> {
             module.setEnabled(enabledStates.get(module.getId()));
@@ -536,7 +537,7 @@ public class AppModuleService extends Observable {
             storeEnabledState(updatedModule);
             activateEnabledState(updatedModule);
         } else {
-            LOG.warn("Could not find module with ID: "+id);
+            LOG.warn("Could not find module with ID: " + id);
         }
     }
 
@@ -607,10 +608,9 @@ public class AppModuleService extends Observable {
 
     /**
      * Update app modules from provided built-in configuration.
-     *
+     * <p>
      * Attention: Any user-modified app module will not be updated!
      * The user would have to reset the module to get the latest built-in state.
-     *
      */
     private void updateFromBuiltin() {
         // Was the file with modules changed since last update?
@@ -644,14 +644,13 @@ public class AppModuleService extends Observable {
         updateFromBuiltinRemoveModules(builtinModulesToBeDeleted);
     }
 
-    private void updateFromBuiltinAddNewModules(List<AppWhitelistModule> builtinModules){
+    private void updateFromBuiltinAddNewModules(List<AppWhitelistModule> builtinModules) {
         Map<Integer, AppWhitelistModule> modulesById = getAll().stream()
-            .filter(m -> !isStaticModule(m))  // must not consider static modules (see hard coded modules above)
-            .collect(Collectors.toMap(AppWhitelistModule::getId, Function.identity()));
-
+                .filter(m -> !isStaticModule(m))  // must not consider static modules (see hard coded modules above)
+                .collect(Collectors.toMap(AppWhitelistModule::getId, Function.identity()));
 
         List<AppWhitelistModule> newModules = new ArrayList<>();
-        for (AppWhitelistModule builtin: builtinModules) {
+        for (AppWhitelistModule builtin : builtinModules) {
             // This builtin module is still contained in the file, it has therefore not been deleted
 
             AppWhitelistModule module = modulesById.get(builtin.getId());
@@ -710,10 +709,11 @@ public class AppModuleService extends Observable {
      * If, however, the user has made changes, we do not want to remove these changes. So we create a custom app module
      * that is based on the app module that has been deleted from the list package. After which we can delete the
      * original app module from the data store, since the custom changes are within the newly created custom app module.
+     *
      * @param builtinModulesToBeDeleted all modules that are builtin and that have been removed from the list package,
      *                                  but are still contained in the data store
      */
-    private void updateFromBuiltinRemoveModules(Map<Integer, AppWhitelistModule> builtinModulesToBeDeleted){
+    private void updateFromBuiltinRemoveModules(Map<Integer, AppWhitelistModule> builtinModulesToBeDeleted) {
         Set<String> removedAppModulesNames = new HashSet<>();
         for (AppWhitelistModule builtinModuleToBeDeleted : builtinModulesToBeDeleted.values()) {
             if (builtinModuleToBeDeleted.isModified() || (!builtinModuleToBeDeleted.isEnabledPerDefault() && builtinModuleToBeDeleted.isEnabled())) {
@@ -764,13 +764,14 @@ public class AppModuleService extends Observable {
 
     private List<AppWhitelistModule> loadBuiltin(EblockerResource builtinAppModulesResource) throws BuiltinModulesLoadException {
         try {
-            LOG.debug("Loading appModules from file: "+builtinAppModulesResource.getPath());
+            LOG.debug("Loading appModules from file: " + builtinAppModulesResource.getPath());
             String jsonAppModules = ResourceHandler.load(builtinAppModulesResource);
 
-            List<AppWhitelistModule> modules = objectMapper.readValue(jsonAppModules, new TypeReference<List<AppWhitelistModule>>(){});
+            List<AppWhitelistModule> modules = objectMapper.readValue(jsonAppModules, new TypeReference<List<AppWhitelistModule>>() {
+            });
 
             // if no explicit version is given generate one based on content
-            for(AppWhitelistModule module : modules) {
+            for (AppWhitelistModule module : modules) {
                 if (module.getVersion() == null) {
                     module.setVersion(calculateChecksum(module));
                 }
@@ -817,20 +818,20 @@ public class AppModuleService extends Observable {
         module.setWhitelistedDomains(normalizedDomains);
     }
 
-    private void normalizeAndValidateIPs(AppWhitelistModule module){
-		if (module == null) {
-			return;
-		}
-    	List<String> normalizedIPs = new ArrayList<>();
-    	if (module.getWhitelistedIPs() != null){
-    		for (String ip : module.getWhitelistedIPs()){
-    			String normalizedIP = ip.trim().replaceAll("\\s+",  "");
-    			if (!normalizedIP.isEmpty()){
-    				normalizedIPs.add(normalizedIP);
-    			}
-    		}
-    	}
-    	module.setWhitelistedIPs(normalizedIPs);
+    private void normalizeAndValidateIPs(AppWhitelistModule module) {
+        if (module == null) {
+            return;
+        }
+        List<String> normalizedIPs = new ArrayList<>();
+        if (module.getWhitelistedIPs() != null) {
+            for (String ip : module.getWhitelistedIPs()) {
+                String normalizedIP = ip.trim().replaceAll("\\s+", "");
+                if (!normalizedIP.isEmpty()) {
+                    normalizedIPs.add(normalizedIP);
+                }
+            }
+        }
+        module.setWhitelistedIPs(normalizedIPs);
     }
 
     public void addDomainToModule(String domain, String name, int id) {
@@ -880,7 +881,7 @@ public class AppModuleService extends Observable {
         AppWhitelistModule module = get(id);
         List<String> domains = new ArrayList<>(module.getWhitelistedDomains());
         Map<String, String> labels = new HashMap<>(module.getLabels());
-        for (SSLWhitelistUrl domain: domainsToAdd) {
+        for (SSLWhitelistUrl domain : domainsToAdd) {
             if (!domains.contains(domain.getUrl())) {
                 domains.add(domain.getUrl());
             }
@@ -904,7 +905,7 @@ public class AppModuleService extends Observable {
         AppWhitelistModule module = get(id);
         List<String> domains = new ArrayList<>(module.getWhitelistedDomains());
         Map<String, String> labels = new HashMap<>(module.getLabels());
-        for (SSLWhitelistUrl domain: domainsToRemove) {
+        for (SSLWhitelistUrl domain : domainsToRemove) {
             if (domains.contains(domain.getUrl())) {
                 domains.remove(domain.getUrl());
             }
@@ -919,7 +920,6 @@ public class AppModuleService extends Observable {
 
     /**
      * Calculates checksum to be used as version for a module.
-     *
      */
     private String calculateChecksum(AppWhitelistModule module) {
         // create a stable string representation order of members (maps iteration order isn't deterministic, so cannot use jackson here)
@@ -930,7 +930,7 @@ public class AppModuleService extends Observable {
         module.getWhitelistedDomains().forEach(builder::append);
         module.getWhitelistedIPs().forEach(builder::append);
 
-        Consumer<Map<String, String>> appendKeyValues = m->m.entrySet().stream().map(e->e.getKey() + e.getValue()).sorted().forEach(builder::append);
+        Consumer<Map<String, String>> appendKeyValues = m -> m.entrySet().stream().map(e -> e.getKey() + e.getValue()).sorted().forEach(builder::append);
         appendKeyValues.accept(module.getDescription());
         appendKeyValues.accept(module.getLabels());
 

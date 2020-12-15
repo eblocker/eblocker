@@ -37,11 +37,11 @@ public class CachingValidator implements CertificateValidator {
     public CachingValidator(int maxSize, int concurrencyLevel, int ttl, CertificateValidator validator) {
         this.validator = validator;
         this.cache = CacheBuilder.newBuilder()
-            .concurrencyLevel(concurrencyLevel)
-            .maximumSize(maxSize)
-            .expireAfterWrite(ttl, TimeUnit.SECONDS)
-            .recordStats()
-            .build();
+                .concurrencyLevel(concurrencyLevel)
+                .maximumSize(maxSize)
+                .expireAfterWrite(ttl, TimeUnit.SECONDS)
+                .recordStats()
+                .build();
     }
 
     @Override

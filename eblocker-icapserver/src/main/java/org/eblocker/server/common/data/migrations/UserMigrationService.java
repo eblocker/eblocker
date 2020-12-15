@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 @SubSystemService(value = SubSystem.SERVICES)
 public class UserMigrationService {
@@ -39,7 +39,6 @@ public class UserMigrationService {
     private static final Logger logger = LoggerFactory.getLogger(UserMigrationService.class);
     private final JedisPool jedisPool;
     private final ObjectMapper objectMapper;
-
 
     @Inject
     public UserMigrationService(JedisPool jedisPool,
@@ -53,12 +52,12 @@ public class UserMigrationService {
      * by dashboard card IDs. Since the getter for the dashboard cards is used in the SchemaMigrations,
      * we cannot remove it w/o breaking the migration. So we deprecate the old user module and introduce
      * a new one in the latest SchemaMigration (version 38), in which we migrate UserModuleOld to UserModule.
-     *
+     * <p>
      * To load the old UserModule into the deprecated type (UserModuleOld), we have to access the datastore
      * directly. Hence the Jedis operations.
      */
     public List<UserModuleOld> getAll() {
-        try(Jedis jedis = jedisPool.getResource()) {
+        try (Jedis jedis = jedisPool.getResource()) {
             List<UserModuleOld> allOldUsers = new ArrayList<>();
 
             // It must be UserModule here, because the old users have been saved as "UserModule:..."
@@ -98,7 +97,7 @@ public class UserMigrationService {
 
     public UserModuleOld save(UserModuleOld oldUser, Integer id) {
         try {
-            try(Jedis jedis = jedisPool.getResource()) {
+            try (Jedis jedis = jedisPool.getResource()) {
                 String json = objectMapper.writeValueAsString(oldUser);
                 jedis.set(UserModule.class.getSimpleName() + ":" + id, json);
                 return oldUser;

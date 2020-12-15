@@ -43,15 +43,15 @@ public class DataSourceEventLoggerTest {
 
     @Test
     public void eventsAreAdded() throws InterruptedException {
-    
+
         Event event1 = Events.powerFailure();
         Event event2 = Events.networkInterfaceDown();
 
         logger.log(event1);
         logger.log(event2);
-        
+
         Thread.sleep(100); // wait for background thread to add events to the datasource
-        
+
         Mockito.verify(dataSource).addEvent(event1);
         Mockito.verify(dataSource).addEvent(event2);
     }
@@ -72,7 +72,7 @@ public class DataSourceEventLoggerTest {
 
         a.start();
         b.start();
-        
+
         a.join();
         b.join();
 
@@ -80,11 +80,11 @@ public class DataSourceEventLoggerTest {
 
         // Verify that the datasource received 1000 events of each type:
         Stream
-            .of(EventType.POWER_FAILURE,
-                EventType.NETWORK_INTERFACE_DOWN)
-            .forEach((type) -> {
-                Mockito.verify(dataSource, Mockito.times(1000)).addEvent(Mockito.argThat(event -> event.getType() == type));
-            });
+                .of(EventType.POWER_FAILURE,
+                        EventType.NETWORK_INTERFACE_DOWN)
+                .forEach((type) -> {
+                    Mockito.verify(dataSource, Mockito.times(1000)).addEvent(Mockito.argThat(event -> event.getType() == type));
+                });
     }
 
     @Test

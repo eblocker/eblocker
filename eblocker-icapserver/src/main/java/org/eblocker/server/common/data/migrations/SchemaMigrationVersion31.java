@@ -16,15 +16,14 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 public class SchemaMigrationVersion31 implements SchemaMigration {
 
@@ -52,7 +51,7 @@ public class SchemaMigrationVersion31 implements SchemaMigration {
     public void migrate() {
         int oldStandardUserId = DefaultEntities.PARENTAL_CONTROL_DEFAULT_USER_ID;
         UserModuleOld oldStandardUser = userMigrationService.get(UserModuleOld.class, oldStandardUserId);
-        for(Device device : dataSource.getDevices()) {
+        for (Device device : dataSource.getDevices()) {
             /*
              * Create and set new, device specific system user for all devices.
              * Copy all relevant settings from "old" standard user.
@@ -86,18 +85,18 @@ public class SchemaMigrationVersion31 implements SchemaMigration {
 
     private UserModuleOld createDefaultSystemUser(String name, UserModuleOld oldStandardUser) {
         UserModuleOld user = new UserModuleOld(
-            dataSource.nextId(UserModule.class),
-            DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
-            name,
-            DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
-            null,
-            null,
-            true,
-            null,
-            oldStandardUser == null ? new HashMap<>() : oldStandardUser.getWhiteListConfigByDomains(),
-            oldStandardUser == null ? new ArrayList<>() : oldStandardUser.getDashboardCards(),
-            oldStandardUser == null ? null : oldStandardUser.getCustomBlacklistId(),
-            oldStandardUser == null ? null : oldStandardUser.getCustomWhitelistId()
+                dataSource.nextId(UserModule.class),
+                DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID,
+                name,
+                DefaultEntities.USER_SYSTEM_DEFAULT_NAME_KEY,
+                null,
+                null,
+                true,
+                null,
+                oldStandardUser == null ? new HashMap<>() : oldStandardUser.getWhiteListConfigByDomains(),
+                oldStandardUser == null ? new ArrayList<>() : oldStandardUser.getDashboardCards(),
+                oldStandardUser == null ? null : oldStandardUser.getCustomBlacklistId(),
+                oldStandardUser == null ? null : oldStandardUser.getCustomWhitelistId()
         );
         return userMigrationService.save(user, user.getId());
     }

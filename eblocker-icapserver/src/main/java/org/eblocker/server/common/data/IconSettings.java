@@ -16,12 +16,11 @@
  */
 package org.eblocker.server.common.data;
 
-import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.Device.DisplayIconPosition;
 
 public class IconSettings {
-
 
     DisplayIconMode iconMode;
 
@@ -29,9 +28,9 @@ public class IconSettings {
 
     @JsonCreator
     public IconSettings(@JsonProperty("enabled") boolean enabled,
-            @JsonProperty("fiveSeconds") boolean fiveSeconds,
-            @JsonProperty("browserOnly") boolean browserOnly,
-            @JsonProperty("iconPosition") DisplayIconPosition iconPosition) {
+                        @JsonProperty("fiveSeconds") boolean fiveSeconds,
+                        @JsonProperty("browserOnly") boolean browserOnly,
+                        @JsonProperty("iconPosition") DisplayIconPosition iconPosition) {
         this.iconMode = DisplayIconMode.generateFrom(enabled, fiveSeconds, browserOnly);
         this.iconPosition = iconPosition;
     }

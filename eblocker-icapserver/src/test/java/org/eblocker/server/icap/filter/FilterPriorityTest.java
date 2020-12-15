@@ -16,30 +16,31 @@
  */
 package org.eblocker.server.icap.filter;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FilterPriorityTest {
 
-	@Test
-	public void test() {
-		assertTrue(FilterPriority.HIGHEST.isHigher(FilterPriority.HIGH));
-		assertFalse(FilterPriority.HIGH.isHigher(FilterPriority.HIGH));
-		assertFalse(FilterPriority.LOW.isHigher(FilterPriority.HIGH));
-		
-		assertTrue(FilterPriority.HIGHEST.isHigherOrEqual(FilterPriority.HIGH));
-		assertTrue(FilterPriority.HIGH.isHigherOrEqual(FilterPriority.HIGH));
-		assertFalse(FilterPriority.LOW.isHigherOrEqual(FilterPriority.HIGH));
-		
-		assertFalse(FilterPriority.HIGHEST.isLower(FilterPriority.HIGH));
-		assertFalse(FilterPriority.HIGH.isLower(FilterPriority.HIGH));
-		assertTrue(FilterPriority.LOW.isLower(FilterPriority.HIGH));
-		
-		assertFalse(FilterPriority.HIGHEST.isLowerOrEqual(FilterPriority.HIGH));
-		assertTrue(FilterPriority.HIGH.isLowerOrEqual(FilterPriority.HIGH));
-		assertTrue(FilterPriority.LOW.isLowerOrEqual(FilterPriority.HIGH));
-		
-	}
+    @Test
+    public void test() {
+        assertTrue(FilterPriority.HIGHEST.isHigher(FilterPriority.HIGH));
+        assertFalse(FilterPriority.HIGH.isHigher(FilterPriority.HIGH));
+        assertFalse(FilterPriority.LOW.isHigher(FilterPriority.HIGH));
+
+        assertTrue(FilterPriority.HIGHEST.isHigherOrEqual(FilterPriority.HIGH));
+        assertTrue(FilterPriority.HIGH.isHigherOrEqual(FilterPriority.HIGH));
+        assertFalse(FilterPriority.LOW.isHigherOrEqual(FilterPriority.HIGH));
+
+        assertFalse(FilterPriority.HIGHEST.isLower(FilterPriority.HIGH));
+        assertFalse(FilterPriority.HIGH.isLower(FilterPriority.HIGH));
+        assertTrue(FilterPriority.LOW.isLower(FilterPriority.HIGH));
+
+        assertFalse(FilterPriority.HIGHEST.isLowerOrEqual(FilterPriority.HIGH));
+        assertTrue(FilterPriority.HIGH.isLowerOrEqual(FilterPriority.HIGH));
+        assertTrue(FilterPriority.LOW.isLowerOrEqual(FilterPriority.HIGH));
+
+    }
 
 }

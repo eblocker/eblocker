@@ -16,15 +16,12 @@
  */
 package org.eblocker.server.common.network;
 
-import static org.junit.Assert.*;
-
-import org.eblocker.server.common.network.ZeroconfRegistrationService;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import static org.junit.Assert.assertEquals;
 
 public class ZeroconfRegistrationServiceTest {
     private ZeroconfRegistrationService service;
@@ -43,7 +40,7 @@ public class ZeroconfRegistrationServiceTest {
         String name = service.getServiceName();
         assertEquals("Default name with_dots_", name);
     }
-    
+
     @Test
     public void useDeviceNameIfPossible() {
         Mockito.when(deviceRegistrationProperties.getDeviceName()).thenReturn("Registered Device Name");

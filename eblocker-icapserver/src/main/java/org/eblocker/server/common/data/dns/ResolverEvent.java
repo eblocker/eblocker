@@ -26,10 +26,10 @@ public class ResolverEvent {
 
     public ResolverEvent(String value) {
         String[] values = value.split(",");
-        this.instant = Instant.ofEpochMilli((long)(Double.parseDouble(values[0]) * 1000));
+        this.instant = Instant.ofEpochMilli((long) (Double.parseDouble(values[0]) * 1000));
         this.nameServer = values[1];
         this.status = values[2];
-        this.elapsed = values.length == 4 ? (long)(Double.parseDouble(values[3]) * 1000) : null;
+        this.elapsed = values.length == 4 ? (long) (Double.parseDouble(values[3]) * 1000) : null;
     }
 
     public ResolverEvent(Instant instant, String nameServer, String status, Long elapsed) {
@@ -49,7 +49,7 @@ public class ResolverEvent {
 
     public String getStatus() {
         return status;
-        }
+    }
 
     public Long getDuration() {
         return elapsed;

@@ -104,7 +104,7 @@ public class DnsServerConfig {
     }
 
     /**
-     @deprecated Property is not used anymore and kept only for backward compatibility.
+     * @deprecated Property is not used anymore and kept only for backward compatibility.
      */
     @Deprecated
     public void setAccessDeniedIp(String accessDeniedIp) {

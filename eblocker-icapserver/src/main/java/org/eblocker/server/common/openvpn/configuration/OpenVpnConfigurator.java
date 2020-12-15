@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.openvpn.configuration;
 
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class OpenVpnConfigurator {
     private final Map<String, Option> defaultOptionsByName;
     private final Provider<OpenVpnConfigurationParser> parserProvider;
 
-    public enum OptionState { ACTIVE, BLACKLISTED, IGNORED, FILE_REQUIRED }
+    public enum OptionState {ACTIVE, BLACKLISTED, IGNORED, FILE_REQUIRED}
 
     @Inject
     public OpenVpnConfigurator(@Named("openvpn.configuration.options.blacklist") String optionsBlacklist,
@@ -87,22 +87,22 @@ public class OpenVpnConfigurator {
         userOptionsByState.put(OptionState.IGNORED, Collections.emptySet());
 
         userOptionsByState.putAll(userOptions.stream()
-            .flatMap( o -> {
-                if (o instanceof OptionsGroup) {
-                    return Stream.concat(Stream.of(o), ((OptionsGroup)o).getOptions().stream());
-                }
-                return Stream.of(o);
-            })
-            .collect(Collectors.groupingBy(o -> {
-                if (isBlacklisted(o)) {
-                    return OptionState.BLACKLISTED;
-                } else if (isIgnored(o)) {
-                    return OptionState.IGNORED;
-                } else if (isFileRequired(o)) {
-                    return OptionState.FILE_REQUIRED;
-                }
-                return OptionState.ACTIVE;
-            }, Collectors.toSet())));
+                .flatMap(o -> {
+                    if (o instanceof OptionsGroup) {
+                        return Stream.concat(Stream.of(o), ((OptionsGroup) o).getOptions().stream());
+                    }
+                    return Stream.of(o);
+                })
+                .collect(Collectors.groupingBy(o -> {
+                    if (isBlacklisted(o)) {
+                        return OptionState.BLACKLISTED;
+                    } else if (isIgnored(o)) {
+                        return OptionState.IGNORED;
+                    } else if (isFileRequired(o)) {
+                        return OptionState.FILE_REQUIRED;
+                    }
+                    return OptionState.ACTIVE;
+                }, Collectors.toSet())));
         return userOptionsByState;
     }
 
@@ -114,27 +114,27 @@ public class OpenVpnConfigurator {
 
         // set names of external files
         optionsByState.get(OptionState.FILE_REQUIRED)
-            .forEach(o -> {
-                if (o instanceof SimpleOption) {
-                    SimpleOption so = (SimpleOption) o;
-                    if (so.getArguments() != null) {
-                        String[] arguments = so.getArguments().clone();
-                        arguments[0] = optionFileByOption.get(o.getName());
-                        setOption(options, new SimpleOption(o.getLineNumber(), o.getName(), arguments));
+                .forEach(o -> {
+                    if (o instanceof SimpleOption) {
+                        SimpleOption so = (SimpleOption) o;
+                        if (so.getArguments() != null) {
+                            String[] arguments = so.getArguments().clone();
+                            arguments[0] = optionFileByOption.get(o.getName());
+                            setOption(options, new SimpleOption(o.getLineNumber(), o.getName(), arguments));
+                        }
                     }
-                }
-            });
+                });
 
         // merge eBlocker options
         defaultOptionsByName.values().forEach(o -> setOption(options, o));
 
         // change static tun device configuration to dynamic one
         if (configuration.getUserOptions().stream().anyMatch(o ->
-            "dev".equals(o.getName())
-                && o instanceof SimpleOption
-                && ((SimpleOption) o).getArguments().length == 1
-                && ((SimpleOption) o).getArguments()[0].matches("tun.+"))) {
-            setOption(options, new SimpleOption(-1, "dev", new String[] { "tun" }));
+                "dev".equals(o.getName())
+                        && o instanceof SimpleOption
+                        && ((SimpleOption) o).getArguments().length == 1
+                        && ((SimpleOption) o).getArguments()[0].matches("tun.+"))) {
+            setOption(options, new SimpleOption(-1, "dev", new String[]{ "tun" }));
         }
 
         // override auth-user-pass option if present
@@ -147,20 +147,20 @@ public class OpenVpnConfigurator {
 
     private List<Option> filterOptions(List<Option> userOptions, Set<Option> activeOptions) {
         return userOptions.stream()
-            .filter(activeOptions::contains)
-            .map(option -> {
-                if (!(option instanceof OptionsGroup)) {
-                    return option;
-                }
+                .filter(activeOptions::contains)
+                .map(option -> {
+                    if (!(option instanceof OptionsGroup)) {
+                        return option;
+                    }
 
-                OptionsGroup optionsGroup = (OptionsGroup) option;
-                List<Option> filteredOptions = filterOptions(optionsGroup.getOptions(), activeOptions);
-                if (filteredOptions.equals(optionsGroup.getOptions())) {
-                    return optionsGroup;
-                }
-                return new OptionsGroup(optionsGroup.getLineNumber(), optionsGroup.getName(), filteredOptions);
-            })
-            .collect(Collectors.toList());
+                    OptionsGroup optionsGroup = (OptionsGroup) option;
+                    List<Option> filteredOptions = filterOptions(optionsGroup.getOptions(), activeOptions);
+                    if (filteredOptions.equals(optionsGroup.getOptions())) {
+                        return optionsGroup;
+                    }
+                    return new OptionsGroup(optionsGroup.getLineNumber(), optionsGroup.getName(), filteredOptions);
+                })
+                .collect(Collectors.toList());
     }
 
     public Collection<Option> getEblockerOptions() {
@@ -169,6 +169,7 @@ public class OpenVpnConfigurator {
 
     /**
      * Checks if configuration fulfils minimal requirements for an openvpn configuration.
+     *
      * @param configuration Configuration to check.
      * @return A list containing message keys for invalid configurations. Will be empty if configuration seems ok.
      */
@@ -206,8 +207,8 @@ public class OpenVpnConfigurator {
         if (option == null) {
             return VPN_CONFIG_ERROR_OPTION_DEV_MISSING;
         } else if (!(option instanceof SimpleOption)
-                || ((SimpleOption)option).getArguments() == null
-                || !((SimpleOption)option).getArguments()[0].matches("tun.*")) {
+                || ((SimpleOption) option).getArguments() == null
+                || !((SimpleOption) option).getArguments()[0].matches("tun.*")) {
             return VPN_CONFIG_ERROR_OPTION_DEV_TUN_SUPPORTED;
         }
         return null;
@@ -221,16 +222,16 @@ public class OpenVpnConfigurator {
 
         // ... or each connection profile contains one
         List<OptionsGroup> connectionOptions = options.stream()
-            .filter(o -> "connection".equals(o.getName()))
-            .filter(o -> o instanceof OptionsGroup)
-            .map(o -> (OptionsGroup) o)
-            .collect(Collectors.toList());
+                .filter(o -> "connection".equals(o.getName()))
+                .filter(o -> o instanceof OptionsGroup)
+                .map(o -> (OptionsGroup) o)
+                .collect(Collectors.toList());
         if (connectionOptions.isEmpty()) {
             return VPN_CONFIG_ERROR_OPTION_REMOTE_MISSING;
         }
 
         if (connectionOptions.stream()
-            .anyMatch(o -> !findValidRemoteOption(o.getOptions()))) {
+                .anyMatch(o -> !findValidRemoteOption(o.getOptions()))) {
             return VPN_CONFIG_ERROR_OPTION_REMOTE_MISSING;
         }
 
@@ -239,16 +240,16 @@ public class OpenVpnConfigurator {
 
     private boolean findValidRemoteOption(List<Option> options) {
         Option option = findOptionByName(options, "remote").orElse(null);
-        return option instanceof SimpleOption && ((SimpleOption)option).getArguments() != null;
+        return option instanceof SimpleOption && ((SimpleOption) option).getArguments() != null;
     }
 
     private String validateInlineOptions(List<Option> options) {
         // options which can be inlined must either be of type InlineOption or reference a file
         boolean missingFileReference = options.stream()
-            .filter(o -> this.optionsInline.contains(o.getName()))
-            .filter(o -> o instanceof SimpleOption)
-            .map(o -> (SimpleOption) o)
-            .anyMatch(o -> o.getArguments() == null);
+                .filter(o -> this.optionsInline.contains(o.getName()))
+                .filter(o -> o instanceof SimpleOption)
+                .map(o -> (SimpleOption) o)
+                .anyMatch(o -> o.getArguments() == null);
 
         return missingFileReference ? VPN_CONFIG_ERROR_OPTION_MISSING_FILE_REFERENCE : null;
     }
@@ -267,8 +268,8 @@ public class OpenVpnConfigurator {
 
     private Set<String> readInlineOptions(String inlineOptionsFile) {
         return ResourceHandler.readLinesAsSet(new SimpleResource(inlineOptionsFile)).stream()
-            .map(l -> l.split(";")[0])
-            .collect(Collectors.toSet());
+                .map(l -> l.split(";")[0])
+                .collect(Collectors.toSet());
     }
 
     private List<Option> parseConfig(String config) throws OpenVpnConfigurationParser.ParseException {
@@ -286,9 +287,9 @@ public class OpenVpnConfigurator {
 
     private boolean isSpecialInlineOption(Option option) {
         return optionsInline.contains(option.getName())
-            && option instanceof SimpleOption
-            && ((SimpleOption)option).getArguments() != null && ((SimpleOption)option).getArguments().length >= 1
-            && "[inline]".equals(((SimpleOption)option).getArguments()[0]);
+                && option instanceof SimpleOption
+                && ((SimpleOption) option).getArguments() != null && ((SimpleOption) option).getArguments().length >= 1
+                && "[inline]".equals(((SimpleOption) option).getArguments()[0]);
     }
 
     private boolean isWhiteListed(Option option) {
@@ -310,7 +311,7 @@ public class OpenVpnConfigurator {
         SimpleOption simpleOption = (SimpleOption) option;
         return AUTH_USER_PASS_OPTION_NAME.equals(simpleOption.getName())
                 && simpleOption.getArguments() != null
-                && ((SimpleOption)option).getArguments().length == 1;
+                && ((SimpleOption) option).getArguments().length == 1;
     }
 
     private boolean isAuthOptionWithoutFileReference(Option option) {
@@ -338,7 +339,7 @@ public class OpenVpnConfigurator {
     }
 
     private Integer findOptionIndexByName(List<Option> options, String name) {
-        for(int i = 0; i < options.size(); ++i) {
+        for (int i = 0; i < options.size(); ++i) {
             if (options.get(i).getName().equals(name)) {
                 return i;
             }

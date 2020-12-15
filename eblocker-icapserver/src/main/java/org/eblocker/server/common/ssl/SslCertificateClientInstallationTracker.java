@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.ssl;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class SslCertificateClientInstallationTracker {
 
     private static final Logger log = LoggerFactory.getLogger(SslCertificateClientInstallationTracker.class);
 
-    public enum Status { NOT_AVAILABLE, UNKNOWN, INSTALLED, NOT_INSTALLED }
+    public enum Status {NOT_AVAILABLE, UNKNOWN, INSTALLED, NOT_INSTALLED}
 
     private final SslService sslService;
 
@@ -74,6 +74,7 @@ public class SslCertificateClientInstallationTracker {
 
     /**
      * Checks if the current ca is installed on device / useragent.
+     *
      * @param deviceId
      * @param userAgent
      * @return true or false if installation status is known otherwise null
@@ -84,6 +85,7 @@ public class SslCertificateClientInstallationTracker {
 
     /**
      * Checks if the future ca is installed on device / useragent.
+     *
      * @param deviceId
      * @param userAgent
      * @return true or false if installation status is known otherwise null
@@ -114,7 +116,7 @@ public class SslCertificateClientInstallationTracker {
         long start = System.currentTimeMillis();
         int initialSize = certificateStatus.size();
         Iterator<Key> i = certificateStatus.keySet().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             BigInteger serial = i.next().getSerialNumber();
             if (!serial.equals(caSerialNumber) && !serial.equals(renewalCaSerialNumber)) {
                 i.remove();

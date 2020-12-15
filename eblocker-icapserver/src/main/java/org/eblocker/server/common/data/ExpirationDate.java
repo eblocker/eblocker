@@ -22,16 +22,16 @@ public class ExpirationDate {
     private final Date expirationDate;
     private final long daysTillExpiration;
 
-    public ExpirationDate(Date expirationDate, Long daysTillExpiration2){
-        this.expirationDate=expirationDate;
-        this.daysTillExpiration=daysTillExpiration2;
+    public ExpirationDate(Date expirationDate, Long daysTillExpiration2) {
+        this.expirationDate = expirationDate;
+        this.daysTillExpiration = daysTillExpiration2;
     }
 
-    public Date getExpirationDate(){
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
-    public long getDaysTillExpiration(){
+    public long getDaysTillExpiration() {
         return daysTillExpiration;
     }
 }

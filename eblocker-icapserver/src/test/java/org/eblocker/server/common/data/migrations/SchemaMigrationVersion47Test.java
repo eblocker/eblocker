@@ -40,6 +40,7 @@ public class SchemaMigrationVersion47Test {
         Mockito.when(jedisPool.getResource()).thenReturn(jedis);
         migration = new SchemaMigrationVersion47(dataSource, jedisPool);
     }
+
     @Test
     public void testUiCard() {
         String key = "UiCard:1";
@@ -73,15 +74,15 @@ public class SchemaMigrationVersion47Test {
 
     @Test
     public void testFilterStoreConfiguration() {
-        FilterStoreConfiguration configuration = createFilterStoreConfiguration(new String[] {
-            "/opt/moonshine-icap/conf/easylist/easylist.txt",
-            "/opt/moonshine-icap/conf/easylist/easylistgermany.txt",
-            "/opt/moonshine-icap/conf/easylist/easyprivacy.txt"
+        FilterStoreConfiguration configuration = createFilterStoreConfiguration(new String[]{
+                "/opt/moonshine-icap/conf/easylist/easylist.txt",
+                "/opt/moonshine-icap/conf/easylist/easylistgermany.txt",
+                "/opt/moonshine-icap/conf/easylist/easyprivacy.txt"
         });
-        FilterStoreConfiguration configurationExpected = createFilterStoreConfiguration(new String[] {
-            "/opt/eblocker-icap/conf/easylist/easylist.txt",
-            "/opt/eblocker-icap/conf/easylist/easylistgermany.txt",
-            "/opt/eblocker-icap/conf/easylist/easyprivacy.txt"
+        FilterStoreConfiguration configurationExpected = createFilterStoreConfiguration(new String[]{
+                "/opt/eblocker-icap/conf/easylist/easylist.txt",
+                "/opt/eblocker-icap/conf/easylist/easylistgermany.txt",
+                "/opt/eblocker-icap/conf/easylist/easyprivacy.txt"
         });
         Mockito.when(dataSource.getAll(FilterStoreConfiguration.class)).thenReturn(Collections.singletonList(configuration));
         migration.migrate();
@@ -91,12 +92,12 @@ public class SchemaMigrationVersion47Test {
     @Test
     public void testPCFilterMetaData() {
         List<String> filenames = Arrays.asList(
-            "/opt/moonshine-icap/conf/customercreated/1004.filter",
-            "/opt/moonshine-icap/conf/customercreated/1004.bloom"
+                "/opt/moonshine-icap/conf/customercreated/1004.filter",
+                "/opt/moonshine-icap/conf/customercreated/1004.bloom"
         );
         List<String> filenamesExpected = Arrays.asList(
-            "/opt/eblocker-icap/conf/customercreated/1004.filter",
-            "/opt/eblocker-icap/conf/customercreated/1004.bloom"
+                "/opt/eblocker-icap/conf/customercreated/1004.filter",
+                "/opt/eblocker-icap/conf/customercreated/1004.bloom"
         );
         ParentalControlFilterMetaData metaData = createPCFilterMetaData(filenames);
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(Collections.singletonList(metaData));
@@ -134,7 +135,7 @@ public class SchemaMigrationVersion47Test {
                 FilterLearningMode.SYNCHRONOUS,
                 FilterDefinitionFormat.EASYLIST,
                 true,
-                new String[]{"csp"},
+                new String[]{ "csp" },
                 true
         );
     }

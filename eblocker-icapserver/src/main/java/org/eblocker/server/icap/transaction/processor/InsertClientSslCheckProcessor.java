@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
+import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.util.StringReplacer;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.common.util.StringReplacer;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import org.eblocker.server.common.network.BaseURLs;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 @RequireFeature(ProductFeature.PRO)
 @Singleton
@@ -43,7 +43,6 @@ public class InsertClientSslCheckProcessor implements TransactionProcessor {
     private static final String TAG_URL_RENEWAL_CA = "@URL_RENEWAL_CA@";
     private static final String TAG_URL_REPORT_ERROR_CURRENT = "@URL_REPORT_ERROR_CURRENT@";
     private static final String TAG_URL_REPORT_ERROR_RENEWAL = "@URL_REPORT_ERROR_RENEWAL@";
-
 
     private final BaseURLs baseURLs;
     private final NetworkInterfaceWrapper networkInterface;
@@ -115,10 +114,10 @@ public class InsertClientSslCheckProcessor implements TransactionProcessor {
 
         String url = "https://%s:%d/%s";
         StringReplacer replacer = new StringReplacer()
-            .add(TAG_TEST_CURRENT, Boolean.toString(sslService.isCaAvailable()))
-            .add(TAG_TEST_RENEWAL, Boolean.toString(sslService.isRenewalCaAvailable()))
-            .add(TAG_URL_CURRENT_CA, String.format(url, ipAddress, currentPort, urlEncodedDeviceId))
-            .add(TAG_URL_RENEWAL_CA, String.format(url, ipAddress, renewalPort, urlEncodedDeviceId));
+                .add(TAG_TEST_CURRENT, Boolean.toString(sslService.isCaAvailable()))
+                .add(TAG_TEST_RENEWAL, Boolean.toString(sslService.isRenewalCaAvailable()))
+                .add(TAG_URL_CURRENT_CA, String.format(url, ipAddress, currentPort, urlEncodedDeviceId))
+                .add(TAG_URL_RENEWAL_CA, String.format(url, ipAddress, renewalPort, urlEncodedDeviceId));
         if (sslService.isCaAvailable()) {
             replacer.add(TAG_URL_REPORT_ERROR_CURRENT, baseUrl + "/ssl/test/" + sslService.getCa().getCertificate().getSerialNumber());
         }

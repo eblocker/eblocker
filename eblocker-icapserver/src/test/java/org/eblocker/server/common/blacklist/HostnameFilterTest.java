@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.blacklist;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +65,5 @@ public class HostnameFilterTest {
         Assert.assertEquals(filteredDomains.size(), filter.getSize());
         Assert.assertEquals(filteredDomains, filter.getDomains().collect(Collectors.toList()));
     }
-
 
 }

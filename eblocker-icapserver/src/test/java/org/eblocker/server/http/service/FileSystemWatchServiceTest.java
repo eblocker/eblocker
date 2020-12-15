@@ -84,9 +84,9 @@ public class FileSystemWatchServiceTest {
 
     @Test(timeout = 15000)
     public void testMultipleFileUpdates() throws IOException, InterruptedException {
-        Path[] files = new Path[] {
-            createFileInThePast("test0.txt"),
-            createFileInThePast("test1.txt")
+        Path[] files = new Path[]{
+                createFileInThePast("test0.txt"),
+                createFileInThePast("test1.txt")
         };
 
         Semaphore semaphore = new Semaphore(2);
@@ -131,6 +131,7 @@ public class FileSystemWatchServiceTest {
         }
 
     }
+
     /**
      * Set file creation time to 61 seconds in the past.
      * This is needed for MacOS, because a file modification would not
@@ -154,9 +155,8 @@ public class FileSystemWatchServiceTest {
      * Set OS specific watch modifier for MacOS.
      * The default on Mac OS takes 10 seconds to notify any file changes.
      * The modifier com.sun.nio.file.SensitivityWatchEventModifier.HIGH reduces this to 2 seconds.
-     *
+     * <p>
      * To avoid a hard dependency on a com.sun package, use reflection to obtain this modifier.
-     *
      */
     private WatchEvent.Modifier[] getOSSpecificWatchEventModifier() {
         if (!System.getProperty("os.name").startsWith("Mac OS")) {
@@ -165,7 +165,7 @@ public class FileSystemWatchServiceTest {
         try {
             Class<?> c = Class.forName("com.sun.nio.file.SensitivityWatchEventModifier");
             Field f = c.getField("HIGH");
-            return new WatchEvent.Modifier[]{(WatchEvent.Modifier) f.get(c)};
+            return new WatchEvent.Modifier[]{ (WatchEvent.Modifier) f.get(c) };
         } catch (Exception e) {
             return null;
         }

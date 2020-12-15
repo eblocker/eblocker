@@ -27,7 +27,7 @@ public enum FeatureServiceMessage {
     }
 
     public static FeatureServiceMessage parse(String message) {
-        for (FeatureServiceMessage featureServiceMessage: FeatureServiceMessage.values()) {
+        for (FeatureServiceMessage featureServiceMessage : FeatureServiceMessage.values()) {
             if (featureServiceMessage.name().equals(message)) {
                 return featureServiceMessage;
             }

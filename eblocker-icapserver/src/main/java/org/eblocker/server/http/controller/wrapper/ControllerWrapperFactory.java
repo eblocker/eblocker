@@ -31,7 +31,7 @@ public class ControllerWrapperFactory<CTRL, IMPL extends CTRL> implements Invoca
     }
 
     public static <CTRL> CTRL wrap(Class<CTRL> clazz) {
-        return (CTRL) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz, ControllerWrapper.class}, new ControllerWrapperFactory<>());
+        return (CTRL) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{ clazz, ControllerWrapper.class }, new ControllerWrapperFactory<>());
     }
 
     @Override

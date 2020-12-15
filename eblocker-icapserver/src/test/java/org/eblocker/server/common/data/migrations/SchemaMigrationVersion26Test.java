@@ -50,11 +50,11 @@ public class SchemaMigrationVersion26Test {
     @Test
     public void migrate() {
         List<ParentalControlFilterMetaData> metaData = Arrays.asList(
-            new ParentalControlFilterMetaData(0, null, null, null, null, null, null, "domainblacklist", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(1, null, null, null, null, null, null, "domainblacklist/md5", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(2, null, null, null, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(3, null, null, null, null, null, null, "domainblacklist/sha1", null, false, false, null, null, null),
-            new ParentalControlFilterMetaData(4, null, null, null, null, null, null, "domainblacklist", null, false, false, null, null, null)
+                new ParentalControlFilterMetaData(0, null, null, null, null, null, null, "domainblacklist", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(1, null, null, null, null, null, null, "domainblacklist/md5", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(2, null, null, null, null, null, null, "domainblacklist/string", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(3, null, null, null, null, null, null, "domainblacklist/sha1", null, false, false, null, null, null),
+                new ParentalControlFilterMetaData(4, null, null, null, null, null, null, "domainblacklist", null, false, false, null, null, null)
         );
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(metaData);
 

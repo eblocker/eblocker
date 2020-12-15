@@ -23,11 +23,17 @@ import java.util.List;
  * Simple wrapper for writing and reading from a network Socket.
  */
 public interface TelnetConnection {
-	void connect(String host, int port) throws IOException;
-	boolean isConnected();
-	boolean isLineAvailableToRead() throws IOException;
-	void writeLine(String line) throws IOException;
-	String readLine() throws IOException;
-	void close() throws IOException;
-	List<String> readAvailableLines() throws IOException;
+    void connect(String host, int port) throws IOException;
+
+    boolean isConnected();
+
+    boolean isLineAvailableToRead() throws IOException;
+
+    void writeLine(String line) throws IOException;
+
+    String readLine() throws IOException;
+
+    void close() throws IOException;
+
+    List<String> readAvailableLines() throws IOException;
 }

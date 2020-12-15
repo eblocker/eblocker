@@ -16,6 +16,10 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.blocker.Format;
@@ -24,10 +28,6 @@ import org.eblocker.server.common.blocker.UpdateInterval;
 import org.eblocker.server.common.blocker.UpdateStatus;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,44 +78,45 @@ public class SchemaMigrationVersion45 implements SchemaMigration {
     @Override
     public void migrate() {
         Map<Integer, ExternalDefinition> definitionsByReferenceId = dataSource.getAll(ExternalDefinition.class)
-            .stream()
-            .filter(definition -> Type.DOMAIN == definition.getType())
-            .filter(definition -> definition.getReferenceId() != null)
-            .collect(Collectors.toMap(ExternalDefinition::getReferenceId, Function.identity()));
+                .stream()
+                .filter(definition -> Type.DOMAIN == definition.getType())
+                .filter(definition -> definition.getReferenceId() != null)
+                .collect(Collectors.toMap(ExternalDefinition::getReferenceId, Function.identity()));
 
         // create list of user created domain filters which do not have an external definition yet
         List<ParentalControlFilterMetaData> customMetadata = dataSource
-            .getAll(ParentalControlFilterMetaData.class)
-            .stream()
-            .filter(d -> !d.isBuiltin())
-            .filter(d -> !definitionsByReferenceId.containsKey(d.getId()))
-            .collect(Collectors.toList());
+                .getAll(ParentalControlFilterMetaData.class)
+                .stream()
+                .filter(d -> !d.isBuiltin())
+                .filter(d -> !definitionsByReferenceId.containsKey(d.getId()))
+                .collect(Collectors.toList());
 
-        for(ParentalControlFilterMetaData metadata : customMetadata) {
+        for (ParentalControlFilterMetaData metadata : customMetadata) {
             log.info("Creating external definition for custom filter: {}", metadata.getId());
             int id = dataSource.nextId(ExternalDefinition.class);
             Path path = localStoragePath.resolve(id + ":" + Type.DOMAIN);
             ExternalDefinition definition = new ExternalDefinition(
-                id,
-                metadata.getCustomerCreatedName(),
-                metadata.getCustomerCreatedDescription(),
-                mapCategory(metadata.getCategory()),
-                Type.DOMAIN,
-                metadata.getId(),
-                Format.DOMAINS,
-                null,
-                UpdateInterval.NEVER,
-                UpdateStatus.READY,
-                null,
-                path.toString(),
-                !metadata.isDisabled(),
-                metadata.getFilterType());
+                    id,
+                    metadata.getCustomerCreatedName(),
+                    metadata.getCustomerCreatedDescription(),
+                    mapCategory(metadata.getCategory()),
+                    Type.DOMAIN,
+                    metadata.getId(),
+                    Format.DOMAINS,
+                    null,
+                    UpdateInterval.NEVER,
+                    UpdateStatus.READY,
+                    null,
+                    path.toString(),
+                    !metadata.isDisabled(),
+                    metadata.getFilterType());
             dataSource.save(definition, definition.getId());
 
             // create source file from copy
             try (InputStream in = Files.newInputStream(customFiltersPath.resolve(Integer.toString(metadata.getId())))) {
                 try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path))) {
-                    List<String> lines = objectMapper.readValue(in, new TypeReference<List<String>>() {});
+                    List<String> lines = objectMapper.readValue(in, new TypeReference<List<String>>() {
+                    });
                     lines.forEach(writer::println);
                 }
             } catch (IOException e) {

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.http.service;
 
+import io.netty.handler.codec.http.HttpRequest;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
-import io.netty.handler.codec.http.HttpRequest;
 
 public class HttpTransactionIdentifier implements TransactionIdentifier {
 

@@ -53,8 +53,8 @@ public class FilterStatisticsServiceTest {
 
         filterListsService = Mockito.mock(ParentalControlFilterListsService.class);
         Mockito.when(filterListsService.getParentalControlFilterMetaData()).thenReturn(Arrays.asList(
-            createFilterMetaData(1, Category.ADS),
-            createFilterMetaData(2, Category.TRACKERS)
+                createFilterMetaData(1, Category.ADS),
+                createFilterMetaData(2, Category.TRACKERS)
         ));
 
         filterStatisticsDataSource = Mockito.mock(FilterStatisticsDataSource.class);
@@ -152,7 +152,6 @@ public class FilterStatisticsServiceTest {
         Assert.assertEquals("queries", totalCounter.getValue().get(1).getName());
         Assert.assertNull(totalCounter.getValue().get(1).getReason());
         Assert.assertEquals(1, totalCounter.getValue().get(1).getValue());
-
 
         Assert.assertEquals(instantOf(2018, 5, 22, 13, 31, 0, 0), statsCounter.getValue().get(2).getInstant());
         Assert.assertEquals("dns", statsCounter.getValue().get(2).getType());

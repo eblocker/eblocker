@@ -22,17 +22,17 @@ import org.eblocker.server.common.data.UserModuleTransport;
 public class UserModuleConverter {
     public static UserModuleTransport getUserModuleTransport(UserModule user) {
         return new UserModuleTransport(
-            user.getId(),
-            user.getAssociatedProfileId(),
-            user.getName(),
-            user.getNameKey(),
-            user.getBirthday(),
-            user.getUserRole(),
-            user.isSystem(),
-            user.getPin() != null,// Flag to tell whether PIN is set or not -
-            // actual PIN (or null if not set) must not
-            // be given to the UI!
-            null,
-            null);
+                user.getId(),
+                user.getAssociatedProfileId(),
+                user.getName(),
+                user.getNameKey(),
+                user.getBirthday(),
+                user.getUserRole(),
+                user.isSystem(),
+                user.getPin() != null,// Flag to tell whether PIN is set or not -
+                // actual PIN (or null if not set) must not
+                // be given to the UI!
+                null,
+                null);
     }
 }

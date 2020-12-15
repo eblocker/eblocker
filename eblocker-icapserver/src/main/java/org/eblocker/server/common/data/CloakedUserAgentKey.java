@@ -29,14 +29,14 @@ public class CloakedUserAgentKey implements Serializable {
         this.userId = userId;
         this.isCustom = isCustom;
     }
-    
+
     @Override
     public String toString() {
         return "{" +
-            "\"deviceId\":\"" + this.deviceId + "\"," +
-            "\"userId\":\"" + this.userId + "\"," +
-            "\"isCustom\":" + this.isCustom +
-            "}";
+                "\"deviceId\":\"" + this.deviceId + "\"," +
+                "\"userId\":\"" + this.userId + "\"," +
+                "\"isCustom\":" + this.isCustom +
+                "}";
     }
 
     public String getDeviceId() {
@@ -68,15 +68,15 @@ public class CloakedUserAgentKey implements Serializable {
         if (o == null || !(o instanceof CloakedUserAgentKey)) {
             return false;
         }
-        CloakedUserAgentKey other = (CloakedUserAgentKey)o;
+        CloakedUserAgentKey other = (CloakedUserAgentKey) o;
 
         return other.getDeviceId().equals(this.deviceId)
-            && other.getUserId().equals(this.userId);
+                && other.getUserId().equals(this.userId);
     }
 
     @Override
     public int hashCode() {
         return this.userId *
-            this.deviceId.hashCode();
+                this.deviceId.hashCode();
     }
 }

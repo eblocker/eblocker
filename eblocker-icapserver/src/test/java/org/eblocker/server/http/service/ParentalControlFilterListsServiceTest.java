@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.blacklist.BlacklistCompiler;
 import org.eblocker.server.common.blacklist.DomainBlacklistService;
 import org.eblocker.server.common.data.DataSource;
@@ -24,7 +25,6 @@ import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMeta
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.data.parentalcontrol.QueryTransformation;
 import org.eblocker.server.common.util.FileUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -104,20 +104,20 @@ public class ParentalControlFilterListsServiceTest {
     @Test
     public void testEnableDisableBuiltinFilter() throws IOException {
         ParentalControlFilterMetaData metadata = new ParentalControlFilterMetaData(
-            0,
-            Collections.singletonMap("en", "name"),
-            Collections.singletonMap("en", "desc"),
-            Category.ADS,
-            Collections.singletonList("domains.txt"),
-            "123",
-            new Date(),
-            "domainblacklist/string",
-            "blacklist",
-            true,
-            false,
-            Collections.singletonList(new QueryTransformation("x", "y")),
-            null,
-            null
+                0,
+                Collections.singletonMap("en", "name"),
+                Collections.singletonMap("en", "desc"),
+                Category.ADS,
+                Collections.singletonList("domains.txt"),
+                "123",
+                new Date(),
+                "domainblacklist/string",
+                "blacklist",
+                true,
+                false,
+                Collections.singletonList(new QueryTransformation("x", "y")),
+                null,
+                null
         );
 
         setupMetadata(metadata);
@@ -169,20 +169,20 @@ public class ParentalControlFilterListsServiceTest {
         Consumer<Path> callback = callbackCaptor.getValue();
 
         setupMetadata(new ParentalControlFilterMetaData(
-            0,
-            Collections.singletonMap("en", "name"),
-            Collections.singletonMap("en", "description"),
-            Category.ADS,
-            Arrays.asList("file0.filter", "file0.bloom"),
-            "20180731",
-            Date.from(Instant.now()),
-            "domainblacklist/string",
-            "blacklist",
-            true,
-            false,
-            null,
-            null,
-            null));
+                0,
+                Collections.singletonMap("en", "name"),
+                Collections.singletonMap("en", "description"),
+                Category.ADS,
+                Arrays.asList("file0.filter", "file0.bloom"),
+                "20180731",
+                Date.from(Instant.now()),
+                "domainblacklist/string",
+                "blacklist",
+                true,
+                false,
+                null,
+                null,
+                null));
 
         callback.accept(metaDataPath);
 
@@ -196,18 +196,18 @@ public class ParentalControlFilterListsServiceTest {
         ParentalControlFilterListsService service = createService();
 
         ParentalControlFilterSummaryData data = new ParentalControlFilterSummaryData(
-            null,
-            Collections.singletonMap("en", "test-name"),
-            Collections.singletonMap("en", "test-description"),
-            null,
-            null,
-            "blacklist",
-            false,
-            false,
-            Arrays.asList(".eblocker.com", ".etracker.com", "xkcd.org"),
-            "test-customer-name",
-            "test-customer-description",
-            Category.ADS);
+                null,
+                Collections.singletonMap("en", "test-name"),
+                Collections.singletonMap("en", "test-description"),
+                null,
+                null,
+                "blacklist",
+                false,
+                false,
+                Arrays.asList(".eblocker.com", ".etracker.com", "xkcd.org"),
+                "test-customer-name",
+                "test-customer-description",
+                Category.ADS);
         ParentalControlFilterSummaryData savedData = service.createFilterList(data, "blacklist");
 
         Assert.assertEquals(Integer.valueOf(1), savedData.getId());
@@ -237,10 +237,10 @@ public class ParentalControlFilterListsServiceTest {
         Assert.assertEquals(data.getCustomerCreatedDescription(), savedMetadataCaptor.getValue().getCustomerCreatedDescription());
 
         Mockito.verify(blacklistCompiler).compile(Mockito.eq(1),
-            Mockito.eq("test-customer-name"),
-            Mockito.eq(Arrays.asList(".eblocker.com", ".etracker.com", ".xkcd.org")),
-            Mockito.anyString(),
-            Mockito.anyString());
+                Mockito.eq("test-customer-name"),
+                Mockito.eq(Arrays.asList(".eblocker.com", ".etracker.com", ".xkcd.org")),
+                Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
@@ -248,18 +248,18 @@ public class ParentalControlFilterListsServiceTest {
         ParentalControlFilterListsService service = createService();
 
         ParentalControlFilterSummaryData data = new ParentalControlFilterSummaryData(
-            null,
-            Collections.singletonMap("en", "test-name"),
-            Collections.singletonMap("en", "test-description"),
-            null,
-            null,
-            "blacklist",
-            false,
-            false,
-            null,
-            "test-customer-name",
-            "test-customer-description",
-            Category.ADS);
+                null,
+                Collections.singletonMap("en", "test-name"),
+                Collections.singletonMap("en", "test-description"),
+                null,
+                null,
+                "blacklist",
+                false,
+                false,
+                null,
+                "test-customer-name",
+                "test-customer-description",
+                Category.ADS);
         List<String> domains = Arrays.asList(".eblocker.com", ".etracker.com", "xkcd.org");
         data.setDomainsStreamSupplier(domains::stream);
 
@@ -310,7 +310,7 @@ public class ParentalControlFilterListsServiceTest {
         }
 
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(metadataList);
-        for(ParentalControlFilterMetaData d : metadataList) {
+        for (ParentalControlFilterMetaData d : metadataList) {
             Mockito.when(dataSource.get(ParentalControlFilterMetaData.class, d.getId())).thenReturn(d);
         }
     }
@@ -318,6 +318,5 @@ public class ParentalControlFilterListsServiceTest {
     private ParentalControlFilterListsService createService() throws IOException {
         return new ParentalControlFilterListsService(metaDataPath.toString(), customFiltersPath.toString(), dataSource, fileSystemWatchService, objectMapper, parentalControlService, domainBlacklistService, blacklistCompiler);
     }
-
 
 }

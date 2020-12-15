@@ -16,12 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.http.service.DashboardCardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class SchemaMigrationVersion41 implements SchemaMigration {
         // we do not need to update the users. UserService#assureConsistency will set all users' dashboards
         // on init.
     }
+
     private int nextId() {
         return dataSource.nextId(UiCard.class);
     }

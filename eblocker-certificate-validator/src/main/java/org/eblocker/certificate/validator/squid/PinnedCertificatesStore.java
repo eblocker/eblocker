@@ -76,8 +76,8 @@ public class PinnedCertificatesStore {
             log.debug("loaded {} pinned certificates", certificates.size());
             for (X509Certificate certificate : certificates) {
                 log.debug("dn: {} serial: {} issuer: {} not before: {} not after: {}", certificate.getSubjectDN(),
-                    certificate.getSerialNumber(), certificate.getIssuerDN(), certificate.getNotBefore(),
-                    certificate.getNotAfter());
+                        certificate.getSerialNumber(), certificate.getIssuerDN(), certificate.getNotBefore(),
+                        certificate.getNotAfter());
             }
         }
     }

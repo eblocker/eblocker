@@ -72,7 +72,7 @@ public class SunCertificateValidator implements CertificateValidator {
     }
 
     public CertificateValidationResponse validate(CertificateValidationRequest request, boolean useConcurrency) {
-        if(request == null)
+        if (request == null)
             return null;
 
         if (request.getCert() == null || request.getCert().length == 0) {
@@ -100,10 +100,10 @@ public class SunCertificateValidator implements CertificateValidator {
 
             boolean success = hasErrors(request); //If we got errors passed from OpenSSL validation, we must not say we trust this certificate!
 
-            return new CertificateValidationResponse(request.getId(),request.getErrorName(),request.getErrorCertId(),useConcurrency,success,null);
+            return new CertificateValidationResponse(request.getId(), request.getErrorName(), request.getErrorCertId(), useConcurrency, success, null);
 
         } catch (CertPathBuilderException e) { //NOSONAR: this exception is expected to be thrown in case of a non-valid certificate, no need to log it
-            LOG.error("Certificate is not valid - "+e.getMessage());
+            LOG.error("Certificate is not valid - " + e.getMessage());
             return new CertificateValidationResponse(request, useConcurrency, request.getErrorName());
 
         } catch (KeyStoreException | InvalidAlgorithmParameterException e) {
@@ -114,11 +114,10 @@ public class SunCertificateValidator implements CertificateValidator {
     }
 
     private boolean hasErrors(CertificateValidationRequest request) {
-        if(request != null){
-            if(request.getErrorName() != null && request.getErrorCertId() != null) {
+        if (request != null) {
+            if (request.getErrorName() != null && request.getErrorCertId() != null) {
                 return (request.getErrorName().length == 0) && (request.getErrorCertId().length == 0);
-            }
-            else{
+            } else {
                 return true;
             }
         }
@@ -134,7 +133,7 @@ public class SunCertificateValidator implements CertificateValidator {
         }
 
         Map<X509Certificate, byte[]> ocspResponses = new HashMap<>();
-        for(int i = 0; i < certs.length - 1; ++i) {
+        for (int i = 0; i < certs.length - 1; ++i) {
             try {
                 byte[] cachedResponse = responseFutures[i].get();
                 if (cachedResponse != null) {
@@ -154,7 +153,7 @@ public class SunCertificateValidator implements CertificateValidator {
             return CertPathBuilder.getInstance(DEFAULT_CERT_PATH_BUILDER_TYPE);
 
         } catch (NoSuchAlgorithmException e) {
-            String msg = "Cannot create cert path builder "+DEFAULT_CERT_PATH_BUILDER_TYPE;
+            String msg = "Cannot create cert path builder " + DEFAULT_CERT_PATH_BUILDER_TYPE;
             LOG.error(msg, e);
             throw new IllegalArgumentException(msg, e);
         }
@@ -162,7 +161,7 @@ public class SunCertificateValidator implements CertificateValidator {
     }
 
     private CertPathChecker createRevocationChecker() {
-        PKIXRevocationChecker revocationChecker = (PKIXRevocationChecker)certPathBuilder.get().getRevocationChecker();
+        PKIXRevocationChecker revocationChecker = (PKIXRevocationChecker) certPathBuilder.get().getRevocationChecker();
         if (preferCrls) {
             revocationChecker.setOptions(EnumSet.of(PKIXRevocationChecker.Option.PREFER_CRLS));
         }

@@ -32,10 +32,11 @@ public class EblockerLoggingHandler implements ChannelInboundHandler, ChannelOut
 
     private static final Logger ICAP_LOG = LoggerFactory.getLogger("ICAP");
 
-    private enum Event { WRITE, READ, EXCEPTION }
-    private enum StreamDirection { UP, DOWN }
+    private enum Event {WRITE, READ, EXCEPTION}
 
-    private static final int CONTENT_SIZE_ALLOWED = 1024*1024;
+    private enum StreamDirection {UP, DOWN}
+
+    private static final int CONTENT_SIZE_ALLOWED = 1024 * 1024;
     private static final int CONTENT_SIZE_CUTOFF = 256;
 
     @Override
@@ -160,9 +161,9 @@ public class EblockerLoggingHandler implements ChannelInboundHandler, ChannelOut
         String content = new String(buffer);
 
         return
-            "\n"+direction+"------------------BEGIN MESSAGE---------------------------"+direction+"\n"+
-            content+(readableBytes > buffer.length ? "[..."+(readableBytes-buffer.length)+" bytes removed...]" : "")+
-            "\n"+direction+"------------------END MESSAGE-----------------------------"+direction+"\n";
+                "\n" + direction + "------------------BEGIN MESSAGE---------------------------" + direction + "\n" +
+                        content + (readableBytes > buffer.length ? "[..." + (readableBytes - buffer.length) + " bytes removed...]" : "") +
+                        "\n" + direction + "------------------END MESSAGE-----------------------------" + direction + "\n";
     }
 
 }

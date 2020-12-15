@@ -16,24 +16,22 @@
  */
 package org.eblocker.server.common.data.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-
 public class JedisEventDataSource implements EventDataSource {
     private static final Logger log = LoggerFactory.getLogger(JedisEventDataSource.class);
-    
+
     private static final String KEY_EVENTS = "events";
     private static final String KEY_EVENT_LAST_SEEN = "event_last_seen";
     private JedisPool pool;
@@ -44,7 +42,7 @@ public class JedisEventDataSource implements EventDataSource {
     public JedisEventDataSource(JedisPool pool,
                                 ObjectMapper mapper,
                                 @Named("events.maximum.number") int maximumNumberOfEvents
-                                ) {
+    ) {
         this.pool = pool;
         this.mapper = mapper;
         this.maximumNumberOfEvents = maximumNumberOfEvents;
@@ -105,11 +103,12 @@ public class JedisEventDataSource implements EventDataSource {
     }
 
     @Override
-    public void deleteAllEvents(){
-        try(Jedis jedis = pool.getResource()){
+    public void deleteAllEvents() {
+        try (Jedis jedis = pool.getResource()) {
             jedis.del(KEY_EVENTS);
         }
     }
+
     @Override
     public void trimEventsAfter(long num) {
         try (Jedis jedis = pool.getResource()) {

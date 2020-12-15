@@ -58,21 +58,21 @@ public class SunCertificateValidatorTest {
     @Test
     public void test_ok() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createValidRequest(useConcurrency);
-        CertificateValidationResponse response = certificateValidator.validate(request,useConcurrency);
+        CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
         assertEquals("OK", response.getMessage());
     }
 
     @Test
     public void test_invalid() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createInvalidRequest(useConcurrency);
-        CertificateValidationResponse response = certificateValidator.validate(request,useConcurrency);
+        CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
         assertEquals("ERR", response.getMessage());
     }
 
     @Test
     public void test_revoked() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createRevokedRequest(useConcurrency);
-        CertificateValidationResponse response = certificateValidator.validate(request,useConcurrency);
+        CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
         assertEquals("ERR", response.getMessage());
     }
 }

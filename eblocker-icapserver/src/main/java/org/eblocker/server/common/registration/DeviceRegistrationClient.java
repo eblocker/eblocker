@@ -16,11 +16,30 @@
  */
 package org.eblocker.server.common.registration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.Collections;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.io.IOUtils;
+import org.eblocker.registration.DeviceRegistrationRequest;
+import org.eblocker.registration.DeviceRegistrationResponse;
+import org.eblocker.registration.DynDnsEntry;
+import org.eblocker.registration.MobileConnectionCheck;
+import org.eblocker.registration.ProductInfo;
+import org.eblocker.registration.TosContainer;
+import org.eblocker.registration.UpgradeInfo;
+import org.eblocker.registration.UpsellInfoWrapper;
+import org.eblocker.registration.error.ClientRequestError;
+import org.eblocker.registration.error.ClientRequestException;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.exceptions.NetworkConnectionException;
+import org.eblocker.server.http.service.SettingsService;
+import org.eblocker.server.icap.resources.EblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.glassfish.jersey.SslConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
@@ -33,32 +52,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import org.eblocker.server.http.service.SettingsService;
-import org.eblocker.registration.DeviceRegistrationRequest;
-import org.eblocker.registration.DeviceRegistrationResponse;
-import org.eblocker.registration.DynDnsEntry;
-import org.eblocker.registration.ProductInfo;
-import org.eblocker.registration.TosContainer;
-import org.eblocker.registration.MobileConnectionCheck;
-import org.eblocker.registration.UpgradeInfo;
-import org.eblocker.registration.UpsellInfoWrapper;
-import org.eblocker.registration.error.ClientRequestError;
-import org.eblocker.registration.error.ClientRequestException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.commons.io.IOUtils;
-import org.glassfish.jersey.SslConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.exceptions.NetworkConnectionException;
-import org.eblocker.server.icap.resources.EblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.Collections;
 
 public class DeviceRegistrationClient {
 
@@ -149,23 +147,23 @@ public class DeviceRegistrationClient {
         }
     }
 
-    private <U,V> V post(String url, U payload, SSLContext sslContext, Class<V> clazz) {
+    private <U, V> V post(String url, U payload, SSLContext sslContext, Class<V> clazz) {
         Client client = ClientBuilder.newBuilder()
-            .sslContext(sslContext)
-            // Uncomment the following line for JUL logging
-            // TODO: Use jul-to-slf4j bridge to log consistently
-            //.register(new org.glassfish.jersey.logging.LoggingFeature(java.util.logging.Logger.getLogger("HTTP"), java.util.logging.Level.INFO, null, null))
-            .build();
+                .sslContext(sslContext)
+                // Uncomment the following line for JUL logging
+                // TODO: Use jul-to-slf4j bridge to log consistently
+                //.register(new org.glassfish.jersey.logging.LoggingFeature(java.util.logging.Logger.getLogger("HTTP"), java.util.logging.Level.INFO, null, null))
+                .build();
         client.property(JERSEY_CONNECT_TIMEOUT_PROPERTY, connectTimeout);
         client.property(JERSEY_READ_TIMEOUT_PROPERTY, readTimeout);
 
         Response response = client
-            .target(url)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .headers(createAuthHeaders())
-            .header(HttpHeaders.ACCEPT_LANGUAGE, settingsService.getLocaleSettings().getLanguage())
-            .header(HTTP_HEADER_EBLOCKER_OS_VERSION, eBlockerOsVersion)
-            .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE));
+                .target(url)
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .headers(createAuthHeaders())
+                .header(HttpHeaders.ACCEPT_LANGUAGE, settingsService.getLocaleSettings().getLanguage())
+                .header(HTTP_HEADER_EBLOCKER_OS_VERSION, eBlockerOsVersion)
+                .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE));
         LOG.info("Submitted POST request to license server: {} --> {}", url, response.getStatus());
 
         if (response.getStatus() == HttpResponseStatus.OK.code() || response.getStatus() == HttpResponseStatus.CREATED.code()) {
@@ -177,22 +175,22 @@ public class DeviceRegistrationClient {
 
     private <T> T get(String url, SSLContext sslContext, Class<T> clazz) {
         Client client = ClientBuilder
-            .newBuilder()
-            .sslContext(sslContext)
-            // Uncomment the following line for JUL logging
-            // TODO: Use jul-to-slf4j bridge to log consistently
-            //.register(new org.glassfish.jersey.logging.LoggingFeature(java.util.logging.Logger.getLogger("HTTP"), java.util.logging.Level.INFO, null, null))
-            .build();
+                .newBuilder()
+                .sslContext(sslContext)
+                // Uncomment the following line for JUL logging
+                // TODO: Use jul-to-slf4j bridge to log consistently
+                //.register(new org.glassfish.jersey.logging.LoggingFeature(java.util.logging.Logger.getLogger("HTTP"), java.util.logging.Level.INFO, null, null))
+                .build();
         client.property(JERSEY_CONNECT_TIMEOUT_PROPERTY, connectTimeout);
         client.property(JERSEY_READ_TIMEOUT_PROPERTY, readTimeout);
 
         Response response = client
-            .target(url)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .headers(createAuthHeaders())
-            .header(HttpHeaders.ACCEPT_LANGUAGE, settingsService.getLocaleSettings().getLanguage())
-            .header(HTTP_HEADER_EBLOCKER_OS_VERSION, eBlockerOsVersion)
-            .get();
+                .target(url)
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .headers(createAuthHeaders())
+                .header(HttpHeaders.ACCEPT_LANGUAGE, settingsService.getLocaleSettings().getLanguage())
+                .header(HTTP_HEADER_EBLOCKER_OS_VERSION, eBlockerOsVersion)
+                .get();
         LOG.info("Submitted GET request to license server: {} --> {}", url, response.getStatus());
 
         if (response.getStatus() == HttpResponseStatus.OK.code()) {
@@ -241,7 +239,7 @@ public class DeviceRegistrationClient {
     }
 
     public ProductInfo getProductInfo() {
-        return get(registrationUrl+"/"+deviceRegistrationProperties.getDeviceId()+"/product", createSSLContext(), ProductInfo.class);
+        return get(registrationUrl + "/" + deviceRegistrationProperties.getDeviceId() + "/product", createSSLContext(), ProductInfo.class);
     }
 
     public MobileConnectionCheck requestMobileConnectionCheck(MobileConnectionCheck.Protocol protocol, int port, byte[] secret) {
@@ -275,16 +273,16 @@ public class DeviceRegistrationClient {
                     String errorMessage = new String(errorContent);
                     LOG.error("Could not read error value", e);
                     return new ClientRequestException(
-                        method,
-                        url,
-                        response.getStatus(),
-                        new ClientRequestError(
+                            method,
+                            url,
                             response.getStatus(),
-                            "UNKNOWN",
-                            (errorMessage.isEmpty() ? "<empty>" : errorMessage),
-                            System.currentTimeMillis(),
-                            Collections.emptyList()
-                        )
+                            new ClientRequestError(
+                                    response.getStatus(),
+                                    "UNKNOWN",
+                                    (errorMessage.isEmpty() ? "<empty>" : errorMessage),
+                                    System.currentTimeMillis(),
+                                    Collections.emptyList()
+                            )
                     );
                 }
 
@@ -320,8 +318,8 @@ public class DeviceRegistrationClient {
             keyStore.load(is, password.toCharArray());
             return keyStore;
 
-        } catch (GeneralSecurityException|IOException e) {
-            String msg = "Cannot load keyStore "+resourcePath+": "+e.getMessage();
+        } catch (GeneralSecurityException | IOException e) {
+            String msg = "Cannot load keyStore " + resourcePath + ": " + e.getMessage();
             LOG.error(msg);
             throw new EblockerException(msg, e);
         }

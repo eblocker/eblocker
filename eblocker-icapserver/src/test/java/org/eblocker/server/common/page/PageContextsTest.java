@@ -16,73 +16,73 @@
  */
 package org.eblocker.server.common.page;
 
-import static org.junit.Assert.*;
-
 import org.eblocker.server.common.data.IpAddress;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+
 public class PageContextsTest {
-	private static final IpAddress IP = IpAddress.parse("192.168.3.3");
+    private static final IpAddress IP = IpAddress.parse("192.168.3.3");
 
-	@Test
-	public void test() {
-		// Create cache with 4 slots
-		PageContexts pageContexts = new PageContexts(4);
-		
-		// Fill all four slots
-		PageContext p1 = pageContexts.add(null, "page-1", IP);
-		PageContext p2 = pageContexts.add(null, "page-2", IP);
-		PageContext p3 = pageContexts.add(null, "page-3", IP);
-		PageContext p4 = pageContexts.add(null, "page-4", IP);
+    @Test
+    public void test() {
+        // Create cache with 4 slots
+        PageContexts pageContexts = new PageContexts(4);
 
+        // Fill all four slots
+        PageContext p1 = pageContexts.add(null, "page-1", IP);
+        PageContext p2 = pageContexts.add(null, "page-2", IP);
+        PageContext p3 = pageContexts.add(null, "page-3", IP);
+        PageContext p4 = pageContexts.add(null, "page-4", IP);
 
-		//try adding a null pointer, should not do anything, but return null
-		PageContext errorContext = pageContexts.add(null, null, IP);
-		assertNull(errorContext);
+        //try adding a null pointer, should not do anything, but return null
+        PageContext errorContext = pageContexts.add(null, null, IP);
+        assertNull(errorContext);
 
-		
-		// Verify that all four page contexts can be retrieved.
-		assertEquals(p1, pageContexts.get("page-1"));
-		assertEquals(p2, pageContexts.get("page-2"));
-		assertEquals(p3, pageContexts.get("page-3"));
-		assertEquals(p4, pageContexts.get("page-4"));
+        // Verify that all four page contexts can be retrieved.
+        assertEquals(p1, pageContexts.get("page-1"));
+        assertEquals(p2, pageContexts.get("page-2"));
+        assertEquals(p3, pageContexts.get("page-3"));
+        assertEquals(p4, pageContexts.get("page-4"));
 
-		// Double check that we have no trivial identity
-		assertNotEquals(p2, pageContexts.get("page-1"));
-		assertNotEquals(p3, pageContexts.get("page-2"));
-		assertNotEquals(p4, pageContexts.get("page-3"));
-		assertNotEquals(p1, pageContexts.get("page-4"));
+        // Double check that we have no trivial identity
+        assertNotEquals(p2, pageContexts.get("page-1"));
+        assertNotEquals(p3, pageContexts.get("page-2"));
+        assertNotEquals(p4, pageContexts.get("page-3"));
+        assertNotEquals(p1, pageContexts.get("page-4"));
 
-		// Confirm that page-5 and page-6 are not yet available
-		assertNull(pageContexts.get("page-5"));
-		assertNull(pageContexts.get("page-6"));
-		
-		// Store page-5 and page-6
-		PageContext p5 = pageContexts.add(null, "page-5", IP);
-		PageContext p6 = pageContexts.add(null, "page-6", IP);
-		
-		// Assert that page-1 and page-2 are now lost and that page-5 and page-6 can be retrieved
-		assertNull(pageContexts.get("page-1"));
-		assertNull(pageContexts.get("page-2"));
-		assertEquals(p3, pageContexts.get("page-3"));
-		assertEquals(p4, pageContexts.get("page-4"));
-		assertEquals(p5, pageContexts.get("page-5"));
-		assertEquals(p6, pageContexts.get("page-6"));
-		
-		// Store page-5 and page-6 again
-		PageContext p5b = pageContexts.add(null, "page-5", IP);
-		PageContext p6b = pageContexts.add(null, "page-6", IP);
-		
-		// Assert that no new entries have been created
-		assertEquals(p5, p5b);
-		assertEquals(p6, p6b);
-		
-		// Assert that the cache is in general unchanged
-		assertEquals(p3, pageContexts.get("page-3"));
-		assertEquals(p4, pageContexts.get("page-4"));
-		assertEquals(p5, pageContexts.get("page-5"));
-		assertEquals(p6, pageContexts.get("page-6"));
-		
-	}
+        // Confirm that page-5 and page-6 are not yet available
+        assertNull(pageContexts.get("page-5"));
+        assertNull(pageContexts.get("page-6"));
+
+        // Store page-5 and page-6
+        PageContext p5 = pageContexts.add(null, "page-5", IP);
+        PageContext p6 = pageContexts.add(null, "page-6", IP);
+
+        // Assert that page-1 and page-2 are now lost and that page-5 and page-6 can be retrieved
+        assertNull(pageContexts.get("page-1"));
+        assertNull(pageContexts.get("page-2"));
+        assertEquals(p3, pageContexts.get("page-3"));
+        assertEquals(p4, pageContexts.get("page-4"));
+        assertEquals(p5, pageContexts.get("page-5"));
+        assertEquals(p6, pageContexts.get("page-6"));
+
+        // Store page-5 and page-6 again
+        PageContext p5b = pageContexts.add(null, "page-5", IP);
+        PageContext p6b = pageContexts.add(null, "page-6", IP);
+
+        // Assert that no new entries have been created
+        assertEquals(p5, p5b);
+        assertEquals(p6, p6b);
+
+        // Assert that the cache is in general unchanged
+        assertEquals(p3, pageContexts.get("page-3"));
+        assertEquals(p4, pageContexts.get("page-4"));
+        assertEquals(p5, pageContexts.get("page-5"));
+        assertEquals(p6, pageContexts.get("page-6"));
+
+    }
 
 }

@@ -18,60 +18,60 @@ package org.eblocker.server.common.data.migrations;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class SchemaMigrationVersion12Test {
-	private DataSource dataSource;
-	private SchemaMigrationVersion12 migration;
-	List<UserModuleOld> userModules = new ArrayList<>();
-    private UserMigrationService userMigrationService;
-	private UserModuleOld userAlice, userBob;
+import static org.mockito.Mockito.eq;
 
-	@Before
-	public void setup() {
-		dataSource = Mockito.mock(DataSource.class);
+public class SchemaMigrationVersion12Test {
+    private DataSource dataSource;
+    private SchemaMigrationVersion12 migration;
+    List<UserModuleOld> userModules = new ArrayList<>();
+    private UserMigrationService userMigrationService;
+    private UserModuleOld userAlice, userBob;
+
+    @Before
+    public void setup() {
+        dataSource = Mockito.mock(DataSource.class);
         userMigrationService = Mockito.mock(UserMigrationService.class);
 
-		migration = new SchemaMigrationVersion12(dataSource, userMigrationService);
+        migration = new SchemaMigrationVersion12(dataSource, userMigrationService);
 
-		// Existing users
-        userAlice = new UserModuleOld(1337, 1337, "alice", "alice-key", null, null,false, null, null, null, null, null);
+        // Existing users
+        userAlice = new UserModuleOld(1337, 1337, "alice", "alice-key", null, null, false, null, null, null, null, null);
 
         userBob = new UserModuleOld(4711, 4711, "bob", "bob-key", null, null, false, null, new HashMap<>(), null, null, null);
 
-		userModules.add(userAlice);
-		userModules.add(userBob);
+        userModules.add(userAlice);
+        userModules.add(userBob);
 
-		Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
-	}
+        Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
+    }
 
-	@Test
-	public void getSourceVersion() throws Exception {
-		Assert.assertEquals("11", migration.getSourceVersion());
-	}
+    @Test
+    public void getSourceVersion() throws Exception {
+        Assert.assertEquals("11", migration.getSourceVersion());
+    }
 
-	@Test
-	public void getTargetVersion() throws Exception {
-		Assert.assertEquals("12", migration.getTargetVersion());
-	}
+    @Test
+    public void getTargetVersion() throws Exception {
+        Assert.assertEquals("12", migration.getTargetVersion());
+    }
 
-	@Test
-	public void testRemovePin() {
-	    Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
-	    
-	    migration.migrate();
-	    
-	    Mockito.verify(userMigrationService).save(eq(userAlice), eq(1337));
-	    Mockito.verify(userMigrationService).save(eq(userBob), eq(4711));
-	}
+    @Test
+    public void testRemovePin() {
+        Mockito.when(userMigrationService.getAll()).thenReturn(userModules);
+
+        migration.migrate();
+
+        Mockito.verify(userMigrationService).save(eq(userAlice), eq(1337));
+        Mockito.verify(userMigrationService).save(eq(userBob), eq(4711));
+    }
 
 }

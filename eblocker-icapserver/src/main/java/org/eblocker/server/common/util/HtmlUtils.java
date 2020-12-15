@@ -31,7 +31,7 @@ public class HtmlUtils {
         generateLowerUppercaseVariants(HTML_END_TAG).forEach(s -> REPLACER.add(s, ""));
     }
 
-	private HtmlUtils() {
+    private HtmlUtils() {
     }
 
     /**
@@ -44,13 +44,12 @@ public class HtmlUtils {
      * <li>implicit: &lt;/html&gt;</li>
      * <li>implicit by end-of-file</li>
      * </ul>
-     *
+     * <p>
      * More details on omitting closing body and html tags:
      * <ul>
      * <li>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body</li>
      * <li>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/html</li>
      * </ul>
-     *
      */
     public static String insertBeforeBodyEnd(String html, String inlay) {
         StringBuilder sb = new StringBuilder(html);
@@ -67,16 +66,15 @@ public class HtmlUtils {
      * <li>explicit: &lt;/body&gt;</li>
      * <li>implicit: &lt;/html&gt;</li>
      * </ul>
-     *
+     * <p>
      * More details on omitting closing body and html tags:
      * <ul>
      * <li>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body</li>
      * <li>https://developer.mozilla.org/en-US/docs/Web/HTML/Element/html</li>
      * </ul>
-     *
      */
     public static void insertBeforeBodyEnd(StringBuilder html, String inlay) {
-	    int position = findLastMatch(html);
+        int position = findLastMatch(html);
         if (position != -1) {
             html.insert(position, inlay);
         }
@@ -85,7 +83,7 @@ public class HtmlUtils {
     private static int findLastMatch(CharSequence html) {
         Integer lastBodyIndex = null;
         Integer lastHtmlIndex = null;
-        for(StringReplacer.Match match : REPLACER.findAll(html)) {
+        for (StringReplacer.Match match : REPLACER.findAll(html)) {
             if (BODY_END_TAG.equalsIgnoreCase(match.getTarget())) {
                 lastBodyIndex = match.getStartIndex();
             } else {
@@ -105,8 +103,8 @@ public class HtmlUtils {
         int n = 1 << s.length();
         Set<String> out = new HashSet<>(n);
         char[] variant = new char[s.length()];
-        for(int i = 0; i < n; ++i) {
-            for(int j = 0; j < s.length(); ++j) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < s.length(); ++j) {
                 int bit = 1 << j;
                 boolean upperCase = (i & bit) == bit;
                 variant[j] = upperCase ? Character.toUpperCase(s.charAt(j)) : Character.toLowerCase(s.charAt(j));

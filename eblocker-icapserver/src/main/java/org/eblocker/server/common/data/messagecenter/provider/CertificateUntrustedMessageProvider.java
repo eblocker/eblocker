@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 
 import java.util.Collections;
 import java.util.Map;
@@ -38,14 +38,14 @@ public class CertificateUntrustedMessageProvider extends AbstractMessageProvider
         String MESSAGE_CERTIFICATE_UNTRUSTED_URL = "MESSAGE_CERTIFICATE_UNTRUSTED_URL";
 
         messageContainer = createMessage(
-            MessageProviderMessageId.MESSAGE_CERTIFICATE_UNTRUSTED_WARNING.getId(),
-            MESSAGE_CERTIFICATE_UNTRUSTED_TITLE,
-            MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT,
-            MESSAGE_CERTIFICATE_UNTRUSTED_LABEL,
-            MESSAGE_CERTIFICATE_UNTRUSTED_URL,
-            Collections.emptyMap(),
-            false,
-            MessageSeverity.ALERT
+                MessageProviderMessageId.MESSAGE_CERTIFICATE_UNTRUSTED_WARNING.getId(),
+                MESSAGE_CERTIFICATE_UNTRUSTED_TITLE,
+                MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT,
+                MESSAGE_CERTIFICATE_UNTRUSTED_LABEL,
+                MESSAGE_CERTIFICATE_UNTRUSTED_URL,
+                Collections.emptyMap(),
+                false,
+                MessageSeverity.ALERT
         );
     }
 

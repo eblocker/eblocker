@@ -33,7 +33,7 @@ class EasyListLineParserUtils {
         return null;
     }
 
-	private static String normalizeDomain(String domain) {
+    private static String normalizeDomain(String domain) {
         if (!domain.contains(".")) {
             // ignore incomplete host names with wild card
             if (domain.contains("*")) {
@@ -45,7 +45,7 @@ class EasyListLineParserUtils {
 
         // append proper wild card
         if (domain.endsWith(".")) {
-            return  domain + "*";
+            return domain + "*";
         }
 
         return domain;

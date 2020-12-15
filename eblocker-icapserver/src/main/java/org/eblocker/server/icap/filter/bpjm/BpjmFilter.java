@@ -63,11 +63,10 @@ public class BpjmFilter {
 
     private final Map<ByteArrays.Key, BpjmEntry[]> entryByDomainHash = new HashMap<>();
 
-
     BpjmFilter(BpjmModul bpjmModul) {
         bpjmModul.getEntries().stream()
-            .collect(Collectors.groupingBy(e -> new ByteArrays.Key(e.getDomainHash())))
-            .forEach((k, v) -> entryByDomainHash.put(k, v.toArray(new BpjmEntry[0])));
+                .collect(Collectors.groupingBy(e -> new ByteArrays.Key(e.getDomainHash())))
+                .forEach((k, v) -> entryByDomainHash.put(k, v.toArray(new BpjmEntry[0])));
     }
 
     public BpjmFilterDecision isBlocked(String url) {
@@ -87,7 +86,7 @@ public class BpjmFilter {
             path += matcher.group(6);
         }
         indicies.add(0, -1);
-        for (int i = indicies.size() - 2 ; i >= 0; --i) {
+        for (int i = indicies.size() - 2; i >= 0; --i) {
             String domain = host.substring(indicies.get(i) + 1);
             BpjmFilterDecision decision = isBlocked(domain, path);
             if (decision.isBlocked()) {
@@ -111,7 +110,7 @@ public class BpjmFilter {
             return new BpjmFilterDecision(true, domain, path, entry.getDepth());
         }
 
-        for(int i = 0; i < separatorIndices.size(); ++i) {
+        for (int i = 0; i < separatorIndices.size(); ++i) {
             String partialPath = path.substring(0, separatorIndices.get(i) + 1);
             if (find(partialPath, i + 1, entries) != null) {
                 return new BpjmFilterDecision(true, domain, path, i + 1);
@@ -155,9 +154,9 @@ public class BpjmFilter {
 
     private List<Integer> indicesOf(char separator, String value) {
         List<Integer> indices = new ArrayList<>();
-        for(int i = 0; i < value.length(); ++i) {
+        for (int i = 0; i < value.length(); ++i) {
             if (value.charAt(i) == separator) {
-                    indices.add(i);
+                indices.add(i);
             }
         }
         return indices;
@@ -166,10 +165,10 @@ public class BpjmFilter {
     private BpjmEntry find(String path, int depth, List<BpjmEntry> entries) {
         byte[] hash = md5(path);
         return entries.stream()
-            .filter(e -> e.getDepth() == depth)
-            .filter(e -> Arrays.equals(e.getPathHash(), hash))
-            .findFirst()
-            .orElse(null);
+                .filter(e -> e.getDepth() == depth)
+                .filter(e -> Arrays.equals(e.getPathHash(), hash))
+                .findFirst()
+                .orElse(null);
     }
 
     private byte[] md5(String value) {

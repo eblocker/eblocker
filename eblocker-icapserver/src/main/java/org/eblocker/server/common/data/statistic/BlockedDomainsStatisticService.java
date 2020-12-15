@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.data.statistic;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.BlockedDomainsStats;
 import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.parentalcontrol.Category;
@@ -25,9 +28,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -148,25 +148,25 @@ public class BlockedDomainsStatisticService {
         }
 
         Map<Category, List<Entry>> stats = entry.heapStats.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> getTopBlockedDomains(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> getTopBlockedDomains(e.getValue())));
         return new BlockedDomainsStats(entry.lastReset, stats);
     }
 
     public synchronized BlockedDomainsStats getStats() {
         Map<Category, List<Entry>> stats = blockStatsById.values().stream()
-            .map(e -> e.heapStats)
-            .map(Map::entrySet)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue,
-                (a, b) -> {
-                    Map<String, Integer> merged = new HashMap<>(a);
-                    b.forEach((key, value) -> merged.merge(key, value, Integer::sum));
-                    return merged;
-                }))
-            .entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> getTopBlockedDomains(e.getValue())));
+                .map(e -> e.heapStats)
+                .map(Map::entrySet)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> {
+                            Map<String, Integer> merged = new HashMap<>(a);
+                            b.forEach((key, value) -> merged.merge(key, value, Integer::sum));
+                            return merged;
+                        }))
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> getTopBlockedDomains(e.getValue())));
 
         long oldestReset = lastResetById.values().stream().reduce(Long::min).orElse(0L);
         return new BlockedDomainsStats(Instant.ofEpochMilli(oldestReset), stats);
@@ -187,7 +187,7 @@ public class BlockedDomainsStatisticService {
 
         long elapsed = System.currentTimeMillis() - start;
         log.info("writing blocked domains stats to disk finished in {}ms", elapsed);
-   }
+    }
 
     public synchronized BlockedDomainsStats resetStats(String deviceId) {
         String id = normalizeDeviceId(deviceId);
@@ -219,9 +219,9 @@ public class BlockedDomainsStatisticService {
         }
 
         return stats.entrySet().stream()
-            .sorted(COUNTER_COMPARATOR)
-            .map(e -> new Entry(e.getKey(), e.getValue()))
-            .collect(Collectors.toList());
+                .sorted(COUNTER_COMPARATOR)
+                .map(e -> new Entry(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -231,10 +231,10 @@ public class BlockedDomainsStatisticService {
         }
 
         List<String> names = db.getAll().keySet().stream()
-            .filter(name -> !"reset".equals(name))
-            .collect(Collectors.toList());
+                .filter(name -> !"reset".equals(name))
+                .collect(Collectors.toList());
 
-        for(String name : names) {
+        for (String name : names) {
             String[] tokens = name.split(":");
             String deviceId = tokens[0];
             Category category = Category.valueOf(tokens[1]);
@@ -284,11 +284,11 @@ public class BlockedDomainsStatisticService {
 
     private BTreeMap<String, Integer> createOrOpenPersistentMap(String id, Category category) {
         return blockStatsById.get(id).persistentStats.computeIfAbsent(
-            category,
-            c -> db.createTreeMap(createPersistentMapName(id, category))
-                .keySerializer(BTreeKeySerializer.STRING)
-                .valueSerializer(Serializer.INTEGER)
-                .makeOrGet());
+                category,
+                c -> db.createTreeMap(createPersistentMapName(id, category))
+                        .keySerializer(BTreeKeySerializer.STRING)
+                        .valueSerializer(Serializer.INTEGER)
+                        .makeOrGet());
     }
 
     private String createPersistentMapName(String id, Category category) {
@@ -298,10 +298,10 @@ public class BlockedDomainsStatisticService {
     private void dropBottomEntriesFromHeap(String id, Category category) {
         Map<String, Integer> heapStats = blockStatsById.get(id).heapStats.get(category);
         List<String> toDrop = heapStats.entrySet().stream()
-            .sorted(COUNTER_COMPARATOR)
-            .skip(heapSize)
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toList());
+                .sorted(COUNTER_COMPARATOR)
+                .skip(heapSize)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
         log.debug("dropping {} entries from {} / {}", toDrop.size(), id, category);
         toDrop.forEach(heapStats::remove);
     }

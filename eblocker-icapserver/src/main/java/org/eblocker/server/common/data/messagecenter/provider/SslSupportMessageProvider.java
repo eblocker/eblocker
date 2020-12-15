@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,19 +53,19 @@ public class SslSupportMessageProvider extends AbstractMessageProvider {
         MessageContainer messageContainer = messageContainers.get(MessageProviderMessageId.MESSAGE_SSL_SUPPORT_INSTALL_ID.getId());
         if (messageContainer == null) {
             messageContainer = createMessage(
-                MessageProviderMessageId.MESSAGE_SSL_SUPPORT_INSTALL_ID.getId(),
-                MESSAGE_SSL_SUPPORT_INSTALL_TITLE,
-                MESSAGE_SSL_SUPPORT_INSTALL_CONTENT,
-                MESSAGE_SSL_SUPPORT_INSTALL_LABEL,
-                MESSAGE_SSL_SUPPORT_INSTALL_URL,
-                Collections.emptyMap(),
-                false,
-                MessageSeverity.INFO
+                    MessageProviderMessageId.MESSAGE_SSL_SUPPORT_INSTALL_ID.getId(),
+                    MESSAGE_SSL_SUPPORT_INSTALL_TITLE,
+                    MESSAGE_SSL_SUPPORT_INSTALL_CONTENT,
+                    MESSAGE_SSL_SUPPORT_INSTALL_LABEL,
+                    MESSAGE_SSL_SUPPORT_INSTALL_URL,
+                    Collections.emptyMap(),
+                    false,
+                    MessageSeverity.INFO
             );
             messageContainers.put(MessageProviderMessageId.MESSAGE_SSL_SUPPORT_INSTALL_ID.getId(), messageContainer);
         }
         Collection<Device> devices = deviceService.getDevices(false);
-        for (Device device: devices) {
+        for (Device device : devices) {
             if (device.isSslEnabled()) {
                 messageContainer.getVisibility().hideForDevice(device.getId());
             }

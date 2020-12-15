@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -42,9 +42,9 @@ public class SchemaMigrationVersion14 implements SchemaMigration {
 
     @Inject
     public SchemaMigrationVersion14(
-        DataSource dataSource,
-        JedisPool jedisPool,
-        @Named("dns.server.enabled.file") String enabledFlagFile
+            DataSource dataSource,
+            JedisPool jedisPool,
+            @Named("dns.server.enabled.file") String enabledFlagFile
     ) {
         this.dataSource = dataSource;
         this.jedisPool = jedisPool;

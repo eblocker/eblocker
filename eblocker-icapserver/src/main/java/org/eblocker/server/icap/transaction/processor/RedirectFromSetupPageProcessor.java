@@ -16,20 +16,19 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
 import org.eblocker.server.http.service.DnsService;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.UriBuilder;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ import java.util.Set;
 public class RedirectFromSetupPageProcessor implements TransactionProcessor {
     private static final Logger log = LoggerFactory.getLogger(RedirectFromSetupPageProcessor.class);
 
-	private DeviceRegistrationProperties deviceRegistrationProperties;
+    private DeviceRegistrationProperties deviceRegistrationProperties;
     private String setupUrlPrefix;
     private Set<String> setupUrlPaths;
     private String dashboardUrl;
@@ -48,8 +47,8 @@ public class RedirectFromSetupPageProcessor implements TransactionProcessor {
     private DnsService dnsService;
     private NetworkServices networkServices;
 
-	@Inject
-	public RedirectFromSetupPageProcessor(@Named("my.eblocker.localredirect.setup.url-prefix") String setupUrlPrefix,
+    @Inject
+    public RedirectFromSetupPageProcessor(@Named("my.eblocker.localredirect.setup.url-prefix") String setupUrlPrefix,
                                           @Named("my.eblocker.localredirect.setup.path") String setupUrlPaths,
                                           @Named("network.dashboard.host") String dashboardHost,
                                           @Named("connection.test.routingtest.url") String connectionCheckRoutingTestUrl,
@@ -63,7 +62,7 @@ public class RedirectFromSetupPageProcessor implements TransactionProcessor {
         this.setupUrlPaths = new HashSet<>(Arrays.asList(setupUrlPaths.split("\\s")));
         this.setupUrlPrefix = setupUrlPrefix;
         this.networkServices = networkServices;
-	}
+    }
 
     private String getRedirectUrlPath(String url) {
         if (url.startsWith(setupUrlPrefix)) {
@@ -89,9 +88,9 @@ public class RedirectFromSetupPageProcessor implements TransactionProcessor {
         return null;
     }
 
-	@Override
-	public boolean process(Transaction transaction) {
-		String url = transaction.getUrl();
+    @Override
+    public boolean process(Transaction transaction) {
+        String url = transaction.getUrl();
         String redirectUrl = getRedirectUrlPath(url);
 
         if (transaction.isRequest() && url.endsWith(connectionCheckRoutingTestUrl)) {
@@ -99,33 +98,33 @@ public class RedirectFromSetupPageProcessor implements TransactionProcessor {
             return false;
         }
 
-		if (redirectUrl == null) {
-			return true;
-		}
+        if (redirectUrl == null) {
+            return true;
+        }
 
-		if (deviceRegistrationProperties.getRegistrationState() == RegistrationState.NEW) {
+        if (deviceRegistrationProperties.getRegistrationState() == RegistrationState.NEW) {
             transaction.redirect(redirectUrl);
         } else {
-            if(dnsService.isEnabled()) {
+            if (dnsService.isEnabled()) {
                 transaction.redirect(dashboardUrl);
-    		} else {
-    		    transaction.redirect(buildUrl(networkServices.getCurrentNetworkConfiguration().getIpAddress(), "dashboard"));
-    		}
-	    }
+            } else {
+                transaction.redirect(buildUrl(networkServices.getCurrentNetworkConfiguration().getIpAddress(), "dashboard"));
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private String buildUrl(String host, String path) {
-	    try {
-	        UriBuilder url = UriBuilder.fromUri("");
-	        url.host(host);
-	        url.scheme("http");
-	        url.path(path);
-	        return url.toString();
+    private String buildUrl(String host, String path) {
+        try {
+            UriBuilder url = UriBuilder.fromUri("");
+            url.host(host);
+            url.scheme("http");
+            url.path(path);
+            return url.toString();
         } catch (Exception e) {
             log.error("Could not build URL from host {}", host, e);
         }
-	    return null;
-	}
+        return null;
+    }
 }

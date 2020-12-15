@@ -22,7 +22,7 @@ public class Ip6Utils {
 
     public static Ip6Address combine(Ip6Address networkAddress, Ip6Address hostAddress) {
         byte[] address = new byte[16];
-        for(int i = 0; i < 16; ++i) {
+        for (int i = 0; i < 16; ++i) {
             address[i] = (byte) (networkAddress.getAddress()[i] | hostAddress.getAddress()[i]);
         }
         return Ip6Address.of(address);
@@ -30,7 +30,7 @@ public class Ip6Utils {
 
     public static boolean isInNetwork(Ip6Address hostAddress, Ip6Address networkAddress, int prefixLength) {
         int bytes = prefixLength / 8;
-        for(int i = 0; i < bytes; ++i) {
+        for (int i = 0; i < bytes; ++i) {
             if (hostAddress.getAddress()[i] != networkAddress.getAddress()[i]) {
                 return false;
             }

@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.dashboard.DashboardCard;
-import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
+import com.google.inject.Inject;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
+import org.eblocker.server.common.data.dashboard.DashboardCard;
+import org.eblocker.server.common.data.dashboard.DashboardCardPosition;
 import org.eblocker.server.http.service.DashboardService;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class SchemaMigrationVersion33 implements SchemaMigration {
         for (UserModuleOld user : users) {
             // Get the DNS Statistics-card
             Optional<DashboardCard> eblStatisticsCard = user.getDashboardCards().stream()
-                .filter(c -> c.getId() == eblStatisticsCardId).findFirst();
+                    .filter(c -> c.getId() == eblStatisticsCardId).findFirst();
             if (!eblStatisticsCard.isPresent()) {
                 // error - the user should have such a card
                 // But the DashbordService will make sure that she gets one!
@@ -74,12 +74,12 @@ public class SchemaMigrationVersion33 implements SchemaMigration {
 
                     // New card with required feature updated
                     DashboardCard newCard = new DashboardCard(card.getId(), ProductFeature.PRO.name(),
-                        card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
-                        card.getDefaultPos(), card.getCustomPos());
+                            card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
+                            card.getDefaultPos(), card.getCustomPos());
 
                     // Keep every card but replace the DNS Statistics Card
                     user.setDashboardCards(user.getDashboardCards().stream()
-                        .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
+                            .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
                     userMigrationService.save(user, user.getId());
                 }
             }
@@ -95,9 +95,9 @@ public class SchemaMigrationVersion33 implements SchemaMigration {
         int eblStatisticsTotalCardId = dashboardService.generateBlockerStatisticsTotalCard().getId();
 
         Optional<DashboardCard> eblStatisticsCard = user.getDashboardCards().stream()
-            .filter(c -> c.getId() == eblStatisticsCardId).findFirst();
+                .filter(c -> c.getId() == eblStatisticsCardId).findFirst();
         Optional<DashboardCard> eblStatisticsTotalCard = user.getDashboardCards().stream()
-            .filter(c -> c.getId() == eblStatisticsTotalCardId).findFirst();
+                .filter(c -> c.getId() == eblStatisticsTotalCardId).findFirst();
 
         DashboardCardPosition[] posTotal = dashboardService.generateBlockerStatisticsTotalCard().getDefaultPos();
         DashboardCardPosition[] pos = dashboardService.generateDnsStatisticsCard().getDefaultPos();
@@ -115,17 +115,17 @@ public class SchemaMigrationVersion33 implements SchemaMigration {
             if (card.getCustomPos() == null) {
                 // New card with required feature updated
                 newCard = new DashboardCard(card.getId(), card.getRequiredFeature(),
-                    card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
-                    position, card.getCustomPos());
+                        card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
+                        position, card.getCustomPos());
             } else {
                 // New card with required feature updated
                 newCard = new DashboardCard(card.getId(), card.getRequiredFeature(),
-                    card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
-                    card.getDefaultPos(), position);
+                        card.getTranslateSuffix(), card.getHtml(), card.isVisible(), card.isAlwaysVisible(),
+                        card.getDefaultPos(), position);
             }
             // Keep every card but replace the new Card
             user.setDashboardCards(user.getDashboardCards().stream()
-                .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
+                    .map(c -> c.getId() == newCard.getId() ? newCard : c).collect(Collectors.toList()));
             userMigrationService.save(user, user.getId());
         }
     }

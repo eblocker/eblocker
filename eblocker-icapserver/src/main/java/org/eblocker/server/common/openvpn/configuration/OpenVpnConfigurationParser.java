@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.openvpn.configuration;
 
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OpenVpnConfigurationParser {
-    private static final char[] COMMENT_CHARACTERS = {';', '#'};
+    private static final char[] COMMENT_CHARACTERS = { ';', '#' };
 
     private static final Pattern TAG_OPEN_PATTERN = Pattern.compile("<([^/]+.*)>");
     private static final Pattern TAG_CLOSE_PATTERN = Pattern.compile("</(.*)>");
@@ -99,7 +99,7 @@ public class OpenVpnConfigurationParser {
     }
 
     private String findNextOptionLine() {
-        while(currentLine.hasNext()) {
+        while (currentLine.hasNext()) {
             String line = currentLine.next().trim();
             if (!line.isEmpty() && !isComment(line)) {
                 return line;

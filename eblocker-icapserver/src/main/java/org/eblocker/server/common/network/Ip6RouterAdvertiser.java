@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.icmpv6.MtuOption;
@@ -25,8 +27,6 @@ import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import java.util.Collections;
 @Singleton
 public class Ip6RouterAdvertiser {
 
-    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[] { 51, 51, 0, 0, 0, 1 };
+    private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{ 51, 51, 0, 0, 0, 1 };
 
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;
@@ -59,20 +59,20 @@ public class Ip6RouterAdvertiser {
         }
 
         if (networkInterface.getAddresses().stream()
-            .filter(IpAddress::isIpv6)
-            .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address)ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
+                .filter(IpAddress::isIpv6)
+                .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address) ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
             return;
         }
 
         RouterAdvertisement advertisement = new RouterAdvertisement(
-            networkInterface.getHardwareAddress(),
-            networkInterface.getIp6LinkLocalAddress(),
-            MULTICAST_ALL_NODES_HW_ADDRESS,
-            Ip6Address.MULTICAST_ALL_NODES_ADDRESS, (short) 255, false, false, false,
-            RouterAdvertisement.RouterPreference.HIGH, 120, 0, 0, Arrays.asList(
-            new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
-            new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
-            new MtuOption(networkInterface.getMtu())));
+                networkInterface.getHardwareAddress(),
+                networkInterface.getIp6LinkLocalAddress(),
+                MULTICAST_ALL_NODES_HW_ADDRESS,
+                Ip6Address.MULTICAST_ALL_NODES_ADDRESS, (short) 255, false, false, false,
+                RouterAdvertisement.RouterPreference.HIGH, 120, 0, 0, Arrays.asList(
+                new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
+                new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
+                new MtuOption(networkInterface.getMtu())));
         pubSubService.publish("ip6:out", advertisement.toString());
     }
 

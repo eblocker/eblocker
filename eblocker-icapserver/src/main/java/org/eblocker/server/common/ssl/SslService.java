@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.common.ssl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.apache.commons.lang3.StringUtils;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
+import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DistinguishedName;
@@ -24,13 +31,6 @@ import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.utils.NormalizationUtils;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,22 +226,22 @@ public class SslService {
         log.info("Generating CA certificate for {} which is valid for {} days...", commonName, daysValid);
         try {
             CertificateAndKey certificateAndKey = PKI.generateRoot(null,
-                commonName,
-                Date.from(notBefore.toInstant()),
-                Date.from(notAfter.toInstant()),
-                caKeySize);
+                    commonName,
+                    Date.from(notBefore.toInstant()),
+                    Date.from(notAfter.toInstant()),
+                    caKeySize);
 
             try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
                 PKI.generateKeyStore(certificateAndKey, "root", keyStorePassword, keyStoreStream);
             }
 
             return new EblockerCa(certificateAndKey);
-        } catch (CryptoException | IOException e ) {
+        } catch (CryptoException | IOException e) {
             throw new PkiException("ca generation failed " + e.getMessage(), e);
         }
     }
 
-    public String generateFileNameForCertificate(){
+    public String generateFileNameForCertificate() {
         // Collect information to include in the filename
         // Validity
         Date notBefore = ca.getCertificate().getNotBefore();
@@ -249,7 +249,7 @@ public class SslService {
 
         // Name
         CaOptions caOptions = dataSource.get(CaOptions.class);
-        String cname="";
+        String cname = "";
         if (caOptions == null || caOptions.getDistinguishedName() == null
                 || StringUtils.isBlank(caOptions.getDistinguishedName().getCommonName())) {
             // Fallback
@@ -363,7 +363,7 @@ public class SslService {
             KeyStore keyStore = PKI.loadKeyStore(keyStoreStream, keyStorePassword);
             String alias = keyStore.aliases().nextElement();
             return new EblockerCa(new CertificateAndKey((X509Certificate) keyStore.getCertificate(alias),
-                (PrivateKey) keyStore.getKey(alias, keyStorePassword)));
+                    (PrivateKey) keyStore.getKey(alias, keyStorePassword)));
         } catch (CryptoException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             throw new PkiException("failed to load ca keystore", e);
         }
@@ -387,9 +387,13 @@ public class SslService {
 
     public interface SslStateListener {
         void onInit(boolean sslEnabled);
+
         void onCaChange();
+
         void onEnable();
+
         void onDisable();
+
         void onRenewalCaChange();
     }
 

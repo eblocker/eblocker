@@ -19,25 +19,25 @@ package org.eblocker.server.icap.filter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum FilterType {
-	PASS,	
-	REDIRECT,
-	ASK,
-	BLOCK,
-	NO_CONTENT,
-	;
-	
-	@JsonCreator
-	public static FilterType fromName(String name) {
-		for (FilterType type: FilterType.values()) {
-			if (type.name().equals(name)) {
-				return type;
-			}
-		}
-		return null;
-	}
+    PASS,
+    REDIRECT,
+    ASK,
+    BLOCK,
+    NO_CONTENT,
+    ;
 
-	public static FilterType getDefault() {
-		return BLOCK;
-	}
-	
+    @JsonCreator
+    public static FilterType fromName(String name) {
+        for (FilterType type : FilterType.values()) {
+            if (type.name().equals(name)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    public static FilterType getDefault() {
+        return BLOCK;
+    }
+
 }

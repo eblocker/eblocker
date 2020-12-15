@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.TasksViewConfig;
 import org.eblocker.server.common.executor.LogEntry;
 import org.eblocker.server.common.executor.LoggingExecutorService;
 import org.eblocker.server.common.executor.PoolStats;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,21 +44,21 @@ public class TasksService {
                         @Named("unlimitedCachePoolExecutor") Executor unlimitedCachePoolExecutor) {
         this.dataSource = dataSource;
         this.loggingExecutorServices = Arrays.asList(
-            (LoggingExecutorService) highPrioScheduledExecutor,
-            (LoggingExecutorService) lowPrioScheduledExecutor,
-            (LoggingExecutorService) unlimitedCachePoolExecutor);
+                (LoggingExecutorService) highPrioScheduledExecutor,
+                (LoggingExecutorService) lowPrioScheduledExecutor,
+                (LoggingExecutorService) unlimitedCachePoolExecutor);
     }
 
     public Map<String, Collection<LogEntry>> getLastExecutions() {
         return loggingExecutorServices.stream().collect(Collectors.toMap(
-            LoggingExecutorService::getName,
-            e -> e.getLastLogEntriesByName().values()));
+                LoggingExecutorService::getName,
+                e -> e.getLastLogEntriesByName().values()));
     }
 
     public Map<String, PoolStats> getPoolStats() {
         return loggingExecutorServices.stream().collect(Collectors.toMap(
-            LoggingExecutorService::getName,
-            LoggingExecutorService::getStats));
+                LoggingExecutorService::getName,
+                LoggingExecutorService::getStats));
     }
 
     public TasksViewConfig getViewConfig() {

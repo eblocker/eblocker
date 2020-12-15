@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.blacklist.DomainFilter;
 import org.eblocker.server.common.session.Session;
@@ -28,9 +31,6 @@ import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.service.CustomDomainFilterWhitelistService;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * Processor to set transactions decision to PASS if hostname belongs to a user's custom domain whitelist.

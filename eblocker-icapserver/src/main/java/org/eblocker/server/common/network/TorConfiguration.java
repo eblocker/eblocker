@@ -16,6 +16,14 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.eblocker.server.icap.resources.TemplateExpander;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,15 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.server.icap.resources.TemplateExpander;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * This class is responsible for writing the Tor configuration file
@@ -42,60 +41,62 @@ public class TorConfiguration {
     //exit node constants
     private final SimpleResource torConfigFileTemplate;
     private final String torConfigFilePath;
-    private static final String TOR_RESTRICT_EXIT_NODES="@SET_EXIT_NODES@";
+    private static final String TOR_RESTRICT_EXIT_NODES = "@SET_EXIT_NODES@";
     private static final String TOR_EXIT_NODES = "@EXIT_NODES@";
 
     @Inject
     public TorConfiguration(
-    		@Named("tor.config.template.file.path") String torConfigTemplateFilePath,
+            @Named("tor.config.template.file.path") String torConfigTemplateFilePath,
             @Named("tor.config.file.path") String torConfigFilePath
-    		) {
+    ) {
         this.torConfigFileTemplate = new SimpleResource(torConfigTemplateFilePath);//tor config template
         this.torConfigFilePath = torConfigFilePath;
     }
-    
-	public void update(Set<String> selectedCountryCodes) {
+
+    public void update(Set<String> selectedCountryCodes) {
         String configExitNodeString = getConfigExitNodeString(selectedCountryCodes);
-        log.info("Set {} as country codes string in Tor config...",configExitNodeString);
-        if(!writeTorConfig(configExitNodeString)){
-        	log.error("Init: Error while writing the Tor config file: {}", torConfigFilePath);
+        log.info("Set {} as country codes string in Tor config...", configExitNodeString);
+        if (!writeTorConfig(configExitNodeString)) {
+            log.error("Init: Error while writing the Tor config file: {}", torConfigFilePath);
         }
     }
 
     /**
      * Creates a list of country codes for the Tor configuration, separated by commas,
      * where each code is enclosed in brackets
+     *
      * @param countryCodes
      * @return country code list for Tor configuration, e.g. {de},{fr},{no}
      */
     public static String getConfigExitNodeString(Set<String> countryCodes) {
-    	return countryCodes
-    			.stream()
-    			.map(code -> "{" + code + "}")
-    			.collect(Collectors.joining(","));
-	}
+        return countryCodes
+                .stream()
+                .map(code -> "{" + code + "}")
+                .collect(Collectors.joining(","));
+    }
 
     /**
      * Use the tor config template and fill in the appropiate information; and then override the "real" tor configuration file with the
      * finished template information
+     *
      * @param exitNodeCountries
      * @return
      */
-    private synchronized boolean writeTorConfig(String exitNodeCountries){
+    private synchronized boolean writeTorConfig(String exitNodeCountries) {
         Map<String, String> substitute = new HashMap<>();
 
         //prepare map for templateexpander
-        if(!"".equals(exitNodeCountries)) {//specify which ExitNode countries to use
-            substitute.put(TOR_RESTRICT_EXIT_NODES,"");
-            substitute.put(TOR_EXIT_NODES,exitNodeCountries);
-        }else{//use Tor instance without setting specific Exit Nodes, in standard mode!
-            substitute.put(TOR_RESTRICT_EXIT_NODES,"#");
-            substitute.put(TOR_EXIT_NODES,"");
+        if (!"".equals(exitNodeCountries)) {//specify which ExitNode countries to use
+            substitute.put(TOR_RESTRICT_EXIT_NODES, "");
+            substitute.put(TOR_EXIT_NODES, exitNodeCountries);
+        } else {//use Tor instance without setting specific Exit Nodes, in standard mode!
+            substitute.put(TOR_RESTRICT_EXIT_NODES, "#");
+            substitute.put(TOR_EXIT_NODES, "");
         }
 
         //template exists?
-        if(!ResourceHandler.exists(torConfigFileTemplate)){
-            log.error("Tor config template file can not be found here {}",torConfigFileTemplate.getPath());
+        if (!ResourceHandler.exists(torConfigFileTemplate)) {
+            log.error("Tor config template file can not be found here {}", torConfigFileTemplate.getPath());
             return false;
         }
 
@@ -108,8 +109,8 @@ public class TorConfiguration {
         //overwrite real tor config file with finished template file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(torConfigFilePath))) {
             writer.write(result);
-        } catch(IOException e) {
-            log.error("Overriding the Tor config file {} did not work",torConfigFilePath,e);
+        } catch (IOException e) {
+            log.error("Overriding the Tor config file {} did not work", torConfigFilePath, e);
             return false;
         }
         return true;

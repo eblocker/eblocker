@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.UserRole;
-import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
 import org.eblocker.server.common.data.migrations.DefaultEntities;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +31,14 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class UserServiceInitTest {
 
@@ -45,7 +51,7 @@ public class UserServiceInitTest {
 
     // Existing users
     private final UserModule ALICE = createUser(1001, "Alice", false);
-    private final UserModule BOB   = createUser(1002, "Bob", false);
+    private final UserModule BOB = createUser(1002, "Bob", false);
 
     // Not existing user
     private final UserModule XAVER = createUser(1101, "Xaver", false);
@@ -86,104 +92,104 @@ public class UserServiceInitTest {
     @Test
     public void test_allSystemUsers_ok() {
         doTest(
-            SYSTEM, SYSTEM, SYSTEM,
-            SYSTEM, SYSTEM, SYSTEM
+                SYSTEM, SYSTEM, SYSTEM,
+                SYSTEM, SYSTEM, SYSTEM
         );
     }
 
     @Test
     public void test_sameOperatingUser_ok() {
         doTest(
-            SYSTEM, ALICE, ALICE,
-            SYSTEM, ALICE, ALICE
+                SYSTEM, ALICE, ALICE,
+                SYSTEM, ALICE, ALICE
         );
     }
 
     @Test
     public void test_differentOperatingUser_ok() {
         doTest(
-            SYSTEM, ALICE, BOB,
-            SYSTEM, ALICE, BOB
+                SYSTEM, ALICE, BOB,
+                SYSTEM, ALICE, BOB
         );
     }
 
     @Test
     public void doTest_notExistingSystemUser_notOk() {
         doTest(
-            INVALID, INVALID, INVALID,
-            NEW, NEW, NEW
+                INVALID, INVALID, INVALID,
+                NEW, NEW, NEW
         );
     }
 
     @Test
     public void doTest_notExistingSystemUser_sameOperatingUser_notOk() {
         doTest(
-            INVALID, ALICE, ALICE,
-            NEW, ALICE, ALICE
+                INVALID, ALICE, ALICE,
+                NEW, ALICE, ALICE
         );
     }
 
     @Test
     public void doTest_notExistingSystemUser_differentOperatingUser_notOk() {
         doTest(
-            INVALID, ALICE, BOB,
-            NEW, ALICE, BOB
+                INVALID, ALICE, BOB,
+                NEW, ALICE, BOB
         );
     }
 
     @Test
     public void doTest_notExistingAssignedUser_notOk() {
         doTest(
-            INVALID, XAVER, BOB,
-            // Even though BOB exists, he cannot remain operating user,
-            // if assigned user is being reset to default system user!
-            NEW, NEW, NEW
+                INVALID, XAVER, BOB,
+                // Even though BOB exists, he cannot remain operating user,
+                // if assigned user is being reset to default system user!
+                NEW, NEW, NEW
         );
     }
 
     @Test
     public void doTest_invalidSystemUser_notOk() {
         doTest(
-            ALICE, ALICE, BOB,
-            NEW, ALICE, BOB
+                ALICE, ALICE, BOB,
+                NEW, ALICE, BOB
         );
     }
 
     @Test
     public void doTest_assignedSystemUser_notOk() {
         doTest(
-            SYSTEM, SYSTEM, BOB,
-            SYSTEM, SYSTEM, SYSTEM
+                SYSTEM, SYSTEM, BOB,
+                SYSTEM, SYSTEM, SYSTEM
         );
     }
 
     @Test
     public void doTest_operatingSystemUser_notOk() {
         doTest(
-            SYSTEM, ALICE, SYSTEM,
-            SYSTEM, ALICE, ALICE
+                SYSTEM, ALICE, SYSTEM,
+                SYSTEM, ALICE, ALICE
         );
     }
 
     @Test
     public void doTest_operatingUserLocked_ok() {
         doTest(
-            SYSTEM, ALICE, LOCKED,
-            SYSTEM, ALICE, LOCKED
+                SYSTEM, ALICE, LOCKED,
+                SYSTEM, ALICE, LOCKED
         );
     }
 
     @Test
     public void doTest_assignedUserLocked_notOk() {
         doTest(
-            SYSTEM, LOCKED, BOB,
-            SYSTEM, SYSTEM, SYSTEM
+                SYSTEM, LOCKED, BOB,
+                SYSTEM, SYSTEM, SYSTEM
         );
     }
 
     private void doTest(
-        UserModule currentDefaultSystemUser, UserModule currentAssignedUser, UserModule currentOperatingUser,
-        UserModule expectedDefaultSystemUser, UserModule expectedAssignedUser, UserModule expectedOperatingUser) {
+            UserModule currentDefaultSystemUser, UserModule currentAssignedUser, UserModule currentOperatingUser,
+            UserModule expectedDefaultSystemUser, UserModule expectedAssignedUser, UserModule expectedOperatingUser) {
         // Provide test scenario
         Device device = createDevice(currentDefaultSystemUser, currentAssignedUser, currentOperatingUser);
         when(deviceService.getDevices(true)).thenReturn(Collections.singletonList(device));
@@ -238,8 +244,8 @@ public class UserServiceInitTest {
             verify(dashboardService).getNewDashboardCardColumns(UserRole.OTHER);
         }
         if (expectedDefaultSystemUser != currentDefaultSystemUser ||
-            expectedAssignedUser != currentAssignedUser ||
-            expectedOperatingUser != currentOperatingUser) {
+                expectedAssignedUser != currentAssignedUser ||
+                expectedOperatingUser != currentOperatingUser) {
             verify(deviceService).updateDevice(device);
         }
 
@@ -258,17 +264,17 @@ public class UserServiceInitTest {
 
     private UserModule createUser(int id, String name, boolean system) {
         return new UserModule(
-            id,
-            null,
-            name,
-            null,
-            null, UserRole.OTHER,
-            system,
-            null,
-            null,
-            null,
-            null,
-            null
+                id,
+                null,
+                name,
+                null,
+                null, UserRole.OTHER,
+                system,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 

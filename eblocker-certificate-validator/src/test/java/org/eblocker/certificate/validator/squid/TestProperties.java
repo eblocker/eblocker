@@ -37,8 +37,8 @@ class TestProperties {
             properties.load(TestProperties.class.getClassLoader().getResourceAsStream("certificate-validator.properties"));
             properties.setProperty("reader.concurrentFormat", Boolean.toString(readerConcurrentFormat));
             properties.setProperty("validator.sun.certificates.path", getCaCertificatesFilePath());
-            properties.setProperty("intermediate.certificates.path",  "/dev/null");
-            properties.setProperty("intermediate.certificates.refresh.period",  "60");
+            properties.setProperty("intermediate.certificates.path", "/dev/null");
+            properties.setProperty("intermediate.certificates.refresh.period", "60");
             properties.setProperty("validator.pin.trustStore.path", "/non-existing");
             properties.setProperty("validator.pin.trustStore.password", "");
             properties.setProperty("validator.pin.refresh.period", "60");

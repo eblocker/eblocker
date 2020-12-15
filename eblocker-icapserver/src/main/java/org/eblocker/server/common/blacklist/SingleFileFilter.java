@@ -83,10 +83,9 @@ public class SingleFileFilter implements DomainFilter<String> {
 
     /**
      * Create a filter from a stream of domains requiring no more than one domain at a time to be in memory.
-     *
+     * <p>
      * This method takes more time but only a small amount of ram. The stream is iterated three times so a supplier
      * is needed to re-create the stream from start.
-     *
      */
     public SingleFileFilter(Charset charset, Path storagePath, int listId, String name, Supplier<Stream<String>> domainStreamSupplier) throws IOException {
         this.charset = charset;
@@ -124,10 +123,10 @@ public class SingleFileFilter implements DomainFilter<String> {
     @Override
     public Stream<String> getDomains() {
         return Stream
-            .iterate(0, i -> i + 1)
-            .limit(buckets.length)
-            .map(this::readDomains)
-            .flatMap(Set::stream);
+                .iterate(0, i -> i + 1)
+                .limit(buckets.length)
+                .map(this::readDomains)
+                .flatMap(Set::stream);
     }
 
     @Override
@@ -154,7 +153,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         long offset = buckets[bucket];
         long offsetNextBucket = bucket + 1 < buckets.length ? buckets[bucket + 1] : fileSize;
         long length = offsetNextBucket - offset;
-        byte[] buffer = new byte[(int)length];
+        byte[] buffer = new byte[(int) length];
 
         try (FileInputStream fis = new FileInputStream(storagePath.toFile())) {
             fis.skip(offset);
@@ -171,7 +170,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         byte[] search = domain.getBytes(charset);
         int matched = 0;
 
-        for(int i = 0; i < buffer.length; ++i) {
+        for (int i = 0; i < buffer.length; ++i) {
             byte c = buffer[i];
             if (c == '\n') {
                 if (matched == search.length) {
@@ -203,7 +202,7 @@ public class SingleFileFilter implements DomainFilter<String> {
     private int mapDomainToBucketV2(String value) {
         long hash = hashFunction.hashBytes(value.getBytes(charset)).asLong();
         long bucket = (hash & 0x7fffffffffffffffL) % buckets.length;
-        return (int)bucket;
+        return (int) bucket;
     }
 
     private void initStorageFile(Collection<String> domains) throws IOException {
@@ -285,7 +284,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         domains.forEach(domain -> bucketsLength[domainBucketFn.apply(domain)] += domain.getBytes(charset).length + 1);
 
         // calculate offsets (based on zero)
-        for(int i = 1; i < buckets.length; ++i) {
+        for (int i = 1; i < buckets.length; ++i) {
             buckets[i] = buckets[i - 1] + bucketsLength[i - 1];
         }
     }
@@ -293,7 +292,7 @@ public class SingleFileFilter implements DomainFilter<String> {
     private void initStorageFileFromStreamWriteDomains(Stream<String> domains) throws IOException {
         try (SeekableByteChannel channel = Files.newByteChannel(storagePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
             ByteBuffer headerBuffer = createHeader();
-            for(int i = 0; i < buckets.length; ++i) {
+            for (int i = 0; i < buckets.length; ++i) {
                 buckets[i] += headerBuffer.limit();
                 headerBuffer.putInt(buckets[i]);
             }
@@ -303,11 +302,11 @@ public class SingleFileFilter implements DomainFilter<String> {
             ByteBuffer domainBuffer = ByteBuffer.allocate(1024);
             int[] bucketsWriteIndices = new int[buckets.length];
             Iterator<String> it = domains.iterator(); // Stream api not used here to avoid wrapping und un-wrapping of IOExceptions.
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 String domain = it.next();
                 domainBuffer.clear();
                 domainBuffer.put(domain.getBytes(charset));
-                domainBuffer.put((byte)'\n');
+                domainBuffer.put((byte) '\n');
                 domainBuffer.flip();
 
                 int bucket = domainBucketFn.apply(domain);

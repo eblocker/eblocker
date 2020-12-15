@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.blocker.Blocker;
 import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.blocker.BlockerType;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.http.controller.BlockerController;
-import com.google.inject.Inject;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -30,7 +30,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BlockerControllerImpl implements BlockerController  {
+public class BlockerControllerImpl implements BlockerController {
 
     private final BlockerService blockerService;
 
@@ -45,10 +45,10 @@ public class BlockerControllerImpl implements BlockerController  {
         Predicate<Blocker> categoryPredicate = createPredicate(request.getHeader("category"), Category::valueOf, Blocker::getCategory);
         Predicate<Blocker> filterTypePredicate = createPredicate(request.getHeader("filterType"), Function.identity(), Blocker::getFilterType);
         return blockerService.getBlockers().stream()
-            .filter(typePredicate)
-            .filter(categoryPredicate)
-            .filter(filterTypePredicate)
-            .collect(Collectors.toList());
+                .filter(typePredicate)
+                .filter(categoryPredicate)
+                .filter(filterTypePredicate)
+                .collect(Collectors.toList());
     }
 
     @Override

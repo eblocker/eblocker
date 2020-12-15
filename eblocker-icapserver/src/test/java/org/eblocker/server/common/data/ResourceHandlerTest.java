@@ -16,11 +16,8 @@
  */
 package org.eblocker.server.common.data;
 
-import static org.junit.Assert.*;
-
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +28,17 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class ResourceHandlerTest {
 
-    private final static String TEST_FILE_PATH="/tmp/testfile";
-    private final static String TEST_FILE_PATH2="/tmp/testfile2";
+    private final static String TEST_FILE_PATH = "/tmp/testfile";
+    private final static String TEST_FILE_PATH2 = "/tmp/testfile2";
 
     @Before
-    public void setup(){
-        if(!Files.exists(Paths.get(TEST_FILE_PATH))){
+    public void setup() {
+        if (!Files.exists(Paths.get(TEST_FILE_PATH))) {
             try {
                 Files.createFile(Paths.get(TEST_FILE_PATH));
             } catch (IOException e) {
@@ -48,7 +48,7 @@ public class ResourceHandlerTest {
     }
 
     @Test
-    public void testWritingListOfStringsToFile(){
+    public void testWritingListOfStringsToFile() {
         SimpleResource existingFile = new SimpleResource(TEST_FILE_PATH);
         List<String> strings = new LinkedList<String>();
         strings.add("Line 0");
@@ -56,24 +56,24 @@ public class ResourceHandlerTest {
         strings.add("Line 2");
         strings.add("Line 3");
 
-        ResourceHandler.replaceContent(existingFile,strings);
+        ResourceHandler.replaceContent(existingFile, strings);
     }
-    
+
     @Test
     public void testCreate() throws IOException {
-    	SimpleResource resource = new SimpleResource(TEST_FILE_PATH2);
-    	assertFalse(ResourceHandler.exists(resource));
-    	
-    	ResourceHandler.create(resource);
-    	assertTrue(ResourceHandler.exists(resource));
+        SimpleResource resource = new SimpleResource(TEST_FILE_PATH2);
+        assertFalse(ResourceHandler.exists(resource));
 
-    	// clean up
-    	Files.delete(Paths.get(TEST_FILE_PATH2));
-    	assertFalse(ResourceHandler.exists(resource));    	
+        ResourceHandler.create(resource);
+        assertTrue(ResourceHandler.exists(resource));
+
+        // clean up
+        Files.delete(Paths.get(TEST_FILE_PATH2));
+        assertFalse(ResourceHandler.exists(resource));
     }
 
     @After
-    public void cleanUp(){
+    public void cleanUp() {
         try {
             Files.delete(Paths.get(TEST_FILE_PATH));
         } catch (IOException e) {

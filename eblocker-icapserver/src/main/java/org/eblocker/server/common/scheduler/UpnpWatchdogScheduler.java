@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.upnp.UpnpManagementService;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.upnp.UpnpManagementService;
 
 public class UpnpWatchdogScheduler extends FixedRateScheduler {
 
     @Inject
     public UpnpWatchdogScheduler(UpnpManagementService upnpManagementService,
-            @Named("executor.upnpWatchdog.startupDelay") long startupDelay,
-            @Named("executor.upnpWatchdog.fixedRate") long fixedRate) {
+                                 @Named("executor.upnpWatchdog.startupDelay") long startupDelay,
+                                 @Named("executor.upnpWatchdog.fixedRate") long fixedRate) {
         super(upnpManagementService::watchdog, startupDelay, fixedRate);
     }
 }

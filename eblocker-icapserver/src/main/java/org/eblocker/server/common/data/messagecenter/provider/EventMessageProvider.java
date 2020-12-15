@@ -16,12 +16,12 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.events.Event;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.http.service.EventService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +31,10 @@ import java.util.Set;
 @Singleton
 public class EventMessageProvider extends AbstractMessageProvider {
 
-    public static final String MESSAGE_ALERT_EVENT_TITLE   = "MESSAGE_ALERT_EVENT_TITLE";
+    public static final String MESSAGE_ALERT_EVENT_TITLE = "MESSAGE_ALERT_EVENT_TITLE";
     public static final String MESSAGE_ALERT_EVENT_CONTENT = "MESSAGE_ALERT_EVENT_CONTENT";
-    public static final String MESSAGE_ALERT_EVENT_LABEL   = "MESSAGE_ALERT_EVENT_LABEL";
-    public static final String MESSAGE_ALERT_EVENT_URL     = "MESSAGE_ALERT_EVENT_URL";
+    public static final String MESSAGE_ALERT_EVENT_LABEL = "MESSAGE_ALERT_EVENT_LABEL";
+    public static final String MESSAGE_ALERT_EVENT_URL = "MESSAGE_ALERT_EVENT_URL";
 
     private final EventService eventService;
 
@@ -61,14 +61,14 @@ public class EventMessageProvider extends AbstractMessageProvider {
             messageContainers.remove(MessageProviderMessageId.MESSAGE_ALERT_EVENT_ID.getId());
         } else {
             MessageContainer message = createMessage(MessageProviderMessageId.MESSAGE_ALERT_EVENT_ID.getId(),
-                                                     MESSAGE_ALERT_EVENT_TITLE,
-                                                     MESSAGE_ALERT_EVENT_CONTENT,
-                                                     MESSAGE_ALERT_EVENT_LABEL,
-                                                     MESSAGE_ALERT_EVENT_URL,
-                                                     Collections.emptyMap(),
-                                                     false,
-                                                     MessageSeverity.INFO
-                                                     );
+                    MESSAGE_ALERT_EVENT_TITLE,
+                    MESSAGE_ALERT_EVENT_CONTENT,
+                    MESSAGE_ALERT_EVENT_LABEL,
+                    MESSAGE_ALERT_EVENT_URL,
+                    Collections.emptyMap(),
+                    false,
+                    MessageSeverity.INFO
+            );
             messageContainers.put(MessageProviderMessageId.MESSAGE_ALERT_EVENT_ID.getId(), message);
         }
     }

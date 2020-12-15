@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
@@ -38,7 +39,6 @@ import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.TestClock;
-import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,8 +61,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
 
 public class EblockerDnsServerTest {
     private final String CHANNEL_NAME = "unit-test-channel";
@@ -120,7 +118,7 @@ public class EblockerDnsServerTest {
 
         routerAdvertisementCache = Mockito.mock(RouterAdvertisementCache.class);
         Mockito.when(routerAdvertisementCache.getEntries()).thenReturn(Collections.singletonList(
-            createRouterAdvertisementEntry(clock.millis(), 86400, 86400, Ip6Address.parse("fe80::192:168:3:1"))
+                createRouterAdvertisementEntry(clock.millis(), 86400, 86400, Ip6Address.parse("fe80::192:168:3:1"))
         ));
 
         listener = Mockito.mock(EblockerDnsServer.Listener.class);
@@ -515,7 +513,7 @@ public class EblockerDnsServerTest {
     public void testGetLocalRecords() {
         // setup mock
         Map<String, LocalDnsRecord> mockLocalRecordByName = new HashMap<>();
-        mockLocalRecordByName.put("ns.eblocker", new LocalDnsRecord("ns.eblocker", false, false,  Ip4Address.parse("10.10.10.100"), null, LOCAL_VPN_IP, null));
+        mockLocalRecordByName.put("ns.eblocker", new LocalDnsRecord("ns.eblocker", false, false, Ip4Address.parse("10.10.10.100"), null, LOCAL_VPN_IP, null));
         mockLocalRecordByName.put("random-device", new LocalDnsRecord("random-device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null));
 
         DnsServerConfig serverConfig = new DnsServerConfig();
@@ -523,25 +521,25 @@ public class EblockerDnsServerTest {
         Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(serverConfig);
 
         eblockerDnsServer = new EblockerDnsServer(
-            CHANNEL_NAME,
-            FLUSH_COMMAND,
-            UPDATE_COMMAND,
-            DEFAULT_CUSTOM_NAME_SERVERS,
-            "",
-            DEFAULT_TOR_NAME_SERVERS,
-            eblockerFlagFilePath.toString(),
-            CONTROL_BAR_HOST_NAME,
-            CONTROL_BAR_IP_ADDRESS,
-            VPN_SUBNET_IP,
-            VPN_SUBNET_NETMASK,
-            clock,
-            dataSource,
-            deviceService,
-            dhcpBindListener,
-            clientLeaseReader,
-            networkInterfaceWrapper,
-            pubSubService,
-            routerAdvertisementCache);
+                CHANNEL_NAME,
+                FLUSH_COMMAND,
+                UPDATE_COMMAND,
+                DEFAULT_CUSTOM_NAME_SERVERS,
+                "",
+                DEFAULT_TOR_NAME_SERVERS,
+                eblockerFlagFilePath.toString(),
+                CONTROL_BAR_HOST_NAME,
+                CONTROL_BAR_IP_ADDRESS,
+                VPN_SUBNET_IP,
+                VPN_SUBNET_NETMASK,
+                clock,
+                dataSource,
+                deviceService,
+                dhcpBindListener,
+                clientLeaseReader,
+                networkInterfaceWrapper,
+                pubSubService,
+                routerAdvertisementCache);
 
         eblockerDnsServer.init();
 
@@ -556,7 +554,7 @@ public class EblockerDnsServerTest {
         Assert.assertEquals(CONTROL_BAR_IP_ADDRESS, recordsByName.get(CONTROL_BAR_HOST_NAME).getVpnIpAddress());
         Assert.assertTrue(recordsByName.get(CONTROL_BAR_HOST_NAME).isBuiltin());
         Assert.assertTrue(recordsByName.get(CONTROL_BAR_HOST_NAME).isHidden());
-        for(Map.Entry<String, LocalDnsRecord> e : mockLocalRecordByName.entrySet()) {
+        for (Map.Entry<String, LocalDnsRecord> e : mockLocalRecordByName.entrySet()) {
             Assert.assertNotNull(recordsByName.get(e.getKey()));
             Assert.assertEquals(e.getValue().isBuiltin(), recordsByName.get(e.getKey()).isBuiltin());
             Assert.assertEquals(e.getValue().isHidden(), recordsByName.get(e.getKey()).isHidden());
@@ -574,17 +572,17 @@ public class EblockerDnsServerTest {
         // setup currently stored config
         DnsServerConfig storedConfig = new DnsServerConfig();
         storedConfig.setLocalDnsRecords(Arrays.asList(
-            new LocalDnsRecord("ns.unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
-            new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null),
-            new LocalDnsRecord("unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
-            new LocalDnsRecord("must.be.deleted", false, false, Ip4Address.parse("4.3.2.1"), null, null, null)));
+                new LocalDnsRecord("ns.unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
+                new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null),
+                new LocalDnsRecord("unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
+                new LocalDnsRecord("must.be.deleted", false, false, Ip4Address.parse("4.3.2.1"), null, null, null)));
         Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
 
         // setup config to be saved
         List<LocalDnsRecord> localRecords = Arrays.asList(
-            new LocalDnsRecord("ns.unit.test", true, false, Ip4Address.parse("10.10.10.99"), null, null, null),
-            new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.201"), null, null, null),
-            new LocalDnsRecord(CONTROL_BAR_HOST_NAME, false, false, Ip4Address.parse("1.2.3.4"), null, LOCAL_VPN_IP, null));
+                new LocalDnsRecord("ns.unit.test", true, false, Ip4Address.parse("10.10.10.99"), null, null, null),
+                new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.201"), null, null, null),
+                new LocalDnsRecord(CONTROL_BAR_HOST_NAME, false, false, Ip4Address.parse("1.2.3.4"), null, LOCAL_VPN_IP, null));
 
         // save config
         eblockerDnsServer.setLocalDnsRecords(localRecords);
@@ -686,9 +684,9 @@ public class EblockerDnsServerTest {
         // setup currently stored config
         DnsServerConfig storedConfig = new DnsServerConfig();
         storedConfig.setLocalDnsRecords(Arrays.asList(
-            new LocalDnsRecord("obsolete.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
-            new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null),
-            new LocalDnsRecord("unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null)));
+                new LocalDnsRecord("obsolete.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null),
+                new LocalDnsRecord("random.device", false, false, Ip4Address.parse("10.10.10.200"), null, null, null),
+                new LocalDnsRecord("unit.test", true, false, Ip4Address.parse("10.10.10.100"), null, null, null)));
         Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
 
         // init dns server
@@ -803,9 +801,9 @@ public class EblockerDnsServerTest {
         Assert.assertNotNull(config.getResolverConfigs().get("dhcp"));
         Assert.assertEquals(
                 Arrays.asList(
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.8"), 53),
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53),
-                    new NameServer(NameServer.Protocol.UDP, IpAddress.parse("fe80::192:168:3:1"), 53)),
+                        new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.8"), 53),
+                        new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53),
+                        new NameServer(NameServer.Protocol.UDP, IpAddress.parse("fe80::192:168:3:1"), 53)),
                 config.getResolverConfigs().get("dhcp").getNameServers());
     }
 
@@ -838,9 +836,9 @@ public class EblockerDnsServerTest {
         Mockito.verify(routerAdvertisementCache).addListener(listenerCaptor.capture());
         long lastUpdate = clock.instant().minusSeconds(1000).toEpochMilli();
         listenerCaptor.getValue().onUpdate(Arrays.asList(
-            createRouterAdvertisementEntry(lastUpdate, 2000, 5000, Ip6Address.parse("2001:4860:4802:32::a"), Ip6Address.parse("2001:4860:4802:34::a")),
-            createRouterAdvertisementEntry(lastUpdate, 2000, 500, Ip6Address.parse("2001:4860:4802:36::a"), Ip6Address.parse("2001:4860:4802:38::a")),
-            createRouterAdvertisementEntry(lastUpdate, 2000, 5000)
+                createRouterAdvertisementEntry(lastUpdate, 2000, 5000, Ip6Address.parse("2001:4860:4802:32::a"), Ip6Address.parse("2001:4860:4802:34::a")),
+                createRouterAdvertisementEntry(lastUpdate, 2000, 500, Ip6Address.parse("2001:4860:4802:36::a"), Ip6Address.parse("2001:4860:4802:38::a")),
+                createRouterAdvertisementEntry(lastUpdate, 2000, 5000)
         ));
 
         Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
@@ -851,12 +849,12 @@ public class EblockerDnsServerTest {
 
         Assert.assertNotNull(config.getResolverConfigs().get("dhcp"));
         Assert.assertEquals(
-            Arrays.asList(
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.1"), 53),
-                new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53),
-                new NameServer(NameServer.Protocol.UDP, Ip6Address.parse("2001:4860:4802:32::a"), 53),
-                new NameServer(NameServer.Protocol.UDP, Ip6Address.parse("2001:4860:4802:34::a"), 53)),
-            config.getResolverConfigs().get("dhcp").getNameServers());
+                Arrays.asList(
+                        new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.1"), 53),
+                        new NameServer(NameServer.Protocol.UDP, IpAddress.parse("192.168.3.2"), 53),
+                        new NameServer(NameServer.Protocol.UDP, Ip6Address.parse("2001:4860:4802:32::a"), 53),
+                        new NameServer(NameServer.Protocol.UDP, Ip6Address.parse("2001:4860:4802:34::a"), 53)),
+                config.getResolverConfigs().get("dhcp").getNameServers());
     }
 
     @Test
@@ -1021,25 +1019,25 @@ public class EblockerDnsServerTest {
     @Test
     public void testGetCustomNameServersWithoutConfiguration() {
         eblockerDnsServer = new EblockerDnsServer(
-            CHANNEL_NAME,
-            FLUSH_COMMAND,
-            UPDATE_COMMAND,
-            DEFAULT_CUSTOM_NAME_SERVERS,
-            DEFAULT_LOCAL_NAMES,
-            DEFAULT_TOR_NAME_SERVERS,
-            eblockerFlagFilePath.toString(),
-            CONTROL_BAR_HOST_NAME,
-            CONTROL_BAR_IP_ADDRESS,
-            VPN_SUBNET_IP,
-            VPN_SUBNET_NETMASK,
-            clock,
-            dataSource,
-            deviceService,
-            dhcpBindListener,
-            clientLeaseReader,
-            networkInterfaceWrapper,
-            pubSubService,
-            routerAdvertisementCache);
+                CHANNEL_NAME,
+                FLUSH_COMMAND,
+                UPDATE_COMMAND,
+                DEFAULT_CUSTOM_NAME_SERVERS,
+                DEFAULT_LOCAL_NAMES,
+                DEFAULT_TOR_NAME_SERVERS,
+                eblockerFlagFilePath.toString(),
+                CONTROL_BAR_HOST_NAME,
+                CONTROL_BAR_IP_ADDRESS,
+                VPN_SUBNET_IP,
+                VPN_SUBNET_NETMASK,
+                clock,
+                dataSource,
+                deviceService,
+                dhcpBindListener,
+                clientLeaseReader,
+                networkInterfaceWrapper,
+                pubSubService,
+                routerAdvertisementCache);
         Assert.assertEquals(Collections.emptyList(), eblockerDnsServer.getCustomNameServers());
     }
 
@@ -1057,25 +1055,25 @@ public class EblockerDnsServerTest {
     @Test
     public void testGetDhcpNameServersWithoutConfiguration() {
         eblockerDnsServer = new EblockerDnsServer(
-            CHANNEL_NAME,
-            FLUSH_COMMAND,
-            UPDATE_COMMAND,
-            DEFAULT_CUSTOM_NAME_SERVERS,
-            DEFAULT_LOCAL_NAMES,
-            DEFAULT_TOR_NAME_SERVERS,
-            eblockerFlagFilePath.toString(),
-            CONTROL_BAR_HOST_NAME,
-            CONTROL_BAR_IP_ADDRESS,
-            VPN_SUBNET_IP,
-            VPN_SUBNET_NETMASK,
-            clock,
-            dataSource,
-            deviceService,
-            dhcpBindListener,
-            clientLeaseReader,
-            networkInterfaceWrapper,
-            pubSubService,
-            routerAdvertisementCache);
+                CHANNEL_NAME,
+                FLUSH_COMMAND,
+                UPDATE_COMMAND,
+                DEFAULT_CUSTOM_NAME_SERVERS,
+                DEFAULT_LOCAL_NAMES,
+                DEFAULT_TOR_NAME_SERVERS,
+                eblockerFlagFilePath.toString(),
+                CONTROL_BAR_HOST_NAME,
+                CONTROL_BAR_IP_ADDRESS,
+                VPN_SUBNET_IP,
+                VPN_SUBNET_NETMASK,
+                clock,
+                dataSource,
+                deviceService,
+                dhcpBindListener,
+                clientLeaseReader,
+                networkInterfaceWrapper,
+                pubSubService,
+                routerAdvertisementCache);
         Assert.assertEquals(Collections.emptyList(), eblockerDnsServer.getDhcpNameServers());
     }
 
@@ -1088,25 +1086,25 @@ public class EblockerDnsServerTest {
         Mockito.when(dataSource.get(EblockerDnsServerState.class)).thenReturn(state);
 
         eblockerDnsServer = new EblockerDnsServer(
-            CHANNEL_NAME,
-            FLUSH_COMMAND,
-            UPDATE_COMMAND,
-            DEFAULT_CUSTOM_NAME_SERVERS,
-            DEFAULT_LOCAL_NAMES,
-            DEFAULT_TOR_NAME_SERVERS,
-            eblockerFlagFilePath.toString(),
-            CONTROL_BAR_HOST_NAME,
-            CONTROL_BAR_IP_ADDRESS,
-            VPN_SUBNET_IP,
-            VPN_SUBNET_NETMASK,
-            clock,
-            dataSource,
-            deviceService,
-            dhcpBindListener,
-            clientLeaseReader,
-            networkInterfaceWrapper,
-            pubSubService,
-            routerAdvertisementCache);
+                CHANNEL_NAME,
+                FLUSH_COMMAND,
+                UPDATE_COMMAND,
+                DEFAULT_CUSTOM_NAME_SERVERS,
+                DEFAULT_LOCAL_NAMES,
+                DEFAULT_TOR_NAME_SERVERS,
+                eblockerFlagFilePath.toString(),
+                CONTROL_BAR_HOST_NAME,
+                CONTROL_BAR_IP_ADDRESS,
+                VPN_SUBNET_IP,
+                VPN_SUBNET_NETMASK,
+                clock,
+                dataSource,
+                deviceService,
+                dhcpBindListener,
+                clientLeaseReader,
+                networkInterfaceWrapper,
+                pubSubService,
+                routerAdvertisementCache);
         eblockerDnsServer.init();
 
         Assert.assertFalse(Files.exists(eblockerFlagFilePath));
@@ -1120,8 +1118,8 @@ public class EblockerDnsServerTest {
     public void testIpChanges() {
         // setup mock device
         Device[] devices = {
-            createDevice("0", "192.168.5.5"),
-            createDevice("1", "192.168.5.6")
+                createDevice("0", "192.168.5.5"),
+                createDevice("1", "192.168.5.6")
         };
 
         Mockito.when(deviceService.getDeviceById("0")).thenReturn(devices[0]);
@@ -1167,8 +1165,8 @@ public class EblockerDnsServerTest {
     public void testIpChangesOnInit() {
         // setup mock device
         Device[] devices = {
-            createDevice("0", "192.168.5.10"),
-            createDevice("1", null)
+                createDevice("0", "192.168.5.10"),
+                createDevice("1", null)
         };
 
         Mockito.when(deviceService.getDeviceById("0")).thenReturn(devices[0]);
@@ -1201,7 +1199,7 @@ public class EblockerDnsServerTest {
 
     @Test
     public void testSetCustomResolver() {
-        for (String mode : new String[] {"dhcp", "custom", "tor"}) {
+        for (String mode : new String[]{ "dhcp", "custom", "tor" }) {
             DnsServerConfig config = new DnsServerConfig();
             config.setDefaultResolver(mode);
             Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(config);
@@ -1216,33 +1214,33 @@ public class EblockerDnsServerTest {
     private DnsServerConfig createDnsServerConfig(String resolverName, List<String> nameServers) {
         ResolverConfig resolverConfig = new ResolverConfig();
         resolverConfig.setNameServers(nameServers.stream()
-            .map(IpAddress::parse)
-            .map(n -> new NameServer(NameServer.Protocol.UDP, n, 53)).collect(Collectors.toList()));
+                .map(IpAddress::parse)
+                .map(n -> new NameServer(NameServer.Protocol.UDP, n, 53)).collect(Collectors.toList()));
         DnsServerConfig dnsServerConfig = new DnsServerConfig();
         dnsServerConfig.setResolverConfigs(Collections.singletonMap(resolverName, resolverConfig));
         return dnsServerConfig;
     }
 
     private void setupDnsServer() {
-        eblockerDnsServer = new EblockerDnsServer(CHANNEL_NAME, 
-            FLUSH_COMMAND, 
-            UPDATE_COMMAND, 
-            DEFAULT_CUSTOM_NAME_SERVERS, 
-            DEFAULT_LOCAL_NAMES, 
-            DEFAULT_TOR_NAME_SERVERS, 
-            eblockerFlagFilePath.toString(), 
-            CONTROL_BAR_HOST_NAME, 
-            CONTROL_BAR_IP_ADDRESS,
-            VPN_SUBNET_IP,
-            VPN_SUBNET_NETMASK,
-            clock,
-            dataSource, 
-            deviceService,
-            dhcpBindListener,
-            clientLeaseReader, 
-            networkInterfaceWrapper, 
-            pubSubService,
-            routerAdvertisementCache);
+        eblockerDnsServer = new EblockerDnsServer(CHANNEL_NAME,
+                FLUSH_COMMAND,
+                UPDATE_COMMAND,
+                DEFAULT_CUSTOM_NAME_SERVERS,
+                DEFAULT_LOCAL_NAMES,
+                DEFAULT_TOR_NAME_SERVERS,
+                eblockerFlagFilePath.toString(),
+                CONTROL_BAR_HOST_NAME,
+                CONTROL_BAR_IP_ADDRESS,
+                VPN_SUBNET_IP,
+                VPN_SUBNET_NETMASK,
+                clock,
+                dataSource,
+                deviceService,
+                dhcpBindListener,
+                clientLeaseReader,
+                networkInterfaceWrapper,
+                pubSubService,
+                routerAdvertisementCache);
         eblockerDnsServer.init();
         eblockerDnsServer.addListener(listener);
     }
@@ -1258,7 +1256,7 @@ public class EblockerDnsServerTest {
 
     private <T> T filterLast(ArgumentCaptor<?> captor, Class<T> clazz) {
         List<T> filteredValues = filterValues(captor, clazz);
-        for(int i = filteredValues.size() - 1; i >= 0; --i) {
+        for (int i = filteredValues.size() - 1; i >= 0; --i) {
             if (clazz.isInstance(filteredValues.get(i))) {
                 return filteredValues.get(i);
             }
@@ -1273,6 +1271,6 @@ public class EblockerDnsServerTest {
 
     private RouterAdvertisementCache.Entry createRouterAdvertisementEntry(long lastUpdate, int lifetime, int rdnsLifetime, Ip6Address... nameServer) {
         List<Option> options = nameServer.length != 0 ? Collections.singletonList(new RecursiveDnsServerOption(rdnsLifetime, Arrays.asList(nameServer))) : Collections.emptyList();
-        return new RouterAdvertisementCache.Entry(null, lastUpdate,lifetime, new RouterAdvertisement(null, null, null, null, (short)0, false, false, false, null, lifetime, 0, 0, options));
+        return new RouterAdvertisementCache.Entry(null, lastUpdate, lifetime, new RouterAdvertisement(null, null, null, null, (short) 0, false, false, false, null, lifetime, 0, 0, options));
     }
 }

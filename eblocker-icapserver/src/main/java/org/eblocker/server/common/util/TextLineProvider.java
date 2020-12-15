@@ -30,16 +30,17 @@ import java.util.Vector;
  */
 public class TextLineProvider {
     private static final Logger logger = LoggerFactory.getLogger(TextLineProvider.class);
-	public List<String> getLines(String filename){
-		List<String> lines = new Vector<>();
-		try (BufferedReader buffReader = new BufferedReader(new FileReader(filename))){
-			String line;
-			while ((line = buffReader.readLine())!=null){
-				lines.add(line);
-			}
-		}catch(IOException e){
-			logger.error("Error on parsing file.", e);
-		}
-		return lines;
-	}
+
+    public List<String> getLines(String filename) {
+        List<String> lines = new Vector<>();
+        try (BufferedReader buffReader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = buffReader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            logger.error("Error on parsing file.", e);
+        }
+        return lines;
+    }
 }

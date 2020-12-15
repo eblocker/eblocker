@@ -21,27 +21,27 @@ import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.restexpress.Request;
 
 public class HttpTransactionIdentifier implements TransactionIdentifier {
-	private final String userAgent;
-	private final IpAddress clientIP;
+    private final String userAgent;
+    private final IpAddress clientIP;
 
-	public HttpTransactionIdentifier(Request request) {
-		userAgent = request.getHeader("User-Agent");
+    public HttpTransactionIdentifier(Request request) {
+        userAgent = request.getHeader("User-Agent");
 
-		String xClientIp = request.getHeader("X-Forwarded-For");
-	    if (xClientIp != null) {
-	        clientIP = IpAddress.parse(xClientIp);
+        String xClientIp = request.getHeader("X-Forwarded-For");
+        if (xClientIp != null) {
+            clientIP = IpAddress.parse(xClientIp);
         } else {
             clientIP = IpAddress.of(request.getRemoteAddress().getAddress());
         }
-	}
+    }
 
-	@Override
-	public String getUserAgent() {
-		return userAgent;
-	}
+    @Override
+    public String getUserAgent() {
+        return userAgent;
+    }
 
-	@Override
-	public IpAddress getOriginalClientIP() {
-		return clientIP;
-	}
+    @Override
+    public IpAddress getOriginalClientIP() {
+        return clientIP;
+    }
 }

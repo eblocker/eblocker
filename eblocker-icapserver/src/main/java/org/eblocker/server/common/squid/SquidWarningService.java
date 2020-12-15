@@ -141,14 +141,14 @@ public class SquidWarningService {
 
         List<FailedConnection> connections = load();
         connections = connections.stream()
-            .map(c -> {
-                List<String> filteredDeviceIds = c.getDeviceIds().stream()
-                    .filter(id -> !id.equals(device.getId()))
-                    .collect(Collectors.toList());
-                return new FailedConnection(filteredDeviceIds, c.getDomains(), c.getErrors(), c.getLastOccurrence());
-            })
-            .filter(c -> !c.getDeviceIds().isEmpty())
-            .collect(Collectors.toList());
+                .map(c -> {
+                    List<String> filteredDeviceIds = c.getDeviceIds().stream()
+                            .filter(id -> !id.equals(device.getId()))
+                            .collect(Collectors.toList());
+                    return new FailedConnection(filteredDeviceIds, c.getDomains(), c.getErrors(), c.getLastOccurrence());
+                })
+                .filter(c -> !c.getDeviceIds().isEmpty())
+                .collect(Collectors.toList());
         save(connections);
     }
 

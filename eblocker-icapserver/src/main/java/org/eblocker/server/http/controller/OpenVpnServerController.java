@@ -16,29 +16,38 @@
  */
 package org.eblocker.server.http.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.restexpress.Request;
 import org.restexpress.Response;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public interface OpenVpnServerController {
     //
     // control / runtime information
     //
     public VpnServerStatus getOpenVpnServerStatus(Request request, Response response);
+
     public VpnServerStatus setOpenVpnServerStatus(Request request, Response response);
+
     public boolean resetOpenVpnServerStatus(Request request, Response response);
+
     public List<String> getCertificates(Request request, Response response) throws IOException;
+
     public String generateDownloadUrl(Request request, Response response) throws IOException;
+
     public String getOpenVpnFileName(Request request, Response response) throws IOException;
+
     public Object downloadClientConf(Request request, Response response) throws IOException;
+
     public boolean enableDevice(Request request, Response response) throws IOException;
+
     public boolean disableDevice(Request request, Response response) throws IOException;
+
     void setPortForwarding(Request request, Response response);
 
     boolean setPrivateNetworkAccess(Request request, Response response) throws UnsupportedEncodingException,
-        IOException;
+            IOException;
 }

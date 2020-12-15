@@ -16,22 +16,22 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.registration.ProductFeature;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** This class will tell inject some javascript into youtube.com website, to block invideo advertisements
- *  and provide a way to further customize the youtube experience
- *  (e.g. disable annoying annotations or autoplay -> the customization has to
- *  be triggered manually at the moment by calling 'youtubeDisable()' in your browser console when using the eBlocker and youtube.com)
- *
+/**
+ * This class will tell inject some javascript into youtube.com website, to block invideo advertisements
+ * and provide a way to further customize the youtube experience
+ * (e.g. disable annoying annotations or autoplay -> the customization has to
+ * be triggered manually at the moment by calling 'youtubeDisable()' in your browser console when using the eBlocker and youtube.com)
  */
 @RequireFeature(ProductFeature.PRO)
 @Singleton
@@ -48,13 +48,14 @@ public class YoutubeAdBlocker implements TransactionProcessor {
 
     @Override
     public boolean process(Transaction transaction) {
-        if(!transaction.isResponse()) return true;//only makes sense for responses
+        if (!transaction.isResponse())
+            return true;//only makes sense for responses
 
         PageContext pageContext = transaction.getPageContext();
 
         if (isYoutubeWebsite(pageContext)) {
             log.debug("Injecting youtube template! {}", pageContext.getUrl());
-           transaction.getInjections().inject(youtubeTemplate);
+            transaction.getInjections().inject(youtubeTemplate);
         }
         return true;
     }

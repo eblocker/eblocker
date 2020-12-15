@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.blocker.Format;
@@ -25,7 +26,6 @@ import org.eblocker.server.common.blocker.UpdateStatus;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.util.FileUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -81,13 +81,13 @@ public class SchemaMigrationVersion45Test {
         AtomicInteger nextId = new AtomicInteger(1000);
         Mockito.when(dataSource.nextId(ExternalDefinition.class)).then(im -> nextId.getAndIncrement());
         Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(Arrays.asList(
-            new ExternalDefinition(0, "assigned-domain-filter", null, Category.ADS, Type.DOMAIN, 1, null, null, null, null, null, null, true, null),
-            new ExternalDefinition(1, "assigned-pattern-filter", null, Category.ADS, Type.PATTERN, 1, null, null, null, null, null, null, true, null)));
+                new ExternalDefinition(0, "assigned-domain-filter", null, Category.ADS, Type.DOMAIN, 1, null, null, null, null, null, null, true, null),
+                new ExternalDefinition(1, "assigned-pattern-filter", null, Category.ADS, Type.PATTERN, 1, null, null, null, null, null, null, true, null)));
         Mockito.when(dataSource.getAll(ParentalControlFilterMetaData.class)).thenReturn(Arrays.asList(
-            new ParentalControlFilterMetaData(0, null, null, null, null, null, null, null, null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(1, null, null, null, null, null, null, null, null, true, false, null, null, null),
-            new ParentalControlFilterMetaData(2, null, null, org.eblocker.server.common.data.parentalcontrol.Category.CUSTOM, null, null, null, null, "blacklist", false, false, null, "custom-name", "custom-desc"),
-            new ParentalControlFilterMetaData(3, null, null, org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL, null, null, null, null, "whitelist", false, false, null, "parental-name", "parental-desc")
+                new ParentalControlFilterMetaData(0, null, null, null, null, null, null, null, null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(1, null, null, null, null, null, null, null, null, true, false, null, null, null),
+                new ParentalControlFilterMetaData(2, null, null, org.eblocker.server.common.data.parentalcontrol.Category.CUSTOM, null, null, null, null, "blacklist", false, false, null, "custom-name", "custom-desc"),
+                new ParentalControlFilterMetaData(3, null, null, org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL, null, null, null, null, "whitelist", false, false, null, "parental-name", "parental-desc")
         ));
 
         List<String> customDomains = Arrays.asList("etracker.com", "google-analytics.com");

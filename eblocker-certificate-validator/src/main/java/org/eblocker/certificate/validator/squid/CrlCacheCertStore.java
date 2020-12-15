@@ -69,14 +69,14 @@ public class CrlCacheCertStore extends CertStoreSpi {
     public Collection<? extends CRL> engineGetCRLs(CRLSelector selector) throws CertStoreException {
         try {
             X509CRLSelector x509Selector = (X509CRLSelector) selector;
-            List<String> crlUrls = extractCrls(new X509Certificate[]{x509Selector.getCertificateChecking()});
+            List<String> crlUrls = extractCrls(new X509Certificate[]{ x509Selector.getCertificateChecking() });
             log.debug("found {} crl urls", crlUrls.size());
             return crlUrls.stream()
-                .filter(url -> url.startsWith("http"))
-                .map(crlCache::get)
-                .filter(Objects::nonNull) // TODO: this may be caused by a network error, how should this be handled?
-                .filter(x509Selector::match)
-                .collect(Collectors.toList());
+                    .filter(url -> url.startsWith("http"))
+                    .map(crlCache::get)
+                    .filter(Objects::nonNull) // TODO: this may be caused by a network error, how should this be handled?
+                    .filter(x509Selector::match)
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             STATUS_LOG.warn("failed to extract crls from certificate", e);
             throw new CertStoreException("failed to extract crls from certificate", e);
@@ -86,7 +86,7 @@ public class CrlCacheCertStore extends CertStoreSpi {
     private List<String> extractCrls(X509Certificate[] certificates) throws IOException {
         List<String> urls = new ArrayList<>();
         for (X509Certificate certificate : certificates) {
-           urls.addAll(extractCrls(certificate));
+            urls.addAll(extractCrls(certificate));
         }
         return urls;
     }

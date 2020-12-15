@@ -17,21 +17,19 @@
 
 package org.eblocker.server.http.controller.impl;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.http.service.DynDnsService;
 import io.netty.buffer.ByteBuf;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
+import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
+import org.eblocker.server.common.openvpn.server.VpnServerStatus;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.DnsService;
+import org.eblocker.server.http.service.DynDnsService;
+import org.eblocker.server.http.service.OpenVpnServerService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,15 +37,17 @@ import org.mockito.Mockito;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
-import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
-import org.eblocker.server.common.openvpn.server.VpnServerStatus;
-import org.eblocker.server.common.squid.SquidConfigController;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.DnsService;
-import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.server.http.utils.NormalizationUtils;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class OpenVpnServerControllerImplTest {
     private static final String registrationEblockerName = "my eBlocker (the white cube)";
@@ -435,25 +435,25 @@ public class OpenVpnServerControllerImplTest {
         assertFilenameNormalization(
                 "attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.ovpn\"", "¹²³¼½¬{[]}");
     }
-    
+
     private void assertFilenameNormalization(String expectedContentDisposition, String deviceName) throws IOException {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
-        
+
         Device device = Mockito.mock(Device.class);
         Mockito.when(device.getId()).thenReturn(deviceId);
         Mockito.when(device.isEblockerMobileEnabled()).thenReturn(true);
         Mockito.when(device.getName()).thenReturn(deviceName);
         Mockito.when(deviceService.getDeviceById(deviceId)).thenReturn(device);
         Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS))
-        .thenReturn("test".getBytes());
+                .thenReturn("test".getBytes());
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.WINDOWS.toString());
-        
+
         controller.downloadClientConf(request, response);
-        
+
         assertEquals(expectedContentDisposition, response.getHeader("Content-Disposition"));
     }
-    
+
     @Test
     public void testSettingPrivateNetworkAccessAllowed() throws IOException {
         Request request = Mockito.mock(Request.class);

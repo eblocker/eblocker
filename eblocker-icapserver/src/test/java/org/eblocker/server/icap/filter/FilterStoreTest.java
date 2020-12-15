@@ -31,25 +31,25 @@ import static org.junit.Assert.assertNotEquals;
 
 public class FilterStoreTest {
 
-	@Test
-	public void test() {
-		FilterDomainContainer container = new SynchronousLearningFilter(true);
-		FilterStore store = new FilterStore(container);
-		store.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, "to-be-removed")));
+    @Test
+    public void test() {
+        FilterDomainContainer container = new SynchronousLearningFilter(true);
+        FilterStore store = new FilterStore(container);
+        store.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, "to-be-removed")));
 
-		FilterDomainContainer container2 = new SynchronousLearningFilter(true);
-		FilterStore store2 = new FilterStore(container2);
+        FilterDomainContainer container2 = new SynchronousLearningFilter(true);
+        FilterStore store2 = new FilterStore(container2);
         store2.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, "to-be-removed")));
 
-		assertEquals(store, store2);
+        assertEquals(store, store2);
 
         store.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, "newly-added")));
-		createFilters(store, "newly-added");
+        createFilters(store, "newly-added");
 
-		assertNotEquals(store, store2);
-	}
+        assertNotEquals(store, store2);
+    }
 
-	@Test
+    @Test
     public void testRemovingLearnedFilter() {
         FilterDomainContainer container = new SynchronousLearningFilter(true);
         FilterStore store = new FilterStore(container);
@@ -65,7 +65,7 @@ public class FilterStoreTest {
 
     @Test
     public void testUpdateLearnedFilter() {
-	    Filter originalFilter = createUrlFilter(StringMatchType.CONTAINS, "blah");
+        Filter originalFilter = createUrlFilter(StringMatchType.CONTAINS, "blah");
         Filter updatedFilter = createUrlFilter(StringMatchType.CONTAINS, "blah");
         FilterDomainContainer container = new SynchronousLearningFilter(true);
         FilterStore store = new FilterStore(container);
@@ -83,21 +83,21 @@ public class FilterStoreTest {
         assertEquals(updatedFilter, result.getDecider());
     }
 
-	@SuppressWarnings("unused")
-	private void createFilters(FilterStore store, String definition) {
-		store.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, definition)));
-	}
+    @SuppressWarnings("unused")
+    private void createFilters(FilterStore store, String definition) {
+        store.update(Collections.singletonList(createUrlFilter(StringMatchType.CONTAINS, definition)));
+    }
 
     private Filter createUrlFilter(StringMatchType matchType, String matchString) {
         return UrlFilterFactory.getInstance()
-            .setStringMatchType(matchType)
-            .setMatchString(matchString)
-            .setType(FilterType.BLOCK)
-            .setDefinition("definition::"+matchString)
-            .setDomain(null)
-            .setPriority(FilterPriority.HIGH)
-            .setRedirectParam("redirectUrl")
-            .build();
-	}
+                .setStringMatchType(matchType)
+                .setMatchString(matchString)
+                .setType(FilterType.BLOCK)
+                .setDefinition("definition::" + matchString)
+                .setDomain(null)
+                .setPriority(FilterPriority.HIGH)
+                .setRedirectParam("redirectUrl")
+                .build();
+    }
 
 }

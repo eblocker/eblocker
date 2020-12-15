@@ -16,9 +16,16 @@
  */
 package org.eblocker.server.app;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.ProvisionException;
+import com.google.inject.name.Names;
+import com.google.inject.spi.Message;
 import org.eblocker.server.common.EblockerModule;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.JedisConsistencyCheck;
+import org.eblocker.server.common.data.RedisBackupService;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.migrations.Migrations;
@@ -32,6 +39,8 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemServiceIndex;
 import org.eblocker.server.common.startup.SubSystemShutdown;
+import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
 import org.eblocker.server.http.controller.AuthenticationController;
@@ -39,9 +48,9 @@ import org.eblocker.server.http.controller.BlockerController;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
 import org.eblocker.server.http.controller.ConnectionCheckController;
 import org.eblocker.server.http.controller.ControlBarController;
+import org.eblocker.server.http.controller.CustomDomainFilterConfigController;
 import org.eblocker.server.http.controller.CustomerInfoController;
 import org.eblocker.server.http.controller.DashboardCardController;
-import org.eblocker.server.http.controller.CustomDomainFilterConfigController;
 import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
@@ -69,9 +78,9 @@ import org.eblocker.server.http.controller.RecordingController;
 import org.eblocker.server.http.controller.RedirectController;
 import org.eblocker.server.http.controller.ReminderController;
 import org.eblocker.server.http.controller.SSLController;
-import org.eblocker.server.http.controller.SplashController;
 import org.eblocker.server.http.controller.SettingsController;
 import org.eblocker.server.http.controller.SetupWizardController;
+import org.eblocker.server.http.controller.SplashController;
 import org.eblocker.server.http.controller.TasksController;
 import org.eblocker.server.http.controller.TimestampController;
 import org.eblocker.server.http.controller.TimezoneController;
@@ -87,9 +96,9 @@ import org.eblocker.server.http.controller.impl.BlockerControllerImpl;
 import org.eblocker.server.http.controller.impl.ConfigurationBackupControllerImpl;
 import org.eblocker.server.http.controller.impl.ConnectionCheckControllerImpl;
 import org.eblocker.server.http.controller.impl.ControlBarControllerImpl;
+import org.eblocker.server.http.controller.impl.CustomDomainFilterConfigControllerImpl;
 import org.eblocker.server.http.controller.impl.CustomerInfoControllerImpl;
 import org.eblocker.server.http.controller.impl.DashboardCardControllerImpl;
-import org.eblocker.server.http.controller.impl.CustomDomainFilterConfigControllerImpl;
 import org.eblocker.server.http.controller.impl.DeviceControllerImpl;
 import org.eblocker.server.http.controller.impl.DeviceRegistrationControllerImpl;
 import org.eblocker.server.http.controller.impl.DnsControllerImpl;
@@ -117,9 +126,9 @@ import org.eblocker.server.http.controller.impl.RecordingControllerImpl;
 import org.eblocker.server.http.controller.impl.RedirectControllerImpl;
 import org.eblocker.server.http.controller.impl.ReminderControllerImpl;
 import org.eblocker.server.http.controller.impl.SSLControllerImpl;
-import org.eblocker.server.http.controller.impl.SplashControllerImpl;
 import org.eblocker.server.http.controller.impl.SettingsControllerImpl;
 import org.eblocker.server.http.controller.impl.SetupWizardControllerImpl;
+import org.eblocker.server.http.controller.impl.SplashControllerImpl;
 import org.eblocker.server.http.controller.impl.TasksControllerImpl;
 import org.eblocker.server.http.controller.impl.TimestampControllerImpl;
 import org.eblocker.server.http.controller.impl.TimezoneControllerImpl;
@@ -131,15 +140,6 @@ import org.eblocker.server.http.controller.impl.UserControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
-import org.eblocker.server.common.data.RedisBackupService;
-import org.eblocker.server.common.status.StartupStatusReporter;
-import org.eblocker.server.common.update.SystemUpdater;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.ProvisionException;
-import com.google.inject.name.Names;
-import com.google.inject.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -248,16 +248,16 @@ public class EblockerServerApp {
         statusReporter.consoleStarted();
 
         systemStatusService
-            .starting(SubSystem.HTTP_SERVER)
-            .starting(SubSystem.HTTPS_SERVER)
-            .starting(SubSystem.SERVICES)
-            .starting(SubSystem.REST_SERVER)
-            .starting(SubSystem.DATABASE_CLIENT)
-            .starting(SubSystem.EVENT_LISTENER)
-            .starting(SubSystem.BACKGROUND_TASKS)
-            .starting(SubSystem.NETWORK_STATE_MACHINE)
-            .starting(SubSystem.ICAP_SERVER)
-            .starting(SubSystem.EBLOCKER_CORE);
+                .starting(SubSystem.HTTP_SERVER)
+                .starting(SubSystem.HTTPS_SERVER)
+                .starting(SubSystem.SERVICES)
+                .starting(SubSystem.REST_SERVER)
+                .starting(SubSystem.DATABASE_CLIENT)
+                .starting(SubSystem.EVENT_LISTENER)
+                .starting(SubSystem.BACKGROUND_TASKS)
+                .starting(SubSystem.NETWORK_STATE_MACHINE)
+                .starting(SubSystem.ICAP_SERVER)
+                .starting(SubSystem.EBLOCKER_CORE);
     }
 
     private void startHttpServer() {
@@ -376,7 +376,7 @@ public class EblockerServerApp {
 
     private void startServices() {
         STATUS.info("Starting internal services...");
-        try{
+        try {
             doStartServices();
             systemStatusService.ok(SubSystem.SERVICES);
         } catch (Exception e) {
@@ -421,7 +421,7 @@ public class EblockerServerApp {
             ProvisionException pe = (ProvisionException) e;
             Optional<Throwable> o = pe.getErrorMessages().stream().filter(m -> m.getCause() instanceof StartupContractViolation).map(Message::getCause).findAny();
             if (o.isPresent()) {
-                throw (StartupContractViolation)o.get();
+                throw (StartupContractViolation) o.get();
             }
         }
     }
@@ -538,32 +538,32 @@ public class EblockerServerApp {
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         Collection<Class<?>> serviceClasses = subSystemServicesIndex.getRegisteredServices(subSystem);
         Map<Integer, List<Class<?>>> serviceClassesByPriority = serviceClasses.stream()
-            .collect(Collectors.groupingBy(c -> c.getAnnotation(SubSystemService.class).initPriority()));
+                .collect(Collectors.groupingBy(c -> c.getAnnotation(SubSystemService.class).initPriority()));
 
         serviceClassesByPriority.keySet().stream().sorted().forEach(priority -> {
             LOG.info("Starting priority: {} classes: {}", priority, serviceClassesByPriority.get(priority));
             List<Future> futures = serviceClassesByPriority.get(priority)
-                .stream()
-                .map(c -> executor.submit(() -> {
-                    LOG.debug("get instance of {}", c);
-                    Object instance = injector.getInstance(c);
+                    .stream()
+                    .map(c -> executor.submit(() -> {
+                        LOG.debug("get instance of {}", c);
+                        Object instance = injector.getInstance(c);
 
-                    List<Method> initMethods = getDeclaredMethodsWithAnnotation(c, SubSystemInit.class);
-                    initMethods.stream().forEach(method -> {
-                        LOG.debug("calling subsystem init method: {} on: {}", method.getName(),
-                            instance.getClass().getName());
-                        long start = System.currentTimeMillis();
-                        callMethod(subSystem, instance, method);
-                        long elapsed = System.currentTimeMillis() - start;
-                        STATUS.info("{}/{}/{} executed in {}ms", subSystem, instance.getClass().getSuperclass().getSimpleName(), method.getName(), elapsed);
-                    });
+                        List<Method> initMethods = getDeclaredMethodsWithAnnotation(c, SubSystemInit.class);
+                        initMethods.stream().forEach(method -> {
+                            LOG.debug("calling subsystem init method: {} on: {}", method.getName(),
+                                    instance.getClass().getName());
+                            long start = System.currentTimeMillis();
+                            callMethod(subSystem, instance, method);
+                            long elapsed = System.currentTimeMillis() - start;
+                            STATUS.info("{}/{}/{} executed in {}ms", subSystem, instance.getClass().getSuperclass().getSimpleName(), method.getName(), elapsed);
+                        });
 
-                    List<Method> shutdownMethods = getDeclaredMethodsWithAnnotation(c, SubSystemShutdown.class);
-                    if (!shutdownMethods.isEmpty()) {
-                        Runtime.getRuntime().addShutdownHook(
-                            new Thread(() -> shutdownMethods.forEach(method -> callMethod(subSystem, instance, method))));
-                    }
-                })).collect(Collectors.toList());
+                        List<Method> shutdownMethods = getDeclaredMethodsWithAnnotation(c, SubSystemShutdown.class);
+                        if (!shutdownMethods.isEmpty()) {
+                            Runtime.getRuntime().addShutdownHook(
+                                    new Thread(() -> shutdownMethods.forEach(method -> callMethod(subSystem, instance, method))));
+                        }
+                    })).collect(Collectors.toList());
 
             futures.forEach(future -> {
                 try {
@@ -581,7 +581,7 @@ public class EblockerServerApp {
 
     private List<Method> getDeclaredMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         List<Method> methods = new ArrayList<>();
-        for(Method method : clazz.getDeclaredMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(annotationClass)) {
                 methods.add(method);
             }

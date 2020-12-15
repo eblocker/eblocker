@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.eblocker.server.common.util.ByteArrays;
 import com.google.common.base.Charsets;
 import com.google.common.math.IntMath;
 import org.apache.commons.io.IOUtils;
+import org.eblocker.server.common.util.ByteArrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,10 +101,10 @@ public class HashFileFilter implements DomainFilter<byte[]> {
     @Override
     public Stream<byte[]> getDomains() {
         return Stream
-            .iterate(0, i -> i + 1)
-            .limit(buckets.length)
-            .map(this::readDomains)
-            .flatMap(List::stream);
+                .iterate(0, i -> i + 1)
+                .limit(buckets.length)
+                .map(this::readDomains)
+                .flatMap(List::stream);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         byte[] buffer = readBucket(bucket);
 
         List<byte[]> domains = new ArrayList<>();
-        for(int i = 0; i < buffer.length; i += hashLength) {
+        for (int i = 0; i < buffer.length; i += hashLength) {
             domains.add(Arrays.copyOfRange(buffer, i, i + hashLength));
         }
         return domains;
@@ -133,7 +133,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         long offset = buckets[bucket];
         long offsetNextBucket = bucket + 1 < buckets.length ? buckets[bucket + 1] : fileSize;
         long length = offsetNextBucket - offset;
-        byte[] buffer = new byte[(int)length];
+        byte[] buffer = new byte[(int) length];
 
         try (FileInputStream fis = new FileInputStream(storagePath.toFile())) {
             fis.skip(offset);
@@ -148,7 +148,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
     private boolean findBucket(int bucket, byte[] search) {
         byte[] buffer = readBucket(bucket);
 
-        for(int i = 0; i < buffer.length; i += hashLength) {
+        for (int i = 0; i < buffer.length; i += hashLength) {
             int cmp = ByteArrays.compare(hashLength, i, buffer, search);
             if (cmp == 0) {
                 return true;
@@ -164,7 +164,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         int bits = IntMath.log2(buckets.length, RoundingMode.UNNECESSARY);
 
         int bucket = 0;
-        for(int i = 0; i < bits; ++i) {
+        for (int i = 0; i < bits; ++i) {
             bucket <<= 1;
             bucket |= (hash[i / 8] >> 7 - i % 8) & 0x01;
         }
@@ -174,8 +174,8 @@ public class HashFileFilter implements DomainFilter<byte[]> {
 
     private void initStorageFile(Collection<byte[]> domains) throws IOException {
         Map<Integer, List<byte[]>> hashes = domains.stream()
-            .sorted(ByteArrays::compare)
-            .collect(Collectors.groupingBy(this::getBucket));
+                .sorted(ByteArrays::compare)
+                .collect(Collectors.groupingBy(this::getBucket));
 
         try (OutputStream out = Files.newOutputStream(storagePath)) {
             writeFilter(out, name, hashes);
@@ -209,7 +209,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         header.putShort((short) headerName.length);
         header.putShort((short) headerHashFunctionName.length);
         header.putInt(size);
-        header.putShort((short)hashLength);
+        header.putShort((short) hashLength);
         header.putInt(buckets.length);
         header.put(headerName);
         header.put(headerHashFunctionName);

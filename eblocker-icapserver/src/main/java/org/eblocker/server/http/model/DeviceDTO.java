@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.http.model;
 
-import org.eblocker.server.common.data.FilterMode;
-import org.eblocker.server.common.data.UserProfileModule;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.data.FilterMode;
+import org.eblocker.server.common.data.UserProfileModule;
 
 import java.util.List;
 
@@ -87,11 +87,19 @@ public class DeviceDTO {
         return effectiveUserProfile;
     }
 
-    public FilterMode getFilterMode() { return this.filterMode; }
+    public FilterMode getFilterMode() {
+        return this.filterMode;
+    }
 
-    public boolean getFilterPlugAndPlayAdsEnabled () { return this.filterPlugAndPlayAdsEnabled; }
+    public boolean getFilterPlugAndPlayAdsEnabled() {
+        return this.filterPlugAndPlayAdsEnabled;
+    }
 
-    public boolean getFilterPlugAndPlayTrackersEnabled () { return this.filterPlugAndPlayTrackersEnabled; }
+    public boolean getFilterPlugAndPlayTrackersEnabled() {
+        return this.filterPlugAndPlayTrackersEnabled;
+    }
 
-    public boolean isSslEnabled () { return this.sslEnabled; }
+    public boolean isSslEnabled() {
+        return this.sslEnabled;
+    }
 }

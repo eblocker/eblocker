@@ -20,23 +20,23 @@ package org.eblocker.server.common.network;
  * The type of an ARP packet. Only requests and responses are supported.
  */
 public enum ArpMessageType {
-	ARP_REQUEST(1), ARP_RESPONSE(2);
-	
-	private int code;
+    ARP_REQUEST(1), ARP_RESPONSE(2);
 
-	private ArpMessageType(int code) {
-		this.code = code;
-	}
-	
-	public int getCode() {
-		return code;
-	}
+    private int code;
 
-	public static boolean isRequest(int operation) {
-		return operation == ARP_REQUEST.code;
-	}
+    private ArpMessageType(int code) {
+        this.code = code;
+    }
 
-	public static boolean isResponse(int operation) {
-		return operation == ARP_RESPONSE.code;
-	}
+    public int getCode() {
+        return code;
+    }
+
+    public static boolean isRequest(int operation) {
+        return operation == ARP_REQUEST.code;
+    }
+
+    public static boolean isResponse(int operation) {
+        return operation == ARP_RESPONSE.code;
+    }
 }

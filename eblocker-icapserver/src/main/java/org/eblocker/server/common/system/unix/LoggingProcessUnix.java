@@ -16,27 +16,27 @@
  */
 package org.eblocker.server.common.system.unix;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.Executor;
-
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.system.LoggingProcess;
 
+import java.lang.reflect.Field;
+import java.util.concurrent.Executor;
+
 public class LoggingProcessUnix extends LoggingProcess {
 
-	public LoggingProcessUnix(String name, Executor executor) {
-		super(name, executor);
-	}
+    public LoggingProcessUnix(String name, Executor executor) {
+        super(name, executor);
+    }
 
-	@Override
-	public int getPid() {
-		try {
-			Field f = process.getClass().getDeclaredField("pid");
-			f.setAccessible(true);
-			return f.getInt(process);
-		} catch (Exception e) {
-			throw new EblockerException("Could not get PID of process named '" + name + "'. Not running on Unix?", e);
-		}
-	}
+    @Override
+    public int getPid() {
+        try {
+            Field f = process.getClass().getDeclaredField("pid");
+            f.setAccessible(true);
+            return f.getInt(process);
+        } catch (Exception e) {
+            throw new EblockerException("Could not get PID of process named '" + name + "'. Not running on Unix?", e);
+        }
+    }
 
 }

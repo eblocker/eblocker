@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.http.controller.CustomDomainFilterConfigController;
@@ -23,8 +25,6 @@ import org.eblocker.server.http.model.CustomDomainFilterConfig;
 import org.eblocker.server.http.service.CustomDomainFilterConfigService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.NotFoundException;
@@ -60,7 +60,7 @@ public class CustomDomainFilterConfigControllerImpl implements CustomDomainFilte
         customDomainFilterConfig.setBlacklistedDomains(customDomainFilterConfig.getBlacklistedDomains().stream().map(this::mapToHostname).collect(Collectors.toSet()));
         customDomainFilterConfig.setWhitelistedDomains(customDomainFilterConfig.getWhitelistedDomains().stream().map(this::mapToHostname).collect(Collectors.toSet()));
         return customDomainFilterConfigService
-            .setCustomDomainFilterConfig(device.getOperatingUser(), customDomainFilterConfig);
+                .setCustomDomainFilterConfig(device.getOperatingUser(), customDomainFilterConfig);
     }
 
     private String mapToHostname(String hostnameOrUrl) {

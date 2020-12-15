@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.common.collect.Sets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserProfileModule;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,6 @@ public class SchemaMigrationVersion36Test {
         migration = new SchemaMigrationVersion36(dataSource);
     }
 
-
     @Test
     public void getSourceVersion() {
         Assert.assertEquals("35", migration.getSourceVersion());
@@ -52,10 +51,10 @@ public class SchemaMigrationVersion36Test {
     @Test
     public void migrate() {
         List<UserProfileModule> profiles = Arrays.asList(
-            createMockProfile(0),
-            createMockProfile(1, 0),
-            createMockProfile(2, 0, 1),
-            createMockProfile(3, 1)
+                createMockProfile(0),
+                createMockProfile(1, 0),
+                createMockProfile(2, 0, 1),
+                createMockProfile(3, 1)
         );
         Mockito.when(dataSource.getAll(UserProfileModule.class)).thenReturn(profiles);
 

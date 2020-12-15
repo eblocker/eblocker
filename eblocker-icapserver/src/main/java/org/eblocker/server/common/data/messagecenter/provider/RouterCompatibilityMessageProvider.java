@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
 
 import java.util.Collections;
 import java.util.Map;

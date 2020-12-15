@@ -23,15 +23,15 @@ public class ByteArraysTest {
 
     @Test
     public void compare() {
-        Assert.assertEquals(-1, ByteArrays.compare(new byte[] { 4, 5, 6 }, new byte[] { 1, 2, 3, 4 }));
-        Assert.assertEquals(1, ByteArrays.compare(new byte[] { 1, 2, 3, 4 }, new byte[] { 4, 5, 6 } ));
-        Assert.assertEquals(-1, ByteArrays.compare(new byte[] { 3, 5, 6 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(-1, ByteArrays.compare(new byte[] { 4, 4, 6 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(-1, ByteArrays.compare(new byte[] { 4, 5, 5 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(0, ByteArrays.compare(new byte[] { 4, 5, 6 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(1, ByteArrays.compare(new byte[] { 4, 5, 7 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(1, ByteArrays.compare(new byte[] { 4, 7, 6 }, new byte[] { 4, 5, 6 }));
-        Assert.assertEquals(1, ByteArrays.compare(new byte[] { 5, 5, 6 }, new byte[] { 4, 5, 6 }));
+        Assert.assertEquals(-1, ByteArrays.compare(new byte[]{ 4, 5, 6 }, new byte[]{ 1, 2, 3, 4 }));
+        Assert.assertEquals(1, ByteArrays.compare(new byte[]{ 1, 2, 3, 4 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(-1, ByteArrays.compare(new byte[]{ 3, 5, 6 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(-1, ByteArrays.compare(new byte[]{ 4, 4, 6 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(-1, ByteArrays.compare(new byte[]{ 4, 5, 5 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(0, ByteArrays.compare(new byte[]{ 4, 5, 6 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(1, ByteArrays.compare(new byte[]{ 4, 5, 7 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(1, ByteArrays.compare(new byte[]{ 4, 7, 6 }, new byte[]{ 4, 5, 6 }));
+        Assert.assertEquals(1, ByteArrays.compare(new byte[]{ 5, 5, 6 }, new byte[]{ 4, 5, 6 }));
     }
 
     @Test
@@ -57,18 +57,18 @@ public class ByteArraysTest {
 
     @Test
     public void keys() {
-        ByteArrays.Key a = new ByteArrays.Key(new byte[] { 1, 2, 3, 4 });
-        ByteArrays.Key b = new ByteArrays.Key(new byte[] { 4, 5, 6 });
-        ByteArrays.Key c = new ByteArrays.Key(new byte[] { 7, 8, 9 });
+        ByteArrays.Key a = new ByteArrays.Key(new byte[]{ 1, 2, 3, 4 });
+        ByteArrays.Key b = new ByteArrays.Key(new byte[]{ 4, 5, 6 });
+        ByteArrays.Key c = new ByteArrays.Key(new byte[]{ 7, 8, 9 });
 
-        Assert.assertEquals(new ByteArrays.Key(new byte[] { 1, 2, 3, 4 }), a);
+        Assert.assertEquals(new ByteArrays.Key(new byte[]{ 1, 2, 3, 4 }), a);
         Assert.assertEquals(a, a);
         Assert.assertNotEquals(a, b);
         Assert.assertNotEquals(a, c);
-        Assert.assertEquals(new ByteArrays.Key(new byte[] { 4, 5, 6 }), b);
+        Assert.assertEquals(new ByteArrays.Key(new byte[]{ 4, 5, 6 }), b);
         Assert.assertEquals(b, b);
         Assert.assertNotEquals(b, c);
-        Assert.assertEquals(new ByteArrays.Key(new byte[] { 7, 8, 9 }), c);
+        Assert.assertEquals(new ByteArrays.Key(new byte[]{ 7, 8, 9 }), c);
         Assert.assertEquals(c, c);
 
         Assert.assertNotEquals(a.hashCode(), b.hashCode());

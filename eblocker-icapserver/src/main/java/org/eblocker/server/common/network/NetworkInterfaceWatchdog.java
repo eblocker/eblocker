@@ -16,23 +16,22 @@
  */
 package org.eblocker.server.common.network;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
-import com.google.inject.Inject;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
 public class NetworkInterfaceWatchdog implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(NetworkInterfaceWatchdog.class);
-    
+
     private NetworkInterfaceWrapper networkInterface;
 
     enum NetworkState {
@@ -42,7 +41,7 @@ public class NetworkInterfaceWatchdog implements Runnable {
     private NetworkState networkState;
     private DataSource dataSource;
     private EventLogger eventLogger;
-    
+
     @Inject
     public NetworkInterfaceWatchdog(NetworkInterfaceWrapper networkInterface, DataSource dataSource, EventLogger eventLogger) {
         this.networkInterface = networkInterface;
@@ -55,7 +54,7 @@ public class NetworkInterfaceWatchdog implements Runnable {
     public void init() {
         checkCleanShutdown();
     }
-     
+
     private void checkCleanShutdown() {
         if (dataSource.getCleanShutdownFlag() == false) {
             log.warn("The last shutdown was not clean!");
@@ -63,7 +62,7 @@ public class NetworkInterfaceWatchdog implements Runnable {
         }
 
         dataSource.setCleanShutdownFlag(false);
-        
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -71,15 +70,15 @@ public class NetworkInterfaceWatchdog implements Runnable {
             }
         });
     }
-    
+
     @Override
     public void run() {
         NetworkState newState = networkInterface.isUp() ? NetworkState.UP : NetworkState.DOWN;
-        
+
         if (newState != networkState) {
             if (networkState != NetworkState.INITIAL) {
                 log.warn("Network state changed: {} -> {}", networkState, newState);
-            
+
                 if (newState == NetworkState.DOWN) {
                     eventLogger.log(Events.networkInterfaceDown());
                 } else {

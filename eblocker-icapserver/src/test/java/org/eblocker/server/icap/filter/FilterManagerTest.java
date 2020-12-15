@@ -16,7 +16,25 @@
  */
 package org.eblocker.server.icap.filter;
 
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.CryptoService;
+import org.eblocker.crypto.CryptoServiceFactory;
+import org.eblocker.crypto.json.JSONCryptoHandler;
+import org.eblocker.crypto.keys.SystemKey;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.transaction.Decision;
+import org.eblocker.server.common.transaction.TransactionContext;
+import org.eblocker.server.common.util.FileUtils;
+import org.eblocker.server.icap.filter.learning.AsynchronousLearningFilter;
+import org.eblocker.server.icap.filter.learning.NotLearningFilter;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,26 +46,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.transaction.TransactionContext;
-import org.eblocker.server.common.util.FileUtils;
-import org.eblocker.server.icap.filter.learning.AsynchronousLearningFilter;
-import org.eblocker.server.icap.filter.learning.NotLearningFilter;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.CryptoService;
-import org.eblocker.crypto.CryptoServiceFactory;
-import org.eblocker.crypto.json.JSONCryptoHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.eblocker.server.common.transaction.Decision;
-import org.eblocker.crypto.keys.SystemKey;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
 
 public class FilterManagerTest {
     private static final String FILTER_NAME = "test-filter";
@@ -85,7 +84,7 @@ public class FilterManagerTest {
         resourceFile = Files.createTempFile(tempFilePrefix + "-resource", ".txt");
 
         defaultConfigurations = new ArrayList<>();
-        defaultConfigurations.add(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, true, 0, new String[] { resourceFile.toString() }, FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST, false, new String[0], true));
+        defaultConfigurations.add(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, true, 0, new String[]{ resourceFile.toString() }, FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST, false, new String[0], true));
         defaultConfigurationsPath = Files.createTempFile(FilterManager.class.getSimpleName() + "-default", ".json");
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), defaultConfigurations);
     }
@@ -113,7 +112,8 @@ public class FilterManagerTest {
         setupStoredConfig(defaultConfigurations);
 
         // create new default configuration on disk
-        List<FilterStoreConfiguration> newDefaultConfigurations = Collections.singletonList(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, true, 1, new String[] { resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, false, new String[0], true));
+        List<FilterStoreConfiguration> newDefaultConfigurations = Collections
+                .singletonList(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, true, 1, new String[]{ resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, false, new String[0], true));
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), newDefaultConfigurations);
 
         FilterManager manager = createManager();
@@ -163,7 +163,8 @@ public class FilterManagerTest {
     public void testAddFilter() throws IOException {
         FilterManager manager = createManager();
         writeEasyListToCache();
-        FilterStoreConfiguration newConfiguration = new FilterStoreConfiguration(null, "test", Category.ADS, false, System.currentTimeMillis(), new String[] { resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true);
+        FilterStoreConfiguration newConfiguration = new FilterStoreConfiguration(null, "test", Category.ADS, false, System.currentTimeMillis(), new String[]{ resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true,
+                new String[0], true);
         FilterStoreConfiguration savedConfiguration = manager.addFilter(newConfiguration);
         Assert.assertNotNull(savedConfiguration.getId());
         assertEquals(newConfiguration.getName(), savedConfiguration.getName());
@@ -186,7 +187,8 @@ public class FilterManagerTest {
     public void testRemoveFilter() throws IOException, CryptoException {
         // create single non-default config
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());
-        setupStoredConfig(new ArrayList<>(Collections.singletonList(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, false, 0, new String[] { resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true))));
+        setupStoredConfig(new ArrayList<>(
+                Collections.singletonList(new FilterStoreConfiguration(0, FILTER_NAME, Category.EBLOCKER, false, 0, new String[]{ resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.EASYLIST, true, new String[0], true))));
 
         FilterManager manager = createManager();
         Assert.assertNotNull(manager.getFilterStoreConfigurationById(0));
@@ -218,7 +220,7 @@ public class FilterManagerTest {
 
     private void setupStoredConfig(List<FilterStoreConfiguration> configurations) throws IOException, CryptoException {
         Mockito.when(dataSource.getAll(FilterStoreConfiguration.class)).thenReturn(configurations);
-        for(FilterStoreConfiguration configuration : configurations) {
+        for (FilterStoreConfiguration configuration : configurations) {
             Path cachedPath = Files.createFile(cacheDirectory.resolve(configuration.getId() + FILE_SUFFIX));
             try (OutputStream out = Files.newOutputStream(cachedPath)) {
                 CryptoService cryptoService = CryptoServiceFactory.getInstance().setKey(systemKey.get()).build();

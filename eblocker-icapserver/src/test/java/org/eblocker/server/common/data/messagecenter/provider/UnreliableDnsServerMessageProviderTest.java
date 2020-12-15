@@ -65,7 +65,7 @@ public class UnreliableDnsServerMessageProviderTest {
     @Test
     public void testUnreliableDnsServerNoMessageCreation() {
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.MEDIUM));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.MEDIUM));
 
         Map<Integer, MessageContainer> container = new HashMap<>();
         provider.doUpdate(container);
@@ -78,7 +78,7 @@ public class UnreliableDnsServerMessageProviderTest {
     public void testUnreliableDnsServerDnsDisabled() {
         Mockito.when(dnsServer.isEnabled()).thenReturn(false);
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
 
         Map<Integer, MessageContainer> container = new HashMap<>();
         provider.doUpdate(container);
@@ -90,7 +90,7 @@ public class UnreliableDnsServerMessageProviderTest {
     @Test
     public void testUnreliableDnsServerMessageCreation() {
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
 
         Map<Integer, MessageContainer> container = new HashMap<>();
         provider.doUpdate(container);
@@ -110,7 +110,7 @@ public class UnreliableDnsServerMessageProviderTest {
     @Test
     public void testUnreliableDnsServerMessageUpdateUnchanged() {
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
 
         // first update should insert a new message
         Map<Integer, MessageContainer> container = new HashMap<>();
@@ -140,7 +140,7 @@ public class UnreliableDnsServerMessageProviderTest {
     @Test
     public void testUnreliableDnsServerMessageUpdateChanged() {
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
 
         // first update should insert a new message
         Map<Integer, MessageContainer> container = new HashMap<>();
@@ -157,7 +157,7 @@ public class UnreliableDnsServerMessageProviderTest {
         // run update again, message must be recreated
         clock.setZonedDateTime(ZonedDateTime.now().plusSeconds(updateInterval));
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.4.4", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.4.4", DnsRating.BAD));
 
         provider.doUpdate(container);
 
@@ -176,7 +176,7 @@ public class UnreliableDnsServerMessageProviderTest {
     @Test
     public void testUnreliableDnsServerMessageRemoval() {
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
+                .thenReturn(createResolverStats("8.8.8.8", DnsRating.BAD));
 
         // first update should insert a new message
         Map<Integer, MessageContainer> container = new HashMap<>();
@@ -193,7 +193,7 @@ public class UnreliableDnsServerMessageProviderTest {
         // run update again, message must be removed
         clock.setZonedDateTime(ZonedDateTime.now().plusSeconds(updateInterval));
         Mockito.when(statisticsService.getResolverStatistics(Mockito.eq("custom"), Mockito.any(Instant.class)))
-            .thenReturn(new ResolverStats(null, null, Collections.emptyList()));
+                .thenReturn(new ResolverStats(null, null, Collections.emptyList()));
 
         provider.doUpdate(container);
 

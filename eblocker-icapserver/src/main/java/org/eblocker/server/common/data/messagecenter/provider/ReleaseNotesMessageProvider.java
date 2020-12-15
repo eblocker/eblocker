@@ -16,21 +16,20 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.VersionInfo;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.http.service.VersionService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 
 @Singleton
 public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
@@ -127,23 +126,23 @@ public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
         // Create new release note message
         if (isMajorOrMinorChange) {
             return createMessage(MessageProviderMessageId.MESSAGE_RELEASE_NOTES_ID.getId(),
-                MESSAGE_RELEASE_NOTES_TITLE,
-                MESSAGE_RELEASE_NOTES_CONTENT,
-                MESSAGE_RELEASE_NOTES_LABEL,
-                MESSAGE_RELEASE_NOTES_URL,
-                context,
-                true,
-                MessageSeverity.INFO
+                    MESSAGE_RELEASE_NOTES_TITLE,
+                    MESSAGE_RELEASE_NOTES_CONTENT,
+                    MESSAGE_RELEASE_NOTES_LABEL,
+                    MESSAGE_RELEASE_NOTES_URL,
+                    context,
+                    true,
+                    MessageSeverity.INFO
             );
         } else {
             return createMessage(MessageProviderMessageId.MESSAGE_PATCH_RELEASE_NOTES_ID.getId(),
-                MESSAGE_PATCH_RELEASE_NOTES_TITLE,
-                MESSAGE_PATCH_RELEASE_NOTES_CONTENT,
-                MESSAGE_PATCH_RELEASE_NOTES_LABEL,
-                MESSAGE_PATCH_RELEASE_NOTES_URL,
-                context,
-                true,
-                MessageSeverity.INFO
+                    MESSAGE_PATCH_RELEASE_NOTES_TITLE,
+                    MESSAGE_PATCH_RELEASE_NOTES_CONTENT,
+                    MESSAGE_PATCH_RELEASE_NOTES_LABEL,
+                    MESSAGE_PATCH_RELEASE_NOTES_URL,
+                    context,
+                    true,
+                    MessageSeverity.INFO
             );
         }
     }
@@ -161,7 +160,7 @@ public class ReleaseNotesMessageProvider extends AbstractMessageProvider {
         String[] newVersionSegments = newVersion.split("\\.");
         return (oldVersionSegments.length >= 2 && newVersionSegments.length >= 2
                 && !(oldVersionSegments[0].equals(newVersionSegments[0])
-                        && oldVersionSegments[1].equals(newVersionSegments[1])));
+                && oldVersionSegments[1].equals(newVersionSegments[1])));
     }
 
 }

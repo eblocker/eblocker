@@ -25,8 +25,8 @@ public class ShowWelcomeFlags {
 
     @JsonCreator
     public ShowWelcomeFlags(
-        @JsonProperty("showWelcomePage") boolean showWelcomePage,
-        @JsonProperty("showBookmarkDialog") boolean showBookmarkDialog) {
+            @JsonProperty("showWelcomePage") boolean showWelcomePage,
+            @JsonProperty("showBookmarkDialog") boolean showBookmarkDialog) {
         this.showWelcomePage = showWelcomePage;
         this.showBookmarkDialog = showBookmarkDialog;
     }

@@ -86,7 +86,7 @@ public class BlockedDomainsStatisticServiceTest {
 
     @After
     public void tearDown() throws IOException {
-        if (db != null && !db.isClosed())  {
+        if (db != null && !db.isClosed()) {
             try {
                 db.close();
             } catch (Exception e) {
@@ -103,8 +103,8 @@ public class BlockedDomainsStatisticServiceTest {
         statisticService = new BlockedDomainsStatisticService(dbPath.toString(), 5, databaseLoader, deviceService, filterListsService);
         statisticService.init();
 
-        for(int i = 0; i < 4; ++i) {
-            for(int j = 0; j < 5; ++j) {
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 5; ++j) {
                 countBlockedDomain(DEVICE_ID, "blocked" + i + "-" + j + ".com", i, j + 1);
             }
         }
@@ -114,10 +114,10 @@ public class BlockedDomainsStatisticServiceTest {
         Map<Category, List<Entry>> stats = blockedDomainsStats.getStats();
         Assert.assertNotNull(stats);
         Category[] categories = { Category.ADS, Category.CUSTOM, Category.PARENTAL_CONTROL, Category.TRACKERS };
-        for(int i = 0; i < categories.length; ++i) {
+        for (int i = 0; i < categories.length; ++i) {
             Assert.assertNotNull(stats.get(categories[i]));
             Assert.assertEquals(5, stats.get(categories[i]).size());
-            for(int j = 0; j < 5; ++j) {
+            for (int j = 0; j < 5; ++j) {
                 Assert.assertEquals("blocked" + i + "-" + (4 - j) + ".com", stats.get(categories[i]).get(j).getDomain());
                 Assert.assertEquals((5 - j), stats.get(categories[i]).get(j).getCount());
             }
@@ -163,8 +163,8 @@ public class BlockedDomainsStatisticServiceTest {
         statisticService = new BlockedDomainsStatisticService(dbPath.toString(), 5, databaseLoader, deviceService, filterListsService);
         statisticService.init();
 
-        for(int i = 0; i < 10; ++i) {
-            countBlockedDomain(DEVICE_ID, "blocked" + i +".com", 0, i + 1);
+        for (int i = 0; i < 10; ++i) {
+            countBlockedDomain(DEVICE_ID, "blocked" + i + ".com", 0, i + 1);
         }
 
         BlockedDomainsStats blockedDomainsStats = statisticService.getStatsByDeviceId(DEVICE_ID);
@@ -173,7 +173,7 @@ public class BlockedDomainsStatisticServiceTest {
         Assert.assertNotNull(stats);
         Assert.assertNotNull(stats.get(Category.ADS));
         Assert.assertEquals(10, stats.get(Category.ADS).size());
-        for(int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 10; ++i) {
             Assert.assertEquals("blocked" + (9 - i) + ".com", stats.get(Category.ADS).get(i).getDomain());
             Assert.assertEquals(10 - i, stats.get(Category.ADS).get(i).getCount());
         }
@@ -185,7 +185,7 @@ public class BlockedDomainsStatisticServiceTest {
         Assert.assertTrue(db.get("001020304050:ADS") instanceof BTreeMap);
         BTreeMap<String, Integer> persistentStats = db.get("001020304050:ADS");
         Assert.assertEquals(10, persistentStats.size());
-        for(int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 10; ++i) {
             Assert.assertEquals(Integer.valueOf(10 - i), persistentStats.get("blocked" + (9 - i) + ".com"));
         }
 
@@ -196,7 +196,7 @@ public class BlockedDomainsStatisticServiceTest {
         Assert.assertNotNull(stats);
         Assert.assertNotNull(stats.get(Category.ADS));
         Assert.assertEquals(5, stats.get(Category.ADS).size());
-        for(int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 5; ++i) {
             Assert.assertEquals("blocked" + (9 - i) + ".com", stats.get(Category.ADS).get(i).getDomain());
             Assert.assertEquals(10 - i, stats.get(Category.ADS).get(i).getCount());
         }
@@ -425,15 +425,15 @@ public class BlockedDomainsStatisticServiceTest {
 
     private void createOpenDb() {
         db = DBMaker
-            .newFileDB(dbPath.toFile())
-            .cacheDisable()
-            .closeOnJvmShutdown()
-            .transactionDisable()
-            .make();
+                .newFileDB(dbPath.toFile())
+                .cacheDisable()
+                .closeOnJvmShutdown()
+                .transactionDisable()
+                .make();
     }
 
     private void countBlockedDomain(String deviceId, String domain, Integer listId, int count) {
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             statisticService.countBlockedDomain(new BlockedDomainLogEntry(deviceId, domain, listId));
         }
     }

@@ -16,19 +16,18 @@
  */
 package org.eblocker.server.common.data.events;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.eblocker.server.common.TestRedisServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import redis.clients.jedis.JedisPool;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JedisEventDataSourceTest {
     public static final int MAXIMUM_NUMBER_OF_EVENTS = 100;

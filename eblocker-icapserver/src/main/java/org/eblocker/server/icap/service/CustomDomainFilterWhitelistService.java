@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.icap.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.blacklist.CachingFilter;
 import org.eblocker.server.common.blacklist.DomainBlacklistService;
 import org.eblocker.server.common.blacklist.DomainFilter;
 import org.eblocker.server.common.blacklist.Filters;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.http.service.UserService;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

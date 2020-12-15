@@ -22,8 +22,11 @@ import org.mockito.Mockito;
 
 import java.time.ZoneId;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class SettingsServiceTest {
 
@@ -70,5 +73,5 @@ public class SettingsServiceTest {
         verify(dataSource).setTimezone(TIMEZONE_ID);
         verifyNoMoreInteractions(dataSource);
     }
-    
+
 }

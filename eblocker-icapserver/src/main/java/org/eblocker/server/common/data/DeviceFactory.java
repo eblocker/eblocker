@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.common.data;
 
+import com.google.inject.Inject;
+import org.eblocker.server.icap.resources.DefaultEblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.icap.resources.DefaultEblockerResource;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import com.google.inject.Inject;
 
 public class DeviceFactory {
     private static final Logger log = LoggerFactory.getLogger(DeviceFactory.class);
@@ -80,7 +79,7 @@ public class DeviceFactory {
 
     public String createNameForNewDevice(String hardwareAddressPrefix) {
         String vendor = macPrefix.getVendor(hardwareAddressPrefix);
-        if (vendor==null || "".equals(vendor)){
+        if (vendor == null || "".equals(vendor)) {
             // No vendor found, use "Device" instead
             if (DEFAULT_NAME_DEVICE_KEY_DE.equalsIgnoreCase(dataSource.getCurrentLanguage().getId())) {
                 vendor = DEFAULT_NAME_DEVICE_DE;
@@ -103,7 +102,7 @@ public class DeviceFactory {
         return "";
     }
 
-   private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix){
-       return disabledByDefault.getVendor(macAdressPrefix) != null;
-   }
+    private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix) {
+        return disabledByDefault.getVendor(macAdressPrefix) != null;
+    }
 }

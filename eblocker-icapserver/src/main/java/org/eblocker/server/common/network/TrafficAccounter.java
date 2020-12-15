@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.data.TrafficAccount;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +194,7 @@ public class TrafficAccounter {
 
         // remove any unreferenced lastUpdate counter
         Iterator i = lastUpdateByMac.keySet().iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             if (!countersByMac.containsKey(i.next())) {
                 i.remove();
             }
@@ -232,7 +232,7 @@ public class TrafficAccounter {
             super(message);
         }
 
-        IpTablesException(String message, Throwable cause){
+        IpTablesException(String message, Throwable cause) {
             super(message, cause);
         }
     }

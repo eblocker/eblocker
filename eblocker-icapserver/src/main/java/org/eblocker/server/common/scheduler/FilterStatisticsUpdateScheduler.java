@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.scheduler;
 
-import org.eblocker.server.common.service.FilterStatisticsService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.service.FilterStatisticsService;
 
 @Singleton
 public class FilterStatisticsUpdateScheduler extends FixedRateScheduler {

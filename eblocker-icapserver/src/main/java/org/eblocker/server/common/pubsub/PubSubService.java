@@ -20,20 +20,22 @@ package org.eblocker.server.common.pubsub;
  * A service for subscribing to and publishing messages in channels.
  */
 public interface PubSubService {
-	/**
-	 * Publish a message in a channel
-	 * @param channel
-	 * @param message
-	 */
-	void publish(String channel, String message);
-	
-	/**
-	 * Subscribe to a channel. This method never returns, so it should be run in a
-	 * background thread.
-	 * @param channel
-	 * @param subscriber
-	 */
-	void subscribeAndLoop(String channel, Subscriber subscriber);
+    /**
+     * Publish a message in a channel
+     *
+     * @param channel
+     * @param message
+     */
+    void publish(String channel, String message);
 
-	void unsubscribe(Subscriber subscriber);
+    /**
+     * Subscribe to a channel. This method never returns, so it should be run in a
+     * background thread.
+     *
+     * @param channel
+     * @param subscriber
+     */
+    void subscribeAndLoop(String channel, Subscriber subscriber);
+
+    void unsubscribe(Subscriber subscriber);
 }

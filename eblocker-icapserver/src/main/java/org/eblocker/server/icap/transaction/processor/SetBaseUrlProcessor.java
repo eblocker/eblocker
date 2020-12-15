@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
-import org.eblocker.server.icap.transaction.Transaction;
-import org.eblocker.server.icap.transaction.TransactionProcessor;
-import org.eblocker.server.common.network.BaseURLs;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.network.BaseURLs;
+import org.eblocker.server.icap.transaction.Transaction;
+import org.eblocker.server.icap.transaction.TransactionProcessor;
 
 /**
  * This processor sets the base URL (eBlocker's own URL) of the transaction,
@@ -29,19 +29,19 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class SetBaseUrlProcessor implements TransactionProcessor {
-	private BaseURLs baseUrls;
+    private BaseURLs baseUrls;
 
-	@Inject
-	public SetBaseUrlProcessor(BaseURLs baseUrls) {
-		this.baseUrls = baseUrls;
-	}
+    @Inject
+    public SetBaseUrlProcessor(BaseURLs baseUrls) {
+        this.baseUrls = baseUrls;
+    }
 
-	@Override
-	public boolean process(Transaction transaction) {
-		String targetUrl = transaction.getUrl();
-		if (targetUrl != null) {
-			transaction.setBaseUrl(baseUrls.selectURLForPage(targetUrl));
-		}
-		return true;
-	}
+    @Override
+    public boolean process(Transaction transaction) {
+        String targetUrl = transaction.getUrl();
+        if (targetUrl != null) {
+            transaction.setBaseUrl(baseUrls.selectURLForPage(targetUrl));
+        }
+        return true;
+    }
 }

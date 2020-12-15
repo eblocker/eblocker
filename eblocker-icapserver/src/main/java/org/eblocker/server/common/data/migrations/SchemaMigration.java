@@ -18,6 +18,7 @@ package org.eblocker.server.common.data.migrations;
 
 public interface SchemaMigration {
     String getSourceVersion();
+
     String getTargetVersion();
 
     void migrate();

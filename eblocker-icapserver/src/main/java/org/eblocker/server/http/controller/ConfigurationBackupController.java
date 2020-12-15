@@ -22,5 +22,6 @@ import org.restexpress.Response;
 
 public interface ConfigurationBackupController {
     public ByteBuf exportConfiguration(Request request, Response response);
+
     public void importConfiguration(Request request, Response response);
 }

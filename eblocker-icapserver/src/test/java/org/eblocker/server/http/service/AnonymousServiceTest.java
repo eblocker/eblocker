@@ -49,12 +49,12 @@ public class AnonymousServiceTest {
     @Test
     public void testInit() {
         Device[] devices = {
-            mockDevice("device:000000000000", false, false, null),
-            mockDevice("device:000000000001", false, false, 1),
-            mockDevice("device:000000000002", false, false, 2),
-            mockDevice("device:000000000010", false, true, null),
-            mockDevice("device:000000000101", true, false, 1),
-            mockDevice("device:000000000102", true, false, 2)
+                mockDevice("device:000000000000", false, false, null),
+                mockDevice("device:000000000001", false, false, 1),
+                mockDevice("device:000000000002", false, false, 2),
+                mockDevice("device:000000000010", false, true, null),
+                mockDevice("device:000000000101", true, false, 1),
+                mockDevice("device:000000000102", true, false, 2)
         };
         Mockito.when(deviceService.getDevices(false)).thenReturn(Arrays.asList(devices));
 

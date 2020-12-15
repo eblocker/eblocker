@@ -16,35 +16,35 @@
  */
 package org.eblocker.server.common.network;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
 
 /**
  * A base class for tests that write a temporary file that needs to be compared
  * to a reference file.
  */
 public class ConfigurationTestBase {
-	protected File outFile;
+    protected File outFile;
 
-	@Before
-	public void setUpTempFile() throws IOException {
-		outFile = File.createTempFile("ConfigurationTestBase", "conf");
-		outFile.deleteOnExit();
-	}
+    @Before
+    public void setUpTempFile() throws IOException {
+        outFile = File.createTempFile("ConfigurationTestBase", "conf");
+        outFile.deleteOnExit();
+    }
 
-	protected void compareOutFileWith(String resource) throws IOException {
-		String result = FileUtils.readFileToString(outFile);
-		String expected = IOUtils.toString(ClassLoader.getSystemResource(resource));
-		assertEquals(expected, result);
-	}
+    protected void compareOutFileWith(String resource) throws IOException {
+        String result = FileUtils.readFileToString(outFile);
+        String expected = IOUtils.toString(ClassLoader.getSystemResource(resource));
+        assertEquals(expected, result);
+    }
 
-	protected String getOutFilePath() {
-		return outFile.getAbsolutePath();
-	}
+    protected String getOutFilePath() {
+        return outFile.getAbsolutePath();
+    }
 }

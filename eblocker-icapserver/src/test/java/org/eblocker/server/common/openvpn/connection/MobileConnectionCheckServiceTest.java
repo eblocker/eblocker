@@ -16,13 +16,12 @@
  */
 package org.eblocker.server.common.openvpn.connection;
 
+import com.google.inject.Provider;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.upnp.UpnpManagementService;
-import com.google.inject.Provider;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,9 +55,9 @@ public class MobileConnectionCheckServiceTest {
 
         provider = Mockito.mock(Provider.class);
         Mockito.when(provider.get()).thenReturn(task);
-        
+
         upnpService = Mockito.mock(UpnpManagementService.class);
-        
+
         OpenVpnServerService openVpnServerService = Mockito.mock(OpenVpnServerService.class);
         Mockito.when(openVpnServerService.getOpenVpnTempMappedPort()).thenReturn(portNum);
 

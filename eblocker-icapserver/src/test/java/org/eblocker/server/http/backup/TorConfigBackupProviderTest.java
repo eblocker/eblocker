@@ -53,6 +53,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
         expectedCountries.add("xy");
         Mockito.verify(torController).setAllowedExitNodesCountries(expectedCountries);
     }
+
     @Test
     public void testExportImportEmptyList() throws IOException {
         // Empty list means the user has set the selection to automatic

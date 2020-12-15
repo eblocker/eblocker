@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import org.eblocker.server.common.data.DataSource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.DataSource;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

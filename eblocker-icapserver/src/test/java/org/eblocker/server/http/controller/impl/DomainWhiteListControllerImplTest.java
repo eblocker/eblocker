@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
@@ -29,7 +30,6 @@ import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,6 @@ import org.restexpress.Request;
 import org.restexpress.Response;
 
 import javax.xml.ws.Holder;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,7 +77,6 @@ public class DomainWhiteListControllerImplTest {
         Mockito.when(userService.getUserById(123)).thenReturn(user);
     }
 
-
     @Test
     public void update() {
         // setup page context
@@ -93,7 +91,7 @@ public class DomainWhiteListControllerImplTest {
         Mockito.when(request.getHeader("pageContextId")).thenReturn("0x1234");
         Mockito.when(request.getAttachment("transactionIdentifier")).thenReturn(new SessionIdentifier(IpAddress.parse("127.0.0.1"), "agent"));
         Holder<WhiteListConfigDto> dtoHolder = new Holder<>();
-        Mockito.when(request.getBodyAs(WhiteListConfigDto.class)).then(im->dtoHolder.value);
+        Mockito.when(request.getBodyAs(WhiteListConfigDto.class)).then(im -> dtoHolder.value);
 
         // enable whitelisting for ads and trackers
         dtoHolder.value = new WhiteListConfigDto("xkcd.org", true, true);

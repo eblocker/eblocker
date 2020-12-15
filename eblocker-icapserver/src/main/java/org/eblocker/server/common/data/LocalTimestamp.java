@@ -16,27 +16,27 @@
  */
 package org.eblocker.server.common.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A small wrapper for converting an Instant to a JSON object
  */
 public class LocalTimestamp {
     private Instant instant;
-    
+
     @JsonIgnore
     private LocalDateTime localDateTime;
-    
+
     public LocalTimestamp(Instant instant) {
         this.instant = instant;
         this.localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
-    
+
     /**
      * The year of the local time
      */
@@ -68,7 +68,7 @@ public class LocalTimestamp {
     public int getDayOfWeek() {
         return localDateTime.getDayOfWeek().getValue();
     }
-    
+
     /**
      * The hour of the local time
      */

@@ -16,19 +16,19 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.registration.TosContainer;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.util.HttpClient;
-import org.eblocker.registration.TosContainer;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.eblocker.server.common.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,9 +93,8 @@ public class RegistrationServiceAvailabilityCheck {
 
     /**
      * Check if the eBlocker registration service is still operated.
-     *
+     * <p>
      * Iff internet can be accessed but Terms Of Service can not be retrieved it is assumed it has ceased operation.
-     *
      */
     public synchronized boolean isRegistrationAvailable() {
         return registrationAvailable == null || Boolean.TRUE.equals(registrationAvailable);
@@ -160,9 +159,9 @@ public class RegistrationServiceAvailabilityCheck {
 
     private boolean firstMatch(List<String> source, Function<String, Callable<Boolean>> createTaskFn) {
         List<Future<Boolean>> futures = source.stream()
-            .map(createTaskFn::apply)
-            .map(executorService::submit)
-            .collect(Collectors.toList());
+                .map(createTaskFn::apply)
+                .map(executorService::submit)
+                .collect(Collectors.toList());
         return futures.stream().anyMatch(this::await);
     }
 

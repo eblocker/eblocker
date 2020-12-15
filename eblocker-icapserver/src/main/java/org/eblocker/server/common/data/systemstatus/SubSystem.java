@@ -18,7 +18,6 @@ package org.eblocker.server.common.data.systemstatus;
 
 public enum SubSystem {
 
-
     HTTP_SERVER(1000),
 
     DATABASE_CLIENT(2000),

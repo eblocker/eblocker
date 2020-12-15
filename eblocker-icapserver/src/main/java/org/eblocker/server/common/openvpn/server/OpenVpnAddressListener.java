@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.openvpn.server;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -28,8 +30,6 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.util.IpUtils;
 import org.eblocker.server.http.service.DeviceService;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,16 +88,16 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
     @SubSystemInit
     public void init() {
         deviceService.getDevices(false).stream()
-            .filter(Device::isVpnClient)
-            .forEach(device -> {
-                Optional<IpAddress> vpnIpAddress = device.getIpAddresses().stream()
-                    .filter(IpAddress::isIpv4)
-                    .filter(ip -> (IpUtils.convertBytesToIp(ip.getAddress()) & vpnSubnetNetmask) == vpnSubnetIp)
-                    .findAny();
-                if (vpnIpAddress.isPresent()) {
-                    ipAddressByDevice.put(device.getId(), vpnIpAddress.get());
-                }
-            });
+                .filter(Device::isVpnClient)
+                .forEach(device -> {
+                    Optional<IpAddress> vpnIpAddress = device.getIpAddresses().stream()
+                            .filter(IpAddress::isIpv4)
+                            .filter(ip -> (IpUtils.convertBytesToIp(ip.getAddress()) & vpnSubnetNetmask) == vpnSubnetIp)
+                            .findAny();
+                    if (vpnIpAddress.isPresent()) {
+                        ipAddressByDevice.put(device.getId(), vpnIpAddress.get());
+                    }
+                });
     }
 
     public void run() {
@@ -112,6 +112,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
      *   <li>delete IP
      * </ul>
      * The CN is equal to the device ID.
+     *
      * @see "man openvpn, option --learn-address"
      */
     @Override
@@ -153,7 +154,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
         } else {
             throw new RuntimeException("Unexpected command '" + command + "'. Why did the message pattern match?");
         }
-}
+    }
 
     private void updateIpAddress(String deviceId, String ipAddressString) {
         log.debug("OpenVpnAddressListener - updateIpAddress: Device: {}, ipAddress: {}", deviceId, ipAddressString);

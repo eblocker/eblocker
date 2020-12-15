@@ -20,13 +20,15 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.http.service.DashboardService;
-import java.util.Collections;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 public class SchemaMigrationVersion38Test {
 
@@ -43,7 +45,7 @@ public class SchemaMigrationVersion38Test {
         userMigrationService = Mockito.mock(UserMigrationService.class);
 
         dashboardService = new DashboardService(null);
-        migration = new SchemaMigrationVersion38(dataSource, dashboardService, userMigrationService,"SHARED.USER.NAME.STANDARD_USER");
+        migration = new SchemaMigrationVersion38(dataSource, dashboardService, userMigrationService, "SHARED.USER.NAME.STANDARD_USER");
         Mockito.when(dataSource.nextId(eq(UserModule.class))).thenReturn(1001);
 
         UserModuleOld userModule = new UserModuleOld(1, 1, "user1", null, null, null, false, null, null, Collections.emptyList(), null, null);

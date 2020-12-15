@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.common.startup;
 
+import com.google.inject.Provider;
+import org.aopalliance.intercept.MethodInvocation;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.data.systemstatus.SubSystemDetails;
 import org.eblocker.server.common.data.systemstatus.SubSystemStatus;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
 import org.eblocker.server.http.service.SystemStatusService;
-import com.google.inject.Provider;
-import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

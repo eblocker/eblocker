@@ -16,18 +16,18 @@
  */
 package org.eblocker.server.common;
 
-import org.eblocker.server.common.data.CloakedUserAgentModule;
-import org.eblocker.server.common.data.IpAddressModule;
-import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.CryptoService;
-import org.eblocker.crypto.CryptoServiceFactory;
-import org.eblocker.crypto.json.JsonEncryptionModule;
-import org.eblocker.crypto.keys.KeyWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.CryptoService;
+import org.eblocker.crypto.CryptoServiceFactory;
+import org.eblocker.crypto.json.JsonEncryptionModule;
+import org.eblocker.crypto.keys.KeyWrapper;
+import org.eblocker.server.common.data.CloakedUserAgentModule;
+import org.eblocker.server.common.data.IpAddressModule;
 
 public class ObjectMapperProvider implements Provider<ObjectMapper> {
 

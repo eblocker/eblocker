@@ -16,7 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
-import static java.util.stream.Collectors.toMap;
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.ExitNodeCountry;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,9 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.ExitNodeCountry;
-import com.google.inject.Inject;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Creates EblockerDnsServerState based on current config
@@ -38,7 +38,7 @@ public class SchemaMigrationVersion17 implements SchemaMigration {
 
     @Inject
     public SchemaMigrationVersion17(
-        DataSource dataSource) {
+            DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

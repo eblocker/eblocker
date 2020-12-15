@@ -36,7 +36,7 @@ public class HostnameFilter implements DomainFilter<String> {
         }
 
         String domain = "." + labels[labels.length - 1];
-        for(int i = 2; i <= labels.length; ++i) {
+        for (int i = 2; i <= labels.length; ++i) {
             domain = "." + labels[labels.length - i] + domain;
             FilterDecision<String> decision = filter.isBlocked(domain);
             if (decision.isBlocked()) {

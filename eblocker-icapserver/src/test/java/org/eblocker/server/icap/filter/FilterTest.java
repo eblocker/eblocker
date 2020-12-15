@@ -16,55 +16,56 @@
  */
 package org.eblocker.server.icap.filter;
 
-import static org.junit.Assert.*;
-
+import org.eblocker.server.common.transaction.Decision;
 import org.junit.Test;
 
-import org.eblocker.server.common.transaction.Decision;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FilterTest {
 
-	@Test
-	public void test() {
-		Filter filter = new TestFilter("ello");
-		FilterResult result = filter.filter(new TestContext("Hello World"));
-		assertEquals(Decision.BLOCK, result.getDecision());
-		assertEquals(filter, result.getDecider());
-		
-		filter = new TestFilter("ello");
-		result = filter.filter(new TestContext("Hallo Welt"));
-		assertEquals(Decision.NO_DECISION, result.getDecision());
-		assertEquals(filter, result.getDecider());
-		
-		filter = new TestFilter("allo", true);
-		result = filter.filter(new TestContext("Hallo Welt"));
-		assertEquals(Decision.PASS, result.getDecision());
-		assertEquals(filter, result.getDecider());
-		
-		Filter clone = new TestFilter((TestFilter) filter);
-		assertEquals(filter, clone);
-		
-		Filter other = new TestFilter("foobar", true);
-		assertNotEquals(filter, other);
-		
-		assertNotEquals(filter, null);
-		assertNotEquals(filter, new Object());
-	}
+    @Test
+    public void test() {
+        Filter filter = new TestFilter("ello");
+        FilterResult result = filter.filter(new TestContext("Hello World"));
+        assertEquals(Decision.BLOCK, result.getDecision());
+        assertEquals(filter, result.getDecider());
 
-	@Test
-	public void testCompare() {
-		Filter high1 = new TestFilter("high1", false, FilterPriority.HIGH);
-		Filter high2 = new TestFilter("high2", false, FilterPriority.HIGH);
-		Filter low1  = new TestFilter("low1",  false, FilterPriority.LOW);
-		Filter low2  = new TestFilter("low2",  false, FilterPriority.LOW);
-		
-		//
-		// From an ordering perspective, "high" prio comes before "low" prio.
-		//
-		assertTrue(high1.compareTo(low2) < 0);
-		assertTrue(low1.compareTo(high2) > 0);
-		
-		assertTrue(high1.compareTo(high1) == 0);
-	}
-	
+        filter = new TestFilter("ello");
+        result = filter.filter(new TestContext("Hallo Welt"));
+        assertEquals(Decision.NO_DECISION, result.getDecision());
+        assertEquals(filter, result.getDecider());
+
+        filter = new TestFilter("allo", true);
+        result = filter.filter(new TestContext("Hallo Welt"));
+        assertEquals(Decision.PASS, result.getDecision());
+        assertEquals(filter, result.getDecider());
+
+        Filter clone = new TestFilter((TestFilter) filter);
+        assertEquals(filter, clone);
+
+        Filter other = new TestFilter("foobar", true);
+        assertNotEquals(filter, other);
+
+        assertNotEquals(filter, null);
+        assertNotEquals(filter, new Object());
+    }
+
+    @Test
+    public void testCompare() {
+        Filter high1 = new TestFilter("high1", false, FilterPriority.HIGH);
+        Filter high2 = new TestFilter("high2", false, FilterPriority.HIGH);
+        Filter low1 = new TestFilter("low1", false, FilterPriority.LOW);
+        Filter low2 = new TestFilter("low2", false, FilterPriority.LOW);
+
+        //
+        // From an ordering perspective, "high" prio comes before "low" prio.
+        //
+        assertTrue(high1.compareTo(low2) < 0);
+        assertTrue(low1.compareTo(high2) > 0);
+
+        assertTrue(high1.compareTo(high1) == 0);
+    }
+
 }

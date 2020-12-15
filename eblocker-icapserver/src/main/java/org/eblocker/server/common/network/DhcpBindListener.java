@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.network;
 
+import com.google.common.base.Splitter;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -24,9 +27,6 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.common.base.Splitter;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +34,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**This class listens for messages on a Redis channel, that announce a new IP address, which was assigned to networkInterfaces via DHCP.
+/**
+ * This class listens for messages on a Redis channel, that announce a new IP address, which was assigned to networkInterfaces via DHCP.
  * When a message is received it will notify the specific NetworkInterfaceWrapper; for now we just have one NetworkInterfaceWrapper for 'eth0',
  * but the script is able to tell which interface got a new IP address via DHCP by the message format : '[InterfaceName] [new IP address]'
  */
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
-public class DhcpBindListener implements Subscriber,Runnable {
+public class DhcpBindListener implements Subscriber, Runnable {
     private static final Logger log = LoggerFactory.getLogger(DhcpBindListener.class);
 
     private final String scriptPath;
@@ -61,7 +62,7 @@ public class DhcpBindListener implements Subscriber,Runnable {
     }
 
     public void init() {
-        if(!new File(scriptPath).exists()) {
+        if (!new File(scriptPath).exists()) {
             log.error("The 'DHCP update IP address' script is missing: {}", scriptPath);
         }
     }

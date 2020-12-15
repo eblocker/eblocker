@@ -17,8 +17,6 @@
 package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.data.Ip4Address;
-import org.eblocker.server.common.network.BaseURLs;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,41 +27,41 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class BaseURLsTest {
-	private NetworkInterfaceWrapper networkInterface;
+    private NetworkInterfaceWrapper networkInterface;
 
-	@Before
-	public void setUp() throws Exception {
-		networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
-		when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.1.2"));
-		when(networkInterface.getVpnIpv4Address()).thenReturn(Ip4Address.parse("10.8.0.1"));
-	}
+    @Before
+    public void setUp() throws Exception {
+        networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
+        when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.1.2"));
+        when(networkInterface.getVpnIpv4Address()).thenReturn(Ip4Address.parse("10.8.0.1"));
+    }
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
         BaseURLs baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
-		assertEquals("http://192.168.1.2:3000", baseURLs.getHttpURL());
-		assertEquals("https://192.168.1.2:3443", baseURLs.getHttpsURL());
+        assertEquals("http://192.168.1.2:3000", baseURLs.getHttpURL());
+        assertEquals("https://192.168.1.2:3443", baseURLs.getHttpsURL());
 
         assertEquals("http://controlbar.eblocker.com:3000", baseURLs.selectURLForPage("http://www.example.com/path"));
         assertEquals("https://controlbar.eblocker.com:3443", baseURLs.selectURLForPage("https://www.example.com/path"));
 
-		assertTrue(baseURLs.matchesAny("http://192.168.1.2:3000/a/b/c"));
-		assertTrue(baseURLs.matchesAny("https://192.168.1.2:3443/c/d/e"));
-		assertFalse(baseURLs.matchesAny("http://192.168.1.2:3443/foo"));
-		assertFalse(baseURLs.matchesAny("http://some.other.host/bla"));
-	}
+        assertTrue(baseURLs.matchesAny("http://192.168.1.2:3000/a/b/c"));
+        assertTrue(baseURLs.matchesAny("https://192.168.1.2:3443/c/d/e"));
+        assertFalse(baseURLs.matchesAny("http://192.168.1.2:3443/foo"));
+        assertFalse(baseURLs.matchesAny("http://some.other.host/bla"));
+    }
 
-	@Test
-	public void testServerMode() {
+    @Test
+    public void testServerMode() {
         BaseURLs baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
 
         assertEquals("http://controlbar.eblocker.com:3000", baseURLs.selectURLForPage("http://www.example.com/path"));
         assertEquals("https://controlbar.eblocker.com:3443", baseURLs.selectURLForPage("https://www.example.com/path"));
-	}
+    }
 
-	@Test
-	public void testIpBaseUrls() {
-	    BaseURLs baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
+    @Test
+    public void testIpBaseUrls() {
+        BaseURLs baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
         assertEquals("https://192.168.1.2:3443", baseURLs.selectIpForPage(false, "https"));
 
         baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
@@ -74,5 +72,5 @@ public class BaseURLsTest {
 
         baseURLs = new BaseURLs(networkInterface, 3000, 3443, "http://setup.eblocker.com/", "controlbar.eblocker.com");
         assertEquals("http://10.8.0.1:3000", baseURLs.selectIpForPage(true, "http"));
-	}
+    }
 }

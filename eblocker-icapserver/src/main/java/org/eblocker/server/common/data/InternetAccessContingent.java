@@ -22,48 +22,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InternetAccessContingent {
-	private Integer onDay;
-	private Integer fromMinutes;
-	private Integer tillMinutes;
-	private Integer totalMinutes;
+    private Integer onDay;
+    private Integer fromMinutes;
+    private Integer tillMinutes;
+    private Integer totalMinutes;
 
-	public enum CONTINGENT_DAY {
-		MONDAY(1), TUESDAY(2), WEDNESDAY(3), THURSDAY(4), FRIDAY(5), SATURDAY(6), SUNDAY(7), WEEKDAY(8), WEEKEND(9)
-		;
+    public enum CONTINGENT_DAY {
+        MONDAY(1), TUESDAY(2), WEDNESDAY(3), THURSDAY(4), FRIDAY(5), SATURDAY(6), SUNDAY(7), WEEKDAY(8), WEEKEND(9);
 
         public final int value;
-        private CONTINGENT_DAY(int n) { value = n; }        
-	}
 
-	@JsonCreator
-	public InternetAccessContingent(
-			@JsonProperty("onDay") Integer onDay,
-			@JsonProperty("fromMinutes") Integer fromMinutes,
-			@JsonProperty("tillMinutes") Integer tillMinutes,
-			@JsonProperty("totalMinutes") Integer totalMinutes) {
-		this.onDay = onDay;
-		this.fromMinutes = fromMinutes;
-		this.tillMinutes = tillMinutes;
-		this.totalMinutes = totalMinutes;
-	}
-	
+        private CONTINGENT_DAY(int n) {
+            value = n;
+        }
+    }
+
+    @JsonCreator
+    public InternetAccessContingent(
+            @JsonProperty("onDay") Integer onDay,
+            @JsonProperty("fromMinutes") Integer fromMinutes,
+            @JsonProperty("tillMinutes") Integer tillMinutes,
+            @JsonProperty("totalMinutes") Integer totalMinutes) {
+        this.onDay = onDay;
+        this.fromMinutes = fromMinutes;
+        this.tillMinutes = tillMinutes;
+        this.totalMinutes = totalMinutes;
+    }
+
     //Getters and setters------------------------------------
 
-	public Integer getFromMinutes() {
-    	return fromMinutes;
-    }
-    
-    public Integer getTillMinutes() {
-    	return tillMinutes;
-    }
-    
-    public Integer getTotalMinutes() {
-    	return totalMinutes;
+    public Integer getFromMinutes() {
+        return fromMinutes;
     }
 
-	public Integer getOnDay() {
-		return onDay;
-	}
+    public Integer getTillMinutes() {
+        return tillMinutes;
+    }
+
+    public Integer getTotalMinutes() {
+        return totalMinutes;
+    }
+
+    public Integer getOnDay() {
+        return onDay;
+    }
 
     @Override
     public int hashCode() {

@@ -16,10 +16,10 @@
  */
 package org.eblocker.server.common.squid.acl;
 
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.http.service.DeviceService;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.http.service.DeviceService;
 
 import java.util.Collection;
 import java.util.Collections;

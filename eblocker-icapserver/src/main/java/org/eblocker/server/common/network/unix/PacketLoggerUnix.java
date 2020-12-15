@@ -16,39 +16,39 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import java.io.IOException;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.network.PacketLogger;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
+import java.io.IOException;
 
 public class PacketLoggerUnix implements PacketLogger {
-	private final ScriptRunner scriptRunner;
-	private final String scriptName;
-	private LoggingProcess loggingProcess = null;
-	
-	@Inject
-	public PacketLoggerUnix(ScriptRunner scriptRunner, @Named("diagnostics.packet.logging.command") String scriptName) {
-		this.scriptRunner = scriptRunner;
-		this.scriptName = scriptName;
-	}
+    private final ScriptRunner scriptRunner;
+    private final String scriptName;
+    private LoggingProcess loggingProcess = null;
 
-	@Override
-	public void startLogging() throws IOException {
-		loggingProcess = scriptRunner.startScript(scriptName);
-	}
+    @Inject
+    public PacketLoggerUnix(ScriptRunner scriptRunner, @Named("diagnostics.packet.logging.command") String scriptName) {
+        this.scriptRunner = scriptRunner;
+        this.scriptName = scriptName;
+    }
 
-	@Override
-	public boolean isLogging() {
-		return loggingProcess != null && loggingProcess.isAlive();
-	}
+    @Override
+    public void startLogging() throws IOException {
+        loggingProcess = scriptRunner.startScript(scriptName);
+    }
 
-	@Override
-	public void stopLogging() throws InterruptedException, IOException {
-		if (loggingProcess != null) {
-			scriptRunner.stopScript(loggingProcess);
-		}
-	}
+    @Override
+    public boolean isLogging() {
+        return loggingProcess != null && loggingProcess.isAlive();
+    }
+
+    @Override
+    public void stopLogging() throws InterruptedException, IOException {
+        if (loggingProcess != null) {
+            scriptRunner.stopScript(loggingProcess);
+        }
+    }
 }

@@ -51,12 +51,12 @@ public class UrlLineParser implements FilterLineParser {
         }
 
         return UrlFilterFactory.getInstance()
-            .setDefinition(line)
-            .setType(FilterType.BLOCK)
-            .setPriority(FilterPriority.DEFAULT)
-            .setDomain(domain)
-            .setStringMatchType(StringMatchType.REGEX)
-            .setMatchString(matchString)
-            .build();
+                .setDefinition(line)
+                .setType(FilterType.BLOCK)
+                .setPriority(FilterPriority.DEFAULT)
+                .setDomain(domain)
+                .setStringMatchType(StringMatchType.REGEX)
+                .setMatchString(matchString)
+                .build();
     }
 }

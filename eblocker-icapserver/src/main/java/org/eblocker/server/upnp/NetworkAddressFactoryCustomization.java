@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.upnp;
 
-import org.eblocker.server.common.util.IpUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.EblockerModule;
+import org.eblocker.server.common.util.IpUtils;
 
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -42,9 +42,9 @@ public class NetworkAddressFactoryCustomization {
                                               @Named("network.unix.iprange.classC") String privateNetworkRangeC) {
         this.networkInterfaceName = networkInterfaceName;
         this.privateNetworkIpNetmasks = Arrays.asList(
-            IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeA),
-            IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeB),
-            IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeC));
+                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeA),
+                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeB),
+                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeC));
     }
 
     public boolean isUsableAddress(String networkInterfaceName, InetAddress address) {

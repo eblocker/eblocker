@@ -46,9 +46,7 @@ public enum AppContext {
     //
     // No password required; only dashboard routes are allowed
     //
-    DASHBOARD(false, "^dashboard\\..*")
-
-    ;
+    DASHBOARD(false, "^dashboard\\..*");
 
     private final boolean passwordRequired;
 
@@ -77,7 +75,7 @@ public enum AppContext {
         //
         // Check if given route matches the app context
         //
-        for (Pattern routePattern: routePatterns) {
+        for (Pattern routePattern : routePatterns) {
             if (routePattern.matcher(route).matches()) {
                 return true;
             }
@@ -93,7 +91,7 @@ public enum AppContext {
         if (acx == null) {
             return defaultValue();
         }
-        for (AppContext appContext: AppContext.values()) {
+        for (AppContext appContext : AppContext.values()) {
             if (acx.equalsIgnoreCase(appContext.name())) {
                 return appContext;
             }

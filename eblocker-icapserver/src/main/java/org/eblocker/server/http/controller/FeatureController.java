@@ -22,5 +22,6 @@ import org.restexpress.Response;
 
 public interface FeatureController {
     CompressionMode getCompressionMode(Request request, Response response);
+
     CompressionMode setCompressionMode(Request request, Response response);
 }

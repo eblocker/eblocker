@@ -16,13 +16,17 @@
  */
 package org.eblocker.server.http.ssl;
 
-import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.common.util.UrlUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.UrlUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AppWhitelistModuleDisplay extends AppWhitelistModuleBase {
@@ -68,13 +72,13 @@ public class AppWhitelistModuleDisplay extends AppWhitelistModuleBase {
             if (IpUtils.isIPAddress(urlip)) {
                 // IP address, not range, can be added
                 tmpWhitelistedDomainsIps.add(urlip);
-            } else if (IpUtils.isIpRange(urlip)){
+            } else if (IpUtils.isIpRange(urlip)) {
                 // Make sure the range is not too big
                 tmpWhitelistedDomainsIps.add(IpUtils.shrinkIpRange(urlip, IP_RANGE_RANGE_THRESHOLD));
             } else {
                 // Is it a domain?
                 String domain = UrlUtils.findDomainInString(urlip);
-                if (domain!=null){
+                if (domain != null) {
                     tmpWhitelistedDomainsIps.add(domain);
                 }
             }

@@ -22,7 +22,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DateUtilTest {
 
@@ -32,19 +33,18 @@ public class DateUtilTest {
     public void testIsBeforeDays() throws Exception {
         // Same date/time
         Date toTest = format.parse("2015/08/01 19:09:12.789 +0200");
-        Date now    = format.parse("2015/08/01 19:09:12.789 +0200");
+        Date now = format.parse("2015/08/01 19:09:12.789 +0200");
         assertTrue(DateUtil.isBeforeDays(toTest, now, 42));
 
         // In two month
         toTest = format.parse("2015/10/01 19:09:12.789 +0200");
-        now    = format.parse("2015/08/01 19:09:12.789 +0200");
+        now = format.parse("2015/08/01 19:09:12.789 +0200");
         assertFalse(DateUtil.isBeforeDays(toTest, now, 42));
 
         // Two month ago
         toTest = format.parse("2015/08/01 19:09:12.789 +0200");
-        now    = format.parse("2015/10/01 19:09:12.789 +0200");
+        now = format.parse("2015/10/01 19:09:12.789 +0200");
         assertTrue(DateUtil.isBeforeDays(toTest, now, 42));
     }
-
 
 }

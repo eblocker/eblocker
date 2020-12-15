@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;

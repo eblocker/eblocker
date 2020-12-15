@@ -16,17 +16,17 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.dashboard.AccessRight;
 import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
+import org.eblocker.server.common.data.dashboard.ParentalControlCard;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.dashboard.ParentalControlCard;
 import org.eblocker.server.common.data.dashboard.UiCardDefaultPositionMapping;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemService;
-import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,10 +55,11 @@ public class DashboardCardService {
      * Create a new parental control dashboard card. Required e.g. for creation of cards for CHILD users. It should not
      * be necessary to call this method from the UI. The UserService calls this method to create dashboard cards
      * when needed.
+     *
      * @param referencingUserId the (CHILD) user that this card has been created for (to maintain specific order of that child-card)
-     * @param requiredFeature License that is necessary to display this card (e.g. for CHILD card it is 'FAM')
-     *                        e.g. ProductFeature.FAM.name()
-     * @param name used in UI for translations (json prefix)
+     * @param requiredFeature   License that is necessary to display this card (e.g. for CHILD card it is 'FAM')
+     *                          e.g. ProductFeature.FAM.name()
+     * @param name              used in UI for translations (json prefix)
      * @return the saved card.
      */
     public UiCard createParentalControlCard(int referencingUserId, String name, String requiredFeature) {
@@ -115,6 +116,7 @@ public class DashboardCardService {
      * This method finds all cards that are either valid for a user and are not yet included in the user's DashboardColumnsView
      * or that are still in the user's DashboardColumnsView, but are no longer valid for that user.
      * The validity of a card for a user is given by the user's role and the accessRights.
+     *
      * @return updated DashboardColumnsView
      */
     public DashboardColumnsView getUpdatedColumnsView(DashboardColumnsView columns, UserRole userRole, List<AccessRight> accessRights) {
@@ -158,8 +160,8 @@ public class DashboardCardService {
      */
     private boolean hasCardsWithAccessRights(List<UiCard> cards, int cardId, List<AccessRight> accessRights) {
         Predicate<UiCard> accessRulePredicate = card -> card.getId() == cardId &&
-            card.getRequiredAccessRights() != null &&
-            accessRights.stream().anyMatch(right -> card.getRequiredAccessRights().contains(right));
+                card.getRequiredAccessRights() != null &&
+                accessRights.stream().anyMatch(right -> card.getRequiredAccessRights().contains(right));
         return cards.stream().anyMatch(accessRulePredicate);
     }
 
@@ -171,9 +173,10 @@ public class DashboardCardService {
     /**
      * We need to stream the cards, because we are looking for missing cards in 'columns' which can only
      * be found in allCards list.
-     * @param allCards all cards
-     * @param columns current (possibly outdated) columns representation of user (card's ID and positions)
-     * @param userRole current user role of user in question
+     *
+     * @param allCards     all cards
+     * @param columns      current (possibly outdated) columns representation of user (card's ID and positions)
+     * @param userRole     current user role of user in question
      * @param accessRights current access rights granted to user (e.g. fragFINN, if profile has fragFINN exception)
      */
     private void addMissingCard(List<UiCard> allCards, DashboardColumnsView columns, UserRole userRole, List<AccessRight> accessRights) {
@@ -193,20 +196,20 @@ public class DashboardCardService {
         }
 
         allCards.
-            stream().
-            filter(predicate).forEach((card) -> {
-                UiCardColumnPosition[] pos = UiCardDefaultPositionMapping.getStaticPositions(card);
-                columns.getOneColumn().add(pos[0]);
-                columns.getTwoColumn().add(pos[1]);
-                columns.getThreeColumn().add(pos[2]);
-            });
+                stream().
+                filter(predicate).forEach((card) -> {
+            UiCardColumnPosition[] pos = UiCardDefaultPositionMapping.getStaticPositions(card);
+            columns.getOneColumn().add(pos[0]);
+            columns.getTwoColumn().add(pos[1]);
+            columns.getThreeColumn().add(pos[2]);
+        });
     }
 
     private UiCard getByReferencingUserId(int id) {
         return getAll().stream().
-            filter(card -> card instanceof ParentalControlCard && ((ParentalControlCard) card).getReferencingUserId() == id).
-            findFirst().
-            orElse(null);
+                filter(card -> card instanceof ParentalControlCard && ((ParentalControlCard) card).getReferencingUserId() == id).
+                findFirst().
+                orElse(null);
     }
 
     private boolean contains(List<UiCard> allCards, int cardId) {

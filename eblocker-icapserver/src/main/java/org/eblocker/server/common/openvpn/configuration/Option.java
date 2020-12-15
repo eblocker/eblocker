@@ -18,7 +18,7 @@ package org.eblocker.server.common.openvpn.configuration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface Option {
     String getName();
 

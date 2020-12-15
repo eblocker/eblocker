@@ -16,17 +16,16 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.openvpn.connection.MobileConnectionCheckService;
 import org.eblocker.server.common.openvpn.connection.MobileConnectionCheckStatus;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import javax.ws.rs.InternalServerErrorException;
-
 import org.restexpress.Request;
 import org.restexpress.Response;
+
+import javax.ws.rs.InternalServerErrorException;
 
 @Singleton
 public class MobileConnectionCheckControllerImpl implements MobileConnectionCheckController {
@@ -40,8 +39,8 @@ public class MobileConnectionCheckControllerImpl implements MobileConnectionChec
 
     @Override
     public void start(Request request, Response response) {
-        try{
-        testService.start();
+        try {
+            testService.start();
         } catch (UpnpPortForwardingException e) {
             throw new InternalServerErrorException(e.getMessage());
         }

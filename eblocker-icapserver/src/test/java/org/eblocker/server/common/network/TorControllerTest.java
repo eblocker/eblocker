@@ -16,16 +16,7 @@
  */
 package org.eblocker.server.common.network;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import static java.util.Arrays.asList;
-
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.Language;
@@ -36,102 +27,112 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import org.eblocker.server.common.data.DataSource;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TorControllerTest {
 
-	private TorController controller;
-	private DataSource dataSource;
-	private EblockerDnsServer dnsServer;
-	private ScheduledExecutorService executorService;
-	private MockTorControllerConnection telnetConnection;
-	private final int torControlPort = 9051;
-	private TorConfiguration torConfiguration;
-	private static final Language LANGUAGE_EN = new Language("en", "english");
+    private TorController controller;
+    private DataSource dataSource;
+    private EblockerDnsServer dnsServer;
+    private ScheduledExecutorService executorService;
+    private MockTorControllerConnection telnetConnection;
+    private final int torControlPort = 9051;
+    private TorConfiguration torConfiguration;
+    private static final Language LANGUAGE_EN = new Language("en", "english");
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-		dataSource       = Mockito.mock(DataSource.class);
-		when(dataSource.getCurrentLanguage()).thenReturn(LANGUAGE_EN);
-		dnsServer        = Mockito.mock(EblockerDnsServer.class);
-		telnetConnection = new MockTorControllerConnection();
-		executorService  = Mockito.mock(ScheduledExecutorService.class);
-		torConfiguration = Mockito.mock(TorConfiguration.class);
-	}
+        dataSource = Mockito.mock(DataSource.class);
+        when(dataSource.getCurrentLanguage()).thenReturn(LANGUAGE_EN);
+        dnsServer = Mockito.mock(EblockerDnsServer.class);
+        telnetConnection = new MockTorControllerConnection();
+        executorService = Mockito.mock(ScheduledExecutorService.class);
+        torConfiguration = Mockito.mock(TorConfiguration.class);
+    }
 
-	protected TorController createTorController(int port) {
-		TorExitNodeCountries exitNodeCountries = new TorExitNodeCountries(dataSource);
+    protected TorController createTorController(int port) {
+        TorExitNodeCountries exitNodeCountries = new TorExitNodeCountries(dataSource);
 
-		return new TorController(port, dataSource, dnsServer, telnetConnection, exitNodeCountries, torConfiguration);
-	}
+        return new TorController(port, dataSource, dnsServer, telnetConnection, exitNodeCountries, torConfiguration);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void testNoConnectionInitially() throws IOException {
-		controller = createTorController(0); // wrong port
+    @Test
+    public void testNoConnectionInitially() throws IOException {
+        controller = createTorController(0); // wrong port
 
-		getConnectionCheckingTask().run();
-		assertFalse(controller.isConnectedToTorNetwork());
-	}
+        getConnectionCheckingTask().run();
+        assertFalse(controller.isConnectedToTorNetwork());
+    }
 
-	@Test
-	public void testLoseAndRegainCircuit() throws IOException {
-		controller = createTorController(torControlPort);
-		Runnable task = getConnectionCheckingTask();
+    @Test
+    public void testLoseAndRegainCircuit() throws IOException {
+        controller = createTorController(torControlPort);
+        Runnable task = getConnectionCheckingTask();
 
-		// Initially, everything is OK:
-		task.run();
-		assertTrue(controller.isConnectedToTorNetwork());
+        // Initially, everything is OK:
+        task.run();
+        assertTrue(controller.isConnectedToTorNetwork());
 
-		// Still OK:
-		task.run();
-		assertTrue(controller.isConnectedToTorNetwork());
+        // Still OK:
+        task.run();
+        assertTrue(controller.isConnectedToTorNetwork());
 
-		// Now we lose the circuit:
-		telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE "+TorController.TOR_EVENT_NOT_ENOUGH_DIR_INFO);
+        // Now we lose the circuit:
+        telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE " + TorController.TOR_EVENT_NOT_ENOUGH_DIR_INFO);
 
-		task.run();
-		task.run();
-		//Thread.sleep(5000);
-		assertFalse(controller.isConnectedToTorNetwork());
+        task.run();
+        task.run();
+        //Thread.sleep(5000);
+        assertFalse(controller.isConnectedToTorNetwork());
 
-		// Still no circuit:
-		task.run();
-		assertFalse(controller.isConnectedToTorNetwork());
+        // Still no circuit:
+        task.run();
+        assertFalse(controller.isConnectedToTorNetwork());
 
-		// Now the circuit is OK again:
-		telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE "+TorController.TOR_EVENT_CIRCUIT_ESTABLISHED);
-		task.run();
-		assertTrue(controller.isConnectedToTorNetwork());
-	}
+        // Now the circuit is OK again:
+        telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE " + TorController.TOR_EVENT_CIRCUIT_ESTABLISHED);
+        task.run();
+        assertTrue(controller.isConnectedToTorNetwork());
+    }
 
-	@Test
-	public void reloadConfigurationAtStartup() throws IOException {
+    @Test
+    public void reloadConfigurationAtStartup() throws IOException {
         controller = createTorController(torControlPort);
         getConnectionCheckingTask().run();
         assertTrue(telnetConnection.hasReceivedReloadSignal());
-	}
+    }
 
-	@Test
-	public void reconnectToControlPortAutomatically() {
-	    controller = createTorController(torControlPort);
+    @Test
+    public void reconnectToControlPortAutomatically() {
+        controller = createTorController(torControlPort);
         getConnectionCheckingTask().run();
 
         telnetConnection.resetHasReceivedReloadSignal();
         telnetConnection.disconnect();
         Set<String> countries = new HashSet<String>(asList("Denmark", "Norway", "Sweden"));
-	    controller.setAllowedExitNodesCountries(countries);
+        controller.setAllowedExitNodesCountries(countries);
         assertTrue(telnetConnection.hasReceivedReloadSignal());
-	}
+    }
 
-	@Test
-	public void slowBootstrapPhase() {
+    @Test
+    public void slowBootstrapPhase() {
         controller = createTorController(torControlPort);
         Runnable task = getConnectionCheckingTask();
 
@@ -145,51 +146,51 @@ public class TorControllerTest {
         telnetConnection.setBootstrapPhasePercentage(100);
         task.run();
         assertTrue(controller.isConnectedToTorNetwork());
-	}
+    }
 
-	@Test
-	public void getNewIdentity() {
+    @Test
+    public void getNewIdentity() {
         controller = createTorController(torControlPort);
         getConnectionCheckingTask().run();
-	    controller.getNewIdentity();
-	}
+        controller.getNewIdentity();
+    }
 
-	protected Runnable getConnectionCheckingTask() {
-		ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-		controller.startCheckingConnection(executorService, 1234);
+    protected Runnable getConnectionCheckingTask() {
+        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
+        controller.startCheckingConnection(executorService, 1234);
 
-		verify(executorService).scheduleWithFixedDelay(captor.capture(), eq(0L), eq(1234L), eq(TimeUnit.MILLISECONDS));
+        verify(executorService).scheduleWithFixedDelay(captor.capture(), eq(0L), eq(1234L), eq(TimeUnit.MILLISECONDS));
 
-		return captor.getValue();
-	}
+        return captor.getValue();
+    }
 
-	@Test
-	public void testAddDeviceUsingTor() {
-		controller = createTorController(torControlPort);
+    @Test
+    public void testAddDeviceUsingTor() {
+        controller = createTorController(torControlPort);
 
-		// setup mock device
-		Device device = new Device();
-		device.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.3.3")));
+        // setup mock device
+        Device device = new Device();
+        device.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.3.3")));
 
-		// tell controller to route device
-		controller.addDeviceUsingTor(device);
+        // tell controller to route device
+        controller.addDeviceUsingTor(device);
 
-		// check all necessary calls are done
-		Mockito.verify(dnsServer).useTorResolver(device);
-	}
+        // check all necessary calls are done
+        Mockito.verify(dnsServer).useTorResolver(device);
+    }
 
-	@Test
-	public void testRemoveDeviceUsingTor() {
-		controller = createTorController(torControlPort);
+    @Test
+    public void testRemoveDeviceUsingTor() {
+        controller = createTorController(torControlPort);
 
-		// setup mock device
-		Device device = new Device();
-		device.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.3.3")));
+        // setup mock device
+        Device device = new Device();
+        device.setIpAddresses(Collections.singletonList(IpAddress.parse("192.168.3.3")));
 
-		// tell controller to route device
-		controller.removeDeviceNotUsingTor(device);
+        // tell controller to route device
+        controller.removeDeviceNotUsingTor(device);
 
-		// check all necessary calls are done
-		Mockito.verify(dnsServer).useDefaultResolver(device);
-	}
+        // check all necessary calls are done
+        Mockito.verify(dnsServer).useDefaultResolver(device);
+    }
 }

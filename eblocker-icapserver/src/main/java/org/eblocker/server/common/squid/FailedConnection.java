@@ -40,7 +40,6 @@ public class FailedConnection {
         this.lastOccurrence = lastOccurrence;
     }
 
-
     public List<String> getDeviceIds() {
         return deviceIds;
     }
@@ -60,11 +59,11 @@ public class FailedConnection {
     @Override
     public String toString() {
         return "FailedConnection{" +
-            "deviceIds=" + deviceIds +
-            ", domains=" + domains +
-            ", errors=" + errors +
-            ", lastOccurrence=" + lastOccurrence +
-            '}';
+                "deviceIds=" + deviceIds +
+                ", domains=" + domains +
+                ", errors=" + errors +
+                ", lastOccurrence=" + lastOccurrence +
+                '}';
     }
 
     @Override
@@ -75,9 +74,9 @@ public class FailedConnection {
             return false;
         FailedConnection that = (FailedConnection) o;
         return Objects.equals(deviceIds, that.deviceIds) &&
-            Objects.equals(domains, that.domains) &&
-            Objects.equals(errors, that.errors) &&
-            Objects.equals(lastOccurrence, that.lastOccurrence);
+                Objects.equals(domains, that.domains) &&
+                Objects.equals(errors, that.errors) &&
+                Objects.equals(lastOccurrence, that.lastOccurrence);
     }
 
     @Override

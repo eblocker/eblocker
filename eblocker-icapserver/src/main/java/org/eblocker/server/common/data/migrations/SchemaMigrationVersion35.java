@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
-import com.google.inject.Inject;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class SchemaMigrationVersion35 implements SchemaMigration {
         Set<Integer> sharedBlacklistIds = getSharedListsIds(users, UserModuleOld::getCustomBlacklistId);
         Set<Integer> sharedWhitelistIds = getSharedListsIds(users, UserModuleOld::getCustomWhitelistId);
 
-        for(UserModuleOld user : users) {
+        for (UserModuleOld user : users) {
             boolean modified = false;
             if (sharedBlacklistIds.contains(user.getCustomBlacklistId())) {
                 modified = true;
@@ -78,12 +78,12 @@ public class SchemaMigrationVersion35 implements SchemaMigration {
 
     private Set<Integer> getSharedListsIds(List<UserModuleOld> users, Function<UserModuleOld, Integer> getListId) {
         return users.stream()
-            .filter(user -> getListId.apply(user) != null)
-            .collect(Collectors.groupingBy(getListId, Collectors.toList()))
-            .entrySet()
-            .stream()
-            .filter(e -> e.getValue().size() > 1)
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+                .filter(user -> getListId.apply(user) != null)
+                .collect(Collectors.groupingBy(getListId, Collectors.toList()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().size() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 }

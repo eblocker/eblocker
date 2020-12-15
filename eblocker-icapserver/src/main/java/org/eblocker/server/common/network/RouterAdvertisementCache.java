@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.common.network;
 
-import org.eblocker.server.common.util.ByteArrays;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.PrefixOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import org.eblocker.server.common.util.ByteArrays;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -86,16 +86,16 @@ public class RouterAdvertisementCache {
 
     private byte[] getSourceAddress(RouterAdvertisement advertisement) {
         return advertisement.getOptions().stream()
-            .filter(o -> SourceLinkLayerAddressOption.TYPE == o.getType())
-            .map(o -> ((SourceLinkLayerAddressOption)o).getHardwareAddress())
-            .findFirst()
-            .orElse(advertisement.getSourceHardwareAddress());
+                .filter(o -> SourceLinkLayerAddressOption.TYPE == o.getType())
+                .map(o -> ((SourceLinkLayerAddressOption) o).getHardwareAddress())
+                .findFirst()
+                .orElse(advertisement.getSourceHardwareAddress());
     }
 
     // checks advertisement and all options and returns the longest lifetime found
     private long getMaximalLifetime(RouterAdvertisement advertisement) {
         long lifetime = advertisement.getRouterLifetime();
-        for(Option option : advertisement.getOptions()) {
+        for (Option option : advertisement.getOptions()) {
             switch (option.getType()) {
                 case RecursiveDnsServerOption.TYPE:
                     lifetime = Math.max(lifetime, ((RecursiveDnsServerOption) option).getLifetime());

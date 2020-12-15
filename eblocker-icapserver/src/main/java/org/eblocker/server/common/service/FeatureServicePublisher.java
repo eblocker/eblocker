@@ -16,16 +16,15 @@
  */
 package org.eblocker.server.common.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.CompressionMode;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * Service class to manage some simple eBlocker feature settings.
- *
  */
 @Singleton
 public class FeatureServicePublisher implements FeatureService {

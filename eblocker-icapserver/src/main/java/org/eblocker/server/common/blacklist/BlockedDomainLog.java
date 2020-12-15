@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.statistic.BlockedDomainsStatisticService;
 import org.eblocker.server.common.executor.NamedRunnable;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -38,7 +38,7 @@ public class BlockedDomainLog {
                             @Named("unlimitedCachePoolExecutor") Executor executor) {
         executor.execute(new NamedRunnable("BlockedDomainLog", () -> {
             try {
-                while(true) {
+                while (true) {
                     statisticService.countBlockedDomain(entries.take());
                 }
             } catch (InterruptedException e) {
@@ -52,6 +52,6 @@ public class BlockedDomainLog {
     }
 
     public void addEntry(String deviceId, String domain, Category category) {
-        entries.add(new BlockedDomainLogEntry(deviceId,domain, category));
+        entries.add(new BlockedDomainLogEntry(deviceId, domain, category));
     }
 }

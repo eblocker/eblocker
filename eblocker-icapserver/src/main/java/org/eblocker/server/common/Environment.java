@@ -24,10 +24,10 @@ public class Environment {
     private static final String SERVER_MODE = "server";
 
     @Inject
-    public Environment (@Named("environment") String mode) {
+    public Environment(@Named("environment") String mode) {
         this.environment = mode;
     }
-    
+
     public boolean isServer() {
         return SERVER_MODE.equals(environment);
     }

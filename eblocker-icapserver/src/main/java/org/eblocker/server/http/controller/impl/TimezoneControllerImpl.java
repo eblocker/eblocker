@@ -16,32 +16,36 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.http.controller.TimezoneController;
-import org.eblocker.server.icap.resources.ResourceHandler;
-import org.eblocker.server.icap.resources.SimpleResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.http.controller.TimezoneController;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.eblocker.server.icap.resources.SimpleResource;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-/** This class is able to set the default timezone
- *
- *  Deprecated: There is also a script to set the OS timezone called: set_timezone; it expects the posix timezone string as the first parameter
- *
+/**
+ * This class is able to set the default timezone
+ * <p>
+ * Deprecated: There is also a script to set the OS timezone called: set_timezone; it expects the posix timezone string as the first parameter
  */
 public class TimezoneControllerImpl implements TimezoneController {
     private static final Logger log = LoggerFactory.getLogger(TimezoneControllerImpl.class);
 
-    private Map<String,List<String>> posixTimezoneStrings = new HashMap<String,List<String>>();
+    private Map<String, List<String>> posixTimezoneStrings = new HashMap<String, List<String>>();
 
     @Inject
-    public TimezoneControllerImpl(@Named("posix.timezone.strings.json.file") String posixStringsFile){
+    public TimezoneControllerImpl(@Named("posix.timezone.strings.json.file") String posixStringsFile) {
         loadTimeZoneStringsFromFile(posixStringsFile);
     }
 
@@ -52,28 +56,28 @@ public class TimezoneControllerImpl implements TimezoneController {
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleResource jsonFile = new SimpleResource(filePath);
         try {
-            posixTimezoneStrings = objectMapper.readValue(ResourceHandler.load(jsonFile),Map.class);
+            posixTimezoneStrings = objectMapper.readValue(ResourceHandler.load(jsonFile), Map.class);
         } catch (IOException e) {
-            log.error("Error while time zone strings from file.", e);;
+            log.error("Error while time zone strings from file.", e);
         }
     }
 
     @Override
-    public Set<String> getTimezoneCategories(Request request, Response response){
-        if(posixTimezoneStrings != null && posixTimezoneStrings.size()>0){
+    public Set<String> getTimezoneCategories(Request request, Response response) {
+        if (posixTimezoneStrings != null && posixTimezoneStrings.size() > 0) {
             return posixTimezoneStrings.keySet();
         }
         return Collections.emptySet();
     }
 
     @Override
-    public List<String> getTimeZoneStringsForCategory(Request request, Response response){
-        Map<String,String> map = request.getBodyAs(Map.class);
-        if(map != null){
+    public List<String> getTimeZoneStringsForCategory(Request request, Response response) {
+        Map<String, String> map = request.getBodyAs(Map.class);
+        if (map != null) {
             String continent = map.get("timezoneContinent");
-            if(continent != null) {
+            if (continent != null) {
                 List<String> timezones = posixTimezoneStrings.get(continent);
-                if(timezones != null) {
+                if (timezones != null) {
                     return timezones;
                 }
             }

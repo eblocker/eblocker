@@ -35,9 +35,9 @@ public class SchemaMigrationVersion22Test {
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         Mockito.when(dataSource.getAll(OpenVpnProfile.class)).thenReturn(Arrays.asList(
-            createProfile(0),
-            createProfile(1),
-            createProfile(2)
+                createProfile(0),
+                createProfile(1),
+                createProfile(2)
         ));
 
         migration = new SchemaMigrationVersion22(dataSource);

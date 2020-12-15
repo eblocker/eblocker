@@ -16,6 +16,9 @@
  */
 package org.eblocker.server.common.openvpn;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.KeepAliveMode;
@@ -27,12 +30,9 @@ import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
 import org.eblocker.server.common.squid.SquidConfigController;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
-
 
 public class OpenVpnClient implements VpnClient, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(OpenVpnClient.class);
@@ -209,7 +208,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
                 clearAndResetDevices(devices.stream().map(Device::getId).collect(Collectors.toSet()));
                 if (deviceIds.isEmpty() && state != State.STOPPED) {
                     stop();
-                    }
+                }
             }
         });
     }
@@ -442,7 +441,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
         }
 
         public void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String trustedIp, List<String> nameServers) {
-            executeLocked("up",  () -> {
+            executeLocked("up", () -> {
                 assertTransitionValidToFrom(State.VPN_UP, State.OVPN_RUNNING, State.VPN_DOWN);
 
                 logger.info("vpn {} up", vpnProfile.getId());

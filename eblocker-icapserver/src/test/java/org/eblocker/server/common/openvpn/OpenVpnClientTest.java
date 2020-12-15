@@ -30,9 +30,9 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.TestPubSubService;
 import org.eblocker.server.common.squid.SquidConfigController;
-import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,7 +113,7 @@ public class OpenVpnClientTest {
         networkInterfaceAliases = Mockito.mock(NetworkInterfaceAliases.class);
 
         profileFiles = Mockito.mock(OpenVpnProfileFiles.class);
-        Mockito.when(profileFiles.getDirectory(Mockito.anyInt())).then(i->"/test/" + i.getArguments()[0]);
+        Mockito.when(profileFiles.getDirectory(Mockito.anyInt())).then(i -> "/test/" + i.getArguments()[0]);
 
         executor = Executors.newCachedThreadPool();
         pubSubService = new TestPubSubService();
@@ -133,7 +133,8 @@ public class OpenVpnClientTest {
         vpnKeepAlive = Mockito.mock(VpnKeepAlive.class);
         vpnKeepAliveFactory = Mockito.mock(VpnKeepAliveFactory.class);
 
-        client = new OpenVpnClient(START_INSTANCE_SCRIPT, KILL_PROCESS_SCRIPT, profileFiles, scriptRunner, networkStateMachine, dataSource, squidConfigController, routingController, networkInterfaceAliases, openVpnChannelSubscriberFactory, executor, eblockerDnsServer, deviceService, vpnKeepAliveFactory, vpnProfile);
+        client = new OpenVpnClient(START_INSTANCE_SCRIPT, KILL_PROCESS_SCRIPT, profileFiles, scriptRunner, networkStateMachine, dataSource, squidConfigController, routingController, networkInterfaceAliases, openVpnChannelSubscriberFactory, executor,
+                eblockerDnsServer, deviceService, vpnKeepAliveFactory, vpnProfile);
     }
 
     @Test
@@ -252,7 +253,7 @@ public class OpenVpnClientTest {
     @Test
     public void addRemoveMultipleClients() throws InterruptedException {
         // setup vpn
-        Device[] devices = {createDevice(), createDevice()};
+        Device[] devices = { createDevice(), createDevice() };
         addSingleDevice(devices[0]);
 
         resetMocks(); // to clear invocation counts from setup
@@ -438,7 +439,6 @@ public class OpenVpnClientTest {
         Device device = createDevice();
         client.addDevices(Collections.singleton(device));
         Thread.sleep(250);
-
 
         // verify process has been started
         Mockito.verify(loggingProcess).waitFor();

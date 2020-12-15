@@ -16,15 +16,15 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Device;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.eblocker.server.common.data.Device;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 /**
  * Saves in RAM when a device was last seen online.
@@ -45,6 +45,7 @@ public class DeviceOnlineStatusCache {
     /**
      * Stores the current time in the cache for the current device.
      * Call this method when a device is seen as online.
+     *
      * @param deviceId
      */
     public void updateOnlineStatus(String deviceId) {
@@ -55,6 +56,7 @@ public class DeviceOnlineStatusCache {
      * Sets the device's online flag depending on the current time and the time
      * the device was seen last. A device is considered to be offline if it is not
      * in the cache.
+     *
      * @param device
      */
     public void setOnlineStatus(Device device) {

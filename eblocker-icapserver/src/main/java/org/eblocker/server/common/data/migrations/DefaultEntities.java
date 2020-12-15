@@ -52,7 +52,7 @@ public class DefaultEntities {
 
     /**
      * @deprecated There is not a single standard user anymore. Instead, each device has its own default system user.
-    */
+     */
     @Deprecated
     public static final int PARENTAL_CONTROL_DEFAULT_USER_ID = PARENTAL_CONTROL_DEFAULT_PROFILE_ID;
 
@@ -107,8 +107,7 @@ public class DefaultEntities {
     //
     public static final String USER_SYSTEM_DEFAULT_NAME_KEY = "SHARED.USER.NAME.SYSTEM_DEFAULT";
 
-
-    private DefaultEntities(){
+    private DefaultEntities() {
         // To hide default public constructor
     }
 }

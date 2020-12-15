@@ -16,6 +16,19 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.RecordedSSLAppData;
+import org.eblocker.server.common.data.RecordedSSLHandshake;
+import org.eblocker.server.common.data.RecordedUrl;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.StartRecordingRequestData;
+import org.eblocker.server.common.util.TextLineProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
@@ -24,20 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eblocker.server.common.util.StartRecordingRequestData;
-import org.eblocker.server.common.util.TextLineProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.RecordedSSLAppData;
-import org.eblocker.server.common.data.RecordedSSLHandshake;
-import org.eblocker.server.common.data.RecordedUrl;
-import org.eblocker.server.common.system.ScriptRunner;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class RecordingService {
     private static final Logger log = LoggerFactory.getLogger(RecordingService.class);

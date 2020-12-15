@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.data.messagecenter.provider;
 
-import org.eblocker.server.common.data.messagecenter.MessageContainer;
-import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import com.google.common.base.Joiner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.messagecenter.MessageContainer;
+import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class AppModuleRemovalMessageProvider extends AbstractMessageProvider {
     public static final String MESSAGE_APP_MODULE_REMOVAL_CONTENT = "MESSAGE_APP_MODULE_REMOVAL_CONTENT";
     public static final String MESSAGE_APP_MODULE_REMOVAL_LABEL = "MESSAGE_APP_MODULE_REMOVAL_LABEL";
     public static final String MESSAGE_APP_MODULE_REMOVAL_URL = "MESSAGE_APP_MODULE_REMOVAL_URL";
-    
+
     private Set<String> removedAppModules;
 
     @Inject

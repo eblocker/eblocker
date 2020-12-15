@@ -47,25 +47,25 @@ public class CachingValidatorTest {
         List<X509Certificate> certificates = new ArrayList<>();
         List<CertificateValidationRequest> requests = new ArrayList<>();
         List<CertificateValidationResponse> responses = new ArrayList<>();
-        for(int i = 0; i <= size; ++i) {
+        for (int i = 0; i <= size; ++i) {
             certificates.add(createCertificate(new byte[i]));
             requests.add(createRequest(i, certificates.get(i)));
             responses.add(createResponse(requests.get(i)));
         }
         Mockito.when(mockValidator.validate(Mockito.any(CertificateValidationRequest.class), Mockito.anyBoolean()))
-            .thenAnswer(im -> responses.get(((CertificateValidationRequest)im.getArgument(0)).getId().intValue()));
+                .thenAnswer(im -> responses.get(((CertificateValidationRequest) im.getArgument(0)).getId().intValue()));
 
         InOrder validatorInOrder = Mockito.inOrder(mockValidator);
 
         // query validator to fill cache
-        for(int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
             Assert.assertTrue(response == responses.get(i));
             validatorInOrder.verify(mockValidator).validate(requests.get(i), false);
         }
 
         // query validator again verifying cached results are returned
-        for(int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
             Assert.assertTrue(response == responses.get(i));
             validatorInOrder.verifyNoMoreInteractions();
@@ -77,7 +77,7 @@ public class CachingValidatorTest {
         validatorInOrder.verify(mockValidator).validate(requests.get(size), false);
 
         // check entries 2 .. size are cached
-        for(int i = 1; i <= size; ++i) {
+        for (int i = 1; i <= size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
             Assert.assertTrue(response == responses.get(i));
             validatorInOrder.verifyNoMoreInteractions();
@@ -110,12 +110,13 @@ public class CachingValidatorTest {
     }
 
     private CertificateValidationRequest createRequest(long id, X509Certificate certificate) {
-        return new CertificateValidationRequest(id, null, null, null, new X509Certificate[] { certificate }, null, null, false);
+        return new CertificateValidationRequest(id, null, null, null, new X509Certificate[]{ certificate }, null, null, false);
     }
 
     private CertificateValidationResponse createResponse(CertificateValidationRequest request) {
         return new CertificateValidationResponse(request.getId(), null, null, false, false, null);
     }
+
     private X509Certificate createCertificate(byte[] encoded) throws CertificateEncodingException {
         X509Certificate certificate = Mockito.mock(X509Certificate.class);
         Mockito.when(certificate.getEncoded()).thenReturn(encoded);

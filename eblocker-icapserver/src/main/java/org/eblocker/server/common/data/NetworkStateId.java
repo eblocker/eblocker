@@ -17,7 +17,7 @@
 package org.eblocker.server.common.data;
 
 public enum NetworkStateId {
-	PLUG_AND_PLAY,
-	EXTERNAL_DHCP,
-	LOCAL_DHCP;
+    PLUG_AND_PLAY,
+    EXTERNAL_DHCP,
+    LOCAL_DHCP;
 }

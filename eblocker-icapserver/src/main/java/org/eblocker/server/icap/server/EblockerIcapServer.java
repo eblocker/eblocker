@@ -16,10 +16,6 @@
  */
 package org.eblocker.server.icap.server;
 
-import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.startup.SubSystemInit;
-import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.startup.SubSystemShutdown;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.bootstrap.ServerBootstrap;
@@ -30,6 +26,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,11 +67,10 @@ public class EblockerIcapServer {
         // Configure the server.
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap
-            .group(bossGroup, workerGroup)
-            .channel(NioServerSocketChannel.class)
-            .localAddress(serverPort)
-            .childHandler(pipelineFactory);
-
+                .group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .localAddress(serverPort)
+                .childHandler(pipelineFactory);
 
         SocketAddress address = new InetSocketAddress("0.0.0.0", serverPort);
         log.info("Binding ICAP server to address {}", address);

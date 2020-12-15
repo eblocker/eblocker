@@ -16,26 +16,24 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.ExpirationDate;
+import org.eblocker.server.common.data.NextReminderSelection;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.registration.RegistrationState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
-
-import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.registration.RegistrationState;
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.ExpirationDate;
-import org.eblocker.server.common.data.NextReminderSelection;
-import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
-import org.slf4j.Logger;
 
 @Singleton
 public class ReminderService {
@@ -57,13 +55,13 @@ public class ReminderService {
 
     @Inject
     public ReminderService(
-        SettingsService settingsService,
-        DeviceRegistrationProperties deviceRegistrationProperties,
-        DataSource dataSource,
-        @Named("license.expiration.warning.threshold.first.reminder") int timeThresholdFirstReminder,
-        @Named("license.expiration.warning.nextOffset.min") int nextOffsetMin,
-        @Named("license.expiration.warning.nextOffset.max") int nextOffsetMax,
-        @Named("registration.warning.period") int warningPeriodDays
+            SettingsService settingsService,
+            DeviceRegistrationProperties deviceRegistrationProperties,
+            DataSource dataSource,
+            @Named("license.expiration.warning.threshold.first.reminder") int timeThresholdFirstReminder,
+            @Named("license.expiration.warning.nextOffset.min") int nextOffsetMin,
+            @Named("license.expiration.warning.nextOffset.max") int nextOffsetMax,
+            @Named("registration.warning.period") int warningPeriodDays
     ) {
         this.settingsService = settingsService;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
@@ -79,9 +77,9 @@ public class ReminderService {
     public void setReminder() {
         // First reminder to be shown on first day of expiration, after 18:00 PM
         if (deviceRegistrationProperties.getRegistrationState() != RegistrationState.NEW
-            && deviceRegistrationProperties.getRegistrationState() != RegistrationState.OK_UNREGISTERED) {
+                && deviceRegistrationProperties.getRegistrationState() != RegistrationState.OK_UNREGISTERED) {
             nextReminder = deviceRegistrationProperties.getLicenseNotValidAfter().toInstant()
-                .minus(warningPeriodDays, ChronoUnit.DAYS).plus(timeThresholdFirstReminder, ChronoUnit.HOURS);
+                    .minus(warningPeriodDays, ChronoUnit.DAYS).plus(timeThresholdFirstReminder, ChronoUnit.HOURS);
         }
     }
 
@@ -90,7 +88,7 @@ public class ReminderService {
         dataSource.setDoNotShowReminder(nextReminderSelection.isDoNotShowAgain());
 
         if (when.equals(NEXT_REMINDER_IN_DAY)) {
-            long offset = (long)nextOffsetMin + (long)rand.nextInt(nextOffsetMax - nextOffsetMin);
+            long offset = (long) nextOffsetMin + (long) rand.nextInt(nextOffsetMax - nextOffsetMin);
             nextReminder = new Date().toInstant().plus(offset, ChronoUnit.SECONDS);
         } else if (when.equals(NEXT_REMINDER_IN_WEEK)) {
             nextReminder = new Date().toInstant().plus(Period.ofWeeks(1));
@@ -113,7 +111,7 @@ public class ReminderService {
             // User does not wish to be shown a reminder
             return false;
         }
-        if (nextReminder==null){
+        if (nextReminder == null) {
             // No reminder was shown yet and the user could not make a decision
             // yet
             // Show first message - but only after 6 PM local time

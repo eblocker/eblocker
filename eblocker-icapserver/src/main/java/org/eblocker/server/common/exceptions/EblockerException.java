@@ -22,9 +22,9 @@ public class EblockerException extends RuntimeException {
     public EblockerException(String msg) {
         super(msg);
     }
-    
+
     public EblockerException(String msg, Exception cause) {
         super(msg, cause);
     }
-    
+
 }

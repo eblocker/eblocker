@@ -48,7 +48,7 @@ public class RouterAdvertisementCacheTest {
 
     @Test
     public void testCachingNoOptions() {
-        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 0, 0, Collections.emptyList());
+        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 0, 0, Collections.emptyList());
         cache.addEntry(advertisement);
 
         Assert.assertNotNull(cache.getEntries());
@@ -62,7 +62,8 @@ public class RouterAdvertisementCacheTest {
 
     @Test
     public void testCachingPrefixOptionWithLifetime() {
-        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.singletonList(new PrefixOption((short)0, false, false, 2000, 2000, null)));
+        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10,
+                Collections.singletonList(new PrefixOption((short) 0, false, false, 2000, 2000, null)));
         cache.addEntry(advertisement);
 
         Assert.assertNotNull(cache.getEntries());
@@ -76,7 +77,8 @@ public class RouterAdvertisementCacheTest {
 
     @Test
     public void testCachingRdnsOptionWithLifetime() {
-        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.singletonList(new RecursiveDnsServerOption(2000, Collections.emptyList())));
+        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10,
+                Collections.singletonList(new RecursiveDnsServerOption(2000, Collections.emptyList())));
         cache.addEntry(advertisement);
 
         Assert.assertNotNull(cache.getEntries());
@@ -90,7 +92,8 @@ public class RouterAdvertisementCacheTest {
 
     @Test
     public void testCachingSourceLinkLayerOption() {
-        RouterAdvertisement advertisementLinkLayerOption = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.singletonList(new SourceLinkLayerAddressOption(new byte[] { 0x1 })));
+        RouterAdvertisement advertisementLinkLayerOption = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10,
+                Collections.singletonList(new SourceLinkLayerAddressOption(new byte[]{ 0x1 })));
         cache.addEntry(advertisementLinkLayerOption);
 
         Assert.assertNotNull(cache.getEntries());
@@ -100,7 +103,7 @@ public class RouterAdvertisementCacheTest {
         Assert.assertSame(advertisementLinkLayerOption, cache.getEntries().get(0).getAdvertisement());
 
         clock = new TestClock(LocalDateTime.of(2019, 3, 12, 16, 30, 0));
-        RouterAdvertisement advertisementNoLinkLayerOption = new RouterAdvertisement(new byte[] { 0x1 }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
+        RouterAdvertisement advertisementNoLinkLayerOption = new RouterAdvertisement(new byte[]{ 0x1 }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
         cache.addEntry(advertisementNoLinkLayerOption);
 
         Assert.assertNotNull(cache.getEntries());
@@ -112,7 +115,7 @@ public class RouterAdvertisementCacheTest {
 
     @Test
     public void testExpiration() {
-        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
+        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
         cache.addEntry(advertisement);
 
         Assert.assertNotNull(cache.getEntries());
@@ -130,7 +133,7 @@ public class RouterAdvertisementCacheTest {
         cache.addListener(listener);
 
         // insert entry
-        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
+        RouterAdvertisement advertisement = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
         cache.addEntry(advertisement);
         ArgumentCaptor<List<RouterAdvertisementCache.Entry>> entriesCaptor = ArgumentCaptor.forClass(List.class);
         Mockito.verify(listener).onUpdate(entriesCaptor.capture());
@@ -138,7 +141,7 @@ public class RouterAdvertisementCacheTest {
         Assert.assertSame(advertisement, entriesCaptor.getValue().get(0).getAdvertisement());
 
         // update entry
-        RouterAdvertisement advertisement2 = new RouterAdvertisement(new byte[] { 0x7f }, null, new byte[0], null, (short)0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
+        RouterAdvertisement advertisement2 = new RouterAdvertisement(new byte[]{ 0x7f }, null, new byte[0], null, (short) 0, false, false, false, RouterAdvertisement.RouterPreference.MEDIUM, 1000, 1000, 10, Collections.emptyList());
         cache.addEntry(advertisement2);
         Mockito.verify(listener, Mockito.times(2)).onUpdate(entriesCaptor.capture());
         Assert.assertEquals(1, entriesCaptor.getValue().size());

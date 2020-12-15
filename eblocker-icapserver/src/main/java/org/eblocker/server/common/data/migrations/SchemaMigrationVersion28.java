@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.common.data.migrations;
 
+import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserProfileModule;
-import com.google.inject.Inject;
 
 import java.time.DayOfWeek;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class SchemaMigrationVersion28 implements SchemaMigration {
     }
 
     @Override
-    public void migrate(){
+    public void migrate() {
         Map<DayOfWeek, Integer> maxUsageTimeByDay = new HashMap<>();
         maxUsageTimeByDay.put(DayOfWeek.MONDAY, 120);
         maxUsageTimeByDay.put(DayOfWeek.TUESDAY, 120);
@@ -56,21 +56,21 @@ public class SchemaMigrationVersion28 implements SchemaMigration {
         maxUsageTimeByDay.put(DayOfWeek.SUNDAY, 120);
 
         UserProfileModule profile = new UserProfileModule(
-            DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_ID,
-            null,
-            null,
-            DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_NAME_KEY,
-            DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_DESCRIPTION_KEY,
-            false,
-            false,
-            Collections.singleton(DefaultEntities.PARENTAL_CONTROL_FILTER_LIST_FRAG_FINN),
-            Collections.emptySet(),
-            UserProfileModule.InternetAccessRestrictionMode.WHITELIST,
-            Collections.emptySet(),
-            maxUsageTimeByDay,
-            null,
-            false,
-            null);
+                DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_ID,
+                null,
+                null,
+                DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_NAME_KEY,
+                DefaultEntities.PARENTAL_CONTROL_FRAG_FINN_PROFILE_DESCRIPTION_KEY,
+                false,
+                false,
+                Collections.singleton(DefaultEntities.PARENTAL_CONTROL_FILTER_LIST_FRAG_FINN),
+                Collections.emptySet(),
+                UserProfileModule.InternetAccessRestrictionMode.WHITELIST,
+                Collections.emptySet(),
+                maxUsageTimeByDay,
+                null,
+                false,
+                null);
         profile.setBuiltin(true);
         profile.setControlmodeMaxUsage(true);
         profile.setControlmodeTime(false);

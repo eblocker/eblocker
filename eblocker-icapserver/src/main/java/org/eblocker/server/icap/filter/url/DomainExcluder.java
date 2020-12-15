@@ -16,50 +16,51 @@
  */
 package org.eblocker.server.icap.filter.url;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 public class DomainExcluder {
 
-	@JsonProperty("domains")
-	private final String[] domains;
-	
-	@JsonProperty("whiteList")
-	private final boolean whiteList; // true: white list; false: black list
-	
-	public DomainExcluder(@JsonProperty("domains") List<String> domains, @JsonProperty("whiteList") boolean whiteList) {
-		this.domains = domains.toArray(new String[]{});
-		this.whiteList = whiteList;
-	}
-	
-	public boolean isExcluded(String hostname) {
-		if (domains == null || domains.length == 0) {
-			// Without any domains for comparison, we cannot exclude anything.
-			return false;
-		}
-		if (hostname == null) {
-			// Without a hostname, it's excluded by any whitelist
-			// but cannot be excluded by a blacklist
-			return whiteList;
-		}
-		for (String domain: domains) {
-			if (hostname.equals(domain) || hostname.endsWith("."+domain)) return !whiteList;
-		}
-		return whiteList;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		if (domains == null || domains.length == 0) {
-			s.append("-");
-		} else {
-			s.append(whiteList ? "" : "~").append(domains[0]);
-			for (int i = 1; i < domains.length; i++) {
-				s.append("|").append(whiteList ? "" : "~").append(domains[i]);
-			}
-		}
-		return s.toString();
-	}
+    @JsonProperty("domains")
+    private final String[] domains;
+
+    @JsonProperty("whiteList")
+    private final boolean whiteList; // true: white list; false: black list
+
+    public DomainExcluder(@JsonProperty("domains") List<String> domains, @JsonProperty("whiteList") boolean whiteList) {
+        this.domains = domains.toArray(new String[]{});
+        this.whiteList = whiteList;
+    }
+
+    public boolean isExcluded(String hostname) {
+        if (domains == null || domains.length == 0) {
+            // Without any domains for comparison, we cannot exclude anything.
+            return false;
+        }
+        if (hostname == null) {
+            // Without a hostname, it's excluded by any whitelist
+            // but cannot be excluded by a blacklist
+            return whiteList;
+        }
+        for (String domain : domains) {
+            if (hostname.equals(domain) || hostname.endsWith("." + domain))
+                return !whiteList;
+        }
+        return whiteList;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        if (domains == null || domains.length == 0) {
+            s.append("-");
+        } else {
+            s.append(whiteList ? "" : "~").append(domains[0]);
+            for (int i = 1; i < domains.length; i++) {
+                s.append("|").append(whiteList ? "" : "~").append(domains[i]);
+            }
+        }
+        return s.toString();
+    }
 }

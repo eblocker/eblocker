@@ -44,47 +44,47 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class StaticFileControllerTest {
-	private StaticFileController fileController;
-	private Response response;
-	private static Charset charset = StandardCharsets.UTF_8;
-	private static int testDataCacheTime = 10;//in seconds
-	private static String dashboardHost = "eblocker.box";
-	private static String httpsPath = "https";
+    private StaticFileController fileController;
+    private Response response;
+    private static Charset charset = StandardCharsets.UTF_8;
+    private static int testDataCacheTime = 10;//in seconds
+    private static String dashboardHost = "eblocker.box";
+    private static String httpsPath = "https";
     private static String[] consolePaths = { "/console", "/console/", "/console/bla" };
 
-	@Before
-	public void setUp() throws Exception {
-		URL testDataRoot = ClassLoader.getSystemResource("test-data/document-root");
+    @Before
+    public void setUp() throws Exception {
+        URL testDataRoot = ClassLoader.getSystemResource("test-data/document-root");
 
-		fileController = new StaticFileController(testDataRoot.toURI().getPath(),
-		        testDataCacheTime,
-		        dashboardHost, httpsPath);
-		response = new Response();
-	}
+        fileController = new StaticFileController(testDataRoot.toURI().getPath(),
+                testDataCacheTime,
+                dashboardHost, httpsPath);
+        response = new Response();
+    }
 
-	private Request makeHttpGetRequest(String uri) {
-		FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
-		Request request = new Request(httpRequest, null);
-		return request;
-	}
+    private Request makeHttpGetRequest(String uri) {
+        FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri);
+        Request request = new Request(httpRequest, null);
+        return request;
+    }
 
-	@Test
-	public void testCachingEnabled() throws Exception{
-		String headerName = "Cache-Control";
-		Request request = makeHttpGetRequest("/test.html");
-		fileController.read(request, response);
+    @Test
+    public void testCachingEnabled() throws Exception {
+        String headerName = "Cache-Control";
+        Request request = makeHttpGetRequest("/test.html");
+        fileController.read(request, response);
 
-		assertTrue(response.getHeader(headerName) != null);
-		assertTrue(response.getHeader(headerName).equals("private,max-age="+testDataCacheTime));
-	}
+        assertTrue(response.getHeader(headerName) != null);
+        assertTrue(response.getHeader(headerName).equals("private,max-age=" + testDataCacheTime));
+    }
 
-	@Test
-	public void readFile() throws IOException {
-		Request request = makeHttpGetRequest("/test.html");
-		ByteBuf buffer = (ByteBuf) fileController.read(request, response);
-		assertEquals(response.getContentType(), "text/html; charset=UTF-8");
-		assertEquals(buffer.toString(charset), "<html><head></head><body>Static test file</body></html>");
-	}
+    @Test
+    public void readFile() throws IOException {
+        Request request = makeHttpGetRequest("/test.html");
+        ByteBuf buffer = (ByteBuf) fileController.read(request, response);
+        assertEquals(response.getContentType(), "text/html; charset=UTF-8");
+        assertEquals(buffer.toString(charset), "<html><head></head><body>Static test file</body></html>");
+    }
 
     @Test
     public void readFileCompressed() throws IOException {
@@ -96,15 +96,15 @@ public class StaticFileControllerTest {
         assertEquals(readResource("test-data/document-root/test.html.gz"), buffer);
     }
 
-	@Test
-	public void redirectToSettingsFromRoot() throws IOException {
-		Request request = makeHttpGetRequest("/");
-		fileController.read(request, response);
-	    assertEquals(HttpResponseStatus.MOVED_PERMANENTLY, response.getResponseStatus());
-	    assertEquals("/settings/", response.getHeader(HttpHeaderNames.LOCATION.toString()));
-	}
+    @Test
+    public void redirectToSettingsFromRoot() throws IOException {
+        Request request = makeHttpGetRequest("/");
+        fileController.read(request, response);
+        assertEquals(HttpResponseStatus.MOVED_PERMANENTLY, response.getResponseStatus());
+        assertEquals("/settings/", response.getHeader(HttpHeaderNames.LOCATION.toString()));
+    }
 
-	@Test
+    @Test
     public void redirectToSettingsFromSettings() throws IOException {
         Request request = makeHttpGetRequest("/settings/");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
@@ -120,92 +120,92 @@ public class StaticFileControllerTest {
         assertEquals(buffer.toString(charset), "<html><head></head><body>Static index file</body></html>");
     }
 
-    @Test(expected=NotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void readInvalidIndex() throws IOException {
         Request request = makeHttpGetRequest("/bla/index.html");
         fileController.read(request, response);
     }
- 
-	@Test
-	public void readIndexFileSubDirectory() throws IOException {
-		Request request = makeHttpGetRequest("/directory/");
+
+    @Test
+    public void readIndexFileSubDirectory() throws IOException {
+        Request request = makeHttpGetRequest("/directory/");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
-		assertEquals(response.getContentType(), "text/html; charset=UTF-8");
-		assertEquals(buffer.toString(charset), "<html><head></head><body>Static index file in sub-directory</body></html>");
-	}
+        assertEquals(response.getContentType(), "text/html; charset=UTF-8");
+        assertEquals(buffer.toString(charset), "<html><head></head><body>Static index file in sub-directory</body></html>");
+    }
 
-	@Test
-	public void redirectSubDirectory() throws IOException {
-		Request request = makeHttpGetRequest("/directory");
-		fileController.read(request, response);
-		assertEquals(HttpResponseStatus.MOVED_PERMANENTLY, response.getResponseStatus());
-		assertEquals("/directory/", response.getHeader(HttpHeaderNames.LOCATION.toString()));
-	}
+    @Test
+    public void redirectSubDirectory() throws IOException {
+        Request request = makeHttpGetRequest("/directory");
+        fileController.read(request, response);
+        assertEquals(HttpResponseStatus.MOVED_PERMANENTLY, response.getResponseStatus());
+        assertEquals("/directory/", response.getHeader(HttpHeaderNames.LOCATION.toString()));
+    }
 
-	@Test
-	public void readSvgImage() throws IOException {
-		Request request = makeHttpGetRequest("/test.svg");
+    @Test
+    public void readSvgImage() throws IOException {
+        Request request = makeHttpGetRequest("/test.svg");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
-		assertEquals(response.getContentType(), "image/svg+xml");
-		String data = buffer.toString(charset);
-		assertTrue(data.startsWith("<?xml"));
-	}
+        assertEquals(response.getContentType(), "image/svg+xml");
+        String data = buffer.toString(charset);
+        assertTrue(data.startsWith("<?xml"));
+    }
 
-	@Test(expected=NotFoundException.class)
-	public void fileNotFound() throws IOException {
-		Request request = makeHttpGetRequest("/the/file/that/wasnt.there");
-		fileController.read(request, response);
-	}
+    @Test(expected = NotFoundException.class)
+    public void fileNotFound() throws IOException {
+        Request request = makeHttpGetRequest("/the/file/that/wasnt.there");
+        fileController.read(request, response);
+    }
 
-	@Test(expected=NotFoundException.class)
-	public void notBelowDocumentRoot() throws IOException {
-		Request request = makeHttpGetRequest("/../sample.xhtml");
-		fileController.read(request, response);
-	}
+    @Test(expected = NotFoundException.class)
+    public void notBelowDocumentRoot() throws IOException {
+        Request request = makeHttpGetRequest("/../sample.xhtml");
+        fileController.read(request, response);
+    }
 
-	@Test(expected=NotFoundException.class)
-	public void doNotLeakInformation() throws IOException {
-		Request request = makeHttpGetRequest("/../document-root/test.html");
-		fileController.read(request, response);
-	}
+    @Test(expected = NotFoundException.class)
+    public void doNotLeakInformation() throws IOException {
+        Request request = makeHttpGetRequest("/../document-root/test.html");
+        fileController.read(request, response);
+    }
 
-	@Test
-	public void ignoreRedundantSlashes() throws IOException {
+    @Test
+    public void ignoreRedundantSlashes() throws IOException {
         Request request = makeHttpGetRequest("////directory//index.html");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
         assertEquals(response.getContentType(), "text/html; charset=UTF-8");
         assertEquals(buffer.toString(charset), "<html><head></head><body>Static index file in sub-directory</body></html>");
-	}
+    }
 
-	@Test
-	public void readFileWithoutQueryString() throws IOException {
-		Request request = makeHttpGetRequest("/test.svg?foo=bar");
+    @Test
+    public void readFileWithoutQueryString() throws IOException {
+        Request request = makeHttpGetRequest("/test.svg?foo=bar");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
-		assertEquals(response.getContentType(), "image/svg+xml");
-		String data = buffer.toString(charset);
-		assertTrue(data.startsWith("<?xml"));
-	}
+        assertEquals(response.getContentType(), "image/svg+xml");
+        String data = buffer.toString(charset);
+        assertTrue(data.startsWith("<?xml"));
+    }
 
-	@Test
-	public void readFileWithoutFragment() throws IOException {
-		Request request = makeHttpGetRequest("/test.html#fragment?nonQuery=Value");
+    @Test
+    public void readFileWithoutFragment() throws IOException {
+        Request request = makeHttpGetRequest("/test.html#fragment?nonQuery=Value");
         ByteBuf buffer = (ByteBuf) fileController.read(request, response);
-		assertEquals(response.getContentType(), "text/html; charset=UTF-8");
-		assertEquals(buffer.toString(charset), "<html><head></head><body>Static test file</body></html>");
-	}
+        assertEquals(response.getContentType(), "text/html; charset=UTF-8");
+        assertEquals(buffer.toString(charset), "<html><head></head><body>Static test file</body></html>");
+    }
 
-	@Test
-	public void redirectToDashboardFromShortURLs() throws IOException {
-	    // Map: URL -> Path
-	    HashMap<String, String> urls = new HashMap<>();
-	    urls.put("http://eblocker.box/", "/dashboard/");
+    @Test
+    public void redirectToDashboardFromShortURLs() throws IOException {
+        // Map: URL -> Path
+        HashMap<String, String> urls = new HashMap<>();
+        urls.put("http://eblocker.box/", "/dashboard/");
         urls.put("https://eblocker.box/", "/dashboard/");
-	    urls.put("http://eblocker.box/dashboard", "/dashboard/");
-	    urls.put("http://eblocker.box/console", "/dashboard/#!/console");
+        urls.put("http://eblocker.box/dashboard", "/dashboard/");
+        urls.put("http://eblocker.box/console", "/dashboard/#!/console");
 
         for (Map.Entry<String, String> url : urls.entrySet()) {
             response = new Response();
-            
+
             URL testUrl = new URL(url.getKey());
             Request request = makeHttpGetRequest(testUrl.getPath());
             request.addHeader("Host", testUrl.getHost());
@@ -214,11 +214,11 @@ public class StaticFileControllerTest {
             assertEquals(HttpResponseStatus.MOVED_PERMANENTLY, response.getResponseStatus());
             assertEquals(url.getValue(), response.getHeader(HttpHeaderNames.LOCATION.toString()));
         }
-	}
+    }
 
-	@Test
-	public void doNotRedirectFromShortIfRightPathIsGiven() throws IOException {
-        String[] hosts = {"eblocker.box" };
+    @Test
+    public void doNotRedirectFromShortIfRightPathIsGiven() throws IOException {
+        String[] hosts = { "eblocker.box" };
         String path = "/dashboard/";
 
         for (String host : hosts) {
@@ -230,7 +230,7 @@ public class StaticFileControllerTest {
 
             assertEquals(HttpResponseStatus.OK, response.getResponseStatus());
         }
-	}
+    }
 
     @Test
     public void redirectToConsole() throws IOException {
@@ -253,16 +253,16 @@ public class StaticFileControllerTest {
     }
 
     private ByteBuf readResource(String resource) {
-	    try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(resource)) {
-	        ByteBuf out = Unpooled.buffer();
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(resource)) {
+            ByteBuf out = Unpooled.buffer();
             byte[] buffer = new byte[8192];
             int read;
-            while((read = in.read(buffer)) != -1) {
+            while ((read = in.read(buffer)) != -1) {
                 out.writeBytes(buffer, 0, read);
             }
             return out;
         } catch (IOException e) {
-	        throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 }

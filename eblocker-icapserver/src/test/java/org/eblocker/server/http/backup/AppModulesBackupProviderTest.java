@@ -62,20 +62,20 @@ public class AppModulesBackupProviderTest extends BackupProviderTestBase {
 
     private AppWhitelistModule createModule(int moduleId, String name, boolean enabled, boolean builtIn, boolean modified) {
         return new AppWhitelistModule(
-            moduleId,
-            name,
-            Collections.emptyMap(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyMap(),
-            false,
-            enabled,
-            builtIn,
-            modified,
-            null,
-            false,
-            false
+                moduleId,
+                name,
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                false,
+                enabled,
+                builtIn,
+                modified,
+                null,
+                false,
+                false
         );
 
     }

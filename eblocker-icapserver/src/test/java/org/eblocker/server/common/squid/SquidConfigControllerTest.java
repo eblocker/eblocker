@@ -88,6 +88,7 @@ public class SquidConfigControllerTest {
     private ScriptRunner scriptRunner;
     private final String squidReconfigureScript = "squidReconfigureScript";
     private final String squidClearCertCacheScript = "squidClearCertCacheScript";
+    private final String squidWorkers = "3";
     private ScheduledExecutorService executorService;
     private TestClock clock;
     private DataSource dataSource;
@@ -455,6 +456,7 @@ public class SquidConfigControllerTest {
                 minimumTimeBetweenReloads,
                 sslKeyFilePath,
                 sslCertFilePath,
+                squidWorkers,
                 CONTROL_BAR_HOST,
                 CONTROL_BAR_FALLBACK_IP,
                 EBLOCKER_DNS_NAMES,

@@ -104,6 +104,7 @@ public class SquidConfigController {
     private final String vpnAclDirectoryPath;
     private final String sslKeyFilePath;
     private final String sslCertFilePath;
+    private final String squidWorkers;
     private final OpenVpnServerService openVpnServerService;
     private final String controlBarHostName;
     private final String controlBarHostFallbackIp;
@@ -142,6 +143,7 @@ public class SquidConfigController {
                                  @Named("squid.config.minimumTimeBetweenReloads") Integer minimumTimeBetweenReloads,
                                  @Named("squid.ssl.ca.key") String sslKeyFilePath,
                                  @Named("squid.ssl.ca.cert") String sslCertFilePath,
+                                 @Named("squid.workers") String squidWorkers,
                                  @Named("network.control.bar.host.name") String controlBarHostName,
                                  @Named("network.control.bar.host.fallback.ip") String controlBarHostFallbackIp,
                                  @Named("dns.server.default.local.names") String dnsLocalNames,
@@ -184,6 +186,7 @@ public class SquidConfigController {
 
         this.sslKeyFilePath = sslKeyFilePath;
         this.sslCertFilePath = sslCertFilePath;
+        this.squidWorkers = squidWorkers;
         this.openVpnServerService = openVpnServerService;
         this.controlBarHostName = controlBarHostName;
         this.controlBarHostFallbackIp = controlBarHostFallbackIp;
@@ -576,6 +579,7 @@ public class SquidConfigController {
         sb.append(createLogOptions());
         sb.append(createVpnOptions(vpnClients));
         sb.append(createErrHtmlOption());
+        sb.append(createWorkersOption());
 
         return sb.toString();
     }
@@ -645,6 +649,29 @@ public class SquidConfigController {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("failed to serialize dynamic config", e);
         }
+    }
+
+    /**
+     * Set number of squid worker processes according to the configuration parameter "squid.workers".
+     *
+     * If it is set to "auto":
+     * Use a second worker if the JVM can use more than 500 MB.
+     *
+     * @return configuration snippet for Squid
+     */
+    private String createWorkersOption() {
+        StringBuilder cfg = new StringBuilder("workers ");
+        if (squidWorkers.equalsIgnoreCase("auto")) {
+            if (Runtime.getRuntime().maxMemory() > 500L*1024L*1024L) {
+                cfg.append(2);
+            } else {
+                cfg.append(1);
+            }
+        } else {
+            cfg.append(squidWorkers);
+        }
+        cfg.append("\n");
+        return cfg.toString();
     }
 
     /* updates all acls and reload squid in case of changes */

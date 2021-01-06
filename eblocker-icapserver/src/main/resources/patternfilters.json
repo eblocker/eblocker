@@ -84,5 +84,20 @@
             "!csp"
         ],
         "enabled": true
+    },
+    {
+        "id": 5,
+        "name": "DuckDuckGo Tracker Radar",
+        "category": "TRACKER_BLOCKER",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/ddgtr.txt"
+        ],
+        "learningMode": "ASYNCHRONOUS",
+        "format": "EASYLIST",
+        "learnForAllDomains": true,
+        "ruleFilters": [],
+        "enabled": false
     }
 ]

@@ -1,4 +1,7 @@
 #! /bin/sh
+#
+# pidfile: /run/icapserver.pid
+#
 ### BEGIN INIT INFO
 # Provides:          icapserver
 # Required-Start:    $network $remote_fs $syslog eblocker-reset redis-server arpread arpwrite

@@ -51,8 +51,11 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
 
         vm.numberOfBlockedAds = '-';
         vm.numberOfBlockedTrackers = '-';
+        vm.numberOfBlockedMalwareReqs = '-';
         vm.numberOfBlockedPatternAds = '-';
         vm.numberOfBlockedPatternTrackers = '-';
+        vm.numberOfBlockedPatternMalwareReqs = '-';
+
         getDnsStatistics();
         getPatternStatistics();
 
@@ -109,6 +112,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
             if (angular.isObject(response.summary) && angular.isObject(response.summary.blockedQueriesByReason)) {
                 vm.numberOfBlockedPatternAds = response.summary.blockedQueriesByReason.ADS || '-';
                 vm.numberOfBlockedPatternTrackers = response.summary.blockedQueriesByReason.TRACKERS || '-';
+                vm.numberOfBlockedPatternMalwareReqs = response.summary.blockedQueriesByReason.MALWARE || '-';
             }
         }, function error(response) {
             logger.error('No Pattern summary found ', response);
@@ -121,6 +125,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
             if (angular.isObject(response.summary) && angular.isObject(response.summary.blockedQueriesByReason)) {
                 vm.numberOfBlockedAds = response.summary.blockedQueriesByReason.ADS || '-';
                 vm.numberOfBlockedTrackers = response.summary.blockedQueriesByReason.TRACKERS || '-';
+                vm.numberOfBlockedMalwareReqs = response.summary.blockedQueriesByReason.MALWARE || '-';
             }
         }, function error(response) {
             // handle rejection..
@@ -274,7 +279,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
                 category: BLOCKER_CATEGORY.MALWARE,
                 usedBy: counter[BLOCKER_CATEGORY.MALWARE_DOMAIN],
                 devices: names[BLOCKER_CATEGORY.MALWARE_DOMAIN],
-                numBlocked: function () { return '-'; }, // TODO add real data
+                numBlocked: function () { return vm.numberOfBlockedMalwareReqs; },
                 isLicensed: RegistrationService.hasProductKey('PRO'),
                 dnsEnabled: vm.dnsEnabled,
                 needsDns: true,
@@ -338,7 +343,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
                 category: BLOCKER_CATEGORY.MALWARE,
                 usedBy: counter[BLOCKER_CATEGORY.MALWARE_PATTERN],
                 devices: names[BLOCKER_CATEGORY.MALWARE_PATTERN],
-                numBlocked: function () { return '-'; }, // TODO add real data
+                numBlocked: function () { return vm.numberOfBlockedPatternMalwareReqs; },
                 isLicensed: RegistrationService.hasProductKey('PRO'),
                 dnsEnabled: vm.dnsEnabled,
                 needsDns: true,

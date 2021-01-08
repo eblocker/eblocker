@@ -54,7 +54,8 @@ public class FilterStatisticsServiceTest {
         filterListsService = Mockito.mock(ParentalControlFilterListsService.class);
         Mockito.when(filterListsService.getParentalControlFilterMetaData()).thenReturn(Arrays.asList(
                 createFilterMetaData(1, Category.ADS),
-                createFilterMetaData(2, Category.TRACKERS)
+                createFilterMetaData(2, Category.TRACKERS),
+                createFilterMetaData(3, Category.MALWARE)
         ));
 
         filterStatisticsDataSource = Mockito.mock(FilterStatisticsDataSource.class);
@@ -175,10 +176,11 @@ public class FilterStatisticsServiceTest {
     public void testGetTotalStatisticsSingleType() {
         // setup counters
         List<TotalCounter> counters = new ArrayList<>();
-        counters.add(new TotalCounter("dns", "queries", null, 10));
+        counters.add(new TotalCounter("dns", "queries", null, 20));
         counters.add(new TotalCounter("dns", "blocked_queries", null, 1));
         counters.add(new TotalCounter("dns", "blocked_queries", "1", 2));
         counters.add(new TotalCounter("dns", "blocked_queries", "2", 3));
+        counters.add(new TotalCounter("dns", "blocked_queries", "3", 4));
         Mockito.when(filterStatisticsDataSource.getTotalCounters("dns")).thenReturn(counters);
 
         Instant lastReset = instantOf(2018, 6, 1, 0, 0, 0, 0);
@@ -190,25 +192,28 @@ public class FilterStatisticsServiceTest {
         Assert.assertEquals(clock.instant(), stats.getEnd());
         Assert.assertNotNull(stats.getSummary());
         Assert.assertNotNull(stats.getSummary().getBlockedQueriesByReason());
-        Assert.assertEquals(10, stats.getSummary().getQueries());
-        Assert.assertEquals(6, stats.getSummary().getBlockedQueries());
+        Assert.assertEquals(20, stats.getSummary().getQueries());
+        Assert.assertEquals(10, stats.getSummary().getBlockedQueries());
         Assert.assertEquals(Integer.valueOf(1), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.PARENTAL_CONTROL));
         Assert.assertEquals(Integer.valueOf(2), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.ADS));
         Assert.assertEquals(Integer.valueOf(3), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.TRACKERS));
+        Assert.assertEquals(Integer.valueOf(4), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.MALWARE));
     }
 
     @Test
     public void testGetTotalStatisticsMultipleTypes() {
         // setup counters
         List<TotalCounter> counters = new ArrayList<>();
-        counters.add(new TotalCounter("dns", "queries", null, 10));
+        counters.add(new TotalCounter("dns", "queries", null, 20));
         counters.add(new TotalCounter("dns", "blocked_queries", null, 1));
         counters.add(new TotalCounter("dns", "blocked_queries", "1", 2));
         counters.add(new TotalCounter("dns", "blocked_queries", "2", 3));
-        counters.add(new TotalCounter("pattern", "queries", null, 20));
+        counters.add(new TotalCounter("dns", "blocked_queries", "3", 4));
+        counters.add(new TotalCounter("pattern", "queries", null, 30));
         counters.add(new TotalCounter("pattern", "blocked_queries", null, 2));
         counters.add(new TotalCounter("pattern", "blocked_queries", "1", 4));
         counters.add(new TotalCounter("pattern", "blocked_queries", "2", 6));
+        counters.add(new TotalCounter("pattern", "blocked_queries", "3", 8));
         Mockito.when(filterStatisticsDataSource.getTotalCounters(null)).thenReturn(counters);
 
         Instant lastReset = instantOf(2018, 6, 1, 0, 0, 0, 0);
@@ -220,11 +225,12 @@ public class FilterStatisticsServiceTest {
         Assert.assertEquals(clock.instant(), stats.getEnd());
         Assert.assertNotNull(stats.getSummary());
         Assert.assertNotNull(stats.getSummary().getBlockedQueriesByReason());
-        Assert.assertEquals(30, stats.getSummary().getQueries());
-        Assert.assertEquals(18, stats.getSummary().getBlockedQueries());
+        Assert.assertEquals(50, stats.getSummary().getQueries());
+        Assert.assertEquals(30, stats.getSummary().getBlockedQueries());
         Assert.assertEquals(Integer.valueOf(3), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.PARENTAL_CONTROL));
         Assert.assertEquals(Integer.valueOf(6), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.ADS));
         Assert.assertEquals(Integer.valueOf(9), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.TRACKERS));
+        Assert.assertEquals(Integer.valueOf(12), stats.getSummary().getBlockedQueriesByReason().get(FilterStats.Category.MALWARE));
     }
 
     @Test

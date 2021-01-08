@@ -97,6 +97,7 @@ public class FilterStats {
         CUSTOM,
         TRACKERS,
         PARENTAL_CONTROL,
+        MALWARE,
         UNKNOWN
     }
 }

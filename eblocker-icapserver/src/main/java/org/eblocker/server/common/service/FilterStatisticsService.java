@@ -191,6 +191,8 @@ public class FilterStatisticsService {
                 return FilterStats.Category.TRACKERS;
             case PARENTAL_CONTROL:
                 return FilterStats.Category.PARENTAL_CONTROL;
+            case MALWARE:
+                return FilterStats.Category.MALWARE;
             default:
                 return FilterStats.Category.UNKNOWN;
         }

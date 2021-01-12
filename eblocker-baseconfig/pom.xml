@@ -122,6 +122,7 @@
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_NO_RELAY</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_ONLY_IF_CACHED_MISS</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_PRECONDITION_FAILED</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
+		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_PROTOCOL_UNKNOWN</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_READ_ERROR</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_READ_TIMEOUT</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>
 		<data><type>link</type><linkName>/opt/eblocker-baseconfig/squid-errors/ERR_SHUTTING_DOWN</linkName><linkTarget>REDIRECT_TO_EBLOCKER</linkTarget></data>

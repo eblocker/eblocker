@@ -417,6 +417,10 @@
                     "LABEL_CLOAKING_OFF_LABEL" : "No cloaking",
                     "TAB_LABEL" : "Anonymization"
                 },
+                "DEVICE" : {
+                    "TAB_LABEL" : "Device",
+                    "HEADING" : "Details for device"
+                },
                 "FILTERS" : {
                     "MALWARE" : {
                         "LABEL" : "Malware Blocker",
@@ -458,7 +462,8 @@
                     "LABEL_VENDOR" : "Vendor",
                     "TOOLTIP" : {
                         "EDIT_DEVICE" : "Edit device name."
-                    }
+                    },
+                    "TAB_LABEL" : "Device"
                 },
                 "HEADING" : "Details for device",
                 "HTTPS" : {

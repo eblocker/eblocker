@@ -417,6 +417,10 @@
                     "LABEL_CLOAKING_OFF_LABEL" : "Nicht tarnen",
                     "TAB_LABEL" : "Anonymisierung"
                 },
+                "DEVICE" : {
+                    "TAB_LABEL" : "Geräte",
+                    "HEADING" : "Gerätedetails"
+                },
                 "FILTERS" : {
                     "MALWARE" : {
                         "LABEL" : "Malware & Phishing Blocker",

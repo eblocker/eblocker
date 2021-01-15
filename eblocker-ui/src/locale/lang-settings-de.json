@@ -868,17 +868,24 @@
                     "URL_REQUIRED": "Bitte geben Sie eine URL ein",
                     "URL_TOO_LONG": "Die URL ist zu lang",
                     "FORMAT_REQUIRED": "Bitte wählen Sie einen Listen-Format",
-                    "SERVER_ERROR": "Es ist ein Fehler aufgetreten. Die Liste konnte nicht gespeichert werden."
+                    "SERVER_ERROR": "Es ist ein Fehler aufgetreten. Die Liste konnte nicht gespeichert werden.",
+                    "CONTENT_REQUIRED": "Bitte geben Sie mindestens einen Filter ein",
+                    "CONTENT_TOO_LONG": "Der Inhalt ist zu lang"
                 },
                 "LABEL": {
                     "NAME": "Name",
                     "FORMAT": "Format",
                     "URL": "URL",
-                    "UPDATES": "tägliche Aktualisierung"
+                    "UPDATES": "tägliche Aktualisierung",
+                    "CONTENT": "Filter (ein Eintrag pro Zeile)"
                 },
-                "INFO":{
+                "INFO": {
                     "PROCESSING": "Diese Liste wird gerade verarbeitet und kann derzeit nicht editiert werden",
                     "READ_ONLY": "Diese Liste wurde vom eBlocker erstellt und kann nicht editiert werden"
+                },
+                "TYPE": {
+                    "DOWNLOAD": "Download URL angeben",
+                    "CUSTOM": "Eigene Liste pflegen"
                 }
             },
             "DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM": {

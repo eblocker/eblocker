@@ -36,13 +36,19 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
         vm.readOnly = blockerList.providedByEblocker;
         vm.name = angular.isObject(blockerList.name) && angular.isDefined(blockerList.name[$translate.use()]) ?
             blockerList.name[$translate.use()] : '';
-        vm.url = blockerList.url;
+        if (angular.isDefined(blockerList.url)) {
+            vm.url = blockerList.url;
+            vm.isDownload = true;
+        } else {
+            vm.content = blockerList.content;
+            vm.isDownload = false;
+        }
         vm.format = blockerList.format || formatList[0];
         vm.updates = blockerList.updateInterval === 'DAILY';
     } else {
         vm.format = formatList[0];
+        vm.isDownload = true;
     }
-
 
     function cancel() {
         $mdDialog.cancel();
@@ -50,14 +56,21 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
 
     function save() {
         vm.hasServerError = false;
-        if (vm.customListForm.name.$valid && vm.customListForm.url.$valid && vm.customListForm.format.$valid) {
+        if (formValid()) {
             if (angular.isFunction(okAction)) {
                 vm.loading = true;
 
                 blockerList.name = {de: vm.name, en: vm.name};
-                blockerList.url = vm.url;
+                if (vm.isDownload) {
+                    blockerList.url = vm.url;
+                    blockerList.updateInterval = vm.updates ? 'DAILY' : 'NEVER';
+                    delete blockerList.content;
+                } else {
+                    blockerList.content = vm.content;
+                    delete blockerList.url;
+                    delete blockerList.updateInterval;
+                }
                 blockerList.format = vm.format;
-                blockerList.updateInterval = vm.updates ? 'DAILY' : 'NEVER';
 
                 okAction(blockerList).then(function success(response) {
                     $mdDialog.hide(response);
@@ -71,5 +84,12 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
                 $mdDialog.hide('No OK-function defined.');
             }
         }
+    }
+
+    function formValid() {
+        return vm.customListForm.name.$valid &&
+            ((vm.isDownload && vm.customListForm.url.$valid) ||
+             (!vm.isDownload && vm.customListForm.content.$valid)) &&
+            vm.customListForm.format.$valid;
     }
 }

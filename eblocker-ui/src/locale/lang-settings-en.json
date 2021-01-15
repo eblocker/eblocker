@@ -868,17 +868,24 @@
                     "URL_REQUIRED": "Enter a URL",
                     "URL_TOO_LONG": "The URL is too long",
                     "FORMAT_REQUIRED": "Select a list format",
-                    "SERVER_ERROR": "An error occurred. The list could not be saved."
+                    "SERVER_ERROR": "An error occurred. The list could not be saved.",
+                    "CONTENT_REQUIRED": "Enter at least one filter",
+                    "CONTENT_TOO_LONG": "The content is too long"
                 },
                 "LABEL": {
                     "NAME": "Name",
                     "FORMAT": "Format",
                     "URL": "URL",
-                    "UPDATES": "daily updates"
+                    "UPDATES": "daily updates",
+                    "CONTENT": "Filters (one entry per line)"
                 },
-                "INFO":{
+                "INFO": {
                     "PROCESSING": "This list is being processed and cannot be edited at the moment",
                     "READ_ONLY": "This list has been created by the eBlocker and cannot be edited"
+                },
+                "TYPE": {
+                    "DOWNLOAD": "Provide download URL",
+                    "CUSTOM": "Maintain own list"
                 }
             },
             "DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM": {

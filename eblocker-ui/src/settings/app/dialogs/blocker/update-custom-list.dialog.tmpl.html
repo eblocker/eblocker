@@ -43,7 +43,14 @@
                     </md-input-container>
                 </div>
 
-                <div>
+                <div layout="row" style="padding-bottom: 8px;">
+                    <md-radio-group layout="row" md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.isDownload">
+                        <md-radio-button ng-value="false">{{'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.TYPE.CUSTOM' | translate}}</md-radio-button>
+                        <md-radio-button ng-value="true">{{'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.TYPE.DOWNLOAD' | translate}}</md-radio-button>
+                    </md-radio-group>
+                </div>
+
+                <div ng-if="vm.isDownload">
                     <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
                         <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.URL' | translate }}</label>
                         <input name="url" ng-model="vm.url" md-maxlength="vm.urlMaxLength" ng-disabled="vm.readOnly" required>
@@ -52,20 +59,30 @@
                             <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.URL_TOO_LONG' | translate }}</div>
                         </div>
                     </md-input-container>
-                </div>
 
-                <div layout="row" layout-align="start center">
-                    <div style="padding: 0 8px 0 8px">
-                        <span>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}</span>
+                    <div layout="row" layout-align="start center">
+                        <div style="padding: 0 8px 0 8px">
+                            <span>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}</span>
+                        </div>
+                        <div style="padding: 0 8px 0 8px">
+                            <md-switch class="md-primary switch-word-break no-margin"
+                                       ng-disabled="vm.readOnly"
+                                       aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}"
+                                       md-theme="eBlockerThemeSwitch"
+                                       ng-model="vm.updates">
+                            </md-switch>
+                        </div>
                     </div>
-                    <div style="padding: 0 8px 0 8px">
-                        <md-switch class="md-primary switch-word-break no-margin"
-                                   ng-disabled="vm.readOnly"
-                                   aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.UPDATES' | translate }}"
-                                   md-theme="eBlockerThemeSwitch"
-                                   ng-model="vm.updates">
-                        </md-switch>
-                    </div>
+                </div>
+                <div ng-if="!vm.isDownload" layout="column">
+                    <md-input-container md-theme="eBlockerThemeInput">
+                        <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.CONTENT' | translate }}</label>
+                        <textarea name="content" ng-model="vm.content" md-maxlength="20000" required></textarea>
+                        <div ng-messages="vm.customListForm.content.$error" ng-if="vm.customListForm.$submitted || vm.customListForm.content.$touched">
+                            <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.CONTENT_REQUIRED' | translate }}</div>
+                            <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.ERROR.CONTENT_TOO_LONG' | translate }}</div>
+                        </div>
+                    </md-input-container>
                 </div>
 
                 <div ng-if="vm.hasServerError" layout="row" layout-align="center center">

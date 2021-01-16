@@ -21,7 +21,7 @@
 
         <!-- content -->
         <div flex-gt-md="95" style="height: 100%;" layout="column">
-            <!-- Main switch / Added conditional for displaying frame on eblocker or gateway-->
+            <!-- Added conditional for displaying frame on eblocker or gateway-->
             <div ng-if="vm.device.isGateway || vm.device.isEblocker" class="config-frame md-whiteframe-z1" layout="column">
                 <div ng-if="vm.device.isGateway" style="padding-left: 16px;">
                     <p>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IS_GATEWAY' | translate }}</p>
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <!-- Removed '&& vm.device.pausedOrEnabled' from ng-if to display device details in tabulated form when vm.device.paused enabled-->
-            <div class="config-frame md-whiteframe-z1" ng-if="!vm.device.isGateway && !vm.device.isEblocker">
+            <div class="config-frame md-whiteframe-z1" >
                 <md-tabs md-border-bottom
                          md-swipe-content
                          md-dynamic-height>
@@ -43,9 +43,9 @@
                             <ng-include src="'app/components/devices/list/devices-details-device.component.html'"></ng-include>
                         </md-tab-body>
                     </md-tab>
-
+                    <!-- Added conditional to hide tabs when eblocker not enabled for device -->
+                    <div ng-if="vm.device.pausedOrEnabled && !vm.device.isGateway && !vm.device.isEblocker">
                     <!-- USER -->
-                    <div ng-if="vm.device.pausedOrEnabled">
                         <md-tab ng-if="vm.hasFeature('FAM')">
                             <md-tab-label>{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.USERS.TAB_LABEL' | translate }}</md-tab-label>
                             <md-tab-body>

@@ -9,7 +9,7 @@
         <!--containing flex box for device details ip, mac, vendor-->
         <div  style="height: 100%; width: 100%;" layout="row" layout-xs="column">
                 <!-- <div style="padding-top: 8px;"> -->
-            <div layout="row" layout-xs="column" layout-align="start start"  style= "paddint-top: 16px; width: 100%;">
+            <div layout="row" layout-xs="column" layout-align="start start"  style= "padding-top: 16px; width: 100%;">
                 <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
                     <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}" config="vm.deviceIp"></eb-label-container>
                 </div>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- workaround: otherwise switch labels overlap on small devices -->
-        <div hide-gt-xs style="margin-top: 20px;" ></div>
+        <div hide-gt-xs style="margin-top: 10px;" ></div>
 
         <!-- Fixed IP Switch (DHCP) -->
         <div ng-if="vm.dhcpActive">

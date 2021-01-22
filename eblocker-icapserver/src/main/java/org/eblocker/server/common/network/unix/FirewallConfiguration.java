@@ -240,27 +240,27 @@ public class FirewallConfiguration {
         Chain postRouting = table.chain("POSTROUTING").accept();
 
         // always answer dns queries directed at eblocker
-        preRouting.rule("-i %s -d %s -p udp --dport 53 -j DNAT --to-destination %s:5300", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress());
+        preRouting.rule("-i %s -d %s -p udp -m udp --dport 53 -j DNAT --to-destination %s:5300", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress());
 
         if (openVpnServerActive) {
-            preRouting.rule("-i %s -d %s -p udp --dport 53 -j DNAT --to-destination %s:5300", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress());
+            preRouting.rule("-i %s -d %s -p udp -m udp --dport 53 -j DNAT --to-destination %s:5300", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress());
         }
 
         // Redirect port 80 & 443 to icapserver backend for user friendly URLs if not running in server mode
         if (environment.isServer()) {
-            preRouting.rule("-i %s -d %s -p tcp --dport 80 -j RETURN", interfaceName, netConfig.getIpAddress());
+            preRouting.rule("-i %s -d %s -p tcp -m tcp --dport 80 -j RETURN", interfaceName, netConfig.getIpAddress());
         } else {
             preRouting
-                    .rule("-i %s -d %s -p tcp --dport 80 -j DNAT --to-destination %s:%d", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress(), httpPort)
-                    .rule("-i %s -d %s -p tcp --dport 443 -j DNAT --to-destination %s:%d", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress(), httpsPort)
-                    .rule("-i %s -d %s -p tcp --dport 80 -j DNAT --to-destination %s:%d", interfaceName, fallbackIp, fallbackIp, httpPort)
-                    .rule("-i %s -d %s -p tcp --dport 443 -j DNAT --to-destination %s:%d", interfaceName, fallbackIp, fallbackIp, httpsPort);
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 80 -j DNAT --to-destination %s:%d", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress(), httpPort)
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 443 -j DNAT --to-destination %s:%d", interfaceName, netConfig.getIpAddress(), netConfig.getIpAddress(), httpsPort)
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 80 -j DNAT --to-destination %s:%d", interfaceName, fallbackIp, fallbackIp, httpPort)
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 443 -j DNAT --to-destination %s:%d", interfaceName, fallbackIp, fallbackIp, httpsPort);
         }
 
         if (openVpnServerActive) {
             preRouting
-                    .rule("-i %s -d %s -p tcp --dport 80 -j DNAT --to-destination %s:%d", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress(), httpPort)
-                    .rule("-i %s -d %s -p tcp --dport 443 -j DNAT --to-destination %s:%d", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress(), httpsPort);
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 80 -j DNAT --to-destination %s:%d", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress(), httpPort)
+                    .rule("-i %s -d %s -p tcp -m tcp --dport 443 -j DNAT --to-destination %s:%d", vpnInterfaceName, netConfig.getVpnIpAddress(), netConfig.getVpnIpAddress(), httpsPort);
         }
 
         devices.stream()
@@ -277,14 +277,14 @@ public class FirewallConfiguration {
         if (enableEblockerDns) {
             preRouting
                     // redirect all dns traffic to dns-server
-                    .rule("-i %s -p udp --dport 53 -j DNAT --to-destination %s:5300", interfaceName, netConfig.getIpAddress())
+                    .rule("-i %s -p udp -m udp --dport 53 -j DNAT --to-destination %s:5300", interfaceName, netConfig.getIpAddress())
                     // redirect blocked http / https traffic to redirect-service
-                    .rule("-d %s -p tcp --dport 80 -j DNAT --to-destination %s:%s", dnsAccessDeniedIp, dnsAccessDeniedIp, parentalControlRedirectHttpPort)
-                    .rule("-d %s -p tcp --dport 443 -j DNAT --to-destination %s:%s", dnsAccessDeniedIp, dnsAccessDeniedIp, parentalControlRedirectHttpsPort);
+                    .rule("-d %s -p tcp -m tcp --dport 80 -j DNAT --to-destination %s:%s", dnsAccessDeniedIp, dnsAccessDeniedIp, parentalControlRedirectHttpPort)
+                    .rule("-d %s -p tcp -m tcp --dport 443 -j DNAT --to-destination %s:%s", dnsAccessDeniedIp, dnsAccessDeniedIp, parentalControlRedirectHttpsPort);
         }
 
         if (openVpnServerActive) {
-            preRouting.rule("-i %s -p udp --dport 53 -j DNAT --to-destination %s:5300", vpnInterfaceName, netConfig.getVpnIpAddress());
+            preRouting.rule("-i %s -p udp -m udp --dport 53 -j DNAT --to-destination %s:5300", vpnInterfaceName, netConfig.getVpnIpAddress());
         }
 
         // no local traffic to be processed by squid and icap
@@ -305,8 +305,8 @@ public class FirewallConfiguration {
         accessRestrictedIps.forEach(ip -> {
             String interfaceName = evaluateInterfaceName(ip);
             preRouting
-                    .rule("-i %s -p tcp -s %s --dport 80 -j DNAT --to-destination %s:%d", interfaceName, ip, netConfig.getIpAddress(), parentalControlRedirectHttpPort)
-                    .rule("-i %s -p tcp -s %s --dport 443 -j DNAT --to-destination %s:%d", interfaceName, ip, netConfig.getIpAddress(), parentalControlRedirectHttpsPort);
+                    .rule("-i %s -p tcp -s %s -m tcp --dport 80 -j DNAT --to-destination %s:%d", interfaceName, ip, netConfig.getIpAddress(), parentalControlRedirectHttpPort)
+                    .rule("-i %s -p tcp -s %s -m tcp --dport 443 -j DNAT --to-destination %s:%d", interfaceName, ip, netConfig.getIpAddress(), parentalControlRedirectHttpsPort);
         });
 
         // Redirect port 80 to the proxy:
@@ -327,7 +327,7 @@ public class FirewallConfiguration {
                             .map(IpAddress::toString)
                             .filter(ip -> !isMobileClient(ip) || openVpnServerActive)
                             .forEach(ip -> {
-                                preRouting.rule("-i %s -p tcp -s %s --dport 443 -j DNAT --to-destination %s:%d", evaluateInterfaceName(ip), ip, selectTargetIpAddress(ip, netConfig), proxyHTTPSPort);
+                                preRouting.rule("-i %s -p tcp -s %s -m tcp --dport 443 -j DNAT --to-destination %s:%d", evaluateInterfaceName(ip), ip, selectTargetIpAddress(ip, netConfig), proxyHTTPSPort);
                             }));
         }
 
@@ -341,7 +341,7 @@ public class FirewallConfiguration {
                 .map(IpAddress::toString)
                 .forEach(ip -> {
                     if (!enableEblockerDns) {
-                        preRouting.rule("-i %s -s %s -p udp --dport 53 -j DNAT --to-destination %s:9053", evaluateInterfaceName(ip), ip, selectTargetIpAddress(ip, netConfig));
+                        preRouting.rule("-i %s -s %s -p udp -m udp --dport 53 -j DNAT --to-destination %s:9053", evaluateInterfaceName(ip), ip, selectTargetIpAddress(ip, netConfig));
                     }
                     preRouting.rule("-i %s -p tcp -s %s -j DNAT --to-destination %s:%d", evaluateInterfaceName(ip), ip, selectTargetIpAddress(ip, netConfig), anonSocksPort);
                 });
@@ -360,11 +360,11 @@ public class FirewallConfiguration {
         }
 
         // nat local traffic to dns-server
-        output.rule("-o lo -p udp -s 127.0.0.1 -d 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5300");
+        output.rule("-o lo -p udp -s 127.0.0.1 -d 127.0.0.1 -m udp --dport 53 -j DNAT --to-destination 127.0.0.1:5300");
 
         // nat local traffic to default ports
-        output.rule("-o lo -p tcp --dport 80 -j DNAT --to-destination 127.0.0.1:%s", httpPort);
-        output.rule("-o lo -p tcp --dport 443 -j DNAT --to-destination 127.0.0.1:%s", httpsPort);
+        output.rule("-o lo -p tcp -m tcp --dport 80 -j DNAT --to-destination 127.0.0.1:%s", httpPort);
+        output.rule("-o lo -p tcp -m tcp --dport 443 -j DNAT --to-destination 127.0.0.1:%s", httpsPort);
 
         // use redsocks for all outgoing traffic from special source ip
         output.rule("-o %s -s %s -p tcp -j DNAT --to-destination %s:%d", interfaceName, anonSourceIp, netConfig.getIpAddress(), anonSocksPort);
@@ -451,15 +451,15 @@ public class FirewallConfiguration {
             String interfaceName = evaluateInterfaceName(ip);
             forward.rule("-i %s -s %s -j DROP", interfaceName, ip);
             input
-                    .rule("-i %s -s %s -p tcp --dport 3128 -j REJECT", interfaceName, ip)
-                    .rule("-i %s -s %s -p tcp --dport 3130 -j REJECT", interfaceName, ip);
+                    .rule("-i %s -s %s -p tcp -m tcp --dport 3128 -j REJECT", interfaceName, ip)
+                    .rule("-i %s -s %s -p tcp -m tcp --dport 3130 -j REJECT", interfaceName, ip);
         });
 
         // drop all non http/https connections on access denied ip
         if (enableEblockerDns) {
             input
-                    .rule("-d %s -p tcp --dport %d -j ACCEPT", dnsAccessDeniedIp, parentalControlRedirectHttpPort)
-                    .rule("-d %s -p tcp --dport %d -j ACCEPT", dnsAccessDeniedIp, parentalControlRedirectHttpsPort)
+                    .rule("-d %s -p tcp -m tcp --dport %d -j ACCEPT", dnsAccessDeniedIp, parentalControlRedirectHttpPort)
+                    .rule("-d %s -p tcp -m tcp --dport %d -j ACCEPT", dnsAccessDeniedIp, parentalControlRedirectHttpsPort)
                     .rule("-d %s -j DROP", dnsAccessDeniedIp);
         }
     }

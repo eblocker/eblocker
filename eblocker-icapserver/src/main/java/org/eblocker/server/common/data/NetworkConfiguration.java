@@ -33,7 +33,7 @@ public class NetworkConfiguration {
     private boolean dhcp; // if true, eBlocker runs a DHCP server
     private boolean dnsServer; // if true eblocker uses it's own dns server
     private String ipAddress; // static IP address of eBlocker
-    private String networkMask; // network mas of static IP address
+    private String networkMask; // network mask of static IP address
     private String vpnIpAddress;
     private String gateway; // IP address of gateway
     private String nameServerPrimary; // IP address of primary name server

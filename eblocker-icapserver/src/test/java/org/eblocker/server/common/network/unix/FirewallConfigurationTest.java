@@ -23,14 +23,12 @@ import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.MockDataSource;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
-import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkServices;
+import org.eblocker.server.common.network.unix.firewall.TableGenerator;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,12 +51,12 @@ import static org.mockito.Mockito.when;
 
 public class FirewallConfigurationTest {
     private FirewallConfiguration configuration;
-    private MockDataSource dataSource;
     private ParentalControlAccessRestrictionsService restrictionsService;
     private String malwareIpSet;
     private Environment environment;
     private File configFullFile;
     private File configDeltaFile;
+    private TableGenerator tableGenerator;
     private NetworkServices networkServices;
 
     @Before
@@ -68,9 +66,6 @@ public class FirewallConfigurationTest {
 
         configDeltaFile = File.createTempFile("firewall", ".conf.delta");
         configDeltaFile.deleteOnExit();
-
-        dataSource = new MockDataSource();
-        dataSource.setGateway("192.168.0.1");
         environment = Mockito.mock(Environment.class);
         Mockito.when(environment.isServer()).thenReturn(false);
 
@@ -78,9 +73,11 @@ public class FirewallConfigurationTest {
 
         networkServices = createNetworkServicesMock("10.8.0.1");
         restrictionsService = createAccessRestrictionsMock();
-        configuration = new FirewallConfiguration(
-                configFullFile.toString(),
-                configDeltaFile.toString(),
+        configuration = createFirewallConfiguration();
+    }
+
+    private FirewallConfiguration createFirewallConfiguration() {
+        tableGenerator = new TableGenerator(
                 "eth2",
                 "tun33",
                 "10.8.0.0",
@@ -101,17 +98,21 @@ public class FirewallConfigurationTest {
                 3004,
                 "139.59.206.208",
                 malwareIpSet,
-                1194,
+                1194);
+
+        return new FirewallConfiguration(
+                configFullFile.toString(),
+                configDeltaFile.toString(),
+                tableGenerator,
                 networkServices,
-                dataSource,
                 restrictionsService,
-                environment
-        );
+                environment);
     }
 
     private NetworkServices createNetworkServicesMock(String vpnIpAddress) {
         NetworkConfiguration networkConfiguration = Mockito.mock(NetworkConfiguration.class);
         when(networkConfiguration.getIpAddress()).thenReturn("192.168.0.10");
+        when(networkConfiguration.getGateway()).thenReturn("192.168.0.1");
         when(networkConfiguration.getNetworkMask()).thenReturn("255.255.255.0");
         when(networkConfiguration.getVpnIpAddress()).thenReturn(vpnIpAddress);
         NetworkServices networkServices = Mockito.mock(NetworkServices.class);
@@ -240,9 +241,6 @@ public class FirewallConfigurationTest {
 
     @Test
     public void testEnabledVPNProfile() throws IOException {
-        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
-        dataSource.addVPNProfile(profile);
-
         OpenVpnClientState client = new OpenVpnClientState();
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
@@ -253,15 +251,10 @@ public class FirewallConfigurationTest {
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-noclients.conf", configFullFile);
-
-        dataSource.removeAllVPNProfiles();
     }
 
     @Test
     public void testActiveVPNProfileWithOneClient() throws IOException {
-        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
-        dataSource.addVPNProfile(profile);
-
         OpenVpnClientState client = new OpenVpnClientState();
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
@@ -275,15 +268,10 @@ public class FirewallConfigurationTest {
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-oneclient.conf", configFullFile);
-
-        dataSource.removeAllVPNProfiles();
     }
 
     @Test
     public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException {
-        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
-        dataSource.addVPNProfile(profile);
-
         OpenVpnClientState client = new OpenVpnClientState();
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
@@ -297,15 +285,10 @@ public class FirewallConfigurationTest {
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-oneclient-no-ip.conf", configFullFile);
-
-        dataSource.removeAllVPNProfiles();
     }
 
     @Test
     public void testActiveVPNProfileWhileRestart() throws IOException {
-        VpnProfile profile = new OpenVpnProfile(1, "OpenVPN profile 1");
-        dataSource.addVPNProfile(profile);
-
         OpenVpnClientState client = new OpenVpnClientState();
         client.setId(1);
         client.setState(OpenVpnClientState.State.PENDING_RESTART);
@@ -319,8 +302,6 @@ public class FirewallConfigurationTest {
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
         assertEqualContent("test-data/firewall-active-vpnprofile-restart.conf", configFullFile);
-
-        dataSource.removeAllVPNProfiles();
     }
 
     @Test
@@ -370,35 +351,7 @@ public class FirewallConfigurationTest {
     private List<Device> setUpEblockerMobileTest() {
         Mockito.when(environment.isServer()).thenReturn(true);
 
-        configuration = new FirewallConfiguration(
-                configFullFile.toString(),
-                configDeltaFile.toString(),
-                "eth2",
-                "tun33",
-                "10.8.0.0",
-                "255.255.255.0",
-                1234,
-                3333,
-                12345,
-                "169.254.7.53/32",
-                "10.0.0.0/8",
-                "172.16.0.0/12",
-                "192.168.0.0/16",
-                "169.254.0.0/16",
-                13,
-                3000,
-                3443,
-                "169.254.93.109",
-                3003,
-                3004,
-                "139.59.206.208",
-                malwareIpSet,
-                1194,
-                networkServices,
-                dataSource,
-                restrictionsService,
-                environment
-        );
+        configuration = createFirewallConfiguration();
 
         Device a = TestDeviceFactory.createDevice("aa11223344ff", "192.168.0.21", true);
         Device b = TestDeviceFactory.createDevice("bb11223344ff", "192.168.0.22", false);

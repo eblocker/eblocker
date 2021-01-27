@@ -1,0 +1,98 @@
+<div layout="column" style="padding-top: 8px;" layout-padding>
+    <!-- Page for device details-ip address, mac address, enabled, disabled -->
+    <div layout="column"  layout-align="center start" >
+    
+            <div layout="row" layout-align="start center" style="width: 100%;">
+                <h4>{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.DEVICE.HEADING' | translate}}
+                </h4>
+            </div>
+        <!--containing flex box for device details ip, mac, vendor-->
+        <div  style="height: 100%; width: 100%;" layout="row" layout-xs="column">
+                <!-- <div style="padding-top: 8px;"> -->
+            <div layout="row" layout-xs="column" layout-align="start start"  style= "padding-top: 16px; width: 100%;">
+                <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
+                    <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}" config="vm.deviceIp"></eb-label-container>
+                </div>
+                <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
+                    <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_MAC' | translate}}" config="vm.deviceMac"></eb-label-container>
+                </div>
+                <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
+                    <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_VENDOR' | translate}}" config="vm.deviceVendor"></eb-label-container>
+                </div>
+            </div>    
+        </div>
+        <!-- **** Edit -->
+        <div layout="row" layout-align="start center" style="width: 100%;">
+            <!-- <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;"> -->
+                <div >
+                <eb-label-container is-edit="vm.editable(vm.device)" edit-callback="vm.editName($event, vm.device)"
+                                    style="margin-bottom: 15px;" label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_NAME' | translate}}" config="vm.deviceName"></eb-label-container>
+            </div>
+        </div>
+    </div>
+
+    <md-divider ng-if="!vm.device.isGateway && !vm.device.isEblocker" style="width: 100%;"></md-divider>
+    
+    <div ng-if="!vm.device.isGateway && !vm.device.isEblocker" layout="column" layout-align="start start">
+        <div>
+            <md-switch md-theme="eBlockerThemeSwitch"
+                        layout="row" layout-align="center center" layout-padding
+                        class="md-primary switch-word-break"
+                        ng-model="vm.device.pausedOrEnabled"
+                        ng-change="vm.onChangeEnabled(vm.device)"
+                        ng-disabled="vm.isUpdatingDevice">
+                {{ vm.device.pausedOrEnabled ? 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_ENABLED_EBLOCKER' : 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_DISABLED_EBLOCKER' | translate }}
+            </md-switch>
+        </div>
+
+        <!-- workaround: otherwise switch labels overlap on small devices -->
+        <div hide-gt-xs style="margin-top: 35px;"></div>
+
+        <div ng-if="vm.pausingAllowed !== false" layout="row" layout-align="start center">
+            <md-switch md-theme="eBlockerThemeSwitch" class="md-primary switch-word-break"
+                        layout="row" layout-align="center center" layout-padding
+                        ng-model="vm.device.paused"
+                        ng-change="vm.onChangePaused(vm.device)"
+                        ng-disabled="!vm.device.pausedOrEnabled || vm.pauseStatusPending || vm.isUpdatingDevice">
+                <span ng-hide="vm.device.paused" translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_NOT_PAUSE_EBLOCKER"></span>
+                <span ng-show="vm.device.paused && vm.pauseRemaining > 0">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_PAUSE_EBLOCKER_COUNTDOWN' | translate:{min: vm.getPauseMinutes(), sec: vm.getPauseSeconds()} }}</span>
+                <span ng-show="vm.device.paused && (vm.pauseRemaining === undefined || vm.pauseRemaining <= 0)">{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_PAUSE_EBLOCKER' | translate }}</span>
+            </md-switch>
+        </div>
+
+        <div ng-if="vm.device.pausedOrEnabled && vm.pausingAllowed === false" layout="row" layout-align="start center" layout-padding>
+            <span translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_PAUSE_NOT_ALLOWED"></span>
+        </div>
+        
+        <div ng-if="!vm.isUpdatingDevice && !vm.spinnerDelay && !vm.device.isGateway && !vm.device.isEblocker" style="padding-top: 26px;">
+        </div>
+
+        <div ng-if="vm.isUpdatingDevice || vm.spinnerDelay"
+            layout="row" layout="start center"
+            style="padding-left: 8px;">
+            <div>
+                <md-progress-circular md-mode="indeterminate" md-diameter="26"></md-progress-circular>
+            </div>
+            <span style="padding-left: 16px;" translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_DEVICE_UPDATING"></span>
+        </div>
+
+        <!-- workaround: otherwise switch labels overlap on small devices -->
+        <div hide-gt-xs style="margin-top: 10px;" ></div>
+
+        <!-- Fixed IP Switch (DHCP) -->
+        <div ng-if="vm.dhcpActive">
+            <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="start center" ng-model="vm.device.ipAddressFixed" class="md-primary switch-word-break" ng-change="vm.onChange(vm.device)">
+                {{ vm.device.ipAddressFixed ? 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP_ADDRESS_FIXED' : 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP_ADDRESS_NOT_FIXED' | translate }}
+            </md-switch>
+        </div>
+        <!-- Reset button -->
+        <md-divider style="width: 100%; margin-top: 12px;"></md-divider>
+        <div style="padding-top: 26px;">
+            <md-button class="md-raised eb-delete-button"
+                        ng-click="vm.onResetDevice(vm.device)"
+                        aria-label="{{ 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_RESET_DEVICE' | translate }}">
+                {{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_RESET_DEVICE' | translate}}
+            </md-button>
+        </div>
+    </div>
+</div>

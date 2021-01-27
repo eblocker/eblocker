@@ -418,7 +418,7 @@
                     "TAB_LABEL" : "Anonymisierung"
                 },
                 "DEVICE" : {
-                    "TAB_LABEL" : "Geräte",
+                    "TAB_LABEL" : "Gerät",
                     "HEADING" : "Gerätedetails"
                 },
                 "FILTERS" : {

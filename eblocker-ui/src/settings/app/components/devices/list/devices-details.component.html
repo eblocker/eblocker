@@ -5,7 +5,6 @@
             <div layout="row" layout-align="start center" layout-align-xs="center center" style="width: 100%;">
                 <eb-back-to-table state="{{vm.backState}}" params="vm.stateParams"></eb-back-to-table>
             </div>
-
             <div layout="row" layout-align="end center" layout-align-xs="center center" style="width: 100%;">
                 <eb-details-paginator table-data="vm.tableData"
                                       tooltip-property="displayName"
@@ -31,6 +30,10 @@
                 </div>
             </div>
             <!-- Removed '&& vm.device.pausedOrEnabled' from ng-if to display device details in tabulated form when vm.device.paused enabled-->
+            <div ng-if="!vm.device.isGateway && !vm.device.isEblocker">
+                <h4>{{ vm.device.name }}
+                </h4>
+            </div>
             <div class="config-frame md-whiteframe-z1" >
                 <md-tabs md-border-bottom
                          md-swipe-content

@@ -29,13 +29,8 @@ public class Chain {
         return rules;
     }
 
-    public Chain rule(String rule) {
-        rules.add(rule);
-        return this;
-    }
-
-    public Chain rule(String rule, Object... options) {
-        rules.add(String.format(rule, options));
+    public Chain rule(Rule rule) {
+        rules.add(rule.toString());
         return this;
     }
 }

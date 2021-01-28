@@ -98,7 +98,9 @@ public class FirewallConfigurationTest {
                 3004,
                 "139.59.206.208",
                 malwareIpSet,
-                1194);
+                1194,
+                5300,
+                9053);
 
         return new FirewallConfiguration(
                 configFullFile.toString(),

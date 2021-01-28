@@ -36,6 +36,8 @@ public class TableGenerator {
     private final String fallbackIp;
     private final String malwareIpSetName;
     private final int vpnServerPort;
+    private final int localDnsPort;
+    private final int torDnsPort;
 
     // eBlocker's IP address configuration
     private String ownIpAddress;
@@ -80,8 +82,10 @@ public class TableGenerator {
                           @Named("parentalControl.redirect.https.port") int parentalControlRedirectHttpsPort,
                           @Named("network.control.bar.host.fallback.ip") String fallbackIp,
                           @Named("malware.filter.ipset.name") String malwareIpSetName,
-                          @Named("openvpn.server.port") int vpnServerPort
-    ) {
+                          @Named("openvpn.server.port") int vpnServerPort,
+                          @Named("dns.server.port") int localDnsPort,
+                          @Named("tor.dns.port") int torDnsPort
+                          ) {
         this.interfaceName = interfaceName;
         this.vpnInterfaceName = vpnInterfaceName;
         this.vpnSubnet = IpUtils.convertIpStringToInt(vpnSubnet);
@@ -103,6 +107,8 @@ public class TableGenerator {
         this.httpsPort = httpsPort;
         this.fallbackIp = fallbackIp;
         this.vpnServerPort = vpnServerPort;
+        this.localDnsPort = localDnsPort;
+        this.torDnsPort = torDnsPort;
 
         // prepare rule templates
         stdInput = new Rule().input(interfaceName);
@@ -136,10 +142,10 @@ public class TableGenerator {
         Chain postRouting = natTable.chain("POSTROUTING").accept();
 
         // always answer dns queries directed at eblocker
-        preRouting.rule(new Rule(stdInput).dns().destinationIp(ownIpAddress).destinationNatTo(ownIpAddress, 5300));
+        preRouting.rule(new Rule(stdInput).dns().destinationIp(ownIpAddress).destinationNatTo(ownIpAddress, localDnsPort));
 
         if (openVpnServerActive) {
-            preRouting.rule(new Rule(vpnInput).dns().destinationIp(vpnIpAddress).destinationNatTo(vpnIpAddress, 5300));
+            preRouting.rule(new Rule(vpnInput).dns().destinationIp(vpnIpAddress).destinationNatTo(vpnIpAddress, localDnsPort));
         }
 
         // Redirect port 80 & 443 to icapserver backend for user friendly URLs if not running in server mode
@@ -165,14 +171,14 @@ public class TableGenerator {
         if (dnsEnabled) {
             preRouting
                     // redirect all dns traffic to dns-server
-                    .rule(new Rule(stdInput).dns().destinationNatTo(ownIpAddress, 5300))
+                    .rule(new Rule(stdInput).dns().destinationNatTo(ownIpAddress, localDnsPort))
                     // redirect blocked http / https traffic to redirect-service
                     .rule(new Rule().destinationIp(dnsAccessDeniedIp).http().destinationNatTo(dnsAccessDeniedIp, parentalControlRedirectHttpPort))
                     .rule(new Rule().destinationIp(dnsAccessDeniedIp).https().destinationNatTo(dnsAccessDeniedIp, parentalControlRedirectHttpsPort));
         }
 
         if (openVpnServerActive) {
-            preRouting.rule(new Rule(vpnInput).dns().destinationNatTo(vpnIpAddress, 5300));
+            preRouting.rule(new Rule(vpnInput).dns().destinationNatTo(vpnIpAddress, localDnsPort));
         }
 
         // no local traffic to be processed by squid and icap
@@ -215,7 +221,7 @@ public class TableGenerator {
         ipAddressFilter.getTorDevicesIps()
                 .forEach(ip -> {
                     if (!dnsEnabled) {
-                        preRouting.rule(redirectAutoInterface(ip, 53, 9053).udp());
+                        preRouting.rule(redirectAutoInterface(ip, 53, torDnsPort).udp());
                     }
                     preRouting.rule(redirectAutoInterface(ip, anonSocksPort).tcp());
                 });
@@ -225,7 +231,7 @@ public class TableGenerator {
             ipAddressFilter.getMalwareDevicesIps().stream()
                     .filter(ip -> !isMobileClient(ip) || openVpnServerActive)
                     .forEach(ipAddress ->
-                            preRouting.rule(redirectAutoInterface(ipAddress, 3128)
+                            preRouting.rule(redirectAutoInterface(ipAddress, proxyPort)
                                     .tcp()
                                     .matchSet(true, malwareIpSetName, "dst", "dst")));
         }
@@ -233,7 +239,7 @@ public class TableGenerator {
         // nat local traffic to dns-server
         Rule loopback = new Rule().output("lo");
         String localhost = "127.0.0.1";
-        output.rule(new Rule(loopback).dns().sourceIp(localhost).destinationIp(localhost).destinationNatTo(localhost, 5300));
+        output.rule(new Rule(loopback).dns().sourceIp(localhost).destinationIp(localhost).destinationNatTo(localhost, localDnsPort));
 
         // nat local traffic to default ports
         output.rule(new Rule(loopback).http().destinationNatTo(localhost, httpPort));
@@ -309,8 +315,8 @@ public class TableGenerator {
             Rule srcIp = new Rule().input(evaluateInterfaceName(ip)).sourceIp(ip);
             forward.rule(new Rule(srcIp).drop());
             input
-                    .rule(new Rule(srcIp).tcp().destinationPort(3128).reject())
-                    .rule(new Rule(srcIp).tcp().destinationPort(3130).reject());
+                    .rule(new Rule(srcIp).tcp().destinationPort(proxyPort).reject())
+                    .rule(new Rule(srcIp).tcp().destinationPort(proxyHTTPSPort).reject());
         });
 
         // drop all non http/https connections on access denied ip

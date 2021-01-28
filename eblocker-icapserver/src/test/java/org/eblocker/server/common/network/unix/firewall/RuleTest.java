@@ -11,7 +11,7 @@ public class RuleTest {
                 .sourceIp("192.168.0.106")
                 .tcp()
                 .destinationPort(80)
-                .destinationNatTo("192.168.0.2", 3128);
+                .redirectTo("192.168.0.2", 3128);
 
         Assert.assertEquals("-i eth0 -s 192.168.0.106 -p tcp -m tcp --dport 80 -j DNAT --to-destination 192.168.0.2:3128", rule.toString());
     }

@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class Rule {
+    public static final int HTTP_PORT = 80;
+    public static final int HTTPS_PORT = 443;
+    public static final int SSH_PORT = 22;
+    public static final int DNS_PORT = 53;
+
     private Action action;
 
     private String inputInterface, outputInterface;
@@ -68,15 +73,15 @@ public class Rule {
     }
 
     public Rule http() {
-        return tcp().destinationPort(80);
+        return tcp().destinationPort(HTTP_PORT);
     }
 
     public Rule https() {
-        return tcp().destinationPort(443);
+        return tcp().destinationPort(HTTPS_PORT);
     }
 
     public Rule dns() {
-        return udp().destinationPort(53);
+        return udp().destinationPort(DNS_PORT);
     }
 
     public Rule destinationPort(int port) {
@@ -104,7 +109,7 @@ public class Rule {
         return this;
     }
 
-    public Rule destinationNatTo(String destinationIp, int destinationPort) {
+    public Rule redirectTo(String destinationIp, int destinationPort) {
         this.action = new ActionDestinationNat(destinationIp, destinationPort);
         return this;
     }

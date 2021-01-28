@@ -119,7 +119,10 @@ public class FirewallConfiguration {
 
         IpAddressFilter ipAddressFilter = new IpAddressFilter(devicesByMac, IpAddress::isIpv4, restrictionsService);
 
-        List<Table> newTables = tableGenerator.generate(ipAddressFilter, vpnClientsById);
+        List<Table> newTables = List.of(
+                tableGenerator.generateNatTable(ipAddressFilter, vpnClientsById),
+                tableGenerator.generateFilterTable(ipAddressFilter, vpnClientsById),
+                tableGenerator.generateMangleTable(ipAddressFilter, vpnClientsById));
 
         // write delta config
         String deltaConfig = null;

@@ -61,4 +61,14 @@ public class RuleTest {
         Assert.assertEquals("-i eth33 -d 10.8.0.1 -p tcp -j RETURN", rule2.toString());
         Assert.assertEquals("-p tcp -j DROP", rule3.toString());
     }
+
+    @Test
+    public void testComment() {
+        Assert.assertEquals("-j DROP -m comment --comment \"Just a comment\"", new Rule().comment("Just a comment").drop().toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalComment() {
+        new Rule().comment("hehe\"\n-j RETURN");
+    }
 }

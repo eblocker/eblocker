@@ -1,6 +1,7 @@
 package org.eblocker.server.common.network.unix.firewall;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Rule {
@@ -20,6 +21,9 @@ public class Rule {
     private States states;
     private MultiPorts multiPorts;
     private OwnerModule ownerModule;
+    private String comment;
+
+    private static Pattern allowedCommentCharacters = Pattern.compile("[ a-zA-Z0-9]+");
 
     /**
      * Copy constructor
@@ -37,6 +41,7 @@ public class Rule {
             states = template.states;
             multiPorts = template.multiPorts;
             ownerModule = template.ownerModule;
+            comment = template.comment;
     }
 
     public Rule() {
@@ -143,6 +148,14 @@ public class Rule {
         return setActionNamed(chainName);
     }
 
+    public Rule comment(String comment) {
+        if (! allowedCommentCharacters.matcher(comment).matches()) {
+            throw new IllegalArgumentException("Illegal characters in firewall rule comment");
+        }
+        this.comment = comment;
+        return this;
+    }
+
     private Rule setActionNamed(String name) {
         this.action = new Action(name);
         return this;
@@ -193,6 +206,13 @@ public class Rule {
         }
         ensureSpace(result);
         result.append(action.toString());
+
+        if (comment != null) {
+            result.append(" -m comment --comment ");
+            result.append('"');
+            result.append(comment);
+            result.append('"');
+        }
         return result.toString();
     }
 

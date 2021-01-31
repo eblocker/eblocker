@@ -1,0 +1,18 @@
+<div flex class="column-xs" hide-xs>
+    <md-icon md-svg-src="/img/icons/ic_doctor.svg"></md-icon>
+</div>
+
+<div flex>
+    {{ entry.severity }}
+    <md-tooltip md-delay="300">{{ entry.severity }}</md-tooltip>
+</div>
+
+<div flex flex-gt-xs="15">
+    {{ entry.audience }}
+    <md-tooltip md-delay="300">{{ entry.audience }}</md-tooltip>
+</div>
+
+<div flex flex-gt-xs="55">
+    {{ entry.message }}
+    <md-tooltip md-delay="300">{{ entry.message }}</md-tooltip>
+</div>

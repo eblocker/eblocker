@@ -1674,6 +1674,19 @@
             "MENU_LABEL" : "Donate for updates",
             "URL" : "https://eblocker.org/en/donate-now"
         },
+        "DOCTOR": {
+            "LABEL" : "Doctor",
+            "DIAGNOSIS" : {
+                "TITLE": "The diagnosis of the eBlocker doctor",
+                "TABLE": {
+                    "COLUMN" : {
+                        "SEVERITY" : "Severity",
+                        "AUDIENCE": "Audience",
+                        "MESSAGE": "Message"
+                    }
+                }
+            }
+        },
         "DO_NOT_TRACK" : {
             "DISABLED" : "The eBlocker will not modify the Do-Not-Track header in outgoing requests.",
             "ENABLED" : "The eBlocker will add the Do-Not-Track header to all outgoing requests.",

@@ -1674,6 +1674,19 @@
             "MENU_LABEL" : "Für Updates spenden",
             "URL" : "https://eblocker.org/de/jetzt-spenden"
         },
+         "DOCTOR": {
+            "LABEL" : "Doktor",
+            "DIAGNOSIS" : {
+                "TITLE": "Die Diagnose des eBlocker Doktors",
+                "TABLE": {
+                    "COLUMN" : {
+                        "SEVERITY" : "Schweregrad",
+                        "AUDIENCE": "Publikum",
+                        "MESSAGE": "Nachricht"
+                    }
+                }
+            }
+        },
         "DO_NOT_TRACK" : {
             "DISABLED" : "Der eBlocker verändert den Do-Not-Track-Header in ausgehenden Anfragen nicht.",
             "ENABLED" : "Der eBlocker fügt allen ausgehenden Anfragen einen Do-Not-Track-Header hinzu.",

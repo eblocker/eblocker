@@ -217,7 +217,7 @@ import LibsCCppComponent from './components/openSourceLicenses/libs-c-cpp.compon
 import LibsJavascriptComponent from './components/openSourceLicenses/libs-javascript.component';
 import LibsRubyComponent from './components/openSourceLicenses/libs-ruby.component';
 import LibsDebianComponent from './components/openSourceLicenses/libs-debian.component';
-
+import DoctorDiagnosisComponent from './components/doctor/diagnosis/doctor-diagnosis.component'
 
 // ** Components for code reuse (instead of directives)
 import RemoveTableEntriesComponent from './components/table/remove-entries.component';
@@ -272,6 +272,7 @@ import DialogService from './service/dialog/DialogService';
 import CloakingService from './service/cloaking/CloakingService';
 import NetworkService from './service/network/NetworkService';
 import VpnService from './service/vpn/VpnService';
+import DoctorService from "./service/doctor/DoctorService";
 import TorService from './service/tor/TorService';
 import TrustedAppsService from './service/ssl/TrustedAppsService';
 import SslSuggestionsService from './service/ssl/SslSuggestionsService';
@@ -463,6 +464,7 @@ angular.module('eblocker.adminconsole', [
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeDevicesComponent', VpnHomeDevicesComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
+    .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('captivePortalComponent', CaptivePortalComponent)
     .component('compressionComponent', CompressionComponent)
     .component('doNotTrackComponent', DoNotTrackComponent)
@@ -580,6 +582,7 @@ angular.module('eblocker.adminconsole', [
     .factory('PauseService', PauseService)
     .factory('SplashService', SplashService)
     .factory('WindowEventService', WindowEventService)
+    .factory('DoctorService', DoctorService)
     .filter('ebfilter', ebFilter)
     .filter('displayHours', function() {
         return function(minutes) {

@@ -54,6 +54,7 @@ import org.eblocker.server.http.controller.DashboardCardController;
 import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
+import org.eblocker.server.http.controller.DoctorController;
 import org.eblocker.server.http.controller.DomainBlockingController;
 import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
@@ -103,6 +104,7 @@ import org.eblocker.server.http.controller.impl.DashboardCardControllerImpl;
 import org.eblocker.server.http.controller.impl.DeviceControllerImpl;
 import org.eblocker.server.http.controller.impl.DeviceRegistrationControllerImpl;
 import org.eblocker.server.http.controller.impl.DnsControllerImpl;
+import org.eblocker.server.http.controller.impl.DoctorControllerImpl;
 import org.eblocker.server.http.controller.impl.DomainBlockingControllerImpl;
 import org.eblocker.server.http.controller.impl.DomainRecorderControllerImpl;
 import org.eblocker.server.http.controller.impl.DomainWhiteListControllerImpl;
@@ -525,6 +527,7 @@ public class EblockerServerApp {
         injectController(ConnectionCheckController.class, ConnectionCheckControllerImpl.class);
         injectController(BlockerController.class, BlockerControllerImpl.class);
         injectController(DashboardAuthorizationProcessor.class, DashboardAuthorizationProcessorImpl.class);
+        injectController(DoctorController.class, DoctorControllerImpl.class);
     }
 
     // ---

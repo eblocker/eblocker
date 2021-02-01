@@ -90,7 +90,7 @@ public class FirewallConfiguration {
     }
 
 
-    public synchronized void enable(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients,
+    public synchronized void enable(Set<Device> allDevices, Collection<OpenVpnClientState> anonVpnClients,
                                     boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
                                     boolean enableOpenVpnServer, boolean enableMalwareSet,
                                     Supplier<Boolean> applyFirewallRules) throws IOException {
@@ -101,28 +101,28 @@ public class FirewallConfiguration {
         tableGenerator.setOwnIpAddress(netConfig.getIpAddress());
         tableGenerator.setNetworkMask(netConfig.getNetworkMask());
         tableGenerator.setGatewayIpAddress(netConfig.getGateway());
-        tableGenerator.setVpnIpAddress(netConfig.getVpnIpAddress());
+        tableGenerator.setMobileVpnIpAddress(netConfig.getVpnIpAddress());
 
         // Set flags
         tableGenerator.setMasqueradeEnabled(masquerade);
         tableGenerator.setSslEnabled(enableSSL);
         tableGenerator.setDnsEnabled(enableEblockerDns);
-        tableGenerator.setVpnServerEnabled(enableOpenVpnServer);
+        tableGenerator.setMobileVpnServerEnabled(enableOpenVpnServer);
         tableGenerator.setMalwareSetEnabled(enableMalwareSet);
         tableGenerator.setServerEnvironment(environment.isServer());
 
         // ensure stable order to prevent deltas due to rule order changes
         Set<Device> devicesByMac = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
         devicesByMac.addAll(allDevices);
-        Set<OpenVpnClientState> vpnClientsById = new TreeSet<>(Comparator.comparing(OpenVpnClientState::getId));
-        vpnClientsById.addAll(vpnClients);
+        Set<OpenVpnClientState> anonVpnClientsById = new TreeSet<>(Comparator.comparing(OpenVpnClientState::getId));
+        anonVpnClientsById.addAll(anonVpnClients);
 
         IpAddressFilter ipAddressFilter = new IpAddressFilter(devicesByMac, IpAddress::isIpv4, restrictionsService);
 
         List<Table> newTables = List.of(
-                tableGenerator.generateNatTable(ipAddressFilter, vpnClientsById),
-                tableGenerator.generateFilterTable(ipAddressFilter, vpnClientsById),
-                tableGenerator.generateMangleTable(ipAddressFilter, vpnClientsById));
+                tableGenerator.generateNatTable(ipAddressFilter, anonVpnClientsById),
+                tableGenerator.generateFilterTable(ipAddressFilter, anonVpnClientsById),
+                tableGenerator.generateMangleTable(ipAddressFilter, anonVpnClientsById));
 
         // write delta config
         String deltaConfig = null;
@@ -183,11 +183,11 @@ public class FirewallConfiguration {
 
     private void writeChainDiff(PrintWriter writer, Chain currentChain, Chain newChain) {
         if (currentChain == null) {
-            newChain.getRules().forEach(rule -> writer.format("-A %s %s\n", newChain.getName(), rule));
+            newChain.getRulesAsStrings().forEach(rule -> writer.format("-A %s %s\n", newChain.getName(), rule));
             return;
         }
 
-        Levenshtein.Distance distance = levenshtein.distance(currentChain.getRules(), newChain.getRules());
+        Levenshtein.Distance distance = levenshtein.distance(currentChain.getRulesAsStrings(), newChain.getRulesAsStrings());
         int i = 1;
         for (Levenshtein.DistanceMatrixEntry e : distance.getEditSequence()) {
             switch (e.getOperation()) {
@@ -195,14 +195,14 @@ public class FirewallConfiguration {
                     ++i;
                     break;
                 case INSERT:
-                    writer.format("-I %s %d %s\n", newChain.getName(), i, newChain.getRules().get(e.getY() - 1));
+                    writer.format("-I %s %d %s\n", newChain.getName(), i, newChain.getRulesAsStrings().get(e.getY() - 1));
                     ++i;
                     break;
                 case DELETE:
                     writer.format("-D %s %d\n", newChain.getName(), i);
                     break;
                 case SUBSTITUTE:
-                    writer.format("-R %s %d %s\n", newChain.getName(), i, newChain.getRules().get(e.getY() - 1));
+                    writer.format("-R %s %d %s\n", newChain.getName(), i, newChain.getRulesAsStrings().get(e.getY() - 1));
                     ++i;
                     break;
             }

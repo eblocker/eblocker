@@ -66,13 +66,13 @@ public class IpAddressFilter {
                 .filter(Device::isMalwareFilterEnabled));
     }
 
-    public List<String> getVpnClientDevicesIps() {
+    public List<String> getMobileVpnDevicesIps() {
         return collectIpAddresses(devices.stream()
                 .filter(Device::isActive)
                 .filter(Device::isVpnClient));
     }
 
-    public List<String> getVpnClientDevicesPrivateNetworkAccessIps() {
+    public List<String> getMobileVpnDevicesPrivateNetworkAccessIps() {
         return collectIpAddresses(devices.stream()
                 .filter(Device::isActive)
                 .filter(Device::isVpnClient)

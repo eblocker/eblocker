@@ -49,6 +49,11 @@ public class RuleTest {
         Assert.assertEquals("-p udp -m udp --dport 53 -j DROP", new Rule().dns().drop().toString());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testMissingAction() {
+        new Rule().http().toString();
+    }
+
     @Test
     public void testTemplate() {
         Rule template = new Rule().tcp().returnFromChain();

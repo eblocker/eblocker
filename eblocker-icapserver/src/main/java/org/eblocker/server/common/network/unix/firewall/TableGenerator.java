@@ -15,10 +15,10 @@ public class TableGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(TableGenerator.class);
 
     // fixed configuration parameters
-    private final String interfaceName;
-    private final String vpnInterfaceName;
-    private final int vpnSubnet;
-    private final int vpnNetmask;
+    private final String standardInterface;
+    private final String mobileVpnInterface;
+    private final int mobileVpnSubnet;
+    private final int mobileVpnNetmask;
     private final int proxyPort;
     private final int proxyHTTPSPort;
     private final int anonSocksPort;
@@ -35,13 +35,13 @@ public class TableGenerator {
     private final int parentalControlRedirectHttpsPort;
     private final String fallbackIp;
     private final String malwareIpSetName;
-    private final int vpnServerPort;
+    private final int mobileVpnServerPort;
     private final int localDnsPort;
     private final int torDnsPort;
 
     // eBlocker's IP address configuration
     private String ownIpAddress;
-    private String vpnIpAddress;
+    private String mobileVpnIpAddress;
     private String gatewayIpAddress;
     private String networkMask;
 
@@ -49,18 +49,18 @@ public class TableGenerator {
     private boolean masqueradeEnabled;
     private boolean sslEnabled;
     private boolean dnsEnabled;
-    private boolean vpnServerEnabled;
+    private boolean mobileVpnServerEnabled;
     private boolean malwareSetEnabled;
     private boolean serverEnvironment;
 
     // rule templates
-    private Rule stdInput, vpnInput, stdOutput;
+    private Rule standardInput, mobileVpnInput, standardOutput;
 
     @Inject
-    public TableGenerator(@Named("network.interface.name") String interfaceName,
-                          @Named("network.vpn.interface.name") String vpnInterfaceName,
-                          @Named("network.vpn.subnet.ip") String vpnSubnet,
-                          @Named("network.vpn.subnet.netmask") String vpnNetmask,
+    public TableGenerator(@Named("network.interface.name") String standardInterface,
+                          @Named("network.vpn.interface.name") String mobileVpnInterface,
+                          @Named("network.vpn.subnet.ip") String mobileVpnSubnet,
+                          @Named("network.vpn.subnet.netmask") String mobileVpnNetmask,
                           @Named("proxyPort") int proxyPort,
                           @Named("proxyHTTPSPort") int proxyHTTPSPort,
                           @Named("anonSocksPort") int anonSocksPort,
@@ -77,14 +77,14 @@ public class TableGenerator {
                           @Named("parentalControl.redirect.https.port") int parentalControlRedirectHttpsPort,
                           @Named("network.control.bar.host.fallback.ip") String fallbackIp,
                           @Named("malware.filter.ipset.name") String malwareIpSetName,
-                          @Named("openvpn.server.port") int vpnServerPort,
+                          @Named("openvpn.server.port") int mobileVpnServerPort,
                           @Named("dns.server.port") int localDnsPort,
                           @Named("tor.dns.port") int torDnsPort
                           ) {
-        this.interfaceName = interfaceName;
-        this.vpnInterfaceName = vpnInterfaceName;
-        this.vpnSubnet = IpUtils.convertIpStringToInt(vpnSubnet);
-        this.vpnNetmask = IpUtils.convertIpStringToInt(vpnNetmask);
+        this.standardInterface = standardInterface;
+        this.mobileVpnInterface = mobileVpnInterface;
+        this.mobileVpnSubnet = IpUtils.convertIpStringToInt(mobileVpnSubnet);
+        this.mobileVpnNetmask = IpUtils.convertIpStringToInt(mobileVpnNetmask);
         this.proxyPort = proxyPort;
         this.proxyHTTPSPort = proxyHTTPSPort;
         this.anonSocksPort = anonSocksPort;
@@ -101,18 +101,17 @@ public class TableGenerator {
         this.httpPort = httpPort;
         this.httpsPort = httpsPort;
         this.fallbackIp = fallbackIp;
-        this.vpnServerPort = vpnServerPort;
+        this.mobileVpnServerPort = mobileVpnServerPort;
         this.localDnsPort = localDnsPort;
         this.torDnsPort = torDnsPort;
 
         // prepare rule templates
-        stdInput = new Rule().input(interfaceName);
-        vpnInput = new Rule().input(vpnInterfaceName);
-        stdOutput = new Rule().output(interfaceName);
-
+        standardInput = new Rule().input(standardInterface);
+        mobileVpnInput = new Rule().input(mobileVpnInterface);
+        standardOutput = new Rule().output(standardInterface);
     }
 
-    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> vpnClients) {
+    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
         Table natTable = new Table("nat");
 
         Chain preRouting = natTable.chain("PREROUTING").accept();
@@ -121,27 +120,27 @@ public class TableGenerator {
         Chain postRouting = natTable.chain("POSTROUTING").accept();
 
         // always answer dns queries directed at eblocker
-        preRouting.rule(new Rule(stdInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
+        preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
 
-        if (openVpnServerActive()) {
-            preRouting.rule(new Rule(vpnInput).dns().destinationIp(vpnIpAddress).redirectTo(vpnIpAddress, localDnsPort));
+        if (mobileVpnServerActive()) {
+            preRouting.rule(new Rule(mobileVpnInput).dns().destinationIp(mobileVpnIpAddress).redirectTo(mobileVpnIpAddress, localDnsPort));
         }
 
         // Redirect port 80 & 443 to icapserver backend for user friendly URLs if not running in server mode
         if (serverEnvironment) {
-            preRouting.rule(new Rule(stdInput).http().destinationIp(ownIpAddress).returnFromChain());
+            preRouting.rule(new Rule(standardInput).http().destinationIp(ownIpAddress).returnFromChain());
         } else {
             preRouting
-                    .rule(new Rule(stdInput).http().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpPort))
-                    .rule(new Rule(stdInput).https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort))
-                    .rule(new Rule(stdInput).http().destinationIp(fallbackIp).redirectTo(fallbackIp, httpPort))
-                    .rule(new Rule(stdInput).https().destinationIp(fallbackIp).redirectTo(fallbackIp, httpsPort));
+                    .rule(new Rule(standardInput).http().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpPort))
+                    .rule(new Rule(standardInput).https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort))
+                    .rule(new Rule(standardInput).http().destinationIp(fallbackIp).redirectTo(fallbackIp, httpPort))
+                    .rule(new Rule(standardInput).https().destinationIp(fallbackIp).redirectTo(fallbackIp, httpsPort));
         }
 
-        if (openVpnServerActive()) {
+        if (mobileVpnServerActive()) {
             preRouting
-                    .rule(new Rule(vpnInput).http().destinationIp(vpnIpAddress).redirectTo(vpnIpAddress, httpPort))
-                    .rule(new Rule(vpnInput).https().destinationIp(vpnIpAddress).redirectTo(vpnIpAddress, httpsPort));
+                    .rule(new Rule(mobileVpnInput).http().destinationIp(mobileVpnIpAddress).redirectTo(mobileVpnIpAddress, httpPort))
+                    .rule(new Rule(mobileVpnInput).https().destinationIp(mobileVpnIpAddress).redirectTo(mobileVpnIpAddress, httpsPort));
         }
 
         ipAddressFilter.getDisabledDevicesIps().forEach(ip -> preRouting
@@ -150,19 +149,19 @@ public class TableGenerator {
         if (dnsEnabled) {
             preRouting
                     // redirect all dns traffic to dns-server
-                    .rule(new Rule(stdInput).dns().redirectTo(ownIpAddress, localDnsPort))
+                    .rule(new Rule(standardInput).dns().redirectTo(ownIpAddress, localDnsPort))
                     // redirect blocked http / https traffic to redirect-service
                     .rule(new Rule().destinationIp(dnsAccessDeniedIp).http().redirectTo(dnsAccessDeniedIp, parentalControlRedirectHttpPort))
                     .rule(new Rule().destinationIp(dnsAccessDeniedIp).https().redirectTo(dnsAccessDeniedIp, parentalControlRedirectHttpsPort));
         }
 
-        if (openVpnServerActive()) {
-            preRouting.rule(new Rule(vpnInput).dns().redirectTo(vpnIpAddress, localDnsPort));
+        if (mobileVpnServerActive()) {
+            preRouting.rule(new Rule(mobileVpnInput).dns().redirectTo(mobileVpnIpAddress, localDnsPort));
         }
 
         // no local traffic to be processed by squid and icap
-        Rule tcpReturn = new Rule(stdInput).tcp().returnFromChain();
-        Rule tcpReturnVpn = new Rule(vpnInput).tcp().returnFromChain();
+        Rule tcpReturn = new Rule(standardInput).tcp().returnFromChain();
+        Rule tcpReturnVpn = new Rule(mobileVpnInput).tcp().returnFromChain();
         preRouting
                 .rule(new Rule(tcpReturn).destinationIp(ipRangeClassC))
                 .rule(new Rule(tcpReturn).destinationIp(ipRangeClassB))
@@ -183,16 +182,16 @@ public class TableGenerator {
         });
 
         // Redirect port 80 to the proxy:
-        preRouting.rule(new Rule(stdInput).http().redirectTo(ownIpAddress, proxyPort));
+        preRouting.rule(new Rule(standardInput).http().redirectTo(ownIpAddress, proxyPort));
 
-        if (openVpnServerActive()) {
-            preRouting.rule(new Rule(vpnInput).http().redirectTo(vpnIpAddress, proxyPort));
+        if (mobileVpnServerActive()) {
+            preRouting.rule(new Rule(mobileVpnInput).http().redirectTo(mobileVpnIpAddress, proxyPort));
         }
 
         if (sslEnabled) {
             //Redirect only devices, which are enabled and SSL is enabled
             ipAddressFilter.getSslEnabledDevicesIps().stream()
-                    .filter(ip -> !isMobileClient(ip) || openVpnServerActive())
+                    .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
                     .forEach(ip -> preRouting.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
         }
 
@@ -208,7 +207,7 @@ public class TableGenerator {
         // Redirect any ip / non-standard-ports known to host malware to squid for filtering
         if (malwareSetEnabled) {
             ipAddressFilter.getMalwareDevicesIps().stream()
-                    .filter(ip -> !isMobileClient(ip) || openVpnServerActive())
+                    .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
                     .forEach(ip ->
                             preRouting.rule(autoInputForSource(ip)
                                     .tcp()
@@ -226,24 +225,24 @@ public class TableGenerator {
         output.rule(new Rule(loopback).https().redirectTo(localhost, httpsPort));
 
         // use redsocks for all outgoing traffic from special source ip
-        output.rule(new Rule(stdOutput).sourceIp(anonSourceIp).tcp().redirectTo(ownIpAddress, anonSocksPort));
+        output.rule(new Rule(standardOutput).sourceIp(anonSourceIp).tcp().redirectTo(ownIpAddress, anonSocksPort));
 
         // masquerading
         if (masqueradeEnabled) {
-            postRouting.rule(new Rule(stdOutput).masquerade());
+            postRouting.rule(new Rule(standardOutput).masquerade());
         }
 
-        // Enable masquerading for vpn clients if eBlocker mobile feature is enabled
-        if (openVpnServerActive()) {
-            ipAddressFilter.getVpnClientDevicesIps()
+        // Enable masquerading for mobile VPN clients
+        if (mobileVpnServerActive()) {
+            ipAddressFilter.getMobileVpnDevicesIps()
                     .forEach(ip -> {
-                        if (IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), vpnSubnet, vpnNetmask)) {
-                            postRouting.rule(new Rule(stdOutput).sourceIp(ip).masquerade());
+                        if (IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask)) {
+                            postRouting.rule(new Rule(standardOutput).sourceIp(ip).masquerade());
                         }
                     });
         }
 
-        for (OpenVpnClientState client : vpnClients) {
+        for (OpenVpnClientState client : anonVpnClients) {
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 if (client.getVirtualInterfaceName() == null) {
                     throw new EblockerException("Error while trying to create firewall rules for VPN profile (" + client.getId() + ") , no name of virtual interface set!");
@@ -256,7 +255,7 @@ public class TableGenerator {
         return natTable;
     }
 
-    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> vpnClients) {
+    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
         Table filterTable = new Table("filter");
 
         Chain input = filterTable.chain("INPUT").accept();
@@ -266,43 +265,43 @@ public class TableGenerator {
         LOG.info("Firewall eBlocker mode: {}", serverEnvironment);
         if (serverEnvironment) {
             LOG.info("Server mode: Setting firewall resctrictions");
-            Rule dropNonStdPorts = new Rule(stdInput)
+            Rule dropNonStdPorts = new Rule(standardInput)
                     .states(true, Rule.State.NEW)
-                    .destinationPorts(false, Rule.SSH_PORT, Rule.HTTP_PORT, Rule.HTTPS_PORT, vpnServerPort)
+                    .destinationPorts(false, Rule.SSH_PORT, Rule.HTTP_PORT, Rule.HTTPS_PORT, mobileVpnServerPort)
                     .drop();
             input.rule(new Rule(dropNonStdPorts).tcp());
             input.rule(new Rule(dropNonStdPorts).udp());
-            input.rule(new Rule(vpnInput).tcp().destinationPort(httpPort).returnFromChain());
-            input.rule(new Rule(vpnInput).tcp().destinationPort(proxyHTTPSPort).returnFromChain());
+            input.rule(new Rule(mobileVpnInput).tcp().destinationPort(httpPort).returnFromChain());
+            input.rule(new Rule(mobileVpnInput).tcp().destinationPort(proxyHTTPSPort).returnFromChain());
         }
 
         // allow some mobile clients access to local networks
-        if (openVpnServerActive()) {
-            ipAddressFilter.getVpnClientDevicesPrivateNetworkAccessIps().stream()
-                    .filter(ip -> IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), vpnSubnet, vpnNetmask))
+        if (mobileVpnServerActive()) {
+            ipAddressFilter.getMobileVpnDevicesPrivateNetworkAccessIps().stream()
+                    .filter(ip -> IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask))
                     .forEach(ip -> forward
-                            .rule(new Rule(vpnInput).sourceIp(ip).destinationIp(ipRangeClassC).accept())
-                            .rule(new Rule(vpnInput).sourceIp(ip).destinationIp(ipRangeClassB).accept())
-                            .rule(new Rule(vpnInput).sourceIp(ip).destinationIp(ipRangeClassA).accept())
-                            .rule(new Rule(vpnInput).sourceIp(ip).destinationIp(ipRangeLinkLocal).accept()));
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassC).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassB).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassA).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeLinkLocal).accept()));
         }
 
         // reject all traffic from mobile clients to local networks
         forward
-                .rule(new Rule(vpnInput).destinationIp(ipRangeClassC).reject())
-                .rule(new Rule(vpnInput).destinationIp(ipRangeClassB).reject())
-                .rule(new Rule(vpnInput).destinationIp(ipRangeClassA).reject())
-                .rule(new Rule(vpnInput).destinationIp(ipRangeLinkLocal).reject());
+                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassC).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassB).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassA).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeLinkLocal).reject());
 
         // do not block traffic to private IP addresses, e.g. routers (with DNS), printers, NAS devices, etc.
         forward
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassC).accept())
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassB).accept())
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassA).accept());
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassC).accept())
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassB).accept())
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassA).accept());
 
         // Drop all traffic which has not been diverted to redsocks / tor here
         ipAddressFilter.getTorDevicesIps()
-                .forEach(ip -> forward.rule(new Rule(stdInput).sourceIp(ip).reject()));
+                .forEach(ip -> forward.rule(new Rule(standardInput).sourceIp(ip).reject()));
 
         // Parental Control: Drop all non-http(s) packets and interrupt connections redirected to squid
         ipAddressFilter.getAccessRestrictedIps().forEach(ip -> {
@@ -321,18 +320,18 @@ public class TableGenerator {
                     .rule(new Rule(dstIp).drop());
         }
 
-        for (OpenVpnClientState client : vpnClients) {
+        for (OpenVpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.PENDING_RESTART) {
                 // disable forwarding all traffic to non-local networks to prevent leaking packets while vpn is re-established
-                clientIps.forEach(ip -> filterTable.chain("FORWARD").rule(new Rule(stdInput).sourceIp(ip).drop()));
+                clientIps.forEach(ip -> filterTable.chain("FORWARD").rule(new Rule(standardInput).sourceIp(ip).drop()));
             }
         }
 
         return filterTable;
     }
 
-    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> vpnClients) {
+    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
         Table mangleTable = new Table("mangle");
 
         //create vpn-routing or decision chain
@@ -356,18 +355,18 @@ public class TableGenerator {
         // traffic account incoming
         mangleTable.chain("ACCOUNT-IN")
                 // exclude private networks
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassA).returnFromChain())
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassB).returnFromChain())
-                .rule(new Rule(stdInput).destinationIp(ipRangeClassC).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassA).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassB).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(ipRangeClassC).returnFromChain())
                 // exclude multi cast ips
-                .rule(new Rule(stdInput).destinationIp("224.0.0.0/4").returnFromChain())
-                .rule(new Rule(stdInput).destinationIp("240.0.0.0/4").returnFromChain());
+                .rule(new Rule(standardInput).destinationIp("224.0.0.0/4").returnFromChain())
+                .rule(new Rule(standardInput).destinationIp("240.0.0.0/4").returnFromChain());
 
         enabledDevicesIps.forEach(ip -> mangleTable.chain("ACCOUNT-IN")
                 .rule(autoInputForSource(ip).returnFromChain()));
 
         // traffic account outgoing
-        Rule notSquid = new Rule(stdOutput).ownerUid(false, squidUid).returnFromChain();
+        Rule notSquid = new Rule(standardOutput).ownerUid(false, squidUid).returnFromChain();
         mangleTable.chain("ACCOUNT-OUT")
                 // do not account traffic from local networks (but account traffic from squid as this is seen in this chain as coming from local host)
                 .rule(new Rule(notSquid).sourceIp(ipRangeClassA))
@@ -380,7 +379,7 @@ public class TableGenerator {
         mangleTable.chain("PREROUTING").rule(new Rule().jumpToChain("ACCOUNT-IN"));
         mangleTable.chain("POSTROUTING").rule(new Rule().jumpToChain("ACCOUNT-OUT"));
 
-        for (OpenVpnClientState client : vpnClients) {
+        for (OpenVpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 //route traffic "after" squid (requests) also into the VPN tunnel
@@ -399,8 +398,11 @@ public class TableGenerator {
         return mangleTable;
     }
 
-    private boolean openVpnServerActive() {
-        return vpnServerEnabled && vpnIpAddress != null;
+    /**
+     * Is eBlocker Mobile active?
+     */
+    private boolean mobileVpnServerActive() {
+        return mobileVpnServerEnabled && mobileVpnIpAddress != null;
     }
 
     /**
@@ -411,23 +413,23 @@ public class TableGenerator {
     }
 
     private boolean isMobileClient(String ip) {
-        return IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), vpnSubnet, vpnNetmask);
+        return IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask);
     }
 
     private String selectInterfaceForSource(String ip) {
-        return isMobileClient(ip) ? vpnInterfaceName : interfaceName;
+        return isMobileClient(ip) ? mobileVpnInterface : standardInterface;
     }
 
     private String selectTargetIp(String ip) {
-        return isMobileClient(ip) ? vpnIpAddress : ownIpAddress;
+        return isMobileClient(ip) ? mobileVpnIpAddress : ownIpAddress;
     }
 
     public void setOwnIpAddress(String ownIpAddress) {
         this.ownIpAddress = ownIpAddress;
     }
 
-    public void setVpnIpAddress(String vpnIpAddress) {
-        this.vpnIpAddress = vpnIpAddress;
+    public void setMobileVpnIpAddress(String mobileVpnIpAddress) {
+        this.mobileVpnIpAddress = mobileVpnIpAddress;
     }
 
     public void setGatewayIpAddress(String gatewayIpAddress) {
@@ -454,8 +456,8 @@ public class TableGenerator {
         this.dnsEnabled = dnsEnabled;
     }
 
-    public void setVpnServerEnabled(boolean vpnServerEnabled) {
-        this.vpnServerEnabled = vpnServerEnabled;
+    public void setMobileVpnServerEnabled(boolean mobileVpnServerEnabled) {
+        this.mobileVpnServerEnabled = mobileVpnServerEnabled;
     }
 
     public void setMalwareSetEnabled(boolean malwareSetEnabled) {

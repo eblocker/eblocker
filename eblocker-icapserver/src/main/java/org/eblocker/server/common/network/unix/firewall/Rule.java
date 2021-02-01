@@ -114,38 +114,44 @@ public class Rule {
         return this;
     }
 
-    public Rule redirectTo(String destinationIp, int destinationPort) {
-        this.action = new ActionDestinationNat(destinationIp, destinationPort);
+    public Rule redirectTo(String targetIp, int targetPort) {
+        this.action = Action.redirectTo(targetIp, targetPort);
         return this;
     }
 
     public Rule mark(int value) {
-        this.action = new ActionMark(value);
+        this.action = Action.mark(value);
         return this;
     }
 
     public Rule drop() {
-        return setActionNamed("DROP");
+        this.action = Action.drop();
+        return this;
     }
 
     public Rule accept() {
-        return setActionNamed("ACCEPT");
+        this.action = Action.accept();
+        return this;
     }
 
     public Rule reject() {
-        return setActionNamed("REJECT");
+        this.action = Action.reject();
+        return this;
     }
 
     public Rule returnFromChain() {
-        return setActionNamed("RETURN");
+        this.action = Action.returnFromChain();
+        return this;
     }
 
     public Rule masquerade() {
-        return setActionNamed("MASQUERADE");
+        this.action = Action.masquerade();
+        return this;
     }
 
     public Rule jumpToChain(String chainName) {
-        return setActionNamed(chainName);
+        this.action = Action.jumpToChain(chainName);
+        return this;
     }
 
     public Rule comment(String comment) {
@@ -156,9 +162,32 @@ public class Rule {
         return this;
     }
 
-    private Rule setActionNamed(String name) {
-        this.action = new Action(name);
-        return this;
+    public Action getAction() {
+        return action;
+    }
+
+    public String getSourceIp() {
+        return sourceIp;
+    }
+
+    public String getDestinationIp() {
+        return destinationIp;
+    }
+
+    public Integer getDestinationPort() {
+        return destinationPort;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public String getInput() {
+        return inputInterface;
+    }
+
+    public String getOutput() {
+        return outputInterface;
     }
 
     public String toString() {
@@ -346,56 +375,6 @@ public class Rule {
             }
             result.append("--uid-owner ");
             result.append(uid);
-            return result.toString();
-        }
-    }
-
-    public class Action {
-        private String chain;
-
-        public Action(String chain) {
-            this.chain = chain;
-        }
-
-        public String toString() {
-            StringBuilder result = new StringBuilder("-j ");
-            result.append(chain);
-            return result.toString();
-        }
-    }
-
-    public class ActionDestinationNat extends Action {
-        private String destinationIp;
-        private Integer destinationPort;
-
-        public ActionDestinationNat(String destinationIp, int destinationPort) {
-            super("DNAT");
-            this.destinationIp = destinationIp;
-            this.destinationPort = destinationPort;
-        }
-
-        public String toString() {
-            StringBuilder result = new StringBuilder(super.toString());
-            result.append(" --to-destination ");
-            result.append(destinationIp);
-            result.append(":");
-            result.append(destinationPort);
-            return result.toString();
-        }
-    }
-
-    public class ActionMark extends Action {
-        private int value;
-
-        public ActionMark(int value) {
-            super("MARK");
-            this.value = value;
-        }
-
-        public String toString() {
-            StringBuilder result = new StringBuilder(super.toString());
-            result.append(" --set-mark ");
-            result.append(value);
             return result.toString();
         }
     }

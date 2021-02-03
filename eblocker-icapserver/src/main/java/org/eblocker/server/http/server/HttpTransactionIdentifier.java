@@ -17,8 +17,11 @@
 package org.eblocker.server.http.server;
 
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.restexpress.Request;
+
+import java.net.InetSocketAddress;
 
 public class HttpTransactionIdentifier implements TransactionIdentifier {
     private final String userAgent;
@@ -31,7 +34,12 @@ public class HttpTransactionIdentifier implements TransactionIdentifier {
         if (xClientIp != null) {
             clientIP = IpAddress.parse(xClientIp);
         } else {
-            clientIP = IpAddress.of(request.getRemoteAddress().getAddress());
+            InetSocketAddress remoteAddress = request.getRemoteAddress();
+            if (remoteAddress != null) {
+                clientIP = IpAddress.of(remoteAddress.getAddress());
+            } else {
+                throw new EblockerException("Could not get client IP address from request");
+            }
         }
     }
 

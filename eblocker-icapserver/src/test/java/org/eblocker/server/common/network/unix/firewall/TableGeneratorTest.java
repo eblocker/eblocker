@@ -145,11 +145,14 @@ public class TableGeneratorTest {
     @Test
     public void testFilterForward() {
         createTablesAndSimulators();
-        // HTTP/3 is not filtered
+
+        // HTTP/3 is blocked only for SSL enabled devices
+        Assert.assertEquals(Action.reject(), filterForward.udpPacket(sslEnabledDevice, externalHost, 443));
         Assert.assertEquals(Action.returnFromChain(), filterForward.udpPacket(enabledDevice, externalHost, 443));
 
-        // TODO: HTTP/3 should be blocked for SSL enabled devices
-        Assert.assertEquals(Action.returnFromChain(), filterForward.udpPacket(sslEnabledDevice, externalHost, 443));
+        // HTTPS via TCP is not blocked:
+        Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(sslEnabledDevice, externalHost, 443));
+        Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(enabledDevice, externalHost, 443));
     }
 
     @Test

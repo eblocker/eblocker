@@ -99,5 +99,22 @@
         "learnForAllDomains": true,
         "ruleFilters": [],
         "enabled": false
+    },
+    {
+        "id": 6,
+        "name": "Consent & Cookie-Banner Blocker",
+        "category": "TRACKER_BLOCKER",
+        "version": 1,
+        "builtin": true,
+        "resources": [
+            "/opt/eblocker-icap/conf/easylist/easylist-cookie.txt"
+        ],
+        "learningMode": "ASYNCHRONOUS",
+        "format": "EASYLIST",
+        "learnForAllDomains": true,
+        "ruleFilters": [
+            "!csp"
+        ],
+        "enabled": false
     }
 ]

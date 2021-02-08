@@ -47,10 +47,14 @@ function SslController($interval, $q, $window, $translate, DeviceService, SslSer
 
     vm.$onInit = function() {
         // load data once manually to init the card
-        loadData().then(function success(response) {
+        loadData(false).then(function success(response) {
             const ssl = angular.isObject(response.data) ? response.data : null;
             if (angular.isObject(ssl) && ssl.executeSslBackgroundCheck) {
-                return testSslCertificate(response.data);
+                return testSslCertificate(response.data)
+                    .finally(function() {
+                        // force reload to reflect certificate installation state in the UI
+                        loadData(true);
+                    });
             }
             const deferred = $q.defer();
             deferred.resolve();
@@ -93,10 +97,10 @@ function SslController($interval, $q, $window, $translate, DeviceService, SslSer
         }, 300);
     };
 
-    function loadData() {
+    function loadData(forceReload) {
         return DeviceService.getDevice().then(function(response) {
             vm.deviceId = response.data.id;
-            return update();
+            return update(forceReload);
         }).finally(function(response) {
             return response;
         });
@@ -110,7 +114,7 @@ function SslController($interval, $q, $window, $translate, DeviceService, SslSer
         if (angular.isDefined(updateTimer)) {
             return;
         }
-        updateTimer = $interval(loadData, UPDATE_INTERVAL);
+        updateTimer = $interval(loadData, UPDATE_INTERVAL, 0, true, false);
     }
 
     function stopUpdateTimer() {
@@ -120,9 +124,9 @@ function SslController($interval, $q, $window, $translate, DeviceService, SslSer
         }
     }
 
-    function update() {
+    function update(forceReload) {
         // TODO this seems unnecessarily complicated: maybe just set 'vm.status = response.data' and work with that..
-        return SslService.getSslStatus().then(function success(response) {
+        return SslService.getSslStatus(forceReload).then(function success(response) {
             const status = response.data;
 
             // Global status

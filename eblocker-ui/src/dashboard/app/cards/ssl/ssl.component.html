@@ -88,9 +88,10 @@
                             -->{{ 'SSL.CARD.CERTIFICATE.TOOLTIP_OUTDATED' | translate }}<!--
                         --></div><!--
                     --></md-tooltip>
-                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg" ng-if="vm.getCaStatus() === 'OK'"></md-icon>
-                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg" ng-if="vm.getCaStatus() === 'WARN'"></md-icon>
-                    <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg" ng-if="vm.getCaStatus() === 'ERROR'"></md-icon>
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_circle.svg" ng-if="vm.sslTestDone && vm.getCaStatus() === 'OK'"></md-icon>
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg" ng-if="vm.sslTestDone && vm.getCaStatus() === 'WARN'"></md-icon>
+                    <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg" ng-if="vm.sslTestDone && vm.getCaStatus() === 'ERROR'"></md-icon>
+                    <md-progress-circular md-diameter="24" md-mode="indeterminate" ng-if="!vm.sslTestDone"></md-progress-circular>
                 </div>
 
             </div>

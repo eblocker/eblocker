@@ -35,10 +35,6 @@ public class MockDataSource implements DataSource {
     private String gatewayIP;
     private Set<VpnProfile> vpnProfiles = new HashSet<>();
 
-    public void setGatewayIP(String gatewayIP) {
-        this.gatewayIP = gatewayIP;
-    }
-
     public void addVPNProfile(VpnProfile profile) {
         if (profile != null) {
             vpnProfiles.add(profile);
@@ -119,7 +115,7 @@ public class MockDataSource implements DataSource {
 
     @Override
     public void setGateway(String gateway) {
-
+        gatewayIP = gateway;
     }
 
     @Override

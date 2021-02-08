@@ -1,0 +1,271 @@
+package org.eblocker.server.common.network.unix.firewall;
+
+import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.List;
+import java.util.Set;
+
+public class TableGeneratorTest {
+    private final int proxyPort = 3128;
+    private final int proxyHTTPSPort = 3130;
+    private final int localDnsPort = 5300;
+    private final int anonSocksPort = 12345;
+    private final int parentalControlRedirectHttpPort = 3003;
+    private final int parentalControlRedirectHttpsPort = 3004;
+    private final int httpPort = 3000;
+    private final int httpsPort = 3443;
+
+    private final String eBlockerIp = "192.168.1.2";
+    private final String fallbackIp = "169.254.94.109";
+    private final String anonSourceIp = "169.254.7.53";
+    private final String parentalControlRedirectIp = "169.254.93.109";
+
+    private final String disabledDevice = "192.168.1.41";
+    private final String enabledDevice = "192.168.1.42";
+    private final String sslEnabledDevice = "192.168.1.43";
+    private final String mobileVpnDevice = "10.8.0.23";
+    private final String mobileVpnLocalAccessDevice = "10.8.0.24";
+    private final String anonVpnClientDevice = "192.168.1.44";
+    private final String torClientDevice = "192.168.1.45";
+    private final String otherLocalDevice = "192.168.1.23";
+    private final String externalHost = "4.3.2.1";
+
+    private final String standardInterface = "eth0";
+
+    // eBlocker Mobile settings
+    private final String mobileVpnInterface = "tun33";
+    private final String mobileVpnIp = "10.8.0.1";
+    private final String mobileVpnSubnet = "10.8.0.0";
+    private final String mobileVpnNetmask = "255.255.255.0";
+
+    // Setting for anonymization via OpenVPN
+    private final String anonVpnInterface = "tun0";
+    private final int anonVpnClientRoute = 1;
+
+    private TableGenerator generator;
+    private IpAddressFilter deviceIpFilter;
+    private Set<OpenVpnClientState> anonVpnClients;
+
+    private Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn;
+
+    @Before
+    public void setUp() {
+        generator = new TableGenerator(standardInterface,
+                mobileVpnInterface, mobileVpnSubnet, mobileVpnNetmask,
+                proxyPort, proxyHTTPSPort,
+                anonSocksPort, anonSourceIp,
+                "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "169.254.0.0/16",
+                13,
+                httpPort, httpsPort,
+                parentalControlRedirectIp, parentalControlRedirectHttpPort, parentalControlRedirectHttpsPort,
+                fallbackIp,
+                "malware",
+                1194, localDnsPort, 9053);
+
+        deviceIpFilter = Mockito.mock(IpAddressFilter.class);
+        Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice, mobileVpnDevice, mobileVpnLocalAccessDevice, torClientDevice, anonVpnClientDevice));
+        Mockito.when(deviceIpFilter.getDisabledDevicesIps()).thenReturn(List.of(disabledDevice));
+        Mockito.when(deviceIpFilter.getSslEnabledDevicesIps()).thenReturn(List.of(sslEnabledDevice, mobileVpnDevice, torClientDevice, anonVpnClientDevice));
+        Mockito.when(deviceIpFilter.getDevicesIps(Set.of("anonVpnClientDeviceId"))).thenReturn(List.of(anonVpnClientDevice));
+        Mockito.when(deviceIpFilter.getTorDevicesIps()).thenReturn(List.of(torClientDevice));
+        Mockito.when(deviceIpFilter.getMobileVpnDevicesIps()).thenReturn(List.of(mobileVpnDevice, mobileVpnLocalAccessDevice));
+        Mockito.when(deviceIpFilter.getMobileVpnDevicesPrivateNetworkAccessIps()).thenReturn(List.of(mobileVpnLocalAccessDevice));
+
+        OpenVpnClientState vpnClient = new OpenVpnClientState();
+        vpnClient.setDevices(Set.of("anonVpnClientDeviceId"));
+        vpnClient.setState(OpenVpnClientState.State.ACTIVE);
+        vpnClient.setVirtualInterfaceName(anonVpnInterface);
+        vpnClient.setLinkLocalIpAddress("169.254.8.1");
+        vpnClient.setRoute(anonVpnClientRoute);
+        anonVpnClients = Set.of(vpnClient);
+
+        generator.setOwnIpAddress(eBlockerIp);
+        generator.setNetworkMask("255.255.255.0");
+        generator.setMobileVpnIpAddress(mobileVpnIp);
+        generator.setDnsEnabled(true);
+        generator.setSslEnabled(true);
+        generator.setMasqueradeEnabled(true);
+        generator.setMobileVpnServerEnabled(true);
+    }
+
+    @Test
+    public void testNatPreRouting() {
+        createTablesAndSimulators();
+        Simulator sim = natPre;
+        sim.setInput(standardInterface);
+
+        // HTTP is redirected to Squid
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), sim.tcpPacket(enabledDevice, externalHost, 80));
+
+        // ... but not for disabled devices
+        Assert.assertEquals(Action.returnFromChain(), sim.tcpPacket(disabledDevice, externalHost, 80));
+
+        // HTTPS is redirected to Squid
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyHTTPSPort), sim.tcpPacket(sslEnabledDevice, externalHost, 443));
+
+        // ... but not if SSL is disabled for the device (or the device is disabled)
+        Assert.assertEquals(Action.returnFromChain(), sim.tcpPacket(enabledDevice, externalHost, 443));
+        Assert.assertEquals(Action.returnFromChain(), sim.tcpPacket(disabledDevice, externalHost, 443));
+
+        // UDP:80 passes through
+        Assert.assertEquals(Action.returnFromChain(), sim.udpPacket(enabledDevice, externalHost, 80));
+
+        // DNS sent explicitly to eBlocker is redirected to eblocker-dns
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), sim.udpPacket(enabledDevice, eBlockerIp, 53));
+
+        // DNS from enabled devices to external servers is redirected to eblocker-dns
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), sim.udpPacket(enabledDevice, externalHost, 53));
+
+        // DNS from disabled devices to external servers is also redirected to eblocker-dns
+        // FIXME: shouldn't this pass through?
+        // (In case traffic is routed to the eBlocker anyway, e.g. if the device is disabled, but still has a DHCP lease from eBlocker)
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), sim.udpPacket(disabledDevice, externalHost, 53));
+
+        // Local network traffic to other devices passes through
+        Assert.assertEquals(Action.returnFromChain(), sim.tcpPacket(enabledDevice, otherLocalDevice, 80));
+        Assert.assertEquals(Action.returnFromChain(), sim.udpPacket(enabledDevice, otherLocalDevice, 1234));
+    }
+
+    @Test
+    public void testNatPostRouting() {
+        createTablesAndSimulators();
+        Simulator sim = natPost;
+        sim.setOutput(standardInterface);
+
+        // Outgoing traffic is masqueraded
+        Assert.assertEquals(Action.masquerade(), sim.tcpPacket(enabledDevice, externalHost, 80));
+        Assert.assertEquals(Action.masquerade(), sim.tcpPacket(enabledDevice, externalHost, 443));
+        Assert.assertEquals(Action.masquerade(), sim.tcpPacket(enabledDevice, externalHost, 22));
+    }
+
+    @Test
+    public void testFilterForward() {
+        createTablesAndSimulators();
+        // HTTP/3 is not filtered
+        Assert.assertEquals(Action.returnFromChain(), filterForward.udpPacket(enabledDevice, externalHost, 443));
+
+        // TODO: HTTP/3 should be blocked for SSL enabled devices
+        Assert.assertEquals(Action.returnFromChain(), filterForward.udpPacket(sslEnabledDevice, externalHost, 443));
+    }
+
+    @Test
+    public void testParentalControlRedirect() {
+        createTablesAndSimulators();
+
+        // Accessing the blocking IP on ports 80 and 443 redirects to 3003 and 3004:
+        Assert.assertEquals(Action.redirectTo(parentalControlRedirectIp, parentalControlRedirectHttpPort), natPre.tcpPacket(enabledDevice, parentalControlRedirectIp, 80));
+        Assert.assertEquals(Action.redirectTo(parentalControlRedirectIp, parentalControlRedirectHttpsPort), natPre.tcpPacket(enabledDevice, parentalControlRedirectIp, 443));
+
+        // Filter allows access to 3003 and 3004:
+        Assert.assertEquals(Action.accept(), filterInput.tcpPacket(enabledDevice, parentalControlRedirectIp, parentalControlRedirectHttpPort));
+        Assert.assertEquals(Action.accept(), filterInput.tcpPacket(enabledDevice, parentalControlRedirectIp, parentalControlRedirectHttpsPort));
+
+        // Everything else is filtered:
+        Assert.assertEquals(Action.drop(), filterInput.tcpPacket(enabledDevice, parentalControlRedirectIp, 1234));
+        Assert.assertEquals(Action.drop(), filterInput.udpPacket(enabledDevice, parentalControlRedirectIp, 1234));
+    }
+
+    @Test
+    public void testAccessSettings() {
+        createTablesAndSimulators();
+        natPre.setInput(standardInterface);
+
+        // Access settings from local network
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, httpPort), natPre.tcpPacket(enabledDevice, eBlockerIp, 80));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, httpsPort), natPre.tcpPacket(enabledDevice, eBlockerIp, 443));
+
+        // Access settings at emergency IP
+        Assert.assertEquals(Action.redirectTo(fallbackIp, httpPort), natPre.tcpPacket(enabledDevice, fallbackIp, 80));
+        Assert.assertEquals(Action.redirectTo(fallbackIp, httpsPort), natPre.tcpPacket(enabledDevice, fallbackIp, 443));
+
+        // Access settings remotely
+        natPre.setInput(mobileVpnInterface);
+        Assert.assertEquals(Action.redirectTo(mobileVpnIp, httpPort), natPre.tcpPacket(mobileVpnDevice, mobileVpnIp, 80));
+        Assert.assertEquals(Action.redirectTo(mobileVpnIp, httpsPort), natPre.tcpPacket(mobileVpnDevice, mobileVpnIp, 443));
+    }
+
+    @Test
+    public void testTorRouting() {
+        createTablesAndSimulators();
+        natPre.setInput(standardInterface);
+        natOutput.setOutput(standardInterface);
+        filterForward.setInput(standardInterface);
+
+        // HTTP(S) traffic is routed to Squid
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), natPre.tcpPacket(torClientDevice, externalHost, 80));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyHTTPSPort), natPre.tcpPacket(torClientDevice, externalHost, 443));
+
+        // Tor traffic from Squid uses a special IP address which is redirected to redsocks:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, anonSocksPort), natOutput.tcpPacket(anonSourceIp, externalHost, 1234));
+
+        // Other TCP traffic is directly routed to Tor via redsocks
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, anonSocksPort), natPre.tcpPacket(torClientDevice, externalHost, 1234));
+
+        // UDP is not supported by Tor, so not processed in NAT table
+        Assert.assertEquals(Action.returnFromChain(), natPre.udpPacket(torClientDevice, externalHost, 1234));
+
+        // ... but it is not forwarded to the router
+        Assert.assertEquals(Action.reject(), filterForward.udpPacket(torClientDevice, externalHost, 1234));
+    }
+
+    @Test
+    public void testMobileVpn() {
+        createTablesAndSimulators();
+        natPre.setInput(mobileVpnInterface);
+        natPost.setOutput(standardInterface);
+        filterForward.setInput(mobileVpnInterface);
+
+        // Outgoing traffic from mobile clients is masqueraded
+        Assert.assertEquals(Action.masquerade(), natPost.tcpPacket(mobileVpnDevice, externalHost, 1234));
+
+        // mobile device with local access:
+        Assert.assertEquals(Action.accept(), filterForward.tcpPacket(mobileVpnLocalAccessDevice, otherLocalDevice, 1234));
+        Assert.assertEquals(Action.accept(), filterForward.udpPacket(mobileVpnLocalAccessDevice, otherLocalDevice, 1234));
+
+        // mobile device without local access:
+        Assert.assertEquals(Action.reject(), filterForward.tcpPacket(mobileVpnDevice, otherLocalDevice, 1234));
+        Assert.assertEquals(Action.reject(), filterForward.udpPacket(mobileVpnDevice, otherLocalDevice, 1234));
+
+        // ports 80 and 443 are redirected to Squid:
+        Assert.assertEquals(Action.redirectTo(mobileVpnIp, proxyPort), natPre.tcpPacket(mobileVpnDevice, externalHost, 80));
+        Assert.assertEquals(Action.redirectTo(mobileVpnIp, proxyHTTPSPort), natPre.tcpPacket(mobileVpnDevice, externalHost, 443));
+    }
+
+    @Test
+    public void testAnonVpn() {
+        createTablesAndSimulators();
+        natPre.setInput(standardInterface);
+
+        // ports 80 and 443 are redirected to Squid:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), natPre.tcpPacket(anonVpnClientDevice, externalHost, 80));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyHTTPSPort), natPre.tcpPacket(anonVpnClientDevice, externalHost, 443));
+
+        // Outgoing traffic from VPN clients is masqueraded
+        natPost.setOutput(anonVpnInterface);
+        Assert.assertEquals(Action.masquerade(), natPost.tcpPacket(anonVpnClientDevice, externalHost, 80));
+
+        // packets are marked for VPN routing
+        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleVpn.tcpPacket(anonVpnClientDevice, externalHost, 1234));
+        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleVpn.udpPacket(anonVpnClientDevice, externalHost, 1234));
+
+        // packets from other devices are not marked:
+        Assert.assertEquals(Action.returnFromChain(), mangleVpn.tcpPacket(enabledDevice, externalHost, 1234));
+    }
+
+    private void createTablesAndSimulators() {
+        Table natTable = generator.generateNatTable(deviceIpFilter, anonVpnClients);
+        Table mangleTable = generator.generateMangleTable(deviceIpFilter, anonVpnClients);
+        Table filterTable = generator.generateFilterTable(deviceIpFilter, anonVpnClients);
+
+        natPre = new Simulator(natTable.chain("PREROUTING"));
+        natPost = new Simulator(natTable.chain("POSTROUTING"));
+        natOutput = new Simulator(natTable.chain("OUTPUT"));
+        filterForward = new Simulator(filterTable.chain("FORWARD"));
+        filterInput = new Simulator(filterTable.chain("INPUT"));
+        mangleVpn = new Simulator(mangleTable.chain("vpn-router"));
+    }
+}

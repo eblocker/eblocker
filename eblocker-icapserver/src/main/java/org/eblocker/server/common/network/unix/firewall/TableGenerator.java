@@ -320,6 +320,10 @@ public class TableGenerator {
                     .rule(new Rule(dstIp).drop());
         }
 
+        // block HTTP/3 for all SSL enabled devices
+        ipAddressFilter.getSslEnabledDevicesIps().forEach(ip ->
+            forward.rule(new Rule().sourceIp(ip).http3().reject()));
+
         for (OpenVpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.PENDING_RESTART) {

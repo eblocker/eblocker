@@ -85,6 +85,10 @@ public class Rule {
         return tcp().destinationPort(HTTPS_PORT);
     }
 
+    public Rule http3() {
+        return udp().destinationPort(HTTPS_PORT);
+    }
+
     public Rule dns() {
         return udp().destinationPort(DNS_PORT);
     }

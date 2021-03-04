@@ -265,12 +265,14 @@ public class AppModuleService extends Observable {
         module = get(autoTrustAppModuleId);
         if (module == null) {
             Map<String, String> description = new HashMap<>();
-            description.put("de", "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten.");
+            description.put("de",
+                    "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten. Befindet sich noch in der Entwicklung und sollte daher noch nicht verwendet werden.");
             description
-                    .put("en", "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear.");
+                    .put("en",
+                            "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear. Currently under development and not ready for general usage.");
             module = new AppWhitelistModule(
                     autoTrustAppModuleId,
-                    "Auto Trust App",
+                    "Auto Trust App (Experimental, don't use!)",
                     description,
                     Collections.emptyList(),
                     Collections.emptyList(),

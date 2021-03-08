@@ -283,7 +283,9 @@ public class UserService {
         UserModule user = findUpdatableUser(id);
         user.setCustomBlacklistId(customBlacklistId);
         user.setCustomWhitelistId(customWhitelistId);
-        return saveAndCacheUser(user);
+        UserModule result = saveAndCacheUser(user);
+        notifyListeners(result);
+        return result;
     }
 
     public UserModule updateUserDashboardView(Integer id) {

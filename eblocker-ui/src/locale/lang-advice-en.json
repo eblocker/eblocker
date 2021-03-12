@@ -69,8 +69,8 @@
                 }
             },
             "URL" : {
-                "PROMO" : "https://www.eblocker.org/en/license-reminder",
-                "PURCHASE" : "https://www.eblocker.org/ebl/en/shop"
+                "PROMO" : "https://eBlocker.org/en/license-reminder",
+                "PURCHASE" : "https://eBlocker.org/ebl/en/shop"
             },
             "WHEN_AGAIN" : {
                 "POST" : "",

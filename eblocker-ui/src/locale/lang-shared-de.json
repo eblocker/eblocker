@@ -20,13 +20,13 @@
                     "CONNECT" : "Verbinden",
                     "DISCONNECT" : "Trennen",
                     "RENEW_ID" : "Tor ID erneuern",
-                    "TEST_CONNECTION" : "Privatsphärestatus prüfen"
+                    "TEST_CONNECTION" : "Privatsphäre-Status prüfen"
                 },
                 "DROPDOWN_LABEL" : "Wählen Sie ein Netzwerk",
                 "LABEL_CONNECTED" : "verbunden",
                 "LABEL_TOR" : "Tor Netzwerk",
                 "TITLE" : "IP-Anonymisierung",
-                "TOR_CHECK_URL" : "https://www.eBlocker.org/de/privacy-check/"
+                "TOR_CHECK_URL" : "https://eBlocker.org/de/privacy-check/"
             },
             "NOTIFICATION" : {
                 "CONNECTION_DOWN" : "VPN {{name}} wird nicht mehr verwendet.",
@@ -63,7 +63,7 @@
                         "CANCEL" : "Abbrechen",
                         "OK" : "Tor aktivieren"
                     },
-                    "MORE_INFO_URL" : "https://www.eBlocker.org/de/tor_info",
+                    "MORE_INFO_URL" : "https://eBlocker.org/de/tor_info",
                     "MORE_INFO_URL_TEXT" : "Weitere Informationen",
                     "SHOW_WARNINGS_CAPTION" : "Diese Warnung nicht mehr anzeigen.",
                     "TITLE" : "Tor für dieses Gerät aktivieren"

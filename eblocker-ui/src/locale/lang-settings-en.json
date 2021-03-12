@@ -4,13 +4,13 @@
             "LABEL" : "About eBlocker",
             "TEAM" : "We have spent many years designing, developing, testing and improving eBlocker. Today we are proud that our idea is gaining more and more supporters. eBlocker is Open Source, has no backdoors, is completely free of charge and being developed together with the community.",
             "THANK_YOU" : "Thank you very much for using eBlocker. You have made a very good decision to protect your privacy and your entire family.",
-            "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by the community. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
+            "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
             "DONATE": "<b>To ensure that eBlocker is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
             "DONATE_URL": "https://eblocker.org/en/donate-and-contribute/",
-            "DONATE_MORE": "Learn more",
+            "DONATE_MORE": "Donate Now",
             "DONATE_THANKS": "Thanks to your support we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
             "COMMUNITY": "If you have any questions, new ideas or found errors, please solely use our forum at",
-            "COMMUNITY_URL": "https://eblocker.org/en/community-2/",
+            "COMMUNITY_URL": "https://eblocker.org/en/community/",
             "YOURS_EBLOCKER" : "Your eBlocker Open Source Team"
         },
         "ACTIVATION" : {
@@ -287,7 +287,7 @@
                     "HINT_CAPTION" : "eBlocker Support",
                     "HINT_POST" : "",
                     "HINT_PRE" : "",
-                    "HINT_URL" : "https://www.eBlocker.org/en/help"
+                    "HINT_URL" : "https://eBlocker.org/en/help"
                 },
                 "RUNNING" : {
                     "WITHOUT_WARNINGS_1" : "eBlocker successfully started:",
@@ -462,8 +462,7 @@
                     "LABEL_VENDOR" : "Vendor",
                     "TOOLTIP" : {
                         "EDIT_DEVICE" : "Edit device name."
-                    },
-                    "TAB_LABEL" : "Device"
+                    }
                 },
                 "HEADING" : "Details for device",
                 "HTTPS" : {
@@ -488,7 +487,7 @@
                     "TAB_LABEL" : "ControlBar"
                 },
                 "MESSAGES" : {
-                    "LABEL_CONFIRM_DIALOG" : "Confirmation and notification dialogs:",
+                    "LABEL_CONFIRM_DIALOG" : "Confirmation and notification dialog:",
                     "LABEL_MESSAGE" : "Show system messages:",
                     "LABEL_MESSAGE_ALERT" : "Only important messages",
                     "LABEL_MESSAGE_ALL" : "All",
@@ -1029,7 +1028,7 @@
                 "AUTO" : {
                     "TEXT" : "In this mode the router assigns the IP addresses.",
                     "TITLE" : "Automatic Network Mode",
-                    "URL" : "https://www.eBlocker.org/en/compatibility-hardware/",
+                    "URL" : "https://eBlocker.org/en/compatibility-hardware/",
                     "WARNING" : "Some routers are not compatible with this mode."
                 },
                 "EXPERT" : {
@@ -1150,7 +1149,7 @@
                     "SELECT_SERVICE_TEXT_3_LABEL" : "tested and compiled a list of compatible VPN providers",
                     "SELECT_SERVICE_TEXT_3_POST" : " for your convenience.",
                     "SELECT_SERVICE_TEXT_3_PRE" : "We have already ",
-                    "SELECT_SERVICE_TEXT_3_TARGET" : "www.eBlocker.org/en/vpn_provider"
+                    "SELECT_SERVICE_TEXT_3_TARGET" : "eBlocker.org/en/vpn_provider"
                 },
                 "TAB_2" : {
                     "ERROR" : {
@@ -1187,7 +1186,7 @@
                     "OPTION_EBLOCKER" : "Standard option added by eBlocker.",
                     "OPTION_OVERRIDDEN" : "eBlocker has overridden original config line {{lineNumber}}: {{line}}",
                     "SUPPORT_CAPTION" : "Support forum",
-                    "SUPPORT_LINK" : "https://eblocker.org/en/community-2/"
+                    "SUPPORT_LINK" : "https://eblocker.org/en/community/"
                 },
                 "TAB_4" : {
                     "CREDENTIALS" : "Credentials",
@@ -1762,7 +1761,7 @@
             "EXPLAIN_PART1" : "Here you can reset the eBlocker to factory defaults.",
             "EXPLAIN_PART2" : "Please be aware that all settings as well as the license activation will be deleted.",
             "EXPLAIN_PART3_LABEL" : "eBlocker license server",
-            "EXPLAIN_PART3_LINK" : "https://www.eBlocker.org/ebl/en/license-transfer",
+            "EXPLAIN_PART3_LINK" : "https://eBlocker.org/ebl/en/license-transfer",
             "EXPLAIN_PART3_POST" : " and re-activate your eBlocker afterwards.",
             "EXPLAIN_PART3_PRE" : "You can release the license on the ",
             "LABEL" : "Factory Reset"
@@ -2214,7 +2213,7 @@
                     }
                 }
             },
-            "KNOWLEDGE_DB_URL" : "https://www.eBlocker.org/en/help-network-dhcp",
+            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/en/help-network-dhcp",
             "TOOLBAR" : {
                 "TITLE" : "Network Configuration"
             }
@@ -2229,7 +2228,7 @@
                 "MORE_INFO" : "More Info",
                 "UPGRADE_NOW" : "Upgrade License Now"
             },
-            "DEFAULT_MOREINFOLINK" : "https://www.eBlocker.org/ebl/en/shop",
+            "DEFAULT_MOREINFOLINK" : "https://eBlocker.org/ebl/en/shop",
             "DEFAULT_PRODUCTNAME" : "eBlocker Online Shop",
             "PRIZE_STARTING" : "starting at {{prize}}",
             "TITLE" : "Upgrade License",
@@ -2364,10 +2363,10 @@
             "ACTION" : {
                 "GENERATE" : "Generate Report"
             },
-            "EMAIL" : "support@eBlocker.org",
-            "EMAIL_HREF" : "mailto:support@eBlocker.org?Subject=Diagnostics%20report",
-            "EXPLAIN_PART1" : "In case of error or when facing problems an automated diagnostics report can be generated that can be send to us: ",
-            "EXPLAIN_PART2" : "This enables us to diagnose the error so we can solve bugs much faster.",
+            "EMAIL" : "community forum",
+            "EMAIL_HREF" : "https://eblocker.org/community/",
+            "EXPLAIN_PART1" : "In case of problems please only use our ",
+            "EXPLAIN_PART2" : "Please describe the problem in detail there and upload the diagnostic report only when requested. It may contain private data.",
             "LABEL" : "Diagnostics Report",
             "LABEL_PROGRESS" : "Generating diagnostics report..."
         },
@@ -2543,25 +2542,25 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                "INTRO" : "This is the first Open Source release that we have developed together with our great community.",
+                "INTRO" : "With this release, we have introduced numerous improvements and focused on the stability of the system.",
                 "GREETINGS" : "Thank you for your support and stay safe ;-),",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Major updates:",
-                    "LI_1" : "eBlockerOS is completely based on Open Source Code",
-                    "LI_2" : "Update of Linux operating system including security patches",
-                    "LI_3" : "Many improvements and updates",
-		    "LI_4" : "Same features including licensed filters as the former commercial eBlocker"
+                    "HEAD" : "Most important changes:",
+                    "LI_1" : "Integrated blocker lists from DuckDuckGo and cookie banner blocker (disabled by default).",
+                    "LI_2" : "User interface and speed improvements",
+                    "LI_3" : "Stability improvements for devices with little memory",
+		    "LI_4" : "Update of Linux operating system including security patches"
                 },
                 "LINK_PRE" : "You can find further details in the  ",
  		"LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/en/release-notes/2-5/",
-                "OUTRO" : "<a href=\"https://eblocker.org/en/donate-and-contribute/\" target=\"_blank\" class=\"orange\">Please donate for the operation</a>, if you like eBlocker.",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-6/",
+                "OUTRO" : "eBlocker is developed and operated by volunteers. <a href=\"https://eblocker.org/en/donate-and-contribute/\" target=\"_blank\" class=\"orange\">Please donate to cover cost of operation</a> to receive daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.5"
+                "TITLE" : "eBlockerOS Release 2.6"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.5",
+            "MENU_LABEL" : "New in eBlockerOS 2.6",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.5"
+                "TITLE" : "eBlockerOS Release 2.6"
             }
         },
         "SSL" : {
@@ -2816,7 +2815,7 @@
             "CONTENT" : {
                 "HELP" : {
                     "LABEL" : "Help",
-                    "URL" : "https://www.eBlocker.org/en/help"
+                    "URL" : "https://eBlocker.org/en/help"
                 },
                 "LOGOUT" : {
                     "LABEL" : "Logout"
@@ -3355,7 +3354,7 @@
                 "MORE2" : "Such a DNS name for dynamic IP addresses - also called \"Dynamic DNS\" or DDNS is available from different providers.",
                 "MORE3" : "For your first steps into eBlocker Mobile, we also provide such a service for you. But please note that availability of this service cannot be guaranteed. It's intended for test use only!",
                 "MORE_LINK_DYN_LABEL" : "List of Dynamic DNS (DDNS) providers",
-                "MORE_LINK_DYN_URL" : "https://www.eBlocker.org/en/ddns",
+                "MORE_LINK_DYN_URL" : "https://eBlocker.org/en/ddns",
                 "OPTION" : {
                     "DYN_DNS" : "I already have a domain from a Dynamic DNS provider for my dynamic IP address.",
                     "EBLOCKER_DYN" : "I want to use eBlocker Dynamic DNS (beta).",
@@ -3571,7 +3570,7 @@
                 "OVERVIEW" : {
                     "P1" : "Instead of Tor you can also use other VPN providers for IP anonymization that support the OpenVPN protocol. Please note that you may incur additional costs through alternative VPN providers.",
                     "P2_LIST_TEXT" : "compiled them for you.",
-                    "P2_LIST_URL" : "https://www.eBlocker.org/en/vpn_provider",
+                    "P2_LIST_URL" : "https://eBlocker.org/en/vpn_provider",
                     "P2_PRE" : "We have already tested some VPN providers for compatibility and ",
                     "P3_POST" : ".",
                     "P3_PRE" : "Basically, however, most OpenVPN providers should work without problems. If you still have problems with your provider, please share this in the forum.",
@@ -3582,7 +3581,7 @@
             "VPN_KEEP_ALIVE" : {
                 "OVERVIEW" : {
                     "LINK_TEXT" : "More info",
-                    "LINK_URL" : "https://www.eblocker.org/vpn_reconnect_en",
+                    "LINK_URL" : "https://eBlocker.org/vpn_reconnect_en",
                     "P1" : "If your VPN provider offers a bi-directional keep-alive monitoring of the VPN connection, an additional active monitoring is not necessary.",
                     "P2" : "However, some VPN providers drop inactive connections or use unusual keep-alive configurations. This may go unnoticed by the eBlocker, if the connection is not actively monitored. If you encounter connection problems, you can enable active monitoring here.",
                     "TITLE" : "Active monitoring of VPN connection"
@@ -3625,7 +3624,7 @@
                 "OVERVIEW" : {
                     "P1" : "Here you can create a list of DNS servers from external providers you trust. Enter the IPv4 address of the desired DNS server directly using the \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}\" button. To remove an entry, select \"{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}\", select the row and select \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}\".",
                     "P2_TEXT" : "Information about external DNS servers",
-                    "P2_URL" : "https://www.eBlocker.org/en/dns-server-list/",
+                    "P2_URL" : "https://eBlocker.org/en/dns-server-list/",
                     "TITLE" : "DNS server sist"
                 }
             },
@@ -3703,7 +3702,7 @@
                     "P1" : "On this page you can find out which of the integrated filtering methods are active on your eBlocker and on which devices they are used.",
                     "P2" : "The domain advertising and tracker blockers form a very uncomplicated and good filtering of the Internet pages on tracker and tracking advertising.",
                     "P3" : "The Pattern Advertising and Tracker Blockers provide very precise and accurate protection for advanced users, the setup effort is slightly higher and there may be applications / apps that deny the service if the filtering blocks specific traffic. Exceptions can be set in the settings under \"Trusted Apps\" and \"Trusted Websites\".",
-                    "P4" : "Blockers whose status display is red are active on one of your devices. In the column '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}' you can stand with the mouse over the first displayed device and in an automatically opened infoblase you can see the devices on which the respective blocker is activated. The '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}' column provides information about the total number of blocked displays or trackers.",
+                    "P4" : "Blockers whose status display is red are active on one of your devices. In the column '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}' you can move the mouse over the first displayed device and in an automatically opened info bubble you can see the devices on which the respective blocker is activated. The '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}' column provides information about the total number of blocked displays or trackers.",
                     "TITLE" : "Blocker overview"
                 }
             },
@@ -3820,7 +3819,7 @@
             "OVERVIEW" : {
                 "P1" : "You can normally keep the settings accessible here.",
                 "P2_LINK_TEXT" : "Hardware Compatibility Information",
-                "P2_LINK_URL" : "https://www.eBlocker.org/en/compatibility-hardware/",
+                "P2_LINK_URL" : "https://eBlocker.org/en/compatibility-hardware/",
                 "P2_POST" : " page, and on the advice of Customer Support, you can change the settings. Please note that you also need access to the settings of your Internet router at the same time in order to complete the configuration there.",
                 "P2_PRE" : "For a few special cases, which you can find on the ",
                 "TITLE" : "Network"
@@ -3866,7 +3865,7 @@
         "PORT_FORWARDING" : {
             "OVERVIEW" : {
                 "LINK_TEXT" : "What to do in case of errors?",
-                "LINK_URL" : "https://www.eBlocker.org/upnp_en",
+                "LINK_URL" : "https://eBlocker.org/upnp_en",
                 "P1" : "Port forwarding redirects incoming requests from one address and port combination to another when the packets are routed through a network's gateway.",
                 "TITLE" : "Port forwarding"
             }
@@ -3880,7 +3879,7 @@
             },
             "DIAGNOSTICS" : {
                 "OVERVIEW" : {
-                    "P1" : "Should problems occur in your network or with your eBlocker, it is possible that our support team will ask you to generate the diagnostic report. After starting report generation, it may take a while for the dialog box with the question about the location to open. If you have specified a fixed file location, the dialog box may not open and you may need to search for the .tgz file immediately in the default download folder. Please send the file as it is.",
+                    "P1" : "Should problems occur in your network or with your eBlocker, please use our community forum. After starting report generation, it may take a while for the dialog box with the question about the location to open. If you have specified a fixed file location, the dialog box may not open and you may need to look for the .tgz file. Please upload the file only on request.",
                     "TITLE" : "Diagnostics"
                 }
             },
@@ -3898,7 +3897,7 @@
                     "P1" : "Here you can save your personal, trustworthy apps and websites created in the HTTPS settings and import them again if necessary.",
                     "P2" : "If necessary, the activation of the eBlocker can be undone here. It will then no longer receive automatic updates. The license can be used on another eBlocker during its validity period.",
                     "P3_LINK_TEXT" : "license server",
-                    "P3_LINK_URL" : "https://www.eBlocker.org/ebl/en/license-transfer",
+                    "P3_LINK_URL" : "https://eBlocker.org/ebl/en/license-transfer",
                     "P3_POST" : " during its validity period.",
                     "P3_PRE" : "If it is necessary to reset the eBlocker, this can be done here. The eBlocker must then be reactivated. To do this, the license must first be released on our license server. The license can be reused on our ",
                     "TITLE" : "Zurücksetzen"

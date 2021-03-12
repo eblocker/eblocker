@@ -4,10 +4,10 @@
             "LABEL" : "Über eBlocker",
             "TEAM" : "Wir haben viele Jahre an eBlocker konzipiert, entwickelt, getestet und verbessert. Heute sind wir stolz, dass unsere Idee immer mehr Anhänger findet. eBlocker ist Open Source, frei von Hintertüren, völlig kostenlos und wird gemeinsam mit der Community weiterentwickelt.",
             "THANK_YOU" : "Wir freuen uns sehr, dass du eBlocker einsetzt. Du hast damit eine sehr gute Entscheidung für den Schutz deiner Privatsphäre und deiner gesamten Familie getroffen.",
-            "NON_PROFIT": "eBlocker ist ein <b>non-profit Projekt</b>, das über Spenden finanziert und von der Community getragen wird. Dahinter steht <b>kein großes Unternehmen</b>, sondern das Engagement eines interdisziplinären Teams aus Privatsphäre-Spezialisten, Datenschützern und IT-Sicherheitsexperten rund um die Initiatoren Christian Bennefeld und Boris Prinz.",
+            "NON_PROFIT": "eBlocker ist ein <b>non-profit Projekt</b>, das über Spenden finanziert und von einer Community aus Ehrenamtlichen getragen wird. Dahinter steht <b>kein großes Unternehmen</b>, sondern das Engagement eines interdisziplinären Teams aus Privatsphäre-Spezialisten, Datenschützern und IT-Sicherheitsexperten rund um die Initiatoren Christian Bennefeld und Boris Prinz.",
             "DONATE": "<b>Damit eBlocker langfristig sicher ist, regelmäßig Updates bekommt und neue Funktionen erhält benötigen wir deine Hilfe. Unterstütze uns bitte mit deinem Engagement in der Community oder einer Spende:</b>",
             "DONATE_URL": "https://eblocker.org/spendenmoeglichkeiten/",
-            "DONATE_MORE": "Mehr erfahren",
+            "DONATE_MORE": "Jetzt spenden oder engagieren",
             "DONATE_THANKS": "Dank deiner Unterstützung sind wir in der Lage, unsere Idee von einem freien Internet ohne Massenüberwachung langfristig in die Realität umzusetzen. Vielen herzlichen Dank dafür!",
             "COMMUNITY": "Bei Fragen, neuen Ideen oder wenn du Fehler gefunden hast, nutze bitte ausschließlich unser Forum unter",
             "COMMUNITY_URL": "https://eblocker.org/community/",
@@ -287,7 +287,7 @@
                     "HINT_CAPTION" : "eBlocker Support",
                     "HINT_POST" : "",
                     "HINT_PRE" : "",
-                    "HINT_URL" : "https://www.eBlocker.org/de/help"
+                    "HINT_URL" : "https://eBlocker.org/de/help"
                 },
                 "RUNNING" : {
                     "WITHOUT_WARNINGS_1" : "eBlocker erfolgreich gestartet:",
@@ -1028,7 +1028,7 @@
                 "AUTO" : {
                     "TEXT" : "In diesem Modus vergibt der Router mit seinem DHCP-Dienst die IP-Adressen im Netzwerk.",
                     "TITLE" : "Automatischer Netzwerkmodus",
-                    "URL" : "https://www.eBlocker.org/de/kompatibilitaetsinformationen-hardware/",
+                    "URL" : "https://eBlocker.org/de/kompatibilitaetsinformationen-hardware/",
                     "WARNING" : "Einige Router sind nicht mit diesem Modus kompatibel."
                 },
                 "EXPERT" : {
@@ -1149,7 +1149,7 @@
                     "SELECT_SERVICE_TEXT_3_LABEL" : "Liste kompatibler VPN-Anbieter",
                     "SELECT_SERVICE_TEXT_3_POST" : " für Sie erstellt.",
                     "SELECT_SERVICE_TEXT_3_PRE" : "Wir haben bereits eine ",
-                    "SELECT_SERVICE_TEXT_3_TARGET" : "www.eBlocker.org/de/vpn_provider"
+                    "SELECT_SERVICE_TEXT_3_TARGET" : "eBlocker.org/de/vpn_provider"
                 },
                 "TAB_2" : {
                     "ERROR" : {
@@ -1761,7 +1761,7 @@
             "EXPLAIN_PART1" : "Sie können den eBlocker hier auf die Werkseinstellungen zurücksetzen.",
             "EXPLAIN_PART2" : "Beachten Sie bitte, dass alle Einstellungen und die Aktivierung dabei gelöscht werden.",
             "EXPLAIN_PART3_LABEL" : "eBlocker Lizenz-Server",
-            "EXPLAIN_PART3_LINK" : "https://www.eBlocker.org/ebl/de/license-transfer",
+            "EXPLAIN_PART3_LINK" : "https://eBlocker.org/ebl/de/license-transfer",
             "EXPLAIN_PART3_POST" : " zurücksetzen und Ihren eBlocker dann neu aktivieren.",
             "EXPLAIN_PART3_PRE" : "Sie können die Lizenz über den ",
             "LABEL" : "Werkseinstellungen"
@@ -2213,7 +2213,7 @@
                     }
                 }
             },
-            "KNOWLEDGE_DB_URL" : "https://www.eBlocker.org/de/help-network-dhcp",
+            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/de/help-network-dhcp",
             "TOOLBAR" : {
                 "TITLE" : "Netzwerk Konfiguration"
             }
@@ -2228,7 +2228,7 @@
                 "MORE_INFO" : "Weitere Informationen",
                 "UPGRADE_NOW" : "Jetzt Lizenz erweitern"
             },
-            "DEFAULT_MOREINFOLINK" : "https://www.eBlocker.org/ebl/de/shop",
+            "DEFAULT_MOREINFOLINK" : "https://eBlocker.org/ebl/de/shop",
             "DEFAULT_PRODUCTNAME" : "eBlocker Online Shop",
             "PRIZE_STARTING" : "ab {{prize}}",
             "TITLE" : "Lizenz erweitern",
@@ -2363,10 +2363,10 @@
             "ACTION" : {
                 "GENERATE" : "Diagnosebericht erstellen"
             },
-            "EMAIL" : "support@eBlocker.org",
-            "EMAIL_HREF" : "mailto:support@eBlocker.org?Subject=Diagnosebericht",
-            "EXPLAIN_PART1" : "Bei Problemen erstellen Sie bitte einen Diagnosebericht, den Sie an uns senden: ",
-            "EXPLAIN_PART2" : "Bitte beschreiben Sie das Problem dabei kurz, damit wir schnell weiterhelfen können.",
+            "EMAIL" : "Community Forum",
+            "EMAIL_HREF" : "https://eblocker.org/community/",
+            "EXPLAIN_PART1" : "Bei Problemen nutze bitte ausschließlich unser ",
+            "EXPLAIN_PART2" : "Bitte beschreibe dort das Problem genau und lade den Diagnosebericht nur nach Aufforderung hoch. Er kann private Daten enthalten.",
             "LABEL" : "Diagnosebericht",
             "LABEL_PROGRESS" : "Diagnosebericht wird erstellt..."
         },
@@ -2542,25 +2542,25 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Dies ist das erste Open Source Release, das wir gemeinsam mit unserer großartigen Community entwickelt haben.",
+                "INTRO" : "Mit diesem Release haben wir zahlreiche Verbesserungen eingeführt und uns auf die Stabilität des Systems konzentriert.",
                 "GREETINGS" : "Danke für deine Unterstützung und bleib geschützt ;-)",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "eBlockerOS basiert vollständig auf Open Source Code",
-		    "LI_2" : "Aktualisierung des Linux Betriebssystems inkl. umfangreicher Sicherheitspatches",
-		    "LI_3" : "Zahlreiche Verbesserungen und Aktualisierungen",
-		    "LI_4" : "Gleicher Leistungsumfang inkl. lizensierter Filter, wie beim ehemals kommerziellen eBlocker"
+                    "LI_1" : "Integrierte Blocker-Listen von DuckDuckGo und Cookie-Banner Blocker (standardmäßig deaktiviert)",
+		    "LI_2" : "Verbesserungen der Nutzer-Oberfläche und Geschwindigkeit",
+		    "LI_3" : "Stabilitätsverbesserungen bei Geräten mit wenig Speicher",
+		    "LI_4" : "Aktualisierung des Linux Betriebssystems inkl. umfangreicher Sicherheitspatches"
                 },
                 "LINK_PRE" : "Weitere Details zu den Änderungen findest du in den ",
                 "LINK_TEXT" : "Release Notes",
-                "LINK_URL" : "https://eblocker.org/release-notes/2-5/",
-                "OUTRO" : "<a href=\"https://eblocker.org/spendenmoeglichkeiten/\" target=\"_blank\" class=\"orange\">Bitte spende für den Betrieb</a>, wenn dir eBlocker gefällt.",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-6/",
+                "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. <a href=\"https://eblocker.org/spendenmoeglichkeiten/\" target=\"_blank\" class=\"orange\">Bitte spende für die Betriebskosten</a>, damit dein eBlocker weiter tägliche Updates erhält.",
                 "SIGN" : "Dein eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.5"
+                "TITLE" : "eBlockerOS Release 2.6"
             },
-            "MENU_LABEL" : "Neu in eBlockerOS 2.5",
+            "MENU_LABEL" : "Neu in eBlockerOS 2.6",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.5"
+                "TITLE" : "eBlockerOS Release 2.6"
             }
         },
         "SSL" : {
@@ -2653,7 +2653,7 @@
                 "TUTORIAL": "http://setup.eblocker.org/de/help/https",
                 "WIZARD": "/https"
             },
-            "LABEL_TEXT_OFF": "Wenn Sie diese Funktion aktivieren, müssen Sie mit erweiterten Einstellungen Ihrer Geräte vertraut sein und ein Verschlüsselungs-Zertifikat auf den Geräten hinterlegen, um den Datenstrom durch den eBlocker analysieren zu lassen. <br />Das Aktivieren der HTTPS Unterstützung schaltet <a target=\"_blank\" href=\"https://support.eblocker.org/hc/de/articles/360006025593-Welche-Funktionen-benötigen-die-Aktivierung-von-HTTPS-SSL-\" class=\"orange\"> weitere Funktionen des eBlockers </a>frei.",
+            "LABEL_TEXT_OFF": "Wenn Sie diese Funktion aktivieren, müssen Sie mit erweiterten Einstellungen Ihrer Geräte vertraut sein und ein Verschlüsselungszertifikat auf den Geräten hinterlegen, um den Datenstrom durch den eBlocker analysieren zu lassen. <br />Das Aktivieren der HTTPS Unterstützung schaltet <a target=\"_blank\" href=\"https://support.eblocker.org/hc/de/articles/360006025593-Welche-Funktionen-benötigen-die-Aktivierung-von-HTTPS-SSL-\" class=\"orange\"> weitere Funktionen des eBlockers </a>frei.",
             "DATE_FORMAT" : "D. MMM YYYY",
             "IMPORTANT_NOTE" : "Wichtig: Sie müssen das eBlocker-Zertifikat auf allen aktivierten Geräten aufnehmen!",
             "IMPORTANT_NOTE_RENEWAL" : "eBlocker-Zertifikat erneuert!",
@@ -2815,7 +2815,7 @@
             "CONTENT" : {
                 "HELP" : {
                     "LABEL" : "Hilfe",
-                    "URL" : "https://www.eBlocker.org/de/help"
+                    "URL" : "https://eBlocker.org/de/help"
                 },
                 "LOGOUT" : {
                     "LABEL" : "Abmelden"
@@ -3354,7 +3354,7 @@
                 "MORE2" : "Für den Dauerbetrieb empfehlen wir Ihnen, einen Account bei einem Anbieter für dynamische IP-Adressen, auch \"Dynamic DNS\" oder DDNS genannt, anzulegen",
                 "MORE3" : "Sollten Sie eine statische IP-Adresse besitzen, können Sie diese direkt verwenden.",
                 "MORE_LINK_DYN_LABEL" : "Liste von Dynamic DNS (DDNS) Anbietern",
-                "MORE_LINK_DYN_URL" : "https://www.eBlocker.org/de/ddns",
+                "MORE_LINK_DYN_URL" : "https://eBlocker.org/de/ddns",
                 "OPTION" : {
                     "DYN_DNS" : "Ich habe bereits eine Domain von einem Dynamic DNS Anbieter für meine dynamische IP-Adresse.",
                     "EBLOCKER_DYN" : "Ich möchte eBlocker Dynamic DNS (beta) nutzen.",
@@ -3570,7 +3570,7 @@
                 "OVERVIEW" : {
                     "P1" : "Sie können anstelle des Tor-Netzwerks auch andere VPN-Anbieter zur IP-Anonymisierung nutzen, die das OpenVPN Protokoll unterstützen. Bitte beachten Sie, dass Ihnen in der Regel durch alternative VPN-Anbieter zusätzliche Kosten entstehen.",
                     "P2_LIST_TEXT" : "für Sie zusammengestellt.",
-                    "P2_LIST_URL" : "https://www.eBlocker.org/de/vpn_provider",
+                    "P2_LIST_URL" : "https://eBlocker.org/de/vpn_provider",
                     "P2_PRE" : "Wir haben bereits einige VPN-Anbieter auf Kompatibilität getestet und",
                     "P3_POST" : ".",
                     "P3_PRE" : "Grundsätzlich sollten jedoch die meisten OpenVPN-Anbieter problemlos funktionieren. Falls mit Ihrem Anbieter dennoch Probleme auftreten, teilen Sie dies gerne im Forum.",
@@ -3581,7 +3581,7 @@
             "VPN_KEEP_ALIVE" : {
                 "OVERVIEW" : {
                     "LINK_TEXT" : "Weitere Informationen",
-                    "LINK_URL" : "https://www.eblocker.org/vpn_reconnect_de",
+                    "LINK_URL" : "https://eBlocker.org/vpn_reconnect_de",
                     "P1" : "Falls Ihr VPN-Provider eine bidirektionale keep-alive Konfiguration anbietet, ist eine zusätzliche, aktive Überwachung der Verbindung nicht notwendig.",
                     "P2" : "Manche VPN-Anbieter beenden allerdings inaktive Verbindungen oder verwenden ungewöhnliche Konfigurationen. Dies kann dazu führen, dass der eBlocker geschlossene Verbindungen ohne aktive Überwachung nicht erkennt. Falls Sie Probleme mit Verbindungsabbrüchen haben, können Sie hier eine aktive Überwachung der Verbindung aktivieren.",
                     "TITLE" : "Aktive Überwachung der VPN-Verbindung"
@@ -3624,7 +3624,7 @@
                 "OVERVIEW" : {
                     "P1" : "Hier können Sie eine Liste von DNS Servern externer Anbieter anlegen, denen Sie Ihr Vertrauen schenken. Tragen Sie mittels des Buttons „{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}“ direkt die IPv4 Adresse des jeweiligen gewünschten DNS Servers ein. Zum Entfernen eines Eintrages klicken Sie auf „{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}“, wählen die Zeile aus und gehen auf „{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}“.",
                     "P2_TEXT" : "Information zu externen DNS Servern",
-                    "P2_URL" : "https://www.eBlocker.org/de/dns-server-liste/",
+                    "P2_URL" : "https://eBlocker.org/de/dns-server-liste/",
                     "TITLE" : "DNS Server Liste"
                 }
             },
@@ -3730,7 +3730,7 @@
             },
             "UPDATE" : {
                 "OVERVIEW" : {
-                    "P1" : "Statusanzeige Ihrer eBlocker Betriebssystem- und Blockierlisten-Versionen. Die eBlocker Pro und Family erhalten regelmäßig aktualisierte Blockerlisten und alle eBlocker erhalten bei Bedarf Bug Fixes und Systemupdates. Wir empfehlen ein tägliches automatisches Update. Dieses wird nur mit einer gültigen, aktiven Lizenz ausgeführt. Sie können für den Updatevorgang eine gewünschte Anfangszeit für den Update Zeitraum festlegen.",
+                    "P1" : "Statusanzeige Ihrer eBlocker Betriebssystem- und Blockierlisten-Versionen. Die eBlocker Pro und Family erhalten regelmäßig aktualisierte Blockerlisten und alle eBlocker erhalten bei Bedarf Bug Fixes und Systemupdates. Wir empfehlen ein tägliches automatisches Update. Dieses wird nur mit einer gültigen, aktiven Lizenz ausgeführt. Sie können für den Update-Vorgang eine gewünschte Anfangszeit für den Update Zeitraum festlegen.",
                     "TITLE" : "Aktualisierungen"
                 }
             }
@@ -3819,8 +3819,8 @@
             "OVERVIEW" : {
                 "P1" : "Die hier zugänglichen Einstellungen können Sie im Normalfall beibehalten.",
                 "P2_LINK_TEXT" : "Kompatibilitäts-Informationen Hardware",
-                "P2_LINK_URL" : "https://www.eBlocker.org/de/kompatibilitaetsinformationen-hardware/",
-                "P2_POST" : " entnehmen, sowie auf Anraten des Kundensupports, können Sie die Einstellungen ändern. Bitte beachten Sie, dass Sie zeitgleich auch den Zugang zu den Einstellungen Ihres Internet-Routers benötigen, um die Konfiguration dort jeweils zu vervollständigen.",
+                "P2_LINK_URL" : "https://eBlocker.org/de/kompatibilitaetsinformationen-hardware/",
+                "P2_POST" : " entnehmen, können Sie die Einstellungen ändern. Bitte beachten Sie, dass Sie zeitgleich auch den Zugang zu den Einstellungen Ihres Internet-Routers benötigen, um die Konfiguration dort jeweils zu vervollständigen.",
                 "P2_PRE" : "Für wenige Sonderfälle, die Sie der Seite ",
                 "TITLE" : "Netzwerk"
             }
@@ -3849,7 +3849,7 @@
             },
             "USER" : {
                 "OVERVIEW" : {
-                    "P1" : "Der eBlocker Jugendschutz basiert auf Benutzern, denen zunächst bei Neuanlage anhand der Rolle (Eltern / Kinder / Gäste) und des Geburtsdatums altersgemässe Rechte zugewiesen werden. Sofern gewünscht kann das Elternprofil gemeinsam genutzt werden, um die Administration zu vereinfachen.",
+                    "P1" : "Der eBlocker Jugendschutz basiert auf Benutzern, denen zunächst bei Neuanlage anhand der Rolle (Eltern / Kinder / Gäste) und des Geburtsdatums altersgemäße Rechte zugewiesen werden. Sofern gewünscht kann das Elternprofil gemeinsam genutzt werden, um die Administration zu vereinfachen.",
                     "P2" : "Nach Anklicken eines Eintrages in der Tabelle der Benutzer können viele zusätzliche Einstellungen bearbeitet werden, vor allem die gesperrten Inhalte, die Gesamtdauer der je Wochentag erlaubten Internetnutzung und der Nutzungszeitraum am Tag. Jedem Benutzer kann ein Gerät zugewiesen werden, dieses unterliegt damit den entsprechenden Jugendschutz-Regeln. Bei Bedarf kann ein anderer Benutzer ein Gerät zeitweilig in Besitz nehmen, um vorübergehend strengere oder auch weniger strenge Regeln zu aktivieren. Zum einfachen Wechsel des Benutzers kann eine PIN festgelegt werden.",
                     "TITLE" : "Benutzer"
                 }
@@ -3865,7 +3865,7 @@
         "PORT_FORWARDING" : {
             "OVERVIEW" : {
                 "LINK_TEXT" : "Was tun bei Fehlern?",
-                "LINK_URL" : "https://www.eBlocker.org/upnp_de",
+                "LINK_URL" : "https://eBlocker.org/upnp_de",
                 "P1" : "Port Weiterleitung bedeutet, dass eintreffende Datenpakete von einer Adress-Port-Kombination zu einer anderen geleitet werden, wenn diese Pakete durch einen Gateway kommen.",
                 "TITLE" : "Port Weiterleitung"
             }
@@ -3879,7 +3879,7 @@
             },
             "DIAGNOSTICS" : {
                 "OVERVIEW" : {
-                    "P1" : "Sollten in Ihrem Netzwerk oder bei Ihrem eBlocker Probleme auftreten, so ist es möglich, dass unser Support Team Sie bittet den Diagnosebericht zu erstellen. Nach Start der Berichtserstellung kann es eine Weile dauern, bis sich das Dialogfeld mit der Frage nach dem Speicherort öffnet. Wenn Sie einen festen Dateispeicherort angegeben haben könnte es sein, dass sich das Dialogfeld gar nicht öffnet und sie sofort im Standard-Download-Ordner nach der .tgz Datei suchen müssen. Bitte senden Sie die Datei möglichst so wie sie ist.",
+                    "P1" : "Sollten in Ihrem Netzwerk oder mit dem eBlocker Probleme auftreten, nutzen Sie bitte unser Community Forum. Dort werden Sie eventuell gebeten, den Diagnose Bericht zu erstellen. Nach Start der Berichtserstellung kann es eine Weile dauern, bis sich das Dialogfeld mit der Frage nach dem Speicherort öffnet. Wenn Sie einen festen Dateispeicherort angegeben hast könnte es sein, dass sich das Dialogfeld nicht öffnet. Sie finden die Datei dann im Standard-Download-Ordner mit der Endung .tgz. Bitte laden Sie die gesamte Datei erst hoch, wenn Sie darum gebeten werden.",
                     "TITLE" : "Diagnose"
                 }
             },
@@ -3897,7 +3897,7 @@
                     "P1" : "Sie können hier Ihre in den HTTPS Einstellungen erstellten, persönlichen, vertrauenswürdigen Apps und Websites sichern und bei Bedarf wieder einspielen.",
                     "P2" : "Sofern es notwendig ist, kann hier die Aktivierung des eBlocker rückgängig gemacht werden. Er wird dann keine automatischen Updates mehr erhalten. Die Lizenz kann im Rahmen ihrer Gültigkeitsdauer auf einem anderen eBlocker weiter verwendet werden.",
                     "P3_LINK_TEXT" : "Lizenzserver",
-                    "P3_LINK_URL" : "https://www.eBlocker.org/ebl/de/license-transfer",
+                    "P3_LINK_URL" : "https://eBlocker.org/ebl/de/license-transfer",
                     "P3_POST" : " im Rahmen ihrer Gültigkeitsdauer wieder verwendet werden.",
                     "P3_PRE" : "Sollte es notwendig sein, den eBlocker zurückzusetzen, so kann dies hier erfolgen. Der eBlocker muss dann neu aktiviert werden. Dafür muss die Lizenz vorher noch auf unserem Lizenzserver freigegeben werden. Die Lizenz kann nach lösen auf unserem ",
                     "TITLE" : "Zurücksetzen"

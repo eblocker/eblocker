@@ -188,6 +188,17 @@ public class EasyListRuleParserTest {
     }
 
     @Test
+    public void endMatch() {
+        String definition = "*.ico|"; // with regex
+        assertFilter(definition, "https://example.com/favicon.ico", null, null, Decision.BLOCK);
+        assertFilter(definition, "https://example.com/favicon.ico?extra", null, null, Decision.NO_DECISION);
+
+        definition = ".ico|";
+        assertFilter(definition, "https://example.com/favicon.ico", null, null, Decision.BLOCK);
+        assertFilter(definition, "https://example.com/favicon.ico?extra", null, null, Decision.NO_DECISION);
+    }
+
+    @Test
     public void endMatchWithOption() {
         String definition = "/ad.php|$popup";
         assertFilter(definition, "https://example.com/path/ad.php?extra", null, null, Decision.NO_DECISION);

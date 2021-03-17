@@ -287,7 +287,7 @@
                     "HINT_CAPTION" : "eBlocker Support",
                     "HINT_POST" : "",
                     "HINT_PRE" : "",
-                    "HINT_URL" : "https://eBlocker.org/de/docs"
+                    "HINT_URL" : "https://eBlocker.org/docs"
                 },
                 "RUNNING" : {
                     "WITHOUT_WARNINGS_1" : "eBlocker erfolgreich gestartet:",
@@ -2213,7 +2213,7 @@
                     }
                 }
             },
-            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/de/docs-network-dhcp",
+            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/docs/eblocker-individual-network-setting",
             "TOOLBAR" : {
                 "TITLE" : "Netzwerk Konfiguration"
             }
@@ -2815,7 +2815,7 @@
             "CONTENT" : {
                 "HELP" : {
                     "LABEL" : "Hilfe",
-                    "URL" : "https://eBlocker.org/de/docs"
+                    "URL" : "https://eBlocker.org/docs"
                 },
                 "LOGOUT" : {
                     "LABEL" : "Abmelden"

@@ -2213,7 +2213,7 @@
                     }
                 }
             },
-            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/docs-network-dhcp",
+            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/docs/eblocker-individual-network-setting",
             "TOOLBAR" : {
                 "TITLE" : "Network Configuration"
             }

@@ -3701,7 +3701,7 @@
                 "OVERVIEW" : {
                     "P1" : "Diese Seite zeigt die Filter-Gruppen (Werbe, Tracker, Malware) an und für welche Geräte sie aktiv sind. In jeder Gruppe können weitere Blockier-Listen hinzugefügt werden.",
                     "P2" : "Die Domain Werbe und Tracker Blocker wirken nur auf Geräten, für die eBlocker HTTPS nicht aktiv ist. Sie blocken stets alle URLs einer geblockten Domain.",
-                    "P3" : "Die Pattern Werbe und Tracker Blocker funktionieren nur auf Geräten, für die eBlocker HTTTPS aktiviert wurde. Sie filtern URL-genau, Domain unabhängig und auf Basis von Mustern im Easylist Format (z.B. */boesertracker.php). Das genaue Muster-Format findet sich hier https://adblockplus.org/filter-cheatsheet",
+                    "P3" : "Die Pattern Werbe und Tracker Blocker funktionieren nur auf Geräten, für die eBlocker HTTTPS aktiviert wurde. Sie filtern URL-genau, Domain unabhängig und auf Basis von Mustern im Easylist Format (z.B. */boesertracker.php). Das genaue Muster-Format findet sich <a href=\"https://adblockplus.org/filter-cheatsheet\" target=\"_blank\">hier</a>.",
                     "P4" : "Blocker deren Status-Anzeige rot ist, sind auf einem Ihrer Geräte aktiv. In der Spalte ‚{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}‘ können Sie mit der Maus über dem ersten angezeigten Gerät stehen und in einer automatisch geöffneten Infoblase ersehen Sie die Geräte auf denen der jeweilige Blocker aktiviert ist. Die Spalte ‚{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}‘ gibt Auskunft über die insgesamt geblockten Anzeigen beziehungsweise Tracker.",
                     "TITLE" : "Blocker Übersicht"
                 }

@@ -3701,7 +3701,7 @@
                 "OVERVIEW" : {
                     "P1" : "This page shows the filter groups (Ad, Tracker, Malware) and for which devices they are active. More block lists can be added in each group.",
                     "P2" : "The Domain Ad and Tracker Blockers work only on devices for which eBlocker HTTPS is not active. They always block all URLs of a domain.",
-                    "P3" : "The Pattern Ad and Tracker Blockers work only on devices that have eBlocker HTTTPS enabled. They filter URL-exactly / domain independent and based on patterns in Easylist format (e.g. */badtracker.php). The exact pattern format can be found <a href=\"https://adblockplus.org/filter-cheatsheet\" target=\"_blank\">here</a>.",
+                    "P3" : "The Pattern Ad and Tracker Blockers work only on devices that have eBlocker HTTTPS enabled. They filter URL-exactly / domain independent and based on patterns in Easylist format (e.g. */badtracker.php). The exact pattern format can be found <a href=\"https://eBlocker.org/docs/easylist-format\" target=\"_blank\">here</a>.",
                     "P4" : "Blockers whose status display is red are active on one of your devices. In the column '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}' you can move the mouse over the first displayed device and in an automatically opened info bubble you can see the devices on which the respective blocker is activated. The '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}' column provides information about the total number of blocked displays or trackers.",
                     "TITLE" : "Blocker overview"
                 }

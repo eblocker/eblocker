@@ -287,7 +287,7 @@
                     "HINT_CAPTION" : "eBlocker Support",
                     "HINT_POST" : "",
                     "HINT_PRE" : "",
-                    "HINT_URL" : "https://eBlocker.org/en/help"
+                    "HINT_URL" : "https://eBlocker.org/docs"
                 },
                 "RUNNING" : {
                     "WITHOUT_WARNINGS_1" : "eBlocker successfully started:",
@@ -1915,7 +1915,7 @@
             "AGB_LABEL" : "eBlocker.org",
             "AGB_LINK" : "https://eblocker.org/",
             "COPYRIGHT_GMBH" : "Copyright (c) 2015-2019 eBlocker GmbH",
-            "COPYRIGHT" : "Copyright (c) 2020 eBlocker Open Source UG (limited liability)",
+            "COPYRIGHT" : "Copyright (c) 2020-2021 eBlocker Open Source UG (limited liability)",
             "EULA_LABEL" : "Licensed under the EUPL",
             "EULA_LINK" : "https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12",
             "LABEL" : "Legal Information",
@@ -2213,7 +2213,7 @@
                     }
                 }
             },
-            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/en/help-network-dhcp",
+            "KNOWLEDGE_DB_URL" : "https://eBlocker.org/docs/eblocker-individual-network-setting",
             "TOOLBAR" : {
                 "TITLE" : "Network Configuration"
             }
@@ -2363,8 +2363,8 @@
             "ACTION" : {
                 "GENERATE" : "Generate Report"
             },
-            "EMAIL" : "community forum",
-            "EMAIL_HREF" : "https://eblocker.org/community/",
+            "FORUM" : "community forum",
+            "FORUM_HREF" : "https://eblocker.org/community/",
             "EXPLAIN_PART1" : "In case of problems please only use our ",
             "EXPLAIN_PART2" : "Please describe the problem in detail there and upload the diagnostic report only when requested. It may contain private data.",
             "LABEL" : "Diagnostics Report",
@@ -2564,7 +2564,7 @@
             }
         },
         "SSL" : {
-            "HELP_LINK" : "https://eBlocker.org/en/help/https",
+            "HELP_LINK" : "https://eBlocker.org/docs/https",
             "LABEL" : "HTTPS"
         },
         "SSL_CERTIFICATE" : {
@@ -2575,7 +2575,7 @@
                 "TUTORIALS" : "Tutorials"
             },
             "URL": {
-                "TUTORIAL": "http://setup.eblocker.org/en/help/https",
+                "TUTORIAL": "http://eblocker.org/docs/https",
                 "WIZARD": "/https"
             },
             "EXPLAIN_WIZARD": "Important: you must add the eBlocker certificate to all activated devices!",
@@ -2650,10 +2650,10 @@
                 "TUTORIALS" : "Tutorials"
             },
             "URL": {
-                "TUTORIAL": "http://setup.eblocker.org/en/help/https",
+                "TUTORIAL": "http://eblocker.org/docs/https",
                 "WIZARD": "/https"
             },
-            "LABEL_TEXT_OFF": "If you enable this feature, you must be familiar with advanced settings of your devices and install an encryption certificate on the devices to let eBlocker analyze the data stream. <br />Activating HTTPS support enables <a target=\"_blank\" href=\"https://support.eblocker.org/hc/en-us/articles/360006025593-Which-functions-require-the-activation-of-HTTPS-SSL-\" class=\"orange\">advanced functions of the eBlocker</a>.",
+            "LABEL_TEXT_OFF": "If you enable this feature, you must be familiar with advanced settings of your devices and install an encryption certificate on the devices to let eBlocker analyze the data stream. <br />Activating HTTPS support enables <a target=\"_blank\" href=\"https://eblocker.org/docs/which-functions-require-the-activation-of-https-ssl/\" class=\"orange\">advanced functions of the eBlocker</a>.",
             "DATE_FORMAT" : "MMM Do, YYYY",
             "IMPORTANT_NOTE" : "Important: you must add the eBlocker certificate to all activated devices!",
             "IMPORTANT_NOTE_RENEWAL" : "eBlocker Certificate renewed!",
@@ -2815,7 +2815,7 @@
             "CONTENT" : {
                 "HELP" : {
                     "LABEL" : "Help",
-                    "URL" : "https://eBlocker.org/en/help"
+                    "URL" : "https://eBlocker.org/docs"
                 },
                 "LOGOUT" : {
                     "LABEL" : "Logout"
@@ -3356,8 +3356,8 @@
                 "MORE_LINK_DYN_LABEL" : "List of Dynamic DNS (DDNS) providers",
                 "MORE_LINK_DYN_URL" : "https://eBlocker.org/en/ddns",
                 "OPTION" : {
-                    "DYN_DNS" : "I already have a domain from a Dynamic DNS provider for my dynamic IP address.",
-                    "EBLOCKER_DYN" : "I want to use eBlocker Dynamic DNS (beta).",
+                    "DYN_DNS" : "I already use a Dynamic DNS provider for my dynamic IP address.",
+                    "EBLOCKER_DYN" : "I want to use eBlocker Dynamic DNS (demo operation).",
                     "FIXED_IP" : "I'm using a static IP address.",
                     "RECOMMENDED" : "(Recommended)"
                 },
@@ -3369,8 +3369,8 @@
                 "MORE2" : "The communication between your devices and your eBlocker is securely encrypted.",
                 "MORE3" : "No other device, service or application within your local network will be accessible through this port.",
                 "OPTION" : {
-                    "AUTO" : "Let eBlocker try to map the ports on your router",
-                    "MANUAL" : "I will do the mapping of ports myself.",
+                    "AUTO" : "Let eBlocker try to map the router ports (using UPnP)",
+                    "MANUAL" : "I will do the port mapping myself.",
                     "RECOMMENDED" : "(Recommended)"
                 },
                 "TEXT1" : "The eBlocker Mobile port must be mapped to an external port on your router, so that it can be accessed from outside."
@@ -3445,8 +3445,8 @@
                     "HOST_LABEL" : "Dynamic DNS name"
                 },
                 "EB_DYN_DNS" : {
-                    "HEADER" : "eBlocker Dynamic DNS (beta)",
-                    "TEXT1" : "<b>eBlocker Dynamic DNS (beta) is still in the testing phase.</b>",
+                    "HEADER" : "eBlocker Dynamic DNS (demo operation)",
+                    "TEXT1" : "<b>eBlocker Dynamic DNS can be used for testing and demo purposes.</b>",
                     "TEXT2" : "For eBlocker DNS it is necessary that your eBlocker regularly connects to the eBlocker DNS server.",
                     "TEXT3" : "Please confirm that your eBlocker is allowed to perform regular connection updates by pinging to the central eBlocker Dynamic DNS Server. This will transfer your IP address. You can stop this at any time by turning off eBlocker Mobile.",
                     "TEXT_CONFIRM" : "I consent to my IP address being transferred to eBlocker."
@@ -3541,7 +3541,7 @@
             "TOR" : {
                 "ADDITIONAL" : {
                     "P1" : "Tor is subject to a few restrictions, as it is made available from a private source.",
-                    "P2" : "https://support.eBlocker.org/hc/de/articles/360004587353-Die-eBlocker-Tor-Netzwerk-Funktion",
+                    "P2" : "https://eblocker.org/docs/the-eblocker-tor-network-feature/",
                     "P3_MIDDLE" : " and its ",
                     "P3_PRE" : "For more information, please see the ",
                     "P3_TOR_FAQ_TEXT" : "FAQ.",
@@ -3661,7 +3661,7 @@
             },
             "COMPRESSION" : {
                 "OVERVIEW" : {
-                    "P1" : "The eBlocker must decompress web pages and javascript files to insert its icon or block WebRTC. Recompressing the content may cause a slight delay. As no speed advantage from compression is to be expected in local networks, it can also be dispensed with there. eBlocker Mobile users, on the other hand, can benefit from this, since the data is sent over the Internet again.",
+                    "P1" : "The eBlocker must decompress web pages and Javascript files to insert its icon or block WebRTC. Recompressing the content may cause a slight delay. As no speed advantage from compression is to be expected in local networks, it can also be dispensed with there. eBlocker Mobile users, on the other hand, can benefit from this, since the data is sent over the Internet again.",
                     "TITLE" : "Kompression"
                 }
             },
@@ -3699,9 +3699,9 @@
             },
             "STATUS" : {
                 "OVERVIEW" : {
-                    "P1" : "On this page you can find out which of the integrated filtering methods are active on your eBlocker and on which devices they are used.",
-                    "P2" : "The domain advertising and tracker blockers form a very uncomplicated and good filtering of the Internet pages on tracker and tracking advertising.",
-                    "P3" : "The Pattern Advertising and Tracker Blockers provide very precise and accurate protection for advanced users, the setup effort is slightly higher and there may be applications / apps that deny the service if the filtering blocks specific traffic. Exceptions can be set in the settings under \"Trusted Apps\" and \"Trusted Websites\".",
+                    "P1" : "This page shows the filter groups (Ad, Tracker, Malware) and for which devices they are active. More block lists can be added in each group.",
+                    "P2" : "The Domain Ad and Tracker Blockers work only on devices for which eBlocker HTTPS is not active. They always block all URLs of a domain.",
+                    "P3" : "The Pattern Ad and Tracker Blockers work only on devices that have eBlocker HTTTPS enabled. They filter URL-exactly / domain independent and based on patterns in Easylist format (e.g. */badtracker.php). The exact pattern format can be found <a href=\"https://eBlocker.org/docs/easylist-format\" target=\"_blank\">here</a>.",
                     "P4" : "Blockers whose status display is red are active on one of your devices. In the column '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}' you can move the mouse over the first displayed device and in an automatically opened info bubble you can see the devices on which the respective blocker is activated. The '{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}' column provides information about the total number of blocked displays or trackers.",
                     "TITLE" : "Blocker overview"
                 }
@@ -3772,15 +3772,15 @@
             "TRUSTED_APPS" : {
                 "OVERVIEW" : {
                     "P1" : "If individual apps are not compatible with eBlocker, you can exclude these apps from eBlocker protection.",
-                    "P2" : "The eBlocker team has already activated a certain number of apps as exceptions to not affect the user experience. You can revoke exceptions at any time.",
-                    "P3" : "Please note that activated exception lists mean that the corresponding apps and websites are not protected by eBlocker and your data could be passed on to third parties.",
+                    "P2" : "The eBlocker team has already activated some apps as exceptions by default to improve the user experience. You can revoke exceptions at any time.",
+                    "P3" : "Please note that activated exception lists mean that the corresponding apps and websites are not protected by eBlocker.",
                     "TITLE" : "Trusted Apps"
                 }
             },
             "TRUSTED_DOMAINS" : {
                 "OVERVIEW" : {
                     "P1" : "If individual websites are not compatible with eBlocker, you can exclude these websites from eBlocker protection.",
-                    "P2" : "Please note that activated exception lists mean that the corresponding apps and websites are not protected by eBlocker and your data could be passed on to third parties.",
+                    "P2" : "Please note that activated exception lists mean that the corresponding apps and websites are not protected by eBlocker.",
                     "P3" : "The recorded HTTPS connection errors help you determine which apps are affected and which domain/IP addresses should be defined as exceptions for the respective app.",
                     "TITLE" : "Trusted Websites"
                 }
@@ -3794,7 +3794,7 @@
                 "P3" : "If a fixed access point is established from the Internet, your router must determine an information channel / \"port\" for the eBlocker under External access to your eBlocker, which can be used for communication. You can do this yourself or use the setup wizard if you have activated the \"Universal Plug and Play\" function on the router. Port forwarding must be set up in the router that connects your local network to the Internet: Port 1194 (protocol UDP) must be forwarded to the IP address eBlockers with the same port number 1194. We recommend assigning a fixed IP address to the eBlocker in the network settings.",
                 "P4" : "The last step of the connection test wizard allows you to test the connection you have just created.",
                 "P5_LINK_TEXT" : "More information about the OpenVPN Apps",
-                "P5_LINK_URL" : "https://support.eBlocker.org/hc/en-us/articles/360008030973-Where-can-I-download-a-compatible-OpenVPN-app-",
+                "P5_LINK_URL" : "https://eblocker.org/docs/where-can-i-download-a-compatible-openvpn-app/",
                 "P5_POST" : "",
                 "P5_PRE" : "On your mobile phone you need an app to access your home network via OpenVPN. The eBlocker provides an OpenVPN configuration file for the OpenVPN connection from your mobile device, which you can download and use to contact the eBlocker."
             },
@@ -3839,7 +3839,7 @@
                     "P2" : "Note: The default profile is automatically assigned to all new and existing devices. This also applies to equipment brought by other children (e.g. friends or guests). The fragFINN protection profile only allows access to the pages checked and approved by the fragFINN team with a preset daily usage time of 2 hours.",
                     "P3_LINK" : "here.",
                     "P3_PRE" : "Further help can be found ",
-                    "P3_URL" : "https://support.eBlocker.org/hc/en-us/articles/360004587293-Parental-Controls"
+                    "P3_URL" : "https://eblocker.org/docs/parental-controls/"
                 },
                 "OVERVIEW" : {
                     "P1" : "A Parental Controls profile can be created for specific user groups, e.g. one for children. You use the protection profile to determine which website categories are to be blocked for this group (e.g. pornography, gambling). You can also specify when and for how long users can access the Internet. The profile is then assigned to the respective users.",

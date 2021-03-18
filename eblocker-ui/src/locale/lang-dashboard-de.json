@@ -14,7 +14,7 @@
         "CONTENT" : {
             "HELP" : {
                 "LABEL" : "Hilfe",
-                "URL" : "https://eBlocker.org/de/help"
+                "URL" : "https://eBlocker.org/docs"
             },
             "EXPAND": {
                 "LABEL": "Alle ausklappen"

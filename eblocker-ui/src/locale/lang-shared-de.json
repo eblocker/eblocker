@@ -115,7 +115,7 @@
             "ERROR": "Ungültiges Datum"
         },
 	"HELP": {
-	    "URL" : "https://eblocker.org/help"
+	    "URL" : "https://eblocker.org/docs"
 	}
     }
 }

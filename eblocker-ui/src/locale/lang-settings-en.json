@@ -2363,8 +2363,8 @@
             "ACTION" : {
                 "GENERATE" : "Generate Report"
             },
-            "EMAIL" : "community forum",
-            "EMAIL_HREF" : "https://eblocker.org/community/",
+            "FORUM" : "community forum",
+            "FORUM_HREF" : "https://eblocker.org/community/",
             "EXPLAIN_PART1" : "In case of problems please only use our ",
             "EXPLAIN_PART2" : "Please describe the problem in detail there and upload the diagnostic report only when requested. It may contain private data.",
             "LABEL" : "Diagnostics Report",

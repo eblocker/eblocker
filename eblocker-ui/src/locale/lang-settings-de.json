@@ -2363,8 +2363,8 @@
             "ACTION" : {
                 "GENERATE" : "Diagnosebericht erstellen"
             },
-            "EMAIL" : "Community Forum",
-            "EMAIL_HREF" : "https://eblocker.org/community/",
+            "FORUM" : "Community Forum",
+            "FORUM_HREF" : "https://eblocker.org/community/",
             "EXPLAIN_PART1" : "Bei Problemen nutze bitte ausschließlich unser ",
             "EXPLAIN_PART2" : "Bitte beschreibe dort das Problem genau und lade den Diagnosebericht nur nach Aufforderung hoch. Er kann private Daten enthalten.",
             "LABEL" : "Diagnosebericht",

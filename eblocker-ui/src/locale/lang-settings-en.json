@@ -1887,8 +1887,8 @@
             "TABLE": {
                 "COLUMN": {
                     "NAME": "Name",
-                    "URL": "Quelle",
-                    "LAST_UPDATED": "Aktualisiert"
+                    "URL": "Source",
+                    "LAST_UPDATED": "Updated"
                 }
             }
         },

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.time.Instant.now;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -58,11 +59,13 @@ public class AutoTrustAppServiceTest {
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bar.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now(), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "bar.com")));
 
-        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
-                autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("bar.com"), autoTrustAppModuleId);
     }
 
     @Test
@@ -72,7 +75,7 @@ public class AutoTrustAppServiceTest {
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
 
-        Instant lastOccurrence = Instant.now();
+        Instant lastOccurrence = now();
         autoTrustAppService.onChange(newArrayList(failedConnection(lastOccurrence, "foo.com")));
         autoTrustAppService.onChange(newArrayList(failedConnection(lastOccurrence, "foo.com")));
 
@@ -87,8 +90,37 @@ public class AutoTrustAppServiceTest {
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now().minusSeconds(10), "foo.com")));
-        autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now(), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minusSeconds(10), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
+
+        verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"),
+                autoTrustAppModuleId);
+    }
+
+    @Test
+    public void testNewDomainIsNotAddedWithOldLastOccurence() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.plusMinutes(1)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
+                autoTrustAppModuleId);
+    }
+
+    @Test
+    public void testNewDomainIsAddedWithOldLastOccurenceAndTwoNewers() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.plusMinutes(1)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.minusMinutes(3)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"),
                 autoTrustAppModuleId);
@@ -101,8 +133,8 @@ public class AutoTrustAppServiceTest {
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now().minusSeconds(10), "foo.com")));
-        autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now(), "foo.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now().minusSeconds(10), "foo.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now(), "foo.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
                 autoTrustAppModuleId);
@@ -115,8 +147,8 @@ public class AutoTrustAppServiceTest {
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bad.com")).thenReturn(blocked());
 
-        autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now().minusSeconds(10), "bad.com")));
-        autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now(), "bad.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now().minusSeconds(10), "bad.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now(), "bad.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("bar"), autoTrustAppModuleId);
     }
@@ -129,8 +161,8 @@ public class AutoTrustAppServiceTest {
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bar.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(Collections.singletonList(failedConnection(Instant.now().minusSeconds(10), "foo.com", "bar.com")));
-        autoTrustAppService.onChange(newArrayList(failedConnection(Instant.now(), "foo.com", "bar.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now().minusSeconds(10), "foo.com", "bar.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com", "bar.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com", "bar.com"), autoTrustAppModuleId);
     }

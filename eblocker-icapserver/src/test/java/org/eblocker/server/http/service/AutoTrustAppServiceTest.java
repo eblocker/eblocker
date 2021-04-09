@@ -69,6 +69,25 @@ public class AutoTrustAppServiceTest {
     }
 
     @Test
+    public void testNewDomainWithCertificateErrorAddedTheFirstTime() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule("alreadyexisting.com");
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bad.com")).thenReturn(blocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("alreadyexisting.com")).thenReturn(notBlocked());
+
+        String untrustedCertError = "blabla " + AutoTrustAppService.CERT_UNTRUSTED_ERROR + " bla";
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "foo.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "alreadyexisting.com")));
+
+        verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("bad.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("alreadyexisting.com"), autoTrustAppModuleId);
+    }
+
+    @Test
     public void testNewDomainIsNotAddedWithSameLastOccurence() {
         AppWhitelistModule sslCollectingAppModule = collectingModule();
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
@@ -196,7 +215,11 @@ public class AutoTrustAppServiceTest {
     }
 
     private FailedConnection failedConnection(Instant lastOccurrence, String... domains) {
+        return getFailedConnectionWithError(lastOccurrence, "error:0", domains);
+    }
+
+    private FailedConnection getFailedConnectionWithError(Instant lastOccurrence, String error, String... domains) {
         return new FailedConnection(newArrayList("device:000000000000"), newArrayList(domains),
-                newArrayList("error:0"), lastOccurrence);
+                newArrayList(error), lastOccurrence);
     }
 }

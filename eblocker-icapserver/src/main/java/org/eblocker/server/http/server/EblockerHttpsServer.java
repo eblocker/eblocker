@@ -415,32 +415,18 @@ public class EblockerHttpsServer implements Preprocessor {
 
     private void setUpRoutes() {
         addFilterRoutes();
-        addUserAgentRoutes();
-        addAnonymousRoutes();
         addDeviceRoutes();
         addRedirectRoutes();
         addNetworkRoutes();
         addParentalControlRoutes();
-        addUserRoutes();
-        addDomainBlackListRoutes();
         addDomainWhiteListRoutes();
         addDeviceRegistrationRoutes();
-        addFactoryResetRoutes();
-        addUpdateRoutes();
         addSSLRoutes();
 
-        addLanguageRoutes();
-        addSetupWizardRoute();
-        addTimezoneRoutes();
         addTimestampRoutes();
         addUserMessagesRoutes();
-        addAppModulesRoutes();
 
-        addRecordingRoutes();
-
-        addAuthenticationRoutes();
         addVpnRoutes();
-        addOpenVpnServerRoutes();
 
         addControlBarRoutes();
 
@@ -452,25 +438,15 @@ public class EblockerHttpsServer implements Preprocessor {
 
         addFilterListsRoutes();
         addTransactionRecorderRoutes();
-        addEventRoutes();
 
         addDashboardRoutes();
 
         addPageContextRoutes();
         addReminderRoutes();
-        addDnsRoutes();
-        addProductMigrationRoutes();
-        addFeatureRoutes();
         addConfigurationBackupRoutes();
         addFeatureToggleRoutes();
         addConnectionCheckRoutes();
         addBlockerRoutes();
-
-        //
-        // Boot phase routes
-        //
-        addDiagnosticsRoutes();
-        addSystemStatusRoutes();
 
         // This must be the last route (catch all):
         server
@@ -487,41 +463,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("controlbar.vpn.profiles.get.route");// Called from controlbar
 
         server
-                .uri("/anonymous/vpn/profiles", openVpnController)
-                .action("createProfile", HttpMethod.POST)
-                .name("console.vpn.profiles.create.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}", openVpnController)
-                .action("getProfile", HttpMethod.GET)
-                .name("console.vpn.profile.get.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}", openVpnController)
-                .action("updateProfile", HttpMethod.PUT)
-                .name("console.vpn.profile.update.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}", openVpnController)
-                .action("deleteProfile", HttpMethod.DELETE)
-                .name("console.vpn.profile.delete.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}/config", openVpnController)
-                .action("getProfileConfig", HttpMethod.GET)
-                .name("console.vpn.profile.get.config.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}/config", openVpnController)
-                .action("uploadProfileConfig", HttpMethod.PUT)
-                .name("console.vpn.profile.create.config.route");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}/config/{option}", openVpnController)
-                .action("uploadProfileConfigOption", HttpMethod.PUT)
-                .name("console.vpn.profile.set.config.option");
-
-        server
                 .uri("/anonymous/vpn/profiles/status/{device}", openVpnController)
                 .action("getVpnStatusByDevice", HttpMethod.GET)
                 .name("errorpage.vpn.profiles.get.status.device");// Called from controlbar and squid error page
@@ -530,16 +471,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/anonymous/vpn/profile/{id}/status", openVpnController)
                 .action("getVpnStatus", HttpMethod.GET)
                 .name("controlbar.vpn.profile.get.status");// Called from controlbar
-
-        server
-                .uri("/anonymous/vpn/profile/{id}/status", openVpnController)
-                .action("setVpnStatus", HttpMethod.PUT)
-                .name("console.vpn.profile.set.status");
-
-        server
-                .uri("/anonymous/vpn/profile/{id}/status/{device}", openVpnController)
-                .action("getVpnDeviceStatus", HttpMethod.GET)
-                .name("console.vpn.profile.status.device.get");
 
         server // Similar to the one below - but used in a different place
                 .uri("/anonymous/vpn/profile/{id}/status/{device}", openVpnController)
@@ -552,153 +483,12 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("errorpageExclusive.vpn.profile.status.device.set");// Called from squid error page
     }
 
-    private void addOpenVpnServerRoutes() {
-        server
-                .uri("/openvpn/status", openVpnServerController)
-                .action("getOpenVpnServerStatus", HttpMethod.GET)
-                .name("console.vpn.server.status.get");
-        server
-                .uri("/openvpn/status", openVpnServerController)
-                .action("setOpenVpnServerStatus", HttpMethod.POST)
-                .name("console.vpn.server.status.set");
-        server
-                .uri("/openvpn/status", openVpnServerController)
-                .action("resetOpenVpnServerStatus", HttpMethod.DELETE)
-                .name("console.vpn.server.status.delete");
-        server
-                .uri("/openvpn/certificates", openVpnServerController)
-                .action("getCertificates", HttpMethod.GET)
-                .name("console.vpn.server.certificates.get");
-        server
-                .uri("/openvpn/certificates/generateDownloadUrl/{deviceId}", openVpnServerController)
-                .action("generateDownloadUrl", HttpMethod.GET)
-                .name("console.vpn.server.certificates.generateDownloadUrl.get");
-        server
-                .uri("/openvpn/certificates/downloadClientConf/{deviceId}", openVpnServerController)
-                .action("downloadClientConf", HttpMethod.GET)
-                .name("console.vpn.server.certificates.downloadClientConf.get")
-                .noSerialization();
-    }
-
-    private void addTimezoneRoutes() {
-        // Only used from within console
-        server
-                .uri("/timezone/continents", timezoneController)
-                .action("getTimezoneCategories", HttpMethod.GET)
-                .name("console.timezone.continents.get.route");
-
-        // Only used from within console
-        server
-                .uri("/timezone/continent/countries", timezoneController)
-                .action("getTimeZoneStringsForCategory", HttpMethod.PUT)
-                .name("console.timezone.continents.put.countries.route");
-    }
-
     private void addTimestampRoutes() {
-        server
-                .uri("/localtimestamp", timestampController)
-                .action("getLocalTimestamp", HttpMethod.GET)
-                .name("public.timestamp.route");
-
         server
                 .uri("/api/localtimestamp", timestampController)
                 .action("getLocalTimestamp", HttpMethod.GET)
                 .name("dashboard.timestamp.route");
 
-    }
-
-    private void addSetupWizardRoute() {
-        server
-                .uri("/setupwizard/info", setupWizardController)
-                .action("getInfo", HttpMethod.GET)
-                .name("setup.wizard.info.route");
-
-        server
-                .uri("/setupwizard/status", setupWizardController)
-                .action("didUserFinishSetupWizard", HttpMethod.GET)
-                .name("setup.wizard.status.route");
-
-        server
-                .uri("/setupwizard/needserial", setupWizardController)
-                .action("askForSerialNumber", HttpMethod.GET)
-                .name("setup.wizard.askforserial.route");
-
-        server
-                .uri("/setupwizard/serialsample", setupWizardController)
-                .action("getSerialNumberExample", HttpMethod.GET)
-                .name("setup.wizard.serialsample.route");
-
-        server
-                .uri("/setupwizard/serial/checkformat", setupWizardController)
-                .action("checkSerialNumber", HttpMethod.PUT)
-                .name("setup.wizard.serial.check.route");
-    }
-
-    private void addLanguageRoutes() {
-        server
-                .uri("/language/all", languageController)
-                .action("getAllAvailableLanguages", HttpMethod.GET)
-                .name("language.get.all.route");
-
-        // public: Must be available before user is logged in. Also for ControlBar
-        server
-                .uri("/language", languageController)
-                .action("getCurrentLanguage", HttpMethod.GET)
-                .name("public.language.get.route");
-        server
-                .uri("/language", languageController)
-                .action("setLanguage", HttpMethod.POST)
-                .name("language.sets.route");
-    }
-
-    private void addAppModulesRoutes() {
-        // Only used from within console
-        server
-                .uri("/appmodules/id", appModulesController)
-                .action("create", HttpMethod.POST)
-                .name("console.app.modules.post.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/id/{id}", appModulesController)
-                .action("read", HttpMethod.GET)
-                .name("console.app.modules.get.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/id/{id}", appModulesController)
-                .action("update", HttpMethod.PUT)
-                .name("console.app.modules.put.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/id/{id}", appModulesController)
-                .action("delete", HttpMethod.DELETE)
-                .name("console.app.modules.delete.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/all", appModulesController)
-                .action("getAppWhitelistModules", HttpMethod.GET)
-                .name("console.app.modules.getall.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/onlyenabled", appModulesController)
-                .action("getOnlyEnabledAppWhitelistModules", HttpMethod.GET)
-                .name("console.app.modules.get.enabled.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/enable", appModulesController)
-                .action("enableAppWhitelistModule", HttpMethod.PUT)
-                .name("console.app.modules.put.route");
-
-        // Only used from within console
-        server
-                .uri("/appmodules/unique", appModulesController)
-                .action("isUnique", HttpMethod.GET)
-                .name("console.app.modules.get.unique.route");
     }
 
     private void addSSLRoutes() {
@@ -725,52 +515,16 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getRenewalCertificateByteStream", HttpMethod.GET)
                 .noSerialization()
                 .name("public.ssl.root.renewal.download.route");
-
-        // Only used from within console
-        server
-                .uri("/ssl/certs/status", sslController)
-                .action("areCertificatesReady", HttpMethod.GET)
-                .name("console.ssl.certs.status.get.route");
-
-        // Only used from within console
-        server
-                .uri("/ssl/rootca", sslController)
-                .action("createNewRootCA", HttpMethod.POST)
-                .name("console.ssl.root.ca.set.route");
-
-        // Only used from within console
-        server
-                .uri("/ssl/rootca", sslController)
-                .action("getRootCaCertificate", HttpMethod.GET)
-                .name("console.ssl.root.ca.get");
-
         //TODO: Is this really required for the ControlBar?
         server
                 .uri("/ssl/status", sslController)
                 .action("getSSLState", HttpMethod.GET)
                 .name("controlbar.ssl.status.get.route");
 
-        // Only used from within console
-        server
-                .uri("/ssl/status", sslController)
-                .action("setSSLState", HttpMethod.POST)
-                .name("console.ssl.status.set.route");
-
         server
                 .uri("/ssl/whitelist", sslController)
                 .action("addUrlToSSLWhitelist", HttpMethod.POST)
                 .name("errorpageExclusive.whitelist.set.route");// Available only for errorpage and console, not for controlbar
-
-        // Only used from within console
-        server
-                .uri("/ssl/whitelist/delete", sslController)
-                .action("removeWhitelistedUrl", HttpMethod.PUT)
-                .name("console.ssl.whitelist.delete.route");
-
-        // Only used from within console
-        server.uri("/ssl/rootca/options", sslController)
-                .action("getDefaultCaOptions", HttpMethod.GET)
-                .name("console.ssl.root.ca.options");
 
         server.uri("/ssl/test/{serialNumber}", sslController)
                 .action("markCertificateStatus", HttpMethod.POST)
@@ -807,307 +561,29 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("ssl.error.recording.enabled.set");
     }
 
-    private void addRecordingRoutes() {
-        // Controls start and stop of recording
-        // Only used from within the console
-        server
-                .uri("/recording/startstop", recordingController)
-                .action("recordingStartStop", HttpMethod.POST)
-                .name("console.recording.start.stop");
-
-        // Only used from within the console
-        server
-                .uri("/recording/recordingStatus", recordingController)
-                .action("getRecordingStatus", HttpMethod.GET)
-                .name("console.recording.get.status");
-
-        // Only used from within the console
-        server
-                .uri("/recording/recordedUrls", recordingController)
-                .action("getRecordedDomainList", HttpMethod.GET)
-                .name("console.recording.get.recorded.domain.list");
-    }
-
-    private void addUpdateRoutes() {
-        // Must be accessible w/o authn for update from 0.9.2 (or earlier) to 0.9.3 (or later).
-        // Otherwise, the update spinner would never stop, as the updated ICAP server would return 401
-        // after it restarted.
-        // TODO: Remove "public.", as soon as we think the number of installations < 0.9.3 is low...
-        server
-                .uri("/updates/status", updateController)
-                .action("getUpdatingStatus", HttpMethod.GET)
-                .name("public.updates.status.get.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/autoupdate", updateController)
-                .action("getAutoUpdateInformation", HttpMethod.GET)
-                .name("console.updates.autoupdate.get.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/status", updateController)
-                .action("setUpdatingStatus", HttpMethod.POST)
-                .name("console.updates.status.set.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/download", updateController)
-                .action("downloadUpdates", HttpMethod.GET)
-                .name("console.updates.download.set.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/check", updateController)
-                .action("getUpdatesCheckStatus", HttpMethod.GET)
-                .name("console.updates.check.set.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/automaticUpdatesStatus", updateController)
-                .action("setAutomaticUpdatesStatus", HttpMethod.POST)
-                .name("console.updates.autoupdate.set.route");
-
-        // Only called from within the console
-        server
-                .uri("/updates/automaticUpdatesConfig", updateController)
-                .action("setAutomaticUpdatesConfig", HttpMethod.POST)
-                .name("console.updates.autoupdate.config.set.route");
-
-        //		server
-        //			.uri("/updates/packetVersion", updateController)
-        //			.action("getListsPacketVersion", HttpMethod.GET)
-        //			.name("update.updates.packet.version.get.route");
-
-    }
-
-    private void addDiagnosticsRoutes() {
-        // This routes are intended to allow generating the report when the icapserver is not fully started but
-        // authentication is required which only works after the actual controller implementations are injected
-        // (EblockerServerApp.injectRESTController).
-        // Therefore they have been removed for now. They will be added back in EB1-2033.
-    }
-
-    private void addFactoryResetRoutes() {
-        // Only used from within console
-        server.uri("/api/factoryreset", factoryResetController)
-                .action("factoryReset", HttpMethod.GET)
-                .name("console.system.factoryreset.route");
-    }
-
     private void addDeviceRegistrationRoutes() {
         // public (required to load the console)
         server
                 .uri("/registration", deviceRegistrationController)
                 .action("registrationStatus", HttpMethod.GET)
                 .name("public.registration.status.route");
-
-        // controlbar
-        server
-                .uri("/registrationNotValidAfter", deviceRegistrationController)
-                .action("licenseNotValidAfter", HttpMethod.GET)
-                .name("controlbar.registration.status.valid.route");
-
-        // controlbar
-        server
-                .uri("/registration", deviceRegistrationController)
-                .action("register", HttpMethod.POST)
-                .name("controlbar.registration.register.route");
-
-        // MUST be with authentication! Not for controlbar!
-        server
-                .uri("/registration", deviceRegistrationController)
-                .action("resetRegistration", HttpMethod.DELETE)
-                .name("registration.reset.route");
     }
 
     private void addNetworkRoutes() {
         server
-                .uri("/network", networkController)
-                .action("getConfiguration", HttpMethod.GET)
-                .name("public.network.config.get.route");
-        server
                 .uri("/network/setupPageInfo", networkController)
                 .action("getSetupPageInfo", HttpMethod.GET)
                 .name("public.network.config.setuppage.get.route");
-
-        // Only used from within console
-        server
-                .uri("/network", networkController)
-                .action("updateConfiguration", HttpMethod.PUT)
-                .name("console.network.config.put.route");
-
-        // Only used from within console
-        server
-                .uri("/network/networkstate", networkController)
-                .action("getDHCPActive", HttpMethod.GET)
-                .name("console.network.config.get.network.state.route");
-
-        server
-                .uri("/network/dhcp-servers", networkController)
-                .action("getDhcpServers", HttpMethod.GET)
-                .name("console.network.config.get.dhcp.servers.route");
     }
 
     private void addParentalControlRoutes() {
-        // Create profile
-        server
-                .uri("/userprofiles", parentalControlController)
-                .action("storeNewProfile", HttpMethod.POST)
-                .name("parentalcontrol.store.profile.route");
-        // Read profiles
-        server
-                .uri("/userprofiles", parentalControlController)
-                .action("getProfiles", HttpMethod.GET)
-                .name("public.parentalcontrol.get.profiles.route");
-        // Update profile
-        server
-                .uri("/userprofiles", parentalControlController)
-                .action("updateProfile", HttpMethod.PUT)
-                .name("parentalcontrol.put.profile.route");
-        // Delete profile
-        server
-                .uri("/userprofiles/{id}", parentalControlController)
-                .action("deleteProfile", HttpMethod.DELETE)
-                .name("parentalcontrol.delete.profile.route");
-
-        server
-                .uri("/userprofiles/unique", parentalControlController)
-                .action("isUnique", HttpMethod.GET)
-                .name("parentalcontrol.unique.profil.route");
-
-        server
-                .uri("/userprofiles/updates", parentalControlController)
-                .action("getProfilesBeingUpdated", HttpMethod.GET)
-                .name("parentalcontrol.profile.updates.route");
-
-        server
-                .uri("/parentalcontrol/usage", parentalControlController)
-                .action("startUsage", HttpMethod.POST)
-                .name("errorpage.parentalcontrol.usage.start");
-
-        server
-                .uri("/parentalcontrol/usage", parentalControlController)
-                .action("stopUsage", HttpMethod.DELETE)
-                .name("errorpage.parentalcontrol.usage.stop");
-
-        server
-                .uri("/parentalcontrol/usage", parentalControlController)
-                .action("getUsage", HttpMethod.GET)
-                .name("errorpage.parentalcontrol.usage");
-
         server
                 .uri("/api/squiderror/searchEngineConfig", parentalControlController)
                 .action("getSearchEngineConfiguration", HttpMethod.GET)
                 .name("errorpage.parentalcontrol.searchEngine.get");
     }
 
-    private void addUserRoutes() {
-        // Create user
-        server
-                .uri("/users", userController)
-                .action("createUser", HttpMethod.POST)
-                .name("console.parentalcontrol.store.user.route");
-        // Read users
-        server
-                .uri("/users", userController)
-                .action("getUsers", HttpMethod.GET)
-                .name("errorpage.get.users.route");// Used in error page
-        // Update user
-        server
-                .uri("/users", userController)
-                .action("updateUser", HttpMethod.PUT)
-                .name("console.parentalcontrol.put.user.route");
-        // Delete user
-        server
-                .uri("/users/{id}", userController)
-                .action("deleteUser", HttpMethod.DELETE)
-                .name("console.parentalcontrol.delete.user.route");
-
-        // Unique name?
-        server
-                .uri("/users/unique", userController)
-                .action("isUnique", HttpMethod.GET)
-                .name("console.parentalcontrol.user.unique.route");
-
-        // Set PIN
-        server
-                .uri("/users/{id}/pin", userController)
-                .action("setPin", HttpMethod.POST)
-                .name("console.parentalcontrol.user.set.pin.route");
-
-        // Set PIN from controlbar
-        server
-                .uri("/users/{id}/changepin", userController)
-                .action("changePin", HttpMethod.POST)
-                .name("controlbar.user.change.pin.route");
-
-        // Reset PIN
-        server
-                .uri("/users/{id}/pin", userController)
-                .action("resetPin", HttpMethod.DELETE)
-                .name("console.parentalcontrol.user.reset.pin.route");
-
-    }
-
-    private void addDomainBlackListRoutes() {
-        server
-                .uri("/blacklist/cache", domainBlockingController)
-                .action("getCacheStats", HttpMethod.GET)
-                .name("debug.blacklist.cache.stats");
-        server
-                .uri("/blacklist/cache", domainBlockingController)
-                .action("clearCaches", HttpMethod.DELETE)
-                .name("debug.blacklist.cache.clear");
-    }
-
-    private void addUserAgentRoutes() {
-        //
-        // controlbar: All used by ControlBar
-        //
-        server
-                .uri("/useragents/getagentlist", userAgentController)
-                .action("getAgentList", HttpMethod.GET)
-                .name("controlbar.useragents.getagentlist.route");
-
-        server
-                .uri("/useragents/setCloakedUserAgentByDeviceId", userAgentController)
-                .action("setCloakedUserAgentByDeviceId", HttpMethod.PUT)
-                .name("controlbar.useragents.setCloakedUserAgentByDeviceId.route");
-
-        server
-                .uri("/useragents/getCloakedUserAgentByDeviceId", userAgentController)
-                .action("getCloakedUserAgentByDeviceId", HttpMethod.GET)
-                .name("controlbar.useragents.getCloakedUserAgentByDeviceId.route");
-
-    }
-
     private void addFilterRoutes() {
-        // public: Must be available, even before ControlBar is open.
-        // There is a certain level of protection due to the pageContextId!
-        server
-                .uri("/filter/badge/{pageContextId}", filterController)
-                .action("getBadge", HttpMethod.GET)
-                .name("public.filter.badge.route");
-
-        // controlbar
-        server
-                .uri("/filter/stats/{pageContextId}", filterController)
-                .action("getStats", HttpMethod.GET)
-                .name("controlbar.filter.stats.route");
-
-        // controlbar
-        server
-                .uri("/filter/config", filterController)
-                .action("getConfig", HttpMethod.GET)
-                .name("controlbar.filter.config.route");
-
-        // controlbar
-        server
-                .uri("/filter/config", filterController)
-                .action("putConfig", HttpMethod.PUT)
-                .name("controlbar.filter.save.config.route");
-
         // dashboard
         server
                 .uri("/summary/whitelist/config", filterController)
@@ -1119,182 +595,14 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/summary/whitelist/config", filterController)
                 .action("putConfig", HttpMethod.PUT)
                 .name("dashboard.filter.save.config.route");
-
-        // controlbar
-        server
-                .uri("/filter/blockedAds/{pageContextId}", filterController)
-                .action("getBlockedAdsSet", HttpMethod.GET)
-                .name("controlbar.filter.blockedAds.route");
-
-        // controlbar
-        server
-                .uri("/filter/blockedTrackings/{pageContextId}", filterController)
-                .action("getBlockedTrackingsSet", HttpMethod.GET)
-                .name("controlbar.filter.blockedTrackings.route");
-
-    }
-
-    private void addAnonymousRoutes() {
-        // controlbar
-        server
-                .uri("/anonymous/config", anonymousController)
-                .action("getConfig", HttpMethod.GET)
-                .name("controlbar.anonymous.config.route");
-
-        // controlbar
-        server
-                .uri("/anonymous/config", anonymousController)
-                .action("putConfig", HttpMethod.PUT)
-                .name("controlbar.anonymous.save.config.route");
-
-        // controlbar
-        server
-                .uri("/anonymous/tor/status", anonymousController)
-                .action("isTorConnected", HttpMethod.GET)
-                .name("controlbar.anonymous.tor.route");
-
-        // controlbar
-        server
-                .uri("/anonymous/tor/newidentity", anonymousController)
-                .action("getNewTorIdentity", HttpMethod.PUT)
-                .name("controlbar.anonymous.tor.route");
-
-        // controlbar: get the Tor check services
-        server
-                .uri("/anonymous/tor/checkservices", anonymousController)
-                .action("getTorCheckServices", HttpMethod.GET)
-                .name("controlbar.anonymous.tor.checkservices.route");
-
-        // Contained within shared code but only called from within console-code
-        server
-                .uri("/anonymous/tor/countries", anonymousController)
-                .action("getTorCountries", HttpMethod.GET)
-                .name("console.anonymous.tor.route");
-
-        // Only used from within console
-        server
-                .uri("/anonymous/tor/countries/selected", anonymousController)
-                .action("setTorExitNodeCountries", HttpMethod.PUT)
-                .name("console.anonymous.tor.route");
-
-        //TODO: Is this really required for the ControlBar?
-        server
-                .uri("/anonymous/tor/countries/selected", anonymousController)
-                .action("getCurrentTorExitNodeCountries", HttpMethod.GET)
-                .name("controlbar.anonymous.tor.route");
-
-        //WebRTC Blocking ------------------
-        // Only used from within console
-        server
-                .uri("/anonymous/block/webrtc", anonymousController)
-                .action("setWebRTCBlockingState", HttpMethod.PUT)
-                .name("console.anonymous.webrtc.route");
-
-        // Only used from within console
-        server
-                .uri("/anonymous/block/webrtc", anonymousController)
-                .action("isWebRTCBlockingEnabled", HttpMethod.GET)
-                .name("console.anonymous.webrtc.route");
-
-        //----------------------------------
-
-        //HTTP Referrer Header Removing ---------------
-
-        // Only used from within console
-        server
-                .uri("/anonymous/block/referrer", anonymousController)
-                .action("setHTTPRefererRemovingState", HttpMethod.PUT)
-                .name("console.anonymous.referrer.route");
-
-        // Only used from within console
-        server
-                .uri("/anonymous/block/referrer", anonymousController)
-                .action("isHTTPRefererRemovingEnabled", HttpMethod.GET)
-                .name("console.anonymous.referrer.route");
-
-        //CaptivePortalRedirector/Repsonder -------------
-
-        // Only used from within console
-        server
-                .uri("/anonymous/block/captiveportal", anonymousController)
-                .action("setGoogleCaptivePortalRedirectState", HttpMethod.PUT)
-                .name("console.anonymous.captiveportal.route");
-
-        // Only used from within console
-        server
-                .uri("/anonymous/block/captiveportal", anonymousController)
-                .action("getGoogleCaptivePortalRedirectState", HttpMethod.GET)
-                .name("console.controlbar.anonymous.captiveportal.route");
-
-        // DNT Header (Do-not-track) -----------------------
-
-        // Only used from within console
-        server
-                .uri("/anonymous/dnt", anonymousController)
-                .action("getDntHeaderState", HttpMethod.GET)
-                .name("console.anonymous.dntheader.get.route");
-
-        // Only used from within console
-        server
-                .uri("/anonymous/dnt", anonymousController)
-                .action("setDntHeaderState", HttpMethod.PUT)
-                .name("console.anonymous.dntheader.set.route");
     }
 
     private void addDeviceRoutes() {
-        // Only used from within console
-        server
-                .uri("/devices/scan", deviceController)
-                .action("scanDevices", HttpMethod.POST)
-                .name("console.devices.scan.route");
-
-        server
-                .uri("/devices/scanningInterval", deviceController)
-                .action("getScanningInterval", HttpMethod.GET)
-                .name("console.devices.get.scanning.interval");
-
-        server
-                .uri("/devices/scanningInterval", deviceController)
-                .action("setScanningInterval", HttpMethod.POST)
-                .name("console.devices.set.scanning.interval");
-
-        // Only used from within console
-        server
-                .uri("/devices/{deviceId}", deviceController)
-                .action("updateDevice", HttpMethod.PUT)
-                .name("console.devices.update.route");
-
-        // Only used from within console
-        server
-                .uri("/devices/{deviceId}", deviceController)
-                .action("deleteDevice", HttpMethod.DELETE)
-                .name("console.devices.delete.route");
-
         // controlbar: Used by controlbar to find current device.
         server
                 .uri("/devices", deviceController)
                 .action("getAllDevices", HttpMethod.GET)
                 .name("controlbar.devices.route");
-
-        // controlbar: Used by controlbar to find out whether to show warnings
-        // for the current device
-        server
-                .uri("/devices/showwarnings", deviceController)
-                .action("getShowWarnings", HttpMethod.GET)
-                .name("controlbar.devices.get.show.warnings.route");
-
-        // controlbar: Used by controlbar to set show warnings for the current
-        // device
-        server
-                .uri("/devices/showwarnings", deviceController)
-                .action("postShowWarnings", HttpMethod.POST)
-                .name("controlbar.devices.post.show.warnings.route");
-
-        // Controlbar: Log out current user
-        server
-                .uri("/controlbar/{pageContextId}/logout", deviceController)
-                .action("logoutUserFromDevice", HttpMethod.POST)
-                .name("controlbar.devices.logout.route");
 
         server
                 .uri("/api/device/icon", deviceController)
@@ -1346,18 +654,6 @@ public class EblockerHttpsServer implements Preprocessor {
     }
 
     private void addDomainWhiteListRoutes() {
-        // controlbar
-        server
-                .uri("/whitelist/{pageContextId}", domainWhiteListController)
-                .action("getDomainStatus", HttpMethod.GET)
-                .name("controlbar.whitelist.status.route");
-
-        // controlbar
-        server
-                .uri("/whitelist/{pageContextId}", domainWhiteListController)
-                .method(HttpMethod.PUT)
-                .name("controlbar.whitelist.store.route");
-
         // dashboard
         server
                 .uri("/summary/whitelist/all", domainWhiteListController)
@@ -1414,56 +710,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("setDoNotShowAgain", HttpMethod.PUT)
                 .name("public.messages.donotshowagain.put.route");
 
-    }
-
-    private void addAuthenticationRoutes() {
-
-        // public: Must be available before user is logged in.
-        server
-                .uri("/authentication/login/{appContext}", authenticationController)
-                .action("login", HttpMethod.POST)
-                .name("public.authentication.login.route");
-
-        server
-                .uri("/authentication/wait", authenticationController)
-                .action("passwordEntryInSeconds", HttpMethod.GET)
-                .name("public.authentication.wait.route");
-
-        // Must be accessible without having a valid token
-        server
-                .uri("/authentication/renew", authenticationController)
-                .action("renew", HttpMethod.GET)
-                .name("authentication.renew.route");
-
-        // Only used from within console
-        server
-                .uri("/authentication/enable", authenticationController)
-                .action("enable", HttpMethod.POST)
-                .name("console.authentication.enable.route");
-
-        // Only used from within console
-        server
-                .uri("/authentication/disable", authenticationController)
-                .action("disable", HttpMethod.POST)
-                .name("console.authentication.disable.route");
-
-        // public: Must be available, if user lost password
-        server
-                .uri("/authentication/initiateReset", authenticationController)
-                .action("initiateReset", HttpMethod.POST)
-                .name("public.authentication.initiateReset.route");
-
-        // public: Must be available, if user lost password
-        server
-                .uri("/authentication/executeReset", authenticationController)
-                .action("executeReset", HttpMethod.POST)
-                .name("public.authentication.executeReset.route");
-
-        // public: Must be available, if user lost password
-        server
-                .uri("/authentication/cancelReset", authenticationController)
-                .action("cancelReset", HttpMethod.POST)
-                .name("public.authentication.cancelReset.route");
     }
 
     private void addAdminConsoleRoutes() {
@@ -2336,45 +1582,17 @@ public class EblockerHttpsServer implements Preprocessor {
     }
 
     private void addControlBarRoutes() {
+        // public: Must be available, even before ControlBar is open.
+        // There is a certain level of protection due to the pageContextId!
         server
-                .uri("/controlbar/console/url", controlBarController)
-                .action("getConsoleUrl", HttpMethod.GET)
-                .name("public.controlbar.console.url.route");
+                .uri("/filter/badge/{pageContextId}", filterController)
+                .action("getBadge", HttpMethod.GET)
+                .name("public.filter.badge.route");
 
         server
                 .uri("/controlbar/console/ip", controlBarController)
                 .action("getConsoleIp", HttpMethod.GET)
                 .name("public.controlbar.console.ip.route");
-
-        server
-                .uri("/controlbar/userprofile", controlBarController)
-                .action("getUserProfile", HttpMethod.GET)
-                .name("public.controlbar.userprofile.route");
-
-        server
-                .uri("/controlbar/user", controlBarController)
-                .action("getUser", HttpMethod.GET)
-                .name("public.controlbar.user.route");
-
-        server
-                .uri("/controlbar/users", controlBarController)
-                .action("getUsers", HttpMethod.GET)
-                .name("public.controlbar.users.route");
-
-        server
-                .uri("/controlbar/device", controlBarController)
-                .action("getDevice", HttpMethod.GET)
-                .name("public.controlbar.device.route");
-
-        server
-                .uri("/controlbar/deviceRestrictions", controlBarController)
-                .action("getDeviceRestrictions", HttpMethod.GET)
-                .name("public.controlbar.device.restrictions.route");
-
-        server
-                .uri("/controlbar/operatinguser", controlBarController)
-                .action("setOperatingUser", HttpMethod.PUT)
-                .name("public.controlbar.device.route");
 
         // ** New Controlbar, with 'api' prefix
         // ** New Controlbar: Trackers / Ads
@@ -2623,36 +1841,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getFilterLists", HttpMethod.GET)
                 .name("public.controlbar.filterlists.get.route");// Public since used by squid error page
 
-        // Only used from within console
-        server
-                .uri("/filterlists/{id}/domains", filterListsController)
-                .action("getFilterListDomains", HttpMethod.GET)
-                .name("console.parentalcontrol.filterlists.getdomains.route");
-
-        // Only used from within console
-        server
-                .uri("/filterlists/{id}", filterListsController)
-                .action("updateFilterList", HttpMethod.PUT)
-                .name("console.parentalcontrol.filterlists.update.route");
-
-        // Only used from within console
-        server
-                .uri("/filterlists/{id}", filterListsController)
-                .action("deleteFilterList", HttpMethod.DELETE)
-                .name("console.parentalcontrol.filterlists.delete.route");
-
-        // Only used from within console
-        server
-                .uri("/filterlists", filterListsController)
-                .action("createFilterList", HttpMethod.POST)
-                .name("console.parentalcontrol.filterlists.create.route");
-
-        // Only used from within console
-        server
-                .uri("/filterlists/unique", filterListsController)
-                .action("isUnique", HttpMethod.GET)
-                .name("console.parentalcontrol.filterlists.unique.route");
-
         server
                 .uri("/api/squiderror/user/customdomainfilter", customDomainFilterConfigController)
                 .action("getFilter", HttpMethod.GET)
@@ -2668,69 +1856,12 @@ public class EblockerHttpsServer implements Preprocessor {
      * Record and analyze HTTP(S) connections
      */
     private void addTransactionRecorderRoutes() {
-        // Only used from within console
-        server
-                .uri("/recorder", transactionRecorderController)
-                .action("start", HttpMethod.POST)
-                .name("console.transactionRecorder.start.route");
-
-        // Only used from within console
-        server
-                .uri("/recorder", transactionRecorderController)
-                .action("stop", HttpMethod.DELETE)
-                .name("console.transactionRecorder.stop.route");
-
-        // Only used from within console
-        server
-                .uri("/recorder", transactionRecorderController)
-                .action("info", HttpMethod.GET)
-                .name("console.transactionRecorder.info.route");
-
-        // Only used from within console
-        server
-                .uri("/recorder/results", transactionRecorderController)
-                .action("getAll", HttpMethod.GET)
-                .name("console.transactionRecorder.getall.route");
-
-        // Only used from within console
-        server
-                .uri("/recorder/whatifmode", transactionRecorderController)
-                .action("getWhatIfMode", HttpMethod.GET)
-                .name("console.transactionRecorder.whatifmode.get.route");
-
-        // Only used from within console
-        server
-                .uri("/recorder/whatifmode", transactionRecorderController)
-                .action("setWhatIfMode", HttpMethod.PUT)
-                .name("console.transactionRecorder.whatifmode.put.route");
-
         //TODO: Should not be public
         server
                 .uri("/recorder/results/csv", transactionRecorderController)
                 .action("getAllAsCSV", HttpMethod.GET)
                 .name("public.transactionRecorder.getallascsv.route")
                 .noSerialization();
-
-        // Only used from within console
-        server
-                .uri("/recorder/results/{domain}", transactionRecorderController)
-                .action("get", HttpMethod.GET)
-                .name("console.transactionRecorder.get.route");
-
-    }
-
-    private void addEventRoutes() {
-        // Only called from within console
-        server
-                .uri("/events", eventController)
-                .action("getEvents", HttpMethod.GET)
-                .name("console.events.get.route");
-
-        // Only called from within console
-        server
-                .uri("/events/{mode}", eventController)
-                .action("deleteSeveralEvents", HttpMethod.DELETE)
-                .name("console.events.delete.route");
     }
 
     private void addDashboardRoutes() {
@@ -3049,85 +2180,12 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("advice.reminder.post");
     }
 
-    private void addDnsRoutes() {
-        // Only called from within console
-        server
-                .uri("/dns/config/resolvers", dnsController)
-                .action("getDnsResolvers", HttpMethod.GET)
-                .name("console.dns.config.resolvers.get");
-
-        // Only called from within console
-        server
-                .uri("/dns/config/resolvers", dnsController)
-                .action("setDnsResolvers", HttpMethod.PUT)
-                .name("console.dns.config.resolvers.set");
-
-        // Only called from within console
-        server
-                .uri("/dns/config/records", dnsController)
-                .action("getLocalDnsRecords", HttpMethod.GET)
-                .name("console.dns.config.records.get");
-
-        // Only called from within console
-        server
-                .uri("/dns/config/records", dnsController)
-                .action("setLocalDnsRecords", HttpMethod.PUT)
-                .name("console.dns.config.records.set");
-
-        // Only called from within console
-        server
-                .uri("/dns/cache", dnsController)
-                .action("flushCache", HttpMethod.DELETE)
-                .name("console.dns.cache.flush");
-
-        // Only called from within console
-        server
-                .uri("/dns/status", dnsController)
-                .action("getStatus", HttpMethod.GET)
-                .name("console.dns.status.get");
-
-        // Only called from within console
-        server
-                .uri("/dns/status", dnsController)
-                .action("setStatus", HttpMethod.PUT)
-                .name("console.dns.status.set");
-        server
-                .uri("/dns/stats", dnsController)
-                .action("getResolverStats", HttpMethod.GET)
-                .name("console.dns.stats.get");
-        server.uri("/dns/test", dnsController)
-                .action("testNameServer", HttpMethod.POST)
-                .name("console.dns.stats.test");
-    }
-
     private void addConnectionCheckRoutes() {
         // Publicly available
         server
                 .uri("/api/check/route", connectionCheckController)
                 .action("routingTest", HttpMethod.GET)
                 .name("public.connectioncheck.route");
-    }
-
-    private void addSystemStatusRoutes() {
-        // obsolete by migration to new '/api/adminconsole/...' routes
-    }
-
-    private void addProductMigrationRoutes() {
-        server
-                .uri("/upsellInfo/{feature}", productMigrationController)
-                .action("getUpsellInfo", HttpMethod.GET)
-                .name("console.productmigration.getUpsellInfo");
-    }
-
-    private void addFeatureRoutes() {
-        server
-                .uri("/api/features/compressionmode", featureController)
-                .action("getCompressionMode", HttpMethod.GET)
-                .name("console.features.compressionmode");
-        server
-                .uri("/api/features/compressionmode", featureController)
-                .action("setCompressionMode", HttpMethod.PUT)
-                .name("console.features.compressionmode");
     }
 
     private void addConfigurationBackupRoutes() {

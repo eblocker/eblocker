@@ -81,6 +81,10 @@ public class SecurityProcessor implements Preprocessor {
             request.putAttachment("jwt", tokenInfo);
         }
 
+        if (tokenInfo.getAppContext() == AppContext.SYSTEM) {
+            LOG.warn("App context SYSTEM used for path {} ({})", request.getPath(), routeName);
+        }
+
         LOG.debug("Valid authn token found for {}", request.getPath());
     }
 

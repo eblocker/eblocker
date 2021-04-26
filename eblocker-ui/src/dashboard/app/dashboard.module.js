@@ -81,7 +81,6 @@ import CARD_HTML from './_bootstrap/_constants/cardHtml';
 import dashboardCardComponent from './components/card.component';
 import dashboardComponent from './dashboard.component';
 import MainComponent from './main.component';
-import StatsComponent from './stats.component.js';
 import PauseComponent from './cards/pause/pause.component';
 import OnlineTimeComponent from './cards/onlineTime/onlineTime.component';
 import DashboardConsoleComponent from './cards/console/console.component';
@@ -244,7 +243,6 @@ angular.module('eblocker.dashboard', [
     .component('ebDropdown', DropdownComponent)
     .component('dashboardIcon', IconComponent)
     .component('dashboardSsl', SslComponent)
-    .component('dashboardStats', StatsComponent)
     .component('dashboardPause', PauseComponent)
     .component('dashboardOnlineTime', OnlineTimeComponent)
     .component('dashboardConsole', DashboardConsoleComponent)

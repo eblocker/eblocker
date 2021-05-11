@@ -88,6 +88,7 @@ import org.eblocker.server.http.controller.UserController;
 import org.eblocker.server.http.controller.boot.DiagnosticsReportController;
 import org.eblocker.server.http.controller.boot.SystemStatusController;
 import org.eblocker.server.http.exceptions.restexpress.ServiceNotAvailableServiceException;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.security.SecurityProcessor;
 import org.restexpress.Request;
 import org.restexpress.RestExpress;
@@ -186,6 +187,7 @@ public class EblockerHttpsServer implements Preprocessor {
                                @Named("http.server.useSystemOut") boolean useSystemOut,
 
                                SecurityProcessor securityProcessor,
+                               DashboardAuthorizationProcessor dashboardAuthorizationProcessor,
                                StartupStatusReporter startupStatusReporter,
                                BaseURLs baseUrls,
 
@@ -265,6 +267,7 @@ public class EblockerHttpsServer implements Preprocessor {
                 .setUseSystemOut(useSystemOut)
                 .addPreprocessor(this)
                 .addPreprocessor(securityProcessor)
+                .addPreprocessor(dashboardAuthorizationProcessor)
                 .addPostprocessor(new CacheControlPostProcessor())
                 .addFinallyProcessor(new ExceptionLogger())
                 .setExecutorThreadCount(2 * Runtime.getRuntime().availableProcessors())
@@ -440,6 +443,7 @@ public class EblockerHttpsServer implements Preprocessor {
         addTransactionRecorderRoutes();
 
         addDashboardRoutes();
+        addAdminDashboardRoutes();
 
         addPageContextRoutes();
         addReminderRoutes();
@@ -2160,6 +2164,23 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/filterlists", filterListsController)
                 .action("getFilterLists", HttpMethod.GET)
                 .name("dashboard.filterlists.get.route");
+    }
+
+    private void addAdminDashboardRoutes() {
+        server
+                .uri("/api/admindashboard/devices", deviceController)
+                .action("getAllDevices", HttpMethod.GET)
+                .name("admindashboard.devices.get");
+
+        server
+                .uri("/api/admindashboard/{deviceId}", deviceController)
+                .action("getDeviceById", HttpMethod.GET)
+                .name("admindashboard.device.get.route");
+
+        server
+                .uri("/api/admindashboard/{deviceId}", deviceController)
+                .action("updateDevice", HttpMethod.PUT)
+                .name("admindashboard.device.update.route");
     }
 
     private void addPageContextRoutes() {

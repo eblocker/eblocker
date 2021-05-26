@@ -404,7 +404,7 @@ public class DeviceControllerImplTest {
     public void testUpdateNonExistingCurrentDevice() {
         Device device = TestDeviceFactory.createDevice("abcdef012345", "192.168.1.42", true);
         Request request = ControllerTestUtils.mockRequestByDevice(device);
-        controller.updateCurrentDevice(request, response);
+        controller.updateDeviceDashboard(request, response);
     }
 
     @Test(expected = ForbiddenException.class)
@@ -413,7 +413,7 @@ public class DeviceControllerImplTest {
         Mockito.when(deviceService.getDeviceByIp(device.getIpAddresses().get(0))).thenReturn(device);
         Request request = ControllerTestUtils.mockRequestByDevice(device);
         Mockito.when(devicePermissionsService.operatingUserMayUpdate(device)).thenReturn(false);
-        controller.updateCurrentDevice(request, response);
+        controller.updateDeviceDashboard(request, response);
     }
 
     @Test
@@ -425,7 +425,7 @@ public class DeviceControllerImplTest {
         Mockito.when(deviceService.getDeviceById(deviceFromDB.getId())).thenReturn(deviceFromDB);
         Mockito.when(devicePermissionsService.operatingUserMayUpdate(deviceFromDB)).thenReturn(true);
         Mockito.when(request.getBodyAs(Device.class)).thenReturn(deviceFromRequest);
-        Object result = controller.updateCurrentDevice(request, response);
+        Object result = controller.updateDeviceDashboard(request, response);
         ArgumentCaptor<Device> updated = ArgumentCaptor.forClass(Device.class);
         Mockito.verify(deviceService).updateDevice(updated.capture());
         assertEquals(updated.getValue().getName(), deviceFromRequest.getName());

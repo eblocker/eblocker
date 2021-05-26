@@ -51,6 +51,7 @@ import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.controller.DomainBlockingController;
+import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
 import org.eblocker.server.http.controller.EventController;
 import org.eblocker.server.http.controller.FactoryResetController;
@@ -178,6 +179,7 @@ public class EblockerHttpsServer implements Preprocessor {
     private final FeatureToggleController featureToggleController;
     private final ConnectionCheckController connectionCheckController;
     private final BlockerController blockerController;
+    private final DomainRecorderController domainRecorderController;
 
     private Channel httpsChannel;
 
@@ -245,7 +247,8 @@ public class EblockerHttpsServer implements Preprocessor {
                                LedSettingsController ledSettingsController,
                                TasksController tasksController,
                                ConnectionCheckController connectionCheckController,
-                               BlockerController blockerController
+                               BlockerController blockerController,
+                               DomainRecorderController domainRecorderController
     ) {
         // Set up SerializationProvider to make sure special characters like "&"
         // are transported to the frontend without encoding
@@ -345,7 +348,10 @@ public class EblockerHttpsServer implements Preprocessor {
         this.connectionCheckController = connectionCheckController;
         this.blockerController = blockerController;
 
+        this.domainRecorderController = domainRecorderController;
+
         setUpRoutes();
+
 
         //observe ssl context for changes
         sslContextHandler.addContextChangeListener(new SSLContextHandler.SslContextChangeListener() {
@@ -1845,15 +1851,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getFilterLists", HttpMethod.GET)
                 .name("public.controlbar.filterlists.get.route");// Public since used by squid error page
 
-        server
-                .uri("/api/squiderror/user/customdomainfilter", customDomainFilterConfigController)
-                .action("getFilter", HttpMethod.GET)
-                .name("errorpageAuthenticated.user.customdomainfilter");
-
-        server
-                .uri("/api/squiderror/user/customdomainfilter", customDomainFilterConfigController)
-                .action("setFilter", HttpMethod.PUT)
-                .name("errorpageAuthenticated.user.customdomainfilter");
     }
 
     /**
@@ -1884,15 +1881,17 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("generateToken", HttpMethod.GET)
                 .name("public.token.get.route");
 
-        // Pausing the current device:
+        // Pausing the selected device:
         server
-                .uri("/api/device/pause", deviceController)
-                .action("getPauseCurrentDevice", HttpMethod.GET)
-                .name("dashboard.device.get.pause");
+                .uri("/api/device/pause/{deviceId}", deviceController)
+                .action("getPauseByDeviceId", HttpMethod.GET)
+                .name("dashboard.device.get.pause")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
         server
-                .uri("/api/device/pause", deviceController)
-                .action("pauseCurrentDevice", HttpMethod.PUT)
-                .name("dashboard.device.put.pause");
+                .uri("/api/device/pause/{deviceId}", deviceController)
+                .action("setPauseByDeviceId", HttpMethod.PUT)
+                .name("dashboard.device.put.pause")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
         // Details about current device
         server
                 .uri("/api/device", deviceController)
@@ -1900,9 +1899,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.device.get");
 
         server
-                .uri("/api/device", deviceController)
-                .action("updateCurrentDevice", HttpMethod.PUT)
-                .name("dashboard.device.update");
+                .uri("/api/device/{deviceId}", deviceController)
+                .action("updateDeviceDashboard", HttpMethod.PUT)
+                .name("dashboard.device.update")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID)
+                .flag("DENY_CHILD_ACCESS");
 
         server
                 .uri("/api/device/showWelcomeFlags", deviceController)
@@ -2064,13 +2065,15 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.vpn.server.certificates.downloadClientConf.get")
                 .noSerialization();
         server
-                .uri("/api/dashboard/user/customdomainfilter", customDomainFilterConfigController)
+                .uri("/api/dashboard/customdomainfilter/{userId}", customDomainFilterConfigController)
                 .action("getFilter", HttpMethod.GET)
-                .name("dashboard.custom.domain.filter.get");
+                .name("dashboard.custom.domain.filter.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_USER_ID);
         server
-                .uri("/api/dashboard/user/customdomainfilter", customDomainFilterConfigController)
+                .uri("/api/dashboard/customdomainfilter/{userId}", customDomainFilterConfigController)
                 .action("setFilter", HttpMethod.PUT)
-                .name("dashboard.custom.domain.filter.set");
+                .name("dashboard.custom.domain.filter.set")
+                .flag(DashboardAuthorizationProcessor.VERIFY_USER_ID);
 
         // Dashboard Dns
         server
@@ -2164,6 +2167,19 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/filterlists", filterListsController)
                 .action("getFilterLists", HttpMethod.GET)
                 .name("dashboard.filterlists.get.route");
+
+        // Domain Recording
+        server
+                .uri("/api/dashboard/domain/recorder/{deviceId}", domainRecorderController)
+                .action("getRecordedDomains", HttpMethod.GET)
+                .name("dashboard.domainRecorder.get.route")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+
+        server
+                .uri("/api/dashboard/domain/recorder/{deviceId}", domainRecorderController)
+                .action("resetRecording", HttpMethod.DELETE)
+                .name("dashboard.domainRecorder.reset.route")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
     }
 
     private void addAdminDashboardRoutes() {
@@ -2171,16 +2187,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/admindashboard/devices", deviceController)
                 .action("getAllDevices", HttpMethod.GET)
                 .name("admindashboard.devices.get");
-
-        server
-                .uri("/api/admindashboard/{deviceId}", deviceController)
-                .action("getDeviceById", HttpMethod.GET)
-                .name("admindashboard.device.get.route");
-
-        server
-                .uri("/api/admindashboard/{deviceId}", deviceController)
-                .action("updateDevice", HttpMethod.PUT)
-                .name("admindashboard.device.update.route");
     }
 
     private void addPageContextRoutes() {

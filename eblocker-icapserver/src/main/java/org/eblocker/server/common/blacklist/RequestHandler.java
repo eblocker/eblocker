@@ -22,6 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.service.DomainRecordingService;
 import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
     private final BlockedDomainLog blockedDomainLog;
     private final DeviceService deviceService;
     private final FilterStatisticsService filterStatisticsService;
+    private final DomainRecordingService domainRecordingService;
 
     private final AtomicInteger requestId = new AtomicInteger();
 
@@ -48,11 +50,13 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
     public RequestHandler(BlockedDomainLog blockedDomainLog,
                           DomainBlockingService domainBlockingService,
                           DeviceService deviceService,
-                          FilterStatisticsService filterStatisticsService) {
+                          FilterStatisticsService filterStatisticsService,
+                          DomainRecordingService domainRecordingService) {
         this.domainBlockingService = domainBlockingService;
         this.blockedDomainLog = blockedDomainLog;
         this.deviceService = deviceService;
         this.filterStatisticsService = filterStatisticsService;
+        this.domainRecordingService = domainRecordingService;
     }
 
     @Override
@@ -91,6 +95,7 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
         }
 
         DomainBlockingService.Decision decision = domainBlockingService.isBlocked(device, hostname);
+        domainRecordingService.log(device, hostname, decision.isBlocked());
 
         if (decision.isBlocked()) {
             ctx.writeAndFlush("OK message=" + toString(decision.getProfileId()) + "," + toString(decision.getListId()) + "," + decision.getDomain() + "," + device.getOperatingUser() + "," + toString(decision.getTarget()) + "\n");

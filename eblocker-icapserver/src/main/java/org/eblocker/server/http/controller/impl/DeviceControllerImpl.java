@@ -176,7 +176,8 @@ public class DeviceControllerImpl implements DeviceController {
     }
 
     @Override
-    public Object updateCurrentDevice(Request request, Response response) {
+    public Object updateDeviceDashboard(Request request, Response response) {
+        String deviceId = request.getHeader("deviceId");
         IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
         Device currentDevice = deviceService.getDeviceByIp(ipAddress);
 
@@ -184,12 +185,12 @@ public class DeviceControllerImpl implements DeviceController {
             throw new NotFoundException("Device with IP " + ipAddress + " not found in datastore.");
         }
 
-        if (!devicePermissionsService.operatingUserMayUpdate(currentDevice)) {
+        if (!devicePermissionsService.operatingUserMayUpdate(currentDevice)) { // TODO: Move to DashboardAuthorizationProcessor
             throw new ForbiddenException("Operating user may not update current device");
         }
 
         Device device = request.getBodyAs(Device.class);
-        device.setId(currentDevice.getId());
+        device.setId(deviceId);
 
         updateDevice(device);
 

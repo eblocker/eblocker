@@ -34,7 +34,7 @@ public interface DeviceController {
 
     Object updateDevice(Request request, Response response);
 
-    Object updateCurrentDevice(Request request, Response response);
+    Object updateDeviceDashboard(Request request, Response response);
 
     Object scanDevices(Request request, Response response);
 

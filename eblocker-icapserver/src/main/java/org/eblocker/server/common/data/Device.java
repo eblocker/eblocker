@@ -45,6 +45,7 @@ public class Device extends ModelObject {
     private boolean malwareFilterEnabled = true;
     private boolean sslEnabled = false;
     private boolean sslRecordErrorsEnabled = true;
+    private boolean domainRecordingEnabled = false;
     private boolean hasDownloadedRootCA = false;
     private DisplayIconMode iconMode = DisplayIconMode.getDefault();
     private DisplayIconPosition iconPosition = DisplayIconPosition.getDefault();
@@ -460,5 +461,13 @@ public class Device extends ModelObject {
 
     public void setMobilePrivateNetworkAccess(boolean mobilePrivateNetworkAccess) {
         this.mobilePrivateNetworkAccess = mobilePrivateNetworkAccess;
+    }
+
+    public boolean isDomainRecordingEnabled() {
+        return domainRecordingEnabled;
+    }
+
+    public void setDomainRecordingEnabled(boolean domainRecordingEnabled) {
+        this.domainRecordingEnabled = domainRecordingEnabled;
     }
 }

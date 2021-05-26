@@ -77,6 +77,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_HTTP_REFERER_REMOVE_STATE = "http_referer_remove_enabled";
     private static final String KEY_GOOGLE_CAPTIVE_PORTAL_CHECK_RESPONDER_STATE = "google_CPC_responder_enabled";
     private static final String KEY_DNT_HEADER_STATE = "dnt_header_enabled";
+    private static final String KEY_DOMAIN_RECORDING_ENABLED = "domain_recording_enabled";
     private static final String KEY_DO_NOT_SHOW_REMINDER = "do_not_show_reminder";
     private static final String KEY_SHOW_SPLASH_SCREEN = "showSplashScreen";
     private static final String KEY_AUTO_ENABLE_NEW_DEVICES = "autoEnableNewDevices";
@@ -469,6 +470,11 @@ public class JedisDataSource implements DataSource {
             device.setSslRecordErrorsEnabled(Boolean.parseBoolean(sslRecordErrors));
         }
 
+        String domainRecordingEnabled = map.get(KEY_DOMAIN_RECORDING_ENABLED);
+        if (domainRecordingEnabled != null) {
+            device.setDomainRecordingEnabled(Boolean.parseBoolean(domainRecordingEnabled));
+        }
+
         String hasRootCAInstalled = map.get(KEY_ROOT_CA_INSTALLED);
         if (hasRootCAInstalled != null) {
             device.setHasRootCAInstalled((hasRootCAInstalled.equals(VALUE_TRUE)));
@@ -547,6 +553,7 @@ public class JedisDataSource implements DataSource {
             map.put(KEY_MALWARE_FILTER_ENABLED, Boolean.toString(device.isMalwareFilterEnabled()));
             map.put(KEY_SSL_ENABLED, Boolean.toString(device.isSslEnabled()));
             map.put(KEY_SSL_RECORD_ERRORS, Boolean.toString(device.isSslRecordErrorsEnabled()));
+            map.put(KEY_DOMAIN_RECORDING_ENABLED, Boolean.toString(device.isDomainRecordingEnabled()));
             map.put(KEY_ROOT_CA_INSTALLED, device.hasRootCAInstalled() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_ICON_MODE, device.getIconMode().name());
             map.put(KEY_ICON_POSITION, device.getIconPosition().name());

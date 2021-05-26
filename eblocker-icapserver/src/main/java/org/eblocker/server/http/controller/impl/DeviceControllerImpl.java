@@ -178,6 +178,9 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public Object updateDeviceDashboard(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
+        if (deviceId == null) {
+            throw new BadRequestException("Required parameter deviceId is missing in request.");
+        }
         IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
         Device currentDevice = deviceService.getDeviceByIp(ipAddress);
 

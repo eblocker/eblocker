@@ -23,7 +23,8 @@ export default {
     }
 };
 
-function PauseController(logger, $interval, $timeout, $filter, PauseService, CardService, DataService, DeviceSelectorService) {
+function PauseController(logger, $interval, $timeout, $filter, PauseService, CardService, DataService,
+                         DeviceSelectorService) {
     'ngInject';
     'use strict';
 

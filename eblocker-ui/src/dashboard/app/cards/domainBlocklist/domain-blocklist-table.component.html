@@ -1,0 +1,69 @@
+<div layout="row">
+    <div class="whitelist-table" layout="column">
+
+        <div class="table-header">
+            <div layout="row" layout-align="start center">
+                <span >{{vm.label | translate }}</span>
+            </div>
+        </div>
+
+        <div class="table-body">
+            <div layout="row" layout-align="start center" flex
+                 ng-repeat="entry in vm.filteredTableData track by $index"
+                 ng-class="{'selected': entry._checked}"
+                 class="whitelist-entry unselectable">
+
+                <div layout="row" layout-align="center center" flex="20">
+                    <md-checkbox md-theme="eBlockerThemeCheckbox"
+                                 ng-model="entry._checked" ng-change="vm.clickOnDomainCheckbox(entry)"
+                                 class="md-primary" style="margin-bottom: 0;"
+                                 aria-label="Select entry"></md-checkbox>
+                </div>
+
+                <div layout="row" layout-align="start center" flex="80">
+                                <span class="truncate"
+                                      style="display: inline-block;"
+                                      ng-class="{'not-whitelisted': !vm.isEntryWhitelisted(entry)}">{{entry.domain}}</span>
+                    <md-tooltip ng-if="vm.isEntryWhitelisted(entry)" md-delay="300">{{entry.domain}}</md-tooltip>
+                    <md-tooltip ng-if="!vm.isEntryWhitelisted(entry)" md-delay="300">{{'WHITELIST_DNS.CARD.TABLE.MARK_DELETE' | translate}}</md-tooltip>
+                </div>
+
+            </div>
+
+            <!-- EMPTY TABLE -->
+            <div ng-if="vm.filteredTableData.length === 0"
+                 layout="row" layout-align="center center"
+                 class="whitelist-entry unselectable">
+                <div ng-show="vm.searchTerm === ''" layout="row" layout-align="center center">
+                    <span>{{vm.placeholder | translate }}</span>
+                </div>
+                <div ng-show="vm.searchTerm !== ''" layout="row" layout-align="center center">
+                    <span>{{'WHITELIST_DNS.CARD.TABLE.EMPTY_FOUND' | translate }}</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH AND ADD -->
+<div layout="row" layout-xs="column" layout-align="center center" style="padding-top: 8px;">
+    <!-- TABLE SEARCH -->
+    <eb-filter-table filtered-data="vm.filteredTableData"
+                     original-data="vm.tableData"
+                     filter-properties="vm.searchProps"
+                     placeholder-label="{{'WHITELIST_DNS.CARD.SEARCH_LABEL' | translate}}"
+                     icon-path="/img/icons/baseline-add_circle.svg"
+                     key-up="vm.clickAddDomainButton(value)"
+                     search-term="vm.searchTerm">
+    </eb-filter-table>
+
+    <div layout="row" layout-align="center center">
+        <div>
+            <md-button class="md-secondary" ng-click="vm.clickAddDomainButton(vm.searchTerm)" ng-disabled="vm.isAddButtonDisabled()">
+                {{'WHITELIST_DNS.CARD.ACTION.ADD_DOMAIN' | translate }}
+            </md-button>
+        </div>
+
+    </div>
+</div>

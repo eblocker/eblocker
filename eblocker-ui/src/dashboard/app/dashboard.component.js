@@ -27,7 +27,7 @@ export default {
 function AppController($scope, $state, $stateParams, $location, $window, $document, $filter,  //jshint ignore: line
                        Idle, logger, security, CardService, DataService, APP_CONTEXT, UserService,
                        DeviceService, deviceDetector, EventService, RedirectService, settings, SystemService,
-                       ResolutionService) {
+                       ResolutionService, DialogService, DeviceSelectorService) {
     'ngInject';
     'use strict';
 
@@ -47,6 +47,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     vm.isDashboardPaused = isDashboardPaused;
     vm.isServerNotRunning = isServerNotRunning;
     vm.getCurrentStatus = getCurrentStatus;
+    vm.adminLogin = adminLogin;
 
     function goToSettings() {
         RedirectService.toConsole(false);
@@ -63,11 +64,12 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     };
 
     function getTitleDevice() {
-        return angular.isObject(DeviceService.getDeviceObject()) ? DeviceService.getDeviceObject().name : '';
+        return angular.isObject(DeviceSelectorService.getSelectedDevice()) ?
+            DeviceSelectorService.getSelectedDevice().name : '';
     }
 
     function getTitleUser() {
-        const dev = DeviceService.getDeviceObject();
+        const dev = DeviceSelectorService.getSelectedDevice();
         if (angular.isObject(dev)) {
             vm.thisOperatingUser = UserService.getUserById(dev.operatingUser);
             if (angular.isObject(vm.thisOperatingUser) && !vm.thisOperatingUser.system) {
@@ -104,7 +106,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     }
 
     function isMainState() {
-        return $state.$current.name === 'main';
+        return $state.includes('main');
     }
 
     function updateVisibility(param) {
@@ -188,12 +190,54 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
             ResolutionService.getScreenSize() === 'mdsm';
     }
 
+    function adminLogin() {
+        DialogService.adminLogin(function onOk(deviceId) {
+            populateDevicesDropdown();
+            DeviceSelectorService.goToDevice(deviceId);
+        }, function onCancel(isLoggedIn) {
+            // login was successful, but user did not select any device:
+            if (isLoggedIn) {
+                populateDevicesDropdown();
+            }
+        });
+    }
+
+    const initialDeviceDropdownContent = [
+        {
+            label: 'Andere Geräte...',
+            image: '/img/icons/ic_computer_black.svg',
+            action: vm.adminLogin,
+            hide: security.isLoggedInAsAdmin,
+            closeOnClick: true,
+        },
+        {
+            label: 'Dieses Gerät',
+            image: '/img/icons/ic_star_rate_black.svg',
+            action: DeviceSelectorService.goToLocalDevice,
+            hide: DeviceSelectorService.isLocalDevice,
+            closeOnClick: true,
+        }
+    ];
+
+    function populateDevicesDropdown() {
+        let entries = DeviceSelectorService.getDevicesByName().map(device => {
+            let entry = {
+                label: device.name,
+                image: '/img/icons/ic_computer_black.svg',
+                action: function() {DeviceSelectorService.goToDevice(device.id);},
+                closeOnClick: true
+            };
+            return entry;
+        });
+        vm.deviceDropdownContent = initialDeviceDropdownContent.concat(entries);
+    }
+
     vm.$onInit = function() {
 
         SystemService.startTokenWatcher(security.requestToken, APP_CONTEXT.name);
 
         settings.load();
-        vm.getContent = [
+        vm.mainDropdownContent = [
             {
                 label: 'APP.CONTENT.HELP.LABEL',
                 image: '/img/icons/ic_help.svg',
@@ -220,6 +264,8 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
                 action: updateVisibility
             }
         ];
+
+        vm.deviceDropdownContent = initialDeviceDropdownContent;
     };
 
 }

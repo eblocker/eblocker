@@ -70,6 +70,9 @@
                 }
             }
         },
+        "BUTTON" : {
+            "CANCEL" : "Abbrechen"
+        },
         "DROP_DOWN" : {
             "TOOLTIP" : "Menü öffnen"
         },
@@ -116,7 +119,25 @@
         },
 	"HELP": {
 	    "URL" : "https://eblocker.org/docs"
-	}
+	},
+        "LOGIN": {
+            "CARD" : {
+                "ACTION" : {
+                    "RESET" : "Passwort vergessen",
+                    "SUBMIT_COUNTDOWN" : "{sec, select, 0{Anmelden} 1{Bitte {sec} Sekunde warten} other{Bitte {sec} Sekunden warten}}"
+                },
+                "ERROR" : {
+                    "PASSWORD_INVALID" : "Passwort ist falsch.",
+                    "PASSWORD_REQUIRED" : "Bitte geben Sie Ihr Passwort ein.",
+                    "PASSWORD_TOO_FREQ" : "Bitte warten Sie, bevor Sie Ihr Passwort erneut eingeben.",
+                    "UNKNOWN" : "Unbekannter Fehler, bitte versuchen Sie es später erneut."
+                },
+                "INPUT" : {
+                    "LABEL" : "Administrator-Passwort"
+                },
+                "TITLE" : "Anmeldung"
+            }
+        }
     }
 }
 

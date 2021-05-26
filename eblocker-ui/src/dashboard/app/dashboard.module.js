@@ -60,7 +60,7 @@ import TorActivationDialogController from '../../shared/dialogs/tor/tor-activati
 import ChangePinDialogController from './dialogs/pin/change-pin.dialog';
 import ProvidePinDialogController from './dialogs/pin/provide-pin.dialog';
 import WelcomeDialogController from './dialogs/welcome/welcome.dialog';
-
+import AdminLoginDialogController from './dialogs/admin/admin-login.dialog';
 
 // ** Configs
 import LocationConfig from './_bootstrap/_configs/locationConfig';
@@ -103,6 +103,11 @@ import MobileSetupWizard from './wizard/mobile/mobile-setup-wizard.component';
 import HttpsWizardComponent from './wizard/https/https-wizard.component';
 import ConnectionTestComponent from './cards/connectionTest/connectiontest.component';
 import ConnectionTestDetail from './cards/connectionTest/connectionTestDetail.component';
+import DeviceFirewall from './cards/deviceFirewall/device-firewall.component';
+import DeviceStatus from './cards/deviceStatus/device-status.component';
+import DomainBlocklist from './cards/domainBlocklist/domain-blocklist.component';
+import DomainPasslist from './cards/domainBlocklist/domain-passlist.component';
+import DomainBlocklistTable from './cards/domainBlocklist/domain-blocklist-table.component';
 
 // squid-error / blocker components
 import BlockerComponent from './blocker/blocker.component';
@@ -138,11 +143,13 @@ import CardService from './service/card/card.service';
 import CardAvailabilityService from './service/card/card-availability.service';
 import UserProfile from './service/devices/userProfile.service';
 import FilterService from './service/filter/FilterService';
+import CustomDomainFilterService from './service/filter/CustomDomainFilterService';
 import UserService from './service/users/UserService';
 import VpnHomeService from './service/vpn/VpnHomeService';
 import NotificationService from '../../shared/services/notification/NotificationService';
 import DialogService from './service/dialog/DialogService';
 import DeviceService from './service/devices/device.service';
+import DeviceSelectorService from './service/devices/deviceSelector.service';
 import PauseService from './service/devices/pause.service';
 import UserProfileService from './service/devices/userProfile.service';
 import DnsService from './service/dns/DnsService';
@@ -154,6 +161,7 @@ import CloakingService from './service/cloaking/CloakingService';
 import LanguageService from '../../shared/services/language/language.service';
 import EventService from '../../shared/services/event/EventService';
 import ResolutionService from './service/window/ResolutionService';
+import DomainRecorderService from './service/devices/domainRecorder.service';
 
 // ** Shared Services
 import DataCachingService from '../../shared/services/caching/DataCachingService';
@@ -225,6 +233,7 @@ angular.module('eblocker.dashboard', [
     .controller('ChangePinDialogController', ChangePinDialogController)
     .controller('WelcomeDialogController', WelcomeDialogController)
     .controller('ProvidePinDialogController', ProvidePinDialogController)
+    .controller('AdminLoginDialogController', AdminLoginDialogController)
     .component('dashboardComponent', dashboardComponent)
     .component('mainComponent', MainComponent)
     .component('blockerComponent', BlockerComponent)
@@ -260,6 +269,11 @@ angular.module('eblocker.dashboard', [
     .component('dashboardParentalControl', ParentalControlComponent)
     .component('dashboardFragFinn', FragFinnComponent)
     .component('dashboardConnectionTest', ConnectionTestComponent)
+    .component('dashboardDeviceFirewall', DeviceFirewall)
+    .component('dashboardDeviceStatus', DeviceStatus)
+    .component('dashboardDomainBlocklist', DomainBlocklist)
+    .component('dashboardDomainPasslist', DomainPasslist)
+    .component('dashboardDomainBlocklistTable', DomainBlocklistTable)
     .component('connectionTestDetail', ConnectionTestDetail)
     .component('ebFilterTable', ebFilterComponent)
     .component('ebCard', dashboardCardComponent)
@@ -274,12 +288,14 @@ angular.module('eblocker.dashboard', [
     .factory('CardService', CardService)
     .factory('CardAvailabilityService', CardAvailabilityService)
     .factory('FilterService', FilterService)
+    .factory('CustomDomainFilterService', CustomDomainFilterService)
     .factory('UserService', UserService)
     .factory('userProfile', UserProfile)
     .factory('VpnHomeService', VpnHomeService)
     .factory('NotificationService', NotificationService)
     .factory('DialogService', DialogService)
     .factory('DeviceService', DeviceService)
+    .factory('DeviceSelectorService', DeviceSelectorService)
     .factory('PauseService', PauseService)
     .factory('UserProfileService', UserProfileService)
     .factory('DnsService', DnsService)
@@ -293,4 +309,5 @@ angular.module('eblocker.dashboard', [
     .factory('EventService', EventService)
     .factory('SystemService', SystemService)
     .factory('ResolutionService', ResolutionService)
+    .factory('DomainRecorderService', DomainRecorderService)
     .filter('ebfilter', ebFilter);

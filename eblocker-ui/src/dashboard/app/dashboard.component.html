@@ -33,6 +33,7 @@
                 <div flex-sm="60" ng-if="vm.showTitleDevice()" layout="row" layout-align="start center">
                     <md-icon md-svg-src="/img/icons/ic_computer_black.svg"></md-icon>
                     <span class="truncate" style="padding-left: 5px;">{{vm.getTitleDevice()}}</span>
+                    <eb-dropdown content="vm.deviceDropdownContent"></eb-dropdown>
                 </div>
 
                 <div hide-xs style="padding-left: 20px;"></div>
@@ -56,6 +57,7 @@
                     <div layout="row" layout-align="start center" ng-if="vm.showTitleDevice()">
                         <md-icon md-svg-src="/img/icons/ic_computer_black.svg"></md-icon>
                         <span class="truncate" style="padding-left: 5px;">{{vm.getTitleDevice()}}</span>
+                        <eb-dropdown content="vm.deviceDropdownContent"></eb-dropdown>
                     </div>
 
                     <div layout="row" layout-align="start center" ng-if="vm.showTitleUser()" style="padding-left: 20px;" >
@@ -79,7 +81,7 @@
                 <!--<md-icon md-svg-src="/img/icons/ic_dashboard.svg"></md-icon>-->
                 <md-icon style="width: 30px; height: 30px;" md-svg-src="/img/icons/baseline-settings.svg"></md-icon>
             </div>
-            <eb-dropdown ng-if="vm.isMainState()" content="vm.getContent"></eb-dropdown>
+            <eb-dropdown ng-if="vm.isMainState()" content="vm.mainDropdownContent"></eb-dropdown>
         </div>
 
     </div>

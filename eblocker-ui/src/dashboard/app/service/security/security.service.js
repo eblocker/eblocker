@@ -14,18 +14,24 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function SecurityService(logger, $http, $q, Idle) {
+export default function SecurityService(logger, $http, $q, Idle, APP_CONTEXT) {
     'ngInject';
     'use strict';
 
     let securityContext = {};
 
+    const PATH = '/api/token/';
+    const LOGIN_PATH = '/api/adminconsole/authentication/login/';
+    const httpConfig = {timeout: 3000};
+
     return {
-        'requestToken': requestToken
+        requestToken: requestToken,
+        requestAdminToken: requestAdminToken,
+        isLoggedInAsAdmin: isLoggedInAsAdmin
     };
 
     function requestToken(appContext) {
-        return $http.get('/api/token/' + appContext, {'timeout': 3000}).then(function(response) {
+        return $http.get(PATH + appContext, httpConfig).then(function(response) {
             // Start watching for idleness, if not yet doing so.
             // We do this, even when we do not need a password, to start the keepalive process.
             // Because the JWT must be renewed even when there is no password!
@@ -40,6 +46,17 @@ export default function SecurityService(logger, $http, $q, Idle) {
         });
     }
 
+    function requestAdminToken(appContext, password) {
+        return $http.post(LOGIN_PATH + appContext, {currentPassword: password}, httpConfig)
+            .then(function(response) {
+                storeToken(response.data);
+                return response.data.token;
+            }, function(response) {
+                logger.error('Login failed with status ' + response.status + ' - ' + response.data);
+                return $q.reject(response.data);
+            });
+    }
+
     function storeToken(data) {
         securityContext.token = data.token;
         securityContext.appContext = data.appContext;
@@ -47,5 +64,9 @@ export default function SecurityService(logger, $http, $q, Idle) {
         securityContext.passwordRequired = data.passwordRequired;
 
         $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
+    }
+
+    function isLoggedInAsAdmin() {
+        return securityContext.appContext === APP_CONTEXT.adminAppContextName;
     }
 }

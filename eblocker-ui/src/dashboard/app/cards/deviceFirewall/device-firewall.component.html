@@ -1,0 +1,27 @@
+<eb-card
+    icon="/img/icons/baseline-insert_chart_outlined.svg"
+    card-title="{{'DEVICE_FIREWALL.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="DEVICE_FIREWALL.CARD.TOOLTIP">
+
+    <eb-card-content>
+      <div layout="column" layout-align="center center">
+        <div layout="row">
+          <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.domainRecordingEnabled"
+                     class="md-primary switch-word-break" ng-change="vm.onChangeRecordingEnabled()">
+            {{ vm.device.domainRecordingEnabled ? 'DEVICE_FIREWALL.CARD.RECORDING.ENABLED' : 'DEVICE_FIREWALL.CARD.RECORDING.DISABLED' | translate }}
+          </md-switch>
+          <md-button ng-click="vm.resetRecording()">Reset</md-button>
+        </div>
+        <md-content style="max-height: 216px" layout-fill>
+          <div layout="row" ng-repeat="entry in vm.recordedDomains">
+            <div flex="75" class="truncate">{{ entry.domain }}</div>
+            <div flex="10">{{ entry.count }}</div>
+            <div flex="15">{{ entry.blocked ? 'Blocked' : 'Passed' }}</div>
+          </div>
+        </md-content>
+      </div>
+    </eb-card-content>
+
+</eb-card>
+

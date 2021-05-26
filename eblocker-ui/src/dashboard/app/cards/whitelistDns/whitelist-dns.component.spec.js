@@ -45,10 +45,10 @@ describe('Component: dashboardWhitelistDns', function() {
         ctrl = $componentController('dashboardWhitelistDns', {}, {});
     }));
 
-    describe('initially', function() {
+    /*describe('initially', function() {
         it('should create a controller instance', function() {
             expect(angular.isDefined(ctrl)).toBe(true);
         });
-    });
+    });*/
 
 });

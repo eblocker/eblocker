@@ -1978,22 +1978,6 @@
             }
         },
         "LOGIN" : {
-            "CARD" : {
-                "ACTION" : {
-                    "RESET" : "Forgot password",
-                    "SUBMIT_COUNTDOWN" : "{sec, select, 0{Login} 1{Please wait {sec} second} other{Please wait {sec} seconds}}"
-                },
-                "ERROR" : {
-                    "PASSWORD_INVALID" : "Wrong password",
-                    "PASSWORD_REQUIRED" : "Please enter your password.",
-                    "PASSWORD_TOO_FREQ" : "Please wait before retyping your password.",
-                    "UNKNOWN" : "Unknown error, please try again later."
-                },
-                "INPUT" : {
-                    "LABEL" : "Administrator password"
-                },
-                "TITLE" : "Log in"
-            },
             "TOOLBAR" : {
                 "TITLE" : "eBlocker Settings"
             }

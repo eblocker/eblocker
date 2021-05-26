@@ -28,7 +28,7 @@ export default {
 
 function MainController(logger, $document, $window, $timeout, $interval, $filter, DataService, CardService, DeviceService, // jshint ignore: line
                         UserService, SystemService, deviceDetector, DialogService, ResolutionService,
-                        Idle, IDLE_TIMES) {
+                        DeviceSelectorService, Idle, IDLE_TIMES) {
     'ngInject';
     'use strict';
 
@@ -149,7 +149,7 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
 
         return CardService.getDashboardData(doReload, vm.productInfo).then(function success(hasChanged) {
             if (hasChanged || !angular.isArray(vm.columns) || vm.columns.length === 0) {
-                vm.columns = CardService.getCardsByColumns(vm.screenRes);
+                vm.columns = CardService.getCardsByColumns();
             }
         });
     }
@@ -162,7 +162,7 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
      * Re-render the dashboard. Only called by eb-multiselect
      */
     function updateVisibility() {
-        vm.columns = CardService.getCardsByColumns(vm.screenRes);
+        vm.columns = CardService.getCardsByColumns();
     }
 
     // ** Wraps the rearrange function in a timeout, so that for a better user experience
@@ -180,7 +180,7 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
         const newScreenRes = getScreenSize();
         if (oldScreenRes !== newScreenRes) {
             vm.screenRes = newScreenRes;
-            vm.columns = CardService.getCardsByColumns(vm.screenRes);
+            vm.columns = CardService.getCardsByColumns();
             setDashboardScreenClass();
         }
 

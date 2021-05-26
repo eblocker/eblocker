@@ -13,7 +13,7 @@
                                      layout="row"
                                      md-scroll-shrink>
                                     <div>
-                                        <h2>{{ 'ADMINCONSOLE.LOGIN.CARD.TITLE' | translate }}</h2>
+                                        <h2>{{ 'SHARED.LOGIN.CARD.TITLE' | translate }}</h2>
                                     </div>
                                 </div>
                             </md-toolbar>
@@ -25,12 +25,12 @@
                             <div layout="column" layout-align="center start">
                                  <div layout="row" layout-align="start center" style="width: 100%;">
                                     <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
-                                        <label>{{ 'ADMINCONSOLE.LOGIN.CARD.INPUT.LABEL' | translate }}</label>
+                                        <label>{{ 'SHARED.LOGIN.CARD.INPUT.LABEL' | translate }}</label>
                                         <input name="adminPassword" ng-model="vm.adminPassword" type="password" ng-maxlength="vm.maxLength" required>
                                         <div ng-messages="vm.passwordForm.adminPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.adminPassword.$touched">
-                                            <div ng-message="required">{{ 'ADMINCONSOLE.LOGIN.CARD.ERROR.PASSWORD_REQUIRED' | translate }}</div>
-                                            <div ng-message="backend">{{ 'ADMINCONSOLE.LOGIN.CARD.ERROR.' + vm.backendErrorKey | translate }}</div>
-                                            <div ng-message="maxlength">{{ 'ADMINCONSOLE.LOGIN.CARD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
+                                            <div ng-message="required">{{ 'SHARED.LOGIN.CARD.ERROR.PASSWORD_REQUIRED' | translate }}</div>
+                                            <div ng-message="backend">{{ 'SHARED.LOGIN.CARD.ERROR.' + vm.backendErrorKey | translate }}</div>
+                                            <div ng-message="maxlength">{{ 'SHARED.LOGIN.CARD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
                                         </div>
                                     </md-input-container>
                                 </div>
@@ -39,12 +39,12 @@
 
                         <md-card-actions layout-gt-xs="row" layout="column" layout-align="center center" layout-margin>
                             <div>
-                                <md-button type="button" class="md-primary" ng-click="vm.goToResetPassword()">{{ 'ADMINCONSOLE.LOGIN.CARD.ACTION.RESET' | translate }}</md-button>
+                                <md-button type="button" class="md-primary" ng-click="vm.goToResetPassword()">{{ 'SHARED.LOGIN.CARD.ACTION.RESET' | translate }}</md-button>
                             </div>
                             <div>
                                 <md-button type="submit" class="md-raised md-primary md-accent"
                                            ng-disabled="vm.secondsTillLogin > 0">
-                                    {{ 'ADMINCONSOLE.LOGIN.CARD.ACTION.SUBMIT_COUNTDOWN' | translate :{sec: vm.secondsTillLogin}:"messageformat"}}
+                                    {{ 'SHARED.LOGIN.CARD.ACTION.SUBMIT_COUNTDOWN' | translate :{sec: vm.secondsTillLogin}:"messageformat"}}
                                 </md-button>
                             </div>
                         </md-card-actions>

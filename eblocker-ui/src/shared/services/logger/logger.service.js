@@ -23,11 +23,11 @@ export default function Logger($log) {
     }
 
     function info(message, data, title) {
-         // $log.info('Info: ' + message, angular.isDefined(data) ? data : '');
+        // $log.info('Info: ' + message, angular.isDefined(data) ? data : '');
     }
 
     function debug(message, data, title) {
-         // $log.info('Debug: ' + message, angular.isDefined(data) ? data : '');
+        // $log.info('Debug: ' + message, angular.isDefined(data) ? data : '');
     }
 
     function success(message, data, title) {

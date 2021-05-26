@@ -246,7 +246,7 @@ export default function CardService($http, logger, $q, $location, $anchorScroll,
         return ret;
     }
 
-    function getColumnsOfCards() {
+    function getCardsByColumns() {
         const columns = [];
         if (isOneColumn()) {
             columns.push(getSortedListForColumn(CARDS_COLUMNS.oneColumn, ALL_CARDS, 1));
@@ -494,7 +494,7 @@ export default function CardService($http, logger, $q, $location, $anchorScroll,
         stop: stopSyncTimer,
         anchorScroll: anchorScroll,
         getAllCards: getAllCards,
-        getCardsByColumns: getColumnsOfCards,
+        getCardsByColumns: getCardsByColumns,
         getDashboardData: getDashboardData,
         getRepresentationOfCard: getRepresentationOfCard,
         registerUpdateListener: registerUpdateListener,

@@ -2,7 +2,8 @@
     icon="/img/icons/ic_security_black.svg"
     card-title="{{'ANONYMIZATION.CARD.TITLE' | translate}}"
     card-id="{{ vm.cardId }}"
-    tooltip="ANONYMIZATION.CARD.TOOLTIP">
+    tooltip="ANONYMIZATION.CARD.TOOLTIP"
+    hide-bottom-divider="!vm.showPrivacyCheck()">
     <eb-card-content>
 
         <div layout="column" layout-align="center start">
@@ -160,7 +161,7 @@
 
     </eb-card-content>
 
-    <eb-card-actions layout="row" layout-align="center center">
+    <eb-card-actions layout="row" layout-align="center center" ng-if="vm.showPrivacyCheck()">
         <md-button class="md-primary"
                    ng-click="vm.goToTestPage()"
                    aria-label="{{ 'SHARED.ANONYMIZATION.IP_ANON.ACTION.TEST_CONNECTION' | translate }}">

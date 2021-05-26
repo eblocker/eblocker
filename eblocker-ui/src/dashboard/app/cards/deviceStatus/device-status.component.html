@@ -1,0 +1,18 @@
+<eb-card
+    icon="/img/icons/ic_computer_black.svg"
+    card-title="{{'DEVICE_STATUS.CARD.TITLE' | translate}}"
+    card-id="{{ vm.cardId }}"
+    tooltip="DEVICE_STATUS.CARD.TOOLTIP">
+
+    <eb-card-content>
+      <div layout="column" layout-align="center center">
+        <div layout="row">
+          <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.enabled"
+                     class="md-primary switch-word-break" ng-change="vm.onChangeDevice()">
+            {{ vm.device.enabled ? 'DEVICE_STATUS.CARD.DEVICE.ENABLED' : 'DEVICE_STATUS.CARD.DEVICE.DISABLED' | translate }}
+          </md-switch>
+        </div>
+      </div>
+    </eb-card-content>
+
+</eb-card>

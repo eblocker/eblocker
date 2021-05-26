@@ -51,7 +51,6 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
     // Functions
     vm.connectionTest = connectionTest;
     vm.clear = clear;
-    vm.onChangeDeviceActive = onChangeDeviceActive;
 
     vm.$onInit = function() {
         hideAllExplanations();
@@ -294,23 +293,6 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
         vm.checksStatus.running = false;
         vm.firstCheck = true;
         vm.checksStatus.resultsPresent = false;
-    }
-
-    function onChangeDeviceActive() {
-        var newState = vm.currentDeviceActivated;
-        DeviceService.getDevice().then(function success(response) {
-            var device = response.data;
-            device.enabled = newState;
-            DeviceService.update(device).then(function success(response){
-                vm.currentDeviceActivated = response.data.enabled;
-            }, function error(response) {
-                // keep old state
-                vm.currentDeviceActivated = !newState;
-                //
-            });
-        }, function error(response) {
-            //
-        });
     }
 
     function shouldUseDomainBlocker(device, https) {

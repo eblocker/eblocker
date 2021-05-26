@@ -19,8 +19,9 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
     'use strict';
 
     const PATH = '/api/device';
+
     const config = {timeout: 3000};
-    let syncTimer, deviceCache, deviceObj;
+    let syncTimer, deviceCache;
 
     function startSyncTimer(interval) {
         if (!angular.isDefined(syncTimer) && angular.isNumber(interval)) {
@@ -43,7 +44,6 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
 
     function getDevice(reload) {
         deviceCache = DataCachingService.loadCache(deviceCache, PATH, reload, config).then(function success(response) {
-            deviceObj = response.data;
             return response;
         }, function error(response) {
             logger.error('Getting device from the eBlocker failed with status ' +
@@ -53,8 +53,18 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
         return deviceCache;
     }
 
+    function getDevices() {
+        return $http.get('/api/admindashboard/devices', config).then(function(response) {
+            return response.data;
+        }, function(reason) {
+            logger.error('Getting devices failed with status ' + reason.status + ' - ' + reason.data);
+            return $q.reject(reason.data);
+        });
+    }
+
     function update(device) {
-        return $http.put(PATH, device).then(function success(response) {
+        let path = PATH + '/' + device.id;
+        return $http.put(path, device).then(function success(response) {
             return response;
         }, function error(response) {
             return response;
@@ -71,16 +81,12 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
         });
     }
 
-    function getDeviceObject() {
-        return deviceObj;
-    }
-
     return {
         start: startSyncTimer,
         stop: stopSyncTimer,
         getDevice: getDevice,
+        getDevices: getDevices,
         update: update,
-        updateShowWelcomeFlags: updateShowWelcomeFlags,
-        getDeviceObject: getDeviceObject
+        updateShowWelcomeFlags: updateShowWelcomeFlags
     };
 }

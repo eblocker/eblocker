@@ -3,19 +3,11 @@
     card-title="{{'CONNECTION_TEST.CARD.TITLE' | translate}}"
     tooltip="CONNECTION_TEST.CARD.TOOLTIP"
     card-id="{{ vm.cardId }}"
+    hide-top-divider="!(vm.checksStatus.resultsPresent || vm.checksStatus.running)"
     hide-bottom-divider="!vm.currentDeviceActivated">
 
-    <eb-card-content>
-
+    <eb-card-content ng-if="vm.checksStatus.resultsPresent || vm.checksStatus.running">
         <div layout="column" layout-align="center none">
-
-            <div layout="row" layout-align="center center">
-                <!-- Slider to show if eBlocker is activated for this device -->
-                <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.currentDeviceActivated" class="md-primary switch-word-break"
-                    ng-change="vm.onChangeDeviceActive()">
-                    {{ vm.currentDeviceActivated ? 'CONNECTION_TEST.CARD.DEVICE.ACTIVE.LABEL' : 'CONNECTION_TEST.CARD.DEVICE.INACTIVE.LABEL' | translate }}
-                </md-switch>
-            </div>
 
             <div layout="column" ng-if="vm.currentDeviceActivated && (vm.checksStatus.resultsPresent || vm.checksStatus.running)">
                 <!-- Result for Routingtest -->

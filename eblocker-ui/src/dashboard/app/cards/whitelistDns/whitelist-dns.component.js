@@ -24,6 +24,7 @@ export default {
 };
 
 function MessageController(logger, $q, $timeout, DeviceService, SslService, FilterService, ArrayUtilsService,
+                           CustomDomainFilterService,
                            DialogService, CardService) {
     'ngInject';
     'use strict';
@@ -48,7 +49,7 @@ function MessageController(logger, $q, $timeout, DeviceService, SslService, Filt
             }
         });
 
-        FilterService.getCurrentUserCustomDomainFilter().then(function(response) {
+        CustomDomainFilterService.getCurrentUserCustomDomainFilter().then(function(response) {
             vm.customDomainFilter = response.data;
         }).catch(function error() {
             vm.customDomainFilter = {
@@ -84,13 +85,13 @@ function MessageController(logger, $q, $timeout, DeviceService, SslService, Filt
 
     function save() {
         if (!vm.device.showDnsFilterInfoDialog) {
-            return FilterService.setCurrentUserCustomDomainFilter(vm.customDomainFilter)
+            return CustomDomainFilterService.setCurrentUserCustomDomainFilter(vm.customDomainFilter)
                 .then(function successUpdateFilterList(response) {
                     return response;
                 });
         } else {
             return DialogService.dnsFilterChangeInfo(undefined, saveDevice, vm.device).finally(function done() {
-                return FilterService.setCurrentUserCustomDomainFilter(vm.customDomainFilter).
+                return CustomDomainFilterService.setCurrentUserCustomDomainFilter(vm.customDomainFilter).
                 then(function successUpdateFilterList(response) {
                     return response;
                 });

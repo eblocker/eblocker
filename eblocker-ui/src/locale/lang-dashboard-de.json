@@ -89,14 +89,6 @@
             "BUTTON_CLEAR": {
                 "LABEL": "Löschen"
             },
-            "DEVICE": {
-                "ACTIVE": {
-                    "LABEL": "eBlocker ist aktiviert für dieses Gerät"
-                },
-                "INACTIVE": {
-                    "LABEL": "eBlocker ist nicht aktiv für dieses Gerät"
-                }
-            },
             "EXPLANATION" : {
                 "RUNNING" : "eBlocker Funktionstest läuft..."
             },
@@ -157,7 +149,7 @@
                 },
                 "NOT_USED": "nicht verwendet"
             },
-            "TITLE" : "Status",
+            "TITLE" : "Funktionstest",
             "TOOLTIP" : "Überprüfen Sie Ihre Verbindung"
         }
     },
@@ -188,7 +180,29 @@
             }
         }
     },
+    "DEVICE_FIREWALL" : {
+        "CARD" : {
+            "RECORDING" : {
+                "DISABLED" : "Nicht aufzeichnen",
+                "ENABLED" : "Aufzeichnen (letzte 24h)"
+            },
+            "TITLE" : "Personal Device Firewall"
+        }
+    },
+    "DEVICE_STATUS" : {
+        "CARD" : {
+            "DEVICE": {
+                "ENABLED": "eBlocker ist aktiviert für dieses Gerät",
+                "DISABLED": "eBlocker ist nicht aktiv für dieses Gerät"
+            },
+            "TITLE" : "Status"
+        }
+    },
     "DIALOGS" : {
+        "LOGIN" : {
+            "EXPLAIN" : "Geben Sie Ihr Administratorpasswort ein, um auf andere Geräte zuzugreifen.",
+            "SELECT_DEVICE" : "Gerät auswählen"
+        },
         "PIN" : {
             "BUTTON" : {
                 "CANCEL" : "Abbrechen",
@@ -257,6 +271,11 @@
             "TITLE" : "Willkommen beim eBlocker Dashboard",
             "TITLE_XS" : "Lesezeichen fürs Dashboard",
             "WIN" : "STRG + D"
+        }
+    },
+    "DOMAIN_BLOCKLIST" : {
+        "CARD" : {
+            "TITLE" : "Domain Blocklist"
         }
     },
     "EXPIRED" : {

@@ -168,8 +168,8 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     });
 
     $scope.$on('Keepalive', function() {
-        logger.debug('Keepalive');
-        security.requestToken(APP_CONTEXT.name);
+        logger.warn('Keepalive');
+        security.renewToken();
     });
 
     vm.$onDestroy = function() {

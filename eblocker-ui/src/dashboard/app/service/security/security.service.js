@@ -22,11 +22,13 @@ export default function SecurityService(logger, $http, $q, Idle, APP_CONTEXT) {
 
     const PATH = '/api/token/';
     const LOGIN_PATH = '/api/adminconsole/authentication/login/';
+    const RENEW_PATH = '/api/admindashboard/authentication/renew/';
     const httpConfig = {timeout: 3000};
 
     return {
         requestToken: requestToken,
         requestAdminToken: requestAdminToken,
+        renewToken: renewToken,
         isLoggedInAsAdmin: isLoggedInAsAdmin
     };
 
@@ -55,6 +57,20 @@ export default function SecurityService(logger, $http, $q, Idle, APP_CONTEXT) {
                 logger.error('Login failed with status ' + response.status + ' - ' + response.data);
                 return $q.reject(response.data);
             });
+    }
+
+    function renewToken() {
+        if (isLoggedInAsAdmin()) {
+            return $http.get(RENEW_PATH + securityContext.appContext, httpConfig).then(function(response) {
+                storeToken(response.data);
+                return response.data.token;
+            }, function(response) {
+                logger.error('Renew token failed with status ' + response.status, response);
+                return $q.reject(response);
+            });
+        } else {
+            return requestToken(securityContext.appContext);
+        }
     }
 
     function storeToken(data) {

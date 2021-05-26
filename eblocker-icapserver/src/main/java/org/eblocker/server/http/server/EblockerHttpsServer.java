@@ -2187,6 +2187,13 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/admindashboard/devices", deviceController)
                 .action("getAllDevices", HttpMethod.GET)
                 .name("admindashboard.devices.get");
+
+        // Only accessible with valid token (pw must have been entered for admindashboard)
+        server
+                .uri("/api/admindashboard/authentication/renew/{appContext}", authenticationController)
+                .action("renewToken", HttpMethod.GET)
+                .name("admindashboard.authentication.renew.route");
+
     }
 
     private void addPageContextRoutes() {

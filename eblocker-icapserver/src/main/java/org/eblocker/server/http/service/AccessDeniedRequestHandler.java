@@ -183,6 +183,9 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
     }
 
     private String getBlockedDomainPageLocation(Category category, DomainBlockingService.Decision decision, String url) {
+        if (category == null) {
+            return getParentalControlLocation(decision, url);
+        }
         switch (category) {
             case ADS:
             case CUSTOM:

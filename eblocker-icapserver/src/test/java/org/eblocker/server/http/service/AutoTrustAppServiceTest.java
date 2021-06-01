@@ -1,9 +1,11 @@
 package org.eblocker.server.http.service;
 
 import org.eblocker.server.common.blacklist.DomainBlockingService;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.SSLWhitelistUrl;
 import org.eblocker.server.common.squid.FailedConnection;
 import org.eblocker.server.common.squid.SquidWarningService;
+import org.eblocker.server.http.service.AutoTrustAppService.KnownError;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 public class AutoTrustAppServiceTest {
 
+    private static final String DEVICE_ID = "device:000000000000";
     private AutoTrustAppService autoTrustAppService;
     private final int autoTrustAppModuleId = 9997;
 
@@ -37,10 +40,17 @@ public class AutoTrustAppServiceTest {
     @Mock
     private DomainBlockingService domainBlockingService;
 
+    @Mock
+    private DeviceService deviceService;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        autoTrustAppService = new AutoTrustAppService(squidWarningService, appModuleService, domainBlockingService);
+        Device d = new Device();
+        d.setEnabled(true);
+        d.setSslEnabled(true);
+        when(deviceService.getDeviceById(DEVICE_ID)).thenReturn(d);
+        autoTrustAppService = new AutoTrustAppService(squidWarningService, appModuleService, domainBlockingService, deviceService);
     }
 
     @Test
@@ -69,6 +79,18 @@ public class AutoTrustAppServiceTest {
     }
 
     @Test
+    public void testUnrelatedErrorIsNotAdded() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.DOMAIN_MISMATCH_ERROR, "foo.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"), autoTrustAppModuleId);
+    }
+
+    @Test
     public void testNewDomainWithCertificateErrorAddedTheFirstTime() {
         AppWhitelistModule sslCollectingAppModule = collectingModule("alreadyexisting.com");
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
@@ -77,10 +99,9 @@ public class AutoTrustAppServiceTest {
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bad.com")).thenReturn(blocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("alreadyexisting.com")).thenReturn(notBlocked());
 
-        String untrustedCertError = "blabla " + AutoTrustAppService.CERT_UNTRUSTED_ERROR + " bla";
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "foo.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "bad.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), untrustedCertError, "alreadyexisting.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "foo.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "alreadyexisting.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("bad.com"), autoTrustAppModuleId);
@@ -160,6 +181,22 @@ public class AutoTrustAppServiceTest {
     }
 
     @Test
+    public void testNoAddOfDomainWithSuccessfulSSL() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+
+        autoTrustAppService.recordSuccessfulSSL("foo.com");
+
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now().minusSeconds(10), "foo.com")));
+        autoTrustAppService.onChange(Collections.singletonList(failedConnection(now(), "foo.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
+                autoTrustAppModuleId);
+    }
+
+    @Test
     public void testBlockedDomainNotAdded() {
         AppWhitelistModule sslCollectingAppModule = collectingModule();
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
@@ -215,11 +252,11 @@ public class AutoTrustAppServiceTest {
     }
 
     private FailedConnection failedConnection(Instant lastOccurrence, String... domains) {
-        return getFailedConnectionWithError(lastOccurrence, "error:0", domains);
+        return getFailedConnectionWithError(lastOccurrence, KnownError.BROKEN_PIPE, domains);
     }
 
-    private FailedConnection getFailedConnectionWithError(Instant lastOccurrence, String error, String... domains) {
-        return new FailedConnection(newArrayList("device:000000000000"), newArrayList(domains),
-                newArrayList(error), lastOccurrence);
+    private FailedConnection getFailedConnectionWithError(Instant lastOccurrence, KnownError error, String... domains) {
+        return new FailedConnection(newArrayList(DEVICE_ID), newArrayList(domains),
+                newArrayList(error.getMessage()), lastOccurrence);
     }
 }

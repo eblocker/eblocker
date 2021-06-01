@@ -256,6 +256,16 @@ public class AccessDeniedRequestHandlerTest {
     }
 
     @Test
+    public void testBlockingTwoWhitelists() {
+        // list ID might be null, for example if more than one whitelist is configured
+        setupFilterMock(PROFILE_ID_PARENTAL, true, null, 5);
+        FullHttpResponse response = doRequest("https", "random.blocked.page", "/abc/def?id=abc", "192.168.9.15", "https://www.eblocker.com");
+
+        Assert.assertEquals(HttpResponseStatus.OK, response.status());
+        assertSvgRedirect("https://dashboard.eblocker/access-denied.html?target=https%3A%2F%2Frandom.blocked.page%2Fabc%2Fdef%3Fid%3Dabc&listId=null&domain=random.blocked.page&profileId=5&userId=5", response.content());
+    }
+
+    @Test
     public void testUnknownDevice() {
         FullHttpResponse response = doRequest("https", "random.blocked.page", "/abc/def?id=abc", "192.168.9.9", "https://www.eblocker.com");
         Assert.assertNull(response);

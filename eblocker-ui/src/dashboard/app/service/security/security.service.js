@@ -89,14 +89,10 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
         let storedContext = $localStorage.securityContextDashboard;
         if (angular.isDefined(storedContext)) {
             if (storedContext.expiresOn > Date.now()/1000) {
-                logger.warn('Reusing stored context');
                 storeSecurityContext(storedContext);
             } else {
-                logger.warn('Stored context has expired. Clearing security context.');
-                clearSecurityContext
+                clearSecurityContext();
             }
-        } else {
-            logger.warn('No stored context found');
         }
     }
 

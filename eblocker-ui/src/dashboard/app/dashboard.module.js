@@ -35,6 +35,7 @@ import '../../../node_modules/chart.js/dist/Chart.min.js';
 import chartJs from 'angular-chart.js';
 
 import ngIdle from '../../../npm_integrations/ng-idle';
+import ngStorage from '../../../npm_integrations/ng-storage';
 
 import '../../../node_modules/jquery-ui/ui/data';
 import '../../../node_modules/jquery-ui/ui/widget';
@@ -201,6 +202,7 @@ angular.module('eblocker.dashboard', [
     translate,
     chartJs,
     ngIdle,
+    ngStorage,
     uiSortable,
     ngDeviceDetector,
     // Logger,

@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function AdminLoginDialogController(logger, $scope, security, DeviceService, DeviceSelectorService,
+export default function AdminLoginDialogController(logger, $scope, security, DeviceSelectorService,
                                                    $mdDialog, APP_CONTEXT, onCancel, onOk) {
     'ngInject';
     let vm = this;
@@ -27,11 +27,8 @@ export default function AdminLoginDialogController(logger, $scope, security, Dev
     };
 
     function loadDevices() {
-        DeviceService.getDevices().then(function(response) {
-            //alert('Got devices: ' + JSON.stringify(response));
-            let devices = response.filter(device => !device.isEblocker);
-            DeviceSelectorService.setDevices(devices);
-            vm.devices = DeviceSelectorService.getDevicesByName();
+        return DeviceSelectorService.getDevicesByName().then(function(response) {
+            vm.devices = response;
         }, function(reason) {
             logger.error('Failed: ' + JSON.stringify(reason));
         });
@@ -47,9 +44,7 @@ export default function AdminLoginDialogController(logger, $scope, security, Dev
         security.requestAdminToken(APP_CONTEXT.adminAppContextName, vm.adminPassword).then(function success(response) {
             //alert('Got response: ' + JSON.stringify(response));
             vm.loggedIn = true;
-            loadDevices();
-            //onOk();
-            //$mdDialog.hide();
+            return loadDevices();
         }, function (reason) {
             logger.error('Admin login failed: ' + reason);
             if (reason === 'error.credentials.invalid') {

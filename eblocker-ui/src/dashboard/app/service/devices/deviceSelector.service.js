@@ -14,13 +14,12 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DeviceSelectorService($state, logger, ArrayUtilsService) {
+export default function DeviceSelectorService($state, $stateParams, logger, DeviceService, ArrayUtilsService) {
     'ngInject';
     'use strict';
 
     let selectedDevice;
     let localDevice;
-    let allDevices = [];
 
     function isRemoteDevice() {
         return $state.includes('remote');
@@ -41,9 +40,13 @@ export default function DeviceSelectorService($state, logger, ArrayUtilsService)
         if (deviceId === localDevice.id) {
             return goToLocalDevice();
         }
-        selectedDevice = ArrayUtilsService.getItemBy(allDevices, 'id', deviceId);
-        $state.go('remote', {deviceId: deviceId}).then(function(newState, params) {
-            notifyListeners();
+        getDevicesByName().then(function(response) {
+            selectedDevice = ArrayUtilsService.getItemBy(response, 'id', deviceId);
+            $state.go('remote', {deviceId: deviceId}).then(function(newState, params) {
+                notifyListeners();
+            });
+        }, function(reason) {
+            logger.error('Could not get devices', reason);
         });
     }
 
@@ -51,12 +54,13 @@ export default function DeviceSelectorService($state, logger, ArrayUtilsService)
         return selectedDevice;
     }
 
-    function setDevices(devices) {
-        allDevices = devices;
-    }
-
     function getDevicesByName() {
-        return ArrayUtilsService.sortByProperty(allDevices, 'name');
+        return DeviceService.getDevices().then(function(response) {
+            let devices = response.filter(device => !device.isEblocker);
+            return ArrayUtilsService.sortByProperty(devices, 'name');
+        }, function(reason) {
+            logger.error('Failed: ' + JSON.stringify(reason));
+        });
     }
 
     function initSelectedDevice(device) { // injected in routeConfig.js
@@ -82,7 +86,6 @@ export default function DeviceSelectorService($state, logger, ArrayUtilsService)
     }
 
     return {
-        setDevices: setDevices,
         getDevicesByName: getDevicesByName,
         isRemoteDevice: isRemoteDevice,
         isLocalDevice: isLocalDevice,

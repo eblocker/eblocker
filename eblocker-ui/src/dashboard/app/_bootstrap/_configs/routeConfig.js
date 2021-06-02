@@ -37,8 +37,8 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
                 return $translate.onReady();
             }],
             security: 'security',
-            token: ['security', 'APP_CONTEXT', function(security, APP_CONTEXT) {
-                return security.requestToken(APP_CONTEXT.name);
+            token: ['security', function(security) {
+                return security.requestInitialToken();
             }],
             consoleUrl: ['RedirectService', function(RedirectService) {
                 return RedirectService.prepare();

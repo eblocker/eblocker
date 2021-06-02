@@ -220,16 +220,20 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     ];
 
     function populateDevicesDropdown() {
-        let entries = DeviceSelectorService.getDevicesByName().map(device => {
-            let entry = {
-                label: device.name,
-                image: '/img/icons/ic_computer_black.svg',
-                action: function() {DeviceSelectorService.goToDevice(device.id);},
-                closeOnClick: true
-            };
-            return entry;
+        DeviceSelectorService.getDevicesByName().then(function(response) {
+            let entries = response.map(device => {
+                let entry = {
+                    label: device.name,
+                    image: '/img/icons/ic_computer_black.svg',
+                    action: function() {DeviceSelectorService.goToDevice(device.id);},
+                    closeOnClick: true
+                };
+                return entry;
+            });
+            vm.deviceDropdownContent = initialDeviceDropdownContent.concat(entries);
+        }, function(reason) {
+            logger.error('Could not populate devices dropdown menu', reason);
         });
-        vm.deviceDropdownContent = initialDeviceDropdownContent.concat(entries);
     }
 
     vm.$onInit = function() {
@@ -266,6 +270,13 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
         ];
 
         vm.deviceDropdownContent = initialDeviceDropdownContent;
+
+        if (security.isLoggedInAsAdmin()) {
+            populateDevicesDropdown();
+            if (DeviceSelectorService.isRemoteDevice()) {
+                DeviceSelectorService.goToDevice($stateParams.deviceId);
+            }
+        }
     };
 
 }

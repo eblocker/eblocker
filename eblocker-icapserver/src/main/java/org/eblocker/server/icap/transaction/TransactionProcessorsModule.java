@@ -44,6 +44,7 @@ import org.eblocker.server.icap.transaction.processor.SessionProcessor;
 import org.eblocker.server.icap.transaction.processor.SetBaseUrlProcessor;
 import org.eblocker.server.icap.transaction.processor.SetDntHeaderProcessor;
 import org.eblocker.server.icap.transaction.processor.SetInjectionsProcessor;
+import org.eblocker.server.icap.transaction.processor.SuccessfulSSLDetector;
 import org.eblocker.server.icap.transaction.processor.TrackingBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.UserAgentSpoofProcessor;
 import org.eblocker.server.icap.transaction.processor.WebRTCBlocker;
@@ -77,8 +78,10 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                            SetBaseUrlProcessor setBaseUrlProcessor,
                                                            SetDntHeaderProcessor setDntHeaderProcessor,
                                                            TrackingBlockerProcessor trackingBlockerProcessor,
-                                                           UserAgentSpoofProcessor userAgentSpoofProcessor) {
+                                                           UserAgentSpoofProcessor userAgentSpoofProcessor,
+                                                           SuccessfulSSLDetector successfulSSLDetector) {
         return Arrays.asList(
+                successfulSSLDetector,
                 sessionProcessor,
                 ignoreEBlockerProcessor,
                 bpjmFilterProcessor,
@@ -117,8 +120,10 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             SetBaseUrlProcessor setBaseUrlProcessor,
                                                             SetInjectionsProcessor setInjectionsProcessor,
                                                             WebRTCBlocker webRTCBlocker,
-                                                            YoutubeAdBlocker youtubeAdBlocker) {
+                                                            YoutubeAdBlocker youtubeAdBlocker,
+                                                            SuccessfulSSLDetector successfulSSLDetector) {
         return Arrays.asList(
+                successfulSSLDetector,
                 sessionProcessor,
                 ignoreEBlockerProcessor,
                 pageContextProcessor,

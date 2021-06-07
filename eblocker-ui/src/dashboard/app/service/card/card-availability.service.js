@@ -105,6 +105,10 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
             return isFragFinnCardAvailable(profile);
         } else if (isCard(card.name, 'dashboard-connection-test')) {
             return isConnectionTestCardAvailable(device);
+        } else if (isCard(card.name, 'dashboard-icon')) {
+            return isIconCardAvailable();
+        } else if (isCard(card.name, 'dashboard-parental-control')) {
+            return isParentalControlCardAvailable();
         } else if (isCard(card.name, 'dashboard-filter')) {
             // TODO this will be implemented in BE: Only Admin may change filter type
             // Admin will be able to allow users to see this card.
@@ -115,7 +119,8 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
 
     function isPatternFilterCardAvailable(card, globalSslState, device) {
         return device.filterMode !== FILTER_TYPE.DNS &&
-            (device.filterMode !== FILTER_TYPE.AUTOMATIC || (globalSslState && device.sslEnabled));
+            (device.filterMode !== FILTER_TYPE.AUTOMATIC || (globalSslState && device.sslEnabled)) &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isSslCardAvailable() {
@@ -140,7 +145,8 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
     }
 
     function isUserCardAvailable(device) {
-        return device.assignedUser !== device.defaultSystemUser;
+        return device.assignedUser !== device.defaultSystemUser &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isIconCardAvailable(device, sslGlobal) {
@@ -153,6 +159,14 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
 
     function isConnectionTestCardAvailable(device) {
         return device.enabled && DeviceSelectorService.isLocalDevice() && !device.paused;
+    }
+
+    function isIconCardAvailable() { // AKA controlbar
+        return DeviceSelectorService.isLocalDevice();
+    }
+
+    function isParentalControlCardAvailable() {
+        return DeviceSelectorService.isLocalDevice();
     }
 
     /**

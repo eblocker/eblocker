@@ -215,7 +215,14 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
     const remoteState = {
         name: 'remote',
         parent: mainState.name,
+        component: 'remoteComponent',
         url: '/:deviceId'
+    };
+
+    const logoutAdminState = {
+        name: 'logoutAdmin',
+        component: 'logoutAdminComponent',
+        url: '/logout'
     };
 
     const mobileWizard = {
@@ -249,4 +256,5 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
     $stateProvider.state(redirectOptions);
     $stateProvider.state(blockOptions);
     $stateProvider.state(remoteState);
+    $stateProvider.state(logoutAdminState);
 }

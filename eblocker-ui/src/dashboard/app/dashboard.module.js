@@ -67,9 +67,11 @@ import AdminLoginDialogController from './dialogs/admin/admin-login.dialog';
 import LocationConfig from './_bootstrap/_configs/locationConfig';
 import TranslationConfig from './_bootstrap/_configs/translationConfig';
 import IdleConfig from './_bootstrap/_configs/idleConfig';
+import HttpInterceptor from './_bootstrap/_configs/httpInterceptor';
 import APP_CONTEXT from './dashboard.constants.js';
 import FILTER_TYPE from '../../shared/_constants/filterTypes';
 import IDLE_TIMES from '../../shared/_constants/idleTimes';
+import BE_ERRORS from '../../shared/_constants/backendErrors';
 import LANG_FILENAMES from '../../shared/locale/langFileNames';
 
 import DurationFilter from './filter/duration.filter';
@@ -109,6 +111,8 @@ import DeviceStatus from './cards/deviceStatus/device-status.component';
 import DomainBlocklist from './cards/domainBlocklist/domain-blocklist.component';
 import DomainPasslist from './cards/domainBlocklist/domain-passlist.component';
 import DomainBlocklistTable from './cards/domainBlocklist/domain-blocklist-table.component';
+import LogoutAdminComponent from './components/logout-admin.component';
+import RemoteComponent from './components/remote.component';
 
 // squid-error / blocker components
 import BlockerComponent from './blocker/blocker.component';
@@ -218,12 +222,14 @@ angular.module('eblocker.dashboard', [
     .config(TranslationConfig)
     .config(ThemingProvider)
     .config(IdleConfig)
+    .config(HttpInterceptor)
     .config(AppRouter)
     .config(DurationFilter)
     .constant('APP_CONTEXT', APP_CONTEXT)
     .constant('FILTER_TYPE', FILTER_TYPE)
     .constant('moment', moment)
     .constant('IDLE_TIMES', IDLE_TIMES)
+    .constant('BE_ERRORS', BE_ERRORS)
     .constant('LANG_FILENAMES', LANG_FILENAMES)
     .constant('CARD_HTML', CARD_HTML)
     .controller('ConsoleRedirectController', ConsoleRedirectController)
@@ -279,6 +285,8 @@ angular.module('eblocker.dashboard', [
     .component('connectionTestDetail', ConnectionTestDetail)
     .component('ebFilterTable', ebFilterComponent)
     .component('ebCard', dashboardCardComponent)
+    .component('logoutAdminComponent', LogoutAdminComponent)
+    .component('remoteComponent', RemoteComponent)
     .directive('compile', compileCard)
     .factory('DataService', DataService)
     .factory('MessageService', MessageService)

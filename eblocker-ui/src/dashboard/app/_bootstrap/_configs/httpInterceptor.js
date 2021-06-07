@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2021 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -21,38 +21,20 @@ export default function HttpInterceptor($httpProvider) {
 
 }
 
-function CustomHttpInterceptor(logger, $q, StateService, STATES, BE_ERRORS) {
+function CustomHttpInterceptor(logger, $q, $state, $transitions, BE_ERRORS) {
     'ngInject';
-
-    const HTTP_REQUEST_DEFAULT_TIMEOUT = 10000;
 
     function responseError(rejection) {
         if (rejection.status > -1) {
-            logger.debug('(HTTP-Interceptor) Request has been rejected: ' +
-                rejection.status + ' [' + rejection.data + ']');
-            // ** If we get a 401 'token-invalid' the session has expired.
             if (rejection.status === 401 && rejection.data === BE_ERRORS.TOKEN_INVALID) {
-                logger.warning('(HTTP-Interceptor) Invalid token. Redirecting to logout state.');
-                StateService.goToState(STATES.LOGOUT);
-            } else if (rejection.status === 503) {
-                logger.warning('(HTTP-Interceptor) Status 503. Redirecting to standby state.');
-                // fix issue: "Controller method generateConsoleToken not yet available"
-                StateService.goToState(STATES.STAND_BY);
+                logger.warning('(HTTP-Interceptor) Invalid token. Going to state "logoutAdmin".');
+                $state.go('logoutAdmin');
             }
-
         }
         return $q.reject(rejection);
     }
 
-    function request(config) {
-        if (angular.isUndefined(config.timeout)) {
-            config.timeout = HTTP_REQUEST_DEFAULT_TIMEOUT;
-        }
-        return config;
-    }
-
     return {
-        request: request,
         responseError: responseError
     };
 

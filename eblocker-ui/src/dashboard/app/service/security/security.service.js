@@ -119,11 +119,17 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
         return securityContext.appContext === APP_CONTEXT.adminAppContextName;
     }
 
+    function logoutAdmin() {
+        clearSecurityContext();
+        return requestToken(APP_CONTEXT.name);
+    }
+
     return {
         requestToken: requestToken,
         requestInitialToken: requestInitialToken,
         requestAdminToken: requestAdminToken,
         renewToken: renewToken,
-        isLoggedInAsAdmin: isLoggedInAsAdmin
+        isLoggedInAsAdmin: isLoggedInAsAdmin,
+        logoutAdmin: logoutAdmin
     };
 }

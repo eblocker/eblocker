@@ -101,6 +101,8 @@ export default function SystemService(logger, $rootScope, $http, $q, $interval) 
                  // So showing a booting screen and then the app does not work because the token is invalid is a
                  // bad user experience. So here, once we get the status 'booting' we can be certain (?) that there
                  // was a reboot and that we need to refresh the browser/token some point afterwards.
+                 //
+                 // FIXME: on a fast (i.e. development) machine, the frontend might miss the backend's BOOTING state.
                  hasBeenRebooted = true;
              }
 

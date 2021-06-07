@@ -101,7 +101,7 @@ import IdleConfig from './_bootstrap/_configs/idleConfig';
 import HttpInterceptor from './_bootstrap/_configs/httpInterceptor';
 import APP_CONTEXT from './settings.constants.js';
 import STATES from './_bootstrap/_constants/statesEnum';
-import BE_ERRORS from './_bootstrap/_constants/backendErrors';
+import BE_ERRORS from '../../shared/_constants/backendErrors';
 import FILTER_TYPE from '../../shared/_constants/filterTypes';
 import IDLE_TIMES from '../../shared/_constants/idleTimes';
 import USER_ROLES from '../../shared/_constants/userRoles';

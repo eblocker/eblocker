@@ -105,8 +105,6 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
             return isFragFinnCardAvailable(profile);
         } else if (isCard(card.name, 'dashboard-connection-test')) {
             return isConnectionTestCardAvailable(device);
-        } else if (isCard(card.name, 'dashboard-icon')) {
-            return isIconCardAvailable();
         } else if (isCard(card.name, 'dashboard-parental-control')) {
             return isParentalControlCardAvailable();
         } else if (isCard(card.name, 'dashboard-filter')) {
@@ -150,7 +148,8 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
     }
 
     function isIconCardAvailable(device, sslGlobal) {
-        return !device.controlBarAutoMode || (device.sslEnabled && sslGlobal);
+        return (!device.controlBarAutoMode || (device.sslEnabled && sslGlobal)) &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isFragFinnCardAvailable(profile) {
@@ -159,10 +158,6 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
 
     function isConnectionTestCardAvailable(device) {
         return device.enabled && DeviceSelectorService.isLocalDevice() && !device.paused;
-    }
-
-    function isIconCardAvailable() { // AKA controlbar
-        return DeviceSelectorService.isLocalDevice();
     }
 
     function isParentalControlCardAvailable() {

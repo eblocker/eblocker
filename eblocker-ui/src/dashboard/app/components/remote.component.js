@@ -15,7 +15,9 @@
  * permissions and limitations under the License.
  */
 export default {
-    template: '<div style="width:100%; background:#888; color:#fff; text-align:center;">Remote device: not all dashboard cards are available.</div>',
+    template: '<div style="width:100%; background:#888; color:#fff; text-align:center;">' +
+        'Remote device: not all dashboard cards are available.' +
+        '</div>',
     controller: Controller,
     controllerAs: 'vm'
 };

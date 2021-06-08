@@ -92,14 +92,14 @@
                         </md-icon>
                     </span>
                     <span class="dashboard-message-title">
-                        {{ message.title ? 'MESSAGE.CARD.MESSAGES.' + message.title : 'MESSAGE.CARD.MESSAGES.' + message.titleKey | translate: message.context }}
+                        {{ message.title ? message.title : 'SHARED.MESSAGES.' + message.titleKey | translate: message.context }}
                     </span>
                 </div>
 
                 <!-- Message content -->
                 <div layout-padding layout="row">
                     <span>
-                        {{ message.content ? 'MESSAGE.CARD.MESSAGES.' + message.content : 'MESSAGE.CARD.MESSAGES.' + message.contentKey | translate: message.context }}
+                        {{ message.content ? message.content : 'SHARED.MESSAGES.' + message.contentKey | translate: message.context }}
                     </span>
                 </div>
 
@@ -112,10 +112,10 @@
                     <div ng-if="message.actionButtonUrlKey !== undefined"
                          flex="60"
                          flex-xs="100">
-                        <a ng-href="{{'MESSAGE.CARD.MESSAGES.' + message.actionButtonUrlKey | translate: message.context}}"
+                        <a ng-href="{{'SHARED.MESSAGES.' + message.actionButtonUrlKey | translate: message.context}}"
                            target="_blank">
                             <md-button class="md-secondary md-raised" ng-click="vm.clickedActionButton(message)">
-                                {{ 'MESSAGE.CARD.MESSAGES.' + message.actionButtonLabelKey | translate }}
+                                {{ 'SHARED.MESSAGES.' + message.actionButtonLabelKey | translate }}
                             </md-button>
                         </a>
                     </div>
@@ -124,7 +124,7 @@
                                flex-xs="100"
                                ng-if="message.actionButtonUrlKey === undefined"
                                ng-click="vm.clickedActionButton(message)">
-                        {{ 'MESSAGE.CARD.MESSAGES.' + message.actionButtonLabelKey | translate }}
+                        {{ 'SHARED.MESSAGES.' + message.actionButtonLabelKey | translate }}
                     </md-button>
 
                     <!-- DO NOT SHOW AGAIN -->

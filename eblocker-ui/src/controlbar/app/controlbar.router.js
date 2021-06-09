@@ -48,6 +48,9 @@ export default function AppRouter($stateProvider) {
                     return settings.locale();
                 });
             }],
+            'initLanguage': ['locale', '$translate', function(locale, $translate) {
+                return $translate.use(locale.language);
+            }],
             'device': ['token', 'DeviceService', function(token, DeviceService) {
                 // 'token' needed only indirectly for the REST call
                 // required for UserService.getAllUsers(..)

@@ -167,7 +167,9 @@
             "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT" : "Did you know, that you can use the eBlocker with HTTPS encrypted websites now?\n\nYou only need to install eBlocker's security certificate in your client device and browsers.",
             "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "Open HTTPS settings",
             "MESSAGE_SSL_SUPPORT_INSTALL_TITLE" : "Activate HTTPS support",
-            "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/settings/#!/ssl"
+            "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/settings/#!/ssl",
+            "MESSAGE_DONATE_LABEL" : "Donate now",
+            "MESSAGE_DONATE_URL" : "https://eblocker.org/en/donate-now"
         }
     }
 }

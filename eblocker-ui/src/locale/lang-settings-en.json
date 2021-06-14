@@ -6,7 +6,6 @@
             "THANK_YOU" : "Thank you very much for using eBlocker. You have made a very good decision to protect your privacy and your entire family.",
             "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
             "DONATE": "<b>To ensure that eBlocker is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
-            "DONATE_URL": "https://eblocker.org/en/donate-and-contribute/",
             "DONATE_MORE": "Donate Now",
             "DONATE_THANKS": "Thanks to your support we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
             "COMMUNITY": "If you have any questions, new ideas or found errors, please solely use our forum at",
@@ -1671,6 +1670,10 @@
                 "MODE_STANDARD_NOT_AVAILABLE" : "\"{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD' | translate }}\" cannot be selected with your current network settings. Click \"{{ 'ADMINCONSOLE.DNS_STATUS.ACTION.MORE' | translate }}\" for further information."
             }
         },
+        "DONATIONS" : {
+            "MENU_LABEL" : "Donate for updates",
+            "URL" : "https://eblocker.org/en/donate-now"
+        },
         "DO_NOT_TRACK" : {
             "DISABLED" : "The eBlocker will not modify the Do-Not-Track header in outgoing requests.",
             "ENABLED" : "The eBlocker will add the Do-Not-Track header to all outgoing requests.",
@@ -1932,9 +1935,14 @@
                 "LABEL" : "Device Name",
                 "UNREGISTERED" : "-"
             },
+            "DONATIONS" : {
+                "HEADING" : "Donate for updates",
+                "TEXT" : "eBlocker is run by volunteers and powered by your donations. Please help to keep daily updates, licensed filters and operations running. Thank you!",
+                "DONATE" : "Donate now"
+            },
             "LABEL" : "License",
-            "LABEL_ACTIVATE_LICENSE" : "Activate a new eBlocker license:",
-            "LABEL_SETUP_WIZARD" : "Activate eBlocker license:",
+            "LABEL_ACTIVATE_LICENSE" : "Activate a new eBlocker license",
+            "LABEL_SETUP_WIZARD" : "Activate eBlocker license",
             "LICENSE_TYPE" : {
                 "LABEL" : "License Type",
                 "PRODUCT_TYPE" : {

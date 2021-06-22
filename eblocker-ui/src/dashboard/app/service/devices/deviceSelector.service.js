@@ -14,8 +14,8 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DeviceSelectorService($rootScope, $state, $stateParams, logger, DeviceService, ArrayUtilsService,
-                                              EVENTS) {
+export default function DeviceSelectorService($rootScope, $state, $stateParams, logger, DeviceService,
+                                              ArrayUtilsService, EVENTS) {
     'ngInject';
     'use strict';
 

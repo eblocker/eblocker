@@ -82,6 +82,25 @@
                                  layout="row"
                                  layout-align="start center"
                                  md-no-ink="true"
+                                 ng-click="vm.goToDonations()"
+                                 class="nav-entry-button icon-pointer feature-is-licensed">
+                                <div style="margin-left: 10px;">
+                                    <md-icon md-svg-src="/img/icons/volunteer_activism_black_24dp.svg" class="navicon"></md-icon>
+                                </div>
+                                <div style="margin-left: 15px;">
+                                    <span>{{'ADMINCONSOLE.DONATIONS.MENU_LABEL' | translate }}</span>
+                                </div>
+                            </div>
+                        </md-item-content>
+                    </md-item>
+                    <md-divider></md-divider>
+                    <md-item>
+                        <md-item-content layout="row" layout-align="start center">
+                            <!-- layout-fill overrides the margin, so just use width: 100% -->
+                            <div style="width: 100%;"
+                                 layout="row"
+                                 layout-align="start center"
+                                 md-no-ink="true"
                                  ng-click="vm.goToSplashScreen()"
                                  class="nav-entry-button icon-pointer feature-is-licensed">
                                 <div style="margin-left: 10px;">

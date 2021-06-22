@@ -27,7 +27,7 @@ export default {
 
 // jshint ignore: line
 function MainController($window, $mdSidenav, logger, RegistrationService, SetupService, StateService, STATES, // jshint ignore: line
-                        SystemService, SplashService, ConsoleService, security) {
+                        SystemService, SplashService, ConsoleService, security, $translate) {
     'ngInject';
     const vm = this;
 
@@ -94,6 +94,7 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
     vm.goToState = goToState;
     vm.goToVpnReminder = goToVpnReminder;
     vm.goToSplashScreen = goToSplashScreen;
+    vm.goToDonations = goToDonations;
     vm.openSetupWizard = openSetupWizard;
     vm.isSideNavOpen = isSideNavOpen;
     vm.isLicensed = isLicensed;
@@ -155,6 +156,11 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
             postRegistrationInformation: vm.postRegistrationInformationContent
         };
         StateService.goToState(STATES.ACTIVATION_FINISH, param);
+    }
+
+    function goToDonations() {
+        const href = $translate.instant('ADMINCONSOLE.DONATIONS.URL');
+        $window.open(href, '_blank');
     }
 
     /**

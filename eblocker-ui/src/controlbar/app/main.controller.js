@@ -14,11 +14,9 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function  MainController(logger, $translate, locale, $sce, $window, $timeout, UserService,  // jshint ignore: line
+export default function  MainController(logger, $translate, $sce, $window, $timeout, UserService,  // jshint ignore: line
                                         RegistrationService, userProfile, allMessages) { // jshint ignore: line
     'ngInject';
-    logger.info('Showing main screen, setting language to \'' + locale.language + '\'');
-    $translate.use(locale.language);
 
     // The controlbar is restricted if the user is a child:
     const restrictUser = userProfile.hidden || UserService.getOperatingUser().userRole === 'CHILD';

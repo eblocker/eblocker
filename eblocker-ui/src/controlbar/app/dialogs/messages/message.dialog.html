@@ -58,28 +58,28 @@
                             </md-icon>
                         </span>
                         <span>
-                            {{ message.title ? message.title : message.titleKey | translate: message.context }}
+                            {{ message.title ? message.title : 'SHARED.MESSAGES.' + message.titleKey | translate: message.context }}
                         </span>
                     </div>
 
                     <!-- Content -->
                     <div layout-padding>
-                        {{ message.content ? message.content : message.contentKey | translate: message.context }}
+                        {{ message.content ? message.content : 'SHARED.MESSAGES.' + message.contentKey | translate: message.context }}
                     </div>
 
                     <!-- Action Button and do-not-show-again -->
                     <div layout="row" layout-align="start center" flex layout-fill>
                         <div flex="50" flex-xs="30">
-                            <a ng-if="message.actionButtonUrlKey != undefined" href="{{message.actionButtonUrlKey | translate: message.context}}" target="_blank">
+                            <a ng-if="message.actionButtonUrlKey != undefined" href="{{'SHARED.MESSAGES.' + message.actionButtonUrlKey | translate: message.context}}" target="_blank">
                                 <md-button class="md-secondary md-raised" ng-click="ctrl.clickedActionButton(message)">
-                                    {{ message.actionButtonLabelKey | translate }}
+                                    {{ 'SHARED.MESSAGES.' + message.actionButtonLabelKey | translate }}
                                 </md-button>
                             </a>
                         </div>
 
                         <div flex="50" flex-xs="30">
                             <md-button ng-if="message.actionButtonUrlKey == undefined" class="md-secondary md-raised" ng-click="ctrl.clickedActionButton(message)">
-                                {{ message.actionButtonLabelKey | translate }}
+                                {{ 'SHARED.MESSAGES.' + message.actionButtonLabelKey | translate }}
                             </md-button>
                         </div>
 

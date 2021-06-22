@@ -1,12 +1,6 @@
 <div layout="row">
     <div class="whitelist-table" layout="column">
 
-        <div class="table-header">
-            <div layout="row" layout-align="start center">
-                <span >{{vm.label | translate }}</span>
-            </div>
-        </div>
-
         <div class="table-body">
             <div layout="row" layout-align="start center" flex
                  ng-repeat="entry in vm.filteredTableData track by $index"

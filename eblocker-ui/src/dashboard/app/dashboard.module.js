@@ -79,6 +79,7 @@ import ThemingProvider from '../../shared/theme/eblocker.theme';
 import AppRouter from './_bootstrap/_configs/routeConfig.js';
 
 import CARD_HTML from './_bootstrap/_constants/cardHtml';
+import EVENTS from './_bootstrap/_constants/events';
 
 // ** Components
 import dashboardCardComponent from './components/card.component';
@@ -174,6 +175,7 @@ import NumberUtilsService from '../../shared/services/utils/number-utils.service
 import DomainUtilsService from '../../shared/services/utils/domain-utils.service';
 import SystemService from '../../shared/services/system/SystemService';
 import RedirectService from '../../shared/services/redirect/RedirectService';
+import FilterModeService from '../../shared/services/device/FilterModeService';
 
 
 // ** Custom Modules
@@ -214,7 +216,7 @@ angular.module('eblocker.dashboard', [
     // Settings
     'eblocker.logger',
     'eblocker.settings',
-    'eblocker.security',
+    'eblocker.dashboard.security',
     'eblocker.services',
     'template.dashboard.app'
 ])
@@ -232,6 +234,7 @@ angular.module('eblocker.dashboard', [
     .constant('BE_ERRORS', BE_ERRORS)
     .constant('LANG_FILENAMES', LANG_FILENAMES)
     .constant('CARD_HTML', CARD_HTML)
+    .constant('EVENTS', EVENTS)
     .controller('ConsoleRedirectController', ConsoleRedirectController)
     .controller('ActionController', ActionController)
     .controller('NotificationController', NotificationController)
@@ -295,6 +298,7 @@ angular.module('eblocker.dashboard', [
     .factory('NumberUtilsService', NumberUtilsService)
     .factory('DomainUtilsService', DomainUtilsService)
     .factory('RedirectService', RedirectService)
+    .factory('FilterModeService', FilterModeService)
     .factory('CardService', CardService)
     .factory('CardAvailabilityService', CardAvailabilityService)
     .factory('FilterService', FilterService)

@@ -23,24 +23,28 @@ export default {
     }
 };
 
-function DomainPasslistController(logger, $q, $interval, DataService, CustomDomainFilterService,
-                                  DeviceSelectorService) {
+function DomainPasslistController($rootScope, $scope, logger, $q, $interval, DataService, CustomDomainFilterService,
+                                  DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
     const vm = this;
     const CARD_NAME = 'DOMAIN_PASSLIST';
+    let updating = false;
 
     vm.customDomainFilter = CustomDomainFilterService.emptyFilter();
 
     vm.$onInit = function() {
         loadCustomDomainFilter();
-        DeviceSelectorService.registerDeviceSelected(loadCustomDomainFilter);
     };
 
-    vm.$onDestroy = function() {
-        DeviceSelectorService.unregisterDeviceSelected(loadCustomDomainFilter);
-    };
+    $scope.$on(EVENTS.DEVICE_SELECTED, loadCustomDomainFilter);
+
+    $scope.$on(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED, function(event) {
+        if (!updating) { // don't reload if update was triggered by this card, so the user has a chance to undo
+            loadCustomDomainFilter();
+        }
+    });
 
     function loadCustomDomainFilter() {
         CustomDomainFilterService.getCustomDomainFilter(true).then(function(response) {
@@ -51,7 +55,15 @@ function DomainPasslistController(logger, $q, $interval, DataService, CustomDoma
     vm.updatePasslist = updatePasslist;
 
     function updatePasslist(domains) {
-        logger.warn('Updating passlist', domains);
-        return CustomDomainFilterService.updatePasslist(domains);
+        updating = true;
+        return CustomDomainFilterService.updatePasslist(domains).then(function(response) {
+            $rootScope.$broadcast(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED);
+            return response;
+        }, function(reason) {
+            logger.error('Failed to update custom domain filter passlist', reason);
+            return $q.reject(reason);
+        }).finally(function() {
+            updating = false;
+        });
     }
 }

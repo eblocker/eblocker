@@ -14,7 +14,8 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DeviceSelectorService($state, $stateParams, logger, DeviceService, ArrayUtilsService) {
+export default function DeviceSelectorService($rootScope, $state, $stateParams, logger, DeviceService, ArrayUtilsService,
+                                              EVENTS) {
     'ngInject';
     'use strict';
 
@@ -68,21 +69,8 @@ export default function DeviceSelectorService($state, $stateParams, logger, Devi
         selectedDevice = device;
     }
 
-    let deviceSelectedCallbacks = [];
-
-    function registerDeviceSelected(callback) {
-        deviceSelectedCallbacks.push(callback);
-    }
-
-    function unregisterDeviceSelected(callback) {
-        let i = deviceSelectedCallbacks.indexOf(callback);
-        if (i !== -1) {
-            deviceSelectedCallbacks.splice(i, 1);
-        }
-    }
-
     function notifyListeners() {
-        deviceSelectedCallbacks.forEach(callback => callback());
+        $rootScope.$broadcast(EVENTS.DEVICE_SELECTED);
     }
 
     return {
@@ -92,8 +80,6 @@ export default function DeviceSelectorService($state, $stateParams, logger, Devi
         goToLocalDevice: goToLocalDevice,
         goToDevice: goToDevice,
         getSelectedDevice: getSelectedDevice,
-        initSelectedDevice: initSelectedDevice,
-        registerDeviceSelected: registerDeviceSelected,
-        unregisterDeviceSelected: unregisterDeviceSelected
+        initSelectedDevice: initSelectedDevice
     };
 }

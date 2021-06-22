@@ -21,7 +21,6 @@ export default {
     bindings: {
         domains: '<',
         onUpdate: '&',
-        label: '@',
         placeholder: '@'
     }
 };

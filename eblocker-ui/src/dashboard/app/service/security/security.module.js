@@ -22,21 +22,10 @@ import SslService from '../devices/ssl.service';
 import registration from '../devices/registration.service';
 import FilterStatistics from '../devices/filterStatistics.service';
 
-// export default function Security() {
-//     'ngInject';
-//     'use strict';
-//
-//     angular.module('eblocker.security', [])
-//         .factory('security', SecurityService)
-//         .factory('localTimestamp', LocalTimestamp)
-//         .factory('onlineTime', OnlineTime)
-//         .factory('SslService', SslService);
-// }
-
 (function() {
     'use strict';
 
-    angular.module('eblocker.security', [])
+    angular.module('eblocker.dashboard.security', [])
         .factory('security', SecurityService)
         .factory('LocalTimestampService', LocalTimestampService)
         .factory('onlineTime', OnlineTime)

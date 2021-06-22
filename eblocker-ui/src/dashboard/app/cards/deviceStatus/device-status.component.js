@@ -23,7 +23,7 @@ export default {
     }
 };
 
-function DeviceStatusController(logger, DeviceSelectorService, DeviceService) {
+function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -36,12 +36,9 @@ function DeviceStatusController(logger, DeviceSelectorService, DeviceService) {
 
     vm.$onInit = function() {
         getSelectedDevice();
-        DeviceSelectorService.registerDeviceSelected(getSelectedDevice);
     };
 
-    vm.$onDestroy = function() {
-        DeviceSelectorService.unregisterDeviceSelected(getSelectedDevice);
-    };
+    $scope.$on(EVENTS.DEVICE_SELECTED, getSelectedDevice);
 
     function getSelectedDevice() {
         vm.device = DeviceSelectorService.getSelectedDevice();

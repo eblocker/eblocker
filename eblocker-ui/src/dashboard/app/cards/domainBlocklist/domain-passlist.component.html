@@ -1,16 +1,15 @@
 <eb-card
     icon="/img/icons/ic_list_black.svg"
-    card-title="{{'DOMAIN_BLOCKLIST.CARD.TITLE' | translate}}"
+    card-title="{{'DOMAIN_PASSLIST.CARD.TITLE' | translate}}"
     card-id="{{ vm.cardId }}"
-    tooltip="DOMAIN_BLOCKLIST.CARD.TOOLTIP">
+    tooltip="DOMAIN_PASSLIST.CARD.TOOLTIP">
 
-    <eb-card-content>
-        <div layout="column" layout-align="center center">
-          <dashboard-domain-blocklist-table
+    <eb-card-content class="whitelist-dns-card">
+        <div layout="column">
+            <dashboard-domain-blocklist-table
                 domains="vm.customDomainFilter.whitelistedDomains"
                 on-update="vm.updatePasslist(domains)"
-                label="WHITELIST_DNS.CARD.TABLE.LABEL_WHITELIST"
-                placeholder="WHITELIST_DNS.CARD.TABLE.EMPTY_BLACKLIST">
+                placeholder="DOMAIN_PASSLIST.CARD.TABLE.EMPTY_LIST">
             </dashboard-domain-blocklist-table>
         </div>
     </eb-card-content>

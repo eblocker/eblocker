@@ -23,8 +23,8 @@ export default {
     }
 };
 
-function PauseController(logger, $interval, $timeout, $filter, PauseService, CardService, DataService,
-                         DeviceSelectorService) {
+function PauseController($scope, logger, $interval, $timeout, $filter, PauseService, CardService, DataService,
+                         DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -54,7 +54,6 @@ function PauseController(logger, $interval, $timeout, $filter, PauseService, Car
         // the correct pause state.
         $timeout(getPause, 500);
         DataService.registerComponentAsServiceListener(CARD_NAME, 'PauseService');
-        DeviceSelectorService.registerDeviceSelected(onDeviceSelected);
     };
 
     vm.$postLink = function() {
@@ -66,14 +65,12 @@ function PauseController(logger, $interval, $timeout, $filter, PauseService, Car
     vm.$onDestroy = function() {
         stopCountdownTimer();
         DataService.unregisterComponentAsServiceListener(CARD_NAME, 'PauseService');
-        DeviceSelectorService.unregisterDeviceSelected(onDeviceSelected);
     };
 
-    function onDeviceSelected() {
-        logger.warn('==> Device selected: ' + DeviceSelectorService.getSelectedDevice().name);
+    $scope.$on(EVENTS.DEVICE_SELECTED, function() {
         stopCountdownTimer();
         getPause(true);
-    }
+    });
 
     function isPauseThreshold() {
         return getPausing() > PAUSE_THRESHOLD;

@@ -182,6 +182,11 @@
     },
     "DEVICE_FIREWALL" : {
         "CARD" : {
+            "ACTION" : {
+                "ALLOW" : "Always allow",
+                "APPLY" : "Apply",
+                "BLOCK" : "Always block"
+            },
             "RECORDING" : {
                 "DISABLED" : "Not recording",
                 "ENABLED" : "Recording (last 24h)"
@@ -275,7 +280,18 @@
     },
     "DOMAIN_BLOCKLIST" : {
         "CARD" : {
-            "TITLE" : "Domain Blocklist"
+            "TABLE" : {
+                "EMPTY_LIST" : "No domains blocked"
+            },
+            "TITLE" : "Block Domains"
+        }
+    },
+    "DOMAIN_PASSLIST" : {
+        "CARD" : {
+            "TABLE" : {
+                "EMPTY_LIST" : "No domains allowed"
+            },
+            "TITLE" : "Allow Domains"
         }
     },
     "EXPIRED" : {

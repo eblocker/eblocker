@@ -106,6 +106,8 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
             return isConnectionTestCardAvailable(device);
         } else if (isCard(card.name, 'dashboard-parental-control')) {
             return isParentalControlCardAvailable();
+        } else if (isCard(card.name, 'dashboard-anonymization')) {
+            return isAnonymizationCardAvailable();
         } else if (isCard(card.name, 'dashboard-filter')) {
             // TODO this will be implemented in BE: Only Admin may change filter type
             // Admin will be able to allow users to see this card.
@@ -160,6 +162,10 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
     }
 
     function isParentalControlCardAvailable() {
+        return DeviceSelectorService.isLocalDevice();
+    }
+
+    function isAnonymizationCardAvailable() {
         return DeviceSelectorService.isLocalDevice();
     }
 

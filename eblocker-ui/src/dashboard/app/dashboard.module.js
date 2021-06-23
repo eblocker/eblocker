@@ -96,8 +96,6 @@ import FilterStatisticsComponent from './cards/filterStatistics/filterStatistics
 import FilterStatisticsDiagramComponent from './cards/filterStatistics/filterStatisticsDiagram.component';
 import FilterStatisticsTotalComponent from './cards/filterStatisticsTotal/filterStatisticsTotal.component';
 import FilterComponent from './cards/filterCard/filter.component';
-import WhitelistDns from './cards/whitelistDns/whitelist-dns.component';
-import WhitelistDnsTable from './cards/whitelistDns/whitelist-dns-table.component';
 import EblockerMobile from './cards/mobile/eblocker-mobile.component';
 import UserComponent from './cards/user/user.component';
 import AnonComponent from './cards/anon/anon.component';
@@ -272,8 +270,6 @@ angular.module('eblocker.dashboard', [
     .component('dashboardFilterStatisticsDiagram', FilterStatisticsDiagramComponent)
     .component('dashboardFilterStatisticsTotal', FilterStatisticsTotalComponent)
     .component('dashboardFilter', FilterComponent)
-    .component('dashboardWhitelistDns', WhitelistDns)
-    .component('dashboardWhitelistDnsTable', WhitelistDnsTable)
     .component('dashboardMobile', EblockerMobile)
     .component('dashboardUser', UserComponent)
     .component('dashboardAnonymization', AnonComponent)

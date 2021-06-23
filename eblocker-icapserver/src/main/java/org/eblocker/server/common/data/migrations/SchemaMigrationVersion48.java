@@ -51,7 +51,7 @@ public class SchemaMigrationVersion48 implements SchemaMigration {
     @Override
     public void migrate() {
         createAndSaveNewCards();
-
+        removeObsoleteCards();
         dataSource.setVersion(getTargetVersion());
     }
 
@@ -61,6 +61,10 @@ public class SchemaMigrationVersion48 implements SchemaMigration {
                     UiCard domainBlocklist = new UiCard(nextId(), name, ProductFeature.PRO.name(), getDefaultRoles(), null);
                     dashboardCardService.saveDashboardCardIfNotExists(domainBlocklist);
                 });
+    }
+
+    private void removeObsoleteCards() {
+        dashboardCardService.removeCardByName("WHITELIST_DNS");
     }
 
     private int nextId() {

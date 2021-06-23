@@ -71,6 +71,7 @@
             }
         },
         "BUTTON" : {
+            "ADD" : "Hinzufügen",
             "CANCEL" : "Abbrechen"
         },
         "DROP_DOWN" : {

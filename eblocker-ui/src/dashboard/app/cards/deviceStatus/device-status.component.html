@@ -12,7 +12,18 @@
             {{ vm.device.enabled ? 'DEVICE_STATUS.CARD.DEVICE.ENABLED' : 'DEVICE_STATUS.CARD.DEVICE.DISABLED' | translate }}
           </md-switch>
         </div>
-      </div>
-    </eb-card-content>
 
+        <div style="padding: 12px 0 8px 32px;" ng-show="vm.device.enabled && vm.domainFilterActive">
+            <div>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.device.filterPlugAndPlayTrackersEnabled" ng-change="vm.onChangeDevice(vm.device)">
+                    {{ 'DEVICE_STATUS.CARD.BLOCKING.TRACKER' | translate }}
+                </md-checkbox>
+            </div>
+            <div>
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.device.filterPlugAndPlayAdsEnabled" ng-change="vm.onChangeDevice(vm.device)">
+                    {{ 'DEVICE_STATUS.CARD.BLOCKING.ADS' | translate }}
+                </md-checkbox>
+            </div>
+        </div>
+    </eb-card-content>
 </eb-card>

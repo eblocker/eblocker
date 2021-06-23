@@ -196,9 +196,13 @@
     },
     "DEVICE_STATUS" : {
         "CARD" : {
-            "DEVICE": {
-                "ENABLED": "eBlocker enabled for this device",
-                "DISABLED": "eBlocker disabled for this device"
+            "BLOCKING" : {
+                "ADS" : "Block ads",
+                "TRACKER" : "Block trackers"
+            },
+            "DEVICE" : {
+                "ENABLED" : "eBlocker enabled for this device",
+                "DISABLED" : "eBlocker disabled for this device"
             },
             "TITLE" : "Status"
         }
@@ -280,8 +284,11 @@
     },
     "DOMAIN_BLOCKLIST" : {
         "CARD" : {
+            "SEARCH_LABEL" : "Enter domain...",
             "TABLE" : {
-                "EMPTY_LIST" : "No domains blocked"
+                "EMPTY_FOUND" : "No domains found",
+                "EMPTY_LIST" : "No domains blocked",
+                "MARK_DELETE" : "This domain will be removed from the list"
             },
             "TITLE" : "Block Domains"
         }
@@ -800,29 +807,6 @@
             },
             "TITLE" : "Trackers and Ads",
             "TOOLTIP" : "Review or delete whitelisted websites for this device."
-        }
-    },
-    "WHITELIST_DNS" : {
-        "CARD" : {
-            "ACTION" : {
-                "ADD_DOMAIN" : "Add"
-            },
-            "GLOBAL_BLOCKING" : {
-                "ADS" : "Ad Servers",
-                "LABEL" : "Block all connections to...",
-                "TRACKER" : "Trackers"
-            },
-            "SEARCH_LABEL" : "Enter domain...",
-            "TABLE" : {
-                "EMPTY_BLACKLIST" : "No domains blacklisted",
-                "EMPTY_FOUND" : "No domains found",
-                "EMPTY_WHITELIST" : "No domains whitelisted",
-                "LABEL_BLACKLIST" : "In addition, block connections to:",
-                "LABEL_WHITELIST" : "But allow connections to:",
-                "MARK_DELETE" : "eBlocker is no longer deactivated for this website. This entry will be removed from this list when reloading the dashboard."
-            },
-            "TITLE" : "Tracker and Ad Blocker Rules",
-            "TOOLTIP" : "Review or delete whitelisted domains for this device."
         }
     },
     "WIZARD" : {

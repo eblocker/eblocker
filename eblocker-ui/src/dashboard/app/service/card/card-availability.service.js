@@ -84,8 +84,7 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
         if (!hasFeature(card.requiredFeature, productInfo)) {
             // if feature of card is 'higher' than customers product feature, card is not available
             return false;
-        } else if (isCard(card.name, 'dashboard-whitelist-dns') ||
-            isCard(card.name, 'dashboard-filter-statistics')) {
+        } else if (isCard(card.name, 'dashboard-filter-statistics')) {
             return isDnsCardAvailable(card, device) || isInternetAccessLocked(device);
         } else if (isCard(card.name, 'dashboard-whitelist')) {
             return isPatternFilterCardAvailable(card, globalSslState, device) || isInternetAccessLocked(device);

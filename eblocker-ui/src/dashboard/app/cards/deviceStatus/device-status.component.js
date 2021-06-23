@@ -23,7 +23,8 @@ export default {
     }
 };
 
-function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceService, EVENTS) {
+function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceService, FilterModeService, SslService,
+                                FILTER_TYPE, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -32,16 +33,37 @@ function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceSer
     const CARD_NAME = 'DEVICE_STATUS';
 
     vm.device = {};
+    vm.globalSslEnabled = false;
+    vm.domainFilterActive = false;
+    vm.patternFilterActive = false;
+
     vm.onChangeDevice = onChangeDevice;
 
     vm.$onInit = function() {
-        getSelectedDevice();
+        loadData();
     };
 
-    $scope.$on(EVENTS.DEVICE_SELECTED, getSelectedDevice);
+    $scope.$on(EVENTS.DEVICE_SELECTED, loadData);
+
+    function loadData() {
+        loadSslStatus().then(function(response) {
+            getSelectedDevice();
+            getFilterMode();
+        });
+    }
 
     function getSelectedDevice() {
         vm.device = DeviceSelectorService.getSelectedDevice();
+    }
+
+    function loadSslStatus() {
+        return SslService.getSslStatus().then(function(response) {
+            vm.globalSslEnabled = response.data.globalSslStatus;
+            return vm.globalSslEnabled;
+        }, function(reason) {
+            logger.error('Could not get SSL status', reason);
+            return $q.reject(reason);
+        });
     }
 
     function onChangeDevice() {
@@ -50,5 +72,16 @@ function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceSer
         }, function error(response) {
             logger.error('Could not en-/disabled state of device', response);
         });
+    }
+
+    function getFilterMode() {
+        const filterMode = FilterModeService.getEffectiveFilterMode(vm.globalSslEnabled, vm.device);
+        vm.domainFilterActive = false;
+        vm.patternFilterActive = false;
+        if (filterMode === FILTER_TYPE.PATTERN) {
+            vm.patternFilterActive = true;
+        } else if (filterMode === FILTER_TYPE.DNS) {
+            vm.domainFilterActive = true;
+        }
     }
 }

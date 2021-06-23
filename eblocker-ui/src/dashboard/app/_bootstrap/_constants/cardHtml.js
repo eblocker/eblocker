@@ -35,7 +35,6 @@ export default {
     PARENTAL_CONTROL: '<dashboard-parental-control card-id="<CARD_ID_PLACEHOLDER>" user-id="<USER_ID_PLACEHOLDER>"></dashboard-parental-control>',
     SSL: '<dashboard-ssl card-id="<CARD_ID_PLACEHOLDER>"></dashboard-ssl>',
     USER: '<dashboard-user card-id="<CARD_ID_PLACEHOLDER>"></dashboard-user>',
-    WHITELIST: '<dashboard-whitelist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist>',
-    WHITELIST_DNS: '<dashboard-whitelist-dns card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist-dns>',
+    WHITELIST: '<dashboard-whitelist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist>'
 };
 /* jshint ignore:end */

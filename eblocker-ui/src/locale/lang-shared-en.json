@@ -71,6 +71,7 @@
             }
         },
         "BUTTON" : {
+            "ADD" : "Add",
             "CANCEL" : "Cancel"
         },
         "DROP_DOWN" : {

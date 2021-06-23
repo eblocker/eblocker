@@ -196,9 +196,13 @@
     },
     "DEVICE_STATUS" : {
         "CARD" : {
-            "DEVICE": {
-                "ENABLED": "eBlocker ist aktiviert für dieses Gerät",
-                "DISABLED": "eBlocker ist nicht aktiv für dieses Gerät"
+            "BLOCKING" : {
+                "ADS" : "Werbung blocken",
+                "TRACKER" : "Tracker blocken"
+            },
+            "DEVICE" : {
+                "ENABLED" : "eBlocker ist aktiviert für dieses Gerät",
+                "DISABLED" : "eBlocker ist nicht aktiv für dieses Gerät"
             },
             "TITLE" : "Status"
         }
@@ -280,8 +284,11 @@
     },
     "DOMAIN_BLOCKLIST" : {
         "CARD" : {
+            "SEARCH_LABEL" : "Domain eingeben...",
             "TABLE" : {
-                "EMPTY_LIST" : "Keine Domains geblockt"
+                "EMPTY_FOUND" : "Keine Domains gefunden",
+                "EMPTY_LIST" : "Keine Domains geblockt",
+                "MARK_DELETE" : "Diese Domain wird von der Liste entfernt"
             },
             "TITLE" : "Domains blocken"
         }
@@ -800,29 +807,6 @@
             },
             "TITLE" : "Tracker & Werbung",
             "TOOLTIP" : "Websites, auf denen Tracker-/ Werbe-Blocker deaktiviert sind."
-        }
-    },
-    "WHITELIST_DNS" : {
-        "CARD" : {
-            "ACTION" : {
-                "ADD_DOMAIN" : "Hinzufügen"
-            },
-            "GLOBAL_BLOCKING" : {
-                "ADS" : "datensammelnder Werbung",
-                "LABEL" : "Blockiere alle Verbindungen zu...",
-                "TRACKER" : "Trackern"
-            },
-            "SEARCH_LABEL" : "Domain eingeben...",
-            "TABLE" : {
-                "EMPTY_BLACKLIST" : "Keine Domains geblockt",
-                "EMPTY_FOUND" : "Keine Domains gefunden",
-                "EMPTY_WHITELIST" : "Keine Domains erlaubt",
-                "LABEL_BLACKLIST" : "Zusätzlich folgende Domains blocken:",
-                "LABEL_WHITELIST" : "Aber erlaube Verbindungen zu:",
-                "MARK_DELETE" : "Der eBlocker ist für diese Website nicht länger deaktiviert. Beim nächsten Laden des Dashboards wird der Eintrag aus der Liste entfernt."
-            },
-            "TITLE" : "Blocker",
-            "TOOLTIP" : "Überprüfen oder löschen Sie hier Domains, auf denen der eBlocker nicht aktiv ist."
         }
     },
     "WIZARD" : {

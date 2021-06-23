@@ -1975,9 +1975,10 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.userprofile.delete.bonustime.route");
 
         server
-                .uri("/api/filter/stats", filterStatisticsController)
+                .uri("/api/filter/stats/device/{deviceId}", filterStatisticsController)
                 .action("getStats", HttpMethod.GET)
-                .name("dashboard.stats.route");
+                .name("dashboard.stats.route")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
 
         server
                 .uri("/api/filter/totalStats", filterStatisticsController)
@@ -1990,14 +1991,16 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.totalStats.route.delete");
 
         server
-                .uri("/api/filter/blockeddomains", filterStatisticsController)
+                .uri("/api/filter/blockeddomains/{deviceId}", filterStatisticsController)
                 .action("getBlockedDomainsStats", HttpMethod.GET)
-                .name("dashboard.blockedStats.filter.get");
+                .name("dashboard.blockedStats.filter.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
 
         server
-                .uri("/api/filter/blockeddomains", filterStatisticsController)
+                .uri("/api/filter/blockeddomains/{deviceId}", filterStatisticsController)
                 .action("resetBlockedDomainsStats", HttpMethod.DELETE)
-                .name("dashboard.blockedStats.filter.delete");
+                .name("dashboard.blockedStats.filter.delete")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
 
         // Registraion data
         server

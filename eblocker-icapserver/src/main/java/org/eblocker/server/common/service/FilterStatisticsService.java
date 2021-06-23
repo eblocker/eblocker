@@ -81,7 +81,7 @@ public class FilterStatisticsService {
         counters.add(new StatisticsCounter(clock.instant(), protocol, ipAddress, "blocked_queries", reason, 1));
     }
 
-    public FilterStats getStatistics(Instant start, Instant end, int binSizeMinutes, String type, IpAddress ipAddress) {
+    public FilterStats getStatistics(Instant start, Instant end, int binSizeMinutes, String type, List<IpAddress> ipAddresses) {
         Map<String, FilterStats.Category> categoryByReason = createCategoryByReasonsMap();
 
         Duration duration = Duration.between(start, end);
@@ -95,6 +95,25 @@ public class FilterStatisticsService {
             bins.add(new FilterStats.Bin(startBin, stopBin));
         }
 
+        if (ipAddresses == null) {
+            updateBins(bins, start, end, binSizeMinutes, categoryByReason, type, null);
+        } else {
+            for (IpAddress ipAddress : ipAddresses) {
+                updateBins(bins, start, end, binSizeMinutes, categoryByReason, type, ipAddress);
+            }
+        }
+
+        FilterStats.Bin summary = new FilterStats.Bin(start, end);
+        for (FilterStats.Bin bin : bins) {
+            summary.setQueries(summary.getQueries() + bin.getQueries());
+            summary.setBlockedQueries(summary.getBlockedQueries() + bin.getBlockedQueries());
+            bin.getBlockedQueriesByReason().forEach((k, v) -> summary.getBlockedQueriesByReason().merge(k, v, (a, b) -> a + b));
+        }
+
+        return new FilterStats(start, end, summary, bins);
+    }
+
+    private void updateBins(List<FilterStats.Bin> bins, Instant start, Instant end, int binSizeMinutes, Map<String, FilterStats.Category> categoryByReason, String type, IpAddress ipAddress) {
         try (Stream<StatisticsCounter> storedCounters = statisticsDataSource.getCounters(type, ipAddress, start, end)) {
             storedCounters
                     .forEach(counter -> {
@@ -111,15 +130,6 @@ public class FilterStatisticsService {
                         }
                     });
         }
-
-        FilterStats.Bin summary = new FilterStats.Bin(start, end);
-        for (FilterStats.Bin bin : bins) {
-            summary.setQueries(summary.getQueries() + bin.getQueries());
-            summary.setBlockedQueries(summary.getBlockedQueries() + bin.getBlockedQueries());
-            bin.getBlockedQueriesByReason().forEach((k, v) -> summary.getBlockedQueriesByReason().merge(k, v, (a, b) -> a + b));
-        }
-
-        return new FilterStats(start, end, summary, bins);
     }
 
     public void deleteOldCounters() {

@@ -18,14 +18,13 @@ export default function FilterStatistics(logger, $http, $q) {
     'ngInject';
     'use strict';
 
-    function getStatistics(numberOfBins, binSizeMinutes) {
+    function getStatistics(deviceId, numberOfBins, binSizeMinutes) {
         return $http({
             method: 'GET',
-            url: '/api/filter/stats',
+            url: '/api/filter/stats/device/' + deviceId,
             params: {
                 numberOfBins: numberOfBins,
-                binSizeMinutes: binSizeMinutes,
-                device: ''
+                binSizeMinutes: binSizeMinutes
             }
         }).then(function(response) {
             return response.data;
@@ -56,8 +55,8 @@ export default function FilterStatistics(logger, $http, $q) {
         });
     }
 
-    function getBlockedDomainsStatistic() {
-        return $http.get('/api/filter/blockeddomains').then(function(response) {
+    function getBlockedDomainsStatistic(deviceId) {
+        return $http.get('/api/filter/blockeddomains/' + deviceId).then(function(response) {
             return response.data;
         }, function(response) {
             logger.error('Getting stats for blocked domains failed with status ' + response.status +
@@ -66,8 +65,8 @@ export default function FilterStatistics(logger, $http, $q) {
         });
     }
 
-    function resetBlockedDomainsStatistic() {
-        return $http.delete('/api/filter/blockeddomains').then(function(response) {
+    function resetBlockedDomainsStatistic(deviceId) {
+        return $http.delete('/api/filter/blockeddomains/' + deviceId).then(function(response) {
             return response.data;
         }, function(response) {
             logger.error('Resetting stats for blocked domains failed with status ' + response.status +

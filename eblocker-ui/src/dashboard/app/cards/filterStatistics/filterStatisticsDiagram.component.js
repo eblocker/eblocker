@@ -23,7 +23,8 @@ export default {
     }
 };
 
-function FilterStatisticsDiagramController($interval, $q, $translate, filterStatistics, LanguageService) {
+function FilterStatisticsDiagramController($scope, $interval, $q, $translate, filterStatistics, LanguageService,
+                                           DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -31,17 +32,22 @@ function FilterStatisticsDiagramController($interval, $q, $translate, filterStat
 
     ctrl.retrievedStatistics = {};
 
-    ctrl.$onInit = function() {
+    ctrl.$onInit = loadData;
+
+    $scope.$on(EVENTS.DEVICE_SELECTED, loadData);
+
+    function loadData() {
+        let device = DeviceSelectorService.getSelectedDevice();
         ctrl.labelFormat = getLabelFormat(ctrl.numberOfBins, ctrl.binSizeMinutes);
         filterStatistics
-            .getStatistics(ctrl.numberOfBins, ctrl.binSizeMinutes)
+            .getStatistics(device.id, ctrl.numberOfBins, ctrl.binSizeMinutes)
             .then(function(response) {
                 ctrl.retrievedStatistics = response;
                 ctrl.updateChart(response);
                 ctrl.updatePieChart(response.summary);
                 ctrl.updateDisplayBin(response.summary);
             });
-    };
+    }
 
     var reasons = [ 'TRACKERS', 'ADS', 'CUSTOM' ];
     var colorsByReason = {

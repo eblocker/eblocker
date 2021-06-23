@@ -24,6 +24,7 @@ import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterResult;
@@ -42,12 +43,15 @@ public class AdBlockerProcessor implements TransactionProcessor {
 
     private final FilterManager filterManager;
     private final PatternBlockerUtils patternBlockerUtils;
+    private final DeviceService deviceService;
 
     @Inject
     public AdBlockerProcessor(FilterManager filterManager,
-                              PatternBlockerUtils patternBlockerUtils) {
+                              PatternBlockerUtils patternBlockerUtils,
+                              DeviceService deviceService) {
         this.filterManager = filterManager;
         this.patternBlockerUtils = patternBlockerUtils;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -58,6 +62,10 @@ public class AdBlockerProcessor implements TransactionProcessor {
 
         Session session = transaction.getSession();
         if (!session.isPatternFiltersEnabled()) {
+            return true;
+        }
+
+        if (!deviceService.getDeviceById(session.getDeviceId()).isFilterAdsEnabled()) {
             return true;
         }
 

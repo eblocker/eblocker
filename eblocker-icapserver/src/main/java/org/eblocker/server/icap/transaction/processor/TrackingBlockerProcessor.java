@@ -27,6 +27,7 @@ import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionCache;
 import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterResult;
@@ -47,16 +48,19 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
     private final FilterManager filterManager;
     private final PatternBlockerUtils patternBlockerUtils;
     private final TransactionCache transactionCache;
+    private final DeviceService deviceService;
 
     @Inject
     public TrackingBlockerProcessor(DataSource dataSource,
                                     FilterManager filterManager,
                                     PatternBlockerUtils patternBlockerUtils,
-                                    TransactionCache transactionCache) {
+                                    TransactionCache transactionCache,
+                                    DeviceService deviceService) {
         this.dataSource = dataSource;
         this.filterManager = filterManager;
         this.patternBlockerUtils = patternBlockerUtils;
         this.transactionCache = transactionCache;
+        this.deviceService = deviceService;
     }
 
     private boolean askBlockOrRedirect(Transaction transaction, Session session) {
@@ -166,6 +170,10 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
 
         Session session = transaction.getSession();
         if (!session.isPatternFiltersEnabled()) {
+            return true;
+        }
+
+        if (!deviceService.getDeviceById(session.getDeviceId()).isFilterTrackersEnabled()) {
             return true;
         }
 

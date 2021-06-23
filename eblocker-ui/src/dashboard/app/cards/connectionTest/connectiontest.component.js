@@ -174,11 +174,11 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
     }
 
     function evaluateAdsDomain(cfgData, testresult) {
-        return evaluateDomainBlocker(cfgData, testresult, 'filterPlugAndPlayAdsEnabled');
+        return evaluateDomainBlocker(cfgData, testresult, 'filterAdsEnabled');
     }
 
     function evaluateTracker(cfgData, testresult) {
-        return evaluateDomainBlocker(cfgData, testresult, 'filterPlugAndPlayTrackersEnabled');
+        return evaluateDomainBlocker(cfgData, testresult, 'filterTrackersEnabled');
     }
 
     function evaluateDomainBlocker(cfgData, testresult, filterTypeEnabledKey) {

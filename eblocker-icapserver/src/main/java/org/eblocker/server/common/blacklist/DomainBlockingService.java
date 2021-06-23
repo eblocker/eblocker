@@ -765,8 +765,8 @@ public class DomainBlockingService {
             Device device = deviceConfig.getDevice();
             config.filterMode = FilterModeUtils.getEffectiveFilterMode(sslEnabledGlobally, device);
             config.sslEnabled = device.isSslEnabled();
-            config.filterAds = device.isFilterPlugAndPlayAdsEnabled();
-            config.filterTrackers = device.isFilterPlugAndPlayTrackersEnabled();
+            config.filterAds = device.isFilterAdsEnabled();
+            config.filterTrackers = device.isFilterTrackersEnabled();
             config.filterMalware = device.isMalwareFilterEnabled();
             config.domainRecordingEnabled = device.isDomainRecordingEnabled();
 

@@ -158,8 +158,8 @@ public class ControlBarControllerImpl extends SessionContextController implement
                 device.getOperatingUser(),
                 profile,
                 device.getFilterMode(),
-                device.isFilterPlugAndPlayAdsEnabled(),
-                device.isFilterPlugAndPlayTrackersEnabled(),
+                device.isFilterAdsEnabled(),
+                device.isFilterTrackersEnabled(),
                 device.isSslEnabled()
         );
     }

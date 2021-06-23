@@ -494,7 +494,7 @@ public class DeviceControllerImpl implements DeviceController {
         String deviceId = request.getHeader("deviceId");
         Device device = deviceService.getDeviceById(deviceId);
         Boolean value = request.getBodyAs(Boolean.class);
-        device.setFilterPlugAndPlayAdsEnabled(value);
+        device.setFilterAdsEnabled(value);
         deviceService.updateDevice(device);
     }
 
@@ -503,7 +503,7 @@ public class DeviceControllerImpl implements DeviceController {
         String deviceId = request.getHeader("deviceId");
         Device device = deviceService.getDeviceById(deviceId);
         Boolean value = request.getBodyAs(Boolean.class);
-        device.setFilterPlugAndPlayTrackersEnabled(value);
+        device.setFilterTrackersEnabled(value);
         deviceService.updateDevice(device);
     }
 

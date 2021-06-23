@@ -40,8 +40,8 @@ public class Device extends ModelObject {
     private boolean routeThroughTor = false;
     private Integer useVPNProfileID;
     private FilterMode filterMode = FilterMode.AUTOMATIC;
-    private boolean filterPlugAndPlayAdsEnabled = true;
-    private boolean filterPlugAndPlayTrackersEnabled = true;
+    private boolean filterAdsEnabled = true;
+    private boolean filterTrackersEnabled = true;
     private boolean malwareFilterEnabled = true;
     private boolean sslEnabled = false;
     private boolean sslRecordErrorsEnabled = true;
@@ -242,20 +242,20 @@ public class Device extends ModelObject {
         this.filterMode = filterMode;
     }
 
-    public boolean isFilterPlugAndPlayAdsEnabled() {
-        return filterPlugAndPlayAdsEnabled;
+    public boolean isFilterAdsEnabled() {
+        return filterAdsEnabled;
     }
 
-    public void setFilterPlugAndPlayAdsEnabled(boolean filterPlugAndPlayAdsEnabled) {
-        this.filterPlugAndPlayAdsEnabled = filterPlugAndPlayAdsEnabled;
+    public void setFilterAdsEnabled(boolean filterAdsEnabled) {
+        this.filterAdsEnabled = filterAdsEnabled;
     }
 
-    public boolean isFilterPlugAndPlayTrackersEnabled() {
-        return filterPlugAndPlayTrackersEnabled;
+    public boolean isFilterTrackersEnabled() {
+        return filterTrackersEnabled;
     }
 
-    public void setFilterPlugAndPlayTrackersEnabled(boolean filterPlugAndPlayTrackersEnabled) {
-        this.filterPlugAndPlayTrackersEnabled = filterPlugAndPlayTrackersEnabled;
+    public void setFilterTrackersEnabled(boolean filterTrackersEnabled) {
+        this.filterTrackersEnabled = filterTrackersEnabled;
     }
 
     public boolean isMalwareFilterEnabled() {

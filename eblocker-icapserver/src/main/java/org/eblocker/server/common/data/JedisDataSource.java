@@ -514,8 +514,8 @@ public class JedisDataSource implements DataSource {
         String filterModeName = map.get(KEY_FILTER_MODE);
         if (filterModeName != null) {
             device.setFilterMode(FilterMode.valueOf(filterModeName));
-            device.setFilterPlugAndPlayAdsEnabled(Boolean.parseBoolean(map.get(KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED)));
-            device.setFilterPlugAndPlayTrackersEnabled(Boolean.parseBoolean(map.get(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED)));
+            device.setFilterAdsEnabled(Boolean.parseBoolean(map.get(KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED)));
+            device.setFilterTrackersEnabled(Boolean.parseBoolean(map.get(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED)));
         }
 
         return device;
@@ -571,8 +571,8 @@ public class JedisDataSource implements DataSource {
             map.put(KEY_DEFAULT_SYSTEM_USER_ID, String.valueOf(device.getDefaultSystemUser()));
             map.put(KEY_IS_OPENVPN_CLIENT, device.isVpnClient() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_FILTER_MODE, device.getFilterMode().name());
-            map.put(KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED, Boolean.toString(device.isFilterPlugAndPlayAdsEnabled()));
-            map.put(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED, Boolean.toString(device.isFilterPlugAndPlayTrackersEnabled()));
+            map.put(KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED, Boolean.toString(device.isFilterAdsEnabled()));
+            map.put(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED, Boolean.toString(device.isFilterTrackersEnabled()));
             jedis.hmset(device.getId(), map);
         }
     }

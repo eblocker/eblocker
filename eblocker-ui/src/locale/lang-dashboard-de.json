@@ -191,7 +191,8 @@
                 "DISABLED" : "Nicht aufzeichnen",
                 "ENABLED" : "Aufzeichnen (letzte 24h)"
             },
-            "TITLE" : "Personal Device Firewall"
+            "TITLE" : "Personal Device Firewall",
+            "TOOLTIP" : "Überprüfen Sie, welche Domains dieses Gerät aufruft"
         }
     },
     "DEVICE_STATUS" : {
@@ -204,7 +205,8 @@
                 "ENABLED" : "eBlocker ist aktiviert für dieses Gerät",
                 "DISABLED" : "eBlocker ist nicht aktiv für dieses Gerät"
             },
-            "TITLE" : "Status"
+            "TITLE" : "Status",
+            "TOOLTIP" : "Status dieses Geräts"
         }
     },
     "DIALOGS" : {
@@ -290,7 +292,8 @@
                 "EMPTY_LIST" : "Keine Domains geblockt",
                 "MARK_DELETE" : "Diese Domain wird von der Liste entfernt"
             },
-            "TITLE" : "Domains blocken"
+            "TITLE" : "Domains blocken",
+            "TOOLTIP" : "Diese Domains für dieses Gerät immer blocken"
         }
     },
     "DOMAIN_PASSLIST" : {
@@ -298,7 +301,8 @@
             "TABLE" : {
                 "EMPTY_LIST" : "Keine Domains erlaubt"
             },
-            "TITLE" : "Domains erlauben"
+            "TITLE" : "Domains erlauben",
+            "TOOLTIP" : "Diese Domains für dieses Gerät immer erlauben"
         }
     },
     "EXPIRED" : {

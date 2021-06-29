@@ -19,22 +19,21 @@ package org.eblocker.server.common.data.dns;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.server.common.data.JedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -67,7 +66,7 @@ public class JedisDnsDataSource implements DnsDataSource {
     @Override
     public void deleteEventsBefore(Instant t) {
         try (Jedis jedis = jedisPool.getResource()) {
-            List<String> keys = scanKeys(jedis, KEY_PATTERN_EVENTS);
+            Set<String> keys = JedisUtils.scanKeys(jedis, KEY_PATTERN_EVENTS);
 
             Map<String, List<ResolverEvent>> eventsByResolver = getEventsByResolver(jedis, keys);
             Pipeline pipeline = jedis.pipelined();
@@ -125,17 +124,4 @@ public class JedisDnsDataSource implements DnsDataSource {
         return i - 1;
     }
 
-    private List<String> scanKeys(Jedis jedis, String pattern) {
-        List<String> keys = new ArrayList<>();
-
-        ScanParams params = new ScanParams().count(10).match(pattern);
-        String cursor = ScanParams.SCAN_POINTER_START;
-        do {
-            ScanResult<String> result = jedis.scan(cursor, params);
-            cursor = result.getStringCursor();
-            keys.addAll(result.getResult());
-        } while (!cursor.equals(ScanParams.SCAN_POINTER_START));
-
-        return keys;
-    }
 }

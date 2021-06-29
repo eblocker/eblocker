@@ -16,53 +16,16 @@
  */
 package org.eblocker.server.http.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eblocker.server.common.TestRedisServer;
+import org.eblocker.server.common.EmbeddedRedisTestBase;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.JedisDataSource;
-import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import redis.clients.jedis.JedisPool;
 
-public class EmbeddedRedisServiceTestBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EmbeddedRedisServiceTestBase.class);
-
-    private JedisPool jedisPool;
-    protected ObjectMapper objectMapper;
+public class EmbeddedRedisServiceTestBase extends EmbeddedRedisTestBase {
     protected DataSource dataSource;
-    protected TestRedisServer redisServer;
-    protected AppModuleRemovalMessageProvider appModuleRemovalMessageProvider;
 
-    @Before
-    public void setup() {
-        doSetup();
-    }
-
-    @After
-    public void shutdown() {
-        doShutdown();
-    }
-
+    @Override
     protected void doSetup() {
-        redisServer = new TestRedisServer();
-        redisServer.start();
-
-        jedisPool = redisServer.getPool();
-        objectMapper = new ObjectMapper();
+        super.doSetup();
         dataSource = new JedisDataSource(jedisPool, objectMapper);
-        appModuleRemovalMessageProvider = Mockito.mock(AppModuleRemovalMessageProvider.class);
-    }
-
-    protected void doShutdown() {
-        redisServer.stop();
-    }
-
-    protected JedisPool getJedisPool() {
-        return jedisPool;
     }
 }

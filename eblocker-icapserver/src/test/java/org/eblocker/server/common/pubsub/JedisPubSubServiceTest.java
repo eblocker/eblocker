@@ -35,7 +35,7 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
 
     @Test(timeout = 5000)
     public void testSubscriberException() throws InterruptedException {
-        JedisPubSubService service = new JedisPubSubService(getJedisPool(), RETRY_DELAY);
+        JedisPubSubService service = new JedisPubSubService(jedisPool, RETRY_DELAY);
 
         // run publisher thread to publish messages for subscriber
         runPublisher = true;
@@ -69,8 +69,8 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
         subscriberThread.join();
 
         // check all connections are still usable
-        while (getJedisPool().getNumIdle() != 0) {
-            Jedis jedis = getJedisPool().getResource();
+        while (jedisPool.getNumIdle() != 0) {
+            Jedis jedis = jedisPool.getResource();
             jedis.set("test" + jedis, "test");
         }
     }
@@ -78,7 +78,7 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
     @Test(timeout = 5000)
     public void testJedisPubSubService() throws InterruptedException {
 
-        JedisPubSubService service = new JedisPubSubService(getJedisPool(), RETRY_DELAY);
+        JedisPubSubService service = new JedisPubSubService(jedisPool, RETRY_DELAY);
         service.publish(CHANNEL, "pre subscription - must not be received");
 
         // Subscribing to a channel blocks the starting thread, so we need to use a second
@@ -132,7 +132,6 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
 
     @Test//(timeout = 5000)
     public void testReconnectAfterLostConnection() throws InterruptedException {
-        JedisPool jedisPool = getJedisPool();
         JedisPubSubService service = new JedisPubSubService(jedisPool, RETRY_DELAY);
 
         // Sempahore with 4 permits for two subscribe and two message events

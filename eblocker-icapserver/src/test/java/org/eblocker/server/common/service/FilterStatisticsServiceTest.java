@@ -24,7 +24,7 @@ import org.eblocker.server.common.data.statistic.FilterStatisticsDataSource;
 import org.eblocker.server.common.data.statistic.StatisticsCounter;
 import org.eblocker.server.common.data.statistic.TotalCounter;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

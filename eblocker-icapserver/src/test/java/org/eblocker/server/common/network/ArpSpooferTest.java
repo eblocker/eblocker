@@ -26,7 +26,7 @@ import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

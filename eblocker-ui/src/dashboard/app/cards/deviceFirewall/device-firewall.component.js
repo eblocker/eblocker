@@ -69,7 +69,13 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     function loadDevice() {
         vm.device = DeviceSelectorService.getSelectedDevice();
         return DomainRecorderService.getRecordedDomains(vm.device.id).then(function(response) {
-            vm.recordedDomains = angular.copy(response.data).sort(compareRecordedDomains);
+            let recordedDomains = [];
+            Object.keys(response.data).forEach((domain) => {
+                let elem = response.data[domain];
+                elem.domain = domain;
+                recordedDomains.push(elem);
+            });
+            vm.recordedDomains = recordedDomains.sort(compareRecordedDomains);
             return vm.recordedDomains;
         }, function(reason) {
             logger.error('Could not get recorded domains', reason);

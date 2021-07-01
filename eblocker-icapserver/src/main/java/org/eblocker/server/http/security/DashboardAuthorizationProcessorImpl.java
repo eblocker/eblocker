@@ -12,8 +12,6 @@ import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.NotFoundException;
 import org.restexpress.exception.UnauthorizedException;
 import org.restexpress.route.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This pre-processor verifies that the current dashboard user has access to routes that are flagged with
@@ -28,8 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class DashboardAuthorizationProcessorImpl implements DashboardAuthorizationProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(DashboardAuthorizationProcessorImpl.class);
-
     private final DeviceService deviceService;
 
     @Inject
@@ -43,12 +39,10 @@ public class DashboardAuthorizationProcessorImpl implements DashboardAuthorizati
 
         if (route.isFlagged(VERIFY_DEVICE_ID)) {
             verifyDeviceAccess(request);
-            LOG.warn("DEVICE ACCESS ALLOWED: {}\t{}\t{}\t{}", request.getAttachment("appContext"), request.getResolvedRoute().getName(), request.getHttpMethod(), request.getPath());
         }
 
         if (route.isFlagged(VERIFY_USER_ID)) {
             verifyUserAccess(request);
-            LOG.warn("USER ACCESS ALLOWED: {}\t{}\t{}\t{}", request.getAttachment("appContext"), request.getResolvedRoute().getName(), request.getHttpMethod(), request.getPath());
         }
     }
 

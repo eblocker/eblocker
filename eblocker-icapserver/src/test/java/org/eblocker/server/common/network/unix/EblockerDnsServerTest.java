@@ -38,7 +38,7 @@ import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

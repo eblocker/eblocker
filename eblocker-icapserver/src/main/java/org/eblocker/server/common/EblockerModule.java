@@ -40,7 +40,9 @@ import org.eblocker.server.common.blacklist.DomainBlockingService;
 import org.eblocker.server.common.blacklist.RequestHandler;
 import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.blocker.UpdateTaskFactory;
+import org.eblocker.server.common.data.DomainRecordingDataSource;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.JedisDomainRecordingDataSource;
 import org.eblocker.server.common.data.dns.DnsDataSource;
 import org.eblocker.server.common.data.dns.JedisDnsDataSource;
 import org.eblocker.server.common.data.events.DataSourceEventLogger;
@@ -311,6 +313,7 @@ public class EblockerModule extends BaseModule {
         bind(EblockerIcapServer.class).in(Scopes.SINGLETON);
         bind(DnsDataSource.class).to(JedisDnsDataSource.class).in(Scopes.SINGLETON);
         bind(FilterStatisticsDataSource.class).to(JedisFilterStatisticsDataSource.class).in(Scopes.SINGLETON);
+        bind(DomainRecordingDataSource.class).to(JedisDomainRecordingDataSource.class).in(Scopes.SINGLETON);
         bind(FilterStatisticsService.class);
         bind(ChannelHandler.class).annotatedWith(Names.named("DomainBlockingRequestHandler")).to(RequestHandler.class);
         bind(ChannelHandler.class).annotatedWith(Names.named("AccessDeniedRequestHandler")).to(AccessDeniedRequestHandler.class);

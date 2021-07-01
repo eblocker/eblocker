@@ -34,7 +34,7 @@ import org.eblocker.server.http.security.JsonWebToken;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
 import org.junit.After;

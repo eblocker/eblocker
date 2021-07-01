@@ -20,7 +20,7 @@ import org.eblocker.server.common.network.icmpv6.PrefixOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

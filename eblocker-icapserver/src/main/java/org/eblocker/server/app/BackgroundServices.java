@@ -48,6 +48,7 @@ import org.eblocker.server.common.scheduler.MessageCenterServiceScheduler;
 import org.eblocker.server.common.scheduler.OpenVpnServiceScheduler;
 import org.eblocker.server.common.scheduler.PCAccessRestrictionsServiceScheduler;
 import org.eblocker.server.common.scheduler.ProblematicRouterDetectionScheduler;
+import org.eblocker.server.common.scheduler.RecordedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.Scheduler;
 import org.eblocker.server.common.scheduler.SessionPurgerScheduler;
 import org.eblocker.server.common.scheduler.StartupTaskScheduler;
@@ -116,6 +117,7 @@ public class BackgroundServices {
     private final BlockedDomainsWriteScheduler blockedDomainsWriteScheduler;
     private final UpnpWatchdogScheduler upnpWatchdogScheduler;
     private final BlockerUpdateScheduler blockerUpdateScheduler;
+    private final RecordedDomainsWriteScheduler recordedDomainsWriteScheduler;
 
     @Inject
     public BackgroundServices(
@@ -157,6 +159,7 @@ public class BackgroundServices {
             BlockedDomainsWriteScheduler blockedDomainsWriteScheduler,
             UpnpWatchdogScheduler upnpWatchdogScheduler,
             BlockerUpdateScheduler blockerUpdateScheduler,
+            RecordedDomainsWriteScheduler recordedDomainsWriteScheduler,
             @Named("tor.connection.check.delay") long torDelay) {
 
         this.highPrioExecutorService = highPrioExecutorService;
@@ -202,6 +205,7 @@ public class BackgroundServices {
         this.blockedDomainsWriteScheduler = blockedDomainsWriteScheduler;
         this.upnpWatchdogScheduler = upnpWatchdogScheduler;
         this.blockerUpdateScheduler = blockerUpdateScheduler;
+        this.recordedDomainsWriteScheduler = recordedDomainsWriteScheduler;
     }
 
     @SubSystemInit
@@ -270,11 +274,13 @@ public class BackgroundServices {
         blockedDomainsWriteScheduler.schedule(lowPrioExecutorService);
         upnpWatchdogScheduler.schedule(lowPrioExecutorService);
         blockerUpdateScheduler.schedule(lowPrioExecutorService);
+        recordedDomainsWriteScheduler.schedule(lowPrioExecutorService);
     }
 
     @SubSystemShutdown
     public void shutdown() {
         zeroconfRegistrationService.unregisterConsoleService();
+        recordedDomainsWriteScheduler.shutdown();
         STATUS.info("Background services shut down.");
     }
 }

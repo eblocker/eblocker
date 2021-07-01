@@ -1,6 +1,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.common.collect.Sets;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.squid.FailedConnection;
 import org.eblocker.server.common.squid.SquidWarningService;

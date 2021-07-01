@@ -21,7 +21,7 @@ import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMeta
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.util.HttpClient;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.icap.filter.FilterDefinitionFormat;
 import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;

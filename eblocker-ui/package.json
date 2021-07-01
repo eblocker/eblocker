@@ -101,7 +101,7 @@
         "karma-phantomjs-launcher": "1.0.4",
         "karma-safari-launcher": "1.0.0",
         "karma-sonarqube-unit-reporter": "0.0.18",
-        "lodash": "4.17.19",
+        "lodash": "4.17.21",
         "nlf": "2.0.1",
         "node-notifier": "8.0.1",
         "path": "0.12.7",

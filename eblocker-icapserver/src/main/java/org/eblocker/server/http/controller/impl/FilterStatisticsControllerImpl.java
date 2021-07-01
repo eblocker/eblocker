@@ -27,6 +27,7 @@ import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.util.FilterModeUtils;
 import org.eblocker.server.http.controller.FilterStatisticsController;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
 import org.restexpress.Request;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Singleton
 public class FilterStatisticsControllerImpl implements FilterStatisticsController {
@@ -65,7 +67,7 @@ public class FilterStatisticsControllerImpl implements FilterStatisticsControlle
         int numberOfBins = getNumberOfBins(request);
         int diagramWidth = numberOfBins * binSizeMinutes;
         String type = getType(request);
-        IpAddress ipAddress = getIpAddress(request);
+        List<IpAddress> ipAddresses = getIpAddresses(request);
 
         ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
@@ -77,7 +79,7 @@ public class FilterStatisticsControllerImpl implements FilterStatisticsControlle
 
         LOG.info("Filter Stats from {} to {} / {} - {} / {} - {}",
                 startTime, endTime, binSizeMinutes, diagramWidth, minuteOfDay, offset);
-        return filterStatisticsService.getStatistics(startTime, endTime, binSizeMinutes, type, ipAddress);
+        return filterStatisticsService.getStatistics(startTime, endTime, binSizeMinutes, type, ipAddresses);
     }
 
     @Override
@@ -94,18 +96,17 @@ public class FilterStatisticsControllerImpl implements FilterStatisticsControlle
 
     @Override
     public BlockedDomainsStats getBlockedDomainsStats(Request request, Response response) {
-        return blockedDomainsStatisticService.getStatsByDeviceId(getDeviceId(request));
+        return blockedDomainsStatisticService.getStatsByDeviceId(getDevice(request).getId());
     }
 
     @Override
     public BlockedDomainsStats resetBlockedDomainsStats(Request request, Response response) {
-        return blockedDomainsStatisticService.resetStats(getDeviceId(request));
+        return blockedDomainsStatisticService.resetStats(getDevice(request).getId());
     }
 
-    private String getDeviceId(Request request) {
-        IpAddress ipAddress = ControllerUtils.getRequestIPAddress(request);
-        Device device = deviceService.getDeviceByIp(ipAddress);
-        return device.getId();
+    private Device getDevice(Request request) {
+        String deviceId = request.getHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY);
+        return deviceService.getDeviceById(deviceId);
     }
 
     private int getBinSizeMinutes(Request request) {
@@ -116,8 +117,8 @@ public class FilterStatisticsControllerImpl implements FilterStatisticsControlle
         return Integer.parseInt(ControllerUtils.getQueryParameter(request, "numberOfBins", "31"));
     }
 
-    private IpAddress getIpAddress(Request request) {
-        return request.getHeader("device") != null ? ControllerUtils.getRequestIPAddress(request) : null;
+    private List<IpAddress> getIpAddresses(Request request) {
+        return getDevice(request).getIpAddresses();
     }
 
     private String getType(Request request) {

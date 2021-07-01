@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DnsService(logger, $http, $interval, DataCachingService) {
+export default function DnsService(logger, $q, $http, $interval, DataCachingService) {
     'ngInject';
 
     const PATH = '/api/dashboard/dns/status';

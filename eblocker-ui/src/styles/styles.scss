@@ -642,6 +642,7 @@ md-icon.md-eBlockerTheme-theme.card-ok-icon {
 }
 
 .eblocker-dropdown-component {
+    position: relative;
     font-size: 15px;
     font-weight: 400;
     letter-spacing: 0.1px;
@@ -659,8 +660,8 @@ md-icon.md-eBlockerTheme-theme.card-ok-icon {
     .eblocker-dropdown-content {
         position:absolute;
         z-index: 1000;
-        top: 65px;
-        right: 10px;
+        top: 40px;
+        right: 0px;
         width: 250px;
         max-height: 300px;
         border-radius: 3px;

@@ -83,7 +83,7 @@ function OnlineTimeController($interval, $q, $timeout, LocalTimestampService, on
 
     function startOnlineTimeInterval() {
         if (angular.isUndefined(onlineTimeInterval)) {
-            onlineTimeInterval = $interval(onlineTimeIntervalExpired, 3000);
+            onlineTimeInterval = $interval(onlineTimeIntervalExpired, 3000, 0, true, false);
         }
     }
 

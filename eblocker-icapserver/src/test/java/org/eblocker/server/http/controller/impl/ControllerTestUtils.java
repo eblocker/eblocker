@@ -92,12 +92,15 @@ public class ControllerTestUtils {
     public static Request mockRequestByDevice(Device device) {
         IpAddress deviceIp = device.getIpAddresses().get(0);
 
-        HttpTransactionIdentifier identifier = Mockito.mock(HttpTransactionIdentifier.class);
-        when(identifier.getOriginalClientIP()).thenReturn(deviceIp);
-
         Request request = Mockito.mock(Request.class);
-        when(request.getAttachment("transactionIdentifier")).thenReturn(identifier);
+        setIpAddressOfMockRequest(deviceIp, request);
         return request;
+    }
+
+    public static void setIpAddressOfMockRequest(IpAddress ipAddress, Request request) {
+        HttpTransactionIdentifier identifier = Mockito.mock(HttpTransactionIdentifier.class);
+        when(identifier.getOriginalClientIP()).thenReturn(ipAddress);
+        when(request.getAttachment("transactionIdentifier")).thenReturn(identifier);
     }
 
     private static class SerializationProvider extends AbstractSerializationProvider {

@@ -70,6 +70,10 @@
                 }
             }
         },
+        "BUTTON" : {
+            "ADD" : "Add",
+            "CANCEL" : "Cancel"
+        },
         "DROP_DOWN" : {
             "TOOLTIP" : "Open menu"
         },
@@ -117,6 +121,24 @@
 	"HELP": {
 	    "URL" : "https://eblocker.org/docs"
 	},
+        "LOGIN": {
+            "CARD" : {
+                "ACTION" : {
+                    "RESET" : "Forgot password",
+                    "SUBMIT_COUNTDOWN" : "{sec, select, 0{Login} 1{Please wait {sec} second} other{Please wait {sec} seconds}}"
+                },
+                "ERROR" : {
+                    "PASSWORD_INVALID" : "Wrong password",
+                    "PASSWORD_REQUIRED" : "Please enter your password.",
+                    "PASSWORD_TOO_FREQ" : "Please wait before retyping your password.",
+                    "UNKNOWN" : "Unknown error, please try again later."
+                },
+                "INPUT" : {
+                    "LABEL" : "Administrator password"
+                },
+                "TITLE" : "Log in"
+            }
+        },
         "MESSAGES" : {
             "MESSAGE_ALERT_EVENT_CONTENT" : "System events are available",
             "MESSAGE_ALERT_EVENT_LABEL" : "Show events",

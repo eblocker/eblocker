@@ -149,7 +149,7 @@ function TrackersController(logger, FilterService, WhitelistService, DeviceServi
             vm.filterMode = DeviceService.getFilterMode(vm.device.filterMode, vm.globalSslStatus, vm.device);
             if (vm.filterMode === 'PLUG_AND_PLAY_NO_SSL') {
 
-                vm.blockingVars.blockGlobally = vm.device.filterPlugAndPlayTrackersEnabled;
+                vm.blockingVars.blockGlobally = vm.device.filterTrackersEnabled;
 
                 DnsStatistics.getStatistics(21, 1, 'dns').then(function success(response) {
                     vm.statistics = response;

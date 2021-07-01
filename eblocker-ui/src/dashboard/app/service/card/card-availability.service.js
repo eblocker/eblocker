@@ -15,7 +15,8 @@
  * permissions and limitations under the License.
  */
 export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, DeviceService, SslService,
-                                                UserProfileService, PauseService, VpnHomeService) {
+                                                UserProfileService, PauseService, VpnHomeService,
+                                                DeviceSelectorService) {
     'ngInject';
 
     let device, globalSslState, profile, pause, vpnHomeStatus;
@@ -83,8 +84,7 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
         if (!hasFeature(card.requiredFeature, productInfo)) {
             // if feature of card is 'higher' than customers product feature, card is not available
             return false;
-        } else if (isCard(card.name, 'dashboard-whitelist-dns') ||
-            isCard(card.name, 'dashboard-filter-statistics')) {
+        } else if (isCard(card.name, 'dashboard-filter-statistics')) {
             return isDnsCardAvailable(card, device) || isInternetAccessLocked(device);
         } else if (isCard(card.name, 'dashboard-whitelist')) {
             return isPatternFilterCardAvailable(card, globalSslState, device) || isInternetAccessLocked(device);
@@ -102,6 +102,12 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
             return isIconCardAvailable(device, globalSslState) || isInternetAccessLocked(device);
         } else if (isCard(card.name, 'dashboard-frag-finn')) {
             return isFragFinnCardAvailable(profile);
+        } else if (isCard(card.name, 'dashboard-connection-test')) {
+            return isConnectionTestCardAvailable(device);
+        } else if (isCard(card.name, 'dashboard-parental-control')) {
+            return isParentalControlCardAvailable();
+        } else if (isCard(card.name, 'dashboard-anonymization')) {
+            return isAnonymizationCardAvailable();
         } else if (isCard(card.name, 'dashboard-filter')) {
             // TODO this will be implemented in BE: Only Admin may change filter type
             // Admin will be able to allow users to see this card.
@@ -112,11 +118,12 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
 
     function isPatternFilterCardAvailable(card, globalSslState, device) {
         return device.filterMode !== FILTER_TYPE.DNS &&
-            (device.filterMode !== FILTER_TYPE.AUTOMATIC || (globalSslState && device.sslEnabled));
+            (device.filterMode !== FILTER_TYPE.AUTOMATIC || (globalSslState && device.sslEnabled)) &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isSslCardAvailable() {
-        return globalSslState;
+        return globalSslState && DeviceSelectorService.isLocalDevice();
     }
 
     function isDnsCardAvailable(card, device) {
@@ -133,19 +140,33 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
     }
 
     function isMobileCardAvailable(card, vpnHomeStatus, device) {
-        return vpnHomeStatus.isRunning && device.mobileState;
+        return vpnHomeStatus.isRunning && device.mobileState && DeviceSelectorService.isLocalDevice();
     }
 
     function isUserCardAvailable(device) {
-        return device.assignedUser !== device.defaultSystemUser;
+        return device.assignedUser !== device.defaultSystemUser &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isIconCardAvailable(device, sslGlobal) {
-        return !device.controlBarAutoMode || (device.sslEnabled && sslGlobal);
+        return (!device.controlBarAutoMode || (device.sslEnabled && sslGlobal)) &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isFragFinnCardAvailable(profile) {
         return profile.controlmodeUrls;
+    }
+
+    function isConnectionTestCardAvailable(device) {
+        return device.enabled && DeviceSelectorService.isLocalDevice() && !device.paused;
+    }
+
+    function isParentalControlCardAvailable() {
+        return DeviceSelectorService.isLocalDevice();
+    }
+
+    function isAnonymizationCardAvailable() {
+        return DeviceSelectorService.isLocalDevice();
     }
 
     /**

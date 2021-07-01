@@ -20,13 +20,12 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.JedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
 import java.io.Closeable;
 import java.time.Instant;
@@ -37,7 +36,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +68,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
     @Override
     public Stream<StatisticsCounter> getCounters() {
         try (Jedis jedis = jedisPool.getResource()) {
-            Set<String> keys = scanKeys(jedis, KEY_PATTERN_COUNTER, e -> true);
+            Set<String> keys = JedisUtils.scanKeys(jedis, KEY_PATTERN_COUNTER, e -> true);
             return StreamSupport.stream(new StatisticsCounterSpliterator(jedisPool, keys), false);
         }
     }
@@ -90,7 +88,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
 
         String keyPattern = String.format(KEY_PATTERN_COUNTER_FORMAT, type, queryIpAddress);
         try (Jedis jedis = jedisPool.getResource()) {
-            Set<String> keys = scanKeys(jedis, keyPattern, keyPredicate);
+            Set<String> keys = JedisUtils.scanKeys(jedis, keyPattern, keyPredicate);
             StatisticsCounterSpliterator spliterator = new StatisticsCounterSpliterator(jedisPool, keys);
             Stream<StatisticsCounter> stream = StreamSupport.stream(spliterator, false);
             return stream.onClose(spliterator::close);
@@ -114,7 +112,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
     public void deleteCountersBefore(Instant instant) {
         try (Jedis jedis = jedisPool.getResource()) {
             Predicate<String> keyPredicate = new KeyDateTimePredicate(Instant.EPOCH, instant);
-            Set<String> keys = scanKeys(jedis, KEY_PATTERN_COUNTER, keyPredicate);
+            Set<String> keys = JedisUtils.scanKeys(jedis, KEY_PATTERN_COUNTER, keyPredicate);
             Pipeline pipeline = jedis.pipelined();
             keys.forEach(pipeline::del);
             pipeline.sync();
@@ -173,20 +171,6 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
             }
             jedis.set(KEY_TOTAL_RESET, String.valueOf(System.currentTimeMillis()));
         }
-    }
-
-    private Set<String> scanKeys(Jedis jedis, String pattern, Predicate<String> keyPredicate) {
-        Set<String> keys = new HashSet<>();
-
-        ScanParams params = new ScanParams().count(100).match(pattern);
-        String cursor = ScanParams.SCAN_POINTER_START;
-        do {
-            ScanResult<String> result = jedis.scan(cursor, params);
-            cursor = result.getStringCursor();
-            result.getResult().stream().filter(keyPredicate).forEach(keys::add);
-        } while (!cursor.equals(ScanParams.SCAN_POINTER_START));
-
-        return keys;
     }
 
     private StatisticsCounter mapKeyValueToCounter(String key, String value) {

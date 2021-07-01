@@ -20,7 +20,11 @@ export default {
     BLOCKER_STATISTICS_TOTAL: '<dashboard-filter-statistics-total card-id="<CARD_ID_PLACEHOLDER>"></dashboard-filter-statistics-total>',
     CONNECTION_TEST: '<dashboard-connection-test card-id="<CARD_ID_PLACEHOLDER>"></dashboard-connection-test>',
     CONSOLE: '<dashboard-console card-id="<CARD_ID_PLACEHOLDER>"></dashboard-console>',
+    DEVICE_FIREWALL: '<dashboard-device-firewall card-id="<CARD_ID_PLACEHOLDER>"></dashboard-device-firewall>',
+    DEVICE_STATUS: '<dashboard-device-status card-id="<CARD_ID_PLACEHOLDER>"></dashboard-device-status>',
     DNS_STATISTICS: '<dashboard-filter-statistics card-id="<CARD_ID_PLACEHOLDER>"></dashboard-filter-statistics>',
+    DOMAIN_BLOCKLIST: '<dashboard-domain-blocklist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-domain-blocklist>',
+    DOMAIN_PASSLIST: '<dashboard-domain-passlist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-domain-passlist>',
     FILTER: '<dashboard-filter card-id="<CARD_ID_PLACEHOLDER>"></dashboard-filter>',
     FRAG_FINN: '<dashboard-frag-finn card-id="<CARD_ID_PLACEHOLDER>"></dashboard-frag-finn>',
     ICON: '<dashboard-icon card-id="<CARD_ID_PLACEHOLDER>"></dashboard-icon>',
@@ -31,7 +35,6 @@ export default {
     PARENTAL_CONTROL: '<dashboard-parental-control card-id="<CARD_ID_PLACEHOLDER>" user-id="<USER_ID_PLACEHOLDER>"></dashboard-parental-control>',
     SSL: '<dashboard-ssl card-id="<CARD_ID_PLACEHOLDER>"></dashboard-ssl>',
     USER: '<dashboard-user card-id="<CARD_ID_PLACEHOLDER>"></dashboard-user>',
-    WHITELIST: '<dashboard-whitelist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist>',
-    WHITELIST_DNS: '<dashboard-whitelist-dns card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist-dns>',
+    WHITELIST: '<dashboard-whitelist card-id="<CARD_ID_PLACEHOLDER>"></dashboard-whitelist>'
 };
 /* jshint ignore:end */

@@ -1,12 +1,6 @@
 <div layout="row">
     <div class="whitelist-table" layout="column">
 
-        <div class="table-header">
-            <div layout="row" layout-align="start center">
-                <span >{{vm.label | translate }}</span>
-            </div>
-        </div>
-
         <div class="table-body">
             <div layout="row" layout-align="start center" flex
                  ng-repeat="entry in vm.filteredTableData track by $index"
@@ -25,7 +19,7 @@
                                       style="display: inline-block;"
                                       ng-class="{'not-whitelisted': !vm.isEntryWhitelisted(entry)}">{{entry.domain}}</span>
                     <md-tooltip ng-if="vm.isEntryWhitelisted(entry)" md-delay="300">{{entry.domain}}</md-tooltip>
-                    <md-tooltip ng-if="!vm.isEntryWhitelisted(entry)" md-delay="300">{{'WHITELIST_DNS.CARD.TABLE.MARK_DELETE' | translate}}</md-tooltip>
+                    <md-tooltip ng-if="!vm.isEntryWhitelisted(entry)" md-delay="300">{{'DOMAIN_BLOCKLIST.CARD.TABLE.MARK_DELETE' | translate}}</md-tooltip>
                 </div>
 
             </div>
@@ -38,7 +32,7 @@
                     <span>{{vm.placeholder | translate }}</span>
                 </div>
                 <div ng-show="vm.searchTerm !== ''" layout="row" layout-align="center center">
-                    <span>{{'WHITELIST_DNS.CARD.TABLE.EMPTY_FOUND' | translate }}</span>
+                    <span>{{'DOMAIN_BLOCKLIST.CARD.TABLE.EMPTY_FOUND' | translate }}</span>
                 </div>
             </div>
 
@@ -52,7 +46,7 @@
     <eb-filter-table filtered-data="vm.filteredTableData"
                      original-data="vm.tableData"
                      filter-properties="vm.searchProps"
-                     placeholder-label="{{'WHITELIST_DNS.CARD.SEARCH_LABEL' | translate}}"
+                     placeholder-label="{{'DOMAIN_BLOCKLIST.CARD.SEARCH_LABEL' | translate}}"
                      icon-path="/img/icons/baseline-add_circle.svg"
                      key-up="vm.clickAddDomainButton(value)"
                      search-term="vm.searchTerm">
@@ -61,7 +55,7 @@
     <div layout="row" layout-align="center center">
         <div>
             <md-button class="md-secondary" ng-click="vm.clickAddDomainButton(vm.searchTerm)" ng-disabled="vm.isAddButtonDisabled()">
-                {{'WHITELIST_DNS.CARD.ACTION.ADD_DOMAIN' | translate }}
+                {{'SHARED.BUTTON.ADD' | translate }}
             </md-button>
         </div>
 

@@ -30,7 +30,7 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

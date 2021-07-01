@@ -28,7 +28,7 @@ function AuthController(security, logger, StateService, STATES, Idle) {
     vm.loginRequired = false;
     vm.loginDone = false;
 
-    // ** when resetting the admin password we need to reboot the eBlocker. After the reboot we contineu with the
+    // ** when resetting the admin password we need to reboot the eBlocker. After the reboot we continue with the
     // workflow state w/o authenticating (since user does not know password).
     if (security.isAuthenticated()) {
         // we have a security context from local storage or are otherwise

@@ -23,8 +23,8 @@ export default {
     }
 };
 
-function ConsoleController($timeout, LanguageService, RedirectService, NetworkService,
-        LicenseService, CardService, registration) {
+function ConsoleController($scope, $timeout, LanguageService, RedirectService, NetworkService,
+                           LicenseService, CardService, registration, DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -53,7 +53,8 @@ function ConsoleController($timeout, LanguageService, RedirectService, NetworkSe
             if (angular.isObject(response.data)) {
                 vm.gateway = response.data.gateway;
                 vm.eblocker = response.data.ipAddress;
-                vm.device = response.data.userIpAddress;
+                vm.localDevice = response.data.userIpAddress;
+                setDeviceIp();
             }
         });
 
@@ -69,6 +70,8 @@ function ConsoleController($timeout, LanguageService, RedirectService, NetworkSe
         });
     };
 
+    $scope.$on(EVENTS.DEVICE_SELECTED, setDeviceIp);
+
     vm.$postLink = function() {
         $timeout(function() {
             CardService.scrollToCard(CARD_NAME);
@@ -82,6 +85,14 @@ function ConsoleController($timeout, LanguageService, RedirectService, NetworkSe
             return 'WARN';
         }
         return '';
+    }
+
+    function setDeviceIp() {
+        if (DeviceSelectorService.isLocalDevice()) {
+            vm.device = vm.localDevice;
+        } else {
+            vm.device = DeviceSelectorService.getSelectedDevice().ipAddresses[0];
+        }
     }
 
     function openConsole() {

@@ -143,11 +143,11 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
     }
 
     function setDomainBlockerStatistics(dev, names, counter) {
-        if (dev.filterPlugAndPlayAdsEnabled) {
+        if (dev.filterAdsEnabled) {
             names[FILTER_TYPE.DNS].ADS.push(dev);
             counter[FILTER_TYPE.DNS].ADS++;
         }
-        if (dev.filterPlugAndPlayTrackersEnabled) {
+        if (dev.filterTrackersEnabled) {
             names[FILTER_TYPE.DNS].TRACKERS.push(dev);
             counter[FILTER_TYPE.DNS].TRACKERS++;
         }

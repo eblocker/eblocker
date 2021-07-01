@@ -18,31 +18,12 @@ export default function FilterService(logger, $http, $q) {
     'ngInject';
 
     const PATH = '/api/dashboard/filterlists';
-    const PATH_CUSTOM = '/api/dashboard/user/customdomainfilter';
 
     function getFilterLists() {
         return $http.get(PATH).then(function success(response) {
             return response;
         }, function error(response) {
             logger.error('Unable to get filter lists', response);
-            return $q.reject(response);
-        });
-    }
-
-    function getCurrentUserCustomDomainFilter() {
-        return $http.get(PATH_CUSTOM).then(function success(response) {
-            return response;
-        }, function error(response) {
-            logger.error('Unable to get current user\'s custom filter', response);
-            return $q.reject(response);
-        });
-    }
-
-    function setCurrentUserCustomDomainFilter(filter) {
-        return $http.put(PATH_CUSTOM, filter).then(function success(response) {
-            return response;
-        }, function error(response) {
-            logger.error('Unable to set current user\'s custom filter', response);
             return $q.reject(response);
         });
     }
@@ -58,9 +39,7 @@ export default function FilterService(logger, $http, $q) {
 
     return {
         getFilterLists: getFilterLists,
-        deleteFilterList: deleteFilterList,
-        getCurrentUserCustomDomainFilter: getCurrentUserCustomDomainFilter,
-        setCurrentUserCustomDomainFilter: setCurrentUserCustomDomainFilter
+        deleteFilterList: deleteFilterList
     };
 
 }

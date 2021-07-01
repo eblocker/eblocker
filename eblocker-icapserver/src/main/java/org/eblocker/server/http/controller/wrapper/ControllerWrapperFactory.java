@@ -41,6 +41,9 @@ public class ControllerWrapperFactory<CTRL, IMPL extends CTRL> implements Invoca
             return null;
 
         }
+        if (method.getName().equals("equals")) {
+            return equals(args[0]);
+        }
         if (controllerImpl != null) {
             try {
                 return method.invoke(controllerImpl, args);

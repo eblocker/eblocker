@@ -16,10 +16,12 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterResult;
@@ -39,11 +41,18 @@ public class TrackingBlockerProcessorTest {
     private PatternBlockerUtils patternBlockerUtils;
 
     private TrackingBlockerProcessor processor;
+    private DeviceService deviceService;
+
+    private Device device;
+    private final String deviceId = "device:1234";
 
     @Before
     public void setUp() {
+        device = new Device();
+        device.setId(deviceId);
+
         session = Mockito.mock(Session.class);
-        Mockito.when(session.getDeviceId()).thenReturn("device:1234");
+        Mockito.when(session.getDeviceId()).thenReturn(deviceId);
         Mockito.when(session.isBlockTrackings()).thenReturn(true);
         Mockito.when(session.isPatternFiltersEnabled()).thenReturn(true);
 
@@ -62,15 +71,26 @@ public class TrackingBlockerProcessorTest {
 
         patternBlockerUtils = Mockito.mock(PatternBlockerUtils.class);
 
-        processor = new TrackingBlockerProcessor(null, filterManager, patternBlockerUtils, null);
+        deviceService = Mockito.mock(DeviceService.class);
+        Mockito.when(deviceService.getDeviceById(deviceId)).thenReturn(device);
+
+        processor = new TrackingBlockerProcessor(null, filterManager, patternBlockerUtils, null, deviceService);
     }
 
     @Test
-    public void testFilterDisabled() {
+    public void testPatternFilterDisabled() {
         Mockito.when(session.isPatternFiltersEnabled()).thenReturn(false);
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(transaction, Mockito.never()).block();
-        Mockito.verifyZeroInteractions(patternBlockerUtils);
+        Mockito.verifyNoInteractions(patternBlockerUtils);
+    }
+
+    @Test
+    public void testTrackerFilterDisabled() {
+        device.setFilterTrackersEnabled(false);
+        Assert.assertTrue(processor.process(transaction));
+        Mockito.verify(transaction, Mockito.never()).block();
+        Mockito.verifyNoInteractions(patternBlockerUtils);
     }
 
     @Test
@@ -85,7 +105,7 @@ public class TrackingBlockerProcessorTest {
         Mockito.when(filter.filter(transaction)).thenReturn(FilterResult.noDecision(filter));
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(transaction, Mockito.never()).block();
-        Mockito.verifyZeroInteractions(patternBlockerUtils);
+        Mockito.verifyNoInteractions(patternBlockerUtils);
     }
 
     @Test
@@ -93,7 +113,7 @@ public class TrackingBlockerProcessorTest {
         Mockito.when(filter.filter(transaction)).thenReturn(FilterResult.pass(filter));
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(transaction, Mockito.never()).block();
-        Mockito.verifyZeroInteractions(patternBlockerUtils);
+        Mockito.verifyNoInteractions(patternBlockerUtils);
     }
 
     @Test
@@ -101,7 +121,7 @@ public class TrackingBlockerProcessorTest {
         Mockito.when(transaction.getDecision()).thenReturn(Decision.PASS);
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(transaction, Mockito.never()).block();
-        Mockito.verifyZeroInteractions(patternBlockerUtils);
+        Mockito.verifyNoInteractions(patternBlockerUtils);
     }
 
 }

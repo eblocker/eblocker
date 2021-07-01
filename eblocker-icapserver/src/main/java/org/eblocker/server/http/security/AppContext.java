@@ -40,13 +40,17 @@ public enum AppContext {
     //TODO: Define necessary routes for squid errors
     SQUID_ERROR(false, "^errorpageAuthenticated\\..*", "^errorpageExclusive\\..*"),
 
-    //TODO: Define necessary routes for system context
-    SYSTEM(false),
-
     //
     // No password required; only dashboard routes are allowed
     //
-    DASHBOARD(false, "^dashboard\\..*");
+    DASHBOARD(false, "^dashboard\\..*"),
+
+    //
+    // Password required; only (admin-)dashboard routes are allowed
+    //
+    ADMINDASHBOARD(true, "^admindashboard\\..*", "^dashboard\\..*"),
+
+    SYSTEM(false);
 
     private final boolean passwordRequired;
 

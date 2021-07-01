@@ -25,7 +25,7 @@
 {"name":"body-parser","version":"1.18.3","repository":"https://github.com/expressjs/body-parser","summary":"MIT"},
 {"name":"brace-expansion","version":"1.1.11","repository":"http://github.com/juliangruber/brace-expansion","summary":"MIT"},
 {"name":"bytes","version":"3.0.0","repository":"https://github.com/visionmedia/bytes.js","summary":"MIT"},
-{"name":"chart.js","version":"2.7.3","repository":"https://github.com/chartjs/Chart.js","summary":"MIT"},
+{"name":"chart.js","version":"2.9.4","repository":"https://github.com/chartjs/Chart.js","summary":"MIT"},
 {"name":"chartjs-color","version":"2.4.1","repository":"https://github.com/chartjs/chartjs-color","summary":"MIT"},
 {"name":"chartjs-color-string","version":"0.6.0","repository":"https://github.com/chartjs/chartjs-color-string","summary":"MIT"},
 {"name":"color-convert","version":"1.9.3","repository":"https://github.com/Qix-/color-convert","summary":"MIT"},

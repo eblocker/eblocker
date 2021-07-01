@@ -19,9 +19,12 @@ package org.eblocker.server.http.controller.impl;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.User;
+import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.http.controller.CustomDomainFilterConfigController;
 import org.eblocker.server.http.model.CustomDomainFilterConfig;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.service.CustomDomainFilterConfigService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.utils.ControllerUtils;
@@ -35,35 +38,34 @@ import java.util.stream.Collectors;
 public class CustomDomainFilterConfigControllerImpl implements CustomDomainFilterConfigController {
 
     private final CustomDomainFilterConfigService customDomainFilterConfigService;
-    private final DeviceService deviceService;
 
     @Inject
-    public CustomDomainFilterConfigControllerImpl(CustomDomainFilterConfigService customDomainFilterConfigService,
-                                                  DeviceService deviceService) {
-        this.deviceService = deviceService;
+    public CustomDomainFilterConfigControllerImpl(CustomDomainFilterConfigService customDomainFilterConfigService) {
         this.customDomainFilterConfigService = customDomainFilterConfigService;
     }
 
     @Override
     public CustomDomainFilterConfig getFilter(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
-        if (device == null) {
-            throw new NotFoundException();
-        }
-        return customDomainFilterConfigService.getCustomDomainFilterConfig(device.getOperatingUser());
+        return customDomainFilterConfigService.getCustomDomainFilterConfig(getUserId(request));
     }
 
     @Override
     public CustomDomainFilterConfig setFilter(Request request, Response response) {
-        Device device = deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
         CustomDomainFilterConfig customDomainFilterConfig = request.getBodyAs(CustomDomainFilterConfig.class);
         customDomainFilterConfig.setBlacklistedDomains(customDomainFilterConfig.getBlacklistedDomains().stream().map(this::mapToHostname).collect(Collectors.toSet()));
         customDomainFilterConfig.setWhitelistedDomains(customDomainFilterConfig.getWhitelistedDomains().stream().map(this::mapToHostname).collect(Collectors.toSet()));
-        return customDomainFilterConfigService
-                .setCustomDomainFilterConfig(device.getOperatingUser(), customDomainFilterConfig);
+        return customDomainFilterConfigService.setCustomDomainFilterConfig(getUserId(request), customDomainFilterConfig);
     }
 
     private String mapToHostname(String hostnameOrUrl) {
         return UrlUtils.isUrl(hostnameOrUrl) ? UrlUtils.getHostname(hostnameOrUrl) : hostnameOrUrl;
+    }
+
+    private int getUserId(Request request) {
+        String userIdStr = request.getHeader(DashboardAuthorizationProcessor.USER_ID_KEY);
+        if (userIdStr == null) {
+            throw new NotFoundException("Could not get required parameter 'userId' from request");
+        }
+        return Integer.parseInt(userIdStr);
     }
 }

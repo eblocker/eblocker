@@ -23,9 +23,10 @@ export default {
     }
 };
 
-function FilterStatisticsTotalController($filter, $interval, $q, $translate, // jshint ignore: line
-                                    $timeout, $sce, CardService, DeviceService, DialogService, DataService,
-                                    filterStatistics, LanguageService, NumberUtilsService) {
+function FilterStatisticsTotalController($scope, $filter, $interval, $q, $translate, // jshint ignore: line
+                                         $timeout, $sce, CardService, DeviceService, DialogService, DataService,
+                                         filterStatistics, LanguageService, NumberUtilsService,
+                                         DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -100,13 +101,19 @@ function FilterStatisticsTotalController($filter, $interval, $q, $translate, // 
         vm.blockedDomainsStatisticEmpty = empty;
     }
 
+    function loadBlockedDomains() {
+        filterStatistics.getBlockedDomainsStatistic(getDeviceId()).then(updateBlockedDomains);
+    }
+
     vm.$onInit = function() {
         filterStatistics.getTotalStatistics().then(updateStats);
-        filterStatistics.getBlockedDomainsStatistic().then(updateBlockedDomains);
+        loadBlockedDomains();
         checkConfigChange();
         startUpdateTimer();
         DataService.registerComponentAsServiceListener(CARD_NAME, 'DeviceService');
     };
+
+    $scope.$on(EVENTS.DEVICE_SELECTED, loadBlockedDomains);
 
     vm.$onDestroy = function() {
         stopUpdateTimer();
@@ -144,6 +151,10 @@ function FilterStatisticsTotalController($filter, $interval, $q, $translate, // 
     }
 
     vm.resetBlockedDomainsStatistic = function() {
-        filterStatistics.resetBlockedDomainsStatistic().then(updateBlockedDomains);
+        filterStatistics.resetBlockedDomainsStatistic(getDeviceId()).then(updateBlockedDomains);
     };
+
+    function getDeviceId() {
+        return DeviceSelectorService.getSelectedDevice().id;
+    }
 }

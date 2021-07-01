@@ -20,6 +20,7 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.service.DomainRecordingService;
 import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
@@ -41,6 +42,7 @@ public class RequestHandlerTest {
     private DomainBlockingService domainBlockingService;
     private DeviceService deviceService;
     private FilterStatisticsService filterStatisticsService;
+    private DomainRecordingService domainRecordingService;
     private EmbeddedChannel embeddedChannel;
 
     @Before
@@ -74,8 +76,9 @@ public class RequestHandlerTest {
         });
 
         filterStatisticsService = Mockito.mock(FilterStatisticsService.class);
+        domainRecordingService = Mockito.mock(DomainRecordingService.class);
 
-        requestHandler = new RequestHandler(blockedDomainLog, domainBlockingService, deviceService, filterStatisticsService);
+        requestHandler = new RequestHandler(blockedDomainLog, domainBlockingService, deviceService, filterStatisticsService, domainRecordingService);
 
         embeddedChannel = new EmbeddedChannel(requestHandler);
     }

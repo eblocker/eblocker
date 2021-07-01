@@ -22,6 +22,5 @@ import org.restexpress.Response;
 
 public interface CustomDomainFilterConfigController {
     CustomDomainFilterConfig getFilter(Request request, Response response);
-
     CustomDomainFilterConfig setFilter(Request request, Response response);
 }

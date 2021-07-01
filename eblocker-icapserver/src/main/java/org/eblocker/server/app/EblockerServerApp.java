@@ -55,6 +55,7 @@ import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.controller.DomainBlockingController;
+import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
 import org.eblocker.server.http.controller.EventController;
 import org.eblocker.server.http.controller.FactoryResetController;
@@ -103,6 +104,7 @@ import org.eblocker.server.http.controller.impl.DeviceControllerImpl;
 import org.eblocker.server.http.controller.impl.DeviceRegistrationControllerImpl;
 import org.eblocker.server.http.controller.impl.DnsControllerImpl;
 import org.eblocker.server.http.controller.impl.DomainBlockingControllerImpl;
+import org.eblocker.server.http.controller.impl.DomainRecorderControllerImpl;
 import org.eblocker.server.http.controller.impl.DomainWhiteListControllerImpl;
 import org.eblocker.server.http.controller.impl.EventControllerImpl;
 import org.eblocker.server.http.controller.impl.FactoryResetControllerImpl;
@@ -138,6 +140,8 @@ import org.eblocker.server.http.controller.impl.UpdateControllerImpl;
 import org.eblocker.server.http.controller.impl.UserAgentControllerImpl;
 import org.eblocker.server.http.controller.impl.UserControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessorImpl;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.slf4j.Logger;
@@ -479,6 +483,7 @@ public class EblockerServerApp {
         injectController(DeviceRegistrationController.class, DeviceRegistrationControllerImpl.class);
         injectController(DnsController.class, DnsControllerImpl.class);
         injectController(DomainBlockingController.class, DomainBlockingControllerImpl.class);
+        injectController(DomainRecorderController.class, DomainRecorderControllerImpl.class);
         injectController(DomainWhiteListController.class, DomainWhiteListControllerImpl.class);
         injectController(EventController.class, EventControllerImpl.class);
         injectController(FactoryResetController.class, FactoryResetControllerImpl.class);
@@ -519,6 +524,7 @@ public class EblockerServerApp {
         injectController(FeatureToggleController.class, FeatureToggleControllerImpl.class);
         injectController(ConnectionCheckController.class, ConnectionCheckControllerImpl.class);
         injectController(BlockerController.class, BlockerControllerImpl.class);
+        injectController(DashboardAuthorizationProcessor.class, DashboardAuthorizationProcessorImpl.class);
     }
 
     // ---

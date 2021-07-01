@@ -44,6 +44,7 @@ import org.eblocker.server.common.scheduler.MessageCenterServiceScheduler;
 import org.eblocker.server.common.scheduler.OpenVpnServiceScheduler;
 import org.eblocker.server.common.scheduler.PCAccessRestrictionsServiceScheduler;
 import org.eblocker.server.common.scheduler.ProblematicRouterDetectionScheduler;
+import org.eblocker.server.common.scheduler.RecordedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.SessionPurgerScheduler;
 import org.eblocker.server.common.scheduler.StartupTaskScheduler;
 import org.eblocker.server.common.scheduler.TrafficAccounterScheduler;
@@ -138,6 +139,7 @@ public class BackgroundServicesTest {
         ProblematicRouterDetectionScheduler routerDetectionScheduler = Mockito.mock(ProblematicRouterDetectionScheduler.class);
         FilterManagerScheduler filterManagerScheduler = Mockito.mock(FilterManagerScheduler.class);
         AppModuleServiceScheduler appModuleServiceScheduler = Mockito.mock(AppModuleServiceScheduler.class);
+        RecordedDomainsWriteScheduler recordedDomainsWriteScheduler = Mockito.mock(RecordedDomainsWriteScheduler.class);
         AutomaticUpdater autoUpdater = null;
 
         services = new BackgroundServices(
@@ -179,6 +181,7 @@ public class BackgroundServicesTest {
                 blockedDomainsWriteScheduler,
                 upnpWatchdogScheduler,
                 blockerUpdateScheduler,
+                recordedDomainsWriteScheduler,
                 10);
     }
 

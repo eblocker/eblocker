@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2021 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,12 +14,17 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default {
-    templateUrl: 'app/stats.component.html',
-    controller: StatsComponent
-};
+package org.eblocker.server.http.security;
 
-function StatsComponent() {
-    'ngInject';
-    'use strict';
+import org.restexpress.Request;
+import org.restexpress.pipeline.Preprocessor;
+
+public interface DashboardAuthorizationProcessor extends Preprocessor {
+    String VERIFY_DEVICE_ID = "VERIFY_DEVICE_ID";
+    String VERIFY_USER_ID = "VERIFY_USER_ID";
+    String DEVICE_ID_KEY = "deviceId";
+    String USER_ID_KEY = "userId";
+
+    @Override
+    public void process(Request request);
 }

@@ -25,7 +25,7 @@ export default {
 
 function Controller(logger, $interval, $timeout, $window, $translate, $q, CardService, TorService, VpnService, // jshint ignore: line
                     NotificationService, DialogService, CloakingService, DeviceService, registration, SslService,
-                    ArrayUtilsService, DataService) {
+                    ArrayUtilsService, DataService, DeviceSelectorService) {
     'ngInject';
     'use strict';
 
@@ -45,6 +45,7 @@ function Controller(logger, $interval, $timeout, $window, $translate, $q, CardSe
     vm.updateCustomUserAgent = updateCustomUserAgent;
     vm.isCustomAgentValid = isCustomAgentValid;
     vm.disableCloaking = disableCloaking;
+    vm.showPrivacyCheck = showPrivacyCheck;
 
     let dataUpdateInterval;
     const INTERVAL = 2000;
@@ -66,6 +67,10 @@ function Controller(logger, $interval, $timeout, $window, $translate, $q, CardSe
             vm.device = response.data; // use in UI
             return response.data;
         });
+    }
+
+    function showPrivacyCheck() {
+        return DeviceSelectorService.isLocalDevice();
     }
 
     vm.$onInit = function() {
@@ -114,7 +119,7 @@ function Controller(logger, $interval, $timeout, $window, $translate, $q, CardSe
         }
     }
 
-    function updateData(reload) {
+    function updateData() {
         $q.all([loadVpnProfiles(), loadVpnConfig(), loadTorConfig()]).then(function success() {
             // If we refactor the select box not to be disabled when a IP-Anon servie is connected:
             // we would need another check here, so that  the selectedProfile is not overridden when the user

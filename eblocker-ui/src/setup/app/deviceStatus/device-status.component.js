@@ -32,6 +32,7 @@ function DeviceStatusController(logger, DeviceService, SystemService, $interval)
     vm.isServerNotRunning = isServerNotRunning;
     vm.getCurrentStatus = getCurrentStatus;
 
+    // FIXME: access to *all* devices only for finding the eBlocker device???
     vm.getDevices();
 
     vm.$onDestroy = function() {

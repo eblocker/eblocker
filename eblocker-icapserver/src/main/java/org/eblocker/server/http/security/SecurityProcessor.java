@@ -31,6 +31,7 @@ public class SecurityProcessor implements Preprocessor {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityProcessor.class);
 
     public static final String NO_AUTHENTICATION_REQUIRED = "NO_AUTHENTICATION_REQUIRED";
+    public static final String APP_CONTEXT_ATTACHMENT = "appContext";
 
     private static final String AUTHN_PREFIX = "Bearer ";
 
@@ -52,6 +53,7 @@ public class SecurityProcessor implements Preprocessor {
 
         if (AppContext.PUBLIC.isValidContextFor(routeName)) {
             LOG.debug("Request for PUBLIC resource {} - no authn needed", request.getPath());
+            request.putAttachment(APP_CONTEXT_ATTACHMENT, AppContext.PUBLIC);
             return;
         }
 
@@ -75,6 +77,9 @@ public class SecurityProcessor implements Preprocessor {
             LOG.warn("Request for resource {} not allowed in context {}", routeName, tokenInfo.getAppContext().name());
             throw new UnauthorizedException("error.token.invalidContext");
         }
+
+        // Store app context for further processors
+        request.putAttachment(APP_CONTEXT_ATTACHMENT, tokenInfo.getAppContext());
 
         if (routeName.equals("authentication.renew.route")) {
             LOG.debug("Request for renewal of authn token");

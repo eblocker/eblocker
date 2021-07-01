@@ -111,9 +111,9 @@ public class DevicesBackupProvider extends BackupProvider {
                 // restoring the backup
                 existingDevice.setEnabled(deviceToRestore.isEnabled() || deviceToRestore.isPaused());
                 existingDevice.setFilterMode(deviceToRestore.getFilterMode());
-                existingDevice.setFilterPlugAndPlayAdsEnabled(deviceToRestore.isFilterPlugAndPlayAdsEnabled());
+                existingDevice.setFilterAdsEnabled(deviceToRestore.isFilterAdsEnabled());
                 existingDevice
-                        .setFilterPlugAndPlayTrackersEnabled(deviceToRestore.isFilterPlugAndPlayTrackersEnabled());
+                        .setFilterTrackersEnabled(deviceToRestore.isFilterTrackersEnabled());
                 // No guarantee the certificate is still the same
                 existingDevice.setHasRootCAInstalled(false);
                 existingDevice.setIconMode(deviceToRestore.getIconMode());

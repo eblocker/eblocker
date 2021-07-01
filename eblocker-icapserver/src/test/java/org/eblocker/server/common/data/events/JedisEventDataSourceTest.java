@@ -16,40 +16,25 @@
  */
 package org.eblocker.server.common.data.events;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.eblocker.server.common.TestRedisServer;
-import org.junit.After;
-import org.junit.Before;
+import org.eblocker.server.common.EmbeddedRedisTestBase;
 import org.junit.Test;
-import redis.clients.jedis.JedisPool;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class JedisEventDataSourceTest {
+public class JedisEventDataSourceTest extends EmbeddedRedisTestBase {
     public static final int MAXIMUM_NUMBER_OF_EVENTS = 100;
 
-    private TestRedisServer redisServer;
-    private JedisPool pool;
     private EventDataSource dataSource;
-    private ObjectMapper mapper;
 
-    @Before
-    public void setUp() throws Exception {
-        redisServer = new TestRedisServer();
-        redisServer.start();
-        pool = redisServer.getPool();
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        dataSource = new JedisEventDataSource(pool, mapper, MAXIMUM_NUMBER_OF_EVENTS);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        redisServer.stop();
+    @Override
+    public void doSetup() {
+        super.doSetup();
+        objectMapper.registerModule(new JavaTimeModule());
+        dataSource = new JedisEventDataSource(jedisPool, objectMapper, MAXIMUM_NUMBER_OF_EVENTS);
     }
 
     @Test

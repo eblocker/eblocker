@@ -143,6 +143,11 @@ $dashboard-toolbar-height: 66px;
         }
     }
 
+    .admin-login-dialog {
+        .device-list {
+            max-height: 320px;
+        }
+    }
 }
 
 // Overlay for paused dashboard

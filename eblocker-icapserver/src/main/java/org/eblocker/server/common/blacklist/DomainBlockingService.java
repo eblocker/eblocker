@@ -494,6 +494,7 @@ public class DomainBlockingService {
                 .filter(e -> !e.getValue().parentalControlUrlControlModeEnabled || !hasFamilyFeature)
                 .filter(e -> e.getValue().getCustomBlacklistId() != null
                         || e.getValue().getCustomWhitelistId() != null
+                        || e.getValue().isDomainRecordingEnabled()
                         || e.getValue().getFilterMode() == FilterMode.PLUG_AND_PLAY && (e.getValue().isFilterAds() || e.getValue().isFilterTrackers()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
@@ -750,6 +751,7 @@ public class DomainBlockingService {
         private boolean filterAds;
         private boolean filterTrackers;
         private boolean filterMalware;
+        private boolean domainRecordingEnabled;
         private Integer customBlacklistId;
         private Integer customWhitelistId;
 
@@ -763,9 +765,10 @@ public class DomainBlockingService {
             Device device = deviceConfig.getDevice();
             config.filterMode = FilterModeUtils.getEffectiveFilterMode(sslEnabledGlobally, device);
             config.sslEnabled = device.isSslEnabled();
-            config.filterAds = device.isFilterPlugAndPlayAdsEnabled();
-            config.filterTrackers = device.isFilterPlugAndPlayTrackersEnabled();
+            config.filterAds = device.isFilterAdsEnabled();
+            config.filterTrackers = device.isFilterTrackersEnabled();
             config.filterMalware = device.isMalwareFilterEnabled();
+            config.domainRecordingEnabled = device.isDomainRecordingEnabled();
 
             UserModule user = deviceConfig.getUser();
             config.customBlacklistId = user.getCustomBlacklistId();
@@ -823,6 +826,10 @@ public class DomainBlockingService {
 
         public Integer getCustomWhitelistId() {
             return customWhitelistId;
+        }
+
+        public boolean isDomainRecordingEnabled() {
+            return domainRecordingEnabled;
         }
 
         public boolean isParentalControlUrlControlModeEnabled() {

@@ -25,7 +25,7 @@
 "body-parser","1.18.3","https://github.com/expressjs/body-parser","MIT"
 "brace-expansion","1.1.11","http://github.com/juliangruber/brace-expansion","MIT"
 "bytes","3.0.0","https://github.com/visionmedia/bytes.js","MIT"
-"chart.js","2.7.3","https://github.com/chartjs/Chart.js","MIT"
+"chart.js","2.9.4","https://github.com/chartjs/Chart.js","MIT"
 "chartjs-color","2.4.1","https://github.com/chartjs/chartjs-color","MIT"
 "chartjs-color-string","0.6.0","https://github.com/chartjs/chartjs-color-string","MIT"
 "color-convert","1.9.3","https://github.com/Qix-/color-convert","MIT"

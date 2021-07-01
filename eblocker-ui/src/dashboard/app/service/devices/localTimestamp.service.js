@@ -88,6 +88,7 @@ export default function LocalTimestampService(logger, $http, $interval, $q, Data
      * keeps a local copy which is then regularly updated)
      */
     function getLocalTimestamp(reload) {
+        // FIXME: it does not make any sense to load a timestamp from a cache!
         serverTimeCache = DataCachingService.loadCache(serverTimeCache, PATH, reload, config).
         then(function success(response) {
             time = response.data;

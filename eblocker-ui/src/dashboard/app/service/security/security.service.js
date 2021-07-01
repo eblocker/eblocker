@@ -14,25 +14,45 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function SecurityService(logger, $http, $q, Idle) {
+export default function SecurityService(logger, $http, $q, $localStorage, Idle, APP_CONTEXT) {
     'ngInject';
     'use strict';
 
     let securityContext = {};
 
-    return {
-        'requestToken': requestToken
-    };
+    const PATH = '/api/token/';
+    const LOGIN_PATH = '/api/adminconsole/authentication/login/';
+    const RENEW_PATH = '/api/admindashboard/authentication/renew/';
+    const httpConfig = {timeout: 3000};
+
+    function init() {
+        loadSecurityContext();
+    }
+
+    init();
+
+    /*
+      If an unexpired admin security context could be loaded from local storage, try to use this.
+      (The user might have logged in as admin and then reloaded the page.)
+      Otherwise, request a "normal" token.
+     */
+    function requestInitialToken() {
+        if (isLoggedInAsAdmin()) {
+            return $q.resolve(securityContext.token);
+        } else {
+            return requestToken(APP_CONTEXT.name);
+        }
+    }
 
     function requestToken(appContext) {
-        return $http.get('/api/token/' + appContext, {'timeout': 3000}).then(function(response) {
+        return $http.get(PATH + appContext, httpConfig).then(function(response) {
             // Start watching for idleness, if not yet doing so.
             // We do this, even when we do not need a password, to start the keepalive process.
             // Because the JWT must be renewed even when there is no password!
             if (!Idle.running()) {
                 Idle.watch();
             }
-            storeToken(response.data);
+            storeSecurityContext(response.data);
             return response.data.token;
         }, function(response) {
             logger.error('Login failed with status ' + response.status + ' - ' + response.data);
@@ -40,12 +60,76 @@ export default function SecurityService(logger, $http, $q, Idle) {
         });
     }
 
-    function storeToken(data) {
+    function requestAdminToken(appContext, password) {
+        return $http.post(LOGIN_PATH + appContext, {currentPassword: password}, httpConfig)
+            .then(function(response) {
+                storeSecurityContext(response.data);
+                return response.data.token;
+            }, function(response) {
+                logger.error('Login failed with status ' + response.status + ' - ' + response.data);
+                return $q.reject(response.data);
+            });
+    }
+
+    function renewToken() {
+        if (isLoggedInAsAdmin()) {
+            return $http.get(RENEW_PATH + securityContext.appContext, httpConfig).then(function(response) {
+                storeSecurityContext(response.data);
+                return response.data.token;
+            }, function(response) {
+                logger.error('Renew token failed with status ' + response.status, response);
+                return $q.reject(response);
+            });
+        } else {
+            return requestToken(securityContext.appContext);
+        }
+    }
+
+    function loadSecurityContext() {
+        let storedContext = $localStorage.securityContextDashboard;
+        if (angular.isDefined(storedContext)) {
+            if (storedContext.expiresOn > Date.now()/1000) {
+                storeSecurityContext(storedContext);
+            } else {
+                clearSecurityContext();
+            }
+        }
+    }
+
+    function storeSecurityContext(data) {
         securityContext.token = data.token;
         securityContext.appContext = data.appContext;
         securityContext.expiresOn = data.expiresOn;
         securityContext.passwordRequired = data.passwordRequired;
 
+        $localStorage.securityContextDashboard = data;
+
         $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
     }
+
+    function clearSecurityContext() {
+        securityContext = {};
+
+        $localStorage.securityContextDashboard = undefined;
+
+        $http.defaults.headers.common.Authorization = undefined;
+    }
+
+    function isLoggedInAsAdmin() {
+        return securityContext.appContext === APP_CONTEXT.adminAppContextName;
+    }
+
+    function logoutAdmin() {
+        clearSecurityContext();
+        return requestToken(APP_CONTEXT.name);
+    }
+
+    return {
+        requestToken: requestToken,
+        requestInitialToken: requestInitialToken,
+        requestAdminToken: requestAdminToken,
+        renewToken: renewToken,
+        isLoggedInAsAdmin: isLoggedInAsAdmin,
+        logoutAdmin: logoutAdmin
+    };
 }

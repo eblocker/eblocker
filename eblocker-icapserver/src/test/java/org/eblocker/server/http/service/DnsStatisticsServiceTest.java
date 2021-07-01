@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.dns.DnsDataSource;
 import org.eblocker.server.common.data.dns.DnsRating;
 import org.eblocker.server.common.data.dns.DnsReliabilityRating;

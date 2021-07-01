@@ -15,18 +15,17 @@
  * permissions and limitations under the License.
  */
 export default {
-    templateUrl: 'app/cards/whitelistDns/whitelist-dns-table.component.html',
-    controller: WhitelistDnsTableController,
+    templateUrl: 'app/cards/domainBlocklist/domain-blocklist-table.component.html',
+    controller: DomainBlocklistTableController,
     controllerAs: 'vm',
     bindings: {
         domains: '<',
         onUpdate: '&',
-        label: '@',
         placeholder: '@'
     }
 };
 
-function WhitelistDnsTableController(logger, ArrayUtilsService) {
+function DomainBlocklistTableController(logger, ArrayUtilsService) {
     'ngInject';
     'use strict';
 

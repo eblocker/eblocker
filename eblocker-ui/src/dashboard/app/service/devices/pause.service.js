@@ -14,11 +14,11 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function PauseService(logger, $http, $q, $interval, DataCachingService) {
+export default function PauseService(logger, $http, $q, $interval, DataCachingService, DeviceSelectorService) {
     'ngInject';
     'use strict';
 
-    const PATH = '/api/device/pause';
+    const PATH = '/api/device/pause/';
 
     const config = {timeout: 3000};
     const SYNC_INTERVAL = 10000; // every 10 seconds
@@ -42,7 +42,8 @@ export default function PauseService(logger, $http, $q, $interval, DataCachingSe
     }
 
     function getPause(reload) {
-        pauseCache = DataCachingService.loadCache(pauseCache, PATH, reload, config).then(function success(response) {
+        let path = PATH + DeviceSelectorService.getSelectedDevice().id;
+        pauseCache = DataCachingService.loadCache(pauseCache, path, reload, config).then(function success(response) {
             return response;
         }, function(response) {
             logger.error('Getting pause status failed with status ' + response.status +
@@ -54,7 +55,8 @@ export default function PauseService(logger, $http, $q, $interval, DataCachingSe
 
     function setPause(seconds) {
         const data = {pausing: seconds};
-        return $http.put(PATH, data, config).then(function(response) {
+        let path = PATH + DeviceSelectorService.getSelectedDevice().id;
+        return $http.put(path, data, config).then(function(response) {
             return response.data;
 
         }, function(response) {

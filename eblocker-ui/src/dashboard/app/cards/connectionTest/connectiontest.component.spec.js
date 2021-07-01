@@ -22,7 +22,7 @@ describe('Component: dashboardConnectionTest', function() {
     let $componentController,
         ctrl;
 
-    beforeEach(inject(function(_$componentController_) {
+     beforeEach(inject(function(_$componentController_) {
         $componentController = _$componentController_;
         ctrl = $componentController('dashboardConnectionTest', {timeout: {}, ConnectionTestService: {},
             DeviceService: {}, DnsService: {}, NetworkService: {}, SslService: {}, CardService: {}}, {});

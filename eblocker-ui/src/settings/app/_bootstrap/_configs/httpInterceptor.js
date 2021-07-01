@@ -35,7 +35,7 @@ function CustomHttpInterceptor(logger, $q, StateService, STATES, BE_ERRORS) {
                 logger.warning('(HTTP-Interceptor) Invalid token. Redirecting to logout state.');
                 StateService.goToState(STATES.LOGOUT);
             } else if (rejection.status === 503) {
-                logger.warning('(HTTP-Interceptor) Status 503. Redirecting to logout state.');
+                logger.warning('(HTTP-Interceptor) Status 503. Redirecting to standby state.');
                 // fix issue: "Controller method generateConsoleToken not yet available"
                 StateService.goToState(STATES.STAND_BY);
             }

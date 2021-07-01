@@ -47,8 +47,8 @@ public class DevicePermissionsService {
     }
 
     private boolean operatingUserMayPerformAction(Action action, Device device) {
-        UserModule user = userService.getUserById(device.getOperatingUser());
         int operatingUserId = device.getOperatingUser();
+        UserModule user = userService.getUserById(operatingUserId);
         if (user == null) {
             log.error("Could not determine operating user #{} of device {}. Permission for action {} denied.", operatingUserId, device, action);
             return false;

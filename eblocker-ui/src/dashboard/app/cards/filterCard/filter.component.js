@@ -71,7 +71,7 @@ function MessageController(logger, $interval, $timeout, DeviceService, SslServic
 
     function startUpdateInterval() {
         if (angular.isUndefined(dataUpdateInterval)) {
-            dataUpdateInterval = $interval(updateData, INTERVAL);
+            dataUpdateInterval = $interval(syncData, INTERVAL);
         }
     }
 
@@ -80,6 +80,10 @@ function MessageController(logger, $interval, $timeout, DeviceService, SslServic
             $interval.cancel(dataUpdateInterval);
             dataUpdateInterval = undefined;
         }
+    }
+
+    function syncData() {
+        updateData(false);
     }
 
     function updateData(reload) {

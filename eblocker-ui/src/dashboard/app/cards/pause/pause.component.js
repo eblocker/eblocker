@@ -23,7 +23,8 @@ export default {
     }
 };
 
-function PauseController(logger, $interval, $timeout, $filter, PauseService, CardService, DataService) {
+function PauseController($scope, logger, $interval, $timeout, $filter, PauseService, CardService, DataService,
+                         DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -65,6 +66,11 @@ function PauseController(logger, $interval, $timeout, $filter, PauseService, Car
         stopCountdownTimer();
         DataService.unregisterComponentAsServiceListener(CARD_NAME, 'PauseService');
     };
+
+    $scope.$on(EVENTS.DEVICE_SELECTED, function() {
+        stopCountdownTimer();
+        getPause(true);
+    });
 
     function isPauseThreshold() {
         return getPausing() > PAUSE_THRESHOLD;
@@ -168,7 +174,7 @@ function PauseController(logger, $interval, $timeout, $filter, PauseService, Car
             pausedTime--;
         }
 
-        // every minute, synchronize pause with the backend
+        // every ten seconds, synchronize pause with the backend
         if (Math.floor(countdownTimerUpdates % 10) === 0) {
             logger.info('Syncing pause with backend');
             getPause(true);

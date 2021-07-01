@@ -17,8 +17,11 @@
 package org.eblocker.server.http.service;
 
 import org.eblocker.server.common.data.SSLWhitelistUrl;
+import org.eblocker.server.common.data.messagecenter.provider.AppModuleRemovalMessageProvider;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.ConflictException;
 
@@ -45,6 +48,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
+    private AppModuleRemovalMessageProvider appModuleRemovalMessageProvider;
+
+    @Before
+    public void setUp() {
+        appModuleRemovalMessageProvider = Mockito.mock(AppModuleRemovalMessageProvider.class);
+    }
 
     @Test
     public void test_init() throws IOException {

@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.http.service.DnsStatisticsService;
-import org.eblocker.server.http.service.TestClock;
+import org.eblocker.server.common.TestClock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

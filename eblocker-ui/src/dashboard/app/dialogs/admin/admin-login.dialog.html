@@ -1,0 +1,48 @@
+<md-dialog aria-label="{{ 'SHARED.LOGIN.PIN_SELECT_USER.HEADER' | translate }}" class="admin-login-dialog">
+    <form name="vm.passwordForm" layout-padding  ng-submit="vm.login()" novalidate style="overflow: initial;">
+
+        <md-dialog-content layout="column" style="overflows: initial;" layout-padding>
+            <div>
+                <h2 ng-hide="vm.loggedIn" translate="SHARED.LOGIN.CARD.TITLE"></h2>
+                <h2 ng-show="vm.loggedIn" translate="DIALOGS.LOGIN.SELECT_DEVICE"></h2>
+                <div>
+                    <p ng-hide="vm.loggedIn" translate="DIALOGS.LOGIN.EXPLAIN"></p>
+                </div>
+            </div>
+
+            <div layout-padding ng-hide="vm.loggedIn">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 90%;">
+                    <label>{{ 'SHARED.LOGIN.CARD.INPUT.LABEL' | translate }}</label>
+                    <input name="adminPassword" ng-model="vm.adminPassword" type="password" required/>
+                    <div ng-messages="vm.passwordForm.adminPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.adminPassword.$touched">
+                        <div ng-message="required">{{ 'SHARED.LOGIN.CARD.ERROR.PASSWORD_REQUIRED' | translate }}</div>
+                        <div ng-message="backend">{{ 'SHARED.LOGIN.CARD.ERROR.' + vm.backendErrorKey | translate }}</div>
+                        <div ng-message="maxlength">{{ 'SHARED.LOGIN.CARD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+
+            <md-content class="device-list" ng-show="vm.loggedIn" flex>
+              <md-list-item ng-repeat="device in vm.devices" ng-click="vm.selectDevice(device.id)">
+                <p>{{ device.name }}</p>
+              </md-list-item>
+            </md-content>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                 layout-align="end center"
+                 layout-xs="column"
+                 layout-align-xs="center center"
+                 style="padding-right: 16px;">
+            <div layout="row" layout-align="end center"
+                 layout-xs="row" layout-align-xs="center center">
+                <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                    {{ 'SHARED.BUTTON.CANCEL' | translate }}
+                </md-button>
+            </div>
+            <md-button class="md-raised md-primary md-accent" type="submit" ng-hide="vm.loggedIn">
+                {{ 'SHARED.LOGIN.CARD.TITLE' | translate }}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

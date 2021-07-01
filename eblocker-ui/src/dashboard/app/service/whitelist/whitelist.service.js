@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function WhitelistService(logger, $http, $interval, DataCachingService) {
+export default function WhitelistService(logger, $q, $http, $interval, DataCachingService) {
     'ngInject';
 
     let whitelistCache, whitelistConfigCache, syncTimer;

@@ -85,8 +85,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerBefore.setDefaultSystemUser(1234);
         computerBefore.setEnabled(true);
         computerBefore.setFilterMode(FilterMode.AUTOMATIC);
-        computerBefore.setFilterPlugAndPlayAdsEnabled(true);
-        computerBefore.setFilterPlugAndPlayTrackersEnabled(true);
+        computerBefore.setFilterAdsEnabled(true);
+        computerBefore.setFilterTrackersEnabled(true);
         computerBefore.setHasRootCAInstalled(true);
         computerBefore.setIconMode(DisplayIconMode.ON);
         computerBefore.setIconPosition(DisplayIconPosition.RIGHT);
@@ -147,8 +147,8 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         computerAfter.setDefaultSystemUser(computerAfterDefaultSystemUser);
         computerAfter.setEnabled(false);
         computerAfter.setFilterMode(FilterMode.NONE);
-        computerAfter.setFilterPlugAndPlayAdsEnabled(false);
-        computerAfter.setFilterPlugAndPlayTrackersEnabled(false);
+        computerAfter.setFilterAdsEnabled(false);
+        computerAfter.setFilterTrackersEnabled(false);
         computerAfter.setHasRootCAInstalled(false);
         computerAfter.setIconMode(DisplayIconMode.OFF);
         computerAfter.setIconPosition(DisplayIconPosition.LEFT);
@@ -211,10 +211,10 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Assert.assertEquals(computerAfterDefaultSystemUser, restoredDevice.getDefaultSystemUser());
         Assert.assertEquals(computerBefore.isEnabled(), restoredDevice.isEnabled());
         Assert.assertEquals(computerBefore.getFilterMode(), restoredDevice.getFilterMode());
-        Assert.assertEquals(computerBefore.isFilterPlugAndPlayAdsEnabled(),
-                restoredDevice.isFilterPlugAndPlayAdsEnabled());
-        Assert.assertEquals(computerBefore.isFilterPlugAndPlayTrackersEnabled(),
-                restoredDevice.isFilterPlugAndPlayTrackersEnabled());
+        Assert.assertEquals(computerBefore.isFilterAdsEnabled(),
+                restoredDevice.isFilterAdsEnabled());
+        Assert.assertEquals(computerBefore.isFilterTrackersEnabled(),
+                restoredDevice.isFilterTrackersEnabled());
         // No guarantee the installed certificate is still used by the eBlocker
         Assert.assertFalse(restoredDevice.hasRootCAInstalled());
         Assert.assertEquals(computerBefore.getIconMode(), restoredDevice.getIconMode());

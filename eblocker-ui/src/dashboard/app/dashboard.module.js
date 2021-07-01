@@ -35,6 +35,7 @@ import '../../../node_modules/chart.js/dist/Chart.min.js';
 import chartJs from 'angular-chart.js';
 
 import ngIdle from '../../../npm_integrations/ng-idle';
+import ngStorage from '../../../npm_integrations/ng-storage';
 
 import '../../../node_modules/jquery-ui/ui/data';
 import '../../../node_modules/jquery-ui/ui/widget';
@@ -60,15 +61,17 @@ import TorActivationDialogController from '../../shared/dialogs/tor/tor-activati
 import ChangePinDialogController from './dialogs/pin/change-pin.dialog';
 import ProvidePinDialogController from './dialogs/pin/provide-pin.dialog';
 import WelcomeDialogController from './dialogs/welcome/welcome.dialog';
-
+import AdminLoginDialogController from './dialogs/admin/admin-login.dialog';
 
 // ** Configs
 import LocationConfig from './_bootstrap/_configs/locationConfig';
 import TranslationConfig from './_bootstrap/_configs/translationConfig';
 import IdleConfig from './_bootstrap/_configs/idleConfig';
+import HttpInterceptor from './_bootstrap/_configs/httpInterceptor';
 import APP_CONTEXT from './dashboard.constants.js';
 import FILTER_TYPE from '../../shared/_constants/filterTypes';
 import IDLE_TIMES from '../../shared/_constants/idleTimes';
+import BE_ERRORS from '../../shared/_constants/backendErrors';
 import LANG_FILENAMES from '../../shared/locale/langFileNames';
 
 import DurationFilter from './filter/duration.filter';
@@ -76,12 +79,12 @@ import ThemingProvider from '../../shared/theme/eblocker.theme';
 import AppRouter from './_bootstrap/_configs/routeConfig.js';
 
 import CARD_HTML from './_bootstrap/_constants/cardHtml';
+import EVENTS from './_bootstrap/_constants/events';
 
 // ** Components
 import dashboardCardComponent from './components/card.component';
 import dashboardComponent from './dashboard.component';
 import MainComponent from './main.component';
-import StatsComponent from './stats.component.js';
 import PauseComponent from './cards/pause/pause.component';
 import OnlineTimeComponent from './cards/onlineTime/onlineTime.component';
 import DashboardConsoleComponent from './cards/console/console.component';
@@ -93,8 +96,6 @@ import FilterStatisticsComponent from './cards/filterStatistics/filterStatistics
 import FilterStatisticsDiagramComponent from './cards/filterStatistics/filterStatisticsDiagram.component';
 import FilterStatisticsTotalComponent from './cards/filterStatisticsTotal/filterStatisticsTotal.component';
 import FilterComponent from './cards/filterCard/filter.component';
-import WhitelistDns from './cards/whitelistDns/whitelist-dns.component';
-import WhitelistDnsTable from './cards/whitelistDns/whitelist-dns-table.component';
 import EblockerMobile from './cards/mobile/eblocker-mobile.component';
 import UserComponent from './cards/user/user.component';
 import AnonComponent from './cards/anon/anon.component';
@@ -104,6 +105,13 @@ import MobileSetupWizard from './wizard/mobile/mobile-setup-wizard.component';
 import HttpsWizardComponent from './wizard/https/https-wizard.component';
 import ConnectionTestComponent from './cards/connectionTest/connectiontest.component';
 import ConnectionTestDetail from './cards/connectionTest/connectionTestDetail.component';
+import DeviceFirewall from './cards/deviceFirewall/device-firewall.component';
+import DeviceStatus from './cards/deviceStatus/device-status.component';
+import DomainBlocklist from './cards/domainBlocklist/domain-blocklist.component';
+import DomainPasslist from './cards/domainBlocklist/domain-passlist.component';
+import DomainBlocklistTable from './cards/domainBlocklist/domain-blocklist-table.component';
+import LogoutAdminComponent from './components/logout-admin.component';
+import RemoteComponent from './components/remote.component';
 
 // squid-error / blocker components
 import BlockerComponent from './blocker/blocker.component';
@@ -139,11 +147,13 @@ import CardService from './service/card/card.service';
 import CardAvailabilityService from './service/card/card-availability.service';
 import UserProfile from './service/devices/userProfile.service';
 import FilterService from './service/filter/FilterService';
+import CustomDomainFilterService from './service/filter/CustomDomainFilterService';
 import UserService from './service/users/UserService';
 import VpnHomeService from './service/vpn/VpnHomeService';
 import NotificationService from '../../shared/services/notification/NotificationService';
 import DialogService from './service/dialog/DialogService';
 import DeviceService from './service/devices/device.service';
+import DeviceSelectorService from './service/devices/deviceSelector.service';
 import PauseService from './service/devices/pause.service';
 import UserProfileService from './service/devices/userProfile.service';
 import DnsService from './service/dns/DnsService';
@@ -155,6 +165,7 @@ import CloakingService from './service/cloaking/CloakingService';
 import LanguageService from '../../shared/services/language/language.service';
 import EventService from '../../shared/services/event/EventService';
 import ResolutionService from './service/window/ResolutionService';
+import DomainRecorderService from './service/devices/domainRecorder.service';
 
 // ** Shared Services
 import DataCachingService from '../../shared/services/caching/DataCachingService';
@@ -162,6 +173,7 @@ import NumberUtilsService from '../../shared/services/utils/number-utils.service
 import DomainUtilsService from '../../shared/services/utils/domain-utils.service';
 import SystemService from '../../shared/services/system/SystemService';
 import RedirectService from '../../shared/services/redirect/RedirectService';
+import FilterModeService from '../../shared/services/device/FilterModeService';
 
 
 // ** Custom Modules
@@ -194,6 +206,7 @@ angular.module('eblocker.dashboard', [
     translate,
     chartJs,
     ngIdle,
+    ngStorage,
     uiSortable,
     ngDeviceDetector,
     // Logger,
@@ -201,7 +214,7 @@ angular.module('eblocker.dashboard', [
     // Settings
     'eblocker.logger',
     'eblocker.settings',
-    'eblocker.security',
+    'eblocker.dashboard.security',
     'eblocker.services',
     'template.dashboard.app'
 ])
@@ -209,14 +222,17 @@ angular.module('eblocker.dashboard', [
     .config(TranslationConfig)
     .config(ThemingProvider)
     .config(IdleConfig)
+    .config(HttpInterceptor)
     .config(AppRouter)
     .config(DurationFilter)
     .constant('APP_CONTEXT', APP_CONTEXT)
     .constant('FILTER_TYPE', FILTER_TYPE)
     .constant('moment', moment)
     .constant('IDLE_TIMES', IDLE_TIMES)
+    .constant('BE_ERRORS', BE_ERRORS)
     .constant('LANG_FILENAMES', LANG_FILENAMES)
     .constant('CARD_HTML', CARD_HTML)
+    .constant('EVENTS', EVENTS)
     .controller('ConsoleRedirectController', ConsoleRedirectController)
     .controller('ActionController', ActionController)
     .controller('NotificationController', NotificationController)
@@ -226,6 +242,7 @@ angular.module('eblocker.dashboard', [
     .controller('ChangePinDialogController', ChangePinDialogController)
     .controller('WelcomeDialogController', WelcomeDialogController)
     .controller('ProvidePinDialogController', ProvidePinDialogController)
+    .controller('AdminLoginDialogController', AdminLoginDialogController)
     .component('dashboardComponent', dashboardComponent)
     .component('mainComponent', MainComponent)
     .component('blockerComponent', BlockerComponent)
@@ -244,7 +261,6 @@ angular.module('eblocker.dashboard', [
     .component('ebDropdown', DropdownComponent)
     .component('dashboardIcon', IconComponent)
     .component('dashboardSsl', SslComponent)
-    .component('dashboardStats', StatsComponent)
     .component('dashboardPause', PauseComponent)
     .component('dashboardOnlineTime', OnlineTimeComponent)
     .component('dashboardConsole', DashboardConsoleComponent)
@@ -254,17 +270,22 @@ angular.module('eblocker.dashboard', [
     .component('dashboardFilterStatisticsDiagram', FilterStatisticsDiagramComponent)
     .component('dashboardFilterStatisticsTotal', FilterStatisticsTotalComponent)
     .component('dashboardFilter', FilterComponent)
-    .component('dashboardWhitelistDns', WhitelistDns)
-    .component('dashboardWhitelistDnsTable', WhitelistDnsTable)
     .component('dashboardMobile', EblockerMobile)
     .component('dashboardUser', UserComponent)
     .component('dashboardAnonymization', AnonComponent)
     .component('dashboardParentalControl', ParentalControlComponent)
     .component('dashboardFragFinn', FragFinnComponent)
     .component('dashboardConnectionTest', ConnectionTestComponent)
+    .component('dashboardDeviceFirewall', DeviceFirewall)
+    .component('dashboardDeviceStatus', DeviceStatus)
+    .component('dashboardDomainBlocklist', DomainBlocklist)
+    .component('dashboardDomainPasslist', DomainPasslist)
+    .component('dashboardDomainBlocklistTable', DomainBlocklistTable)
     .component('connectionTestDetail', ConnectionTestDetail)
     .component('ebFilterTable', ebFilterComponent)
     .component('ebCard', dashboardCardComponent)
+    .component('logoutAdminComponent', LogoutAdminComponent)
+    .component('remoteComponent', RemoteComponent)
     .directive('compile', compileCard)
     .factory('DataService', DataService)
     .factory('MessageService', MessageService)
@@ -273,15 +294,18 @@ angular.module('eblocker.dashboard', [
     .factory('NumberUtilsService', NumberUtilsService)
     .factory('DomainUtilsService', DomainUtilsService)
     .factory('RedirectService', RedirectService)
+    .factory('FilterModeService', FilterModeService)
     .factory('CardService', CardService)
     .factory('CardAvailabilityService', CardAvailabilityService)
     .factory('FilterService', FilterService)
+    .factory('CustomDomainFilterService', CustomDomainFilterService)
     .factory('UserService', UserService)
     .factory('userProfile', UserProfile)
     .factory('VpnHomeService', VpnHomeService)
     .factory('NotificationService', NotificationService)
     .factory('DialogService', DialogService)
     .factory('DeviceService', DeviceService)
+    .factory('DeviceSelectorService', DeviceSelectorService)
     .factory('PauseService', PauseService)
     .factory('UserProfileService', UserProfileService)
     .factory('DnsService', DnsService)
@@ -295,4 +319,5 @@ angular.module('eblocker.dashboard', [
     .factory('EventService', EventService)
     .factory('SystemService', SystemService)
     .factory('ResolutionService', ResolutionService)
+    .factory('DomainRecorderService', DomainRecorderService)
     .filter('ebfilter', ebFilter);

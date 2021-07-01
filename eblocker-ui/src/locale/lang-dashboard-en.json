@@ -89,14 +89,6 @@
             "BUTTON_CLEAR" : {
                 "LABEL": "Clear"
             },
-            "DEVICE": {
-                "ACTIVE": {
-                    "LABEL": "eBlocker enabled for this device"
-                },
-                "INACTIVE": {
-                    "LABEL": "eBlocker disabled for this device"
-                }
-            },
             "EXPLANATION" : {
                 "RUNNING" : "eBlocker function test running..."
             },
@@ -157,7 +149,7 @@
                 },
                 "NOT_USED": "not used"
             },
-            "TITLE" : "Status",
+            "TITLE" : "Function test",
             "TOOLTIP" : "Test your connection"
         }
     },
@@ -188,7 +180,40 @@
             }
         }
     },
+    "DEVICE_FIREWALL" : {
+        "CARD" : {
+            "ACTION" : {
+                "ALLOW" : "Always allow",
+                "APPLY" : "Apply",
+                "BLOCK" : "Always block"
+            },
+            "RECORDING" : {
+                "DISABLED" : "Not recording",
+                "ENABLED" : "Recording (last 24h)"
+            },
+            "TITLE" : "Personal Device Firewall",
+            "TOOLTIP" : "Check the domains this device connects to"
+        }
+    },
+    "DEVICE_STATUS" : {
+        "CARD" : {
+            "BLOCKING" : {
+                "ADS" : "Block ads",
+                "TRACKER" : "Block trackers"
+            },
+            "DEVICE" : {
+                "ENABLED" : "eBlocker enabled for this device",
+                "DISABLED" : "eBlocker disabled for this device"
+            },
+            "TITLE" : "Status",
+            "TOOLTIP" : "Status of this device"
+        }
+    },
     "DIALOGS" : {
+        "LOGIN" : {
+            "EXPLAIN" : "Enter your administrator password to access other devices.",
+            "SELECT_DEVICE" : "Select device"
+        },
         "PIN" : {
             "BUTTON" : {
                 "CANCEL" : "Cancel",
@@ -257,6 +282,27 @@
             "TITLE" : "Welcome to eBlocker Dashboard",
             "TITLE_XS" : "Bookmark the Dashboard",
             "WIN" : "CTRL + D"
+        }
+    },
+    "DOMAIN_BLOCKLIST" : {
+        "CARD" : {
+            "SEARCH_LABEL" : "Enter domain...",
+            "TABLE" : {
+                "EMPTY_FOUND" : "No domains found",
+                "EMPTY_LIST" : "No domains blocked",
+                "MARK_DELETE" : "This domain will be removed from the list"
+            },
+            "TITLE" : "Block Domains",
+            "TOOLTIP" : "Always block these domains for this device"
+        }
+    },
+    "DOMAIN_PASSLIST" : {
+        "CARD" : {
+            "TABLE" : {
+                "EMPTY_LIST" : "No domains allowed"
+            },
+            "TITLE" : "Allow Domains",
+            "TOOLTIP" : "Always allow these domains for this device"
         }
     },
     "EXPIRED" : {
@@ -765,29 +811,6 @@
             },
             "TITLE" : "Trackers and Ads",
             "TOOLTIP" : "Review or delete whitelisted websites for this device."
-        }
-    },
-    "WHITELIST_DNS" : {
-        "CARD" : {
-            "ACTION" : {
-                "ADD_DOMAIN" : "Add"
-            },
-            "GLOBAL_BLOCKING" : {
-                "ADS" : "Ad Servers",
-                "LABEL" : "Block all connections to...",
-                "TRACKER" : "Trackers"
-            },
-            "SEARCH_LABEL" : "Enter domain...",
-            "TABLE" : {
-                "EMPTY_BLACKLIST" : "No domains blacklisted",
-                "EMPTY_FOUND" : "No domains found",
-                "EMPTY_WHITELIST" : "No domains whitelisted",
-                "LABEL_BLACKLIST" : "In addition, block connections to:",
-                "LABEL_WHITELIST" : "But allow connections to:",
-                "MARK_DELETE" : "eBlocker is no longer deactivated for this website. This entry will be removed from this list when reloading the dashboard."
-            },
-            "TITLE" : "Tracker and Ad Blocker Rules",
-            "TOOLTIP" : "Review or delete whitelisted domains for this device."
         }
     },
     "WIZARD" : {

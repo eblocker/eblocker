@@ -103,6 +103,24 @@ export default function DialogService($mdDialog, $q) {
         });
     }
 
+    function adminLogin(onOk, onCancel) {
+        return $mdDialog.show({
+            controller: 'AdminLoginDialogController',
+            controllerAs: 'vm',
+            templateUrl: 'app/dialogs/admin/admin-login.dialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: false,
+            locals: {
+                onOk: onOk,
+                onCancel: onCancel
+            }
+        }).then(function success(response) {
+            return response;
+        }, function error(reason) {
+            return reason;
+        });
+    }
+
     function dnsFilterChangeInfo(event, okAction, device) {
         return $mdDialog.show({
             controller: 'InformationDialogController',
@@ -187,6 +205,7 @@ export default function DialogService($mdDialog, $q) {
         mobileRevokeCertificate: mobileRevokeCertificate,
         userChangePin: userChangePin,
         userProvidePin: userProvidePin,
+        adminLogin: adminLogin,
         dnsFilterChangeInfo: dnsFilterChangeInfo,
         showTorActivationDialog: showTorActivationDialog,
         welcome: welcome,

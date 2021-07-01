@@ -46,7 +46,7 @@ public class Migrations {
 
     private DataSource dataSource;
     private Map<String, SchemaMigration> migrationsBySourceVersion;
-    private String targetVerison;
+    private String targetVersion;
 
     @Inject
     public Migrations(DataSource dataSource, Set<SchemaMigration> schemaMigrations) {
@@ -62,16 +62,16 @@ public class Migrations {
     public String migrateToLatestSchema() {
         String version = dataSource.getVersion();
         log.info("data source version: {}", version);
-        log.info("migrations version: {}", targetVerison);
-        if (targetVerison.equals(version)) {
+        log.info("migrations version: {}", targetVersion);
+        if (targetVersion.equals(version)) {
             log.info("nothing to do");
             return version;
         }
 
         SchemaMigration migration = migrationsBySourceVersion.get(version);
         if (migration == null) {
-            log.error("no migration path found for source version {} to {}!", version, targetVerison);
-            throw new EblockerException("no migration path found for source version " + version + " to " + targetVerison);
+            log.error("no migration path found for source version {} to {}!", version, targetVersion);
+            throw new EblockerException("no migration path found for source version " + version + " to " + targetVersion);
         }
 
         while (migration != null) {
@@ -109,7 +109,7 @@ public class Migrations {
         }
 
         while (migration != null) {
-            targetVerison = migration.getTargetVersion();
+            targetVersion = migration.getTargetVersion();
             usedMigrations.add(migration);
             SchemaMigration nextMigration = migrationsBySourceVersion.get(migration.getTargetVersion());
             log.info("found migration from {} to {}", migration.getSourceVersion(), migration.getTargetVersion());
@@ -183,6 +183,7 @@ public class Migrations {
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion45.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion46.class);
             migrationMultiBinder.addBinding().to(SchemaMigrationVersion47.class);
+            migrationMultiBinder.addBinding().to(SchemaMigrationVersion48.class);
         }
     }
 }

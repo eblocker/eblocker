@@ -149,7 +149,7 @@ function ComController(logger, FilterService, WhitelistService, DeviceService, D
             vm.filterMode = DeviceService.getFilterMode(vm.device.filterMode, vm.globalSslStatus, vm.device);
             if (vm.filterMode === 'PLUG_AND_PLAY_NO_SSL') {
 
-                vm.blockingVars.blockGlobally = vm.device.filterPlugAndPlayAdsEnabled;
+                vm.blockingVars.blockGlobally = vm.device.filterAdsEnabled;
                 DnsStatistics.getStatistics(21, 1, 'dns').then(function success(response) {
                     vm.statistics = response;
                     if (angular.isObject(vm.statistics.summary)) {

@@ -15,5 +15,6 @@
  * permissions and limitations under the License.
  */
 export default {
-    'name': 'DASHBOARD'
+    'name': 'DASHBOARD',
+    'adminAppContextName': 'ADMINDASHBOARD'
 };

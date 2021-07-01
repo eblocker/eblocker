@@ -308,6 +308,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
         return device;
     }
 
+    // TODO: why not subclass SessionContextController?
     private Session getSession(Request request) {
         return sessionStore.getSession((TransactionIdentifier) request.getAttachment("transactionIdentifier"));
     }

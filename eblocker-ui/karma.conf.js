@@ -46,6 +46,7 @@ module.exports = function(config) {
             src + 'index.html'
         ],
 
+        urlRoot: '/_karma_/',
         proxies: {
             '/': 'http://localhost:8888/'
         },

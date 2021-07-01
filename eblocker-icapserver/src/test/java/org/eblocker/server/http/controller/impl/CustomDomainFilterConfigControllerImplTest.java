@@ -36,7 +36,6 @@ public class CustomDomainFilterConfigControllerImplTest {
     private static final IpAddress IP_ADDRESS = IpAddress.parse("192.168.3.3");
 
     private CustomDomainFilterConfigService service;
-    private DeviceService deviceService;
 
     private CustomDomainFilterConfigControllerImpl controller;
     private Request request;
@@ -44,21 +43,13 @@ public class CustomDomainFilterConfigControllerImplTest {
 
     @Before
     public void setUp() {
-        Device device = new Device();
-        device.setOperatingUser(1);
-        deviceService = Mockito.mock(DeviceService.class);
-        Mockito.when(deviceService.getDeviceByIp(IP_ADDRESS)).thenReturn(device);
-
-        HttpTransactionIdentifier transactionIdentifier = Mockito.mock(HttpTransactionIdentifier.class);
-        Mockito.when(transactionIdentifier.getOriginalClientIP()).thenReturn(IP_ADDRESS);
-
         request = Mockito.mock(Request.class);
-        Mockito.when(request.getAttachment("transactionIdentifier")).thenReturn(transactionIdentifier);
+        Mockito.when(request.getHeader("userId")).thenReturn("1");
 
         response = Mockito.mock(Response.class);
         service = Mockito.mock(CustomDomainFilterConfigService.class);
 
-        controller = new CustomDomainFilterConfigControllerImpl(service, deviceService);
+        controller = new CustomDomainFilterConfigControllerImpl(service);
     }
 
     @Test
@@ -71,7 +62,7 @@ public class CustomDomainFilterConfigControllerImplTest {
 
     @Test(expected = NotFoundException.class)
     public void getFilterUnknownDevice() {
-        Mockito.when(deviceService.getDeviceByIp(Mockito.any(IpAddress.class))).thenReturn(null);
+        Mockito.when(request.getHeader("userId")).thenReturn(null);
         controller.getFilter(request, response);
     }
 

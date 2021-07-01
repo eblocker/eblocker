@@ -37,8 +37,8 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
                 return $translate.onReady();
             }],
             security: 'security',
-            token: ['security', 'APP_CONTEXT', function(security, APP_CONTEXT) {
-                return security.requestToken(APP_CONTEXT.name);
+            token: ['security', function(security) {
+                return security.requestInitialToken();
             }],
             consoleUrl: ['RedirectService', function(RedirectService) {
                 return RedirectService.prepare();
@@ -196,16 +196,33 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         parent: appState.name,
         resolvePolicy: { async: 'WAIT', when: 'EAGER' },
         resolve: {
-            initCards: ['token', 'CardService', 'registration', function(token, CardService, registration) {
-                return registration.loadProductInfo().then(function() {
-                    const productInfo = registration.getRegistrationInfo().productInfo;
-                    return CardService.getDashboardData(true, productInfo);
-                });
-                // 'token' needed only indirectly for the REST call
-
+            initCards: ['token', 'initSelectedDevice', 'CardService', 'registration',
+                        function(token, initSelectedDevice, CardService, registration) {
+                            return registration.loadProductInfo().then(function() {
+                                const productInfo = registration.getRegistrationInfo().productInfo;
+                                return CardService.getDashboardData(true, productInfo);
+                            });
+                            // 'token' needed only indirectly for the REST call
+                        }],
+            initSelectedDevice: ['device', 'DeviceSelectorService', function(device, DeviceSelectorService) {
+                return DeviceSelectorService.initSelectedDevice(device);
             }]
         },
         url: '/main' // need URL for anchor scrolling, so that main state is loaded
+    };
+
+    /* Remote dashboard */
+    const remoteState = {
+        name: 'remote',
+        parent: mainState.name,
+        component: 'remoteComponent',
+        url: '/:deviceId'
+    };
+
+    const logoutAdminState = {
+        name: 'logoutAdmin',
+        component: 'logoutAdminComponent',
+        url: '/logout'
     };
 
     const mobileWizard = {
@@ -238,4 +255,6 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
     $stateProvider.state(redirectState);
     $stateProvider.state(redirectOptions);
     $stateProvider.state(blockOptions);
+    $stateProvider.state(remoteState);
+    $stateProvider.state(logoutAdminState);
 }

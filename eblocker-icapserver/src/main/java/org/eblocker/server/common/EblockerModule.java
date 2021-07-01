@@ -40,7 +40,9 @@ import org.eblocker.server.common.blacklist.DomainBlockingService;
 import org.eblocker.server.common.blacklist.RequestHandler;
 import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.blocker.UpdateTaskFactory;
+import org.eblocker.server.common.data.DomainRecordingDataSource;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.JedisDomainRecordingDataSource;
 import org.eblocker.server.common.data.dns.DnsDataSource;
 import org.eblocker.server.common.data.dns.JedisDnsDataSource;
 import org.eblocker.server.common.data.events.DataSourceEventLogger;
@@ -125,6 +127,7 @@ import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.controller.DomainBlockingController;
+import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
 import org.eblocker.server.http.controller.EventController;
 import org.eblocker.server.http.controller.FactoryResetController;
@@ -160,6 +163,7 @@ import org.eblocker.server.http.controller.UpdateController;
 import org.eblocker.server.http.controller.UserAgentController;
 import org.eblocker.server.http.controller.UserController;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapperFactory;
+import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.server.EblockerHttpsServer;
 import org.eblocker.server.http.server.SSLContextHandler;
 import org.eblocker.server.http.service.AccessDeniedRequestHandler;
@@ -309,6 +313,7 @@ public class EblockerModule extends BaseModule {
         bind(EblockerIcapServer.class).in(Scopes.SINGLETON);
         bind(DnsDataSource.class).to(JedisDnsDataSource.class).in(Scopes.SINGLETON);
         bind(FilterStatisticsDataSource.class).to(JedisFilterStatisticsDataSource.class).in(Scopes.SINGLETON);
+        bind(DomainRecordingDataSource.class).to(JedisDomainRecordingDataSource.class).in(Scopes.SINGLETON);
         bind(FilterStatisticsService.class);
         bind(ChannelHandler.class).annotatedWith(Names.named("DomainBlockingRequestHandler")).to(RequestHandler.class);
         bind(ChannelHandler.class).annotatedWith(Names.named("AccessDeniedRequestHandler")).to(AccessDeniedRequestHandler.class);
@@ -767,6 +772,12 @@ public class EblockerModule extends BaseModule {
 
     @Provides
     @Singleton
+    public DomainRecorderController domainRecorderController() {
+        return ControllerWrapperFactory.wrap(DomainRecorderController.class);
+    }
+
+    @Provides
+    @Singleton
     public UpdateController updateController() {
         return ControllerWrapperFactory.wrap(UpdateController.class);
     }
@@ -829,5 +840,17 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public BlockerController blockerController() {
         return ControllerWrapperFactory.wrap(BlockerController.class);
+    }
+
+    /**
+     * The DashboardAuthorizationProcessor is not really a Controller,
+     * but it must be wrapped by the ControllerWrapperFactory,
+     * because it needs to access the DeviceService.
+     * @return
+     */
+    @Provides
+    @Singleton
+    public DashboardAuthorizationProcessor dashboardAuthorizationProcessor() {
+        return ControllerWrapperFactory.wrap(DashboardAuthorizationProcessor.class);
     }
 }

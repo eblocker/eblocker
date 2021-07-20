@@ -98,7 +98,6 @@ import org.restexpress.response.RawResponseWrapper;
 import org.restexpress.serialization.NullSerializationProvider;
 import org.restexpress.serialization.SerializationProvider;
 import org.restexpress.serialization.json.JacksonJsonProcessor;
-import org.restexpress.serialization.xml.XstreamXmlProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -263,7 +262,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             }
         }, new RawResponseWrapper(), true);
-        serializationProvider.add(new XstreamXmlProcessor(), new RawResponseWrapper());
 
         RestExpress.setDefaultSerializationProvider(serializationProvider);
         server = new RestExpress()

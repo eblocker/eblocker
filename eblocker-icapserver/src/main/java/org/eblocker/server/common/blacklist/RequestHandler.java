@@ -95,7 +95,7 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
         }
 
         DomainBlockingService.Decision decision = domainBlockingService.isBlocked(device, hostname);
-        domainRecordingService.log(device, hostname, decision.isBlocked());
+        domainRecordingService.log(device, hostname, decision.isBlocked(), false);
 
         if (decision.isBlocked()) {
             ctx.writeAndFlush("OK message=" + toString(decision.getProfileId()) + "," + toString(decision.getListId()) + "," + decision.getDomain() + "," + device.getOperatingUser() + "," + toString(decision.getTarget()) + "\n");

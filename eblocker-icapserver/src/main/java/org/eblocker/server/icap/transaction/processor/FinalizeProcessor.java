@@ -16,10 +16,12 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
+import org.eblocker.server.icap.transaction.processor.filter.PatternBlockerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +31,23 @@ public class FinalizeProcessor implements TransactionProcessor {
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(FinalizeProcessor.class);
     private final static Logger FILTER_LOG = LoggerFactory.getLogger("FILTER_LOG");
+    private final PatternBlockerUtils patternBlockerUtils;
+
+    @Inject
+    public FinalizeProcessor(PatternBlockerUtils patternBlockerUtils) {
+        this.patternBlockerUtils = patternBlockerUtils;
+    }
 
     @Override
     public boolean process(Transaction transaction) {
         FILTER_LOG.info("{}\tFI\t{}\t{}\t{}", transaction.getSession().getShortId(), Decision.PASS, transaction.getUrl(), "DEFAULT");
         transaction.setComplete(true);
+
+        if (transaction.isRequest()) {
+            // No other processor has terminated this request, so we assume it passed:
+            patternBlockerUtils.countPassedDomain(transaction.getSession(), transaction);
+        }
+
         return false;
     }
 }

@@ -45,11 +45,11 @@ public class JedisDomainRecordingDataSourceTest extends EmbeddedRedisTestBase {
         Instant t2 = t1.plusMillis(1000);
 
         RecordedDomainBin bin1 = new RecordedDomainBin(t0, t1);
-        bin1.update("tracker.com", true);
-        bin1.update("eblocker.org", false);
+        bin1.update("tracker.com", true, false);
+        bin1.update("eblocker.org", false, false);
 
         RecordedDomainBin bin2 = new RecordedDomainBin(t1, t2);
-        bin2.update("eblocker.org", false);
+        bin2.update("eblocker.org", false, false);
 
         dataSource.save(deviceId, bin1);
         dataSource.save(deviceId, bin2);

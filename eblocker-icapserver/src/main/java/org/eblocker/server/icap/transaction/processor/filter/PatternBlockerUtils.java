@@ -20,35 +20,50 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.blacklist.BlockedDomainLog;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.parentalcontrol.Category;
+import org.eblocker.server.common.service.DomainRecordingService;
 import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.util.UrlUtils;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.transaction.Transaction;
 
 @Singleton
 public class PatternBlockerUtils {
-
+    private final DeviceService deviceService;
     private final BlockedDomainLog blockedDomainLog;
     private final FilterStatisticsService filterStatisticsService;
+    private final DomainRecordingService domainRecordingService;
     private final boolean ignoreFirstParty;
 
     @Inject
     public PatternBlockerUtils(@Named("filter.stats.ignore.first.party") boolean ignoreFirstParty,
+                               DeviceService deviceService,
                                BlockedDomainLog blockedDomainLog,
-                               FilterStatisticsService filterStatisticsService) {
+                               FilterStatisticsService filterStatisticsService,
+                               DomainRecordingService domainRecordingService) {
         this.ignoreFirstParty = ignoreFirstParty;
+        this.deviceService = deviceService;
         this.blockedDomainLog = blockedDomainLog;
         this.filterStatisticsService = filterStatisticsService;
+        this.domainRecordingService = domainRecordingService;
     }
 
     public void countBlockedDomain(Category category, FilterResult filterResult, Session session, Transaction transaction) {
+        Device device = deviceService.getDeviceById(session.getDeviceId());
         String domain = getDomain(filterResult, transaction);
         filterStatisticsService.countBlocked("pattern", transaction.getOriginalClientIP(), category.name());
         if (transaction.isThirdParty() || !ignoreFirstParty) {
-            blockedDomainLog.addEntry(session.getDeviceId(), domain, category);
+            blockedDomainLog.addEntry(device.getId(), domain, category);
         }
+        domainRecordingService.log(device, UrlUtils.getHostname(transaction.getUrl()), true, true);
+    }
+
+    public void countPassedDomain(Session session, Transaction transaction) {
+        Device device = deviceService.getDeviceById(session.getDeviceId());
+        domainRecordingService.log(device, UrlUtils.getHostname(transaction.getUrl()), false, true);
     }
 
     private String getDomain(FilterResult filterResult, Transaction transaction) {

@@ -31,14 +31,32 @@ public class RecordedDomainCounter {
     @JsonProperty("count")
     private int count;
 
+    // Number of blocked pattern requests
+    @JsonProperty("patternBlocked")
+    private int patternBlocked;
+
+    // Number of passed pattern requests
+    @JsonProperty("patternPassed")
+    private int patternPassed;
+
     @JsonCreator
     public RecordedDomainCounter() {
         this.count = 0;
+        this.patternBlocked = 0;
+        this.patternPassed = 0;
     }
 
-    public void update(boolean blocked) {
-        this.blocked = blocked;
-        count++;
+    public void update(boolean blocked, boolean patternRequest) {
+        if (patternRequest) {
+            if (blocked) {
+                patternBlocked++;
+            } else {
+                patternPassed++;
+            }
+        } else {
+            this.blocked = blocked;
+            count++;
+        }
     }
 
     public boolean isBlocked() {
@@ -57,12 +75,14 @@ public class RecordedDomainCounter {
             return false;
         RecordedDomainCounter that = (RecordedDomainCounter) o;
         return blocked == that.blocked &&
-                count == that.count;
+                count == that.count &&
+                patternPassed == that.patternPassed &&
+                patternBlocked == that.patternBlocked;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(blocked, count);
+        return Objects.hash(blocked, count, patternPassed, patternBlocked);
     }
 
     /**
@@ -72,5 +92,7 @@ public class RecordedDomainCounter {
     public void update(RecordedDomainCounter counter) {
         count += counter.count;
         blocked = counter.blocked;
+        patternPassed += counter.patternPassed;
+        patternBlocked += counter.patternBlocked;
     }
 }

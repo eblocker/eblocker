@@ -56,7 +56,7 @@ public class PatternFilterStatisticsProcessor implements TransactionProcessor {
         session.setPatternFiltersEnabled(patternBasedFiltersEnabled);
 
         if (patternBasedFiltersEnabled) {
-            filterStatisticsService.countQuery("pattern", transaction.getOriginalClientIP());
+                filterStatisticsService.countQuery("pattern", transaction.getOriginalClientIP());
         }
 
         return true;

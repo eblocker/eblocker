@@ -52,9 +52,9 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
     @Test
     public void recordDomains() {
         for (int i = 0; i < 10; i++) {
-            recorder.recordRequest(deviceId1, "tracker.com", true);
+            recorder.recordRequest(deviceId1, "tracker.com", true, false);
         }
-        recorder.recordRequest(deviceId2, "eblocker.org", false);
+        recorder.recordRequest(deviceId2, "eblocker.org", false, false);
 
         RecordedDomainCounter c1 = recorder.getRecordedDomainRequests(deviceId1).get("tracker.com");
         Assert.assertTrue(c1.isBlocked());
@@ -73,9 +73,9 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
 
     @Test
     public void mergeBins() {
-        recorder.recordRequest(deviceId1, "tracker.com", false);
+        recorder.recordRequest(deviceId1, "tracker.com", false, false);
         clock.setInstant(clock.instant().plusSeconds(12)); // force new bin
-        recorder.recordRequest(deviceId1, "tracker.com", true);
+        recorder.recordRequest(deviceId1, "tracker.com", true, false);
 
         RecordedDomainCounter c1 = recorder.getRecordedDomainRequests(deviceId1).get("tracker.com");
         Assert.assertTrue(c1.isBlocked());
@@ -84,7 +84,7 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
 
     @Test
     public void dontCountSavedCurrentBinTwice() throws IOException {
-        recorder.recordRequest(deviceId1, "tracker.com", true);
+        recorder.recordRequest(deviceId1, "tracker.com", true, false);
         recorder.saveCurrent();
 
         RecordedDomainCounter c1 = recorder.getRecordedDomainRequests(deviceId1).get("tracker.com");
@@ -94,9 +94,9 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
 
     @Test
     public void reset() {
-        recorder.recordRequest(deviceId1, "tracker.com", false);
+        recorder.recordRequest(deviceId1, "tracker.com", false, false);
         clock.setInstant(clock.instant().plusSeconds(12)); // force new bin
-        recorder.recordRequest(deviceId1, "tracker.com", true);
+        recorder.recordRequest(deviceId1, "tracker.com", true, false);
 
         recorder.resetRecording(deviceId1);
 

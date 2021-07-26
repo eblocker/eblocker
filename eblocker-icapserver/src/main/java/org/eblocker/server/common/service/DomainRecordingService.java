@@ -49,7 +49,7 @@ public class DomainRecordingService {
             try {
                 while (true) {
                     DomainRequestLogEntry entry = queue.take();
-                    recorder.recordRequest(entry.deviceId, entry.hostname, entry.blocked);
+                    recorder.recordRequest(entry.deviceId, entry.hostname, entry.blocked, entry.patternRequest);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -57,9 +57,9 @@ public class DomainRecordingService {
         }));
     }
 
-    public void log(Device device, String hostname, boolean blocked) {
+    public void log(Device device, String hostname, boolean blocked, boolean patternRequest) {
         if (device.isDomainRecordingEnabled()) {
-            queue.add(new DomainRequestLogEntry(device.getId(), hostname, blocked));
+            queue.add(new DomainRequestLogEntry(device.getId(), hostname, blocked, patternRequest));
         }
     }
 
@@ -67,11 +67,13 @@ public class DomainRecordingService {
         private final String deviceId;
         private final String hostname;
         private final boolean blocked;
+        private final boolean patternRequest;
 
-        private DomainRequestLogEntry(String deviceId, String hostname, boolean blocked) {
+        private DomainRequestLogEntry(String deviceId, String hostname, boolean blocked, boolean patternRequest) {
             this.deviceId = deviceId;
             this.hostname = hostname;
             this.blocked = blocked;
+            this.patternRequest = patternRequest;
         }
     }
 }

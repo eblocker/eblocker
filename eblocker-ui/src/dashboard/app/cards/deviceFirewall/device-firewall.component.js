@@ -24,7 +24,7 @@ export default {
 };
 
 function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, $interval, DataService, DomainRecorderService, // jshint ignore: line
-                                  DeviceSelectorService, DeviceService, CustomDomainFilterService, SslService,
+                                  DeviceSelectorService, DeviceService, CustomDomainFilterService,
                                   FilterModeService, FILTER_TYPE, EVENTS) {
     'ngInject';
     'use strict';
@@ -35,7 +35,6 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
 
     vm.recordedDomains = [];
     vm.device = {};
-    vm.globalSslEnabled = false;
     vm.patternFiltered = {};
     vm.customDomainFilter = CustomDomainFilterService.emptyFilter();
 
@@ -58,8 +57,8 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     $scope.$on(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED, loadData);
 
     function loadData() {
-        $q.all([loadDevice(), loadCustomDomainFilter(), loadSslStatus()]).then(function(data) {
-            findPatternFilteredDomains();
+        $q.all([loadDevice(), loadCustomDomainFilter()]).then(function(data) {
+            processRecordedDomains();
         }, function(reason) {
             logger.error('Could not load data', reason);
             return $q.reject(reason);
@@ -75,7 +74,7 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
                 elem.domain = domain;
                 recordedDomains.push(elem);
             });
-            vm.recordedDomains = recordedDomains.sort(compareRecordedDomains);
+            vm.recordedDomains = recordedDomains;
             return vm.recordedDomains;
         }, function(reason) {
             logger.error('Could not get recorded domains', reason);
@@ -89,16 +88,6 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
             return vm.customDomainFilter;
         }, function(reason) {
             logger.error('Could not get custom domain filter', reason);
-            return $q.reject(reason);
-        });
-    }
-
-    function loadSslStatus() {
-        return SslService.getSslStatus().then(function(response) {
-            vm.globalSslEnabled = response.data.globalSslStatus;
-            return vm.globalSslEnabled;
-        }, function(reason) {
-            logger.error('Could not get SSL status', reason);
             return $q.reject(reason);
         });
     }
@@ -146,10 +135,6 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
         return angular.isDefined(vm.recordedDomains.find(entry => entry.selected));
     }
 
-    function deviceUsesPatternFilter() {
-        return FilterModeService.getEffectiveFilterMode(vm.globalSslEnabled, vm.device) === FILTER_TYPE.PATTERN;
-    }
-
     /*
       Append domains that are not already on the first list
     */
@@ -176,56 +161,22 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     }
 
     /*
-      If the pattern filter is active for the device and a domain was not blocked, the reason could be one of:
-      - the domain (or one of its parent domains) was allowed explicitly, so the pattern filter was not applied
-      - the domain was not on any domain block list (but requests might have been blocked by the pattern filter)
-      We want to distinguish these cases in the UI.
+      Process the recorded Domains, so the correct icon is shown for each:
+      - if patternBlocked > 0 and patternPassed == 0: show as blocked
+      - if patternBlocked == 0 and patternPassed > 0: show as passed
+      - if patternBlocked > 0 and patternPassed > 0: show as filtered
      */
-    function findPatternFilteredDomains() {
-        if (!deviceUsesPatternFilter()) {
-            return;
-        }
-        let allowed = {}; // build a tree of allowed domains
-        vm.customDomainFilter.whitelistedDomains.forEach(domain => {
-            let parts = domain.split('.').reverse();
-            var node = allowed;
-            for (var i = 0; i < parts.length; i++) {
-                let part = parts[i];
-                if (node[part] === true) {
-                    break; // already allowed
-                }
-                if (angular.isUndefined(node[part])) {
-                    node[part] = {}; // new subdomain
-                }
-                if (i === parts.length - 1) { // last element?
-                    node[part] = true;
-                } else {
-                    node = node[part]; // go to subdomain
+    function processRecordedDomains() {
+        vm.recordedDomains.forEach(domain => {
+            if (!domain.blocked) {
+                if (domain.patternBlocked > 0 && domain.patternPassed === 0) {
+                    domain.blocked = true;
+                } else if (domain.patternBlocked > 0 && domain.patternPassed > 0) {
+                    domain.patternFiltered = true;
                 }
             }
+            domain.count = Math.max(domain.count, domain.patternBlocked + domain.patternPassed);
         });
-        function isAllowed(domain) {
-            let parts = domain.split('.').reverse();
-            var node = allowed;
-            for (var i = 0; i < parts.length; i++) {
-                let part = parts[i];
-                if (node[part] === true) {
-                    return true;
-                }
-                if (angular.isUndefined(node[part])) {
-                    node[part] = {}; // try subdomain
-                }
-                node = node[part];
-            }
-            return false;
-        }
-        vm.recordedDomains.forEach(recordedDomain => {
-            let domain = recordedDomain.domain;
-            if (!recordedDomain.blocked) {
-                if (!isAllowed(domain)) {
-                    recordedDomain.patternFiltered = true;
-                }
-            }
-        });
+        vm.recordedDomains.sort(compareRecordedDomains);
     }
 }

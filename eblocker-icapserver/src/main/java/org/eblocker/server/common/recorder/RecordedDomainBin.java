@@ -41,8 +41,8 @@ public class RecordedDomainBin {
         this.requests = new HashMap<>();
     }
 
-    public void update(String domain, boolean blocked) {
-        requests.computeIfAbsent(domain, d -> new RecordedDomainCounter()).update(blocked);
+    public void update(String domain, boolean blocked, boolean patternRequest) {
+        requests.computeIfAbsent(domain, d -> new RecordedDomainCounter()).update(blocked, patternRequest);
     }
 
     public Instant getEnd() {

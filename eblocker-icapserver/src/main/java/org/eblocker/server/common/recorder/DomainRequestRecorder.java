@@ -55,7 +55,7 @@ public class DomainRequestRecorder {
         this.binLengthInSeconds = binLengthInSeconds;
     }
 
-    public synchronized void recordRequest(String deviceId, String domain, boolean blocked) {
+    public synchronized void recordRequest(String deviceId, String domain, boolean blocked, boolean patternRequest) {
         Instant now = clock.instant();
 
         RecordedDomainBin bin = currentBins.computeIfAbsent(deviceId, k -> loadOrCreateBin(k, now));
@@ -64,7 +64,7 @@ public class DomainRequestRecorder {
             bin = createBin(now);
             currentBins.put(deviceId, bin);
         }
-        bin.update(domain, blocked);
+        bin.update(domain, blocked, patternRequest);
     }
 
     private RecordedDomainBin loadOrCreateBin(String deviceId, Instant now) {

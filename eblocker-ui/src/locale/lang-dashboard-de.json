@@ -185,7 +185,9 @@
             "ACTION" : {
                 "ALLOW" : "Immer erlauben",
                 "APPLY" : "Anwenden",
-                "BLOCK" : "Immer blocken"
+                "BLOCK" : "Immer blocken",
+                "REFRESH" : "Aktualisieren",
+                "RESET" : "Löschen"
             },
             "RECORDING" : {
                 "DISABLED" : "Nicht aufzeichnen",

@@ -42,6 +42,7 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     vm.selectedAction = 'block';
     vm.applyChanges = applyChanges;
     vm.anyDomainSelected = anyDomainSelected;
+    vm.loadData = loadData;
 
     function onDeviceSelected() {
         logger.warn('***** The selected device has changed! *****');

@@ -185,7 +185,9 @@
             "ACTION" : {
                 "ALLOW" : "Always allow",
                 "APPLY" : "Apply",
-                "BLOCK" : "Always block"
+                "BLOCK" : "Always block",
+                "REFRESH" : "Refresh",
+                "RESET" : "Reset"
             },
             "RECORDING" : {
                 "DISABLED" : "Not recording",

@@ -11,17 +11,20 @@
                            class="md-primary switch-word-break" ng-change="vm.onChangeRecordingEnabled()">
                     {{ vm.device.domainRecordingEnabled ? 'DEVICE_FIREWALL.CARD.RECORDING.ENABLED' : 'DEVICE_FIREWALL.CARD.RECORDING.DISABLED' | translate }}
                 </md-switch>
-                <md-button ng-click="vm.resetRecording()">Reset</md-button>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" ng-click="vm.loadData()">{{'DEVICE_FIREWALL.CARD.ACTION.REFRESH' | translate}}</md-button>
+                <md-button class="md-primary" ng-click="vm.resetRecording()">{{'DEVICE_FIREWALL.CARD.ACTION.RESET' | translate}}</md-button>
             </div>
             <md-content style="max-height: 216px" layout-fill>
                 <div layout="row" ng-repeat="entry in vm.recordedDomains">
                     <md-checkbox flex="10" md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="entry.selected" aria-label="Select entry"></md-checkbox>
                     <div layout="row" flex="90">
                         <div flex="80" class="truncate">{{ entry.domain }}</div>
-                        <div flex="10">{{ entry.count }}</div>
+                        <div flex="10" class="align-right">{{ entry.count }}</div>
                         <div flex="10">
                             <md-icon ng-show="!entry.blocked && !entry.patternFiltered" class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
-                            <md-icon ng-show="!entry.blocked && entry.patternFiltered" class="content-warn" md-svg-src="/img/icons/icons8-filter.svg"></md-icon>
+                            <md-icon ng-show="!entry.blocked && entry.patternFiltered" class="orange" md-svg-src="/img/icons/icons8-filter.svg"></md-icon>
                             <md-icon ng-show="entry.blocked" class="content-error" md-svg-src="/img/icons/ic_block_black.svg"></md-icon>
                         </div>
                     </div>
@@ -29,12 +32,30 @@
             </md-content>
         </div>
 
-        <div layout="row" ng-hide="vm.recordedDomains.length == 0">
+        <div layout="row" layout-align="center center" ng-hide="vm.recordedDomains.length == 0">
             <md-select ng-model="vm.selectedAction" aria-label="Select action">
                 <md-option value="allow">{{'DEVICE_FIREWALL.CARD.ACTION.ALLOW' | translate}}</md-option>
                 <md-option value="block">{{'DEVICE_FIREWALL.CARD.ACTION.BLOCK' | translate}}</md-option>
             </md-select>
-            <md-button ng-disabled="!vm.anyDomainSelected()" ng-click="vm.applyChanges()">{{'DEVICE_FIREWALL.CARD.ACTION.APPLY' | translate}}</md-button>
+            <md-button class="md-primary" ng-disabled="!vm.anyDomainSelected()" ng-click="vm.applyChanges()">{{'DEVICE_FIREWALL.CARD.ACTION.APPLY' | translate}}</md-button>
+        </div>
+        <div ng-show="vm.showLegend" layout="column">
+            <div layout="row">
+                <md-icon class="content-ok align-right" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                <div translate="DEVICE_FIREWALL.CARD.LEGEND.PASS"></div>
+            </div>
+            <div layout="row">
+                <md-icon class="orange align-right" md-svg-src="/img/icons/icons8-filter.svg"></md-icon>
+                <div translate="DEVICE_FIREWALL.CARD.LEGEND.FILTER"></div>
+            </div>
+            <div layout="row">
+                <md-icon class="content-error align-right" md-svg-src="/img/icons/ic_block_black.svg"></md-icon>
+                <div translate="DEVICE_FIREWALL.CARD.LEGEND.BLOCK"></div>
+            </div>
         </div>
     </eb-card-content>
+    <eb-card-actions layout="row" layout-align="center center">
+        <md-button class="md-primary" ng-click="vm.setShowLegend(true)" ng-hide="vm.showLegend">{{'DEVICE_FIREWALL.CARD.ACTION.LEGEND_SHOW' | translate}}</md-button>
+        <md-button class="md-primary" ng-click="vm.setShowLegend(false)" ng-show="vm.showLegend">{{'DEVICE_FIREWALL.CARD.ACTION.LEGEND_HIDE' | translate}}</md-button>
+    </eb-card-actions>
 </eb-card>

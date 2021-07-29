@@ -36,15 +36,17 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     vm.recordedDomains = [];
     vm.device = {};
     vm.patternFiltered = {};
+    vm.showLegend = false;
     vm.customDomainFilter = CustomDomainFilterService.emptyFilter();
 
     vm.resetRecording = resetRecording;
     vm.selectedAction = 'block';
     vm.applyChanges = applyChanges;
     vm.anyDomainSelected = anyDomainSelected;
+    vm.loadData = loadData;
+    vm.setShowLegend = setShowLegend;
 
     function onDeviceSelected() {
-        logger.warn('***** The selected device has changed! *****');
         loadData();
     }
 
@@ -129,6 +131,10 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
             logger.error('Failed to apply changes:' + vm.selectedAction + ': ' + domains, reason);
             return $q.reject(reason);
         });
+    }
+
+    function setShowLegend(show) {
+        vm.showLegend = show;
     }
 
     function anyDomainSelected() {

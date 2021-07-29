@@ -185,7 +185,16 @@
             "ACTION" : {
                 "ALLOW" : "Immer erlauben",
                 "APPLY" : "Anwenden",
-                "BLOCK" : "Immer blocken"
+                "BLOCK" : "Immer blocken",
+                "LEGEND_HIDE" : "Legende ausblenden",
+                "LEGEND_SHOW" : "Legende anzeigen",
+                "REFRESH" : "Aktualisieren",
+                "RESET" : "Löschen"
+            },
+            "LEGEND" : {
+                "BLOCK" : "Alle Anfragen wurden geblockt.",
+                "FILTER" : "Einige Anfragen wurden vom Pattern-Blocker geblockt.",
+                "PASS" : "Alle Anfragen an diese Domain wurden erlaubt."
             },
             "RECORDING" : {
                 "DISABLED" : "Nicht aufzeichnen",

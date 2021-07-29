@@ -185,7 +185,16 @@
             "ACTION" : {
                 "ALLOW" : "Always allow",
                 "APPLY" : "Apply",
-                "BLOCK" : "Always block"
+                "BLOCK" : "Always block",
+                "LEGEND_HIDE" : "Hide legend",
+                "LEGEND_SHOW" : "Show legend",
+                "REFRESH" : "Refresh",
+                "RESET" : "Reset"
+            },
+            "LEGEND" : {
+                "BLOCK" : "All requests were blocked.",
+                "FILTER" : "Some requests were blocked by the pattern blocker.",
+                "PASS" : "All requests to this domain were allowed."
             },
             "RECORDING" : {
                 "DISABLED" : "Not recording",

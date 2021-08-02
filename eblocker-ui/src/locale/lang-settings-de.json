@@ -2935,6 +2935,7 @@
                 "AUTO_UPDATE_DISABLED" : "Automatische Aktualisierungen sind deaktiviert",
                 "AUTO_UPDATE_ENABLED" : "Aktualisierungen täglich:",
                 "CHECK_FOR_UPDATES" : "Jetzt prüfen",
+                "DONATE" : "Jetzt tägliche Updates freischalten",
                 "UPDATE" : "Jetzt aktualisieren"
             },
             "AUTO_UPDATE_EDIT" : {

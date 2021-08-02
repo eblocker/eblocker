@@ -19,12 +19,14 @@ package org.eblocker.server.http.controller.impl;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.strategicgains.syntaxe.ValidationEngine;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.UpdatingStatus;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.common.update.SystemUpdater.State;
 import org.eblocker.server.http.controller.UpdateController;
+import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.RegistrationService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.restexpress.Request;
@@ -49,6 +51,7 @@ public class UpdateControllerImpl implements UpdateController {
     private final AutomaticUpdater automaticUpdater;
     private final RegistrationService registrationService;
     private final SystemStatusService systemStatusService;
+    private final ProductInfoService productInfoService;
     private final int secondsBetweenUpdateRequests;
     private Instant lastUpdateRequest = null;
 
@@ -58,12 +61,14 @@ public class UpdateControllerImpl implements UpdateController {
             AutomaticUpdater autoUpdater,
             RegistrationService registrationService,
             SystemStatusService systemStatusService,
+            ProductInfoService productInfoService,
             @Named("update.seconds.between.requests") int secondsBetweenUpdateRequests
     ) {
         this.systemUpdater = systemUpdater;
         this.automaticUpdater = autoUpdater;
         this.registrationService = registrationService;
         this.systemStatusService = systemStatusService;
+        this.productInfoService = productInfoService;
         this.secondsBetweenUpdateRequests = secondsBetweenUpdateRequests;
     }
 
@@ -72,6 +77,7 @@ public class UpdateControllerImpl implements UpdateController {
         UpdatingStatus status = systemUpdater.getUpdatingStatus();
         status.activateAutomaticUpdates(automaticUpdater.isActivated());
         status.setNextAutomaticUpdate(formatDate(automaticUpdater.getNextUpdate()));
+        status.setAutomaticUpdatesAllowed(productInfoService.hasFeature(ProductFeature.AUP));
         systemStatusService.setUpdatingStatus(status);
         status.setConfig(automaticUpdater.getConfiguration());
         return status;

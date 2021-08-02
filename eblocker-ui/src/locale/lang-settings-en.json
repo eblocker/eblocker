@@ -2935,6 +2935,7 @@
                 "AUTO_UPDATE_DISABLED" : "Automatic updates are disabled",
                 "AUTO_UPDATE_ENABLED" : "Automatic updates daily between",
                 "CHECK_FOR_UPDATES" : "Check now",
+                "DONATE" : "Activate daily updates now",
                 "UPDATE" : "Update now"
             },
             "AUTO_UPDATE_EDIT" : {

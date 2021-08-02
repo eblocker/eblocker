@@ -21,11 +21,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.strategicgains.syntaxe.ValidationEngine;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.RegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +70,8 @@ public class AutomaticUpdater {
     private Clock clock;
     private Random random;
 
-    private RegistrationService registrationService;
+    private final RegistrationService registrationService;
+    private final ProductInfoService productInfoService;
 
     @Inject
     public AutomaticUpdater(
@@ -79,7 +82,8 @@ public class AutomaticUpdater {
             @Named("update.automatic.config") String configJSON,
             @Named("localClock") Clock clock,
             Random random,
-            RegistrationService registrationService
+            RegistrationService registrationService,
+            ProductInfoService productInfoService
     ) {
         this.executorService = executorService;
         this.updater = updater;
@@ -90,6 +94,7 @@ public class AutomaticUpdater {
 
         this.random = random;
         this.registrationService = registrationService;
+        this.productInfoService = productInfoService;
     }
 
     @SubSystemInit
@@ -142,7 +147,7 @@ public class AutomaticUpdater {
     public void start() {
         stopUpdateTask();
         delayToNextUpdate = calculateNextUpdateAndDelay();
-        startUpdatingTask(false); //start update later in time frame today
+        scheduleUpdatingTask();
     }
 
     /**
@@ -167,7 +172,7 @@ public class AutomaticUpdater {
             taskFuture.cancel(false);
     }
 
-    private void startUpdatingTask(boolean now) {
+    private void scheduleUpdatingTask() {
         if (updater != null && isActivated) {
             Runnable updateTask = new Runnable() {
                 @Override
@@ -179,15 +184,18 @@ public class AutomaticUpdater {
                     }
 
                     try {
-                        log.info("Starting system updater now.");
-
-                        updater.startUpdate();
+                        if (automaticUpdatesAllowed()) {
+                            log.info("Starting system updater now.");
+                            updater.startUpdate();
+                        } else {
+                            log.info("Automatic updates feature not available.");
+                        }
 
                         //next Update tomorrow
                         prepareUpdateTomorrow();
 
                         // schedule next Update
-                        startUpdatingTask(false);
+                        scheduleUpdatingTask();
                     } catch (EblockerException | IOException e) {
                         log.error("Cannot check for system update", e);
                     } catch (InterruptedException e) {
@@ -196,12 +204,12 @@ public class AutomaticUpdater {
                     }
                 }
             };
-            if (now) {//start update now
-                executorService.execute(updateTask);
-            } else {
-                taskFuture = executorService.schedule(updateTask, delayToNextUpdate, TimeUnit.MINUTES);
-            }
+            taskFuture = executorService.schedule(updateTask, delayToNextUpdate, TimeUnit.MINUTES);
         }
+    }
+
+    private boolean automaticUpdatesAllowed() {
+        return productInfoService.hasFeature(ProductFeature.AUP);
     }
 
     /**

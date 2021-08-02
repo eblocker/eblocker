@@ -17,7 +17,9 @@
 package org.eblocker.server.common.update;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.RegistrationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,7 @@ public class AutomaticUpdaterTest {
     private Clock localClock;
     private Random random;
     private RegistrationService registrationService;
+    private ProductInfoService productInfoService;
     private DataSource dataSource;
     private SystemUpdater systemUpdater;
     private ScheduledExecutorService executorService;
@@ -62,11 +65,13 @@ public class AutomaticUpdaterTest {
         systemUpdater = Mockito.mock(SystemUpdater.class);
 
         executorService = Mockito.mock(ScheduledExecutorService.class);
+
+        productInfoService = Mockito.mock(ProductInfoService.class);
     }
 
     private AutomaticUpdater createUpdater(int startTimeHour, int startTimeMin, int endTimeHour, int endTimeMin) {
         String config = createConfiguration(startTimeHour, startTimeMin, endTimeHour, endTimeMin).toJSONString();
-        AutomaticUpdater updater = new AutomaticUpdater(executorService, systemUpdater, dataSource, new ObjectMapper(), config, localClock, random, registrationService);
+        AutomaticUpdater updater = new AutomaticUpdater(executorService, systemUpdater, dataSource, new ObjectMapper(), config, localClock, random, registrationService, productInfoService);
         updater.init();
         return updater;
     }
@@ -120,10 +125,21 @@ public class AutomaticUpdaterTest {
 
     @Test
     public void testScheduleAndStartUpdates() throws Exception {
+        testScheduleUpdates(true);
+    }
+
+    @Test
+    public void testOnlyScheduleUpdates() throws Exception {
+        testScheduleUpdates(false);
+    }
+
+    private void testScheduleUpdates(boolean automaticUpdatesAllowed) throws Exception {
         LocalDateTime lastUpdate = LocalDateTime.of(2018, 12, 27, 3, 20, 0);
         Instant bootTime = LocalDateTime.of(2018, 12, 27, 3, 30, 0).toInstant(zoneOffsetCET);
         LocalDateTime nextUpdate = LocalDateTime.of(2018, 12, 28, 3, 15, 0);
         LocalDateTime nextUpdate2 = LocalDateTime.of(2018, 12, 29, 3, 15, 0);
+
+        Mockito.when(productInfoService.hasFeature(ProductFeature.AUP)).thenReturn(automaticUpdatesAllowed);
 
         Mockito.when(dataSource.getLastUpdateTime()).thenReturn(lastUpdate);
         Mockito.when(localClock.instant()).thenReturn(bootTime);
@@ -139,8 +155,15 @@ public class AutomaticUpdaterTest {
         Mockito.when(localClock.instant()).thenReturn(nextUpdate.toInstant(zoneOffsetCET));
         task.getValue().run();
 
-        // Updates were started:
-        Mockito.verify(systemUpdater).startUpdate();
+        // License upgrade was checked:
+        Mockito.verify(registrationService).checkAndExecuteUpgrade();
+
+        // Updates were started (or not):
+        if (automaticUpdatesAllowed) {
+            Mockito.verify(systemUpdater).startUpdate();
+        } else {
+            Mockito.verifyNoInteractions(systemUpdater);
+        }
 
         // And the next update is scheduled:
         assertEquals(nextUpdate2, updater.getNextUpdate());

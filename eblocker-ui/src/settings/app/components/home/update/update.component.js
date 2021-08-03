@@ -135,7 +135,8 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         } else {
             vm.lastUpdate.value = '-';
         }
-        if (vm.automaticUpdatesAllowed && angular.isDefined(status.nextAutomaticUpdate) && status.nextAutomaticUpdate !== '') {
+        if (vm.automaticUpdatesAllowed && angular.isDefined(status.nextAutomaticUpdate) &&
+            status.nextAutomaticUpdate !== '') {
             vm.nextUpdate.value = LanguageService.getDate(status.nextAutomaticUpdate, vm.dateTimeFormat);
         } else {
             vm.nextUpdate.value = '-';

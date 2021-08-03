@@ -98,7 +98,8 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         vm.isUpdating = status.updating;
         vm.isChecking = status.checking;
         vm.areUpdatesAvailable = status.updatesAvailable;
-        vm.automaticUpdates = status.automaticUpdatesActivated;
+        vm.automaticUpdates = status.automaticUpdatesActivated && status.automaticUpdatesAllowed;
+        vm.automaticUpdatesAllowed = status.automaticUpdatesAllowed;
         // $scope.lastAutomaticUpdate = status.lastAutomaticUpdate;
         // $scope.nextAutomaticUpdate = status.nextAutomaticUpdate;
         vm.projectVersion = status.projectVersion;
@@ -134,7 +135,7 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         } else {
             vm.lastUpdate.value = '-';
         }
-        if (angular.isDefined(status.nextAutomaticUpdate) && status.nextAutomaticUpdate !== '') {
+        if (vm.automaticUpdatesAllowed && angular.isDefined(status.nextAutomaticUpdate) && status.nextAutomaticUpdate !== '') {
             vm.nextUpdate.value = LanguageService.getDate(status.nextAutomaticUpdate, vm.dateTimeFormat);
         } else {
             vm.nextUpdate.value = '-';

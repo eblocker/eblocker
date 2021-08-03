@@ -27,6 +27,7 @@ public class UpdatingStatus {
     private boolean checking = false;
     private boolean updatesAvailable = false;
     private boolean automaticUpdatesActivated = false;
+    private boolean automaticUpdatesAllowed = false;
     private boolean disabled = false;
     private String lastAutomaticUpdate = "";
     private String nextAutomaticUpdate = "";
@@ -94,6 +95,11 @@ public class UpdatingStatus {
     }
 
     @JsonProperty
+    public boolean isAutomaticUpdatesAllowed() {
+        return automaticUpdatesAllowed;
+    }
+
+    @JsonProperty
     public String getProjectVersion() {
         return projectVersion;
     }
@@ -155,6 +161,10 @@ public class UpdatingStatus {
 
     public void activateAutomaticUpdates(boolean autoUpdates) {
         this.automaticUpdatesActivated = autoUpdates;
+    }
+
+    public void setAutomaticUpdatesAllowed(boolean allowed) {
+        this.automaticUpdatesAllowed = allowed;
     }
 
     public void setUpdateProgress(List<String> list) {

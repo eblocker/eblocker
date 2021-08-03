@@ -52,7 +52,7 @@
 
                 <!-- Toggle Automatic updates -->
                 <div>
-                    <md-switch md-theme="eBlockerThemeSwitch" class="md-primary" style="white-space: inherit;" ng-model="vm.automaticUpdates" ng-change="vm.setAutomaticUpdateStatus()">
+                    <md-switch md-theme="eBlockerThemeSwitch" class="md-primary" style="white-space: inherit;" ng-model="vm.automaticUpdates" ng-change="vm.setAutomaticUpdateStatus()" ng-disabled="!vm.automaticUpdatesAllowed">
                         {{ vm.automaticUpdates ? 'ADMINCONSOLE.UPDATE.ACTION.AUTO_UPDATE_ENABLED' : 'ADMINCONSOLE.UPDATE.ACTION.AUTO_UPDATE_DISABLED' | translate }}
                     </md-switch>
                 </div>
@@ -80,6 +80,11 @@
 
             </div>
 
+            <div>
+                <md-button class="md-primary" ng-hide="vm.automaticUpdatesAllowed" ng-href="{{ 'ADMINCONSOLE.DONATIONS.URL' | translate }}" target="_blank">
+                    {{'ADMINCONSOLE.UPDATE.ACTION.DONATE' | translate}}
+                </md-button>
+            </div>
 
             <div layout="row" layout-xs="column" style="padding-top: 20px;">
                 <div flex-gt-xs="50">

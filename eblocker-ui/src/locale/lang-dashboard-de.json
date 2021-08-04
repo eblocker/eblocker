@@ -196,6 +196,10 @@
                 "FILTER" : "Einige Anfragen wurden vom Pattern-Blocker geblockt.",
                 "PASS" : "Alle Anfragen an diese Domain wurden erlaubt."
             },
+            "MESSAGE" : {
+                "BLOCK" : "{{numberOfDomains}} Domain(s) der Blockierliste hinzugefügt",
+                "ALLOW" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste hinzugefügt"
+            },
             "RECORDING" : {
                 "DISABLED" : "Nicht aufzeichnen",
                 "ENABLED" : "Aufzeichnen (letzte 24h)"

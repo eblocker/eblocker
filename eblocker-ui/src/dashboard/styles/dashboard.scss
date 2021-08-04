@@ -136,6 +136,13 @@ $dashboard-toolbar-height: 66px;
         }
     }
 
+    .device-firewall-card {
+        .recorded-domain-deselected {
+            color: gray;
+            font-style: italic;
+        }
+    }
+
     .frag-finn-card .iframe-container {
         iframe {
             width: 280px;

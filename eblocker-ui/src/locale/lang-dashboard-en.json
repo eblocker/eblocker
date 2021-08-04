@@ -196,6 +196,10 @@
                 "FILTER" : "Some requests were blocked by the pattern blocker.",
                 "PASS" : "All requests to this domain were allowed."
             },
+            "MESSAGE" : {
+                "BLOCK" : "Added {{numberOfDomains}} domain(s) to the blocker list",
+                "ALLOW" : "Added {{numberOfDomains}} domain(s) to the exception list"
+            },
             "RECORDING" : {
                 "DISABLED" : "Not recording",
                 "ENABLED" : "Recording (last 24h)"

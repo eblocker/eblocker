@@ -25,7 +25,7 @@ export default {
 
 function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, $interval, DataService, DomainRecorderService, // jshint ignore: line
                                   DeviceSelectorService, DeviceService, CustomDomainFilterService,
-                                  FilterModeService, FILTER_TYPE, EVENTS) {
+                                  NotificationService, FilterModeService, FILTER_TYPE, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -119,12 +119,15 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
         let selectedDomains = vm.recordedDomainsFiltered.filter(entry => entry.selected);
         let domains = selectedDomains.map(obj => obj.domain);
         let updater, listToUpdate;
+        let toastKey = 'DEVICE_FIREWALL.CARD.MESSAGE.';
         if (vm.selectedAction === 'block') {
             updater = CustomDomainFilterService.updateBlocklist;
             listToUpdate = vm.customDomainFilter.blacklistedDomains;
+            toastKey += 'BLOCK';
         } else if (vm.selectedAction === 'allow') {
             updater = CustomDomainFilterService.updatePasslist;
             listToUpdate = vm.customDomainFilter.whitelistedDomains;
+            toastKey += 'ALLOW';
         } else {
             logger.error('Unexpected action to apply to domains: ' + vm.selectedAction);
             return;
@@ -133,6 +136,7 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
         updater(listToUpdate).then(function(result) {
             $rootScope.$broadcast(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED);
             deselectDomains();
+            NotificationService.info(toastKey, {numberOfDomains: domains.length});
         }, function(reason) {
             logger.error('Failed to apply changes:' + vm.selectedAction + ': ' + domains, reason);
             return $q.reject(reason);

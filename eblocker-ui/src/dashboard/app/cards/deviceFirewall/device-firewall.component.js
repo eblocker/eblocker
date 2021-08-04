@@ -34,6 +34,7 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     const CARD_NAME = 'DEVICE_FIREWALL';
 
     vm.recordedDomains = [];
+    vm.recordedDomainsFiltered = [];
     vm.device = {};
     vm.patternFiltered = {};
     vm.showLegend = false;
@@ -46,6 +47,9 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     vm.loadData = loadData;
     vm.setShowLegend = setShowLegend;
 
+    vm.searchProps = ['domain'];
+    vm.searchTerm = '';
+
     function onDeviceSelected() {
         loadData();
     }
@@ -56,11 +60,12 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
 
     $scope.$on(EVENTS.DEVICE_SELECTED, loadData);
 
-    $scope.$on(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED, loadData);
+    $scope.$on(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED, loadCustomDomainFilter);
 
     function loadData() {
         $q.all([loadDevice(), loadCustomDomainFilter()]).then(function(data) {
             processRecordedDomains();
+            vm.searchTerm = '';
         }, function(reason) {
             logger.error('Could not load data', reason);
             return $q.reject(reason);
@@ -104,14 +109,14 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
 
     function resetRecording() {
         DomainRecorderService.resetRecording(vm.device.id).then(function(response) {
-            loadDevice();
+            loadData();
         }, function(reason) {
             logger.error('Could not reset recording', reason);
         });
     }
 
     function applyChanges() {
-        let selectedDomains = vm.recordedDomains.filter(entry => entry.selected);
+        let selectedDomains = vm.recordedDomainsFiltered.filter(entry => entry.selected);
         let domains = selectedDomains.map(obj => obj.domain);
         let updater, listToUpdate;
         if (vm.selectedAction === 'block') {
@@ -127,6 +132,7 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
         appendDomains(listToUpdate, domains);
         updater(listToUpdate).then(function(result) {
             $rootScope.$broadcast(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED);
+            deselectDomains();
         }, function(reason) {
             logger.error('Failed to apply changes:' + vm.selectedAction + ': ' + domains, reason);
             return $q.reject(reason);
@@ -138,7 +144,16 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     }
 
     function anyDomainSelected() {
-        return angular.isDefined(vm.recordedDomains.find(entry => entry.selected));
+        return angular.isDefined(vm.recordedDomainsFiltered.find(entry => entry.selected));
+    }
+
+    function deselectDomains() {
+        vm.recordedDomainsFiltered.forEach(domain => {
+            if (domain.selected) {
+                delete domain.selected;
+                domain.deselected = true; // show as gray / italic
+            }
+        });
     }
 
     /*
@@ -184,5 +199,6 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
             domain.count = Math.max(domain.count, domain.patternBlocked + domain.patternPassed);
         });
         vm.recordedDomains.sort(compareRecordedDomains);
+        vm.recordedDomainsFiltered = angular.copy(vm.recordedDomains);
     }
 }

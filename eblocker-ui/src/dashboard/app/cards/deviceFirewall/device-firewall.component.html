@@ -4,7 +4,7 @@
     card-id="{{ vm.cardId }}"
     tooltip="DEVICE_FIREWALL.CARD.TOOLTIP">
 
-    <eb-card-content>
+    <eb-card-content class="device-firewall-card">
         <div layout="column" layout-align="center center">
             <div layout="row">
                 <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.domainRecordingEnabled"
@@ -13,14 +13,27 @@
                 </md-switch>
             </div>
             <div layout="row">
-                <md-button class="md-primary" ng-click="vm.loadData()">{{'DEVICE_FIREWALL.CARD.ACTION.REFRESH' | translate}}</md-button>
-                <md-button class="md-primary" ng-click="vm.resetRecording()">{{'DEVICE_FIREWALL.CARD.ACTION.RESET' | translate}}</md-button>
+                <md-button class="md-primary" ng-click="vm.loadData()">
+                    {{'DEVICE_FIREWALL.CARD.ACTION.REFRESH' | translate}}
+                </md-button>
+                <md-button class="md-primary" ng-click="vm.resetRecording()" ng-hide="vm.recordedDomains.length === 0">
+                    {{'DEVICE_FIREWALL.CARD.ACTION.RESET' | translate}}
+                </md-button>
             </div>
+            <!-- TABLE SEARCH -->
+            <eb-filter-table filtered-data="vm.recordedDomainsFiltered"
+                             original-data="vm.recordedDomains"
+                             filter-properties="vm.searchProps"
+                             placeholder-label="{{'SHARED.FILTER.LABEL' | translate}}"
+                             icon-path="/img/icons/ic_search_black.svg"
+                             search-term="vm.searchTerm"
+                             ng-hide="vm.recordedDomains.length === 0">
+            </eb-filter-table>
             <md-content style="max-height: 216px" layout-fill>
-                <div layout="row" ng-repeat="entry in vm.recordedDomains">
+                <div layout="row" ng-repeat="entry in vm.recordedDomainsFiltered">
                     <md-checkbox flex="10" md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="entry.selected" aria-label="Select entry"></md-checkbox>
                     <div layout="row" flex="90">
-                        <div flex="80" class="truncate">{{ entry.domain }}</div>
+                        <div flex="80" class="truncate" ng-class="{'recorded-domain-deselected': entry.deselected}">{{ entry.domain }}</div>
                         <div flex="10" class="align-right">{{ entry.count }}</div>
                         <div flex="10">
                             <md-icon ng-show="!entry.blocked && !entry.patternFiltered" class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
@@ -32,7 +45,7 @@
             </md-content>
         </div>
 
-        <div layout="row" layout-align="center center" ng-hide="vm.recordedDomains.length == 0">
+        <div layout="row" layout-align="center center" ng-hide="vm.recordedDomains.length === 0">
             <md-select ng-model="vm.selectedAction" aria-label="Select action">
                 <md-option value="allow">{{'DEVICE_FIREWALL.CARD.ACTION.ALLOW' | translate}}</md-option>
                 <md-option value="block">{{'DEVICE_FIREWALL.CARD.ACTION.BLOCK' | translate}}</md-option>

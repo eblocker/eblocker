@@ -32,6 +32,7 @@ import org.eblocker.server.common.data.messagecenter.provider.CertificateExpirat
 import org.eblocker.server.common.data.messagecenter.provider.CertificateUntrustedMessageProvider;
 import org.eblocker.server.common.data.messagecenter.provider.DailyNewsMessageProvider;
 import org.eblocker.server.common.data.messagecenter.provider.EventMessageProvider;
+import org.eblocker.server.common.data.messagecenter.provider.FilterListsOutdatedMessageProvider;
 import org.eblocker.server.common.data.messagecenter.provider.LicenseExpirationMessageProvider;
 import org.eblocker.server.common.data.messagecenter.provider.LocalDnsIsNotGatewayMessageProvider;
 import org.eblocker.server.common.data.messagecenter.provider.MessageProviderMessageId;
@@ -106,6 +107,7 @@ public class MessageCenterService {
             LocalDnsIsNotGatewayMessageProvider localDnsIsNotGatewayMessageProvider,
             UnreliableDnsServerMessageProvider unreliableDnsServerMessageProvider,
             AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
+            FilterListsOutdatedMessageProvider filterListsOutdatedMessageProvider,
             ProductInfoService productInfoService,
             DeviceService deviceService,
             UserService userService,
@@ -122,7 +124,8 @@ public class MessageCenterService {
                         certificateUntrustedMessageProvider,
                         localDnsIsNotGatewayMessageProvider,
                         unreliableDnsServerMessageProvider,
-                        appModuleRemovalMessageProvider
+                        appModuleRemovalMessageProvider,
+                        filterListsOutdatedMessageProvider
                 ),
                 productInfoService,
                 deviceService,
@@ -165,18 +168,15 @@ public class MessageCenterService {
         }
         // User is not restricted, return actual messages
         for (MessageContainer messageContainer : cache.values()) {
+            MessageCenterMessage message = messageContainer.getMessage();
+            MessageSeverity severity = message.getMessageSeverity();
+
             // Show message if visible and if not Info when info messages are disabled and if not alert when alert messages are disabled
             if (messageContainer.getVisibility().isForDevice(deviceId) &&
-                    !(messageContainer.getMessage().getMessageSeverity() != null &&
-                            messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.INFO) &&
-                            dev != null &&
-                            !dev.isMessageShowInfo()) &&
-                    !(messageContainer.getMessage().getMessageSeverity() != null &&
-                            messageContainer.getMessage().getMessageSeverity().equals(MessageSeverity.ALERT) &&
-                            dev != null &&
-                            !dev.isMessageShowAlert())
+                    !(severity != null && severity.equals(MessageSeverity.INFO)  && dev != null && !dev.isMessageShowInfo()) &&
+                    !(severity != null && severity.equals(MessageSeverity.ALERT) && dev != null && !dev.isMessageShowAlert())
             ) {
-                messages.add(messageContainer.getMessage());
+                messages.add(message);
             }
         }
         return messages;

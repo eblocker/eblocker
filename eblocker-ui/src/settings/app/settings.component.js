@@ -88,7 +88,7 @@ function Controller($scope, $mdSidenav, STATES, StateService, SplashService, Con
                 url: 'ADMINCONSOLE.TOOLBAR.CONTENT.HELP.URL'
             },
             {
-                label: 'ADMINCONSOLE.TOOLBAR.CONTENT.LOGOUT.LABEL',
+                label: 'SHARED.LOGOUT.LABEL',
                 image: '/img/icons/ic_person_black.svg',
                 hide: hideLogoutInMenu,
                 closeOnClick: true,

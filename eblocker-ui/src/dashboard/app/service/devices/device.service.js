@@ -53,11 +53,20 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
         return deviceCache;
     }
 
-    function getDevices() {
+    function getAllDevices() {
         return $http.get('/api/admindashboard/devices', config).then(function(response) {
             return response.data;
         }, function(reason) {
-            logger.error('Getting devices failed with status ' + reason.status + ' - ' + reason.data);
+            logger.error('Getting all devices failed with status ' + reason.status + ' - ' + reason.data);
+            return $q.reject(reason.data);
+        });
+    }
+
+    function getOperatingUserDevices() {
+        return $http.get('/api/dashboard/operatinguser/devices', config).then(function(response) {
+            return response.data;
+        }, function(reason) {
+            logger.error('Getting operating user\'s devices failed with status ' + reason.status + ' - ' + reason.data);
             return $q.reject(reason.data);
         });
     }
@@ -85,7 +94,8 @@ export default function Device(logger, $http, $q, $interval, DataCachingService)
         start: startSyncTimer,
         stop: stopSyncTimer,
         getDevice: getDevice,
-        getDevices: getDevices,
+        getAllDevices: getAllDevices,
+        getOperatingUserDevices: getOperatingUserDevices,
         update: update,
         updateShowWelcomeFlags: updateShowWelcomeFlags
     };

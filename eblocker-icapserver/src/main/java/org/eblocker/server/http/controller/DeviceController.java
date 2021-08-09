@@ -30,6 +30,8 @@ public interface DeviceController {
 
     List<Device> getAllDevices(Request request, Response response);
 
+    List<Device> getOperatingUserDevices(Request request, Response response);
+
     Device getDeviceById(Request request, Response response);
 
     Object updateDevice(Request request, Response response);

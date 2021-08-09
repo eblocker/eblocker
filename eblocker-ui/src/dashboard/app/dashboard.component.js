@@ -193,7 +193,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     function adminLogin() {
         DialogService.adminLogin(function onOk(deviceId) {
             populateDevicesDropdown();
-            DeviceSelectorService.goToDevice(deviceId);
+            DeviceSelectorService.goToDevice(deviceId, true);
         }, function onCancel(isLoggedIn) {
             // login was successful, but user did not select any device:
             if (isLoggedIn) {
@@ -202,30 +202,48 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
         });
     }
 
+    function adminLogout() {
+        security.requestToken(APP_CONTEXT.name).then(function(response) {
+            populateDevicesDropdown();
+            DeviceSelectorService.goToLocalDevice();
+        }, function(reason) {
+            logger.warn('Could not log out admin', reason);
+        });
+    }
+
     const initialDeviceDropdownContent = [
         {
-            label: 'Andere Geräte...',
+            label: 'APP.DEVICE_MENU.SELECT_OTHER',
             image: '/img/icons/ic_computer_black.svg',
             action: vm.adminLogin,
             hide: security.isLoggedInAsAdmin,
-            closeOnClick: true,
+            closeOnClick: true
         },
         {
-            label: 'Dieses Gerät',
+            label: 'APP.DEVICE_MENU.SELECT_LOCAL',
             image: '/img/icons/ic_star_rate_black.svg',
             action: DeviceSelectorService.goToLocalDevice,
             hide: DeviceSelectorService.isLocalDevice,
-            closeOnClick: true,
+            closeOnClick: true
+        },
+        {
+            label: 'SHARED.LOGOUT.LABEL',
+            image: '/img/icons/ic_person_black.svg',
+            action: adminLogout,
+            hide: function() {
+                return !security.isLoggedInAsAdmin();
+            },
+            closeOnClick: true
         }
     ];
 
     function populateDevicesDropdown() {
-        DeviceSelectorService.getDevicesByName().then(function(response) {
+        DeviceSelectorService.getDevicesByName(security.isLoggedInAsAdmin()).then(function(response) {
             let entries = response.map(device => {
                 let entry = {
                     label: device.name,
                     image: '/img/icons/ic_computer_black.svg',
-                    action: function() {DeviceSelectorService.goToDevice(device.id);},
+                    action: function() {DeviceSelectorService.goToDevice(device.id, security.isLoggedInAsAdmin());},
                     closeOnClick: true
                 };
                 return entry;
@@ -271,11 +289,9 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
 
         vm.deviceDropdownContent = initialDeviceDropdownContent;
 
-        if (security.isLoggedInAsAdmin()) {
-            populateDevicesDropdown();
-            if (DeviceSelectorService.isRemoteDevice()) {
-                DeviceSelectorService.goToDevice($stateParams.deviceId);
-            }
+        populateDevicesDropdown();
+        if (DeviceSelectorService.isRemoteDevice()) {
+            DeviceSelectorService.goToDevice($stateParams.deviceId, security.isLoggedInAsAdmin());
         }
     };
 

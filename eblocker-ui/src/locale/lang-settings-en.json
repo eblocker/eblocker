@@ -2809,9 +2809,6 @@
                     "LABEL" : "Help",
                     "URL" : "https://eBlocker.org/docs"
                 },
-                "LOGOUT" : {
-                    "LABEL" : "Logout"
-                },
                 "NAVBAR" : {
                     "LABEL" : "Navigation"
                 }

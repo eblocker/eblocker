@@ -139,6 +139,9 @@
                 "TITLE" : "Log in"
             }
         },
+        "LOGOUT" : {
+            "LABEL" : "Logout"
+        },
         "MESSAGES" : {
             "MESSAGE_ALERT_EVENT_CONTENT" : "System events are available",
             "MESSAGE_ALERT_EVENT_LABEL" : "Show events",

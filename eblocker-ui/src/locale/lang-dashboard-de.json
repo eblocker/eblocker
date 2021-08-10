@@ -23,6 +23,10 @@
                 "LABEL": "Alle einklappen"
             }
         },
+        "DEVICE_MENU" : {
+            "SELECT_LOCAL" : "Dieses Gerät",
+            "SELECT_OTHER" : "Andere Geräte..."
+        },
         "DRAG_DROP" : {
             "TOOLTIP" : "Ziehen Sie hier, um die Karte umzusortieren."
         },
@@ -34,6 +38,9 @@
         "PAUSED" : {
             "LABEL_BOTTOM" : "ANGEHALTEN",
             "LABEL_TOP" : "DASHBOARD"
+        },
+        "REMOTE_WARNING" : {
+            "LABEL" : "Remote-Gerät: nicht alle Dashboardkarten sind verfügbar."
         },
         "SERVER_UNAVAILABLE" : {
             "BOOTING" : "WIRD GESTARTET",

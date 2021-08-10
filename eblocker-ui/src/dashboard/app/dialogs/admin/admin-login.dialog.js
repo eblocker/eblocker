@@ -27,7 +27,7 @@ export default function AdminLoginDialogController(logger, $scope, security, Dev
     };
 
     function loadDevices() {
-        return DeviceSelectorService.getDevicesByName().then(function(response) {
+        return DeviceSelectorService.getDevicesByName(true).then(function(response) {
             vm.devices = response;
         }, function(reason) {
             logger.error('Failed: ' + JSON.stringify(reason));

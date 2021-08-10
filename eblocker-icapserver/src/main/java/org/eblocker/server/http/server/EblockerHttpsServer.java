@@ -1909,6 +1909,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.device.updateShowWelcomeFlags");
 
         server
+                .uri("/api/dashboard/operatinguser/devices", deviceController)
+                .action("getOperatingUserDevices", HttpMethod.GET)
+                .name("dashboard.operatinguser.devices.get");
+
+        server
                 .uri("/api/parentalcontrol/usage", parentalControlController)
                 .action("startUsage", HttpMethod.POST)
                 .name("dashboard.parentalcontrol.usage.start");

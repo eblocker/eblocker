@@ -23,6 +23,10 @@
                 "LABEL": "Collapse all"
             }
         },
+        "DEVICE_MENU" : {
+            "SELECT_LOCAL" : "This device",
+            "SELECT_OTHER" : "Other devices..."
+        },
         "DRAG_DROP" : {
             "TOOLTIP" : "Drag here to reorder this card."
         },
@@ -34,6 +38,9 @@
         "PAUSED" : {
             "LABEL_BOTTOM" : "STOPPED",
             "LABEL_TOP" : "DASHBOARD"
+        },
+        "REMOTE_WARNING" : {
+            "LABEL" : "Remote device: not all dashboard cards are available."
         },
         "SERVER_UNAVAILABLE" : {
             "BOOTING" : "BOOTING",

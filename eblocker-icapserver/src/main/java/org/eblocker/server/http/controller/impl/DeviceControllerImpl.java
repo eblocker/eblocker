@@ -155,6 +155,16 @@ public class DeviceControllerImpl implements DeviceController {
     }
 
     @Override
+    public List<Device> getOperatingUserDevices(Request request, Response response) {
+        Device current = getCurrentDevice(request);
+        int operatingUser = current.getOperatingUser();
+
+        return deviceService.getDevices(true).stream()
+                .filter(device -> device.getOperatingUser() == operatingUser)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Device getDeviceById(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
         Device deviceById = deviceService.getDeviceById(deviceId);
@@ -433,7 +443,7 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Device getCurrentDevice(Request request, Response response) {
-        return deviceService.getDeviceByIp(ControllerUtils.getRequestIPAddress(request));
+        return getCurrentDevice(request);
     }
 
     @Override

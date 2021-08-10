@@ -37,15 +37,20 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
         });
     }
 
-    function goToDevice(deviceId) {
+    function goToDevice(deviceId, isLoggedInAsAdmin) {
         if (deviceId === localDevice.id) {
             return goToLocalDevice();
         }
-        getDevicesByName().then(function(response) {
-            selectedDevice = ArrayUtilsService.getItemBy(response, 'id', deviceId);
-            $state.go('remote', {deviceId: deviceId}).then(function(newState, params) {
-                notifyListeners();
-            });
+        getDevicesByName(isLoggedInAsAdmin).then(function(response) {
+            let device = ArrayUtilsService.getItemBy(response, 'id', deviceId);
+            if (angular.isObject(device)) {
+                selectedDevice = device;
+                $state.go('remote', {deviceId: deviceId}).then(function(newState, params) {
+                    notifyListeners();
+                });
+            } else {
+                logger.error('No access to to device ' + deviceId);
+            }
         }, function(reason) {
             logger.error('Could not get devices', reason);
         });
@@ -55,8 +60,9 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
         return selectedDevice;
     }
 
-    function getDevicesByName() {
-        return DeviceService.getDevices().then(function(response) {
+    function getDevicesByName(isLoggedInAsAdmin) {
+        let func = isLoggedInAsAdmin ? DeviceService.getAllDevices : DeviceService.getOperatingUserDevices;
+        return func().then(function(response) {
             let devices = response.filter(device => !device.isEblocker);
             return ArrayUtilsService.sortByProperty(devices, 'name');
         }, function(reason) {

@@ -139,6 +139,9 @@
                 "TITLE" : "Anmeldung"
             }
         },
+        "LOGOUT": {
+            "LABEL": "Abmelden"
+        },
         "MESSAGES" : {
             "MESSAGE_ALERT_EVENT_CONTENT" : "Es sind Systemereignisse aufgetreten",
             "MESSAGE_ALERT_EVENT_LABEL" : "Ereignisse ansehen",

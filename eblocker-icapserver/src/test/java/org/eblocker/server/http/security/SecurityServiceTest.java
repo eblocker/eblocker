@@ -288,6 +288,12 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
         securityService.verifyPassword(new Credentials("mY-s3creT-p@ssw0rD", null), IP_ADDRESS);
     }
 
+    @Test(expected = UnauthorizedException.class)
+    public void testSystemAppContextRejected() {
+        SecurityService securityService = createSecurityService();
+        securityService.generateToken(AppContext.SYSTEM); // for internal use only
+    }
+
     @Test
     public void testAttemptFromDifferentIpAccepted() {
         SecurityService securityService = createSecurityService();

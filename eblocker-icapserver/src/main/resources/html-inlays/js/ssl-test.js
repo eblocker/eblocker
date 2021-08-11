@@ -14,31 +14,33 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-if (this === top) {
+(function() {
+    if (this === top) {
 
-    var testCurrentParam = '@TEST_CURRENT@';
-    var isTestCurrtent = testCurrentParam.toString() === 'true';
+        var testCurrentParam = '@TEST_CURRENT@';
+        var isTestCurrtent = testCurrentParam.toString() === 'true';
 
-    var testRenewalParam = '@TEST_RENEWAL@';
-    var isTestRenewal = testRenewalParam.toString() === 'true';
+        var testRenewalParam = '@TEST_RENEWAL@';
+        var isTestRenewal = testRenewalParam.toString() === 'true';
 
-    if (isTestCurrtent) {
-        testSsl('@URL_CURRENT_CA@', '@URL_REPORT_ERROR_CURRENT@');
-    }
-    if (isTestRenewal) {
-        testSsl('@URL_RENEWAL_CA@', '@URL_REPORT_ERROR_RENEWAL@');
-    }
-}
-
-function testSsl(url, errorUrl) {
-    var testSslXhr = new XMLHttpRequest();
-    testSslXhr.onreadystatechange = function () {
-        if (testSslXhr['readyState'] === 4 && testSslXhr['status'] !== 200) {
-            var reportFailure = new XMLHttpRequest();
-            reportFailure.open('POST', errorUrl, true);
-            reportFailure.send();
+        if (isTestCurrtent) {
+            testSsl('@URL_CURRENT_CA@', '@URL_REPORT_ERROR_CURRENT@');
         }
-    };
-    testSslXhr.open('GET', url, true);
-    testSslXhr.send();
-}
+        if (isTestRenewal) {
+            testSsl('@URL_RENEWAL_CA@', '@URL_REPORT_ERROR_RENEWAL@');
+        }
+    }
+
+    function testSsl(url, errorUrl) {
+        var testSslXhr = new XMLHttpRequest();
+        testSslXhr.onreadystatechange = function () {
+            if (testSslXhr['readyState'] === 4 && testSslXhr['status'] !== 200) {
+                var reportFailure = new XMLHttpRequest();
+                reportFailure.open('POST', errorUrl, true);
+                reportFailure.send();
+            }
+        };
+        testSslXhr.open('GET', url, true);
+        testSslXhr.send();
+    }
+})();

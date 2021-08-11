@@ -78,7 +78,7 @@ fi
     NETWORKSTATE=$(redis-cli get networkState)
     echo "Network state: $NETWORKSTATE" >> $FILE
     IP=$(ifconfig eth0)
-    NETWORK_CONFIG=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/network)
+    NETWORK_CONFIG=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/network)
     DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
     GATEWAY=$(redis-cli get gateway)
     DNS_SERVER=$(cat /etc/resolv.conf)
@@ -116,7 +116,7 @@ fi
     echo "Updates: " >> $FILE
     echo $SEP >> $FILE
 
-    VERSION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/updates/status)
+    VERSION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/updates/status)
     REGISTRATION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/registration)
 
 

@@ -140,6 +140,10 @@ public class SecurityService {
     }
 
     private JsonWebToken generateToken(boolean passwordRequired, AppContext context, long tokenValiditySeconds, boolean isAuthenticationValid) {
+        if (context == AppContext.SYSTEM) {
+            LOG.error("System app context can only be accessed internally");
+            throw new UnauthorizedException("error.token.invalidContext");
+        }
         return tokenHandler.generateToken(passwordRequired, context, tokenValiditySeconds, isAuthenticationValid);
     }
 

@@ -2538,21 +2538,21 @@
                 "GREETINGS" : "Thank you for your support and stay safe ;-),",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important changes:",
-                    "LI_1" : "Integrated blocker lists from DuckDuckGo and cookie banner blocker (disabled by default).",
-                    "LI_2" : "User interface and speed improvements",
-                    "LI_3" : "Stability improvements for devices with little memory",
+                    "LI_1" : "Auto Trust App",
+                    "LI_2" : "Personal Device Firewall",
+                    "LI_3" : "T.B.D",
 		    "LI_4" : "Update of Linux operating system including security patches"
                 },
                 "LINK_PRE" : "You can find further details in the  ",
  		"LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-6/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-7/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. <a href=\"https://eblocker.org/en/donate-and-contribute/\" target=\"_blank\" class=\"orange\">Please donate to cover cost of operation</a> to receive daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.6"
+                "TITLE" : "eBlockerOS Release 2.7"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.6",
+            "MENU_LABEL" : "New in eBlockerOS 2.7",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.6"
+                "TITLE" : "eBlockerOS Release 2.7"
             }
         },
         "SSL" : {

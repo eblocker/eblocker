@@ -266,8 +266,8 @@ public class EblockerServerApp {
 
     private void startHttpServer() {
         STATUS.info("Starting HTTP server...");
-        statusReporter.testNetworkInterface();
         doStartHttpServer();
+        statusReporter.testNetworkInterface();
         // No need to catch exception and set error status:
         // If starting the HTTP server fails, the user will anyway not get any feedback.
         String key = "httpPort";

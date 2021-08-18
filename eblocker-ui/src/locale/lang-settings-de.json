@@ -1935,11 +1935,6 @@
                 "LABEL" : "Gerätename",
                 "UNREGISTERED" : "-"
             },
-            "DONATIONS" : {
-                "HEADING" : "Für Updates spenden",
-                "TEXT" : "eBlocker wird von Freiwilligen betrieben und lebt von Ihrer Unterstützung. Bitte helfen Sie mit, den Betrieb mit täglichen Updates und lizenzierten Filtern sicherzustellen. Vielen Dank!",
-                "DONATE" : "Jetzt spenden"
-            },
             "LABEL" : "Lizenz",
             "LABEL_ACTIVATE_LICENSE" : "Eine neue eBlocker Lizenz aktivieren",
             "LABEL_SETUP_WIZARD" : "eBlocker Lizenz aktivieren",
@@ -2932,7 +2927,6 @@
                 "AUTO_UPDATE_DISABLED" : "Automatische Aktualisierungen sind deaktiviert",
                 "AUTO_UPDATE_ENABLED" : "Aktualisierungen täglich:",
                 "CHECK_FOR_UPDATES" : "Jetzt prüfen",
-                "DONATE" : "Jetzt tägliche Updates freischalten",
                 "UPDATE" : "Jetzt aktualisieren"
             },
             "AUTO_UPDATE_EDIT" : {
@@ -2941,6 +2935,10 @@
             },
             "DATE_FORMAT" : "D. MMM YYYY",
             "DATE_TIME_FORMAT" : "D. MMM YYYY HH:mm",
+            "DONATE" : {
+                "LABEL" : "Jetzt tägliche Updates freischalten",
+                "URL" : "https://eblocker.org/de/spenden-fuer-updates"
+            },
             "EBLOCKER_ACTIVATION_STATE" : {
                 "LABEL" : "Aktivierungsstatus"
             },
@@ -2964,10 +2962,11 @@
             "LAST_UPDATE" : {
                 "LABEL" : "Letzte Aktualisierung"
             },
-            "LICENSE_VALID_TILL" : {
-                "LABEL" : "Aktualisierungslizenz gültig bis",
-                "LIFETIME" : "Lifetime",
-                "UNREGISTERED" : "-"
+            "LICENSE_UPDATE_TYPE" : {
+                "AUTOMATIC" : "Automatische Aktualisierung",
+                "LABEL" : "Lizenz umfasst",
+                "MANUAL" : "Manuelle Aktualisierung",
+                "UNTIL" : "bis"
             },
             "NEXT_UPDATE" : {
                 "LABEL" : "Nächste Aktualisierung"

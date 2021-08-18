@@ -24,7 +24,7 @@
                 <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.EBLOCKER_ACTIVATION_STATE.LABEL' | translate }}" config="vm.activationState"></eb-label-container>
             </div>
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.LICENSE_VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
+                <eb-label-container label="{{ 'ADMINCONSOLE.UPDATE.LICENSE_UPDATE_TYPE.LABEL' | translate }}" config="vm.licenseUpdateType"></eb-label-container>
             </div>
         </div>
 
@@ -81,8 +81,8 @@
             </div>
 
             <div>
-                <md-button class="md-primary" ng-hide="vm.automaticUpdatesAllowed" ng-href="{{ 'ADMINCONSOLE.DONATIONS.URL' | translate }}" target="_blank">
-                    {{'ADMINCONSOLE.UPDATE.ACTION.DONATE' | translate}}
+                <md-button class="md-primary" ng-hide="vm.automaticUpdatesAllowed" ng-href="{{ 'ADMINCONSOLE.UPDATE.DONATE.URL' | translate }}" target="_blank">
+                    {{'ADMINCONSOLE.UPDATE.DONATE.LABEL' | translate}}
                 </md-button>
             </div>
 

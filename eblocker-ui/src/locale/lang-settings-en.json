@@ -1935,11 +1935,6 @@
                 "LABEL" : "Device Name",
                 "UNREGISTERED" : "-"
             },
-            "DONATIONS" : {
-                "HEADING" : "Donate for updates",
-                "TEXT" : "eBlocker is run by volunteers and powered by your donations. Please help to keep daily updates, licensed filters and operations running. Thank you!",
-                "DONATE" : "Donate now"
-            },
             "LABEL" : "License",
             "LABEL_ACTIVATE_LICENSE" : "Activate a new eBlocker license",
             "LABEL_SETUP_WIZARD" : "Activate eBlocker license",
@@ -2932,7 +2927,6 @@
                 "AUTO_UPDATE_DISABLED" : "Automatic updates are disabled",
                 "AUTO_UPDATE_ENABLED" : "Automatic updates daily between",
                 "CHECK_FOR_UPDATES" : "Check now",
-                "DONATE" : "Activate daily updates now",
                 "UPDATE" : "Update now"
             },
             "AUTO_UPDATE_EDIT" : {
@@ -2941,8 +2935,12 @@
             },
             "DATE_FORMAT" : "MMM Do, YYYY",
             "DATE_TIME_FORMAT" : "MMM D, YYYY h:mm a",
+            "DONATE" : {
+                "LABEL" : "Activate daily updates now",
+                "URL" : "https://eblocker.org/en/donate-for-updates"
+            },
             "EBLOCKER_ACTIVATION_STATE" : {
-                "LABEL" : "Activation status"
+                "LABEL" : "Activation Status"
             },
             "EBLOCKER_FILTER_VERSION" : {
                 "LABEL" : "eBlocker Blocker Lists Version"
@@ -2964,10 +2962,11 @@
             "LAST_UPDATE" : {
                 "LABEL" : "Last update"
             },
-            "LICENSE_VALID_TILL" : {
-                "LABEL" : "Update license valid until",
-                "LIFETIME" : "Lifetime",
-                "UNREGISTERED" : "-"
+            "LICENSE_UPDATE_TYPE" : {
+                "AUTOMATIC" : "Automatic Updates",
+                "LABEL" : "License includes",
+                "MANUAL" : "Manual Updates",
+                "UNTIL" : "until"
             },
             "NEXT_UPDATE" : {
                 "LABEL" : "Next update"

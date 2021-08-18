@@ -40,7 +40,7 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         value: '-'
     };
 
-    vm.validTill = {
+    vm.licenseUpdateType = {
         value: '-'
     };
 
@@ -118,15 +118,17 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
             vm.filterVersion.value = v.substr(0, 4) + '-' + v.substr(4, 2) + '-' + v.substr(6, 2) + '-' +
                 v.substr(8, 2) + '-' + v.substr(10, 2) + '-' + v.substr(12, 2);
         }
-        let validTill;
-        if (registrationInfo.licenseLifetime) {
-            validTill = 'ADMINCONSOLE.UPDATE.LICENSE_VALID_TILL.LIFETIME';
-        } else if (angular.isDefined(registrationInfo.licenseNotValidAfter)) {
-            validTill = LanguageService.getDate(registrationInfo.licenseNotValidAfter, vm.dateFormat);
+        let licenseUpdateType;
+        if (vm.automaticUpdatesAllowed && registrationInfo.licenseLifetime) {
+            licenseUpdateType = 'ADMINCONSOLE.UPDATE.LICENSE_UPDATE_TYPE.AUTOMATIC';
+        } else if (vm.automaticUpdatesAllowed && angular.isDefined(registrationInfo.licenseNotValidAfter)) {
+            licenseUpdateType = $translate.instant('ADMINCONSOLE.UPDATE.LICENSE_UPDATE_TYPE.AUTOMATIC') + ' ' +
+                $translate.instant('ADMINCONSOLE.UPDATE.LICENSE_UPDATE_TYPE.UNTIL') + ' ' +
+                LanguageService.getDate(registrationInfo.licenseNotValidAfter, vm.dateFormat);
         } else {
-            validTill = 'ADMINCONSOLE.UPDATE.LICENSE_VALID_TILL.UNREGISTERED';
+            licenseUpdateType = 'ADMINCONSOLE.UPDATE.LICENSE_UPDATE_TYPE.MANUAL';
         }
-        vm.validTill.value = validTill;
+        vm.licenseUpdateType.value = licenseUpdateType;
 
         vm.activationState.value = getRegistrationState(registrationInfo);
 

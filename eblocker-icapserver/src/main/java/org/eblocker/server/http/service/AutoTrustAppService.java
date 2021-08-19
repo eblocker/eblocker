@@ -257,7 +257,8 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     private boolean isDomainEligibleForAutoTrustApp(String domain) {
         return !isBlocked(domain) &&
-                !isDomainAlreadySucessful(domain);
+                !isDomainAlreadySucessful(domain) &&
+                !isExplicitlyExcluded(domain);
     }
 
     private boolean isBlocked(String domain) {
@@ -274,6 +275,10 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
             log.debug("Domain already successful: " + domain);
         }
         return domainAlreadySucessful;
+    }
+
+    private boolean isExplicitlyExcluded(String domain) {
+        return domain.endsWith("eblocker.org");
     }
 
     @Override

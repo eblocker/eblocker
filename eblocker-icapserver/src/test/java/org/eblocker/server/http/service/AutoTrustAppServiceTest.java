@@ -168,6 +168,19 @@ public class AutoTrustAppServiceTest {
     }
 
     @Test
+    public void testEblockerOrgIsNotAdded() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("eblocker.org")).thenReturn(notBlocked());
+
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minusSeconds(10), "eblocker.org")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "eblocker.org")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("eblocker.org"), autoTrustAppModuleId);
+    }
+
+    @Test
     public void testNewDomainIsAddedWithOldLastOccurenceAndTwoNewers() {
         AppWhitelistModule sslCollectingAppModule = collectingModule();
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);

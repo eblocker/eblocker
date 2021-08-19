@@ -29,7 +29,7 @@
                              search-term="vm.searchTerm"
                              ng-hide="vm.recordedDomains.length === 0">
             </eb-filter-table>
-            <md-content style="max-height: 216px" layout-fill>
+            <md-content class="recorded-domain-list" ng-hide="vm.recordedDomains.length === 0" layout-fill>
                 <div layout="row" ng-repeat="entry in vm.recordedDomainsFiltered">
                     <md-checkbox flex="10" md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="entry.selected" aria-label="Select entry"></md-checkbox>
                     <div layout="row" flex="90">

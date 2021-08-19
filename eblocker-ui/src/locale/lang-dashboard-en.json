@@ -63,17 +63,8 @@
     },
     "CONSOLE" : {
         "CARD" : {
-            "ACTIVATION_WARNING" : "Activate your eBlocker",
             "BUTTON" : {
-                "ACTIVATE" : "Activate",
-                "OK" : "Go to settings",
-                "RENEW" : "Renew license"
-            },
-            "EXPIRED_WARNING" : "Your license expires soon",
-            "LICENSE" : {
-                "FORMAT_DATE" : "MMM D, YYYY",
-                "LABEL" : "eBlocker license:",
-                "VALID_TILL" : "valid till"
+                "OK" : "Go to settings"
             },
             "NETWORK" : {
                 "DEVICE_IP" : "This device:",

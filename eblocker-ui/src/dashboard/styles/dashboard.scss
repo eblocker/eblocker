@@ -46,10 +46,16 @@ $dashboard-toolbar-height: 66px;
     .dashboard-app-screen {
         height: 100%;
     }
+
+    .cards-container {
+        min-width: 300px;
+    }
+
     .dashboard-app-screen .dashboard-main-screen .cards-container {
         // min-height is required, so that we can drop a dashboard card on an empty column
         min-height: 200px;
     }
+
     .dashboard-app-screen .dashboard-main-screen {
         padding-top: 8px;
     }
@@ -137,6 +143,11 @@ $dashboard-toolbar-height: 66px;
     }
 
     .device-firewall-card {
+        .recorded-domain-list {
+            max-height: 216px;
+            background-color: white;
+            border-bottom: 2px solid $color-border;
+        }
         .recorded-domain-deselected {
             color: gray;
             font-style: italic;

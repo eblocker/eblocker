@@ -20,19 +20,19 @@
 
         <div layout="row" layout-xs="column">
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_FROM.LABEL' | translate }}" config="vm.validFrom"></eb-label-container>
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.REGISTERED_BY.LABEL' | translate }}" config="vm.registeredBy"></eb-label-container>
             </div>
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.DEVICE_NAME.LABEL' | translate }}" config="vm.deviceName"></eb-label-container>
             </div>
         </div>
 
         <div layout="row" layout-xs="column">
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.REGISTERED_BY.LABEL' | translate }}" config="vm.registeredBy"></eb-label-container>
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_FROM.LABEL' | translate }}" config="vm.validFrom"></eb-label-container>
             </div>
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.DEVICE_NAME.LABEL' | translate }}" config="vm.deviceName"></eb-label-container>
+                <eb-label-container ng-show="vm.showValidTill" label="{{ 'ADMINCONSOLE.LICENSE.VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
             </div>
         </div>
     </div>

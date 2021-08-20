@@ -15,41 +15,35 @@
                 <md-divider style="width: 100%; padding-bottom: 16px;"></md-divider>
             </div>
 
-            <div layout="row" layout-align="center center" style="padding-bottom: 16px; height: 100%;">
-                <div flex="70">
-                    <div layout="column" layout-align="start start">
-                        <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_REQUESTS"></span>
-                        <div style="padding-left: 16px;">
-                            <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_BLOCKED"></span>
-                            <div style="padding-left: 16px;">
-                                <div>
-                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_TRACKERS"></span>
-                                </div>
-                                <div>
-                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_ADS"></span>
-                                </div>
-                                <div>
-                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_PARENTAL"></span>
-                                </div>
-                                <div>
-                                    <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_CUSTOM"></span>
-                                </div>
-                            </div>
-                            <span translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.BLOCKED_PERCENTAGE"></span>
-                        </div>
-                    </div>
+            <div layout="column" layout-align="center start" style="padding-bottom: 16px; height: 100%;">
+                <div layout="row" style="width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_REQUESTS"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.queries)"></div>
                 </div>
-                <div flex="20">
-                    <div layout="column" layout-align="end end">
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.queries)"></div>
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueries)"></div>
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.TRACKERS || 0)"></div>
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.ADS || 0)"></div>
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.PARENTAL_CONTROL || 0)"></div>
-                        <div ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.CUSTOM || 0)"></div>
-                        <div ng-if="vm.displayBin.queries !== 0">{{vm.displayBin.percentageBlocked}}%</div>
-                        <div ng-if="vm.displayBin.queries === 0">-</div>
-                    </div>
+                <div layout="row" style="padding-left: 16px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.TOTAL_BLOCKED"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueries)"></div>
+                </div>
+                <div layout="row" style="padding-left: 32px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_TRACKERS"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.TRACKERS || 0)"></div>
+                </div>
+                <div layout="row" style="padding-left: 32px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_ADS"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.ADS || 0)"></div>
+                </div>
+                <div layout="row" style="padding-left: 32px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_PARENTAL"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.PARENTAL_CONTROL || 0)"></div>
+                </div>
+                <div layout="row" style="padding-left: 32px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.CATEGORY_CUSTOM"></div>
+                    <div flex="30" class="align-right" ng-bind-html="vm.getDisplayValue(vm.displayBin.blockedQueriesByReason.CUSTOM || 0)"></div>
+                </div>
+                <div layout="row" style="padding-left: 16px; width: 100%;">
+                    <div flex="70" translate="BLOCKER_STATISTICS_TOTAL.CARD.LABELS.BLOCKED_PERCENTAGE"></div>
+                    <div flex="30" class="align-right" ng-if="vm.displayBin.queries !== 0">{{vm.displayBin.percentageBlocked}}%</div>
+                    <div flex="30" class="align-right" ng-if="vm.displayBin.queries === 0">-</div>
                 </div>
             </div>
 

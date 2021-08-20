@@ -65,6 +65,7 @@ function LicenseController(logger, $translate, $filter, DialogService, Registrat
     function setValues() {
         let registrationInfo = RegistrationService.getRegistrationInfo() || {};
         vm.showActivationButton = registrationInfo.registrationState !== 'NEW';
+        vm.showValidTill = !registrationInfo.licenseLifetime;
 
         vm.licenseType.value = getLicenseType(registrationInfo.productInfo);
         vm.registrationState.value = getRegistrationState(registrationInfo);

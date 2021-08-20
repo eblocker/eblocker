@@ -202,7 +202,7 @@
                 "DISABLED" : "Not recording",
                 "ENABLED" : "Recording (last 24h)"
             },
-            "TITLE" : "Personal Device Firewall",
+            "TITLE" : "Personal Device Firewall (beta)",
             "TOOLTIP" : "Check the domains this device connects to"
         }
     },

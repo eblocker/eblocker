@@ -43,7 +43,7 @@
             "BUTTON" : {
                 "CLOSE" : "Ok",
                 "ENTER" : "Lizenzschlüssel eingeben",
-                "PURCHASE" : "Neue Lizenz erwerben"
+                "PURCHASE" : "Für neue Lizenz spenden"
             },
             "TEXT" : {
                 "DEMO" : {

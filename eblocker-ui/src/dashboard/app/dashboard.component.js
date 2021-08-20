@@ -27,11 +27,14 @@ export default {
 function AppController($scope, $state, $stateParams, $location, $window, $document, $filter,  //jshint ignore: line
                        Idle, logger, security, CardService, DataService, APP_CONTEXT, UserService,
                        DeviceService, deviceDetector, EventService, RedirectService, settings, SystemService,
-                       ResolutionService, DialogService, DeviceSelectorService) {
+                       ResolutionService, DialogService, DeviceSelectorService,
+                       NotificationService, EVENTS) {
     'ngInject';
     'use strict';
 
     const vm = this;
+
+    let remoteWarningShown = false;
 
     vm.getTitleDevice = getTitleDevice;
     vm.getTitleUser = getTitleUser;
@@ -295,4 +298,31 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
         }
     };
 
+    function deviceSelectedHandler() {
+        if (DeviceSelectorService.isRemoteDevice()) {
+            showRemoteWarning();
+            setRemoteBackground(true);
+        } else {
+            setRemoteBackground(false);
+        }
+    }
+
+    function setRemoteBackground(isRemote) {
+        const el = $document.find('dashboard-component')[0];
+        if (angular.isObject(el)) {
+            el.classList.remove('dashboard-remote-device');
+            if (isRemote) {
+                el.classList.add('dashboard-remote-device');
+            }
+        }
+    }
+
+    function showRemoteWarning() {
+        if (! remoteWarningShown) {
+            NotificationService.info('APP.REMOTE_WARNING.LABEL');
+            remoteWarningShown = true;
+        }
+    }
+
+    $scope.$on(EVENTS.DEVICE_SELECTED, deviceSelectedHandler);
 }

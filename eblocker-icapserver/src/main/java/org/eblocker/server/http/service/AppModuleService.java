@@ -62,6 +62,9 @@ public class AppModuleService extends Observable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppModuleService.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
+    public static final String AUTO_TRUST_APP_NAME = "Auto Trust App (beta)";
+    public static final String AUTO_TRUST_APP_DESCR_DE = "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten. Beta-Version, bitte Beschreibung im Handbuch beachten.";
+    public static final String AUTO_TRUST_APP_DESCR_EN = "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear. Beta version, please see user manual for details.";
 
     private final int tempAppModuleId;
     private final int standardAppModuleId;
@@ -262,17 +265,16 @@ public class AppModuleService extends Observable {
             );
             dataSource.save(module, userAppModuleId);
         }
-        module = get(autoTrustAppModuleId);
-        if (module == null) {
-            Map<String, String> description = new HashMap<>();
-            description.put("de",
-                    "Sammelt automatisch alle Domains, für die ein HTTPS-Verbindungsfehler aufgetreten ist, sodass der eBlocker zukünftig diese Domains nicht mehr analysiert und daher auch keine Verbindungsfehler mehr auftreten sollten. Befindet sich noch in der Entwicklung und sollte daher noch nicht verwendet werden.");
-            description
-                    .put("en",
-                            "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear. Currently under development and not ready for general usage.");
-            module = new AppWhitelistModule(
+        createOrUpdateAutoTrustAppModule();
+    }
+
+    private void createOrUpdateAutoTrustAppModule() {
+        AppWhitelistModule ataModule = get(autoTrustAppModuleId);
+        if (ataModule == null) {
+            Map<String, String> description = autoTrustAppDescription();
+            ataModule = new AppWhitelistModule(
                     autoTrustAppModuleId,
-                    "Auto Trust App (Experimental, don't use!)",
+                    AUTO_TRUST_APP_NAME,
                     description,
                     Collections.emptyList(),
                     Collections.emptyList(),
@@ -286,8 +288,26 @@ public class AppModuleService extends Observable {
                     false,
                     false
             );
-            dataSource.save(module, autoTrustAppModuleId);
+            dataSource.save(ataModule, autoTrustAppModuleId);
+        } else {
+            boolean modified = false;
+            if (!AUTO_TRUST_APP_NAME.equals(ataModule.getName())) {
+                ataModule.setName(AUTO_TRUST_APP_NAME);
+                modified = true;
+            }
+            Map<String, String> autotrustAppDescription = autoTrustAppDescription();
+            if (!autotrustAppDescription.equals(ataModule.getDescription())) {
+                ataModule.setDescription(autotrustAppDescription);
+                modified = true;
+            }
+            if (modified) {
+                dataSource.save(ataModule, autoTrustAppModuleId);
+            }
         }
+    }
+
+    private Map<String, String> autoTrustAppDescription() {
+        return Map.of("de", AUTO_TRUST_APP_DESCR_DE, "en", AUTO_TRUST_APP_DESCR_EN);
     }
 
     /**

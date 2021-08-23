@@ -202,7 +202,7 @@
                 "DISABLED" : "Nicht aufzeichnen",
                 "ENABLED" : "Aufzeichnen (letzte 24h)"
             },
-            "TITLE" : "Personal Device Firewall (beta)",
+            "TITLE" : "Personal Device Firewall",
             "TOOLTIP" : "Überprüfen Sie, welche Domains dieses Gerät aufruft"
         }
     },

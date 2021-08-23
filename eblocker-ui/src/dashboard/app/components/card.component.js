@@ -27,7 +27,8 @@ export default {
         hideTopDivider: '<',
         hideBottomDivider: '<',
         noPadding: '<',
-        cardId: '@'
+        cardId: '@',
+        betaFeature: '@'
     },
     transclude: {
         content: '?ebCardContent',

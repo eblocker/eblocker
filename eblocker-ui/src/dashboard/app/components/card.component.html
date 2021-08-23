@@ -42,7 +42,7 @@
 
         <md-divider ng-if="vm.hasContent() && (vm.hideTopDivider !== true && vm.hideTopDivider !== 'true')"></md-divider>
 
-        <md-card-content layout="column" layout-align="start stretch" ng-class="{'no-padding': (vm.hideTopDivider === true || vm.hideTopDivider === 'true') || vm.noPadding}" ng-if="vm.hasContent()">
+        <md-card-content layout="column" layout-align="start stretch" ng-class="{'no-padding': (vm.hideTopDivider === true || vm.hideTopDivider === 'true') || vm.noPadding, 'dashboard-beta-background': vm.betaFeature}" ng-if="vm.hasContent()">
             <ng-transclude ng-transclude-slot="content"></ng-transclude>
         </md-card-content>
 

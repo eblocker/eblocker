@@ -223,7 +223,9 @@
     "DIALOGS" : {
         "LOGIN" : {
             "EXPLAIN" : "Geben Sie Ihr Administratorpasswort ein, um auf andere Geräte zuzugreifen.",
-            "SELECT_DEVICE" : "Gerät auswählen"
+            "NO_ADMIN_PASSWORD_SET" : "Es ist kein Administratorpasswort gesetzt. Um im Dashboard auf andere Geräte zugreifen zu können, müssen Sie zuvor ein Passwort setzen.",
+            "SELECT_DEVICE" : "Gerät auswählen",
+            "SET_ADMIN_PASSWORD" : "Administratorpasswort setzen"
         },
         "PIN" : {
             "BUTTON" : {

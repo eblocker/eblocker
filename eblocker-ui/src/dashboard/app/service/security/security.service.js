@@ -22,6 +22,7 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
 
     const PATH = '/api/token/';
     const LOGIN_PATH = '/api/adminconsole/authentication/login/';
+    const TOKEN_PATH = '/api/adminconsole/authentication/token/';
     const RENEW_PATH = '/api/admindashboard/authentication/renew/';
     const httpConfig = {timeout: 3000};
 
@@ -58,6 +59,16 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
             logger.error('Login failed with status ' + response.status + ' - ' + response.data);
             return $q.reject(response.data);
         });
+    }
+
+    function isPasswordRequired(appContext) {
+        return $http.get(TOKEN_PATH + appContext, httpConfig)
+            .then(function(response) {
+                return response.data.passwordRequired;
+            }, function (response) {
+                logger.error('Getting password requirement failed with status ' + response.status + ' - ' + response.data);
+                return $q.reject(response.data);
+            });
     }
 
     function requestAdminToken(appContext, password) {
@@ -130,6 +141,7 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
         requestAdminToken: requestAdminToken,
         renewToken: renewToken,
         isLoggedInAsAdmin: isLoggedInAsAdmin,
+        isPasswordRequired: isPasswordRequired,
         logoutAdmin: logoutAdmin
     };
 }

@@ -223,7 +223,9 @@
     "DIALOGS" : {
         "LOGIN" : {
             "EXPLAIN" : "Enter your administrator password to access other devices.",
-            "SELECT_DEVICE" : "Select device"
+            "NO_ADMIN_PASSWORD_SET" : "No administrator password is set. If you want to access other devices in the dashboard, you must set a password first.",
+            "SELECT_DEVICE" : "Select device",
+            "SET_ADMIN_PASSWORD" : "Set administrator password"
         },
         "PIN" : {
             "BUTTON" : {

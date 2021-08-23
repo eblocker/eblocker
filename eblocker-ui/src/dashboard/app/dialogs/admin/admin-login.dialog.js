@@ -15,11 +15,20 @@
  * permissions and limitations under the License.
  */
 export default function AdminLoginDialogController(logger, $scope, security, DeviceSelectorService,
-                                                   $mdDialog, APP_CONTEXT, onCancel, onOk) {
+                                                   RedirectService, $mdDialog, APP_CONTEXT, onCancel, onOk) {
     'ngInject';
     let vm = this;
     vm.devices = [];
     vm.loggedIn = false;
+    vm.adminPasswordRequired = true;
+
+    vm.$onInit = function() {
+        security.isPasswordRequired(APP_CONTEXT.adminAppContextName).then(function (response) {
+            vm.adminPasswordRequired = response;
+        }, function (reason) {
+            logger.error('Error getting admin password requirement: ' + reason);
+        });
+    };
 
     vm.cancel = function() {
         onCancel(vm.loggedIn);
@@ -58,4 +67,8 @@ export default function AdminLoginDialogController(logger, $scope, security, Dev
         });
     };
 
+    vm.setAdminPassword = function() {
+        RedirectService.toConsole(false, '/#!/system/adminpassword');
+        vm.cancel();
+    };
 }

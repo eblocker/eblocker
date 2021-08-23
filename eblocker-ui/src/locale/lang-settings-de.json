@@ -1691,12 +1691,12 @@
             "ARIA_REMOVE" : "Ereignisse löschen",
             "DATE_FORMAT" : "D. MMM YYYY",
             "EVENT" : {
-                "ADMIN_PASSWORD_CHANGED" : "Administrator-Passwort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_CHANGED_BY_USER" : "Administrator-Passwort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
-                "ADMIN_PASSWORD_REMOVED" : "Administrator-Passwort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_REMOVED_BY_USER" : "Administrator-Passwort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
-                "ADMIN_PASSWORD_RESET" : "Administrator-Passwort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_RESET_BY_USER" : "Administrator-Passwort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_CHANGED" : "Administratorpasswort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_CHANGED_BY_USER" : "Administratorpasswort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_REMOVED" : "Administratorpasswort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_REMOVED_BY_USER" : "Administratorpasswort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_RESET" : "Administratorpasswort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_RESET_BY_USER" : "Administratorpasswort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
                 "ICAP_SERVER_STARTED" : "Der eBlocker Hauptprozess wurde gestartet.",
                 "ICAP_SERVER_STARTED_WITH_WARNINGS" : "Fehler beim Start des eBlocker Hauptprozesses.",
                 "LICENSE_EXPIRED" : "Die eBlocker Lizenz ist abgelaufen.",
@@ -2300,7 +2300,7 @@
         },
         "PARENTAL_CONTROL" : {
             "ACTION" : {
-                "SET_PASSWORD" : "Administrator-Passwort setzen"
+                "SET_PASSWORD" : "Administratorpasswort setzen"
             },
             "DEFAULT_PROFILE" : {
                 "PARENTAL_CONTROL_DEFAULT_PROFILE_DESCRIPTION" : "Dieses Schutzprofil wird automatisch allen bestehenden und neuen Geräten zugewiesen. ",
@@ -2319,7 +2319,7 @@
                 "PARENTAL_CONTROL_USERPROFILE_LIMBO_NAME" : "Internet-Sperre"
             },
             "LABEL" : "Jugendschutz",
-            "SET_ADMIN_PASSWORD_TEXT" : "Es ist kein Administrator-Passwort gesetzt. Wenn Sie die Jugendschutz-Funktionen nutzen möchten, müssen Sie ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht ohne Berechtigung geändert werden können."
+            "SET_ADMIN_PASSWORD_TEXT" : "Es ist kein Administratorpasswort gesetzt. Wenn Sie die Jugendschutz-Funktionen nutzen möchten, müssen Sie ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht ohne Berechtigung geändert werden können."
         },
         "PASSWORD_SERVICE" : {
             "NOTIFICATION" : {

@@ -1959,12 +1959,12 @@
             "REGISTRATION_STATE" : {
                 "LABEL" : "Activation Status",
                 "STATES" : {
-                    "ABOUT_TO_EXPIRE" : "activated (expires soon)",
-                    "EXPIRED" : "expired",
+                    "ABOUT_TO_EXPIRE" : "Activated (expires soon)",
+                    "EXPIRED" : "Expired",
                     "INVALID" : "The activation is invalid.",
-                    "NEW" : "not activated",
-                    "OK" : "activated",
-                    "OK_UNREGISTERED": "without activation",
+                    "NEW" : "Not activated",
+                    "OK" : "Activated",
+                    "OK_UNREGISTERED": "Without activation",
                     "REVOKED" : "The license is invalid."
                 }
             },

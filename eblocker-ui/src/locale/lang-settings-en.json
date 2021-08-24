@@ -2529,13 +2529,13 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                "INTRO" : "ATTENTION: The automatic daily updates are now disabled. But you can reactivate them instantly with a donation. In addition, we have implemented many new features.",
+                "INTRO" : "<strong>IMPORTANT NOTE</strong>:<br> Automatic daily updates have been disabled now. You can reactivate them instantly with a donation or a respective license key.<br>In addition, we have implemented many new features to protect you even better.",
                 "GREETINGS" : "Thank you for your support - we continue to protect you,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important changes:",
-                    "LI_1" : "Personal Device Firewall (beta) to monitor and restrict traffic of any device.",
-                    "LI_2" : "Remote Dashboard (beta) to access the dashboard of IoT and other devices with no screen.",
-                    "LI_3" : "Auto Trust App (beta) to automatically improve the compatibility of apps with eBlocker HTTPS.",
+                    "LI_1" : "<strong>Personal Device Firewall</strong> (beta) to monitor and restrict traffic of any device.",
+                    "LI_2" : "<strong>Remote Dashboard</strong> (beta) to access the dashboard of IoT and other devices with no screen.",
+                    "LI_3" : "<strong>Auto Trust App</strong> (beta) to automatically improve the compatibility of apps with eBlocker HTTPS.",
 		    "LI_4" : "Security update of the Linux operating system and many other improvements and optimizations."
                 },
                 "LINK_PRE" : "Please find further details in the ",

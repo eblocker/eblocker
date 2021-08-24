@@ -203,7 +203,7 @@
                 "ENABLED" : "Recording (last 24h)"
             },
             "TITLE" : "Personal Device Firewall",
-            "TOOLTIP" : "Check the domains this device connects to"
+            "TOOLTIP" : "To monitor, block or allow domains this device requests"
         }
     },
     "DEVICE_STATUS" : {

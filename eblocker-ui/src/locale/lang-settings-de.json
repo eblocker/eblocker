@@ -2156,7 +2156,7 @@
                         "STEP2_TEXT2_LINK" : " Wissensdatenbank.",
                         "STEP2_TEXT2_PRE" : "Bitte deaktivieren Sie jetzt den DHCP-Dienst auf Ihrem Router. Details dazu finden Sie in der Anleitung Ihres Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
                         "STEP3_HEADER" : "3. {{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PROCESS.STEP3' | translate}}",
-                        "STEP3_TEXT1" : "Der DHCP-Dienst Ihres Routers ist nun deaktivert.",
+                        "STEP3_TEXT1" : "Der DHCP-Dienst Ihres Routers ist nun deaktiviert.",
                         "STEP3_TEXT2" : "Bitte starten Sie nun alle Netzwerkgeräte bis auf den eBlocker und den Router neu oder unterbrechen Sie kurz deren Netzwerkverbindungen, indem Sie z.B. kurz den Flugmodus aktivieren.",
                         "STEP3_WARN_PRE" : "Achtung: ",
                         "STEP3_WARN_TEXT" : "Bitte beachten Sie, dass der DHCP-Server in Ihrem Router wieder aktiviert werden muss, falls Sie den eBlocker aus Ihrem Netzwerk entfernen."
@@ -2529,13 +2529,13 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "ACHTUNG: Die automatischen täglichen Updates sind jetzt abgeschaltet. Du kannst sie aber mit einer Spende sofort wieder aktivieren. Gleichzeitig haben wir viele neue Features implementiert.",
+                "INTRO" : "<strong>WICHTIGER HINWEIS</strong>:<br>Die automatischen täglichen Updates wurden deaktiviert. Du kannst sie aber mit einer Spende sofort wieder aktivieren.<br> Gleichzeitig haben wir viele neue Features implementiert, um deinen Schutz und eBlocker weiter zu verbessern.",
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "Personal Device Firewall (beta), um den Datenverkehr beliebiger Geräte zu kontrollieren und einzuschränken.",
-		    "LI_2" : "Remote Dashboard (beta), um das Dashboard von IoT und anderen Geräten ohne Bildschirm aufzurufen.",
-		    "LI_3" : "Auto Trust App (beta), um die Kompatibilität von Apps mit eBlocker HTTPS automatisch zu verbessern.",
+                    "LI_1" : "<strong>Personal Device Firewall</strong> (beta), um den Datenverkehr beliebiger Geräte zu kontrollieren und einzuschränken.",
+		    "LI_2" : "<strong>Remote Dashboard</strong> (beta), um das Dashboard von IoT und anderen Geräten ohne Bildschirm aufzurufen.",
+		    "LI_3" : "<strong>Auto Trust App</strong> (beta), um die Kompatibilität von Apps mit eBlocker HTTPS automatisch zu verbessern.",
 		    "LI_4" : "Sicherheitsupdate des Linux Betriebssystems sowie viele weitere Verbesserungen und Optimierungen."
                 },
                 "LINK_PRE" : "Weitere Details zu allen Änderungen findest du in den ",

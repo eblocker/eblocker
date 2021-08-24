@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eblocker</groupId>
     <artifactId>eblocker-parent</artifactId>
-    <version>2.7.3</version>
+    <version>2.7.4</version>
     <relativePath>../eblocker-parent</relativePath>
   </parent>
   <artifactId>eblocker-baseconfig</artifactId>

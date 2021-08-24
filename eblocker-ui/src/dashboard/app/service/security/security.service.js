@@ -66,7 +66,8 @@ export default function SecurityService(logger, $http, $q, $localStorage, Idle, 
             .then(function(response) {
                 return response.data.passwordRequired;
             }, function (response) {
-                logger.error('Getting password requirement failed with status ' + response.status + ' - ' + response.data);
+                logger.error('Getting password requirement failed with status ' + response.status +
+                             ' - ' + response.data);
                 return $q.reject(response.data);
             });
     }

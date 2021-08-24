@@ -203,7 +203,7 @@
                 "ENABLED" : "Aufzeichnen (letzte 24h)"
             },
             "TITLE" : "Personal Device Firewall",
-            "TOOLTIP" : "Überprüfen Sie, welche Domains dieses Gerät aufruft"
+            "TOOLTIP" : "Von diesem Gerät aufgerufene Domains prüfen und ggf. blockieren/freigeben"
         }
     },
     "DEVICE_STATUS" : {

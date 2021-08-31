@@ -172,11 +172,11 @@
             "MESSAGE_FILTER_LISTS_OUTDATED_TITLE" : "Blockierlisten nicht aktuell",
             "MESSAGE_FILTER_LISTS_OUTDATED_URL" : "/settings/#!/home/update",
             "MESSAGE_LICENSE_EXPIRED_CONTENT" : "Die Lizenz Ihres eBlockers ist am {{licenseNotValidAfter| date}} abgelaufen.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch wieder tägliche Schutz-Updates.",
-            "MESSAGE_LICENSE_EXPIRED_LABEL" : "Neue Lizenz erwerben",
+            "MESSAGE_LICENSE_EXPIRED_LABEL" : "Für neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRED_TITLE" : "Lizenz abgelaufen",
             "MESSAGE_LICENSE_EXPIRED_URL" : "https://eBlocker.org/ebl/de/shop",
             "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT" : "Die Lizenz Ihres eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch tägliche Schutz-Updates.\n\nBitte beachten Sie, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
-            "MESSAGE_LICENSE_EXPIRING_LABEL" : "Neue Lizenz erwerben",
+            "MESSAGE_LICENSE_EXPIRING_LABEL" : "Für neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT" : "Die Lizenz Ihres eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängern Sie Ihre Lizenz, um dauerhaft geschützt zu sein. Sie erhalten dann automatisch wieder tägliche Schutz-Updates.\n\nBitte beachten Sie, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
             "MESSAGE_LICENSE_EXPIRING_TITLE" : "Lizenz läuft bald ab",
             "MESSAGE_LICENSE_EXPIRING_URL" : "https://eBlocker.org/ebl/de/shop",
@@ -185,7 +185,7 @@
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "Mehr...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-7/",
-	    "MESSAGE_RELEASE_NOTES_CONTENT" : "Neu in eBlockerOS 2.6: Mit diesem Release haben wir zahlreiche Verbesserungen eingeführt und uns auf die Stabilität des Systems konzentriert.",
+	    "MESSAGE_RELEASE_NOTES_CONTENT" : "Neu in eBlockerOS 2.7: Mit diesem Release wurden automatische tägliche Updates deaktiviert. Dank einer Spende kannst du sie aber wieder aktivieren. Gleichzeitig haben wir viele neue Features implementiert.",
             "MESSAGE_RELEASE_NOTES_LABEL" : "Mehr...",
             "MESSAGE_RELEASE_NOTES_TITLE" : "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-7/",
@@ -197,7 +197,7 @@
             "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "HTTPS-Einstellungen öffnen",
             "MESSAGE_SSL_SUPPORT_INSTALL_TITLE" : "HTTPS-Unterstützung aktivieren",
             "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/settings/#!/ssl",
-            "MESSAGE_DONATE_LABEL" : "Jetzt spenden",
+            "MESSAGE_DONATE_LABEL" : "eBlocker unterstützen",
             "MESSAGE_DONATE_URL" : "https://eblocker.org/de/jetzt-spenden"
         }
     }

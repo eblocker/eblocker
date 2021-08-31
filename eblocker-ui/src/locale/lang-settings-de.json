@@ -2,12 +2,12 @@
     "ADMINCONSOLE" : {
         "ABOUT" : {
             "LABEL" : "Über eBlocker",
-            "TEAM" : "Wir haben viele Jahre an eBlocker konzipiert, entwickelt, getestet und verbessert. Heute sind wir stolz, dass unsere Idee immer mehr Anhänger findet. eBlocker ist Open Source, frei von Hintertüren, völlig kostenlos und wird gemeinsam mit der Community weiterentwickelt.",
-            "THANK_YOU" : "Wir freuen uns sehr, dass du eBlocker einsetzt. Du hast damit eine sehr gute Entscheidung für den Schutz deiner Privatsphäre und deiner gesamten Familie getroffen.",
+            "TEAM" : "Wir haben viele Jahre an eBlockerOS konzipiert, entwickelt, getestet und verbessert. Heute sind wir stolz, dass unsere Idee immer mehr Anhänger findet. eBlockerOS ist Open Source, frei von Hintertüren, völlig kostenlos und wird gemeinsam mit der Community weiterentwickelt.",
+            "THANK_YOU" : "Wir freuen uns sehr, dass du eBlockerOS einsetzt. Du hast damit eine sehr gute Entscheidung für den Schutz deiner Privatsphäre und deiner gesamten Familie getroffen.",
             "NON_PROFIT": "eBlocker ist ein <b>non-profit Projekt</b>, das über Spenden finanziert und von einer Community aus Ehrenamtlichen getragen wird. Dahinter steht <b>kein großes Unternehmen</b>, sondern das Engagement eines interdisziplinären Teams aus Privatsphäre-Spezialisten, Datenschützern und IT-Sicherheitsexperten rund um die Initiatoren Christian Bennefeld und Boris Prinz.",
-            "DONATE": "<b>Damit eBlocker langfristig sicher ist, regelmäßig Updates bekommt und neue Funktionen erhält benötigen wir deine Hilfe. Unterstütze uns bitte mit deinem Engagement in der Community oder einer Spende:</b>",
+            "DONATE": "<b>Damit eBlockerOS langfristig sicher ist, regelmäßig Updates bekommt und neue Funktionen erhält benötigen wir deine Hilfe. Unterstütze uns bitte mit deinem Engagement in der Community oder einer Spende:</b>",
             "DONATE_MORE": "Jetzt spenden oder engagieren",
-            "DONATE_THANKS": "Dank deiner Unterstützung sind wir in der Lage, unsere Idee von einem freien Internet ohne Massenüberwachung langfristig in die Realität umzusetzen. Vielen herzlichen Dank dafür!",
+            "DONATE_THANKS": "Als Dank erhältst du einen Lizenzschlüssel, mit dem du automatisch tägliche Updates bekommst. Gleichzeitig sind wir damit in der Lage, unsere Idee von einem freien Internet ohne Massenüberwachung langfristig in die Realität umzusetzen. Vielen herzlichen Dank dafür!",
             "COMMUNITY": "Bei Fragen, neuen Ideen oder wenn du Fehler gefunden hast, nutze bitte ausschließlich unser Forum unter",
             "COMMUNITY_URL": "https://eblocker.org/community/",
             "YOURS_EBLOCKER" : "Dein eBlocker Open Source Team"
@@ -64,7 +64,7 @@
                         "ERROR_REGISTER_LICENSEUSED" : "Dieser Lizenzschlüssel wurde bereits verwendet.",
                         "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Die E-Mail und der Lizenzschlüssel passen nicht zusammen. Bitte stellen Sie sicher, dass Sie die korrekte E-Mail und den dazugehörigen Lizenzschlüssel eingegeben haben.",
                         "ERROR_REGISTER_NOLICENSEKEY" : "Dieser Lizenzschlüssel ist nicht gültig. Bitte prüfen Sie den eingegebenen Lizenzschlüssel.",
-                        "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "Die aktuelle Lifetime Lizenz kann nicht verlängert werden. Setzen Sie die aktuelle Lizenz zurück, bevor Sie die neue Lizenz aktivieren.",
+                        "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "Die aktuelle Lizenz kann nicht verlängert werden. Setzen Sie die aktuelle Lizenz zurück, bevor Sie die neue Lizenz aktivieren.",
                         "ERROR_REGISTER_NOTTOBEUSEDFORUPGRADE" : "Der Schlüssel gehört zu einer Lizenz, die nicht für ein Upgrade oder eine Verlängerung genutzt werden kann.",
                         "ERROR_REGISTER_NOUPGRADABLELICENSE" : "Der Schlüssel gehört zu einer Upgrade-Lizenz. Ihr eBlocker muss bereits mit einer Lizenz aktiviert sein, die für das Upgrade geeignet ist.",
                         "ERROR_REGISTER_PRODUCTIDNOTFOUND" : "Falsches Format des Lizenzschlüssels. Bitte prüfen Sie den eingegebenen Lizenzschlüssel.",
@@ -1459,7 +1459,7 @@
                     "ERROR_REGISTER_LICENSEUSED" : "Dieser Lizenzschlüssel wurde bereits verwendet.",
                     "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Die E-Mail und der Lizenzschlüssel passen nicht zusammen. Bitte stellen Sie sicher, dass Sie die korrekte E-Mail und den dazugehörigen Lizenzschlüssel eingegeben haben.",
                     "ERROR_REGISTER_NOLICENSEKEY" : "Dieser Lizenzschlüssel ist nicht gültig. Bitte prüfen Sie den eingegebenen Lizenzschlüssel.",
-                    "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "Die aktuelle Lifetime Lizenz kann nicht verlängert werden. Setzen Sie die aktuelle Lizenz zurück, bevor Sie die neue Lizenz aktivieren.",
+                    "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "Die aktuelle Lizenz kann nicht verlängert werden. Setzen Sie die aktuelle Lizenz zurück, bevor Sie die neue Lizenz aktivieren.",
                     "ERROR_REGISTER_NOTTOBEUSEDFORUPGRADE" : "Der Schlüssel gehört zu einer Lizenz, die nicht für ein Upgrade oder eine Verlängerung genutzt werden kann.",
                     "ERROR_REGISTER_NOUPGRADABLELICENSE" : "Der Schlüssel gehört zu einer Upgrade-Lizenz. Ihr eBlocker muss bereits mit einer Lizenz aktiviert sein, die für das Upgrade geeignet ist.",
                     "ERROR_REGISTER_PRODUCTIDNOTFOUND" : "Falsches Format des Lizenzschlüssels. Bitte prüfen Sie den eingegebenen Lizenzschlüssel.",
@@ -1486,7 +1486,7 @@
                         },
                         "LABEL" : "Bestätigen",
                         "SUSPENDED_FEATURE" : {
-                            "LFT" : "Die bisherige Lifetime-Lizenz wird zurückgesetzt. Sie können sie auf einem anderen eBlocker oder nach Ablauf der neuen Lizenz auf diesem eBlocker erneut aktivieren."
+                            "LFT" : "Die bisherige Lizenz wird zurückgesetzt. Sie können sie auf einem anderen eBlocker oder nach Ablauf der neuen Lizenz auf diesem eBlocker erneut aktivieren."
                         },
                         "TEXT2" : "Die Aktivierung der neuen Lizenz hat folgende Auswirkungen:"
                     },
@@ -1509,7 +1509,7 @@
                         "CANCEL" : "Abbrechen",
                         "UPDATE" : "Aktualisierung starten"
                     },
-                    "TEXT1" : "Der Aktualisierungsprozess kann bis zu <b>10 Minuten</b> dauern. Der eBlocker wird zum Abschluss der Aktualisierung neu gestartet.",
+                    "TEXT1" : "Der Aktualisierungsprozess kann bis zu <b>20 Minuten</b> dauern. Der eBlocker wird zum Abschluss der Aktualisierung neu gestartet.",
                     "TEXT2" : "Der Internetzugang kann während des Aktualisierungsprozesses für andere Geräte gestört sein. Trennen Sie den eBlocker während der Aktualisierung nicht von der Stromversorgung oder vom Netzwerk!",
                     "TITLE" : "Jetzt aktualisieren"
                 },
@@ -1671,7 +1671,7 @@
             }
         },
         "DONATIONS" : {
-            "MENU_LABEL" : "Für Updates spenden",
+            "MENU_LABEL" : "eBlocker unterstützen",
             "URL" : "https://eblocker.org/de/jetzt-spenden"
         },
          "DOCTOR": {
@@ -1704,12 +1704,12 @@
             "ARIA_REMOVE" : "Ereignisse löschen",
             "DATE_FORMAT" : "D. MMM YYYY",
             "EVENT" : {
-                "ADMIN_PASSWORD_CHANGED" : "Administrator-Passwort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_CHANGED_BY_USER" : "Administrator-Passwort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
-                "ADMIN_PASSWORD_REMOVED" : "Administrator-Passwort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_REMOVED_BY_USER" : "Administrator-Passwort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
-                "ADMIN_PASSWORD_RESET" : "Administrator-Passwort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
-                "ADMIN_PASSWORD_RESET_BY_USER" : "Administrator-Passwort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_CHANGED" : "Administratorpasswort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_CHANGED_BY_USER" : "Administratorpasswort geändert von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_REMOVED" : "Administratorpasswort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_REMOVED_BY_USER" : "Administratorpasswort entfernt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
+                "ADMIN_PASSWORD_RESET" : "Administratorpasswort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }})",
+                "ADMIN_PASSWORD_RESET_BY_USER" : "Administratorpasswort zurückgesetzt von Gerät {{ deviceName }} (IP {{ ipAddress }}), benutzt von {{ userName }}",
                 "ICAP_SERVER_STARTED" : "Der eBlocker Hauptprozess wurde gestartet.",
                 "ICAP_SERVER_STARTED_WITH_WARNINGS" : "Fehler beim Start des eBlocker Hauptprozesses.",
                 "LICENSE_EXPIRED" : "Die eBlocker Lizenz ist abgelaufen.",
@@ -1948,11 +1948,6 @@
                 "LABEL" : "Gerätename",
                 "UNREGISTERED" : "-"
             },
-            "DONATIONS" : {
-                "HEADING" : "Für Updates spenden",
-                "TEXT" : "eBlocker wird von Freiwilligen betrieben und lebt von Ihrer Unterstützung. Bitte helfen Sie mit, den Betrieb mit täglichen Updates und lizenzierten Filtern sicherzustellen. Vielen Dank!",
-                "DONATE" : "Jetzt spenden"
-            },
             "LABEL" : "Lizenz",
             "LABEL_ACTIVATE_LICENSE" : "Eine neue eBlocker Lizenz aktivieren",
             "LABEL_SETUP_WIZARD" : "eBlocker Lizenz aktivieren",
@@ -1977,11 +1972,11 @@
             "REGISTRATION_STATE" : {
                 "LABEL" : "Aktivierungsstatus",
                 "STATES" : {
-                    "ABOUT_TO_EXPIRE" : "aktiviert (läuft bald ab)",
-                    "EXPIRED" : "abgelaufen",
+                    "ABOUT_TO_EXPIRE" : "Aktiviert (läuft bald ab)",
+                    "EXPIRED" : "Abgelaufen",
                     "INVALID" : "Die Aktivierung ist ungültig.",
-                    "NEW" : "nicht aktiviert",
-                    "OK" : "aktiviert",
+                    "NEW" : "Nicht aktiviert",
+                    "OK" : "Aktiviert",
                     "OK_UNREGISTERED": "Ohne Aktivierung",
                     "REVOKED" : "Die Lizenz ist ungültig."
                 }
@@ -2174,7 +2169,7 @@
                         "STEP2_TEXT2_LINK" : " Wissensdatenbank.",
                         "STEP2_TEXT2_PRE" : "Bitte deaktivieren Sie jetzt den DHCP-Dienst auf Ihrem Router. Details dazu finden Sie in der Anleitung Ihres Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
                         "STEP3_HEADER" : "3. {{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PROCESS.STEP3' | translate}}",
-                        "STEP3_TEXT1" : "Der DHCP-Dienst Ihres Routers ist nun deaktivert.",
+                        "STEP3_TEXT1" : "Der DHCP-Dienst Ihres Routers ist nun deaktiviert.",
                         "STEP3_TEXT2" : "Bitte starten Sie nun alle Netzwerkgeräte bis auf den eBlocker und den Router neu oder unterbrechen Sie kurz deren Netzwerkverbindungen, indem Sie z.B. kurz den Flugmodus aktivieren.",
                         "STEP3_WARN_PRE" : "Achtung: ",
                         "STEP3_WARN_TEXT" : "Bitte beachten Sie, dass der DHCP-Server in Ihrem Router wieder aktiviert werden muss, falls Sie den eBlocker aus Ihrem Netzwerk entfernen."
@@ -2318,7 +2313,7 @@
         },
         "PARENTAL_CONTROL" : {
             "ACTION" : {
-                "SET_PASSWORD" : "Administrator-Passwort setzen"
+                "SET_PASSWORD" : "Administratorpasswort setzen"
             },
             "DEFAULT_PROFILE" : {
                 "PARENTAL_CONTROL_DEFAULT_PROFILE_DESCRIPTION" : "Dieses Schutzprofil wird automatisch allen bestehenden und neuen Geräten zugewiesen. ",
@@ -2337,7 +2332,7 @@
                 "PARENTAL_CONTROL_USERPROFILE_LIMBO_NAME" : "Internet-Sperre"
             },
             "LABEL" : "Jugendschutz",
-            "SET_ADMIN_PASSWORD_TEXT" : "Es ist kein Administrator-Passwort gesetzt. Wenn Sie die Jugendschutz-Funktionen nutzen möchten, müssen Sie ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht ohne Berechtigung geändert werden können."
+            "SET_ADMIN_PASSWORD_TEXT" : "Es ist kein Administratorpasswort gesetzt. Wenn Sie die Jugendschutz-Funktionen nutzen möchten, müssen Sie ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht ohne Berechtigung geändert werden können."
         },
         "PASSWORD_SERVICE" : {
             "NOTIFICATION" : {
@@ -2547,19 +2542,19 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Mit diesem Release haben wir zahlreiche Verbesserungen eingeführt und uns auf die Stabilität des Systems konzentriert.",
-                "GREETINGS" : "Danke für deine Unterstützung und bleib geschützt ;-)",
+                "INTRO" : "<strong>WICHTIGER HINWEIS</strong>:<br>Die automatischen täglichen Updates wurden deaktiviert. Du kannst sie aber mit einer Spende sofort wieder aktivieren.<br> Gleichzeitig haben wir viele neue Features implementiert, um deinen Schutz und eBlocker weiter zu verbessern.",
+                "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "Auto-Trust-App",
-		    "LI_2" : "Personal-Device-Firewall",
-		    "LI_3" : "T.B.D.",
-		    "LI_4" : "Aktualisierung des Linux Betriebssystems inkl. umfangreicher Sicherheitspatches"
+                    "LI_1" : "<strong>Personal Device Firewall</strong> (beta), um den Datenverkehr beliebiger Geräte zu kontrollieren und einzuschränken.",
+		    "LI_2" : "<strong>Remote Dashboard</strong> (beta), um das Dashboard von IoT und anderen Geräten ohne Bildschirm aufzurufen.",
+		    "LI_3" : "<strong>Auto Trust App</strong> (beta), um die Kompatibilität von Apps mit eBlocker HTTPS automatisch zu verbessern.",
+		    "LI_4" : "Sicherheitsupdate des Linux Betriebssystems sowie viele weitere Verbesserungen und Optimierungen."
                 },
-                "LINK_PRE" : "Weitere Details zu den Änderungen findest du in den ",
+                "LINK_PRE" : "Weitere Details zu allen Änderungen findest du in den ",
                 "LINK_TEXT" : "Release Notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-7/",
-                "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. <a href=\"https://eblocker.org/spendenmoeglichkeiten/\" target=\"_blank\" class=\"orange\">Bitte spende für die Betriebskosten</a>, damit dein eBlocker weiter tägliche Updates erhält.",
+                "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du jetzt einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN" : "Dein eBlocker Team",
                 "TITLE" : "eBlockerOS Release 2.7"
             },
@@ -2945,7 +2940,6 @@
                 "AUTO_UPDATE_DISABLED" : "Automatische Aktualisierungen sind deaktiviert",
                 "AUTO_UPDATE_ENABLED" : "Aktualisierungen täglich:",
                 "CHECK_FOR_UPDATES" : "Jetzt prüfen",
-                "DONATE" : "Jetzt tägliche Updates freischalten",
                 "UPDATE" : "Jetzt aktualisieren"
             },
             "AUTO_UPDATE_EDIT" : {
@@ -2954,6 +2948,10 @@
             },
             "DATE_FORMAT" : "D. MMM YYYY",
             "DATE_TIME_FORMAT" : "D. MMM YYYY HH:mm",
+            "DONATE" : {
+                "LABEL" : "Jetzt tägliche Updates freischalten",
+                "URL" : "https://eblocker.org/de/spenden-fuer-updates"
+            },
             "EBLOCKER_ACTIVATION_STATE" : {
                 "LABEL" : "Aktivierungsstatus"
             },
@@ -2977,10 +2975,11 @@
             "LAST_UPDATE" : {
                 "LABEL" : "Letzte Aktualisierung"
             },
-            "LICENSE_VALID_TILL" : {
-                "LABEL" : "Aktualisierungslizenz gültig bis",
-                "LIFETIME" : "Lifetime",
-                "UNREGISTERED" : "-"
+            "LICENSE_UPDATE_TYPE" : {
+                "AUTOMATIC" : "Automatische Aktualisierung",
+                "LABEL" : "Lizenz umfasst",
+                "MANUAL" : "Manuelle Aktualisierung",
+                "UNTIL" : "bis"
             },
             "NEXT_UPDATE" : {
                 "LABEL" : "Nächste Aktualisierung"
@@ -3727,7 +3726,7 @@
                     "P3_PRE" : "Sollten Sie zu dieser E-Mail Adresse keinen Zugang mehr haben oder Sie haben einen gebrauchten eBlocker erworben, hinterlassen Sie bitte eine Nachricht im Forum"
                 },
                 "OVERVIEW" : {
-                    "P1" : "Statusanzeige Ihrer aktuellsten, auf diesem Gerät verwendeten eBlocker-Lizenz. Sie können Ihren neu erworbenen Lizenzschlüssel eingeben und somit aktivieren, über externe Seiten können Sie den aktuellen Lizenzschlüssel vom Gerät lösen/übertragen oder einen neuen kaufen.",
+                    "P1" : "Statusanzeige Ihrer aktuellsten, auf diesem Gerät verwendeten eBlocker-Lizenz. Sie können Ihren neuen Lizenzschlüssel eingeben und somit aktivieren, über externe Seiten können Sie den aktuellen Lizenzschlüssel vom Gerät lösen/übertragen oder für einen neuen spenden.",
                     "TITLE" : "Lizenz"
                 }
             },

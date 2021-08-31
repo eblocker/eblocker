@@ -6,11 +6,14 @@
                 <h2 ng-hide="vm.loggedIn" translate="SHARED.LOGIN.CARD.TITLE"></h2>
                 <h2 ng-show="vm.loggedIn" translate="DIALOGS.LOGIN.SELECT_DEVICE"></h2>
                 <div>
-                    <p ng-hide="vm.loggedIn" translate="DIALOGS.LOGIN.EXPLAIN"></p>
+                    <p ng-hide="vm.loggedIn || !vm.adminPasswordRequired" translate="DIALOGS.LOGIN.EXPLAIN"></p>
+                </div>
+                <div>
+                    <p ng-hide="vm.adminPasswordRequired" translate="DIALOGS.LOGIN.NO_ADMIN_PASSWORD_SET"></div>
                 </div>
             </div>
 
-            <div layout-padding ng-hide="vm.loggedIn">
+            <div layout-padding ng-hide="vm.loggedIn || !vm.adminPasswordRequired">
                 <md-input-container md-theme="eBlockerThemeInput" style="width: 90%;">
                     <label>{{ 'SHARED.LOGIN.CARD.INPUT.LABEL' | translate }}</label>
                     <input name="adminPassword" ng-model="vm.adminPassword" type="password" required/>
@@ -40,8 +43,11 @@
                     {{ 'SHARED.BUTTON.CANCEL' | translate }}
                 </md-button>
             </div>
-            <md-button class="md-raised md-primary md-accent" type="submit" ng-hide="vm.loggedIn">
+            <md-button class="md-raised md-primary md-accent" type="submit" ng-hide="vm.loggedIn || !vm.adminPasswordRequired">
                 {{ 'SHARED.LOGIN.CARD.TITLE' | translate }}
+            </md-button>
+            <md-button class="md-raised md-primary md-accent" type="button" ng-click="vm.setAdminPassword()" ng-show="!vm.adminPasswordRequired">
+                {{ 'DIALOGS.LOGIN.SET_ADMIN_PASSWORD' | translate }}
             </md-button>
         </md-dialog-actions>
     </form>

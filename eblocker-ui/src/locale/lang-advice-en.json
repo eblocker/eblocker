@@ -43,7 +43,7 @@
             "BUTTON" : {
                 "CLOSE" : "Ok",
                 "ENTER" : "Enter license key",
-                "PURCHASE" : "Purchase new license"
+                "PURCHASE" : "Donate for new license"
             },
             "TEXT" : {
                 "DEMO" : {

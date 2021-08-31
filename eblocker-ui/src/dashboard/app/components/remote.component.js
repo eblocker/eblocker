@@ -20,13 +20,14 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(security, logger, $state) {
+function Controller(logger, $state) {
     'ngInject';
     'use strict';
 
     const vm = this;
 
+
     vm.$onInit = function() {
-        logger.warn('You are now on a remote device.');
+        logger.info('Now on a remote device');
     };
 }

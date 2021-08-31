@@ -115,11 +115,4 @@ public class StartupStatusReporter {
                 "Network interface is " + (up ? "up" : "DOWN")));
     }
 
-    public void testDatabaseConnection(DataSource dataSource) throws DatabaseFailureException {
-        try {
-            messages.add(new Message(MessageStatus.INFO, String.format("Database connection established (version %s)", dataSource.getVersion())));
-        } catch (Exception e) {
-            throw new DatabaseFailureException("Could not connect to database", e);
-        }
-    }
 }

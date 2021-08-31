@@ -49,6 +49,22 @@ perform_self_check() {
     console_log "*** PERFORMING SELF CHECK ***"
 }
 
+perform_update_recovery() {
+    console_log "*** PERFORMING UPDATE RECOVERY ***"
+
+    date >> $EBLOCKER_UPDATERECOVERY_FILE
+    dpkg --force-confold --force-confdef --configure -a &>> $EBLOCKER_UPDATERECOVERY_FILE
+    RETVAL=$?
+
+    if [ $RETVAL -eq 0 ]
+    then
+        echo "Update recovery - Finished without error." >> $EBLOCKER_UPDATERECOVERY_FILE
+    else
+        echo "Update recovery - Finished with error ($RETVAL)." >> $EBLOCKER_UPDATERECOVERY_FILE
+    fi
+    poweroff
+}
+
 perform_status_report() {
     IPADDRS=$(ip addr list eth0)
     DATE=$(date)
@@ -104,6 +120,8 @@ if [ -e $THUMBDRIVE_DEVICE ]; then
 	    perform_factory_reset
 	elif [ -e $EBLOCKER_SELFCHECK_FILE ]; then
 	    perform_self_check
+	elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
+	    perform_update_recovery
 	else
             perform_status_report
 	fi

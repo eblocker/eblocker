@@ -63,17 +63,8 @@
     },
     "CONSOLE" : {
         "CARD" : {
-            "ACTIVATION_WARNING" : "Aktivieren Sie Ihren eBlocker",
             "BUTTON" : {
-                "ACTIVATE" : "Aktivieren",
-                "OK" : "Einstellungen öffnen",
-                "RENEW" : "Lizenz erneuern"
-            },
-            "EXPIRED_WARNING" : "Ihre Lizenz läuft bald ab",
-            "LICENSE" : {
-                "FORMAT_DATE" : "D. MMM YYYY",
-                "LABEL" : "eBlocker Lizenz:",
-                "VALID_TILL" : "gültig bis"
+                "OK" : "Einstellungen öffnen"
             },
             "NETWORK" : {
                 "DEVICE_IP" : "Dieses Gerät:",
@@ -212,7 +203,7 @@
                 "ENABLED" : "Aufzeichnen (letzte 24h)"
             },
             "TITLE" : "Personal Device Firewall",
-            "TOOLTIP" : "Überprüfen Sie, welche Domains dieses Gerät aufruft"
+            "TOOLTIP" : "Von diesem Gerät aufgerufene Domains prüfen und ggf. blockieren/freigeben"
         }
     },
     "DEVICE_STATUS" : {
@@ -232,7 +223,9 @@
     "DIALOGS" : {
         "LOGIN" : {
             "EXPLAIN" : "Geben Sie Ihr Administratorpasswort ein, um auf andere Geräte zuzugreifen.",
-            "SELECT_DEVICE" : "Gerät auswählen"
+            "NO_ADMIN_PASSWORD_SET" : "Es ist kein Administratorpasswort gesetzt. Um im Dashboard auf andere Geräte zugreifen zu können, müssen Sie zuvor ein Passwort setzen.",
+            "SELECT_DEVICE" : "Gerät auswählen",
+            "SET_ADMIN_PASSWORD" : "Administratorpasswort setzen"
         },
         "PIN" : {
             "BUTTON" : {

@@ -2,7 +2,8 @@
     icon="/img/icons/baseline-insert_chart_outlined.svg"
     card-title="{{'DEVICE_FIREWALL.CARD.TITLE' | translate}}"
     card-id="{{ vm.cardId }}"
-    tooltip="DEVICE_FIREWALL.CARD.TOOLTIP">
+    tooltip="DEVICE_FIREWALL.CARD.TOOLTIP"
+    beta-feature="true">
 
     <eb-card-content class="device-firewall-card">
         <div layout="column" layout-align="center center">
@@ -29,11 +30,14 @@
                              search-term="vm.searchTerm"
                              ng-hide="vm.recordedDomains.length === 0">
             </eb-filter-table>
-            <md-content style="max-height: 216px" layout-fill>
+            <md-content class="recorded-domain-list" ng-hide="vm.recordedDomains.length === 0" layout-fill>
                 <div layout="row" ng-repeat="entry in vm.recordedDomainsFiltered">
                     <md-checkbox flex="10" md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="entry.selected" aria-label="Select entry"></md-checkbox>
                     <div layout="row" flex="90">
-                        <div flex="80" class="truncate" ng-class="{'recorded-domain-deselected': entry.deselected}">{{ entry.domain }}</div>
+                        <div flex="80" class="truncate" ng-class="{'recorded-domain-deselected': entry.deselected}">
+                            <span>{{ entry.domain }}</span>
+                            <md-tooltip md-delay="300">{{ entry.domain }}</md-tooltip>
+                        </div>
                         <div flex="10" class="align-right">{{ entry.count }}</div>
                         <div flex="10">
                             <md-icon ng-show="!entry.blocked && !entry.patternFiltered" class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>

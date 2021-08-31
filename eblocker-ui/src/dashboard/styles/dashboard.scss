@@ -18,6 +18,16 @@ $dashboard-toolbar-height: 66px;
         background-color: $eblocker-orange;
     }
 
+    .dashboard-remote-device {
+        background-color: #888;
+
+        // remove when beta phase is over:
+        background-image: url('/img/eblocker-beta-feature.svg');
+        background-repeat: no-repeat;
+        background-position: top 65px left -1px;
+        background-size: 44px 44px;
+    }
+
     .custom-column-xs {
         padding: 0 1% 0 1%
     }
@@ -46,10 +56,16 @@ $dashboard-toolbar-height: 66px;
     .dashboard-app-screen {
         height: 100%;
     }
+
+    .cards-container {
+        min-width: 300px;
+    }
+
     .dashboard-app-screen .dashboard-main-screen .cards-container {
         // min-height is required, so that we can drop a dashboard card on an empty column
         min-height: 200px;
     }
+
     .dashboard-app-screen .dashboard-main-screen {
         padding-top: 8px;
     }
@@ -64,6 +80,13 @@ $dashboard-toolbar-height: 66px;
         // issue: adminconsole.scss accidentally defines a rule that sets height of main-component
         height: 100%;
         width: 100%;
+    }
+
+    .dashboard-beta-background {
+        background-image: url('/img/eblocker-beta-feature.svg');
+        background-repeat: no-repeat;
+        background-position: top -1px left -1px;
+        background-size: 44px 44px;
     }
 
     .dashboard-card-template {
@@ -137,6 +160,11 @@ $dashboard-toolbar-height: 66px;
     }
 
     .device-firewall-card {
+        .recorded-domain-list {
+            max-height: 216px;
+            background-color: white;
+            border-bottom: 2px solid $color-border;
+        }
         .recorded-domain-deselected {
             color: gray;
             font-style: italic;

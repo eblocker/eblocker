@@ -65,26 +65,12 @@ public class StartupStatusReporterTest {
         when(dataSource.getVersion()).thenReturn("23");
         when(networkInterface.isUp()).thenReturn(true);
         reporter.consoleStarted();
-        reporter.testDatabaseConnection(dataSource);
         reporter.testNetworkInterface();
         reporter.portConnected("HTTP", "http://192.168.1.2:3000/");
         reporter.portConnected("HTTPS", "https://192.168.1.2:3443/");
         reporter.startupCompleted();
         verify(scriptRunner).runScript(eq("mycommand"), tempFileName.capture());
         compareFileWithResource(tempFileName.getValue(), "test-data/startup-status/eblocker-status-success.html");
-    }
-
-    @Test
-    public void databaseFailure() throws IOException, InterruptedException {
-        when(dataSource.getVersion()).thenThrow(new JedisConnectionException("Could not get a resource from the pool", null));
-        reporter.consoleStarted();
-        try {
-            reporter.testDatabaseConnection(dataSource);
-        } catch (DatabaseFailureException e) {
-            reporter.startupFailed(e);
-        }
-        verify(scriptRunner).runScript(eq("mycommand"), tempFileName.capture());
-        compareFileWithResource(tempFileName.getValue(), "test-data/startup-status/eblocker-status-database-failure.html");
     }
 
     @Test
@@ -100,7 +86,6 @@ public class StartupStatusReporterTest {
         when(dataSource.getVersion()).thenReturn("23");
         when(networkInterface.isUp()).thenReturn(false);
         reporter.consoleStarted();
-        reporter.testDatabaseConnection(dataSource);
         reporter.testNetworkInterface();
         reporter.portConnected("HTTP", "http://169.254.94.109:3000/");
         reporter.startupCompleted();

@@ -1899,7 +1899,13 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("setPauseByDeviceId", HttpMethod.PUT)
                 .name("dashboard.device.put.pause")
                 .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+
         // Details about current device
+        server
+                .uri("/api/device/showWelcomeFlags", deviceController)
+                .action("updateShowWelcomeFlags", HttpMethod.PUT)
+                .name("dashboard.device.updateShowWelcomeFlags");
+
         server
                 .uri("/api/device", deviceController)
                 .action("getCurrentDevice", HttpMethod.GET)
@@ -1911,11 +1917,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("dashboard.device.update")
                 .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID)
                 .flag("DENY_CHILD_ACCESS");
-
-        server
-                .uri("/api/device/showWelcomeFlags", deviceController)
-                .action("updateShowWelcomeFlags", HttpMethod.PUT)
-                .name("dashboard.device.updateShowWelcomeFlags");
 
         server
                 .uri("/api/dashboard/operatinguser/devices", deviceController)

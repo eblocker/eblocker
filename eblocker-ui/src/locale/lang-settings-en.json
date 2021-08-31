@@ -2,12 +2,12 @@
     "ADMINCONSOLE" : {
         "ABOUT" : {
             "LABEL" : "About eBlocker",
-            "TEAM" : "We have spent many years designing, developing, testing and improving eBlocker. Today we are proud that our idea is gaining more and more supporters. eBlocker is Open Source, has no backdoors, is completely free of charge and being developed together with the community.",
-            "THANK_YOU" : "Thank you very much for using eBlocker. You have made a very good decision to protect your privacy and your entire family.",
+            "TEAM" : "We have spent many years designing, developing, testing and improving eBlockerOS. Today we are proud that our idea is gaining more and more supporters. eBlockerOS is Open Source, has no backdoors, is completely free of charge and being developed together with the community.",
+            "THANK_YOU" : "Thank you very much for using eBlockerOS. You have made a very good decision to protect your privacy and your entire family.",
             "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
-            "DONATE": "<b>To ensure that eBlocker is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
+            "DONATE": "<b>To ensure eBlockerOS is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
             "DONATE_MORE": "Donate Now",
-            "DONATE_THANKS": "Thanks to your support we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
+            "DONATE_THANKS": "As a gratitude for your donation, you will receive a license key to get automatic daily updates. In addition we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
             "COMMUNITY": "If you have any questions, new ideas or found errors, please solely use our forum at",
             "COMMUNITY_URL": "https://eblocker.org/en/community/",
             "YOURS_EBLOCKER" : "Your eBlocker Open Source Team"
@@ -64,7 +64,7 @@
                         "ERROR_REGISTER_LICENSEUSED" : "This license has already been activated.",
                         "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Email address and license key do not match. Please make sure that you enter the email address corresponding to the license key.",
                         "ERROR_REGISTER_NOLICENSEKEY" : "The license key is invalid. Please verify the entered license key.",
-                        "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "The current Lifetime license cannot be extended. Reset the current license, before activating a new license.",
+                        "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "The current license cannot be extended. Reset the current license, before activating a new license.",
                         "ERROR_REGISTER_NOTTOBEUSEDFORUPGRADE" : "This key belongs to a license that cannot be used for an upgrade or extension.",
                         "ERROR_REGISTER_NOUPGRADABLELICENSE" : "This is an upgrade license. Your eBlocker needs to be activated with a license suitable for upgrades.",
                         "ERROR_REGISTER_PRODUCTIDNOTFOUND" : "Invalid license key format. Please verify the entered license key.",
@@ -1459,7 +1459,7 @@
                     "ERROR_REGISTER_LICENSEUSED" : "This license has already been activated.",
                     "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Email address and license key do not match. Please make sure that you enter the email address corresponding to the license key.",
                     "ERROR_REGISTER_NOLICENSEKEY" : "The license key is invalid. Please verify the entered license key.",
-                    "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "The current Lifetime license cannot be extended. Reset the current license, before activating a new license.",
+                    "ERROR_REGISTER_NOLIFETIMEUPGRADE" : "The current license cannot be extended. Reset the current license, before activating a new license.",
                     "ERROR_REGISTER_NOTTOBEUSEDFORUPGRADE" : "This key belongs to a license that cannot be used for an upgrade or extension.",
                     "ERROR_REGISTER_NOUPGRADABLELICENSE" : "This is an upgrade license. Your eBlocker needs to be activated with a license suitable for upgrades.",
                     "ERROR_REGISTER_PRODUCTIDNOTFOUND" : "Invalid license key format. Please verify the entered license key.",
@@ -1486,7 +1486,7 @@
                         },
                         "LABEL" : "Confirmation",
                         "SUSPENDED_FEATURE" : {
-                            "LFT" : "The current Lifetime license will be reset. You can activate it anytime on another eBlocker or on the same eBlocker, after the new license has expired."
+                            "LFT" : "The current license will be reset. You can activate it anytime on another eBlocker or on the same eBlocker, after the new license has expired."
                         },
                         "TEXT2" : "The activation of this license will result in:"
                     },
@@ -1509,7 +1509,7 @@
                         "CANCEL" : "Cancel",
                         "UPDATE" : "Start update"
                     },
-                    "TEXT1" : "The update process can take up to <b>10 minutes</b>. The eBlocker might be restarted at the end of the update process.",
+                    "TEXT1" : "The update process can take up to <b>20 minutes</b>. The eBlocker might be restarted at the end of the update process.",
                     "TEXT2" : "Internet access of other devices might be interrupted during the update! Do not disconnect power or network connection from the eBlocker during the update!",
                     "TITLE" : "Update now"
                 },
@@ -1671,7 +1671,7 @@
             }
         },
         "DONATIONS" : {
-            "MENU_LABEL" : "Donate for updates",
+            "MENU_LABEL" : "Support eBlocker",
             "URL" : "https://eblocker.org/en/donate-now"
         },
         "DOCTOR": {
@@ -1948,11 +1948,6 @@
                 "LABEL" : "Device Name",
                 "UNREGISTERED" : "-"
             },
-            "DONATIONS" : {
-                "HEADING" : "Donate for updates",
-                "TEXT" : "eBlocker is run by volunteers and powered by your donations. Please help to keep daily updates, licensed filters and operations running. Thank you!",
-                "DONATE" : "Donate now"
-            },
             "LABEL" : "License",
             "LABEL_ACTIVATE_LICENSE" : "Activate a new eBlocker license",
             "LABEL_SETUP_WIZARD" : "Activate eBlocker license",
@@ -1977,12 +1972,12 @@
             "REGISTRATION_STATE" : {
                 "LABEL" : "Activation Status",
                 "STATES" : {
-                    "ABOUT_TO_EXPIRE" : "activated (expires soon)",
-                    "EXPIRED" : "expired",
+                    "ABOUT_TO_EXPIRE" : "Activated (expires soon)",
+                    "EXPIRED" : "Expired",
                     "INVALID" : "The activation is invalid.",
-                    "NEW" : "not activated",
-                    "OK" : "activated",
-                    "OK_UNREGISTERED": "without activation",
+                    "NEW" : "Not activated",
+                    "OK" : "Activated",
+                    "OK_UNREGISTERED": "Without activation",
                     "REVOKED" : "The license is invalid."
                 }
             },
@@ -2547,19 +2542,19 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                "INTRO" : "With this release, we have introduced numerous improvements and focused on the stability of the system.",
-                "GREETINGS" : "Thank you for your support and stay safe ;-),",
+                "INTRO" : "<strong>IMPORTANT NOTE</strong>:<br> Automatic daily updates have been disabled now. You can reactivate them instantly with a donation or a respective license key.<br>In addition, we have implemented many new features to protect you even better.",
+                "GREETINGS" : "Thank you for your support - we continue to protect you,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important changes:",
-                    "LI_1" : "Auto Trust App",
-                    "LI_2" : "Personal Device Firewall",
-                    "LI_3" : "T.B.D",
-		    "LI_4" : "Update of Linux operating system including security patches"
+                    "LI_1" : "<strong>Personal Device Firewall</strong> (beta) to monitor and restrict traffic of any device.",
+                    "LI_2" : "<strong>Remote Dashboard</strong> (beta) to access the dashboard of IoT and other devices with no screen.",
+                    "LI_3" : "<strong>Auto Trust App</strong> (beta) to automatically improve the compatibility of apps with eBlocker HTTPS.",
+		    "LI_4" : "Security update of the Linux operating system and many other improvements and optimizations."
                 },
-                "LINK_PRE" : "You can find further details in the  ",
+                "LINK_PRE" : "Please find further details in the ",
  		"LINK_TEXT" : "release notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-7/",
-                "OUTRO" : "eBlocker is developed and operated by volunteers. <a href=\"https://eblocker.org/en/donate-and-contribute/\" target=\"_blank\" class=\"orange\">Please donate to cover cost of operation</a> to receive daily updates.",
+                "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will now receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
                 "TITLE" : "eBlockerOS Release 2.7"
             },
@@ -2945,7 +2940,6 @@
                 "AUTO_UPDATE_DISABLED" : "Automatic updates are disabled",
                 "AUTO_UPDATE_ENABLED" : "Automatic updates daily between",
                 "CHECK_FOR_UPDATES" : "Check now",
-                "DONATE" : "Activate daily updates now",
                 "UPDATE" : "Update now"
             },
             "AUTO_UPDATE_EDIT" : {
@@ -2954,8 +2948,12 @@
             },
             "DATE_FORMAT" : "MMM Do, YYYY",
             "DATE_TIME_FORMAT" : "MMM D, YYYY h:mm a",
+            "DONATE" : {
+                "LABEL" : "Donate for daily updates now",
+                "URL" : "https://eblocker.org/en/donate-for-updates"
+            },
             "EBLOCKER_ACTIVATION_STATE" : {
-                "LABEL" : "Activation status"
+                "LABEL" : "Activation Status"
             },
             "EBLOCKER_FILTER_VERSION" : {
                 "LABEL" : "eBlocker Blocker Lists Version"
@@ -2977,10 +2975,11 @@
             "LAST_UPDATE" : {
                 "LABEL" : "Last update"
             },
-            "LICENSE_VALID_TILL" : {
-                "LABEL" : "Update license valid until",
-                "LIFETIME" : "Lifetime",
-                "UNREGISTERED" : "-"
+            "LICENSE_UPDATE_TYPE" : {
+                "AUTOMATIC" : "Automatic Updates",
+                "LABEL" : "License includes",
+                "MANUAL" : "Manual Updates",
+                "UNTIL" : "until"
             },
             "NEXT_UPDATE" : {
                 "LABEL" : "Next update"
@@ -3727,7 +3726,7 @@
                     "P3_PRE" : "If you no longer have access to this e-mail address or you have purchased a used eBlocker, please post a note in the forum"
                 },
                 "OVERVIEW" : {
-                    "P1" : "Status display of your most recent eBlocker license used on this device. You can enter your newly purchased license key and thus activate it, via external pages you can remove/transfer the current license key from the device or buy a new one.",
+                    "P1" : "Status display of your most recent eBlocker license used on this device. You can enter your new license key and thus activate it, via external pages you can remove/transfer the current license key from the device or buy a new one.",
                     "TITLE" : "License"
                 }
             },

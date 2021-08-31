@@ -63,17 +63,8 @@
     },
     "CONSOLE" : {
         "CARD" : {
-            "ACTIVATION_WARNING" : "Activate your eBlocker",
             "BUTTON" : {
-                "ACTIVATE" : "Activate",
-                "OK" : "Go to settings",
-                "RENEW" : "Renew license"
-            },
-            "EXPIRED_WARNING" : "Your license expires soon",
-            "LICENSE" : {
-                "FORMAT_DATE" : "MMM D, YYYY",
-                "LABEL" : "eBlocker license:",
-                "VALID_TILL" : "valid till"
+                "OK" : "Go to settings"
             },
             "NETWORK" : {
                 "DEVICE_IP" : "This device:",
@@ -212,7 +203,7 @@
                 "ENABLED" : "Recording (last 24h)"
             },
             "TITLE" : "Personal Device Firewall",
-            "TOOLTIP" : "Check the domains this device connects to"
+            "TOOLTIP" : "To monitor, block or allow domains this device requests"
         }
     },
     "DEVICE_STATUS" : {
@@ -232,7 +223,9 @@
     "DIALOGS" : {
         "LOGIN" : {
             "EXPLAIN" : "Enter your administrator password to access other devices.",
-            "SELECT_DEVICE" : "Select device"
+            "NO_ADMIN_PASSWORD_SET" : "No administrator password is set. If you want to access other devices in the dashboard, you must set a password first.",
+            "SELECT_DEVICE" : "Select device",
+            "SET_ADMIN_PASSWORD" : "Set administrator password"
         },
         "PIN" : {
             "BUTTON" : {

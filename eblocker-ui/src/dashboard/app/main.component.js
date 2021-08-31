@@ -28,7 +28,7 @@ export default {
 
 function MainController(logger, $document, $window, $timeout, $interval, $filter, DataService, CardService, DeviceService, // jshint ignore: line
                         UserService, SystemService, deviceDetector, DialogService, ResolutionService,
-                        DeviceSelectorService, Idle, IDLE_TIMES) {
+                        Idle, IDLE_TIMES) {
     'ngInject';
     'use strict';
 

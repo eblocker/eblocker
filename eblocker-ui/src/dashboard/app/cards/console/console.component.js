@@ -24,7 +24,7 @@ export default {
 };
 
 function ConsoleController($scope, $timeout, LanguageService, RedirectService, NetworkService,
-                           LicenseService, CardService, registration, DeviceSelectorService, EVENTS) {
+                           CardService, registration, DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -32,22 +32,9 @@ function ConsoleController($scope, $timeout, LanguageService, RedirectService, N
 
     const CARD_NAME = 'CONSOLE'; // 'card-6'
 
-    vm.getStatus = getStatus;
     vm.openConsole = openConsole;
 
-    let isRegistered, isLicenseAboutToExpire;
-
     vm.$onInit = function() {
-
-        const registrationInfo = registration.getRegistrationInfo();
-
-        vm.isRegistered = angular.isUndefined(registrationInfo) ||
-            angular.isUndefined(registrationInfo.isRegistered) ||
-            registrationInfo.isRegistered;
-
-        vm.isLicenseAboutToExpire = angular.isUndefined(registrationInfo) ||
-            angular.isUndefined(registrationInfo.licenseAboutToExpire) ||
-            registrationInfo.licenseAboutToExpire;
 
         NetworkService.getNetworkStatus().then(function success(response) {
             if (angular.isObject(response.data)) {
@@ -55,17 +42,6 @@ function ConsoleController($scope, $timeout, LanguageService, RedirectService, N
                 vm.eblocker = response.data.ipAddress;
                 vm.localDevice = response.data.userIpAddress;
                 setDeviceIp();
-            }
-        });
-
-        LicenseService.getLicenseStatus().then(function success(response) {
-            if (angular.isObject(response.data)) {
-                vm.license = response.data;
-                vm.license.licenseNotValidAfterDisplay =
-                    LanguageService.getDate(registrationInfo.licenseNotValidAfter, 'CONSOLE.CARD.LICENSE.FORMAT_DATE');
-                if (vm.license.productInfo && vm.license.productInfo.productName) {
-                    vm.license.displayProductName = vm.license.productInfo.productName.replace(/\s*\(.*\)\s*$/, '');
-                }
             }
         });
     };
@@ -77,15 +53,6 @@ function ConsoleController($scope, $timeout, LanguageService, RedirectService, N
             CardService.scrollToCard(CARD_NAME);
         }, 300);
     };
-
-    function getStatus() {
-        if (!vm.isRegistered) {
-            return 'ERROR';
-        } else if (vm.isLicenseAboutToExpire) {
-            return 'WARN';
-        }
-        return '';
-    }
 
     function setDeviceIp() {
         if (DeviceSelectorService.isLocalDevice()) {

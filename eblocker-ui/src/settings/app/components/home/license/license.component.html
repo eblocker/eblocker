@@ -20,40 +20,19 @@
 
         <div layout="row" layout-xs="column">
             <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_FROM.LABEL' | translate }}" config="vm.validFrom"></eb-label-container>
-            </div>
-            <div flex-gt-xs="50">
-                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
-            </div>
-        </div>
-
-        <div layout="row" layout-xs="column">
-            <div flex-gt-xs="50">
                 <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.REGISTERED_BY.LABEL' | translate }}" config="vm.registeredBy"></eb-label-container>
             </div>
             <div flex-gt-xs="50">
                 <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.DEVICE_NAME.LABEL' | translate }}" config="vm.deviceName"></eb-label-container>
             </div>
         </div>
-    </div>
 
-    <!-- DONATE -->
-    <div class="config-frame md-whiteframe-z1">
-        <div flex-gt-sm="90">
-            <div>
-                <h4 translate="ADMINCONSOLE.LICENSE.DONATIONS.HEADING"></h4>
+        <div layout="row" layout-xs="column">
+            <div flex-gt-xs="50">
+                <eb-label-container label="{{ 'ADMINCONSOLE.LICENSE.VALID_FROM.LABEL' | translate }}" config="vm.validFrom"></eb-label-container>
             </div>
-            <div>
-                {{ 'ADMINCONSOLE.LICENSE.DONATIONS.TEXT' | translate }}
-            </div>
-            <div>
-                <md-button type="button"
-                           style="margin-left: 0;"
-                           ng-href="{{ 'ADMINCONSOLE.DONATIONS.URL' | translate }}"
-                           target="_blank"
-                           class="md-raised md-primary md-accent">
-                    {{ 'ADMINCONSOLE.LICENSE.DONATIONS.DONATE' | translate }}
-                </md-button>
+            <div flex-gt-xs="50">
+                <eb-label-container ng-show="vm.showValidTill" label="{{ 'ADMINCONSOLE.LICENSE.VALID_TILL.LABEL' | translate }}" config="vm.validTill"></eb-label-container>
             </div>
         </div>
     </div>

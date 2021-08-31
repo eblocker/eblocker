@@ -126,6 +126,7 @@ import org.eblocker.server.http.controller.DashboardCardController;
 import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
+import org.eblocker.server.http.controller.DoctorController;
 import org.eblocker.server.http.controller.DomainBlockingController;
 import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
@@ -842,6 +843,7 @@ public class EblockerModule extends BaseModule {
         return ControllerWrapperFactory.wrap(BlockerController.class);
     }
 
+
     /**
      * The DashboardAuthorizationProcessor is not really a Controller,
      * but it must be wrapped by the ControllerWrapperFactory,
@@ -852,5 +854,11 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public DashboardAuthorizationProcessor dashboardAuthorizationProcessor() {
         return ControllerWrapperFactory.wrap(DashboardAuthorizationProcessor.class);
+    }
+
+    @Provides
+    @Singleton
+    public DoctorController doctorControllerController() {
+        return ControllerWrapperFactory.wrap(DoctorController.class);
     }
 }

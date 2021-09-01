@@ -53,7 +53,6 @@ public class DoctorService {
     private final DeviceService deviceService;
     private final ParentalControlService parentalControlService;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
-    private final ProblematicRouterDetection problematicRouterDetection;
 
     @Inject
     public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
@@ -68,8 +67,11 @@ public class DoctorService {
         this.deviceFactory = deviceFactory;
         this.deviceService = deviceService;
         this.parentalControlService = parentalControlService;
-        this.problematicRouterDetection = problematicRouterDetection;
-        problematicRouterDetection.addObserver((observable, arg) -> isProblematicRouter = Optional.of(true)); // TODO: true is wrong, but arg will always be null because ProblematicRouterDetection is stupid
+        problematicRouterDetection.addObserver((observable, arg) -> {
+            if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
+                isProblematicRouter = Optional.of((Boolean) arg);
+            }
+        });
     }
 
     public List<DoctorDiagnosisResult> runDiagnosis() {

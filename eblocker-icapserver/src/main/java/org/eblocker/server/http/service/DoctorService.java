@@ -147,7 +147,7 @@ public class DoctorService {
         LocalDateTime lastUpdateTime = debianUpdater.getLastUpdateTime();
         if (lastUpdateTime == null) {
             diagnoses.add(failedProbe("System updates never ran"));
-        } else if (LocalDateTime.now().minusDays(2).isBefore(lastUpdateTime)) {
+        } else if (lastUpdateTime.isBefore(LocalDateTime.now().minusDays(2))) {
             diagnoses.add(failedProbe("Last system update is older than two days : " + lastUpdateTime));
         } else {
             diagnoses.add(goodForEveryone("System updates are okay"));

@@ -196,7 +196,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     function adminLogin() {
         DialogService.adminLogin(function onOk(deviceId) {
             populateDevicesDropdown();
-            DeviceSelectorService.goToDevice(deviceId, true);
+            DeviceSelectorService.goToDevice(deviceId);
         }, function onCancel(isLoggedIn) {
             // login was successful, but user did not select any device:
             if (isLoggedIn) {
@@ -241,12 +241,12 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     ];
 
     function populateDevicesDropdown() {
-        DeviceSelectorService.getDevicesByName(security.isLoggedInAsAdmin()).then(function(response) {
+        DeviceSelectorService.getDevicesByName().then(function(response) {
             let entries = response.map(device => {
                 let entry = {
                     label: device.name,
                     image: '/img/icons/ic_computer_black.svg',
-                    action: function() {DeviceSelectorService.goToDevice(device.id, security.isLoggedInAsAdmin());},
+                    action: function() {DeviceSelectorService.goToDevice(device.id);},
                     closeOnClick: true
                 };
                 return entry;
@@ -294,7 +294,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
 
         populateDevicesDropdown();
         if (DeviceSelectorService.isRemoteDevice()) {
-            DeviceSelectorService.goToDevice($stateParams.deviceId, security.isLoggedInAsAdmin());
+            DeviceSelectorService.goToDevice($stateParams.deviceId);
         }
     };
 

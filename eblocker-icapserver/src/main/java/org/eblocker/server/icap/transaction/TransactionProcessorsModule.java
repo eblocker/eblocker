@@ -48,7 +48,7 @@ import org.eblocker.server.icap.transaction.processor.SuccessfulSSLDetector;
 import org.eblocker.server.icap.transaction.processor.TrackingBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.UserAgentSpoofProcessor;
 import org.eblocker.server.icap.transaction.processor.WebRTCBlocker;
-import org.eblocker.server.icap.transaction.processor.YoutubeAdBlocker;
+import org.eblocker.server.icap.transaction.processor.ScriptletsProtoypeProcessor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -120,7 +120,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             SetBaseUrlProcessor setBaseUrlProcessor,
                                                             SetInjectionsProcessor setInjectionsProcessor,
                                                             WebRTCBlocker webRTCBlocker,
-                                                            YoutubeAdBlocker youtubeAdBlocker,
+                                                            ScriptletsProtoypeProcessor scriptletsProtoypeProcessor,
                                                             SuccessfulSSLDetector successfulSSLDetector) {
         return Arrays.asList(
                 successfulSSLDetector,
@@ -136,7 +136,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 setInjectionsProcessor,
                 insertToolbarProcessor,
                 insertClientSslCheckProcessor,
-                youtubeAdBlocker,
+                scriptletsProtoypeProcessor,
                 htmlInjectionProcessor,
                 compressProcessor,
                 finalizeProcessor

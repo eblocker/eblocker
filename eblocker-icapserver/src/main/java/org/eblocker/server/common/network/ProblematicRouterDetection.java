@@ -93,10 +93,11 @@ public class ProblematicRouterDetection extends Observable implements Runnable {
             // detect router type
             try {
                 // store information
+                boolean isProblematicRouter = isDeviceProblematicRouter(gatewayAddress);
                 this.routerCompatibilityMessageProvider
-                        .setProblematicProvider(isDeviceProblematicRouter(gatewayAddress));
+                        .setProblematicProvider(isProblematicRouter);
                 setChanged();
-                notifyObservers();
+                notifyObservers(isProblematicRouter);
             } catch (Exception e) {
                 log.debug("Could not open a connection to the routers PnP-page.", e);
             }

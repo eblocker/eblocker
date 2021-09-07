@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 export default function DeviceSelectorService($rootScope, $state, $stateParams, logger, DeviceService,
-                                              ArrayUtilsService, EVENTS) {
+                                              security, ArrayUtilsService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -33,23 +33,23 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
     function goToLocalDevice() {
         selectedDevice = localDevice;
         $state.go('main').then(function(newState, params) {
-            notifyListeners();
+            notifyListenersSelected();
         });
     }
 
-    function goToDevice(deviceId, isLoggedInAsAdmin) {
+    function goToDevice(deviceId) {
         if (deviceId === localDevice.id) {
             return goToLocalDevice();
         }
-        getDevicesByName(isLoggedInAsAdmin).then(function(response) {
+        getDevicesByName().then(function(response) {
             let device = ArrayUtilsService.getItemBy(response, 'id', deviceId);
             if (angular.isObject(device)) {
                 selectedDevice = device;
                 $state.go('remote', {deviceId: deviceId}).then(function(newState, params) {
-                    notifyListeners();
+                    notifyListenersSelected();
                 });
             } else {
-                logger.error('No access to to device ' + deviceId);
+                logger.error('No access to device ' + deviceId);
             }
         }, function(reason) {
             logger.error('Could not get devices', reason);
@@ -60,7 +60,8 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
         return selectedDevice;
     }
 
-    function getDevicesByName(isLoggedInAsAdmin) {
+    function getDevicesByName() {
+        let isLoggedInAsAdmin = security.isLoggedInAsAdmin();
         let func = isLoggedInAsAdmin ? DeviceService.getAllDevices : DeviceService.getOperatingUserDevices;
         return func().then(function(response) {
             let devices = response.filter(device => !device.isEblocker);
@@ -75,8 +76,30 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
         selectedDevice = device;
     }
 
-    function notifyListeners() {
+    // Clients of the service can signal that they have updated the device,
+    // so the service can reload the selected device and broadcast a DEVICE_UPDATED event.
+    function onDeviceUpdate() {
+        logger.info('Device was updated. Reloading selected device...');
+        let deviceId = getSelectedDevice().id;
+        getDevicesByName().then(function(response) {
+            let device = ArrayUtilsService.getItemBy(response, 'id', deviceId);
+            if (angular.isObject(device)) {
+                selectedDevice = device;
+                notifyListenersUpdated();
+            } else {
+                logger.error('No access to device ' + deviceId);
+            }
+        }, function(reason) {
+            logger.error('Could not get devices', reason);
+        });
+    }
+
+    function notifyListenersSelected() {
         $rootScope.$broadcast(EVENTS.DEVICE_SELECTED);
+    }
+
+    function notifyListenersUpdated() {
+        $rootScope.$broadcast(EVENTS.DEVICE_UPDATED);
     }
 
     return {
@@ -86,6 +109,7 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
         goToLocalDevice: goToLocalDevice,
         goToDevice: goToDevice,
         getSelectedDevice: getSelectedDevice,
-        initSelectedDevice: initSelectedDevice
+        initSelectedDevice: initSelectedDevice,
+        onDeviceUpdate: onDeviceUpdate
     };
 }

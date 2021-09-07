@@ -50,15 +50,12 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
     vm.searchProps = ['domain'];
     vm.searchTerm = '';
 
-    function onDeviceSelected() {
-        loadData();
-    }
-
     vm.$onInit = function() {
         loadData();
     };
 
     $scope.$on(EVENTS.DEVICE_SELECTED, loadData);
+    $scope.$on(EVENTS.DEVICE_UPDATED, loadData);
 
     $scope.$on(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED, loadCustomDomainFilter);
 

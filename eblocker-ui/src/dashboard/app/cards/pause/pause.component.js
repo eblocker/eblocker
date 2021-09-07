@@ -30,14 +30,11 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
 
     const vm = this;
     const CARD_NAME = 'PAUSE'; // 'card-1';
-    const PAUSE_THRESHOLD = 36000; // 36000 = 10 hours
     const PAUSE_INTERVAL = 300;
 
     let countdownTimer;
-    let countdownTimerUpdates = 0;
-    let pausedTime = 0; // actual pause remaining in seconds
+    let remainingPauseInSeconds = 0;
 
-    vm.error = true;
     vm.pausingAllowed = false;
 
     vm.paused = paused;
@@ -47,12 +44,9 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
     vm.getTitleTranslateString = getTitleTranslateString;
     vm.minusFive = minusFive;
     vm.plusFive = plusFive;
-    vm.isPauseThreshold = isPauseThreshold;
 
     vm.$onInit = function() {
-        // Load pause status after some time, because loading too fast may miss
-        // the correct pause state.
-        $timeout(getPause, 500);
+        getPause(true);
         DataService.registerComponentAsServiceListener(CARD_NAME, 'PauseService');
     };
 
@@ -72,74 +66,65 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
         getPause(true);
     });
 
-    function isPauseThreshold() {
-        return getPausing() > PAUSE_THRESHOLD;
-    }
-
     function getPausingAsDuration() {
-        return $filter('duration')(pausedTime);
+        return $filter('duration')(remainingPauseInSeconds);
     }
 
     function getTitleTranslateString() {
-        return pausedTime > 0 ? 'PAUSE.CARD.TITLE_COLLAPSED_PAUSED' : 'PAUSE.CARD.TITLE';
+        return remainingPauseInSeconds > 0 ? 'PAUSE.CARD.TITLE_COLLAPSED_PAUSED' : 'PAUSE.CARD.TITLE';
     }
 
-    // remaining seconds to pause
-    function getPausing() {
-        return pausedTime;
-    }
-
-    function setPausing(pausing) {
-        // adjust pausedTime to value from server, in case countdown in UI differs from countdown in server
+    function setRemaingPauseInSeconds(seconds) {
+        // adjust remainingPauseInSeconds to value from server, in case countdown in UI differs from countdown in server
         // may cause slight jitter in UI display of countdown (but only every 10 seconds)
-        pausedTime = Math.max(pausing, 0);
+        remainingPauseInSeconds = Math.max(seconds, 0);
     }
 
     function startPause() {
         setPause(PAUSE_INTERVAL);
         startCountdownTimer();
+        logger.info('Pause started');
+        onDeviceStateUpdate();
     }
 
     function minusFive() {
-        if (getPausing() - PAUSE_INTERVAL > 0) {
-            setPause(getPausing() - PAUSE_INTERVAL);
+        if (remainingPauseInSeconds - PAUSE_INTERVAL > 0) {
+            setPause(remainingPauseInSeconds - PAUSE_INTERVAL);
         } else {
             stopPause();
         }
     }
 
     function plusFive() {
-        let pause = getPausing() + PAUSE_INTERVAL;
-        if (pause > PAUSE_THRESHOLD) {
-            pause = PAUSE_THRESHOLD;
-        }
-        setPause(pause);
+        setPause(remainingPauseInSeconds + PAUSE_INTERVAL);
     }
 
     function stopPause() {
         setPause(0);
         stopCountdownTimer();
+        logger.info('Pause stopped');
+        onDeviceStateUpdate();
     }
 
     function paused() {
-        return getPausing() > 0;
+        return remainingPauseInSeconds > 0;
     }
 
     function setPause(seconds) {
         vm.pauseIsPending = true;
         PauseService.setPause(seconds)
             .then(function success(response) {
-                setPausing(response.pausing);
+                setRemaingPauseInSeconds(response.pausing);
             }, function error(response) {
                 logger.error('Could not set pause: ' + JSON.stringify(response));
             }).finally(function done() {
-            vm.pauseIsPending = false;
-        });
+                vm.pauseIsPending = false;
+            });
     }
 
     function getPause(reload) {
         PauseService.getPause(reload).then(function(response) {
-                setPausing(response.data.pausing);
+                setRemaingPauseInSeconds(response.data.pausing);
                 vm.pausingAllowed = response.data.pausingAllowed;
                 if (paused()) {
                     startCountdownTimer();
@@ -157,7 +142,6 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
             return;
         }
         countdownTimer = $interval(updatePausing, 1000);
-        countdownTimerUpdates = 0;
     }
 
     function stopCountdownTimer() {
@@ -167,11 +151,17 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
         }
     }
 
-    // must be called once per second
-    function updatePausing() {
-        if (pausedTime > 0) {
-            // to allow display of smooth countdown every second
-            pausedTime--;
+    // called by countdown timer
+    function updatePausing(countdownTimerUpdates) {
+        if (remainingPauseInSeconds > 0) {
+            remainingPauseInSeconds--;
+        }
+
+        if (remainingPauseInSeconds <= 0) { // pause ended?
+            stopCountdownTimer();
+            logger.info('Pause ended');
+            $timeout(onDeviceStateUpdate, 2000); // allow some time for the backend to end the pause
+            return;
         }
 
         // every ten seconds, synchronize pause with the backend
@@ -179,6 +169,10 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
             logger.info('Syncing pause with backend');
             getPause(true);
         }
-        countdownTimerUpdates++;
+    }
+
+    // tell other components that the device's enabled/disabled state has changed
+    function onDeviceStateUpdate() {
+        DeviceSelectorService.onDeviceUpdate();
     }
 }

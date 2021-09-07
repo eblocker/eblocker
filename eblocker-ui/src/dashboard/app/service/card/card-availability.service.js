@@ -136,7 +136,12 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
 
     function isPauseCardAvailable(device) {
         // if device is not enabled, BUT paused, then the card is still available
-        return (device.enabled || device.paused);
+        if (DeviceSelectorService.isLocalDevice()) {
+            return (device.enabled || device.paused);
+        } else {
+            let remoteDevice = DeviceSelectorService.getSelectedDevice();
+            return (remoteDevice.enabled || remoteDevice.paused);
+        }
     }
 
     function isMobileCardAvailable(card, vpnHomeStatus, device) {

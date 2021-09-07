@@ -9,8 +9,8 @@
         <div layout="column" layout-align="center center">
             <div layout="row">
                 <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="center center" ng-model="vm.device.domainRecordingEnabled"
-                           class="md-primary switch-word-break" ng-change="vm.onChangeRecordingEnabled()">
-                    {{ vm.device.domainRecordingEnabled ? 'DEVICE_FIREWALL.CARD.RECORDING.ENABLED' : 'DEVICE_FIREWALL.CARD.RECORDING.DISABLED' | translate }}
+                           class="md-primary switch-word-break" ng-change="vm.onChangeRecordingEnabled()" ng-disabled="!vm.device.enabled">
+                    {{ vm.device.domainRecordingEnabled && vm.device.enabled ? 'DEVICE_FIREWALL.CARD.RECORDING.ENABLED' : 'DEVICE_FIREWALL.CARD.RECORDING.DISABLED' | translate }}
                 </md-switch>
             </div>
             <div layout="row">

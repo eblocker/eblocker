@@ -44,6 +44,7 @@ function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceSer
     };
 
     $scope.$on(EVENTS.DEVICE_SELECTED, loadData);
+    $scope.$on(EVENTS.DEVICE_UPDATED, loadData);
 
     function loadData() {
         loadSslStatus().then(function(response) {
@@ -70,7 +71,7 @@ function DeviceStatusController($scope, logger, DeviceSelectorService, DeviceSer
         DeviceService.update(vm.device).then(function success(response){
             vm.device = response.data;
         }, function error(response) {
-            logger.error('Could not en-/disabled state of device', response);
+            logger.error('Could not en-/disable state of device', response);
         });
     }
 

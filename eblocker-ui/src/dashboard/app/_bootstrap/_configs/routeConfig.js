@@ -63,6 +63,9 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
                     }
                     return null;
                 });
+            }],
+            initSelectedDevice: ['device', 'DeviceSelectorService', function(device, DeviceSelectorService) {
+                return DeviceSelectorService.initSelectedDevice(device);
             }]
         }
     };
@@ -196,17 +199,14 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         parent: appState.name,
         resolvePolicy: { async: 'WAIT', when: 'EAGER' },
         resolve: {
-            initCards: ['token', 'initSelectedDevice', 'CardService', 'registration',
-                        function(token, initSelectedDevice, CardService, registration) {
+            initCards: ['token', 'CardService', 'registration',
+                        function(token, CardService, registration) {
                             return registration.loadProductInfo().then(function() {
                                 const productInfo = registration.getRegistrationInfo().productInfo;
                                 return CardService.getDashboardData(true, productInfo);
                             });
                             // 'token' needed only indirectly for the REST call
-                        }],
-            initSelectedDevice: ['device', 'DeviceSelectorService', function(device, DeviceSelectorService) {
-                return DeviceSelectorService.initSelectedDevice(device);
-            }]
+                        }]
         },
         url: '/main' // need URL for anchor scrolling, so that main state is loaded
     };

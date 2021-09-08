@@ -10,6 +10,7 @@ import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserProfileModule.InternetAccessRestrictionMode;
 import org.eblocker.server.common.data.dns.DnsRating;
+import org.eblocker.server.common.data.dns.DnsResolvers;
 import org.eblocker.server.common.data.dns.NameServerStats;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.ProblematicRouterDetection;
@@ -22,6 +23,7 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -46,25 +48,30 @@ public class DoctorService {
     private final AutomaticUpdater automaticUpdater;
     private final DebianUpdater debianUpdater;
     private final DnsStatisticsService dnsStatisticsService;
+    private final DnsService dnsService;
     private final DeviceFactory deviceFactory;
     private final DeviceService deviceService;
     private final ParentalControlService parentalControlService;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
-    private final ProblematicRouterDetection problematicRouterDetection;
 
     @Inject
-    public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DeviceFactory deviceFactory,
+    public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
+                         DeviceFactory deviceFactory,
                          DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
         this.debianUpdater = debianUpdater;
         this.dnsStatisticsService = dnsStatisticsService;
+        this.dnsService = dnsService;
         this.deviceFactory = deviceFactory;
         this.deviceService = deviceService;
         this.parentalControlService = parentalControlService;
-        this.problematicRouterDetection = problematicRouterDetection;
-        problematicRouterDetection.addObserver((observable, arg) -> isProblematicRouter = Optional.of(true)); // TODO: true is wrong, but arg will always be null because ProblematicRouterDetection is stupid
+        problematicRouterDetection.addObserver((observable, arg) -> {
+            if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
+                isProblematicRouter = Optional.of((Boolean) arg);
+            }
+        });
     }
 
     public List<DoctorDiagnosisResult> runDiagnosis() {
@@ -147,7 +154,7 @@ public class DoctorService {
         LocalDateTime lastUpdateTime = debianUpdater.getLastUpdateTime();
         if (lastUpdateTime == null) {
             diagnoses.add(failedProbe("System updates never ran"));
-        } else if (LocalDateTime.now().minusDays(2).isBefore(lastUpdateTime)) {
+        } else if (lastUpdateTime.isBefore(LocalDateTime.now().minusDays(2))) {
             diagnoses.add(failedProbe("Last system update is older than two days : " + lastUpdateTime));
         } else {
             diagnoses.add(goodForEveryone("System updates are okay"));
@@ -209,13 +216,13 @@ public class DoctorService {
     }
 
     private boolean hasNonGoodNameServers() {
-        List<NameServerStats> nameServerStats = dnsStatisticsService.getResolverStatistics("custom",
-                ZonedDateTime.now().minusHours(24).toInstant()).getNameServerStats();
-        if (nameServerStats.isEmpty()) {
-            return true; // TODO: probably wrong
-        } else {
-            return nameServerStats.stream().anyMatch(nss -> !nss.getRating().equals(DnsRating.GOOD));
-        }
+        DnsResolvers resolvers = dnsService.getDnsResolvers();
+        return resolvers.getCustomNameServers().stream()
+                .map(resolver -> dnsStatisticsService.getResolverStatistics(resolver,
+                        ZonedDateTime.now().minusHours(24).toInstant()).getNameServerStats())
+                .flatMap(Collection::stream)
+                .map(NameServerStats::getRating)
+                .anyMatch(rating -> !DnsRating.GOOD.equals(rating));
     }
 
     private boolean pingHost(int ipVersion, String hostName) {

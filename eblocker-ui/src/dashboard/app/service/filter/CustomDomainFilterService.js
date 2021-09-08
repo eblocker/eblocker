@@ -98,9 +98,8 @@ export default function CustomDomainFilterService(logger, $http, $q, DeviceServi
         emptyFilter: emptyFilter,
         updateBlocklist: updateBlocklist,
         updatePasslist: updatePasslist,
-        getCurrentUserCustomDomainFilter: getCustomDomainFilter, // TODO remove this
         getCustomDomainFilter: getCustomDomainFilter,
-        setCurrentUserCustomDomainFilter: setCustomDomainFilter
+        setCustomDomainFilter: setCustomDomainFilter
     };
 
 }

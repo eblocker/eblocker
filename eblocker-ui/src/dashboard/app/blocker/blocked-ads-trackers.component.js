@@ -20,7 +20,8 @@ export default {
     controller: Controller
 };
 
-function Controller(logger, $stateParams, $window, DomainUtilsService, DialogService, FilterService, PauseService) {
+function Controller(logger, $stateParams, $window, DomainUtilsService, DialogService, CustomDomainFilterService,
+                    PauseService) {
     'ngInject';
     'use strict';
 
@@ -50,7 +51,7 @@ function Controller(logger, $stateParams, $window, DomainUtilsService, DialogSer
     vm.whitelistDomain = function() {
         vm.waiting = true;
         vm.customdomainfilter.whitelistedDomains.push(vm.domain);
-        FilterService.setCurrentUserCustomDomainFilter(vm.customdomainfilter).then(function success() {
+        CustomDomainFilterService.setCustomDomainFilter(vm.customdomainfilter).then(function success() {
             setTimeout(function () {
                 $window.location.replace(vm.target);
             }, 10000);
@@ -85,7 +86,7 @@ function Controller(logger, $stateParams, $window, DomainUtilsService, DialogSer
         let index = vm.customdomainfilter.blacklistedDomains.indexOf(domain);
         if (index !== -1) {
             vm.customdomainfilter.blacklistedDomains.splice(index, 1);
-            FilterService.setCurrentUserCustomDomainFilter(vm.customdomainfilter).then(function success() {
+            CustomDomainFilterService.setCustomDomainFilter(vm.customdomainfilter).then(function success() {
                 setTimeout(function () {
                     $window.location.replace(vm.target);
                 }, 10000);
@@ -98,7 +99,7 @@ function Controller(logger, $stateParams, $window, DomainUtilsService, DialogSer
     };
 
     function getCustomDomainFilter() {
-        return FilterService.getCurrentUserCustomDomainFilter().then(function success(response) {
+        return CustomDomainFilterService.getCustomDomainFilter().then(function success(response) {
             vm.customdomainfilter = response.data;
             const whitelistedDomains = vm.customdomainfilter.whitelistedDomains || [];
             vm.alreadyWhitelisted = false;

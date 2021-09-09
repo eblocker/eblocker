@@ -51,7 +51,7 @@ export default function SettingsService(logger, $http, $q, $translate, $rootScop
         return $q.reject(response);
     }
 
-    function getHeaderTitle() {
+    function getHeaderTitleId() {
         let trans;
         const state = $state.$current + '';
         if (state.indexOf('app.redirect') > -1) {
@@ -67,14 +67,17 @@ export default function SettingsService(logger, $http, $q, $translate, $rootScop
     function doSetLocale(value) {
         locale = value;
         $translate.use(locale.language).then(function() {
-            // set browser title
-            $translate(getHeaderTitle()).then(function(title) {
-                $rootScope.title = title;
-            }, function (response) {
-                logger.error('translation error ', response);
-            });
+            setHeaderTitle();
         }, function(response) {
             logger.error('error setting language ', response);
+        });
+    }
+
+    function setHeaderTitle() {
+        $translate(getHeaderTitleId()).then(function(title) {
+            $rootScope.title = title;
+        }, function (response) {
+            logger.error('translation error ', response);
         });
     }
 
@@ -92,6 +95,7 @@ export default function SettingsService(logger, $http, $q, $translate, $rootScop
         locale: getLocale,
         load: load,
         setLocale: setLocale,
-        getDefaultLocale: getDefaultLocale
+        getDefaultLocale: getDefaultLocale,
+        setHeaderTitle: setHeaderTitle
     };
 }

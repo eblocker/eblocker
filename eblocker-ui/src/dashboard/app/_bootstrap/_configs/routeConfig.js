@@ -66,6 +66,9 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
             }],
             initSelectedDevice: ['device', 'DeviceSelectorService', function(device, DeviceSelectorService) {
                 return DeviceSelectorService.initSelectedDevice(device);
+            }],
+            locale: ['settings', function(settings) {
+                return settings.load();
             }]
         }
     };
@@ -199,8 +202,8 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         parent: appState.name,
         resolvePolicy: { async: 'WAIT', when: 'EAGER' },
         resolve: {
-            initCards: ['token', 'CardService', 'registration',
-                        function(token, CardService, registration) {
+            initCards: ['token', 'initSelectedDevice', 'CardService', 'registration',
+                        function(token, initSelectedDevice, CardService, registration) {
                             return registration.loadProductInfo().then(function() {
                                 const productInfo = registration.getRegistrationInfo().productInfo;
                                 return CardService.getDashboardData(true, productInfo);

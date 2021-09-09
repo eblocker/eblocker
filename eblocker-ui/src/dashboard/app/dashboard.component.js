@@ -261,7 +261,8 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
 
         SystemService.startTokenWatcher(security.requestToken, APP_CONTEXT.name);
 
-        settings.load();
+        settings.setHeaderTitle(); // depends on $state
+
         vm.mainDropdownContent = [
             {
                 label: 'APP.CONTENT.HELP.LABEL',

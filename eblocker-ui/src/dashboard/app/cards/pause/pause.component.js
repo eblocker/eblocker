@@ -23,7 +23,7 @@ export default {
     }
 };
 
-function PauseController($scope, logger, $interval, $timeout, $filter, PauseService, CardService, DataService,
+function PauseController($q, $scope, logger, $interval, $timeout, $filter, PauseService, CardService, DataService,  //jshint ignore: line
                          DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
@@ -74,17 +74,18 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
         return remainingPauseInSeconds > 0 ? 'PAUSE.CARD.TITLE_COLLAPSED_PAUSED' : 'PAUSE.CARD.TITLE';
     }
 
-    function setRemaingPauseInSeconds(seconds) {
+    function setRemainingPauseInSeconds(seconds) {
         // adjust remainingPauseInSeconds to value from server, in case countdown in UI differs from countdown in server
         // may cause slight jitter in UI display of countdown (but only every 10 seconds)
         remainingPauseInSeconds = Math.max(seconds, 0);
     }
 
     function startPause() {
-        setPause(PAUSE_INTERVAL);
-        startCountdownTimer();
-        logger.info('Pause started');
-        onDeviceStateUpdate();
+        setPause(PAUSE_INTERVAL).then(function() {
+            startCountdownTimer();
+            logger.info('Pause started');
+            onDeviceStateUpdate();
+        });
     }
 
     function minusFive() {
@@ -100,10 +101,11 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
     }
 
     function stopPause() {
-        setPause(0);
-        stopCountdownTimer();
-        logger.info('Pause stopped');
-        onDeviceStateUpdate();
+        setPause(0).then(function() {
+            stopCountdownTimer();
+            logger.info('Pause stopped');
+            onDeviceStateUpdate();
+        });
     }
 
     function paused() {
@@ -112,28 +114,29 @@ function PauseController($scope, logger, $interval, $timeout, $filter, PauseServ
 
     function setPause(seconds) {
         vm.pauseIsPending = true;
-        PauseService.setPause(seconds)
-            .then(function success(response) {
-                setRemaingPauseInSeconds(response.pausing);
-            }, function error(response) {
-                logger.error('Could not set pause: ' + JSON.stringify(response));
-            }).finally(function done() {
-                vm.pauseIsPending = false;
-            });
+        return PauseService.setPause(seconds).then(function success(response) {
+            setRemainingPauseInSeconds(response.pausing);
+        }, function error(response) {
+            logger.error('Could not set pause: ' + JSON.stringify(response));
+            return $q.reject(response);
+        }).finally(function done() {
+            vm.pauseIsPending = false;
+        });
     }
 
     function getPause(reload) {
-        PauseService.getPause(reload).then(function(response) {
-                setRemaingPauseInSeconds(response.data.pausing);
-                vm.pausingAllowed = response.data.pausingAllowed;
-                if (paused()) {
-                    startCountdownTimer();
-                } else {
-                    stopCountdownTimer();
-                }
-            }, function error(response) {
-                logger.error('Could not get pause: ' + JSON.stringify(response));
-            });
+        return PauseService.getPause(reload).then(function(response) {
+            setRemainingPauseInSeconds(response.data.pausing);
+            vm.pausingAllowed = response.data.pausingAllowed;
+            if (paused()) {
+                startCountdownTimer();
+            } else {
+                stopCountdownTimer();
+            }
+        }, function error(response) {
+            logger.error('Could not get pause: ' + JSON.stringify(response));
+            return $q.reject(response.data);
+        });
     }
 
     function startCountdownTimer() {

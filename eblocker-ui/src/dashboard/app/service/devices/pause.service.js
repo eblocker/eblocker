@@ -20,7 +20,7 @@ export default function PauseService(logger, $http, $q, $interval, DataCachingSe
 
     const PATH = '/api/device/pause/';
 
-    const config = {timeout: 3000};
+    const config = {timeout: 10000};
     const SYNC_INTERVAL = 10000; // every 10 seconds
     let pauseCache, syncTimer;
 

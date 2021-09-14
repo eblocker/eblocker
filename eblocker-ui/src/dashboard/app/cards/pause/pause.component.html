@@ -33,5 +33,6 @@
     <eb-card-actions layout="row" layout-align="center center">
         <md-button class="md-primary" ng-if="! vm.paused()" ng-click="vm.startPause()" ng-disabled="vm.pauseIsPending">{{'PAUSE.CARD.BUTTON.START' | translate}}</md-button>
         <md-button class="md-primary" ng-if="vm.paused()" ng-click="vm.stopPause()" ng-disabled="vm.pauseIsPending">{{'PAUSE.CARD.BUTTON.STOP' | translate}}</md-button>
+        <md-progress-circular md-mode="indeterminate" md-diameter="24" ng-show="vm.pauseIsPending"></md-progress-circular>
     </eb-card-actions>
 </eb-card>

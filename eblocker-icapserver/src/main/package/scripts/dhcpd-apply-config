@@ -45,9 +45,6 @@ then
     then
 	service isc-dhcp-server restart
     fi
-
-    # Sync file systems (before user pulls the plug)
-    sync
 else
     echo "DHCP server configuration has not changed."
 fi

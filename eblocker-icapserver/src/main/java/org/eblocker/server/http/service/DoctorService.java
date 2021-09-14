@@ -2,6 +2,7 @@ package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.DoctorDiagnosisResult;
@@ -17,6 +18,7 @@ import org.eblocker.server.common.network.ProblematicRouterDetection;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.DebianUpdater;
+import org.eblocker.server.http.ssl.AppWhitelistModule;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -52,12 +54,15 @@ public class DoctorService {
     private final DeviceFactory deviceFactory;
     private final DeviceService deviceService;
     private final ParentalControlService parentalControlService;
+    private final ProductInfoService productInfoService;
+    private final AppModuleService appModuleService;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
 
     @Inject
     public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
                          DeviceFactory deviceFactory,
-                         DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection) {
+                         DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection,
+                         ProductInfoService productInfoService, AppModuleService appModuleService) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
@@ -67,6 +72,8 @@ public class DoctorService {
         this.deviceFactory = deviceFactory;
         this.deviceService = deviceService;
         this.parentalControlService = parentalControlService;
+        this.productInfoService = productInfoService;
+        this.appModuleService = appModuleService;
         problematicRouterDetection.addObserver((observable, arg) -> {
             if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
                 isProblematicRouter = Optional.of((Boolean) arg);
@@ -145,10 +152,14 @@ public class DoctorService {
 
     private List<DoctorDiagnosisResult> autoUpdateChecks() {
         List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
-        if (automaticUpdater.isActivated()) {
-            diagnoses.add(goodForEveryone("Your eBlocker is configured to automatically update itself on a daily basis"));
+        if (productInfoService.hasFeature(ProductFeature.AUP)) {
+            if (automaticUpdater.isActivated()) {
+                diagnoses.add(goodForEveryone("Your eBlocker is configured to automatically update itself on a daily basis"));
+            } else {
+                diagnoses.add(recommendationNotFollowedEveryone("Automatic updates are disabled"));
+            }
         } else {
-            diagnoses.add(recommendationNotFollowedEveryone("Automatic updates are disabled"));
+            diagnoses.add(recommendationNotFollowedEveryone("You cannot run automatic updates because you don't have donor license."));
         }
 
         LocalDateTime lastUpdateTime = debianUpdater.getLastUpdateTime();
@@ -167,13 +178,22 @@ public class DoctorService {
         if (sslService.isSslEnabled()) {
             diagnoses.add(goodForEveryone("You have HTTPS enabled"));
 
-            //diagnoses.add(hintForExpert("FAKE: The Auto Trust App is not enabled"));
+            AppWhitelistModule ata = appModuleService.getAutoSslAppModule();
+            if (ata.isEnabled()) {
+                diagnoses.add(goodForEveryone("You have ATA enabled. It's still beta but generally a good thing to have."));
+                List<String> wwwDomains = ata.getWhitelistedDomains().stream()
+                        .filter(domain -> domain.startsWith("www."))
+                        .collect(Collectors.toList());
+                if (!wwwDomains.isEmpty()) {
+                    diagnoses.add(hintForEveryone("ATA contains the following domains starting with 'www.'. This might hides the eBlocker icon on these pages " + wwwDomains));
+                }
+            } else {
+                diagnoses.add(hintForEveryone("Please consider enabeling ATA, even though it's still beta."));
+            }
 
             //diagnoses.add(hintForExpert("FAKE: The DDGTR blocker list is not enabled"));
 
             //diagnoses.add(hintForExpert("FAKE: The cookie blocker list is not enabled"));
-
-            //diagnoses.add(hintForEveryone("FAKE: ATA contains the following domains starting with 'www.'. This might hides the eBlocker icon on these pages"));
             ipv6Check(diagnoses);
         } else {
             diagnoses.add(new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EXPERT, "HTTPS is not enabled. You will get better tracking protection with it"));

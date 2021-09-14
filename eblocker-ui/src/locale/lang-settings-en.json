@@ -1677,12 +1677,62 @@
         "DOCTOR": {
             "LABEL" : "Doctor",
             "DIAGNOSIS" : {
-                "TITLE": "The diagnosis of the eBlocker doctor",
+                "TITLE": "The diagnoses of the eBlocker doctor",
+                "LEVEL": {
+                    "NOVICE" : "Novice",
+                    "EXPERT" : "Expert"
+                },
                 "TABLE": {
                     "COLUMN" : {
                         "SEVERITY" : "Severity",
-                        "AUDIENCE": "Audience",
-                        "MESSAGE": "Message"
+                        "MESSAGE": "Diagnosis"
+                    },
+                    "SEVERITY" : {
+                        "ERROR" : "Error",
+                        "WARNING" : "Warning",
+                        "INFO" : "Information",
+                        "OKAY" : "OK"
+                    },
+                    "MESSAGE" : {
+                        "NON_GOOD_DNS_SERVER" : "You have name servers with non-good rating.",
+                        "ALL_DNS_SERVERS_GOOD" : "Your name servers look good.",
+                        "PROBLEMATIC_ROUTER" : "Your router is problematic!",
+                        "CHILDREN_WITHOUT_RESTRICTIONS" : "The following children have no restrictions at all: ",
+                        "AUTOMATIC_NETWORK_MODE" : "You are using the automatic network mode. It may cause problems.",
+                        "GOOD_NETWORK_MODE" : "You are using a good network mode.",
+                        "AUTOMATIC_UPDATES_ENABLED" : "Your eBlocker is configured to automatically update itself on a daily basis.",
+                        "AUTOMATIC_UPDATES_DISABLED" : "Automatic updates are disabled-",
+                        "NO_DONOR_LICENSE" : "You cannot run automatic updates because you don't have donor license.",
+                        "SYSTEM_UPDATE_NEVER_RAN" : "System updates never ran.",
+                        "SYSTEM_UPDATE_RAN" : "System updates are okay.",
+                        "HTTPS_ENABLED" : "You have HTTPS enabled.",
+                        "LAST_SYSTEM_UPDATE_OLDER_2_DAYS" : "Last system update is older than two days: ",
+                        "ATA_ENABLED" : "You have ATA enabled. It's still beta but generally a good thing to have.",
+                        "ATA_HAS_WWW_DOMAINS" : "ATA contains domains starting with 'www.'. This might hides the eBlocker icon on these pages: ",
+                        "ATA_NOT_ENABLED" : "Please consider enabeling ATA, even though it's still beta.",
+                        "HTTPS_NOT_ENABLED" : "HTTPS is not enabled. You will get better tracking protection with it.",
+                        "STANDARD_PATTERN_FILTER_ENABLED" : "The following standard pattern filter is enabled as it should: ",
+                        "STANDARD_PATTERN_FILTER_DISABLED" : "The following standard pattern filter is not enabled: ",
+                        "DDG_FILTER_ENABLED_OVERBLOCKING" : "The DuckDuckGo filter is enabled. Note that is tends to over-blocking.",
+                        "DDG_FILTER_DISABLED" : "You might want to enable the DuckDuckGo filter.",
+                        "COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING" : "The Cookie & Consent filter is enabled. Note that is tends to over-blocking.",
+                        "COOKIE_CONSENT_FILTER_DISABLED" : "You might want to enable the Cookie & Consent filter.",
+                        "EBLOCKER_ENABLED_FOR_NEW_DEVICES" : "eBlocker will be automatically enabled for new devices. This may cause trouble when a new device is not compatible with the eBlocker.",
+                        "EBLOCKER_DISABLED_FOR_NEW_DEVICES" : "eBlocker will not be automatically enabled for new devices, so you don't run into trouble during setup. Don't forget to enable new devices manually...",
+                        "EBLOCKER_DNS_RESOLVE_BROKEN" : "The eBlocker itself can resolve DNS names.",
+                        "EBLOCKER_DNS_RESOLVE_WORKING" : "The eBlocker itself cannot resolve DNS names. Check your DNS settings.",
+                        "EBLOCKER_IP4_PING_BROKEN" : "Your eBlocker cannot reach the internet via ICMP/ping!",
+                        "EBLOCKER_IP4_PING_WORKING" : "Your eBlocker can reach the internet via ICMP/ping.",
+                        "EBLOCKER_IP6_ENABLED" : "Your network can access the internet via IPv6. That will bypass the tracking of eBlocker if HTTPS support is enabled.",
+                        "EBLOCKER_NO_IP6" : "Your network cannot access the internet via IPv6. This is good news as the eBlocker does not support IPv6 yet.",
+                        "ALL_DEVICES_USE_AUTO_BLOCK_MODE" : "All your devices are set to automatic mode.",
+                        "DEVICES_WITHOUT_AUTO_BLOCK_MODE" : "The following devices are not set to automatic blocking mode: ",
+                        "ALL_DEVICES_USE_MALWARE_FILTER" : "All your devices have malware filtering enabled.",
+                        "DEVICES_MALWARE_FILTER_DISABLED" : "The following devices have malware filtering disabled: ",
+                        "ALL_DEVICES_USE_AUTO_CONTROLBAR" : "All your devices are using the automatic ControlBar configuration.",
+                        "DEVICES_WITHOUT_AUTO_CONTROLBAR" : "The following devices are not using the automatic ControlBar configuration: ",
+                        "MORE_INFO" : "More information",
+                        "CLICK_FOR_MORE" : "Click for details."
                     }
                 }
             }

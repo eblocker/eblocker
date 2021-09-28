@@ -6,6 +6,7 @@ import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.DoctorDiagnosisResult;
+import org.eblocker.server.common.data.DoctorDiagnosisResult.Tag;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -19,6 +20,8 @@ import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.DebianUpdater;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
+import org.eblocker.server.icap.filter.FilterManager;
+import org.eblocker.server.icap.filter.FilterStoreConfiguration;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
@@ -41,6 +45,43 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.FAI
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.GOOD;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.HINT;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.RECOMMENDATION_NOT_FOLLOWED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_AUTO_BLOCK_MODE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_AUTO_CONTROLBAR;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_MALWARE_FILTER;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DNS_SERVERS_GOOD;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ATA_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ATA_HAS_WWW_DOMAINS;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ATA_NOT_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.AUTOMATIC_NETWORK_MODE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.AUTOMATIC_UPDATES_DISABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.AUTOMATIC_UPDATES_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.CHILDREN_WITHOUT_RESTRICTIONS;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.COOKIE_CONSENT_FILTER_DISABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DDG_FILTER_DISABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DDG_FILTER_ENABLED_OVERBLOCKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_MALWARE_FILTER_DISABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_BLOCK_MODE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_CONTROLBAR;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DISABLED_FOR_NEW_DEVICES;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DNS_RESOLVE_BROKEN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DNS_RESOLVE_WORKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_ENABLED_FOR_NEW_DEVICES;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP4_PING_BROKEN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP4_PING_WORKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP6_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_NO_IP6;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.GOOD_NETWORK_MODE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.HTTPS_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.HTTPS_NOT_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.LAST_SYSTEM_UPDATE_OLDER_2_DAYS;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.NON_GOOD_DNS_SERVER;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.NO_DONOR_LICENSE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.PROBLEMATIC_ROUTER;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.STANDARD_PATTERN_FILTER_DISABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.STANDARD_PATTERN_FILTER_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.SYSTEM_UPDATE_NEVER_RAN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.SYSTEM_UPDATE_RAN;
 
 @Singleton
 public class DoctorService {
@@ -56,13 +97,14 @@ public class DoctorService {
     private final ParentalControlService parentalControlService;
     private final ProductInfoService productInfoService;
     private final AppModuleService appModuleService;
+    private final FilterManager filterManager;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
 
     @Inject
     public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
                          DeviceFactory deviceFactory,
                          DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection,
-                         ProductInfoService productInfoService, AppModuleService appModuleService) {
+                         ProductInfoService productInfoService, AppModuleService appModuleService, FilterManager filterManager) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
@@ -74,6 +116,7 @@ public class DoctorService {
         this.parentalControlService = parentalControlService;
         this.productInfoService = productInfoService;
         this.appModuleService = appModuleService;
+        this.filterManager = filterManager;
         problematicRouterDetection.addObserver((observable, arg) -> {
             if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
                 isProblematicRouter = Optional.of((Boolean) arg);
@@ -105,13 +148,13 @@ public class DoctorService {
         diagnoses.addAll(checkParentalControl());
 
         if (hasNonGoodNameServers()) {
-            diagnoses.add(failedProbe("You have name servers with non-good rating"));
+            diagnoses.add(failedProbe(NON_GOOD_DNS_SERVER));
         } else {
-            diagnoses.add(goodForEveryone("Your name servers look good"));
+            diagnoses.add(goodForEveryone(ALL_DNS_SERVERS_GOOD));
         }
 
         if (isProblematicRouter.isPresent() && isProblematicRouter.get()) {
-            diagnoses.add(failedProbe("Your router is problematic!"));
+            diagnoses.add(failedProbe(PROBLEMATIC_ROUTER));
         }
         return diagnoses;
     }
@@ -131,7 +174,7 @@ public class DoctorService {
         if (unrestrictedChildren.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return Collections.singletonList(new DoctorDiagnosisResult(ANORMALY, EVERYONE, "The following children have no restrictions at all: " + unrestrictedChildren));
+            return Collections.singletonList(new DoctorDiagnosisResult(ANORMALY, EVERYONE, CHILDREN_WITHOUT_RESTRICTIONS, unrestrictedChildren.toString()));
         }
     }
 
@@ -144,9 +187,9 @@ public class DoctorService {
     private DoctorDiagnosisResult networkModeCheck() {
         NetworkConfiguration currentNetworkConfiguration = networkServices.getCurrentNetworkConfiguration();
         if (currentNetworkConfiguration.isAutomatic()) {
-            return new DoctorDiagnosisResult(HINT, EVERYONE, "You are using the automatic network mode. It may cause problems.");
+            return new DoctorDiagnosisResult(HINT, EVERYONE, AUTOMATIC_NETWORK_MODE, "");
         } else {
-            return goodForEveryone("You are using a good network mode");
+            return goodForEveryone(GOOD_NETWORK_MODE);
         }
     }
 
@@ -154,21 +197,21 @@ public class DoctorService {
         List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
         if (productInfoService.hasFeature(ProductFeature.AUP)) {
             if (automaticUpdater.isActivated()) {
-                diagnoses.add(goodForEveryone("Your eBlocker is configured to automatically update itself on a daily basis"));
+                diagnoses.add(goodForEveryone(AUTOMATIC_UPDATES_ENABLED));
             } else {
-                diagnoses.add(recommendationNotFollowedEveryone("Automatic updates are disabled"));
+                diagnoses.add(recommendationNotFollowedEveryone(AUTOMATIC_UPDATES_DISABLED));
             }
         } else {
-            diagnoses.add(recommendationNotFollowedEveryone("You cannot run automatic updates because you don't have donor license."));
+            diagnoses.add(recommendationNotFollowedEveryone(NO_DONOR_LICENSE));
         }
 
         LocalDateTime lastUpdateTime = debianUpdater.getLastUpdateTime();
         if (lastUpdateTime == null) {
-            diagnoses.add(failedProbe("System updates never ran"));
+            diagnoses.add(failedProbe(SYSTEM_UPDATE_NEVER_RAN));
         } else if (lastUpdateTime.isBefore(LocalDateTime.now().minusDays(2))) {
-            diagnoses.add(failedProbe("Last system update is older than two days : " + lastUpdateTime));
+            diagnoses.add(failedProbe(LAST_SYSTEM_UPDATE_OLDER_2_DAYS, lastUpdateTime.toString()));
         } else {
-            diagnoses.add(goodForEveryone("System updates are okay"));
+            diagnoses.add(goodForEveryone(SYSTEM_UPDATE_RAN));
         }
         return diagnoses;
     }
@@ -176,36 +219,59 @@ public class DoctorService {
     private List<DoctorDiagnosisResult> httpsRelatedChecks() {
         List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
         if (sslService.isSslEnabled()) {
-            diagnoses.add(goodForEveryone("You have HTTPS enabled"));
+            diagnoses.add(goodForEveryone(HTTPS_ENABLED));
 
             AppWhitelistModule ata = appModuleService.getAutoSslAppModule();
             if (ata.isEnabled()) {
-                diagnoses.add(goodForEveryone("You have ATA enabled. It's still beta but generally a good thing to have."));
+                diagnoses.add(goodForEveryone(ATA_ENABLED));
                 List<String> wwwDomains = ata.getWhitelistedDomains().stream()
                         .filter(domain -> domain.startsWith("www."))
                         .collect(Collectors.toList());
                 if (!wwwDomains.isEmpty()) {
-                    diagnoses.add(hintForEveryone("ATA contains the following domains starting with 'www.'. This might hides the eBlocker icon on these pages " + wwwDomains));
+                    diagnoses.add(hintForEveryone(ATA_HAS_WWW_DOMAINS, stringify(wwwDomains)));
                 }
             } else {
-                diagnoses.add(hintForEveryone("Please consider enabeling ATA, even though it's still beta."));
+                diagnoses.add(hintForEveryone(ATA_NOT_ENABLED));
             }
 
-            //diagnoses.add(hintForExpert("FAKE: The DDGTR blocker list is not enabled"));
+            verifyPatternFilters(diagnoses);
 
-            //diagnoses.add(hintForExpert("FAKE: The cookie blocker list is not enabled"));
             ipv6Check(diagnoses);
         } else {
-            diagnoses.add(new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EXPERT, "HTTPS is not enabled. You will get better tracking protection with it"));
+            diagnoses.add(new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EXPERT, HTTPS_NOT_ENABLED, ""));
         }
         return diagnoses;
     }
 
+    private void verifyPatternFilters(List<DoctorDiagnosisResult> diagnoses) {
+        IntStream.range(0, 5).mapToObj(filterManager::getFilterStoreConfigurationById).forEach(patternFilter -> {
+            if (patternFilter.isEnabled()) {
+                diagnoses.add(goodForEveryone(STANDARD_PATTERN_FILTER_ENABLED, patternFilter.getName()));
+            } else {
+                diagnoses.add(recommendationNotFollowedEveryone(STANDARD_PATTERN_FILTER_DISABLED, patternFilter.getName()));
+            }
+        });
+
+        FilterStoreConfiguration ddgTrFilter = filterManager.getFilterStoreConfigurationById(5);
+        if (ddgTrFilter.isEnabled()) {
+            diagnoses.add(hintForEveryone(DDG_FILTER_ENABLED_OVERBLOCKING));
+        } else {
+            diagnoses.add(hintForExpert(DDG_FILTER_DISABLED));
+        }
+
+        FilterStoreConfiguration cookieConsentFilter = filterManager.getFilterStoreConfigurationById(6);
+        if (cookieConsentFilter.isEnabled()) {
+            diagnoses.add(hintForEveryone(COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING));
+        } else {
+            diagnoses.add(hintForExpert(COOKIE_CONSENT_FILTER_DISABLED));
+        }
+    }
+
     private DoctorDiagnosisResult autoEnableNewDevicesCheck() {
         if (deviceFactory.isAutoEnableNewDevices()) {
-            return recommendationNotFollowedEveryone("eBlocker will be automatically enabled for new devices. This may cause trouble when a new device is not ready for eBlocker");
+            return recommendationNotFollowedEveryone(EBLOCKER_ENABLED_FOR_NEW_DEVICES);
         } else {
-            return goodForEveryone("eBlocker will not be automatically enabled for new devices, so you don't run into trouble during setup. Don't forget to enable new devices manually...");
+            return goodForEveryone(EBLOCKER_DISABLED_FOR_NEW_DEVICES);
         }
     }
 
@@ -213,25 +279,25 @@ public class DoctorService {
         try {
             //noinspection ResultOfMethodCallIgnored
             InetAddress.getByName("eblocker.org");
-            return Collections.singletonList(goodForEveryone("The eBlocker itself can resolve DNS names"));
+            return Collections.singletonList(goodForEveryone(EBLOCKER_DNS_RESOLVE_WORKING));
         } catch (UnknownHostException e) {
-            return Collections.singletonList(failedProbe("The eBlocker itself cannot resolve DNS names. Check your DNS settings"));
+            return Collections.singletonList(failedProbe(EBLOCKER_DNS_RESOLVE_BROKEN));
         }
     }
 
     private DoctorDiagnosisResult ipv4Ping() {
         if (pingHost(4, "1.1.1.1")) {
-            return goodForEveryone("Your eBlocker can reach the internet via ICMP/ping");
+            return goodForEveryone(EBLOCKER_IP4_PING_WORKING);
         } else {
-            return failedProbe("Your eBlocker cannot reach the internet via ICMP/ping");
+            return failedProbe(EBLOCKER_IP4_PING_BROKEN);
         }
     }
 
     private void ipv6Check(List<DoctorDiagnosisResult> diagnoses) {
         if (pingHost(6, "ipv6-test.com")) {
-            diagnoses.add(failedProbe("Your network can access the internet via IPv6. That will bypass the tracking of eBlocker if HTTPS support is enabled."));
+            diagnoses.add(failedProbe(EBLOCKER_IP6_ENABLED));
         } else {
-            diagnoses.add(goodForEveryone("Your network cannot access the internet via IPv6. This is good news as the eBlocker does not support IPv6 yet."));
+            diagnoses.add(goodForEveryone(EBLOCKER_NO_IP6));
         }
     }
 
@@ -276,9 +342,9 @@ public class DoctorService {
                 .map(Device::getName)
                 .collect(Collectors.toList());
         if (nonAutomaticDevices.isEmpty()) {
-            return goodForEveryone("All your devices are set to automatic mode");
+            return goodForEveryone(ALL_DEVICES_USE_AUTO_BLOCK_MODE);
         } else {
-            return recommendationNotFollowedEveryone("The following devices are not set to automatic blocking mode: " + nonAutomaticDevices);
+            return recommendationNotFollowedEveryone(DEVICES_WITHOUT_AUTO_BLOCK_MODE, stringify(nonAutomaticDevices));
         }
     }
 
@@ -288,9 +354,9 @@ public class DoctorService {
                 .map(Device::getName)
                 .collect(Collectors.toList());
         if (nonMalwareDevices.isEmpty()) {
-            return goodForEveryone("All your devices have malware filtering enabled");
+            return goodForEveryone(ALL_DEVICES_USE_MALWARE_FILTER);
         } else {
-            return recommendationNotFollowedEveryone("The following devices have malware filtering disabled: " + nonMalwareDevices);
+            return recommendationNotFollowedEveryone(DEVICES_MALWARE_FILTER_DISABLED, stringify(nonMalwareDevices));
         }
     }
 
@@ -300,9 +366,9 @@ public class DoctorService {
                 .map(Device::getName)
                 .collect(Collectors.toList());
         if (nonAutoControlBarModeDevices.isEmpty()) {
-            return goodForEveryone("All your devices are using the automatic ControlBar configuration");
+            return goodForEveryone(ALL_DEVICES_USE_AUTO_CONTROLBAR);
         } else {
-            return recommendationNotFollowedEveryone("The following devices are not using the automatic ControlBar configuration: " + nonAutoControlBarModeDevices);
+            return recommendationNotFollowedEveryone(DEVICES_WITHOUT_AUTO_CONTROLBAR, stringify(nonAutoControlBarModeDevices));
         }
     }
 
@@ -311,23 +377,47 @@ public class DoctorService {
                 .filter(Device::isEnabled);
     }
 
-    private DoctorDiagnosisResult failedProbe(String message) {
-        return new DoctorDiagnosisResult(FAILED_PROBE, EVERYONE, message);
+    private String stringify(List<?> l) {
+        return l.stream().map(Object::toString).collect(Collectors.joining(", "));
     }
 
-    private DoctorDiagnosisResult goodForEveryone(String message) {
-        return new DoctorDiagnosisResult(GOOD, EVERYONE, message);
+    private DoctorDiagnosisResult failedProbe(Tag tag) {
+        return failedProbe(tag, "");
     }
 
-    private DoctorDiagnosisResult recommendationNotFollowedEveryone(String message) {
-        return new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EVERYONE, message);
+    private DoctorDiagnosisResult failedProbe(Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(FAILED_PROBE, EVERYONE, tag, dynamicInfo);
     }
 
-    private DoctorDiagnosisResult hintForExpert(String message) {
-        return new DoctorDiagnosisResult(HINT, EXPERT, message);
+    private DoctorDiagnosisResult goodForEveryone(Tag tag) {
+        return goodForEveryone(tag, "");
     }
 
-    private DoctorDiagnosisResult hintForEveryone(String message) {
-        return new DoctorDiagnosisResult(HINT, EVERYONE, message);
+    private DoctorDiagnosisResult goodForEveryone(Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(GOOD, EVERYONE, tag, dynamicInfo);
+    }
+
+    private DoctorDiagnosisResult recommendationNotFollowedEveryone(Tag tag) {
+        return recommendationNotFollowedEveryone(tag, "");
+    }
+
+    private DoctorDiagnosisResult recommendationNotFollowedEveryone(Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EVERYONE, tag, dynamicInfo);
+    }
+
+    private DoctorDiagnosisResult hintForExpert(Tag tag) {
+        return hintForExpert(tag, "");
+    }
+
+    private DoctorDiagnosisResult hintForExpert(Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(HINT, EXPERT, tag, dynamicInfo);
+    }
+
+    private DoctorDiagnosisResult hintForEveryone(Tag tag) {
+        return hintForEveryone(tag, "");
+    }
+
+    private DoctorDiagnosisResult hintForEveryone(Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(HINT, EVERYONE, tag, dynamicInfo);
     }
 }

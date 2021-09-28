@@ -20,22 +20,77 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, DoctorService, TableService) {
+function Controller(logger, DoctorService, TableService, STATES) {
     'ngInject';
     'use strict';
 
     const vm = this;
 
+    vm.userExperienceLevels = ['NOVICE', 'EXPERT'];
+    vm.selectedExperienceLevel = 'NOVICE';
+
+    vm.getSelectedExperienceLevel = getSelectedExperienceLevel;
+    vm.setExperienceLevel = setExperienceLevel;
+
     vm.$onInit = function() {
         runDiagnosis();
-    };
+        vm.templateCallback = {
+            showMoreInfo: showMoreInfo,
+            hasDetails: hasDetails,
+            isError : isError,
+            isWarning : isWarning,
+            isInfo : isInfo,
+            isOkay : isOkay
+        };
+    }
+
+    function setExperienceLevel(level) {
+        vm.selectedExperienceLevel = level;
+        filterByLevel();
+    }
+
+    function getSelectedExperienceLevel() {
+        return vm.selectedExperienceLevel;
+    }
+
+    function showMoreInfo(dr) {
+        return isError(dr) || isWarning(dr) || isInfo(dr);
+    }
+
+    function hasDetails(dr) {
+        return dr.dynamicInfo && dr.dynamicInfo !==  "";
+    }
 
     function runDiagnosis() {
         DoctorService.runDiagnosis().then(function success(response) {
             vm.diagnosisResult = response.data;
+           filterByLevel();
         }, function error(response) {
             logger.error('Error running diagnosis', response);
         });
+    }
+
+    function filterByLevel() {
+        vm.filteredDiagnosisResult = vm.diagnosisResult.filter(function(dr) {
+            return dr.audience === 'EVERYONE' || dr.audience === vm.selectedExperienceLevel;
+        });
+    }
+
+    function isError(dr) {
+        return dr.severity === 'FAILED_PROBE';
+    }
+
+    function isWarning(dr) {
+        return dr.severity === 'RECOMMENDATION_NOT_FOLLOWED' ||
+            dr.severity === 'ANORMALY'
+    }
+
+    function isInfo(dr) {
+        return dr.severity === 'HINT';
+    }
+
+    function isOkay(dr) {
+        return dr.severity === 'GOOD';
     }
 
     // ** START: TABLE
@@ -50,12 +105,8 @@ function Controller(logger, DoctorService, TableService) {
         {
             label: 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.COLUMN.SEVERITY',
             isSortable: true,
-            sortingKey: 'severity'
-        },
-        {
-            label: 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.COLUMN.AUDIENCE',
-            flexGtXs: 15,
-            isSortable: false
+            flexGtXs: 10,
+            sortingKey: 'severityOrder'
         },
         {
             label: 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.COLUMN.MESSAGE',
@@ -63,5 +114,7 @@ function Controller(logger, DoctorService, TableService) {
             isSortable: false
         }
     ];
+
+    vm.detailsState = STATES.DOCTOR_DIAGNOSIS_DETAILS;
     // ## END: TABLE
 }

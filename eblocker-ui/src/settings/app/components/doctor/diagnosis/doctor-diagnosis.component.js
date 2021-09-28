@@ -42,7 +42,7 @@ function Controller(logger, DoctorService, TableService, STATES) {
             isInfo : isInfo,
             isOkay : isOkay
         };
-    }
+    };
 
     function setExperienceLevel(level) {
         vm.selectedExperienceLevel = level;
@@ -58,7 +58,7 @@ function Controller(logger, DoctorService, TableService, STATES) {
     }
 
     function hasDetails(dr) {
-        return dr.dynamicInfo && dr.dynamicInfo !==  "";
+        return dr.dynamicInfo && dr.dynamicInfo !==  '';
     }
 
     function runDiagnosis() {
@@ -82,7 +82,7 @@ function Controller(logger, DoctorService, TableService, STATES) {
 
     function isWarning(dr) {
         return dr.severity === 'RECOMMENDATION_NOT_FOLLOWED' ||
-            dr.severity === 'ANORMALY'
+            dr.severity === 'ANORMALY';
     }
 
     function isInfo(dr) {

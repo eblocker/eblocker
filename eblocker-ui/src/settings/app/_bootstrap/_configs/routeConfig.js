@@ -1108,7 +1108,8 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
-        dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails, doctor, doctorDiagnosisDetails];
+        dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
+        doctor, doctorDiagnosisDetails];
 
     // ** MAIN STATE ERROR: NOT LICENSED
     const notLicensed = {

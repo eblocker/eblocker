@@ -40,5 +40,5 @@ function Controller(logger, $translate, StateService, STATES, $stateParams) {
             StateService.goToState(vm.backState);
             return;
         }
-    }
+    };
 }

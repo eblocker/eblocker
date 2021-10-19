@@ -106,12 +106,15 @@ function Controller(logger, DoctorService, TableService, STATES) {
             label: 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.COLUMN.SEVERITY',
             isSortable: true,
             flexGtXs: 10,
+            defaultSorting: true,
             sortingKey: 'severityOrder'
         },
         {
             label: 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.COLUMN.MESSAGE',
             flexGtXs: 55,
-            isSortable: false
+            isSortable: true,
+            secondSorting: true,
+            sortingKey: 'tag'
         }
     ];
 

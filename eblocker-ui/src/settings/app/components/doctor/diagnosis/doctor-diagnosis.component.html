@@ -3,10 +3,29 @@
         <div style="margin-top: 10px;" class="md-headline">
             {{ 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TITLE' | translate}}
         </div>
-        <eb-table table-data="vm.diagnosisResult"
+        <div layout="row" layout-xs="column" style="width: 100%; padding-bottom: 16px;">
+            <div layout="row"
+                 layout-align="start center"
+                 layout-padding
+                 ng-repeat="level in vm.userExperienceLevels"
+                 class="icon-pointer icon-option"
+                 ng-click="vm.setExperienceLevel(level)">
+                <div ng-class="{'lang-selected': level === vm.getSelectedExperienceLevel()}">
+                    <span>{{'ADMINCONSOLE.DOCTOR.DIAGNOSIS.LEVEL.' + level | translate}}</span>
+                </div>
+                <div ng-show="level === vm.getSelectedExperienceLevel()">
+                    <md-icon class="content-ok" md-svg-src="/img/icons/ic_check_black.svg"></md-icon>
+                </div>
+                <div ng-hide="level === vm.getSelectedExperienceLevel()" flex>
+
+                </div>
+            </div>
+        </div>
+        <eb-table table-data="vm.filteredDiagnosisResult"
                   table-header="vm.tableHeaderConfig"
                   table-template="app/components/doctor/diagnosis/diagnosis-table.template.html"
                   table-id="vm.tableId"
+                  table-details-state-name="{{vm.detailsState}}"
                   template-callback="vm.templateCallback">
         </eb-table>
     </div>

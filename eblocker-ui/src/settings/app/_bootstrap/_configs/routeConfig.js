@@ -992,7 +992,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     };
 
     const doctor = {
-        name: 'doctor',
+        name: STATES.DOCTOR,
         parent: STATES.MAIN,
         url: slashOptionUrl + 'doctor',
         showInNavbar: true,
@@ -1003,6 +1003,17 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         },
         translationKey: 'ADMINCONSOLE.DOCTOR.LABEL',
         component: 'doctorDiagnosisComponent'
+    };
+
+    const doctorDiagnosisDetails = {
+        name: STATES.DOCTOR_DIAGNOSIS_DETAILS,
+        url: slashOptionSubState + 'doctordiagnosis/details',
+        parent: parentalControl.name,
+        ignoreTab: true,
+        requiredLicense: function() {
+            return 'BAS';
+        },
+        component: 'doctorDiagnosisDetailsComponent'
     };
 
     // ** MAIN STATE: VPN HOME (eBlocker Mobile)
@@ -1097,7 +1108,8 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
-        dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails, doctor];
+        dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
+        doctor, doctorDiagnosisDetails];
 
     // ** MAIN STATE ERROR: NOT LICENSED
     const notLicensed = {

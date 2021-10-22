@@ -217,6 +217,8 @@ public class UpdateTask implements Runnable {
                 return org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER;
             case MALWARE:
                 return org.eblocker.server.icap.filter.Category.MALWARE;
+            case CONTENT:
+                return org.eblocker.server.icap.filter.Category.CONTENT;
             default:
                 throw new IllegalArgumentException("pattern filters not available for " + category);
         }

@@ -28,6 +28,7 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public class BlockerService {
     private final DataSource dataSource;
     private final FilterManager filterManager;
     private final MalwareFilterService malwareFilterService;
+    private final ContentFilterManager contentFilterManager;
     private final ParentalControlFilterListsService filterListsService;
     private final ScheduledExecutorService executorService;
     private final UpdateTaskFactory updateTaskFactory;
@@ -68,6 +70,7 @@ public class BlockerService {
                           DataSource dataSource,
                           FilterManager filterManager,
                           MalwareFilterService malwareFilterService,
+                          ContentFilterManager contentFilterManager,
                           ParentalControlFilterListsService filterListsService,
                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                           UpdateTaskFactory updateTaskFactory) {
@@ -76,6 +79,7 @@ public class BlockerService {
         this.dataSource = dataSource;
         this.filterManager = filterManager;
         this.malwareFilterService = malwareFilterService;
+        this.contentFilterManager = contentFilterManager;
         this.filterListsService = filterListsService;
         this.executorService = executorService;
         this.updateTaskFactory = updateTaskFactory;
@@ -110,6 +114,7 @@ public class BlockerService {
         blockers.addAll(getDomainFilters(definitionByTypeId));
         blockers.addAll(getPatternFilters(definitionByTypeId));
         blockers.add(getMalwareUrlFilter());
+        blockers.add(getContentFilter());
         return blockers;
     }
 
@@ -195,6 +200,8 @@ public class BlockerService {
                     return enablePatternFilter(typeId.id, null, blocker.isEnabled());
                 case MALWARE_URL:
                     return enableMalwareUrlFilter(blocker.isEnabled());
+                case CONTENT:
+                    return enableContentFilter(blocker.isEnabled());
                 default:
                     throw new IllegalArgumentException("unknown type " + typeId.type);
             }
@@ -368,6 +375,26 @@ public class BlockerService {
         );
     }
 
+    private Blocker getContentFilter() {
+        return new Blocker(
+                idCache.getId(new TypeId(Type.CONTENT, 0)),
+                localizedMap("uBlock Filters"),
+                Collections.emptyMap(),
+                BlockerType.PATTERN,
+                Category.CONTENT,
+                contentFilterManager.getLastUpdate(),
+                true,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                contentFilterManager.isEnabled(),
+                "content"
+        );
+    }
+
     private Blocker mapParentControlFilterMetadata(ParentalControlFilterMetaData metadata, ExternalDefinition definition) {
         if (definition == null) {
             Category category = mapDomainFilterCategory(metadata.getCategory());
@@ -448,6 +475,8 @@ public class BlockerService {
                 return Category.ADS;
             case TRACKER_BLOCKER:
                 return Category.TRACKER;
+            case CONTENT:
+                return Category.CONTENT;
             default:
                 return null;
         }
@@ -514,6 +543,11 @@ public class BlockerService {
     private Blocker enableMalwareUrlFilter(boolean enabled) {
         malwareFilterService.setEnabled(enabled);
         return getMalwareUrlFilter();
+    }
+
+    private Blocker enableContentFilter(boolean enabled) {
+        contentFilterManager.setEnabled(enabled);
+        return getContentFilter();
     }
 
     private BlockerType mapType(Type type) {

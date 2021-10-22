@@ -31,6 +31,7 @@ import org.eblocker.server.common.openvpn.server.OpenVpnAddressListener;
 import org.eblocker.server.common.scheduler.AppModuleServiceScheduler;
 import org.eblocker.server.common.scheduler.BlockedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.BlockerUpdateScheduler;
+import org.eblocker.server.common.scheduler.ContentFilterUpdateScheduler;
 import org.eblocker.server.common.scheduler.DeviceServiceScheduler;
 import org.eblocker.server.common.scheduler.DnsGatewayNamesScheduler;
 import org.eblocker.server.common.scheduler.DnsStatisticsScheduler;
@@ -118,6 +119,7 @@ public class BackgroundServices {
     private final UpnpWatchdogScheduler upnpWatchdogScheduler;
     private final BlockerUpdateScheduler blockerUpdateScheduler;
     private final RecordedDomainsWriteScheduler recordedDomainsWriteScheduler;
+    private final ContentFilterUpdateScheduler contentFilterUpdateScheduler;
 
     @Inject
     public BackgroundServices(
@@ -160,6 +162,7 @@ public class BackgroundServices {
             UpnpWatchdogScheduler upnpWatchdogScheduler,
             BlockerUpdateScheduler blockerUpdateScheduler,
             RecordedDomainsWriteScheduler recordedDomainsWriteScheduler,
+            ContentFilterUpdateScheduler contentFilterUpdateScheduler,
             @Named("tor.connection.check.delay") long torDelay) {
 
         this.highPrioExecutorService = highPrioExecutorService;
@@ -206,6 +209,7 @@ public class BackgroundServices {
         this.upnpWatchdogScheduler = upnpWatchdogScheduler;
         this.blockerUpdateScheduler = blockerUpdateScheduler;
         this.recordedDomainsWriteScheduler = recordedDomainsWriteScheduler;
+        this.contentFilterUpdateScheduler = contentFilterUpdateScheduler;
     }
 
     @SubSystemInit
@@ -254,6 +258,8 @@ public class BackgroundServices {
         messageCenterServiceScheduler.schedule(lowPrioExecutorService);
 
         malwareUpdateScheduler.schedule(lowPrioExecutorService);
+
+        contentFilterUpdateScheduler.schedule(lowPrioExecutorService);
 
         //start automatic updating service
         if (autoUpdater != null && autoUpdater.isActivated())

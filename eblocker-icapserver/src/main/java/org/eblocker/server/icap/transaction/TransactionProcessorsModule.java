@@ -22,6 +22,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.icap.transaction.processor.AdBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.BpjmFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.CompressProcessor;
+import org.eblocker.server.icap.transaction.processor.ContentFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.ContentSecurityPoliciesProcessor;
 import org.eblocker.server.icap.transaction.processor.CustomDomainFilterWhitelistProcessor;
 import org.eblocker.server.icap.transaction.processor.DecompressProcessor;
@@ -121,6 +122,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             SetInjectionsProcessor setInjectionsProcessor,
                                                             WebRTCBlocker webRTCBlocker,
                                                             ScriptletsProtoypeProcessor scriptletsProtoypeProcessor,
+                                                            ContentFilterProcessor contentFilterProcessor,
                                                             SuccessfulSSLDetector successfulSSLDetector) {
         return Arrays.asList(
                 successfulSSLDetector,
@@ -137,6 +139,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 insertToolbarProcessor,
                 insertClientSslCheckProcessor,
                 scriptletsProtoypeProcessor,
+                contentFilterProcessor,
                 htmlInjectionProcessor,
                 compressProcessor,
                 finalizeProcessor

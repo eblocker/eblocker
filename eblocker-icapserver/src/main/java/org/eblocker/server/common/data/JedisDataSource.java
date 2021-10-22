@@ -134,7 +134,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED = "filter_plug_and_play_ads_enabled";
     private static final String KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED = "filter_plug_and_play_trackers_enabled";
 
-    private static final String KEY_MALWARE_URL_FILTER_ENABLED = "malware_url_filter_enabled";
+    private static final String KEY_CONTENT_FILTER_ENABLED = "content_filter_enabled";
 
     private static final String KEY_DHCP_LEASE_TIME = "dhcpLeaseTime";
 
@@ -1400,6 +1400,24 @@ public class JedisDataSource implements DataSource {
     public void setMalwareUrlFilterEnabled(boolean enabled) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(KEY_MALWARE_FILTER_ENABLED, Boolean.toString(enabled));
+        }
+    }
+
+    @Override
+    public boolean isContentFilterEnabled() {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(KEY_CONTENT_FILTER_ENABLED);
+            if (value == null) {
+                return false; // content filter is disabled by default
+            }
+            return Boolean.parseBoolean(value);
+        }
+    }
+
+    @Override
+    public void setContentFilterEnabled(boolean enabled) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_CONTENT_FILTER_ENABLED, Boolean.toString(enabled));
         }
     }
 }

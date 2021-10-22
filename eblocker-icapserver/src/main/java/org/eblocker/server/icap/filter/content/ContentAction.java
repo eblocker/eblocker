@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2021 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,8 +14,12 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.common.blocker;
+package org.eblocker.server.icap.filter.content;
 
-public enum Type {
-    PATTERN, DOMAIN, MALWARE_URL, CONTENT;
+/**
+ * A content blocker rule containing '##' adds a content filter.
+ * A rule containing '#@#' removes a previously added content filter for a specific domain.
+ */
+public enum ContentAction {
+    ADD, REMOVE;
 }

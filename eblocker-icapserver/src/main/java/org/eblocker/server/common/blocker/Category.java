@@ -21,5 +21,6 @@ public enum Category {
     TRACKER,
     MALWARE,
     PARENTAL_CONTROL,
-    CUSTOM
+    CUSTOM,
+    CONTENT
 }

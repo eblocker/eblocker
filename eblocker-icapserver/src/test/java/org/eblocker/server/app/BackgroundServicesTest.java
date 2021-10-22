@@ -27,6 +27,7 @@ import org.eblocker.server.common.openvpn.server.OpenVpnAddressListener;
 import org.eblocker.server.common.scheduler.AppModuleServiceScheduler;
 import org.eblocker.server.common.scheduler.BlockedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.BlockerUpdateScheduler;
+import org.eblocker.server.common.scheduler.ContentFilterUpdateScheduler;
 import org.eblocker.server.common.scheduler.DeviceServiceScheduler;
 import org.eblocker.server.common.scheduler.DnsGatewayNamesScheduler;
 import org.eblocker.server.common.scheduler.DnsStatisticsScheduler;
@@ -99,6 +100,7 @@ public class BackgroundServicesTest {
     private BlockedDomainsWriteScheduler blockedDomainsWriteScheduler;
     private UpnpWatchdogScheduler upnpWatchdogScheduler;
     private BlockerUpdateScheduler blockerUpdateScheduler;
+    private ContentFilterUpdateScheduler contentFilterUpdateScheduler;
 
     @Before
     public void setUp() throws Exception {
@@ -132,6 +134,7 @@ public class BackgroundServicesTest {
         blockedDomainsWriteScheduler = Mockito.mock(BlockedDomainsWriteScheduler.class);
         upnpWatchdogScheduler = Mockito.mock(UpnpWatchdogScheduler.class);
         blockerUpdateScheduler = Mockito.mock(BlockerUpdateScheduler.class);
+        contentFilterUpdateScheduler = Mockito.mock(ContentFilterUpdateScheduler.class);
 
         // Not really used yet:
         SessionPurgerScheduler sessionPurgerScheduler = Mockito.mock(SessionPurgerScheduler.class);
@@ -182,6 +185,7 @@ public class BackgroundServicesTest {
                 upnpWatchdogScheduler,
                 blockerUpdateScheduler,
                 recordedDomainsWriteScheduler,
+                contentFilterUpdateScheduler,
                 10);
     }
 

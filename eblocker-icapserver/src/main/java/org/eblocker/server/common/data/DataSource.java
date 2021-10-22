@@ -496,4 +496,8 @@ public interface DataSource {
     boolean isMalwareUrlFilterEnabled();
 
     void setMalwareUrlFilterEnabled(boolean enabled);
+
+    boolean isContentFilterEnabled();
+
+    void setContentFilterEnabled(boolean enabled);
 }

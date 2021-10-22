@@ -1905,6 +1905,7 @@
             "FILTER" : {
                 "NONE" : "Keine Blocker",
                 "PATTERN_ADS" : "Pattern Werbe Blocker",
+                "PATTERN_CONTENT" : "Video Ads & Content Blocker",
                 "PATTERN_TRACKERS" : "Pattern Tracker Blocker",
                 "PATTERN_MALWARE" : "Pattern Malware & Phishing Blocker",
                 "DOMAIN_ADS" : "Domain Werbe Blocker",
@@ -3715,6 +3716,13 @@
                 "OVERVIEW" : {
                     "P1" : "Der eBlocker muß Web-Seiten und Javascript-Dateien dekomprimieren um sein Icon einzufügen oder WebRTC zu blockieren. Das Wiederkomprimieren des Inhaltes kann zu einer leichten Verzögerung führen. Da in lokalen NetzwerkeN kein Geschwindigkeitsvorteil von der Kompression zu erwarten ist kann dort darauf auch verzichtet werden. eBlocker Mobile Benutzer können hingegen davon profitieren, da die Daten wieder über das Internet gesendet werden.",
                     "TITLE" : "Kompression"
+                }
+            },
+            "CONTENT" : {
+                "OVERVIEW" : {
+                    "P1" : "Manche Werbung wird nicht vom Werbeblocker geblockt, kann aber im Browser ausgeblendet werden. Dies verbessert nicht den Privatsphäreschutz.",
+                    "P2" : "Scriptlets können verhindern, dass im Browser Fingerprinting stattfindet, Werbeblocker erkannt werden und in Videos Werbung gezeigt wird.",
+                    "TITLE" : "Video Ads & Content Blocker"
                 }
             },
             "DO_NOT_TRACK" : {

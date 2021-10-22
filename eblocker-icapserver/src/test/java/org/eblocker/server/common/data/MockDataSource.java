@@ -587,4 +587,13 @@ public class MockDataSource implements DataSource {
     public void setMalwareUrlFilterEnabled(boolean enabled) {
     }
 
+    @Override
+    public boolean isContentFilterEnabled() {
+        return false;
+    }
+
+    @Override
+    public void setContentFilterEnabled(boolean enabled) {
+
+    }
 }

@@ -29,6 +29,7 @@ import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStore;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,6 +61,7 @@ public class BlockerServiceTest {
     private DataSource dataSource;
     private FilterManager filterManager;
     private MalwareFilterService malwareFilterService;
+    private ContentFilterManager contentFilterManager;
     private ParentalControlFilterListsService filterListsService;
     private ScheduledExecutorService executorService;
     private UpdateTaskFactory updateTaskFactory;
@@ -136,6 +138,8 @@ public class BlockerServiceTest {
         Mockito.when(malwareFilterService.isEnabled()).thenReturn(true);
         Mockito.when(malwareFilterService.getLastUpdate()).thenReturn(BUILTIN_UPDATE_DATE.getTime());
 
+        contentFilterManager = Mockito.mock(ContentFilterManager.class);
+
         filterListsService = Mockito.mock(ParentalControlFilterListsService.class);
         metadata = Arrays.asList(
                 new ParentalControlFilterMetaData(100, null, null, org.eblocker.server.common.data.parentalcontrol.Category.ADS, Collections.singletonList("/tmp/file.1001"), null, BUILTIN_UPDATE_DATE, "domainblacklist/string", "blacklist", false, false,
@@ -187,7 +191,7 @@ public class BlockerServiceTest {
         Mockito.when(idCache.getId(Mockito.any(TypeId.class))).then(im -> idByTypeId.get(im.getArgument(0)));
         Mockito.when(idCache.getTypeId(Mockito.anyInt())).then(im -> idByTypeId.inverse().get(im.getArgument(0)));
 
-        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, filterManager, malwareFilterService, filterListsService, executorService, updateTaskFactory);
+        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, filterManager, malwareFilterService, contentFilterManager, filterListsService, executorService, updateTaskFactory);
     }
 
     @After
@@ -202,7 +206,7 @@ public class BlockerServiceTest {
     public void testGetBlockers() {
         List<Blocker> blockers = blockerService.getBlockers();
         Assert.assertNotNull(blockers);
-        Assert.assertEquals(15, blockers.size());
+        Assert.assertEquals(16, blockers.size());
 
         Map<String, Blocker> blockersByName = blockers.stream().collect(Collectors.toMap(b -> b.getName().get("en"), Function.identity()));
         assertDefinitionMatchesBlocker(definitions.get(0), blockersByName.get("test-0"));

@@ -60,6 +60,7 @@ public class UrlUtils {
         throw new EblockerException("malformed url " + urlString);
     }
 
+    // FIXME: this problem is already solved more generally in class InternetDomainName
     public static boolean isUkStyleTdl(String hostname) {
         return CO_UK_STYLE_TDL_PATTERN.matcher(hostname).matches();
     }

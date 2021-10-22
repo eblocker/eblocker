@@ -22,5 +22,6 @@ public enum Category {
     TRACKER_BLOCKER,
     TRACKER_REDIRECT,
     CONTENT_SECURITY_POLICIES,
-    MALWARE
+    MALWARE,
+    CONTENT; // Element hiding and scriptlet filters
 }

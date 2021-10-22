@@ -55,6 +55,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
         vm.numberOfBlockedPatternAds = '-';
         vm.numberOfBlockedPatternTrackers = '-';
         vm.numberOfBlockedPatternMalwareReqs = '-';
+        vm.numberOfBlockedPatternContentReqs = '-';
 
         getDnsStatistics();
         getPatternStatistics();
@@ -140,6 +141,8 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
             names[BLOCKER_CATEGORY.MALWARE_PATTERN].push(dev);
             counter[BLOCKER_CATEGORY.MALWARE_PATTERN]++;
         }
+        names[BLOCKER_CATEGORY.CONTENT].push(dev);
+        counter[BLOCKER_CATEGORY.CONTENT]++;
     }
 
     function setDomainBlockerStatistics(dev, names, counter) {
@@ -167,6 +170,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
         names[FILTER_TYPE.NONE] = [];
         names[BLOCKER_CATEGORY.MALWARE_PATTERN] = [];
         names[BLOCKER_CATEGORY.MALWARE_DOMAIN] = [];
+        names[BLOCKER_CATEGORY.CONTENT] = [];
 
         const counter = {};
         counter[FILTER_TYPE.DNS] = {
@@ -177,6 +181,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
         counter[FILTER_TYPE.NONE] = 0;
         counter[BLOCKER_CATEGORY.MALWARE_PATTERN] = 0;
         counter[BLOCKER_CATEGORY.MALWARE_DOMAIN] = 0;
+        counter[BLOCKER_CATEGORY.CONTENT] = 0;
 
         devices.forEach((dev) => { // jshint ignore: line
             if ((names.hasOwnProperty(dev.filterMode) || dev.filterMode === FILTER_TYPE.AUTOMATIC) &&
@@ -348,6 +353,21 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
                 dnsEnabled: vm.dnsEnabled,
                 needsDns: true,
                 template: 'app/components/filters/overview/help-filters-malware.template.html'
+            }
+        );
+        tableData.push(
+            {
+                id: 4, // required for paginator
+                name: 'ADMINCONSOLE.FILTER_OVERVIEW.FILTER.PATTERN_CONTENT',
+                type: BLOCKER_TYPE.PATTERN,
+                category: BLOCKER_CATEGORY.CONTENT,
+                usedBy: counter[BLOCKER_CATEGORY.CONTENT],
+                devices: names[BLOCKER_CATEGORY.CONTENT],
+                numBlocked: function () { return vm.numberOfBlockedPatternContentReqs; },
+                isLicensed: RegistrationService.hasProductKey('PRO'),
+                dnsEnabled: vm.dnsEnabled,
+                needsDns: true,
+                template: 'app/components/filters/overview/help-filters-content.template.html'
             }
         );
 

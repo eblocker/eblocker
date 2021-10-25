@@ -18,7 +18,7 @@ import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.ProblematicRouterDetection;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.update.AutomaticUpdater;
-import org.eblocker.server.common.update.DebianUpdater;
+import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
@@ -89,7 +89,7 @@ public class DoctorService {
     private final NetworkServices networkServices;
     private final SslService sslService;
     private final AutomaticUpdater automaticUpdater;
-    private final DebianUpdater debianUpdater;
+    private final SystemUpdater systemUpdater;
     private final DnsStatisticsService dnsStatisticsService;
     private final DnsService dnsService;
     private final DeviceFactory deviceFactory;
@@ -101,14 +101,14 @@ public class DoctorService {
     private Optional<Boolean> isProblematicRouter = Optional.empty();
 
     @Inject
-    public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, DebianUpdater debianUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
+    public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, SystemUpdater systemUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
                          DeviceFactory deviceFactory,
                          DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection,
                          ProductInfoService productInfoService, AppModuleService appModuleService, FilterManager filterManager) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
-        this.debianUpdater = debianUpdater;
+        this.systemUpdater = systemUpdater;
         this.dnsStatisticsService = dnsStatisticsService;
         this.dnsService = dnsService;
         this.deviceFactory = deviceFactory;
@@ -205,7 +205,7 @@ public class DoctorService {
             diagnoses.add(recommendationNotFollowedEveryone(NO_DONOR_LICENSE));
         }
 
-        LocalDateTime lastUpdateTime = debianUpdater.getLastUpdateTime();
+        LocalDateTime lastUpdateTime = systemUpdater.getLastUpdateTime();
         if (lastUpdateTime == null) {
             diagnoses.add(failedProbe(SYSTEM_UPDATE_NEVER_RAN));
         } else if (lastUpdateTime.isBefore(LocalDateTime.now().minusDays(2))) {

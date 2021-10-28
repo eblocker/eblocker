@@ -80,13 +80,17 @@ public class JedisDomainRecordingDataSource implements DomainRecordingDataSource
     @Override
     public void save(String deviceId, RecordedDomainBin bin) {
         String key = KEY_PREFIX + deviceId + ":" + bin.getBegin().toEpochMilli();
-        Instant expiresAt = bin.getEnd().plusSeconds(binLifetimeInSeconds);
+        Instant expiresAt = getExpiration(bin);
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.set(key, objectMapper.writeValueAsString(bin));
             jedis.pexpireAt(key, expiresAt.toEpochMilli());
         } catch (JsonProcessingException e) {
             LOG.error("Could not save recorded domains for device {}", deviceId, e);
         }
+    }
+
+    public Instant getExpiration(RecordedDomainBin bin) {
+        return bin.getEnd().plusSeconds(binLifetimeInSeconds);
     }
 
     @Override

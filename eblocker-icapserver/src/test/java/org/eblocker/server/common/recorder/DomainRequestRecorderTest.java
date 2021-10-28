@@ -35,18 +35,20 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
     private DomainRequestRecorder recorder;
     private String deviceId1 = "device:abcdef012345";
     private String deviceId2 = "device:0123456789ab";
+    private final int binLifetime = 30;
+    private final int binLength = 10;
 
     @Override
     protected void doSetup() {
         super.doSetup();
         objectMapper.registerModule(new JavaTimeModule());
-        dataSource = new JedisDomainRecordingDataSource(jedisPool, objectMapper, 30);
+        dataSource = new JedisDomainRecordingDataSource(jedisPool, objectMapper, binLifetime);
     }
 
     @Before
     public void setUp() {
         clock = new TestClock(LocalDateTime.now());
-        recorder = new DomainRequestRecorder(10, dataSource, clock);
+        recorder = new DomainRequestRecorder(binLength, dataSource, clock);
     }
 
     @Test
@@ -74,7 +76,7 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
     @Test
     public void mergeBins() {
         recorder.recordRequest(deviceId1, "tracker.com", false, false);
-        clock.setInstant(clock.instant().plusSeconds(12)); // force new bin
+        clock.setInstant(clock.instant().plusSeconds(binLength + 1)); // force new bin
         recorder.recordRequest(deviceId1, "tracker.com", true, false);
 
         RecordedDomainCounter c1 = recorder.getRecordedDomainRequests(deviceId1).get("tracker.com");
@@ -95,11 +97,28 @@ public class DomainRequestRecorderTest extends EmbeddedRedisTestBase {
     @Test
     public void reset() {
         recorder.recordRequest(deviceId1, "tracker.com", false, false);
-        clock.setInstant(clock.instant().plusSeconds(12)); // force new bin
+        clock.setInstant(clock.instant().plusSeconds(binLength + 1)); // force new bin
         recorder.recordRequest(deviceId1, "tracker.com", true, false);
 
         recorder.resetRecording(deviceId1);
 
         Assert.assertTrue(recorder.getRecordedDomainRequests(deviceId1).isEmpty());
+    }
+
+    @Test
+    public void expiredBinInMemory() {
+        recorder.recordRequest(deviceId1, "tracker.com", true, false);
+        clock.setInstant(clock.instant().plusSeconds(binLength + binLifetime + 1)); // bin is now expired
+        Assert.assertEquals(0, recorder.getRecordedDomainRequests(deviceId1).size());
+    }
+
+    @Test
+    public void dontSaveExpiredBin() {
+        recorder.recordRequest(deviceId1, "tracker.com", true, false);
+        clock.setInstant(clock.instant().plusSeconds(binLength + binLifetime + 1)); // bin is now expired
+        // continue recording
+        recorder.recordRequest(deviceId1, "adserver.com", true, false);
+        // the expired bin has not been saved to the database:
+        Assert.assertTrue(dataSource.getBins(deviceId1).isEmpty());
     }
 }

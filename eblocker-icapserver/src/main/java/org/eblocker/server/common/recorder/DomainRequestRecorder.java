@@ -60,7 +60,10 @@ public class DomainRequestRecorder {
 
         RecordedDomainBin bin = currentBins.computeIfAbsent(deviceId, k -> loadOrCreateBin(k, now));
         if (!bin.isWritable(now)) {
-            dataSource.save(deviceId, currentBins.remove(deviceId));
+            RecordedDomainBin current = currentBins.remove(deviceId);
+            if (!isExpired(current)) {
+                dataSource.save(deviceId, current);
+            }
             bin = createBin(now);
             currentBins.put(deviceId, bin);
         }
@@ -83,7 +86,7 @@ public class DomainRequestRecorder {
                 .sorted(Comparator.comparing(RecordedDomainBin::getEnd));
 
         RecordedDomainBin current = currentBins.get(deviceId);
-        if (current != null) {
+        if (current != null && !isExpired(current)) {
             bins = Stream.concat(
                     // the current bin might have been saved already, so remove it:
                     bins.filter(bin -> !bin.getBegin().equals(current.getBegin())),
@@ -93,6 +96,10 @@ public class DomainRequestRecorder {
         Map<String, RecordedDomainCounter> result = new HashMap<>();
         bins.forEach(bin -> merge(result, bin.getRequests()));
         return result;
+    }
+
+    private boolean isExpired(RecordedDomainBin bin) {
+        return clock.instant().isAfter(dataSource.getExpiration(bin));
     }
 
     private void merge(Map<String, RecordedDomainCounter> result, Map<String, RecordedDomainCounter> requests) {

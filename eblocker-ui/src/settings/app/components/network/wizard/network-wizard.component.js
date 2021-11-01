@@ -179,9 +179,9 @@ function Controller(logger, StateService, STATES, $stateParams, NetworkService, 
     vm.finish = finish;
     vm.openPrintView = openPrintView;
     vm.recheckDhcpIndividual = recheckDhcpIndividual;
-    vm.isStillGettingDhcpLeases = true; // false;
+    vm.isStillGettingDhcpLeases = true;
     vm.isDhcpDisabled = false;
-    vm.useCheckmarkToConfirmDhcpDown = false; // true;
+    vm.useCheckmarkToConfirmDhcpDown = false;
 
     function finish() {
         goBack();
@@ -191,7 +191,7 @@ function Controller(logger, StateService, STATES, $stateParams, NetworkService, 
 
     function recheckDhcpIndividual() {
         numCheckForDhcpDisabled = 0;
-        vm.isStillGettingDhcpLeases = false;
+        vm.isStillGettingDhcpLeases = true;
         vm.useCheckmarkToConfirmDhcpDown = false;
         isDhcpDisabled();
     }

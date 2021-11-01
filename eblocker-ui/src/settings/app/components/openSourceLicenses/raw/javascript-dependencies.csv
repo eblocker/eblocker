@@ -60,7 +60,7 @@
 "ipaddr.js","1.9.1","http://github.com/whitequark/ipaddr.js","MIT"
 "isarray","0.0.1","http://github.com/juliangruber/isarray","MIT"
 "jquery","3.5.0","https://github.com/jquery/jquery","MIT"
-"jquery-ui","1.12.1","http://github.com/jquery/jquery-ui","MIT"
+"jquery-ui","1.13.0","http://github.com/jquery/jquery-ui","MIT"
 "jquery-ui-dist","1.12.1","http://github.com/jquery/jquery-ui","MIT"
 "jquery-ui-touch-punch","0.2.3","https://github.com/furf/jquery-ui-touch-punch","Dual licensed under the MIT or GPL Version 2 licenses."
 "json-schema-traverse","0.4.1","https://github.com/epoberezkin/json-schema-traverse","MIT"

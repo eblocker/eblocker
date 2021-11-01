@@ -118,6 +118,5 @@ function Controller(logger, DoctorService, TableService, STATES) {
         }
     ];
 
-    vm.detailsState = STATES.DOCTOR_DIAGNOSIS_DETAILS;
     // ## END: TABLE
 }

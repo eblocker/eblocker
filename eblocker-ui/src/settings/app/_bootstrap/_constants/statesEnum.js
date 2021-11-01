@@ -26,7 +26,6 @@ export default {
     DNS: 'dns',
     DNS_SERVER_LIST: 'dnsserver',
     DOCTOR: 'doctor',
-    DOCTOR_DIAGNOSIS_DETAILS: 'doctordiagnosisdetails',
     EXPIRED: 'expired',
     FACTORY_RESET_SCREEN: 'factoryResetScreen',
     FILTER: 'filterstate',

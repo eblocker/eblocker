@@ -25,7 +25,6 @@ import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper.IpAddressChangeListener;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +53,6 @@ public class DeviceServiceTest {
     private static final int nextUserId = 104;
 
     private DataSource dataSource;
-    private SslService sslService;
     private DeviceService deviceService;
     private UserAgentService userAgentService;
     private NetworkInterfaceWrapper networkInterfaceWrapper;
@@ -68,7 +66,6 @@ public class DeviceServiceTest {
         // setup data source and mock devices
         dataSource = Mockito.mock(DataSource.class);
         listener = Mockito.mock(DeviceService.DeviceChangeListener.class);
-        sslService = Mockito.mock(SslService.class);
         userAgentService = Mockito.mock(UserAgentService.class);
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
@@ -102,7 +99,7 @@ public class DeviceServiceTest {
 
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse(EBLOCKER_IP));
         // setup device service
-        deviceService = new DeviceService(dataSource, sslService, deviceRegistrationProperties, userAgentService,
+        deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
                 networkInterfaceWrapper, deviceFactory);
         deviceService.init();
         deviceService.addListener(listener);

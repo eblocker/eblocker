@@ -32,7 +32,6 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
-import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.icap.resources.DefaultEblockerResource;
@@ -59,7 +58,6 @@ import java.util.function.Predicate;
 public class DeviceService {
     private static final Logger log = LoggerFactory.getLogger(DeviceService.class);
     private final DataSource datasource;
-    private final SslService sslService;
     private final UserAgentService userAgentService;
 
     private final DeviceRegistrationProperties deviceRegistrationProperties;
@@ -73,12 +71,11 @@ public class DeviceService {
     private final MacPrefix macPrefix = new MacPrefix();
 
     @Inject
-    public DeviceService(DataSource datasource, SslService sslService,
+    public DeviceService(DataSource datasource,
                          DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
                          NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.datasource = datasource;
-        this.sslService = sslService;
         this.userAgentService = userAgentService;
         this.deviceFactory = deviceFactory;
         this.networkInterfaceWrapper = networkInterfaceWrapper;
@@ -134,13 +131,17 @@ public class DeviceService {
 
     private Device updateIconStatus(Device dev) {
         Device device = dev;
-        if (device.isControlBarAutoMode() && device.isSslEnabled() && sslService.isSslEnabled() &&
+        if (device.isControlBarAutoMode() && device.isSslEnabled() && isSslEnabled() &&
                 device.getIconMode() == DisplayIconMode.OFF) {
             device.setIconMode(DisplayIconMode.ON_ALL_DEVICES);
-        } else if (device.isControlBarAutoMode() && (!device.isSslEnabled() || !sslService.isSslEnabled())) {
+        } else if (device.isControlBarAutoMode() && (!device.isSslEnabled() || !isSslEnabled())) {
             device.setIconMode(DisplayIconMode.OFF);
         }
         return device;
+    }
+
+    private boolean isSslEnabled() {
+        return datasource.getSSLEnabledState();
     }
 
     public Device getDeviceByIp(IpAddress ip) {

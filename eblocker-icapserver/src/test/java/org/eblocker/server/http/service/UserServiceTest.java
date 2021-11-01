@@ -25,7 +25,6 @@ import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.http.security.PasswordUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,7 +47,6 @@ public class UserServiceTest {
 
     private DataSource dataSource;
     private DeviceService deviceService;
-    private SslService sslService;
     private UserService userService;
     private UserService.UserChangeListener listener;
     private UserAgentService userAgentService;
@@ -65,12 +63,11 @@ public class UserServiceTest {
         // setup data source and mock users
         dataSource = Mockito.mock(DataSource.class);
         dashboardCardService = Mockito.mock(DashboardCardService.class);
-        sslService = Mockito.mock(SslService.class);
         userAgentService = Mockito.mock(UserAgentService.class);
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
-        deviceService = new DeviceService(dataSource, sslService, deviceRegistrationProperties, userAgentService,
+        deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
                 networkInterfaceWrapper, deviceFactory);
         deviceService.init();
 

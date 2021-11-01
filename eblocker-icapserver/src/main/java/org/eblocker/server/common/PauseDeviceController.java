@@ -108,12 +108,16 @@ public class PauseDeviceController {
     }
 
     public synchronized void reactivateDevice(Device device) {
-        device.setEnabled(true);
-        device.setPaused(false);
-        deviceService.updateDevice(device);
+        setPausedState(device, false);
         networkStateMachine.deviceStateChanged();
         // Remove itself from pausedDevices
         deviceReactivators.remove(device.getId());
+    }
+
+    private void setPausedState(Device device, boolean paused) {
+        device.setPaused(paused);
+        device.setEnabled(!paused);
+        deviceService.updateDevice(device);
     }
 
     /**
@@ -153,14 +157,16 @@ public class PauseDeviceController {
             // Device not already paused - start pause
             reactivator = new DeviceReactivator(deviceId);
 
-            log.info("Disabling device now...");
-            device.setPaused(true);
-            device.setEnabled(false);
-            deviceService.updateDevice(device);
+            log.info("Disabling and pausing device now...");
+            setPausedState(device, true);
 
-            networkStateMachine.deviceStateChanged(device);
-
-            log.info("removing all references from squid acl files for device...");
+            try {
+                networkStateMachine.deviceStateChanged(device);
+            } catch (Exception e) {
+                log.error("Could not configure network for pause of device {}", deviceId, e);
+                setPausedState(device, false); // pausing failed, return device to enabled/unpaused state
+                throw e;
+            }
 
             ScheduledFuture<?> newFuture = executorService.schedule(reactivator, timeInSeconds, TimeUnit.SECONDS);
             reactivator.setAssociatedFuture(newFuture);

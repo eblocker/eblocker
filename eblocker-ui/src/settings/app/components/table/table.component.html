@@ -12,7 +12,7 @@
             <div ng-if="vm.editMode"
                  class="column-xs overall-checkbox"
                  layout="row"
-                 ng-style="vm.getEntryStyle()">
+                 ng-style="vm.getHeaderStyle()">
                 <md-checkbox md-theme="eBlockerThemeCheckbox" ng-click="vm.checkAll(vm.tableData)"
                              class="md-primary"
                              ng-checked="vm.allEntriesChecked(vm.tableData)"
@@ -25,7 +25,7 @@
             <!-- EACH HEADER COLUMN -->
             <div layout="row" layout-align="start center"
                  class="column-wrapper"
-                 ng-style="vm.getEntryStyle()"
+                 ng-style="vm.getHeaderStyle()"
                  ng-class="{
                         'reduced-width': vm.isReducedWidth(vm.editMode, vm.hasDetails),
                         'full-width': !vm.isReducedWidth(vm.editMode, vm.hasDetails)}">

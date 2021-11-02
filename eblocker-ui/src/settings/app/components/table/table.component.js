@@ -239,6 +239,11 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
         return vm.isSmallTable() ? vm.smallEntryStyle : vm.largeEntryStyle;
     };
 
+    vm.getHeaderStyle = function() {
+
+        return vm.isSmallTable() ? vm.smallHeaderStyle : vm.largeHeaderStyle;
+    };
+
     vm.getTableRowHeight = function() {
         return vm.isSmallTable() ? vm.smallTableRowHeight : vm.largeTableRowHeight;
     };
@@ -393,10 +398,13 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
 
         // ** get height of each row from tableService
         vm.largeEntryStyle = {
+            minHeight: largeTableRowHeight + 'px',
+            // lineHeight: largeTableRowHeight + 'px'
+        };
+        vm.largeHeaderStyle = {
             height: largeTableRowHeight + 'px',
             minHeight: largeTableRowHeight + 'px',
             maxHeight: largeTableRowHeight + 'px'
-            // lineHeight: largeTableRowHeight + 'px'
         };
     }
 
@@ -406,6 +414,9 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
         vm.smallTableRowHeight = smallTableRowHeight; // for angular-material vs-repeat
 
         vm.smallEntryStyle = {
+            minHeight: smallTableRowHeight + 'px',
+        };
+        vm.smallHeaderStyle = {
             height: smallTableRowHeight + 'px',
             minHeight: smallTableRowHeight + 'px',
             maxHeight: smallTableRowHeight + 'px'

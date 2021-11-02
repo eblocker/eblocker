@@ -19,10 +19,7 @@
 
 <div flex flex-gt-xs="55" style="white-space: normal">
     {{ 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.MESSAGE.' + entry.tag | translate }}
-    <span ng-if="vm.templateCallback.hasDetails(entry)">
-        {{ 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.MESSAGE.CLICK_FOR_MORE' | translate }}
-    </span>
-    <a ng-if="vm.templateCallback.showMoreInfo(entry)" href="{{'https://eblocker.org/doctor/' + entry.tag}}" target="_top">
+    {{entry.dynamicInfo}}
+    <a ng-if="vm.templateCallback.showMoreInfo(entry)" href="{{'https://eblocker.org/doctor/' + entry.tag}}" target="_blank">
         {{'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.MESSAGE.MORE_INFO' | translate}}</a>
-    <md-tooltip md-delay="300">{{ 'ADMINCONSOLE.DOCTOR.DIAGNOSIS.TABLE.MESSAGE.' + entry.tag | translate }}</md-tooltip>
 </div>

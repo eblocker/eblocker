@@ -95,7 +95,9 @@ function Controller($timeout, SslSuggestionsService, SslService, TrustedAppsServ
             label: 'ADMINCONSOLE.SSL_FAILS.TABLE_APP.COLUMN.LAST_SEEN',
             isSortable: true,
             showOnSmallTable: false,
-            sortingKey: 'lastOccurrence'
+            sortingKey: 'lastOccurrence',
+            defaultSorting: true,
+            isReversed: true
         },
         {
             label: 'ADMINCONSOLE.SSL_FAILS.TABLE_APP.COLUMN.TRUSTED',
@@ -176,7 +178,9 @@ function Controller($timeout, SslSuggestionsService, SslService, TrustedAppsServ
             label: 'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.COLUMN.LAST_SEEN',
             isSortable: true,
             showOnSmallTable: false,
-            sortingKey: 'lastOccurrence'
+            sortingKey: 'lastOccurrence',
+            defaultSorting: true,
+            isReversed: true
         },
         {
             label: 'ADMINCONSOLE.SSL_FAILS.TABLE_DOMAIN.COLUMN.ACTION',

@@ -17,7 +17,7 @@
                         <md-icon md-svg-src="{{item.image}}"></md-icon>
                     </div>
                     <div>
-                        <span translate="{{item.label}}"></span>
+                        <span>{{item.label | translate}}</span>
                     </div>
                 </div>
                 <md-divider ng-if="$index < vm.content.length"></md-divider>
@@ -31,7 +31,7 @@
                         <md-icon md-svg-src="{{item.image}}"></md-icon>
                     </div>
                     <div>
-                        <span translate="{{item.label}}"></span>
+                        <span>{{item.label | translate}}</span>
                     </div>
                 </a>
                 <md-divider ng-if="$index < vm.content.length"></md-divider>

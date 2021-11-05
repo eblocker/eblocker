@@ -33,6 +33,7 @@ function DomainBlocklistController($rootScope, $scope, logger, $q, $interval, Da
     let updating = false;
 
     vm.customDomainFilter = CustomDomainFilterService.emptyFilter();
+    vm.user = undefined;
 
     vm.$onInit = function() {
         loadCustomDomainFilter();
@@ -50,6 +51,7 @@ function DomainBlocklistController($rootScope, $scope, logger, $q, $interval, Da
         CustomDomainFilterService.getCustomDomainFilter(true).then(function(response) {
             vm.customDomainFilter = response.data;
         });
+        vm.user = CustomDomainFilterService.getUserName();
     }
 
     vm.updateBlocklist = updateBlocklist;

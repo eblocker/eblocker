@@ -196,7 +196,9 @@
             },
             "MESSAGE" : {
                 "BLOCK" : "{{numberOfDomains}} Domain(s) der Blockierliste hinzugefügt",
-                "ALLOW" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste hinzugefügt"
+                "BLOCK_USER" : "{{numberOfDomains}} Domain(s) der Blockierliste von {{userName}} hinzugefügt",
+                "ALLOW" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste hinzugefügt",
+                "ALLOW_USER" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste von {{userName}} hinzugefügt"
             },
             "RECORDING" : {
                 "DISABLED" : "Nicht aufzeichnen",
@@ -303,10 +305,11 @@
             "TABLE" : {
                 "EMPTY_FOUND" : "Keine Domains gefunden",
                 "EMPTY_LIST" : "Keine Domains geblockt",
-                "MARK_DELETE" : "Diese Domain wird von der Liste entfernt"
+                "MARK_DELETE" : "Diese Domain wird von der Liste entfernt",
+                "USER_HINT" : "Für alle Geräte von"
             },
             "TITLE" : "Domains blocken",
-            "TOOLTIP" : "Diese Domains für dieses Gerät immer blocken"
+            "TOOLTIP" : "Diese Domains immer blocken"
         }
     },
     "DOMAIN_PASSLIST" : {
@@ -315,7 +318,7 @@
                 "EMPTY_LIST" : "Keine Domains erlaubt"
             },
             "TITLE" : "Domains erlauben",
-            "TOOLTIP" : "Diese Domains für dieses Gerät immer erlauben"
+            "TOOLTIP" : "Diese Domains immer erlauben"
         }
     },
     "EXPIRED" : {

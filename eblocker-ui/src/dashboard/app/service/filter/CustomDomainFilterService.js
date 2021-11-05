@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 export default function CustomDomainFilterService(logger, $http, $q, DeviceService, DialogService, DataCachingService,
-                                                  security, DeviceSelectorService) {
+                                                  UserService, security, DeviceSelectorService) {
     'ngInject';
 
     const PATH = '/api/dashboard/customdomainfilter';
@@ -56,6 +56,19 @@ export default function CustomDomainFilterService(logger, $http, $q, DeviceServi
     function getUserId() {
         let device = DeviceSelectorService.getSelectedDevice();
         return device.operatingUser;
+    }
+
+    /*
+      Return the operating user's name. If the operating user is the default system user,
+      undefined is returned.
+     */
+    function getUserName() {
+        let device = DeviceSelectorService.getSelectedDevice();
+        let operatingUser = UserService.getUserById(device.operatingUser);
+        if (angular.isObject(operatingUser) && !operatingUser.system) {
+            return operatingUser.name;
+        }
+        return undefined;
     }
 
     function emptyFilter() {
@@ -99,7 +112,8 @@ export default function CustomDomainFilterService(logger, $http, $q, DeviceServi
         updateBlocklist: updateBlocklist,
         updatePasslist: updatePasslist,
         getCustomDomainFilter: getCustomDomainFilter,
-        setCustomDomainFilter: setCustomDomainFilter
+        setCustomDomainFilter: setCustomDomainFilter,
+        getUserName: getUserName
     };
 
 }

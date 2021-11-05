@@ -196,7 +196,9 @@
             },
             "MESSAGE" : {
                 "BLOCK" : "Added {{numberOfDomains}} domain(s) to the blocker list",
-                "ALLOW" : "Added {{numberOfDomains}} domain(s) to the exception list"
+                "BLOCK_USER" : "Added {{numberOfDomains}} domain(s) to the blocker list of {{userName}}",
+                "ALLOW" : "Added {{numberOfDomains}} domain(s) to the exception list",
+                "ALLOW_USER" : "Added {{numberOfDomains}} domain(s) to the exception list of {{userName}}"
             },
             "RECORDING" : {
                 "DISABLED" : "Not recording",
@@ -303,10 +305,11 @@
             "TABLE" : {
                 "EMPTY_FOUND" : "No domains found",
                 "EMPTY_LIST" : "No domains blocked",
-                "MARK_DELETE" : "This domain will be removed from the list"
+                "MARK_DELETE" : "This domain will be removed from the list",
+                "USER_HINT" : "For all devices of"
             },
             "TITLE" : "Block Domains",
-            "TOOLTIP" : "Always block these domains for this device"
+            "TOOLTIP" : "Always block these domains"
         }
     },
     "DOMAIN_PASSLIST" : {
@@ -315,7 +318,7 @@
                 "EMPTY_LIST" : "No domains allowed"
             },
             "TITLE" : "Allow Domains",
-            "TOOLTIP" : "Always allow these domains for this device"
+            "TOOLTIP" : "Always allow these domains"
         }
     },
     "EXPIRED" : {

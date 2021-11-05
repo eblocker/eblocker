@@ -133,11 +133,21 @@ function DeviceFirewallController($rootScope, $scope, $q, logger, $transitions, 
         updater(listToUpdate).then(function(result) {
             $rootScope.$broadcast(EVENTS.CUSTOM_DOMAIN_FILTER_UPDATED);
             deselectDomains();
-            NotificationService.info(toastKey, {numberOfDomains: domains.length});
+            notifyUser(toastKey, domains.length);
         }, function(reason) {
             logger.error('Failed to apply changes:' + vm.selectedAction + ': ' + domains, reason);
             return $q.reject(reason);
         });
+    }
+
+    function notifyUser(toastKey, numberOfDomains) {
+        let userName = CustomDomainFilterService.getUserName();
+        let params = {'numberOfDomains': numberOfDomains};
+        if (userName !== undefined) {
+            toastKey += '_USER';
+            params['userName'] = userName;
+        }
+        NotificationService.info(toastKey, params);
     }
 
     function setShowLegend(show) {

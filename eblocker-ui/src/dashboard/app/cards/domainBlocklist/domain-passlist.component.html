@@ -8,6 +8,7 @@
         <div layout="column">
             <dashboard-domain-blocklist-table
                 domains="vm.customDomainFilter.whitelistedDomains"
+                user="vm.user"
                 on-update="vm.updatePasslist(domains)"
                 placeholder="DOMAIN_PASSLIST.CARD.TABLE.EMPTY_LIST">
             </dashboard-domain-blocklist-table>

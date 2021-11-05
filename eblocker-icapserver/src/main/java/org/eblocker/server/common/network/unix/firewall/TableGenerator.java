@@ -147,10 +147,10 @@ public class TableGenerator {
             preRouting.rule(new Rule(standardInput).http().destinationIp(ownIpAddress).returnFromChain());
         } else {
             preRouting
-                    .rule(new Rule(standardInput).http().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpPort))
-                    .rule(new Rule(standardInput).https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort))
-                    .rule(new Rule(standardInput).http().destinationIp(fallbackIp).redirectTo(fallbackIp, httpPort))
-                    .rule(new Rule(standardInput).https().destinationIp(fallbackIp).redirectTo(fallbackIp, httpsPort));
+                    .rule(new Rule().http().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpPort))
+                    .rule(new Rule().https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort))
+                    .rule(new Rule().http().destinationIp(fallbackIp).redirectTo(fallbackIp, httpPort))
+                    .rule(new Rule().https().destinationIp(fallbackIp).redirectTo(fallbackIp, httpsPort));
         }
 
         if (mobileVpnServerActive()) {

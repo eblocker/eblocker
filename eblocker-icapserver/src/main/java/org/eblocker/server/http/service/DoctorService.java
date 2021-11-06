@@ -135,6 +135,8 @@ public class DoctorService {
 
         diagnoses.addAll(httpsRelatedChecks());
 
+        diagnoses.addAll(ipv6Check());
+
         diagnoses.addAll(checkDevices());
 
         diagnoses.add(autoEnableNewDevicesCheck());
@@ -235,8 +237,6 @@ public class DoctorService {
             }
 
             verifyPatternFilters(diagnoses);
-
-            ipv6Check(diagnoses);
         } else {
             diagnoses.add(new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EXPERT, HTTPS_NOT_ENABLED, ""));
         }
@@ -293,11 +293,11 @@ public class DoctorService {
         }
     }
 
-    private void ipv6Check(List<DoctorDiagnosisResult> diagnoses) {
+    private List<DoctorDiagnosisResult> ipv6Check() {
         if (pingHost(6, "ipv6-test.com")) {
-            diagnoses.add(failedProbe(EBLOCKER_IP6_ENABLED));
+            return List.of(failedProbe(EBLOCKER_IP6_ENABLED));
         } else {
-            diagnoses.add(goodForEveryone(EBLOCKER_NO_IP6));
+            return List.of(goodForEveryone(EBLOCKER_NO_IP6));
         }
     }
 

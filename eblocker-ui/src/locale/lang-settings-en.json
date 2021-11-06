@@ -1677,14 +1677,14 @@
         "DOCTOR": {
             "LABEL" : "Doctor",
             "DIAGNOSIS" : {
-                "TITLE": "The diagnoses of the eBlocker doctor",
+                "TITLE": "The diagnoses of the eBlocker Doctor (beta)",
                 "LEVEL": {
                     "NOVICE" : "Novice",
                     "EXPERT" : "Expert"
                 },
                 "TABLE": {
                     "COLUMN" : {
-                        "SEVERITY" : "Severity",
+                        "SEVERITY" : "Prio",
                         "MESSAGE": "Diagnosis"
                     },
                     "SEVERITY" : {
@@ -1694,7 +1694,7 @@
                         "OKAY" : "OK"
                     },
                     "MESSAGE" : {
-                        "NON_GOOD_DNS_SERVER" : "You have name servers with non-good rating.",
+                        "NON_GOOD_DNS_SERVER" : "You have DNS servers with non-good rating.",
                         "ALL_DNS_SERVERS_GOOD" : "Your name servers all have a good rating.",
                         "PROBLEMATIC_ROUTER" : "Your router is problematic!",
                         "CHILDREN_WITHOUT_RESTRICTIONS" : "The following children have no restrictions at all: ",

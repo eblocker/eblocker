@@ -19,6 +19,7 @@ import org.eblocker.server.common.network.ProblematicRouterDetection;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.SystemUpdater;
+import org.eblocker.server.http.security.SecurityService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
@@ -40,11 +41,13 @@ import java.util.stream.Stream;
 import static java.util.function.Predicate.not;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Audience.EVERYONE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Audience.EXPERT;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Audience.NOVICE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.ANORMALY;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.FAILED_PROBE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.GOOD;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.HINT;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.RECOMMENDATION_NOT_FOLLOWED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ADMIN_PASSWORD_NOT_SET;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_AUTO_BLOCK_MODE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_AUTO_CONTROLBAR;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ALL_DEVICES_USE_MALWARE_FILTER;
@@ -63,6 +66,8 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DDG_FILT
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_MALWARE_FILTER_DISABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_BLOCK_MODE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_CONTROLBAR;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DNS_TOR_MAY_LEAD_TO_ERRORS;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DNS_TOR_NOT_DISABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DISABLED_FOR_NEW_DEVICES;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DNS_RESOLVE_BROKEN;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_DNS_RESOLVE_WORKING;
@@ -98,13 +103,15 @@ public class DoctorService {
     private final ProductInfoService productInfoService;
     private final AppModuleService appModuleService;
     private final FilterManager filterManager;
+    private final SecurityService securityService;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
 
     @Inject
     public DoctorService(NetworkServices networkServices, SslService sslService, AutomaticUpdater automaticUpdater, SystemUpdater systemUpdater, DnsStatisticsService dnsStatisticsService, DnsService dnsService,
                          DeviceFactory deviceFactory,
                          DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection,
-                         ProductInfoService productInfoService, AppModuleService appModuleService, FilterManager filterManager) {
+                         ProductInfoService productInfoService, AppModuleService appModuleService, FilterManager filterManager,
+                         SecurityService securityService) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
@@ -117,6 +124,7 @@ public class DoctorService {
         this.productInfoService = productInfoService;
         this.appModuleService = appModuleService;
         this.filterManager = filterManager;
+        this.securityService = securityService;
         problematicRouterDetection.addObserver((observable, arg) -> {
             if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
                 isProblematicRouter = Optional.of((Boolean) arg);
@@ -127,7 +135,7 @@ public class DoctorService {
     public List<DoctorDiagnosisResult> runDiagnosis() {
         List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
 
-        diagnoses.add(networkModeCheck());
+        diagnoses.addAll(networkModeCheck());
 
         diagnoses.add(ipv4Ping());
 
@@ -155,8 +163,13 @@ public class DoctorService {
             diagnoses.add(goodForEveryone(ALL_DNS_SERVERS_GOOD));
         }
 
-        if (isProblematicRouter.isPresent() && isProblematicRouter.get()) {
-            diagnoses.add(failedProbe(PROBLEMATIC_ROUTER));
+        if (usesDnsOverTor()) {
+            diagnoses.add(recommendationNotFollowed(NOVICE, DNS_TOR_NOT_DISABLED, ""));
+            diagnoses.add(hintForExpert(DNS_TOR_MAY_LEAD_TO_ERRORS));
+        }
+
+        if (!securityService.isPasswordRequired()) {
+            diagnoses.add(recommendationNotFollowedEveryone(ADMIN_PASSWORD_NOT_SET));
         }
         return diagnoses;
     }
@@ -186,13 +199,18 @@ public class DoctorService {
                 !child.isControlmodeMaxUsage();
     }
 
-    private DoctorDiagnosisResult networkModeCheck() {
+    private List<DoctorDiagnosisResult> networkModeCheck() {
+        List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
         NetworkConfiguration currentNetworkConfiguration = networkServices.getCurrentNetworkConfiguration();
         if (currentNetworkConfiguration.isAutomatic()) {
-            return new DoctorDiagnosisResult(HINT, EVERYONE, AUTOMATIC_NETWORK_MODE, "");
+            if (isProblematicRouter.isPresent() && isProblematicRouter.get()) {
+                diagnoses.add(failedProbe(PROBLEMATIC_ROUTER));
+            }
+            diagnoses.add(new DoctorDiagnosisResult(HINT, EVERYONE, AUTOMATIC_NETWORK_MODE, ""));
         } else {
-            return goodForEveryone(GOOD_NETWORK_MODE);
+            diagnoses.add(goodForEveryone(GOOD_NETWORK_MODE));
         }
+        return diagnoses;
     }
 
     private List<DoctorDiagnosisResult> autoUpdateChecks() {
@@ -303,12 +321,18 @@ public class DoctorService {
 
     private boolean hasNonGoodNameServers() {
         DnsResolvers resolvers = dnsService.getDnsResolvers();
-        return resolvers.getCustomNameServers().stream()
-                .map(resolver -> dnsStatisticsService.getResolverStatistics(resolver,
-                        ZonedDateTime.now().minusHours(24).toInstant()).getNameServerStats())
-                .flatMap(Collection::stream)
-                .map(NameServerStats::getRating)
-                .anyMatch(rating -> !DnsRating.GOOD.equals(rating));
+        return "custom".equalsIgnoreCase(resolvers.getCustomResolverMode()) &&
+                resolvers.getCustomNameServers().stream()
+                        .map(resolver -> dnsStatisticsService.getResolverStatistics(resolver,
+                                ZonedDateTime.now().minusHours(24).toInstant()).getNameServerStats())
+                        .flatMap(Collection::stream)
+                        .map(NameServerStats::getRating)
+                        .anyMatch(rating -> !DnsRating.GOOD.equals(rating));
+    }
+
+    private boolean usesDnsOverTor() {
+        DnsResolvers resolvers = dnsService.getDnsResolvers();
+        return "tor".equalsIgnoreCase(resolvers.getDefaultResolver());
     }
 
     private boolean pingHost(int ipVersion, String hostName) {
@@ -402,7 +426,11 @@ public class DoctorService {
     }
 
     private DoctorDiagnosisResult recommendationNotFollowedEveryone(Tag tag, String dynamicInfo) {
-        return new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EVERYONE, tag, dynamicInfo);
+        return recommendationNotFollowed(EVERYONE, tag, dynamicInfo);
+    }
+
+    private DoctorDiagnosisResult recommendationNotFollowed(DoctorDiagnosisResult.Audience audience, Tag tag, String dynamicInfo) {
+        return new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, audience, tag, dynamicInfo);
     }
 
     private DoctorDiagnosisResult hintForExpert(Tag tag) {

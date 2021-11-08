@@ -1731,6 +1731,9 @@
                         "DEVICES_MALWARE_FILTER_DISABLED" : "Auf folgenden Geräten ist der Malware & Phisching Blocker nicht aktiv:",
                         "ALL_DEVICES_USE_AUTO_CONTROLBAR" : "Auf allen Geräten ist die automatische Konfiguration der ControlBar aktiv.",
                         "DEVICES_WITHOUT_AUTO_CONTROLBAR" : "Auf folgenden Geräten ist die automatische Konfiguration der ControlBar nicht aktiv:",
+                        "DNS_TOR_NOT_DISABLED" : "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Dies wird für Anfänger nicht empfohlen.",
+                        "DNS_TOR_MAY_LEAD_TO_ERRORS" : "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Bitte beachten Sie, dass dies zu Aussetzern führen kann.",
+                        "ADMIN_PASSWORD_NOT_SET" : "Es ist kein Administratorpasswort gesetzt. Jeder mit Zugang zu Ihrem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
                         "MORE_INFO" : "Mehr Information",
                         "CLICK_FOR_MORE" : "Klicken Sie für Details."
                     }

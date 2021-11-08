@@ -1677,14 +1677,14 @@
          "DOCTOR": {
             "LABEL" : "Doktor",
             "DIAGNOSIS" : {
-                "TITLE": "Die Diagnosen des eBlocker Doktors",
+                "TITLE": "Die Diagnosen des eBlocker Doktors (beta)",
                 "LEVEL": {
                     "NOVICE" : "Anfänger",
                     "EXPERT" : "Experte"
                 },
                 "TABLE": {
                     "COLUMN" : {
-                        "SEVERITY" : "Schweregrad",
+                        "SEVERITY" : "Prio",
                         "MESSAGE": "Diagnose"
                     },
                     "SEVERITY" : {

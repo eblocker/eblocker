@@ -2590,6 +2590,9 @@
                     "NOT_AGAIN" : "Do not show again",
                     "OK" : "Ok"
                 },
+                "BLOG_LINK_PRE" : "How to activate the new features is described in detail in the ",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.8",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.8",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
@@ -2602,7 +2605,7 @@
                     "LI_3" : "<strong>Doctor</strong> (beta), for optimal eBlocker configuration.",
                     "LI_4" : "<strong>Security updates</strong> of the Linux system and bug fixes."
                 },
-                "LINK_PRE" : "Please find further details in the ",
+                "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-8/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will now receive a license key for automatic daily updates.",

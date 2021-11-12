@@ -28,11 +28,12 @@ import java.util.stream.Stream;
 public class ContentFilterServiceTest {
     private ContentFilterService service;
     private ScriptletService scriptletService;
+    private final int cacheSize = 50;
 
     @Before
     public void setUp() throws Exception {
         scriptletService = Mockito.mock(ScriptletService.class);
-        service = new ContentFilterService(scriptletService, "display: none;");
+        service = new ContentFilterService(scriptletService, "display: none;", cacheSize);
 
         Stream<String> filters = Stream.of(
                 "google.*##.ads",
@@ -63,6 +64,17 @@ public class ContentFilterServiceTest {
         service.getHtmlToInject("www.google.com");
         service.getHtmlToInject("www.google.com");
         Mockito.verify(scriptletService, Mockito.atMostOnce()).resolve("say, hello");
+    }
+
+    @Test
+    public void testResultCacheIsLimited() throws IOException {
+        service.getHtmlToInject("www.google.com");
+        // fill the cache with other domains
+        for (int i = 0; i < cacheSize; i++) {
+            service.getHtmlToInject("www" + i + ".example.com");
+        }
+        service.getHtmlToInject("www.google.com"); // not in the cache any more
+        Mockito.verify(scriptletService, Mockito.atLeast(2)).resolve("say, hello");
     }
 
     @Test

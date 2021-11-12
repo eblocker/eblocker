@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.icap.filter.content;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  *  Finds matching content filters and creates HTML to inject into the web page
@@ -34,24 +36,36 @@ import java.util.Map;
 @Singleton
 public class ContentFilterService {
     private static final Logger log = LoggerFactory.getLogger(ContentFilterService.class);
-    private Map<String, String> cache; // Map hostname to injected HTML
+    private Cache<String, String> cache; // Map hostname to injected HTML
     private ContentFilterList filterList = ContentFilterList.emptyList();
     private final ScriptletService scriptletService;
     private final String elementHidingCss;
 
     @Inject
-    public ContentFilterService(ScriptletService scriptletService, @Named("contentFilter.elementHiding.css") String elementHidingCss) {
+    public ContentFilterService(ScriptletService scriptletService,
+                                @Named("contentFilter.elementHiding.css") String elementHidingCss,
+                                @Named("contentFilter.cache.size") int cacheSize
+    ) {
         this.scriptletService = scriptletService;
         this.elementHidingCss = elementHidingCss;
-        createCache();
+        cache = CacheBuilder.newBuilder().maximumSize(cacheSize).build();
     }
 
-    private void createCache() {
-        cache = new Hashtable<>();
+    private void clearCache() {
+        cache.invalidateAll();
     }
 
     public String getHtmlToInject(String hostname) {
-        return cache.computeIfAbsent(hostname, this::generateHtmlToInject);
+        if (filterList.size() == 0) {
+            // don't fill the cache if filter lists are disabled
+            return "";
+        }
+        try {
+            return cache.get(hostname, () -> generateHtmlToInject(hostname));
+        } catch (ExecutionException e) {
+            log.error("Could not generate HTML to inject", e);
+            return "";
+        }
     }
 
     private String generateHtmlToInject(String hostname) {
@@ -100,7 +114,7 @@ public class ContentFilterService {
 
 
     public void setFilterList(ContentFilterList filterList) {
-        createCache();
+        clearCache();
         this.filterList = filterList;
     }
 }

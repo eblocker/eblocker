@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
+import org.eblocker.server.common.service.FilterStatisticsService;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.filter.content.ContentFilterService;
@@ -31,16 +32,23 @@ import org.eblocker.server.icap.transaction.TransactionProcessor;
 public class ContentFilterProcessor implements TransactionProcessor {
 
     private final ContentFilterService contentFilterService;
+    private final FilterStatisticsService filterStatisticsService;
 
     @Inject
-    public ContentFilterProcessor(ContentFilterService contentFilterService) {
+    public ContentFilterProcessor(ContentFilterService contentFilterService,
+                                  FilterStatisticsService filterStatisticsService) {
         this.contentFilterService = contentFilterService;
+        this.filterStatisticsService = filterStatisticsService;
     }
 
     @Override
     public boolean process(Transaction transaction) {
         if (!transaction.isResponse()) {
             return true; // only makes sense for responses
+        }
+
+        if (transaction.isPreview()) {
+            return true; // complete content needed for injecting HTML
         }
 
         if (!isHTML(transaction)) {
@@ -53,6 +61,7 @@ public class ContentFilterProcessor implements TransactionProcessor {
             String html = contentFilterService.getHtmlToInject(hostname);
             if (!html.isEmpty()) {
                 transaction.getInjections().inject(html);
+                filterStatisticsService.countBlocked("pattern", transaction.getOriginalClientIP(), "CONTENT");
             }
         }
         return true;

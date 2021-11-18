@@ -2591,8 +2591,8 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "How to activate the new features is described in detail in the ",
-                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.8",
-                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.8",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.9",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.9",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
@@ -2600,21 +2600,21 @@
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important new features:",
-                    "LI_1" : "<strong>Advanced ad blocker</strong> (beta) to block video ads (e.g. on YouTube) and even more ads.",
-                    "LI_2" : "<strong>Fingerprinting blocker</strong> (beta) to protect against invasive tracking techniques.",
-                    "LI_3" : "<strong>Doctor</strong> (beta), for optimal eBlocker configuration.",
+                    "LI_1" : "<strong>t.b.d.</strong>",
+                    "LI_2" : "<strong>t.b.d.</strong>",
+                    "LI_3" : "<strong>t.b.d.</strong>",
                     "LI_4" : "<strong>Security updates</strong> of the Linux system and bug fixes."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-8/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-9/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will now receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.8"
+                "TITLE" : "eBlockerOS Release 2.9"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.8",
+            "MENU_LABEL" : "New in eBlockerOS 2.9",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.8"
+                "TITLE" : "eBlockerOS Release 2.9"
             }
         },
         "SSL" : {

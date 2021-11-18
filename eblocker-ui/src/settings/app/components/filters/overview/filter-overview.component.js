@@ -114,6 +114,7 @@ function Controller(logger, TableService, FILTER_TYPE, RegistrationService, DnsS
                 vm.numberOfBlockedPatternAds = response.summary.blockedQueriesByReason.ADS || '-';
                 vm.numberOfBlockedPatternTrackers = response.summary.blockedQueriesByReason.TRACKERS || '-';
                 vm.numberOfBlockedPatternMalwareReqs = response.summary.blockedQueriesByReason.MALWARE || '-';
+                vm.numberOfBlockedPatternContentReqs = response.summary.blockedQueriesByReason.CONTENT || '-';
             }
         }, function error(response) {
             logger.error('No Pattern summary found ', response);

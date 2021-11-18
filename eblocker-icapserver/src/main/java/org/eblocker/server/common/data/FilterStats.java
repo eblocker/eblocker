@@ -98,6 +98,7 @@ public class FilterStats {
         TRACKERS,
         PARENTAL_CONTROL,
         MALWARE,
+        CONTENT,
         UNKNOWN
     }
 }

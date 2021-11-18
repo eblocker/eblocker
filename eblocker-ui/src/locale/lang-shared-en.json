@@ -185,7 +185,7 @@
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
             "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-8/",
-	    "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 2.8: The doctor checks the configuration and makes suggestions for improvement. Scriptlets support blocking of video ads and preventing fingerprinting.",
+	    "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 2.8: Advanced Ad Blocker - also for Video Ads, Fingerprinting Blocker as well as the eBlocker Doctor for an optimal configuration.",
             "MESSAGE_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
 	    "MESSAGE_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-8/",

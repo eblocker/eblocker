@@ -1,6 +1,8 @@
 <div layout="row">
     <div class="whitelist-table" layout="column">
-
+        <div ng-show="vm.user !== undefined">
+            {{'DOMAIN_BLOCKLIST.CARD.TABLE.USER_HINT' | translate}} <b>{{vm.user}}</b>
+        </div>
         <div class="table-body">
             <div layout="row" layout-align="start center" flex
                  ng-repeat="entry in vm.filteredTableData track by $index"

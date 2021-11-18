@@ -2590,18 +2590,22 @@
                     "NOT_AGAIN" : "Do not show again",
                     "OK" : "Ok"
                 },
+                "BLOG_LINK_PRE" : "How to activate the new features is described in detail in the ",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.8",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.8",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                "INTRO" : "We have implemented many new features to protect you even better.",
-                "GREETINGS" : "Thank you for your support - we continue to protect you,",
+                 "INTRO" : "We've implemented exciting features to reduce the amount of ads you get and increase eBlocker's protection even further.",
+                "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Most important changes:",
-                    "LI_1" : "<strong>Doctor</strong> (beta) to check the configuration and make suggestions for improvement.",
-                    "LI_2" : "<strong>Scriptlets</strong> (beta) to block video ads and prevent fingerprinting.",
-		    "LI_3" : "Security update of the Linux operating system and many other improvements and optimizations."
+                    "HEAD" : "Most important new features:",
+                    "LI_1" : "<strong>Advanced ad blocker</strong> (beta) to block video ads (e.g. on YouTube) and even more ads.",
+                    "LI_2" : "<strong>Fingerprinting blocker</strong> (beta) to protect against invasive tracking techniques.",
+                    "LI_3" : "<strong>Doctor</strong> (beta), for optimal eBlocker configuration.",
+                    "LI_4" : "<strong>Security updates</strong> of the Linux system and bug fixes."
                 },
-                "LINK_PRE" : "Please find further details in the ",
+                "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-8/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will now receive a license key for automatic daily updates.",

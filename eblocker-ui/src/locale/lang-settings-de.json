@@ -2590,18 +2590,22 @@
                     "NOT_AGAIN" : "Nicht wieder anzeigen",
                     "OK" : "Ok"
                 },
+                "BLOG_LINK_PRE" : "Wie du die neuen Funktionen aktivierst, steht ausführlich im ",
+                "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.8",
+                "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.8",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Wir haben viele neue Features implementiert, um deinen Schutz und eBlocker weiter zu verbessern.",
+                "INTRO" : "Wir haben viele spannende Features implementiert, damit du weniger Werbung bekommst und der eBlocker Schutz noch besser wird.",
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "<strong>Doktor</strong> (beta), um die Konfiguration zu prüfen und Verbesserungsvorschläge zu machen.",
-		    "LI_2" : "<strong>Scriptlets</strong> (beta), um Video-Ads zu blocken und Fingerprinting zu verhindern.",
-		    "LI_3" : "Sicherheitsupdate des Linux Betriebssystems sowie viele weitere Verbesserungen und Optimierungen."
+                    "LI_1" : "<strong>Erweiterter Ad-Blocker</strong> (beta), um Video-Ads (z.B. bei YouTube) und noch mehr Werbung zu blocken.",
+                    "LI_2" : "<strong>Fingerprinting-Blocker</strong> (beta), der vor invasiven Tracking-Techniken schützt.",
+                    "LI_3" : "<strong>Doktor</strong> (beta), für die optimale eBlocker Konfiguration.",
+                    "LI_4" : "<strong>Sicherheitsupdates</strong> des Linux-Systems und Fehlerbeseitigungen."
                 },
-                "LINK_PRE" : "Weitere Details zu allen Änderungen findest du in den ",
+                "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-8/",
                 "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du jetzt einen Lizenzschlüssel für automatische tägliche Updates.",

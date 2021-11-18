@@ -20,6 +20,7 @@ export default {
     controllerAs: 'vm',
     bindings: {
         domains: '<',
+        user: '<',
         onUpdate: '&',
         placeholder: '@'
     }

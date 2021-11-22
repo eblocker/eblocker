@@ -132,37 +132,37 @@ public class FirewallConfigurationTest {
     public void testEnable() throws IOException {
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
     }
 
     @Test
     public void testMasquerade() throws IOException {
         configuration.enable(new HashSet<>(), new HashSet<>(), true, true, false, true, true, () -> true);
 
-        assertEqualContent("test-data/firewall-masquerade.conf", configFullFile);
+        assertEqualContent("test-data/firewall/masquerade.conf", configFullFile);
     }
 
     @Test
     public void testDiff() throws IOException {
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/no-changes.conf", configDeltaFile);
     }
 
     @Test
     public void testApplyFailure() throws IOException {
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> false);
-        assertEqualContent("test-data/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
 
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
 
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> false);
-        assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/no-changes.conf", configDeltaFile);
 
         configuration.enable(new HashSet<>(), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/no-changes.conf", configDeltaFile);
     }
 
     @Test
@@ -182,15 +182,15 @@ public class FirewallConfigurationTest {
 
         // create initial fw-config
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-excluded-devices.conf", configFullFile);
+        assertEqualContent("test-data/firewall/excluded-devices.conf", configFullFile);
 
         // disable ssl and check delta
         configuration.enable(allDevices, new HashSet<>(), false, false, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-diff-ssl-disabled.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/diff-ssl-disabled.conf", configDeltaFile);
 
         // re-enable ssl and check delta
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-diff-ssl-enabled.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/diff-ssl-enabled.conf", configDeltaFile);
 
         // switch device a <-> c and  b <-> d and check delta
         a.setSslEnabled(true);
@@ -202,7 +202,7 @@ public class FirewallConfigurationTest {
         d.setSslEnabled(false);
         d.setEnabled(false);
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-diff-ssl-switch.conf", configDeltaFile);
+        assertEqualContent("test-data/firewall/diff-ssl-switch.conf", configDeltaFile);
     }
 
     @Test
@@ -220,7 +220,7 @@ public class FirewallConfigurationTest {
         allDevices.addAll(Arrays.asList(a, b, c, d));
         configuration.enable(allDevices, new HashSet<>(), false, true, false, true, true, () -> true);
 
-        assertEqualContent("test-data/firewall-excluded-devices.conf", configFullFile);
+        assertEqualContent("test-data/firewall/excluded-devices.conf", configFullFile);
     }
 
     @Test
@@ -238,7 +238,7 @@ public class FirewallConfigurationTest {
         allDevices.addAll(Arrays.asList(a, b, c, d));
         configuration.enable(allDevices, new HashSet<>(), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall-active-vpnprofile-noclients.conf", configFullFile);
+        assertEqualContent("test-data/firewall/active-vpnprofile-noclients.conf", configFullFile);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall-active-vpnprofile-oneclient.conf", configFullFile);
+        assertEqualContent("test-data/firewall/active-vpnprofile-oneclient.conf", configFullFile);
     }
 
     @Test
@@ -286,7 +286,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall-active-vpnprofile-oneclient-no-ip.conf", configFullFile);
+        assertEqualContent("test-data/firewall/active-vpnprofile-oneclient-no-ip.conf", configFullFile);
     }
 
     @Test
@@ -303,7 +303,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(Collections.singleton(device), Collections.singleton(client), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall-active-vpnprofile-restart.conf", configFullFile);
+        assertEqualContent("test-data/firewall/active-vpnprofile-restart.conf", configFullFile);
     }
 
     @Test
@@ -324,7 +324,7 @@ public class FirewallConfigurationTest {
         for (List<Device> permutation : permutations) {
             configuration.enable(new LinkedHashSet<>(permutation), Collections.emptyList(), false, true, false, false, true, () -> true);
             Assert.assertEquals(expected, FileUtils.readFileToString(configFullFile));
-            assertEqualContent("test-data/firewall-no-changes.conf", configDeltaFile);
+            assertEqualContent("test-data/firewall/no-changes.conf", configDeltaFile);
         }
     }
 
@@ -332,7 +332,7 @@ public class FirewallConfigurationTest {
     public void testEblockerMobileServerDisabled() throws EblockerException, IOException {
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new HashSet<>(devices), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall-server-openvpn-server-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-openvpn-server-disabled.conf", configFullFile);
     }
 
     @Test
@@ -340,14 +340,14 @@ public class FirewallConfigurationTest {
         networkServices = createNetworkServicesMock(null);
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-server-openvpn-server-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-openvpn-server-disabled.conf", configFullFile);
     }
 
     @Test
     public void testEblockerMobileServerEnabled() throws EblockerException, IOException {
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall-server-openvpn-server-enabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-openvpn-server-enabled.conf", configFullFile);
     }
 
     private List<Device> setUpEblockerMobileTest() {
@@ -375,7 +375,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, false, true, false, false, () -> true);
 
-        assertEqualContent("test-data/firewall-tor-dns-enabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/tor-dns-enabled.conf", configFullFile);
     }
 
     @Test
@@ -387,7 +387,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, false, false, false, false, () -> true);
 
-        assertEqualContent("test-data/firewall-tor-dns-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/tor-dns-disabled.conf", configFullFile);
     }
 
     @Test
@@ -400,7 +400,7 @@ public class FirewallConfigurationTest {
 
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, false, true, true, false, () -> true);
 
-        assertEqualContent("test-data/firewall-tor-mobile.conf", configFullFile);
+        assertEqualContent("test-data/firewall/tor-mobile.conf", configFullFile);
     }
 
     @Test
@@ -410,7 +410,7 @@ public class FirewallConfigurationTest {
         a.setMalwareFilterEnabled(true);
         b.setMalwareFilterEnabled(false);
         configuration.enable(Sets.newHashSet(a, b), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall-malware-set-enabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/malware-set-enabled.conf", configFullFile);
     }
 
     @Test
@@ -420,7 +420,7 @@ public class FirewallConfigurationTest {
         a.setMalwareFilterEnabled(true);
         b.setMalwareFilterEnabled(false);
         configuration.enable(Sets.newHashSet(a, b), new HashSet<>(), false, true, false, false, false, () -> true);
-        assertEqualContent("test-data/firewall-malware-set-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/malware-set-disabled.conf", configFullFile);
     }
 
     @Test
@@ -434,7 +434,7 @@ public class FirewallConfigurationTest {
         b.setIsVpnClient(true);
         b.setIpAddresses(Arrays.asList(IpAddress.parse("192.168.0.21"), IpAddress.parse("10.8.0.3")));
         configuration.enable(Sets.newHashSet(a, b), Collections.emptySet(), false, true, true, true, false, () -> true);
-        assertEqualContent("test-data/firewall-mobile-private-network.conf", configFullFile);
+        assertEqualContent("test-data/firewall/mobile-private-network.conf", configFullFile);
     }
 
     @Test
@@ -444,7 +444,7 @@ public class FirewallConfigurationTest {
         Mockito.when(restrictionsService.isAccessPermitted(a)).thenReturn(false);
         Mockito.when(restrictionsService.isAccessPermitted(b)).thenReturn(false);
         configuration.enable(Sets.newHashSet(a, b), Collections.emptySet(), false, false, false, false, false, () -> true);
-        assertEqualContent("test-data/firewall-access-restrictions.conf", configFullFile);
+        assertEqualContent("test-data/firewall/access-restrictions.conf", configFullFile);
     }
 
     private void assertEqualContent(String expectedClassPathResource, File actualFile) throws IOException {

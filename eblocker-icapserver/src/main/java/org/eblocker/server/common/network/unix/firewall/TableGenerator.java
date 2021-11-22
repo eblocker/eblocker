@@ -348,6 +348,27 @@ public class TableGenerator {
             }
         }
 
+        // restrict access from public addresses
+        if (!serverEnvironment) {
+            // allow access to eBlocker's ports from private addresses
+            input
+                    .rule(new Rule(standardInput).sourceIp(ipRangeClassC).accept())
+                    .rule(new Rule(standardInput).sourceIp(ipRangeClassB).accept())
+                    .rule(new Rule(standardInput).sourceIp(ipRangeClassA).accept())
+                    .rule(new Rule(standardInput).sourceIp(ipRangeLinkLocal).accept());
+
+            // and to eBlocker Mobile port from all addresses
+            if (mobileVpnServerActive()) {
+                input.rule(new Rule(standardInput).udp().destinationPort(mobileVpnServerPort).accept());
+            }
+
+            // allow responses to DNS, Squid, etc.
+            input.rule(new Rule(standardInput).states(true, Rule.State.ESTABLISHED, Rule.State.RELATED).accept());
+
+            // block everything else from public addresses
+            input.rule(new Rule(standardInput).drop());
+        }
+
         return filterTable;
     }
 

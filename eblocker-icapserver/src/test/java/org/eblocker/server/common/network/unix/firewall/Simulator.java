@@ -32,22 +32,30 @@ public class Simulator {
     }
 
     public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort) {
-        return packet(Rule.Protocol.TCP, sourceIp, destinationIp, destinationPort);
+        return tcpPacket(sourceIp, destinationIp, destinationPort, Rule.State.NEW);
     }
 
     public Action udpPacket(String sourceIp, String destinationIp, int destinationPort) {
-        return packet(Rule.Protocol.UDP, sourceIp, destinationIp, destinationPort);
+        return udpPacket(sourceIp, destinationIp, destinationPort, Rule.State.NEW);
     }
 
-    private Action packet(Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort) {
+    public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+        return packet(Rule.Protocol.TCP, sourceIp, destinationIp, destinationPort, state);
+    }
+
+    public Action udpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+        return packet(Rule.Protocol.UDP, sourceIp, destinationIp, destinationPort, state);
+    }
+
+    private Action packet(Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
         return chain.getRules().stream()
-                .filter(rule -> matches(rule, protocol, sourceIp, destinationIp, destinationPort))
+                .filter(rule -> matches(rule, protocol, sourceIp, destinationIp, destinationPort, state))
                 .findFirst()
                 .map(Rule::getAction)
                 .orElse(Action.returnFromChain()); // packet passes through
     }
 
-    private boolean matches(Rule rule, Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort) {
+    private boolean matches(Rule rule, Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
         if (!matchInterface(rule.getInput(), input)) {
             return false;
         }
@@ -66,7 +74,17 @@ public class Simulator {
         if (!matchPort(rule.getDestinationPort(), destinationPort)) {
             return false;
         }
+        if (!matchState(rule.getStates(), state)) {
+            return false;
+        }
         return true;
+    }
+
+    private boolean matchState(Rule.States ruleStates, Rule.State packetState) {
+        if (ruleStates == null) { // all states allowed
+            return true;
+        }
+        return ruleStates.match(packetState);
     }
 
     private boolean matchIp(String ruleIp, String packetIp) {

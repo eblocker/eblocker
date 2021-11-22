@@ -210,6 +210,10 @@ public class Rule {
         return outputInterface;
     }
 
+    public States getStates() {
+        return states;
+    }
+
     public String toString() {
         StringBuilder result = new StringBuilder();
         if (inputInterface != null) {
@@ -314,6 +318,16 @@ public class Rule {
             result.append("--state ");
             result.append(Arrays.stream(states).map(State::name).collect(Collectors.joining(",")));
             return result.toString();
+        }
+
+        public boolean match(State packetState) {
+            boolean found = false;
+            for (State state: states) {
+                if (state == packetState) {
+                    found = true;
+                }
+            }
+            return found == match;
         }
     }
 

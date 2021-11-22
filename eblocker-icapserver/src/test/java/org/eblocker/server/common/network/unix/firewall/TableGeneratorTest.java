@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class TableGeneratorTest {
     private final int proxyPort = 3128;
@@ -67,6 +68,7 @@ public class TableGeneratorTest {
     private Set<OpenVpnClientState> anonVpnClients;
 
     private Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn;
+    private Table natTable, filterTable, mangleTable;
 
     @Before
     public void setUp() {
@@ -106,11 +108,12 @@ public class TableGeneratorTest {
         generator.setSslEnabled(true);
         generator.setMasqueradeEnabled(true);
         generator.setMobileVpnServerEnabled(true);
+
+        createTablesAndSimulators();
     }
 
     @Test
     public void testNatPreRouting() {
-        createTablesAndSimulators();
         Simulator sim = natPre;
         sim.setInput(standardInterface);
 
@@ -148,7 +151,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testNatPostRouting() {
-        createTablesAndSimulators();
         Simulator sim = natPost;
         sim.setOutput(standardInterface);
 
@@ -160,8 +162,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testFilterForward() {
-        createTablesAndSimulators();
-
         // HTTP/3 is blocked only for SSL enabled devices
         Assert.assertEquals(Action.reject(), filterForward.udpPacket(sslEnabledDevice, externalHost, 443));
         Assert.assertEquals(Action.returnFromChain(), filterForward.udpPacket(enabledDevice, externalHost, 443));
@@ -173,8 +173,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testParentalControlRedirect() {
-        createTablesAndSimulators();
-
         // Accessing the blocking IP on ports 80 and 443 redirects to 3003 and 3004:
         Assert.assertEquals(Action.redirectTo(parentalControlRedirectIp, parentalControlRedirectHttpPort), natPre.tcpPacket(enabledDevice, parentalControlRedirectIp, 80));
         Assert.assertEquals(Action.redirectTo(parentalControlRedirectIp, parentalControlRedirectHttpsPort), natPre.tcpPacket(enabledDevice, parentalControlRedirectIp, 443));
@@ -190,7 +188,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testAccessSettings() {
-        createTablesAndSimulators();
         natPre.setInput(standardInterface);
 
         // Access settings from local network
@@ -209,7 +206,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testTorRouting() {
-        createTablesAndSimulators();
         natPre.setInput(standardInterface);
         natOutput.setOutput(standardInterface);
         filterForward.setInput(standardInterface);
@@ -233,7 +229,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testMobileVpn() {
-        createTablesAndSimulators();
         natPre.setInput(mobileVpnInterface);
         natPost.setOutput(standardInterface);
         filterForward.setInput(mobileVpnInterface);
@@ -256,7 +251,6 @@ public class TableGeneratorTest {
 
     @Test
     public void testAnonVpn() {
-        createTablesAndSimulators();
         natPre.setInput(standardInterface);
 
         // ports 80 and 443 are redirected to Squid:
@@ -275,10 +269,39 @@ public class TableGeneratorTest {
         Assert.assertEquals(Action.returnFromChain(), mangleVpn.tcpPacket(enabledDevice, externalHost, 1234));
     }
 
+    @Test
+    public void testAccessFromPublicAddresses() {
+        filterInput.setInput(standardInterface);
+
+        // Filter allows access from private IPs
+        Assert.assertEquals(Action.accept(), filterInput.tcpPacket(enabledDevice, eBlockerIp, 1234));
+        Assert.assertEquals(Action.accept(), filterInput.udpPacket(enabledDevice, eBlockerIp, 1234));
+
+        // Filter denies access from public IPs opening new connections...
+        Assert.assertEquals(Action.drop(), filterInput.tcpPacket(externalHost, eBlockerIp, 1234, Rule.State.NEW));
+        Assert.assertEquals(Action.drop(), filterInput.udpPacket(externalHost, eBlockerIp, 1234, Rule.State.NEW));
+
+        // ... except for eBlocker Mobile:
+        Assert.assertEquals(Action.accept(), filterInput.udpPacket(externalHost, eBlockerIp, 1194, Rule.State.NEW));
+
+        // But eBlocker may establish connections to public addresses and get responses:
+        Assert.assertEquals(Action.accept(), filterInput.tcpPacket(externalHost, eBlockerIp, 1234, Rule.State.ESTABLISHED));
+        Assert.assertEquals(Action.accept(), filterInput.udpPacket(externalHost, eBlockerIp, 1234, Rule.State.ESTABLISHED));
+    }
+
+    @Test
+    public void testRules() {
+        // There are some sanity checks in Rule#toString()
+        Stream.of(natTable, mangleTable, filterTable)
+                .flatMap(table -> table.getChains().stream())
+                .flatMap(chain -> chain.getRules().stream())
+                .forEach(rule -> Assert.assertNotNull(rule.toString()));
+    }
+
     private void createTablesAndSimulators() {
-        Table natTable = generator.generateNatTable(deviceIpFilter, anonVpnClients);
-        Table mangleTable = generator.generateMangleTable(deviceIpFilter, anonVpnClients);
-        Table filterTable = generator.generateFilterTable(deviceIpFilter, anonVpnClients);
+        natTable = generator.generateNatTable(deviceIpFilter, anonVpnClients);
+        mangleTable = generator.generateMangleTable(deviceIpFilter, anonVpnClients);
+        filterTable = generator.generateFilterTable(deviceIpFilter, anonVpnClients);
 
         natPre = new Simulator(natTable.chain("PREROUTING"));
         natPost = new Simulator(natTable.chain("POSTROUTING"));

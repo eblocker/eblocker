@@ -20,7 +20,6 @@
  */
 let quickRun = false;
 
-
 const args = require('yargs').alias('r', 'redirectRestApi').argv;
 const browserSync = require('browser-sync');
 const config = require('./gulp.config')();
@@ -33,10 +32,6 @@ const ansiColors = require('ansi-colors');
 const _ = require('lodash');
 const debug = require('gulp-debug-streams');
 
-const webpack = require('webpack');
-const webpackStream = require('webpack-stream');
-
-const gulpSequence = require('gulp-sequence');
 const gulpInject = require('gulp-inject');
 const gulpConcat = require('gulp-concat');
 const gulpRef = require('gulp-rev');
@@ -47,7 +42,7 @@ const jsonminify = require('gulp-jsonminify');
 const gulpTap = require('gulp-tap');
 const file = require('gulp-file');
 
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const cleanCSS = require('gulp-clean-css');
 
 const port = process.env.PORT || config.defaultPort;
@@ -79,12 +74,6 @@ const nlf = require('nlf');
  * --inspect-brk: Launch debugger and break on 1st line with node-inspector.
  * --startServers: Will start servers for midway tests on the test task.
  */
-
-/**
- * List the available gulp tasks
- */
-gulp.task('help', $.taskListing);
-gulp.task('default', ['help']);
 
 /**
  * Avoid error: (node:85927) MaxListenersExceededWarning: Possible EventEmitter memory leak detected.
@@ -141,7 +130,7 @@ function createTemplateCache(module) {
 }
 
 
-gulp.task('template-cache', function (done) {
+function templateCache(done) {
     let counter = 0;
     for (let i = 0; i < config.modules.length; i++) {
         createTemplateCache(config.modules[i])
@@ -160,17 +149,17 @@ gulp.task('template-cache', function (done) {
             }
         );
     }
-});
+}
 
 /**
  * Only called in dev, so that overview page exists with all modules
  */
-gulp.task('copy-root-index', function() {
+function copyRootIndex() {
     // not required, if 'template'-task also copies the index.html's
     // ** this task is required for the sample and dashboard root page, opened by serve-dev
     return gulp.src(config.src + 'index.html')
         .pipe(gulp.dest(config.build));
-});
+}
 
 function doInject(module) {
     let target = gulp.src(config.index(module));
@@ -191,7 +180,7 @@ function doInject(module) {
 /**
  * Injects each JS and CSS bundle into each index.html (per module)
  */
-gulp.task('inject-compiled', function(done) {
+function injectCompiled(done) {
     let counter = 0;
     for (let i = 0; i < config.modules.length; i++) {
         doInject(config.modules[i])
@@ -210,16 +199,6 @@ gulp.task('inject-compiled', function(done) {
             }
         );
     }
-});
-
-function webpackBundle(module, isDev) {
-    let webpackConfig = require('./webpack.config.js')(module, isDev);
-
-    return gulp.src(config.src + module + '/**/*.js')
-        .pipe(webpackStream(webpackConfig, webpack))
-        .on('error', handleError)
-        .pipe(gulpRef())
-        .pipe(gulp.dest(config.build + module));
 }
 
 function browserifyBundle(module, isDev) {
@@ -276,48 +255,13 @@ function browserifyBundle(module, isDev) {
     return browserifyResult;
 }
 
-gulp.task('webpack:develop', function(done) {
-    doWebpackBundle(true, done);
-});
-
-gulp.task('webpack:production', function(done) {
-    doWebpackBundle(false, done);
-});
-
-function doWebpackBundle(isDev, done) {
-    let counter = 0;
-
-    // ** This is somewhat a hack. We need the return stream from webpackBundle(..) to determine
-    // when the bundle() task is done. Otherwise the next task (in the sequence) will be executed
-    // before the file is written to the FS. Browser would reload, but no change would be visible.
-    // So here we use the on-end event and then manually notify that the task is done. The counter
-    // makes sure that all modules have been build.
-    for (let i = 0; i < config.modules.length; i++) {
-        webpackBundle(config.modules[i], isDev)
-            .on('end', function() {
-                counter++;
-                log('Webpack task ' + counter + ' is done.');
-                if (counter === config.modules.length) {
-                    done();
-                }
-            })
-            .on('error', function() {
-                counter++;
-                log('Webpack task ' + counter + ' ended with error.');
-                if (counter === config.modules.length) {
-                    done();
-                }
-            });
-    }
+function browserifyDevelop(done) {
+    doBrowserifyBundle(true, done);
 }
 
-gulp.task('browserify:develop', function(done) {
-    doBrowserifyBundle(true, done);
-});
-
-gulp.task('browserify:production', function(done) {
+function browserifyProduction(done) {
     doBrowserifyBundle(false, done);
-});
+}
 
 function doBrowserifyBundle(isDev, done) {
     let counter = 0;
@@ -349,115 +293,104 @@ function doBrowserifyBundle(isDev, done) {
 // ***** WATCHERS
 
 /**
- * Webpack/Browserify takes quite some time to bundle (app + node_modules). As a
+ * Browserify takes quite some time to bundle (app + node_modules). As a
  * quick workaround, we split the JS watchers into modules here.
  * So when JS changes only the changed module is re-bundled.
  */
-gulp.task('watch', function() {
+function watch() {
 
     for (let i = 0; i < config.modules.length; i++) {
-        let module = config.modules[i];
-
-        // the watch-task to be called when js files are changed.
-        gulp.task('watch-js-' + module, function(done) {
-            return getGulpWatchSequenceJS(module, done);
-        });
-
-        // the watch-task to be called when HTML files are changed.
-        gulp.task('watch-tpl-' + module, function(done) {
-            return getGulpWatchSequenceTemplate(module, done);
-        });
-
-        // create browserify bundler for each module.
-        // Called by each watch-js-* task: see sequence of
-        // watch-js-*
-        gulp.task('browserify:' + module, function(done) {
-            return browserifyBundle(module, true);
-        });
-
-        gulp.task('template-cache:' + module, function(done) {
-            return createTemplateCache(module);
-        });
-
-        gulp.task('clean-js-' + module, function(done) {
-            return getCleanJSFnForModule(done, module + '/');
-        });
-
-        gulp.task('clean-template-' + module, function(done) {
-            return getCleanTemplateFnForModule(done, module);
-        });
-        // register the actual JS + HTML watcher
-        gulp.watch([config.src + module + '/**/*.js', config.src + 'shared/**/*.js'], ['watch-js-' + module]);
-        gulp.watch([config.src + module + '/**/*.html', config.src + 'shared/**/*.html'], ['watch-tpl-' + module]);
+        addModuleWatchers(config.modules[i]);
     }
-    gulp.watch(config.src + '**/*.scss', ['watch-sass']);
-    gulp.watch(config.src + 'locale/*.json', ['watch-locale']);
-});
 
-function getGulpWatchSequenceJS(module, done) {
-    return gulpSequence('clean-js-' + module,
-        'browserify:' + module,
-        'clean-index',
-        'inject-compiled',
-        function() {
-            browserSync.reload();
-            done();
-        }
-    );
+    gulp.watch(config.src + '**/*.scss', gulp.series(
+        cleanCss,
+        sassTask,
+        cleanIndex,
+        injectCompiled,
+        browserSyncReload));
+
+    gulp.watch(config.src + 'locale/*.json', watchLocale);
 }
 
-function getGulpWatchSequenceTemplate(module, done) {
-    return gulpSequence('clean-template-' + module,
-        'template-cache:' + module,
-        'clean-index',
-        'inject-compiled',
-        function() {
-            browserSync.reload();
-            done();
-        }
+function addModuleWatchers(module) {
+    // create browserify bundler for each module.
+    // Called by each watch-js-* task: see sequence of
+    // watch-js-*
+    const browserifyMod = function() {
+        return browserifyBundle(module, true);
+    };
+
+    const templateCacheMod = function() {
+        return createTemplateCache(module);
+    };
+
+    const cleanJsMod = function(done) {
+        return getCleanJSFnForModule(done, module + '/');
+    };
+
+    const cleanTemplateMod = function(done) {
+        return getCleanTemplateFnForModule(done, module);
+    };
+
+    // Set display names for better log messages:
+    browserifyMod.displayName = 'browserify:' + module;
+    templateCacheMod.displayName = 'template-cache:' + module;
+    cleanJsMod.displayName = 'clean-js:' + module;
+    cleanTemplateMod.displayName = 'clean-template:' + module;
+
+    const watchJSSeriesMod = gulp.series(
+        cleanJsMod,
+        browserifyMod,
+        cleanIndex,
+        injectCompiled,
+        browserSyncReload
     );
+
+    const watchTemplateSeriesMod = gulp.series(
+        cleanTemplateMod,
+        templateCacheMod,
+        cleanIndex,
+        injectCompiled,
+        browserSyncReload
+    );
+
+    // register the actual JS + HTML watcher
+    gulp.watch([config.src + module + '/**/*.js', config.src + 'shared/**/*.js'], watchJSSeriesMod);
+    gulp.watch([config.src + module + '/**/*.html', config.src + 'shared/**/*.html'], watchTemplateSeriesMod);
 }
 
-gulp.task('watch-sass', function(done) {
-    return gulpSequence('clean-css', 'sass', 'clean-index', 'inject-compiled', function() {
-        browserSync.reload();
-        done();
-    });
-});
-
-gulp.task('watch-locale', function(done) {
-    // watch-locale calls 'clean-locale'
-    return gulpSequence('watch-locale', function() {
-        browserSync.reload();
-        done();
-    });
-});
-
+function browserSyncReload(done) {
+    browserSync.reload();
+    done();
+}
 
 // ***** CLEAN TASKS
 
 /**
  * Cleans all
  */
-gulp.task('clean', function(done) {
+function cleanAll(done) {
     let delconfig = [].concat(config.build, config.temp, config.report);
     log('Cleaning: ' + ansiColors.blue(delconfig));
     clean(delconfig, done);
-});
+}
+exports.clean = cleanAll;
 
-gulp.task('clean-report', function(done) {
+function cleanReport(done) {
     let delconfig = [].concat(config.report);
     log('Cleaning: ' + ansiColors.blue(delconfig));
     clean(delconfig, done);
-});
+}
+exports['clean-report'] = cleanReport;
 
-gulp.task('clean-styles', function(done) {
+exports['clean-styles'] = function(done) {
     let files = [].concat(
         config.temp + '**/*.css',
         config.build + 'css/**/*.css'
     );
     clean(files, done);
-});
+};
 
 /**
  * Fixes issue:
@@ -466,7 +399,7 @@ gulp.task('clean-styles', function(done) {
  *  So here we clean out the index, copy it again, and after that we can
  *  call the injection task.
  */
-gulp.task('clean-index', function(done) {
+function cleanIndex(done) {
     let counter = 0;
     for (let i = 0; i < config.modules.length; i++) {
         let module = config.modules[i];
@@ -480,7 +413,7 @@ gulp.task('clean-index', function(done) {
             }
         });
     }
-});
+}
 
 /**
  * We split the clean JS tasks into
@@ -501,39 +434,36 @@ function getCleanTemplateFnForModule(done, module) {
     clean(delconfig, done);
 }
 
-gulp.task('clean-css', function(done) {
+function cleanCss(done) {
     let delconfig = [config.build + 'css'];
     log('Cleaning: ' + ansiColors.blue(delconfig));
     clean(delconfig, done);
-});
+}
 
-gulp.task('clean-images', function(done) {
+function cleanImages(done) {
     clean(config.build + 'img/**/*.*', done);
-});
+}
 
-gulp.task('clean-locale', function(done) {
+function cleanLocale(done) {
     clean(config.build + 'locale/**/*.*', done);
-});
+}
 
-gulp.task('sass', function() {
+function sassTask() {
     let sassConf = config.sassConfig();
-    return gulp.src([sassConf.entryPoint, 'node_modules/angular-material-time-picker/dist/md-time-picker.css'])
+    return gulp.src([sassConf.entryPoint])
         .pipe(sass())
         .on('error', handleError)
         .pipe(gulpConcat('main.css'))
         .pipe(cleanCSS())
         .pipe(gulpRef())
         .pipe(gulp.dest(sassConf.dest));
-});
+}
 
 /**
  * To add static css files. Planing to use this to add a style to the content of an iframe (fragFinn dashboard card).
  * The idea is to get the element with Javascript and add a link with href to the static css file. We cannot know
  * the ref number, so here we simply copy static css files to the build folder.
  */
-gulp.task('special-css', function(done) {
-    return specialCss(done);
-});
 
 function specialCss(done) {
     let counter = 0;
@@ -625,18 +555,17 @@ function copyExistingLangFiles(module, obj) {
 }
 
 let localeWatchSemaphore = false;
-gulp.task('watch-locale', function(done) {
+function watchLocale(done) {
     if (!localeWatchSemaphore) {
         localeWatchSemaphore = true;
-        return gulpSequence('clean-locale', 'do-locale', done);
+        gulp.series(cleanLocale, doLocale)();
     } else {
         log('Language watch in progress. Cannot executing watch task.');
-        done();
     }
+    done();
+}
 
-});
-
-gulp.task('do-locale', function(done) {
+function doLocale(done) {
     let counter = 0;
     const modules = [];
     // copy modules so that we can add 'shared' string w/o adding it for other places that use modules
@@ -661,8 +590,7 @@ gulp.task('do-locale', function(done) {
             }
         });
     }
-});
-
+}
 
 /**
  * Provides a random / ref number for the lang files. We use the same number for both 'en' and 'de' file. This is
@@ -710,7 +638,7 @@ function copyAndRenameLangFiles(module, obj) {
         .pipe(gulp.dest(config.build + 'locale/'));
 }
 
-gulp.task('set-lang-filenames', function(done) {
+function setLangFilenames(done) {
     let counter = 0;
     const modules = [];
     // copy modules so that we can add 'shared' string w/o adding it for other places that use modules
@@ -733,7 +661,7 @@ gulp.task('set-lang-filenames', function(done) {
             }
         });
     }
-});
+}
 
 /**
  * Writes a javascript file which exports the language file information (ref number), so that we can give
@@ -741,7 +669,7 @@ gulp.task('set-lang-filenames', function(done) {
  * a ref number, to force browser to reload the file).
  * This export can be imported in the corresponding translationConfig.js file.
  */
-gulp.task('write-down', function () {
+function writeDown() {
     const string = '/* This file has been generated automatically. Please do not edit. ' +
         'Please do not push into repo. */\n\nexport default ' +
         JSON.stringify(langObj) +
@@ -749,12 +677,12 @@ gulp.task('write-down', function () {
     log('Writing JS exports file for language reference numbers to ' + config.src + 'shared/locale/langFileNames.js');
     return file('langFileNames.js', Buffer.from(string), { src: true })
         .pipe(gulp.dest(config.src + 'shared/locale'));
-});
+}
 
 /**
  * Copy and compress images
  */
-gulp.task('images', ['clean-images'], function() {
+function compressAndCopyImages() {
     log('Compressing and copying images');
 
     return gulp
@@ -768,13 +696,13 @@ gulp.task('images', ['clean-images'], function() {
         )
         .on('error', exitBuild)
         .pipe(gulp.dest(config.build + 'img'));
-});
-
+}
+const images = gulp.series(cleanImages, compressAndCopyImages);
 
 /**
  * vet the code and create coverage report
  */
-gulp.task('vet', function() {
+function vet() {
     log('Analyzing source with JSHint and JSCS: ' + config.allJs);
 
     return gulp
@@ -785,7 +713,7 @@ gulp.task('vet', function() {
         .pipe($.jshint.reporter('jshint-stylish', { verbose: true }))
         .pipe($.jshint.reporter('fail'))
         .pipe($.jscs());
-});
+}
 
 /**
  * Run specs once and exit
@@ -793,12 +721,13 @@ gulp.task('vet', function() {
  *    gulp test --startServers
  * @return {Stream}
  */
-gulp.task('test', ['clean-report'], function(done) {
+const test = gulp.series(cleanReport, function(done) {
     if (!quickRun) {
         log('Starting test cases...');
         startTests(true /*singleRun*/, done);
     } else {
         log('Skipping test cases.');
+        done();
     }
 });
 
@@ -815,7 +744,7 @@ function addLicense(item, license) {
     return summary;
 }
 
-gulp.task('generateJavaScriptLicenseCSV', function(done) {
+function generateJavaScriptLicenseCSV(done) {
     nlf.find({
         directory: './',
         summaryMode: 'off',
@@ -905,9 +834,9 @@ gulp.task('generateJavaScriptLicenseCSV', function(done) {
             csv, {encoding:'utf8'});
         done();
     });
-});
+}
 
-gulp.task('convertLicenseCSVtoJSON', function() {
+function convertLicenseCSVtoJSON() {
     return fs.createReadStream(config.src +
         'settings/app/components/openSourceLicenses/raw/javascript-dependencies.csv')
         .pipe(csv2json({
@@ -916,9 +845,9 @@ gulp.task('convertLicenseCSVtoJSON', function() {
         }))
         .pipe(fs.createWriteStream(config.src +
             'settings/app/components/openSourceLicenses/raw/javascript-dependencies.json'));
-});
+}
 
-gulp.task('generate-and-write-js-licenses', function(done) {
+function generateAndWriteJsLicenses(done) {
     if (quickRun) {
         log('Skipping generation of Javascript dependency list');
         done();
@@ -928,10 +857,11 @@ gulp.task('generate-and-write-js-licenses', function(done) {
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
     }
-    gulpSequence('generateJavaScriptLicenseCSV', 'convertLicenseCSVtoJSON', 'createJavaScriptLicenseHTML', done);
-});
+    gulp.series(generateJavaScriptLicenseCSV, convertLicenseCSVtoJSON, createJavaScriptLicenseHTML)();
+    done();
+}
 
-gulp.task('createJavaScriptLicenseHTML', function(done) {
+function createJavaScriptLicenseHTML(done) {
     const html = fs.readFileSync(config.src +
         'settings/app/components/openSourceLicenses/libs-javascript.component.html', {encoding:'utf8'});
     const jsDepJson = require(config.src +
@@ -960,7 +890,7 @@ gulp.task('createJavaScriptLicenseHTML', function(done) {
     fs.writeFileSync(config.src + 'settings/app/components/openSourceLicenses/raw/libs-javascript.generated.html',
         htmlDest, {encoding:'utf8'});
     done();
-});
+}
 
 /**
  * Run specs and wait.
@@ -968,48 +898,54 @@ gulp.task('createJavaScriptLicenseHTML', function(done) {
  * To start servers and run midway specs as well:
  *    gulp autotest --startServers
  */
-gulp.task('autotest', function(done) {
+exports.autotest = function(done) {
     startTests(false /*singleRun*/, done);
-});
+};
 
-gulp.task('start-prod', function(done) {
+function setQuickRun(done) {
     quickRun = (args.quickrun !== undefined && (args.quickrun === true || args.quickrun === 'true'));
     log('Running tests and minification: ' + (!quickRun));
-    gulpSequence('vet', 'clean', 'set-lang-filenames', 'write-down', 'generate-and-write-js-licenses',
-        ['browserify:production', 'template-cache', 'sass', 'images', 'special-css'], 'inject-compiled', 'test', done);
-});
-
-gulp.task('start-dev', function(done) {
-    gulpSequence('clean', 'set-lang-filenames', 'write-down', ['browserify:develop', 'template-cache', 'sass',
-            'images', 'special-css'], 'copy-root-index', 'inject-compiled', done);
-});
-
-gulp.task('build', ['start-prod'], function(done) {
-    let msg = {
-        title: 'gulp build',
-        subtitle: 'Deployed to the build folder',
-        message: 'Running `gulp build`'
-    };
-    log(msg);
     done();
-});
+}
 
-gulp.task('build-dev', ['start-dev', 'watch'], function(done) {
-    let msg = {
-        title: 'gulp serve-dev',
-        subtitle: 'Deployed to the build folder',
-        message: 'Running `gulp serve-dev`'
-    };
-    log(msg);
-    done();
-});
+const startProd = gulp.series(
+    setQuickRun,
+    vet, cleanAll, setLangFilenames, writeDown, generateAndWriteJsLicenses,
+    gulp.parallel(browserifyProduction, templateCache, sassTask, images, specialCss),
+    injectCompiled, test
+);
+exports['start-prod'] = startProd;
+
+const startDev = gulp.series(
+    cleanAll, setLangFilenames, writeDown,
+    gulp.parallel(browserifyDevelop, templateCache, sassTask, images, specialCss),
+    copyRootIndex, injectCompiled
+);
+exports['start-dev'] = startDev;
+
+const build = gulp.series(
+    startProd,
+    function(done) {
+        let msg = {
+            title: 'gulp build',
+            subtitle: 'Deployed to the build folder',
+            message: 'Running `gulp build`'
+        };
+        log(msg);
+        done();
+    }
+);
+exports.build = build;
+
+const buildDev = gulp.series(startDev, watch);
+exports['build-dev'] = buildDev;
 
 /**
  * serve the dev environment
  * --inspect-brk or --inspect
  * --nosync
  */
-gulp.task('serve-dev', ['build-dev'], function() {
+exports['serve-dev'] = gulp.series(buildDev, function() {
     serve(true /*isDev*/);
 });
 
@@ -1018,7 +954,7 @@ gulp.task('serve-dev', ['build-dev'], function() {
  * --inspect-brk or --inspect
  * --nosync
  */
-gulp.task('serve-build', ['build'], function() {
+exports['serve-build'] = gulp.series(build, function() {
     serve(false /*isDev*/);
 });
 
@@ -1063,55 +999,6 @@ function orderSrc(src, order) {
         .pipe($.if(order, $.order(order)))
         ;
 }
-
-/**
- * Start Plato inspector and visualizer
- */
-// function startPlatoVisualizer(done) {
-//     log('Running Plato');
-//
-//     let files = glob.sync(config.plato.js);
-//     let excludeFiles = /.*\.spec\.js/;
-//     let plato = require('plato');
-//
-//     let options = {
-//         title: 'Plato Inspections Report',
-//         exclude: excludeFiles
-//     };
-//     let outputDir = config.report + '/plato';
-//
-//     plato.inspect(files, outputDir, options, platoCompleted);
-//
-//     function platoCompleted(report) {
-//         let overview = plato.getOverviewReport(report);
-//         if (args.verbose) {
-//             log(overview.summary);
-//         }
-//         if (done) {
-//             done();
-//         }
-//     }
-// }
-
-/**
- * Format and return the header for files
- */
-// function getHeader(module) {
-//     let pkg = require(config.packageJson);
-//     let template = ['/**',
-//         ' * <%= pkg.name %>/' + module + ' - <%= pkg.description %>',
-//         ' * @authors <%= pkg.authors %>',
-//         ' * @version v<%= pkg.version %>',
-//         ' * @link <%= pkg.homepage %>',
-//         ' * @license <%= pkg.license %>',
-//         ' * Copyright (c) 2017 eBlocker GmbH, Hamburg, Germany',
-//         ' */',
-//         ''
-//     ].join('\n');
-//     return $.header(template, {
-//         pkg: pkg
-//     });
-// }
 
 /**
  * Log a message or series of messages using chalk's blue color.
@@ -1307,5 +1194,3 @@ function notify(options) {
     _.assign(notifyOptions, options);
     notifier.notify(notifyOptions);
 }
-
-module.exports = gulp;

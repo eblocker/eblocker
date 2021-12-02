@@ -111,17 +111,63 @@ public class AutoTrustAppServiceTest {
         AppWhitelistModule sslCollectingAppModule = collectingModule("alreadyexisting.com");
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
 
-        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("cert.error.com")).thenReturn(notBlocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("bad.com")).thenReturn(blocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("alreadyexisting.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("too.old.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "foo.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "cert.error.com")));
         autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "bad.com")));
         autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CERT_UNTRUSTED, "alreadyexisting.com")));
+        Instant tooOldFromNow = now().minus(AutoTrustAppService.TOO_OLD).minusSeconds(5);
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(tooOldFromNow, KnownError.CERT_UNTRUSTED, "too.old.com")));
 
-        verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"), autoTrustAppModuleId);
+        verify(appModuleService).addDomainsToModule(whitelistUrls("cert.error.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("bad.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("alreadyexisting.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("too.old.com"), autoTrustAppModuleId);
+    }
+
+    @Test
+    public void testNewDomainStartingWithAPIAddedTheFirstTime() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("api.somewhere.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("api.bad.com")).thenReturn(blocked());
+
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "api.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "api.bad.com")));
+
+        verify(appModuleService).addDomainsToModule(whitelistUrls("api.somewhere.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("api.bad.com"), autoTrustAppModuleId);
+    }
+
+    @Test
+    public void testNewDomainStartingWithWWWAddedOnThirdOccurence() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule("alreadyexisting.com");
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("www.somewhere.com")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("www.bad.com")).thenReturn(blocked());
+
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
+
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
+
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+
+        verify(appModuleService).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
     }
 
     @Test
@@ -154,13 +200,28 @@ public class AutoTrustAppServiceTest {
     }
 
     @Test
+    public void testNewDomainIsNotAddedWhenTooOld() {
+        AppWhitelistModule sslCollectingAppModule = collectingModule();
+        when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
+
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
+
+        Instant tooOldFromNow = now().minus(AutoTrustAppService.TOO_OLD).minusSeconds(5);
+        autoTrustAppService.onChange(newArrayList(failedConnection(tooOldFromNow.minusSeconds(10), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(tooOldFromNow, "foo.com")));
+
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
+                autoTrustAppModuleId);
+    }
+
+    @Test
     public void testNewDomainIsNotAddedWithOldLastOccurence() {
         AppWhitelistModule sslCollectingAppModule = collectingModule();
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.plusMinutes(1)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.FAILED_CONECTIONS_CUT_OFF_DURATION.plusMinutes(1)), "foo.com")));
         autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("foo.com"),
@@ -187,8 +248,8 @@ public class AutoTrustAppServiceTest {
 
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("foo.com")).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.plusMinutes(1)), "foo.com")));
-        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS.minusMinutes(3)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.FAILED_CONECTIONS_CUT_OFF_DURATION.plusMinutes(1)), "foo.com")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minus(AutoTrustAppService.FAILED_CONECTIONS_CUT_OFF_DURATION.minusMinutes(3)), "foo.com")));
         autoTrustAppService.onChange(newArrayList(failedConnection(now(), "foo.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("foo.com"),

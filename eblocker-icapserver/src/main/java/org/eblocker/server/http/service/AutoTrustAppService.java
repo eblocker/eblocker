@@ -30,13 +30,18 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -81,7 +86,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         SELF_SIGNED_CERT_IN_CHAIN("crtvd:19:X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN", true),
         CERT_UNTRUSTED("crtvd:27:X509_V_ERR_CERT_UNTRUSTED", true), // TODO: also seen for 5thmarket.info, which is a tracker, and for bzz.ch (web only)
         BAD_CERTIFICATE("ssl:1:error:14094412:SSL routines:ssl3_read_bytes:sslv3 alert bad certificate", true), // TODO seen for lookaside.facebook.com, i.instagram.com, graph.instagram.com, graph.facebook.com so is this really a isCertError?
-        CERTIFICATE_UNKNOWN("ssl:1:error:14094416:SSL routines:ssl3_read_bytes:sslv3 alert certificate unknown", true),
+        CERTIFICATE_UNKNOWN("ssl:1:error:14094416:SSL routines:ssl3_read_bytes:sslv3 alert certificate unknown", true), // TODO seen for www.srf.ch
         UNKNOWN_CA("ssl:1:error:14094418:SSL routines:ssl3_read_bytes:tlsv1 alert unknown ca", true),
         UNSUPPORTED_PROTOCOL("ssl:1:error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol", true),
         CONNECTION_RESET("io:104:(104) Connection reset by peer", false),
@@ -121,11 +126,12 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     private static final Logger log = LoggerFactory.getLogger(AutoTrustAppService.class);
 
-    public static final Duration MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS = Duration.ofMinutes(30);
+    static final Duration FAILED_CONECTIONS_CUT_OFF_DURATION = Duration.ofMinutes(30);
+    static final Duration TOO_OLD = Duration.ofMinutes(30);
     private final AppModuleService appModuleService;
     private final DomainBlockingService domainBlockingService;
     private final DeviceService deviceService;
-    private final Map<String, Instant> pendingDomains = new ConcurrentHashMap<>();
+    private final Map<String, List<Instant>> pendingDomains = new ConcurrentHashMap<>();
     private final SuccessfulSSLDomains successfulSSLDomains = new SuccessfulSSLDomains(1000, 100, 0.001);
 
     @Inject
@@ -170,11 +176,15 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         if (!newWhiteListUrls.isEmpty()) {
             appModuleService.addDomainsToModule(newWhiteListUrls, autoTrustAppModule.getId());
         }
+
+        pruneTooOldPendingDomains();
     }
 
     private Optional<String> processDomain(String domain, FailedConnection fc) {
         logFailedConnection(fc);
         if (!happendOnSSLDevice(fc)) {
+            return Optional.empty();
+        } else if (tooOld(fc)) {
             return Optional.empty();
         } else if (!isDomainEligibleForAutoTrustApp(domain)) {
             log.trace("Not eligible for AutoTrustApp: " + domain);
@@ -187,11 +197,17 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         } else if (hasObviousRootCertificateProblemError(fc)) {
             log.debug("hasObviousRootCertificateProblemError" + domain);
             return processCertificateError(domain);
-        } else if (isPending(domain)) {
-            return processAlreadyPending(domain, fc.getLastOccurrence());
         } else {
-            return processNotPending(domain, fc.getLastOccurrence());
+            return processWithPendings(domain, fc.getLastOccurrence());
         }
+    }
+
+    private boolean tooOld(FailedConnection fc) {
+        return tooOld(fc.getLastOccurrence());
+    }
+
+    private boolean tooOld(Instant instant) {
+        return instant.isBefore(Instant.now().minus(TOO_OLD));
     }
 
     private void logFailedConnection(FailedConnection fc) {
@@ -220,39 +236,54 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         return KnownError.hasCertError(fc);
     }
 
-    private boolean isPending(String domain) {
-        return pendingDomains.containsKey(domain);
+    private Optional<String> processCertificateError(String domain) {
+        return pendingSuccess(domain);
     }
 
-    private Optional<String> processCertificateError(String domain) {
+    private Optional<String> processWithPendings(String domain, Instant lastSeen) {
+        List<Instant> previousSeens = pendingDomains.get(domain);
+        NavigableSet<Instant> allOccurences = previousSeens == null ? new TreeSet<>() : new TreeSet<>(previousSeens);
+        allOccurences.add(lastSeen);
+
+        pruneToRange(allOccurences);
+
+        if (allOccurences.isEmpty()) {
+            pendingDomains.remove(domain);
+        }
+
+        if (domain.startsWith("api.")) {
+            return pendingSuccess(domain);
+        } else if (domain.startsWith("www.")) {
+            if (allOccurences.size() > 2) {
+                return pendingSuccess(domain);
+            } else {
+                return stillPending(domain, allOccurences);
+            }
+        } else {
+            if (allOccurences.size() == 1) {
+                return stillPending(domain, allOccurences);
+            } else {
+                return pendingSuccess(domain);
+            }
+        }
+    }
+
+    private Optional<String> pendingSuccess(String domain) {
+        pendingDomains.remove(domain);
         return Optional.of(domain);
     }
 
-    private Optional<String> processAlreadyPending(String domain, Instant lastSeen) {
-        Instant pendingSeen = pendingDomains.get(domain);
-        if (lastSeen.isAfter(pendingSeen)) {
-            if (lastSeen.minus(MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS).isBefore(pendingSeen)) {
-                pendingDomains.remove(domain);
-                return Optional.of(domain);
-            } else {
-                // overwrite with newer occurrence
-                pendingDomains.put(domain, lastSeen);
-                log.debug("Overwriting " + domain + " in pendingDomains with newer occurence");
-                return Optional.empty();
-            }
-        } else {
-            return Optional.empty();
-        }
+    private Optional<String> stillPending(String domain, NavigableSet<Instant> allOccurences) {
+        pendingDomains.put(domain, new ArrayList<>(allOccurences));
+        log.debug("Updating " + domain + " in pendingDomains with newer occurence");
+        return Optional.empty();
     }
 
-    private Optional<String> processNotPending(String domain, Instant lastSeen) {
-        if (Instant.now().minus(MAX_RANGE_BETWEEN_TWO_FAILED_CONECTIONS).isBefore(lastSeen)) {
-            pendingDomains.put(domain, lastSeen);
-            log.debug("Adding " + domain + " to pendingDomains");
-        } else {
-            log.trace("FailedConnection too old to add domain " + domain);
-        }
-        return Optional.empty();
+    private void pruneToRange(Set<Instant> previousSeens) {
+        Instant minimum = Instant.now().minus(FAILED_CONECTIONS_CUT_OFF_DURATION);
+        //what 's the difference between the two constants?'
+        // TODO: add test for this (needs tooOld to not already filter these)
+        previousSeens.removeIf(i -> i.isBefore(minimum));
     }
 
     private boolean isDomainEligibleForAutoTrustApp(String domain) {
@@ -279,6 +310,20 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     private boolean isExplicitlyExcluded(String domain) {
         return domain.endsWith("eblocker.org");
+    }
+
+    private void pruneTooOldPendingDomains() {
+        Iterator<Map.Entry<String, List<Instant>>> iterator = pendingDomains.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<Instant>> e = iterator.next();
+            List<Instant> pruned = e.getValue().stream().filter(not(this::tooOld)).collect(Collectors.toList());
+            if (pruned.isEmpty()) {
+                log.debug("Removing " + e.getKey() + " from pending domains");
+                iterator.remove();
+            } else {
+                e.setValue(pruned);
+            }
+        }
     }
 
     @Override

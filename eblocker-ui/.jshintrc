@@ -23,7 +23,7 @@
     "maxparams": 10,
     "maxdepth": 5,
     "maxstatements": 40,
-    "maxcomplexity": 8,
+    "maxcomplexity": 14,
     "maxlen": 120,
 
     "asi": false,

@@ -79,7 +79,6 @@
         "gulp-print": "5.0.2",
         "gulp-rev": "9.0.0",
         "gulp-sass": "5.0.0",
-        "gulp-sequence": "1.0.0",
         "gulp-sourcemaps": "3.0.0",
         "gulp-tap": "2.0.0",
         "gulp-uglify": "3.0.2",

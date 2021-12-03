@@ -1731,6 +1731,9 @@
                         "DEVICES_MALWARE_FILTER_DISABLED" : "The following devices have malware filtering disabled: ",
                         "ALL_DEVICES_USE_AUTO_CONTROLBAR" : "All your devices are using the automatic ControlBar configuration.",
                         "DEVICES_WITHOUT_AUTO_CONTROLBAR" : "The following devices are not using the automatic ControlBar configuration: ",
+                        "DNS_TOR_NOT_DISABLED" : "The Tor network is used for DNS requests. This is not recommended for novices.",
+                        "DNS_TOR_MAY_LEAD_TO_ERRORS" : "The Tor network is used for DNS requests. Please note that this may lead to sporadic errors.",
+                        "ADMIN_PASSWORD_NOT_SET": "The admin password is not set. Anyone with access to your network can change the settings of the eBlocker",
                         "MORE_INFO" : "More information",
                         "CLICK_FOR_MORE" : "Click for details."
                     }

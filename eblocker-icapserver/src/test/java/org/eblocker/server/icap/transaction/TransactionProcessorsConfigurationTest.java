@@ -16,8 +16,10 @@
  */
 package org.eblocker.server.icap.transaction;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.RequireFeature;
 import org.eblocker.server.http.service.ProductInfoService;
@@ -33,6 +35,7 @@ import java.util.List;
 
 public class TransactionProcessorsConfigurationTest {
 
+    public static final String OPTIMIZE_LOGGER = "OPTIMIZE";
     private ProductInfoService productInfoService;
     private List<TransactionProcessor> requestProcessors;
     private List<TransactionProcessor> responseProcessors;
@@ -57,16 +60,15 @@ public class TransactionProcessorsConfigurationTest {
         Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[0]);
 
         // save log configuration and overwrite to have consistent default
-        Logger logger = Logger.getLogger("OPTIMIZE");
+        Logger logger = LogManager.getLogger(OPTIMIZE_LOGGER);
         optimizeLevel = logger.getLevel();
-        logger.setLevel(Level.WARN);
+        Configurator.setLevel(OPTIMIZE_LOGGER, Level.WARN);
     }
 
     @After
     public void tearDown() {
         // restore previous log configuration
-        Logger logger = Logger.getLogger("OPTIMIZE");
-        logger.setLevel(optimizeLevel);
+        Configurator.setLevel(OPTIMIZE_LOGGER, optimizeLevel);
     }
 
     @Test
@@ -132,8 +134,7 @@ public class TransactionProcessorsConfigurationTest {
     public void testLoggingProcessors() {
         Mockito.when(productInfoService.get().getProductFeatures()).thenReturn(new String[]{ ProductFeature.PRO.name() });
 
-        Logger logger = Logger.getLogger("OPTIMIZE");
-        logger.setLevel(Level.INFO);
+        Configurator.setLevel(OPTIMIZE_LOGGER, Level.INFO);
 
         configuration = new TransactionProcessorsConfiguration(productInfoService, requestProcessors, responseProcessors);
 

@@ -17,7 +17,7 @@
 #
 
 BASEDIR=/opt/eblocker-icap
-LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j.properties
+LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j2.xml
 ARGS=""
 
 SELF_CHECK=0
@@ -47,5 +47,5 @@ if [ $SELF_CHECK -eq 1 ]; then
     exec java -cp $BASEDIR/lib/${project.build.finalName}.jar org.eblocker.server.app.SelfCheckApp
 else
     # Run the ICAP server:
-    exec java -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m -Dlog4j.configuration=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
+    exec java -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
 fi

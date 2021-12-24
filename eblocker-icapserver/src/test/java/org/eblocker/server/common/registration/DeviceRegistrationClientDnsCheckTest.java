@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
+import org.mockserver.model.MediaType;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -43,6 +44,7 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
                         .withBody("helloworld.com")
         ).respond(
                 HttpResponse.response()
+                        .withContentType(MediaType.JSON_UTF_8)
                         .withStatusCode(200)
                         .withBody("true")
         );
@@ -59,6 +61,7 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
                         .withBody("helloworld.com")
         ).respond(
                 HttpResponse.response()
+                        .withContentType(MediaType.JSON_UTF_8)
                         .withStatusCode(200)
                         .withBody("false")
         );

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} [%-5p] %c [%t] - %m%n"/>
+        </Console>
+        <RollingFile name="SYSTEM"
+                     fileName="/var/log/eblocker/eblocker-system.log"
+                     filePattern="/var/log/eblocker/eblocker-system.log.%i">
+            <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+        <RollingFile name="AUDIT"
+                     fileName="/var/log/eblocker/eblocker-audit.log"
+                     filePattern="/var/log/eblocker/eblocker-audit.log.%i">
+            <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+        <RollingFile name="OPTIMIZE"
+                     fileName="/var/log/eblocker/icapserver-optimize.log"
+                     filePattern="/var/log/eblocker/icapserver-optimize.log.%i">
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="SYSTEM"/>
+        </Root>
+        <Logger name="STATUS" level="info"/>
+        <Logger name="FILTER_LOG" level="info" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="AUDIT"/>
+        </Logger>
+        <Logger name="OPTIMIZE" level="warn">
+            <AppenderRef ref="OPTIMIZE"/>
+        </Logger>
+
+        <!-- Uncomment this to get stack traces from HTTP controllers: -->
+        <!-- Logger name="org.eblocker.server.http.server.ExceptionLogger" level="debug"/ -->
+
+        <Logger name="org.eblocker.server.common.network.TorController" level="error"/>
+        <Logger name="javax.jmdns" level="error"/>
+    </Loggers>
+</Configuration>

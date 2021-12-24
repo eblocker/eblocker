@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <RollingFile name="SYSTEM"
+                     fileName="/var/log/certvalidator/certificate-validator.log"
+                     filePattern="/var/log/certvalidator/certificate-validator.log.%i">
+            <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="warn">
+            <AppenderRef ref="SYSTEM"/>
+        </Root>
+        <Logger name="STATUS" level="info" additivity="false"/>
+    </Loggers>
+</Configuration>

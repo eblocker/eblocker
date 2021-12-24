@@ -17,7 +17,7 @@
 #
 
 BASEDIR=/opt/eblocker-network/certificate-validator/
-LOG4JCONF=file://$BASEDIR/bin/certificate-validator-log4j.properties
+LOG4JCONF=file://$BASEDIR/bin/certificate-validator-log4j2.xml
 
 #exec java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xmx192m -Dlog4j.configuration=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar true
-exec java -Xmx192m -Dlog4j.configuration=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar true
+exec java -Xmx192m -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar true

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Console name="CONSOLE" target="SYSTEM_OUT">
+        <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
+    </Console>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+        <Logger name="org.eblocker.certificate.validator.squid.OcspCache" level="debug" additivity="false"/>
+        <Logger name="org.eblocker.certificate.validator.squid.CrlCache" level="debug" additivity="false"/>
+    </Loggers>
+</Configuration>

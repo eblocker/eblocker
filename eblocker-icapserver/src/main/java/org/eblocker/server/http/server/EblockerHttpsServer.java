@@ -1611,6 +1611,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getConsoleIp", HttpMethod.GET)
                 .name("public.controlbar.console.ip.route");
 
+        server
+                .uri("/controlbar/deviceRestrictions", controlBarController)
+                .action("getDeviceRestrictions", HttpMethod.GET)
+                .name("public.controlbar.device.restrictions.route");
+
         // ** New Controlbar, with 'api' prefix
         // ** New Controlbar: Trackers / Ads
         server

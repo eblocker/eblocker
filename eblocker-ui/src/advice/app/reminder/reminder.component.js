@@ -96,51 +96,18 @@ function  Controller(logger, $window, $translate, $filter, $http, $sce, $q, Devi
         vm.countdownStopped = true;
     }
 
-    function setLargeIframe(url, productType) {
-        // https://www.eblocker.com/en/license-reminder/
-        // https://www.eblocker.com/en/license-reminder-pro/
-        // https://www.eblocker.com/en/license-reminder-family/
-        const type = getIframeUrlType(productType, '');
-        displayIframe(url + type);
-    }
-
-    function setSmallIframe(url, productType) {
-        // https://www.eblocker.com/en/license-reminder-500/
-        // https://www.eblocker.com/en/license-reminder-pro-500/
-        // https://www.eblocker.com/en/license-reminder-family-500/
-        const type = getIframeUrlType(productType, '-500');
-        displayIframe(url + type, 'sm');
-    }
-
-    function setXsIframe(url, productType) {
-        // https://www.eblocker.com/en/license-reminder-250/
-        // https://www.eblocker.com/en/license-reminder-pro-250/
-        // https://www.eblocker.com/en/license-reminder-family-250/
-        const type = getIframeUrlType(productType, '-250');
-        displayIframe(url + type, 'xs');
-    }
-
     let xsDone, smDone, lgDone;
     function resizeWatcher() {
         if ($window.innerWidth < 600 && !xsDone) {
             xsDone = true;
-            setXsIframe(vm.url, vm.productType);
+            displayIframe(vm.url, 'xs');
         } else if ($window.innerWidth < 960 && !smDone) {
             smDone = true;
-            setSmallIframe(vm.url, vm.productType);
+            displayIframe(vm.url, 'sm');
         } else if (!lgDone) {
             lgDone = true;
-            setLargeIframe(vm.url, vm.productType);
+            displayIframe(vm.url);
         }
-    }
-
-    function getIframeUrlType(productType, size) {
-        if (productType === 'FAM') {
-            return '-family' + size + '/';
-        } else if (productType === 'PRO') {
-            return '-pro' + size + '/';
-        }
-        return size + '/';
     }
 
     function close() {

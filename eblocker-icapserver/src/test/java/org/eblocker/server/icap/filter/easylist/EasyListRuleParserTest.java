@@ -175,6 +175,18 @@ public class EasyListRuleParserTest {
     }
 
     @Test
+    public void testIgnoringPingRules() {
+        Filter rule = new EasyListLineParser().parseLine("$ping");
+        Assert.assertNull(rule);
+    }
+
+    @Test
+    public void testIgnoringPopupRules() {
+        Filter rule = new EasyListLineParser().parseLine("||shortpixel.ai^$popup");
+        Assert.assertNull(rule);
+    }
+
+    @Test
     public void ignoreElementHiding() {
         assertIgnore("ebuddy.com###Button");
         assertIgnore("###AdvContainerTopCenter");
@@ -200,7 +212,7 @@ public class EasyListRuleParserTest {
 
     @Test
     public void endMatchWithOption() {
-        String definition = "/ad.php|$popup";
+        String definition = "/ad.php|$object";
         assertFilter(definition, "https://example.com/path/ad.php?extra", null, null, Decision.NO_DECISION);
         assertFilter(definition, "https://example.com/path/ad.php", null, null, Decision.BLOCK);
     }

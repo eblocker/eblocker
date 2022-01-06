@@ -46,27 +46,11 @@
                 "PURCHASE" : "Für neue Lizenz spenden"
             },
             "TEXT" : {
-                "DEMO" : {
-                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
-                },
-                "FAM" : {
-                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
-                },
-                "PRO" : {
-                    "E0" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E1" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E2" : "Lieber Kunde, Ihre Lizenz läuft in {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E3" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab.",
-                    "E4" : "Lieber Kunde, Ihre Lizenz lief vor {{ days }} Tagen, am {{ displayDate }}, ab."
-                }
+                "E0" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E1" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E2" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E3" : "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab.",
+                "E4" : "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab."
             },
             "URL" : {
                 "PROMO" : "https://eBlocker.org/de/license-reminder",

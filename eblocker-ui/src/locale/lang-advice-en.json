@@ -46,27 +46,11 @@
                 "PURCHASE" : "Donate for new license"
             },
             "TEXT" : {
-                "DEMO" : {
-                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
-                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
-                },
-                "FAM" : {
-                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
-                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
-                },
-                "PRO" : {
-                    "E0" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E1" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E2" : "Dear Customer, your license expires in {{ days }} days on {{ displayDate }}.",
-                    "E3" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}.",
-                    "E4" : "Dear Customer, your license expired {{ days }} days ago on {{ displayDate }}."
-                }
+                "E0" : "Your license expires in {{ days }} days on {{ displayDate }}.",
+                "E1" : "Your license expires in {{ days }} days on {{ displayDate }}.",
+                "E2" : "Your license expires in {{ days }} days on {{ displayDate }}.",
+                "E3" : "Your license expired {{ days }} days ago on {{ displayDate }}.",
+                "E4" : "Your license expired {{ days }} days ago on {{ displayDate }}."
             },
             "URL" : {
                 "PROMO" : "https://eBlocker.org/en/license-reminder",

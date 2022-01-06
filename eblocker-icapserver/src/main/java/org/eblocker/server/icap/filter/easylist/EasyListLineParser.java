@@ -44,6 +44,12 @@ public class EasyListLineParser implements FilterLineParser {
                     ").*"
     );
 
+    private static final List<BooleanOption> UNSUPPORTED_OPTIONS = List.of(
+            BooleanOption.WEB_SOCKET,
+            BooleanOption.PING,
+            BooleanOption.POPUP
+    );
+
     private String definition;
 
     private EasyListRuleType ruleType;
@@ -133,9 +139,11 @@ public class EasyListLineParser implements FilterLineParser {
         type = ruleType.getType();
 
         normalizeMatchString();
-        if (Boolean.TRUE.equals(booleanOptions.get(BooleanOption.WEB_SOCKET))) {
-            log.info("filtering websockets unsupported, dropping rule: {}", definition);
-            return null;
+        for (BooleanOption unsupportedOption: UNSUPPORTED_OPTIONS) {
+            if (Boolean.TRUE.equals(booleanOptions.get(unsupportedOption))) {
+                log.info("filtering option {} unsupported, dropping rule: {}", unsupportedOption, definition);
+                return null;
+            }
         }
 
         StringMatchType matchType;

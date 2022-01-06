@@ -11,17 +11,15 @@
 
         <div layout="column" layout-align="center center">
 
-            <div translate="{{'REMINDER.OVERLAY.TEXT.' + vm.productType + '.' + vm.licensePhase}}"
+            <div translate="{{'REMINDER.OVERLAY.TEXT.' + vm.licensePhase}}"
                  translate-values="vm.context" layout-padding>
             </div>
 
-            <div>
+            <div layout="row">
                 <!-- button to enter license key -->
                 <md-button class="md-raised md-primary md-accent" ng-click="vm.buttonEnterLicenseKeyClicked()">
                     {{ 'REMINDER.OVERLAY.BUTTON.ENTER' | translate }}
                 </md-button>
-            </div>
-            <div>
                 <!-- button to buy license key -->
                 <md-button class="md-raised md-secondary" ng-click="vm.buttonBuyLicenseKeyClicked()">
                     {{ 'REMINDER.OVERLAY.BUTTON.PURCHASE' | translate }}

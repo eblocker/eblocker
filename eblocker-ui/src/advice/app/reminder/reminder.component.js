@@ -49,9 +49,6 @@ function  Controller(logger, $window, $translate, $filter, $http, $sce, $q, Devi
 
         vm.registrationInfo = RegistrationService.getRegistrationInfo();
 
-        // 'DEMO', 'PRO' or 'FAM'
-        vm.productType = determineProductType();
-
         const validDays = determineValidDays();
         // 'E0', 'E1', 'E2', 'E3'
         vm.licensePhase = determineLicensePhase(validDays);
@@ -164,8 +161,8 @@ function  Controller(logger, $window, $translate, $filter, $http, $sce, $q, Devi
     function displayIframe(url, screenSize){
         let width, height, iframeId;
         if (screenSize === 'xs') {
-            width = '250px';
-            height = '141px';
+            width = '300px';
+            height = '240px';
             iframeId = 'eblocker-reminder-iframe-container-xs';
         } else if (screenSize === 'sm') {
             width = '500px';
@@ -188,28 +185,6 @@ function  Controller(logger, $window, $translate, $filter, $http, $sce, $q, Devi
 
         // Insert it into reminder
         document.getElementById(iframeId).appendChild(iframe);
-    }
-
-    function determineProductType() {
-        if (!angular.isDefined(vm.registrationInfo)) {
-            return 'PRO';
-        }
-        if (!angular.isDefined(vm.registrationInfo.productInfo)) {
-            return 'PRO';
-        }
-        if (!angular.isDefined(vm.registrationInfo.productInfo.productId)) {
-            return 'PRO';
-        }
-        if (!angular.isDefined(vm.registrationInfo.productInfo.productFeatures)) {
-            return 'PRO';
-        }
-        if (vm.registrationInfo.productInfo.productId === 'EBL30DAYSTEST') {
-            return 'DEMO';
-        }
-        if (vm.registrationInfo.productInfo.productFeatures.indexOf('FAM') >= 0) {
-            return 'FAM';
-        }
-        return 'PRO';
     }
 
     function determineValidDays() {

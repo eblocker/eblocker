@@ -165,7 +165,7 @@ import ReportComponent from './components/system/diagnostics/report.component';
 import EventsComponent from './components/system/events/events.component';
 import FactoryResetComponent from './components/system/factoryReset/factory-reset.component';
 import ResetComponent from './components/system/reset/reset.component';
-import ResetActivationComponent from './components/system/resetActivation/reset-activation.component';
+import ResetActivationComponent from './components/home/license/resetActivation/reset-activation.component';
 import StatusComponent from './components/system/status/status.component';
 import TasksComponent from './components/system/tasks/tasks.component';
 import TimeLangComponent from './components/system/timeLang/time-language.component';

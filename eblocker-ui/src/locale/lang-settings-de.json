@@ -1234,7 +1234,6 @@
                 },
                 "TEXT1" : "Möchten Sie die Lizenz wirklich von diesem Gerät entfernen?",
                 "TEXT2" : "Ihr eBlocker erhält danach keine automatischen Updates mehr.",
-                "TEXT3" : "Die aktuelle Lizenz können Sie über unsere Website freigeben und bis zum Ablauf der Gültigkeit erneut verwenden.",
                 "TITLE" : "Lizenz entfernen"
             },
             "RESET_DEVICE_CONFIRM" : {
@@ -2435,10 +2434,6 @@
             "LABEL" : "Aktivierung Zurücksetzen",
             "NOTIFICATION" : {
                 "SUCCESS" : "Lizenz erfolgreich entfernt."
-            },
-            "TOOLTIP" : {
-                "NOT_AVAILABLE" : "Test- oder Evaluationslizenz kann nicht zurückgesetzt werden.",
-                "NOT_REGISTERED" : "Noch nicht aktiviert."
             }
         },
         "RESET_PASSWORD" : {

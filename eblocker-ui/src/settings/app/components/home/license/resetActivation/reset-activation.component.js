@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 export default {
-    templateUrl: 'app/components/system/resetActivation/reset-activation.component.html',
+    templateUrl: 'app/components/home/license/resetActivation/reset-activation.component.html',
     controller: Controller,
     controllerAs: 'vm'
 };

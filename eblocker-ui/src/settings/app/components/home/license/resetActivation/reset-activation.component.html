@@ -1,0 +1,12 @@
+<div class="config-frame md-whiteframe-z1" ng-hide="vm.isRegistrationStateNew() || vm.isEvaluationLicense()">
+    <h4>{{ 'ADMINCONSOLE.RESET_ACTIVATION.LABEL' | translate }}</h4>
+
+    <p>{{ 'ADMINCONSOLE.RESET_ACTIVATION.EXPLAIN_PART1' | translate}}</p>
+    <div flex="100">
+        <md-button style="margin-left: 0;"
+                   class="md-raised eb-delete-button"
+                   ng-click="vm.openLicenseResetDialog()">
+                {{ 'ADMINCONSOLE.RESET_ACTIVATION.ACTION.RESET' | translate}}
+        </md-button>
+    </div>
+</div>

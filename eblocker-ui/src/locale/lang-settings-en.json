@@ -1234,7 +1234,6 @@
                 },
                 "TEXT1" : "Do you really want to remove the license from this device?",
                 "TEXT2" : "Your eBlocker will not receive automatic updates anymore.",
-                "TEXT3" : "You can release the current license on our website. Afterwards, you can use it again until it expires.",
                 "TITLE" : "Remove License"
             },
             "RESET_DEVICE_CONFIRM" : {
@@ -2435,10 +2434,6 @@
             "LABEL" : "Reset Activation",
             "NOTIFICATION" : {
                 "SUCCESS" : "License successfully removed."
-            },
-            "TOOLTIP" : {
-                "NOT_AVAILABLE" : "Test or evaluation license cannot be reset.",
-                "NOT_REGISTERED" : "Not yet activated."
             }
         },
         "RESET_PASSWORD" : {

@@ -20,7 +20,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $state, $interval, deviceDetector, DeviceService, NotificationService, DialogService, // jshint ignore: line
+function Controller(logger, $state, $interval, $window, deviceDetector, DeviceService, NotificationService, DialogService, // jshint ignore: line
                     SslService) {
     'ngInject';
 
@@ -119,31 +119,34 @@ function Controller(logger, $state, $interval, deviceDetector, DeviceService, No
 
     function isFirefox() {
         return vm.deviceBrowser === 'firefox';
-        // return false;
     }
 
     function isWindows() {
         return vm.deviceOs.type === 'WINDOWS';
-        // return true;
     }
 
     function isIos() {
-        return vm.deviceOs.type === 'IOS';
-        // return true;
+        return vm.deviceOs.type === 'IOS' || isIpad();
     }
 
     function isMac() {
-        return vm.deviceOs.type === 'MAC';
-        // return false;
+        return vm.deviceOs.type === 'MAC' && !isIpad();
     }
 
     function isAndroid() {
         return vm.deviceOs.type === 'ANDROID';
-        // return true;
     }
 
     function isOther() {
         return vm.deviceOs.type === 'OTHER';
+    }
+
+    /* By default an iPad now pretends to be a Mac */
+    function isIpad() {
+        const navigator = $window.navigator;
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
     }
 
     function backToDashboard(event) {

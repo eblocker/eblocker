@@ -907,7 +907,7 @@
             },
             "IOS_ADD_CERT" : {
                 "STEP_2" : "Tap „Allow“ in the alert box to allow the download of the configuration profile",
-		"STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „Profiles“ > „Downloaded Profile“",
+		"STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „VPN & Device Management“ > „Downloaded Profile“",
                 "STEP_4" : "Tap „Install“, enter your code and confirm again with „Install“",
                 "STEP_5" : "Tap „Done“",
                 "STEP_6" : "The certificate must now be activated (Continue)",

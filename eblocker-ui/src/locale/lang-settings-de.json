@@ -230,6 +230,9 @@
                 "SSL_DISABLED" : "HTTPS-Unterstützung ist nicht aktiviert"
             }
         },
+        "BACKUP" : {
+            "LABEL" : "Backup"
+        },
         "BLACKLISTS" : {
             "ACTION" : {
                 "ADD" : "Neue Kategorie",
@@ -3938,6 +3941,12 @@
                     "TITLE" : "Admin-Passwort"
                 }
             },
+            "BACKUP" : {
+                "OVERVIEW" : {
+                    "P1" : "Sie können hier Ihre in den HTTPS Einstellungen erstellten, persönlichen, vertrauenswürdigen Apps und Websites sichern und bei Bedarf wieder einspielen.",
+                    "TITLE" : "Einstellungen Sichern"
+                }
+            },
             "DIAGNOSTICS" : {
                 "OVERVIEW" : {
                     "P1" : "Sollten in Ihrem Netzwerk oder mit dem eBlocker Probleme auftreten, nutzen Sie bitte unser Community Forum. Dort werden Sie eventuell gebeten, den Diagnose Bericht zu erstellen. Nach Start der Berichtserstellung kann es eine Weile dauern, bis sich das Dialogfeld mit der Frage nach dem Speicherort öffnet. Wenn Sie einen festen Dateispeicherort angegeben hast könnte es sein, dass sich das Dialogfeld nicht öffnet. Sie finden die Datei dann im Standard-Download-Ordner mit der Endung .tgz. Bitte laden Sie die gesamte Datei erst hoch, wenn Sie darum gebeten werden.",
@@ -3952,16 +3961,11 @@
             },
             "RESET" : {
                 "OVERVIEW" : {
-                    "H1" : "Einstellungen Sichern",
-                    "H2" : "Aktivierung zurücksetzen",
-                    "H3" : "Werkseinstellungen",
-                    "P1" : "Sie können hier Ihre in den HTTPS Einstellungen erstellten, persönlichen, vertrauenswürdigen Apps und Websites sichern und bei Bedarf wieder einspielen.",
-                    "P2" : "Sofern es notwendig ist, kann hier die Aktivierung des eBlocker rückgängig gemacht werden. Er wird dann keine automatischen Updates mehr erhalten. Die Lizenz kann im Rahmen ihrer Gültigkeitsdauer auf einem anderen eBlocker weiter verwendet werden.",
-                    "P3_LINK_TEXT" : "Lizenzserver",
-                    "P3_LINK_URL" : "https://eBlocker.org/ebl/de/license-transfer",
-                    "P3_POST" : " im Rahmen ihrer Gültigkeitsdauer wieder verwendet werden.",
-                    "P3_PRE" : "Sollte es notwendig sein, den eBlocker zurückzusetzen, so kann dies hier erfolgen. Der eBlocker muss dann neu aktiviert werden. Dafür muss die Lizenz vorher noch auf unserem Lizenzserver freigegeben werden. Die Lizenz kann nach lösen auf unserem ",
-                    "TITLE" : "Zurücksetzen"
+                    "P1_LINK_TEXT" : "Lizenzserver",
+                    "P1_LINK_URL" : "https://eBlocker.org/ebl/de/license-transfer",
+                    "P1_POST" : " im Rahmen ihrer Gültigkeitsdauer wieder verwendet werden.",
+                    "P1_PRE" : "Sollte es notwendig sein, den eBlocker zurückzusetzen, so kann dies hier erfolgen. Der eBlocker muss dann neu aktiviert werden. Dafür muss die Lizenz vorher noch auf unserem Lizenzserver freigegeben werden. Die Lizenz kann nach lösen auf unserem ",
+                    "TITLE" : "Werkseinstellungen"
                 }
             },
             "STATUS" : {

@@ -230,6 +230,9 @@
                 "SSL_DISABLED" : "HTTPS support is disabled"
             }
         },
+        "BACKUP" : {
+            "LABEL": "Backup"
+        },
         "BLACKLISTS" : {
             "ACTION" : {
                 "ADD" : "New Category",
@@ -3938,6 +3941,12 @@
                     "TITLE" : "Admin Password"
                 }
             },
+            "BACKUP" : {
+                "OVERVIEW" : {
+                    "P1" : "Here you can save your personal, trustworthy apps and websites created in the HTTPS settings and import them again if necessary.",
+                    "TITLE" : "Save Settings"
+                }
+            },
             "DIAGNOSTICS" : {
                 "OVERVIEW" : {
                     "P1" : "Should problems occur in your network or with your eBlocker, please use our community forum. After starting report generation, it may take a while for the dialog box with the question about the location to open. If you have specified a fixed file location, the dialog box may not open and you may need to look for the .tgz file. Please upload the file only on request.",
@@ -3952,16 +3961,11 @@
             },
             "RESET" : {
                 "OVERVIEW" : {
-                    "H1" : "Save Settings",
-                    "H2" : "Reset Activation",
-                    "H3" : " Factory Reset",
-                    "P1" : "Here you can save your personal, trustworthy apps and websites created in the HTTPS settings and import them again if necessary.",
-                    "P2" : "If necessary, the activation of the eBlocker can be undone here. It will then no longer receive automatic updates. The license can be used on another eBlocker during its validity period.",
-                    "P3_LINK_TEXT" : "license server",
-                    "P3_LINK_URL" : "https://eBlocker.org/ebl/en/license-transfer",
-                    "P3_POST" : " during its validity period.",
-                    "P3_PRE" : "If it is necessary to reset the eBlocker, this can be done here. The eBlocker must then be reactivated. To do this, the license must first be released on our license server. The license can be reused on our ",
-                    "TITLE" : "Zurücksetzen"
+                    "P1_LINK_TEXT" : "license server",
+                    "P1_LINK_URL" : "https://eBlocker.org/ebl/en/license-transfer",
+                    "P1_POST" : " during its validity period.",
+                    "P1_PRE" : "If it is necessary to reset the eBlocker, this can be done here. The eBlocker must then be reactivated. To do this, the license must first be released on our license server. The license can be reused on our ",
+                    "TITLE" : "Factory Reset"
                 }
             },
             "STATUS" : {

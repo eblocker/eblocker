@@ -164,12 +164,13 @@ import DiagnosticsComponent from './components/system/diagnostics/diagnostics.co
 import ReportComponent from './components/system/diagnostics/report.component';
 import EventsComponent from './components/system/events/events.component';
 import FactoryResetComponent from './components/system/factoryReset/factory-reset.component';
+import BackupComponent from './components/system/configBackup/backup.component';
+import ConfigBackupComponent from './components/system/configBackup/config-backup.component';
 import ResetComponent from './components/system/reset/reset.component';
 import ResetActivationComponent from './components/home/license/resetActivation/reset-activation.component';
 import StatusComponent from './components/system/status/status.component';
 import TasksComponent from './components/system/tasks/tasks.component';
 import TimeLangComponent from './components/system/timeLang/time-language.component';
-import ConfigBackupComponent from './components/system/configBackup/config-backup.component';
 import LedSettingsComponent from './components/system/ledSettings/led-settings.component';
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
@@ -457,6 +458,7 @@ angular.module('eblocker.adminconsole', [
     .component('statusComponent', StatusComponent)
     .component('tasksComponent', TasksComponent)
     .component('timeLanguageComponent', TimeLangComponent)
+    .component('backupComponent', BackupComponent)
     .component('configBackupComponent', ConfigBackupComponent)
     .component('ledSettingsComponent', LedSettingsComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)

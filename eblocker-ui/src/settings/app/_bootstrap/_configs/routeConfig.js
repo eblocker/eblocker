@@ -897,11 +897,21 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'eventsComponent'
     };
 
+    const backup = {
+        name: 'backup',
+        url: slashOptionSubState + 'backup',
+        parent: system.name,
+        tabOrder: 7,
+        requiredLicense: system.requiredLicense,
+        translationKey: 'ADMINCONSOLE.BACKUP.LABEL',
+        component: 'backupComponent'
+    };
+
     const reset = {
         name: 'reset',
         url: slashOptionSubState + 'reset',
         parent: system.name,
-        tabOrder: 7,
+        tabOrder: 8,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.RESET.LABEL',
         component: 'resetComponent'
@@ -1093,7 +1103,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
         system, network, networkWizard, vpnHome, manualRecording, users,
         blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
-        events, reset, diagnostics, usersDetails, usersProfileDetails,
+        events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,

@@ -43,6 +43,7 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
     vm.stateParams = $stateParams;
 
     vm.feedbackLink = feedbackLink;
+    vm.showFeedbackLink = showFeedbackLink;
 
     vm.$onInit = function() {
         if (angular.isObject(vm.stateParams) && angular.isObject(vm.stateParams.param)) {
@@ -245,16 +246,27 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
         TrustedAppsService.toggleAppModule(trustedApp);
     }
 
+    function showFeedbackLink(trustedApp) {
+        if (!angular.isObject(trustedApp)) {
+            return false;
+        }
+        if (trustedApp.id === 9997) { // Hide feedback link for ATA Auto Trust App
+            return false;
+        }
+        return !trustedApp.builtin || trustedApp.modified;
+    }
+
     function feedbackLink(trustedApp) {
         if (!angular.isObject(trustedApp)) {
             return '';
         }
-        const subject = 'Suggestion for ' + (trustedApp.builtin ? 'existing' : 'new') + ' app: ' + trustedApp.name
-              + (trustedApp.builtin ? ' (ID ' + trustedApp.id + ')' : '');
-        const body = 'Name: ' + trustedApp.name
-              + '\n\nDescription:\nde: ' + trustedApp.description.de + '\nen: ' + trustedApp.description.en
-              + '\n\nDomains:\n' + trustedApp.domainsIps;
-        return 'mailto:appfeedback@eblocker.org?subject=' + encodeURIComponent(subject)
-            + '&body=' + encodeURIComponent(body);
+        const subject = 'Suggestion for ' + (trustedApp.builtin ? 'existing' : 'new') + ' app: ' + trustedApp.name +
+              (trustedApp.builtin ? ' (ID ' + trustedApp.id + ')' : '');
+        const body = 'Name: ' + trustedApp.name +
+              '\n\nDescription:\nde: ' + trustedApp.description.de + '\nen: ' + trustedApp.description.en +
+              '\n\nDomains:\n' + trustedApp.domainsIps;
+        return 'mailto:appfeedback@eblocker.org' +
+            '?subject=' + encodeURIComponent(subject) +
+            '&body=' + encodeURIComponent(body);
     }
 }

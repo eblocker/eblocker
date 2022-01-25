@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" ng-if="!vm.trustedApp.builtin || vm.trustedApp.modified">
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" ng-if="vm.showFeedbackLink(vm.trustedApp)">
             <a href="{{vm.feedbackLink(vm.trustedApp)}}" translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.FEEDBACK_LINK" class="orange"></a>
         </div>
 

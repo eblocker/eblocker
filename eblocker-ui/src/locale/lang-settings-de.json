@@ -2920,6 +2920,7 @@
                     "ADD_DOMAIN" : "Neu",
                     "REMOVE_DOMAIN" : "{num, select, 0{Domain/IP löschen} 1{{num} Domain/IP löschen} other{{num} Domains/IPs löschen}}"
                 },
+                "FEEDBACK_LINK" : "Feedback zu dieser App an eBlocker senden",
                 "HEADING" : "Details zu Ausnahmeliste für App",
                 "HEADING_DOMAINS" : "Domains/IPs hinzufügen",
                 "LABEL_DESCRIPTION" : "Beschreibung",

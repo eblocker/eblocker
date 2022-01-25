@@ -42,6 +42,8 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
     vm.backState = STATES.TRUSTED_APPS;
     vm.stateParams = $stateParams;
 
+    vm.feedbackLink = feedbackLink;
+
     vm.$onInit = function() {
         if (angular.isObject(vm.stateParams) && angular.isObject(vm.stateParams.param)) {
             vm.trustedApp = vm.stateParams.param.entry;
@@ -241,5 +243,18 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
 
     function toggleAppModule(trustedApp){
         TrustedAppsService.toggleAppModule(trustedApp);
+    }
+
+    function feedbackLink(trustedApp) {
+        if (!angular.isObject(trustedApp)) {
+            return '';
+        }
+        const subject = 'Suggestion for ' + (trustedApp.builtin ? 'existing' : 'new') + ' app: ' + trustedApp.name
+              + (trustedApp.builtin ? ' (ID ' + trustedApp.id + ')' : '');
+        const body = 'Name: ' + trustedApp.name
+              + '\n\nDescription:\nde: ' + trustedApp.description.de + '\nen: ' + trustedApp.description.en
+              + '\n\nDomains:\n' + trustedApp.domainsIps;
+        return 'mailto:appfeedback@eblocker.org?subject=' + encodeURIComponent(subject)
+            + '&body=' + encodeURIComponent(body);
     }
 }

@@ -33,10 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ConfigurationBackupControllerImpl implements ConfigurationBackupController {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupControllerImpl.class);
-    private static final int CURRENT_VERSION = 1;
     private final ConfigurationBackupService backupService;
 
     @Inject
@@ -46,7 +47,8 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
 
     @Override
     public ByteBuf exportConfiguration(Request request, Response response) {
-        response.addHeader("Content-Disposition", "attachment; filename=\"eblocker-config.eblcfg\"");
+        String timestamp = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
+        response.addHeader("Content-Disposition", "attachment; filename=\"eblocker-config-" + timestamp + ".eblcfg\"");
         response.setContentType("application/octet-stream");
         ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(10000);
         try (OutputStream outputStream = new ByteBufOutputStream(buffer)) {

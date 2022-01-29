@@ -76,7 +76,7 @@ import static java.util.function.Predicate.not;
  * ____+ Spotify seems to work fine on iOS but complains about dealer.spotify.com on macOS
  * ____- Blows up the recoding of successful domains
  * ____- Device A cannot benefit from the successful SSL connections on device B
- *
+ * <p>
  * * * Why does My own DTBL work even though it is enabled???
  */
 @SubSystemService(value = SubSystem.SERVICES)
@@ -309,7 +309,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
     }
 
     private boolean isExplicitlyExcluded(String domain) {
-        return domain.endsWith("eblocker.org");
+        return domain.endsWith("eblocker.org") || domain.contains("youtube.");
     }
 
     private void pruneTooOldPendingDomains() {

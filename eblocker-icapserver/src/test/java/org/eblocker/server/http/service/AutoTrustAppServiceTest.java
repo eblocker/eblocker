@@ -230,15 +230,24 @@ public class AutoTrustAppServiceTest {
 
     @Test
     public void testEblockerOrgIsNotAdded() {
+        assertDomainIsNotAdded("eblocker.org");
+    }
+
+    private void assertDomainIsNotAdded(String domain) {
         AppWhitelistModule sslCollectingAppModule = collectingModule();
         when(appModuleService.getAutoSslAppModule()).thenReturn(sslCollectingAppModule);
 
-        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("eblocker.org")).thenReturn(notBlocked());
+        when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters(domain)).thenReturn(notBlocked());
 
-        autoTrustAppService.onChange(newArrayList(failedConnection(now().minusSeconds(10), "eblocker.org")));
-        autoTrustAppService.onChange(newArrayList(failedConnection(now(), "eblocker.org")));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now().minusSeconds(10), domain)));
+        autoTrustAppService.onChange(newArrayList(failedConnection(now(), domain)));
 
-        verify(appModuleService, never()).addDomainsToModule(whitelistUrls("eblocker.org"), autoTrustAppModuleId);
+        verify(appModuleService, never()).addDomainsToModule(whitelistUrls(domain), autoTrustAppModuleId);
+    }
+
+    @Test
+    public void testYoutubeIsNotAdded() {
+        assertDomainIsNotAdded("youtube.com");
     }
 
     @Test

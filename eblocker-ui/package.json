@@ -89,7 +89,7 @@
         "jshint": "2.13.1",
         "jshint-stylish": "2.2.1",
         "json2csv": "5.0.6",
-        "karma": "6.3.9",
+        "karma": "6.3.14",
         "karma-browserify": "8.1.0",
         "karma-chrome-launcher": "3.1.0",
         "karma-coverage": "2.0.3",

@@ -21,8 +21,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DistinguishedName;
@@ -34,18 +32,10 @@ import org.eblocker.server.http.utils.NormalizationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -91,7 +81,6 @@ public class SslService {
     public SslService(@Named("ca.keystore.path") String keyStorePath,
                       @Named("ca.keystore.password") String keyStorePassword,
                       @Named("ca.cert.max.validity.months") int maxCaValidityInMonths,
-                      // TODO: rename
                       @Named("ca.cert.dn.format") String caCertDnFormat,
                       @Named("ca.key.size") int caKeySize,
                       @Named("ca.renew.weeks") int caRenewWeeks,
@@ -122,8 +111,8 @@ public class SslService {
         }
 
         sslEnabled = dataSource.getSSLEnabledState();
-        ca = loadCa(keyStorePath, keyStorePassword);
-        renewalCa = loadCa(renewalKeyStorePath, keyStorePassword);
+        ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+        renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
 
         if (sslEnabled && ca == null) {
             throw new PkiException("ssl is enabled but no keypair available!");
@@ -225,17 +214,15 @@ public class SslService {
         long daysValid = ChronoUnit.DAYS.between(notBefore, notAfter);
         log.info("Generating CA certificate for {} which is valid for {} days...", commonName, daysValid);
         try {
-            CertificateAndKey certificateAndKey = PKI.generateRoot(null,
+            EblockerCa rootCa = EblockerCa.generateRootCa(
                     commonName,
                     Date.from(notBefore.toInstant()),
                     Date.from(notAfter.toInstant()),
                     caKeySize);
 
-            try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
-                PKI.generateKeyStore(certificateAndKey, "root", keyStorePassword, keyStoreStream);
-            }
+            rootCa.writeToKeyStore("root", keyStorePath, keyStorePassword);
 
-            return new EblockerCa(certificateAndKey);
+            return rootCa;
         } catch (CryptoException | IOException e) {
             throw new PkiException("ca generation failed " + e.getMessage(), e);
         }
@@ -354,34 +341,10 @@ public class SslService {
         return generateCa(caOptions.getDistinguishedName().getCommonName(), caOptions.getValidityInMonths(), keyStorePath, keyStorePassword);
     }
 
-    private EblockerCa loadCa(String keyStorePath, char[] keyStorePassword) throws PkiException {
-        if (!Files.exists(Paths.get(keyStorePath))) {
-            return null;
-        }
-
-        try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
-            KeyStore keyStore = PKI.loadKeyStore(keyStoreStream, keyStorePassword);
-            String alias = keyStore.aliases().nextElement();
-            return new EblockerCa(new CertificateAndKey((X509Certificate) keyStore.getCertificate(alias),
-                    (PrivateKey) keyStore.getKey(alias, keyStorePassword)));
-        } catch (CryptoException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new PkiException("failed to load ca keystore", e);
-        }
-    }
 
     private void requireInitialization() {
         if (!initialized) {
             throw new IllegalStateException("method call not allowed on uninitialized service");
-        }
-    }
-
-    public class PkiException extends Exception {
-        public PkiException(String message) {
-            super(message);
-        }
-
-        private PkiException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 

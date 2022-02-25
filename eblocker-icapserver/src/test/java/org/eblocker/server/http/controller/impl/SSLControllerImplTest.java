@@ -35,7 +35,7 @@ import org.eblocker.server.common.squid.SquidWarningService;
 import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.server.common.ssl.SslService.PkiException;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslTestUtils;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.controller.impl.SSLControllerImpl.SslState;
@@ -321,7 +321,7 @@ public class SSLControllerImplTest {
         Request request = Mockito.mock(Request.class);
         when(request.getBodyAs(any())).thenReturn(caOptions);
         // SSL Service
-        doThrow(sslService.new PkiException("exception")).when(sslService).generateCa(any());
+        doThrow(new PkiException("exception")).when(sslService).generateCa(any());
         // Call to controller
         boolean exceptionCatched = false;
         try {

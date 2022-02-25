@@ -33,6 +33,7 @@ import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.common.registration.DeviceRegistrationInfo;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
@@ -304,7 +305,7 @@ public class DeviceRegistrationControllerImpl implements DeviceRegistrationContr
         executorService.submit(() -> {
             try {
                 sslService.generateCa(sslService.getDefaultCaOptions());
-            } catch (SslService.PkiException e) {
+            } catch (PkiException e) {
                 LOG.error("failed to generate ca", e);
             }
         });

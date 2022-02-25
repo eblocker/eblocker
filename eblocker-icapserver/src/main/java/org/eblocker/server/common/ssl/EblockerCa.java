@@ -20,11 +20,11 @@ import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.crypto.pki.PKI;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -87,18 +87,18 @@ public class EblockerCa {
         return Date.from(result);
     }
 
-    public void writeToKeyStore(String alias, String keyStorePath, char[] keyStorePassword) throws IOException, CryptoException {
-        try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
+    public void writeToKeyStore(String alias, Path keyStorePath, char[] keyStorePassword) throws IOException, CryptoException {
+        try (OutputStream keyStoreStream = Files.newOutputStream(keyStorePath)) {
             PKI.generateKeyStore(certificateAndKey, alias, keyStorePassword, keyStoreStream);
         }
     }
 
-    public static EblockerCa loadFromKeyStore(String keyStorePath, char[] keyStorePassword) throws PkiException {
-        if (!Files.exists(Paths.get(keyStorePath))) {
+    public static EblockerCa loadFromKeyStore(Path keyStorePath, char[] keyStorePassword) throws PkiException {
+        if (!Files.exists(keyStorePath)) {
             return null;
         }
 
-        try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
+        try (InputStream keyStoreStream = Files.newInputStream(keyStorePath)) {
             KeyStore keyStore = PKI.loadKeyStore(keyStoreStream, keyStorePassword);
             String alias = keyStore.aliases().nextElement();
             return new EblockerCa(new CertificateAndKey((X509Certificate) keyStore.getCertificate(alias),

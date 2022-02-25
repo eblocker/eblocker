@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
@@ -55,8 +56,8 @@ import java.util.concurrent.TimeUnit;
 public class SslService {
     private static final Logger log = LoggerFactory.getLogger(SslService.class);
 
-    private final String keyStorePath;
-    private final String renewalKeyStorePath;
+    private final Path keyStorePath;
+    private final Path renewalKeyStorePath;
     private final char[] keyStorePassword;
     private final int maxCaValidityInMonths;
     private final int caKeySize;
@@ -90,13 +91,13 @@ public class SslService {
                       @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                       @Named("ssl.certificate.friendlyname.length") int sslCertificateFriendlyNameLength,
                       @Named("ssl.certificate.friendlyname.fallback") String sslCertificateFriendlyNameFallback) {
-        this.keyStorePath = keyStorePath;
+        this.keyStorePath = Paths.get(keyStorePath);
         this.keyStorePassword = keyStorePassword.toCharArray();
         this.maxCaValidityInMonths = maxCaValidityInMonths;
         this.caCertDnFormat = caCertDnFormat;
         this.caKeySize = caKeySize;
         this.caRenewWeeks = caRenewWeeks;
-        this.renewalKeyStorePath = renewalKeyStorePath;
+        this.renewalKeyStorePath = Paths.get(renewalKeyStorePath);
         this.dataSource = dataSource;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.executorService = executorService;
@@ -198,7 +199,7 @@ public class SslService {
         return caRenewWeeks;
     }
 
-    private EblockerCa generateCa(String optionsCommonName, int validityInMonths, String keyStorePath, char[] keyStorePassword) throws PkiException {
+    private EblockerCa generateCa(String optionsCommonName, int validityInMonths, Path keyStorePath, char[] keyStorePassword) throws PkiException {
         if (validityInMonths > maxCaValidityInMonths) {
             log.warn("Generating CA certificate requested validity of {} months but maximum is {}.", validityInMonths, maxCaValidityInMonths);
             throw new PkiException("Maximum CA validity exceeded");
@@ -258,7 +259,7 @@ public class SslService {
             if (renewalCa != null) {
                 log.debug("deleting previously generated renewal ca");
                 renewalCa = null;
-                Files.deleteIfExists(Paths.get(renewalKeyStorePath));
+                Files.deleteIfExists(renewalKeyStorePath);
             }
             log.debug("canceling all scheduled tasks for ca expiration");
             futures.forEach(f -> f.cancel(false));
@@ -312,7 +313,7 @@ public class SslService {
             } else {
                 log.info("replacing expired ca with previously generated one");
                 ca = renewalCa;
-                Files.move(Paths.get(renewalKeyStorePath), Paths.get(keyStorePath), StandardCopyOption.REPLACE_EXISTING);
+                Files.move(renewalKeyStorePath, keyStorePath, StandardCopyOption.REPLACE_EXISTING);
             }
 
             disableRenewalCa();
@@ -330,7 +331,7 @@ public class SslService {
         }
     }
 
-    private EblockerCa regenerateCa(String keyStorePath, char[] keyStorePassword) throws PkiException {
+    private EblockerCa regenerateCa(Path keyStorePath, char[] keyStorePassword) throws PkiException {
         // use previously used options or default ones if not available
         CaOptions caOptions = dataSource.get(CaOptions.class);
         if (caOptions == null) {

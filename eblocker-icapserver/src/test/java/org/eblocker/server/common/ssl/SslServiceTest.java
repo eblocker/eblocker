@@ -24,7 +24,6 @@ import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DistinguishedName;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.ssl.SslService.PkiException;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.junit.After;
@@ -108,7 +107,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testInitDisabledNoCa() throws SslService.PkiException {
+    public void testInitDisabledNoCa() throws PkiException {
         sslService = createService(null);
 
         sslService.init();
@@ -123,7 +122,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testInitDisabledExistingCa() throws SslService.PkiException {
+    public void testInitDisabledExistingCa() throws PkiException {
         sslService = createService(SslTestUtils.CA_RESOURCE);
 
         sslService.init();
@@ -141,8 +140,8 @@ public class SslServiceTest {
         Assert.assertFalse(scheduledFutures.get(1).isCancelled());
     }
 
-    @Test(expected = SslService.PkiException.class)
-    public void testInitEnabledNoCa() throws SslService.PkiException {
+    @Test(expected = PkiException.class)
+    public void testInitEnabledNoCa() throws PkiException {
         Mockito.when(dataSource.getSSLEnabledState()).thenReturn(true);
 
         sslService = createService(null);
@@ -154,7 +153,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testInitEnabledExistingCa() throws SslService.PkiException {
+    public void testInitEnabledExistingCa() throws PkiException {
         Mockito.when(dataSource.getSSLEnabledState()).thenReturn(true);
 
         sslService = createService(SslTestUtils.CA_RESOURCE);
@@ -175,7 +174,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testGenerateCa() throws SslService.PkiException, CryptoException {
+    public void testGenerateCa() throws PkiException, CryptoException {
         sslService = createService(null);
 
         sslService.init();
@@ -199,7 +198,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testRegenerateCa() throws SslService.PkiException, CryptoException {
+    public void testRegenerateCa() throws PkiException, CryptoException {
         sslService = createService(SslTestUtils.CA_RESOURCE);
 
         sslService.init();
@@ -225,7 +224,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testInitCaExpirationNoRenewalCa() throws SslService.PkiException {
+    public void testInitCaExpirationNoRenewalCa() throws PkiException {
         sslService = createService(SslTestUtils.EXPIRED_CA_RESOURCE, null);
 
         sslService.init();
@@ -243,7 +242,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testInitCaExpirationRenewalCa() throws SslService.PkiException, IOException {
+    public void testInitCaExpirationRenewalCa() throws PkiException, IOException {
         sslService = createService(SslTestUtils.EXPIRED_CA_RESOURCE, SslTestUtils.ALTERNATIVE_CA_RESOURCE);
 
         sslService.init();
@@ -261,7 +260,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testRenewalCaGeneration() throws SslService.PkiException {
+    public void testRenewalCaGeneration() throws PkiException {
         sslService = createService(SslTestUtils.CA_RESOURCE, null);
 
         sslService.init();
@@ -280,7 +279,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testCaExpirationNoRenewalCa() throws SslService.PkiException {
+    public void testCaExpirationNoRenewalCa() throws PkiException {
         sslService = createService(SslTestUtils.CA_RESOURCE, null);
 
         sslService.init();
@@ -298,7 +297,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testCaExpirationRenewalCa() throws SslService.PkiException, IOException {
+    public void testCaExpirationRenewalCa() throws PkiException, IOException {
         sslService = createService(SslTestUtils.CA_RESOURCE, SslTestUtils.ALTERNATIVE_CA_RESOURCE);
 
         sslService.init();
@@ -316,7 +315,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testEnableSsl() throws SslService.PkiException {
+    public void testEnableSsl() throws PkiException {
         sslService = createService(SslTestUtils.CA_RESOURCE);
 
         sslService.init();
@@ -328,7 +327,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testDisableSsl() throws SslService.PkiException {
+    public void testDisableSsl() throws PkiException {
         Mockito.when(dataSource.getSSLEnabledState()).thenReturn(true);
         sslService = createService(SslTestUtils.CA_RESOURCE);
 
@@ -340,7 +339,7 @@ public class SslServiceTest {
     }
 
     @Test
-    public void testGetDefaultCaOptions() throws SslService.PkiException {
+    public void testGetDefaultCaOptions() throws PkiException {
         sslService = createService(null);
 
         sslService.init();
@@ -354,37 +353,37 @@ public class SslServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedGenerateCa() throws SslService.PkiException {
+    public void testUninitializedGenerateCa() throws PkiException {
         sslService = createService(null);
         sslService.generateCa(new CaOptions());
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedIsSslEnabeld() throws SslService.PkiException {
+    public void testUninitializedIsSslEnabeld() throws PkiException {
         sslService = createService(null);
         sslService.isSslEnabled();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedEnableSsl() throws SslService.PkiException {
+    public void testUninitializedEnableSsl() throws PkiException {
         sslService = createService(null);
         sslService.enableSsl();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedDisableSsl() throws SslService.PkiException {
+    public void testUninitializedDisableSsl() throws PkiException {
         sslService = createService(null);
         sslService.disableSsl();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedGetCa() throws SslService.PkiException {
+    public void testUninitializedGetCa() throws PkiException {
         sslService = createService(null);
         sslService.getCa();
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testUninitializedIsCaAvailable() throws SslService.PkiException {
+    public void testUninitializedIsCaAvailable() throws PkiException {
         sslService = createService(null);
         sslService.isCaAvailable();
     }
@@ -402,7 +401,7 @@ public class SslServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDuplicateInit() throws SslService.PkiException {
+    public void testDuplicateInit() throws PkiException {
         sslService = createService(null);
         sslService.init();
         sslService.init();

@@ -40,6 +40,7 @@ import org.eblocker.server.icap.transaction.processor.PageContextProcessor;
 import org.eblocker.server.icap.transaction.processor.PatternFilterStatisticsProcessor;
 import org.eblocker.server.icap.transaction.processor.RedirectFromSetupPageProcessor;
 import org.eblocker.server.icap.transaction.processor.ReferrerRemoveProcessor;
+import org.eblocker.server.icap.transaction.processor.RemoveTrackingParametersProcessor;
 import org.eblocker.server.icap.transaction.processor.ResponseShortCutProcessor;
 import org.eblocker.server.icap.transaction.processor.SessionProcessor;
 import org.eblocker.server.icap.transaction.processor.SetBaseUrlProcessor;
@@ -74,6 +75,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                            PatternFilterStatisticsProcessor patternFilterStatisticsProcessor,
                                                            RedirectFromSetupPageProcessor redirectToInternalWebsiteProcessor,
                                                            ReferrerRemoveProcessor referrerRemoveProcessor,
+                                                           RemoveTrackingParametersProcessor removeTrackingParametersProcessor,
                                                            SessionProcessor sessionProcessor,
                                                            SetBaseUrlProcessor setBaseUrlProcessor,
                                                            SetDntHeaderProcessor setDntHeaderProcessor,
@@ -98,6 +100,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 adBlockerProcessor,
                 trackingBlockerProcessor,
                 referrerRemoveProcessor,
+                removeTrackingParametersProcessor,
                 setDntHeaderProcessor,
                 finalizeProcessor
         );

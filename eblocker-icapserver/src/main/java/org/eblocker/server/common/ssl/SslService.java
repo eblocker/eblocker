@@ -64,6 +64,8 @@ public class SslService {
     private final String caCertDnFormat;
     private final int caRenewWeeks;
 
+    private final Object keyStoreLock = new Object();
+
     private final DataSource dataSource;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final ScheduledExecutorService executorService;
@@ -112,8 +114,11 @@ public class SslService {
         }
 
         sslEnabled = dataSource.getSSLEnabledState();
-        ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
-        renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+
+        synchronized (keyStoreLock) {
+            ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+            renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+        }
 
         if (sslEnabled && ca == null) {
             throw new PkiException("ssl is enabled but no keypair available!");
@@ -162,7 +167,9 @@ public class SslService {
         if (!isCaAvailable()) {
             return null;
         }
-        return Files.readAllBytes(keyStorePath);
+        synchronized (keyStoreLock) {
+            return Files.readAllBytes(keyStorePath);
+        }
     }
 
     public EblockerCa getRenewalCa() {
@@ -179,15 +186,19 @@ public class SslService {
         if (!isRenewalCaAvailable()) {
             return null;
         }
-        return Files.readAllBytes(renewalKeyStorePath);
+        synchronized (keyStoreLock) {
+            return Files.readAllBytes(renewalKeyStorePath);
+        }
     }
 
     public void importCas(byte[] caBytes, byte[] renewalCaBytes) throws IOException {
         boolean caUpdated = false;
         if (caBytes != null) {
-            Files.write(keyStorePath, caBytes);
             try {
-                ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+                synchronized (keyStoreLock) {
+                    Files.write(keyStorePath, caBytes);
+                    ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+                }
                 caUpdated = true;
             } catch (PkiException e) {
                 log.error("Could not load imported CA from key store {}", keyStorePath, e);
@@ -198,9 +209,11 @@ public class SslService {
         }
 
         if (renewalCaBytes != null) {
-            Files.write(renewalKeyStorePath, renewalCaBytes);
             try {
-                renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+                synchronized (keyStoreLock) {
+                    Files.write(renewalKeyStorePath, renewalCaBytes);
+                    renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+                }
             } catch (PkiException e) {
                 log.error("Could not load imported renewal CA from key store {}", renewalKeyStorePath, e);
                 throw new IOException("Could not load renewal CA from key store", e);
@@ -268,7 +281,9 @@ public class SslService {
                     Date.from(notAfter.toInstant()),
                     caKeySize);
 
-            rootCa.writeToKeyStore("root", keyStorePath, keyStorePassword);
+            synchronized (keyStoreLock) {
+                rootCa.writeToKeyStore("root", keyStorePath, keyStorePassword);
+            }
 
             return rootCa;
         } catch (CryptoException | IOException e) {
@@ -306,7 +321,9 @@ public class SslService {
             if (renewalCa != null) {
                 log.debug("deleting previously generated renewal ca");
                 renewalCa = null;
-                Files.deleteIfExists(renewalKeyStorePath);
+                synchronized (keyStoreLock) {
+                    Files.deleteIfExists(renewalKeyStorePath);
+                }
             }
             cancelExpirationTasks();
         } catch (IOException e) {
@@ -364,7 +381,9 @@ public class SslService {
             } else {
                 log.info("replacing expired ca with previously generated one");
                 ca = renewalCa;
-                Files.move(renewalKeyStorePath, keyStorePath, StandardCopyOption.REPLACE_EXISTING);
+                synchronized (keyStoreLock) {
+                    Files.move(renewalKeyStorePath, keyStorePath, StandardCopyOption.REPLACE_EXISTING);
+                }
             }
 
             disableRenewalCa();

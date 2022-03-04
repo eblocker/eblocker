@@ -90,6 +90,7 @@ import MobileConfirmCloseController from './dialogs/mobile/mobile-confirm-close.
 import NotificationDialogController from './dialogs/notification/notification.dialog';
 import TorActivationDialogController from '../../shared/dialogs/tor/tor-activation.dialog';
 import EditTasksViewConfigController from './dialogs/system/tasks-view-config-edit.dialog';
+import ConfigBackupImportController from './dialogs/system/config-backup-import.dialog';
 import AddCustomListController from './dialogs/blocker/update-custom-list.dialog';
 
 
@@ -411,6 +412,7 @@ angular.module('eblocker.adminconsole', [
     .controller('MobileConfirmCloseController', MobileConfirmCloseController)
     .controller('TorActivationDialogController', TorActivationDialogController)
     .controller('EditTasksViewConfigController', EditTasksViewConfigController)
+    .controller('ConfigBackupImportController', ConfigBackupImportController)
     .controller('addCustomListController', AddCustomListController)
     .component('settingsComponent', SettingsComponent)
     .component('mainComponent', MainComponent)

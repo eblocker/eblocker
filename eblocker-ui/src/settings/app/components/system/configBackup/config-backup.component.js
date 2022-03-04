@@ -20,28 +20,63 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $window, ConfigBackupService, NotificationService, security) {
+function Controller(logger, $window, ConfigBackupService, DialogService, NotificationService, security) {
     'ngInject';
     'use strict';
 
     const vm = this;
+    vm.exporting = false;
+    vm.includeKeys = true;
 
-    function configBackupDownloadUrl() {
-        return ConfigBackupService.downloadUrl() + '?Authorization=Bearer+' + security.getToken();
+    function configBackupDownloadUrl(fileReference) {
+        return ConfigBackupService.downloadConfigUrl(fileReference) + '?Authorization=Bearer+' + security.getToken();
     }
 
+    vm.getAuthorization = function() {
+        return 'Bearer ' + security.getToken();
+    };
+
+    vm.getDownloadURL = function() {
+        return ConfigBackupService.downloadUrl();
+    };
+
     vm.createConfigBackup = function() {
-        NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.DOWNLOADED');
-        $window.location = configBackupDownloadUrl();
+        var password;
+        if (vm.includeKeys) {
+            // Do passwords match?
+            vm.passwordForm.repeatPassword.$setValidity('mustMatch', vm.newPassword === vm.repeatPassword);
+
+            // Any other form error?
+            if (!vm.passwordForm.$valid) {
+                return;
+            }
+            password = vm.newPassword;
+        }
+
+        vm.exporting = true;
+        ConfigBackupService.exportConfig(vm.includeKeys, password).then(function(data) {
+            NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.DOWNLOADED');
+            $window.location = configBackupDownloadUrl(data.fileReference);
+        }, function(reason) {
+            logger.error('Could not export backup configuration');
+        }).finally(function() {
+            vm.exporting = false;
+        });
     };
 
     vm.uploadConfigBackup = function(file, invalidFiles) {
-        logger.debug('File: ' + file);
-        logger.debug('Invalid files: ' + invalidFiles);
         if (file) {
-            ConfigBackupService.importConfig(file).then(
-                function success(response) {
-                    NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.UPLOADED');
+            ConfigBackupService.uploadConfig(file).then(
+                function success(data) {
+                    DialogService.configBackupImport(file.name, data.passwordRequired).then(function(password) {
+                        logger.warn('Got import result: ' + JSON.stringify(password));
+                        ConfigBackupService.importConfig(data.fileReference, password).then(function(result) {
+                            NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.UPLOADED');
+                        }, function(response) {
+                            logger.error('Could not import backup configuration');
+                            NotificationService.error(response.toUpperCase());
+                        });
+                    });
                 },
                 function error(response) {
                     NotificationService.error(response.toUpperCase());

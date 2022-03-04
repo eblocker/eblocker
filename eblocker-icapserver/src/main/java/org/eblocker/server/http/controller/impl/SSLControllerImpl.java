@@ -40,6 +40,7 @@ import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.common.squid.SquidWarningService;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.http.controller.SSLController;
@@ -234,7 +235,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
                 log.info("Enabling ssl and generating new certificates...");
                 try {
                     sslService.generateCa(sslState.getCaOptions());
-                } catch (SslService.PkiException e) {
+                } catch (PkiException e) {
                     throw new EblockerException("certificate generation failed", e);
                 }
             }
@@ -313,7 +314,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         try {
             sslService.generateCa(caOptions);
             STATUS.info("Generating and applying new SSL certificate was successful.");
-        } catch (SslService.PkiException e) {
+        } catch (PkiException e) {
             log.error("Creating new certificates failed: {}", e.getMessage(), e);
             throw new BadRequestException(e.getMessage());
         }

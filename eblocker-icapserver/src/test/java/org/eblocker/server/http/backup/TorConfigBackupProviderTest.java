@@ -37,6 +37,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
         torController = Mockito.mock(TorController.class);
         provider = new TorConfigBackupProvider(torController);
         dataSource = Mockito.mock(DataSource.class);
+        Mockito.when(dataSource.getVersion()).thenReturn("42");
     }
 
     @Test
@@ -47,7 +48,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
 
         Mockito.when(torController.getCurrentExitNodeCountries()).thenReturn(countries);
 
-        exportAndImportWithTorConfigBackupProvider(dataSource, provider);
+        exportAndImportWith(dataSource, provider);
 
         Set<String> expectedCountries = new HashSet<>();
         expectedCountries.add("xy");
@@ -61,7 +62,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
 
         Mockito.when(torController.getCurrentExitNodeCountries()).thenReturn(countries);
 
-        exportAndImportWithTorConfigBackupProvider(dataSource, provider);
+        exportAndImportWith(dataSource, provider);
 
         Mockito.verify(torController).setAllowedExitNodesCountries(Collections.EMPTY_SET);
     }

@@ -21,8 +21,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.eblocker.crypto.CryptoException;
-import org.eblocker.crypto.pki.CertificateAndKey;
-import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.CaOptions;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DistinguishedName;
@@ -34,18 +32,11 @@ import org.eblocker.server.http.utils.NormalizationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -65,13 +56,15 @@ import java.util.concurrent.TimeUnit;
 public class SslService {
     private static final Logger log = LoggerFactory.getLogger(SslService.class);
 
-    private final String keyStorePath;
-    private final String renewalKeyStorePath;
+    private final Path keyStorePath;
+    private final Path renewalKeyStorePath;
     private final char[] keyStorePassword;
     private final int maxCaValidityInMonths;
     private final int caKeySize;
     private final String caCertDnFormat;
     private final int caRenewWeeks;
+
+    private final Object keyStoreLock = new Object();
 
     private final DataSource dataSource;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
@@ -91,7 +84,6 @@ public class SslService {
     public SslService(@Named("ca.keystore.path") String keyStorePath,
                       @Named("ca.keystore.password") String keyStorePassword,
                       @Named("ca.cert.max.validity.months") int maxCaValidityInMonths,
-                      // TODO: rename
                       @Named("ca.cert.dn.format") String caCertDnFormat,
                       @Named("ca.key.size") int caKeySize,
                       @Named("ca.renew.weeks") int caRenewWeeks,
@@ -101,13 +93,13 @@ public class SslService {
                       @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                       @Named("ssl.certificate.friendlyname.length") int sslCertificateFriendlyNameLength,
                       @Named("ssl.certificate.friendlyname.fallback") String sslCertificateFriendlyNameFallback) {
-        this.keyStorePath = keyStorePath;
+        this.keyStorePath = Paths.get(keyStorePath);
         this.keyStorePassword = keyStorePassword.toCharArray();
         this.maxCaValidityInMonths = maxCaValidityInMonths;
         this.caCertDnFormat = caCertDnFormat;
         this.caKeySize = caKeySize;
         this.caRenewWeeks = caRenewWeeks;
-        this.renewalKeyStorePath = renewalKeyStorePath;
+        this.renewalKeyStorePath = Paths.get(renewalKeyStorePath);
         this.dataSource = dataSource;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.executorService = executorService;
@@ -122,8 +114,11 @@ public class SslService {
         }
 
         sslEnabled = dataSource.getSSLEnabledState();
-        ca = loadCa(keyStorePath, keyStorePassword);
-        renewalCa = loadCa(renewalKeyStorePath, keyStorePassword);
+
+        synchronized (keyStoreLock) {
+            ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+            renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+        }
 
         if (sslEnabled && ca == null) {
             throw new PkiException("ssl is enabled but no keypair available!");
@@ -168,6 +163,15 @@ public class SslService {
         return ca != null;
     }
 
+    public byte[] exportCa() throws IOException {
+        if (!isCaAvailable()) {
+            return null;
+        }
+        synchronized (keyStoreLock) {
+            return Files.readAllBytes(keyStorePath);
+        }
+    }
+
     public EblockerCa getRenewalCa() {
         requireInitialization();
         return renewalCa;
@@ -176,6 +180,52 @@ public class SslService {
     public boolean isRenewalCaAvailable() {
         requireInitialization();
         return renewalCa != null;
+    }
+
+    public byte[] exportRenewalCa() throws IOException {
+        if (!isRenewalCaAvailable()) {
+            return null;
+        }
+        synchronized (keyStoreLock) {
+            return Files.readAllBytes(renewalKeyStorePath);
+        }
+    }
+
+    public void importCas(byte[] caBytes, byte[] renewalCaBytes) throws IOException {
+        boolean caUpdated = false;
+        if (caBytes != null) {
+            try {
+                synchronized (keyStoreLock) {
+                    Files.write(keyStorePath, caBytes);
+                    ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+                }
+                caUpdated = true;
+            } catch (PkiException e) {
+                log.error("Could not load imported CA from key store {}", keyStorePath, e);
+                throw new IOException("Could not load CA from key store", e);
+            }
+            log.info("Successfully imported CA. Notifying listeners...");
+            listeners.forEach(SslStateListener::onCaChange);
+        }
+
+        if (renewalCaBytes != null) {
+            try {
+                synchronized (keyStoreLock) {
+                    Files.write(renewalKeyStorePath, renewalCaBytes);
+                    renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+                }
+            } catch (PkiException e) {
+                log.error("Could not load imported renewal CA from key store {}", renewalKeyStorePath, e);
+                throw new IOException("Could not load renewal CA from key store", e);
+            }
+            log.info("Successfully imported renewal CA. Notifying listeners...");
+            listeners.forEach(SslStateListener::onRenewalCaChange);
+        }
+
+        if (caUpdated) {
+            cancelExpirationTasks();
+            checkCaExpiration();
+        }
     }
 
     public CaOptions getDefaultCaOptions() {
@@ -209,7 +259,7 @@ public class SslService {
         return caRenewWeeks;
     }
 
-    private EblockerCa generateCa(String optionsCommonName, int validityInMonths, String keyStorePath, char[] keyStorePassword) throws PkiException {
+    private EblockerCa generateCa(String optionsCommonName, int validityInMonths, Path keyStorePath, char[] keyStorePassword) throws PkiException {
         if (validityInMonths > maxCaValidityInMonths) {
             log.warn("Generating CA certificate requested validity of {} months but maximum is {}.", validityInMonths, maxCaValidityInMonths);
             throw new PkiException("Maximum CA validity exceeded");
@@ -225,17 +275,17 @@ public class SslService {
         long daysValid = ChronoUnit.DAYS.between(notBefore, notAfter);
         log.info("Generating CA certificate for {} which is valid for {} days...", commonName, daysValid);
         try {
-            CertificateAndKey certificateAndKey = PKI.generateRoot(null,
+            EblockerCa rootCa = EblockerCa.generateRootCa(
                     commonName,
                     Date.from(notBefore.toInstant()),
                     Date.from(notAfter.toInstant()),
                     caKeySize);
 
-            try (FileOutputStream keyStoreStream = new FileOutputStream(keyStorePath)) {
-                PKI.generateKeyStore(certificateAndKey, "root", keyStorePassword, keyStoreStream);
+            synchronized (keyStoreLock) {
+                rootCa.writeToKeyStore("root", keyStorePath, keyStorePassword);
             }
 
-            return new EblockerCa(certificateAndKey);
+            return rootCa;
         } catch (CryptoException | IOException e) {
             throw new PkiException("ca generation failed " + e.getMessage(), e);
         }
@@ -271,10 +321,11 @@ public class SslService {
             if (renewalCa != null) {
                 log.debug("deleting previously generated renewal ca");
                 renewalCa = null;
-                Files.deleteIfExists(Paths.get(renewalKeyStorePath));
+                synchronized (keyStoreLock) {
+                    Files.deleteIfExists(renewalKeyStorePath);
+                }
             }
-            log.debug("canceling all scheduled tasks for ca expiration");
-            futures.forEach(f -> f.cancel(false));
+            cancelExpirationTasks();
         } catch (IOException e) {
             throw new PkiException("failed to delete obsolete renewal ca", e);
         }
@@ -306,11 +357,16 @@ public class SslService {
         futures.add(executorService.schedule(this::handleCaExpiration, duration.toMillis(), TimeUnit.MILLISECONDS));
     }
 
+    private void cancelExpirationTasks() {
+        log.debug("canceling all scheduled tasks for ca expiration");
+        futures.forEach(f -> f.cancel(false));
+    }
+
     private void generateRenewalCa() {
         try {
             log.debug("generating renewal ca");
             renewalCa = regenerateCa(renewalKeyStorePath, keyStorePassword);
-            listeners.forEach(l -> l.onRenewalCaChange());
+            listeners.forEach(SslStateListener::onRenewalCaChange);
         } catch (PkiException e) {
             log.error("failed to generate renewal ca", e);
         }
@@ -325,7 +381,9 @@ public class SslService {
             } else {
                 log.info("replacing expired ca with previously generated one");
                 ca = renewalCa;
-                Files.move(Paths.get(renewalKeyStorePath), Paths.get(keyStorePath), StandardCopyOption.REPLACE_EXISTING);
+                synchronized (keyStoreLock) {
+                    Files.move(renewalKeyStorePath, keyStorePath, StandardCopyOption.REPLACE_EXISTING);
+                }
             }
 
             disableRenewalCa();
@@ -333,7 +391,7 @@ public class SslService {
             // suppress callbacks if we handle expiration on init
             if (initialized) {
                 listeners.forEach(SslStateListener::onCaChange);
-                listeners.forEach(l -> l.onRenewalCaChange());
+                listeners.forEach(SslStateListener::onRenewalCaChange);
             }
             scheduleExpirationTasks();
         } catch (PkiException e) {
@@ -343,7 +401,7 @@ public class SslService {
         }
     }
 
-    private EblockerCa regenerateCa(String keyStorePath, char[] keyStorePassword) throws PkiException {
+    private EblockerCa regenerateCa(Path keyStorePath, char[] keyStorePassword) throws PkiException {
         // use previously used options or default ones if not available
         CaOptions caOptions = dataSource.get(CaOptions.class);
         if (caOptions == null) {
@@ -354,34 +412,10 @@ public class SslService {
         return generateCa(caOptions.getDistinguishedName().getCommonName(), caOptions.getValidityInMonths(), keyStorePath, keyStorePassword);
     }
 
-    private EblockerCa loadCa(String keyStorePath, char[] keyStorePassword) throws PkiException {
-        if (!Files.exists(Paths.get(keyStorePath))) {
-            return null;
-        }
-
-        try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
-            KeyStore keyStore = PKI.loadKeyStore(keyStoreStream, keyStorePassword);
-            String alias = keyStore.aliases().nextElement();
-            return new EblockerCa(new CertificateAndKey((X509Certificate) keyStore.getCertificate(alias),
-                    (PrivateKey) keyStore.getKey(alias, keyStorePassword)));
-        } catch (CryptoException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new PkiException("failed to load ca keystore", e);
-        }
-    }
 
     private void requireInitialization() {
         if (!initialized) {
             throw new IllegalStateException("method call not allowed on uninitialized service");
-        }
-    }
-
-    public class PkiException extends Exception {
-        public PkiException(String message) {
-            super(message);
-        }
-
-        private PkiException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 

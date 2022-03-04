@@ -21,8 +21,16 @@ import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.crypto.pki.PKI;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -77,5 +85,31 @@ public class EblockerCa {
         Instant maxNotAfter = Instant.now().plus(MAX_VALIDITY_SERVER_IN_DAYS, ChronoUnit.DAYS);
         Instant result = maxNotAfter.isBefore(caNotAfter) ? maxNotAfter : caNotAfter;
         return Date.from(result);
+    }
+
+    public void writeToKeyStore(String alias, Path keyStorePath, char[] keyStorePassword) throws IOException, CryptoException {
+        try (OutputStream keyStoreStream = Files.newOutputStream(keyStorePath)) {
+            PKI.generateKeyStore(certificateAndKey, alias, keyStorePassword, keyStoreStream);
+        }
+    }
+
+    public static EblockerCa loadFromKeyStore(Path keyStorePath, char[] keyStorePassword) throws PkiException {
+        if (!Files.exists(keyStorePath)) {
+            return null;
+        }
+
+        try (InputStream keyStoreStream = Files.newInputStream(keyStorePath)) {
+            KeyStore keyStore = PKI.loadKeyStore(keyStoreStream, keyStorePassword);
+            String alias = keyStore.aliases().nextElement();
+            return new EblockerCa(new CertificateAndKey((X509Certificate) keyStore.getCertificate(alias),
+                    (PrivateKey) keyStore.getKey(alias, keyStorePassword)));
+        } catch (CryptoException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            throw new PkiException("failed to load ca keystore", e);
+        }
+    }
+
+    public static EblockerCa generateRootCa(String commonName, Date notBefore, Date notAfter, int caKeySize) throws CryptoException {
+        CertificateAndKey certificateAndKey = PKI.generateRoot(null, commonName, notBefore, notAfter, caKeySize);
+        return new EblockerCa(certificateAndKey);
     }
 }

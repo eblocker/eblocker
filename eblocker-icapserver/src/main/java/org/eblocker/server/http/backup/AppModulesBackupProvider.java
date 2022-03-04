@@ -17,6 +17,7 @@
 package org.eblocker.server.http.backup;
 
 import com.google.inject.Inject;
+import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
@@ -42,7 +43,7 @@ public class AppModulesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
         List<AppWhitelistModule> allModules = appModuleService.getAll();
         List<AppWhitelistModule> modifiedModules = allModules.stream()
                 .filter(AppWhitelistModule::isModified)
@@ -59,7 +60,7 @@ public class AppModulesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
         AppModulesBackup backup = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(APP_MODULES_ENTRY)) {

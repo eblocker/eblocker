@@ -18,11 +18,37 @@ export default function ConfigBackupService(logger, $http, $q) {
     'ngInject';
 
     const PATH = '/api/configbackup/';
-    const PATH_EXPORT = PATH + 'export/eblocker-config.eblcfg';
+    const PATH_EXPORT = PATH + 'export';
+    const PATH_DOWNLOAD = PATH + 'download';
+    const PATH_UPLOAD = PATH + 'upload';
     const PATH_IMPORT = PATH + 'import';
 
-    function importConfig(file) {
-        return $http.put(PATH_IMPORT, file, {'headers': {'Content-type': 'application/octet-stream'}}).then(
+    function exportConfig(passwordRequired, password) {
+        return $http.post(PATH_EXPORT, {passwordRequired: passwordRequired, password: password}).then(
+            function(response) {
+                return response.data;
+            }, function(reason) {
+                logger.error('Could not export config: ' + reason);
+                return $q.reject(reason);
+            });
+    }
+
+    function downloadConfigUrl(fileReference) {
+        return PATH_DOWNLOAD + '/' + fileReference;
+    }
+
+    function uploadConfig(file) {
+        return $http.put(PATH_UPLOAD, file, {'headers': {'Content-type': 'application/octet-stream'}}).then(
+            function success(response){
+                return response.data;
+            }, function error(response) {
+                logger.error('Error uploading configuration backup ', response);
+                return $q.reject(response.data);
+            });
+    }
+
+    function importConfig(filename, password) {
+        return $http.post(PATH_IMPORT, {fileReference: filename, password: password}).then(
             function success(response){
                 return response;
             }, function error(response) {
@@ -31,12 +57,10 @@ export default function ConfigBackupService(logger, $http, $q) {
             });
     }
 
-    function downloadUrl() {
-        return PATH_EXPORT;
-    }
-
     return {
+        exportConfig: exportConfig,
+        downloadConfigUrl: downloadConfigUrl,
+        uploadConfig: uploadConfig,
         importConfig: importConfig,
-        downloadUrl: downloadUrl
     };
 }

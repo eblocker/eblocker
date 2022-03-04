@@ -32,6 +32,7 @@ import org.eblocker.server.common.data.migrations.Migrations;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.ssl.SslTestListeners;
 import org.eblocker.server.common.startup.StartupContractViolation;
@@ -465,7 +466,7 @@ public class EblockerServerApp {
         initSubSystemServices(SubSystem.NETWORK_STATE_MACHINE);
     }
 
-    private boolean doStartSslService() throws SslService.PkiException {
+    private boolean doStartSslService() throws PkiException {
         initSubSystemServices(SubSystem.HTTPS_SERVER);
 
         SslService sslService = injector.getInstance(SslService.class);

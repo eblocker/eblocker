@@ -22,6 +22,7 @@ import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.ssl.EblockerCa;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.ssl.SslTestUtils;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -374,7 +375,7 @@ public class SSLContextHandlerTest {
     }
 
     @Test
-    public void testEnable() throws SslService.PkiException, IOException {
+    public void testEnable() throws PkiException, IOException {
         Mockito.when(sslService.getCa()).thenReturn(eblockerCa);
         Mockito.when(sslService.isCaAvailable()).thenReturn(true);
         Mockito.when(sslService.isSslEnabled()).thenReturn(false);
@@ -389,7 +390,7 @@ public class SSLContextHandlerTest {
     }
 
     @Test
-    public void testDisable() throws SslService.PkiException, IOException {
+    public void testDisable() throws PkiException, IOException {
         Mockito.when(sslService.getCa()).thenReturn(eblockerCa);
         Mockito.when(sslService.isCaAvailable()).thenReturn(true);
         Mockito.when(sslService.isSslEnabled()).thenReturn(true);

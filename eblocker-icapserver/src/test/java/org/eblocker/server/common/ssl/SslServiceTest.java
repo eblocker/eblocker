@@ -477,6 +477,24 @@ public class SslServiceTest {
         Assert.assertEquals(expectedFilename, generatedFilename);
     }
 
+    @Test
+    public void testExportCa() throws PkiException, IOException {
+        sslService = createService(SslTestUtils.CA_RESOURCE, null);
+        sslService.init();
+        Assert.assertNotNull(sslService.exportCa());
+    }
+
+    @Test
+    public void testImportCas() throws Exception {
+        sslService = createService(SslTestUtils.CA_RESOURCE, null);
+        sslService.init();
+
+        byte[] alternativeCaBytes = ResourceHandler.getInputStream(SslTestUtils.ALTERNATIVE_CA_RESOURCE).readAllBytes();
+        sslService.importCas(alternativeCaBytes, null);
+        CertificateAndKey alternativeCa = SslTestUtils.loadCertificateAndKey(SslTestUtils.ALTERNATIVE_CA_RESOURCE, SslTestUtils.UNIT_TEST_CA_PASSWORD);
+        Assert.assertEquals(alternativeCa.getCertificate(), sslService.getCa().getCertificate());
+    }
+
     private SslService createService(EblockerResource caResource) {
         return createService(caResource, null);
     }

@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import org.apache.commons.io.IOUtils;
+import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.backup.AppModulesBackupProvider;
 import org.eblocker.server.http.backup.BackupProvider;
@@ -25,6 +26,7 @@ import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -39,7 +41,13 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 public class ConfigurationBackupServiceTest {
-    DataSource dataSource = Mockito.mock(DataSource.class);
+    DataSource dataSource;
+
+    @Before
+    public void setUp() {
+        dataSource = Mockito.mock(DataSource.class);
+        Mockito.when(dataSource.getVersion()).thenReturn("42");
+    }
 
     @Test
     public void testExportImport() throws IOException {
@@ -53,14 +61,11 @@ public class ConfigurationBackupServiceTest {
 
     @Test(expected = UnsupportedBackupVersionException.class)
     public void testUnsupportedVersion() throws IOException {
-        AppModulesBackupProvider ambp = Mockito.mock(AppModulesBackupProvider.class);
-        DevicesBackupProvider dbp = Mockito.mock(DevicesBackupProvider.class);
-        TorConfigBackupProvider tor = Mockito.mock(TorConfigBackupProvider.class);
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, ambp, dbp, tor) {
+        BackupProvider provider = Mockito.mock(BackupProvider.class);
+        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider) {
             @Override
-            void addMainAttributes(Attributes attributes) {
-                super.addMainAttributes(attributes);
-                attributes.putValue(CURRENT_VERSION_KEY, "-666");
+            BackupAttributes getBackupAttributes(boolean passwordRequired) {
+                return new BackupAttributes(-666, 42, passwordRequired);
             }
         };
         exportImport(service);
@@ -79,6 +84,24 @@ public class ConfigurationBackupServiceTest {
             }
         };
         exportImport(service);
+    }
+
+    @Test
+    public void testRequiresPassword() throws IOException {
+        TestBackupProvider provider = new TestBackupProvider();
+        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
+
+        // without password:
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        service.exportConfiguration(outputStream, null);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        Assert.assertFalse(service.requiresPassword(inputStream));
+
+        // with password:
+        outputStream = new ByteArrayOutputStream();
+        service.exportConfiguration(outputStream, "top secret");
+        inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        Assert.assertTrue(service.requiresPassword(inputStream));
     }
 
     /**
@@ -101,14 +124,14 @@ public class ConfigurationBackupServiceTest {
         private String exportedData = "Test 1234";
         private String importedData = null;
 
-        public void exportConfiguration(JarOutputStream outputStream) throws IOException {
+        public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
             JarEntry entry = new JarEntry(ENTRY_NAME);
             outputStream.putNextEntry(entry);
             IOUtils.write(exportedData, outputStream, StandardCharsets.UTF_8);
             outputStream.closeEntry();
         }
 
-        public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
             JarEntry entry = inputStream.getNextJarEntry();
             if (entry.getName().equals(ENTRY_NAME)) {
                 importedData = IOUtils.toString(inputStream, StandardCharsets.UTF_8);

@@ -27,38 +27,16 @@ import java.io.IOException;
 @SuppressWarnings("squid:S2187")
 public class BackupProviderTestBase {
     protected void exportAndImportWith(DataSource dataSource, BackupProvider provider) throws IOException {
+        exportAndImportWith(dataSource, provider, null);
+    }
+
+    protected void exportAndImportWith(DataSource dataSource, BackupProvider provider, String password) throws IOException {
         ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream);
+        service.exportConfiguration(outputStream, password);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream);
-    }
-
-    protected void exportAndImportWithDevicesBackupProvider(DataSource dataSource, DevicesBackupProvider dbp) throws IOException {
-        AppModulesBackupProvider ambp = Mockito.mock(AppModulesBackupProvider.class);
-        TorConfigBackupProvider tor = Mockito.mock(TorConfigBackupProvider.class);
-
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, ambp, dbp, tor);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream);
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream);
-    }
-
-    protected void exportAndImportWithTorConfigBackupProvider(DataSource dataSource, TorConfigBackupProvider tor) throws IOException {
-        AppModulesBackupProvider ambp = Mockito.mock(AppModulesBackupProvider.class);
-        DevicesBackupProvider dbp = Mockito.mock(DevicesBackupProvider.class);
-
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, ambp, dbp, tor);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream);
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream);
+        service.importConfiguration(inputStream, password);
     }
 }

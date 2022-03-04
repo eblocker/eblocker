@@ -18,6 +18,7 @@ package org.eblocker.server.http.backup;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
+import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.TorController;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class TorConfigBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
         Set<String> torCountries = torController.getCurrentExitNodeCountries();
 
         JarEntry entry = new JarEntry(TOR_ENTRY);
@@ -51,7 +52,7 @@ public class TorConfigBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
         Set<String> restoredTorCountries = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(TOR_ENTRY)) {

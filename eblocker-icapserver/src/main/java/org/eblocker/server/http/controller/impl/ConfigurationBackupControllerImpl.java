@@ -17,9 +17,10 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import org.eblocker.server.common.data.ConfigBackupReference;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
@@ -31,41 +32,119 @@ import org.restexpress.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import java.nio.file.StandardCopyOption;
+
 public class ConfigurationBackupControllerImpl implements ConfigurationBackupController {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupControllerImpl.class);
+    public static final String FILE_PREFIX = "eblocker-config-";
+    public static final String FILE_SUFFIX = ".eblcfg";
     private final ConfigurationBackupService backupService;
+    private final Path tmpDir;
 
     @Inject
-    public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService) {
+    public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService, @Named("tmpDir") String tmpDir) {
         this.backupService = backupService;
+        this.tmpDir = Paths.get(tmpDir);
     }
 
+    /**
+     * Writes a backup of the settings to a temporary file and returns a reference for immediate
+     * download to the client.
+     * @param request
+     * @param response
+     * @return
+     */
     @Override
-    public ByteBuf exportConfiguration(Request request, Response response) {
-        String timestamp = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
-        response.addHeader("Content-Disposition", "attachment; filename=\"eblocker-config-" + timestamp + ".eblcfg\"");
-        response.setContentType("application/octet-stream");
-        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(10000);
-        try (OutputStream outputStream = new ByteBufOutputStream(buffer)) {
-            backupService.exportConfiguration(outputStream);
-            LOG.info("Successfully exported configuration backup");
-        } catch (Exception e) {
-            LOG.error("Could not write backup", e);
-            buffer.release();
-            throw new EblockerException("Could not write backup");
+    public ConfigBackupReference exportConfiguration(Request request, Response response) {
+        ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
+        if (reference == null) {
+            String message = "ConfigBackupReference is missing from request";
+            LOG.error(message);
+            throw new BadRequestException(message);
         }
-        return buffer;
+        try {
+            Path tempFile = createTempFile();
+            try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
+                backupService.exportConfiguration(outputStream, reference.getPassword());
+                LOG.debug("Successfully exported configuration backup to {}", tempFile);
+            }
+            return new ConfigBackupReference(tempFile.getFileName().toString(), null, reference.isPasswordRequired());
+        } catch (Exception e) {
+            LOG.error("Could not export configuration to local file", e);
+            throw new EblockerException("adminconsole.config_backup.error.export_failure");
+        }
     }
 
+    /**
+     * Returns a previously exported configuration backup
+     * @param request
+     * @param response
+     * @return
+     */
+    @Override
+    public ByteBuf downloadConfiguration(Request request, Response response) {
+        String fileReference = request.getHeader("configBackupFileReference");
+        Path localFile = getVerifiedLocalPath(fileReference);
+        String timestamp = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
+        response.addHeader("Content-Disposition", "attachment; filename=\"" + FILE_PREFIX + timestamp + FILE_SUFFIX + "\"");
+        response.setContentType("application/octet-stream");
+        try {
+            byte[] bytes = Files.readAllBytes(localFile);
+            LOG.debug("Read {} bytes of configuration backup from {}", bytes.length, localFile);
+            return Unpooled.wrappedBuffer(bytes);
+        } catch (Exception e) {
+            LOG.error("Could not read exported backup file '{}' from disk", localFile, e);
+            throw new EblockerException("adminconsole.config_backup.error.download_failure");
+        }
+    }
+
+    /**
+     * Saves an uploaded configuration backup and returns whether a password is required to recover keys
+     * @param request
+     * @param response
+     * @return
+     */
+    @Override
+    public ConfigBackupReference uploadConfiguration(Request request, Response response) {
+        try (InputStream inputStream = request.getBodyAsStream()) {
+            Path tempFile = createTempFile();
+            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            LOG.debug("Wrote uploaded backup file to: {}", tempFile);
+            try (InputStream localInputStream = Files.newInputStream(tempFile)) {
+                boolean passwordRequired = backupService.requiresPassword(localInputStream);
+                return new ConfigBackupReference(tempFile.getFileName().toString(), null, passwordRequired);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not write uploaded backup to disk", e);
+            throw new EblockerException("adminconsole.config_backup.error.upload_failure");
+        }
+    }
+
+    /**
+     * Imports a previously uploaded configuration backup
+     * @param request
+     * @param response
+     */
     @Override
     public void importConfiguration(Request request, Response response) {
-        try (InputStream inputStream = request.getBodyAsStream()) {
-            backupService.importConfiguration(inputStream);
+        ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
+        if (reference == null) {
+            String message = "ConfigBackupReference is missing from request";
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+        Path localFile = getVerifiedLocalPath(reference.getFileReference());
+        try (InputStream inputStream = Files.newInputStream(localFile)) {
+            backupService.importConfiguration(inputStream, reference.getPassword());
             LOG.info("Successfully imported configuration backup");
         } catch (CorruptedBackupException e) {
             LOG.error("Could not import corrupted backup", e);
@@ -77,5 +156,27 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             LOG.error("Could not import backup", e);
             throw new EblockerException("adminconsole.config_backup.error.import_failure");
         }
+    }
+
+    private Path createTempFile() throws IOException {
+        Path tempFile = Files.createTempFile(tmpDir, FILE_PREFIX, FILE_SUFFIX);
+        tempFile.toFile().deleteOnExit();
+        return tempFile;
+    }
+
+    private Path getVerifiedLocalPath(String fileReference) {
+        if (fileReference == null || fileReference.isEmpty()) {
+            String message = "Config backup file reference is missing from request";
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+        Path filename = Paths.get(fileReference).getFileName(); // protect against relative paths with '..' components
+        if (!filename.toString().startsWith(FILE_PREFIX) || !filename.toString().endsWith(FILE_SUFFIX)) {
+            String message = "Invalid backup file name: " + filename;
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+        Path localFile = tmpDir.resolve(filename);
+        return localFile;
     }
 }

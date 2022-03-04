@@ -1,9 +1,9 @@
 <div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" layout-fill class="settings-child-view">
     <div class="config-frame md-whiteframe-z1">
-        <h3>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL' | translate }}</h3>
+        <h3>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.GENERATE' | translate }}</h3>
         <div layout="column">
             <div>
-                <p>{{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN' | translate }}
+                <p>{{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.EXPORT' | translate }}
                     <ul>
                         <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
                         <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
@@ -12,21 +12,71 @@
                     </ul>
                 </p>
             </div>
-            <div layout="row" layout-xs="column" layout-align="center center">
-                <md-button class="md-raised md-accent" ng-click="vm.createConfigBackup()">
-                    {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.GENERATE' | translate }}
-                </md-button>
-                <md-button class="md-raised md-secondary"
-                           name="configFile"
-                           ngf-select="vm.uploadConfigBackup($file, $invalidFiles)"
-                           ng-model="vm.configFile"
-                           ngf-pattern="'.eblcfg'"
-                           accept=".eblcfg"
-                           ngf-max-size="'1MB'"
-                           ng-required="required">
-                    {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.UPLOAD' | translate}}
-                </md-button>
-            </div>
+            <form name="vm.passwordForm" novalidate ng-submit="vm.createConfigBackup()">
+                <div>
+                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                 ng-model="vm.includeKeys"
+                                 aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
+                        {{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.EXPORT' | translate }}
+                    </md-checkbox>
+                </div>
+                <!-- PASSWORD -->
+                <div layout="row" layout-xs="column" ng-if="vm.includeKeys">
+                    <div flex="60" flex-xs="100">
+                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                            <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_NEW_PASSWORD' | translate }}</label>
+                            <input name="newPassword" ng-model="vm.newPassword" type="password" md-maxlength="vm.maxLength" required>
+                            <div ng-messages="vm.passwordForm.newPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.newPassword.$touched">
+                                <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.NEW_PASSWORD_REQUIRED' | translate }}</div>
+                                <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <div flex="40" flex-xs="100" layout="column" layout-align="start center" style="min-height: 40px">
+                        <span style="font-size: 12px;">{{'ADMINCONSOLE.DIALOG.PASSWORD.STRENGTH' | translate}}</span>
+                        <ul id="strength" password-quality="vm.newPassword" style="margin: 0; padding: 0;"></ul>
+                    </div>
+                </div>
+
+                <!-- REPEAT PASSWORD -->
+                <div layout="row" ng-if="vm.includeKeys">
+                    <div flex="60" flex-xs="100">
+                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                            <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_REPEAT_PASSWORD' | translate }}</label>
+                            <input name="repeatPassword" ng-model="vm.repeatPassword" type="password" ng-maxlength="vm.maxLength" required>
+                            <div ng-messages="vm.passwordForm.repeatPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.repeatPassword.$touched">
+                                <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.REPEAT_PASSWORD_REQUIRED' | translate }}</div>
+                                <div ng-message="mustMatch">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.REPEAT_PASSWORD_MISMATCH' | translate }}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.WARNING" ng-if="vm.includeKeys">
+                </div>
+
+                <div layout="row" layout-xs="column" layout-align="start center">
+                    <md-button type="submit" class="md-raised md-accent" ng-disabled="vm.exporting">
+                        {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.GENERATE' | translate }}
+                    </md-button>
+                    <md-progress-circular md-diameter="36" md-mode="indeterminate" ng-show="vm.exporting"></md-progress-circular>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate }}</h3>
+        <div layout="row" layout-xs="column" layout-align="start center">
+            <md-button class="md-raised md-secondary"
+                       name="configFile"
+                       ngf-select="vm.uploadConfigBackup($file, $invalidFiles)"
+                       ng-model="vm.configFile"
+                       ngf-pattern="'.eblcfg'"
+                       accept=".eblcfg"
+                       ngf-max-size="'1MB'"
+                       ng-required="required">
+                {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.UPLOAD' | translate}}
+            </md-button>
         </div>
     </div>
 </div>

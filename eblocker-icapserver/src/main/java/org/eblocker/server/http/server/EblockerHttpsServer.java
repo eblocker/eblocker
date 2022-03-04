@@ -2245,13 +2245,24 @@ public class EblockerHttpsServer implements Preprocessor {
 
     private void addConfigurationBackupRoutes() {
         server
-                .uri("/api/configbackup/export/eblocker-config.eblcfg", configBackupController)
-                .action("exportConfiguration", HttpMethod.GET)
-                .name("adminconsole.configbackup.export")
+                .uri("/api/configbackup/export", configBackupController)
+                .action("exportConfiguration", HttpMethod.POST)
+                .name("adminconsole.configbackup.export");
+
+        server
+                .uri("/api/configbackup/download/{configBackupFileReference}", configBackupController)
+                .action("downloadConfiguration", HttpMethod.GET)
+                .name("adminconsole.configbackup.download")
                 .noSerialization();
+
+        server
+                .uri("/api/configbackup/upload", configBackupController)
+                .action("uploadConfiguration", HttpMethod.PUT)
+                .name("adminconsole.configbackup.upload");
+
         server
                 .uri("/api/configbackup/import", configBackupController)
-                .action("importConfiguration", HttpMethod.PUT)
+                .action("importConfiguration", HttpMethod.POST)
                 .name("adminconsole.configbackup.import");
     }
 

@@ -18,6 +18,7 @@ package org.eblocker.server.http.backup;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
+import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.exceptions.EblockerException;
@@ -53,7 +54,7 @@ public class DevicesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
         List<Device> allDevices = deviceService.getDevices(true).stream()
                 .filter(device -> !device.isEblocker())
                 .collect(Collectors.toList());
@@ -64,7 +65,7 @@ public class DevicesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
         List<Device> devicesToRestore = null;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(DEVICES_ENTRY)) {

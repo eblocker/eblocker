@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2022 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,16 +14,19 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.http.controller;
+export default function ConfigBackupImportController(logger, $scope, $mdDialog, fileName, passwordRequired) {
+    'ngInject';
 
-import io.netty.buffer.ByteBuf;
-import org.eblocker.server.common.data.ConfigBackupReference;
-import org.restexpress.Request;
-import org.restexpress.Response;
+    const vm = this;
+    vm.fileName = fileName;
+    vm.passwordRequired = passwordRequired;
+    vm.includeKeys = passwordRequired; // default: ask for password if keys are contained in the backup
 
-public interface ConfigurationBackupController {
-    ConfigBackupReference exportConfiguration(Request request, Response response);
-    ByteBuf downloadConfiguration(Request request, Response response);
-    ConfigBackupReference uploadConfiguration(Request request, Response response);
-    void importConfiguration(Request request, Response response);
+    vm.close = function() {
+        $mdDialog.hide(vm.password);
+    };
+
+    vm.cancel = function() {
+        $mdDialog.cancel();
+    };
 }

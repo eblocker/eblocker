@@ -351,7 +351,7 @@
         "CONFIG_BACKUP" : {
             "ACTION" : {
                 "GENERATE" : "Einstellungen sichern",
-                "UPLOAD" : "Wiederherstellen..."
+                "UPLOAD" : "Einstellungen wiederherstellen..."
             },
 	    "DATA_DEVICE_SETTINGS" : "Geräteeinstellungen",
 	    "DATA_TOR_SETTINGS" : "Einstellungen für Tor",
@@ -359,16 +359,33 @@
             "DATA_TRUSTED_SITES" : "Vertrauenswürdige Websites",
             "ERROR" : {
                 "CORRUPTED" : "Die Sicherungsdatei ist beschädigt und konnte nicht importiert werden",
+                "DOWNLOAD_FAILURE" : "Die Sicherungsdatei konnte nicht heruntergeladen werden",
+                "EXPORT_FAILURE" : "Die Sicherungsdatei konnte nicht erstellt werden",
                 "IMPORT_FAILURE" : "Die Sicherungsdatei konnte nicht wiederhergestellt werden",
                 "INVALID_FILE" : "Bitte wählen Sie eine eBlocker-Sicherungsdatei mit der Endung .eblcfg aus",
-                "UNSUPPORTED_VERSION" : "Die Version der Sicherungsdatei wird nicht mehr unterstützt"
+                "UNSUPPORTED_VERSION" : "Die Version der Sicherungsdatei wird nicht mehr unterstützt",
+                "UPLOAD_FAILURE" : "Die Sicherungsdatei konnte nicht hochgeladen werden"
             },
-            "EXPLAIN" : "Diese Daten können Sie in der aktuellen Version in einer Datei sichern und wiederherstellen:",
+            "EXPLAIN" : {
+                "EXPORT" : "Diese Daten können Sie in der aktuellen Version in einer Datei sichern und wiederherstellen:",
+                "IMPORT" : "Diese Daten werden wiederhergestellt:"
+            },
+            "FILE_LABEL" : "Ausgewählte Datei",
+            "INCLUDE_KEYS" : {
+                "EXPORT" : "Schlüssel für HTTPS und eBlocker Mobile sichern",
+                "IMPORT" : "Schlüssel für HTTPS und eBlocker Mobile wiederherstellen"
+            },
             "INFO" : {
                 "DOWNLOADED" : "Die Sicherungsdatei wurde in Ihrem Downloads-Verzeichnis gespeichert",
                 "UPLOADED" : "Die Einstellungen wurden wiederhergestellt"
             },
-            "LABEL" : "Einstellungen Sichern"
+            "LABEL" : {
+                "GENERATE" : "Einstellungen sichern",
+                "UPLOAD" : "Einstellungen wiederherstellen"
+            },
+            "PASSWORD" : {
+                "WARNING" : "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht."
+            }
         },
         "DETAILS_VIEW" : {
             "NAV_BACK" : "Übersicht"

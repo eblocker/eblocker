@@ -158,6 +158,13 @@ public class SslService {
         return ca != null;
     }
 
+    public byte[] exportCa() throws IOException {
+        if (!isCaAvailable()) {
+            return null;
+        }
+        return Files.readAllBytes(keyStorePath);
+    }
+
     public EblockerCa getRenewalCa() {
         requireInitialization();
         return renewalCa;
@@ -166,6 +173,46 @@ public class SslService {
     public boolean isRenewalCaAvailable() {
         requireInitialization();
         return renewalCa != null;
+    }
+
+    public byte[] exportRenewalCa() throws IOException {
+        if (!isRenewalCaAvailable()) {
+            return null;
+        }
+        return Files.readAllBytes(renewalKeyStorePath);
+    }
+
+    public void importCas(byte[] caBytes, byte[] renewalCaBytes) throws IOException {
+        boolean caUpdated = false;
+        if (caBytes != null) {
+            Files.write(keyStorePath, caBytes);
+            try {
+                ca = EblockerCa.loadFromKeyStore(keyStorePath, keyStorePassword);
+                caUpdated = true;
+            } catch (PkiException e) {
+                log.error("Could not load imported CA from key store {}", keyStorePath, e);
+                throw new IOException("Could not load CA from key store", e);
+            }
+            log.info("Successfully imported CA. Notifying listeners...");
+            listeners.forEach(SslStateListener::onCaChange);
+        }
+
+        if (renewalCaBytes != null) {
+            Files.write(renewalKeyStorePath, renewalCaBytes);
+            try {
+                renewalCa = EblockerCa.loadFromKeyStore(renewalKeyStorePath, keyStorePassword);
+            } catch (PkiException e) {
+                log.error("Could not load imported renewal CA from key store {}", renewalKeyStorePath, e);
+                throw new IOException("Could not load renewal CA from key store", e);
+            }
+            log.info("Successfully imported renewal CA. Notifying listeners...");
+            listeners.forEach(SslStateListener::onRenewalCaChange);
+        }
+
+        if (caUpdated) {
+            cancelExpirationTasks();
+            checkCaExpiration();
+        }
     }
 
     public CaOptions getDefaultCaOptions() {
@@ -261,8 +308,7 @@ public class SslService {
                 renewalCa = null;
                 Files.deleteIfExists(renewalKeyStorePath);
             }
-            log.debug("canceling all scheduled tasks for ca expiration");
-            futures.forEach(f -> f.cancel(false));
+            cancelExpirationTasks();
         } catch (IOException e) {
             throw new PkiException("failed to delete obsolete renewal ca", e);
         }
@@ -294,11 +340,16 @@ public class SslService {
         futures.add(executorService.schedule(this::handleCaExpiration, duration.toMillis(), TimeUnit.MILLISECONDS));
     }
 
+    private void cancelExpirationTasks() {
+        log.debug("canceling all scheduled tasks for ca expiration");
+        futures.forEach(f -> f.cancel(false));
+    }
+
     private void generateRenewalCa() {
         try {
             log.debug("generating renewal ca");
             renewalCa = regenerateCa(renewalKeyStorePath, keyStorePassword);
-            listeners.forEach(l -> l.onRenewalCaChange());
+            listeners.forEach(SslStateListener::onRenewalCaChange);
         } catch (PkiException e) {
             log.error("failed to generate renewal ca", e);
         }
@@ -321,7 +372,7 @@ public class SslService {
             // suppress callbacks if we handle expiration on init
             if (initialized) {
                 listeners.forEach(SslStateListener::onCaChange);
-                listeners.forEach(l -> l.onRenewalCaChange());
+                listeners.forEach(SslStateListener::onRenewalCaChange);
             }
             scheduleExpirationTasks();
         } catch (PkiException e) {

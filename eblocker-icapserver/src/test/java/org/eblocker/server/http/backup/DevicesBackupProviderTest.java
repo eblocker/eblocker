@@ -59,6 +59,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         openVpnService = Mockito.mock(OpenVpnService.class);
         dataSource = Mockito.mock(DataSource.class);
         provider = new DevicesBackupProvider(deviceService, userService, deviceFactory, openVpnService);
+        Mockito.when(dataSource.getVersion()).thenReturn("42");
     }
 
     @Test
@@ -185,7 +186,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
                 deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(computerAfter);
 
-        exportAndImportWithDevicesBackupProvider(dataSource, provider);
+        exportAndImportWith(dataSource, provider);
 
         //        Mockito.verify(deviceService).updateDevice(gatewayAfter);
         //        Mockito.verify(deviceService).updateDevice(computerAfter);
@@ -289,7 +290,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
                 deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(computerAfter);
 
-        exportAndImportWithDevicesBackupProvider(dataSource, provider);
+        exportAndImportWith(dataSource, provider);
 
         // Verify computer has been restored correctly
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);

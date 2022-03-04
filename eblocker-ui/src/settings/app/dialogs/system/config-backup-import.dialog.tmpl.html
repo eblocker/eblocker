@@ -1,0 +1,56 @@
+<md-dialog id="config-backup-import-dialog" aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate}}">
+    <form name="configBackupImportForm" layout-padding ng-submit="Dialog.save()" novalidate style="overflow: initial;">
+        <md-dialog-content layout="column" layout-padding style="overflow: initial;">
+            <div>
+                <h2>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate }}</h2>
+            </div>
+
+            <div>
+                {{ 'ADMINCONSOLE.CONFIG_BACKUP.FILE_LABEL' | translate }}: <b>{{ vm.fileName }}</b>
+            </div>
+
+            <div>
+                {{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORT' | translate }}
+                <ul>
+                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
+                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
+                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
+                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
+                </ul>
+            </div>
+
+            <div ng-if="vm.passwordRequired">
+                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                             ng-model="vm.includeKeys" ng-change="vm.updateIncludeKeys()"
+                             aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
+                    {{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.IMPORT' | translate }}
+                </md-checkbox>
+            </div>
+
+            <div ng-if="vm.passwordRequired && vm.includeKeys">
+                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                    <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_NEW_PASSWORD' | translate }}</label>
+                    <input name="password" ng-model="vm.password" type="password" md-maxlength="vm.maxLength" required>
+                    <div ng-messages="vm.passwordForm.password.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.password.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.NEW_PASSWORD_REQUIRED' | translate }}</div>
+                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
+                    </div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"
+                           layout-align="end center"
+                           layout-xs="column"
+                           layout-align-xs="center center"
+                           style="padding-right: 16px;">
+            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
+            </md-button>
+            <md-button type="submit" ng-click="vm.close()" class="md-raised md-primary md-accent">
+                {{ 'ADMINCONSOLE.TASKS.DIALOG.OK' | translate }}
+            </md-button>
+
+        </md-dialog-actions>
+    </form>
+</md-dialog>

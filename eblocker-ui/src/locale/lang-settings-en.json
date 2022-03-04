@@ -359,16 +359,33 @@
             "DATA_TRUSTED_SITES" : "Trusted websites",
             "ERROR" : {
                 "CORRUPTED" : "The settings file is corrupted and could not be read",
+                "DOWNLOAD_FAILURE" : "The settings file could not be downloaded",
+                "EXPORT_FAILURE" : "The settings file could not be created",
                 "IMPORT_FAILURE" : "The settings could not be restored from the file",
                 "INVALID_FILE" : "Please select an eBlocker settings file with extension .eblcfg",
-                "UNSUPPORTED_VERSION" : "This settings file's version is not supported any more"
+                "UNSUPPORTED_VERSION" : "This settings file's version is not supported any more",
+                "UPLOAD_FAILURE" : "The settings file could not be uploaded"
             },
-            "EXPLAIN" : "These data can be saved to a file and restored in the current version:",
+            "EXPLAIN" : {
+                "EXPORT" : "These data can be saved to a file and restored in the current version:",
+                "IMPORT" : "These data are restored:"
+            },
+            "FILE_LABEL" : "Selected File",
+            "INCLUDE_KEYS" : {
+                "EXPORT" : "Save HTTPS and eBlocker Mobile keys",
+                "IMPORT" : "Restore HTTPS and eBlocker Mobile keys"
+            },
             "INFO" : {
                 "DOWNLOADED" : "The settings file was saved in your Downloads folder",
                 "UPLOADED" : "The settings have been restored"
             },
-            "LABEL" : "Save Settings"
+            "LABEL" : {
+                "GENERATE" : "Save Settings",
+                "UPLOAD" : "Restore Settings"
+            },
+            "PASSWORD" : {
+                "WARNING" : "<b>Please note:</b> this password is needed to restore the keys later. It cannot be recovered if it is lost."
+            }
         },
         "DETAILS_VIEW" : {
             "NAV_BACK" : "Back to overview"

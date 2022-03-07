@@ -120,7 +120,7 @@ public class CrlCacheCertStore extends CertStoreSpi {
             ASN1OctetString octetString = ASN1OctetString.getInstance(extension);
             ASN1Primitive primitive = ASN1Primitive.fromByteArray(octetString.getOctets());
             return CRLDistPoint.getInstance(primitive);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             throw new IOException("decoding failure", e);
         }
     }

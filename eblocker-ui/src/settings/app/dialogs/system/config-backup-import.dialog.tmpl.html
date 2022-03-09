@@ -33,7 +33,6 @@
                     <input name="password" ng-model="vm.password" type="password" md-maxlength="vm.maxLength" required>
                     <div ng-messages="vm.configBackupImportForm.password.$error" ng-if="vm.configBackupImportForm.$submitted || vm.configBackupImportForm.password.$touched">
                         <div ng-message="required">{{ 'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.REQUIRED' | translate }}</div>
-                        <div ng-message="invalid">BAD</div>
                         <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
                     </div>
                 </md-input-container>

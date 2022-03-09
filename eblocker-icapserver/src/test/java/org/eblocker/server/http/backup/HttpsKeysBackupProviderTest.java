@@ -18,10 +18,13 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.http.service.ConfigurationBackupService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -50,5 +53,41 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         exportAndImportWith(dataSource, provider, "top secret");
 
         Mockito.verify(sslService).importCas(caBytes, renewalCaBytes);
+    }
+
+    @Test
+    public void noPasswordForExport() throws IOException {
+        byte[] caBytes = "This is the CA".getBytes();
+        Mockito.when(sslService.exportCa()).thenReturn(caBytes);
+        exportAndImportWith(dataSource, provider, null);
+    }
+
+    @Test
+    public void noPasswordForImport() throws IOException {
+        byte[] caBytes = "This is the CA".getBytes();
+        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
+        Mockito.when(sslService.exportCa()).thenReturn(caBytes);
+
+        String password = "top secret";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        service.exportConfiguration(outputStream, password);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        service.importConfiguration(inputStream, null);
+    }
+
+    @Test(expected = DecryptionFailedException.class)
+    public void wrongPassword() throws IOException {
+        byte[] caBytes = "This is the CA".getBytes();
+        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
+        Mockito.when(sslService.exportCa()).thenReturn(caBytes);
+
+        String password = "top secret";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        service.exportConfiguration(outputStream, password);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        service.importConfiguration(inputStream, "1234");
+
     }
 }

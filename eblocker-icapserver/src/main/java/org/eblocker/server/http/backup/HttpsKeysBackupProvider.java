@@ -58,13 +58,17 @@ public class HttpsKeysBackupProvider extends BackupProvider {
 
     private HttpsKeysBackup exportHttpsKeys(CryptoService cryptoService) throws CryptoException, IOException {
         HttpsKeysBackup backup = new HttpsKeysBackup();
-        byte[] caBytes = sslService.exportCa();
-        if (caBytes != null) {
-            backup.setEncryptedCA(cryptoService.encrypt(caBytes));
-        }
-        byte[] renewalCaBytes = sslService.exportRenewalCa();
-        if (renewalCaBytes != null) {
-            backup.setEncryptedRenewalCA(cryptoService.encrypt(renewalCaBytes));
+        if (cryptoService != null) {
+            byte[] caBytes = sslService.exportCa();
+            if (caBytes != null) {
+                backup.setEncryptedCA(cryptoService.encrypt(caBytes));
+            }
+            byte[] renewalCaBytes = sslService.exportRenewalCa();
+            if (renewalCaBytes != null) {
+                backup.setEncryptedRenewalCA(cryptoService.encrypt(renewalCaBytes));
+            }
+        } else {
+            LOG.warn("No password provided, so CAs are not backed up");
         }
         return backup;
     }
@@ -81,6 +85,10 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         } else {
             throw new EblockerException("Expected entry " + HTTPS_KEYS_ENTRY + ", got " + entry.getName());
         }
+        if (cryptoService == null) {
+            LOG.warn("No password provided, so CAs are not imported");
+            return;
+        }
         try {
             EncryptedData data = backup.getEncryptedCA();
             if (data != null) {
@@ -93,7 +101,8 @@ public class HttpsKeysBackupProvider extends BackupProvider {
                 LOG.info("Decrypted {} bytes of the renewal CA", renewalCaBytes.length);
             }
         } catch (CryptoException e) {
-            throw new IOException("Could not decrypt HTTPS keys", e);
+            LOG.error("Could not decrypt HTTPS keys", e);
+            throw new DecryptionFailedException("Could not decrypt HTTPS keys");
         }
         sslService.importCas(caBytes, renewalCaBytes);
     }

@@ -372,8 +372,8 @@
             },
             "FILE_LABEL" : "Ausgewählte Datei",
             "INCLUDE_KEYS" : {
-                "EXPORT" : "Schlüssel für HTTPS und eBlocker Mobile sichern",
-                "IMPORT" : "Schlüssel für HTTPS und eBlocker Mobile wiederherstellen"
+                "EXPORT" : "Schlüssel für HTTPS sichern",
+                "IMPORT" : "Schlüssel für HTTPS wiederherstellen"
             },
             "INFO" : {
                 "DOWNLOADED" : "Die Sicherungsdatei wurde in Ihrem Downloads-Verzeichnis gespeichert",
@@ -384,6 +384,11 @@
                 "UPLOAD" : "Einstellungen wiederherstellen"
             },
             "PASSWORD" : {
+                "ERROR" : {
+                    "REQUIRED" : "Passwort wird zur Wiederherstellung der Schlüssel benötigt",
+                    "RETRY" : "Die Schlüssel konnten mit dem eingebenen Passwort nicht wiederhergestellt werden. Bitte versuchen Sie es erneut."
+                },
+                "LABEL" : "Passwort eingeben",
                 "WARNING" : "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht."
             }
         },

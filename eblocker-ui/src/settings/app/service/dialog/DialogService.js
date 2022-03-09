@@ -850,7 +850,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function configBackupImport(fileName, passwordRequired) {
+    function configBackupImport(fileName, passwordRequired, passwordRetry) {
         return $mdDialog.show({
             controller: 'ConfigBackupImportController',
             controllerAs: 'vm',
@@ -859,7 +859,8 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             clickOutsideToClose:false,
             locals: {
                 fileName: fileName,
-                passwordRequired: passwordRequired
+                passwordRequired: passwordRequired,
+                passwordRetry: passwordRetry
             }
         });
     }

@@ -1,5 +1,5 @@
 <md-dialog id="config-backup-import-dialog" aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate}}">
-    <form name="configBackupImportForm" layout-padding ng-submit="Dialog.save()" novalidate style="overflow: initial;">
+    <form name="vm.configBackupImportForm" layout-padding ng-submit="Dialog.save()" novalidate style="overflow: initial;">
         <md-dialog-content layout="column" layout-padding style="overflow: initial;">
             <div>
                 <h2>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate }}</h2>
@@ -29,13 +29,16 @@
 
             <div ng-if="vm.passwordRequired && vm.includeKeys">
                 <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
-                    <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_NEW_PASSWORD' | translate }}</label>
+                    <label>{{'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.LABEL' | translate }}</label>
                     <input name="password" ng-model="vm.password" type="password" md-maxlength="vm.maxLength" required>
-                    <div ng-messages="vm.passwordForm.password.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.password.$touched">
-                        <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.NEW_PASSWORD_REQUIRED' | translate }}</div>
+                    <div ng-messages="vm.configBackupImportForm.password.$error" ng-if="vm.configBackupImportForm.$submitted || vm.configBackupImportForm.password.$touched">
+                        <div ng-message="required">{{ 'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.REQUIRED' | translate }}</div>
                         <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
                     </div>
                 </md-input-container>
+                <div ng-if="vm.passwordRetry">
+                    <span class="content-error" translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.RETRY"></span>
+                </div>
             </div>
         </md-dialog-content>
 

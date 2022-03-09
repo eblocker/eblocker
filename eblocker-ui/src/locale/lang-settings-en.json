@@ -372,8 +372,8 @@
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {
-                "EXPORT" : "Save HTTPS and eBlocker Mobile keys",
-                "IMPORT" : "Restore HTTPS and eBlocker Mobile keys"
+                "EXPORT" : "Save HTTPS keys",
+                "IMPORT" : "Restore HTTPS keys"
             },
             "INFO" : {
                 "DOWNLOADED" : "The settings file was saved in your Downloads folder",
@@ -384,6 +384,11 @@
                 "UPLOAD" : "Restore Settings"
             },
             "PASSWORD" : {
+                "ERROR" : {
+                    "REQUIRED" : "Password is needed to restore the keys",
+                    "RETRY" : "The keys could not be restored with the entered password. Please try again."
+                },
+                "LABEL" : "Enter password",
                 "WARNING" : "<b>Please note:</b> this password is needed to restore the keys later. It cannot be recovered if it is lost."
             }
         },

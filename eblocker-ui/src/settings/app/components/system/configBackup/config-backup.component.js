@@ -27,6 +27,7 @@ function Controller(logger, $window, ConfigBackupService, DialogService, Notific
     const vm = this;
     vm.exporting = false;
     vm.includeKeys = true;
+    vm.maxLength = 50;
 
     function configBackupDownloadUrl(fileReference) {
         return ConfigBackupService.downloadConfigUrl(fileReference) + '?Authorization=Bearer+' + security.getToken();
@@ -64,19 +65,27 @@ function Controller(logger, $window, ConfigBackupService, DialogService, Notific
         });
     };
 
+    function showImportDialog(fileName, fileReference, passwordRequired, passwordRetry) {
+        DialogService.configBackupImport(fileName, passwordRequired, passwordRetry).then(function(password) {
+            ConfigBackupService.importConfig(fileReference, password).then(function(result) {
+                NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.UPLOADED');
+            }, function(response) {
+                logger.error('Could not import backup configuration');
+                let errCode = response.toUpperCase();
+                if (errCode === 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.INVALID_PASSWORD') {
+                    showImportDialog(fileName, fileReference, passwordRequired, true);
+                } else {
+                    NotificationService.error(errCode);
+                }
+            });
+        });
+    }
+
     vm.uploadConfigBackup = function(file, invalidFiles) {
         if (file) {
             ConfigBackupService.uploadConfig(file).then(
                 function success(data) {
-                    DialogService.configBackupImport(file.name, data.passwordRequired).then(function(password) {
-                        logger.warn('Got import result: ' + JSON.stringify(password));
-                        ConfigBackupService.importConfig(data.fileReference, password).then(function(result) {
-                            NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.UPLOADED');
-                        }, function(response) {
-                            logger.error('Could not import backup configuration');
-                            NotificationService.error(response.toUpperCase());
-                        });
-                    });
+                    showImportDialog(file.name, data.fileReference, data.passwordRequired, false);
                 },
                 function error(response) {
                     NotificationService.error(response.toUpperCase());

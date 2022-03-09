@@ -14,15 +14,21 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function ConfigBackupImportController(logger, $scope, $mdDialog, fileName, passwordRequired) {
+export default function ConfigBackupImportController(logger, $scope, $mdDialog, fileName, passwordRequired,
+                                                     passwordRetry) {
     'ngInject';
 
     const vm = this;
     vm.fileName = fileName;
     vm.passwordRequired = passwordRequired;
     vm.includeKeys = passwordRequired; // default: ask for password if keys are contained in the backup
+    vm.passwordRetry = passwordRetry;
+    vm.maxLength = 50;
 
     vm.close = function() {
+        if (!vm.configBackupImportForm.$valid) {
+            return;
+        }
         $mdDialog.hide(vm.password);
     };
 

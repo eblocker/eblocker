@@ -23,6 +23,7 @@ import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.ConfigBackupReference;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.backup.CorruptedBackupException;
+import org.eblocker.server.http.backup.DecryptionFailedException;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
 import org.eblocker.server.http.service.ConfigurationBackupService;
@@ -152,6 +153,9 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
         } catch (UnsupportedBackupVersionException e) {
             LOG.error("Could not import backup with unsupported version", e);
             throw new BadRequestException("adminconsole.config_backup.error.unsupported_version");
+        } catch (DecryptionFailedException e) {
+            LOG.error("Could not import backup due to invalid password", e);
+            throw new BadRequestException("adminconsole.config_backup.error.invalid_password");
         } catch (Exception e) {
             LOG.error("Could not import backup", e);
             throw new EblockerException("adminconsole.config_backup.error.import_failure");

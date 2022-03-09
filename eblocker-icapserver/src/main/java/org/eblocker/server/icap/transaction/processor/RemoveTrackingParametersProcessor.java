@@ -10,13 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class RemoveTrackingParametersProcessor implements TransactionProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(RemoveTrackingParametersProcessor.class);
 
-    private static final List<String> TRACKING_PARAMS = List.of("gclid", "msclkid", "fbclid", "utm_campaign", "utm_term", "utm_medium", "utm_source", "utm_content", "fb_action_ids", "fb_action_types", "fb_source", "fb_ref", "ga_source", "ga_medium",
+    private static final Set<String> TRACKING_PARAMS = Set.of("gclid", "msclkid", "fbclid", "utm_campaign", "utm_term", "utm_medium", "utm_source", "utm_content", "fb_action_ids", "fb_action_types", "fb_source", "fb_ref", "ga_source", "ga_medium",
             "ga_term",
             "ga_content", "ga_campaign", "ga_place", "action_object_map", "action_type_map", "action_ref_map", "gs_l", "mkt_tok", "hmb_campaign", "hmb_source", "hmb_medium", "aff", "KNC", "oq", "prmd");
 
@@ -51,7 +52,7 @@ public class RemoveTrackingParametersProcessor implements TransactionProcessor {
                             (newQuery.isBlank() ? "" : "?" + newQuery) +
                             (url.getRef() == null ? "" : "#" + url.getRef());
                     request.setUri(newUrl);
-                    // TODO: do we need to notify the transaction that the Uri changed?
+                    transaction.setHeadersChanged(true);
                     log.warn("Removed tracking parameter from >>" + requestUri + "<< to >>" + newUrl + "<<");
                 }
             }

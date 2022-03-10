@@ -829,6 +829,10 @@ function generateJavaScriptLicenseCSV(done) {
                 item.repository = 'https://github.com/visionmedia/debug';
             } else if (item.name === 'glob') {
                 item.repository = 'https://github.com/isaacs/node-glob';
+            } else if (item.name === 'json-schema-traverse') {
+                item.repository = 'https://github.com/epoberezkin/json-schema-traverse';
+            } else if (item.name === 'regenerator-runtime') {
+                item.repository = 'https://github.com/facebook/regenerator/tree/main/packages/runtime';
             }
             item.repository = normalizeRepository(item.repository);
         });

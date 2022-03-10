@@ -831,6 +831,8 @@ function generateJavaScriptLicenseCSV(done) {
                 item.repository = 'https://github.com/isaacs/node-glob';
             } else if (item.name === 'json-schema-traverse') {
                 item.repository = 'https://github.com/epoberezkin/json-schema-traverse';
+            } else if (item.name === 'ms') {
+                item.repository = 'https://github.com/zeit/ms';
             } else if (item.name === 'regenerator-runtime') {
                 item.repository = 'https://github.com/facebook/regenerator/tree/main/packages/runtime';
             }

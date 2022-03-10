@@ -224,7 +224,7 @@
 {"name":"moment","version":"2.29.1","repository":"https://github.com/moment/moment","summary":"MIT"},
 {"name":"morgan","version":"1.10.0","repository":"https://github.com/expressjs/morgan","summary":"MIT"},
 {"name":"move-concurrently","version":"1.0.1","repository":"https://github.com/npm/move-concurrently","summary":"ISC"},
-{"name":"ms","version":"2.1.1","repository":"(none)","summary":"MIT"},
+{"name":"ms","version":"2.1.1","repository":"https://github.com/zeit/ms","summary":"MIT"},
 {"name":"nanomatch","version":"1.2.13","repository":"https://github.com/micromatch/nanomatch","summary":"MIT"},
 {"name":"negotiator","version":"0.6.2","repository":"https://github.com/jshttp/negotiator","summary":"MIT"},
 {"name":"neo-async","version":"2.6.2","repository":"https://github.com/suguru03/neo-async","summary":"MIT"},

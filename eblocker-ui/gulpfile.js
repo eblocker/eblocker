@@ -744,6 +744,24 @@ function addLicense(item, license) {
     return summary;
 }
 
+function normalizeRepository(repository) {
+    // Already (none) or a URL?
+    if (repository === '(none)' || repository.startsWith('http://') || repository.startsWith('https://')) {
+        return repository;
+    }
+
+    // normalize:
+    // * git@github.com:xyz
+    // * github.com:xyz
+    // * ssh://git@github.com/xyz
+    if (repository.includes('github.com')) {
+        return repository.replace(/.*github\.com[\/:]/, 'https://github.com/');
+    }
+
+    // default: assume github.com
+    return 'https://github.com/' + repository;
+}
+
 function generateJavaScriptLicenseCSV(done) {
     nlf.find({
         directory: './',
@@ -751,7 +769,6 @@ function generateJavaScriptLicenseCSV(done) {
         depth: 100,
         production: true
     }, function (err, data) {
-
         /* Remove duplicates (due to different versions) */
         const duplicates = [];
         data.forEach((item, iOut) => {
@@ -817,8 +834,9 @@ function generateJavaScriptLicenseCSV(done) {
             } else if (item.name === 'ms') {
                 item.repository = 'https://github.com/zeit/ms';
             } else if (item.name === 'regenerator-runtime') {
-                item.repository = 'https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime';
+                item.repository = 'https://github.com/facebook/regenerator/tree/main/packages/runtime';
             }
+            item.repository = normalizeRepository(item.repository);
         });
 
         /* Remove eblocker-ui from list */
@@ -957,6 +975,8 @@ exports['serve-dev'] = gulp.series(buildDev, function() {
 exports['serve-build'] = gulp.series(build, function() {
     serve(false /*isDev*/);
 });
+
+exports.generateJavaScriptLicenseCSV = generateJavaScriptLicenseCSV;
 
 // -----------------
 // private functions

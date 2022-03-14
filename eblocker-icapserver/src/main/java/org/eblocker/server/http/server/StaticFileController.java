@@ -181,6 +181,9 @@ public class StaticFileController {
         //try to tell IE to use the edge renderer
         response.addHeader("X-UA-Compatible", "IE=edge");
 
+        // Outgoing requests should not have a referrer with eblocker.box or a private IP
+        response.addHeader("Referrer-Policy", "same-origin");
+
         //CACHE VALIDATION -> which response code to return?!
         if (fileNotModified(path.toFile(), request)) {//return "304 - Not modified" to tell UA to take file from cache
             log.debug("File not modified {}", path);

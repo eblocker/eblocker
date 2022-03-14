@@ -22,7 +22,7 @@ export default {
 
 // jshint ignore: line
 function Controller(logger, StateService, STATES, $stateParams, DialogService, TrustedAppsService, TableService, $q,
-                    ArrayUtilsService, $window) {
+                    ArrayUtilsService, $window) { // jshint maxstatements:100
     'ngInject';
     'use strict';
 

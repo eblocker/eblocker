@@ -2942,7 +2942,11 @@
                     "ADD_DOMAIN" : "New",
                     "REMOVE_DOMAIN" : "{num, select, 0{Remove Domain/IP} 1{Remove {num} Domain/IP} other{Remove {num} Domains/IPs}}"
                 },
-                "FEEDBACK_LINK" : "Send feedback about this app to eBlocker",
+                "FEEDBACK" : {
+                    "BUTTON" : "Send feedback...",
+                    "TEXT" : "Send feedback about this app to eBlocker:",
+                    "TITLE" : "Feedback"
+                },
                 "HEADING" : "Details for exception list for app",
                 "HEADING_DOMAINS" : "Add domains/IPs",
                 "LABEL_DESCRIPTION" : "Description",

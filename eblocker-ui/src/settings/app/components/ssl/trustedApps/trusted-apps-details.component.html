@@ -60,8 +60,11 @@
             </div>
         </div>
 
-        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" ng-if="vm.showFeedbackLink(vm.trustedApp)">
-            <a href="{{vm.feedbackLink(vm.trustedApp)}}" translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.FEEDBACK_LINK" class="orange"></a>
+        <div flex-gt-lg="65" flex-md="75" flex-lg="75" class="config-frame md-whiteframe-z1" ng-if="vm.showFeedbackButton(vm.trustedApp)">
+            <h4 translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.FEEDBACK.TITLE"></h4>
+            <p translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.FEEDBACK.TEXT"></p>
+            <md-button ng-click="vm.openFeedback(vm.trustedApp)" class="md-raised" translate="ADMINCONSOLE.TRUSTED_APPS.DETAILS.FEEDBACK.BUTTON">
+            </md-button>
         </div>
 
         <!-- TABLE -->

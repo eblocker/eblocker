@@ -22,7 +22,7 @@ export default {
 
 // jshint ignore: line
 function Controller(logger, StateService, STATES, $stateParams, DialogService, TrustedAppsService, TableService, $q,
-                    ArrayUtilsService) {
+                    ArrayUtilsService, $window) {
     'ngInject';
     'use strict';
 
@@ -42,8 +42,8 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
     vm.backState = STATES.TRUSTED_APPS;
     vm.stateParams = $stateParams;
 
-    vm.feedbackLink = feedbackLink;
-    vm.showFeedbackLink = showFeedbackLink;
+    vm.showFeedbackButton = showFeedbackButton;
+    vm.openFeedback = openFeedback;
 
     vm.$onInit = function() {
         if (angular.isObject(vm.stateParams) && angular.isObject(vm.stateParams.param)) {
@@ -246,7 +246,7 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
         TrustedAppsService.toggleAppModule(trustedApp);
     }
 
-    function showFeedbackLink(trustedApp) {
+    function showFeedbackButton(trustedApp) {
         if (!angular.isObject(trustedApp)) {
             return false;
         }
@@ -256,10 +256,14 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
         return !trustedApp.builtin || trustedApp.modified;
     }
 
-    function feedbackLink(trustedApp) {
+    function openFeedback(trustedApp) {
         if (!angular.isObject(trustedApp)) {
-            return '';
+            return;
         }
+        $window.open(feedbackLink(trustedApp));
+    }
+
+    function feedbackLink(trustedApp) {
         const subject = 'Suggestion for ' + (trustedApp.builtin ? 'existing' : 'new') + ' app: ' + trustedApp.name +
               (trustedApp.builtin ? ' (ID ' + trustedApp.id + ')' : '');
         const body = 'Name: ' + trustedApp.name +

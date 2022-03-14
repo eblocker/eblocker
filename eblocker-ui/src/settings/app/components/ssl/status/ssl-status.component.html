@@ -16,6 +16,12 @@
 
         <div ng-show="vm.ssl.enabled">
 
+            <div layout="row" layout-xs="column" layout-align="start center" layout-margin>
+                <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.ataEnabled" class="md-primary switch-word-break" ng-change="vm.toggleATAState()">
+                    {{ vm.ataEnabled ? 'ADMINCONSOLE.SSL_STATUS.SWITCH.ATA_ON' : 'ADMINCONSOLE.SSL_STATUS.SWITCH.ATA_OFF' | translate}}
+                </md-switch>
+            </div>
+
             <div ng-if="!vm.ssl.renewalCertificateReady" class="config-frame md-whiteframe-z1" layout="column">
                 <div layout="row" layout-align="start center">
                     <h3>{{ 'ADMINCONSOLE.SSL_STATUS.IMPORTANT_NOTE' | translate }}</h3>
@@ -41,7 +47,7 @@
 
             <div class="config-frame md-whiteframe-z1" layout="column">
                 <div layout="row" layout-align="start center">
-                    <h4 style="margin-right:8px;" >{{ 'ADMINCONSOLE.SSL_STATUS.INFO_TITLE' | translate }}</h4>
+                    <h4 style="margin-right:8px;">{{ 'ADMINCONSOLE.SSL_STATUS.INFO_TITLE' | translate }}</h4>
                 </div>
                 <div layout="column" layout-gt-lg="row">
                     <div layout="row" flex layout-align="start start" layout-padding>

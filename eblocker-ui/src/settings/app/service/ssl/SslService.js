@@ -18,6 +18,7 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
     'ngInject';
 
     const PATH_SSL_STATUS = '/api/adminconsole/ssl/status';
+    const PATH_ATA_STATUS = '/api/adminconsole/ata/status';
     const PATH_SSL_STATUS_RENEWAL = '/api/adminconsole/ssl/status/renewal';
     const PATH_SSL_ROOTCA = '/api/adminconsole/ssl/rootca';
     const PATH_SSL_ROOTCA_OPTIONS = PATH_SSL_ROOTCA + '/options';
@@ -50,20 +51,21 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
     let sslStatusCache;
 
     function getStatus(reload) {
-        sslStatusCache = DataCachingService.loadCache(sslStatusCache, PATH_SSL_STATUS, reload).then(function(response){
-            sslSettings.enabled = response.data;
-            return response;
-        }, function(response) {
-            NotificationService.error('ADMINCONSOLE.SERVICE.SSL.ERROR_SERVICE_SSL_GET_STATUS', response);
-            return $q.reject(response);
-        });
+        sslStatusCache = DataCachingService.loadCache(sslStatusCache, PATH_SSL_STATUS, reload)
+            .then(function (response) {
+                sslSettings.enabled = response.data;
+                return response;
+            }, function (response) {
+                NotificationService.error('ADMINCONSOLE.SERVICE.SSL.ERROR_SERVICE_SSL_GET_STATUS', response);
+                return $q.reject(response);
+            });
         return sslStatusCache;
     }
 
     function invalidateCache() {
         sslStatusCache = undefined;
     }
-    
+
     function getUpdatedSettingsRenewalStatus() {
         return $http.get(PATH_SSL_STATUS_RENEWAL).then(function success(response) {
             sslSettings.renewalCertificateReady = response.data.renewalCertificateAvailable;
@@ -72,17 +74,17 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
             if (angular.isDefined(currentCertificate) && angular.isDefined(currentCertificate.distinguishedName)) {
                 sslSettings.display.cn = currentCertificate.distinguishedName.commonName;
                 sslSettings.display.validityNotBefore = LanguageService.getDate(currentCertificate.notBefore,
-                        dateFormat);
+                    dateFormat);
                 sslSettings.display.validityNotAfter = LanguageService.getDate(currentCertificate.notAfter,
-                        dateFormat);
+                    dateFormat);
             }
             const renewalCertificate = response.data.renewalCertificate;
             if (angular.isDefined(renewalCertificate) && angular.isDefined(renewalCertificate.distinguishedName)) {
                 sslSettings.display.renewalCn = renewalCertificate.distinguishedName.commonName;
                 sslSettings.display.renewalValidityNotBefore = LanguageService.getDate(renewalCertificate.notBefore,
-                        dateFormat);
+                    dateFormat);
                 sslSettings.display.renewalValidityNotAfter = LanguageService.getDate(renewalCertificate.notAfter,
-                        dateFormat);
+                    dateFormat);
             }
             sslSettings.caRenewWeeks = response.data.caRenewWeeks;
             return sslSettings;
@@ -90,32 +92,48 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
     }
 
     function setStatus(status) {
-        return $http.post(PATH_SSL_STATUS, status).then(function(response) {
+        return $http.post(PATH_SSL_STATUS, status).then(function (response) {
             sslSettings.enabled = status.enabled;
             return response;
-        }, function(response) {
+        }, function (response) {
             return $q.reject(response);
-        }).finally(function() {
+        }).finally(function () {
             invalidateCache();
         });
     }
 
+    function setAtaStatus(status) {
+        return $http.post(PATH_ATA_STATUS, status).then(function (response) {
+            return response.data;
+        }, function (response) {
+            return $q.reject(response);
+        });
+    }
+
+    function getAtaStatus() {
+        return $http.get(PATH_ATA_STATUS).then(function (response) {
+            return response.data;
+        }, function (response) {
+            return $q.reject(response);
+        });
+    }
+
     function setRootCa(caOptions) {
-        return $http.post(PATH_SSL_ROOTCA, caOptions).then(function(response) {
+        return $http.post(PATH_SSL_ROOTCA, caOptions).then(function (response) {
             return response;
-        }, function(response) {
+        }, function (response) {
             return $q.reject(response);
         });
     }
 
     function getRootCa() {
-        return $http.get(PATH_SSL_ROOTCA).then(function(response) {
-            sslSettings.rootCertificate =  response.data;
+        return $http.get(PATH_SSL_ROOTCA).then(function (response) {
+            sslSettings.rootCertificate = response.data;
             const dateFormat = 'ADMINCONSOLE.SSL_STATUS.DATE_FORMAT';
             sslSettings.rootCertificate.notAfter = LanguageService.getDate(sslSettings.rootCertificate.notAfter,
-                    dateFormat);
+                dateFormat);
             return response;
-        }, function(response) {
+        }, function (response) {
             return $q.reject(response);
         });
     }
@@ -125,10 +143,10 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
     }
 
     function getSslCertStatus() {
-        return $http.get(PATH_SSL_CERT_STATUS).then(function(response) {
+        return $http.get(PATH_SSL_CERT_STATUS).then(function (response) {
             sslSettings.certificatesReady = response.data;
             return response;
-        }, function(response) {
+        }, function (response) {
             return $q.reject(response);
         });
     }
@@ -136,12 +154,12 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
     // Queries all enabled appmodules
     // returns a dictionary with 'domain'-'>appname' and 'ip'->'appname'
     // where 'domain'/'ip' is whitelisted by the app identified by 'appname'
-    function getAllWhitelistedDomains(){
+    function getAllWhitelistedDomains() {
         return $http.get(PATH_APPS).catch(
-            function(response) {
+            function (response) {
                 NotificationService.error('ADMINCONSOLE.SERVICE.SSL.ERROR_SERVICE_SSL_GETWHITELISTEDDOMAINS_APPS',
                     response);
-            }).then(function(response) { // jshint ignore: line
+            }).then(function (response) { // jshint ignore: line
 
                 if (!angular.isObject(response) && !angular.isArray(response.data)) {
                     return {};
@@ -187,12 +205,12 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
         return save(module);
     }
 
-    function save(module){
-        return $http.post(PATH_SSL_WHITELIST, module).then(function(response){
+    function save(module) {
+        return $http.post(PATH_SSL_WHITELIST, module).then(function (response) {
             return response.data;
-        }, function(response) {
+        }, function (response) {
             return $q.reject(response);
-        }).finally(function() {
+        }).finally(function () {
             invalidateCache();
         });
     }
@@ -201,7 +219,7 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
         return $http.get(PATH_SSL_ERRORS).then(standardSuccess, standardError);
     }
 
-    function clearErrors () {
+    function clearErrors() {
         return $http.delete(PATH_SSL_ERRORS).then(standardSuccess, standardError);
     }
 
@@ -231,6 +249,8 @@ export default function SslService($http, $q, NotificationService, DataCachingSe
         getStatus: getStatus,
         getUpdatedSettingsRenewalStatus: getUpdatedSettingsRenewalStatus,
         setStatus: setStatus,
+        setAtaStatus: setAtaStatus,
+        getAtaStatus: getAtaStatus,
         getRootCa: getRootCa,
         setRootCa: setRootCa,
         getRootCaOptions: getRootCaOptions,

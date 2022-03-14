@@ -33,13 +33,14 @@ import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.common.session.UserAgentInfo;
 import org.eblocker.server.common.squid.SquidWarningService;
 import org.eblocker.server.common.ssl.EblockerCa;
+import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslCertificateClientInstallationTracker;
 import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.server.common.ssl.PkiException;
 import org.eblocker.server.common.ssl.SslTestUtils;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.controller.impl.SSLControllerImpl.SslState;
 import org.eblocker.server.http.model.SslWhitelistEntryDto;
+import org.eblocker.server.http.service.AutoTrustAppService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.FailedConnectionSuggestionService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -88,6 +89,7 @@ public class SSLControllerImplTest {
     private NetworkStateMachine networkStateMachine;
     private CertificateAndKey unitTestCaCertificateAndKey;
     private UserAgentService userAgentService;
+    private AutoTrustAppService autoTrustAppService;
     private static ObjectMapper objectMapper;
 
     @Before
@@ -104,6 +106,8 @@ public class SSLControllerImplTest {
         squidWarningService = Mockito.mock(SquidWarningService.class);
         failedConnectionSuggestionService = Mockito.mock(FailedConnectionSuggestionService.class);
         userAgentService = Mockito.mock(UserAgentService.class);
+        autoTrustAppService = Mockito.mock(AutoTrustAppService.class);
+
         objectMapper = new ObjectMapper();
 
         controller = new SSLControllerImpl(
@@ -119,7 +123,8 @@ public class SSLControllerImplTest {
                 failedConnectionSuggestionService,
                 networkStateMachine,
                 objectMapper,
-                userAgentService
+                userAgentService,
+                autoTrustAppService
         );
 
         // load unit test ca

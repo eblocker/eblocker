@@ -16,10 +16,11 @@
 
         <div ng-show="vm.ssl.enabled">
 
-            <div layout="row" layout-xs="column" layout-align="start center" layout-margin>
+            <div layout="column" layout-align="start start" layout-margin>
                 <md-switch md-theme="eBlockerThemeSwitch" ng-model="vm.ataEnabled" class="md-primary switch-word-break" ng-change="vm.toggleATAState()">
                     {{ vm.ataEnabled ? 'ADMINCONSOLE.SSL_STATUS.SWITCH.ATA_ON' : 'ADMINCONSOLE.SSL_STATUS.SWITCH.ATA_OFF' | translate}}
                 </md-switch>
+                <div style="margin-left: 52px;" ng-show="vm.ataEnabled" translate="ADMINCONSOLE.SSL_STATUS.ATA_TEXT"></div>
             </div>
 
             <div ng-if="!vm.ssl.renewalCertificateReady" class="config-frame md-whiteframe-z1" layout="column">

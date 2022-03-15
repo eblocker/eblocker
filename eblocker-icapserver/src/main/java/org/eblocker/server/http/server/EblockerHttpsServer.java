@@ -354,7 +354,6 @@ public class EblockerHttpsServer implements Preprocessor {
 
         setUpRoutes();
 
-
         //observe ssl context for changes
         sslContextHandler.addContextChangeListener(new SSLContextHandler.SslContextChangeListener() {
             @Override
@@ -1031,6 +1030,14 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/ssl/status", sslController)
                 .action("getSSLState", HttpMethod.GET)
                 .name("adminconsole.ssl.status.get.route");
+        server
+                .uri("/api/adminconsole/ata/status", sslController)
+                .action("setAutoTrustAppState", HttpMethod.POST)
+                .name("adminconsole.ssl.ata.status.set.route");
+        server
+                .uri("/api/adminconsole/ata/status", sslController)
+                .action("getAutoTrustAppState", HttpMethod.GET)
+                .name("adminconsole.ssl.ata.status.get.route");
         server
                 .uri("/api/adminconsole/ssl/status", sslController)
                 .action("setSSLState", HttpMethod.POST)

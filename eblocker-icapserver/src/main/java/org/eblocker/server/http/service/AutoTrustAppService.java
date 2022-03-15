@@ -338,6 +338,14 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         return appModuleService.getAutoSslAppModule();
     }
 
+    public void setAutoTrustAppEnabled(boolean enabled) {
+        appModuleService.storeAndActivateEnabledState(getAutoTrustAppModule().getId(), enabled);
+    }
+
+    public boolean isAutoTrustAppEnabled() {
+        return getAutoTrustAppModule().isEnabled();
+    }
+
     public void recordSuccessfulSSL(String domain) {
         successfulSSLDomains.recordDomain(domain);
     }

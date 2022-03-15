@@ -2744,7 +2744,9 @@
             "RENEWAL_EXPLANATION_PRE" : "Das alte eBlocker-Zertifikat läuft am ",
             "SWITCH" : {
                 "SSL_OFF" : "HTTPS-Unterstützung nicht aktiv",
-                "SSL_ON" : "HTTPS-Unterstützung aktiv"
+                "SSL_ON" : "HTTPS-Unterstützung aktiv",
+                "ATA_OFF" : "Auto-Trust-App nicht aktiv",
+                "ATA_ON" : "Auto-Trust-App aktiv"
             }
         },
         "STAND_BY" : {

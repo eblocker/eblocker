@@ -30,15 +30,29 @@ function Controller(DialogService, SslService, $translate, $filter, SslSuggestio
     const vm = this;
 
     vm.setSSLState = setSSLState;
+    vm.toggleATAState = toggleATAState;
     vm.openHelp = openHelp;
 
     vm.ssl = SslService.getSslSettings();
+    vm.ataEnabled = false;
 
-    function setSSLState(event){
+    vm.$onInit = function () {
+        SslService.getAtaStatus().then(function (response) {
+            vm.ataEnabled = response;
+        });
+    };
+
+    function toggleATAState() {
+        SslService.setAtaStatus(vm.ataEnabled).then(function (response) {
+            vm.ataEnabled = response;
+        });
+    }
+
+    function setSSLState(event) {
         const isDeviceUsePatternFilter = deviceUsePatternFilter(vm.devices);
         const isDeviceControlBarOn = deviceControlBarOn(vm.devices);
 
-        if(vm.ssl.enabled){
+        if (vm.ssl.enabled) {
             vm.ssl.step = 0;
             vm.ssl.generateCa = !vm.ssl.certificatesReady;
             vm.ssl.renew = false;
@@ -83,7 +97,7 @@ function Controller(DialogService, SslService, $translate, $filter, SslSuggestio
     }
 
     function loadRenewalCertificateStatus() {
-        SslService.getUpdatedSettingsRenewalStatus().then(function(settings){
+        SslService.getUpdatedSettingsRenewalStatus().then(function (settings) {
             vm.ssl = settings;
         });
     }

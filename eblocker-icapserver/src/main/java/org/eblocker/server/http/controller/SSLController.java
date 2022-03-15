@@ -42,6 +42,10 @@ public interface SSLController {
 
     boolean getSSLState(Request request, Response response);
 
+    boolean setAutoTrustAppState(Request request, Response response) throws IOException;
+
+    boolean getAutoTrustAppState(Request request, Response response);
+
     void removeWhitelistedUrl(Request request, Response resp) throws Exception;
 
     Integer removeAllWhitelistedUrl(Request request, Response resp) throws Exception;

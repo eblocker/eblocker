@@ -2744,7 +2744,9 @@
             "RENEWAL_EXPLANATION_PRE" : "The current eBlocker certificate expires on ",
             "SWITCH" : {
                 "SSL_OFF" : "HTTPS support deactivated",
-                "SSL_ON" : "HTTPS support activated"
+                "SSL_ON" : "HTTPS support activated",
+                "ATA_OFF" : "Auto Trust App deactivated",
+                "ATA_ON" : "Auto Trust App activated"
             }
         },
         "STAND_BY" : {

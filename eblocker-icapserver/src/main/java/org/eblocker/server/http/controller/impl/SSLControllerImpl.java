@@ -46,6 +46,7 @@ import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.http.controller.SSLController;
 import org.eblocker.server.http.model.SslWhitelistEntryDto;
 import org.eblocker.server.http.server.SessionContextController;
+import org.eblocker.server.http.service.AutoTrustAppService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.FailedConnectionSuggestionService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -81,6 +82,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
     private final DeviceService deviceService;
     private final UserService userService;
     private final UserAgentService userAgentService;
+    private final AutoTrustAppService autoTrustAppService;
     private final ParentalControlService parentalControlService;
     private final SslService sslService;
     private final SSLWhitelistService whitelistDomainStore;
@@ -105,7 +107,8 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
             FailedConnectionSuggestionService failedConnectionSuggestionService,
             NetworkStateMachine networkStateMachine,
             ObjectMapper objectMapper,
-            UserAgentService userAgentService) {
+            UserAgentService userAgentService,
+            AutoTrustAppService autoTrustAppService) {
         super(sessionStore, pageContextStore);
         this.sslService = sslService;
         this.whitelistDomainStore = whitelistDomainStore;
@@ -118,6 +121,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
         this.networkStateMachine = networkStateMachine;
         this.objectMapper = objectMapper;
         this.userAgentService = userAgentService;
+        this.autoTrustAppService = autoTrustAppService;
     }
 
     /**
@@ -221,6 +225,18 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
     @Override
     public boolean areCertificatesReady(Request request, Response response) {
         return sslService.getCa() != null;
+    }
+
+    @Override
+    public boolean setAutoTrustAppState(Request request, Response response) {
+        boolean requestedState = request.getBodyAs(Boolean.class);
+        autoTrustAppService.setAutoTrustAppEnabled(requestedState);
+        return autoTrustAppService.isAutoTrustAppEnabled();
+    }
+
+    @Override
+    public boolean getAutoTrustAppState(Request request, Response response) {
+        return autoTrustAppService.isAutoTrustAppEnabled();
     }
 
     @Override

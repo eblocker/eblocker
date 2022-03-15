@@ -2726,6 +2726,7 @@
                 "HTTPS_WIZARD" : "HTTPS Assistent",
                 "TUTORIALS" : "Anleitungen"
             },
+            "ATA_TEXT" : "<a href=\"#!/https/trustedapps/9997\">Überprüfen Sie die vertrauenswürdigen Domains</a>, die Auto-Trust-App hinzugefügt hat",
             "URL": {
                 "TUTORIAL": "https://eBlocker.org/docs/https",
                 "WIZARD": "/https"

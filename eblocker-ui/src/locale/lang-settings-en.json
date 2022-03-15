@@ -2726,6 +2726,7 @@
                 "HTTPS_WIZARD" : "Start HTTPS Wizard",
                 "TUTORIALS" : "Tutorials"
             },
+            "ATA_TEXT" : "<a href=\"#!/https/trustedapps/9997\">Review the trusted domains</a> added by Auto Trust App",
             "URL": {
                 "TUTORIAL": "http://eblocker.org/docs/https",
                 "WIZARD": "/https"

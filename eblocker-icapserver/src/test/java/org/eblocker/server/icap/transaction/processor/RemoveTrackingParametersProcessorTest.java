@@ -89,4 +89,24 @@ public class RemoveTrackingParametersProcessorTest {
 
         assertEquals("https://foo.com/?a=b&c=d", request.uri());
     }
+
+    @Test
+    public void process_removes_tracking_params_from_referer() {
+        FullHttpRequest request = makeRequest("https://foo.com/");
+        request.headers().add("Referer", "https://bar.com/?gclid=ItrackU&x=y&ga_term=trackingTerm");
+        Mockito.when(transaction.getRequest()).thenReturn(request);
+        testee.process(transaction);
+
+        assertEquals("https://bar.com/?x=y", request.headers().get("Referer"));
+    }
+
+    @Test
+    public void process_referer_untouched() {
+        FullHttpRequest request = makeRequest("https://foo.com/");
+        request.headers().add("Referer", "https://bar.com/?x=y");
+        Mockito.when(transaction.getRequest()).thenReturn(request);
+        testee.process(transaction);
+
+        assertEquals("https://bar.com/?x=y", request.headers().get("Referer"));
+    }
 }

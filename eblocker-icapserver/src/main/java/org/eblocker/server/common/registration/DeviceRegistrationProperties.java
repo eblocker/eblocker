@@ -105,10 +105,7 @@ public class DeviceRegistrationProperties {
     private final Date lifetimeIndicator;
     private final Path tmpDir;
 
-    private RegistrationState registrationState;
-    private UUID registrationId;
-    private int registrationType;
-    private String registrationCpuSerial;
+    private RegistrationData registration;
 
     private String deviceId;
     private String deviceName;
@@ -163,7 +160,7 @@ public class DeviceRegistrationProperties {
     private void init() {
         log.info("Initialising device registration handler");
         if (ResourceHandler.exists(registrationProperties) && load()) {
-            if (hasBeenRegisteredBefore()) {
+            if (registration.hasBeenRegisteredBefore()) {
                 verify();
             }
         } else {
@@ -174,18 +171,20 @@ public class DeviceRegistrationProperties {
 
     public void reset() {
         log.info("Reset registration configuration in file {}", registrationProperties.getPath());
-        registrationState = RegistrationState.NEW;
-        registrationType = defaultRegistrationType;
-        registrationId = generateRegistrationId();
-        registrationCpuSerial = cpuInfo.getSerial();
 
-        deviceId = generateDeviceId();
+        RegistrationData newRegistration = new RegistrationData();
+        newRegistration.state = RegistrationState.NEW;
+        newRegistration.type = defaultRegistrationType;
+        newRegistration.id = UUID.randomUUID();
+        newRegistration.cpuSerial = cpuInfo.getSerial();
+
+        String newDeviceId = newRegistration.generateDeviceId();
 
         try {
-            decodedDeviceCredentials = PKI.generateSelfSignedCertificateRequest(deviceId, keySize);
+            decodedDeviceCredentials = PKI.generateSelfSignedCertificateRequest(newDeviceId, keySize);
             deviceCredentials = Base64.encodeBase64String(encodeKeyStore(decodedDeviceCredentials, DEVICE_KEY_ALIAS));
 
-            decodedLicenseCredentials = PKI.generateSelfSignedCertificateRequest(deviceId, keySize);
+            decodedLicenseCredentials = PKI.generateSelfSignedCertificateRequest(newDeviceId, keySize);
             licenseCredentials = Base64.encodeBase64String(encodeKeyStore(decodedLicenseCredentials, LICENSE_KEY_ALIAS));
 
         } catch (CryptoException | IOException e) {
@@ -194,6 +193,7 @@ public class DeviceRegistrationProperties {
             throw new EblockerException(msg, e);
         }
 
+        deviceId = newDeviceId;
         deviceRegisteredAt = null;
         deviceRegisteredBy = null;
         deviceName = null;
@@ -201,6 +201,7 @@ public class DeviceRegistrationProperties {
         licenseNotValidAfter = null;
         licenseAutoRenewal = false;
         tosVersion = null;
+        registration = newRegistration;
 
         store();
     }
@@ -230,10 +231,11 @@ public class DeviceRegistrationProperties {
             throw new EblockerException(msg, e);
         }
 
-        registrationState = RegistrationState.valueOf(properties.getProperty(PROP_REG_STATE));
-        registrationId = UUID.fromString(properties.getProperty(PROP_REG_ID));
-        registrationType = Integer.valueOf(properties.getProperty(PROP_REG_TYPE));
-        registrationCpuSerial = properties.getProperty(PROP_REG_CPU_SERIAL);
+        registration = new RegistrationData();
+        registration.state = RegistrationState.valueOf(properties.getProperty(PROP_REG_STATE));
+        registration.id = UUID.fromString(properties.getProperty(PROP_REG_ID));
+        registration.type = Integer.valueOf(properties.getProperty(PROP_REG_TYPE));
+        registration.cpuSerial = properties.getProperty(PROP_REG_CPU_SERIAL);
 
         deviceId = properties.getProperty(PROP_DEVICE_ID);
         deviceCredentials = properties.getProperty(PROP_DEVICE_CRED);
@@ -245,7 +247,7 @@ public class DeviceRegistrationProperties {
 
         tosVersion = properties.getProperty(PROP_TOS_VERSION, null);
 
-        if (hasBeenRegisteredBefore()) {
+        if (registration.hasBeenRegisteredBefore()) {
             deviceRegisteredBy = properties.getProperty(PROP_DEVICE_REG_BY);
             deviceRegisteredAt = decodedDeviceCredentials.getCertificate().getNotBefore();
             deviceName = properties.getProperty(PROP_DEVICE_NAME);
@@ -261,14 +263,14 @@ public class DeviceRegistrationProperties {
     private void store() {
         Properties properties = new Properties();
 
-        properties.setProperty(PROP_REG_STATE, registrationState.toString());
-        properties.setProperty(PROP_REG_TYPE, Integer.toString(registrationType));
-        properties.setProperty(PROP_REG_ID, registrationId.toString());
-        properties.setProperty(PROP_REG_CPU_SERIAL, registrationCpuSerial);
+        properties.setProperty(PROP_REG_STATE, registration.state.toString());
+        properties.setProperty(PROP_REG_TYPE, Integer.toString(registration.type));
+        properties.setProperty(PROP_REG_ID, registration.id.toString());
+        properties.setProperty(PROP_REG_CPU_SERIAL, registration.cpuSerial);
 
         properties.setProperty(PROP_DEVICE_ID, deviceId);
         properties.setProperty(PROP_DEVICE_CRED, deviceCredentials);
-        if (hasBeenRegisteredBefore()) {
+        if (registration.hasBeenRegisteredBefore()) {
             properties.setProperty(PROP_DEVICE_NAME, deviceName);
             properties.setProperty(PROP_DEVICE_REG_AT, format.format(deviceRegisteredAt));
             properties.setProperty(PROP_DEVICE_REG_BY, deviceRegisteredBy);
@@ -278,7 +280,7 @@ public class DeviceRegistrationProperties {
 
         properties.setProperty(PROP_LICENSE_CRED, licenseCredentials);
         properties.setProperty(PROP_LICENSE_TYPE, licenseType.toString());
-        if (hasBeenRegisteredBefore()) {
+        if (registration.hasBeenRegisteredBefore()) {
             if (licenseType.isSubscription()) {
                 properties.setProperty(PROP_LICENSE_NVA, format.format(licenseNotValidAfter));
                 properties.setProperty(PROP_LICENSE_AUTO, Boolean.toString(licenseAutoRenewal));
@@ -303,9 +305,9 @@ public class DeviceRegistrationProperties {
     }
 
     private void verify() {
-        RegistrationState oldRegistrationState = registrationState;
-        registrationState = verifiedRegistrationState();
-        if (oldRegistrationState != registrationState) {
+        RegistrationState oldRegistrationState = registration.state;
+        registration.state = verifiedRegistrationState();
+        if (oldRegistrationState != registration.state) {
             store();
         }
     }
@@ -315,67 +317,27 @@ public class DeviceRegistrationProperties {
             return RegistrationState.NEW;
         }
 
-        if (registrationState == RegistrationState.OK_UNREGISTERED) {
+        if (registration.state == RegistrationState.OK_UNREGISTERED) {
             return RegistrationState.OK_UNREGISTERED;
         }
 
-        if (registrationType < MIN_ALLOWED_REG_TYPE) {
+        if (registration.type < MIN_ALLOWED_REG_TYPE) {
             return RegistrationState.INVALID;
         }
 
-        if (!registrationCpuSerial.equals(cpuInfo.getSerial())) {
+        if (!registration.cpuSerial.equals(cpuInfo.getSerial())) {
             return RegistrationState.INVALID;
         }
 
-        if (!deviceId.equals(generateDeviceId())) {
+        if (!deviceId.equals(registration.generateDeviceId())) {
             return RegistrationState.INVALID;
         }
 
-        if (!isExpired() && registrationState == RegistrationState.REVOKED) {
+        if (!isExpired() && registration.state == RegistrationState.REVOKED) {
             return RegistrationState.REVOKED;
         }
 
         return RegistrationState.OK;
-    }
-
-    private UUID generateRegistrationId() {
-        return UUID.randomUUID();
-    }
-
-    private String generateDeviceId() {
-        StringBuilder normalized = new StringBuilder();
-        switch (registrationType) {
-
-            case 0:
-                normalized.append(registrationId.toString());
-                normalized.append("::");
-                normalized.append("LH4ylkeL!43fh@VVu!#3LZLl2%F#1Stn");
-                break;
-
-            case 1:
-                normalized.append(registrationId.toString());
-                normalized.append("::");
-                normalized.append(registrationCpuSerial);
-                normalized.append("::");
-                normalized.append("j6Ko%!5OhEG17@6NuPNJjqkTVyzRIX9z");
-                break;
-
-            default:
-                // This should never generate a valid, verifiable registration ID
-                normalized.append(UUID.randomUUID().toString());
-        }
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(normalized.toString().getBytes(StandardCharsets.UTF_8));
-            byte[] digest = md.digest();
-            return Hex.encodeHexString(digest);
-
-        } catch (NoSuchAlgorithmException e) {
-            String msg = "Cannot generate registration ID: " + e.getMessage();
-            log.error(msg);
-            throw new EblockerException(msg, e);
-        }
     }
 
     private byte[] encodeKeyStore(CertificateAndKey certificateAndKey, String alias) {
@@ -428,21 +390,18 @@ public class DeviceRegistrationProperties {
         }
     }
 
-    private boolean hasBeenRegisteredBefore() {
-        return registrationState != RegistrationState.NEW && registrationState != RegistrationState.OK_UNREGISTERED;
-    }
 
     private boolean isFallbackRegistration() {
-        return registrationState == RegistrationState.OK_UNREGISTERED;
+        return registration.state == RegistrationState.OK_UNREGISTERED;
     }
 
     public boolean isSubscriptionValid() {
-        if (!hasBeenRegisteredBefore()) {
+        if (!registration.hasBeenRegisteredBefore()) {
             // Unregistered device can never have a valid subscription
             return false;
         }
 
-        if (registrationState != RegistrationState.OK) {
+        if (registration.state != RegistrationState.OK) {
             return false;
         }
 
@@ -488,12 +447,12 @@ public class DeviceRegistrationProperties {
      */
     public void acquireRevokationState() {
         try {
-            if (!isExpired() && (registrationState == RegistrationState.OK || registrationState == RegistrationState.REVOKED)) {
+            if (!isExpired() && (registration.state == RegistrationState.OK || registration.state == RegistrationState.REVOKED)) {
                 makeLicenseCredentialsAvailable();
                 if (licenseState.checkCertificate() == RegistrationState.INVALID) {
-                    registrationState = RegistrationState.REVOKED;
+                    registration.state = RegistrationState.REVOKED;
                 } else {
-                    registrationState = RegistrationState.OK;
+                    registration.state = RegistrationState.OK;
                 }
             }
         } catch (Exception e) {
@@ -510,7 +469,7 @@ public class DeviceRegistrationProperties {
             licenseCertficate = decodeCertificate(deviceRegistrationResponse.getEncodedLicenseCertificate());
         }
 
-        registrationState = RegistrationState.OK;
+        registration.state = RegistrationState.OK;
         // registrationId - unchanged
         // registrationType - unchanged
         // registrationMac - unchanged
@@ -536,13 +495,13 @@ public class DeviceRegistrationProperties {
 
     public void registrationFallback(String deviceName) {
         reset();
-        registrationState = RegistrationState.OK_UNREGISTERED;
+        registration.state = RegistrationState.OK_UNREGISTERED;
         this.deviceName = Strings.isNullOrEmpty(deviceName) ? "My eBlocker" : deviceName;
         store();
     }
 
     public void makeLicenseCredentialsAvailable() {
-        if (isSubscriptionValid() || RegistrationState.REVOKED == registrationState) {
+        if (isSubscriptionValid() || RegistrationState.REVOKED == registration.state) {
             try {
                 Path temp = Files.createTempFile(tmpDir, "license.", ".cert");
                 PKI.storeCertificate(decodedLicenseCredentials.getCertificate(), Files.newOutputStream(temp));
@@ -605,8 +564,8 @@ public class DeviceRegistrationProperties {
     }
 
     public RegistrationState getRegistrationState() {
-        registrationState = verifiedRegistrationState();
-        return registrationState;
+        registration.state = verifiedRegistrationState();
+        return registration.state;
     }
 
     public Date getDeviceRegisteredAt() {
@@ -666,28 +625,28 @@ public class DeviceRegistrationProperties {
     }
 
     public X509Certificate getDeviceCertificate() {
-        if (!hasBeenRegisteredBefore() || decodedDeviceCredentials == null) {
+        if (!registration.hasBeenRegisteredBefore() || decodedDeviceCredentials == null) {
             return null;
         }
         return decodedDeviceCredentials.getCertificate();
     }
 
     public X509Certificate getLicenseCertificate() {
-        if (!hasBeenRegisteredBefore() || !licenseType.isSubscription() || decodedLicenseCredentials == null) {
+        if (!registration.hasBeenRegisteredBefore() || !licenseType.isSubscription() || decodedLicenseCredentials == null) {
             return null;
         }
         return decodedLicenseCredentials.getCertificate();
     }
 
     public KeyStore getDeviceKeyStore() {
-        if (!hasBeenRegisteredBefore() || deviceCredentials == null) {
+        if (!registration.hasBeenRegisteredBefore() || deviceCredentials == null) {
             return null;
         }
         return decodeKeyStore(Base64.decodeBase64(deviceCredentials));
     }
 
     public KeyStore getLicenseKeyStore() {
-        if (!hasBeenRegisteredBefore() || !licenseType.isSubscription() || licenseCredentials == null) {
+        if (!registration.hasBeenRegisteredBefore() || !licenseType.isSubscription() || licenseCredentials == null) {
             return null;
         }
         return decodeKeyStore(Base64.decodeBase64(licenseCredentials));
@@ -697,4 +656,51 @@ public class DeviceRegistrationProperties {
         return password;
     }
 
+    private static class RegistrationData {
+        private RegistrationState state;
+        private int type;
+        private UUID id;
+        private String cpuSerial;
+
+        private boolean hasBeenRegisteredBefore() {
+            return state != RegistrationState.NEW && state != RegistrationState.OK_UNREGISTERED;
+        }
+
+        private String generateDeviceId() {
+            StringBuilder normalized = new StringBuilder();
+            switch (type) {
+
+                case 0:
+                    normalized.append(id.toString());
+                    normalized.append("::");
+                    normalized.append("LH4ylkeL!43fh@VVu!#3LZLl2%F#1Stn");
+                    break;
+
+                case 1:
+                    normalized.append(id.toString());
+                    normalized.append("::");
+                    normalized.append(cpuSerial);
+                    normalized.append("::");
+                    normalized.append("j6Ko%!5OhEG17@6NuPNJjqkTVyzRIX9z");
+                    break;
+
+                default:
+                    // This should never generate a valid, verifiable registration ID
+                    normalized.append(UUID.randomUUID().toString());
+            }
+
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                md.update(normalized.toString().getBytes(StandardCharsets.UTF_8));
+                byte[] digest = md.digest();
+                return Hex.encodeHexString(digest);
+
+            } catch (NoSuchAlgorithmException e) {
+                String msg = "Cannot generate registration ID: " + e.getMessage();
+                log.error(msg);
+                throw new EblockerException(msg, e);
+            }
+        }
+
+    }
 }

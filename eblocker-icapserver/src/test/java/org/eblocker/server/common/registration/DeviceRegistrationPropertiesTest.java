@@ -39,6 +39,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -420,6 +423,20 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         assertEquals(RegistrationState.OK, drp.getRegistrationState());
         drp.acquireRevokationState();
         assertEquals(RegistrationState.REVOKED, drp.getRegistrationState());
+    }
+
+    @Test
+    public void testResetRaceCondition() throws Exception {
+        // Test a race condition which occurred when
+        // getRegistrationState() was called during reset()
+        registerWithSubscriptionLicense();
+        ScheduledFuture<?> future = Executors.newSingleThreadScheduledExecutor()
+                .scheduleAtFixedRate(() -> drp.getRegistrationState(), 10, 10, TimeUnit.MILLISECONDS);
+        try {
+            drp.reset();
+        } finally {
+            future.cancel(true);
+        }
     }
 
     private void registerWithCommunityLicense() throws CertificateException, CryptoException {

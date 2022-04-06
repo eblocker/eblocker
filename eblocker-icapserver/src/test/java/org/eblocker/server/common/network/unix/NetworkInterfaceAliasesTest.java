@@ -26,15 +26,19 @@ import java.io.IOException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class NetworkInterfaceAliasesTest {
 
-    private final List<String> INTERFACE_NAME_LOOKUP = Arrays.asList("eth1", "eth0", "en8", "en7", "en4", "en2", "en1", "en0", "enp0s25");
+    private final List<Pattern> INTERFACE_NAME_PATTERNS = Stream.of("eth1\\d+", "en\\d+", "enp0s\\d+")
+            .map(Pattern::compile)
+            .collect(Collectors.toList());
     private final int ALIASES_COUNT = 16;
     private final int ALIAS_MIN = 20;
     private final int ALIAS_MAX = ALIAS_MIN + ALIASES_COUNT - 1;
@@ -48,12 +52,20 @@ public class NetworkInterfaceAliasesTest {
 
     @Before
     public void setup() throws SocketException {
-        for (NetworkInterface networkInterface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-            if (INTERFACE_NAME_LOOKUP.contains(networkInterface.getName())) {
-                networkInterfaceName = networkInterface.getName();
-            }
-        }
-        Assert.assertNotNull("Cannot find any network interface from this list: " + INTERFACE_NAME_LOOKUP.stream().collect(Collectors.joining(", ")), networkInterfaceName);
+        List<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+        networkInterfaceName = networkInterfaces.stream()
+                .flatMap(networkInterface -> INTERFACE_NAME_PATTERNS.stream().map(pattern -> pattern.matcher(networkInterface.getName())))
+                .filter(Matcher::matches)
+                .findFirst()
+                .map(Matcher::group)
+                .orElse(null);
+
+        Assert.assertNotNull("Cannot find any network interface matching any of these patterns: " +
+                INTERFACE_NAME_PATTERNS.stream()
+                        .map(Pattern::toString)
+                        .collect(Collectors.joining(", ")),
+                networkInterfaceName);
+
         scriptRunner = Mockito.mock(ScriptRunner.class);
         networkInterfaceAliases = new NetworkInterfaceAliases(networkInterfaceName, ALIAS_MIN, ALIAS_MAX, SCRIPT_ALIAS_ADD, SCRIPT_ALIAS_REMOVE, scriptRunner);
     }

@@ -33,7 +33,6 @@ public class ContentFilterManagerTest {
     private ContentFilterService service;
     private DataSource dataSource;
     private ContentFilter filter;
-    private long beforeFileCreateMillis;
     private Path file;
 
     @Before
@@ -46,7 +45,6 @@ public class ContentFilterManagerTest {
                 ContentAction.ADD,
                 ".ads");
 
-        beforeFileCreateMillis = System.currentTimeMillis();
         file = Files.createTempFile(this.getClass().getSimpleName(),".txt");
         Files.writeString(file, filter.toString());
         file.toFile().deleteOnExit();
@@ -65,7 +63,7 @@ public class ContentFilterManagerTest {
         inOrder.verify(service).setFilterList(ContentFilterList.emptyList());
         inOrder.verify(service).setFilterList(new ContentFilterList(List.of(filter)));
         inOrder.verifyNoMoreInteractions();
-        Assert.assertTrue(manager.getLastUpdate() >= beforeFileCreateMillis);
+        Assert.assertTrue(manager.getLastUpdate() > 0);
     }
 
     @Test

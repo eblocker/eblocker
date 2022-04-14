@@ -185,7 +185,7 @@
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
             "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-9/",
-	    "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 2.9: t.b.d.",
+	    "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 2.9: Numerous improvements in the background and security updates",
             "MESSAGE_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
 	    "MESSAGE_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-2-9/",

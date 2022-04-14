@@ -1733,7 +1733,7 @@
                         "LAST_SYSTEM_UPDATE_OLDER_2_DAYS" : "Last system update is older than two days: ",
                         "ATA_ENABLED" : "The Auto Trust App is enabled.",
                         "ATA_HAS_WWW_DOMAINS" : "The Auto Trust App whitelisted domains starting with 'www.'. This might hides the eBlocker icon on these pages: ",
-                        "ATA_NOT_ENABLED" : "Please consider enabeling the Auto Trust App to improve your experience with the HTTPS support.",
+                        "ATA_NOT_ENABLED" : "Please consider enabling the Auto Trust App to improve your experience with the HTTPS support.",
                         "HTTPS_NOT_ENABLED" : "HTTPS is not enabled. You will get better tracking protection and block ads in videos.",
                         "STANDARD_PATTERN_FILTER_ENABLED" : "The following standard pattern filter is enabled as it should: ",
                         "STANDARD_PATTERN_FILTER_DISABLED" : "The following standard pattern filter is not enabled: ",
@@ -2619,19 +2619,19 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                 "INTRO" : "We've implemented exciting features to reduce the amount of ads you get and increase eBlocker's protection even further.",
+                 "INTRO" : "With eBlockerOS 2.9 we focused on security maintenance and many improvement in the background.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important new features:",
-                    "LI_1" : "<strong>t.b.d.</strong>",
-                    "LI_2" : "<strong>t.b.d.</strong>",
-                    "LI_3" : "<strong>t.b.d.</strong>",
-                    "LI_4" : "<strong>Security updates</strong> of the Linux system and bug fixes."
+                    "LI_1" : "<strong>Settings backups</strong> now also contain the eBlocker certificate/key pair.",
+                    "LI_2" : "<strong>Auto Trust App</strong> has been further improved and can now be switched on directly under HTTPS.",
+                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components.",
+                    "LI_4" : "<strong>ATTENTION white cube users:</strong>Due to the kernel update, the RGB LED is currently not working."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-9/",
-                "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will now receive a license key for automatic daily updates.",
+                "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
                 "TITLE" : "eBlockerOS Release 2.9"
             },

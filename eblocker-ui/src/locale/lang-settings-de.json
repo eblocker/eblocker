@@ -1729,7 +1729,7 @@
                         "NO_DONOR_LICENSE" : "Sie haben keine Lizenz für eBlocker-Spender und können daher die automatische Aktualisierung nicht aktivieren.",
                         "SYSTEM_UPDATE_NEVER_RAN" : "Die System-Updates sind noch nie gelaufen!",
                         "SYSTEM_UPDATE_RAN" : "Die System-Updates sind zuletzt gelaufen.",
-                        "HTTPS_ENABLED" : "Sie haben die HTTPS-Unterstüzung aktiviert",
+                        "HTTPS_ENABLED" : "Sie haben die HTTPS-Unterstützung aktiviert",
                         "LAST_SYSTEM_UPDATE_OLDER_2_DAYS" : "Das letzte Aktualisierung ist länger als zwei Tage her: ",
                         "ATA_ENABLED" : "Sie haben die Auto-Trust-App aktiviert.",
                         "ATA_HAS_WWW_DOMAINS" : "Die Auto-Trust-App hat Domains, die mit 'www.' beginnen erkannt. Dies führt möglicherweise dazu, dass das eBlocker-Icon auf folgenden Seiten nicht angezeigt wird:",
@@ -1751,13 +1751,13 @@
                         "EBLOCKER_NO_IP6" : "Ihr Netzwerk ist nicht über IPv6 mit dem Internet verbunden. Das ist erfreulich, da der eBlocker IPv6 noch nicht unterstützt.",
                         "ALL_DEVICES_USE_AUTO_BLOCK_MODE" : "Auf allen Geräten ist der automatische Modus für Tracker- und Werbeblocker aktiv.",
                         "DEVICES_WITHOUT_AUTO_BLOCK_MODE" : "Auf folgenden Geräten ist der automatische Modus für Tracker- und Werbeblocker nicht aktiv:",
-                        "ALL_DEVICES_USE_MALWARE_FILTER" : "Auf allen Geräten ist der Malware & Phisching Blocker aktiv.",
-                        "DEVICES_MALWARE_FILTER_DISABLED" : "Auf folgenden Geräten ist der Malware & Phisching Blocker nicht aktiv:",
+                        "ALL_DEVICES_USE_MALWARE_FILTER" : "Auf allen Geräten ist der Malware & Phishing Blocker aktiv.",
+                        "DEVICES_MALWARE_FILTER_DISABLED" : "Auf folgenden Geräten ist der Malware & Phishing Blocker nicht aktiv:",
                         "ALL_DEVICES_USE_AUTO_CONTROLBAR" : "Auf allen Geräten ist die automatische Konfiguration der ControlBar aktiv.",
                         "DEVICES_WITHOUT_AUTO_CONTROLBAR" : "Auf folgenden Geräten ist die automatische Konfiguration der ControlBar nicht aktiv:",
                         "DNS_TOR_NOT_DISABLED" : "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Dies wird für Anfänger nicht empfohlen.",
                         "DNS_TOR_MAY_LEAD_TO_ERRORS" : "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Bitte beachten Sie, dass dies zu Aussetzern führen kann.",
-                        "ADMIN_PASSWORD_NOT_SET" : "Es ist kein Administratorpasswort gesetzt. Jeder mit Zugang zu Ihrem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
+                        "ADMIN_PASSWORD_NOT_SET" : "Es ist kein Administrator-Passwort gesetzt. Jeder mit Zugang zu Ihrem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
                         "MORE_INFO" : "Mehr Information",
                         "CLICK_FOR_MORE" : "Klicken Sie für Details."
                     }
@@ -2619,19 +2619,19 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Wir haben viele spannende Features implementiert, damit du weniger Werbung bekommst und der eBlocker Schutz noch besser wird.",
+                "INTRO" : "Mit eBlockerOS 2.9 haben wir uns auf die Sicherheitswartung und viele Verbesserung im Hintergrund konzentriert.",
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "<strong>t.b.d.</strong>",
-                    "LI_2" : "<strong>t.b.d.</strong>",
-                    "LI_3" : "<strong>t.b.d.</strong>",
-                    "LI_4" : "<strong>Sicherheitsupdates</strong> des Linux-Systems und Fehlerbeseitigungen."
+                    "LI_1" : "<strong>Backups der Einstellungen</strong> enthalten jetzt auch das eBlocker Zertifikat/Schlüsselpaar.",
+                    "LI_2" : "<strong>Auto Trust App</strong> wurde weiter verbessert und ist nun direkt unter HTTPS einschaltbar.",
+                    "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten.",
+                    "LI_4" : "<strong>ACHTUNG weiße Würfel Nutzer:</strong>Durch das Kernel Update funktioniert die RGB-LED derzeit nicht."
                 },
                 "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-9/",
-                "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du jetzt einen Lizenzschlüssel für automatische tägliche Updates.",
+                "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN" : "Dein eBlocker Team",
                 "TITLE" : "eBlockerOS Release 2.9"
             },

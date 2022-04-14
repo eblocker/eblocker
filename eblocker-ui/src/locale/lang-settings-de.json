@@ -2626,7 +2626,7 @@
                     "LI_1" : "<strong>Backups der Einstellungen</strong> enthalten jetzt auch das eBlocker Zertifikat/Schlüsselpaar.",
                     "LI_2" : "<strong>Auto Trust App</strong> wurde weiter verbessert und ist nun direkt unter HTTPS einschaltbar.",
                     "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten.",
-                    "LI_4" : "<strong>ACHTUNG weiße Würfel Nutzer:</strong>Durch das Kernel Update funktioniert die RGB-LED derzeit nicht."
+                    "LI_4" : "<strong>ACHTUNG weiße Würfel Nutzer:</strong> Durch das Kernel Update funktioniert die RGB-LED derzeit nicht."
                 },
                 "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",

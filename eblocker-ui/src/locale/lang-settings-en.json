@@ -2626,7 +2626,7 @@
                     "LI_1" : "<strong>Settings backups</strong> now also contain the eBlocker certificate/key pair.",
                     "LI_2" : "<strong>Auto Trust App</strong> has been further improved and can now be switched on directly under HTTPS.",
                     "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components.",
-                    "LI_4" : "<strong>ATTENTION white cube users:</strong>Due to the kernel update, the RGB LED is currently not working."
+                    "LI_4" : "<strong>ATTENTION white cube users:</strong> Due to the kernel update, the RGB LED is currently not working."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",

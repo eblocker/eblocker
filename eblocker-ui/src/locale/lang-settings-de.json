@@ -2613,7 +2613,7 @@
                     "NOT_AGAIN" : "Nicht wieder anzeigen",
                     "OK" : "Ok"
                 },
-                "BLOG_LINK_PRE" : "Wie du die neuen Funktionen aktivierst, steht ausführlich im ",
+                "BLOG_LINK_PRE" : "Mehr zu den Neuerungen findest Du im ",
                 "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.9",
                 "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.9",
                 "ENABLE" : {
@@ -2626,7 +2626,7 @@
                     "LI_1" : "<strong>Backups der Einstellungen</strong> enthalten jetzt auch das eBlocker Zertifikat/Schlüsselpaar.",
                     "LI_2" : "<strong>Auto Trust App</strong> wurde weiter verbessert und ist nun direkt unter HTTPS einschaltbar.",
                     "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten.",
-                    "LI_4" : "<strong>ACHTUNG weiße Würfel Nutzer:</strong> Durch das Kernel Update funktioniert die RGB-LED derzeit nicht."
+                    "LI_4" : "<strong>HINWEIS für weiße Würfel:</strong> Nach dem Update leuchtet die RGB-LED derzeit permanent."
                 },
                 "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",
@@ -2637,7 +2637,7 @@
             },
             "MENU_LABEL" : "Neu in eBlockerOS 2.9",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.9"
+                "TITLE" : "Neues eBlockerOS Release 2.9"
             }
         },
         "SSL" : {
@@ -2946,9 +2946,9 @@
                     "REMOVE_DOMAIN" : "{num, select, 0{Domain/IP löschen} 1{{num} Domain/IP löschen} other{{num} Domains/IPs löschen}}"
                 },
                 "FEEDBACK" : {
-                    "BUTTON" : "Feedback senden...",
-                    "TEXT" : "Feedback zu dieser App an eBlocker senden:",
-                    "TITLE" : "Feedback"
+                    "BUTTON" : "App per E-Mail teilen...",
+                    "TEXT" : "Um eBlocker stetig zu verbessern, benötigen wir Rückmeldungen zu selbst definierten vertrauenswürdigen Apps. Diese werden dann in einer zukünftigen eBlockerOS Version integriert, damit alle Nutzer davon profitieren. Bitte teile deine App Ausnahmeliste per E-Mail, die vor Versand editiert werden kann.",
+                    "TITLE" : "Ausnahmeliste mit eBlocker teilen"
                 },
                 "HEADING" : "Details zu Ausnahmeliste für App",
                 "HEADING_DOMAINS" : "Domains/IPs hinzufügen",

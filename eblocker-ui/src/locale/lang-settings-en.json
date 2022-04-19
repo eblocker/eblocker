@@ -2613,7 +2613,7 @@
                     "NOT_AGAIN" : "Do not show again",
                     "OK" : "Ok"
                 },
-                "BLOG_LINK_PRE" : "How to activate the new features is described in detail in the ",
+                "BLOG_LINK_PRE" : "Learn more about the improvements in our ",
                 "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.9",
                 "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.9",
                 "ENABLE" : {
@@ -2624,9 +2624,9 @@
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important new features:",
                     "LI_1" : "<strong>Settings backups</strong> now also contain the eBlocker certificate/key pair.",
-                    "LI_2" : "<strong>Auto Trust App</strong> has been further improved and can now be switched on directly under HTTPS.",
+                    "LI_2" : "<strong>Auto Trust App</strong> has been improved further and can be enabled under HTTPS now.",
                     "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components.",
-                    "LI_4" : "<strong>ATTENTION white cube users:</strong> Due to the kernel update, the RGB LED is currently not working."
+                    "LI_4" : "<strong>NOTE for white cubes:</strong> After the update, the RGB LED is currently permanently lit."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
@@ -2946,9 +2946,9 @@
                     "REMOVE_DOMAIN" : "{num, select, 0{Remove Domain/IP} 1{Remove {num} Domain/IP} other{Remove {num} Domains/IPs}}"
                 },
                 "FEEDBACK" : {
-                    "BUTTON" : "Send feedback...",
-                    "TEXT" : "Send feedback about this app to eBlocker:",
-                    "TITLE" : "Feedback"
+                    "BUTTON" : "Share app via email...",
+                    "TEXT" : "To continuously improve eBlocker, we need feedback on self-defined trusted apps. This will be integrated in a future eBlockerOS version for the benefit of all users. Please share your app exception list via email, which can be edited before sending.",
+                    "TITLE" : "Share exception list with eBlocker"
                 },
                 "HEADING" : "Details for exception list for app",
                 "HEADING_DOMAINS" : "Add domains/IPs",

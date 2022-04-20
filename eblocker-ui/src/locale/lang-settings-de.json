@@ -139,7 +139,7 @@
                 "HEADER" : "Aktualisierung verfügbar",
                 "TEXT1" : "Es liegt ein Update mit Verbesserungen und Erweiterungen vor.",
                 "TEXT2" : "Eine Aktualisierung wird empfohlen.",
-                "TEXT3" : "Der Aktualisierungsprozess kann bis zu <b>15</b> Minuten dauern.",
+                "TEXT3" : "Der Aktualisierungsprozess kann bis zu <b>30</b> Minuten dauern.",
                 "TEXT4" : "Trennen Sie die Strom- und Netzwerkverbindung nicht, solange die Aktualisierung läuft!"
             },
             "TOOLBAR" : {

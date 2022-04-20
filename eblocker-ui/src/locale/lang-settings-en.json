@@ -139,7 +139,7 @@
                 "HEADER" : "Update available",
                 "TEXT1" : "An update with improvements and extensions is available.",
                 "TEXT2" : "An update is recommended.",
-                "TEXT3" : "Updating may take up to <b>15</b> minutes.",
+                "TEXT3" : "Updating may take up to <b>30</b> minutes.",
                 "TEXT4" : "Do not remove power and network connection while the update is running!"
             },
             "TOOLBAR" : {

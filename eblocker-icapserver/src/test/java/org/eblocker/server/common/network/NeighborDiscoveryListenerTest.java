@@ -99,7 +99,7 @@ public class NeighborDiscoveryListenerTest {
     @Test
     public void testNewAddressNeighborAdvertisement() {
         listener.run();
-        subscriber.process("000010101010/fe800000000000000010001000100011/000010101000/fe800000000000000010001000100000/icmp6/136/1/1/0/fe800000000000000010001000100010");
+        subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/136/1/1/0/fe800000000000000010001000100011");
         Assert.assertEquals(3, device.getIpAddresses().size());
         Assert.assertTrue(device.getIpAddresses().contains(IpAddress.parse("fe80::10:10:10:11")));
         Mockito.verify(deviceService).updateDevice(device);

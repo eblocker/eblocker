@@ -113,17 +113,24 @@ public class NeighborDiscoveryListener implements Runnable {
                 return;
             }
 
-            if (!device.getIpAddresses().contains(parsedMessage.getSourceAddress())) {
-                log.debug("adding ip address {} for {}", parsedMessage.getSourceAddress(), device.getId());
+            Ip6Address advertisedAddress = parsedMessage.getSourceAddress();
+            if (parsedMessage instanceof NeighborAdvertisement) {
+                // In neighbor advertisements the target address is the address that is advertised
+                // (see RFC 4861, section 4.4). The source address might be another (e.g. link-local) address.
+                advertisedAddress = ((NeighborAdvertisement)parsedMessage).getTargetAddress();
+            }
+
+            if (!device.getIpAddresses().contains(advertisedAddress)) {
+                log.debug("adding ip address {} for {}", advertisedAddress, device.getId());
                 List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
-                ipAddresses.add(parsedMessage.getSourceAddress());
+                ipAddresses.add(advertisedAddress);
                 device.setIpAddresses(ipAddresses);
                 deviceService.updateDevice(device);
             }
 
             log.trace("updated arp response table entry for {}: {}", device.getId(), arpResponseTable.row(device.getHardwareAddress(false)));
             synchronized (arpResponseTable) {
-                arpResponseTable.put(device.getHardwareAddress(false), parsedMessage.getSourceAddress(), clock.millis());
+                arpResponseTable.put(device.getHardwareAddress(false), advertisedAddress, clock.millis());
             }
         } catch (MessageException e) {
             log.error("invalid message:", e);

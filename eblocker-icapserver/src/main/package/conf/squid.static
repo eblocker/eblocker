@@ -37,11 +37,15 @@ acl localnet src 10.0.0.0/8     # RFC1918 possible internal network
 acl localnet src 172.16.0.0/12  # RFC1918 possible internal network
 acl localnet src 192.168.0.0/16 # RFC1918 possible internal network
 acl localnet src 169.254.0.0/16 # Link-local addresses
+acl localnet src fc00::/7       # RFC 4193 local private network range
+acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines
 
 acl localnetDst dst 10.0.0.0/8     # RFC1918 possible internal network
 acl localnetDst dst 172.16.0.0/12  # RFC1918 possible internal network
 acl localnetDst dst 192.168.0.0/16 # RFC1918 possible internal network
 acl localnetDst dst 169.254.0.0/16 # Link-local addresses
+acl localnetDst dst fc00::/7       # RFC 4193 local private network range
+acl localnetDst dst fe80::/10      # RFC 4291 link-local (directly plugged) machines
 
 http_access allow manager localhost
 http_access deny manager

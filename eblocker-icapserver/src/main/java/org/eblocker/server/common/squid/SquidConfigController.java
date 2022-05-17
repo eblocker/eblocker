@@ -26,6 +26,8 @@ import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
@@ -37,6 +39,7 @@ import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
@@ -64,6 +67,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class is able to rewrite ACL files which are used in the squid config file; In addition it is able to tell squid, that the configuration changed and
@@ -300,7 +305,7 @@ public class SquidConfigController {
                 lastReload = clock.millis();
             }
         } catch (Exception e) {
-            log.error("Problem while running the squid reload script : {}", e);
+            log.error("Problem while running the squid reload script", e);
         }
     }
 
@@ -565,9 +570,7 @@ public class SquidConfigController {
 
         if (vpnClients != null && !vpnClients.isEmpty()) { //if there are some active vpn clients, add the necessary part to the squid config
             String vpnConfigPart = createVpnOptions(vpnClients);
-            if (vpnConfigPart != null) {
-                configContent.append(vpnConfigPart);
-            }
+            configContent.append(vpnConfigPart);
         }
 
         return configContent.toString();
@@ -580,6 +583,7 @@ public class SquidConfigController {
         sb.append(createVpnOptions(vpnClients));
         sb.append(createErrHtmlOption());
         sb.append(createWorkersOption());
+        sb.append(createIp6Options());
 
         return sb.toString();
     }
@@ -672,6 +676,29 @@ public class SquidConfigController {
         }
         cfg.append("\n");
         return cfg.toString();
+    }
+
+    /**
+     * Allow access from and to IPv6 networks
+     *
+     * @return Squid configuration snippet
+     */
+    private String createIp6Options() {
+        return networkInterface.getAddresses().stream()
+                .filter(IpAddress::isIpv6)
+                .map(ip -> (Ip6Address) ip)
+                .filter(ip -> !Ip6Utils.isLinkLocal(ip))
+                .map(this::getCidrNetwork)
+                .distinct()
+                .flatMap(ip -> Stream.of(
+                        "acl localnet src " + ip + "\n",
+                        "acl localnetDst dst " + ip + "\n"))
+                .collect(Collectors.joining());
+    }
+
+    private String getCidrNetwork(Ip6Address ip) {
+        int prefixLen = networkInterface.getNetworkPrefixLength(ip);
+        return Ip6Utils.getNetworkAddress(ip, prefixLen) + "/" + prefixLen;
     }
 
     /* updates all acls and reload squid in case of changes */

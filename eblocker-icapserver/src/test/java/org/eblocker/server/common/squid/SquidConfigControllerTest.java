@@ -21,6 +21,7 @@ import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
+import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
@@ -55,6 +56,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Delayed;
@@ -75,6 +77,9 @@ public class SquidConfigControllerTest {
     private static final String CONTROL_BAR_HOST = "controlbar.eblocker.com";
     private static final String CONTROL_BAR_FALLBACK_IP = "169.254.93.109";
     private static final String EBLOCKER_DNS_NAMES = "eblocker.box, block.box";
+    private static final Ip4Address ip4Address = Ip4Address.parse("192.168.178.42");
+    private static final Ip6Address ip6Address1 = Ip6Address.parse("2a02:1:1:1:d9d0:5cb9:8956:be08");
+    private static final Ip6Address ip6Address2 = Ip6Address.parse("2a02:2:2:2:d9d0:5cb9:8956:be08");
 
     private SquidConfigController controller;
     private String outputConfigFile;
@@ -97,6 +102,7 @@ public class SquidConfigControllerTest {
     private SslService.SslStateListener sslStateListener;
     private EblockerCa eblockerCa;
     private Environment environment;
+    private NetworkInterfaceWrapper networkInterface;
 
     private SquidAcl torClientsAcl;
     private SquidAcl sslClientsAcl;
@@ -396,6 +402,16 @@ public class SquidConfigControllerTest {
         Mockito.verify(executorService, Mockito.times(aclMocks.length)).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
     }
 
+    @Test
+    public void testIp6Options() {
+        Mockito.when(networkInterface.getAddresses()).thenReturn(List.of(ip4Address, ip6Address1, ip6Address2));
+        Mockito.when(networkInterface.getNetworkPrefixLength(Mockito.any())).thenReturn(64);
+
+        sslStateListener.onInit(true);
+
+        compareToReference(outputConfigFile, "squid-eblocker-ip6.conf");
+    }
+
     private void compareToReference(String file, String reference) {
         String expected = ResourceHandler.load(new SimpleResource(squidTestdata(reference)));
         String result = ResourceHandler.load(new SimpleResource(file));
@@ -412,7 +428,6 @@ public class SquidConfigControllerTest {
         String confSslExclusivePath = squidTestdata("ssl.exclusive.conf");
         String confNoSslExclusivePath = squidTestdata("noSsl.exclusive.conf");
 
-        NetworkInterfaceWrapper networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
         JsonWebTokenHandler jsonWebTokenHandler = Mockito.mock(JsonWebTokenHandler.class);
         NetworkServices networkServices = Mockito.mock(NetworkServices.class);
         OpenVpnServerService openVpnServerService = Mockito.mock(OpenVpnServerService.class);
@@ -426,7 +441,8 @@ public class SquidConfigControllerTest {
         };
 
         // simulate dynamic configuration
-        when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.178.42"));
+        networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
+        when(networkInterface.getFirstIPv4Address()).thenReturn(ip4Address);
 
         JsonWebToken jwt = Mockito.mock(JsonWebToken.class);
         when(jwt.getToken()).thenReturn("unit-test-token");

@@ -75,7 +75,7 @@ public class Ip6NetworkScan {
         List<Ip6Address> networks = networkInterface.getAddresses().stream()
                 .filter(IpAddress::isIpv6)
                 .map(ip -> (Ip6Address) ip)
-                .filter(ip -> !isLinkLocal(ip))
+                .filter(ip -> !Ip6Utils.isLinkLocal(ip))
                 .map(ip -> Ip6Utils.getNetworkAddress(ip, networkInterface.getNetworkPrefixLength(ip)))
                 .distinct()
                 .collect(Collectors.toList());
@@ -93,7 +93,7 @@ public class Ip6NetworkScan {
             log.debug("ip6 addresses of {}: {}", device.getId(), ip6Addresses);
 
             List<Ip6Address> linkLocalAddresses = ip6Addresses.stream()
-                    .filter(this::isLinkLocal)
+                    .filter(Ip6Utils::isLinkLocal)
                     .collect(Collectors.toList());
 
             log.debug("found {} link-local addresses for {}: {}", linkLocalAddresses.size(), device.getId(), linkLocalAddresses);
@@ -117,10 +117,6 @@ public class Ip6NetworkScan {
                             ip,
                             sourceLinkLayerAddressOption));
         }
-    }
-
-    private boolean isLinkLocal(Ip6Address ip) {
-        return Ip6Utils.isInNetwork(ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX);
     }
 
     private void sendNeighborDiscoverySolicitation(byte[] sourceHardwareAddress,

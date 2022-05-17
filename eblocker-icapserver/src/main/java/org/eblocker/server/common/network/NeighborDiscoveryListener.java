@@ -140,7 +140,7 @@ public class NeighborDiscoveryListener implements Runnable {
     private void replyToRouterSolicitation(RouterSolicitation solicitation) {
         if (networkInterface.getAddresses().stream()
                 .filter(IpAddress::isIpv6)
-                .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address) ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
+                .allMatch(ip -> Ip6Utils.isLinkLocal((Ip6Address) ip))) {
             return;
         }
 

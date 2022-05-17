@@ -62,4 +62,12 @@ public class Ip6UtilsTest {
         Assert.assertTrue(Ip6Utils.isInNetwork(Ip6Address.parse("2003::1234"), Ip6Address.parse("2003::1235"), 127));
         Assert.assertFalse(Ip6Utils.isInNetwork(Ip6Address.parse("2003::1234"), Ip6Address.parse("2003::1236"), 127));
     }
+
+    @Test
+    public void testIsLinkLocal() {
+        Assert.assertTrue(Ip6Utils.isLinkLocal(Ip6Address.parse("fe80::1234")));
+        Assert.assertFalse(Ip6Utils.isLinkLocal(Ip6Address.parse("fc00::1234")));
+        Assert.assertFalse(Ip6Utils.isLinkLocal(Ip6Address.parse("::1")));
+        Assert.assertFalse(Ip6Utils.isLinkLocal(Ip6Address.parse("2a02:8106:21:6f03:d9d0:5cb9:8956:be08")));
+    }
 }

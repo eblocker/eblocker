@@ -74,4 +74,8 @@ public class Ip6Utils {
 
         return Ip6Address.of(hostAddress);
     }
+
+    public static boolean isLinkLocal(Ip6Address address) {
+        return isInNetwork(address, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX);
+    }
 }

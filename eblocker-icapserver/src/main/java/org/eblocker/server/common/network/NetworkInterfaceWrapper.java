@@ -158,7 +158,7 @@ public class NetworkInterfaceWrapper {
         return getAddresses().stream()
                 .filter(IpAddress::isIpv6)
                 .map(ip -> (Ip6Address) ip)
-                .filter(ip -> Ip6Utils.isInNetwork(ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))
+                .filter(Ip6Utils::isLinkLocal)
                 .findFirst()
                 .orElse(null);
     }

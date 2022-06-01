@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.network.NetworkUtils;
 import org.eblocker.server.common.util.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +42,6 @@ public class TableGenerator {
     private final String anonSourceIp;
     private final int httpPort;
     private final int httpsPort;
-    private final String ipRangeClassA;
-    private final String ipRangeClassB;
-    private final String ipRangeClassC;
-    private final String ipRangeLinkLocal;
     private final Integer squidUid;
     private final String dnsAccessDeniedIp;
     private final int parentalControlRedirectHttpPort;
@@ -81,10 +78,6 @@ public class TableGenerator {
                           @Named("proxyHTTPSPort") int proxyHTTPSPort,
                           @Named("anonSocksPort") int anonSocksPort,
                           @Named("network.unix.anon.source.ip") String anonSourceIp,
-                          @Named("network.unix.iprange.classA") String ipRangeClassA,
-                          @Named("network.unix.iprange.classB") String ipRangeClassB,
-                          @Named("network.unix.iprange.classC") String ipRangeClassC,
-                          @Named("network.unix.iprange.linkLocal") String ipRangeLinkLocal,
                           @Named("squid.uid") Integer squidUid,
                           @Named("httpPort") int httpPort,
                           @Named("httpsPort") int httpsPort,
@@ -105,10 +98,6 @@ public class TableGenerator {
         this.proxyHTTPSPort = proxyHTTPSPort;
         this.anonSocksPort = anonSocksPort;
         this.anonSourceIp = anonSourceIp;
-        this.ipRangeClassA = ipRangeClassA;
-        this.ipRangeClassB = ipRangeClassB;
-        this.ipRangeClassC = ipRangeClassC;
-        this.ipRangeLinkLocal = ipRangeLinkLocal;
         this.squidUid = squidUid;
         this.dnsAccessDeniedIp = parentalControlRedirectIp;
         this.parentalControlRedirectHttpPort = parentalControlRedirectHttpPort;
@@ -179,15 +168,15 @@ public class TableGenerator {
         Rule tcpReturn = new Rule(standardInput).tcp().returnFromChain();
         Rule tcpReturnVpn = new Rule(mobileVpnInput).tcp().returnFromChain();
         preRouting
-                .rule(new Rule(tcpReturn).destinationIp(ipRangeClassC))
-                .rule(new Rule(tcpReturn).destinationIp(ipRangeClassB))
-                .rule(new Rule(tcpReturn).destinationIp(ipRangeClassA))
-                .rule(new Rule(tcpReturn).destinationIp(ipRangeLinkLocal))
+                .rule(new Rule(tcpReturn).destinationIp(NetworkUtils.privateClassC))
+                .rule(new Rule(tcpReturn).destinationIp(NetworkUtils.privateClassB))
+                .rule(new Rule(tcpReturn).destinationIp(NetworkUtils.privateClassA))
+                .rule(new Rule(tcpReturn).destinationIp(NetworkUtils.linkLocal))
                 .rule(new Rule(tcpReturn).destinationIp(fallbackIp))
-                .rule(new Rule(tcpReturnVpn).destinationIp(ipRangeClassC))
-                .rule(new Rule(tcpReturnVpn).destinationIp(ipRangeClassB))
-                .rule(new Rule(tcpReturnVpn).destinationIp(ipRangeClassA))
-                .rule(new Rule(tcpReturnVpn).destinationIp(ipRangeLinkLocal))
+                .rule(new Rule(tcpReturnVpn).destinationIp(NetworkUtils.privateClassC))
+                .rule(new Rule(tcpReturnVpn).destinationIp(NetworkUtils.privateClassB))
+                .rule(new Rule(tcpReturnVpn).destinationIp(NetworkUtils.privateClassA))
+                .rule(new Rule(tcpReturnVpn).destinationIp(NetworkUtils.linkLocal))
                 .rule(new Rule(tcpReturnVpn).destinationIp(fallbackIp));
 
         // Parental Control: redirect http(s) traffic to access denied page
@@ -296,24 +285,24 @@ public class TableGenerator {
             ipAddressFilter.getMobileVpnDevicesPrivateNetworkAccessIps().stream()
                     .filter(ip -> IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask))
                     .forEach(ip -> forward
-                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassC).accept())
-                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassB).accept())
-                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeClassA).accept())
-                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(ipRangeLinkLocal).accept()));
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.privateClassC).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.privateClassB).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.privateClassA).accept())
+                            .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.linkLocal).accept()));
         }
 
         // reject all traffic from mobile clients to local networks
         forward
-                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassC).reject())
-                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassB).reject())
-                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeClassA).reject())
-                .rule(new Rule(mobileVpnInput).destinationIp(ipRangeLinkLocal).reject());
+                .rule(new Rule(mobileVpnInput).destinationIp(NetworkUtils.privateClassC).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(NetworkUtils.privateClassB).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(NetworkUtils.privateClassA).reject())
+                .rule(new Rule(mobileVpnInput).destinationIp(NetworkUtils.linkLocal).reject());
 
         // do not block traffic to private IP addresses, e.g. routers (with DNS), printers, NAS devices, etc.
         forward
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassC).accept())
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassB).accept())
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassA).accept());
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassC).accept())
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassB).accept())
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassA).accept());
 
         // Drop all traffic which has not been diverted to redsocks / tor here
         ipAddressFilter.getTorDevicesIps()
@@ -352,10 +341,10 @@ public class TableGenerator {
         if (!serverEnvironment) {
             // allow access to eBlocker's ports from private addresses
             input
-                    .rule(new Rule(standardInput).sourceIp(ipRangeClassC).accept())
-                    .rule(new Rule(standardInput).sourceIp(ipRangeClassB).accept())
-                    .rule(new Rule(standardInput).sourceIp(ipRangeClassA).accept())
-                    .rule(new Rule(standardInput).sourceIp(ipRangeLinkLocal).accept());
+                    .rule(new Rule(standardInput).sourceIp(NetworkUtils.privateClassC).accept())
+                    .rule(new Rule(standardInput).sourceIp(NetworkUtils.privateClassB).accept())
+                    .rule(new Rule(standardInput).sourceIp(NetworkUtils.privateClassA).accept())
+                    .rule(new Rule(standardInput).sourceIp(NetworkUtils.linkLocal).accept());
 
             // and to eBlocker Mobile port from all addresses
             if (mobileVpnServerActive()) {
@@ -396,9 +385,9 @@ public class TableGenerator {
         // traffic account incoming
         mangleTable.chain("ACCOUNT-IN")
                 // exclude private networks
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassA).returnFromChain())
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassB).returnFromChain())
-                .rule(new Rule(standardInput).destinationIp(ipRangeClassC).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassA).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassB).returnFromChain())
+                .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassC).returnFromChain())
                 // exclude multi cast ips
                 .rule(new Rule(standardInput).destinationIp("224.0.0.0/4").returnFromChain())
                 .rule(new Rule(standardInput).destinationIp("240.0.0.0/4").returnFromChain());
@@ -410,9 +399,9 @@ public class TableGenerator {
         Rule notSquid = new Rule(standardOutput).ownerUid(false, squidUid).returnFromChain();
         mangleTable.chain("ACCOUNT-OUT")
                 // do not account traffic from local networks (but account traffic from squid as this is seen in this chain as coming from local host)
-                .rule(new Rule(notSquid).sourceIp(ipRangeClassA))
-                .rule(new Rule(notSquid).sourceIp(ipRangeClassB))
-                .rule(new Rule(notSquid).sourceIp(ipRangeClassC));
+                .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassA))
+                .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassB))
+                .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassC));
 
         enabledDevicesIps.forEach(ip -> mangleTable.chain("ACCOUNT-OUT")
                 .rule(new Rule().output(selectInterfaceForSource(ip)).destinationIp(ip).returnFromChain()));

@@ -21,7 +21,15 @@ import org.eblocker.server.common.exceptions.EblockerException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * IPv4 network utilities
+ */
 public class NetworkUtils {
+    public static final String privateClassA = "10.0.0.0/8";
+    public static final String privateClassB = "172.16.0.0/12";
+    public static final String privateClassC = "192.168.0.0/16";
+    public static final String linkLocal     = "169.254.0.0/16";
+
     private NetworkUtils() {
     }
 

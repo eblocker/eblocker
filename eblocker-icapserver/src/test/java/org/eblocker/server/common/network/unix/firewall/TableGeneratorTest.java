@@ -76,7 +76,6 @@ public class TableGeneratorTest {
                 mobileVpnInterface, mobileVpnSubnet, mobileVpnNetmask,
                 proxyPort, proxyHTTPSPort,
                 anonSocksPort, anonSourceIp,
-                "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "169.254.0.0/16",
                 13,
                 httpPort, httpsPort,
                 parentalControlRedirectIp, parentalControlRedirectHttpPort, parentalControlRedirectHttpsPort,

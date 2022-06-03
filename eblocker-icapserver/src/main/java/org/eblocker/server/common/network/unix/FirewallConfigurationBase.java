@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2022 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -17,20 +17,14 @@
 package org.eblocker.server.common.network.unix;
 
 import com.google.common.collect.Sets;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
-import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.firewall.Chain;
 import org.eblocker.server.common.network.unix.firewall.IpAddressFilter;
 import org.eblocker.server.common.network.unix.firewall.Table;
-import org.eblocker.server.common.network.unix.firewall.TableGenerator;
+import org.eblocker.server.common.network.unix.firewall.TableGeneratorBase;
 import org.eblocker.server.common.util.Levenshtein;
-import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +34,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,57 +46,35 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-/**
- * Writes configuration files for "iptables-restore".
- */
-public class FirewallConfiguration {
+public abstract class FirewallConfigurationBase {
+    private static final Logger LOG = LoggerFactory.getLogger(FirewallConfigurationBase.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(FirewallConfiguration.class);
-
-    private final TableGenerator tableGenerator;
-    private final NetworkServices networkServices;
-    private final ParentalControlAccessRestrictionsService restrictionsService;
-    private final Environment environment;
-
+    protected final Levenshtein<String> levenshtein;
+    protected List<Table> activeTables;
     private final Path configFullPath;
     private final Path configDeltaPath;
+    private final Environment environment;
 
-    private final Levenshtein<String> levenshtein;
-
-    private List<Table> activeTables;
-
-    @Inject
-    public FirewallConfiguration(@Named("network.unix.firewall.config.full.path") String configFullPath,
-                                 @Named("network.unix.firewall.config.delta.path") String configDeltaPath,
-                                 TableGenerator tableGenerator,
-                                 NetworkServices networkServices,
-                                 ParentalControlAccessRestrictionsService restrictionsService,
-                                 Environment environment) {
-
-        this.configFullPath = Paths.get(configFullPath);
-        this.configDeltaPath = Paths.get(configDeltaPath);
-        this.tableGenerator = tableGenerator;
-        this.networkServices = networkServices;
-        this.restrictionsService = restrictionsService;
+    public FirewallConfigurationBase(Path configFullPath, Path configDeltaPath, Environment environment) {
+        this.configFullPath = configFullPath;
+        this.configDeltaPath = configDeltaPath;
         this.environment = environment;
         this.levenshtein = new Levenshtein.Builder<String>().substitutionCost(c -> Integer.MAX_VALUE).build();
     }
 
+    abstract protected IpAddressFilter getIpAddressFilter(Set<Device> devices);
+
+    abstract protected TableGeneratorBase getTableGenerator();
 
     public synchronized void enable(Set<Device> allDevices, Collection<OpenVpnClientState> anonVpnClients,
                                     boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
                                     boolean enableOpenVpnServer, boolean enableMalwareSet,
                                     Supplier<Boolean> applyFirewallRules) throws IOException {
 
-        NetworkConfiguration netConfig = networkServices.getCurrentNetworkConfiguration();
+        // Get IP version specific generator
+        TableGeneratorBase tableGenerator = getTableGenerator();
 
-        // Set IP/network addresses
-        tableGenerator.setOwnIpAddress(netConfig.getIpAddress());
-        tableGenerator.setNetworkMask(netConfig.getNetworkMask());
-        tableGenerator.setGatewayIpAddress(netConfig.getGateway());
-        tableGenerator.setMobileVpnIpAddress(netConfig.getVpnIpAddress());
-
-        // Set flags
+        // Set flags common to IPv4 and IPv6
         tableGenerator.setMasqueradeEnabled(masquerade);
         tableGenerator.setSslEnabled(enableSSL);
         tableGenerator.setDnsEnabled(enableEblockerDns);
@@ -117,7 +88,7 @@ public class FirewallConfiguration {
         Set<OpenVpnClientState> anonVpnClientsById = new TreeSet<>(Comparator.comparing(OpenVpnClientState::getId));
         anonVpnClientsById.addAll(anonVpnClients);
 
-        IpAddressFilter ipAddressFilter = new IpAddressFilter(devicesByMac, IpAddress::isIpv4, restrictionsService);
+        IpAddressFilter ipAddressFilter = getIpAddressFilter(devicesByMac);
 
         List<Table> newTables = List.of(
                 tableGenerator.generateNatTable(ipAddressFilter, anonVpnClientsById),
@@ -140,16 +111,15 @@ public class FirewallConfiguration {
         if (applyFirewallRules.get()) {
             activeTables = newTables;
         } else {
-            LOG.error("applying firewall rules failed");
-            LOG.error("delta rules:\n{}", deltaConfig);
-            LOG.error("full rules:\n{}", fullConfig);
+            FirewallConfigurationBase.LOG.error("applying firewall rules failed");
+            FirewallConfigurationBase.LOG.error("delta rules:\n{}", deltaConfig);
+            FirewallConfigurationBase.LOG.error("full rules:\n{}", fullConfig);
         }
     }
-
     /**
      * Writes all the table information to the file (final step)
      */
-    private String createTablesDiff(List<Table> currentTables, List<Table> newTables) {
+    protected String createTablesDiff(List<Table> currentTables, List<Table> newTables) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         for (Table newTable : newTables) {

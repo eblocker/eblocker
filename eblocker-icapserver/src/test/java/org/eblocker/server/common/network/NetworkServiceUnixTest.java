@@ -25,7 +25,7 @@ import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.network.unix.DnsConfiguration;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import org.eblocker.server.common.network.unix.FirewallConfiguration;
+import org.eblocker.server.common.network.unix.FirewallConfigurationIp4;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkInterfaceConfiguration;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
@@ -44,14 +44,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class NetworkServiceUnixTest {
+public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesUnixTest testing the same class!
     private NetworkServicesUnix networkService;
     private IscDhcpServer dhcpServer;
     private DataSource dataSource;
     private NetworkInterfaceWrapper networkInterface;
     private DnsConfiguration dnsConfiguration;
     private NetworkInterfaceConfiguration interfaceConfiguration;
-    private FirewallConfiguration firewallConfiguration;
+    private FirewallConfigurationIp4 firewallConfiguration;
     private ScheduledExecutorService executorService;
     private ArpSpoofer arpSpoofer;
     private ScriptRunner scriptRunner;
@@ -63,7 +63,7 @@ public class NetworkServiceUnixTest {
         dnsConfiguration = Mockito.mock(DnsConfiguration.class);
         interfaceConfiguration = Mockito.mock(NetworkInterfaceConfiguration.class);
         dhcpServer = Mockito.mock(IscDhcpServer.class);
-        firewallConfiguration = Mockito.mock(FirewallConfiguration.class);
+        firewallConfiguration = Mockito.mock(FirewallConfigurationIp4.class);
         dnsConfiguration = Mockito.mock(DnsConfiguration.class);
         executorService = Mockito.mock(ScheduledExecutorService.class);
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
@@ -80,7 +80,7 @@ public class NetworkServiceUnixTest {
                 dnsConfiguration,
                 interfaceConfiguration,
                 dhcpServer,
-                firewallConfiguration,
+                firewallConfiguration, null,
                 executorService,
                 networkInterface,
                 arpSpoofer,

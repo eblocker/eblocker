@@ -28,16 +28,12 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-public class TableGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(TableGenerator.class);
+public class TableGeneratorIp4 extends TableGeneratorBase {
+    private static final Logger LOG = LoggerFactory.getLogger(TableGeneratorIp4.class);
 
     // fixed configuration parameters
-    private final String standardInterface;
-    private final String mobileVpnInterface;
     private final int mobileVpnSubnet;
     private final int mobileVpnNetmask;
-    private final int proxyPort;
-    private final int proxyHTTPSPort;
     private final int anonSocksPort;
     private final String anonSourceIp;
     private final int httpPort;
@@ -52,50 +48,35 @@ public class TableGenerator {
     private final int localDnsPort;
     private final int torDnsPort;
 
-    // eBlocker's IP address configuration
-    private String ownIpAddress;
     private String mobileVpnIpAddress;
     private String gatewayIpAddress;
     private String networkMask;
 
-    // flags
-    private boolean masqueradeEnabled;
-    private boolean sslEnabled;
-    private boolean dnsEnabled;
-    private boolean mobileVpnServerEnabled;
-    private boolean malwareSetEnabled;
-    private boolean serverEnvironment;
-
-    // rule templates
-    private Rule standardInput, mobileVpnInput, standardOutput;
 
     @Inject
-    public TableGenerator(@Named("network.interface.name") String standardInterface,
-                          @Named("network.vpn.interface.name") String mobileVpnInterface,
-                          @Named("network.vpn.subnet.ip") String mobileVpnSubnet,
-                          @Named("network.vpn.subnet.netmask") String mobileVpnNetmask,
-                          @Named("proxyPort") int proxyPort,
-                          @Named("proxyHTTPSPort") int proxyHTTPSPort,
-                          @Named("anonSocksPort") int anonSocksPort,
-                          @Named("network.unix.anon.source.ip") String anonSourceIp,
-                          @Named("squid.uid") Integer squidUid,
-                          @Named("httpPort") int httpPort,
-                          @Named("httpsPort") int httpsPort,
-                          @Named("parentalControl.redirect.ip") String parentalControlRedirectIp,
-                          @Named("parentalControl.redirect.http.port") int parentalControlRedirectHttpPort,
-                          @Named("parentalControl.redirect.https.port") int parentalControlRedirectHttpsPort,
-                          @Named("network.control.bar.host.fallback.ip") String fallbackIp,
-                          @Named("malware.filter.ipset.name") String malwareIpSetName,
-                          @Named("openvpn.server.port") int mobileVpnServerPort,
-                          @Named("dns.server.port") int localDnsPort,
-                          @Named("tor.dns.port") int torDnsPort
+    public TableGeneratorIp4(@Named("network.interface.name") String standardInterface,
+                             @Named("network.vpn.interface.name") String mobileVpnInterface,
+                             @Named("network.vpn.subnet.ip") String mobileVpnSubnet,
+                             @Named("network.vpn.subnet.netmask") String mobileVpnNetmask,
+                             @Named("proxyPort") int proxyPort,
+                             @Named("proxyHTTPSPort") int proxyHTTPSPort,
+                             @Named("anonSocksPort") int anonSocksPort,
+                             @Named("network.unix.anon.source.ip") String anonSourceIp,
+                             @Named("squid.uid") Integer squidUid,
+                             @Named("httpPort") int httpPort,
+                             @Named("httpsPort") int httpsPort,
+                             @Named("parentalControl.redirect.ip") String parentalControlRedirectIp,
+                             @Named("parentalControl.redirect.http.port") int parentalControlRedirectHttpPort,
+                             @Named("parentalControl.redirect.https.port") int parentalControlRedirectHttpsPort,
+                             @Named("network.control.bar.host.fallback.ip") String fallbackIp,
+                             @Named("malware.filter.ipset.name") String malwareIpSetName,
+                             @Named("openvpn.server.port") int mobileVpnServerPort,
+                             @Named("dns.server.port") int localDnsPort,
+                             @Named("tor.dns.port") int torDnsPort
                           ) {
-        this.standardInterface = standardInterface;
-        this.mobileVpnInterface = mobileVpnInterface;
+        super(standardInterface, mobileVpnInterface, proxyPort, proxyHTTPSPort);
         this.mobileVpnSubnet = IpUtils.convertIpStringToInt(mobileVpnSubnet);
         this.mobileVpnNetmask = IpUtils.convertIpStringToInt(mobileVpnNetmask);
-        this.proxyPort = proxyPort;
-        this.proxyHTTPSPort = proxyHTTPSPort;
         this.anonSocksPort = anonSocksPort;
         this.anonSourceIp = anonSourceIp;
         this.squidUid = squidUid;
@@ -110,10 +91,6 @@ public class TableGenerator {
         this.localDnsPort = localDnsPort;
         this.torDnsPort = torDnsPort;
 
-        // prepare rule templates
-        standardInput = new Rule().input(standardInterface);
-        mobileVpnInput = new Rule().input(mobileVpnInterface);
-        standardOutput = new Rule().output(standardInterface);
     }
 
     public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
@@ -454,10 +431,6 @@ public class TableGenerator {
         return isMobileClient(ip) ? mobileVpnIpAddress : ownIpAddress;
     }
 
-    public void setOwnIpAddress(String ownIpAddress) {
-        this.ownIpAddress = ownIpAddress;
-    }
-
     public void setMobileVpnIpAddress(String mobileVpnIpAddress) {
         this.mobileVpnIpAddress = mobileVpnIpAddress;
     }
@@ -470,27 +443,4 @@ public class TableGenerator {
         this.networkMask = networkMask;
     }
 
-    public void setServerEnvironment(boolean serverEnvironment) {
-        this.serverEnvironment = serverEnvironment;
-    }
-
-    public void setMasqueradeEnabled(boolean masqueradeEnabled) {
-        this.masqueradeEnabled = masqueradeEnabled;
-    }
-
-    public void setSslEnabled(boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
-    }
-
-    public void setDnsEnabled(boolean dnsEnabled) {
-        this.dnsEnabled = dnsEnabled;
-    }
-
-    public void setMobileVpnServerEnabled(boolean mobileVpnServerEnabled) {
-        this.mobileVpnServerEnabled = mobileVpnServerEnabled;
-    }
-
-    public void setMalwareSetEnabled(boolean malwareSetEnabled) {
-        this.malwareSetEnabled = malwareSetEnabled;
-    }
 }

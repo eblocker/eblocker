@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class TableGeneratorTest {
+public class TableGeneratorIp4Test {
     private final int proxyPort = 3128;
     private final int proxyHTTPSPort = 3130;
     private final int localDnsPort = 5300;
@@ -63,7 +63,7 @@ public class TableGeneratorTest {
     private final String anonVpnInterface = "tun0";
     private final int anonVpnClientRoute = 1;
 
-    private TableGenerator generator;
+    private TableGeneratorIp4 generator;
     private IpAddressFilter deviceIpFilter;
     private Set<OpenVpnClientState> anonVpnClients;
 
@@ -72,7 +72,7 @@ public class TableGeneratorTest {
 
     @Before
     public void setUp() {
-        generator = new TableGenerator(standardInterface,
+        generator = new TableGeneratorIp4(standardInterface,
                 mobileVpnInterface, mobileVpnSubnet, mobileVpnNetmask,
                 proxyPort, proxyHTTPSPort,
                 anonSocksPort, anonSourceIp,

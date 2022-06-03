@@ -28,7 +28,7 @@ import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkServices;
-import org.eblocker.server.common.network.unix.firewall.TableGenerator;
+import org.eblocker.server.common.network.unix.firewall.TableGeneratorIp4;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,14 +49,14 @@ import java.util.TreeSet;
 
 import static org.mockito.Mockito.when;
 
-public class FirewallConfigurationTest {
-    private FirewallConfiguration configuration;
+public class FirewallConfigurationIp4Test {
+    private FirewallConfigurationIp4 configuration;
     private ParentalControlAccessRestrictionsService restrictionsService;
     private String malwareIpSet;
     private Environment environment;
     private File configFullFile;
     private File configDeltaFile;
-    private TableGenerator tableGenerator;
+    private TableGeneratorIp4 tableGenerator;
     private NetworkServices networkServices;
 
     @Before
@@ -76,8 +76,8 @@ public class FirewallConfigurationTest {
         configuration = createFirewallConfiguration();
     }
 
-    private FirewallConfiguration createFirewallConfiguration() {
-        tableGenerator = new TableGenerator(
+    private FirewallConfigurationIp4 createFirewallConfiguration() {
+        tableGenerator = new TableGeneratorIp4(
                 "eth2",
                 "tun33",
                 "10.8.0.0",
@@ -98,7 +98,7 @@ public class FirewallConfigurationTest {
                 5300,
                 9053);
 
-        return new FirewallConfiguration(
+        return new FirewallConfigurationIp4(
                 configFullFile.toString(),
                 configDeltaFile.toString(),
                 tableGenerator,

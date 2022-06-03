@@ -17,8 +17,29 @@
 #
 
 my $CONFDIR='/opt/eblocker-icap/network';
-my $IPTABLES='/usr/sbin/iptables';
-my $IPTABLES_RESTORE='/usr/sbin/iptables-restore';
+my ($IPTABLES, $IPTABLES_RESTORE, $FIREWALL_CONF, $FIREWALL_CONF_DELTA);
+
+sub usage() {
+    die "Usage: $0 IPv4|IPv6\n";
+}
+
+usage() unless scalar(@ARGV) == 1;
+
+my $ip_version = $ARGV[0];
+
+if ($ip_version eq "IPv4") {
+    $IPTABLES='/usr/sbin/iptables';
+    $IPTABLES_RESTORE='/usr/sbin/iptables-restore';
+    $FIREWALL_CONF="$CONFDIR/firewall.conf";
+    $FIREWALL_CONF_DELTA="$CONFDIR/firewall.conf.delta";
+} elsif ($ip_version eq "IPv6") {
+    $IPTABLES='/usr/sbin/ip6tables';
+    $IPTABLES_RESTORE='/usr/sbin/ip6tables-restore';
+    $FIREWALL_CONF="$CONFDIR/firewall.ip6.conf";
+    $FIREWALL_CONF_DELTA="$CONFDIR/firewall.ip6.conf.delta";
+} else {
+    usage();
+}
 
 # This is equivalent to 'iptables-restore -n'
 # (which on Raspbian Buster sometimes ignores positions of rules to be inserted)
@@ -57,12 +78,11 @@ sub apply_configuration_full {
     }
 }
 
-
 # Install firewall configuration
-if (-f "$CONFDIR/firewall.conf.delta") {
-    apply_configuration_delta("$CONFDIR/firewall.conf.delta");
-} elsif (-f "$CONFDIR/firewall.conf") {
-    apply_configuration_full("$CONFDIR/firewall.conf");
+if (-f $FIREWALL_CONF_DELTA) {
+    apply_configuration_delta($FIREWALL_CONF_DELTA);
+} elsif (-f $FIREWALL_CONF) {
+    apply_configuration_full($FIREWALL_CONF);
 } else {
-    die "Neither firewall.conf nor firewall.conf.delta exists in $CONFDIR. Cannot apply firewall configuration.\n";
+    die "Neither $FIREWALL_CONF nor $FIREWALL_CONF_DELTA exists in $CONFDIR. Cannot apply firewall configuration for $ip_version.\n";
 }

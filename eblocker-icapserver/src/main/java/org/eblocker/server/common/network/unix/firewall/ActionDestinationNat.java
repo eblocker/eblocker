@@ -31,7 +31,14 @@ public class ActionDestinationNat extends Action {
     public String toString() {
         StringBuilder result = new StringBuilder(super.toString());
         result.append(" --to-destination ");
-        result.append(destinationIp);
+        if (destinationIp.contains(":")) {
+            // IPv6 address must be written in brackets, so the port is not interpreted as part of the IP address:
+            result.append("[");
+            result.append(destinationIp);
+            result.append("]");
+        } else {
+            result.append(destinationIp);
+        }
         result.append(":");
         result.append(destinationPort);
         return result.toString();

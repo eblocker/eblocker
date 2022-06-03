@@ -33,6 +33,18 @@ public class RuleTest {
     }
 
     @Test
+    public void testDestinationNatIp6() {
+        Rule rule = new Rule()
+                .input("eth0")
+                .tcp()
+                .destinationPort(80)
+                .redirectTo("fe80::a00:27ff:fed4:24d6", 3128);
+
+        // IPv6 address must be written in brackets, so the port is not interpreted as part of the IP address:
+        Assert.assertEquals("-i eth0 -p tcp -m tcp --dport 80 -j DNAT --to-destination [fe80::a00:27ff:fed4:24d6]:3128", rule.toString());
+    }
+
+    @Test
     public void testMark() {
         Rule rule = new Rule()
                 .sourceIp("192.168.0.22")

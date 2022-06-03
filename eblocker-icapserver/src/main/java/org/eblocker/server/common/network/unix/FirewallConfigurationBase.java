@@ -111,9 +111,9 @@ public abstract class FirewallConfigurationBase {
         if (applyFirewallRules.get()) {
             activeTables = newTables;
         } else {
-            FirewallConfigurationBase.LOG.error("applying firewall rules failed");
-            FirewallConfigurationBase.LOG.error("delta rules:\n{}", deltaConfig);
-            FirewallConfigurationBase.LOG.error("full rules:\n{}", fullConfig);
+            LOG.error("applying firewall rules failed");
+            LOG.error("delta rules:\n{}", deltaConfig);
+            LOG.error("full rules:\n{}", fullConfig);
         }
     }
     /**

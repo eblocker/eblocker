@@ -568,11 +568,6 @@ public class SquidConfigController {
             configContent.append(nonSslExclusivePart);
         }
 
-        if (vpnClients != null && !vpnClients.isEmpty()) { //if there are some active vpn clients, add the necessary part to the squid config
-            String vpnConfigPart = createVpnOptions(vpnClients);
-            configContent.append(vpnConfigPart);
-        }
-
         return configContent.toString();
     }
 
@@ -580,10 +575,10 @@ public class SquidConfigController {
         StringBuilder sb = new StringBuilder();
 
         sb.append(createLogOptions());
-        sb.append(createVpnOptions(vpnClients));
         sb.append(createErrHtmlOption());
         sb.append(createWorkersOption());
         sb.append(createIp6Options());
+        sb.append(createVpnOptions(vpnClients));
 
         return sb.toString();
     }
@@ -612,7 +607,6 @@ public class SquidConfigController {
             squidConfigContent.append("#------------------------------------------------------------------------------\n");
             squidConfigContent.append("# VPN clients support\n");
             squidConfigContent.append("#------------------------------------------------------------------------------\n");
-            squidConfigContent.append("\n");
 
             for (OpenVpnClientState client : vpnClients) {
                 if (client.getState() == OpenVpnClientState.State.ACTIVE) {
@@ -632,6 +626,7 @@ public class SquidConfigController {
                     squidConfigContent.append("\n");
                 }
             }
+            squidConfigContent.append("\n");
             return squidConfigContent.toString();
         }
 

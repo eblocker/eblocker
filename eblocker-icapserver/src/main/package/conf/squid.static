@@ -147,3 +147,7 @@ icap_service_failure_limit -1
 # If MAC address of device is in file 'torclients', set a special source IP address (which redirects traffic to redsocks)
 acl outbound_tor src "/etc/squid/torclients"
 tcp_outgoing_address 169.254.7.53 outbound_tor !disabledClients
+
+#==============================================================================
+# Dynamic configuration
+#==============================================================================

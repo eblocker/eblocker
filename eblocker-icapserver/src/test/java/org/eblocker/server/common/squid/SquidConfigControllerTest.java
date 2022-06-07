@@ -22,6 +22,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
@@ -349,6 +350,18 @@ public class SquidConfigControllerTest {
 
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         Mockito.verify(executorService).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testVpnClient() {
+        OpenVpnClientState clientState = new OpenVpnClientState();
+        clientState.setState(OpenVpnClientState.State.ACTIVE);
+        clientState.setId(7);
+        clientState.setLinkLocalIpAddress("169.254.8.2");
+        Mockito.when(dataSource.getAll(OpenVpnClientState.class)).thenReturn(List.of(clientState));
+        sslStateListener.onInit(true);
+
+        compareToReference(outputConfigFile, "squid-eblocker-vpnclient.conf");
     }
 
     @Test

@@ -357,7 +357,7 @@ public class SquidConfigControllerTest {
         OpenVpnClientState clientState = new OpenVpnClientState();
         clientState.setState(OpenVpnClientState.State.ACTIVE);
         clientState.setId(7);
-        clientState.setLinkLocalIpAddress("169.254.8.2");
+        clientState.setRoute(18);
         Mockito.when(dataSource.getAll(OpenVpnClientState.class)).thenReturn(List.of(clientState));
         sslStateListener.onInit(true);
 

@@ -617,7 +617,7 @@ public class SquidConfigController {
                             tcp_outgoing_address 169.254.8.[ID] outbound_vpn_[ID]
                          */
                     String line1 = String.format("acl outbound_vpn_%d src \"/etc/squid/vpn-%d.acl\"", client.getId(), client.getId());
-                    String line2 = String.format("tcp_outgoing_address %s outbound_vpn_%d !disabledClients", client.getLinkLocalIpAddress(), client.getId());
+                    String line2 = String.format("tcp_outgoing_mark 0x%x outbound_vpn_%d !disabledClients", client.getRoute(), client.getId());
 
                     squidConfigContent.append("# VPN client " + client.getId() + "\n");
                     squidConfigContent.append(line1);

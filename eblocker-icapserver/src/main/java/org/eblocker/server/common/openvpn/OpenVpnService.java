@@ -136,7 +136,7 @@ public class OpenVpnService {
      */
     private void killDanglingProcesses() {
         try {
-            scriptRunner.runScript(killAllInstancesScript);
+            scriptRunner.runScript(killAllInstancesScript, profileFiles.getProfilesPath());
         } catch (IOException e) {
             throw new IllegalStateException("failed to start stop all instances script", e);
         } catch (InterruptedException e) {
@@ -146,7 +146,7 @@ public class OpenVpnService {
     }
 
     /**
-     * Upgrades previous profile configration files
+     * Upgrades previous profile configuration files
      */
     private void upgradeConfigurations() {
         upgradeConfigurations(null, this::upgradeConfigurationToV1);

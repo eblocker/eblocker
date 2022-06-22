@@ -26,11 +26,6 @@ VPN_FOLDERS_PREFIX=/opt/eblocker-icap/network/openvpn
 
 if [ $# == '1' ];
 then
-
-    #debugging
-    SCRIPT_NAME="openvpn_prestart"
-    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
-
     ID=$1
     FOLDER="$VPN_FOLDERS_PREFIX/profile$ID"
     #create directory (and all parent directories needed)
@@ -41,13 +36,7 @@ then
     ACLFILE=$FOLDER/clients$ID.acl
     touch $ACLFILE
     chown icapd:icapd $ACLFILE
-
-
-    #debugging
-    SCRIPT_NAME="openvpn_prestart"
-    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
-
-
 else
-    echo "Wrong number of arguments! Expecting the VPNProfile ID as the first argument!"
+    echo "Wrong number of arguments! Expecting the VPNProfile ID as the first argument!" 1>&2
+    exit 1
 fi

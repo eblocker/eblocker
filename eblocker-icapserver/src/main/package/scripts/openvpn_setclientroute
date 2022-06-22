@@ -29,41 +29,27 @@
 
 if [ $# -ge '1' ];
 then
+    ID=$1
+    IFACENAME=$2
+    route_net_gateway=$3
+    route_vpn_gateway=$4
+    trusted_ip=$5
 
-    #debugging
-    SCRIPT_NAME="openvpn_setupclientroute"
-    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
+    VPNTABLE_NAME="openvpn$ID"
+    DEFAULTTABLE_NAME="standard"
 
-	ID=$1
-	IFACENAME=$2
-	route_net_gateway=$3
-	route_vpn_gateway=$4
-	trusted_ip=$5
+    # first normal route to VPN server through default gateway (router)
+    ip route add "$trusted_ip/32" via $route_net_gateway
 
-	VPNTABLE_NAME="openvpn$ID"
-	DEFAULTTABLE_NAME="standard"
+    # put VPN route into VPN table
+    if ip route show table $VPNTABLE_NAME default | grep -qs 'default'; then
+        ip route del table $VPNTABLE_NAME default
+    fi
+    ip route add table $VPNTABLE_NAME default via $route_vpn_gateway dev $IFACENAME
 
-	echo "Building route table for VPN client"
-
-	# first normal route to VPN server through default gateway (router)
-	ip route add "$trusted_ip/32" via $route_net_gateway
-
-	# put VPN route into VPN table
-	if ip route show table $VPNTABLE_NAME default | grep -qs 'default'; then
-    		ip route del table $VPNTABLE_NAME default
-	fi
-	ip route add table $VPNTABLE_NAME default via $route_vpn_gateway dev $IFACENAME
-
-
-	# cleanup,commit changes
-	ip route flush cache
-
-    #debugging
-    SCRIPT_NAME="openvpn_setupclientroute"
-    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
-
-
+    # cleanup,commit changes
+    ip route flush cache
 else
-	echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument."
+    echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument." 1>&2
+    exit 1
 fi
-

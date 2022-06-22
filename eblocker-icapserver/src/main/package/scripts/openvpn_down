@@ -20,17 +20,16 @@
 #
 #
 
-
 if [ $# -ge '1' ];
 then
-	ID=$1
-	VPNTABLE_NAME="openvpn$ID"
+    ID=$1
+    VPNTABLE_NAME="openvpn$ID"
 
-	# tell OpenVPNController that this VPN client instance is going down
-	# and the reason why it is going down ($signal) as third parameter
-	redis-cli PUBLISH "vpn_profile_status:$ID:in" "down $signal" > /dev/null
+    # tell OpenVPNController that this VPN client instance is going down
+    # and the reason why it is going down ($signal) as third parameter
+    redis-cli PUBLISH "vpn_profile_status:$ID:in" "down $signal" > /dev/null
 
 else
-	echo "Wrong number of arguments! Expecting the VPN profile ID as first argument!"
-
+    echo "Wrong number of arguments! Expecting the VPN profile ID as first argument!" 1>&2
+    exit 1
 fi

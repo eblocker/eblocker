@@ -24,24 +24,15 @@
 
 if [ $# -ge '1' ];
 then
-
-    #debugging
-    SCRIPT_NAME="openvpn_up"
-    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
-
-	ID=$1
-	IFACENAME=$2
-	DNS_SERVERS=`env | sed -n 's/foreign_option_.=dhcp-option DNS //p' | paste -d "," - -`
+    ID=$1
+    IFACENAME=$2
+    DNS_SERVERS=`env | sed -n 's/foreign_option_.=dhcp-option DNS //p' | paste -d "," - -`
 
     # Tell Icapserver that this VPN client instance is ready
-    redis-cli PUBLISH "vpn_profile_status:$ID:in" "up $IFACENAME $route_net_gateway $route_vpn_gateway $trusted_ip $DNS_SERVERS" > /dev/null
-
-    #debugging
-    SCRIPT_NAME="openvpn_up"
-    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
-
+    redis-cli PUBLISH "vpn_profile_status:$ID:in" "up $IFACENAME $route_net_gateway $route_vpn_gateway $ifconfig_local $trusted_ip $DNS_SERVERS" > /dev/null
 
 else
-	echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument."
+    echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument." 1>&2
+    exit 1
 fi
 

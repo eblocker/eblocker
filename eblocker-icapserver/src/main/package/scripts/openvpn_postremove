@@ -30,5 +30,6 @@ then
     rm -R -d $VPN_FOLDERS_PREFIX/profile$ID
 
 else
-    echo "Wrong number of arguments! Expecting VPNProfile ID as first argument!"
+    echo "Wrong number of arguments! Expecting VPNProfile ID as first argument!" 1>&2
+    exit 1
 fi

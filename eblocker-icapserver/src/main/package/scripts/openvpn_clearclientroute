@@ -22,12 +22,13 @@
 
 if [ $# -ge '1' ];
 then
-	ID=$1
-	trusted_ip=$2
+    ID=$1
+    trusted_ip=$2
 
-	# del route to vpn provider
-	ip route del $trusted_ip
+    # del route to vpn provider
+    ip route del $trusted_ip
 
 else
-	echo "Wrong number of arguments! Expecting the VPN profile ID as first argument!"
+    echo "Wrong number of arguments! Expecting the VPN profile ID as first argument!" 1>&2
+    exit 1
 fi

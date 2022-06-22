@@ -27,13 +27,8 @@
 
 if [ $# -ge '2' ];
 then
-
-    #debugging
-    SCRIPT_NAME="vpn_policy_reconfigure"
-    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
-
-	# Policy Routing Rules:
-	# add policy routing rules
+    # Policy Routing Rules:
+    # add policy routing rules
     TABLE_NAME_PREFIX=$1
     OFFSET=$2
 
@@ -49,11 +44,9 @@ then
         shift
     done
 
-	# cleanup,commit changes
-	ip route flush cache
-
-    #debugging
-    echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
+    # cleanup,commit changes
+    ip route flush cache
 else
-	echo "Wrong number of arguments!"
+    echo "Wrong number of arguments!" 1>&2
+    exit 1
 fi

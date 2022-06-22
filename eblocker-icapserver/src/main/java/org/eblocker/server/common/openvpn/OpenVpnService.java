@@ -36,6 +36,7 @@ import org.eblocker.server.common.openvpn.configuration.Option;
 import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -584,5 +585,14 @@ public class OpenVpnService {
                 .map(o -> o.getArguments()[0])
                 .findFirst()
                 .orElse(null);
+    }
+
+    @SubSystemShutdown
+    public void shutdown() {
+        log.info("Shutting down");
+        vpnClientsById.forEach((id, client) -> {
+            log.info("Stopping client {}", id);
+            client.stop();
+        });
     }
 }

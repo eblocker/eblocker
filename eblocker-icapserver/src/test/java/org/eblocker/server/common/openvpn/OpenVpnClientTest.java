@@ -66,7 +66,6 @@ public class OpenVpnClientTest {
     private DataSource dataSource;
     private SquidConfigController squidConfigController;
     private RoutingController routingController;
-    private NetworkInterfaceAliases networkInterfaceAliases;
     private OpenVpnProfileFiles profileFiles;
     private OpenVpnChannelFactory openVpnChannelSubscriberFactory;
     private EblockerDnsServer eblockerDnsServer;
@@ -110,7 +109,6 @@ public class OpenVpnClientTest {
         squidConfigController = Mockito.mock(SquidConfigController.class);
         routingController = Mockito.mock(RoutingController.class);
         Mockito.when(routingController.createRoute()).thenReturn(ROUTE);
-        networkInterfaceAliases = Mockito.mock(NetworkInterfaceAliases.class);
 
         profileFiles = Mockito.mock(OpenVpnProfileFiles.class);
         Mockito.when(profileFiles.getDirectory(Mockito.anyInt())).then(i -> "/test/" + i.getArguments()[0]);
@@ -133,7 +131,7 @@ public class OpenVpnClientTest {
         vpnKeepAlive = Mockito.mock(VpnKeepAlive.class);
         vpnKeepAliveFactory = Mockito.mock(VpnKeepAliveFactory.class);
 
-        client = new OpenVpnClient(START_INSTANCE_SCRIPT, KILL_PROCESS_SCRIPT, profileFiles, scriptRunner, networkStateMachine, dataSource, squidConfigController, routingController, networkInterfaceAliases, openVpnChannelSubscriberFactory, executor,
+        client = new OpenVpnClient(START_INSTANCE_SCRIPT, KILL_PROCESS_SCRIPT, profileFiles, scriptRunner, networkStateMachine, dataSource, squidConfigController, routingController, openVpnChannelSubscriberFactory, executor,
                 eblockerDnsServer, deviceService, vpnKeepAliveFactory, vpnProfile);
     }
 
@@ -158,7 +156,7 @@ public class OpenVpnClientTest {
         // report vpn usable
         String channel = String.format(Channels.VPN_PROFILE_STATUS_IN, vpnProfile.getId());
         pubSubService.publish(channel, "pid 51723");
-        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 5.79.71.195 8.8.8.8,8.8.4.4");
+        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195 8.8.8.8,8.8.4.4");
         // wait some time to ensure messages have been processed
         Thread.sleep(2500);
 
@@ -169,7 +167,7 @@ public class OpenVpnClientTest {
         Mockito.verify(routingController).setClientRoute(ROUTE, "tun0", "10.10.10.10", "10.0.51.1", "5.79.71.195");
         Mockito.verify(squidConfigController).updateSquidConfig();
         Mockito.verify(networkStateMachine, Mockito.times(2)).deviceStateChanged();
-        Mockito.verify(eblockerDnsServer).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "169.254.8." + ROUTE);
+        Mockito.verify(eblockerDnsServer).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "10.0.51.42");
         Mockito.verify(eblockerDnsServer).useVpnResolver(device, vpnProfile.getId());
 
         // remove client
@@ -206,7 +204,7 @@ public class OpenVpnClientTest {
         Mockito.verify(eblockerDnsServer).useDefaultResolver(device);
 
         // check client state is correct
-        Mockito.verify(dataSource, Mockito.times(6)).save(Mockito.any(OpenVpnClientState.class), Mockito.eq(vpnProfile.getId()));
+        Mockito.verify(dataSource, Mockito.times(5)).save(Mockito.any(OpenVpnClientState.class), Mockito.eq(vpnProfile.getId()));
         Assert.assertEquals(Collections.emptySet(), clientState.getDevices());
     }
 
@@ -301,7 +299,7 @@ public class OpenVpnClientTest {
         Assert.assertFalse(client.isUp());
 
         // signal vpn up again
-        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 5.79.71.195");
+        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195");
         Thread.sleep(250);
 
         // check client and device is marked as active
@@ -347,7 +345,7 @@ public class OpenVpnClientTest {
         // report vpn usable
         String channel = String.format(Channels.VPN_PROFILE_STATUS_IN, vpnProfile.getId());
         pubSubService.publish(channel, "pid 51723");
-        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 5.79.71.195");
+        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195");
         // wait some time to ensure messages have been processed
         Thread.sleep(250);
 
@@ -456,7 +454,7 @@ public class OpenVpnClientTest {
         // report vpn usable
         String channel = String.format(Channels.VPN_PROFILE_STATUS_IN, vpnProfile.getId());
         pubSubService.publish(channel, "pid 51723");
-        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 5.79.71.195 8.8.8.8,8.8.4.4");
+        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195 8.8.8.8,8.8.4.4");
         // wait some time to ensure messages have been processed
         Thread.sleep(250);
 
@@ -472,7 +470,7 @@ public class OpenVpnClientTest {
         Mockito.verify(routingController).setClientRoute(ROUTE, "tun0", "10.10.10.10", "10.0.51.1", "5.79.71.195");
         Mockito.verify(squidConfigController).updateSquidConfig();
         Mockito.verify(networkStateMachine, Mockito.times(2)).deviceStateChanged();
-        Mockito.verify(eblockerDnsServer).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "169.254.8." + ROUTE);
+        Mockito.verify(eblockerDnsServer).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "10.0.51.42");
         Mockito.verify(eblockerDnsServer).useVpnResolver(device, vpnProfile.getId());
 
         // call "connection is dead"-callback and check vpn is being restarted
@@ -511,7 +509,7 @@ public class OpenVpnClientTest {
 
         // send up message
         pubSubService.publish(channel, "pid 51724");
-        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 5.79.71.195 8.8.8.8,8.8.4.4");
+        pubSubService.publish(channel, "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195 8.8.8.8,8.8.4.4");
         Mockito.when(loggingProcess.getPid()).thenReturn(51724);
         Thread.sleep(250);
 
@@ -519,7 +517,7 @@ public class OpenVpnClientTest {
         Mockito.verify(routingController, Mockito.times(2)).setClientRoute(ROUTE, "tun0", "10.10.10.10", "10.0.51.1", "5.79.71.195");
         Mockito.verify(squidConfigController, Mockito.times(3)).updateSquidConfig();
         Mockito.verify(networkStateMachine, Mockito.times(4)).deviceStateChanged();
-        Mockito.verify(eblockerDnsServer, Mockito.times(2)).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "169.254.8." + ROUTE);
+        Mockito.verify(eblockerDnsServer, Mockito.times(2)).addVpnResolver(vpnProfile.getId(), Arrays.asList("8.8.8.8", "8.8.4.4"), "10.0.51.42");
         Mockito.verify(eblockerDnsServer, Mockito.times(1)).useVpnResolver(device, vpnProfile.getId()); // device has not been configured to return to normal dns
 
         // request shutdown and check vpn is not restarted again
@@ -631,7 +629,7 @@ public class OpenVpnClientTest {
         Mockito.verify(vpnKeepAlive, Mockito.times(0)).stop();
 
         // signal vpn up again
-        pubSubService.publish(channel, "up tun1 10.10.10.10 10.0.51.1 5.79.71.195");
+        pubSubService.publish(channel, "up tun1 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195");
         Thread.sleep(250);
 
         // check client and device is marked as active and a new vpn keep alive has been created and the previous one has been stopped

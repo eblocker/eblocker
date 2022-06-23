@@ -114,10 +114,11 @@ public class OpenVpnChannel {
                     String virtualInterfaceName = parts[1];
                     String routeNetGateway = parts[2];
                     String routeVpnGateway = parts[3];
-                    String trustedIp = parts[4];
-                    List<String> nameServers = parts.length == 6 ? Arrays.asList(parts[5].split(",")) : Collections.emptyList();
+                    String ifconfigLocal = parts[4];
+                    String trustedIp = parts[5];
+                    List<String> nameServers = parts.length == 7 ? Arrays.asList(parts[6].split(",")) : Collections.emptyList();
                     log.info("VPN client instance with ID: {} using {} just came (back) up.", id, virtualInterfaceName);
-                    listener.up(virtualInterfaceName, routeNetGateway, routeVpnGateway, trustedIp, nameServers);
+                    listener.up(virtualInterfaceName, routeNetGateway, routeVpnGateway, ifconfigLocal, trustedIp, nameServers);
                     break;
                 case "error":
                     log.error("VPN client instance with ID: {} just broadcasted an error...NO REACTION IMPLEMENTED!", id);

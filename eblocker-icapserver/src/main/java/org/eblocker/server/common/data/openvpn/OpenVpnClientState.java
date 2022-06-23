@@ -25,8 +25,7 @@ public class OpenVpnClientState {
     private Integer id;
     private State state;
     private String virtualInterfaceName;
-    private String linkLocalInterfaceAlias;
-    private String linkLocalIpAddress;
+    private String localEndpointIp;
     private Integer route;
     private String routeNetGateway;
     private String routeVpnGateway;
@@ -58,20 +57,12 @@ public class OpenVpnClientState {
         this.virtualInterfaceName = virtualInterfaceName;
     }
 
-    public String getLinkLocalInterfaceAlias() {
-        return linkLocalInterfaceAlias;
+    public String getLocalEndpointIp() {
+        return localEndpointIp;
     }
 
-    public void setLinkLocalInterfaceAlias(String linkLocalInterfaceAlias) {
-        this.linkLocalInterfaceAlias = linkLocalInterfaceAlias;
-    }
-
-    public String getLinkLocalIpAddress() {
-        return linkLocalIpAddress;
-    }
-
-    public void setLinkLocalIpAddress(String linkLocalIpAddress) {
-        this.linkLocalIpAddress = linkLocalIpAddress;
+    public void setLocalEndpointIp(String localEndpointIp) {
+        this.localEndpointIp = localEndpointIp;
     }
 
     public Integer getRoute() {

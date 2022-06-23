@@ -610,12 +610,6 @@ public class SquidConfigController {
 
             for (OpenVpnClientState client : vpnClients) {
                 if (client.getState() == OpenVpnClientState.State.ACTIVE) {
-                    //replacing of the sourceIP for the request to the local Link address of this vpn profile
-                    // by adding the following two example lines to the squid conf FOR EACH active vpn profile:
-                        /*
-                            acl outbound_vpn_[ID] arp "/etc/squid/vpn-[ID].acl"
-                            tcp_outgoing_address 169.254.8.[ID] outbound_vpn_[ID]
-                         */
                     String line1 = String.format("acl outbound_vpn_%d src \"/etc/squid/vpn-%d.acl\"", client.getId(), client.getId());
                     String line2 = String.format("tcp_outgoing_mark 0x%x outbound_vpn_%d !disabledClients", client.getRoute(), client.getId());
 

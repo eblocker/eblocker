@@ -96,7 +96,6 @@ public class TableGeneratorIp4Test {
         vpnClient.setDevices(Set.of("anonVpnClientDeviceId"));
         vpnClient.setState(OpenVpnClientState.State.ACTIVE);
         vpnClient.setVirtualInterfaceName(anonVpnInterface);
-        vpnClient.setLinkLocalIpAddress("169.254.8.1");
         vpnClient.setRoute(anonVpnClientRoute);
         anonVpnClients = Set.of(vpnClient);
 

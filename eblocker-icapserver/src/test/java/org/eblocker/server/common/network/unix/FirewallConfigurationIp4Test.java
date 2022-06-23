@@ -243,7 +243,6 @@ public class FirewallConfigurationIp4Test {
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
         client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
         client.setRoute(1);
 
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
@@ -257,7 +256,6 @@ public class FirewallConfigurationIp4Test {
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
         client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
         client.setRoute(1);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
@@ -274,7 +272,6 @@ public class FirewallConfigurationIp4Test {
         client.setId(1);
         client.setState(OpenVpnClientState.State.ACTIVE);
         client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
         client.setRoute(1);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", (String) null, true);
@@ -291,7 +288,6 @@ public class FirewallConfigurationIp4Test {
         client.setId(1);
         client.setState(OpenVpnClientState.State.PENDING_RESTART);
         client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
         client.setRoute(1);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);

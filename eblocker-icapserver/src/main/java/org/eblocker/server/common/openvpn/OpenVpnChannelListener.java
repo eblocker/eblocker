@@ -21,7 +21,7 @@ import java.util.List;
 public interface OpenVpnChannelListener {
     void reportPid(int pid);
 
-    void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String trustedIp, List<String> nameServers);
+    void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String ifconfigLocal, String trustedIp, List<String> nameServers);
 
     void down(String reason);
 }

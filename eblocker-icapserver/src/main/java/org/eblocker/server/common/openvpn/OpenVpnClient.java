@@ -61,7 +61,6 @@ public class OpenVpnClient implements VpnClient, Closeable {
     private final DataSource dataSource;
     private final SquidConfigController squidConfigController;
     private final RoutingController routingController;
-    private final NetworkInterfaceAliases networkInterfaceAliases;
     private final Executor executor;
     private final EblockerDnsServer eblockerDnsServer;
     private final DeviceService deviceService;
@@ -92,7 +91,6 @@ public class OpenVpnClient implements VpnClient, Closeable {
                   DataSource dataSource,
                   SquidConfigController squidConfigController,
                   RoutingController routingController,
-                  NetworkInterfaceAliases networkInterfaceAliases,
                   OpenVpnChannelFactory openVpnChannelSubscriberFactory,
                   @Named("unlimitedCachePoolExecutor") Executor executor,
                   EblockerDnsServer eblockerDnsServer,
@@ -108,7 +106,6 @@ public class OpenVpnClient implements VpnClient, Closeable {
         this.dataSource = dataSource;
         this.squidConfigController = squidConfigController;
         this.routingController = routingController;
-        this.networkInterfaceAliases = networkInterfaceAliases;
         this.executor = executor;
         this.eblockerDnsServer = eblockerDnsServer;
         this.deviceService = deviceService;
@@ -122,7 +119,6 @@ public class OpenVpnClient implements VpnClient, Closeable {
         clientState.setId(vpnProfile.getId());
         clientState.setDevices(deviceIds);
         clientState.setRoute(routingController.createRoute());
-        clientState.setLinkLocalIpAddress("169.254.8." + clientState.getRoute());
         saveClientState();
     }
 
@@ -371,11 +367,6 @@ public class OpenVpnClient implements VpnClient, Closeable {
     private void routeClients() {
         logger.info("VPN profile/instance (connection) just came (back) up... Tell clients they can use it again...");
 
-        logger.info("setting up link-local alias ...");
-        String alias = networkInterfaceAliases.add(clientState.getLinkLocalIpAddress(), "255.255.255.255");
-        clientState.setLinkLocalInterfaceAlias(alias);
-        saveClientState();
-
         logger.info("setting up routes ...");
         routingController.setClientRoute(clientState.getRoute(), clientState.getVirtualInterfaceName(), clientState.getRouteNetGateway(), clientState.getRouteVpnGateway(), clientState.getTrustedIp());
 
@@ -391,21 +382,12 @@ public class OpenVpnClient implements VpnClient, Closeable {
 
         //configure name servers (if available)
         if (!clientState.getNameServers().isEmpty()) {
-            eblockerDnsServer.addVpnResolver(clientState.getId(), clientState.getNameServers(), clientState.getLinkLocalIpAddress());
+            eblockerDnsServer.addVpnResolver(clientState.getId(), clientState.getNameServers(), clientState.getLocalEndpointIp());
         }
     }
 
     private void unrouteClients() {
         logger.info("Unrouting all client(s)...");
-
-        if (clientState.getLinkLocalInterfaceAlias() != null) {
-            logger.info("tear-down link-local device ...");
-            networkInterfaceAliases.remove(clientState.getLinkLocalInterfaceAlias());
-            clientState.setLinkLocalInterfaceAlias(null);
-            saveClientState();
-        } else {
-            logger.info("no link-local device active");
-        }
 
         if (clientState.getTrustedIp() != null) {
             logger.info("tear-down routes ...");
@@ -440,7 +422,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
             }
         }
 
-        public void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String trustedIp, List<String> nameServers) {
+        public void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String ifconfigLocal, String trustedIp, List<String> nameServers) {
             executeLocked("up", () -> {
                 assertTransitionValidToFrom(State.VPN_UP, State.OVPN_RUNNING, State.VPN_DOWN);
 
@@ -450,6 +432,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
                 clientState.setVirtualInterfaceName(virtualInterfaceName);
                 clientState.setRouteNetGateway(routeNetGateway);
                 clientState.setRouteVpnGateway(routeVpnGateway);
+                clientState.setLocalEndpointIp(ifconfigLocal);
                 clientState.setTrustedIp(trustedIp);
                 clientState.setNameServers(nameServers);
                 saveClientState();

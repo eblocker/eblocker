@@ -390,16 +390,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 //route traffic "after" squid (requests) also into the VPN tunnel
-                String linkLocalAddress = client.getLinkLocalIpAddress();
-                if (linkLocalAddress == null) {
-                    throw new EblockerException("Error while trying to create firewall rules for VPN profile, no linklocal address specified!");
-                }
-
                 Rule markClientRoute = new Rule().mark(client.getRoute());
                 clientIps.forEach(ip -> mangleTable.chain("vpn-router").rule(new Rule(markClientRoute).sourceIp(ip)));
-
-                //also add the bound linklocal address (for the packets on port 80 and 443) which first go through squid and route this traffic through the VPN tunnel as well
-                mangleTable.chain("vpn-router").rule(new Rule(markClientRoute).sourceIp(linkLocalAddress));
             }
         }
         return mangleTable;

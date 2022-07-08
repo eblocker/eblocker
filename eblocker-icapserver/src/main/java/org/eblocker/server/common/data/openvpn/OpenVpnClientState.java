@@ -32,6 +32,7 @@ public class OpenVpnClientState {
     private String trustedIp;
     private Set<String> devices;
     private List<String> nameServers;
+    private String gatewayIp6;
 
     public Integer getId() {
         return id;
@@ -111,5 +112,13 @@ public class OpenVpnClientState {
 
     public void setNameServers(List<String> nameServers) {
         this.nameServers = nameServers;
+    }
+
+    public String getGatewayIp6() {
+        return gatewayIp6;
+    }
+
+    public void setGatewayIp6(String gatewayIp6) {
+        this.gatewayIp6 = gatewayIp6;
     }
 }

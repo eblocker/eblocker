@@ -26,10 +26,17 @@ if [ $# -ge '1' ];
 then
     ID=$1
     IFACENAME=$2
-    DNS_SERVERS=`env | sed -n 's/foreign_option_.=dhcp-option DNS //p' | paste -d "," - -`
+    DNS_SERVERS=`env | sed -n 's/foreign_option_.=dhcp-option DNS //p' | tr "\n" ,`
+    DNS6_SERVERS=`env | sed -n 's/foreign_option_.=dhcp-option DNS6 //p' | tr "\n" ,`
+
+    IP6_GATEWAYS=`env | sort | sed -n 's/route_ipv6_gateway_.=//p' | tr "\n" ,`
+    IP6_NETWORKS=`env | sort | sed -n 's/route_ipv6_network_.=//p' | tr "\n" ,`
 
     # Tell Icapserver that this VPN client instance is ready
     redis-cli PUBLISH "vpn_profile_status:$ID:in" "up $IFACENAME $route_net_gateway $route_vpn_gateway $ifconfig_local $trusted_ip $DNS_SERVERS" > /dev/null
+    if [ -n "$IP6_GATEWAYS" ]; then
+        redis-cli PUBLISH "vpn_profile_status:$ID:in" "up6 $IP6_GATEWAYS $IP6_NETWORKS $DNS6_SERVERS" > /dev/null
+    fi
 
 else
     echo "Wrong number of arguments! Expecting the ID of the VPN instance as the first argument." 1>&2

@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -386,6 +387,10 @@ public class OpenVpnClient implements VpnClient, Closeable {
         }
     }
 
+    private void routeClientsIp6() {
+        routingController.setClientRouteIp6(clientState.getRoute(), clientState.getVirtualInterfaceName(), clientState.getGatewayIp6());
+    }
+
     private void unrouteClients() {
         logger.info("Unrouting all client(s)...");
 
@@ -415,6 +420,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
     // callbacks from state listener
     //
     private class ChannelListener implements OpenVpnChannelListener {
+        @Override
         public void reportPid(int pid) {
             logger.debug("vpn {} reported pid: {}", vpnProfile.getId(), pid);
             if (pid != process.getPid()) {
@@ -422,6 +428,7 @@ public class OpenVpnClient implements VpnClient, Closeable {
             }
         }
 
+        @Override
         public void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String ifconfigLocal, String trustedIp, List<String> nameServers) {
             executeLocked("up", () -> {
                 assertTransitionValidToFrom(State.VPN_UP, State.OVPN_RUNNING, State.VPN_DOWN);
@@ -450,6 +457,19 @@ public class OpenVpnClient implements VpnClient, Closeable {
             });
         }
 
+        @Override
+        public void up6(List<String> gateways, List<String> networks, List<String> nameServers) {
+            Optional<String> publicGateway = Ip6GatewaySelector.selectPublicGateway(gateways, networks);
+            if (publicGateway.isEmpty()) {
+                logger.warn("Could not find gateway in gateways {} for networks {}. Not routing VPN traffic via Ip6", gateways, networks);
+                return;
+            }
+            clientState.setGatewayIp6(publicGateway.get());
+            saveClientState();
+            routeClientsIp6();
+        }
+
+        @Override
         public void down(String reason) {
             executeLocked("down", () -> {
                 assertTransitionValidToFrom(State.VPN_DOWN, State.VPN_UP, State.OVPN_RUNNING);

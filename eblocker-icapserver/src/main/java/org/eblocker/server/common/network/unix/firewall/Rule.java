@@ -37,6 +37,7 @@ public class Rule {
     private States states;
     private MultiPorts multiPorts;
     private OwnerModule ownerModule;
+    private IcmpType icmpType;
     private String comment;
 
     private static Pattern allowedCommentCharacters = Pattern.compile("[ a-zA-Z0-9]+");
@@ -57,6 +58,7 @@ public class Rule {
             states = template.states;
             multiPorts = template.multiPorts;
             ownerModule = template.ownerModule;
+            icmpType = template.icmpType;
             comment = template.comment;
     }
 
@@ -90,6 +92,11 @@ public class Rule {
 
     public Rule udp() {
         this.protocol = Protocol.UDP;
+        return this;
+    }
+
+    public Rule icmpv6() {
+        this.protocol = Protocol.ICMPv6;
         return this;
     }
 
@@ -131,6 +138,11 @@ public class Rule {
 
     public Rule ownerUid(boolean match, int uid) {
         this.ownerModule = new OwnerModule(match, uid);
+        return this;
+    }
+
+    public Rule icmpType(IcmpType type) {
+        this.icmpType = type;
         return this;
     }
 
@@ -254,6 +266,13 @@ public class Rule {
             ensureSpace(result);
             result.append(ownerModule.toString());
         }
+        if (icmpType != null) {
+            if (protocol != icmpType.requiredProtocol()) {
+                throw new IllegalArgumentException("ICMP type '" + icmpType + "' can not be used with protocol '" + protocol + "'");
+            }
+            ensureSpace(result);
+            result.append(icmpType.toString());
+        }
         if (action == null) {
             throw new IllegalArgumentException("A firewall rule needs an action");
         }
@@ -284,7 +303,8 @@ public class Rule {
 
     public enum Protocol {
         TCP("tcp"),
-        UDP("udp");
+        UDP("udp"),
+        ICMPv6("icmpv6");
 
         private final String label;
 
@@ -299,6 +319,30 @@ public class Rule {
 
     public enum State {
         INVALID, ESTABLISHED, NEW, RELATED, UNTRACKED;
+    }
+
+    public interface IcmpType {
+        Protocol requiredProtocol();
+    }
+
+    public enum Icmp6Type implements IcmpType {
+        REDIRECT("redirect");
+
+        private final String typeName;
+
+        Icmp6Type(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return "--icmpv6-type " + typeName;
+        }
+
+        @Override
+        public Protocol requiredProtocol() {
+            return Protocol.ICMPv6;
+        }
     }
 
     public class States {

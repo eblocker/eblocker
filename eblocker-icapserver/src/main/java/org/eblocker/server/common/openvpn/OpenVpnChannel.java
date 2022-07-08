@@ -120,6 +120,12 @@ public class OpenVpnChannel {
                     log.info("VPN client instance with ID: {} using {} just came (back) up.", id, virtualInterfaceName);
                     listener.up(virtualInterfaceName, routeNetGateway, routeVpnGateway, ifconfigLocal, trustedIp, nameServers);
                     break;
+                case "up6":
+                    List<String> gateways = parts.length >= 2 ? Arrays.asList(parts[1].split(",")) : Collections.emptyList();
+                    List<String> networks = parts.length >= 3 ? Arrays.asList(parts[2].split(",")) : Collections.emptyList();
+                    List<String> nameSrv6 = parts.length >= 4 ? Arrays.asList(parts[3].split(",")) : Collections.emptyList();
+                    listener.up6(gateways, networks, nameSrv6);
+                    break;
                 case "error":
                     log.error("VPN client instance with ID: {} just broadcasted an error...NO REACTION IMPLEMENTED!", id);
                     break;

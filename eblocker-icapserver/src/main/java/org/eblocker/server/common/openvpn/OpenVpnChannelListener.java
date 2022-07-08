@@ -22,6 +22,7 @@ public interface OpenVpnChannelListener {
     void reportPid(int pid);
 
     void up(String virtualInterfaceName, String routeNetGateway, String routeVpnGateway, String ifconfigLocal, String trustedIp, List<String> nameServers);
+    void up6(List<String> gateways, List<String> networks, List<String> nameServers);
 
     void down(String reason);
 }

@@ -25,7 +25,6 @@ import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import org.eblocker.server.common.network.unix.NetworkInterfaceAliases;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.TestPubSubService;
@@ -206,6 +205,18 @@ public class OpenVpnClientTest {
         // check client state is correct
         Mockito.verify(dataSource, Mockito.times(5)).save(Mockito.any(OpenVpnClientState.class), Mockito.eq(vpnProfile.getId()));
         Assert.assertEquals(Collections.emptySet(), clientState.getDevices());
+    }
+
+    @Test
+    public void addClientIp6() throws InterruptedException {
+        Device device = createDevice();
+        client.addDevices(Collections.singleton(device));
+        Thread.sleep(250);
+
+        String channel = String.format(Channels.VPN_PROFILE_STATUS_IN, vpnProfile.getId());
+        pubSubService.publish(channel, "up6 2abc:cafe:3:4711::3,2abc:cafe:3:4711::2,2abc:cafe:3:4711::1, fc00::/7,::/3,2000::/3,");
+        Thread.sleep(250);
+
     }
 
     @Test

@@ -19,33 +19,33 @@
 # This script creates the policy based routing rules. It expects the routing tables to be already registered and named with a common prefix.
 #
 # Usage:
-#   openvpn_policy prefix offset [id...]
+#   openvpn_policy [-4|-6] prefix offset [id...]
 # where
 #   prefix is the routing table prefix (e.g. openvpn)
 #   offset each rule is given a priority of offset + id
 #
 
-if [ $# -ge '2' ];
+if [ $# -ge '3' ];
 then
     # Policy Routing Rules:
     # add policy routing rules
-    TABLE_NAME_PREFIX=$1
-    OFFSET=$2
+    IP_VERSION=$1
+    TABLE_NAME_PREFIX=$2
+    OFFSET=$3
 
     # clear all previously set rules
-    rules=`ip rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`
-    for rule in `ip rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`; do
-        ip rule del pref $rule
+    for rule in `ip $IP_VERSION rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`; do
+        ip $IP_VERSION rule del pref $rule
     done
 
-    shift 2
+    shift 3
     while(("$#")); do
-        ip rule add prio $(($OFFSET+$1)) from all fwmark $1 table $TABLE_NAME_PREFIX$1
+        ip $IP_VERSION rule add prio $(($OFFSET+$1)) from all fwmark $1 table $TABLE_NAME_PREFIX$1
         shift
     done
 
     # cleanup,commit changes
-    ip route flush cache
+    ip $IP_VERSION route flush cache
 else
     echo "Wrong number of arguments!" 1>&2
     exit 1

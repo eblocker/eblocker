@@ -389,7 +389,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         for (OpenVpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
-                //route traffic "after" squid (requests) also into the VPN tunnel
+                // mark VPN traffic
                 Rule markClientRoute = new Rule().mark(client.getRoute());
                 clientIps.forEach(ip -> mangleTable.chain("vpn-router").rule(new Rule(markClientRoute).sourceIp(ip)));
             }

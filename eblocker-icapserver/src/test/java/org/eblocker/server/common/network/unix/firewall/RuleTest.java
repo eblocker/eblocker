@@ -71,6 +71,24 @@ public class RuleTest {
     }
 
     @Test
+    public void testDropIcmpv6Redirects() {
+        Rule rule = new Rule().icmpv6().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        Assert.assertEquals("-p icmpv6 --icmpv6-type redirect -j DROP", rule.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIcmpv6IllegalProtocol() {
+        Rule rule = new Rule().udp().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        rule.toString();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIcmpv6MissingProtocol() {
+        Rule rule = new Rule().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        rule.toString();
+    }
+
+    @Test
     public void testShortcuts() {
         Assert.assertEquals("-p tcp -m tcp --dport 80 -j DROP", new Rule().http().drop().toString());
         Assert.assertEquals("-p tcp -m tcp --dport 443 -j DROP", new Rule().https().drop().toString());

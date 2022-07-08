@@ -36,7 +36,6 @@ then
     trusted_ip=$5
 
     VPNTABLE_NAME="openvpn$ID"
-    DEFAULTTABLE_NAME="standard"
 
     # first normal route to VPN server through default gateway (router)
     ip route add "$trusted_ip/32" via $route_net_gateway

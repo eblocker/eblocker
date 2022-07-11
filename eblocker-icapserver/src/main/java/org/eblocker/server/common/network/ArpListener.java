@@ -107,7 +107,7 @@ public class ArpListener implements Runnable {
                 return;
             }
 
-            String deviceID = "device:" + message.sourceHardwareAddress;
+            String deviceID = Device.ID_PREFIX + message.sourceHardwareAddress;
             Device device = deviceService.getDeviceById(deviceID);
 
             if (log.isDebugEnabled()) {

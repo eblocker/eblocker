@@ -118,7 +118,7 @@ public class IpAddressValidator {
     }
 
     private void dropInactive(RecentActivity recentActivity) {
-        Device device = deviceService.getDeviceById("device:" + recentActivity.hwAddress);
+        Device device = deviceService.getDeviceById(Device.ID_PREFIX + recentActivity.hwAddress);
         Set<IpAddress> newIpAddresses = recentActivity.ipAddresses;
 
         if (device == null) {

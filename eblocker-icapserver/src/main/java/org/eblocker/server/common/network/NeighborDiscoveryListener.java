@@ -104,7 +104,7 @@ public class NeighborDiscoveryListener implements Runnable {
                 routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
 
-            String deviceId = "device:" + DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
+            String deviceId = Device.ID_PREFIX + DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
             Device device = deviceService.getDeviceById(deviceId);
 
             // TODO: refactor to share common code with ArpListener, e.g. create a service

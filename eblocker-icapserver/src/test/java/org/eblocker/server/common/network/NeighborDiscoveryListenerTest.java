@@ -18,7 +18,7 @@ package org.eblocker.server.common.network;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -29,8 +29,6 @@ import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.service.FeatureToggleRouter;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.common.TestClock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +45,7 @@ public class NeighborDiscoveryListenerTest {
 
     private Table<String, IpAddress, Long> arpResponseTable;
     private TestClock clock;
-    private DeviceService deviceService;
+    private DeviceIpUpdater deviceIpUpdater;
     private FeatureToggleRouter featureToggleRouter;
     private NetworkInterfaceWrapper networkInterface;
     private RouterAdvertisementCache routerAdvertisementCache;
@@ -56,16 +54,11 @@ public class NeighborDiscoveryListenerTest {
     private TestPubSubService pubSubService;
 
     private Subscriber subscriber;
-    private Device device;
 
     @Before
     public void setUp() {
         arpResponseTable = HashBasedTable.create();
         clock = new TestClock(ZonedDateTime.now());
-
-        device = createDevice("000010101010", IpAddress.parse("10.10.10.10"), IpAddress.parse("fe80::10:10:10:10"));
-        deviceService = Mockito.mock(DeviceService.class);
-        Mockito.when(deviceService.getDeviceById("device:000010101010")).thenReturn(device);
 
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
@@ -78,7 +71,9 @@ public class NeighborDiscoveryListenerTest {
         pubSubService = new TestPubSubService();
         routerAdvertisementCache = Mockito.mock(RouterAdvertisementCache.class);
 
-        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceService, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache);
+        deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
+
+        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache);
     }
 
     @Test
@@ -88,32 +83,29 @@ public class NeighborDiscoveryListenerTest {
     }
 
     @Test
-    public void testExistingAddressNeighborSolicitation() {
+    public void testNeighborSolicitation() {
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/135/fe800000000000000010001000100010/1/000010101010");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
     @Test
-    public void testNewAddressNeighborAdvertisement() {
+    public void testNeighborAdvertisement() {
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/136/1/1/0/fe800000000000000010001000100011");
-        Assert.assertEquals(3, device.getIpAddresses().size());
-        Assert.assertTrue(device.getIpAddresses().contains(IpAddress.parse("fe80::10:10:10:11")));
-        Mockito.verify(deviceService).updateDevice(device);
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:11"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:11")));
-        listener.run();
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
     @Test
-    public void testUnkownDeviceIcmpEchoRequest() {
+    public void testIcmpEchoRequest() {
         listener.run();
         subscriber.process("000010101020/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/128");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(Mockito.any(Device.class));
-        Assert.assertEquals(0, arpResponseTable.size());
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101020", Ip6Address.parse("fe80::10:10:10:10"));
+        Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101020", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
@@ -121,17 +113,17 @@ public class NeighborDiscoveryListenerTest {
     public void testUnspecifiedSourceAddressIcmpEchoResponse() {
         listener.run();
         subscriber.process("000010101020/00000000000000000000000000000000/000010101000/fe800000000000000010001000100000/icmp6/129");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(Mockito.any(Device.class));
+        Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.anyString(), Mockito.any());
         Assert.assertEquals(0, arpResponseTable.size());
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
     @Test
-    public void testExistingAddressRouterSolicitation() {
+    public void testRouterSolicitation() {
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"), Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/133");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(1, pubSubService.getPublishedMessages().size());
         Assert.assertEquals("ip6:out", pubSubService.getPublishedMessages().get(0)[0]);
@@ -140,20 +132,20 @@ public class NeighborDiscoveryListenerTest {
     }
 
     @Test
-    public void testExistingAddressRouterSolicitationNoGlobalAddress() {
+    public void testRouterSolicitationNoGlobalAddress() {
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"), Ip4Address.parse("10.12.34.5")));
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/133");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
     @Test
-    public void testExistingAddressRouterAdvertisement() {
+    public void testRouterAdvertisement() {
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/333300000001/ff020000000000000000000000000001/icmp6/134/64/0/1/0/-1/1800/0/0/3/64/1/1/86400/14400/2a02810600216f030000000000000000/1/000010101010/5/1500");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
 
@@ -204,15 +196,8 @@ public class NeighborDiscoveryListenerTest {
         subscriber.process("000010101020/00000000000000000000000000000000/000010101000/fe800000000000000010001000100000/icmp6/129");
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/133");
         subscriber.process("000010101010/fe800000000000000010001000100010/333300000001/ff020000000000000000000000000001/icmp6/134/64/0/1/1800/0/0/3/64/1/1/86400/14400/2a02810600216f030000000000000000/1/000010101010");
-        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+        Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.anyString(), Mockito.any());
         Assert.assertTrue(arpResponseTable.isEmpty());
-    }
-
-    private Device createDevice(String hardwareAddress, IpAddress... ipAddresses) {
-        Device device = new Device();
-        device.setId("device:" + hardwareAddress);
-        device.setIpAddresses(Arrays.asList(ipAddresses));
-        return device;
     }
 
     private class TestPubSubService implements PubSubService {

@@ -149,6 +149,7 @@ public class IpAddressValidator {
 
         keepIpAddresses(device, newIpAddresses);
 
+        // TODO: refactor to use DeviceIpUpdater
         deviceService.updateDevice(device);
         networkStateMachine.deviceStateChanged(device);
 

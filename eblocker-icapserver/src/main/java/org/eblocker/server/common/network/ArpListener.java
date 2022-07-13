@@ -19,9 +19,7 @@ package org.eblocker.server.common.network;
 import com.google.common.collect.Table;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.pubsub.Channels;
@@ -29,30 +27,21 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.util.IpUtils;
 import org.eblocker.server.http.service.DeviceOnlineStatusCache;
-import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 public class ArpListener implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ArpListener.class);
     private final Clock clock;
     private final PubSubService pubSubService;
-    private final DataSource dataSource;
-    private final DeviceService deviceService;
     private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final NetworkInterfaceWrapper networkInterface;
-    private final NetworkStateMachine networkStateMachine;
     private final ConcurrentMap<String, Long> arpProbeCache;
     private final Table<String, IpAddress, Long> arpResponseTable;
-    private final DeviceFactory deviceFactory;
-    private final UserService userService;
+    private final DeviceIpUpdater deviceIpUpdater;
 
     private class ArpListenerSubscriber implements Subscriber {
         @Override
@@ -71,26 +60,18 @@ public class ArpListener implements Runnable {
     @Inject
     public ArpListener(@Named("arpProbeCache") ConcurrentMap<String, Long> arpProbeCache,
                        @Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
-                       DataSource dataSource,
-                       DeviceService deviceService,
                        DeviceOnlineStatusCache deviceOnlineStatusCache,
                        PubSubService pubSubService,
                        NetworkInterfaceWrapper networkInterface,
-                       NetworkStateMachine networkStateMachine,
                        Clock clock,
-                       DeviceFactory deviceFactory,
-                       UserService userService) {
+                       DeviceIpUpdater deviceIpUpdater) {
         this.arpProbeCache = arpProbeCache;
         this.arpResponseTable = arpResponseTable;
-        this.dataSource = dataSource;
-        this.deviceService = deviceService;
         this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.pubSubService = pubSubService;
         this.networkInterface = networkInterface;
-        this.networkStateMachine = networkStateMachine;
         this.clock = clock;
-        this.deviceFactory = deviceFactory;
-        this.userService = userService;
+        this.deviceIpUpdater = deviceIpUpdater;
     }
 
     /**
@@ -108,7 +89,6 @@ public class ArpListener implements Runnable {
             }
 
             String deviceID = Device.ID_PREFIX + message.sourceHardwareAddress;
-            Device device = deviceService.getDeviceById(deviceID);
 
             if (log.isDebugEnabled()) {
                 log.debug("Got ARP message from device: " + message.sourceIPAddress + " - " + message.sourceHardwareAddress);
@@ -124,7 +104,7 @@ public class ArpListener implements Runnable {
                 synchronized (arpResponseTable) {
                     arpResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
                 }
-                reactToRespondingDevice(device, deviceID, sourceAddress);
+                reactToRespondingDevice(deviceID, sourceAddress);
             }
 
             // Mark corresponding device as active
@@ -143,44 +123,12 @@ public class ArpListener implements Runnable {
 
     /**
      * When we receive an ArpMessage from a device, that was responding to the ArpSweep (sent ARP response/reply)
-     *
-     * @param device
      */
-    private void reactToRespondingDevice(Device device, String deviceId, Ip4Address sourceIPAddress) {
+    private void reactToRespondingDevice(String deviceId, Ip4Address sourceIPAddress) {
         if (!isInEblockerNet(sourceIPAddress)) {
             return;
         }
-        if (device != null) { // device exists already,just update IP address
-            if (device.getIpAddresses().contains(sourceIPAddress)) {
-                // there is no new information in this ARP message:
-                return;
-            }
-
-            List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
-            ipAddresses.add(sourceIPAddress);
-            device.setIpAddresses(ipAddresses);
-
-        } else {
-            // TODO: This should be combined into a service method.
-            //       The problem is that DeviceFactory may not depend on UserService,
-            //       because it is used by SchemaMigrations.
-            //       Also, the following lines that writes the device to the DB and notifies listeners
-            //       should be part of the service. So there is anyway a larger refactoring necessary.
-            device = deviceFactory.createDevice(deviceId, Collections.singletonList(sourceIPAddress),
-                    dataSource.isIpFixedByDefault());
-            userService.restoreDefaultSystemUserAsUsers(device);
-        }
-
-        updateIsGateway(device);
-        deviceService.updateDevice(device);
-
-        networkStateMachine.deviceStateChanged();
-    }
-
-    // TODO: this should be consolidated with JedisDataSource.getDevice() and moved to the DeviceService
-    private void updateIsGateway(Device device) {
-        String gateway = dataSource.getGateway();
-        device.setIsGateway(gateway != null && device.getIpAddresses().contains(Ip4Address.parse(gateway)));
+        deviceIpUpdater.refresh(deviceId, sourceIPAddress);
     }
 
     @Override

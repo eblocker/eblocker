@@ -37,7 +37,6 @@ import org.eblocker.server.common.network.icmpv6.TargetLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
-import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ public class NeighborDiscoveryListener implements Runnable {
 
     private final Table<String, IpAddress, Long> arpResponseTable;
     private final Clock clock;
-    private final DeviceService deviceService;
+    private final DeviceIpUpdater deviceIpUpdater;
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
@@ -65,14 +64,14 @@ public class NeighborDiscoveryListener implements Runnable {
     @Inject
     public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
                                      Clock clock,
-                                     DeviceService deviceService,
+                                     DeviceIpUpdater deviceIpUpdater,
                                      FeatureToggleRouter featureToggleRouter,
                                      NetworkInterfaceWrapper networkInterface,
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache) {
         this.arpResponseTable = arpResponseTable;
         this.clock = clock;
-        this.deviceService = deviceService;
+        this.deviceIpUpdater = deviceIpUpdater;
         this.featureToggleRouter = featureToggleRouter;
         this.networkInterface = networkInterface;
         this.pubSubService = pubSubService;
@@ -104,14 +103,8 @@ public class NeighborDiscoveryListener implements Runnable {
                 routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
 
-            String deviceId = Device.ID_PREFIX + DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
-            Device device = deviceService.getDeviceById(deviceId);
-
-            // TODO: refactor to share common code with ArpListener, e.g. create a service
-            if (device == null) {
-                log.info("ignoring unknown device: {}", deviceId);
-                return;
-            }
+            String hardwareAddress = DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
+            String deviceId = Device.ID_PREFIX + hardwareAddress;
 
             Ip6Address advertisedAddress = parsedMessage.getSourceAddress();
             if (parsedMessage instanceof NeighborAdvertisement) {
@@ -120,17 +113,10 @@ public class NeighborDiscoveryListener implements Runnable {
                 advertisedAddress = ((NeighborAdvertisement)parsedMessage).getTargetAddress();
             }
 
-            if (!device.getIpAddresses().contains(advertisedAddress)) {
-                log.debug("adding ip address {} for {}", advertisedAddress, device.getId());
-                List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
-                ipAddresses.add(advertisedAddress);
-                device.setIpAddresses(ipAddresses);
-                deviceService.updateDevice(device);
-            }
+            deviceIpUpdater.refresh(deviceId, advertisedAddress);
 
-            log.trace("updated arp response table entry for {}: {}", device.getId(), arpResponseTable.row(device.getHardwareAddress(false)));
             synchronized (arpResponseTable) {
-                arpResponseTable.put(device.getHardwareAddress(false), advertisedAddress, clock.millis());
+                arpResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
             }
         } catch (MessageException e) {
             log.error("invalid message:", e);

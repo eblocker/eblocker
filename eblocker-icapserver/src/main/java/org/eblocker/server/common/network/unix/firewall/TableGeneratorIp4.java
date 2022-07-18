@@ -36,8 +36,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     private final int mobileVpnNetmask;
     private final int anonSocksPort;
     private final String anonSourceIp;
-    private final int httpPort;
-    private final int httpsPort;
     private final Integer squidUid;
     private final String dnsAccessDeniedIp;
     private final int parentalControlRedirectHttpPort;
@@ -45,7 +43,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     private final String fallbackIp;
     private final String malwareIpSetName;
     private final int mobileVpnServerPort;
-    private final int localDnsPort;
     private final int torDnsPort;
 
     private String mobileVpnIpAddress;
@@ -74,7 +71,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                              @Named("dns.server.port") int localDnsPort,
                              @Named("tor.dns.port") int torDnsPort
                           ) {
-        super(standardInterface, mobileVpnInterface, proxyPort, proxyHTTPSPort);
+        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
         this.mobileVpnSubnet = IpUtils.convertIpStringToInt(mobileVpnSubnet);
         this.mobileVpnNetmask = IpUtils.convertIpStringToInt(mobileVpnNetmask);
         this.anonSocksPort = anonSocksPort;
@@ -84,11 +81,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         this.parentalControlRedirectHttpPort = parentalControlRedirectHttpPort;
         this.parentalControlRedirectHttpsPort = parentalControlRedirectHttpsPort;
         this.malwareIpSetName = malwareIpSetName;
-        this.httpPort = httpPort;
-        this.httpsPort = httpsPort;
         this.fallbackIp = fallbackIp;
         this.mobileVpnServerPort = mobileVpnServerPort;
-        this.localDnsPort = localDnsPort;
         this.torDnsPort = torDnsPort;
 
     }

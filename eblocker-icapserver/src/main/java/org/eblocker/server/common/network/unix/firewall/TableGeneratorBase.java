@@ -23,8 +23,11 @@ import java.util.Set;
 public abstract class TableGeneratorBase {
     protected final String standardInterface;
     protected final String mobileVpnInterface;
+    protected final int httpPort;
+    protected final int httpsPort;
     protected final int proxyPort;
     protected final int proxyHTTPSPort;
+    protected final int localDnsPort;
 
     // rule templates
     protected final Rule standardInput, mobileVpnInput, standardOutput;
@@ -42,12 +45,17 @@ public abstract class TableGeneratorBase {
     public TableGeneratorBase(
             String standardInterface,
             String mobileVpnInterface,
-            int proxyPort, int proxyHTTPSPort) {
+            int httpPort, int httpsPort,
+            int proxyPort, int proxyHTTPSPort,
+            int localDnsPort) {
 
         this.standardInterface = standardInterface;
         this.mobileVpnInterface = mobileVpnInterface;
+        this.httpPort = httpPort;
+        this.httpsPort = httpsPort;
         this.proxyPort = proxyPort;
         this.proxyHTTPSPort = proxyHTTPSPort;
+        this.localDnsPort = localDnsPort;
 
         // prepare rule templates
         standardInput = new Rule().input(standardInterface);

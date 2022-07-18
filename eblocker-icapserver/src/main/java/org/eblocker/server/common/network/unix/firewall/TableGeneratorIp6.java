@@ -28,9 +28,13 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     @Inject
     public TableGeneratorIp6(@Named("network.interface.name") String standardInterface,
                              @Named("network.vpn.interface.name") String mobileVpnInterface,
+                             @Named("httpPort") int httpPort,
+                             @Named("httpsPort") int httpsPort,
                              @Named("proxyPort") int proxyPort,
-                             @Named("proxyHTTPSPort") int proxyHTTPSPort) {
-        super(standardInterface, mobileVpnInterface, proxyPort, proxyHTTPSPort);
+                             @Named("proxyHTTPSPort") int proxyHTTPSPort,
+                             @Named("dns.server.port") int localDnsPort
+                             ) {
+        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
     }
 
     @Override
@@ -41,8 +45,26 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Chain output = natTable.chain("OUTPUT").accept();
         Chain postRouting = natTable.chain("POSTROUTING").accept();
 
+        // always answer dns queries directed at eblocker
+        preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
+
+        // Redirect port 80 & 443 to icapserver backend for user friendly URLs if not running in server mode
+        if (serverEnvironment) {
+            preRouting.rule(new Rule(standardInput).http().destinationIp(ownIpAddress).returnFromChain());
+        } else {
+            preRouting
+                    .rule(new Rule().http().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpPort))
+                    .rule(new Rule().https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort));
+        }
+
         ipAddressFilter.getDisabledDevicesIps().forEach(ip -> preRouting
                 .rule(autoInputForSource(ip).tcp().returnFromChain()));
+
+        if (dnsEnabled) {
+            preRouting
+                    // redirect all dns traffic to dns-server
+                    .rule(new Rule(standardInput).dns().redirectTo(ownIpAddress, localDnsPort));
+        }
 
         // Redirect port 80 to the proxy:
         preRouting.rule(new Rule(standardInput).http().redirectTo(ownIpAddress, proxyPort));

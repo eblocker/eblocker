@@ -34,6 +34,7 @@ import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.network.icmpv6.RouterSolicitation;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.network.icmpv6.TargetLinkLayerAddressOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
@@ -60,6 +61,7 @@ public class NeighborDiscoveryListener implements Runnable {
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
     private final RouterAdvertisementCache routerAdvertisementCache;
+    private final Ip6AddressDelayedValidator delayedValidator;
 
     @Inject
     public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
@@ -68,7 +70,8 @@ public class NeighborDiscoveryListener implements Runnable {
                                      FeatureToggleRouter featureToggleRouter,
                                      NetworkInterfaceWrapper networkInterface,
                                      PubSubService pubSubService,
-                                     RouterAdvertisementCache routerAdvertisementCache) {
+                                     RouterAdvertisementCache routerAdvertisementCache,
+                                     Ip6AddressDelayedValidator delayedValidator) {
         this.arpResponseTable = arpResponseTable;
         this.clock = clock;
         this.deviceIpUpdater = deviceIpUpdater;
@@ -76,10 +79,11 @@ public class NeighborDiscoveryListener implements Runnable {
         this.networkInterface = networkInterface;
         this.pubSubService = pubSubService;
         this.routerAdvertisementCache = routerAdvertisementCache;
+        this.delayedValidator = delayedValidator;
     }
 
     public void run() {
-        pubSubService.subscribeAndLoop("ip6:in", this::subscriber);
+        pubSubService.subscribeAndLoop(Channels.IP6_IN, this::subscriber);
     }
 
     private void subscriber(String message) {
@@ -91,7 +95,12 @@ public class NeighborDiscoveryListener implements Runnable {
             log.debug("got message: {}", message);
             Icmp6Message parsedMessage = parseMessage(message);
             if (Ip6Address.UNSPECIFIED_ADDRESS.equals(parsedMessage.getSourceAddress())) {
-                log.debug("ignoring message with unspecified source address");
+                if (parsedMessage instanceof NeighborSolicitation) {
+                    // A device is doing duplicate address detection: validate address after a few seconds
+                    delayedValidator.validateDelayed(getHardwareAddressAsString(parsedMessage), ((NeighborSolicitation)parsedMessage).getTargetAddress());
+                } else {
+                    log.debug("ignoring message with unspecified source address and ICMP type {}", parsedMessage.getIcmpType());
+                }
                 return;
             }
 
@@ -103,7 +112,7 @@ public class NeighborDiscoveryListener implements Runnable {
                 routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
 
-            String hardwareAddress = DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
+            String hardwareAddress = getHardwareAddressAsString(parsedMessage);
             String deviceId = Device.ID_PREFIX + hardwareAddress;
 
             Ip6Address advertisedAddress = parsedMessage.getSourceAddress();
@@ -146,7 +155,11 @@ public class NeighborDiscoveryListener implements Runnable {
                 Arrays.asList(new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
                         new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
                         new MtuOption(networkInterface.getMtu())));
-        pubSubService.publish("ip6:out", advertisement.toString());
+        pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
+    }
+
+    private String getHardwareAddressAsString(Icmp6Message message) {
+        return DatatypeConverter.printHexBinary(getSourceHardwareAddress(message)).toLowerCase();
     }
 
     private byte[] getSourceHardwareAddress(Icmp6Message message) {

@@ -40,7 +40,6 @@ import org.eblocker.server.common.scheduler.FilterManagerScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsDeleteScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsUpdateScheduler;
 import org.eblocker.server.common.scheduler.Ip6MulticastPingScheduler;
-import org.eblocker.server.common.scheduler.Ip6NetworkScanScheduler;
 import org.eblocker.server.common.scheduler.Ip6RouterAdvertiserScheduler;
 import org.eblocker.server.common.scheduler.IpAdressValidatorScheduler;
 import org.eblocker.server.common.scheduler.LicenseExpirationCheckScheduler;
@@ -86,7 +85,6 @@ public class BackgroundServices {
     private final NeighborDiscoveryListener neighborDiscoveryListener;
     private final IpAdressValidatorScheduler ipAdressValidatorScheduler;
     private final Ip6MulticastPingScheduler ip6MulticastPingScheduler;
-    private final Ip6NetworkScanScheduler ip6NetworkScanScheduler;
     private final Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler;
 
     private final ProblematicRouterDetectionScheduler problematicRouterDetectionScheduler;
@@ -151,7 +149,6 @@ public class BackgroundServices {
             ControlBarAliasUpdater controlBarAliasUpdater,
             IpAdressValidatorScheduler ipAdressValidatorScheduler,
             Ip6MulticastPingScheduler ip6MulticastPingScheduler,
-            Ip6NetworkScanScheduler ip6NetworkScanScheduler,
             Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler,
             DeviceScanningService deviceScanningService,
             LicenseExpirationCheckScheduler licenseExpirationCheckScheduler,
@@ -177,7 +174,6 @@ public class BackgroundServices {
         this.neighborDiscoveryListener = neighborDiscoveryListener;
         this.ipAdressValidatorScheduler = ipAdressValidatorScheduler;
         this.ip6MulticastPingScheduler = ip6MulticastPingScheduler;
-        this.ip6NetworkScanScheduler = ip6NetworkScanScheduler;
         this.ip6RouterAdvertiserScheduler = ip6RouterAdvertiserScheduler;
         this.problematicRouterDetectionScheduler = problematicRouterDetectionScheduler;
         this.appModuleServiceScheduler = appModuleServiceScheduler;
@@ -223,7 +219,6 @@ public class BackgroundServices {
         unlimitedCachePoolExecutor.execute(neighborDiscoveryListener);
         ipAdressValidatorScheduler.schedule(highPrioExecutorService);
         ip6MulticastPingScheduler.schedule(highPrioExecutorService);
-        ip6NetworkScanScheduler.schedule(highPrioExecutorService);
         ip6RouterAdvertiserScheduler.schedule(highPrioExecutorService);
         deviceScanningService.start();
 

@@ -49,6 +49,7 @@ public class NeighborDiscoveryListenerTest {
     private FeatureToggleRouter featureToggleRouter;
     private NetworkInterfaceWrapper networkInterface;
     private RouterAdvertisementCache routerAdvertisementCache;
+    private Ip6AddressDelayedValidator addressCache;
     private NeighborDiscoveryListener listener;
 
     private TestPubSubService pubSubService;
@@ -70,10 +71,11 @@ public class NeighborDiscoveryListenerTest {
 
         pubSubService = new TestPubSubService();
         routerAdvertisementCache = Mockito.mock(RouterAdvertisementCache.class);
+        addressCache = Mockito.mock(Ip6AddressDelayedValidator.class);
 
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
 
-        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache);
+        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache);
     }
 
     @Test
@@ -89,6 +91,16 @@ public class NeighborDiscoveryListenerTest {
         Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
+        Mockito.verifyNoInteractions(addressCache);
+    }
+
+    @Test
+    public void testNeighborSolicitationDuplicateAddressDetection() {
+        listener.run();
+        subscriber.process("abcdef012345/00000000000000000000000000000000/000010101000/fe800000000000000010001000100000/icmp6/135/2001004700110023c90ff80a4a5b2eb1");
+        Mockito.verifyNoInteractions(deviceIpUpdater);
+        Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
+        Mockito.verify(addressCache).validateDelayed("abcdef012345", Ip6Address.parse("2001:47:11:23:c90f:f80a:4a5b:2eb1"));
     }
 
     @Test

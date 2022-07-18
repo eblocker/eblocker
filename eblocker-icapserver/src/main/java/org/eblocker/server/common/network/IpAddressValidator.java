@@ -26,6 +26,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.icmpv6.NeighborSolicitation;
 import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.IpUtils;
@@ -198,7 +199,7 @@ public class IpAddressValidator {
             message.sourceHardwareAddress = eblockerHardwareAddressHex;
             message.targetHardwareAddress = DatatypeConverter.printHexBinary(targetHardwareAddress).toLowerCase();
             message.targetIPAddress = targetIpAddress.toString();
-            pubSubService.publish("arp:out", message.format());
+            pubSubService.publish(Channels.ARP_OUT, message.format());
         }
 
         private void sendNeighborDiscoverySolicitation(byte[] targetHardwareAddress, Ip6Address targetIpAddress) {
@@ -209,7 +210,7 @@ public class IpAddressValidator {
                     targetIpAddress,
                     targetIpAddress,
                     sourceLinkLayerAddressOption);
-            pubSubService.publish("ip6:out", solicitation.toString());
+            pubSubService.publish(Channels.IP6_OUT, solicitation.toString());
         }
     }
 

@@ -24,6 +24,7 @@ import org.eblocker.server.common.network.icmpv6.MtuOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
@@ -73,7 +74,7 @@ public class Ip6RouterAdvertiser {
                 new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
                 new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
                 new MtuOption(networkInterface.getMtu())));
-        pubSubService.publish("ip6:out", advertisement.toString());
+        pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
     }
 
 }

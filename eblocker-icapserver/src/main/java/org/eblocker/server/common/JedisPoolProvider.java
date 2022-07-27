@@ -33,8 +33,8 @@ public class JedisPoolProvider implements Provider<JedisPool> {
 
     @Inject
     public JedisPoolProvider(@Named("jedis.pool.max.total") int maxTotal,
-                             @Named("jedis.pool.min.idle") int maxIdle,
-                             @Named("jedis.pool.max.idle") int minIdle) {
+                             @Named("jedis.pool.min.idle") int minIdle,
+                             @Named("jedis.pool.max.idle") int maxIdle) {
         this.maxTotal = maxTotal;
         this.maxIdle = maxIdle;
         this.minIdle = minIdle;

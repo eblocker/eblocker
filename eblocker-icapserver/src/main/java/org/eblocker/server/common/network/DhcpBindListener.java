@@ -18,6 +18,7 @@ package org.eblocker.server.common.network;
 
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Ip4Address;
@@ -39,6 +40,7 @@ import java.util.List;
  * When a message is received it will notify the specific NetworkInterfaceWrapper; for now we just have one NetworkInterfaceWrapper for 'eth0',
  * but the script is able to tell which interface got a new IP address via DHCP by the message format : '[InterfaceName] [new IP address]'
  */
+@Singleton
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
 public class DhcpBindListener implements Subscriber, Runnable {
     private static final Logger log = LoggerFactory.getLogger(DhcpBindListener.class);

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.NetworkConfiguration;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * The network state machine processes events (e.g. when a new network configuration is received
  * by the NetworkController) and changes the network state accordingly using the NetworkServices.
  */
+@Singleton
 @SubSystemService(value = SubSystem.NETWORK_STATE_MACHINE, initPriority = 100)
 public class NetworkStateMachine {
     private static final Logger log = LoggerFactory.getLogger(NetworkStateMachine.class);

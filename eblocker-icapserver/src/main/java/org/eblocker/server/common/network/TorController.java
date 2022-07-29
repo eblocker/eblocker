@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -52,6 +53,7 @@ import java.util.regex.Pattern;
  * For the BananaPi M2 it can be found in this repository (mirror) :
  * deb http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi
  */
+@Singleton
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
 public class TorController {
     private static final Logger log = LoggerFactory.getLogger(TorController.class);

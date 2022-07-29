@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
@@ -74,6 +75,7 @@ import java.util.stream.Stream;
  * This class is able to rewrite ACL files which are used in the squid config file; In addition it is able to tell squid, that the configuration changed and
  * a reload is neccessary.
  */
+@Singleton
 @SubSystemService(value = SubSystem.HTTPS_SERVER)
 public class SquidConfigController {
     private static final Logger log = LoggerFactory.getLogger(SquidConfigController.class);

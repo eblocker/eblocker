@@ -19,6 +19,7 @@ package org.eblocker.server.common.page;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.session.Session;
 import org.slf4j.MDC;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+@Singleton
 public class PageContextStore {
 
     private final Cache<String, PageContext> store;

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.openvpn;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.icap.resources.EblockerResource;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@Singleton
 public class RoutingController {
     private static final Logger logger = LoggerFactory.getLogger(RoutingController.class);
 

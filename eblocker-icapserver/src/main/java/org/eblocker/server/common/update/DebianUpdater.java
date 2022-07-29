@@ -17,6 +17,7 @@
 package org.eblocker.server.common.update;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UpdatingStatus;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+@Singleton
 public class DebianUpdater implements SystemUpdater {
     private static final Logger log = LoggerFactory.getLogger(DebianUpdater.class);
     private final DeviceRegistrationProperties deviceRegistrationProperties;

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.openvpn;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -63,6 +64,7 @@ import java.util.stream.Stream;
  * This class makes all the work which is asked for by the OpenVpnController (REST Interface).
  * It will trigger/tell the other objects to adapt the firewall configuration, rewrite squids config and so on...
  */
+@Singleton
 @SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 200)
 public class OpenVpnService {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnService.class);

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.messagecenter.provider.RouterCompatibilityMessageProvider;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Observable;
 
+@Singleton
 public class ProblematicRouterDetection extends Observable implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ProblematicRouterDetection.class);

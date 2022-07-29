@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network.unix;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -43,6 +44,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Configures and controls network services on Unix OSes
  */
+@Singleton
 public class NetworkServicesUnix extends NetworkServicesBase {
     private static final Logger log = LoggerFactory.getLogger(NetworkServicesUnix.class);
 

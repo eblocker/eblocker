@@ -120,19 +120,6 @@ public class DeviceScanningServiceTest {
     }
 
     @Test
-    public void noReschedule() {
-        // here the interval has not changed, so we do not want a rescheduling to happen
-        Mockito.when(dataSource.getDeviceScanningInterval()).thenReturn(42L);
-
-        service.start();
-        Mockito.verify(executorService, Mockito.times(1)).scheduleAtFixedRate(arpSweeper, STARTUP_DELAY, 164062L, TimeUnit.MICROSECONDS);
-
-        service.setScanningInterval(42L);
-        Mockito.verifyZeroInteractions(future);
-        Mockito.verify(executorService, Mockito.never()).scheduleAtFixedRate(arpSweeper, 0L, 164062L, TimeUnit.MICROSECONDS);
-    }
-
-    @Test
     public void enableScanning() {
         // scanning is disabled initially:
         Mockito.when(dataSource.getDeviceScanningInterval()).thenReturn(0L);
@@ -157,6 +144,23 @@ public class DeviceScanningServiceTest {
         service.setScanningInterval(0L);
         Mockito.verify(future).cancel(true);
         Mockito.verifyZeroInteractions(executorService);
+    }
+
+    @Test
+    public void reEnableScanning() {
+        InOrder order = Mockito.inOrder(executorService, future);
+        Mockito.when(dataSource.getDeviceScanningInterval()).thenReturn(42L);
+
+        service.start();
+        order.verify(executorService).scheduleAtFixedRate(arpSweeper, STARTUP_DELAY, 164062L, TimeUnit.MICROSECONDS);
+
+        // disable scanning
+        service.setScanningInterval(0L);
+        order.verify(future).cancel(true);
+
+        // re-enable scanning
+        service.setScanningInterval(42L);
+        order.verify(executorService).scheduleAtFixedRate(arpSweeper, 0L, 164062L, TimeUnit.MICROSECONDS);
     }
 
     @Test

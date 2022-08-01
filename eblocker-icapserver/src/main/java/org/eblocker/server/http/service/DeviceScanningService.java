@@ -39,7 +39,6 @@ public class DeviceScanningService {
     private final ArpSweeper arpSweeper;
     private final DataSource dataSource;
     private final long defaultScanningInterval;
-    private long currentScanningInterval;
     private final long startupDelay;
     private ScheduledExecutorService highPrioExecutorService;
     private ScheduledFuture<?> scheduledFuture;
@@ -81,13 +80,10 @@ public class DeviceScanningService {
     public void setScanningInterval(long seconds) {
         dataSource.setDeviceScanningInterval(seconds);
 
-        if (currentScanningInterval == seconds) {
-            return;
-        }
-
         if (scheduledFuture != null) {
             log.info("Cancelling ARP scanning");
             scheduledFuture.cancel(true);
+            scheduledFuture = null;
         }
 
         schedule(0L, seconds);
@@ -139,7 +135,6 @@ public class DeviceScanningService {
         long requestInterval = 1000000 * interval / 256;
         log.info("Scheduling ARP request each {}ms", requestInterval / 1000.0);
         scheduledFuture = highPrioExecutorService.scheduleAtFixedRate(arpSweeper, startupDelay, requestInterval, TimeUnit.MICROSECONDS);
-        currentScanningInterval = interval;
     }
 
     private boolean isPrivateNetwork() {

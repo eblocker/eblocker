@@ -16,8 +16,8 @@
                 <label>{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.LABEL' | translate }}</label>
                 <md-select ng-model="vm.deviceScanningInterval" ng-change="vm.setScanningInterval()" aria-label="Select scan interval">
                     <md-option value="10">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_FAST' | translate }}</md-option>
-                    <md-option value="150">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_MIDDLE' | translate }}</md-option>
-                    <md-option value="300">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_SLOW' | translate }}</md-option>
+                    <md-option value="300">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_MIDDLE' | translate }}</md-option>
+                    <md-option value="3600">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_SLOW' | translate }}</md-option>
                     <md-option value="0">{{ 'ADMINCONSOLE.DEVICES_DISCOVERY.DEVICE_SCANNING.INTERVAL_0' | translate }}</md-option>
                 </md-select>
             </md-input-container>

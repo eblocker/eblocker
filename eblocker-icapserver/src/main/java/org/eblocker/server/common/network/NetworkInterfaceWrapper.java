@@ -140,6 +140,19 @@ public class NetworkInterfaceWrapper {
     }
 
     /**
+     * Once a NetworkInterface object has been created its IP addresses do not change.
+     *
+     * Therefore, an external process must detect IPv6 address updates and call this method to reload the NetworkInterface.
+     */
+    public void notifyIp6AddressChanged() {
+        try {
+            networkInterface = networkInterfaceFactory.getNetworkInterfaceByName(interfaceName);
+        } catch (SocketException e) {
+            log.error("Error while reloading the network interface {}", interfaceName, e);
+        }
+    }
+
+    /**
      * Returns the primary IPv4 IP address assigned the network interface
      *
      * @return IPv4 address -> null if the IPv4 Address could not be found

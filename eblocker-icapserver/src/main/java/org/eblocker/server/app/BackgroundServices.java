@@ -17,12 +17,14 @@
 package org.eblocker.server.app;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.network.ArpListener;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.DhcpListener;
+import org.eblocker.server.common.network.Ip6AddressMonitor;
 import org.eblocker.server.common.network.NeighborDiscoveryListener;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
@@ -67,6 +69,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Singleton
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class BackgroundServices {
 
@@ -92,6 +95,7 @@ public class BackgroundServices {
     private DhcpListener dhcpListener;
     private DhcpBindListener dhcpBindListener;
     private final TorController torController;
+    private final Ip6AddressMonitor ip6AddressMonitor;
 
     private final long torConnectionCheckDelay;
 
@@ -127,6 +131,7 @@ public class BackgroundServices {
             DhcpListener dhcpListener,
             DhcpBindListener dhcpBindListener,
             TorController torController,
+            Ip6AddressMonitor ip6AddressMonitor,
             SessionPurgerScheduler sessionPurgerScheduler,
             StartupTaskScheduler startupTaskScheduler,
             ArpListener arpListener,
@@ -192,6 +197,7 @@ public class BackgroundServices {
         this.dhcpListener = dhcpListener;
         this.dhcpBindListener = dhcpBindListener;
         this.torController = torController;
+        this.ip6AddressMonitor = ip6AddressMonitor;
 
         this.torConnectionCheckDelay = torDelay;
         this.zeroconfRegistrationService = zeroconfRegistrationService;
@@ -228,7 +234,7 @@ public class BackgroundServices {
 
         //check if interface 'eth0' gets a new IP address assigned via DHCP and tell NetworkInterfaceWrapper
         unlimitedCachePoolExecutor.execute(dhcpBindListener);
-
+        unlimitedCachePoolExecutor.execute(ip6AddressMonitor);
         unlimitedCachePoolExecutor.execute(openVpnAddressListener);
 
         //start Tor control port connection
@@ -282,6 +288,7 @@ public class BackgroundServices {
     public void shutdown() {
         zeroconfRegistrationService.unregisterConsoleService();
         recordedDomainsWriteScheduler.shutdown();
+        ip6AddressMonitor.shutdown();
         STATUS.info("Background services shut down.");
     }
 }

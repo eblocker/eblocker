@@ -20,6 +20,7 @@ import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.network.ArpListener;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.DhcpListener;
+import org.eblocker.server.common.network.Ip6AddressMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.network.ZeroconfRegistrationService;
@@ -78,6 +79,7 @@ public class BackgroundServicesTest {
     private DhcpListener dhcpListener;
     private DhcpBindListener dhcpBindListener;
     private TorController torController;
+    private Ip6AddressMonitor ip6AddressMonitor;
     private PCAccessRestrictionsServiceScheduler contingentEnforcerScheduler;
     private OpenVpnServiceScheduler openVpnServiceScheduler;
     private OpenVpnAddressListener openVpnAddressListener;
@@ -112,6 +114,7 @@ public class BackgroundServicesTest {
         ip6MulticastPingScheduler = Mockito.mock(Ip6MulticastPingScheduler.class);
         ip6RouterAdvertiserScheduler = Mockito.mock(Ip6RouterAdvertiserScheduler.class);
         torController = Mockito.mock(TorController.class);
+        ip6AddressMonitor = Mockito.mock(Ip6AddressMonitor.class);
         contingentEnforcerScheduler = Mockito.mock(PCAccessRestrictionsServiceScheduler.class);
         openVpnServiceScheduler = Mockito.mock(OpenVpnServiceScheduler.class);
         deviceServiceScheduler = Mockito.mock(DeviceServiceScheduler.class);
@@ -149,6 +152,7 @@ public class BackgroundServicesTest {
                 dhcpListener,
                 dhcpBindListener,
                 torController,
+                ip6AddressMonitor,
                 sessionPurgerScheduler,
                 startupTaskScheduler,
                 arpListener,
@@ -201,6 +205,9 @@ public class BackgroundServicesTest {
 
         verify(highPrioExecutorService, never()).execute(dhcpBindListener);
         verify(lowPrioExecutorService, never()).execute(dhcpBindListener);
+
+        verify(highPrioExecutorService, never()).execute(ip6AddressMonitor);
+        verify(lowPrioExecutorService, never()).execute(ip6AddressMonitor);
     }
 
     @Test

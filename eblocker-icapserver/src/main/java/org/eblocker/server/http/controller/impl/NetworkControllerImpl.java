@@ -69,6 +69,7 @@ public class NetworkControllerImpl implements NetworkController {
         networkInfo.setGateway(config.getGateway());
         networkInfo.setIpAddress(config.getIpAddress());
         networkInfo.setAutomatic(config.isAutomatic());
+        networkInfo.setGlobalIp6AddressAvailable(config.isGlobalIp6AddressAvailable());
         return networkInfo;
     }
 

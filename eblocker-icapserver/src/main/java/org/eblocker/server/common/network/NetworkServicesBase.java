@@ -94,6 +94,8 @@ public abstract class NetworkServicesBase implements NetworkServices {
 
         config.setDnsServer(eblockerDnsServer.isEnabled());
 
+        config.setGlobalIp6AddressAvailable(networkInterface.hasGlobalIp6Address());
+
         // to avoid having 127.0.0.1 / eblocker-ip showing up in manual configuration mode when eblocker-dns
         // has been disabled this structure always contains the first two actual configured upstream servers in
         // eblocker-dns mode

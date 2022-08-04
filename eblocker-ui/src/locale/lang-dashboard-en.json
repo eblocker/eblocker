@@ -107,6 +107,9 @@
                 "DNSFIREWALLTEST" : {
                     "LABEL" : "DNS Firewall"
                 },
+                "IPV6TEST" : {
+                    "LABEL" : "IPv6 filtering"
+                },
                 "WEBFILTERINGTEST" : {
                     "LABEL" : "Web filtering"
                 },
@@ -143,6 +146,9 @@
                     "EXISTING_SSL_SESSION" : "You changed eBlocker's settings but your browser uses an existing HTTPS session. Please restart your browser.",
                     "HEADING" : "Possible causes:",
                     "INTERNET_CONNECTIVITY" : "The connection to your Internet provider is interrupted.",
+                    "IPV6_LEAK" : "The IPv6 connection is not protected by eBlocker.",
+                    "NO_IPV6_ON_CLIENT" : "There is no IPv6 connectivity.",
+                    "NO_IPV6_ON_EBLOCKER" : "There is no IPv6 connectivity on the eBlocker.",
                     "ROUTING_SECOND_NETWORK" : "Your device is using a second network that is not protected by eBlocker."
                 },
                 "NOT_USED": "not used"

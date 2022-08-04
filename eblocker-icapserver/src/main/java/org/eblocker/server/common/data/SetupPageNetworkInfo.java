@@ -23,6 +23,7 @@ public class SetupPageNetworkInfo {
     private String ipAddress; // static IP address of eBlocker
     private String gateway; // IP address of gateway
     private String userIpAddress;
+    private boolean globalIp6AddressAvailable;
 
     @JsonProperty
     public boolean isAutomatic() {
@@ -58,5 +59,14 @@ public class SetupPageNetworkInfo {
 
     public void setUserIpAddress(String userIpAddress) {
         this.userIpAddress = userIpAddress;
+    }
+
+    @JsonProperty
+    public boolean isGlobalIp6AddressAvailable() {
+        return globalIp6AddressAvailable;
+    }
+
+    public void setGlobalIp6AddressAvailable(boolean globalIp6AddressAvailable) {
+        this.globalIp6AddressAvailable = globalIp6AddressAvailable;
     }
 }

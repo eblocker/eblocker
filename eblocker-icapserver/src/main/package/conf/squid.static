@@ -85,9 +85,6 @@ reply_header_access X-Cache-Lookup deny all
 reply_header_access X-Squid-Error deny all
 reply_header_access X-Cache deny all
 
-# prevent leaking dns requests
-dns_aaaa off
-
 # faster shutdown
 shutdown_lifetime 1 second
 

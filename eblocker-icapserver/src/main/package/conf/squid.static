@@ -39,6 +39,7 @@ acl localnet src 192.168.0.0/16 # RFC1918 possible internal network
 acl localnet src 169.254.0.0/16 # Link-local addresses
 acl localnet src fc00::/7       # RFC 4193 local private network range
 acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines
+# Note: global IPv6 prefix is added below in section "Dynamic configuration"
 
 acl localnetDst dst 10.0.0.0/8     # RFC1918 possible internal network
 acl localnetDst dst 172.16.0.0/12  # RFC1918 possible internal network

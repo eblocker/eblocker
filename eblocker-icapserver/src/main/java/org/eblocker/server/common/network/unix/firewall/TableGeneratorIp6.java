@@ -94,8 +94,13 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
         Table filterTable = new Table("filter");
 
+        Chain forward = filterTable.chain("FORWARD").accept();
         Chain output = filterTable.chain("OUTPUT").accept();
         output.rule(new Rule().icmpv6().icmpType(Rule.Icmp6Type.REDIRECT).drop());
+
+        // block HTTP/3 for all SSL enabled devices
+        ipAddressFilter.getSslEnabledDevicesIps().forEach(ip ->
+                forward.rule(new Rule().sourceIp(ip).http3().reject()));
 
         return filterTable;
     }

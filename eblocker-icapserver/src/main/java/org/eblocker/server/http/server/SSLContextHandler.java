@@ -149,7 +149,7 @@ public class SSLContextHandler {
             }
         });
 
-        networkInterface.addIpAddressChangeListener(ip -> notifyIpChange());
+        networkInterface.addIpAddressChangeListener(this::notifyIpChange);
     }
 
     public void addContextChangeListener(SslContextChangeListener listener) {
@@ -169,7 +169,7 @@ public class SSLContextHandler {
      *
      * @return
      */
-    private void notifyIpChange() {
+    private void notifyIpChange(boolean ip4Updated, boolean ip6Updated) {
         try {
             log.info("Updating the SSL Context...");
             if (sslService.isCaAvailable()) {

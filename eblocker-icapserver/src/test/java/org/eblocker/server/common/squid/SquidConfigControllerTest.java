@@ -23,6 +23,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
@@ -79,8 +80,6 @@ public class SquidConfigControllerTest {
     private static final String CONTROL_BAR_FALLBACK_IP = "169.254.93.109";
     private static final String EBLOCKER_DNS_NAMES = "eblocker.box, block.box";
     private static final Ip4Address ip4Address = Ip4Address.parse("192.168.178.42");
-    private static final Ip6Address ip6Address1 = Ip6Address.parse("2a02:1:1:1:d9d0:5cb9:8956:be08");
-    private static final Ip6Address ip6Address2 = Ip6Address.parse("2a02:2:2:2:d9d0:5cb9:8956:be08");
 
     private SquidConfigController controller;
     private String outputConfigFile;
@@ -104,6 +103,7 @@ public class SquidConfigControllerTest {
     private EblockerCa eblockerCa;
     private Environment environment;
     private NetworkInterfaceWrapper networkInterface;
+    private Ip6PrefixMonitor prefixMonitor;
 
     private SquidAcl torClientsAcl;
     private SquidAcl sslClientsAcl;
@@ -128,6 +128,8 @@ public class SquidConfigControllerTest {
         dataSource = Mockito.mock(DataSource.class);
 
         executorService = Mockito.mock(ScheduledExecutorService.class);
+
+        prefixMonitor = Mockito.mock(Ip6PrefixMonitor.class);
 
         // simulate that SSL is enabled and certificates are ready:
         sslService = Mockito.mock(SslService.class);
@@ -417,8 +419,7 @@ public class SquidConfigControllerTest {
 
     @Test
     public void testIp6Options() {
-        Mockito.when(networkInterface.getAddresses()).thenReturn(List.of(ip4Address, ip6Address1, ip6Address2));
-        Mockito.when(networkInterface.getNetworkPrefixLength(Mockito.any())).thenReturn(64);
+        when(prefixMonitor.getCurrentPrefixes()).thenReturn(Set.of("2a02:1:1:1::/64", "2a02:2:2:2::/64"));
 
         sslStateListener.onInit(true);
 
@@ -493,7 +494,8 @@ public class SquidConfigControllerTest {
                 networkInterface, jsonWebTokenHandler, executorService, networkServices,
                 deviceService, squidAclFactory,
                 openVpnServerService,
-                environment);
+                environment,
+                prefixMonitor);
     }
 
     private static class MockFuture<V> implements ScheduledFuture<V> {

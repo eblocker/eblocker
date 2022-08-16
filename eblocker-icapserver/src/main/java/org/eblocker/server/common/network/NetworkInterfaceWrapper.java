@@ -55,13 +55,15 @@ public class NetworkInterfaceWrapper {
     private NetworkInterface networkInterface;
     private final ScriptRunner scriptRunner;
     private final String findGatewayScript;
-    private Ip4Address emergencyIp;
+    private final Ip4Address emergencyIp;
 
     private Ip4Address firstIPv4Address;
+    private List<IpAddress> currentAddresses;
     private final String interfaceName;
     private final String vpnInterfaceName;
 
-    private List<IpAddressChangeListener> ipAddressChangeListeners = new ArrayList<>();
+    private final List<IpAddressChangeListener> ipAddressChangeListeners = new ArrayList<>();
+
     private boolean waitingForIPv4Address = false;
 
     @Inject
@@ -120,23 +122,17 @@ public class NetworkInterfaceWrapper {
      * Call this method, if e.g. the device got a new IPv4 address via DHCP in automatic mode.
      */
     public void notifyIPAddressChanged(Ip4Address newIP) {
-        //Dont reread the IP, just use the message that came from the script
+        // Don't reread the IP, just use the message that came from the script
 
         log.info("The network interface {} got an new IP address assigned via DHCP: {}", interfaceName, newIP);
 
         firstIPv4Address = newIP;
 
-        //reload NetworkInterface, otherwise it will stay in old state
-        try {
-            networkInterface = networkInterfaceFactory.getNetworkInterfaceByName(interfaceName);
-            if (waitingForIPv4Address) {
-                log.warn("The network interface {} finally got an IPv4 address {}, not returning the emergency IP anymore...", interfaceName, newIP);
-            }
-            waitingForIPv4Address = false;
-        } catch (SocketException e) {
-            log.error("Error while reloading the network interface {} : {}", interfaceName, e.toString(), e);
+        if (waitingForIPv4Address) {
+            log.warn("The network interface {} finally got an IPv4 address {}, not returning the emergency IP anymore...", interfaceName, newIP);
         }
-        notifyIpAddressChangeListeners(newIP);
+        waitingForIPv4Address = false;
+        reloadNetworkInterface();
     }
 
     /**
@@ -145,11 +141,7 @@ public class NetworkInterfaceWrapper {
      * Therefore, an external process must detect IPv6 address updates and call this method to reload the NetworkInterface.
      */
     public void notifyIp6AddressChanged() {
-        try {
-            networkInterface = networkInterfaceFactory.getNetworkInterfaceByName(interfaceName);
-        } catch (SocketException e) {
-            log.error("Error while reloading the network interface {}", interfaceName, e);
-        }
+        reloadNetworkInterface();
     }
 
     /**
@@ -186,6 +178,18 @@ public class NetworkInterfaceWrapper {
             return Collections.emptyList();
         }
 
+        // After a java.net.NetworkInterface has been created, its list of sub interfaces
+        // and IP addresses never changes. So we can return a cached value:
+        synchronized (this) {
+            if (currentAddresses != null) {
+                return currentAddresses;
+            }
+            currentAddresses = getAddresses(networkInterface);
+            return currentAddresses;
+        }
+    }
+
+    private static List<IpAddress> getAddresses(NetworkInterface networkInterface) {
         // collect all addresses which belongs to sub-interfaces
         Set<InetAddress> subInterfaceAddresses = networkInterface.subInterfaces()
                 .flatMap(NetworkInterface::inetAddresses)
@@ -198,11 +202,40 @@ public class NetworkInterfaceWrapper {
                 .collect(Collectors.toList());
 
         if (assignedIps.isEmpty()) {
-            log.warn("could not find any ip assigned to the primary interface");
-            return Collections.emptyList();
+            log.warn("Could not find any IP addresses assigned to interface {}", networkInterface.getName());
         }
 
         return assignedIps;
+    }
+
+    private void reloadNetworkInterface() {
+        try {
+            networkInterface = networkInterfaceFactory.getNetworkInterfaceByName(interfaceName);
+        } catch (SocketException e) {
+            log.error("Could not reload network interface {}", interfaceName, e);
+            return;
+        }
+        List<IpAddress> oldAddresses = getAddresses();
+        // invalidate cached addresses
+        synchronized (this) {
+            currentAddresses = null;
+        }
+        List<IpAddress> newAddresses = getAddresses();
+        notifyIpAddressChangeListeners(oldAddresses, newAddresses);
+    }
+
+    private void notifyIpAddressChangeListeners(List<IpAddress> oldAddresses, List<IpAddress> newAddresses) {
+        Set<IpAddress> oldIp4 = oldAddresses.stream().filter(IpAddress::isIpv4).collect(Collectors.toSet());
+        Set<IpAddress> newIp4 = newAddresses.stream().filter(IpAddress::isIpv4).collect(Collectors.toSet());
+        Set<IpAddress> oldIp6 = oldAddresses.stream().filter(IpAddress::isIpv6).collect(Collectors.toSet());
+        Set<IpAddress> newIp6 = newAddresses.stream().filter(IpAddress::isIpv6).collect(Collectors.toSet());
+
+        boolean ip4AddressesChanged = !newIp4.equals(oldIp4);
+        boolean ip6AddressesChanged = !newIp6.equals(oldIp6);
+
+        if (ip4AddressesChanged || ip6AddressesChanged) {
+            notifyIpAddressChangeListeners(ip4AddressesChanged, ip6AddressesChanged);
+        }
     }
 
     public boolean hasGlobalIp6Address() {
@@ -217,7 +250,7 @@ public class NetworkInterfaceWrapper {
     /**
      * Returns the network prefix length (in bits) of the given IP address
      *
-     * @param ipAddress
+     * @param ipAddress IP address
      * @return -1 if there was no networkInterface
      */
     public int getNetworkPrefixLength(IpAddress ipAddress) {
@@ -263,9 +296,9 @@ public class NetworkInterfaceWrapper {
         try {
             scriptRunner.runScript(findGatewayScript);
         } catch (IOException e) {
-            log.error("Error while starting the script {}", e);
+            log.error("Error while starting the script {}", findGatewayScript, e);
         } catch (InterruptedException e) {
-            log.error("Error while starting the script {}", e);
+            log.error("Error while starting the script {}", findGatewayScript, e);
             Thread.currentThread().interrupt();
         }
     }
@@ -317,12 +350,11 @@ public class NetworkInterfaceWrapper {
         ipAddressChangeListeners.add(listener);
     }
 
-    private void notifyIpAddressChangeListeners(IpAddress newIp) {
-        ipAddressChangeListeners.forEach(l -> l.onIpAddressChange(newIp));
+    private void notifyIpAddressChangeListeners(boolean ip4Updated, boolean ip6Updated) {
+        ipAddressChangeListeners.forEach(l -> l.onIpAddressChange(ip4Updated, ip6Updated));
     }
 
     public interface IpAddressChangeListener {
-        void onIpAddressChange(IpAddress newIp);
+        void onIpAddressChange(boolean ip4Updated, boolean ip6Updated);
     }
-
 }

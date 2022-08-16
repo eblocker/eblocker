@@ -31,6 +31,7 @@ import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
@@ -92,6 +93,7 @@ public class SquidConfigController {
     private final JsonWebTokenHandler tokenHandler;
     private final ScheduledExecutorService executorService;
     private final ConfigurableDeviceFilterAclFactory squidAclFactory;
+    private final Ip6PrefixMonitor prefixMonitor;
 
     private final SimpleResource mimeTypesAcl;//list of MIME types to send to this Icapserver (Squid has to forward/hand files of these MIMEtypes to the ICAP server...)
     private final SimpleResource squidConfigTemplateFile; //template part of squid config
@@ -165,7 +167,8 @@ public class SquidConfigController {
                                  DeviceService deviceService,
                                  ConfigurableDeviceFilterAclFactory squidAclFactory,
                                  OpenVpnServerService openVpnServerService,
-                                 Environment environment) {
+                                 Environment environment,
+                                 Ip6PrefixMonitor prefixMonitor) {
 
         this.squidReconfigureScript = squidReconfigureScript;
         this.squidClearCertCacheScript = squidClearCertCacheScript;
@@ -207,6 +210,8 @@ public class SquidConfigController {
 
         this.environment = environment;
 
+        this.prefixMonitor = prefixMonitor;
+
         if (!ResourceHandler.exists(squidConfigStaticFile)) {
             log.error("Squid static config filepart does not exist at {}", confStaticFilePath);
         }
@@ -228,6 +233,8 @@ public class SquidConfigController {
 
         // register callback to trigger reload on name server changes
         networkServices.addListener(l -> tellSquidToReloadConfig());
+
+        prefixMonitor.addPrefixChangeListener(this::updateSquidConfig);
 
         // register callback to trigger on device changes
         deviceService.addListener(new DeviceChangeListener() {
@@ -675,21 +682,12 @@ public class SquidConfigController {
      * @return Squid configuration snippet
      */
     private String createIp6Options() {
-        return networkInterface.getAddresses().stream()
-                .filter(IpAddress::isIpv6)
-                .map(ip -> (Ip6Address) ip)
-                .filter(ip -> !Ip6Utils.isLinkLocal(ip))
-                .map(this::getCidrNetwork)
-                .distinct()
+        return prefixMonitor.getCurrentPrefixes().stream()
+                .sorted()
                 .flatMap(ip -> Stream.of(
                         "acl localnet src " + ip + "\n",
                         "acl localnetDst dst " + ip + "\n"))
                 .collect(Collectors.joining());
-    }
-
-    private String getCidrNetwork(Ip6Address ip) {
-        int prefixLen = networkInterface.getNetworkPrefixLength(ip);
-        return Ip6Utils.getNetworkAddress(ip, prefixLen) + "/" + prefixLen;
     }
 
     /* updates all acls and reload squid in case of changes */

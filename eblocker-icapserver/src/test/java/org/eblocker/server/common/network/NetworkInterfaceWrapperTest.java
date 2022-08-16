@@ -18,6 +18,7 @@ package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,13 +27,15 @@ import org.mockito.Mockito;
 
 import javax.xml.bind.DatatypeConverter;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
 
 public class NetworkInterfaceWrapperTest {
-    private static Ip4Address EMERGENCY_ADDRESS = Ip4Address.parse("169.254.94.109");
-    private static String INTERFACE_NAME = "eth0";
-    private static String VPN_INTERFACE_NAME = "tun33";
+    private static final Ip4Address EMERGENCY_ADDRESS = Ip4Address.parse("169.254.94.109");
+    private static final String INTERFACE_NAME = "eth0";
+    private static final String VPN_INTERFACE_NAME = "tun33";
     private NetworkInterface networkInterface;
     private NetworkInterface vpnInterface;
     private NetworkInterfaceWrapper wrapper;
@@ -63,6 +66,40 @@ public class NetworkInterfaceWrapperTest {
         // there is no IPv4 address assigned yet
         wrapper.init();
         Assert.assertEquals(EMERGENCY_ADDRESS, wrapper.getFirstIPv4Address());
+    }
+
+    @Test
+    public void dhcpAssignedAddress() {
+        wrapper.init();
+        Assert.assertEquals(EMERGENCY_ADDRESS, wrapper.getFirstIPv4Address());
+        NetworkInterfaceWrapper.IpAddressChangeListener listener = Mockito.mock(NetworkInterfaceWrapper.IpAddressChangeListener.class);
+        wrapper.addIpAddressChangeListener(listener);
+        assignAddresses(networkInterface, "192.168.1.2");
+        Ip4Address newIp = Ip4Address.parse("192.168.1.2");
+        wrapper.notifyIPAddressChanged(newIp);
+        Assert.assertEquals(newIp, wrapper.getFirstIPv4Address());
+        Mockito.verify(listener).onIpAddressChange(true, false);
+    }
+
+    @Test
+    public void ip6AddressesNotChanged() {
+        assignAddresses(networkInterface, "2003:42::1:2:3:4");
+        wrapper.init();
+        NetworkInterfaceWrapper.IpAddressChangeListener listener = Mockito.mock(NetworkInterfaceWrapper.IpAddressChangeListener.class);
+        wrapper.addIpAddressChangeListener(listener);
+        wrapper.notifyIp6AddressChanged();
+        Mockito.verifyNoInteractions(listener);
+    }
+
+    @Test
+    public void ip6AddressesChanged() {
+        assignAddresses(networkInterface, "2003:42::1:2:3:4");
+        wrapper.init();
+        NetworkInterfaceWrapper.IpAddressChangeListener listener = Mockito.mock(NetworkInterfaceWrapper.IpAddressChangeListener.class);
+        wrapper.addIpAddressChangeListener(listener);
+        assignAddresses(networkInterface, "2003:42::5:6:7:8");
+        wrapper.notifyIp6AddressChanged();
+        Mockito.verify(listener).onIpAddressChange(false, true);
     }
 
     @Test
@@ -99,6 +136,20 @@ public class NetworkInterfaceWrapperTest {
         Assert.assertEquals(Ip4Address.parse("10.8.0.17"), wrapper.getVpnIpv4Address());
     }
 
+    @Test
+    public void networkPrefixLength() {
+        InterfaceAddress address1 = mockInterfaceAddress("192.168.1.2", 24);
+        InterfaceAddress address2 = mockInterfaceAddress("2003:42::1:2:3:4", 64);
+        Mockito.when(networkInterface.getInterfaceAddresses()).thenReturn(List.of(address1, address2));
+        wrapper.init();
+
+        Assert.assertEquals(24, wrapper.getNetworkPrefixLength(IpAddress.parse("192.168.1.2")));
+        Assert.assertEquals(64, wrapper.getNetworkPrefixLength(IpAddress.parse("2003:42::1:2:3:4")));
+
+        Assert.assertEquals(-1, wrapper.getNetworkPrefixLength(IpAddress.parse("192.168.1.7")));
+        Assert.assertEquals(-1, wrapper.getNetworkPrefixLength(IpAddress.parse("2003:42::5:6:7:8")));
+    }
+
     private void assignAddresses(NetworkInterface networkInterface, String... addresses) {
         Mockito.when(networkInterface.inetAddresses()).thenAnswer(invocation -> Arrays.stream(addresses).map(this::getInetAddress));
     }
@@ -109,5 +160,12 @@ public class NetworkInterfaceWrapperTest {
         } catch (UnknownHostException e) {
             throw new RuntimeException("Could not create InetAddress from IP", e);
         }
+    }
+
+    private InterfaceAddress mockInterfaceAddress(String ip, int prefixLength) {
+        InterfaceAddress address = Mockito.mock(InterfaceAddress.class);
+        Mockito.when(address.getAddress()).thenReturn(getInetAddress(ip));
+        Mockito.when(address.getNetworkPrefixLength()).thenReturn((short) prefixLength);
+        return address;
     }
 }

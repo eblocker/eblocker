@@ -53,6 +53,7 @@ import org.eblocker.server.common.executor.LoggingExecutorService;
 import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.DhcpServer;
+import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
@@ -271,6 +272,7 @@ public class EblockerModule extends BaseModule {
         bind(FilterManager.class);
         bind(FilterStatisticsService.class);
         bind(IpSets.class);
+        bind(Ip6PrefixMonitor.class);
         bind(MalwareFilterService.class);
         bind(MessageCenterService.class);
         bind(NetworkInterfaceWatchdog.class);

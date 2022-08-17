@@ -56,6 +56,7 @@ public class IpAddressValidator {
     private final NetworkInterfaceWrapper networkInterface;
     private final String vpnSubnetIp;
     private final String vpnSubnetNetmask;
+    private boolean firstRun = true;
 
     @Inject
     public IpAddressValidator(@Named("arp.ip.grace.period.seconds") long recentActivityThreshold,
@@ -81,6 +82,12 @@ public class IpAddressValidator {
     }
 
     public void run() {
+        if (firstRun) {
+            // Do not check responses in the first run to avoid removing addresses that are still valid
+            sendRequests();
+            firstRun = false;
+            return;
+        }
         checkResponses();
         sendRequests();
     }

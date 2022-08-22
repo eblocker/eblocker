@@ -16,13 +16,22 @@
  */
 package org.eblocker.server.common.scheduler;
 
+import java.util.concurrent.ScheduledFuture;
+
 public abstract class AbstractScheduler implements Scheduler {
     protected final Runnable command;
     protected final long initialDelay;
+    protected ScheduledFuture scheduledFuture;
 
     public AbstractScheduler(Runnable command, long initialDelayInSeconds) {
         this.command = command;
         this.initialDelay = initialDelayInSeconds;
     }
 
+    public void cancel(boolean mayInterruptIfRunning) {
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(mayInterruptIfRunning);
+            scheduledFuture = null;
+        }
+    }
 }

@@ -29,8 +29,6 @@ import java.util.concurrent.ScheduledFuture;
 public class ProblematicRouterDetectionScheduler extends FixedRateScheduler implements Observer {
     private static final Logger log = LoggerFactory.getLogger(ProblematicRouterDetectionScheduler.class);
 
-    private ScheduledFuture<?> problematicRouterDetectionFuture;
-
     @Inject
     public ProblematicRouterDetectionScheduler(ProblematicRouterDetection problematicRouterDetection,
                                                @Named("executor.problematicRouterDetection.startupDelay") long startupDelay,
@@ -45,9 +43,7 @@ public class ProblematicRouterDetectionScheduler extends FixedRateScheduler impl
         if (o instanceof ProblematicRouterDetection) {
             // A problematic (or unproblematic) router was detected
             log.info("Problematic router detection was successful...Stopping it!");
-            problematicRouterDetectionFuture.cancel(false);
-            problematicRouterDetectionFuture = null;
+            cancel(false);
         }
     }
-
 }

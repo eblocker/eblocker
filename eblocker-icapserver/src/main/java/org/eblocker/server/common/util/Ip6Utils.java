@@ -78,4 +78,17 @@ public class Ip6Utils {
     public static boolean isLinkLocal(Ip6Address address) {
         return isInNetwork(address, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX);
     }
+
+    /**
+     * Strips enclosing brackets from IPv6 addresses
+     * @param address address with optional brackets e.g. [::1]
+     * @return address with brackets removed, e.g. ::1. There is no guarantee that the returned string is a valid IPv6 address.
+     */
+    public static String stripBrackets(String address) {
+        if (address != null && address.startsWith("[") && address.endsWith("]")) {
+            return address.substring(1, address.length() - 1);
+        } else {
+            return address;
+        }
+    }
 }

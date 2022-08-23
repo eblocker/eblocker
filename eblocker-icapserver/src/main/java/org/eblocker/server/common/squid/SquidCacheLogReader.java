@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.common.util.TailReader;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
@@ -135,14 +136,14 @@ public class SquidCacheLogReader {
 
         String error = matcher.group(7);
 
-        IpAddress ip = IpAddress.parse(matcher.group(8));
+        IpAddress ip = IpAddress.parse(Ip6Utils.stripBrackets(matcher.group(8)));
         Device device = deviceService.getDeviceByIp(ip);
         if (device == null) {
             log.warn("no device known for {}", ip);
             return null;
         }
 
-        String host = parseHost(matcher.group(9));
+        String host = Ip6Utils.stripBrackets(parseHost(matcher.group(9)));
         String sni = parseHost(matcher.group(10));
         String certificate = parseCertificate(matcher.group(11));
 

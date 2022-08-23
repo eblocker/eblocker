@@ -70,4 +70,16 @@ public class Ip6UtilsTest {
         Assert.assertFalse(Ip6Utils.isLinkLocal(Ip6Address.parse("::1")));
         Assert.assertFalse(Ip6Utils.isLinkLocal(Ip6Address.parse("2a02:8106:21:6f03:d9d0:5cb9:8956:be08")));
     }
+
+    @Test
+    public void testStripBrackets() {
+        Assert.assertEquals("::1", Ip6Utils.stripBrackets("[::1]"));
+        Assert.assertEquals("1.1.1.1", Ip6Utils.stripBrackets("1.1.1.1"));
+        Assert.assertEquals("host.name", Ip6Utils.stripBrackets("host.name"));
+        Assert.assertNull(Ip6Utils.stripBrackets(null));
+        Assert.assertEquals("[::1", Ip6Utils.stripBrackets("[::1"));
+        Assert.assertEquals("not an address", Ip6Utils.stripBrackets("[not an address]"));
+        Assert.assertEquals("", Ip6Utils.stripBrackets("[]"));
+        Assert.assertEquals("[", Ip6Utils.stripBrackets("["));
+    }
 }

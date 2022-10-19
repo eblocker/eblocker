@@ -371,7 +371,7 @@ public class EblockerHttpsServer implements Preprocessor {
     }
 
     /**
-     * Binds to the http and https ports and starts the server. This method never returns.
+     * Binds to the http port and starts the server.
      */
     @SubSystemInit
     public void run() throws Throwable {
@@ -1255,9 +1255,9 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.diagnostics.report.status.route");
 
         server
-                .uri("/api/diagnostics/report/download", diagnosticsReportController)
+                .uri("/api/adminconsole/diagnostics/download", diagnosticsReportController)
                 .action("getReport", HttpMethod.GET)
-                .name("public.diagnostics.report.download.route")
+                .name("adminconsole.diagnostics.report.download.route")
                 .noSerialization();
 
         // ** New Adminconsole: System Factory reset

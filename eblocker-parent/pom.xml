@@ -4,8 +4,8 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-top</artifactId>
-        <version>2.4.9</version>
-        <relativePath>../../eblocker-top/</relativePath>
+        <version>2.4.10</version>
+        <relativePath>../../eblocker-top</relativePath>
     </parent>
     <groupId>org.eblocker</groupId>
     <artifactId>eblocker-parent</artifactId>

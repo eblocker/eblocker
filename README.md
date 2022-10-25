@@ -18,6 +18,7 @@ Build projects:
 * eblocker-crypto
 * eblocker-registration-api
 * netty-icap
+* RestExpress
 
 Clone each of the above projects from https://github.com/eblocker.
 
@@ -26,6 +27,7 @@ Clone each of the above projects from https://github.com/eblocker.
     git clone https://github.com/eblocker/eblocker-crypto.git
     git clone https://github.com/eblocker/eblocker-registration-api.git
     git clone https://github.com/eblocker/netty-icap.git
+    git clone https://github.com/eblocker/RestExpress.git
 
 In each project:
 

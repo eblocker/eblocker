@@ -182,7 +182,7 @@ public class IpAddressValidator {
 
         MessageSender() {
             eblockerHardwareAddress = networkInterface.getHardwareAddress();
-            eblockerHardwareAddressHex = DatatypeConverter.printHexBinary(eblockerHardwareAddress);
+            eblockerHardwareAddressHex = DatatypeConverter.printHexBinary(eblockerHardwareAddress).toLowerCase();
             eblockerIp4Address = networkInterface.getFirstIPv4Address();
             eblockerIp6LinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
             sourceLinkLayerAddressOption = Collections.singletonList(new SourceLinkLayerAddressOption(eblockerHardwareAddress));

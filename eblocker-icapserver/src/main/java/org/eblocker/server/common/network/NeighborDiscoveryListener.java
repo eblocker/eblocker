@@ -38,6 +38,7 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class NeighborDiscoveryListener implements Runnable {
     private final PubSubService pubSubService;
     private final RouterAdvertisementCache routerAdvertisementCache;
     private final Ip6AddressDelayedValidator delayedValidator;
+    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
 
     @Inject
     public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
@@ -71,7 +73,8 @@ public class NeighborDiscoveryListener implements Runnable {
                                      NetworkInterfaceWrapper networkInterface,
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache,
-                                     Ip6AddressDelayedValidator delayedValidator) {
+                                     Ip6AddressDelayedValidator delayedValidator,
+                                     DeviceOnlineStatusCache deviceOnlineStatusCache) {
         this.arpResponseTable = arpResponseTable;
         this.clock = clock;
         this.deviceIpUpdater = deviceIpUpdater;
@@ -80,6 +83,7 @@ public class NeighborDiscoveryListener implements Runnable {
         this.pubSubService = pubSubService;
         this.routerAdvertisementCache = routerAdvertisementCache;
         this.delayedValidator = delayedValidator;
+        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
     }
 
     public void run() {
@@ -123,6 +127,7 @@ public class NeighborDiscoveryListener implements Runnable {
             }
 
             deviceIpUpdater.refresh(deviceId, advertisedAddress);
+            deviceOnlineStatusCache.updateOnlineStatus(deviceId);
 
             synchronized (arpResponseTable) {
                 arpResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());

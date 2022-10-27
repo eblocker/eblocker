@@ -38,19 +38,6 @@ public class PageContextStore {
         store = CacheBuilder.newBuilder().maximumSize(size).build();
     }
 
-    public PageContext get(UUID id) {
-        if (id == null) {
-            return null;
-        }
-
-        PageContext pageContext = store.getIfPresent(id.toString());
-
-        // From now on, we know the corresponding page context
-        setLoggingContext(pageContext);
-
-        return pageContext;
-    }
-
     public PageContext get(String id) {
         if (id == null) {
             return null;

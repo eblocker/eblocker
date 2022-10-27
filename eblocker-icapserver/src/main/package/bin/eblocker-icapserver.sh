@@ -37,15 +37,23 @@ SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')
 if [ "$SYSTEM_MEMORY_IN_MB" -gt 1500 ]; then
     MAX_JVM_HEAP_SIZE_IN_MB=768
     MAX_DIRECT_MEMORY_IN_MB=200
+    NUM_ARENAS=8
 else
     MAX_JVM_HEAP_SIZE_IN_MB=384
     MAX_DIRECT_MEMORY_IN_MB=100
+    NUM_ARENAS=4
 fi
+
+MEMORY_SETTINGS="\
+-Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m \
+-XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m \
+-Dio.netty.allocator.numDirectArenas=${NUM_ARENAS} \
+-Dio.netty.allocator.numHeapArenas=${NUM_ARENAS}"
 
 if [ $SELF_CHECK -eq 1 ]; then
     # Run the self-check:
     exec java -cp $BASEDIR/lib/${project.build.finalName}.jar org.eblocker.server.app.SelfCheckApp
 else
     # Run the ICAP server:
-    exec java -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
+    exec java $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
 fi

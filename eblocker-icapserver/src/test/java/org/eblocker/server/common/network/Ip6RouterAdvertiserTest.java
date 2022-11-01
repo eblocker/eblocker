@@ -74,6 +74,20 @@ public class Ip6RouterAdvertiserTest {
     }
 
     @Test
+    public void preferEui64DnsAddress() {
+        Ip6Address linkLocalAddress = Ip6Address.parse("fe80::201:02ff:fe03:0405");
+        Ip6Address globalUnicastAddress = Ip6Address.parse("2000::201:02ff:fe03:0405");
+        Mockito.when(networkInterface.isUp()).thenReturn(true);
+        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(networkInterface.isEui64Address(linkLocalAddress)).thenReturn(true);
+        Mockito.when(networkInterface.isEui64Address(globalUnicastAddress)).thenReturn(true);
+        Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(linkLocalAddress,
+                Ip4Address.parse("10.12.34.5"), globalUnicastAddress));
+        advertiser.advertise();
+        Mockito.verify(pubSubService).publish("ip6:out", "000102030405/fe800000000000010002000300040005/333300000001/ff020000000000000000000000000001/icmp6/134/255/0/0/0/1/120/0/0/1/000102030405/25/120/1/2000000000000000020102fffe030405/5/1500");
+    }
+
+    @Test
     public void testAdvertisementNetworkInterfaceDown() {
         Mockito.when(networkInterface.isUp()).thenReturn(false);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);

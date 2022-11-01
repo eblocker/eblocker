@@ -50,6 +50,7 @@ public class NetworkInterfaceWrapperTest {
         Mockito.when(factory.getNetworkInterfaceByName(INTERFACE_NAME)).thenReturn(networkInterface);
         Mockito.when(factory.getNetworkInterfaceByName(VPN_INTERFACE_NAME)).thenReturn(vpnInterface);
         Mockito.when(networkInterface.getHardwareAddress()).thenReturn(DatatypeConverter.parseHexBinary("012345abcdef"));
+        Mockito.when(networkInterface.getName()).thenReturn(INTERFACE_NAME);
 
         wrapper = new NetworkInterfaceWrapper(factory, INTERFACE_NAME, EMERGENCY_ADDRESS, "get_gateway", "tun33", scriptRunner);
     }
@@ -148,6 +149,16 @@ public class NetworkInterfaceWrapperTest {
 
         Assert.assertEquals(-1, wrapper.getNetworkPrefixLength(IpAddress.parse("192.168.1.7")));
         Assert.assertEquals(-1, wrapper.getNetworkPrefixLength(IpAddress.parse("2003:42::5:6:7:8")));
+    }
+
+    @Test
+    public void testEui64() {
+        wrapper.init();
+        Assert.assertFalse(wrapper.isEui64Address(Ip6Address.parse("2003:42::0123:45ff:feab:cdef"))); // 7th bit was not flipped
+        Assert.assertTrue(wrapper.isEui64Address(Ip6Address.parse("2003:42::0323:45ff:feab:cdef")));
+        Assert.assertTrue(wrapper.isEui64Address(Ip6Address.parse("fe80::0323:45ff:feab:cdef")));
+        Assert.assertFalse(wrapper.isEui64Address(Ip6Address.parse("2003:42::0323:45ff:feab:cdfe")));
+        Assert.assertFalse(wrapper.isEui64Address(Ip6Address.parse("::1")));
     }
 
     private void assignAddresses(NetworkInterface networkInterface, String... addresses) {

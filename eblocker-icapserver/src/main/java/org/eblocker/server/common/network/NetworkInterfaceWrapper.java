@@ -346,6 +346,24 @@ public class NetworkInterfaceWrapper {
         }
     }
 
+    /** Returns true if the given IPv6 address was derived from the hardware address (EUI-64)
+     *
+     * @param address IPv6 address
+     * @return true if the given address was derived from the hardware address
+     */
+    public boolean isEui64Address(Ip6Address address) {
+        if (networkInterface == null) {
+            return false;
+        }
+        byte[] hw = getHardwareAddress();
+        byte[] ad = Arrays.copyOfRange(address.getAddress(), 8, 16);
+        if (ad[3] != (byte)0xff || ad[4] != (byte)0xfe) {
+            return false;
+        }
+        byte flipped = (byte)(hw[0] ^ 0x02);
+        return ad[0] == flipped && ad[1] == hw[1] && ad[2] == hw[2] && ad[5] == hw[3] && ad[6] == hw[4] && ad[7] == hw[5];
+    }
+
     public void addIpAddressChangeListener(IpAddressChangeListener listener) {
         ipAddressChangeListeners.add(listener);
     }

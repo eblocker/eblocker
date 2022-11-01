@@ -37,6 +37,9 @@ public class Ip6RouterAdvertiser {
 
     private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{ 51, 51, 0, 0, 0, 1 };
 
+    public static final Ip6Address GLOBAL_UNICAST_NETWORK = Ip6Address.parse("2000::");
+    public static final int GLOBAL_UNICAST_PREFIX_LENGTH = 3;
+
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
@@ -72,9 +75,19 @@ public class Ip6RouterAdvertiser {
                 Ip6Address.MULTICAST_ALL_NODES_ADDRESS, (short) 255, false, false, false,
                 RouterAdvertisement.RouterPreference.HIGH, 120, 0, 0, Arrays.asList(
                 new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
-                new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
+                new RecursiveDnsServerOption(120, Collections.singletonList(getGlobalUnicastAddress())),
                 new MtuOption(networkInterface.getMtu())));
         pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
+    }
+
+    private Ip6Address getGlobalUnicastAddress() {
+        return networkInterface.getAddresses().stream()
+                .filter(IpAddress::isIpv6)
+                .map(address -> (Ip6Address)address)
+                .filter(address -> Ip6Utils.isInNetwork(address, GLOBAL_UNICAST_NETWORK, GLOBAL_UNICAST_PREFIX_LENGTH))
+                .filter(networkInterface::isEui64Address)
+                .findFirst()
+                .orElse(networkInterface.getIp6LinkLocalAddress());
     }
 
 }

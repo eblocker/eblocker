@@ -68,7 +68,7 @@ public class IpAddressValidatorTest {
                 createDevice("00aabbccddee", Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), false),
                 createDevice("00ff00112233", Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), false),
                 createDevice("008800000001", Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), true),
-                createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10")), true));
+                createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10"), IpAddress.parse("fe80::a:b:c:d")), true));
 
         deviceService = Mockito.mock(DeviceService.class);
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices);

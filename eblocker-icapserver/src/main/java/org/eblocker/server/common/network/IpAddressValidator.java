@@ -139,6 +139,7 @@ public class IpAddressValidator {
             if (deviceIpAddresses.stream().anyMatch(ip -> recentActivity.ipAddresses.contains(ip))) {
                 // Preserve vpn ip addresses for mobile clients
                 deviceIpAddresses.stream()
+                        .filter(IpAddress::isIpv4)
                         .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
                         .forEach(newIpAddresses::add);
             } else {

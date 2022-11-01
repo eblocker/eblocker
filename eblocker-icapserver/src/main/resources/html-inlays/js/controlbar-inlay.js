@@ -96,7 +96,7 @@
             req.onload = function() {
                 var response = JSON.parse(req.response);
                 var number = response['badge'];
-                if (number > blockedAdsTrackers) {
+                if (number != blockedAdsTrackers) {
                     blockedAdsTrackers = number;
                     badge.style.display = 'inline';
                     badge.innerHTML = blockedAdsTrackers;

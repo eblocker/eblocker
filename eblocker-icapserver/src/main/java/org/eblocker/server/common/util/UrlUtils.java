@@ -280,4 +280,22 @@ public class UrlUtils {
             throw new IllegalStateException("java does not support utf-8 ?", e);
         }
     }
+
+    /**
+     * Returns only the origin of a given URL
+     * @param url full URL
+     * @return origin of the URL, given by scheme, hostname and port (if specified)
+     */
+    public static String getOrigin(String url) {
+        if (url == null || url.isEmpty()) {
+            return null;
+        }
+        try {
+            URL u = new URL(url);
+            return u.getProtocol() + "://" + u.getHost() + (u.getPort() != -1 ? ":" + u.getPort() : "") + "/";
+        } catch (MalformedURLException e) {
+            log.warn("Could not get origin of URL", e);
+            return null;
+        }
+    }
 }

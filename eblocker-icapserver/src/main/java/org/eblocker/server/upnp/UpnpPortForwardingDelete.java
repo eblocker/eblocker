@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 public class UpnpPortForwardingDelete extends PortMappingDelete {
     private static final Logger log = LoggerFactory.getLogger(UpnpPortForwardingDelete.class);
     private UpnpPortForwardingResult result;
-    private Service service;
     private UpnpManagementService callingService;
 
     @Inject
@@ -37,7 +36,6 @@ public class UpnpPortForwardingDelete extends PortMappingDelete {
                                     @Assisted UpnpPortForwarding portForwarding, @Assisted UpnpManagementService callingService) {
         super(service, controlPoint, portForwarding);
         result = new UpnpPortForwardingResult(portForwarding);
-        this.service = service;
         this.callingService = callingService;
     }
 

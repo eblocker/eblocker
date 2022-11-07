@@ -100,7 +100,7 @@ public class MobileConnectionCheckService {
     private void openPort() throws UpnpPortForwardingException {
         int externalPort = openVpnServerService.getOpenVpnTempMappedPort();
         List<UpnpPortForwardingResult> openedPorts = upnpService.addPortForwarding(externalPort, internalPort,
-                portForwardingDuration, portForwardingDescription, false);
+                portForwardingDuration, portForwardingDescription);
         Optional<UpnpPortForwardingResult> potentiallyFailedOpening = openedPorts.stream()
                 .filter(res -> !res.isSuccess()).findFirst();
         if (potentiallyFailedOpening.isPresent()) {

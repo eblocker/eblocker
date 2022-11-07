@@ -19,19 +19,30 @@ package org.eblocker.server.http.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import io.netty.buffer.PooledByteBufAllocator;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Singleton
 public class DiagnosticsReportService {
+    public final static String PREFIX = "eblocker-diagnostics-report/";
+    public final static String SYSTEM_LOG_ENTRY = PREFIX + "eblocker-system.log";
+    public final static String EVENTS_LOG_ENTRY = PREFIX + "events.log";
+    public final static String NETTY_POOL_ENTRY = PREFIX + "netty-pool.txt";
 
     private static final Logger log = LoggerFactory.getLogger(DiagnosticsReportService.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
@@ -43,20 +54,27 @@ public class DiagnosticsReportService {
     private final JsonWebTokenHandler tokenHandler;
     private final String reportCreateScript;
     private final ScheduledExecutorService executorService;
+    private final Path systemLog;
+    private final EventService eventService;
 
-    private State state = State.NOT_STARTED;
+    private volatile State state = State.NOT_STARTED;
 
     @Inject
-    public DiagnosticsReportService(@Named("diagnostics.report.file") String diagnosticsReportFilePath,
-                                    @Named("generateDiagnosticsReport.command") String reportCreateScript,
+    public DiagnosticsReportService(@Named("diagnostics.report.file") String diagnosticsReportFile,
+                                    @Named("diagnostics.report.command") String reportCreateScript,
                                     @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                                     ScriptRunner scriptRunner,
-                                    JsonWebTokenHandler tokenHandler) {
-        this.diagnosticsReportFile = Paths.get(diagnosticsReportFilePath);
+                                    JsonWebTokenHandler tokenHandler,
+                                    @Named("tmpDir") String tmpDir,
+                                    @Named("diagnostics.logfile.system") String systemLog,
+                                    EventService eventService) {
+        this.diagnosticsReportFile = Paths.get(tmpDir).resolve(diagnosticsReportFile);
         this.reportCreateScript = reportCreateScript;
         this.scriptRunner = scriptRunner;
         this.tokenHandler = tokenHandler;
         this.executorService = executorService;
+        this.systemLog = Paths.get(systemLog);
+        this.eventService = eventService;
     }
 
     public synchronized void startGeneration(String remoteAddress) throws IOException {
@@ -69,11 +87,11 @@ public class DiagnosticsReportService {
 
         log.info("Creating automated diagnostics report...");
         Files.deleteIfExists(diagnosticsReportFile);
+        Path reportOutputDir = Files.createTempDirectory(null);
         executorService.execute(() -> {
             try {
-                scriptRunner.runScript(reportCreateScript,
-                        tokenHandler.generateSystemToken().getToken(),
-                        remoteAddress);
+                runReportScript(reportOutputDir, remoteAddress);
+                writeZipFile(reportOutputDir);
                 STATUS.info("Created diagnostics report!");
                 state = State.FINISHED;
             } catch (InterruptedException e) {
@@ -82,8 +100,97 @@ public class DiagnosticsReportService {
             } catch (IOException e) {
                 log.error("failed to create report", e);
                 state = State.ERROR;
+            } finally {
+                try {
+                    FileUtils.deleteDirectory(reportOutputDir);
+                } catch (IOException e) {
+                    log.error("Could not clean up diagnostics report directory", e);
+                }
             }
         });
+    }
+
+    public void runReportScript(Path reportOutputDir, String remoteAddress) throws InterruptedException {
+        try {
+            int result = scriptRunner.runScript(reportCreateScript,
+                    reportOutputDir.toString(),
+                    tokenHandler.generateSystemToken().getToken(),
+                    remoteAddress);
+            if (result != 0) {
+                log.warn("Unexpected return code from report script: " + result);
+            }
+        } catch (IOException e) {
+            log.error("failed to run report script", e);
+            // continue, so at least the system log is in the diagnostics report
+        }
+    }
+
+    private void writeZipFile(Path reportOutputDir) throws IOException {
+        try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(diagnosticsReportFile))) {
+            addReportOutput(reportOutputDir, zipOut);
+            addFile(SYSTEM_LOG_ENTRY, systemLog, zipOut);
+            addString(EVENTS_LOG_ENTRY, getEventsLog(), zipOut);
+            addString(NETTY_POOL_ENTRY, PooledByteBufAllocator.DEFAULT.dumpStats(), zipOut);
+            zipOut.finish();
+        }
+    }
+
+    private String getEventsLog() {
+        return eventService.getEvents().stream()
+                .map(event -> event.toString() + "\n")
+                .collect(Collectors.joining());
+    }
+
+    private void addReportOutput(Path reportOutputDir, ZipOutputStream zipOut) throws IOException {
+        // recursively add all files from reportOutputDir
+        Files.walk(reportOutputDir).forEach(path -> {
+            try {
+                addEntry(path, reportOutputDir, zipOut);
+            } catch (IOException e) {
+                log.error("Could not add file '{}' to diagnostics report", path, e);
+            }
+        });
+    }
+
+    private void addEntry(Path path, Path root, ZipOutputStream zipOut) throws IOException {
+        Path rel = root.relativize(path);
+        String entryName = PREFIX + rel.toString();
+        if (Files.isDirectory(path)) {
+            addDirectory(entryName, zipOut);
+        } else {
+            addFile(entryName, path, zipOut);
+        }
+    }
+
+    private void addFile(String entryName, Path path, ZipOutputStream zipOut) throws IOException {
+        ZipEntry entry = new ZipEntry(entryName);
+        zipOut.putNextEntry(entry);
+        try (InputStream logIn = Files.newInputStream(path)) {
+            logIn.transferTo(zipOut);
+        } catch (IOException e) {
+            String msg = "Could not read '" + path + "': " + e.toString();
+            zipOut.write(msg.getBytes(StandardCharsets.UTF_8));
+            log.error(msg);
+        }
+        zipOut.closeEntry();
+    }
+    private void addString(String entryName, String content, ZipOutputStream zipOut) throws IOException {
+        ZipEntry entry = new ZipEntry(entryName);
+        zipOut.putNextEntry(entry);
+        if (content == null) {
+            content = "null";
+        }
+        zipOut.write(content.getBytes(StandardCharsets.UTF_8));
+        zipOut.closeEntry();
+    }
+
+    private void addDirectory(String entryName, ZipOutputStream zipOut) throws IOException {
+        if (!entryName.endsWith("/")) {
+            entryName += "/";
+        }
+        ZipEntry entry = new ZipEntry(entryName);
+        zipOut.putNextEntry(entry);
+        zipOut.closeEntry();
     }
 
     public synchronized State getStatus() {

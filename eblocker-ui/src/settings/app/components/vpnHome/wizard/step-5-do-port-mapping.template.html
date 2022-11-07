@@ -73,7 +73,7 @@
 
                 <!-- Mapping port HELP -->
                 <div flex-gt-sm="15" layout="row" layout-align="center center" layout-gt-sm-align="end center">
-                    <eb-help-inline template="app/components/vpnHome/wizard/help-port-forwarding.template.html"
+                    <eb-help-inline template="app/components/vpnHome/wizard/help-port-forwarding-auto.template.html"
                                     as-dialog="true">
                     </eb-help-inline>
                 </div>
@@ -112,12 +112,23 @@
                 </div>
             </div>
 
-            <div>
-                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.manuallyMappedPortsConfirm">
-                    {{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_DO_PORT_MAPPING.MANUAL.TEXT_CONFIRM' | translate}}
-                </md-checkbox>
-            </div>
 
+            <div class="config-frame md-whiteframe-z1" layout="row" layout-xs="column" layout-sm="column" layout-align="center center">
+                <div flex-gt-sm="85">
+                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary" ng-model="vm.manuallyMappedPortsConfirm" style="margin-bottom: 0;">
+                        {{'ADMINCONSOLE.VPN_HOME_WIZARD.STEP_DO_PORT_MAPPING.MANUAL.TEXT_CONFIRM' | translate}}
+                    </md-checkbox>
+                </div>
+
+                <div hide-gt-sm layout-padding></div>
+
+                <!-- Mapping port HELP -->
+                <div flex-gt-sm="15" layout="row" layout-align="center center" layout-gt-sm-align="end center">
+                    <eb-help-inline template="app/components/vpnHome/wizard/help-port-forwarding-manual.template.html"
+                                    as-dialog="true">
+                    </eb-help-inline>
+                </div>
+            </div>
         </div>
 
         <div hide-xs layout="row" layout-align="end center">

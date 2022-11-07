@@ -73,4 +73,9 @@ public class Event {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "[" + timestamp + "] " + type + " " + eventDetails;
+    }
 }

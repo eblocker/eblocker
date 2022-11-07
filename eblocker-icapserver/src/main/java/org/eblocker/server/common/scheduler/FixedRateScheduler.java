@@ -29,7 +29,7 @@ public class FixedRateScheduler extends AbstractScheduler {
 
     @Override
     public void schedule(ScheduledExecutorService service) {
-        service.scheduleAtFixedRate(command, initialDelay, period, TimeUnit.SECONDS);
+        scheduledFuture = service.scheduleAtFixedRate(command, initialDelay, period, TimeUnit.SECONDS);
     }
 
 }

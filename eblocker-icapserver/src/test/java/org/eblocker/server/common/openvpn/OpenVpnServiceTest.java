@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 
 public class OpenVpnServiceTest {
     private static final String KILL_ALL_INSTANCES_SCRIPT = "KILL_ALL_INSTANCES_SCRIPT";
+    private static final String PROFILES_PATH = "PROFILES_PATH";
     private static final String PASSWORD_MASK = "****";
     private static final int STOPPED_CLIENT_TIMEOUT = 60;
     private static final String KEEP_ALIVE_TARGET = "eblocker.com";
@@ -102,6 +103,7 @@ public class OpenVpnServiceTest {
         Mockito.when(profileFiles.hasParsedConfiguration(2)).thenReturn(false);
         Mockito.when(profileFiles.readParsedConfiguration(0)).thenReturn(new OpenVpnConfiguration());
         Mockito.when(profileFiles.getOptionFile(Mockito.anyInt(), Mockito.anyString())).then(im -> "option." + im.getArgument(1));
+        Mockito.when(profileFiles.getProfilesPath()).thenReturn(PROFILES_PATH);
     }
 
     @Test
@@ -109,7 +111,7 @@ public class OpenVpnServiceTest {
         OpenVpnService service = createService();
         service.init();
 
-        Mockito.verify(scriptRunner).runScript(KILL_ALL_INSTANCES_SCRIPT);
+        Mockito.verify(scriptRunner).runScript(KILL_ALL_INSTANCES_SCRIPT, PROFILES_PATH);
 
         // Assert.assertEquals fails, why?
         Assert.assertTrue(service.getVpnProfiles().containsAll(profilesById.values()) && profilesById.values().containsAll(service.getVpnProfiles()));

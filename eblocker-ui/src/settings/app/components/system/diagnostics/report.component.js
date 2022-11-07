@@ -20,7 +20,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $window, $interval, DiagnosticsService) {
+function Controller(logger, $window, $interval, DiagnosticsService, security) {
     'ngInject';
     'use strict';
 
@@ -38,13 +38,14 @@ function Controller(logger, $window, $interval, DiagnosticsService) {
             var statusPoll = $interval(function() {
                 DiagnosticsService.getReportStatus().then(function success(response) {
                     switch(response.data) {
-                        case 'PENDING':
-                            return;
-                        case 'ERROR':
-                            logger.error('Error while generating report');
-                            break;
-                        case 'FINISHED':
-                            $window.location = DiagnosticsService.downloadPath;
+                    case 'PENDING':
+                        return;
+                    case 'ERROR':
+                        logger.error('Error while generating report');
+                        break;
+                    case 'FINISHED':
+                        $window.location = DiagnosticsService.downloadPath +
+                            '?Authorization=Bearer+' + security.getToken();
                     }
                     $interval.cancel(statusPoll);
                     vm.creatingDiagReport = false;

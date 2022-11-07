@@ -47,7 +47,7 @@ public class DiagnosticsReportControllerTest {
         reportService = Mockito.mock(DiagnosticsReportService.class);
         Mockito.when(reportService.getStatus()).thenReturn(DiagnosticsReportService.State.NOT_STARTED);
 
-        controller = new DiagnosticsReportController(reportService);
+        controller = new DiagnosticsReportController("eblocker-diagnostics-report.zip", reportService);
 
         request = Mockito.mock(Request.class);
         Mockito.when(request.getRemoteAddress()).thenReturn(new InetSocketAddress(IP_ADDRESS, 48123));

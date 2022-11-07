@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 public class UpnpPortForwardingAdd extends PortMappingAdd {
     private static final Logger log = LoggerFactory.getLogger(UpnpPortForwardingAdd.class);
     private UpnpPortForwardingResult result;
-    private Service service;
     private UpnpManagementService callingService;
 
     @Inject
@@ -37,14 +36,13 @@ public class UpnpPortForwardingAdd extends PortMappingAdd {
                                  @Assisted UpnpPortForwarding portForwarding, @Assisted UpnpManagementService callingService) {
         super(service, controlPoint, portForwarding);
         result = new UpnpPortForwardingResult(portForwarding);
-        this.service = service;
         this.callingService = callingService;
     }
 
     @Override
     public void success(ActionInvocation invocation) {
         log.info("Port mapping added: {}", result.getCorrespondingPortForwarding());
-        callingService.addOrUpdateForwardingForService(result.getCorrespondingPortForwarding(), service);
+        callingService.addOrUpdateForwardingForService(result.getCorrespondingPortForwarding());
         result.setSuccess(true);
     }
 

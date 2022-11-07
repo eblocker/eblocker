@@ -61,6 +61,8 @@ export default function SslService(logger, $http, $q, $interval, $location, Data
     }
 
     /**
+     * FIXME: not used anymore?
+     *
      * Here we try to connect via HTTPS on <port> to the eBlocker.
      * On success the browser knows eBlocker's cert and the ICAP server will
      * set the certificate to INSTALLED.

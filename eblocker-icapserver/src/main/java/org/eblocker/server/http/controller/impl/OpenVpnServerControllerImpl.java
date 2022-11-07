@@ -144,7 +144,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         openVpnServerService.setOpenVpnPortForwardingMode(newStatus.getPortForwardingMode());
 
         if (obtainServerStatus() == newStatus.isRunning()) {
-            result.setRunning(true);
+            result.setRunning(newStatus.isRunning()); // no update of server status necessary
         } else {
             if (newStatus.isRunning()) {
                 openVpnServerService.setOpenVpnMappedPort(mappedPort);
@@ -156,7 +156,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             } else {
                 result.setRunning(!openVpnServerService.stopOpenVpnServer());
                 if (!result.isRunning()) {
-                    stopOpenVpnServer();
+                    disableOpenVpnServer();
                 }
             }
             squidConfigController.tellSquidToReloadConfig();
@@ -178,7 +178,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         }
     }
 
-    private void stopOpenVpnServer() {
+    private void disableOpenVpnServer() {
         Collection<Device> devices = deviceService.getDevices(false);
         for (Device device : devices) {
             device.setIsVpnClient(false);

@@ -20,10 +20,10 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
     const PATH = '/api/adminconsole/openvpn';
     const PATH_CONNECTION_TEST = PATH + '/test';
     const PATH_HOSTNAME_TEST = PATH + '/dns';
-    const TWO_MIN_IN_MS = 120000;
+    const STATUS_UPDATE_TIMEOUT = 60000; // one minute in ms
 
     function startStopServer(status) {
-        return $http.post(PATH + '/status', status).
+        return $http.post(PATH + '/status', status, {timeout: STATUS_UPDATE_TIMEOUT}).
         then(standardSuccess, function(response) {
             NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.SERVER_START', response);
             return $q.reject(response);
@@ -31,7 +31,7 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
     }
 
     function setStatus(status) {
-        return $http.post(PATH + '/status', status, {timeout: TWO_MIN_IN_MS}).
+        return $http.post(PATH + '/status', status, {timeout: STATUS_UPDATE_TIMEOUT}).
         then(standardSuccess, function(response) {
             NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.SERVER_POST', response);
             return $q.reject(response);

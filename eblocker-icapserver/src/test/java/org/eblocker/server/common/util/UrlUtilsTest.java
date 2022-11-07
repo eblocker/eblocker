@@ -368,4 +368,17 @@ public class UrlUtilsTest {
         assertTrue(UrlUtils.isSameDomain("facebook.com", "facebook.com"));
         assertFalse(UrlUtils.isSameDomain("bad-facebook.com", "www.facebook.com"));
     }
+
+    @Test
+    public void testGetOrigin() {
+        assertEquals("http://www.example.com/", UrlUtils.getOrigin("http://www.example.com"));
+        assertEquals("https://www.example.com/", UrlUtils.getOrigin("https://www.example.com/"));
+        assertEquals("https://www.example.com/", UrlUtils.getOrigin("https://www.example.com/some/path"));
+        assertEquals("https://www.example.com:8080/", UrlUtils.getOrigin("https://www.example.com:8080/some/path"));
+        assertEquals("https://www.example.com/", UrlUtils.getOrigin("https://user:password@www.example.com/hello?foo=bar"));
+        assertEquals("ftp://example.com/", UrlUtils.getOrigin("ftp://example.com/some/file"));
+        assertNull(UrlUtils.getOrigin("whatever"));
+        assertNull(UrlUtils.getOrigin(null));
+        assertNull(UrlUtils.getOrigin(""));
+    }
 }

@@ -78,7 +78,7 @@ public class UpdateControllerImpl implements UpdateController {
         status.activateAutomaticUpdates(automaticUpdater.isActivated());
         status.setNextAutomaticUpdate(formatDate(automaticUpdater.getNextUpdate()));
         status.setAutomaticUpdatesAllowed(productInfoService.hasFeature(ProductFeature.AUP));
-        systemStatusService.setUpdatingStatus(status);
+        systemStatusService.setUpdatingStatus(status); // FIXME: A getter method sets a status in a service?
         status.setConfig(automaticUpdater.getConfiguration());
         return status;
     }

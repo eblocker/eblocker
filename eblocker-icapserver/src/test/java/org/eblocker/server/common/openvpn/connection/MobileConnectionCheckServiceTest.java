@@ -91,7 +91,7 @@ public class MobileConnectionCheckServiceTest {
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
 
         Mockito.verify(upnpService).addPortForwarding(Mockito.eq(portNum), Mockito.eq(portNum), Mockito.eq(duration),
-                Mockito.eq(portForwardingDescription), Mockito.eq(false));
+                Mockito.eq(portForwardingDescription));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class MobileConnectionCheckServiceTest {
 
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
 
-        Mockito.verify(upnpService, Mockito.never()).addPortForwardings(Mockito.any(), Mockito.eq(false));
+        Mockito.verify(upnpService, Mockito.never()).addPortForwardings(Mockito.any());
     }
 
     @Test

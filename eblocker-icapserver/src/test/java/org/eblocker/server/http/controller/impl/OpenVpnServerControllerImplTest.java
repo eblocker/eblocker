@@ -92,10 +92,9 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void getOpenVpnServerStatus() throws IOException, InterruptedException {
+    public void getOpenVpnServerStatus() {
         Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("eblocker.com");
-        Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
         Mockito.when(openVpnServerService.getOpenVpnServerStatus()).thenReturn(true);
 
         Request request = Mockito.mock(Request.class);
@@ -107,7 +106,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void startOpenVpnServerFirstStartFailed() throws IOException, InterruptedException {
+    public void startOpenVpnServerFirstStartFailed() {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
         Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
@@ -117,7 +116,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void startOpenVpnServerSuccessfully() throws IOException, InterruptedException, UpnpPortForwardingException {
+    public void startOpenVpnServerSuccessfully() throws UpnpPortForwardingException {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
         Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
@@ -136,7 +135,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void startOpenVpnServerAndEnableDns() throws IOException, InterruptedException, UpnpPortForwardingException {
+    public void startOpenVpnServerAndEnableDns() throws UpnpPortForwardingException {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
         Mockito.when(dnsService.setStatus(true)).thenReturn(true);
@@ -149,7 +148,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void stopOpenVpnServer() throws IOException, InterruptedException {
+    public void stopOpenVpnServer() {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(stopServerRequest());
 
@@ -252,7 +251,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void resetOpenVpnServer() throws IOException, InterruptedException {
+    public void resetOpenVpnServer() {
         Request request = Mockito.mock(Request.class);
 
         // Stop and reset server
@@ -266,7 +265,7 @@ public class OpenVpnServerControllerImplTest {
     /*
      *  Server couldn't be stopped, so don't purge
      */
-    public void resetOpenVpnServerFailed() throws IOException, InterruptedException {
+    public void resetOpenVpnServerFailed() {
         Request request = Mockito.mock(Request.class);
 
         assertFalse(controller.resetOpenVpnServerStatus(request, response));

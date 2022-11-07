@@ -101,7 +101,7 @@ public class UpnpManagementServiceTest {
         forwardings.add(forwardingA);
         forwardings.add(forwardingB);
 
-        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings, false);
+        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings);
 
         Assert.assertTrue(results.size() == 2);
         // Check both failed
@@ -162,7 +162,7 @@ public class UpnpManagementServiceTest {
         forwardings.add(forwardingA);
         forwardings.add(forwardingB);
 
-        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings, false);
+        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings);
 
         Assert.assertTrue(results.size() == 2);
         // Check both failed
@@ -242,7 +242,7 @@ public class UpnpManagementServiceTest {
 
         Mockito.when(upnpService.getRegistry()).thenReturn(upnpRegistry);
 
-        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings, false);
+        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings);
 
         // Check the result
         Assert.assertTrue(results.size() == 1);
@@ -315,7 +315,7 @@ public class UpnpManagementServiceTest {
 
         Mockito.when(upnpService.getRegistry()).thenReturn(upnpRegistry);// +1
 
-        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings, false);
+        List<UpnpPortForwardingResult> results = upnpManagementService.addPortForwardings(forwardings);
 
         // Check the result
         Assert.assertTrue(results.size() == 1);
@@ -345,7 +345,7 @@ public class UpnpManagementServiceTest {
         UpnpPortForwardingResult resultANew = new UpnpPortForwardingResult(forwardingANew, true, "a");
         Mockito.when(upnpPortForwardingAddA.getResult()).thenReturn(resultANew);
 
-        List<UpnpPortForwardingResult> resultsNew = upnpManagementService.addPortForwardings(forwardingsNew, false);
+        List<UpnpPortForwardingResult> resultsNew = upnpManagementService.addPortForwardings(forwardingsNew);
         UpnpPortForwardingResult installedForwarding = resultsNew.get(0);
         Assert.assertTrue(installedForwarding.isSuccess());
         Assert.assertEquals(installedForwarding.getCorrespondingPortForwarding().getDescription(), descriptionANew);

@@ -62,7 +62,7 @@ public class OpenVpnServerService {
 
     private int tempPort;
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerService.class);
-    private static final String ERROR_MSG_POTENTIALLY_CONFLICITNG_FORWARDINGS = "ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFLICTING_FORWARDINGS";
+    private static final String ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS = "ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFLICTING_FORWARDINGS";
 
     @Inject
     public OpenVpnServerService(ScriptRunner scriptRunner, DataSource dataSource,
@@ -163,7 +163,7 @@ public class OpenVpnServerService {
         // Enable port forwarding
         if (getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
             int externalPort = dataSource.getOpenVpnMappedPort();
-            openedPorts = upnpService.addPortForwarding(externalPort, port, duration, portForwardingDescription, true);
+            openedPorts = upnpService.addPortForwarding(externalPort, port, duration, portForwardingDescription);
 
             // Check if opening the ports succeeded or if there was a problem
             UpnpPortForwardingResult failedOpening = openedPorts.stream().filter(res -> !res.isSuccess()).findFirst()
@@ -171,7 +171,7 @@ public class OpenVpnServerService {
             if (failedOpening != null) {
                 // Analyse situation - maybe we can give the user a hint
                 if (!upnpService.findExistingForwardingsBlockingRequest(externalPort, port).isEmpty()) {
-                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICITNG_FORWARDINGS);
+                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS);
                 }
                 throw new UpnpPortForwardingException(failedOpening.getErrorMsg());
             }
@@ -245,14 +245,14 @@ public class OpenVpnServerService {
         tempPort = externalPort;
         if (getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
             openedPorts = upnpService.addPortForwarding(externalPort, port, portForwardingTempDuration,
-                    portForwardingDescription, false);
+                    portForwardingDescription);
 
             UpnpPortForwardingResult failedOpening = openedPorts.stream().filter(res -> !res.isSuccess()).findFirst()
                     .orElse(null);
             if (failedOpening != null) {
                 // Analyse situation - maybe we can give the user a hint
                 if (!upnpService.findExistingForwardingsBlockingRequest(externalPort, port).isEmpty()) {
-                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICITNG_FORWARDINGS);
+                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS);
                 }
                 throw new UpnpPortForwardingException(failedOpening.getErrorMsg());
             }
@@ -271,6 +271,10 @@ public class OpenVpnServerService {
         return vpnServerControl("stop");
     }
 
+    /**
+     * Get running status of the OpenVPN server
+     * @return true if the OpenVPN server is running, false otherwise
+     */
     public boolean getOpenVpnServerStatus() {
         return vpnServerControl("status");
     }

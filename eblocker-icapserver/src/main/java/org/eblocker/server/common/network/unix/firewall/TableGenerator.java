@@ -358,9 +358,7 @@ public class TableGenerator {
                     .rule(new Rule(standardInput).sourceIp(ipRangeLinkLocal).accept());
 
             // and to eBlocker Mobile port from all addresses
-            if (mobileVpnServerActive()) {
-                input.rule(new Rule(standardInput).udp().destinationPort(mobileVpnServerPort).accept());
-            }
+            input.rule(new Rule(standardInput).udp().destinationPort(mobileVpnServerPort).accept());
 
             // allow responses to DNS, Squid, etc.
             input.rule(new Rule(standardInput).states(true, Rule.State.ESTABLISHED, Rule.State.RELATED).accept());

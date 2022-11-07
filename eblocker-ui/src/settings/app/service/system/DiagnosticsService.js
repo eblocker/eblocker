@@ -18,7 +18,7 @@ export default function DiagnosticsService(logger, $http, $q) {
     'ngInject';
 
     const PATH_REPORT = '/api/adminconsole/diagnostics/report';
-    const PATH_DOWNLOAD = '/api/diagnostics/report/download';
+    const PATH_DOWNLOAD = '/api/adminconsole/diagnostics/download';
 
     function startReportGeneration() {
         return $http.post(PATH_REPORT, {}).then(function success(response){

@@ -29,7 +29,7 @@ public class FixedDelayScheduler extends AbstractScheduler {
 
     @Override
     public void schedule(ScheduledExecutorService service) {
-        service.scheduleWithFixedDelay(command, initialDelay, delay, TimeUnit.SECONDS);
+        scheduledFuture = service.scheduleWithFixedDelay(command, initialDelay, delay, TimeUnit.SECONDS);
     }
 
 }

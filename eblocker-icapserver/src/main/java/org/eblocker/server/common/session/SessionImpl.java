@@ -22,6 +22,7 @@ import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContexts;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
+import org.eblocker.server.common.util.UrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,12 +160,12 @@ public class SessionImpl implements Session {
 
     @Override
     public PageContext createPageContext(PageContext parentContext, String url) {
-        return pageContexts.add(parentContext, url, ip);
+        return pageContexts.add(parentContext, UrlUtils.getOrigin(url), ip);
     }
 
     @Override
     public PageContext getPageContext(String url) {
-        return pageContexts.get(url);
+        return pageContexts.get(UrlUtils.getOrigin(url));
     }
 
     @Override

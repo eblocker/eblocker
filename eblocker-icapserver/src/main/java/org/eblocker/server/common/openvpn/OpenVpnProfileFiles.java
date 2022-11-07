@@ -62,6 +62,10 @@ public class OpenVpnProfileFiles {
         this.objectMapper = objectMapper;
     }
 
+    public String getProfilesPath() {
+        return profilesPath;
+    }
+
     public String getDirectory(int id) {
         return profilesPath + "/" + id;
     }

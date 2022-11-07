@@ -20,19 +20,13 @@
 # As first argument it expects a valid system token for querying service endpoints.
 #
 
-FILE=/var/log/eblocker/eblocker-status.log
 TGZFILE=eblocker-status.tgz
 SEP="#################################"
-AUTHZ_HEADER='Authorization: Bearer '$1
-CLIENT_IP=$2
+OUT_DIR=$1
+AUTHZ_HEADER='Authorization: Bearer '$2
+CLIENT_IP=$3
 
-if [ -f $FILE ];
-then
-    echo "Writing into file: $FILE"
-else
-    echo "Creating file $FILE and writing result into it"
-    touch $FILE
-fi
+FILE=$OUT_DIR/eblocker-status.log
 
 ### write header
     echo $SEP > $FILE
@@ -57,11 +51,6 @@ fi
     cat /proc/meminfo >> $FILE
     echo $SEP >> $FILE
 
-    #PARTITIONS=$(cat /proc/partitions)
-    #DISKUSAGE=$(cd / && du -s *)
-    #echo "Partitions:" >> $FILE
-    #cat /proc/partitions >> $FILE
-    #echo $SEP >> $FILE
     echo "Partitions and disk usage:" >> $FILE
     echo $SEP >> $FILE
     df -h >> $FILE
@@ -82,7 +71,6 @@ fi
     DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
     GATEWAY=$(redis-cli get gateway)
     DNS_SERVER=$(cat /etc/resolv.conf)
-    DHCP_LEASES=$(cat /var/lib/dhcp/dhcpd.leases)
     TRACEROUTE_EB=$(traceroute my.eblocker.com)
 
     echo "ifconfig eth0:" >> $FILE
@@ -101,15 +89,11 @@ fi
     echo "IPv6 interface addresses: " >> $FILE
     cat /proc/net/if_inet6 >> $FILE
     echo $SEP >> $FILE
-    echo "DHCP leases of isc-dhcp-server for clients:" >> $FILE
-    cat /var/lib/dhcp/dhcpd.leases >> $FILE
-    echo $SEP >> $FILE
-    echo "Network packet info:" >> $FILE
-    netstat -s >> $FILE
-    echo $SEP >> $FILE
     echo "Network configuration:" >> $FILE
     echo $NETWORK_CONFIG >> $FILE
 
+### Network packet info ###
+    netstat -s > $OUT_DIR/network-packet-info.log
 
 ### Updates ###
     echo $SEP >> $FILE
@@ -118,7 +102,6 @@ fi
 
     VERSION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/updates/status)
     REGISTRATION=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/registration)
-
 
     echo "Installed eBlockerOS version: $VERSION" >> $FILE
     echo $SEP >> $FILE
@@ -139,22 +122,12 @@ fi
     echo $ROOT_CA_NOT_VALID_AFTER >> $FILE
 
 ### Devices ###
-    echo $SEP >> $FILE
-    echo "List of devices:" >> $FILE
-
     DEVICES_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/devices)
-
-    echo $DEVICES_JSON >> $FILE
+    echo $DEVICES_JSON > $OUT_DIR/devices.json
 
 ### DNS ###
-    DNSSETTINGSFILERELATIVE=dnssettings.log
-    DNSSETTINGSFILE=/var/log/eblocker/$DNSSETTINGSFILERELATIVE
-    echo "DNS Settings:" > $DNSSETTINGSFILE
-    # DNS Server Config
-    echo "DNS Server Config:" >> $DNSSETTINGSFILE
-    redis-cli get DnsServerConfig >> $DNSSETTINGSFILE
-    echo "eBlocker DNS Server State:" >> $DNSSETTINGSFILE
-    redis-cli get EblockerDnsServerState >> $DNSSETTINGSFILE
+    redis-cli get DnsServerConfig > $OUT_DIR/dns-settings.json
+    redis-cli get EblockerDnsServerState > $OUT_DIR/dns-state.json
 
 ### Anon ###
     echo $SEP >> $FILE
@@ -180,14 +153,8 @@ fi
     echo "Do Not Track setting: $(redis-cli GET dnt_header_enabled)" >> $FILE
 
 ### iptables configuration ###
-    echo $SEP >> $FILE
-    echo "Iptables configuration:" >> $FILE
-    iptables-save >> $FILE
-
-### redis events ###
-    echo $SEP >> $FILE
-    echo "Redis events:" >> $FILE
-    redis-cli lrange events 0 -1 >> $FILE
+    iptables-save > $OUT_DIR/iptables.txt
+    ip6tables-save > $OUT_DIR/ip6tables.txt
 
 ### eblocker-device.properties###
     echo $SEP >> $FILE
@@ -200,20 +167,12 @@ fi
     ls -lR /etc/openvpn/ >> $FILE
 
 ### Schedulers ###
-    echo $SEP >> $FILE
-    echo "Schedulers:" >> $FILE
-
     STATS_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/tasks/stats)
-
-    echo $STATS_JSON >> $FILE
+    echo $STATS_JSON > $OUT_DIR/tasks-stats.json
 
 ### Tasks ###
-    echo $SEP >> $FILE
-    echo "Tasks:" >> $FILE
-
     TASKS_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/tasks/log)
-
-    echo $TASKS_JSON >> $FILE
+    echo $TASKS_JSON > $OUT_DIR/tasks-log.json
 
 ### Squid status ###
     echo $SEP >> $FILE
@@ -226,51 +185,37 @@ fi
     service certvalidator status >> $FILE
 
 ### Include systemd-journal if applicable (the last 10000 lines) ###
-    TMPDIR=$(dirname $(mktemp -u))
     JOURNAL_CATALOG=journal_catalog.log
     if [ -x "$(command -v journalctl)" ]; then
-        journalctl -x | tail -n 10000 > $TMPDIR/$JOURNAL_CATALOG
+        journalctl -x | tail -n 10000 > $OUT_DIR/$JOURNAL_CATALOG
     fi
 ### Include current syslog (last 10000 lines should not exceed 100 kB when compressed)
-    TMPDIR=$(dirname $(mktemp -u))
     LOGFILESYSLOG=syslog.log
-    tail -n 10000 /var/log/syslog > $TMPDIR/$LOGFILESYSLOG
-
-### Compress bugreport and other files ###
-    LOGFILELOCATION=/var/log/eblocker
-    cd $LOGFILELOCATION
+    tail -n 10000 /var/log/syslog > $OUT_DIR/$LOGFILESYSLOG
 
 ### System Monitoring ###
-    SYSSTATINTERMED=sysstat
+    SYSSTATINTERMED=$OUT_DIR/sysstat
     if [ ! -d "$SYSSTATINTERMED" ]; then
         mkdir $SYSSTATINTERMED
     fi
     SYSSTATSRC=/var/log/sysstat
-    cp $SYSSTATSRC/sa?? ./$SYSSTATINTERMED/ -n > /dev/null 2>&1
+    cp $SYSSTATSRC/sa?? $SYSSTATINTERMED/ -n > /dev/null 2>&1
 
     APTGETLOG=/var/log/apt
-    APTGETLOGINTERMED=apt
+    APTGETLOGINTERMED=$OUT_DIR/apt
     if [ ! -d "$APTGETLOGINTERMED" ]; then
         mkdir $APTGETLOGINTERMED
     fi
     cp $APTGETLOG/{term,history}.log* $APTGETLOGINTERMED/ > /dev/null 2>&1
 
-    LOGFILESYSTEM=eblocker-system.log
-    LOGFILEUPDATE=install-eblocker-updates.log
-    LOGFILEBUGREPORT=eblocker-status.log
-    LOGFILEOPENVPN=openvpn.log
-    LOGFILEDNS=eblocker-dns.log
-    LOGFILECERTVALIDATOR=certificate-validator.log
+### Has anybody logged in?
+    last -10 > $OUT_DIR/last.txt
 
-    BUNDLE="$LOGFILESYSTEM $LOGFILEUPDATE $LOGFILEBUGREPORT $DNSSETTINGSFILERELATIVE $SYSSTATINTERMED/sa?? $APTGETLOGINTERMED -C $TMPDIR $JOURNAL_CATALOG -C /opt/eblocker-dns/log $LOGFILEDNS -C $TMPDIR $LOGFILESYSLOG -C /var/log/certvalidator $LOGFILECERTVALIDATOR"
-    if [ -e /var/log/$LOGFILEOPENVPN ]; then
-        BUNDLE="$BUNDLE -C /var/log $LOGFILEOPENVPN"
-    fi
+### Copy some log files to make them readable by user icapd ###
+    cp /var/log/eblocker/install-eblocker-updates.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/openvpn.log $OUT_DIR/ > /dev/null 2>&1
+    cp /opt/eblocker-dns/log/eblocker-dns.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/certvalidator/certificate-validator.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/lib/dhcp/dhcpd.leases $OUT_DIR/ > /dev/null 2>&1
 
-    tar -cvzf $TGZFILE $BUNDLE
-
-### Cleanup temporary files ###
-    rm ./$SYSSTATINTERMED/sa?? > /dev/null 2>&1
-    rm -f $TMPDIR/$LOGFILESYSLOG
-    rm -f $TMPDIR/$JOURNAL_CATALOG
-    rm -f ./$APTGETLOGINTERMED/* > /dev/null 2>&1
+    chown --recursive icapd $OUT_DIR/*

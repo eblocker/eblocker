@@ -53,9 +53,6 @@ public class UpnpManagementService {
     static final ServiceType PPP_SERVICE_TYPE = new UDAServiceType("WANPPPConnection", 1);
 
     private static final String ERROR_NO_DEVICE_FOUND = "No device found";
-    static final String ERROR_DURATION_SHORTER = "Duration of new forwarding is shorter than that of existing forwarding";
-    static final String ERROR_PORT_CHANGED = "Forwarding with different port exists";
-    static final String ERROR_DESTINATION_CHANGED = "Forwarding with different device exists";
 
     static final String RESULT_KEY_PORT_MAPPING_DESCRIPTION = "NewPortMappingDescription";
     static final String RESULT_KEY_PORT_MAPPING_ENABLED = "NewEnabled";
@@ -102,28 +99,20 @@ public class UpnpManagementService {
         ip = networkInterfaceWrapper.getFirstIPv4Address();
     }
 
-    public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, String description,
-                                                            boolean force) {
-        return addPortForwarding(externalPort, internalPort, 0, description, force);
-    }
-
     public List<UpnpPortForwardingResult> addPortForwarding(int externalPort, int internalPort, int duration,
-                                                            String description, boolean force) {
+                                                            String description) {
         String eblockerIp = networkInterfaceWrapper.getFirstIPv4Address().toString();
 
         List<UpnpPortForwarding> portForwardings = new ArrayList<>();
         portForwardings.add(new UpnpPortForwarding(externalPort, internalPort, eblockerIp, duration, description,
-                Protocol.TCP, true));
-        portForwardings.add(new UpnpPortForwarding(externalPort, internalPort, eblockerIp, duration, description,
                 Protocol.UDP, true));
-        return addPortForwardings(portForwardings, force);
+        return addPortForwardings(portForwardings);
     }
 
-    public synchronized List<UpnpPortForwardingResult> addPortForwardings(List<UpnpPortForwarding> portForwardings,
-                                                                          boolean force) {
+    public synchronized List<UpnpPortForwardingResult> addPortForwardings(List<UpnpPortForwarding> portForwardings) {
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (UpnpPortForwarding portForwarding : portForwardings) {
-            results.addAll(addPortForwarding(portForwarding, force));
+            results.addAll(addPortForwarding(portForwarding));
         }
         return results;
     }
@@ -148,8 +137,7 @@ public class UpnpManagementService {
         return gatewayDevices;
     }
 
-    public synchronized List<UpnpPortForwardingResult> addPortForwarding(UpnpPortForwarding portForwarding,
-                                                                         boolean force) {
+    public synchronized List<UpnpPortForwardingResult> addPortForwarding(UpnpPortForwarding portForwarding) {
         Collection<Device> gatewayDevices = getGatewayDevices();
         List<UpnpPortForwardingResult> results = new ArrayList<>();
         for (Device gatewayDevice : gatewayDevices) {
@@ -187,7 +175,7 @@ public class UpnpManagementService {
         return upnpPortForwardingAdd.getResult();
     }
 
-    void addOrUpdateForwardingForService(UpnpPortForwarding forwarding, Service service) {
+    void addOrUpdateForwardingForService(UpnpPortForwarding forwarding) {
         boolean found = false;
         for (UpnpPortForwarding existingForwarding : activePortForwardings) {
             // Only port and protocol needed for identification, other
@@ -298,7 +286,7 @@ public class UpnpManagementService {
             }
         }
         // All forwardings in refresh must be refreshed
-        addPortForwardings(refresh, false);
+        addPortForwardings(refresh);
     }
 
     private synchronized void onIpAddressChange(IpAddress newIp) {
@@ -319,7 +307,7 @@ public class UpnpManagementService {
             }
         }
         removePortForwardings(toBeDeleted);
-        addPortForwardings(changedForwardings, true);
+        addPortForwardings(changedForwardings);
         ip = newIp;
     }
 

@@ -3486,8 +3486,8 @@
                     "LABEL_WAITING" : "Port Zuweisung wird durchgeführt...",
                     "MAP_PORT_LABEL" : "Diesem externen Port zugewiesen",
                     "MOBILE_PORT" : "eBlocker Mobile Port",
-                    "TEXT1" : "Der eBlocker wird jetzt versuchen anhand einer UPnP Technik die Ports zuzuweisen.",
-                    "TEXT2" : "Ob dies möglich ist hängt von Ihrem Router und dessen Konfiguration ab. Die meisten modernen Router unterstützen UPnP. Es könnte aus Sicherheitsgründen deaktiviert sein."
+                    "TEXT1" : "Der eBlocker wird jetzt versuchen, die Ports mit Hilfe von UPnP zuzuweisen.",
+                    "TEXT2" : "Ob dies möglich ist, hängt von Ihrem Router und dessen Konfiguration ab. Die meisten modernen Router unterstützen UPnP. Es könnte aus Sicherheitsgründen deaktiviert sein."
                 },
                 "ERROR" : {
                     "PORT_IN_BETWEEN" : "Der Port muss eine Zahl zwischen {{min}} und {{max}} sein.",
@@ -3958,10 +3958,19 @@
         },
         "PORT_FORWARDING" : {
             "OVERVIEW" : {
-                "LINK_TEXT" : "Was tun bei Fehlern?",
-                "LINK_URL" : "https://eBlocker.org/upnp_de",
-                "P1" : "Port Weiterleitung bedeutet, dass eintreffende Datenpakete von einer Adress-Port-Kombination zu einer anderen geleitet werden, wenn diese Pakete durch einen Gateway kommen.",
-                "TITLE" : "Port Weiterleitung"
+                "LINK_TEXT" : "Weitere Hinweise zur Einrichtung auf dem Router",
+                "AUTO" : {
+                    "LINK_URL" : "https://eBlocker.org/upnp_de",
+                    "P1" : "Damit der eBlocker die Port-Weiterleitung automatisch einrichten kann, muss der Router Universal Plug & Play (UPnP) unterstützen. Auf einigen Routern muss UPnP erst aktiviert werden. Zusätzlich muss auf einigen Routern dem eBlocker-Gerät erlaubt werden, Port-Weiterleitungen selbstständig einzurichten.",
+                    "P2" : "Wenn die automatische Einrichtung nicht möglich ist, wählen Sie die Option \"Ich werde die Ports selbst zuweisen\".",
+                    "TITLE" : "Port-Weiterleitung automatisch einrichten"
+                },
+                "MANUAL" : {
+                    "LINK_URL" : "https://eBlocker.org/port_forwarding_manual_de",
+                    "P1" : "Um die Port-Weiterleitung auf dem Router manuell einzurichten, öffnen Sie die Einstellungen Ihres Routers. Sie finden die Port-Weiterleitungen z.B. unter \"Internet / Freigaben / Portfreigaben\" oder \"Internet / Portfreischaltung\".",
+                    "P2" : "Wählen Sie das eBlocker-Gerät aus und fügen Sie eine Weiterleitung bzw. Freigabe hinzu. Das Protokoll muss UDP sein. Der interne Port am eBlocker ist fest auf 1194 eingestellt. Den externen Port können Sie ändern, falls der Port 1194 schon von einem anderen Gerät belegt sein sollte.",
+                    "TITLE" : "Port-Weiterleitung manuell einrichten"
+                }
             }
         },
         "SYSTEM" : {

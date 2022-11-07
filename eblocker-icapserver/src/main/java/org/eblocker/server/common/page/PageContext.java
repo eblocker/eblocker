@@ -58,10 +58,6 @@ public class PageContext {
         return id.substring(0, 8);
     }
 
-    public PageContext getParentContext() {
-        return parentContext;
-    }
-
     public void setParentContext(PageContext parentContext) {
         this.parentContext = parentContext;
     }

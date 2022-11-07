@@ -3958,10 +3958,19 @@
         },
         "PORT_FORWARDING" : {
             "OVERVIEW" : {
-                "LINK_TEXT" : "What to do in case of errors?",
-                "LINK_URL" : "https://eBlocker.org/upnp_en",
-                "P1" : "Port forwarding redirects incoming requests from one address and port combination to another when the packets are routed through a network's gateway.",
-                "TITLE" : "Port forwarding"
+                "LINK_TEXT" : "Further setup instructions on the router",
+                "AUTO" : {
+                    "LINK_URL" : "https://eBlocker.org/upnp_en",
+                    "P1" : "In order for eBlocker to be able to install the port forwarding automatically the router must support Universal Plug & Play (UPnP). On some routers UPnP must be enabled first. Additionally, on some routers you must allow the eBlocker device explicitly to install port forwardings.",
+                    "P2" : "If eBlocker fails to install the port forwarding automatically, choose option \"I will do the port mapping myself\".",
+                    "TITLE" : "Set up port forwarding automatically"
+                },
+                "MANUAL" : {
+                    "LINK_URL" : "https://eBlocker.org/port_forwarding_manual_en",
+                    "P1" : "To set up the port forwarding on your router manually, open the settings of your router. You will find the port forwarding settings for example at \"Forwarding / Virtual Servers\" or \"Advanced Setup / Port Forwarding\".",
+                    "P2" : "Select the eBlocker device and add a new port forwarding. The protocol must be UDP. The internal port on the eBlocker is set to 1194 and cannot be changed. The external port can be changed, if port 1194 is already used by another device.",
+                    "TITLE" : "Set up port forwarding manually"
+                }
             }
         },
         "SYSTEM" : {

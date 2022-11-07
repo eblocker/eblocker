@@ -151,7 +151,7 @@ public class OpenVpnServerServiceTest {
 
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
         Mockito.verify(upnpService, Mockito.never()).addPortForwarding(Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyInt(), Mockito.anyString(), Mockito.eq(false));
+                Mockito.anyInt(), Mockito.anyString());
         Assert.assertEquals(portNum, service.getOpenVpnTempMappedPort());
     }
 
@@ -166,7 +166,7 @@ public class OpenVpnServerServiceTest {
 
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
         Mockito.verify(upnpService).addPortForwarding(portNum, port, tempDuration,
-                portForwardingDescription, false);
+                portForwardingDescription);
         Assert.assertEquals(portNum, service.getOpenVpnTempMappedPort());
 
     }
@@ -196,7 +196,7 @@ public class OpenVpnServerServiceTest {
         Mockito.when(scriptRunner.runScript("openvpn-server-control", "init")).thenReturn(1);
 
         Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyString(), Mockito.eq(false))).thenReturn(Collections.emptyList());
+                Mockito.anyString())).thenReturn(Collections.emptyList());
 
         service = createOpenVpnServerService();
         service.init();
@@ -221,7 +221,7 @@ public class OpenVpnServerServiceTest {
         Mockito.when(scriptRunner.runScript("openvpn-server-control", "init")).thenReturn(0);
 
         Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyString(), Mockito.eq(false))).thenReturn(Collections.emptyList());
+                Mockito.anyString())).thenReturn(Collections.emptyList());
 
         service = createOpenVpnServerService();
         service.init();
@@ -237,7 +237,7 @@ public class OpenVpnServerServiceTest {
         Mockito.verify(scriptRunner).runScript("openvpn-server-control", "start");
         Mockito.verify(dataSource).setOpenVpnServerFirstRun(false);
         Mockito.verify(dataSource).setOpenVpnServerState(true);
-        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription, true);
+        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription);
     }
 
     @Test
@@ -290,7 +290,7 @@ public class OpenVpnServerServiceTest {
         UpnpPortForwardingResult forwardingResult = new UpnpPortForwardingResult(forwarding, true, null);
         List<UpnpPortForwardingResult> forwardingResults = new ArrayList<>(Arrays.asList(forwardingResult));
         Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyString(), Mockito.eq(true))).thenReturn(forwardingResults);
+                Mockito.anyString())).thenReturn(forwardingResults);
 
         service = createOpenVpnServerService();
         service.init();
@@ -304,7 +304,7 @@ public class OpenVpnServerServiceTest {
         Mockito.verify(scriptRunner).runScript("openvpn-server-control", "start");
         Mockito.verify(dataSource).setOpenVpnServerFirstRun(false);
         Mockito.verify(dataSource).setOpenVpnServerState(true);
-        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription, true);
+        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription);
 
         // Now the service has a list of opened ports
 

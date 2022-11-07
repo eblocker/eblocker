@@ -18,6 +18,7 @@ package org.eblocker.server.http.controller.boot;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -32,10 +33,13 @@ import java.io.IOException;
 public class DiagnosticsReportController {
 
     private final DiagnosticsReportService diagnosticsReportService;
+    private final String diagnosticsReportFile;
 
     @Inject
-    public DiagnosticsReportController(DiagnosticsReportService diagnosticsReportService) {
+    public DiagnosticsReportController(@Named("diagnostics.report.file") String diagnosticsReportFile,
+                                       DiagnosticsReportService diagnosticsReportService) {
         this.diagnosticsReportService = diagnosticsReportService;
+        this.diagnosticsReportFile = diagnosticsReportFile;
     }
 
     @SuppressWarnings("unused")
@@ -48,7 +52,7 @@ public class DiagnosticsReportController {
         switch (diagnosticsReportService.getStatus()) {
             case FINISHED:
                 response.addHeader("Content-Type", "application/octet-stream");
-                response.addHeader("Content-Disposition", "attachment; filename=\"eblocker-diagnostics-report.tgz\"");
+                response.addHeader("Content-Disposition", "attachment; filename=\"" + diagnosticsReportFile + "\"");
                 return Unpooled.wrappedBuffer(diagnosticsReportService.getReport());
             case ERROR:
                 response.setResponseStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);

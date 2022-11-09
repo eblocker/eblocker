@@ -2947,6 +2947,7 @@
                 },
                 "FEEDBACK" : {
                     "BUTTON" : "Share app via email...",
+                    "MISSING_DESCRIPTION" : "Please add a short description of the app above.",
                     "TEXT" : "To continuously improve eBlocker, we need feedback on self-defined trusted apps. This will be integrated in a future eBlockerOS version for the benefit of all users. Please share your app exception list via email, which can be edited before sending.",
                     "TITLE" : "Share exception list with eBlocker"
                 },
@@ -2975,7 +2976,6 @@
                 }
             },
             "LABEL" : "Trusted Apps",
-            "NO_DESCRIPTION" : "No description available",
             "TABLE" : {
                 "COLUMN" : {
                     "DESCRIPTION" : "Description",

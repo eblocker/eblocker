@@ -2947,6 +2947,7 @@
                 },
                 "FEEDBACK" : {
                     "BUTTON" : "App per E-Mail teilen...",
+                    "MISSING_DESCRIPTION" : "Bitte füge oben eine kurze Beschreibung der App hinzu.",
                     "TEXT" : "Um eBlocker stetig zu verbessern, benötigen wir Rückmeldungen zu selbst definierten vertrauenswürdigen Apps. Diese werden dann in einer zukünftigen eBlockerOS Version integriert, damit alle Nutzer davon profitieren. Bitte teile deine App Ausnahmeliste per E-Mail, die vor Versand editiert werden kann.",
                     "TITLE" : "Ausnahmeliste mit eBlocker teilen"
                 },
@@ -2975,7 +2976,6 @@
                 }
             },
             "LABEL" : "Vertrauenswürdige Apps",
-            "NO_DESCRIPTION" : "Keine Beschreibung vorhanden.",
             "TABLE" : {
                 "COLUMN" : {
                     "DESCRIPTION" : "Beschreibung",

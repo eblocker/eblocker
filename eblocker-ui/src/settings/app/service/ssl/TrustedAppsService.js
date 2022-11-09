@@ -55,8 +55,6 @@ export default function TrustedAppsService($http, $q, $translate, DataCachingSer
         const langId = $translate.use();
         if (angular.isDefined(module.description) && angular.isDefined(module.description[langId])) {
             module.localizedDescription = module.description[langId];
-        } else {
-            module.localizedDescription = $translate.instant('ADMINCONSOLE.TRUSTED_APPS.NO_DESCRIPTION');
         }
         return module;
     }
@@ -107,7 +105,7 @@ export default function TrustedAppsService($http, $q, $translate, DataCachingSer
             module.description.en = module.localizedDescription;
         }
         if (!angular.isDefined(module.description.de) || module.description.de === '') {
-            module.description.en = module.localizedDescription;
+            module.description.de = module.localizedDescription;
         }
         return save(module);
     }

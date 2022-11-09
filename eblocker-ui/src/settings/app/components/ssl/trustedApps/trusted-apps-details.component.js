@@ -44,6 +44,7 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
 
     vm.showFeedbackButton = showFeedbackButton;
     vm.openFeedback = openFeedback;
+    vm.isShareable = isShareable;
 
     vm.$onInit = function() {
         if (angular.isObject(vm.stateParams) && angular.isObject(vm.stateParams.param)) {
@@ -272,5 +273,13 @@ function Controller(logger, StateService, STATES, $stateParams, DialogService, T
         return 'mailto:appfeedback@eblocker.org' +
             '?subject=' + encodeURIComponent(subject) +
             '&body=' + encodeURIComponent(body);
+    }
+
+    function hasDescription(trustedApp) {
+        return angular.isDefined(trustedApp.localizedDescription) && trustedApp.localizedDescription !== '';
+    }
+
+    function isShareable(trustedApp) {
+        return hasDescription(trustedApp);
     }
 }

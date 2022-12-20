@@ -131,6 +131,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         result.setHost(openVpnServerService.getOpenVpnServerHost());
 
         openVpnServerService.setOpenVpnExternalAddressType(newStatus.getExternalAddressType());
+        result.setExternalAddressType(newStatus.getExternalAddressType());
 
         Integer mappedPort = newStatus.getMappedPort();
         if (mappedPort != null && newStatus.getPortForwardingMode() == PortForwardingMode.AUTO) {
@@ -140,6 +141,8 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             // TODO check if tempPort is still needed, doesn't seem to make sense anymore. See MobileConnectionCheckTask: but there we actually want to use the mappedPort, not tempPort
             openVpnServerService.setOpenVpnMappedPort(mappedPort);
         }
+        result.setMappedPort(mappedPort);
+        result.setPortForwardingMode(newStatus.getPortForwardingMode());
 
         openVpnServerService.setOpenVpnPortForwardingMode(newStatus.getPortForwardingMode());
 

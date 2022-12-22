@@ -2340,7 +2340,7 @@
                     "MODULE" : "Module",
                     "VERSION" : "Version"
                 },
-                "TITLE" : "Debian Jessie Packages"
+                "TITLE" : "Debian Buster Packages"
             },
             "JAVA" : {
                 "COLUMN" : {

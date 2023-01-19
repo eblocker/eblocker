@@ -454,18 +454,6 @@ public class EblockerModule extends BaseModule {
     }
 
     @Provides
-    @Named("toolbarYoutubeInlayTemplate")
-    public String provideToolbarYoutubeInlayTemplate() {
-        String name = "toolbarYoutubeInlayTemplate";
-        String path = getProperty("resource.toolbarInlayTemplate.youtube.path");
-        String charsetName = getProperty("toolbarInlayTemplate.resource.charset");
-        if (charsetName == null) {
-            charsetName = "UTF-8";
-        }
-        return ResourceHandler.load(new SimpleResource(name, path, Charset.forName(charsetName)));
-    }
-
-    @Provides
     @Named("arpProbeCache")
     @Singleton
     public ConcurrentMap<String, Long> provideArpProbeCache() {

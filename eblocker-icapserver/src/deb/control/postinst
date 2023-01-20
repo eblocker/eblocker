@@ -51,13 +51,13 @@ if [ "$1" = configure ] ; then
     update-rc.d icapserver defaults
 
     # Show newest release message in all sessions (again)
-    redis-cli del MessageContainer:42
+    #redis-cli del MessageContainer:42
 
     # Show newest patch release message in all sessions (again)
-    #redis-cli del MessageContainer:43
+    redis-cli del MessageContainer:43
 
     # Show splash screen in settings (again)
-    redis-cli del showSplashScreen
+    #redis-cli del showSplashScreen
 
     # Install sysstat
     echo "ENABLED=\"true\"" > /etc/default/sysstat

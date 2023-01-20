@@ -2342,7 +2342,7 @@
                     "MODULE" : "Module",
                     "VERSION" : "Version"
                 },
-                "TITLE" : "Debian Jessie Packages"
+                "TITLE" : "Debian Buster Packages"
             },
             "JAVA" : {
                 "COLUMN" : {
@@ -2616,30 +2616,29 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "Learn more about the improvements in our ",
-                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.9",
-                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.9",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.10",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.10",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                 "INTRO" : "With eBlockerOS 2.9 we focused on security maintenance and many improvements in the background.",
+                 "INTRO" : "With eBlockerOS 2.10 we focused on security maintenance and many improvements in the background.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Most important new features:",
-                    "LI_1" : "<strong>Settings backups</strong> now also contain the eBlocker certificate/key pair.",
-                    "LI_2" : "<strong>Auto Trust App</strong> has been improved further and can be enabled under HTTPS now.",
-                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components.",
-                    "LI_4" : "<strong>NOTE for white cubes:</strong> After the update, the RGB LED is currently permanently lit."
+                    "HEAD" : "Most important improvements:",
+                    "LI_1" : "<strong>eBlocker Mobile</strong> improved stability and setup.",
+                    "LI_2" : "<strong>Controlbar</strong> shows number of blocked trackers and ads again.",
+                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-9/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-10/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.9"
+                "TITLE" : "eBlockerOS Release 2.10"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.9",
+            "MENU_LABEL" : "New in eBlockerOS 2.10",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.9"
+                "TITLE" : "eBlockerOS Release 2.10"
             }
         },
         "SSL" : {
@@ -2949,6 +2948,7 @@
                 },
                 "FEEDBACK" : {
                     "BUTTON" : "Share app via email...",
+                    "MISSING_DESCRIPTION" : "Please add a short description of the app above.",
                     "TEXT" : "To continuously improve eBlocker, we need feedback on self-defined trusted apps. This will be integrated in a future eBlockerOS version for the benefit of all users. Please share your app exception list via email, which can be edited before sending.",
                     "TITLE" : "Share exception list with eBlocker"
                 },
@@ -2977,7 +2977,6 @@
                 }
             },
             "LABEL" : "Trusted Apps",
-            "NO_DESCRIPTION" : "No description available",
             "TABLE" : {
                 "COLUMN" : {
                     "DESCRIPTION" : "Description",

@@ -2342,7 +2342,7 @@
                     "MODULE" : "Modul",
                     "VERSION" : "Version"
                 },
-                "TITLE" : "Debian Jessie Pakete"
+                "TITLE" : "Debian Buster Pakete"
             },
             "JAVA" : {
                 "COLUMN" : {
@@ -2616,30 +2616,29 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "Mehr zu den Neuerungen findest Du im ",
-                "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.9",
-                "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.9",
+                "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.10",
+                "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.10",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Mit eBlockerOS 2.9 haben wir uns auf die Sicherheitswartung und viele Verbesserungen im Hintergrund konzentriert.",
+                "INTRO" : "Mit eBlockerOS 2.10 haben wir uns auf die Sicherheitswartung und viele Verbesserungen im Hintergrund konzentriert.",
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Wichtigste Neuerungen:",
-                    "LI_1" : "<strong>Backups der Einstellungen</strong> enthalten jetzt auch das eBlocker Zertifikat/Schlüsselpaar.",
-                    "LI_2" : "<strong>Auto Trust App</strong> wurde weiter verbessert und ist nun direkt unter HTTPS einschaltbar.",
-                    "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten.",
-                    "LI_4" : "<strong>HINWEIS für weiße Würfel:</strong> Nach dem Update leuchtet die RGB-LED derzeit permanent."
+                    "HEAD" : "Wichtigste Verbesserungen:",
+                    "LI_1" : "<strong>eBlocker Mobile</strong> Stabilität und Einrichtung verbessert.",
+                    "LI_2" : "<strong>Controlbar</strong> zeigt wieder die Anzahl der geblockten Tracker und Ads an.",
+                    "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten."
                 },
                 "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-9/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-10/",
                 "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN" : "Dein eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.9"
+                "TITLE" : "eBlockerOS Release 2.10"
             },
-            "MENU_LABEL" : "Neu in eBlockerOS 2.9",
+            "MENU_LABEL" : "Neu in eBlockerOS 2.10",
             "TOOLBAR" : {
-                "TITLE" : "Neues eBlockerOS Release 2.9"
+                "TITLE" : "Neues eBlockerOS Release 2.10"
             }
         },
         "SSL" : {
@@ -2949,6 +2948,7 @@
                 },
                 "FEEDBACK" : {
                     "BUTTON" : "App per E-Mail teilen...",
+                    "MISSING_DESCRIPTION" : "Bitte füge oben eine kurze Beschreibung der App hinzu.",
                     "TEXT" : "Um eBlocker stetig zu verbessern, benötigen wir Rückmeldungen zu selbst definierten vertrauenswürdigen Apps. Diese werden dann in einer zukünftigen eBlockerOS Version integriert, damit alle Nutzer davon profitieren. Bitte teile deine App Ausnahmeliste per E-Mail, die vor Versand editiert werden kann.",
                     "TITLE" : "Ausnahmeliste mit eBlocker teilen"
                 },
@@ -2977,7 +2977,6 @@
                 }
             },
             "LABEL" : "Vertrauenswürdige Apps",
-            "NO_DESCRIPTION" : "Keine Beschreibung vorhanden.",
             "TABLE" : {
                 "COLUMN" : {
                     "DESCRIPTION" : "Beschreibung",

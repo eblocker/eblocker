@@ -20,6 +20,8 @@ package org.eblocker.server.http.controller.impl;
 import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.common.data.openvpn.ExternalAddressType;
+import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
@@ -162,6 +164,28 @@ public class OpenVpnServerControllerImplTest {
         controller.setOpenVpnServerStatus(request, response);
         Mockito.verify(device, Mockito.times(1)).setIsVpnClient(false);
         Mockito.verify(squidConfigController, Mockito.times(1)).tellSquidToReloadConfig();
+    }
+
+    @Test
+    public void startWithEblockerDynDns() {
+        Request request = Mockito.mock(Request.class);
+        VpnServerStatus statusIn = startServerRequest();
+        final String dynDnsHost = "abcdefghijklmnop.home.eblocker.com";
+        final Integer mappedPort = 1195;
+        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        statusIn.setPortForwardingMode(PortForwardingMode.AUTO);
+        statusIn.setMappedPort(mappedPort);
+        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(statusIn);
+        Mockito.when(dynDnsService.getHostname()).thenReturn(dynDnsHost);
+        Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn(dynDnsHost);
+        VpnServerStatus statusOut = controller.setOpenVpnServerStatus(request, response);
+
+        assertEquals(dynDnsHost, statusOut.getHost());
+        assertEquals(ExternalAddressType.EBLOCKER_DYN_DNS, statusOut.getExternalAddressType());
+        assertEquals(PortForwardingMode.AUTO, statusOut.getPortForwardingMode());
+        assertEquals(mappedPort, statusOut.getMappedPort());
+
+        Mockito.verify(openVpnServerService).setOpenVpnServerHost(dynDnsHost);
     }
 
     @Test

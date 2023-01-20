@@ -19,7 +19,7 @@
 require 'net/http'
 
 puts "Downloading oui.txt..."
-uri = URI('http://standards-oui.ieee.org/oui.txt')
+uri = URI('https://standards-oui.ieee.org/oui/oui.txt')
 oui = Net::HTTP.get(uri)
 
 puts "Writing mac-prefixes.txt..."

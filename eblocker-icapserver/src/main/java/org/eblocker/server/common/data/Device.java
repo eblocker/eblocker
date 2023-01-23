@@ -82,6 +82,7 @@ public class Device extends ModelObject {
     private boolean controlBarAutoMode = true;
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
+    private String lastSeen = "";
 
     public Device() {
     }
@@ -469,5 +470,13 @@ public class Device extends ModelObject {
 
     public void setDomainRecordingEnabled(boolean domainRecordingEnabled) {
         this.domainRecordingEnabled = domainRecordingEnabled;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
     }
 }

@@ -59,17 +59,28 @@ public class DeviceOnlineStatusCache {
      *
      * @param device
      */
-    public void setOnlineStatus(Device device) {
-        if (device.isVpnClient()) {
-            device.setOnline(true);
+    /**
+ * Sets the online status on the given device object based on the last seen timestamp from the cache.
+ *
+ * @param device the device to set the online status on
+ */
+public void setOnlineStatus(Device device) {
+    // VPN clients are always online
+    if (device.isVpnClient()) {
+        device.setOnline(true);
+    } else {
+        // Get the last seen timestamp from the cache
+        Instant lastSeen = cache.get(device.getId());
+        if (lastSeen != null) {
+            // Calculate the timestamp when this device should be considered offline
+            Instant offlineSince = lastSeen.plusSeconds(deviceOfflineAfterSeconds);
+            device.setLastSeen(offlineSince.toString());
+            // Check if the device is offline
+            device.setOnline(offlineSince.isAfter(clock.instant()));
         } else {
-            Instant lastSeen = cache.get(device.getId());
-            if (lastSeen != null) {
-                Instant now = clock.instant();
-                device.setOnline(lastSeen.plusSeconds(deviceOfflineAfterSeconds).isAfter(now));
-            } else {
-                device.setOnline(false);
-            }
+            // Device has never been seen, so it's offline
+            device.setOnline(false);
         }
     }
+}
 }

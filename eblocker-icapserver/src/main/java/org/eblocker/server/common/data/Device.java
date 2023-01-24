@@ -82,7 +82,7 @@ public class Device extends ModelObject {
     private boolean controlBarAutoMode = true;
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
-    private String lastSeen = "";
+    private String lastSeen = "null";
 
     public Device() {
     }

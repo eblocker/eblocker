@@ -70,8 +70,8 @@
     </md-icon>
     <md-icon ng-hide="entry.isOnline" class="eb-table-icon-deactivated" md-svg-src="/img/icons/ic_internet_disconnected_black_48px.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}">
         <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}</md-tooltip>
-        <span ng-show="!entry.isOnline">Last seen: {{entry.lastSeen}}</span>
     </md-icon>
+    <span ng-hide="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.LastSeen' | translate}}: {{entry.lastSeen}}</span>
     
 
     <!-- SSL ICON -->

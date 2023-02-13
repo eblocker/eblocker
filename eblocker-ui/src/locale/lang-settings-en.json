@@ -565,7 +565,7 @@
                     "NAME" : "Name",
                     "STATUS" : "State",
                     "USER_ASSIGN" : "Owner",
-                    "VENDOR" : "Vendor"
+                    "ONLINE" : "Online"
                 }
             },
             "TOOLTIP" : {

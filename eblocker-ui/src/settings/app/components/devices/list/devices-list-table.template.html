@@ -70,9 +70,7 @@
     </md-icon>
     <md-icon ng-hide="entry.isOnline" class="eb-table-icon-deactivated" md-svg-src="/img/icons/ic_internet_disconnected_black_48px.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}">
         <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}</md-tooltip>
-    </md-icon>
-    <span ng-hide="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.LastSeen' | translate}}: {{entry.lastSeen}}</span>
-    
+    </md-icon>    
 
     <!-- SSL ICON -->
     <md-icon ng-show="vm.templateCallback.sslEnabled && entry.sslEnabled && (entry.enabled || entry.paused) && !entry.isEblocker && !entry.isGateway" ng-class="{'content-eb-orange': !entry.paused}"  md-svg-src="/img/icons/ic_lock_black.svg" aria-label="Is device paused">
@@ -111,8 +109,7 @@
 
 <!-- VENDOR -->
 <div flex hide-xs>
-    <span ng-show="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor}}</span>
-    <md-tooltip md-delay="300" ng-if="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor | translate}}</md-tooltip>
+    <span ng-hide="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.LastSeen' | translate}}: {{entry.lastSeen}}</span>
 </div>
 
 <!-- ASSIGNED USER -->

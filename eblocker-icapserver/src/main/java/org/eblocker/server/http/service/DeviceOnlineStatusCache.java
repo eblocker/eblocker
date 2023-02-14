@@ -74,7 +74,14 @@ public void setOnlineStatus(Device device) {
         if (lastSeen != null) {
             // Calculate the timestamp when this device should be considered offline
             Instant offlineSince = lastSeen.plusSeconds(deviceOfflineAfterSeconds);
-            device.setLastSeen(offlineSince.toString());
+            //if device is offline for more than 24 hours, calculate the days and put in in lastSeen
+            if (offlineSince.isBefore(clock.instant())) {
+                long days = (clock.instant().toEpochMilli() - offlineSince.toEpochMilli()) / (1000 * 60 * 60 * 24);
+                device.setLastSeen(Long.toString(days, deviceOfflineAfterSeconds));
+            } else {
+                device.setLastSeen("today");
+                device.setLastSeenToday(true);
+            }
             // Check if the device is offline
             device.setOnline(offlineSince.isAfter(clock.instant()));
         } else {

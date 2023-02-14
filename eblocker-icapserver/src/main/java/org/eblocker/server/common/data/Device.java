@@ -83,6 +83,7 @@ public class Device extends ModelObject {
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
     private String lastSeen = "null";
+    private boolean lastSeenToday = false;
 
     public Device() {
     }
@@ -479,4 +480,13 @@ public class Device extends ModelObject {
     public String getLastSeen() {
         return lastSeen;
     }
+
+    public void setLastSeenToday(boolean lastSeenToday) {
+        this.lastSeenToday = lastSeenToday;
+    }
+
+    public boolean isLastSeenToday() {
+        return lastSeenToday;
+    }
+
 }

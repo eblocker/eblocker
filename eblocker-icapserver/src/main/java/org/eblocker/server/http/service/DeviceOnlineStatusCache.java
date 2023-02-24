@@ -78,9 +78,12 @@ public void setOnlineStatus(Device device) {
             if (offlineSince.isBefore(clock.instant())) {
                 long days = (clock.instant().toEpochMilli() - offlineSince.toEpochMilli()) / (1000 * 60 * 60 * 24);
                 device.setLastSeen(Long.toString(days, deviceOfflineAfterSeconds));
+                device.setLastSeenToday(true);
+                device.setLastSeenAllTime(true);
             } else {
                 device.setLastSeen("today");
                 device.setLastSeenToday(true);
+                device.setLastSeenAllTime(true);
             }
             // Check if the device is offline
             device.setOnline(offlineSince.isAfter(clock.instant()));

@@ -18,9 +18,9 @@ package org.eblocker.server.common.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,10 +82,13 @@ public class Device extends ModelObject {
     private boolean controlBarAutoMode = true;
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
-    private String lastSeen = "null";
-    private boolean lastSeenToday = false;
+    private String lastSeen = "-";
+    private HashMap<String, Boolean> deviceLastSeenMap = new HashMap<String, Boolean>();
 
     public Device() {
+        deviceLastSeenMap.put("lastSeen", false);
+        deviceLastSeenMap.put("lastSeenToday", false);
+        deviceLastSeenMap.put("lastSeenAllTime", true);
     }
 
     public enum DisplayIconPosition {
@@ -481,12 +484,25 @@ public class Device extends ModelObject {
         return lastSeen;
     }
 
-    public void setLastSeenToday(boolean lastSeenToday) {
-        this.lastSeenToday = lastSeenToday;
+    public void setLastSeenToday(Boolean lastSeenToday) {
+        this.getLastSeenTodayMap().put("lastSeenToday", lastSeenToday);
+        this.getLastSeenTodayMap().put("lastSeenAllTime", lastSeenToday);
     }
 
-    public boolean isLastSeenToday() {
-        return lastSeenToday;
+    public void setLastSeenAllTime(Boolean lastSeenAllTime) {
+        this.getLastSeenTodayMap().put("lastSeenAllTime", lastSeenAllTime);
+    }
+
+    public HashMap<String, Boolean> getLastSeenTodayMap() {
+        return deviceLastSeenMap;
+    }
+
+    public Boolean getLastSeenToday(){
+        return deviceLastSeenMap.get("lastSeenToday");
+    }
+
+    public Boolean getLastSeenAllTime(){
+        return deviceLastSeenMap.get("lastSeenAllTime");
     }
 
 }

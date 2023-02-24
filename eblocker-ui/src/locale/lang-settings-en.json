@@ -583,6 +583,7 @@
                 "OFFLINE" : "Device is offline",
                 "LastSeen" : "Last seen",
                 "LastSeenDays" : "days ago",
+                "NeverSeen" : "Never seen",
                 "ONLINE" : "Device is online",
                 "REMOVE_BUTTON" : "Gateways and the eBlocker cannot be reset",
                 "SSL_DISABLED" : "HTTPS support is disabled for this device",

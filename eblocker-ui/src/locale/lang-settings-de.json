@@ -583,6 +583,7 @@
                 "OFFLINE" : "Gerät ist offline",
                 "LastSeen" : "Zuletzt gesehen",
                 "LastSeenDays" : "Tage inaktiv",
+                "NeverSeen" : "Gerät nie gesehen",
                 "ONLINE" : "Gerät ist online",
                 "REMOVE_BUTTON" : "Gateways und der eBlocker können nicht zurück gesetzt werden",
                 "SSL_DISABLED" : "HTTPS-Unterstützung ist für dieses Gerät deaktiviert",

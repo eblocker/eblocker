@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -149,6 +150,7 @@ public class DeviceControllerImpl implements DeviceController {
         eblockerDevice.setVendor(DEVICE_EBLOCKER_VENDOR);
         eblockerDevice.setOnline(true);
         eblockerDevice.setIsEblocker(true);
+        eblockerDevice.setLastSeenToday(true);
         result.add(eblockerDevice);
 
         return result;

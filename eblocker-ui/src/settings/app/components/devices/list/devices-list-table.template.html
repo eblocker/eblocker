@@ -109,8 +109,9 @@
 
 <!-- VENDOR -->
 <div flex hide-xs>
-    <span ng-hide="entry.isOnline && !entry.lastSeenToday">{{entry.lastSeen}} : {{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.LastSeenDays' | translate}}</span>
+    <span ng-show="!entry.isOnline && entry.lastSeen != '-'">{{entry.lastSeen}} {{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.LastSeenDays' | translate}}</span>
     <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>
+    <span ng-show="!entry.isOnline && entry.lastSeen == '-'">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NeverSeen' | translate}}</span>
 </div>
 
 <!-- ASSIGNED USER -->

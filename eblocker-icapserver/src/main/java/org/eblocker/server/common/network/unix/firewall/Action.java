@@ -53,6 +53,10 @@ public class Action {
         return new ActionDestinationNat(targetIp, targetPort);
     }
 
+    public static Action redirectTo(int targetPort) {
+        return new ActionRedirect(targetPort);
+    }
+
     public static Action mark(int value) {
         return new ActionMark(value);
     }

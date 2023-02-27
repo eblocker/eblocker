@@ -151,6 +151,11 @@ public class Rule {
         return this;
     }
 
+    public Rule redirectTo(int targetPort) {
+        this.action = Action.redirectTo(targetPort);
+        return this;
+    }
+
     public Rule mark(int value) {
         this.action = Action.mark(value);
         return this;

@@ -45,6 +45,16 @@ public class RuleTest {
     }
 
     @Test
+    public void testLocalRedirect() {
+        Rule rule = new Rule()
+                .input("eth0")
+                .dns()
+                .redirectTo(5300);
+
+        Assert.assertEquals("-i eth0 -p udp -m udp --dport 53 -j REDIRECT --to-ports 5300", rule.toString());
+    }
+
+    @Test
     public void testMark() {
         Rule rule = new Rule()
                 .sourceIp("192.168.0.22")

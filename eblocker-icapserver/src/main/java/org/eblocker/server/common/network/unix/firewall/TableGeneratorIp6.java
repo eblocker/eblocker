@@ -63,7 +63,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         if (dnsEnabled) {
             preRouting
                     // redirect all dns traffic to dns-server
-                    .rule(new Rule(standardInput).dns().redirectTo(ownIpAddress, localDnsPort));
+                    //.rule(new Rule(standardInput).dns().redirectTo(ownIpAddress, localDnsPort)); // connection tracking does not work via link-local address for UDP
+                    .rule(new Rule(standardInput).dns().redirectTo(localDnsPort));
         }
 
         // Redirect port 80 to the proxy:

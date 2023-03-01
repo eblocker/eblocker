@@ -61,13 +61,14 @@ public class TableGeneratorIp4Test {
 
     // Setting for anonymization via OpenVPN
     private final String anonVpnInterface = "tun0";
+    private final String anonVpnEndpointIp = "100.42.23.7";
     private final int anonVpnClientRoute = 1;
 
     private TableGeneratorIp4 generator;
     private IpAddressFilter deviceIpFilter;
     private Set<OpenVpnClientState> anonVpnClients;
 
-    private Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn;
+    private Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn, mangleOutput;
     private Table natTable, filterTable, mangleTable;
 
     @Before
@@ -93,6 +94,7 @@ public class TableGeneratorIp4Test {
         Mockito.when(deviceIpFilter.getMobileVpnDevicesPrivateNetworkAccessIps()).thenReturn(List.of(mobileVpnLocalAccessDevice));
 
         OpenVpnClientState vpnClient = new OpenVpnClientState();
+        vpnClient.setLocalEndpointIp(anonVpnEndpointIp);
         vpnClient.setDevices(Set.of("anonVpnClientDeviceId"));
         vpnClient.setState(OpenVpnClientState.State.ACTIVE);
         vpnClient.setVirtualInterfaceName(anonVpnInterface);
@@ -265,6 +267,11 @@ public class TableGeneratorIp4Test {
 
         // packets from other devices are not marked:
         Assert.assertEquals(Action.returnFromChain(), mangleVpn.tcpPacket(enabledDevice, externalHost, 1234));
+
+        // eblocker-dns binds to the VPN tunnel's endpoint IP for outgoing DNS packets.
+        // If the destination IP (i.e. the DNS server) is not within the tunnel interface's IP range, the packets must also be marked.
+        // Otherwise they do not go into the tunnel but take the default route.
+        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleOutput.udpPacket(anonVpnEndpointIp, externalHost, 53));
     }
 
     @Test
@@ -307,5 +314,7 @@ public class TableGeneratorIp4Test {
         filterForward = new Simulator(filterTable.chain("FORWARD"));
         filterInput = new Simulator(filterTable.chain("INPUT"));
         mangleVpn = new Simulator(mangleTable.chain("vpn-router"));
+        mangleOutput = new Simulator(mangleTable.chain("OUTPUT"));
+        mangleOutput.addSubChain(mangleTable.chain("vpn-router"));
     }
 }

@@ -224,8 +224,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                     throw new EblockerException("Error while trying to create firewall rules for VPN profile (" + client.getId() + ") , no name of virtual interface set!");
                 }
                 Rule outputVirtualInterface = new Rule().output(client.getVirtualInterfaceName());
-                natTable.chain("POSTROUTING").rule(new Rule(outputVirtualInterface).masquerade());
-                natTable.chain("OUTPUT").rule(new Rule(outputVirtualInterface).accept());
+                postRouting.rule(new Rule(outputVirtualInterface).masquerade());
+                output.rule(new Rule(outputVirtualInterface).accept());
             }
         }
         return natTable;
@@ -304,7 +304,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.PENDING_RESTART) {
                 // disable forwarding all traffic to non-local networks to prevent leaking packets while vpn is re-established
-                clientIps.forEach(ip -> filterTable.chain("FORWARD").rule(new Rule(standardInput).sourceIp(ip).drop()));
+                clientIps.forEach(ip -> forward.rule(new Rule(standardInput).sourceIp(ip).drop()));
             }
         }
 
@@ -334,25 +334,30 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         Table mangleTable = new Table("mangle");
 
         //create vpn-routing or decision chain
-        Chain vpnRoutingChain = mangleTable.chain("vpn-router");
+        Chain vpnRouter = mangleTable.chain("vpn-router");
+        Chain output = mangleTable.chain("OUTPUT");
+        Chain preRouting = mangleTable.chain("PREROUTING");
+        Chain postRouting = mangleTable.chain("POSTROUTING");
+        Chain accountIn = mangleTable.chain("ACCOUNT-IN");
+        Chain accountOut = mangleTable.chain("ACCOUNT-OUT");
 
-        final Rule jumpToVpnChain = new Rule().jumpToChain(vpnRoutingChain.getName());
-        mangleTable.chain("OUTPUT").rule(jumpToVpnChain);
-        mangleTable.chain("PREROUTING").rule(jumpToVpnChain);
+        final Rule jumpToVpnChain = new Rule().jumpToChain(vpnRouter.getName());
+        output.rule(jumpToVpnChain);
+        preRouting.rule(jumpToVpnChain);
 
         //do not route packets from the default gateway through any vpn tunnel -> FIXME this part has to be kept up-to-date, when the gateway IP address changes
         if (gatewayIpAddress != null) {
-            vpnRoutingChain.rule(new Rule().sourceIp(gatewayIpAddress).returnFromChain());
+            vpnRouter.rule(new Rule().sourceIp(gatewayIpAddress).returnFromChain());
         }
 
         //do not route packets for the localnet through the VPN tunnels
         final String localnetString = IpUtils.getSubnet(ownIpAddress, networkMask);
-        vpnRoutingChain.rule(new Rule().destinationIp(localnetString).returnFromChain());
+        vpnRouter.rule(new Rule().destinationIp(localnetString).returnFromChain());
 
         List<String> enabledDevicesIps = ipAddressFilter.getEnabledDevicesIps();
 
         // traffic account incoming
-        mangleTable.chain("ACCOUNT-IN")
+        accountIn
                 // exclude private networks
                 .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassA).returnFromChain())
                 .rule(new Rule(standardInput).destinationIp(NetworkUtils.privateClassB).returnFromChain())
@@ -361,29 +366,32 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                 .rule(new Rule(standardInput).destinationIp("224.0.0.0/4").returnFromChain())
                 .rule(new Rule(standardInput).destinationIp("240.0.0.0/4").returnFromChain());
 
-        enabledDevicesIps.forEach(ip -> mangleTable.chain("ACCOUNT-IN")
-                .rule(autoInputForSource(ip).returnFromChain()));
+        enabledDevicesIps.forEach(ip -> accountIn.rule(autoInputForSource(ip).returnFromChain()));
 
         // traffic account outgoing
         Rule notSquid = new Rule(standardOutput).ownerUid(false, squidUid).returnFromChain();
-        mangleTable.chain("ACCOUNT-OUT")
+        accountOut
                 // do not account traffic from local networks (but account traffic from squid as this is seen in this chain as coming from local host)
                 .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassA))
                 .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassB))
                 .rule(new Rule(notSquid).sourceIp(NetworkUtils.privateClassC));
 
-        enabledDevicesIps.forEach(ip -> mangleTable.chain("ACCOUNT-OUT")
-                .rule(new Rule().output(selectInterfaceForSource(ip)).destinationIp(ip).returnFromChain()));
+        enabledDevicesIps.forEach(ip -> accountOut.rule(new Rule().output(selectInterfaceForSource(ip)).destinationIp(ip).returnFromChain()));
 
-        mangleTable.chain("PREROUTING").rule(new Rule().jumpToChain("ACCOUNT-IN"));
-        mangleTable.chain("POSTROUTING").rule(new Rule().jumpToChain("ACCOUNT-OUT"));
+        preRouting.rule(new Rule().jumpToChain(accountIn.getName()));
+        postRouting.rule(new Rule().jumpToChain(accountOut.getName()));
 
         for (OpenVpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 // mark VPN traffic
                 Rule markClientRoute = new Rule().mark(client.getRoute());
-                clientIps.forEach(ip -> mangleTable.chain("vpn-router").rule(new Rule(markClientRoute).sourceIp(ip)));
+                clientIps.forEach(ip -> vpnRouter.rule(new Rule(markClientRoute).sourceIp(ip)));
+
+                // mark locally generated packets (e.g. by eblocker-dns)
+                if (client.getLocalEndpointIp() != null) {
+                    output.rule(new Rule(markClientRoute).sourceIp(client.getLocalEndpointIp()));
+                }
             }
         }
         return mangleTable;

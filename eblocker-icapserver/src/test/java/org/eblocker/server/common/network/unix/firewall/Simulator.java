@@ -18,17 +18,27 @@ package org.eblocker.server.common.network.unix.firewall;
 
 import org.eblocker.server.common.util.IpUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
  * Simulates passing a TCP or UDP packet through a chain.
+ * The chain can contain sub-chains.
  *
  * Note: Not all rule features are implemented, yet.
  */
 public class Simulator {
     private final Chain chain;
     private String input, output;
+    private List<Chain> subChains = new ArrayList();
 
     public Simulator(Chain chain) {
         this.chain = chain;
+    }
+
+    public void addSubChain(Chain subChain) {
+        subChains.add(subChain);
     }
 
     public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort) {
@@ -40,41 +50,54 @@ public class Simulator {
     }
 
     public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return packet(Rule.Protocol.TCP, sourceIp, destinationIp, destinationPort, state);
+        return getAction(new Packet(Rule.Protocol.TCP, sourceIp, destinationIp, destinationPort, state));
     }
 
     public Action udpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return packet(Rule.Protocol.UDP, sourceIp, destinationIp, destinationPort, state);
+        return getAction(new Packet(Rule.Protocol.UDP, sourceIp, destinationIp, destinationPort, state));
     }
 
-    private Action packet(Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return chain.getRules().stream()
-                .filter(rule -> matches(rule, protocol, sourceIp, destinationIp, destinationPort, state))
+    private Action getAction(Packet packet) {
+        return streamOfActionsMatching(chain, packet)
                 .findFirst()
-                .map(Rule::getAction)
                 .orElse(Action.returnFromChain()); // packet passes through
     }
 
-    private boolean matches(Rule rule, Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+    private Stream<Action> includeSubChainActions(Action action, Packet packet) {
+        return subChains.stream()
+                .filter(subChain -> action.equals(Action.jumpToChain(subChain.getName())))
+                .findFirst()
+                .map(subChain -> streamOfActionsMatching(subChain, packet))
+                .orElse(Stream.of(action)); // action was not to jump into another chain, so return the action itself
+    }
+
+    private Stream<Action> streamOfActionsMatching(Chain chain, Packet packet) {
+        return chain.getRules().stream()
+                .filter(rule -> matches(rule, packet))
+                .map(Rule::getAction)
+                .flatMap(action -> includeSubChainActions(action, packet));
+    }
+
+    private boolean matches(Rule rule, Packet packet) {
         if (!matchInterface(rule.getInput(), input)) {
             return false;
         }
         if (!matchInterface(rule.getOutput(), output)) {
             return false;
         }
-        if (rule.getProtocol() != null && rule.getProtocol() != protocol) {
+        if (rule.getProtocol() != null && rule.getProtocol() != packet.protocol) {
             return false;
         }
-        if (!matchIp(rule.getSourceIp(), sourceIp)) {
+        if (!matchIp(rule.getSourceIp(), packet.sourceIp)) {
             return false;
         }
-        if (!matchIp(rule.getDestinationIp(), destinationIp)) {
+        if (!matchIp(rule.getDestinationIp(), packet.destinationIp)) {
             return false;
         }
-        if (!matchPort(rule.getDestinationPort(), destinationPort)) {
+        if (!matchPort(rule.getDestinationPort(), packet.destinationPort)) {
             return false;
         }
-        if (!matchState(rule.getStates(), state)) {
+        if (!matchState(rule.getStates(), packet.state)) {
             return false;
         }
         return true;
@@ -122,5 +145,22 @@ public class Simulator {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    // source port not supported yet
+    private class Packet {
+        Rule.Protocol protocol;
+        String sourceIp;
+        String destinationIp;
+        int destinationPort;
+        Rule.State state;
+
+        private Packet(Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+            this.protocol = protocol;
+            this.sourceIp = sourceIp;
+            this.destinationIp = destinationIp;
+            this.destinationPort = destinationPort;
+            this.state = state;
+        }
     }
 }

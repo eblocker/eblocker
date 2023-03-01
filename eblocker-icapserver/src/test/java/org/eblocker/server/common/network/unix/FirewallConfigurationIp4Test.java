@@ -239,11 +239,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testEnabledVPNProfile() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
@@ -252,11 +248,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWithOneClient() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -268,11 +260,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", (String) null, true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -284,11 +272,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWhileRestart() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.PENDING_RESTART);
-        client.setVirtualInterfaceName("tun0");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.PENDING_RESTART);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -454,5 +438,15 @@ public class FirewallConfigurationIp4Test {
         device.setUseAnonymizationService(useAnonymizationService);
         device.setRouteThroughTor(routeThroughTor);
         return device;
+    }
+
+    private OpenVpnClientState createVpnClient(OpenVpnClientState.State state) {
+        OpenVpnClientState client = new OpenVpnClientState();
+        client.setId(1);
+        client.setState(state);
+        client.setVirtualInterfaceName("tun0");
+        client.setLocalEndpointIp("100.23.42.7");
+        client.setRoute(1);
+        return client;
     }
 }

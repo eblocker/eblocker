@@ -96,7 +96,6 @@ public class Device extends ModelObject {
     private boolean mobilePrivateNetworkAccess;
     private Instant lastSeen;
     private String lastSeenString = "";
-    private String state = "";
 
     public Device() {
     }
@@ -515,8 +514,6 @@ public class Device extends ModelObject {
         // If offline since more than 24 hours, show days only
         else if (lastSeenZoned.isBefore(ZonedDateTime.now().minus(1, ChronoUnit.DAYS))) {
             lastSeenString = DateTimeFormatter.ofPattern("dd.MM").format(lastSeenZoned);
-        } else {
-            state = "ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NeverSeen";
         }
 
     }

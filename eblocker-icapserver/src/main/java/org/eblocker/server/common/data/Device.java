@@ -18,20 +18,28 @@ package org.eblocker.server.common.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents a network device. A device has a unique MAC address and optionally an IP address.
+ * Represents a network device. A device has a unique MAC address and optionally
+ * an IP address.
  */
 public class Device extends ModelObject {
 
     public static final String ID_PREFIX = "device:";
-    private static Pattern pattern = Pattern.compile(ID_PREFIX + "([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})");
+    private static Pattern pattern = Pattern
+            .compile(ID_PREFIX + "([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})");
 
     private List<IpAddress> ipAddresses = Collections.emptyList();
     private boolean enabled = true;
@@ -49,9 +57,10 @@ public class Device extends ModelObject {
     private boolean hasDownloadedRootCA = false;
     private DisplayIconMode iconMode = DisplayIconMode.getDefault();
     private DisplayIconPosition iconPosition = DisplayIconPosition.getDefault();
-    private String name;//optional
+    private String name;// optional
     private String vendor;
-    private boolean isCurrentDevice = false;//just use this boolean temporarily to avoid looping over all devices again (does not have to be saved to redis)
+    private boolean isCurrentDevice = false;// just use this boolean temporarily to avoid looping over all devices again
+                                            // (does not have to be saved to redis)
     private boolean areDeviceMessagesSettingsDefault = true;
     @JsonProperty
     private boolean isOnline = false;
@@ -63,9 +72,12 @@ public class Device extends ModelObject {
 
     private Integer assignedUser;
     private Integer operatingUser;
-    // Setting an invalid default value to ensure that the int value is never undefined.
-    // MUST be replaced with an ID of an existing user, before the device is used anywhere.
-    // Latest the next restart - UserService.init() - will generate and set a valid default system user.
+    // Setting an invalid default value to ensure that the int value is never
+    // undefined.
+    // MUST be replaced with an ID of an existing user, before the device is used
+    // anywhere.
+    // Latest the next restart - UserService.init() - will generate and set a valid
+    // default system user.
     private int defaultSystemUser = -1;
 
     private boolean isVpnClient = false;
@@ -82,13 +94,10 @@ public class Device extends ModelObject {
     private boolean controlBarAutoMode = true;
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
-    private String lastSeen = "-";
-    private HashMap<String, Boolean> deviceLastSeenMap = new HashMap<String, Boolean>();
+    private Instant lastSeen;
+    private String lastSeenString = "";
 
     public Device() {
-        deviceLastSeenMap.put("lastSeen", false);
-        deviceLastSeenMap.put("lastSeenToday", false);
-        deviceLastSeenMap.put("lastSeenAllTime", true);
     }
 
     public enum DisplayIconPosition {
@@ -103,7 +112,9 @@ public class Device extends ModelObject {
     @JsonProperty
     /**
      * Extracts the MAC address from the device ID.
-     * @return MAC address (in the range from 00:00:00:00:00:00 up to ff:ff:ff:ff:ff:ff)
+     * 
+     * @return MAC address (in the range from 00:00:00:00:00:00 up to
+     *         ff:ff:ff:ff:ff:ff)
      */
     public String getHardwareAddress() {
         return getHardwareAddress(true);
@@ -116,9 +127,11 @@ public class Device extends ModelObject {
         Matcher matcher = pattern.matcher(this.getId());
         if (matcher.matches()) {
             if (colonSeparated) {
-                return String.format("%s:%s:%s:%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
+                return String.format("%s:%s:%s:%s:%s:%s", matcher.group(1), matcher.group(2), matcher.group(3),
+                        matcher.group(4), matcher.group(5), matcher.group(6));
             } else {
-                return String.format("%s%s%s%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
+                return String.format("%s%s%s%s%s%s", matcher.group(1), matcher.group(2), matcher.group(3),
+                        matcher.group(4), matcher.group(5), matcher.group(6));
             }
         } else {
             return null;
@@ -476,33 +489,37 @@ public class Device extends ModelObject {
         this.domainRecordingEnabled = domainRecordingEnabled;
     }
 
-    public void setLastSeen(String lastSeen) {
+    public void setLastSeen(Instant lastSeen) {
         this.lastSeen = lastSeen;
     }
 
-    public String getLastSeen() {
+    public Instant getLastSeen() {
         return lastSeen;
     }
 
-    public void setLastSeenToday(Boolean lastSeenToday) {
-        this.getLastSeenTodayMap().put("lastSeenToday", lastSeenToday);
-        this.getLastSeenTodayMap().put("lastSeenAllTime", lastSeenToday);
+    public void getOfflineSinceString() {
+        if (lastSeen == null) {
+            lastSeenString = "";
+            return;
+        }
+        ZonedDateTime lastSeenZoned = lastSeen.atZone(ZoneId.systemDefault());
+        // If offline since today, show time only
+        if (lastSeenZoned.toLocalDate().isEqual(LocalDate.now())) {
+            lastSeenString = DateTimeFormatter.ofPattern("HH:mm").format(lastSeenZoned);
+        }
+        // If offline for more than 14 days, show date only
+        else if (lastSeenZoned.isBefore(ZonedDateTime.now().minus(14, ChronoUnit.DAYS))) {
+            lastSeenString = DateTimeFormatter.ofPattern("dd.MM.uuuu").format(lastSeenZoned);
+        }
+        // If offline since more than 24 hours, show days only
+        else if (lastSeenZoned.isBefore(ZonedDateTime.now().minus(1, ChronoUnit.DAYS))) {
+            lastSeenString = DateTimeFormatter.ofPattern("dd.MM").format(lastSeenZoned);
+        }
+
     }
 
-    public void setLastSeenAllTime(Boolean lastSeenAllTime) {
-        this.getLastSeenTodayMap().put("lastSeenAllTime", lastSeenAllTime);
-    }
-
-    public HashMap<String, Boolean> getLastSeenTodayMap() {
-        return deviceLastSeenMap;
-    }
-
-    public Boolean getLastSeenToday(){
-        return deviceLastSeenMap.get("lastSeenToday");
-    }
-
-    public Boolean getLastSeenAllTime(){
-        return deviceLastSeenMap.get("lastSeenAllTime");
+    public String getLastSeenString() {
+        return lastSeenString;
     }
 
 }

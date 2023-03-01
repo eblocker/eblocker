@@ -24,11 +24,19 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.any;
 
 public class DeviceFactoryTest {
@@ -103,4 +111,38 @@ public class DeviceFactoryTest {
         String expectedName = "Dell Inc. (No. 3)";
         Assert.assertEquals(expectedName, nameForNewDevice);
     }
+
+    @Test
+    public void testGetOfflineSinceString() {
+        Device device = new Device();
+
+        // Test null case
+        device.setLastSeen(null);
+        device.getOfflineSinceString();
+        assertEquals("", device.getLastSeenString());
+
+        // Test time-only case
+        Instant nowInstant = Instant.now();
+        ZonedDateTime lastSeenTimeOnly = nowInstant.minusSeconds(30).atZone(ZoneId.systemDefault());
+        device.setLastSeen(lastSeenTimeOnly.toInstant());
+        device.getOfflineSinceString();
+        String expectedTimeString = DateTimeFormatter.ofPattern("HH:mm").format(lastSeenTimeOnly);
+        assertEquals(expectedTimeString, device.getLastSeenString());
+
+        // Test day-only case
+        ZonedDateTime lastSeenDayOnly = nowInstant.minus(2, ChronoUnit.DAYS).atZone(ZoneId.systemDefault());
+        device.setLastSeen(lastSeenDayOnly.toInstant());
+        device.getOfflineSinceString();
+        String expectedDayString = DateTimeFormatter.ofPattern("dd.MM").format(lastSeenDayOnly);
+        assertEquals(expectedDayString, device.getLastSeenString());
+
+        // Test date-only case
+        ZonedDateTime lastSeenDateOnly = nowInstant.minus(15, ChronoUnit.DAYS).atZone(ZoneId.systemDefault());
+        device.setLastSeen(lastSeenDateOnly.toInstant());
+        device.getOfflineSinceString();
+        String expectedDateString = DateTimeFormatter.ofPattern("dd.MM.uuuu").format(lastSeenDateOnly);
+        assertEquals(expectedDateString, device.getLastSeenString());
+
+    }
+
 }

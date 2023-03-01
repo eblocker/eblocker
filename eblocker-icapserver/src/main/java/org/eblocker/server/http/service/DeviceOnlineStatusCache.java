@@ -60,37 +60,28 @@ public class DeviceOnlineStatusCache {
      * @param device
      */
     /**
- * Sets the online status on the given device object based on the last seen timestamp from the cache.
- *
- * @param device the device to set the online status on
- */
-public void setOnlineStatus(Device device) {
-    // VPN clients are always online
-    if (device.isVpnClient()) {
-        device.setOnline(true);
-    } else {
-        // Get the last seen timestamp from the cache
-        Instant lastSeen = cache.get(device.getId());
-        if (lastSeen != null) {
-            // Calculate the timestamp when this device should be considered offline
-            Instant offlineSince = lastSeen.plusSeconds(deviceOfflineAfterSeconds);
-            //if device is offline for more than 24 hours, calculate the days and put in in lastSeen
-            if (offlineSince.isBefore(clock.instant())) {
-                long days = (clock.instant().toEpochMilli() - offlineSince.toEpochMilli()) / (1000 * 60 * 60 * 24);
-                device.setLastSeen(Long.toString(days, deviceOfflineAfterSeconds));
-                device.setLastSeenToday(true);
-                device.setLastSeenAllTime(true);
-            } else {
-                device.setLastSeen("today");
-                device.setLastSeenToday(true);
-                device.setLastSeenAllTime(true);
-            }
-            // Check if the device is offline
-            device.setOnline(offlineSince.isAfter(clock.instant()));
+     * Sets the online status on the given device object based on the last seen
+     * timestamp from the cache.
+     *
+     * @param device the device to set the online status on
+     */
+    public void setOnlineStatus(Device device) {
+        // VPN clients are always online
+        if (device.isVpnClient()) {
+            device.setOnline(true);
         } else {
-            // Device has never been seen, so it's offline
-            device.setOnline(false);
+            // Get the last seen timestamp from the cache
+            Instant lastSeen = cache.get(device.getId());
+            if (lastSeen != null) {
+                Instant offlineSince = lastSeen.plusSeconds(deviceOfflineAfterSeconds);
+                device.setOnline(offlineSince.isAfter(clock.instant()));
+                device.setLastSeen(lastSeen);
+                device.getOfflineSinceString();
+            } else {
+                device.setOnline(false);
+                device.setLastSeen(clock.instant());
+            }
         }
     }
-}
+
 }

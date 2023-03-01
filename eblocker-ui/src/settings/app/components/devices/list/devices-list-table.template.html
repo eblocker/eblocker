@@ -109,7 +109,8 @@
 
 <!-- Last Seen/Online Status -->
 <div flex hide-xs>
-    <span ng-show="!entry.isOnline">{{entry.lastSeenString }} {{entry.state | translate}}</span>
+    <span ng-show="!entry.isOnline && entry.lastSeenString != ''">{{entry.lastSeenString }}</span>
+    <span ng-hide="entry.isOnline && entry.lastSeenString == ''">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NeverSeen' | translate}}</span>
     <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>
     <!--
     <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>

@@ -29,7 +29,7 @@
         "express": "4.17.1",
         "gulp-empty": "0.1.2",
         "jquery": "3.6.0",
-        "jquery-ui": "1.13.0",
+        "jquery-ui": "1.13.2",
         "jquery-ui-touch-punch": "0.2.3",
         "moment": "2.29.1",
         "morgan": "1.10.0",

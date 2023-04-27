@@ -176,6 +176,11 @@ public class Rule {
         return this;
     }
 
+    public Rule rejectWithTcpReset() {
+        this.action = Action.rejectWithTcpReset();
+        return this;
+    }
+
     public Rule returnFromChain() {
         this.action = Action.returnFromChain();
         return this;
@@ -284,6 +289,10 @@ public class Rule {
         ensureSpace(result);
         result.append(action.toString());
 
+        if (!action.protocolAllowed(protocol)) {
+            throw new IllegalArgumentException("Action '" + action + "' can not be used with protocol '" + protocol + "'");
+        }
+
         if (comment != null) {
             result.append(" -m comment --comment ");
             result.append('"');
@@ -303,22 +312,6 @@ public class Rule {
     private void ensureSpace(StringBuilder sb) {
         if (sb.length() != 0) {
             sb.append(" ");
-        }
-    }
-
-    public enum Protocol {
-        TCP("tcp"),
-        UDP("udp"),
-        ICMPv6("icmpv6");
-
-        private final String label;
-
-        Protocol(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
         }
     }
 

@@ -18,13 +18,18 @@ package org.eblocker.server.common.network.unix.firewall;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.util.Ip6Utils;
 
 import java.util.List;
 import java.util.Set;
 
 public class TableGeneratorIp6 extends TableGeneratorBase {
+    final static Ip6Address publicNetwork = Ip6Address.parse("2000::");
+    final static int publicNetworkPrefixLength = 3;
+
     @Inject
     public TableGeneratorIp6(@Named("network.interface.name") String standardInterface,
                              @Named("network.vpn.interface.name") String mobileVpnInterface,
@@ -83,8 +88,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                     throw new EblockerException("Error while trying to create firewall rules for VPN profile (" + client.getId() + ") , no name of virtual interface set!");
                 }
                 Rule outputVirtualInterface = new Rule().output(client.getVirtualInterfaceName());
-                natTable.chain("POSTROUTING").rule(new Rule(outputVirtualInterface).masquerade());
-                natTable.chain("OUTPUT").rule(new Rule(outputVirtualInterface).accept());
+                postRouting.rule(new Rule(outputVirtualInterface).masquerade());
+                output.rule(new Rule(outputVirtualInterface).accept());
             }
         }
 
@@ -96,6 +101,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Table filterTable = new Table("filter");
 
         Chain forward = filterTable.chain("FORWARD").accept();
+        Chain input = filterTable.chain("INPUT").accept();
         Chain output = filterTable.chain("OUTPUT").accept();
         output.rule(new Rule().icmpv6().icmpType(Rule.Icmp6Type.REDIRECT).drop());
 
@@ -103,7 +109,35 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         ipAddressFilter.getSslEnabledDevicesIps().forEach(ip ->
                 forward.rule(new Rule().sourceIp(ip).http3().reject()));
 
+        // block IPv6 for VPN provider that do not support it
+        for (OpenVpnClientState client : anonVpnClients) {
+            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+                List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
+                if (client.getGatewayIp6() == null) {
+                    clientIps.forEach(ip -> blockFromPublicIp(ip, input, forward));
+                }
+            }
+        }
+
+        // block IPv6 for clients using Tor
+        ipAddressFilter.getTorDevicesIps().forEach(ip -> blockFromPublicIp(ip, input, forward));
+
         return filterTable;
+    }
+
+    private boolean isPublicIp(String ip) {
+        return Ip6Utils.isInNetwork(Ip6Address.parse(ip), publicNetwork, publicNetworkPrefixLength);
+    }
+
+    private void blockFromPublicIp(String ip, Chain... chains) {
+        if (isPublicIp(ip)) {
+            Rule blockFromIpTcp = new Rule().sourceIp(ip).tcp().rejectWithTcpReset();
+            Rule blockFromIpUdp = new Rule().sourceIp(ip).udp().reject();
+            for (Chain chain : chains) {
+                chain.rule(blockFromIpTcp);
+                chain.rule(blockFromIpUdp);
+            }
+        }
     }
 
     @Override
@@ -118,11 +152,11 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         mangleTable.chain("PREROUTING").rule(jumpToVpnChain);
 
         for (OpenVpnClientState client : anonVpnClients) {
-            List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 // mark VPN traffic
+                List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
                 Rule markClientRoute = new Rule().mark(client.getRoute());
-                clientIps.forEach(ip -> mangleTable.chain("vpn-router").rule(new Rule(markClientRoute).sourceIp(ip)));
+                clientIps.forEach(ip -> vpnRoutingChain.rule(new Rule(markClientRoute).sourceIp(ip)));
             }
         }
         return mangleTable;

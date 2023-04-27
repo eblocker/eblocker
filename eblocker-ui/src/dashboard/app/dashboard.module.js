@@ -171,6 +171,7 @@ import DomainRecorderService from './service/devices/domainRecorder.service';
 import DataCachingService from '../../shared/services/caching/DataCachingService';
 import NumberUtilsService from '../../shared/services/utils/number-utils.service';
 import DomainUtilsService from '../../shared/services/utils/domain-utils.service';
+import IpUtilsService from '../../shared/services/utils/ip-utils.service';
 import SystemService from '../../shared/services/system/SystemService';
 import RedirectService from '../../shared/services/redirect/RedirectService';
 import FilterModeService from '../../shared/services/device/FilterModeService';
@@ -293,6 +294,7 @@ angular.module('eblocker.dashboard', [
     .factory('ArrayUtilsService', ArrayUtilsService)
     .factory('NumberUtilsService', NumberUtilsService)
     .factory('DomainUtilsService', DomainUtilsService)
+    .factory('IpUtilsService', IpUtilsService)
     .factory('RedirectService', RedirectService)
     .factory('FilterModeService', FilterModeService)
     .factory('CardService', CardService)

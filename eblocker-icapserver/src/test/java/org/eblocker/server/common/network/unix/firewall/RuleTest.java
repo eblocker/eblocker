@@ -99,6 +99,18 @@ public class RuleTest {
     }
 
     @Test
+    public void testRejectWithReset() {
+        Rule rule = new Rule().tcp().sourceIp("2000::1234").rejectWithTcpReset();
+        Assert.assertEquals("-s 2000::1234 -p tcp -j REJECT --reject-with tcp-reset", rule.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRejectWithResetIllegalProtocol() {
+        Rule rule = new Rule().udp().sourceIp("2000:1234").rejectWithTcpReset();
+        rule.toString();
+    }
+
+    @Test
     public void testShortcuts() {
         Assert.assertEquals("-p tcp -m tcp --dport 80 -j DROP", new Rule().http().drop().toString());
         Assert.assertEquals("-p tcp -m tcp --dport 443 -j DROP", new Rule().https().drop().toString());

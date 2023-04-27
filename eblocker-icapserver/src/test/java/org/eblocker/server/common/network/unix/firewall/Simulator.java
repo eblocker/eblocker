@@ -50,11 +50,11 @@ public class Simulator {
     }
 
     public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return getAction(new Packet(Rule.Protocol.TCP, sourceIp, destinationIp, destinationPort, state));
+        return getAction(new Packet(Protocol.TCP, sourceIp, destinationIp, destinationPort, state));
     }
 
     public Action udpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return getAction(new Packet(Rule.Protocol.UDP, sourceIp, destinationIp, destinationPort, state));
+        return getAction(new Packet(Protocol.UDP, sourceIp, destinationIp, destinationPort, state));
     }
 
     private Action getAction(Packet packet) {
@@ -149,13 +149,13 @@ public class Simulator {
 
     // source port not supported yet
     private class Packet {
-        Rule.Protocol protocol;
+        Protocol protocol;
         String sourceIp;
         String destinationIp;
         int destinationPort;
         Rule.State state;
 
-        private Packet(Rule.Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+        private Packet(Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
             this.protocol = protocol;
             this.sourceIp = sourceIp;
             this.destinationIp = destinationIp;

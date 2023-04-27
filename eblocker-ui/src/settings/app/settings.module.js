@@ -295,6 +295,7 @@ import UpnpService from './service/upnp/UpnpService';
 // ** Shared Services
 import NotificationService from '../../shared/services/notification/NotificationService';
 import ArrayUtilsService from '../../shared/services/utils/array-utils.service';
+import IpUtilsService from '../../shared/services/utils/ip-utils.service';
 import AccessContingentService from '../../shared/services/parentalControl/AccessContingentService';
 import DataCachingService from '../../shared/services/caching/DataCachingService';
 import LanguageService from '../../shared/services/language/language.service.js';
@@ -538,6 +539,7 @@ angular.module('eblocker.adminconsole', [
     .factory('UpdateService', UpdateService)
     .factory('PasswordService', PasswordService)
     .factory('ArrayUtilsService', ArrayUtilsService)
+    .factory('IpUtilsService', IpUtilsService)
     .factory('FeatureToggleService', FeatureToggleService)
     .factory('SystemService', SystemService)
     .factory('RedirectService', RedirectService)

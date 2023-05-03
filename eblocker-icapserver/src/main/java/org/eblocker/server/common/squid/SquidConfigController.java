@@ -39,6 +39,7 @@ import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAclFactory;
 import org.eblocker.server.common.squid.acl.SquidAcl;
 import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.util.Ip6Utils;
@@ -77,7 +78,7 @@ import java.util.stream.Stream;
  * a reload is neccessary.
  */
 @Singleton
-@SubSystemService(value = SubSystem.HTTPS_SERVER)
+@SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 150)
 public class SquidConfigController {
     private static final Logger log = LoggerFactory.getLogger(SquidConfigController.class);
 
@@ -234,8 +235,6 @@ public class SquidConfigController {
         // register callback to trigger reload on name server changes
         networkServices.addListener(l -> tellSquidToReloadConfig());
 
-        prefixMonitor.addPrefixChangeListener(this::updateSquidConfig);
-
         // register callback to trigger on device changes
         deviceService.addListener(new DeviceChangeListener() {
             @Override
@@ -283,7 +282,11 @@ public class SquidConfigController {
         });
     }
 
-    //SQUID -----------------------------------------------------------------
+    @SubSystemInit
+    public void init() {
+        // this requires the SslService to be initialized:
+        prefixMonitor.addPrefixChangeListener(this::updateSquidConfig);
+    }
 
     /**
      * Tell squid that its configuration has been updated, so please reconfigure

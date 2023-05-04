@@ -471,7 +471,7 @@
                     "LABEL_DEVICE_UPDATING" : "Updating device ...",
                     "LABEL_DISABLED_EBLOCKER" : "eBlocker disabled for this device",
                     "LABEL_ENABLED_EBLOCKER" : "eBlocker enabled for this device",
-                    "LABEL_IP" : "IP address",
+                    "LABEL_IP" : "IP addresses",
                     "LABEL_IP_ADDRESS_FIXED" : "Always assign the same IP address to this device",
                     "LABEL_IP_ADDRESS_NOT_FIXED" : "Assign dynamic IP address to this device",
                     "LABEL_IS_EBLOCKER" : "Device is eBlocker",

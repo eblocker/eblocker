@@ -114,9 +114,9 @@ public class LocalDnsIsNotGatewayMessageProviderTest {
     private void setupMocks(boolean dnsEnabled, boolean automatic, boolean dhcp, boolean localDnsServers) {
         Mockito.when(dnsServer.isEnabled()).thenReturn(dnsEnabled);
         if (localDnsServers) {
-            Mockito.when(dnsServer.getDhcpNameServers()).thenReturn(Arrays.asList("10.10.10.101", "192.168.3.20"));
+            Mockito.when(dnsServer.getDhcpNameServers()).thenReturn(Arrays.asList("10.10.10.101", "192.168.3.20", "fd00::fb"));
         } else {
-            Mockito.when(dnsServer.getDhcpNameServers()).thenReturn(Arrays.asList("10.10.10.10", "192.168.3.20"));
+            Mockito.when(dnsServer.getDhcpNameServers()).thenReturn(Arrays.asList("10.10.10.10", "192.168.3.20", "fd00::fb"));
         }
 
         Mockito.when(networkServices.getCurrentNetworkConfiguration()).thenReturn(createNetworkConfiguration(automatic, dhcp, "10.10.10.10", "10.10.10.100", "255.255.255.0"));

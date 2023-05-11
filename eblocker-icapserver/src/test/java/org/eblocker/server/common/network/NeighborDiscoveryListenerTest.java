@@ -25,6 +25,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.icmpv6.MtuOption;
 import org.eblocker.server.common.network.icmpv6.PrefixOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
@@ -78,7 +79,8 @@ public class NeighborDiscoveryListenerTest {
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
         deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
 
-        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache, deviceOnlineStatusCache);
+        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, networkInterface);
+        listener = new NeighborDiscoveryListener(arpResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache, deviceOnlineStatusCache, routerAdvertisementFactory);
     }
 
     @Test
@@ -146,7 +148,7 @@ public class NeighborDiscoveryListenerTest {
         Assert.assertEquals((Long) clock.millis(), arpResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
         Assert.assertEquals(1, pubSubService.getPublishedMessages().size());
         Assert.assertEquals("ip6:out", pubSubService.getPublishedMessages().get(0)[0]);
-        Assert.assertEquals("000001020304/fe800000000000000001000200030004/000010101010/fe800000000000000010001000100010/icmp6/134/255/0/0/0/1/120/0/0/25/120/1/fe800000000000000001000200030004/1/000001020304/5/1500",
+        Assert.assertEquals("000001020304/fe800000000000000001000200030004/000010101010/fe800000000000000010001000100010/icmp6/134/255/0/0/0/1/120/0/0/1/000001020304/25/120/1/fe800000000000000001000200030004/5/1500",
                 pubSubService.getPublishedMessages().get(0)[1]);
     }
 

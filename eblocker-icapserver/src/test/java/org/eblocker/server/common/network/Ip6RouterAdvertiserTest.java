@@ -18,6 +18,8 @@ package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.junit.Before;
@@ -41,7 +43,8 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::1:2:3:4:5"));
         Mockito.when(networkInterface.getMtu()).thenReturn(1500);
         pubSubService = Mockito.mock(PubSubService.class);
-        advertiser = new Ip6RouterAdvertiser(featureToggleRouter, networkInterface, pubSubService);
+        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, networkInterface);
+        advertiser = new Ip6RouterAdvertiser(featureToggleRouter, networkInterface, pubSubService, routerAdvertisementFactory);
     }
 
     @Test

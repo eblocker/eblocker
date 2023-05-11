@@ -31,6 +31,7 @@ import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.PrefixOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.network.icmpv6.RouterSolicitation;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.network.icmpv6.TargetLinkLayerAddressOption;
@@ -64,6 +65,7 @@ public class NeighborDiscoveryListener implements Runnable {
     private final RouterAdvertisementCache routerAdvertisementCache;
     private final Ip6AddressDelayedValidator delayedValidator;
     private final DeviceOnlineStatusCache deviceOnlineStatusCache;
+    private final RouterAdvertisementFactory routerAdvertisementFactory;
 
     @Inject
     public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
@@ -74,7 +76,8 @@ public class NeighborDiscoveryListener implements Runnable {
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache,
                                      Ip6AddressDelayedValidator delayedValidator,
-                                     DeviceOnlineStatusCache deviceOnlineStatusCache) {
+                                     DeviceOnlineStatusCache deviceOnlineStatusCache,
+                                     RouterAdvertisementFactory routerAdvertisementFactory) {
         this.arpResponseTable = arpResponseTable;
         this.clock = clock;
         this.deviceIpUpdater = deviceIpUpdater;
@@ -84,6 +87,7 @@ public class NeighborDiscoveryListener implements Runnable {
         this.routerAdvertisementCache = routerAdvertisementCache;
         this.delayedValidator = delayedValidator;
         this.deviceOnlineStatusCache = deviceOnlineStatusCache;
+        this.routerAdvertisementFactory = routerAdvertisementFactory;
     }
 
     public void run() {
@@ -144,22 +148,11 @@ public class NeighborDiscoveryListener implements Runnable {
             return;
         }
 
-        RouterAdvertisement advertisement = new RouterAdvertisement(
+        RouterAdvertisement advertisement = routerAdvertisementFactory.create(
                 networkInterface.getHardwareAddress(),
                 networkInterface.getIp6LinkLocalAddress(),
                 solicitation.getSourceHardwareAddress(),
-                solicitation.getSourceAddress(),
-                (short) 255,
-                false,
-                false,
-                false,
-                RouterAdvertisement.RouterPreference.HIGH,
-                120,
-                0,
-                0,
-                Arrays.asList(new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
-                        new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
-                        new MtuOption(networkInterface.getMtu())));
+                solicitation.getSourceAddress());
         pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
     }
 

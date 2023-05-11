@@ -23,6 +23,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.icmpv6.MtuOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
@@ -40,14 +41,17 @@ public class Ip6RouterAdvertiser {
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
+    private final RouterAdvertisementFactory routerAdvertisementFactory;
 
     @Inject
     public Ip6RouterAdvertiser(FeatureToggleRouter featureToggleRouter,
                                NetworkInterfaceWrapper networkInterface,
-                               PubSubService pubSubService) {
+                               PubSubService pubSubService,
+                               RouterAdvertisementFactory routerAdvertisementFactory) {
         this.featureToggleRouter = featureToggleRouter;
         this.networkInterface = networkInterface;
         this.pubSubService = pubSubService;
+        this.routerAdvertisementFactory = routerAdvertisementFactory;
     }
 
     public void advertise() {
@@ -65,15 +69,11 @@ public class Ip6RouterAdvertiser {
             return;
         }
 
-        RouterAdvertisement advertisement = new RouterAdvertisement(
+        RouterAdvertisement advertisement = routerAdvertisementFactory.create(
                 networkInterface.getHardwareAddress(),
                 networkInterface.getIp6LinkLocalAddress(),
                 MULTICAST_ALL_NODES_HW_ADDRESS,
-                Ip6Address.MULTICAST_ALL_NODES_ADDRESS, (short) 255, false, false, false,
-                RouterAdvertisement.RouterPreference.HIGH, 120, 0, 0, Arrays.asList(
-                new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
-                new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
-                new MtuOption(networkInterface.getMtu())));
+                Ip6Address.MULTICAST_ALL_NODES_ADDRESS);
         pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
     }
 

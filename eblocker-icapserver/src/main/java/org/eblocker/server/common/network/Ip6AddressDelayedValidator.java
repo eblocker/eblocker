@@ -31,7 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +61,7 @@ public class Ip6AddressDelayedValidator {
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
     private final ScheduledExecutorService executorService;
+    private final Set<Ip6Address> currentCandidates = Collections.synchronizedSet(new HashSet<>());
 
     @Inject
     public Ip6AddressDelayedValidator(@Named("highPrioScheduledExecutor") ScheduledExecutorService executorService, FeatureToggleRouter featureToggleRouter, NetworkInterfaceWrapper networkInterface, PubSubService pubSubService) {
@@ -72,10 +75,15 @@ public class Ip6AddressDelayedValidator {
         if (!featureToggleRouter.isIp6Enabled()) {
             return;
         }
+        if (currentCandidates.contains(candidate)) {
+            return;
+        }
         log.debug("Scheduling validation of address candidate {} for device {}", candidate, hardwareAddress);
         Future future = executorService.scheduleWithFixedDelay(getValidator(hardwareAddress, candidate), 5, 10, TimeUnit.SECONDS);
+        currentCandidates.add(candidate);
         executorService.schedule(() -> {
             future.cancel(false);
+            currentCandidates.remove(candidate);
         }, 30, TimeUnit.SECONDS);
     }
 

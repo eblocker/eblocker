@@ -58,6 +58,14 @@ public class Ip6AddressDelayedValidatorTest {
     }
 
     @Test
+    public void testScheduleOnlyOnce() {
+        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        validator.validateDelayed("abcdef012345", Ip6Address.parse("2001::4711"));
+        validator.validateDelayed("abcdef012345", Ip6Address.parse("2001::4711"));
+        Mockito.verify(executorService).scheduleWithFixedDelay(Mockito.any(Runnable.class), Mockito.eq(5L), Mockito.eq(10L), Mockito.eq(TimeUnit.SECONDS));
+    }
+
+    @Test
     public void testIp6Disabled() {
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(false);
         validator.validateDelayed("abcdef012345", Ip6Address.parse("2001::4711"));

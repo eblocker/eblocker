@@ -26,15 +26,20 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class JedisPoolProvider implements Provider<JedisPool> {
-
+    private int port;
+    private int timeout;
     private int maxTotal;
     private int maxIdle;
     private int minIdle;
 
     @Inject
-    public JedisPoolProvider(@Named("jedis.pool.max.total") int maxTotal,
+    public JedisPoolProvider(@Named("jedis.port") int port,
+                             @Named("jedis.timeout") int timeout,
+                             @Named("jedis.pool.max.total") int maxTotal,
                              @Named("jedis.pool.min.idle") int minIdle,
                              @Named("jedis.pool.max.idle") int maxIdle) {
+        this.port = port;
+        this.timeout = timeout;
         this.maxTotal = maxTotal;
         this.maxIdle = maxIdle;
         this.minIdle = minIdle;
@@ -48,6 +53,6 @@ public class JedisPoolProvider implements Provider<JedisPool> {
         jedisPoolConfig.setMaxTotal(maxTotal);
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMinIdle(minIdle);
-        return new JedisPool(jedisPoolConfig, "localhost");
+        return new JedisPool(jedisPoolConfig, "localhost", port, timeout);
     }
 }

@@ -30,6 +30,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     final static Ip6Address publicNetwork = Ip6Address.parse("2000::");
     final static int publicNetworkPrefixLength = 3;
 
+    private Set<String> prefixes = Set.of();
+
     @Inject
     public TableGeneratorIp6(@Named("network.interface.name") String standardInterface,
                              @Named("network.vpn.interface.name") String mobileVpnInterface,
@@ -49,6 +51,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         natTable.chain("INPUT").accept();
         Chain output = natTable.chain("OUTPUT").accept();
         Chain postRouting = natTable.chain("POSTROUTING").accept();
+        Chain localRedirects = natTable.chain("local-redirects");
 
         // always answer dns queries directed at eblocker
         preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
@@ -62,7 +65,13 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                     .rule(new Rule().https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort));
         }
 
-        ipAddressFilter.getDisabledDevicesIps().forEach(ip -> preRouting
+        prefixes.forEach(prefix -> {
+                preRouting.rule(new Rule(standardInput).sourceIp(prefix).jumpToChain(localRedirects.getName()));
+        });
+
+        ipAddressFilter.getDisabledDevicesIps().stream()
+                .filter(ip -> isPublicIp(ip))
+                .forEach(ip -> localRedirects
                 .rule(autoInputForSource(ip).tcp().returnFromChain()));
 
         if (dnsEnabled) {
@@ -73,13 +82,14 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         }
 
         // Redirect port 80 to the proxy:
-        preRouting.rule(new Rule(standardInput).http().redirectTo(ownIpAddress, proxyPort));
+        localRedirects.rule(new Rule(standardInput).http().redirectTo(ownIpAddress, proxyPort));
 
         if (sslEnabled) {
             //Redirect only devices, which are enabled and SSL is enabled
             ipAddressFilter.getSslEnabledDevicesIps().stream()
                     .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
-                    .forEach(ip -> preRouting.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
+                    .filter(ip -> isPublicIp(ip))
+                    .forEach(ip -> localRedirects.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
         }
 
         for (OpenVpnClientState client : anonVpnClients) {
@@ -160,6 +170,10 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             }
         }
         return mangleTable;
+    }
+
+    public void setPrefixes(Set<String> prefixes) {
+        this.prefixes = prefixes;
     }
 
     private String selectTargetIp(String ip) {

@@ -21,6 +21,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.unix.firewall.IpAddressFilter;
 import org.eblocker.server.common.network.unix.firewall.TableGeneratorBase;
@@ -34,6 +35,7 @@ public class FirewallConfigurationIp6 extends FirewallConfigurationBase {
     private final TableGeneratorIp6 tableGenerator;
     private final ParentalControlAccessRestrictionsService restrictionsService;
     private final NetworkInterfaceWrapper networkInterface;
+    private final Ip6PrefixMonitor ip6PrefixMonitor;
 
     @Inject
     public FirewallConfigurationIp6(
@@ -42,11 +44,13 @@ public class FirewallConfigurationIp6 extends FirewallConfigurationBase {
             TableGeneratorIp6 tableGenerator,
             NetworkInterfaceWrapper networkInterface,
             ParentalControlAccessRestrictionsService restrictionsService,
-            Environment environment) {
+            Environment environment,
+            Ip6PrefixMonitor ip6PrefixMonitor) {
         super(Paths.get(configFullPath), Paths.get(configDeltaPath), environment);
         this.tableGenerator = tableGenerator;
         this.networkInterface = networkInterface;
         this.restrictionsService = restrictionsService;
+        this.ip6PrefixMonitor = ip6PrefixMonitor;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class FirewallConfigurationIp6 extends FirewallConfigurationBase {
     @Override
     protected TableGeneratorBase getTableGenerator() {
         tableGenerator.setOwnIpAddress(networkInterface.getIp6LinkLocalAddress().toString());
+        tableGenerator.setPrefixes(ip6PrefixMonitor.getCurrentPrefixes());
         return tableGenerator;
     }
 }

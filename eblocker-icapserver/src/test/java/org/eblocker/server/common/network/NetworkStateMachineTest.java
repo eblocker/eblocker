@@ -48,6 +48,7 @@ public class NetworkStateMachineTest {
     private IpSets ipSets;
     private SslService sslService;
     private EblockerDnsServer dnsServer;
+    private Ip6PrefixMonitor ip6PrefixMonitor;
     private boolean enableSSL = true;
 
     @Before
@@ -60,7 +61,8 @@ public class NetworkStateMachineTest {
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         ipSets = Mockito.mock(IpSets.class);
         dnsServer = Mockito.mock(EblockerDnsServer.class);
-        machine = new NetworkStateMachine(services, dataSource, dnsChecker, eventLogger, featureToggleRouter, ipSets, sslService, dnsServer);
+        ip6PrefixMonitor = Mockito.mock(Ip6PrefixMonitor.class);
+        machine = new NetworkStateMachine(services, dataSource, dnsChecker, eventLogger, featureToggleRouter, ipSets, sslService, dnsServer, ip6PrefixMonitor);
 
         when(dataSource.getSSLEnabledState()).thenReturn(true);
     }

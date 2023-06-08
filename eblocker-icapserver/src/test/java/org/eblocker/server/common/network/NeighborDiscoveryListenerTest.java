@@ -66,6 +66,7 @@ public class NeighborDiscoveryListenerTest {
 
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
 
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
         Mockito.when(networkInterface.getHardwareAddress()).thenReturn(new byte[]{ 0, 0, 1, 2, 3, 4 });

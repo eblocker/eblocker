@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.strategicgains.syntaxe.ValidationEngine;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
+import org.eblocker.server.common.data.NetworkIp6Configuration;
 import org.eblocker.server.common.data.SetupPageNetworkInfo;
 import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
 import org.eblocker.server.common.network.NetworkServices;
@@ -98,5 +99,17 @@ public class NetworkControllerImpl implements NetworkController {
             log.warn("dhcp discovery failed", e);
             throw new ServiceException("dhcp server discovery failed");
         }
+    }
+
+    @Override
+    public Object getConfigurationIp6(Request request, Response response) {
+        return networkServices.getNetworkIp6Configuration();
+    }
+
+    @Override
+    public Object updateConfigurationIp6(Request request, Response response) {
+        NetworkIp6Configuration networkIp6Configuration = request.getBodyAs(NetworkIp6Configuration.class);
+        networkServices.updateNetworkIp6Configuration(networkIp6Configuration);
+        return networkIp6Configuration;
     }
 }

@@ -952,7 +952,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     const network = {
         name: 'network',
         parent: STATES.MAIN,
-        // redirectTo: 'networksettings', // auto activate substate
+        redirectTo: 'networksettings', // auto activate substate
         url: slashOptionUrl + 'network',
         showInNavbar: true,
         iconUrl: '/img/icons/ic_settings_ethernet_black.svg',
@@ -969,6 +969,13 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
                     return null;
                 });
             }],
+            configurationIp6: ['NetworkService', function(NetworkService) {
+                return NetworkService.getNetworkIp6Config().then(function success(response) {
+                    return response.data;
+                }, function error() {
+                    return null;
+                });
+            }],
             dnsEnabled: ['DnsService', function(DnsService) {
                 return DnsService.loadDnsStatus(true).then(function success(response) {
                     return response.data;
@@ -978,18 +985,29 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
             }]
         },
         translationKey: 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL',
-        component: 'networkSettingsComponent'
-        // component: 'networkComponent'
+        //component: 'networkSettingsComponent'
+        component: 'networkComponent'
     };
 
-    // const networkSettings = {
-    //     name: 'networksettings',
-    //     url: slashOptionSubState + 'networksettings',
-    //     parent: network.name,
-    //     requiredLicense: network.requiredLicense,
-    //     translationKey: 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL',
-    //     component: 'networkSettingsComponent'
-    // };
+    const networkSettings = {
+        name: 'networksettings',
+        url: slashOptionSubState + 'networksettings',
+        parent: network.name,
+        tabOrder: 1,
+        requiredLicense: network.requiredLicense,
+        translationKey: 'ADMINCONSOLE.NETWORK_SETTINGS.LABEL',
+        component: 'networkSettingsComponent'
+    };
+
+    const networkSettingsIp6 = {
+        name: 'networksettingsip6',
+        url: slashOptionSubState + 'networksettingsip6',
+        parent: network.name,
+        tabOrder: 2,
+        requiredLicense: network.requiredLicense,
+        translationKey: 'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL',
+        component: 'networkSettingsIp6Component'
+    };
 
     const networkWizard = {
         name: STATES.NETWORK_WIZARD,
@@ -1101,7 +1119,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     const allStates = [home, homeLicense, homeUpdate, adminPassword, homeAbout,
         homeLegal, parentalControl, parentalControlState, devices, ssl, sslStatus,
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
-        system, network, networkWizard, vpnHome, manualRecording, users,
+        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, manualRecording, users,
         blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
         events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,

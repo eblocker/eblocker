@@ -50,7 +50,7 @@ public class Ip6RouterAdvertiserTest {
     @Test
     public void testAdvertisement() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();
@@ -58,7 +58,7 @@ public class Ip6RouterAdvertiserTest {
     }
 
     @Test
-    public void testAdvertisementIp6Disabled() {
+    public void testAdvertisementsOrIp6Disabled() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
@@ -69,7 +69,7 @@ public class Ip6RouterAdvertiserTest {
     @Test
     public void testAdvertisementNoGlobalAddress() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5")));
         advertiser.advertise();
@@ -79,7 +79,7 @@ public class Ip6RouterAdvertiserTest {
     @Test
     public void testAdvertisementNetworkInterfaceDown() {
         Mockito.when(networkInterface.isUp()).thenReturn(false);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();

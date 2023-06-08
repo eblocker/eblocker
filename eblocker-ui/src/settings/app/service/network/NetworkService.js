@@ -21,6 +21,7 @@ export default function NetworkService($http, $q, $translate, moment) {
     const PATH_DHCP_STATE = PATH + '/dhcpstate';
     const PATH_SETUP_INFO = PATH + '/setupPageInfo';
     const PATH_DHCP_SERVERS = PATH + '/dhcpservers';
+    const PATH_IP6 = PATH + '/ip6';
 
     // For the request to /dhcpservers the timeout must be larger than
     // network.unix.dhcp.discovery.timeout (in configuration.properties)
@@ -61,6 +62,22 @@ export default function NetworkService($http, $q, $translate, moment) {
 
     function setNetworkConfig(config) {
         return $http.put(PATH, config).then(function success(response) {
+            return response;
+        }, function error(response) {
+            return $q.reject(response);
+        });
+    }
+
+    function getNetworkIp6Config() {
+        return $http.get(PATH_IP6).then(function success(response) {
+            return response;
+        }, function error(response) {
+            return $q.reject(response);
+        });
+    }
+
+    function setNetworkIp6Config(config) {
+        return $http.put(PATH_IP6, config).then(function success(response) {
             return response;
         }, function error(response) {
             return $q.reject(response);
@@ -141,6 +158,8 @@ export default function NetworkService($http, $q, $translate, moment) {
         setNetworkConfig: setNetworkConfig,
         processBackendErrors: processBackendErrors,
         getDhcpLeaseTimes: getDhcpLeaseTimes,
-        getDhcpLeaseTimeTranslation: getDhcpLeaseTimeTranslation
+        getDhcpLeaseTimeTranslation: getDhcpLeaseTimeTranslation,
+        getNetworkIp6Config: getNetworkIp6Config,
+        setNetworkIp6Config: setNetworkIp6Config
     };
 }

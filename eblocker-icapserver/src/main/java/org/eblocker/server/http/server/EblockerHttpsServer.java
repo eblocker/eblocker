@@ -1331,6 +1331,14 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/network/dhcpservers", networkController)
                 .action("getDhcpServers", HttpMethod.GET)
                 .name("adminconsole.network.config.get.dhcp.servers.route");
+        server
+                .uri("/api/adminconsole/network/ip6", networkController)
+                .action("getConfigurationIp6", HttpMethod.GET)
+                .name("adminconsole.network.config.ip6.get.route");
+        server
+                .uri("/api/adminconsole/network/ip6", networkController)
+                .action("updateConfigurationIp6", HttpMethod.PUT)
+                .name("adminconsole.network.config.ip6.put.route");
 
         // ** New Adminconsole: VPN
         server

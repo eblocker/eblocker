@@ -2178,6 +2178,18 @@
                 "INDIVIDUAL" : "Individuell"
             }
         },
+        "NETWORK_SETTINGS_IP6" : {
+            "LABEL" : "IPv6 (beta)",
+            "LABEL_ADDRESSES" : "IPv6-Adressen (eBlocker)",
+            "LABEL_GLOBAL" : "Global",
+            "LABEL_LINK_LOCAL" : "Lokal",
+            "ROUTER_ADVERTISEMENTS" : {
+                "DISABLED" : "eBlocker nicht als IPv6-Router melden",
+                "ENABLED" : "eBlocker als IPv6-Router mit Präferenz \"hoch\" melden"
+            },
+            "WARNING_IP6_LEAK" : "IPv6 ist im Netzwerk aktiv, aber der eBlocker meldet sich nicht als IPv6-Router. Daher kann der eBlocker den IPv6-Verkehr nicht schützen.<br>Wähle eine dieser Möglichkeiten:<ul><li>Aktiviere den obigen Schalter,</li><li>schalte IPv6 auf deinem Router aus</li><li>oder konfiguriere die lokale Adresse (s.u.) des eBlockers als Gateway manuell auf deinen Geräten.</li></ul>",
+            "WARNING_NO_GLOBAL_ADDRESS" : "eBlocker hat noch keine globale IPv6-Adresse. Wenn du IPv6 auf deinem Router einschaltest, wird der eBlocker sich als IPv6-Router melden."
+        },
         "NETWORK_WIZARD" : {
             "ACTION" : {
                 "CANCEL" : "Abbrechen",

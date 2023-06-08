@@ -18,6 +18,7 @@ package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.NetworkConfiguration;
+import org.eblocker.server.common.data.NetworkIp6Configuration;
 
 /**
  * Instances of this class should know how to configure, start and stop network
@@ -77,4 +78,7 @@ public interface NetworkServices {
 
     void addListener(NetworkChangeListener listener);
 
+    NetworkIp6Configuration getNetworkIp6Configuration();
+
+    void updateNetworkIp6Configuration(NetworkIp6Configuration networkIp6Configuration);
 }

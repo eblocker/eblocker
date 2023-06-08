@@ -175,6 +175,7 @@ import TimeLangComponent from './components/system/timeLang/time-language.compon
 import LedSettingsComponent from './components/system/ledSettings/led-settings.component';
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
+import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
 import VpnHomeComponent from './components/vpnHome/vpn-home.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeDevicesComponent from './components/vpnHome/devices/vpn-home-devices.component';
@@ -465,6 +466,7 @@ angular.module('eblocker.adminconsole', [
     .component('configBackupComponent', ConfigBackupComponent)
     .component('ledSettingsComponent', LedSettingsComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)
+    .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
     .component('vpnHomeComponent', VpnHomeComponent)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeDevicesComponent', VpnHomeDevicesComponent)

@@ -55,7 +55,7 @@ public class Ip6RouterAdvertiser {
     }
 
     public void advertise() {
-        if (!featureToggleRouter.isIp6Enabled()) {
+        if (!featureToggleRouter.shouldSendRouterAdvertisements()) {
             return;
         }
 

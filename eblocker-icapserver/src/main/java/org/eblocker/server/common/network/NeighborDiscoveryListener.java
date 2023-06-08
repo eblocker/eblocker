@@ -142,6 +142,10 @@ public class NeighborDiscoveryListener implements Runnable {
     }
 
     private void replyToRouterSolicitation(RouterSolicitation solicitation) {
+        if (!featureToggleRouter.shouldSendRouterAdvertisements()) {
+            return;
+        }
+
         if (networkInterface.getAddresses().stream()
                 .filter(IpAddress::isIpv6)
                 .allMatch(ip -> Ip6Utils.isLinkLocal((Ip6Address) ip))) {

@@ -18,6 +18,7 @@ package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class DhcpListener {
             }
 
             String hardwareAddress = tokens[1];
-            String deviceId = "device:" + hardwareAddress;
+            String deviceId = Device.ID_PREFIX + hardwareAddress;
             arpProbeCache.put(deviceId, System.currentTimeMillis());
             log.debug("detected dhcp discover / request for {}", deviceId);
         });

@@ -19,11 +19,14 @@ package org.eblocker.server.common.network;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
+import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
+import org.eblocker.server.common.data.NetworkIp6Configuration;
 import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.util.Ip6Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +38,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base class for network services that are platform independent.
@@ -93,6 +98,8 @@ public abstract class NetworkServicesBase implements NetworkServices {
         config.setGateway(gateway);
 
         config.setDnsServer(eblockerDnsServer.isEnabled());
+
+        config.setGlobalIp6AddressAvailable(networkInterface.hasGlobalIp6Address());
 
         // to avoid having 127.0.0.1 / eblocker-ip showing up in manual configuration mode when eblocker-dns
         // has been disabled this structure always contains the first two actual configured upstream servers in
@@ -227,6 +234,30 @@ public abstract class NetworkServicesBase implements NetworkServices {
             eblockerDnsServer.disable();
             setNameserverAddresses(configuration);
         }
+    }
+
+    @Override
+    public NetworkIp6Configuration getNetworkIp6Configuration() {
+        NetworkIp6Configuration result = new NetworkIp6Configuration();
+        result.setRouterAdvertisementsEnabled(dataSource.areRouterAdvertisementsEnabled());
+        result.setLocalAddresses(ip6Addresses()
+                .filter(ip -> Ip6Utils.isLinkLocal(ip))
+                .collect(Collectors.toList()));
+        result.setGlobalAddresses(ip6Addresses()
+                .filter(ip -> !Ip6Utils.isLinkLocal(ip))
+                .collect(Collectors.toList()));
+        return result;
+    }
+
+    private Stream<Ip6Address> ip6Addresses() {
+        return networkInterface.getAddresses().stream()
+                .filter(IpAddress::isIpv6)
+                .map(ip -> (Ip6Address)ip);
+    }
+
+    @Override
+    public void updateNetworkIp6Configuration(NetworkIp6Configuration networkIp6Configuration) {
+        dataSource.setRouterAdvertisementsEnabled(networkIp6Configuration.isRouterAdvertisementsEnabled());
     }
 
     @Override

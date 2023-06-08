@@ -19,6 +19,7 @@ package org.eblocker.server.common.registration;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -63,6 +64,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 
+@Singleton
 public class DeviceRegistrationProperties {
 
     private static final Logger log = LoggerFactory.getLogger(DeviceRegistrationProperties.class);

@@ -17,6 +17,7 @@
 package org.eblocker.server.common;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.network.NetworkStateMachine;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This object is able to pause the eBlocker on a specific device for a certain amount of time.
  */
+@Singleton
 public class PauseDeviceController {
     private static final Logger log = LoggerFactory.getLogger(PauseDeviceController.class);
 

@@ -19,6 +19,7 @@ package org.eblocker.server.common.data.migrations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserModuleOld;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
@@ -33,6 +34,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 @SubSystemService(value = SubSystem.SERVICES)
 public class UserMigrationService {
 

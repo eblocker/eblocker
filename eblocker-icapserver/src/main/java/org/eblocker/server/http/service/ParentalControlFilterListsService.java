@@ -19,6 +19,7 @@ package org.eblocker.server.http.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.blacklist.BlacklistCompiler;
 import org.eblocker.server.common.blacklist.DomainBlacklistService;
@@ -48,6 +49,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Singleton
 public class ParentalControlFilterListsService {
     private static final Logger log = LoggerFactory.getLogger(ParentalControlFilterListsService.class);
 

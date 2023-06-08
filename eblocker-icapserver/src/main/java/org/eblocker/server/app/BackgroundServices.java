@@ -17,12 +17,14 @@
 package org.eblocker.server.app;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.network.ArpListener;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.DhcpListener;
+import org.eblocker.server.common.network.Ip6AddressMonitor;
 import org.eblocker.server.common.network.NeighborDiscoveryListener;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
@@ -40,7 +42,6 @@ import org.eblocker.server.common.scheduler.FilterManagerScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsDeleteScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsUpdateScheduler;
 import org.eblocker.server.common.scheduler.Ip6MulticastPingScheduler;
-import org.eblocker.server.common.scheduler.Ip6NetworkScanScheduler;
 import org.eblocker.server.common.scheduler.Ip6RouterAdvertiserScheduler;
 import org.eblocker.server.common.scheduler.IpAdressValidatorScheduler;
 import org.eblocker.server.common.scheduler.LicenseExpirationCheckScheduler;
@@ -68,6 +69,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Singleton
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class BackgroundServices {
 
@@ -86,7 +88,6 @@ public class BackgroundServices {
     private final NeighborDiscoveryListener neighborDiscoveryListener;
     private final IpAdressValidatorScheduler ipAdressValidatorScheduler;
     private final Ip6MulticastPingScheduler ip6MulticastPingScheduler;
-    private final Ip6NetworkScanScheduler ip6NetworkScanScheduler;
     private final Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler;
 
     private final ProblematicRouterDetectionScheduler problematicRouterDetectionScheduler;
@@ -94,6 +95,7 @@ public class BackgroundServices {
     private DhcpListener dhcpListener;
     private DhcpBindListener dhcpBindListener;
     private final TorController torController;
+    private final Ip6AddressMonitor ip6AddressMonitor;
 
     private final long torConnectionCheckDelay;
 
@@ -129,6 +131,7 @@ public class BackgroundServices {
             DhcpListener dhcpListener,
             DhcpBindListener dhcpBindListener,
             TorController torController,
+            Ip6AddressMonitor ip6AddressMonitor,
             SessionPurgerScheduler sessionPurgerScheduler,
             StartupTaskScheduler startupTaskScheduler,
             ArpListener arpListener,
@@ -151,7 +154,6 @@ public class BackgroundServices {
             ControlBarAliasUpdater controlBarAliasUpdater,
             IpAdressValidatorScheduler ipAdressValidatorScheduler,
             Ip6MulticastPingScheduler ip6MulticastPingScheduler,
-            Ip6NetworkScanScheduler ip6NetworkScanScheduler,
             Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler,
             DeviceScanningService deviceScanningService,
             LicenseExpirationCheckScheduler licenseExpirationCheckScheduler,
@@ -177,7 +179,6 @@ public class BackgroundServices {
         this.neighborDiscoveryListener = neighborDiscoveryListener;
         this.ipAdressValidatorScheduler = ipAdressValidatorScheduler;
         this.ip6MulticastPingScheduler = ip6MulticastPingScheduler;
-        this.ip6NetworkScanScheduler = ip6NetworkScanScheduler;
         this.ip6RouterAdvertiserScheduler = ip6RouterAdvertiserScheduler;
         this.problematicRouterDetectionScheduler = problematicRouterDetectionScheduler;
         this.appModuleServiceScheduler = appModuleServiceScheduler;
@@ -196,6 +197,7 @@ public class BackgroundServices {
         this.dhcpListener = dhcpListener;
         this.dhcpBindListener = dhcpBindListener;
         this.torController = torController;
+        this.ip6AddressMonitor = ip6AddressMonitor;
 
         this.torConnectionCheckDelay = torDelay;
         this.zeroconfRegistrationService = zeroconfRegistrationService;
@@ -223,7 +225,6 @@ public class BackgroundServices {
         unlimitedCachePoolExecutor.execute(neighborDiscoveryListener);
         ipAdressValidatorScheduler.schedule(highPrioExecutorService);
         ip6MulticastPingScheduler.schedule(highPrioExecutorService);
-        ip6NetworkScanScheduler.schedule(highPrioExecutorService);
         ip6RouterAdvertiserScheduler.schedule(highPrioExecutorService);
         deviceScanningService.start();
 
@@ -233,7 +234,7 @@ public class BackgroundServices {
 
         //check if interface 'eth0' gets a new IP address assigned via DHCP and tell NetworkInterfaceWrapper
         unlimitedCachePoolExecutor.execute(dhcpBindListener);
-
+        unlimitedCachePoolExecutor.execute(ip6AddressMonitor);
         unlimitedCachePoolExecutor.execute(openVpnAddressListener);
 
         //start Tor control port connection
@@ -287,6 +288,7 @@ public class BackgroundServices {
     public void shutdown() {
         zeroconfRegistrationService.unregisterConsoleService();
         recordedDomainsWriteScheduler.shutdown();
+        ip6AddressMonitor.shutdown();
         STATUS.info("Background services shut down.");
     }
 }

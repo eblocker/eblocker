@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.data.dashboard.AccessRight;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Singleton
 @SubSystemService(value = SubSystem.SERVICES)
 public class DashboardCardService {
     private final DataSource dataSource;

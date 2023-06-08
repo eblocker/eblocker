@@ -94,7 +94,7 @@ if [ $# -ge '1' ]; then
     esac
 fi
 
-echo "Error: Wrong mode."
-echo "Expected format: $SCRIPT_NAME start | stop | status | init | purge | update-crl"
+echo "Error: Wrong mode." 1>&2
+echo "Expected format: $SCRIPT_NAME start | stop | status | init | purge | update-crl" 1>&2
 
 exit 1

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.openvpn;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.icap.resources.EblockerResource;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@Singleton
 public class RoutingController {
     private static final Logger logger = LoggerFactory.getLogger(RoutingController.class);
 
@@ -44,6 +46,7 @@ public class RoutingController {
     private final String reconfigureRoutingTablesScript;
     private final String reconfigurePolicyScript;
     private final String setClientRouteScript;
+    private final String setClientRouteIp6Script;
     private final String clearClientRouteScript;
 
     private final ScriptRunner scriptRunner;
@@ -61,6 +64,7 @@ public class RoutingController {
                              @Named("vpn.reconfigure.routing.tables.command") String reconfigureRoutingTablesScript,
                              @Named("vpn.reconfigure.policy") String reconfigurePolicyScript,
                              @Named("vpn.set.client.route") String setClientRouteScript,
+                             @Named("vpn.set.client.route.ip6") String setClientRouteIp6Script,
                              @Named("vpn.clear.client.route") String clearClientRouteScript,
                              ScriptRunner scriptRunner) {
         this.ipRouteRtTablesFile = ipRouteRtTablesFile;
@@ -70,6 +74,7 @@ public class RoutingController {
         this.reconfigureRoutingTablesScript = reconfigureRoutingTablesScript;
         this.reconfigurePolicyScript = reconfigurePolicyScript;
         this.setClientRouteScript = setClientRouteScript;
+        this.setClientRouteIp6Script = setClientRouteIp6Script;
         this.clearClientRouteScript = clearClientRouteScript;
         this.scriptRunner = scriptRunner;
 
@@ -110,9 +115,25 @@ public class RoutingController {
 
             scriptRunner.runScript(setClientRouteScript, String.valueOf(id), virtualInterfaceName, routeNetGateway, routeVpnGateway, trustedIp);
         } catch (IOException e) {
-            logger.error("failed to set client {} routes", e);
+            logger.error("failed to set client {} routes", id, e);
         } catch (InterruptedException e) {
             logger.error("setClientRoute interrupted", e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void setClientRouteIp6(int id, String virtualInterfaceName, String gatewayIp6) {
+        try {
+            if (!allocatedRoutes.contains(id)) {
+                logger.error("can not set unallocated IP6 route {}", id);
+                throw new IllegalArgumentException("can not set unallocated IP6 route");
+            }
+
+            scriptRunner.runScript(setClientRouteIp6Script, String.valueOf(id), virtualInterfaceName, gatewayIp6);
+        } catch (IOException e) {
+            logger.error("failed to set IP6 client {} routes", id, e);
+        } catch (InterruptedException e) {
+            logger.error("setClientRouteIp6 interrupted", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -126,7 +147,7 @@ public class RoutingController {
         try {
             scriptRunner.runScript(clearClientRouteScript, String.valueOf(id), trustedIp);
         } catch (IOException e) {
-            logger.error("failed to clear client {} routes", e);
+            logger.error("failed to clear client {} routes", id, e);
         } catch (InterruptedException e) {
             logger.error("clearClientRoute interrupted", e);
             Thread.currentThread().interrupt();
@@ -178,11 +199,17 @@ public class RoutingController {
     }
 
     private void setupPolicyBasedRoutes() {
-        String[] arguments = new String[2 + allocatedRoutes.size()];
-        arguments[0] = ipRouteRtTablesTableNamePrefix;
-        arguments[1] = String.valueOf(ipRouteRtTablesOffset);
+        setupPolicyBasedRoutes("-4");
+        setupPolicyBasedRoutes("-6");
+    }
 
-        int i = 2;
+    private void setupPolicyBasedRoutes(String ipVersionFlag) {
+        String[] arguments = new String[3 + allocatedRoutes.size()];
+        arguments[0] = ipVersionFlag;
+        arguments[1] = ipRouteRtTablesTableNamePrefix;
+        arguments[2] = String.valueOf(ipRouteRtTablesOffset);
+
+        int i = 3;
         for (Integer id : allocatedRoutes) {
             arguments[i++] = String.valueOf(id);
         }
@@ -190,7 +217,7 @@ public class RoutingController {
         try {
             scriptRunner.runScript(reconfigurePolicyScript, arguments);
         } catch (Exception e) {
-            logger.error("Failed to setup ip routes", e);
+            logger.error("Failed to setup ip routes (IP version {})", ipVersionFlag, e);
         }
     }
 }

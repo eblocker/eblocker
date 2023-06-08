@@ -31,13 +31,15 @@ import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.PrefixOption;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.network.icmpv6.RouterSolicitation;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.network.icmpv6.TargetLinkLayerAddressOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
-import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,31 +58,40 @@ public class NeighborDiscoveryListener implements Runnable {
 
     private final Table<String, IpAddress, Long> arpResponseTable;
     private final Clock clock;
-    private final DeviceService deviceService;
+    private final DeviceIpUpdater deviceIpUpdater;
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterface;
     private final PubSubService pubSubService;
     private final RouterAdvertisementCache routerAdvertisementCache;
+    private final Ip6AddressDelayedValidator delayedValidator;
+    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
+    private final RouterAdvertisementFactory routerAdvertisementFactory;
 
     @Inject
     public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
                                      Clock clock,
-                                     DeviceService deviceService,
+                                     DeviceIpUpdater deviceIpUpdater,
                                      FeatureToggleRouter featureToggleRouter,
                                      NetworkInterfaceWrapper networkInterface,
                                      PubSubService pubSubService,
-                                     RouterAdvertisementCache routerAdvertisementCache) {
+                                     RouterAdvertisementCache routerAdvertisementCache,
+                                     Ip6AddressDelayedValidator delayedValidator,
+                                     DeviceOnlineStatusCache deviceOnlineStatusCache,
+                                     RouterAdvertisementFactory routerAdvertisementFactory) {
         this.arpResponseTable = arpResponseTable;
         this.clock = clock;
-        this.deviceService = deviceService;
+        this.deviceIpUpdater = deviceIpUpdater;
         this.featureToggleRouter = featureToggleRouter;
         this.networkInterface = networkInterface;
         this.pubSubService = pubSubService;
         this.routerAdvertisementCache = routerAdvertisementCache;
+        this.delayedValidator = delayedValidator;
+        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
+        this.routerAdvertisementFactory = routerAdvertisementFactory;
     }
 
     public void run() {
-        pubSubService.subscribeAndLoop("ip6:in", this::subscriber);
+        pubSubService.subscribeAndLoop(Channels.IP6_IN, this::subscriber);
     }
 
     private void subscriber(String message) {
@@ -92,7 +103,12 @@ public class NeighborDiscoveryListener implements Runnable {
             log.debug("got message: {}", message);
             Icmp6Message parsedMessage = parseMessage(message);
             if (Ip6Address.UNSPECIFIED_ADDRESS.equals(parsedMessage.getSourceAddress())) {
-                log.debug("ignoring message with unspecified source address");
+                if (parsedMessage instanceof NeighborSolicitation) {
+                    // A device is doing duplicate address detection: validate address after a few seconds
+                    delayedValidator.validateDelayed(getHardwareAddressAsString(parsedMessage), ((NeighborSolicitation)parsedMessage).getTargetAddress());
+                } else {
+                    log.debug("ignoring message with unspecified source address and ICMP type {}", parsedMessage.getIcmpType());
+                }
                 return;
             }
 
@@ -104,26 +120,21 @@ public class NeighborDiscoveryListener implements Runnable {
                 routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
 
-            String deviceId = "device:" + DatatypeConverter.printHexBinary(getSourceHardwareAddress(parsedMessage)).toLowerCase();
-            Device device = deviceService.getDeviceById(deviceId);
+            String hardwareAddress = getHardwareAddressAsString(parsedMessage);
+            String deviceId = Device.ID_PREFIX + hardwareAddress;
 
-            // TODO: refactor to share common code with ArpListener, e.g. create a service
-            if (device == null) {
-                log.info("ignoring unknown device: {}", deviceId);
-                return;
+            Ip6Address advertisedAddress = parsedMessage.getSourceAddress();
+            if (parsedMessage instanceof NeighborAdvertisement) {
+                // In neighbor advertisements the target address is the address that is advertised
+                // (see RFC 4861, section 4.4). The source address might be another (e.g. link-local) address.
+                advertisedAddress = ((NeighborAdvertisement)parsedMessage).getTargetAddress();
             }
 
-            if (!device.getIpAddresses().contains(parsedMessage.getSourceAddress())) {
-                log.debug("adding ip address {} for {}", parsedMessage.getSourceAddress(), device.getId());
-                List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
-                ipAddresses.add(parsedMessage.getSourceAddress());
-                device.setIpAddresses(ipAddresses);
-                deviceService.updateDevice(device);
-            }
+            deviceIpUpdater.refresh(deviceId, advertisedAddress);
+            deviceOnlineStatusCache.updateOnlineStatus(deviceId);
 
-            log.trace("updated arp response table entry for {}: {}", device.getId(), arpResponseTable.row(device.getHardwareAddress(false)));
             synchronized (arpResponseTable) {
-                arpResponseTable.put(device.getHardwareAddress(false), parsedMessage.getSourceAddress(), clock.millis());
+                arpResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
             }
         } catch (MessageException e) {
             log.error("invalid message:", e);
@@ -131,29 +142,26 @@ public class NeighborDiscoveryListener implements Runnable {
     }
 
     private void replyToRouterSolicitation(RouterSolicitation solicitation) {
-        if (networkInterface.getAddresses().stream()
-                .filter(IpAddress::isIpv6)
-                .allMatch(ip -> Ip6Utils.isInNetwork((Ip6Address) ip, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX))) {
+        if (!featureToggleRouter.shouldSendRouterAdvertisements()) {
             return;
         }
 
-        RouterAdvertisement advertisement = new RouterAdvertisement(
+        if (networkInterface.getAddresses().stream()
+                .filter(IpAddress::isIpv6)
+                .allMatch(ip -> Ip6Utils.isLinkLocal((Ip6Address) ip))) {
+            return;
+        }
+
+        RouterAdvertisement advertisement = routerAdvertisementFactory.create(
                 networkInterface.getHardwareAddress(),
                 networkInterface.getIp6LinkLocalAddress(),
                 solicitation.getSourceHardwareAddress(),
-                solicitation.getSourceAddress(),
-                (short) 255,
-                false,
-                false,
-                false,
-                RouterAdvertisement.RouterPreference.HIGH,
-                120,
-                0,
-                0,
-                Arrays.asList(new RecursiveDnsServerOption(120, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),
-                        new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
-                        new MtuOption(networkInterface.getMtu())));
-        pubSubService.publish("ip6:out", advertisement.toString());
+                solicitation.getSourceAddress());
+        pubSubService.publish(Channels.IP6_OUT, advertisement.toString());
+    }
+
+    private String getHardwareAddressAsString(Icmp6Message message) {
+        return DatatypeConverter.printHexBinary(getSourceHardwareAddress(message)).toLowerCase();
     }
 
     private byte[] getSourceHardwareAddress(Icmp6Message message) {

@@ -37,11 +37,16 @@ acl localnet src 10.0.0.0/8     # RFC1918 possible internal network
 acl localnet src 172.16.0.0/12  # RFC1918 possible internal network
 acl localnet src 192.168.0.0/16 # RFC1918 possible internal network
 acl localnet src 169.254.0.0/16 # Link-local addresses
+acl localnet src fc00::/7       # RFC 4193 local private network range
+acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines
+# Note: global IPv6 prefix is added below in section "Dynamic configuration"
 
 acl localnetDst dst 10.0.0.0/8     # RFC1918 possible internal network
 acl localnetDst dst 172.16.0.0/12  # RFC1918 possible internal network
 acl localnetDst dst 192.168.0.0/16 # RFC1918 possible internal network
 acl localnetDst dst 169.254.0.0/16 # Link-local addresses
+acl localnetDst dst fc00::/7       # RFC 4193 local private network range
+acl localnetDst dst fe80::/10      # RFC 4291 link-local (directly plugged) machines
 
 http_access allow manager localhost
 http_access deny manager
@@ -80,9 +85,6 @@ via off
 reply_header_access X-Cache-Lookup deny all
 reply_header_access X-Squid-Error deny all
 reply_header_access X-Cache deny all
-
-# prevent leaking dns requests
-dns_aaaa off
 
 # faster shutdown
 shutdown_lifetime 1 second
@@ -143,3 +145,7 @@ icap_service_failure_limit -1
 # If MAC address of device is in file 'torclients', set a special source IP address (which redirects traffic to redsocks)
 acl outbound_tor src "/etc/squid/torclients"
 tcp_outgoing_address 169.254.7.53 outbound_tor !disabledClients
+
+#==============================================================================
+# Dynamic configuration
+#==============================================================================

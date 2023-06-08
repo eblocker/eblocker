@@ -58,7 +58,7 @@ public class SubSystemUsageInterceptor implements MethodInterceptor {
         if (subSystemService.allowUninitializedCalls() || isRequiredSubSystemStarted(statusService, subSystemService.value())) {
             return invocation.proceed();
         } else {
-            log.error("Startup contract violation {} / {} called to early!", invocation.getThis().getClass(), invocation.getMethod());
+            log.error("Startup contract violation: {} / {} called too early!", invocation.getThis().getClass(), invocation.getMethod());
             throw new StartupContractViolation("Startup contract violation: " + invocation.getThis().getClass() + " / " + invocation.getMethod() + " called too early!");
         }
     }

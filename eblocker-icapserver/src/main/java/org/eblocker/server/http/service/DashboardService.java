@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.UserModuleOld;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /* by DashboardCardService, move hard coded dashboard card instantiation into schema migration */
+@Singleton
 @Deprecated
 public class DashboardService {
 

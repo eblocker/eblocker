@@ -37,6 +37,10 @@ public class NeighborSolicitation extends NeighborDiscoveryMessage {
         this.targetAddress = targetAddress;
     }
 
+    public Ip6Address getTargetAddress() {
+        return targetAddress;
+    }
+
     @Override
     public void appendParameter(StringBuilder sb) {
         sb.append("/");

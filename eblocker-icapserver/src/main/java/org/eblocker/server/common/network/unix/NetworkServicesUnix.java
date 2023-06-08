@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network.unix;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -43,13 +44,15 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Configures and controls network services on Unix OSes
  */
+@Singleton
 public class NetworkServicesUnix extends NetworkServicesBase {
     private static final Logger log = LoggerFactory.getLogger(NetworkServicesUnix.class);
 
     private final DnsConfiguration dnsConfiguration;
     private final NetworkInterfaceConfiguration interfaceConfiguration;
     private final IscDhcpServer dhcpServer;
-    private final FirewallConfiguration firewallConfiguration;
+    private final FirewallConfigurationIp4 firewallConfiguration;
+    private final FirewallConfigurationIp6 firewallConfigurationIp6;
     private final String applyNetworkConfigurationCommand;
     private final String applyFirewallConfigurationCommand;
     private final String enableIp6Command;
@@ -61,7 +64,8 @@ public class NetworkServicesUnix extends NetworkServicesBase {
             DnsConfiguration dnsConfiguration,
             NetworkInterfaceConfiguration interfaceConfiguration,
             IscDhcpServer dhcpServer,
-            FirewallConfiguration firewallConfiguration,
+            FirewallConfigurationIp4 firewallConfiguration,
+            FirewallConfigurationIp6 firewallConfigurationIp6,
             @Named("highPrioScheduledExecutor") ScheduledExecutorService executorService,
             NetworkInterfaceWrapper networkInterface,
             ArpSpoofer arpSpoofer,
@@ -78,6 +82,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
         this.interfaceConfiguration = interfaceConfiguration;
         this.dhcpServer = dhcpServer;
         this.firewallConfiguration = firewallConfiguration;
+        this.firewallConfigurationIp6 = firewallConfigurationIp6;
         this.scriptRunner = scriptRunner;
         this.applyNetworkConfigurationCommand = applyNetworkConfigurationCommand;
         this.applyFirewallConfigurationCommand = applyFirewallConfigurationCommand;
@@ -155,9 +160,9 @@ public class NetworkServicesUnix extends NetworkServicesBase {
      *
      * @param command
      */
-    private int executeCommand(String command) {
+    private int executeCommand(String command, String... arguments) {
         try {
-            return scriptRunner.runScript(command);
+            return scriptRunner.runScript(command, arguments);
         } catch (Exception e) {
             throw new EblockerException("Could not run command '" + command + "'", e);
         }
@@ -204,9 +209,15 @@ public class NetworkServicesUnix extends NetworkServicesBase {
                                                boolean enableEblockerMobile, boolean enableMalwareSet) {
         try {
             firewallConfiguration.enable(allDevices, vpnClients, masquerade, enableSSL, enableEblockerDns,
-                    enableEblockerMobile, enableMalwareSet, () -> executeCommand(applyFirewallConfigurationCommand) == 0);
+                    enableEblockerMobile, enableMalwareSet, () -> executeCommand(applyFirewallConfigurationCommand, "IPv4") == 0);
         } catch (IOException e) {
-            log.error("i/o error applying firewall rules", e);
+            log.error("i/o error applying firewall rules for IPv4", e);
+        }
+        try {
+            firewallConfigurationIp6.enable(allDevices, vpnClients, masquerade, enableSSL, enableEblockerDns,
+                    enableEblockerMobile, enableMalwareSet, () -> executeCommand(applyFirewallConfigurationCommand, "IPv6") == 0);
+        } catch (IOException e) {
+            log.error("i/o error applying firewall rules for IPv6", e);
         }
     }
 

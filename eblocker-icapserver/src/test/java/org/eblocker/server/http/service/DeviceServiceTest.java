@@ -138,7 +138,7 @@ public class DeviceServiceTest {
         ArgumentCaptor<IpAddressChangeListener> captor = ArgumentCaptor.forClass(IpAddressChangeListener.class);
         Mockito.verify(networkInterfaceWrapper).addIpAddressChangeListener(captor.capture());
         IpAddressChangeListener listener = captor.getValue();
-        listener.onIpAddressChange(Ip4Address.parse(EBLOCKER_IP));
+        listener.onIpAddressChange(true, false);
         // Device has its IP removed, has no other IP
         Assert.assertEquals(0, devices.get(5).getIpAddresses().size());
         // Its fixed-IP-flag has been removed as well

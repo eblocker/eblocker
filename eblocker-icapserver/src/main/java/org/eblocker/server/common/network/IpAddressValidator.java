@@ -26,6 +26,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.icmpv6.NeighborSolicitation;
 import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.IpUtils;
@@ -55,6 +56,7 @@ public class IpAddressValidator {
     private final NetworkInterfaceWrapper networkInterface;
     private final String vpnSubnetIp;
     private final String vpnSubnetNetmask;
+    private boolean firstRun = true;
 
     @Inject
     public IpAddressValidator(@Named("arp.ip.grace.period.seconds") long recentActivityThreshold,
@@ -80,6 +82,12 @@ public class IpAddressValidator {
     }
 
     public void run() {
+        if (firstRun) {
+            // Do not check responses in the first run to avoid removing addresses that are still valid
+            sendRequests();
+            firstRun = false;
+            return;
+        }
         checkResponses();
         sendRequests();
     }
@@ -118,7 +126,7 @@ public class IpAddressValidator {
     }
 
     private void dropInactive(RecentActivity recentActivity) {
-        Device device = deviceService.getDeviceById("device:" + recentActivity.hwAddress);
+        Device device = deviceService.getDeviceById(Device.ID_PREFIX + recentActivity.hwAddress);
         Set<IpAddress> newIpAddresses = recentActivity.ipAddresses;
 
         if (device == null) {
@@ -131,6 +139,7 @@ public class IpAddressValidator {
             if (deviceIpAddresses.stream().anyMatch(ip -> recentActivity.ipAddresses.contains(ip))) {
                 // Preserve vpn ip addresses for mobile clients
                 deviceIpAddresses.stream()
+                        .filter(IpAddress::isIpv4)
                         .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
                         .forEach(newIpAddresses::add);
             } else {
@@ -149,6 +158,7 @@ public class IpAddressValidator {
 
         keepIpAddresses(device, newIpAddresses);
 
+        // TODO: refactor to use DeviceIpUpdater
         deviceService.updateDevice(device);
         networkStateMachine.deviceStateChanged(device);
 
@@ -173,7 +183,7 @@ public class IpAddressValidator {
 
         MessageSender() {
             eblockerHardwareAddress = networkInterface.getHardwareAddress();
-            eblockerHardwareAddressHex = DatatypeConverter.printHexBinary(eblockerHardwareAddress);
+            eblockerHardwareAddressHex = DatatypeConverter.printHexBinary(eblockerHardwareAddress).toLowerCase();
             eblockerIp4Address = networkInterface.getFirstIPv4Address();
             eblockerIp6LinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
             sourceLinkLayerAddressOption = Collections.singletonList(new SourceLinkLayerAddressOption(eblockerHardwareAddress));
@@ -197,7 +207,7 @@ public class IpAddressValidator {
             message.sourceHardwareAddress = eblockerHardwareAddressHex;
             message.targetHardwareAddress = DatatypeConverter.printHexBinary(targetHardwareAddress).toLowerCase();
             message.targetIPAddress = targetIpAddress.toString();
-            pubSubService.publish("arp:out", message.format());
+            pubSubService.publish(Channels.ARP_OUT, message.format());
         }
 
         private void sendNeighborDiscoverySolicitation(byte[] targetHardwareAddress, Ip6Address targetIpAddress) {
@@ -208,7 +218,7 @@ public class IpAddressValidator {
                     targetIpAddress,
                     targetIpAddress,
                     sourceLinkLayerAddressOption);
-            pubSubService.publish("ip6:out", solicitation.toString());
+            pubSubService.publish(Channels.IP6_OUT, solicitation.toString());
         }
     }
 

@@ -18,6 +18,7 @@ package org.eblocker.server.common.squid;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
@@ -50,6 +51,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Singleton
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class SquidWarningService {
     private static final Logger log = LoggerFactory.getLogger(SquidWarningService.class);

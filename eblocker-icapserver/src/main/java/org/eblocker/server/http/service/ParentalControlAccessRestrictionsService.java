@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.data.AccessRestriction;
 import org.eblocker.server.common.data.Device;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Singleton
 @SubSystemService(value = SubSystem.BACKGROUND_TASKS, initPriority = -1)
 public class ParentalControlAccessRestrictionsService implements Runnable {
 

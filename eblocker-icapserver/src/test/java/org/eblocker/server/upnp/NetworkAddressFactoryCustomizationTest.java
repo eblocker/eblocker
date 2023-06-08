@@ -29,7 +29,7 @@ public class NetworkAddressFactoryCustomizationTest {
 
     @Before
     public void setUp() {
-        factoryCustomization = new NetworkAddressFactoryCustomization("eth0", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16");
+        factoryCustomization = new NetworkAddressFactoryCustomization("eth0");
     }
 
     @Test

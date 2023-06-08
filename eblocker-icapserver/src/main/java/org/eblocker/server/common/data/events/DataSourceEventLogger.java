@@ -17,6 +17,7 @@
 package org.eblocker.server.common.data.events;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * background thread. This de-couples adding events from
  * I/O operations.
  */
+@Singleton
 public class DataSourceEventLogger implements EventLogger {
     private static final Logger log = LoggerFactory.getLogger(DataSourceEventLogger.class);
 

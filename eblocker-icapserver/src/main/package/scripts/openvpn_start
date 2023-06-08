@@ -31,37 +31,27 @@ DOWNSCRIPT=openvpn_down
 
 if [ $# == '3' ];
 then
-    #debugging
-    SCRIPT_NAME="openvpn_start"
-    echo "$SCRIPT_NAME script started..." >> /var/log/eblocker/$SCRIPT_NAME.log
-
     ID=$1
     CONFFILE=$2
     LOGFILE=$3
 
     if [ -f $CONFFILE ];
     then
-        #conffile exists
-        #start OpenVPN instance
-        echo "Starting OpenVPN instance with config file from: $CONFFILE"
-
-        OPENVPN=$(which openvpn)
-        echo "OpenVPN is here: $OPENVPN" >> /var/log/eblocker/$SCRIPT_NAME.log
-
         PIDOFPROCESS=$$
-        echo "reporting PID of OpenVPN instance: $PIDOFPROCESS"
         redis-cli PUBLISH "vpn_profile_status:$ID:in" "pid $PIDOFPROCESS"
 
+        OPENVPN=$(which openvpn)
         exec $OPENVPN --config $CONFFILE \
                 --log $LOGFILE \
                 --script-security 2 \
                 --up "$SCRIPTSPATH/$UPSCRIPT $ID" \
                 --down "$SCRIPTSPATH/$DOWNSCRIPT $ID"
     else
-        echo "The config file can not be found here: $CONFFILE"
-        # return error
+        echo "The config file can not be found here: $CONFFILE" 1>&2
+        exit 1
     fi
 else
-    echo "Error: Wrong number of parameters!"
-    echo "Expected format: openvpn_start [ID_OF_INSTANCE] [CONFIG_FILE] [LOG_FILE]"
+    echo "Error: Wrong number of parameters!" 1>&2
+    echo "Expected format: openvpn_start [ID_OF_INSTANCE] [CONFIG_FILE] [LOG_FILE]" 1>&2
+    exit 1
 fi

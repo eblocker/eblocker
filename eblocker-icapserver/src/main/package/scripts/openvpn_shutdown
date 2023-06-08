@@ -20,10 +20,7 @@
 #
 
 DEFAULT_TABLE="standard"
-DEFAULT_TABLE_MARK=42
 TEMP_IPROUTE2_RTTABLES_FILE=/opt/eblocker-icap/network/iproute2.rt_tables.result
-
-echo "Removing routing tables..."
 
 # remove our default table
 sed -i '/100   standard/d' /etc/iproute2/rt_tables
@@ -47,11 +44,3 @@ ip rule del pref 199
 
 # commit changes
 ip route flush cache
-
-
-#debugging
-SCRIPT_NAME="openvpn_shutdown"
-echo "$SCRIPT_NAME script finished!" >> /var/log/eblocker/$SCRIPT_NAME.log
-
-echo "Finished shutdown of routing tables!"
-echo "TODO: remove client routing tables"

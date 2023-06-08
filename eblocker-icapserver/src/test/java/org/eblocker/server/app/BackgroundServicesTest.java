@@ -20,6 +20,7 @@ import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.network.ArpListener;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.DhcpListener;
+import org.eblocker.server.common.network.Ip6AddressMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.network.ZeroconfRegistrationService;
@@ -36,7 +37,6 @@ import org.eblocker.server.common.scheduler.FilterManagerScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsDeleteScheduler;
 import org.eblocker.server.common.scheduler.FilterStatisticsUpdateScheduler;
 import org.eblocker.server.common.scheduler.Ip6MulticastPingScheduler;
-import org.eblocker.server.common.scheduler.Ip6NetworkScanScheduler;
 import org.eblocker.server.common.scheduler.Ip6RouterAdvertiserScheduler;
 import org.eblocker.server.common.scheduler.IpAdressValidatorScheduler;
 import org.eblocker.server.common.scheduler.LicenseExpirationCheckScheduler;
@@ -75,11 +75,11 @@ public class BackgroundServicesTest {
     private ArpListener arpListener;
     private IpAdressValidatorScheduler ipAdressValidatorScheduler;
     private Ip6MulticastPingScheduler ip6MulticastPingScheduler;
-    private Ip6NetworkScanScheduler ip6NetworkScanScheduler;
     private Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler;
     private DhcpListener dhcpListener;
     private DhcpBindListener dhcpBindListener;
     private TorController torController;
+    private Ip6AddressMonitor ip6AddressMonitor;
     private PCAccessRestrictionsServiceScheduler contingentEnforcerScheduler;
     private OpenVpnServiceScheduler openVpnServiceScheduler;
     private OpenVpnAddressListener openVpnAddressListener;
@@ -112,9 +112,9 @@ public class BackgroundServicesTest {
         arpListener = Mockito.mock(ArpListener.class);
         ipAdressValidatorScheduler = Mockito.mock(IpAdressValidatorScheduler.class);
         ip6MulticastPingScheduler = Mockito.mock(Ip6MulticastPingScheduler.class);
-        ip6NetworkScanScheduler = Mockito.mock(Ip6NetworkScanScheduler.class);
         ip6RouterAdvertiserScheduler = Mockito.mock(Ip6RouterAdvertiserScheduler.class);
         torController = Mockito.mock(TorController.class);
+        ip6AddressMonitor = Mockito.mock(Ip6AddressMonitor.class);
         contingentEnforcerScheduler = Mockito.mock(PCAccessRestrictionsServiceScheduler.class);
         openVpnServiceScheduler = Mockito.mock(OpenVpnServiceScheduler.class);
         deviceServiceScheduler = Mockito.mock(DeviceServiceScheduler.class);
@@ -152,6 +152,7 @@ public class BackgroundServicesTest {
                 dhcpListener,
                 dhcpBindListener,
                 torController,
+                ip6AddressMonitor,
                 sessionPurgerScheduler,
                 startupTaskScheduler,
                 arpListener,
@@ -174,7 +175,6 @@ public class BackgroundServicesTest {
                 controlBarAliasUpdater,
                 ipAdressValidatorScheduler,
                 ip6MulticastPingScheduler,
-                ip6NetworkScanScheduler,
                 ip6RouterAdvertiserScheduler,
                 deviceScanningService,
                 licenseExpirationCheckScheduler,
@@ -205,6 +205,9 @@ public class BackgroundServicesTest {
 
         verify(highPrioExecutorService, never()).execute(dhcpBindListener);
         verify(lowPrioExecutorService, never()).execute(dhcpBindListener);
+
+        verify(highPrioExecutorService, never()).execute(ip6AddressMonitor);
+        verify(lowPrioExecutorService, never()).execute(ip6AddressMonitor);
     }
 
     @Test

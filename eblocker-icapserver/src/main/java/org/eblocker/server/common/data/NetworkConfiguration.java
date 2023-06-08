@@ -32,6 +32,7 @@ public class NetworkConfiguration {
     private boolean isExpertMode;
     private boolean dhcp; // if true, eBlocker runs a DHCP server
     private boolean dnsServer; // if true eblocker uses it's own dns server
+    private boolean globalIp6AddressAvailable; // if true eBlocker has a global IPv6 address
     private String ipAddress; // static IP address of eBlocker
     private String networkMask; // network mask of static IP address
     private String vpnIpAddress;
@@ -53,6 +54,7 @@ public class NetworkConfiguration {
                 .append(isExpertMode())
                 .append(isDhcp())
                 .append(isDnsServer())
+                .append(isGlobalIp6AddressAvailable())
                 .append(getIpAddress())
                 .append(getNetworkMask())
                 .append(getGateway())
@@ -80,6 +82,7 @@ public class NetworkConfiguration {
                 .append(isExpertMode(), rhs.isExpertMode())
                 .append(isDhcp(), rhs.isDhcp())
                 .append(isDnsServer(), rhs.isDnsServer())
+                .append(isGlobalIp6AddressAvailable(), rhs.isGlobalIp6AddressAvailable())
                 .append(getIpAddress(), rhs.getIpAddress())
                 .append(getNetworkMask(), rhs.getNetworkMask())
                 .append(vpnIpAddress, rhs.getVpnIpAddress())
@@ -114,6 +117,8 @@ public class NetworkConfiguration {
             result.append(", ");
             result.append(nameServerSecondary);
         }
+        result.append(", public IPv6 address available: ");
+        result.append(globalIp6AddressAvailable);
 
         result.append(", dhcp: ");
         result.append(dhcp);
@@ -267,5 +272,14 @@ public class NetworkConfiguration {
 
     public void setDhcpLeaseTime(int leaseTime) {
         this.dhcpLeaseTime = leaseTime;
+    }
+
+    @JsonProperty
+    public boolean isGlobalIp6AddressAvailable() {
+        return globalIp6AddressAvailable;
+    }
+
+    public void setGlobalIp6AddressAvailable(boolean globalIp6AddressAvailable) {
+        this.globalIp6AddressAvailable = globalIp6AddressAvailable;
     }
 }

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network.unix;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
 /**
  * This class can be used to dynamically add or remove interface aliases.
  */
+@Singleton
 public class NetworkInterfaceAliases {
     private static final Logger logger = LoggerFactory.getLogger(NetworkInterfaceAliases.class);
 

@@ -48,6 +48,9 @@
         <!-- Uncomment this to get stack traces from HTTP controllers: -->
         <!-- Logger name="org.eblocker.server.http.server.ExceptionLogger" level="debug"/ -->
 
+        <!-- Uncomment this to get Netty memory pool configuration at start up: -->
+        <!-- Logger name="io.netty.buffer.PooledByteBufAllocator" level="debug"/ -->
+
         <Logger name="org.eblocker.server.common.network.TorController" level="error"/>
         <Logger name="javax.jmdns" level="error"/>
     </Loggers>

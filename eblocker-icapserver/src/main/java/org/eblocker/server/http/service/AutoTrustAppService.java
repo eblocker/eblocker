@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.blacklist.DomainBlockingService;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.SSLWhitelistUrl;
@@ -79,6 +80,7 @@ import static java.util.function.Predicate.not;
  * <p>
  * * * Why does My own DTBL work even though it is enabled???
  */
+@Singleton
 @SubSystemService(value = SubSystem.SERVICES)
 public class AutoTrustAppService implements SquidWarningService.FailedConnectionsListener {
 

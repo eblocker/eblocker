@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DeviceService($http, $q, DataCachingService) {
+export default function DeviceService($http, $q, DataCachingService, IpUtilsService) {
     'ngInject';
 
     const PATH = '/api/adminconsole/devices';
@@ -155,12 +155,13 @@ export default function DeviceService($http, $q, DataCachingService) {
     function setDisplayValues(device) { // jshint ignore: line
         let ipAddress = '-';
         device.displayIpAddresses = '';
-        device.sumIpAddress = 0;
+        device.sortingKeyIpAddress = 0;
 
         if (angular.isArray(device.ipAddresses) && device.ipAddresses.length > 0) {
-            device.sumIpAddress = ipToInt(device.ipAddresses[0]);
-            device.displayIpAddresses = device.ipAddresses.join('\n');
-            ipAddress = device.ipAddresses[0];
+            const ipAddresses = IpUtilsService.sortByVersion(device.ipAddresses);
+            device.sortingKeyIpAddress = IpUtilsService.sortingKey(ipAddresses[0]);
+            device.displayIpAddresses = ipAddresses.join('\n');
+            ipAddress = ipAddresses[0];
         }
 
         device.displayIpAddress = ipAddress;
@@ -194,12 +195,6 @@ export default function DeviceService($http, $q, DataCachingService) {
             device.displayIconFiveSeconds = true;
             device.displayIconBrowserOnly = true;
         }
-    }
-
-    function ipToInt(ip) {
-        const octets = ip.split('.').map(function(v) { return parseInt(v); });
-        /*jslint bitwise: true */
-        return (octets[0] << 24 | octets[1] << 16 | octets[2] << 8 | octets[3]) >>> 0;
     }
 
     function getDevicesAssignedOrOperatedByUser(users, devices) {

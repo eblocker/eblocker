@@ -28,7 +28,7 @@ import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkServices;
-import org.eblocker.server.common.network.unix.firewall.TableGenerator;
+import org.eblocker.server.common.network.unix.firewall.TableGeneratorIp4;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,14 +49,14 @@ import java.util.TreeSet;
 
 import static org.mockito.Mockito.when;
 
-public class FirewallConfigurationTest {
-    private FirewallConfiguration configuration;
+public class FirewallConfigurationIp4Test {
+    private FirewallConfigurationIp4 configuration;
     private ParentalControlAccessRestrictionsService restrictionsService;
     private String malwareIpSet;
     private Environment environment;
     private File configFullFile;
     private File configDeltaFile;
-    private TableGenerator tableGenerator;
+    private TableGeneratorIp4 tableGenerator;
     private NetworkServices networkServices;
 
     @Before
@@ -76,8 +76,8 @@ public class FirewallConfigurationTest {
         configuration = createFirewallConfiguration();
     }
 
-    private FirewallConfiguration createFirewallConfiguration() {
-        tableGenerator = new TableGenerator(
+    private FirewallConfigurationIp4 createFirewallConfiguration() {
+        tableGenerator = new TableGeneratorIp4(
                 "eth2",
                 "tun33",
                 "10.8.0.0",
@@ -86,10 +86,6 @@ public class FirewallConfigurationTest {
                 3333,
                 12345,
                 "169.254.7.53/32",
-                "10.0.0.0/8",
-                "172.16.0.0/12",
-                "192.168.0.0/16",
-                "169.254.0.0/16",
                 13,
                 3000,
                 3443,
@@ -102,7 +98,7 @@ public class FirewallConfigurationTest {
                 5300,
                 9053);
 
-        return new FirewallConfiguration(
+        return new FirewallConfigurationIp4(
                 configFullFile.toString(),
                 configDeltaFile.toString(),
                 tableGenerator,
@@ -243,12 +239,7 @@ public class FirewallConfigurationTest {
 
     @Test
     public void testEnabledVPNProfile() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
@@ -257,12 +248,7 @@ public class FirewallConfigurationTest {
 
     @Test
     public void testActiveVPNProfileWithOneClient() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -274,12 +260,7 @@ public class FirewallConfigurationTest {
 
     @Test
     public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.ACTIVE);
-        client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", (String) null, true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -291,12 +272,7 @@ public class FirewallConfigurationTest {
 
     @Test
     public void testActiveVPNProfileWhileRestart() throws IOException {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setId(1);
-        client.setState(OpenVpnClientState.State.PENDING_RESTART);
-        client.setVirtualInterfaceName("tun0");
-        client.setLinkLocalIpAddress("169.254.8.1");
-        client.setRoute(1);
+        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.PENDING_RESTART);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -462,5 +438,15 @@ public class FirewallConfigurationTest {
         device.setUseAnonymizationService(useAnonymizationService);
         device.setRouteThroughTor(routeThroughTor);
         return device;
+    }
+
+    private OpenVpnClientState createVpnClient(OpenVpnClientState.State state) {
+        OpenVpnClientState client = new OpenVpnClientState();
+        client.setId(1);
+        client.setState(state);
+        client.setVirtualInterfaceName("tun0");
+        client.setLocalEndpointIp("100.23.42.7");
+        client.setRoute(1);
+        return client;
     }
 }

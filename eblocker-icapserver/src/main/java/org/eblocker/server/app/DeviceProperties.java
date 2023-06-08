@@ -17,6 +17,7 @@
 package org.eblocker.server.app;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
  *     <li>...</li>
  * </ul>
  */
+@Singleton
 public class DeviceProperties {
     private static final Logger LOG = LoggerFactory.getLogger(DeviceProperties.class);
 

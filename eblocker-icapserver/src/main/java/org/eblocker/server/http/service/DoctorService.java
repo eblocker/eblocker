@@ -74,8 +74,10 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_ENABLED_FOR_NEW_DEVICES;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP4_PING_BROKEN;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP4_PING_WORKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP6_DISABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP6_ENABLED;
-import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_NO_IP6;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP6_PING_BROKEN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.EBLOCKER_IP6_PING_WORKING;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.GOOD_NETWORK_MODE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.HTTPS_ENABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.HTTPS_NOT_ENABLED;
@@ -90,6 +92,9 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.SYSTEM_U
 
 @Singleton
 public class DoctorService {
+    private static final String PING_IPV6_HOST = "ipv6.eblocker.org";
+    private static final String PING_IPV4_HOST = "1.1.1.1";
+    private static final String DNS_CHECK_HOST = "eblocker.org";
 
     private final NetworkServices networkServices;
     private final SslService sslService;
@@ -296,7 +301,7 @@ public class DoctorService {
     private List<DoctorDiagnosisResult> dnsLookupCheck() {
         try {
             //noinspection ResultOfMethodCallIgnored
-            InetAddress.getByName("eblocker.org");
+            InetAddress.getByName(DNS_CHECK_HOST);
             return Collections.singletonList(goodForEveryone(EBLOCKER_DNS_RESOLVE_WORKING));
         } catch (UnknownHostException e) {
             return Collections.singletonList(failedProbe(EBLOCKER_DNS_RESOLVE_BROKEN));
@@ -304,7 +309,7 @@ public class DoctorService {
     }
 
     private DoctorDiagnosisResult ipv4Ping() {
-        if (pingHost(4, "1.1.1.1")) {
+        if (pingHost(4, PING_IPV4_HOST)) {
             return goodForEveryone(EBLOCKER_IP4_PING_WORKING);
         } else {
             return failedProbe(EBLOCKER_IP4_PING_BROKEN);
@@ -312,11 +317,19 @@ public class DoctorService {
     }
 
     private List<DoctorDiagnosisResult> ipv6Check() {
-        if (pingHost(6, "ipv6-test.com")) {
-            return List.of(failedProbe(EBLOCKER_IP6_ENABLED));
+        List<DoctorDiagnosisResult> diagnoses = new ArrayList<>();
+        NetworkConfiguration networkConfiguration = networkServices.getCurrentNetworkConfiguration();
+        if (networkConfiguration.isGlobalIp6AddressAvailable()) {
+            diagnoses.add(goodForEveryone(EBLOCKER_IP6_ENABLED));
+            if (pingHost(6, PING_IPV6_HOST)) {
+                diagnoses.add(goodForEveryone(EBLOCKER_IP6_PING_WORKING));
+            } else {
+                diagnoses.add(failedProbe(EBLOCKER_IP6_PING_BROKEN));
+            }
         } else {
-            return List.of(goodForEveryone(EBLOCKER_NO_IP6));
+            diagnoses.add(goodForEveryone(EBLOCKER_IP6_DISABLED));
         }
+        return diagnoses;
     }
 
     private boolean hasNonGoodNameServers() {

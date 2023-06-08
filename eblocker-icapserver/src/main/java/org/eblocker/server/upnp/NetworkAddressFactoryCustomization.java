@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.EblockerModule;
+import org.eblocker.server.common.network.NetworkUtils;
 import org.eblocker.server.common.util.IpUtils;
 
 import java.net.InetAddress;
@@ -36,15 +37,12 @@ public class NetworkAddressFactoryCustomization {
     private final List<int[]> privateNetworkIpNetmasks;
 
     @Inject
-    public NetworkAddressFactoryCustomization(@Named("network.interface.name") String networkInterfaceName,
-                                              @Named("network.unix.iprange.classA") String privateNetworkRangeA,
-                                              @Named("network.unix.iprange.classB") String privateNetworkRangeB,
-                                              @Named("network.unix.iprange.classC") String privateNetworkRangeC) {
+    public NetworkAddressFactoryCustomization(@Named("network.interface.name") String networkInterfaceName) {
         this.networkInterfaceName = networkInterfaceName;
         this.privateNetworkIpNetmasks = Arrays.asList(
-                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeA),
-                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeB),
-                IpUtils.convertIpRangeToIpNetmask(privateNetworkRangeC));
+                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassA),
+                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassB),
+                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassC));
     }
 
     public boolean isUsableAddress(String networkInterfaceName, InetAddress address) {

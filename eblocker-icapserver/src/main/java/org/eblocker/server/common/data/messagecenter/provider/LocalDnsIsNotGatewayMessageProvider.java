@@ -67,6 +67,7 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
         int networkMask = IpUtils.convertIpStringToInt(networkMaskString);
         int network = gatewayIpAddress & networkMask;
         return nameServers.stream()
+                .filter(ns -> IpUtils.isIPAddress(ns))
                 .filter(ns -> !ns.equals(gatewayIpAddressString))
                 .filter(ns -> !ns.equals(eblockerIpAddressString))
                 .map(ns -> IpUtils.convertIpStringToInt(ns) & network)

@@ -218,7 +218,7 @@ public class SSLContextHandlerTest {
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("10.10.10.99"));
         ArgumentCaptor<NetworkInterfaceWrapper.IpAddressChangeListener> ipChangeListenerCaptor = ArgumentCaptor.forClass(NetworkInterfaceWrapper.IpAddressChangeListener.class);
         Mockito.verify(networkInterface).addIpAddressChangeListener(ipChangeListenerCaptor.capture());
-        ipChangeListenerCaptor.getValue().onIpAddressChange(Ip4Address.parse("10.10.10.99"));
+        ipChangeListenerCaptor.getValue().onIpAddressChange(true, false);
 
         // verify a new key has been generated
         CertificateAndKey testKeyPair = SslTestUtils.loadCertificateAndKey(new SimpleResource(unitTestHttps), keyStorePassword);
@@ -238,7 +238,7 @@ public class SSLContextHandlerTest {
 
         ArgumentCaptor<NetworkInterfaceWrapper.IpAddressChangeListener> ipChangeListenerCaptor = ArgumentCaptor.forClass(NetworkInterfaceWrapper.IpAddressChangeListener.class);
         Mockito.verify(networkInterface).addIpAddressChangeListener(ipChangeListenerCaptor.capture());
-        ipChangeListenerCaptor.getValue().onIpAddressChange(Ip4Address.parse("10.10.10.99"));
+        ipChangeListenerCaptor.getValue().onIpAddressChange(true, false);
         Mockito.verify(sslService, Mockito.never()).getCa();
     }
 

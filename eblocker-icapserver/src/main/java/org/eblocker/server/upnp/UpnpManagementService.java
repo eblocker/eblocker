@@ -289,11 +289,11 @@ public class UpnpManagementService {
         addPortForwardings(refresh);
     }
 
-    private synchronized void onIpAddressChange(IpAddress newIp) {
-        if (!newIp.isIpv4()) {
-            log.error("Need IPv4 address for UPnP, but got {} - ignoring IP change", newIp);
+    private synchronized void onIpAddressChange(boolean ip4Updated, boolean ip6Updated) {
+        if (!ip4Updated) {
             return;
         }
+        IpAddress newIp = networkInterfaceWrapper.getFirstIPv4Address();
         log.info("Changed IP from {} to {}", ip, newIp);
         List<UpnpPortForwarding> changedForwardings = new ArrayList<>();
         List<UpnpPortForwarding> toBeDeleted = new ArrayList<>();

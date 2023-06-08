@@ -1,0 +1,42 @@
+<div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" class="settings-child-view">
+
+    <!--div>
+        <eb-help-icon template="app/components/network/settingsIp6/help-network-ipv6.template.html">
+        </eb-help-icon>
+    </div-->
+
+    <div layout-padding layout-margin></div>
+
+    <div layout="row" layout-align="start center">
+        <md-switch md-theme="eBlockerThemeSwitch" class="md-primary"
+                   ng-model="vm.configurationIp6.routerAdvertisementsEnabled" ng-change="vm.toggleRouterAdvertisements()" ng-disabled="vm.isTogglingRouterAdvertisements">
+            {{ vm.configurationIp6.routerAdvertisementsEnabled ? 'ADMINCONSOLE.NETWORK_SETTINGS_IP6.ROUTER_ADVERTISEMENTS.ENABLED' : 'ADMINCONSOLE.NETWORK_SETTINGS_IP6.ROUTER_ADVERTISEMENTS.DISABLED' | translate }}
+        </md-switch>
+    </div>
+
+    <div class="config-frame md-whiteframe-z1" ng-show="vm.showWarningGlobalAddressMissing">
+        <div>
+            <p translate="ADMINCONSOLE.NETWORK_SETTINGS_IP6.WARNING_NO_GLOBAL_ADDRESS"></p>
+        </div>
+    </div>
+
+    <div class="config-frame md-whiteframe-z1" ng-show="vm.showWarningIp6Leak">
+        <div>
+            <p translate="ADMINCONSOLE.NETWORK_SETTINGS_IP6.WARNING_IP6_LEAK"></p>
+        </div>
+    </div>
+
+    <div class="config-frame md-whiteframe-z1">
+        <div layout="row" layout-align="start center" layout-margin>
+            <h4>{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_ADDRESSES' | translate}}</h4>
+        </div>
+        <div layout="column">
+            <div layout="row" class="network-label-container">
+                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_LINK_LOCAL' | translate}}" config="vm.localAddresses"></eb-label-container>
+            </div>
+            <div layout="row" class="network-label-container">
+                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_GLOBAL' | translate}}" config="vm.globalAddresses"></eb-label-container>
+            </div>
+        </div>
+    </div>
+</div>

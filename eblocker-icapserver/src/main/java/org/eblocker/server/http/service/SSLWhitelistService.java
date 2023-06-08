@@ -17,6 +17,7 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.SSLWhitelistUrl;
 import org.eblocker.server.common.exceptions.EblockerException;
@@ -38,6 +39,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Singleton
 public class SSLWhitelistService implements Observer {
 
     private static final Logger log = LoggerFactory.getLogger(SSLWhitelistService.class);

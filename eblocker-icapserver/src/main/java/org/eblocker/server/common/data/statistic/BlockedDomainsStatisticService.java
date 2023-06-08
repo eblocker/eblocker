@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.BlockedDomainsStats;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
@@ -210,7 +211,7 @@ public class BlockedDomainsStatisticService {
     }
 
     public synchronized void resetStats() {
-        blockStatsById.keySet().forEach(key -> resetStats("device:" + key));
+        blockStatsById.keySet().forEach(key -> resetStats(Device.ID_PREFIX + key));
     }
 
     private List<Entry> getTopBlockedDomains(Map<String, Integer> stats) {
@@ -239,7 +240,7 @@ public class BlockedDomainsStatisticService {
             String deviceId = tokens[0];
             Category category = Category.valueOf(tokens[1]);
 
-            if (deviceService.getDeviceById("device:" + deviceId) == null) {
+            if (deviceService.getDeviceById(Device.ID_PREFIX + deviceId) == null) {
                 db.delete(name);
                 db.commit();
                 continue;

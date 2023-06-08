@@ -17,6 +17,7 @@
 package org.eblocker.server.common.openvpn;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -36,6 +37,7 @@ import org.eblocker.server.common.openvpn.configuration.Option;
 import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,7 @@ import java.util.stream.Stream;
  * This class makes all the work which is asked for by the OpenVpnController (REST Interface).
  * It will trigger/tell the other objects to adapt the firewall configuration, rewrite squids config and so on...
  */
+@Singleton
 @SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 200)
 public class OpenVpnService {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnService.class);
@@ -584,5 +587,14 @@ public class OpenVpnService {
                 .map(o -> o.getArguments()[0])
                 .findFirst()
                 .orElse(null);
+    }
+
+    @SubSystemShutdown
+    public void shutdown() {
+        log.info("Shutting down");
+        vpnClientsById.forEach((id, client) -> {
+            log.info("Stopping client {}", id);
+            client.stop();
+        });
     }
 }

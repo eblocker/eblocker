@@ -11,7 +11,8 @@
                 <!-- <div style="padding-top: 8px;"> -->
             <div layout="row" layout-xs="column" layout-align="start start"  style= "padding-top: 16px; width: 100%;">
                 <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
-                    <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}" config="vm.deviceIp"></eb-label-container>
+                    <eb-label-container is-edit="vm.editable(vm.device)" edit-callback="vm.editName($event, vm.device)"
+                                    style="margin-bottom: 15px;" label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_NAME' | translate}}" config="vm.deviceName"></eb-label-container>
                 </div>
                 <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;">
                     <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_MAC' | translate}}" config="vm.deviceMac"></eb-label-container>
@@ -24,9 +25,9 @@
         <!-- **** Edit -->
         <div layout="row" layout-align="start center" style="width: 100%;">
             <!-- <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;"> -->
-                <div >
-                <eb-label-container is-edit="vm.editable(vm.device)" edit-callback="vm.editName($event, vm.device)"
-                                    style="margin-bottom: 15px;" label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_NAME' | translate}}" config="vm.deviceName"></eb-label-container>
+            <div>
+                <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}" config="vm.deviceIp"
+                                    style="white-space: pre;"></eb-label-container>
             </div>
         </div>
     </div>

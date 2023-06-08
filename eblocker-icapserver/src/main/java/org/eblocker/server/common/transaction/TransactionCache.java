@@ -17,12 +17,14 @@
 package org.eblocker.server.common.transaction;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Singleton
 public class TransactionCache {
 
     private final int size;

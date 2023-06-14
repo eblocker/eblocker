@@ -55,12 +55,12 @@ public class OpenVpnChannelTest extends EmbeddedRedisServiceTestBase {
         };
         service.publish(channelNames[0], "pid 51723");
         service.publish(channelNames[0], "unknown-message-log-some-error");
-        service.publish(channelNames[0], "up tun0 10.10.10.10 10.0.51.1 5.79.71.195 8.8.8.8,8.8.4.4");
+        service.publish(channelNames[0], "up tun0 10.10.10.10 10.0.51.1 10.0.51.42 5.79.71.195 8.8.8.8,8.8.4.4");
         service.publish(channelNames[0], "down test");
         service.publish(channelNames[0], "down");
         service.publish(channelNames[1], "pid 23175");
         service.publish(channelNames[0], "unknown-message-log-some-error");
-        service.publish(channelNames[1], "up tun0 10.11.10.10 11.0.51.1 6.79.71.195");
+        service.publish(channelNames[1], "up tun0 10.11.10.10 11.0.51.1 11.0.51.42 6.79.71.195");
         service.publish(channelNames[1], "down test2");
         service.publish(channelNames[1], "down");
 
@@ -71,7 +71,7 @@ public class OpenVpnChannelTest extends EmbeddedRedisServiceTestBase {
         // check listener of client 0 have been called in sequence and with correct parameters
         InOrder inOrder = Mockito.inOrder(listener);
         inOrder.verify(listener).reportPid(51723);
-        inOrder.verify(listener).up("tun0", "10.10.10.10", "10.0.51.1", "5.79.71.195", Arrays.asList("8.8.8.8", "8.8.4.4"));
+        inOrder.verify(listener).up("tun0", "10.10.10.10", "10.0.51.1", "10.0.51.42", "5.79.71.195", Arrays.asList("8.8.8.8", "8.8.4.4"));
         inOrder.verify(listener).down("test");
         inOrder.verify(listener).down("unknown");
 

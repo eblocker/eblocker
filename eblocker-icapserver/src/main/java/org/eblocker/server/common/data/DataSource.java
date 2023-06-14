@@ -500,4 +500,8 @@ public interface DataSource {
     boolean isContentFilterEnabled();
 
     void setContentFilterEnabled(boolean enabled);
+
+    boolean areRouterAdvertisementsEnabled();
+
+    void setRouterAdvertisementsEnabled(boolean enabled);
 }

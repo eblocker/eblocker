@@ -107,6 +107,9 @@
                 "DNSFIREWALLTEST" : {
                     "LABEL" : "DNS Firewall"
                 },
+                "IPV6TEST" : {
+                    "LABEL" : "IPv6-Filterung"
+                },
                 "WEBFILTERINGTEST" : {
                     "LABEL" : "Webseiten-Filterung"
                 },
@@ -143,6 +146,9 @@
                     "EXISTING_SSL_SESSION" : "Bei Änderung der Einstellungen: Ihr Browser verwendet eine bestehende HTTPS-Verbindung. Bitte starten Sie Ihren Browser neu.",
                     "HEADING" : "Mögliche Ursachen:",
                     "INTERNET_CONNECTIVITY" : "Die Verbindung zu Ihrem Internetprovider ist gestört.",
+                    "IPV6_LEAK" : "Es besteht eine IPv6-Verbindung, die nicht durch den eBlocker geschützt wird.",
+                    "NO_IPV6_ON_CLIENT" : "Es besteht keine IPv6-Verbindung.",
+                    "NO_IPV6_ON_EBLOCKER" : "Es besteht keine IPv6-Verbindung auf dem eBlocker.",
                     "ROUTING_SECOND_NETWORK" : "Ihr Gerät verwendet ein zweites Netzwerk, das nicht durch den eBlocker geschützt wird."
                 },
                 "NOT_USED": "nicht verwendet"

@@ -354,7 +354,7 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
             label: 'ADMINCONSOLE.USERS.DETAILS.TABLE.COLUMN.IP',
             isSortable: true,
             showHeader: true,
-            sortingKey: 'sumIpAddress'
+            sortingKey: 'sortingKeyIpAddress'
         }
     ];
 

@@ -44,6 +44,7 @@ public class RoutingControllerTest {
     private static final String RECONFIGURE_ROUTING_TABLES_SCRIPT = "reconfigureTables";
     private static final String RECONFIGURE_POLICY_SCRIPT = "reconfigurePolicy";
     private static final String VPN_SET_CLIENT_ROUTE_SCRIPT = "setClientRoute";
+    private static final String VPN_SET_CLIENT_ROUTE_IP6_SCRIPT = "setClientRouteIp6";
     private static final String VPN_CLEAR_CLIENT_ROUTE_SCRIPT = "clearClientRoute";
 
     private String rtTablesPath = "test-data/vpn/rt_tables";
@@ -59,7 +60,8 @@ public class RoutingControllerTest {
         rtTablesTempFile.deleteOnExit();
 
         scriptRunner = Mockito.mock(ScriptRunner.class);
-        routingController = new RoutingController(rtTablesPath, rtTablesTempFile.getAbsolutePath(), RT_PREFIX, RT_OFFSET, ROUTE_MIN, ROUTE_MAX, RECONFIGURE_ROUTING_TABLES_SCRIPT, RECONFIGURE_POLICY_SCRIPT, VPN_SET_CLIENT_ROUTE_SCRIPT,
+        routingController = new RoutingController(rtTablesPath, rtTablesTempFile.getAbsolutePath(), RT_PREFIX, RT_OFFSET, ROUTE_MIN, ROUTE_MAX, RECONFIGURE_ROUTING_TABLES_SCRIPT, RECONFIGURE_POLICY_SCRIPT,
+                VPN_SET_CLIENT_ROUTE_SCRIPT, VPN_SET_CLIENT_ROUTE_IP6_SCRIPT,
                 VPN_CLEAR_CLIENT_ROUTE_SCRIPT, scriptRunner);
     }
 
@@ -79,8 +81,10 @@ public class RoutingControllerTest {
             inOrder.verify(scriptRunner).runScript(RECONFIGURE_ROUTING_TABLES_SCRIPT);
 
             // check policy configuration
-            String[] arguments = createReconfigurePolicyArguments(routes, 0, i + 1);
-            inOrder.verify(scriptRunner).runScript(RECONFIGURE_POLICY_SCRIPT, arguments);
+            for (String ipVersionFlag: List.of("-4", "-6")) {
+                String[] arguments = createReconfigurePolicyArguments(ipVersionFlag, routes, 0, i + 1);
+                inOrder.verify(scriptRunner).runScript(RECONFIGURE_POLICY_SCRIPT, arguments);
+            }
         }
 
         // check generated routing tables
@@ -103,19 +107,22 @@ public class RoutingControllerTest {
             inOrder.verify(scriptRunner).runScript(RECONFIGURE_ROUTING_TABLES_SCRIPT);
 
             // check policy configuration
-            String[] arguments = createReconfigurePolicyArguments(routes, k + 1, n);
-            inOrder.verify(scriptRunner).runScript(RECONFIGURE_POLICY_SCRIPT, arguments);
+            for (String ipVersionFlag: List.of("-4", "-6")) {
+                String[] arguments = createReconfigurePolicyArguments(ipVersionFlag, routes, k + 1, n);
+                inOrder.verify(scriptRunner).runScript(RECONFIGURE_POLICY_SCRIPT, arguments);
+            }
         }
 
     }
 
-    private String[] createReconfigurePolicyArguments(List<Integer> routes, int startIndex, int endIndex) {
+    private String[] createReconfigurePolicyArguments(String ipVersionFlag, List<Integer> routes, int startIndex, int endIndex) {
         int n = endIndex - startIndex;
-        String[] arguments = new String[2 + n];
-        arguments[0] = RT_PREFIX;
-        arguments[1] = String.valueOf(RT_OFFSET);
+        String[] arguments = new String[3 + n];
+        arguments[0] = ipVersionFlag;
+        arguments[1] = RT_PREFIX;
+        arguments[2] = String.valueOf(RT_OFFSET);
         for (int i = 0; i < n; ++i) {
-            arguments[2 + i] = String.valueOf(routes.get(startIndex + i));
+            arguments[3 + i] = String.valueOf(routes.get(startIndex + i));
         }
         return arguments;
     }

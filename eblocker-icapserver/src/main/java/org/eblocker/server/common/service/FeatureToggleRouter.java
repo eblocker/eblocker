@@ -19,14 +19,18 @@ package org.eblocker.server.common.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.DataSource;
 
 @Singleton
 public class FeatureToggleRouter {
 
     private final boolean ip6Enabled;
+    private final DataSource dataSource;
 
     @Inject
-    public FeatureToggleRouter(@Named("features.enable.ip6") boolean ip6Enabled) {
+    public FeatureToggleRouter(DataSource dataSource,
+                               @Named("features.enable.ip6") boolean ip6Enabled) {
+        this.dataSource = dataSource;
         this.ip6Enabled = ip6Enabled;
     }
 
@@ -34,4 +38,7 @@ public class FeatureToggleRouter {
         return ip6Enabled;
     }
 
+    public boolean shouldSendRouterAdvertisements() {
+        return ip6Enabled && dataSource.areRouterAdvertisementsEnabled();
+    }
 }

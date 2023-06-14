@@ -103,6 +103,7 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
             vm.checkResultsUi['dns']       = evaluateDns(      cfgData, response.dnsFirewallTest);
             vm.checkResultsUi['http']      = evaluateHttp(     cfgData, response.httpRoutingTest);
             vm.checkResultsUi['https']     = evaluateHttps(    cfgData, response.httpsRoutingTest);
+            vm.checkResultsUi['ipv6']      = evaluateIpv6(     cfgData, response.ipv6RoutingTest);
             vm.checkResultsUi['pattern']   = evaluatePattern(  cfgData, response.patternBlockerTest);
             vm.checkResultsUi['routing']   = evaluateRouting(  cfgData, response.routingTest);
             vm.checkResultsUi['domainblocker'] = combinedDomainBlockerResult(vm.checkResultsUi['adsdomain'],
@@ -271,6 +272,27 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
         return {ok: ok, expected: expected, expl: expl};
     }
 
+    function evaluateIpv6(cfgData, testresult) {
+        var networkConfig = cfgData['network'];
+        if (!networkConfig) {
+            return {ok: false, expected: false, expl: ['CONFIGURATION_DATA_MISSING']};
+        }
+        var ok = testresult.checkStatus === 'passed';
+        var ip6Leak = testresult.checkDetails.httpcode === 200;
+        var expected = shouldRouteIpv6(networkConfig) === ok && !ip6Leak;
+        var expl = [];
+        if (!expected) {
+            if (ip6Leak) {
+                expl.push('IPV6_LEAK');
+            } else if (shouldRouteIpv6(networkConfig)) {
+                expl.push('NO_IPV6_ON_CLIENT');
+            } else {
+                expl.push('NO_IPV6_ON_EBLOCKER');
+            }
+        }
+        return {ok: ok, expected: expected, expl: expl};
+    }
+
     function combinedDomainBlockerResult(adsResult, trackerResult) {
         var ok = false;
         var expected = adsResult.expected && trackerResult.expected;
@@ -321,5 +343,9 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
         } else {
             return false;
         }
+    }
+
+    function shouldRouteIpv6(networkConfig) {
+        return networkConfig.globalIp6AddressAvailable;
     }
 }

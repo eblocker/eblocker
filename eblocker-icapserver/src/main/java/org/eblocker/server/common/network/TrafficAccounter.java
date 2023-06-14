@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -53,6 +54,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+@Singleton
 @SubSystemService(value = SubSystem.EVENT_LISTENER, allowUninitializedCalls = false)
 public class TrafficAccounter {
     private static final Logger logger = LoggerFactory.getLogger(TrafficAccounter.class);

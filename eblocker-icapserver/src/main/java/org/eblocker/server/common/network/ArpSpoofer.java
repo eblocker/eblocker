@@ -18,6 +18,7 @@ package org.eblocker.server.common.network;
 
 import com.google.common.collect.Table;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
@@ -34,6 +35,7 @@ import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+@Singleton
 public class ArpSpoofer implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ArpSpoofer.class);
 

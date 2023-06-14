@@ -18,6 +18,7 @@ package org.eblocker.server.common.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.io.IOUtils;
@@ -58,6 +59,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.Collections;
 
+@Singleton
 public class DeviceRegistrationClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceRegistrationClient.class);

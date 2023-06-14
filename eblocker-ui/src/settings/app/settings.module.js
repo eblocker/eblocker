@@ -175,6 +175,7 @@ import TimeLangComponent from './components/system/timeLang/time-language.compon
 import LedSettingsComponent from './components/system/ledSettings/led-settings.component';
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
+import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
 import VpnHomeComponent from './components/vpnHome/vpn-home.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeDevicesComponent from './components/vpnHome/devices/vpn-home-devices.component';
@@ -295,6 +296,7 @@ import UpnpService from './service/upnp/UpnpService';
 // ** Shared Services
 import NotificationService from '../../shared/services/notification/NotificationService';
 import ArrayUtilsService from '../../shared/services/utils/array-utils.service';
+import IpUtilsService from '../../shared/services/utils/ip-utils.service';
 import AccessContingentService from '../../shared/services/parentalControl/AccessContingentService';
 import DataCachingService from '../../shared/services/caching/DataCachingService';
 import LanguageService from '../../shared/services/language/language.service.js';
@@ -464,6 +466,7 @@ angular.module('eblocker.adminconsole', [
     .component('configBackupComponent', ConfigBackupComponent)
     .component('ledSettingsComponent', LedSettingsComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)
+    .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
     .component('vpnHomeComponent', VpnHomeComponent)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeDevicesComponent', VpnHomeDevicesComponent)
@@ -538,6 +541,7 @@ angular.module('eblocker.adminconsole', [
     .factory('UpdateService', UpdateService)
     .factory('PasswordService', PasswordService)
     .factory('ArrayUtilsService', ArrayUtilsService)
+    .factory('IpUtilsService', IpUtilsService)
     .factory('FeatureToggleService', FeatureToggleService)
     .factory('SystemService', SystemService)
     .factory('RedirectService', RedirectService)

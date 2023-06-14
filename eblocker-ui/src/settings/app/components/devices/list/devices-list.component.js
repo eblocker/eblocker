@@ -118,7 +118,7 @@ function Controller(logger, $filter, $stateParams, StateService, VpnService, Reg
             label: 'ADMINCONSOLE.DEVICES_LIST.TABLE.COLUMN.IP',
             isSortable: true,
             showOnSmallTable: false,
-            sortingKey: 'sumIpAddress',
+            sortingKey: 'sortingKeyIpAddress',
             showHeader: true,
         },
         {

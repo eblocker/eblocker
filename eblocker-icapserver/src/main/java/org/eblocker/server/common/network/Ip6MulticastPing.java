@@ -19,6 +19,7 @@ package org.eblocker.server.common.network;
 import com.google.inject.Inject;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.network.icmpv6.EchoRequest;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 
@@ -64,7 +65,7 @@ public class Ip6MulticastPing {
         random.nextBytes(data);
         EchoRequest echoRequest = new EchoRequest(networkInterface.getHardwareAddress(), networkInterface.getIp6LinkLocalAddress(), MULTICAST_ALL_NODES_HW_ADDRESS, Ip6Address.MULTICAST_ALL_NODES_ADDRESS, identifier, sequence, data);
         String message = echoRequest.toString();
-        pubSubService.publish("ip6:out", message);
+        pubSubService.publish(Channels.IP6_OUT, message);
         sequence = (sequence + 1) & 0xffff;
     }
 }

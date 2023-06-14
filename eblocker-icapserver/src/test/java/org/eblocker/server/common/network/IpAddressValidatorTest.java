@@ -68,7 +68,7 @@ public class IpAddressValidatorTest {
                 createDevice("00aabbccddee", Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), false),
                 createDevice("00ff00112233", Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), false),
                 createDevice("008800000001", Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), true),
-                createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10")), true));
+                createDevice("008800000201", Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("192.168.7.201"), IpAddress.parse("10.8.0.10"), IpAddress.parse("fe80::a:b:c:d")), true));
 
         deviceService = Mockito.mock(DeviceService.class);
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devices);
@@ -111,6 +111,7 @@ public class IpAddressValidatorTest {
         arpResponseTable.put("008800000001", Ip4Address.parse("192.168.7.100"), lastActivity);
 
         validator.run();
+        validator.run(); // responses are checked in the second run
 
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), devices.get(0).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), devices.get(1).getIpAddresses());
@@ -137,6 +138,10 @@ public class IpAddressValidatorTest {
         arpResponseTable.put("008800000201", Ip4Address.parse("192.168.7.201"), lastActivity);
 
         validator.run();
+        // still valid because responses are not checked in the first run:
+        Assert.assertTrue(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
+
+        validator.run(); // responses are checked in the second run
 
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), devices.get(0).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.21")), devices.get(1).getIpAddresses());

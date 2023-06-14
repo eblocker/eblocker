@@ -24,17 +24,9 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
-public class TableGeneratorTest {
-    private final int proxyPort = 3128;
-    private final int proxyHTTPSPort = 3130;
-    private final int localDnsPort = 5300;
-    private final int anonSocksPort = 12345;
-    private final int parentalControlRedirectHttpPort = 3003;
-    private final int parentalControlRedirectHttpsPort = 3004;
-    private final int httpPort = 3000;
-    private final int httpsPort = 3443;
+public class TableGeneratorIp4Test extends TableGeneratorTestBase {
+    private final String anonVpnInterface = "tun0";
 
     private final String eBlockerIp = "192.168.1.2";
     private final String fallbackIp = "169.254.94.109";
@@ -51,32 +43,24 @@ public class TableGeneratorTest {
     private final String otherLocalDevice = "192.168.1.23";
     private final String externalHost = "4.3.2.1";
 
-    private final String standardInterface = "eth0";
-
     // eBlocker Mobile settings
-    private final String mobileVpnInterface = "tun33";
     private final String mobileVpnIp = "10.8.0.1";
     private final String mobileVpnSubnet = "10.8.0.0";
     private final String mobileVpnNetmask = "255.255.255.0";
 
     // Setting for anonymization via OpenVPN
-    private final String anonVpnInterface = "tun0";
+    private static final String anonVpnClientDeviceId = "anonVpnClientDeviceId";
+    private final String anonVpnEndpointIp = "100.42.23.7";
     private final int anonVpnClientRoute = 1;
 
-    private TableGenerator generator;
-    private IpAddressFilter deviceIpFilter;
-    private Set<OpenVpnClientState> anonVpnClients;
-
-    private Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn;
-    private Table natTable, filterTable, mangleTable;
+    private TableGeneratorIp4 generator;
 
     @Before
     public void setUp() {
-        generator = new TableGenerator(standardInterface,
+        generator = new TableGeneratorIp4(standardInterface,
                 mobileVpnInterface, mobileVpnSubnet, mobileVpnNetmask,
                 proxyPort, proxyHTTPSPort,
                 anonSocksPort, anonSourceIp,
-                "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "169.254.0.0/16",
                 13,
                 httpPort, httpsPort,
                 parentalControlRedirectIp, parentalControlRedirectHttpPort, parentalControlRedirectHttpsPort,
@@ -88,16 +72,16 @@ public class TableGeneratorTest {
         Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice, mobileVpnDevice, mobileVpnLocalAccessDevice, torClientDevice, anonVpnClientDevice));
         Mockito.when(deviceIpFilter.getDisabledDevicesIps()).thenReturn(List.of(disabledDevice));
         Mockito.when(deviceIpFilter.getSslEnabledDevicesIps()).thenReturn(List.of(sslEnabledDevice, mobileVpnDevice, torClientDevice, anonVpnClientDevice));
-        Mockito.when(deviceIpFilter.getDevicesIps(Set.of("anonVpnClientDeviceId"))).thenReturn(List.of(anonVpnClientDevice));
+        Mockito.when(deviceIpFilter.getDevicesIps(Set.of(anonVpnClientDeviceId))).thenReturn(List.of(anonVpnClientDevice));
         Mockito.when(deviceIpFilter.getTorDevicesIps()).thenReturn(List.of(torClientDevice));
         Mockito.when(deviceIpFilter.getMobileVpnDevicesIps()).thenReturn(List.of(mobileVpnDevice, mobileVpnLocalAccessDevice));
         Mockito.when(deviceIpFilter.getMobileVpnDevicesPrivateNetworkAccessIps()).thenReturn(List.of(mobileVpnLocalAccessDevice));
 
         OpenVpnClientState vpnClient = new OpenVpnClientState();
-        vpnClient.setDevices(Set.of("anonVpnClientDeviceId"));
+        vpnClient.setLocalEndpointIp(anonVpnEndpointIp);
+        vpnClient.setDevices(Set.of(anonVpnClientDeviceId));
         vpnClient.setState(OpenVpnClientState.State.ACTIVE);
         vpnClient.setVirtualInterfaceName(anonVpnInterface);
-        vpnClient.setLinkLocalIpAddress("169.254.8.1");
         vpnClient.setRoute(anonVpnClientRoute);
         anonVpnClients = Set.of(vpnClient);
 
@@ -109,7 +93,7 @@ public class TableGeneratorTest {
         generator.setMasqueradeEnabled(true);
         generator.setMobileVpnServerEnabled(true);
 
-        createTablesAndSimulators();
+        createTablesAndSimulators(generator);
     }
 
     @Test
@@ -267,6 +251,11 @@ public class TableGeneratorTest {
 
         // packets from other devices are not marked:
         Assert.assertEquals(Action.returnFromChain(), mangleVpn.tcpPacket(enabledDevice, externalHost, 1234));
+
+        // eblocker-dns binds to the VPN tunnel's endpoint IP for outgoing DNS packets.
+        // If the destination IP (i.e. the DNS server) is not within the tunnel interface's IP range, the packets must also be marked.
+        // Otherwise they do not go into the tunnel but take the default route.
+        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleOutput.udpPacket(anonVpnEndpointIp, externalHost, 53));
     }
 
     @Test
@@ -292,22 +281,6 @@ public class TableGeneratorTest {
     @Test
     public void testRules() {
         // There are some sanity checks in Rule#toString()
-        Stream.of(natTable, mangleTable, filterTable)
-                .flatMap(table -> table.getChains().stream())
-                .flatMap(chain -> chain.getRules().stream())
-                .forEach(rule -> Assert.assertNotNull(rule.toString()));
-    }
-
-    private void createTablesAndSimulators() {
-        natTable = generator.generateNatTable(deviceIpFilter, anonVpnClients);
-        mangleTable = generator.generateMangleTable(deviceIpFilter, anonVpnClients);
-        filterTable = generator.generateFilterTable(deviceIpFilter, anonVpnClients);
-
-        natPre = new Simulator(natTable.chain("PREROUTING"));
-        natPost = new Simulator(natTable.chain("POSTROUTING"));
-        natOutput = new Simulator(natTable.chain("OUTPUT"));
-        filterForward = new Simulator(filterTable.chain("FORWARD"));
-        filterInput = new Simulator(filterTable.chain("INPUT"));
-        mangleVpn = new Simulator(mangleTable.chain("vpn-router"));
+        getAllRules().forEach(rule -> Assert.assertNotNull(rule.toString()));
     }
 }

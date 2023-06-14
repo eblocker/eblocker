@@ -64,6 +64,12 @@ export default function ConnectionTestService($http, $q) {
                 getResponseProcessor(protocol === 'https' ? 'httpsRoutingTest' : 'httpRoutingTest', 204));
     }
 
+    function makeIpv6RoutingTestRequest() {
+        return makeTestRequest('http', 'ipv6.eblocker.org/_check_/routing').then(
+                getResponseProcessor('ipv6RoutingTest', 204),
+                getResponseProcessor('ipv6RoutingTest', 204));
+    }
+
     function makeAdsDomainBlockerTestRequest() {
         return makeTestRequest('http', 'ads.domainblockercheck.eblocker.org/_check_/domain-blocker').then(
                 getResponseProcessor('adsDomainBlockerTest', 200),
@@ -133,6 +139,10 @@ export default function ConnectionTestService($http, $q) {
                 addToTestResults, addToTestResults);
         promises.push(pDnsFirewallTest);
 
+        var pIpv6RoutingTest = makeIpv6RoutingTestRequest().then(
+                addToTestResults, addToTestResults);
+        promises.push(pIpv6RoutingTest);
+
         // All promises are finished (or failed)
         return $q.all(promises).then(function success(){
             return testresults;
@@ -149,6 +159,7 @@ export default function ConnectionTestService($http, $q) {
         makeTrackerDomainBlockerTestRequest: makeTrackerDomainBlockerTestRequest,
         makeDnsFirewallTestRequest: makeDnsFirewallTestRequest,
         makeRoutingTestRequest: makeRoutingTestRequest,
+        makeIpv6RoutingTestRequest: makeIpv6RoutingTestRequest,
         makeTestRequest: makeTestRequest
     };
 }

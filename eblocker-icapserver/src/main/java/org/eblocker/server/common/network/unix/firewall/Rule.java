@@ -37,6 +37,7 @@ public class Rule {
     private States states;
     private MultiPorts multiPorts;
     private OwnerModule ownerModule;
+    private IcmpType icmpType;
     private String comment;
 
     private static Pattern allowedCommentCharacters = Pattern.compile("[ a-zA-Z0-9]+");
@@ -57,6 +58,7 @@ public class Rule {
             states = template.states;
             multiPorts = template.multiPorts;
             ownerModule = template.ownerModule;
+            icmpType = template.icmpType;
             comment = template.comment;
     }
 
@@ -90,6 +92,11 @@ public class Rule {
 
     public Rule udp() {
         this.protocol = Protocol.UDP;
+        return this;
+    }
+
+    public Rule icmpv6() {
+        this.protocol = Protocol.ICMPv6;
         return this;
     }
 
@@ -134,8 +141,18 @@ public class Rule {
         return this;
     }
 
+    public Rule icmpType(IcmpType type) {
+        this.icmpType = type;
+        return this;
+    }
+
     public Rule redirectTo(String targetIp, int targetPort) {
         this.action = Action.redirectTo(targetIp, targetPort);
+        return this;
+    }
+
+    public Rule redirectTo(int targetPort) {
+        this.action = Action.redirectTo(targetPort);
         return this;
     }
 
@@ -156,6 +173,11 @@ public class Rule {
 
     public Rule reject() {
         this.action = Action.reject();
+        return this;
+    }
+
+    public Rule rejectWithTcpReset() {
+        this.action = Action.rejectWithTcpReset();
         return this;
     }
 
@@ -254,11 +276,22 @@ public class Rule {
             ensureSpace(result);
             result.append(ownerModule.toString());
         }
+        if (icmpType != null) {
+            if (protocol != icmpType.requiredProtocol()) {
+                throw new IllegalArgumentException("ICMP type '" + icmpType + "' can not be used with protocol '" + protocol + "'");
+            }
+            ensureSpace(result);
+            result.append(icmpType.toString());
+        }
         if (action == null) {
             throw new IllegalArgumentException("A firewall rule needs an action");
         }
         ensureSpace(result);
         result.append(action.toString());
+
+        if (!action.protocolAllowed(protocol)) {
+            throw new IllegalArgumentException("Action '" + action + "' can not be used with protocol '" + protocol + "'");
+        }
 
         if (comment != null) {
             result.append(" -m comment --comment ");
@@ -282,23 +315,32 @@ public class Rule {
         }
     }
 
-    public enum Protocol {
-        TCP("tcp"),
-        UDP("udp");
-
-        private final String label;
-
-        Protocol(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-    }
-
     public enum State {
         INVALID, ESTABLISHED, NEW, RELATED, UNTRACKED;
+    }
+
+    public interface IcmpType {
+        Protocol requiredProtocol();
+    }
+
+    public enum Icmp6Type implements IcmpType {
+        REDIRECT("redirect");
+
+        private final String typeName;
+
+        Icmp6Type(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return "--icmpv6-type " + typeName;
+        }
+
+        @Override
+        public Protocol requiredProtocol() {
+            return Protocol.ICMPv6;
+        }
     }
 
     public class States {

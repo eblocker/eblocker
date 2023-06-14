@@ -22,6 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpMethod;
@@ -114,6 +115,7 @@ import javax.net.ssl.SSLContext;
  * has failed, however, only http requests are processed. This allows the user to see
  * error logs and probably reset the unit to a usable state.
  */
+@Singleton
 @SubSystemService(SubSystem.HTTP_SERVER)
 @SuppressWarnings("squid:S1192")
 public class EblockerHttpsServer implements Preprocessor {
@@ -1329,6 +1331,14 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/network/dhcpservers", networkController)
                 .action("getDhcpServers", HttpMethod.GET)
                 .name("adminconsole.network.config.get.dhcp.servers.route");
+        server
+                .uri("/api/adminconsole/network/ip6", networkController)
+                .action("getConfigurationIp6", HttpMethod.GET)
+                .name("adminconsole.network.config.ip6.get.route");
+        server
+                .uri("/api/adminconsole/network/ip6", networkController)
+                .action("updateConfigurationIp6", HttpMethod.PUT)
+                .name("adminconsole.network.config.ip6.put.route");
 
         // ** New Adminconsole: VPN
         server

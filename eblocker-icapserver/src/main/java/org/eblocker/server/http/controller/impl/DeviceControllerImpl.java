@@ -122,7 +122,7 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public List<Device> getAllDevices(Request request, Response response) {
         IpAddress requestIPAddress = ControllerUtils.getRequestIPAddress(request);
-        String eBlockerId = "device:" + networkInterfaceWrapper.getHardwareAddressHex();
+        String eBlockerId = Device.ID_PREFIX + networkInterfaceWrapper.getHardwareAddressHex();
 
         Collection<Device> devices = deviceService.getDevices(true);
         List<Device> result = new ArrayList<>(devices.size());

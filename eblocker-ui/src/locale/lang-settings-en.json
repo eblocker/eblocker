@@ -471,7 +471,7 @@
                     "LABEL_DEVICE_UPDATING" : "Updating device ...",
                     "LABEL_DISABLED_EBLOCKER" : "eBlocker disabled for this device",
                     "LABEL_ENABLED_EBLOCKER" : "eBlocker enabled for this device",
-                    "LABEL_IP" : "IP address",
+                    "LABEL_IP" : "IP addresses",
                     "LABEL_IP_ADDRESS_FIXED" : "Always assign the same IP address to this device",
                     "LABEL_IP_ADDRESS_NOT_FIXED" : "Assign dynamic IP address to this device",
                     "LABEL_IS_EBLOCKER" : "Device is eBlocker",
@@ -1750,8 +1750,10 @@
                         "EBLOCKER_DNS_RESOLVE_WORKING" : "The eBlocker itself can resolve DNS names.",
                         "EBLOCKER_IP4_PING_BROKEN" : "Your eBlocker cannot reach the internet via ICMP/ping!",
                         "EBLOCKER_IP4_PING_WORKING" : "Your eBlocker can reach the internet via ICMP/ping.",
-                        "EBLOCKER_IP6_ENABLED" : "Your network can access the internet via IPv6. That will bypass the tracking of eBlocker if HTTPS support is enabled.",
-                        "EBLOCKER_NO_IP6" : "Your network cannot access the internet via IPv6. This is good news as the eBlocker does not support IPv6 yet.",
+                        "EBLOCKER_IP6_ENABLED" : "Your network can access the internet via IPv6.",
+                        "EBLOCKER_IP6_DISABLED" : "Your network cannot access the internet via IPv6.",
+                        "EBLOCKER_IP6_PING_BROKEN" : "Your eBlocker cannot reach the IPv6 internet via ICMPv6/ping!",
+                        "EBLOCKER_IP6_PING_WORKING" : "Your eBlocker can reach the IPv6 internet via ICMPv6/ping.",
                         "ALL_DEVICES_USE_AUTO_BLOCK_MODE" : "All your devices are set to automatic mode.",
                         "DEVICES_WITHOUT_AUTO_BLOCK_MODE" : "The following devices are not set to automatic blocking mode: ",
                         "ALL_DEVICES_USE_MALWARE_FILTER" : "All your devices have malware filtering enabled.",
@@ -2179,6 +2181,18 @@
                 "INDIVIDUAL" : "Individual"
             }
         },
+        "NETWORK_SETTINGS_IP6" : {
+            "LABEL" : "IPv6 (beta)",
+            "LABEL_ADDRESSES" : "IPv6 Adresses (eBlocker)",
+            "LABEL_GLOBAL" : "Global",
+            "LABEL_LINK_LOCAL" : "Local",
+            "ROUTER_ADVERTISEMENTS" : {
+                "DISABLED" : "Do not advertise eBlocker as IPv6 router",
+                "ENABLED" : "Advertise eBlocker as IPv6 router with preference \"high\""
+            },
+            "WARNING_IP6_LEAK" : "IPv6 is enabled in your home network, but eBlocker does not advertise itself as an IPv6 router. As a result, eBlocker can not protect IPv6 traffic.<br>Choose one of these options:<ul><li>Enable the switch above,</li><li>disable IPv6 on your router</li><li>or configure eBlocker's local address (see below) as gateway on clients manually.</li></ul>",
+            "WARNING_NO_GLOBAL_ADDRESS" : "eBlocker does not have a global IPv6 address yet. If you enable IPv6 on your router, eBlocker will advertise itself as an IPv6 router."
+        },
         "NETWORK_WIZARD" : {
             "ACTION" : {
                 "CANCEL" : "Cancel",
@@ -2343,7 +2357,7 @@
                     "MODULE" : "Module",
                     "VERSION" : "Version"
                 },
-                "TITLE" : "Debian Jessie Packages"
+                "TITLE" : "Debian Buster Packages"
             },
             "JAVA" : {
                 "COLUMN" : {
@@ -2617,29 +2631,29 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "Learn more about the improvements in our ",
-                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.10",
-                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.10",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.11",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.11",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                 "INTRO" : "With eBlockerOS 2.10 we focused on security maintenance and many improvements in the background.",
+                "INTRO" : "With eBlockerOS 2.11 we focused on security maintenance and many improvements in the background.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Most important improvements:",
-                    "LI_1" : "<strong>eBlocker Mobile</strong> improved stability and setup.",
-                    "LI_2" : "<strong>Controlbar</strong> shows number of blocked trackers and ads again.",
+                    "LI_1" : "<strong>IPv6 support (beta)</strong>",
+                    "LI_2" : "<strong>Improved stability</strong>",
                     "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
  		"LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-10/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-11/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.10"
+                "TITLE" : "eBlockerOS Release 2.11"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.10",
+            "MENU_LABEL" : "New in eBlockerOS 2.11",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.10"
+                "TITLE" : "eBlockerOS Release 2.11"
             }
         },
         "SSL" : {

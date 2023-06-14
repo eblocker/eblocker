@@ -36,16 +36,18 @@ public class NetworkServicesUnixTest {
     private static final String APPLY_FIREWALL_COMMAND = "apply_firewall";
     private static final String ENABLE_IP6_COMMAND = "enable_ip6";
 
-    private FirewallConfiguration firewallConfiguration;
+    private FirewallConfigurationIp4 firewallConfiguration;
+    private FirewallConfigurationIp6 firewallConfigurationIp6;
     private ScriptRunner scriptRunner;
     private NetworkServicesUnix networkServices;
 
     @Before
     public void setUp() {
         DataSource dataSource = Mockito.mock(DataSource.class);
-        firewallConfiguration = Mockito.mock(FirewallConfiguration.class);
+        firewallConfiguration = Mockito.mock(FirewallConfigurationIp4.class);
+        firewallConfigurationIp6 = Mockito.mock(FirewallConfigurationIp6.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
-        networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, null, null, null, scriptRunner, 0, 0, APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null);
+        networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, firewallConfigurationIp6, null, null, null, scriptRunner, 0, 0, APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null);
     }
 
     @Test
@@ -64,19 +66,25 @@ public class NetworkServicesUnixTest {
 
     @Test
     public void testEnableFirewallSuccess() throws IOException, InterruptedException {
-        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND)).thenReturn(0);
+        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv4")).thenReturn(0);
+        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv6")).thenReturn(0);
         networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), false, false, false, false, false);
         ArgumentCaptor<Supplier<Boolean>> captor = ArgumentCaptor.forClass(Supplier.class);
         Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
+        Assert.assertTrue(captor.getValue().get());
+        Mockito.verify(firewallConfigurationIp6).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertTrue(captor.getValue().get());
     }
 
     @Test
     public void testEnableFirewallFailure() throws IOException, InterruptedException {
-        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND)).thenReturn(1);
+        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv4")).thenReturn(1);
+        Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv6")).thenReturn(1);
         networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), false, false, false, false, false);
         ArgumentCaptor<Supplier<Boolean>> captor = ArgumentCaptor.forClass(Supplier.class);
         Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
+        Assert.assertFalse(captor.getValue().get());
+        Mockito.verify(firewallConfigurationIp6).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertFalse(captor.getValue().get());
     }
 

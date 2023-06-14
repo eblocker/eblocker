@@ -33,6 +33,28 @@ public class RuleTest {
     }
 
     @Test
+    public void testDestinationNatIp6() {
+        Rule rule = new Rule()
+                .input("eth0")
+                .tcp()
+                .destinationPort(80)
+                .redirectTo("fe80::a00:27ff:fed4:24d6", 3128);
+
+        // IPv6 address must be written in brackets, so the port is not interpreted as part of the IP address:
+        Assert.assertEquals("-i eth0 -p tcp -m tcp --dport 80 -j DNAT --to-destination [fe80::a00:27ff:fed4:24d6]:3128", rule.toString());
+    }
+
+    @Test
+    public void testLocalRedirect() {
+        Rule rule = new Rule()
+                .input("eth0")
+                .dns()
+                .redirectTo(5300);
+
+        Assert.assertEquals("-i eth0 -p udp -m udp --dport 53 -j REDIRECT --to-ports 5300", rule.toString());
+    }
+
+    @Test
     public void testMark() {
         Rule rule = new Rule()
                 .sourceIp("192.168.0.22")
@@ -56,6 +78,36 @@ public class RuleTest {
     public void testOwnerUid() {
         Rule rule = new Rule().ownerUid(false, 23).reject();
         Assert.assertEquals("-m owner ! --uid-owner 23 -j REJECT", rule.toString());
+    }
+
+    @Test
+    public void testDropIcmpv6Redirects() {
+        Rule rule = new Rule().icmpv6().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        Assert.assertEquals("-p icmpv6 --icmpv6-type redirect -j DROP", rule.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIcmpv6IllegalProtocol() {
+        Rule rule = new Rule().udp().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        rule.toString();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIcmpv6MissingProtocol() {
+        Rule rule = new Rule().icmpType(Rule.Icmp6Type.REDIRECT).drop();
+        rule.toString();
+    }
+
+    @Test
+    public void testRejectWithReset() {
+        Rule rule = new Rule().tcp().sourceIp("2000::1234").rejectWithTcpReset();
+        Assert.assertEquals("-s 2000::1234 -p tcp -j REJECT --reject-with tcp-reset", rule.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRejectWithResetIllegalProtocol() {
+        Rule rule = new Rule().udp().sourceIp("2000:1234").rejectWithTcpReset();
+        rule.toString();
     }
 
     @Test

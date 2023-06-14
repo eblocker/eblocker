@@ -22,6 +22,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.network.ArpSweeper;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
+import org.eblocker.server.common.network.NetworkUtils;
 import org.eblocker.server.common.util.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +52,6 @@ public class DeviceScanningService {
                                  @Named("highPrioScheduledExecutor") ScheduledExecutorService highPrioExecutorService,
                                  @Named("executor.arpSweeper.startupDelay") long startupDelay,
                                  @Named("executor.arpSweeper.default.fixedRate") long defaultScanningInterval,
-                                 @Named("network.unix.iprange.classA") String privateNet24,
-                                 @Named("network.unix.iprange.classB") String privateNet20,
-                                 @Named("network.unix.iprange.classC") String privateNet16,
                                  @Named("environment") String environment,
                                  NetworkInterfaceWrapper networkInterface) {
         this.arpSweeper = arpSweeper;
@@ -61,7 +59,7 @@ public class DeviceScanningService {
         this.highPrioExecutorService = highPrioExecutorService;
         this.startupDelay = startupDelay;
         this.defaultScanningInterval = defaultScanningInterval;
-        this.privateNetworks = createNetworks(privateNet24, privateNet20, privateNet16);
+        this.privateNetworks = createNetworks(NetworkUtils.privateClassA, NetworkUtils.privateClassB, NetworkUtils.privateClassC);
         this.networkInterface = networkInterface;
         serverEnv = environment.equalsIgnoreCase("server");
     }

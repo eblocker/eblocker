@@ -32,4 +32,9 @@ public interface NetworkController {
     boolean getDHCPActive(Request request, Response response);
 
     Set<String> getDhcpServers(Request request, Response response);
+
+    Object getConfigurationIp6(Request request, Response response) throws IOException;
+
+    Object updateConfigurationIp6(Request request, Response response) throws IOException;
+
 }

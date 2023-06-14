@@ -471,7 +471,7 @@
                     "LABEL_DEVICE_UPDATING" : "Gerät wird aktualisiert ... ",
                     "LABEL_DISABLED_EBLOCKER" : "eBlocker für dieses Gerät deaktiviert",
                     "LABEL_ENABLED_EBLOCKER" : "eBlocker für dieses Gerät aktiviert",
-                    "LABEL_IP" : "IP-Adresse",
+                    "LABEL_IP" : "IP-Adressen",
                     "LABEL_IP_ADDRESS_FIXED" : "Gerät stets dieselbe IP-Adresse zuweisen.",
                     "LABEL_IP_ADDRESS_NOT_FIXED" : "Gerät eine beliebige IP-Adresse zuweisen.",
                     "LABEL_IS_EBLOCKER" : "Gerät ist eBlocker",
@@ -1750,8 +1750,10 @@
                         "EBLOCKER_DNS_RESOLVE_WORKING" : "Der eBlocker selbst kann DNS-Anfragen auflösen.",
                         "EBLOCKER_IP4_PING_BROKEN" : "Der eBlocker selbst kann das Internet mittels ICMP/ping nicht erreichen.",
                         "EBLOCKER_IP4_PING_WORKING" : "Der eBlocker selbst kann das Internet mittels ICMP/ping erreichen.",
-                        "EBLOCKER_IP6_ENABLED" : "Ihr Netzwerk ist über IPv6 mit dem Internet verbunden. Dies führt zu Problemen, wenn die HTTPS-Unterstützung aktiv ist, da der eBlocker IPv6 noch nicht unterstützt.",
-                        "EBLOCKER_NO_IP6" : "Ihr Netzwerk ist nicht über IPv6 mit dem Internet verbunden. Das ist erfreulich, da der eBlocker IPv6 noch nicht unterstützt.",
+                        "EBLOCKER_IP6_ENABLED" : "Ihr Netzwerk ist über IPv6 mit dem Internet verbunden.",
+                        "EBLOCKER_IP6_DISABLED" : "Ihr Netzwerk ist nicht über IPv6 mit dem Internet verbunden.",
+                        "EBLOCKER_IP6_PING_BROKEN" : "Der eBlocker selbst kann das IPv6-Internet mittels ICMPv6/ping nicht erreichen.",
+                        "EBLOCKER_IP6_PING_WORKING" : "Der eBlocker selbst kann das IPv6-Internet mittels ICMPv6/ping erreichen.",
                         "ALL_DEVICES_USE_AUTO_BLOCK_MODE" : "Auf allen Geräten ist der automatische Modus für Tracker- und Werbeblocker aktiv.",
                         "DEVICES_WITHOUT_AUTO_BLOCK_MODE" : "Auf folgenden Geräten ist der automatische Modus für Tracker- und Werbeblocker nicht aktiv:",
                         "ALL_DEVICES_USE_MALWARE_FILTER" : "Auf allen Geräten ist der Malware & Phishing Blocker aktiv.",
@@ -2179,6 +2181,18 @@
                 "INDIVIDUAL" : "Individuell"
             }
         },
+        "NETWORK_SETTINGS_IP6" : {
+            "LABEL" : "IPv6 (beta)",
+            "LABEL_ADDRESSES" : "IPv6-Adressen (eBlocker)",
+            "LABEL_GLOBAL" : "Global",
+            "LABEL_LINK_LOCAL" : "Lokal",
+            "ROUTER_ADVERTISEMENTS" : {
+                "DISABLED" : "eBlocker nicht als IPv6-Router melden",
+                "ENABLED" : "eBlocker als IPv6-Router mit Präferenz \"hoch\" melden"
+            },
+            "WARNING_IP6_LEAK" : "IPv6 ist im Netzwerk aktiv, aber der eBlocker meldet sich nicht als IPv6-Router. Daher kann der eBlocker den IPv6-Verkehr nicht schützen.<br>Wähle eine dieser Möglichkeiten:<ul><li>Aktiviere den obigen Schalter,</li><li>schalte IPv6 auf deinem Router aus</li><li>oder konfiguriere die lokale Adresse (s.u.) des eBlockers als Gateway manuell auf deinen Geräten.</li></ul>",
+            "WARNING_NO_GLOBAL_ADDRESS" : "eBlocker hat noch keine globale IPv6-Adresse. Wenn du IPv6 auf deinem Router einschaltest, wird der eBlocker sich als IPv6-Router melden."
+        },
         "NETWORK_WIZARD" : {
             "ACTION" : {
                 "CANCEL" : "Abbrechen",
@@ -2343,7 +2357,7 @@
                     "MODULE" : "Modul",
                     "VERSION" : "Version"
                 },
-                "TITLE" : "Debian Jessie Pakete"
+                "TITLE" : "Debian Buster Pakete"
             },
             "JAVA" : {
                 "COLUMN" : {
@@ -2617,29 +2631,29 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "Mehr zu den Neuerungen findest Du im ",
-                "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.10",
-                "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.10",
+                "BLOG_LINK_TEXT" : "Blog-Beitrag zu eBlockerOS 2.11",
+                "BLOG_LINK_URL" : "https://eblocker.org/de/magazin/eos2.11",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO" : "Mit eBlockerOS 2.10 haben wir uns auf die Sicherheitswartung und viele Verbesserungen im Hintergrund konzentriert.",
+                "INTRO" : "Mit eBlockerOS 2.11 haben wir uns auf die Sicherheitswartung und viele Verbesserungen im Hintergrund konzentriert.",
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Verbesserungen:",
-                    "LI_1" : "<strong>eBlocker Mobile</strong> Stabilität und Einrichtung verbessert.",
-                    "LI_2" : "<strong>Controlbar</strong> zeigt wieder die Anzahl der geblockten Tracker und Ads an.",
+                    "LI_1" : "<strong>IPv6-Unterstützung</strong>",
+                    "LI_2" : "<strong>Verbesserte Stabilität</strong>",
                     "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten."
                 },
                 "LINK_PRE" : "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT" : "Release Notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-10/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-11/",
                 "OUTRO" : "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN" : "Dein eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.10"
+                "TITLE" : "eBlockerOS Release 2.11"
             },
-            "MENU_LABEL" : "Neu in eBlockerOS 2.10",
+            "MENU_LABEL" : "Neu in eBlockerOS 2.11",
             "TOOLBAR" : {
-                "TITLE" : "Neues eBlockerOS Release 2.10"
+                "TITLE" : "Neues eBlockerOS Release 2.11"
             }
         },
         "SSL" : {

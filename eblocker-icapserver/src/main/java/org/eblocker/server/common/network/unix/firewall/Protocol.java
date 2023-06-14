@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2023 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,19 +14,20 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.common.scheduler;
+package org.eblocker.server.common.network.unix.firewall;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import org.eblocker.server.common.network.Ip6NetworkScan;
+public enum Protocol {
+    TCP("tcp"),
+    UDP("udp"),
+    ICMPv6("icmpv6");
 
-public class Ip6NetworkScanScheduler extends FixedRateScheduler {
+    private final String label;
 
-    @Inject
-    public Ip6NetworkScanScheduler(@Named("executor.ip6NetworkScan.startupDelay") long initialDelay,
-                                   @Named("executor.ip6NetworkScan.fixedRate") long fixedRate,
-                                   Ip6NetworkScan ip6NetworkScan) {
-        super(ip6NetworkScan::run, initialDelay, fixedRate);
+    Protocol(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
-

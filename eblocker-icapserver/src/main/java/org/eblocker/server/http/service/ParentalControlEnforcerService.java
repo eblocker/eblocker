@@ -16,12 +16,13 @@
  */
 package org.eblocker.server.http.service;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.startup.SubSystemService;
 
-import javax.inject.Inject;
-
+@Singleton
 @SubSystemService(SubSystem.EVENT_LISTENER)
 public class ParentalControlEnforcerService {
 

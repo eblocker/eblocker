@@ -19,6 +19,7 @@ package org.eblocker.server.common.network.unix;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.exceptions.DhcpDiscoveryException;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
@@ -68,7 +69,7 @@ public class DhcpDiscoveryService {
         for (int i = 0; i < 100; ++i) {
             long hardwareAddress = random.nextLong() & 0xfcffffffffffL; // clear lower bits of first octet to mark mac as globally unique unicast address
             String hex = String.format("%012x", hardwareAddress);
-            if (deviceService.getDeviceById("device:" + hex) == null) {
+            if (deviceService.getDeviceById(Device.ID_PREFIX + hex) == null) {
                 return hex;
             }
         }

@@ -17,6 +17,7 @@
 package org.eblocker.server.icap.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
+@Singleton
 @SubSystemService(SubSystem.ICAP_SERVER)
 public class EblockerIcapServer {
     private static final Logger log = LoggerFactory.getLogger(EblockerIcapServer.class);

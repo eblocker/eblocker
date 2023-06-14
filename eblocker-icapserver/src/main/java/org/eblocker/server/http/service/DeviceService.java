@@ -90,8 +90,7 @@ public class DeviceService {
             log.error("Could not read MAC prefixes", e);
         }
 
-        Ip4Address ip = networkInterfaceWrapper.getFirstIPv4Address();
-        onIpAddressChange(ip);
+        onIpAddressChange(true, false);
     }
 
     public Collection<Device> getDevices(boolean refresh) {
@@ -323,7 +322,12 @@ public class DeviceService {
         return iconPosition;
     }
 
-    private void onIpAddressChange(IpAddress newIp) {
+    private void onIpAddressChange(boolean ip4Updated, boolean ip6Updated) {
+        // only resolve IPv4 conflicts for now
+        if (!ip4Updated) {
+            return;
+        }
+        Ip4Address newIp = networkInterfaceWrapper.getFirstIPv4Address();
         resolveIpAddressConflicts(Collections.singletonList(newIp), getDevices(true));
     }
 

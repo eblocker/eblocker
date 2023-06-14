@@ -20,14 +20,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
@@ -35,8 +39,10 @@ import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAclFactory;
 import org.eblocker.server.common.squid.acl.SquidAcl;
 import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
@@ -64,12 +70,15 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class is able to rewrite ACL files which are used in the squid config file; In addition it is able to tell squid, that the configuration changed and
  * a reload is neccessary.
  */
-@SubSystemService(value = SubSystem.HTTPS_SERVER)
+@Singleton
+@SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 150)
 public class SquidConfigController {
     private static final Logger log = LoggerFactory.getLogger(SquidConfigController.class);
 
@@ -85,6 +94,7 @@ public class SquidConfigController {
     private final JsonWebTokenHandler tokenHandler;
     private final ScheduledExecutorService executorService;
     private final ConfigurableDeviceFilterAclFactory squidAclFactory;
+    private final Ip6PrefixMonitor prefixMonitor;
 
     private final SimpleResource mimeTypesAcl;//list of MIME types to send to this Icapserver (Squid has to forward/hand files of these MIMEtypes to the ICAP server...)
     private final SimpleResource squidConfigTemplateFile; //template part of squid config
@@ -158,7 +168,8 @@ public class SquidConfigController {
                                  DeviceService deviceService,
                                  ConfigurableDeviceFilterAclFactory squidAclFactory,
                                  OpenVpnServerService openVpnServerService,
-                                 Environment environment) {
+                                 Environment environment,
+                                 Ip6PrefixMonitor prefixMonitor) {
 
         this.squidReconfigureScript = squidReconfigureScript;
         this.squidClearCertCacheScript = squidClearCertCacheScript;
@@ -199,6 +210,8 @@ public class SquidConfigController {
         this.torClientsAcl = torClientsAcl;
 
         this.environment = environment;
+
+        this.prefixMonitor = prefixMonitor;
 
         if (!ResourceHandler.exists(squidConfigStaticFile)) {
             log.error("Squid static config filepart does not exist at {}", confStaticFilePath);
@@ -269,7 +282,11 @@ public class SquidConfigController {
         });
     }
 
-    //SQUID -----------------------------------------------------------------
+    @SubSystemInit
+    public void init() {
+        // this requires the SslService to be initialized:
+        prefixMonitor.addPrefixChangeListener(this::updateSquidConfig);
+    }
 
     /**
      * Tell squid that its configuration has been updated, so please reconfigure
@@ -300,7 +317,7 @@ public class SquidConfigController {
                 lastReload = clock.millis();
             }
         } catch (Exception e) {
-            log.error("Problem while running the squid reload script : {}", e);
+            log.error("Problem while running the squid reload script", e);
         }
     }
 
@@ -563,13 +580,6 @@ public class SquidConfigController {
             configContent.append(nonSslExclusivePart);
         }
 
-        if (vpnClients != null && !vpnClients.isEmpty()) { //if there are some active vpn clients, add the necessary part to the squid config
-            String vpnConfigPart = createVpnOptions(vpnClients);
-            if (vpnConfigPart != null) {
-                configContent.append(vpnConfigPart);
-            }
-        }
-
         return configContent.toString();
     }
 
@@ -577,9 +587,10 @@ public class SquidConfigController {
         StringBuilder sb = new StringBuilder();
 
         sb.append(createLogOptions());
-        sb.append(createVpnOptions(vpnClients));
         sb.append(createErrHtmlOption());
         sb.append(createWorkersOption());
+        sb.append(createIp6Options());
+        sb.append(createVpnOptions(vpnClients));
 
         return sb.toString();
     }
@@ -608,18 +619,11 @@ public class SquidConfigController {
             squidConfigContent.append("#------------------------------------------------------------------------------\n");
             squidConfigContent.append("# VPN clients support\n");
             squidConfigContent.append("#------------------------------------------------------------------------------\n");
-            squidConfigContent.append("\n");
 
             for (OpenVpnClientState client : vpnClients) {
                 if (client.getState() == OpenVpnClientState.State.ACTIVE) {
-                    //replacing of the sourceIP for the request to the local Link address of this vpn profile
-                    // by adding the following two example lines to the squid conf FOR EACH active vpn profile:
-                        /*
-                            acl outbound_vpn_[ID] arp "/etc/squid/vpn-[ID].acl"
-                            tcp_outgoing_address 169.254.8.[ID] outbound_vpn_[ID]
-                         */
                     String line1 = String.format("acl outbound_vpn_%d src \"/etc/squid/vpn-%d.acl\"", client.getId(), client.getId());
-                    String line2 = String.format("tcp_outgoing_address %s outbound_vpn_%d !disabledClients", client.getLinkLocalIpAddress(), client.getId());
+                    String line2 = String.format("tcp_outgoing_mark 0x%x outbound_vpn_%d !disabledClients", client.getRoute(), client.getId());
 
                     squidConfigContent.append("# VPN client " + client.getId() + "\n");
                     squidConfigContent.append(line1);
@@ -628,6 +632,7 @@ public class SquidConfigController {
                     squidConfigContent.append("\n");
                 }
             }
+            squidConfigContent.append("\n");
             return squidConfigContent.toString();
         }
 
@@ -672,6 +677,20 @@ public class SquidConfigController {
         }
         cfg.append("\n");
         return cfg.toString();
+    }
+
+    /**
+     * Allow access from and to IPv6 networks
+     *
+     * @return Squid configuration snippet
+     */
+    private String createIp6Options() {
+        return prefixMonitor.getCurrentPrefixes().stream()
+                .sorted()
+                .flatMap(ip -> Stream.of(
+                        "acl localnet src " + ip + "\n",
+                        "acl localnetDst dst " + ip + "\n"))
+                .collect(Collectors.joining());
     }
 
     /* updates all acls and reload squid in case of changes */

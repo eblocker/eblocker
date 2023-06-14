@@ -68,6 +68,7 @@ FILE=$OUT_DIR/eblocker-status.log
     echo "Network state: $NETWORKSTATE" >> $FILE
     IP=$(ifconfig eth0)
     NETWORK_CONFIG=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/network)
+    NETWORK_CONFIG_IP6=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/network/ip6)
     DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
     GATEWAY=$(redis-cli get gateway)
     DNS_SERVER=$(cat /etc/resolv.conf)
@@ -91,6 +92,8 @@ FILE=$OUT_DIR/eblocker-status.log
     echo $SEP >> $FILE
     echo "Network configuration:" >> $FILE
     echo $NETWORK_CONFIG >> $FILE
+    echo "Network IPv6 configuration:" >> $FILE
+    echo $NETWORK_CONFIG_IP6 >> $FILE
 
 ### Network packet info ###
     netstat -s > $OUT_DIR/network-packet-info.log

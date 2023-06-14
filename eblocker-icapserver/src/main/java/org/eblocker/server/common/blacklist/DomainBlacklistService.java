@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.Funnels;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
+@Singleton
 public class DomainBlacklistService {
     private static final Logger log = LoggerFactory.getLogger(DomainBlacklistService.class);
 

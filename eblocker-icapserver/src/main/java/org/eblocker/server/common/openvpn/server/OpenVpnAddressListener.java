@@ -17,6 +17,7 @@
 package org.eblocker.server.common.openvpn.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
@@ -49,6 +50,7 @@ import java.util.regex.Pattern;
  *   <li>Remove IP address
  * </ul>
  */
+@Singleton
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class OpenVpnAddressListener implements Runnable, Subscriber {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnAddressListener.class);

@@ -20,7 +20,6 @@
 
 if [ $# == '1' ];
 then
-
     VPNPROFILE_ID=$1
 
     #get PID for this VPN profile
@@ -32,5 +31,6 @@ then
     kill $PID
 
 else
-    echo "Wrong number of inputs! Expecting the ID of the OpenVPN profile as the first argument."
+    echo "Wrong number of inputs! Expecting the ID of the OpenVPN profile as the first argument." 1>&2
+    exit 1
 fi

@@ -19,6 +19,7 @@ package org.eblocker.server.common.openvpn;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
@@ -43,6 +44,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collections;
 import java.util.List;
 
+@Singleton
 public class OpenVpnProfileFiles {
     private static final String CONFIGURATION_FILE_NAME_FORMAT = "/parsedConfiguration%d.json";
     private static final String CONFIG_FILE_NAME_FORMAT = "/conf%d.ovpn";

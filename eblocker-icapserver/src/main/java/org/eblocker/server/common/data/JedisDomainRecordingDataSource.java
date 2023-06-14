@@ -19,6 +19,7 @@ package org.eblocker.server.common.data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.recorder.RecordedDomainBin;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Persists recorded domain requests. Requests are saved in bins which expire after a day.
  */
+@Singleton
 public class JedisDomainRecordingDataSource implements DomainRecordingDataSource {
     private static final Logger LOG = LoggerFactory.getLogger(JedisDomainRecordingDataSource.class);
     private static final String KEY_PREFIX = "recorded_domains:";

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.pubsub.Channels;
@@ -25,6 +26,7 @@ import org.eblocker.server.common.util.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class ArpSweeper implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ArpSweeper.class);
 

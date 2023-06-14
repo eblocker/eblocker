@@ -35,10 +35,10 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class SubSystemServiceIndex {
-    private Map<SubSystem, List<Class<?>>> servicesBySubSytem;
+    private Map<SubSystem, List<Class<?>>> servicesBySubSystem;
 
     public void scan(Map<Key<?>, Binding<?>> bindings) {
-        servicesBySubSytem = bindings.values()
+        servicesBySubSystem = bindings.values()
                 .stream()
                 .map(binding -> (Class<?>) binding.acceptTargetVisitor(new DefaultBindingTargetVisitor<Object, Class<?>>() {
                     @Override
@@ -65,7 +65,7 @@ public class SubSystemServiceIndex {
     }
 
     public Collection<Class<?>> getRegisteredServices(SubSystem subSystem) {
-        Collection<Class<?>> services = servicesBySubSytem.get(subSystem);
+        Collection<Class<?>> services = servicesBySubSystem.get(subSystem);
         return services == null ? Collections.emptyList() : services;
     }
 }

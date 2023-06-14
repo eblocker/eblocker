@@ -18,6 +18,7 @@ package org.eblocker.server.http.server;
 
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.CertificateAndKey;
@@ -67,6 +68,7 @@ import java.util.stream.Collectors;
  * Implemented regeneration of ssl certificate, when DhcpBindListener observes new IP address
  * -> generateSSLCertificate(newIP,...) and set new SSLContext (-> getSSLContext(...)) to EblockerHttpsServer
  */
+@Singleton
 @SubSystemService(SubSystem.HTTPS_SERVER)
 public class SSLContextHandler {
     private static final Logger log = LoggerFactory.getLogger(SSLContextHandler.class);
@@ -147,7 +149,7 @@ public class SSLContextHandler {
             }
         });
 
-        networkInterface.addIpAddressChangeListener(ip -> notifyIpChange());
+        networkInterface.addIpAddressChangeListener(this::notifyIpChange);
     }
 
     public void addContextChangeListener(SslContextChangeListener listener) {
@@ -167,7 +169,7 @@ public class SSLContextHandler {
      *
      * @return
      */
-    private void notifyIpChange() {
+    private void notifyIpChange(boolean ip4Updated, boolean ip6Updated) {
         try {
             log.info("Updating the SSL Context...");
             if (sslService.isCaAvailable()) {

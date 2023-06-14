@@ -18,6 +18,8 @@ package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.network.icmpv6.RouterAdvertisementFactory;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.junit.Before;
@@ -41,13 +43,14 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::1:2:3:4:5"));
         Mockito.when(networkInterface.getMtu()).thenReturn(1500);
         pubSubService = Mockito.mock(PubSubService.class);
-        advertiser = new Ip6RouterAdvertiser(featureToggleRouter, networkInterface, pubSubService);
+        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, networkInterface);
+        advertiser = new Ip6RouterAdvertiser(featureToggleRouter, networkInterface, pubSubService, routerAdvertisementFactory);
     }
 
     @Test
     public void testAdvertisement() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();
@@ -55,7 +58,7 @@ public class Ip6RouterAdvertiserTest {
     }
 
     @Test
-    public void testAdvertisementIp6Disabled() {
+    public void testAdvertisementsOrIp6Disabled() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
@@ -66,7 +69,7 @@ public class Ip6RouterAdvertiserTest {
     @Test
     public void testAdvertisementNoGlobalAddress() {
         Mockito.when(networkInterface.isUp()).thenReturn(true);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5")));
         advertiser.advertise();
@@ -76,7 +79,7 @@ public class Ip6RouterAdvertiserTest {
     @Test
     public void testAdvertisementNetworkInterfaceDown() {
         Mockito.when(networkInterface.isUp()).thenReturn(false);
-        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"),
                 Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         advertiser.advertise();

@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.NetworkConfiguration;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * The network state machine processes events (e.g. when a new network configuration is received
  * by the NetworkController) and changes the network state accordingly using the NetworkServices.
  */
+@Singleton
 @SubSystemService(value = SubSystem.NETWORK_STATE_MACHINE, initPriority = 100)
 public class NetworkStateMachine {
     private static final Logger log = LoggerFactory.getLogger(NetworkStateMachine.class);
@@ -50,6 +52,7 @@ public class NetworkStateMachine {
     private final FeatureToggleRouter featureToggleRouter;
     private final IpSets ipSets;
     private final EblockerDnsServer dnsServer;
+    private final Ip6PrefixMonitor ip6PrefixMonitor;
 
     @Inject
     public NetworkStateMachine(NetworkServices services,
@@ -59,7 +62,8 @@ public class NetworkStateMachine {
                                FeatureToggleRouter featureToggleRouter,
                                IpSets ipSets,
                                SslService sslService,
-                               EblockerDnsServer dnsServer) {
+                               EblockerDnsServer dnsServer,
+                               Ip6PrefixMonitor ip6PrefixMonitor) {
         this.services = services;
         this.dataSource = dataSource;
         this.dnsEnableByDefaultChecker = dnsEnableByDefaultChecker;
@@ -67,6 +71,7 @@ public class NetworkStateMachine {
         this.featureToggleRouter = featureToggleRouter;
         this.ipSets = ipSets;
         this.dnsServer = dnsServer;
+        this.ip6PrefixMonitor = ip6PrefixMonitor;
 
         sslService.addListener(new SslService.BaseStateListener() {
             @Override
@@ -99,7 +104,9 @@ public class NetworkStateMachine {
 
         dnsEnableByDefaultChecker.check();
         services.enableIp6(featureToggleRouter.isIp6Enabled());
-        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabledd(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+
+        ip6PrefixMonitor.addPrefixChangeListener(this::updateFirewall);
     }
 
     public boolean isSSLEnabled() {
@@ -107,7 +114,7 @@ public class NetworkStateMachine {
         return dataSource.getSSLEnabledState();
     }
 
-    private boolean isOpenVpnServerEnabledd() {
+    private boolean isOpenVpnServerEnabled() {
         boolean state = dataSource.getOpenVpnServerState();
         log.debug("eBlocker mobile state is :{}", state);
         return state;
@@ -116,9 +123,14 @@ public class NetworkStateMachine {
     private void sslStateChanged(boolean sslEnabled) {
         //reconfigure firewall
         NetworkStateId currentState = getCurrentNetworkState().getId();
-        services.enableFirewall(shouldMasquerade(currentState), sslEnabled, isOpenVpnServerEnabledd(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), sslEnabled, isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         log.debug("SSL state is now {}", sslEnabled);
+    }
+
+    private void updateFirewall() {
+        NetworkStateId currentState = getCurrentNetworkState().getId();
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
     }
 
     // Masquerading is not a good idea when ARP-spoofing is used (see https://trac.bmb-dev.de/trac/wiki/NetworkConfiguration)
@@ -177,7 +189,7 @@ public class NetworkStateMachine {
         services.configureEblockerDns(networkConfiguration);
 
         services.applyNetworkConfiguration(networkConfiguration);
-        services.enableFirewall(shouldMasquerade(selected.getId()), isSSLEnabled(), isOpenVpnServerEnabledd(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(selected.getId()), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         setCurrentNetworkState(selected);
 
@@ -215,7 +227,7 @@ public class NetworkStateMachine {
      */
     public void deviceStateChanged() {
         NetworkStateId currentState = getCurrentNetworkState().getId();
-        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabledd(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
         if (currentState == NetworkStateId.LOCAL_DHCP) {
             services.configureDhcpServer(services.getCurrentNetworkConfiguration());
         }

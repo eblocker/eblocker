@@ -42,7 +42,11 @@ public class Action {
     }
 
     public static Action reject() {
-        return new Action("REJECT");
+        return new ActionReject(ActionReject.RejectType.DEFAULT);
+    }
+
+    public static Action rejectWithTcpReset() {
+        return new ActionReject(ActionReject.RejectType.TCP_RESET);
     }
 
     public static Action jumpToChain(String chain) {
@@ -53,8 +57,21 @@ public class Action {
         return new ActionDestinationNat(targetIp, targetPort);
     }
 
+    public static Action redirectTo(int targetPort) {
+        return new ActionRedirect(targetPort);
+    }
+
     public static Action mark(int value) {
         return new ActionMark(value);
+    }
+
+    /**
+     * Some actions require a specific protocol
+     * @param protocol
+     * @return
+     */
+    protected boolean protocolAllowed(Protocol protocol) {
+        return true;
     }
 
     public String toString() {

@@ -54,7 +54,7 @@ if [ "$1" = configure ] ; then
     redis-cli del MessageContainer:42
 
     # Show newest patch release message in all sessions (again)
-    #redis-cli del MessageContainer:43
+    redis-cli del MessageContainer:43
 
     # Show splash screen in settings (again)
     redis-cli del showSplashScreen

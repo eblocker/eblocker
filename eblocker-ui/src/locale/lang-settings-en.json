@@ -565,7 +565,7 @@
                     "NAME" : "Name",
                     "STATUS" : "State",
                     "USER_ASSIGN" : "Owner",
-                    "VENDOR" : "Vendor"
+                    "ONLINE" : "Online"
                 }
             },
             "TOOLTIP" : {
@@ -581,6 +581,7 @@
                 "MOBILE_OFF" : "eBlocker Mobile is disabled for this device",
                 "MOBILE_ON" : "eBlocker Mobile is not connected",
                 "OFFLINE" : "Device is offline",
+                "NEVER_SEEN" : "Never seen",
                 "ONLINE" : "Device is online",
                 "REMOVE_BUTTON" : "Gateways and the eBlocker cannot be reset",
                 "SSL_DISABLED" : "HTTPS support is disabled for this device",

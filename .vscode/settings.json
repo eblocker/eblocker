@@ -1,0 +1,7 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "develop"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
+}

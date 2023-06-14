@@ -147,9 +147,9 @@ function Controller(logger, $filter, $stateParams, StateService, VpnService, Reg
             showHeader: true,
         },
         {
-            label: 'ADMINCONSOLE.DEVICES_LIST.TABLE.COLUMN.VENDOR',
+            label: 'ADMINCONSOLE.DEVICES_LIST.TABLE.COLUMN.ONLINE',
             isSortable: true,
-            sortingKey: 'vendor',
+            sortingKey: 'isOnline',
             showHeader: true,
         },
         {

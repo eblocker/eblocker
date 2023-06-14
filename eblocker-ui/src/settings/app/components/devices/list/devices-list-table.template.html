@@ -107,10 +107,11 @@
     </md-icon>
 </div>
 
-<!-- VENDOR -->
+<!-- Last Seen/Online Status -->
 <div flex hide-xs>
-    <span ng-show="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor}}</span>
-    <md-tooltip md-delay="300" ng-if="entry.vendor !== undefined && entry.vendor !== ''">{{entry.vendor | translate}}</md-tooltip>
+    <span ng-show="!entry.isOnline && entry.lastSeenString != ''">{{entry.lastSeenString }}</span>
+    <span ng-show="!entry.isOnline && entry.lastSeenString == ''">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NEVER_SEEN' | translate}}</span>
+    <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>
 </div>
 
 <!-- ASSIGNED USER -->

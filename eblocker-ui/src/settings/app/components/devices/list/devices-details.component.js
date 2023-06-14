@@ -26,7 +26,8 @@ export default {
 };
 
 // jshint ignore: line
-function Controller(logger, $stateParams, $window, $interval, $timeout, $q, StateService, STATES, ArrayUtilsService, // jshint ignore: line
+function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $translate, // jshint ignore: line
+                    StateService, STATES, ArrayUtilsService,
                     RegistrationService, SslService, DeviceService, CloakingService, NetworkService, DialogService,
                     VpnService, TorService, VpnHomeService, NotificationService, PauseService, ConsoleService,
                     deviceDetector) {
@@ -183,9 +184,20 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, Stat
                 value: vm.device.hardwareAddress
             };
             vm.deviceVendor = {
-                value: vm.device.vendor
+                value: getVendor(vm.device.vendor, vm.device.hardwareAddress)
             };
         }
+    }
+
+    function getVendor(vendor, hardwareAddress) {
+        if (angular.isString(vendor) && vendor.length > 0) {
+            return vendor;
+        }
+        // private MAC address (locally administered bit set)?
+        if ('26ae'.includes(hardwareAddress[1])) {
+            vendor = $translate.instant('ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_VENDOR_PRIVATE_MAC');
+        }
+        return vendor;
     }
 
     function resetPauseTimer() {

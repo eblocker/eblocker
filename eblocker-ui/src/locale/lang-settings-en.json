@@ -484,6 +484,7 @@
                     "LABEL_PAUSE_NOT_ALLOWED" : "Due to parental controls settings the eBlocker cannot be paused for this device.",
                     "LABEL_RESET_DEVICE" : "Reset device",
                     "LABEL_VENDOR" : "Vendor",
+                    "LABEL_VENDOR_PRIVATE_MAC" : "Unknown (private MAC address)",
                     "TOOLTIP" : {
                         "EDIT_DEVICE" : "Edit device name."
                     }
@@ -581,7 +582,7 @@
                 "MOBILE_OFF" : "eBlocker Mobile is disabled for this device",
                 "MOBILE_ON" : "eBlocker Mobile is not connected",
                 "OFFLINE" : "Device is offline",
-                "NEVER_SEEN" : "Never seen",
+                "NEVER_SEEN" : "-",
                 "ONLINE" : "Device is online",
                 "REMOVE_BUTTON" : "Gateways and the eBlocker cannot be reset",
                 "SSL_DISABLED" : "HTTPS support is disabled for this device",

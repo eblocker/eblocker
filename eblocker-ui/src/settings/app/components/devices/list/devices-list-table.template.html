@@ -70,7 +70,7 @@
     </md-icon>
     <md-icon ng-hide="entry.isOnline" class="eb-table-icon-deactivated" md-svg-src="/img/icons/ic_internet_disconnected_black_48px.svg" aria-label="{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}">
         <md-tooltip md-delay="300">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.OFFLINE' | translate}}</md-tooltip>
-    </md-icon>    
+    </md-icon>
 
     <!-- SSL ICON -->
     <md-icon ng-show="vm.templateCallback.sslEnabled && entry.sslEnabled && (entry.enabled || entry.paused) && !entry.isEblocker && !entry.isGateway" ng-class="{'content-eb-orange': !entry.paused}"  md-svg-src="/img/icons/ic_lock_black.svg" aria-label="Is device paused">
@@ -110,12 +110,8 @@
 <!-- Last Seen/Online Status -->
 <div flex hide-xs>
     <span ng-show="!entry.isOnline && entry.lastSeenString != ''">{{entry.lastSeenString }}</span>
-    <span ng-show="!entry.isOnline && entry.lastSeenString == ''">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NeverSeen' | translate}}</span>
+    <span ng-show="!entry.isOnline && entry.lastSeenString == ''">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NEVER_SEEN' | translate}}</span>
     <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>
-    <!--
-    <span ng-show="entry.isOnline">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.ONLINE' | translate}}</span>
-    <span ng-show="!entry.isOnline && entry.lastSeen == '-'">{{'ADMINCONSOLE.DEVICES_LIST.TOOLTIP.NeverSeen' | translate}}</span>
-    -->
 </div>
 
 <!-- ASSIGNED USER -->

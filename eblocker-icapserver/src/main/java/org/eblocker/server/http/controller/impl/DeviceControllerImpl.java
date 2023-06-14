@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,17 +70,17 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Inject
     public DeviceControllerImpl(AnonymousService anonymousService,
-            DeviceOnlineStatusCache deviceOnlineStatusCache,
-            DevicePermissionsService devicePermissionsService,
-            DeviceScanningService deviceScanningService,
-            DeviceService deviceService,
-            DeviceRegistrationProperties deviceRegistrationProperties,
-            FeatureToggleRouter featureToggleRouter,
-            NetworkInterfaceWrapper networkInterfaceWrapper,
-            NetworkStateMachine networkStateMachine,
-            OpenVpnService openVpnService,
-            PauseDeviceController pauseDeviceController,
-            DeviceFactory deviceFactory) {
+                                DeviceOnlineStatusCache deviceOnlineStatusCache,
+                                DevicePermissionsService devicePermissionsService,
+                                DeviceScanningService deviceScanningService,
+                                DeviceService deviceService,
+                                DeviceRegistrationProperties deviceRegistrationProperties,
+                                FeatureToggleRouter featureToggleRouter,
+                                NetworkInterfaceWrapper networkInterfaceWrapper,
+                                NetworkStateMachine networkStateMachine,
+                                OpenVpnService openVpnService,
+                                PauseDeviceController pauseDeviceController,
+                                DeviceFactory deviceFactory) {
         this.anonymousService = anonymousService;
         this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.devicePermissionsService = devicePermissionsService;
@@ -134,9 +133,7 @@ public class DeviceControllerImpl implements DeviceController {
 
             if (device.getId().equals(eBlockerId)) {
                 // eBlocker itself should not be in this list. If it is, remove it.
-                // TODO: This is not a good solution. The whole Device/Controller/Service has to
-                // be refactored. After refactoring, eBlocker should be a device like all
-                // others.
+                // TODO: This is not a good solution. The whole Device/Controller/Service has to be refactored. After refactoring, eBlocker should be a device like all others.
                 deviceService.delete(device);
             } else {
                 result.add(device);
@@ -201,8 +198,7 @@ public class DeviceControllerImpl implements DeviceController {
             throw new NotFoundException("Device with IP " + ipAddress + " not found in datastore.");
         }
 
-        if (!devicePermissionsService.operatingUserMayUpdate(currentDevice)) { // TODO: Move to
-                                                                               // DashboardAuthorizationProcessor
+        if (!devicePermissionsService.operatingUserMayUpdate(currentDevice)) { // TODO: Move to DashboardAuthorizationProcessor
             throw new ForbiddenException("Operating user may not update current device");
         }
 
@@ -219,27 +215,20 @@ public class DeviceControllerImpl implements DeviceController {
         Device current = deviceService.getDeviceById(device.getId());
 
         /*
-         * The default system user must not be changed. EB1-2220 describes an issue
-         * where possible two eBlockers
-         * in the network may have caused a device of one eBlocker to be updated in
-         * Redis of another, causing the
-         * default system user to be updated. To avoid a device being accidentally
-         * overridden, an updated
-         * default system user indicates an inconsistent state, so that we abort the
-         * operation here.
+         * The default system user must not be changed. EB1-2220 describes an issue where possible two eBlockers
+         * in the network may have caused a device of one eBlocker to be updated in Redis of another, causing the
+         * default system user to be updated. To avoid a device being accidentally overridden, an updated
+         * default system user indicates an inconsistent state, so that we abort the operation here.
          */
         if (current.getDefaultSystemUser() != device.getDefaultSystemUser()) {
-            throw new BadRequestException("Attempt to update the default system user of device " + device.getId()
-                    + ". The default system user must not be updated.");
+            throw new BadRequestException("Attempt to update the default system user of device " + device.getId() + ". The default system user must not be updated.");
         }
 
         // Was a paused device reactivated (via console)?
         if (device.isEnabled() && device.isPaused() && !current.isEnabled() && current.isPaused()) {
-            // Cancel pause by setting remaining pause to 0 (it remains paused if the pause
-            // is now != 0)
+            // Cancel pause by setting remaining pause to 0 (it remains paused if the pause is now != 0)
             device.setPaused(pauseDeviceController.pauseDevice(device, 0).getPausing() != 0);
-            // return since the device was only unpaused and the pauseDeviceController makes
-            // relevant calls to deviceService
+            // return since the device was only unpaused and the pauseDeviceController makes relevant calls to deviceService
             return;
         }
 
@@ -251,7 +240,7 @@ public class DeviceControllerImpl implements DeviceController {
                 || (current.isSslEnabled() != device.isSslEnabled())
                 // If the DHCP config needs rewriting:
                 || (current.isIpAddressFixed() != device.isIpAddressFixed())) {
-            networkStateMachine.deviceStateChanged(device); // adapt firewall and also heal device if in automode
+            networkStateMachine.deviceStateChanged(device); //adapt firewall and also heal device if in automode
         }
 
         if (!device.isEnabled()) {
@@ -272,8 +261,7 @@ public class DeviceControllerImpl implements DeviceController {
                 if (profile != null) {
                     anonymousService.enableVpn(device, profile);
                 } else {
-                    log.warn("cannot activate non-existing vpn profile {} for {} - resetting",
-                            device.getUseVPNProfileID(), device.getId());
+                    log.warn("cannot activate non-existing vpn profile {} for {} - resetting", device.getUseVPNProfileID(), device.getId());
                     device.setUseVPNProfileID(null);
                     device.setUseAnonymizationService(false);
                     deviceService.updateDevice(device);
@@ -420,8 +408,7 @@ public class DeviceControllerImpl implements DeviceController {
             result.setPausingAllowed(pausingAllowed);
             return result;
         } else {
-            log.error("Could not pause device with ID {} because it is not known",
-                    (device != null ? device.getId() : "NULL"));
+            log.error("Could not pause device with ID {} because it is not known", (device != null ? device.getId() : "NULL"));
             return null;
         }
     }

@@ -73,13 +73,11 @@ public class DeviceOnlineStatusCache {
             // Get the last seen timestamp from the cache
             Instant lastSeen = cache.get(device.getId());
             if (lastSeen != null) {
-                Instant offlineSince = lastSeen.plusSeconds(deviceOfflineAfterSeconds);
-                device.setOnline(offlineSince.isAfter(clock.instant()));
+                Instant now = clock.instant();
+                device.setOnline(lastSeen.plusSeconds(deviceOfflineAfterSeconds).isAfter(now));
                 device.setLastSeen(lastSeen);
-                device.getOfflineSinceString();
             } else {
                 device.setOnline(false);
-                device.setLastSeen(clock.instant());
             }
         }
     }

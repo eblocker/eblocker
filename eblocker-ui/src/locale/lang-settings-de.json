@@ -484,6 +484,7 @@
                     "LABEL_PAUSE_NOT_ALLOWED" : "Aufgrund von Jugendschutzeinstellungen kann der eBlocker für dieses Gerät nicht pausiert werden.",
                     "LABEL_RESET_DEVICE" : "Gerät zurücksetzen",
                     "LABEL_VENDOR" : "Hersteller",
+                    "LABEL_VENDOR_PRIVATE_MAC" : "Unbekannt (private MAC-Adresse)",
                     "TOOLTIP" : {
                         "EDIT_DEVICE" : "Gerätenamen ändern"
                     }
@@ -581,7 +582,7 @@
                 "MOBILE_OFF" : "eBlocker Mobile ist für dieses Gerät deaktiviert",
                 "MOBILE_ON" : "eBlocker Mobile ist nicht verbunden",
                 "OFFLINE" : "Gerät ist offline",
-                "NEVER_SEEN" : "Gerät nie gesehen",
+                "NEVER_SEEN" : "-",
                 "ONLINE" : "Gerät ist online",
                 "REMOVE_BUTTON" : "Gateways und der eBlocker können nicht zurück gesetzt werden",
                 "SSL_DISABLED" : "HTTPS-Unterstützung ist für dieses Gerät deaktiviert",

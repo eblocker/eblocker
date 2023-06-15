@@ -17,6 +17,8 @@
 package org.eblocker.server.common.data.validation;
 
 import com.strategicgains.syntaxe.validator.Validator;
+import org.eblocker.server.common.data.Ip4Address;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.network.NetworkUtils;
 import org.slf4j.Logger;
@@ -69,8 +71,8 @@ public class NetworkConfigurationValidator implements Validator<NetworkConfigura
         }
 
         // optional fields:
-        validateOptionalIPv4Address(cfg.getNameServerPrimary(), "nameServerPrimary", errors);
-        validateOptionalIPv4Address(cfg.getNameServerSecondary(), "nameServerSecondary", errors);
+        validateOptionalIPAddress(cfg.getNameServerPrimary(), "nameServerPrimary", errors);
+        validateOptionalIPAddress(cfg.getNameServerSecondary(), "nameServerSecondary", errors);
         validateOptionalIPv4Address(cfg.getDhcpRangeFirst(), "dhcpRangeFirst", errors);
         validateOptionalIPv4Address(cfg.getDhcpRangeLast(), "dhcpRangeLast", errors);
 
@@ -160,6 +162,15 @@ public class NetworkConfigurationValidator implements Validator<NetworkConfigura
         }
     }
 
+    private void validateOptionalIPAddress(String address, String name, List<String> errors) {
+        if (address == null) {
+            return;
+        }
+        if (!isValidIPAddress(address)) {
+            addError(name + ".invalid", errors);
+        }
+    }
+
     private boolean isValidIPv4NetworkMask(String networkMask) {
         if (!isValidIPv4Address(networkMask)) {
             return false;
@@ -176,22 +187,20 @@ public class NetworkConfigurationValidator implements Validator<NetworkConfigura
     }
 
     public static boolean isValidIPv4Address(String ipAddress) {
-        String[] components = ipAddress.split("\\.");
-        if (components.length != 4) {
+        try {
+            Ip4Address.parse(ipAddress);
+            return true;
+        } catch (Exception e) {
             return false;
         }
+    }
 
-        for (String component : components) {
-            try {
-                int number = Integer.parseInt(component);
-                if (number < 0 || number > 255) {
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                return false;
-            }
+    public static boolean isValidIPAddress(String ipAddress) {
+        try {
+            IpAddress.parse(ipAddress);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        return true;
     }
 }

@@ -56,6 +56,7 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
     private ArpSpoofer arpSpoofer;
     private ScriptRunner scriptRunner;
     private EblockerDnsServer eblockerDnsServer;
+    private DeviceService deviceService;
 
     @Before
     public void setUp() {
@@ -70,6 +71,7 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
         arpSpoofer = Mockito.mock(ArpSpoofer.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
         eblockerDnsServer = Mockito.mock(EblockerDnsServer.class);
+        deviceService = Mockito.mock(DeviceService.class);
 
         apply();
     }
@@ -90,7 +92,8 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
                 "applyNetworkConfigurationCommand",
                 "applyFirewallConfigurationCommand",
                 "enable_ip6",
-                eblockerDnsServer);
+                eblockerDnsServer,
+                deviceService);
     }
 
     @Test
@@ -231,13 +234,11 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
 
     @Test
     public void TestConfigureDhcp() {
-        DeviceService deviceService = Mockito.mock(DeviceService.class);
         TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
         tdf.addDevice("0123456789ab", "10.2.3.4", true);
         tdf.addDevice("caffee001122", "10.2.3.5", false);
         tdf.addDevice("1cc11afedcba", "10.2.3.6", false);
         tdf.commit();
-        Mockito.when(dataSource.getDevices()).thenReturn(tdf.getDevices());
 
         NetworkConfiguration cfg = Mockito.mock(NetworkConfiguration.class);
         Mockito.when(cfg.getIpAddress()).thenReturn("192.168.0.2");

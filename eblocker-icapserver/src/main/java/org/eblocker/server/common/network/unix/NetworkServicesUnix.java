@@ -30,6 +30,7 @@ import org.eblocker.server.common.network.DhcpServerConfiguration;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServicesBase;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,9 +76,10 @@ public class NetworkServicesUnix extends NetworkServicesBase {
             @Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand,
             @Named("network.unix.apply.firewall.configuration.command") String applyFirewallConfigurationCommand,
             @Named("network.unix.enable.ip6") String enableIp6Command,
-            EblockerDnsServer eblockerDnsServer
+            EblockerDnsServer eblockerDnsServer,
+            DeviceService deviceService
     ) {
-        super(dataSource, executorService, networkInterface, arpSpoofer, arpSpoofer_startupDelay, arpSpoofer_fixedDelay, eblockerDnsServer);
+        super(dataSource, executorService, networkInterface, arpSpoofer, arpSpoofer_startupDelay, arpSpoofer_fixedDelay, eblockerDnsServer, deviceService);
         this.dnsConfiguration = dnsConfiguration;
         this.interfaceConfiguration = interfaceConfiguration;
         this.dhcpServer = dhcpServer;

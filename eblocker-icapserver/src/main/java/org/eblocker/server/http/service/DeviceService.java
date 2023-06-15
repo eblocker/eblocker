@@ -224,7 +224,7 @@ public class DeviceService {
         return cachedDevice;
     }
 
-    public Set<Device> delete(Predicate<Device> predicate) {
+    private Set<Device> delete(Predicate<Device> predicate) {
         Set<Device> deletedDevices = new HashSet<>();
         Iterator<Device> i = devicesById.values().iterator();
         while (i.hasNext()) {

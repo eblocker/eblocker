@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class NetworkServicesUnixTest {
     private FirewallConfigurationIp6 firewallConfigurationIp6;
     private ScriptRunner scriptRunner;
     private NetworkServicesUnix networkServices;
+    private DeviceService deviceService;
 
     @Before
     public void setUp() {
@@ -47,7 +49,10 @@ public class NetworkServicesUnixTest {
         firewallConfiguration = Mockito.mock(FirewallConfigurationIp4.class);
         firewallConfigurationIp6 = Mockito.mock(FirewallConfigurationIp6.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
-        networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, firewallConfigurationIp6, null, null, null, scriptRunner, 0, 0, APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null);
+        deviceService = Mockito.mock(DeviceService.class);
+        networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, firewallConfigurationIp6,
+                null, null, null, scriptRunner, 0, 0,
+                APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null, deviceService);
     }
 
     @Test

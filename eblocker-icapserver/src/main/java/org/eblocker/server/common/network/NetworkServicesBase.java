@@ -27,11 +27,13 @@ import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,6 +58,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
     private final NetworkInterfaceWrapper networkInterface;
     private ScheduledFuture<?> arpSpooferFuture;
     private final EblockerDnsServer eblockerDnsServer;
+    private final DeviceService deviceService;
 
     private List<NetworkChangeListener> listeners = new ArrayList<>();
 
@@ -65,7 +68,8 @@ public abstract class NetworkServicesBase implements NetworkServices {
                                ArpSpoofer arpSpoofer,
                                long arpSpooferStartupDelay,
                                long arpSpooferFixedDelay,
-                               EblockerDnsServer eblockerDnsServer) {
+                               EblockerDnsServer eblockerDnsServer,
+                               DeviceService deviceService) {
         this.dataSource = dataSource;
         this.executorService = executorService;
         this.networkInterface = networkInterface;
@@ -73,10 +77,11 @@ public abstract class NetworkServicesBase implements NetworkServices {
         this.arpSpooferStartupDelay = arpSpooferStartupDelay;
         this.arpSpooferFixedDelay = arpSpooferFixedDelay;
         this.eblockerDnsServer = eblockerDnsServer;
+        this.deviceService = deviceService;
     }
 
     protected Set<Device> getDevices() {
-        return dataSource.getDevices();
+        return new HashSet<>(deviceService.getDevices(true));
     }
 
     @Override
@@ -201,7 +206,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
 
     @Override
     public void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableEblockerMobile, boolean enableMalwareSet) {
-        Set<Device> allDevices = dataSource.getDevices();
+        Set<Device> allDevices = getDevices();
         Collection<OpenVpnClientState> vpnClients = dataSource.getAll(OpenVpnClientState.class);
         enableFirewall(allDevices, vpnClients, masquerade, enableSSL, eblockerDnsServer.isEnabled(), enableEblockerMobile, enableMalwareSet);
     }

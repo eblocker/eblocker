@@ -152,6 +152,19 @@ public class NetworkConfigurationValidatorTest {
         assertTrue(configurationHasError("dhcp.invalidRange"));
     }
 
+    @Test
+    public void testIp6NameServers() {
+        configuration.setAutomatic(false);
+        configuration.setIpAddress("192.168.0.2");
+        configuration.setNetworkMask("255.255.255.0");
+        configuration.setGateway("192.168.0.1");
+
+        configuration.setNameServerPrimary("2001:1234::1111");
+        configuration.setNameServerPrimary("2001:1234::2222");
+
+        assertTrue(configurationIsValid());
+    }
+
     private boolean configurationHasError(String string) {
         List<String> errors = ValidationEngine.validate(configuration);
         for (String error : errors) {

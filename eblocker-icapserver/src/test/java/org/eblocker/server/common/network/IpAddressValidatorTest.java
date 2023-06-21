@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
@@ -37,7 +35,7 @@ import java.util.List;
 
 public class IpAddressValidatorTest {
 
-    private Table<String, IpAddress, Long> arpResponseTable;
+    private IpResponseTable ipResponseTable;
     private TestClock clock;
     private DeviceService deviceService;
     private FeatureToggleRouter featureToggleRouter;
@@ -50,7 +48,7 @@ public class IpAddressValidatorTest {
 
     @Before
     public void setUp() {
-        arpResponseTable = HashBasedTable.create();
+        ipResponseTable = new IpResponseTable();
         clock = new TestClock(ZonedDateTime.now());
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
         pubSubService = Mockito.mock(PubSubService.class);
@@ -79,7 +77,7 @@ public class IpAddressValidatorTest {
 
         validator = new IpAddressValidator(
                 60,
-                arpResponseTable,
+                ipResponseTable,
                 "10.8.0.0",
                 "255.255.255.0",
                 clock,
@@ -105,10 +103,10 @@ public class IpAddressValidatorTest {
     public void testKeepIpsDeviceWithoutRecentActivity() {
         long lastActivity = ZonedDateTime.now().minusHours(4).toInstant().toEpochMilli();
 
-        arpResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.21"), lastActivity);
-        arpResponseTable.put("00ff00112233", Ip6Address.parse("fe80::192:168:7:21"), lastActivity);
-        arpResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.22"), lastActivity);
-        arpResponseTable.put("008800000001", Ip4Address.parse("192.168.7.100"), lastActivity);
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.21"), lastActivity);
+        ipResponseTable.put("00ff00112233", Ip6Address.parse("fe80::192:168:7:21"), lastActivity);
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.22"), lastActivity);
+        ipResponseTable.put("008800000001", Ip4Address.parse("192.168.7.100"), lastActivity);
 
         validator.run();
         validator.run(); // responses are checked in the second run
@@ -116,9 +114,9 @@ public class IpAddressValidatorTest {
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.20"), IpAddress.parse("fe80::192:168:7:20")), devices.get(0).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.21"), IpAddress.parse("192.168.7.22")), devices.get(1).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), devices.get(2).getIpAddresses());
-        Assert.assertTrue(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.21")));
-        Assert.assertTrue(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
-        Assert.assertTrue(arpResponseTable.contains("008800000001", Ip4Address.parse("192.168.7.100")));
+        Assert.assertTrue(ipResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.21")));
+        Assert.assertTrue(ipResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
+        Assert.assertTrue(ipResponseTable.contains("008800000001", Ip4Address.parse("192.168.7.100")));
 
         Mockito.verify(deviceService, Mockito.never()).updateDevice(Mockito.any(Device.class));
         Mockito.verify(networkStateMachine, Mockito.never()).deviceStateChanged(Mockito.any(Device.class));
@@ -129,17 +127,17 @@ public class IpAddressValidatorTest {
         long now = System.currentTimeMillis();
         long lastActivity = ZonedDateTime.now().minusHours(4).toInstant().toEpochMilli();
 
-        arpResponseTable.put("00aabbccddee", Ip4Address.parse("192.168.7.20"), now);
-        arpResponseTable.put("00aabbccddee", Ip6Address.parse("fe80::192:168:7:20"), now);
-        arpResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.21"), now);
-        arpResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.22"), lastActivity);
-        arpResponseTable.put("008800000001", Ip4Address.parse("192.168.7.100"), lastActivity);
-        arpResponseTable.put("008800000201", Ip4Address.parse("192.168.7.200"), now);
-        arpResponseTable.put("008800000201", Ip4Address.parse("192.168.7.201"), lastActivity);
+        ipResponseTable.put("00aabbccddee", Ip4Address.parse("192.168.7.20"), now);
+        ipResponseTable.put("00aabbccddee", Ip6Address.parse("fe80::192:168:7:20"), now);
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.21"), now);
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.22"), lastActivity);
+        ipResponseTable.put("008800000001", Ip4Address.parse("192.168.7.100"), lastActivity);
+        ipResponseTable.put("008800000201", Ip4Address.parse("192.168.7.200"), now);
+        ipResponseTable.put("008800000201", Ip4Address.parse("192.168.7.201"), lastActivity);
 
         validator.run();
         // still valid because responses are not checked in the first run:
-        Assert.assertTrue(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
+        Assert.assertTrue(ipResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
 
         validator.run(); // responses are checked in the second run
 
@@ -147,11 +145,11 @@ public class IpAddressValidatorTest {
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.21")), devices.get(1).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.100"), IpAddress.parse("10.8.0.9")), devices.get(2).getIpAddresses());
         Assert.assertEquals(Arrays.asList(IpAddress.parse("192.168.7.200"), IpAddress.parse("10.8.0.10")), devices.get(3).getIpAddresses());
-        Assert.assertTrue(arpResponseTable.contains("00aabbccddee", Ip4Address.parse("192.168.7.20")));
-        Assert.assertTrue(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.21")));
-        Assert.assertFalse(arpResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
-        Assert.assertTrue(arpResponseTable.contains("008800000001", Ip4Address.parse("192.168.7.100")));
-        Assert.assertTrue(arpResponseTable.contains("008800000201", Ip4Address.parse("192.168.7.200")));
+        Assert.assertTrue(ipResponseTable.contains("00aabbccddee", Ip4Address.parse("192.168.7.20")));
+        Assert.assertTrue(ipResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.21")));
+        Assert.assertFalse(ipResponseTable.contains("00ff00112233", Ip4Address.parse("192.168.7.22")));
+        Assert.assertTrue(ipResponseTable.contains("008800000001", Ip4Address.parse("192.168.7.100")));
+        Assert.assertTrue(ipResponseTable.contains("008800000201", Ip4Address.parse("192.168.7.200")));
 
         Mockito.verify(deviceService).updateDevice(devices.get(1));
         Mockito.verify(networkStateMachine).deviceStateChanged(devices.get(1));

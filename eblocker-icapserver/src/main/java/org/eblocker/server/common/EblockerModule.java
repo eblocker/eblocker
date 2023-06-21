@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -422,13 +420,6 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public ConcurrentMap<String, Long> provideArpProbeCache() {
         return new ConcurrentHashMap<>(64, 0.75f, 1);
-    }
-
-    @Provides
-    @Named("arpResponseTable")
-    @Singleton
-    public Table<String, IpAddress, Long> provideArpResponseTable() {
-        return HashBasedTable.create();
     }
 
     @Provides

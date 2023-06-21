@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.Table;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -40,7 +39,7 @@ public class ArpSpoofer implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ArpSpoofer.class);
 
     private final ConcurrentMap<String, Long> arpProbeCache;
-    private final Table<String, IpAddress, Long> arpResponseTable;
+    private final IpResponseTable ipResponseTable;
     private final Clock clock;
     private final DataSource dataSource;
     private final DeviceService deviceService;
@@ -57,14 +56,14 @@ public class ArpSpoofer implements Runnable {
                       @Named("arp.spoof.suspend.period") long suspendPeriod,
                       @Named("network.emergency.ip") Ip4Address emergencyIp,
                       @Named("arpProbeCache") ConcurrentMap<String, Long> arpProbeCache,
-                      @Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
+                      IpResponseTable ipResponseTable,
                       Clock clock,
                       DataSource dataSource,
                       DeviceService deviceService,
                       PubSubService pubSubService,
                       NetworkInterfaceWrapper networkInterface) {
         this.arpProbeCache = arpProbeCache;
-        this.arpResponseTable = arpResponseTable;
+        this.ipResponseTable = ipResponseTable;
         this.clock = clock;
         this.pubSubService = pubSubService;
         this.dataSource = dataSource;
@@ -243,12 +242,7 @@ public class ArpSpoofer implements Runnable {
     private boolean isOnline(Device device) {
         long now = clock.millis();
 
-        Map<IpAddress, Long> row;
-        synchronized (arpResponseTable) {
-            row = arpResponseTable.row(device.getHardwareAddress(false));
-        }
-
-        return row != null && row.values().stream().anyMatch(t -> t + onlineThreshold > now);
+        return ipResponseTable.activeSince(device.getHardwareAddress(false), now - onlineThreshold);
     }
 
     private boolean isArpProbing(Device device) {

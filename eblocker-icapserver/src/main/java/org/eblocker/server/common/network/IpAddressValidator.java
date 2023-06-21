@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.Table;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
@@ -37,9 +36,8 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.time.Clock;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ public class IpAddressValidator {
     private static final Logger log = LoggerFactory.getLogger(IpAddressValidator.class);
 
     private final long recentActivityThreshold;
-    private final Table<String, IpAddress, Long> arpResponseTable;
+    private final IpResponseTable ipResponseTable;
     private final Clock clock;
     private final DeviceService deviceService;
     private final FeatureToggleRouter featureToggleRouter;
@@ -60,7 +58,7 @@ public class IpAddressValidator {
 
     @Inject
     public IpAddressValidator(@Named("arp.ip.grace.period.seconds") long recentActivityThreshold,
-                              @Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
+                              IpResponseTable ipResponseTable,
                               @Named("network.vpn.subnet.ip") String vpnSubnetIp,
                               @Named("network.vpn.subnet.netmask") String vpnSubnetNetmask,
                               Clock clock,
@@ -70,7 +68,7 @@ public class IpAddressValidator {
                               NetworkStateMachine networkStateMachine,
                               PubSubService pubSubService) {
         this.recentActivityThreshold = recentActivityThreshold * 1000;
-        this.arpResponseTable = arpResponseTable;
+        this.ipResponseTable = ipResponseTable;
         this.vpnSubnetIp = vpnSubnetIp;
         this.vpnSubnetNetmask = vpnSubnetNetmask;
         this.clock = clock;
@@ -102,70 +100,56 @@ public class IpAddressValidator {
 
     private void checkResponses() {
         log.debug("checking responses");
-        synchronized (arpResponseTable) {
-            // 1. get all rows with recent entries -> device is online
-            // 2. drop all ips which are not active for those devices
-            long now = clock.millis();
-            if (log.isTraceEnabled()) {
-                log.trace("now: {}", now);
-                log.trace("response table: {}", arpResponseTable);
-            }
-            arpResponseTable.rowMap().entrySet().stream()
-                    .map(row -> recentlyActiveIpAddresses(now, row))
-                    .filter(e -> !e.ipAddresses.isEmpty())   // only care about online devices
-                    .forEach(this::dropInactive);
+
+        // 1. get all rows with recent entries -> device is online
+        // 2. drop all ips which are not active for those devices
+        long now = clock.millis();
+        if (log.isTraceEnabled()) {
+            log.trace("now: {}", now);
+            log.trace("response table: {}", ipResponseTable);
         }
+        ipResponseTable.forEachActiveSince(now - recentActivityThreshold, this::dropInactive);
     }
 
-    private RecentActivity recentlyActiveIpAddresses(long now, Map.Entry<String, Map<IpAddress, Long>> row) {
-        return new RecentActivity(row.getKey(),
-                row.getValue().entrySet().stream()
-                        .filter(e -> now - e.getValue() < recentActivityThreshold)
-                        .map(Map.Entry::getKey)
-                        .collect(Collectors.toSet()));
-    }
-
-    private void dropInactive(RecentActivity recentActivity) {
-        Device device = deviceService.getDeviceById(Device.ID_PREFIX + recentActivity.hwAddress);
-        Set<IpAddress> newIpAddresses = recentActivity.ipAddresses;
+    private void dropInactive(String hardwareAddress, Set<IpAddress> activeIpAddresses) {
+        Device device = deviceService.getDeviceById(Device.ID_PREFIX + hardwareAddress);
 
         if (device == null) {
-            log.warn("arp responses for unknown device: {}", recentActivity.hwAddress);
+            log.warn("arp responses for unknown device: {}", hardwareAddress);
             return;
         }
 
         List<IpAddress> deviceIpAddresses = device.getIpAddresses();
         if (device.isVpnClient()) {
-            if (deviceIpAddresses.stream().anyMatch(ip -> recentActivity.ipAddresses.contains(ip))) {
+            if (deviceIpAddresses.stream().anyMatch(ip -> activeIpAddresses.contains(ip))) {
                 // Preserve vpn ip addresses for mobile clients
                 deviceIpAddresses.stream()
                         .filter(IpAddress::isIpv4)
                         .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
-                        .forEach(newIpAddresses::add);
+                        .forEach(activeIpAddresses::add);
             } else {
-                log.debug("ignoring vpn client {}", recentActivity.hwAddress);
+                log.debug("ignoring vpn client {}", hardwareAddress);
                 return;
             }
         }
 
-        if (recentActivity.ipAddresses.size() == deviceIpAddresses.size()
-                && recentActivity.ipAddresses.containsAll(deviceIpAddresses)) {
-            log.trace("{}: ip-addresses unchanged", recentActivity.hwAddress);
+        if (activeIpAddresses.size() == deviceIpAddresses.size()
+                && activeIpAddresses.containsAll(deviceIpAddresses)) {
+            log.trace("{}: ip-addresses unchanged", hardwareAddress);
             return;
         }
 
-        log.debug("{}: ip-address has changed from {} to {}", recentActivity.hwAddress, deviceIpAddresses, recentActivity.ipAddresses);
+        log.debug("{}: ip-address has changed from {} to {}", hardwareAddress, deviceIpAddresses, activeIpAddresses);
 
-        keepIpAddresses(device, newIpAddresses);
+        keepIpAddresses(device, activeIpAddresses);
 
         // TODO: refactor to use DeviceIpUpdater
         deviceService.updateDevice(device);
         networkStateMachine.deviceStateChanged(device);
 
-        Map<IpAddress, Long> row = arpResponseTable.row(recentActivity.hwAddress);
-        deviceIpAddresses.stream()
-                .filter(ip -> !recentActivity.ipAddresses.contains(ip))
-                .forEach(row::remove);
+        Set<IpAddress> inactiveIpAddresses = new HashSet(deviceIpAddresses);
+        inactiveIpAddresses.removeAll(activeIpAddresses);
+        ipResponseTable.removeAll(hardwareAddress, inactiveIpAddresses);
     }
 
     private void keepIpAddresses(Device device, Set<IpAddress> newIpAddresses) {
@@ -219,16 +203,6 @@ public class IpAddressValidator {
                     targetIpAddress,
                     sourceLinkLayerAddressOption);
             pubSubService.publish(Channels.IP6_OUT, solicitation.toString());
-        }
-    }
-
-    private static class RecentActivity {
-        String hwAddress;
-        LinkedHashSet<IpAddress> ipAddresses;
-
-        RecentActivity(String hwAddress, Set<IpAddress> ipAddresses) {
-            this.hwAddress = hwAddress;
-            this.ipAddresses = new LinkedHashSet<>(ipAddresses);
         }
     }
 }

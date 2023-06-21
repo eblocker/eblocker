@@ -16,12 +16,10 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.Table;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
-import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
@@ -40,7 +38,7 @@ public class ArpListener implements Runnable {
     private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final NetworkInterfaceWrapper networkInterface;
     private final ConcurrentMap<String, Long> arpProbeCache;
-    private final Table<String, IpAddress, Long> arpResponseTable;
+    private final IpResponseTable ipResponseTable;
     private final DeviceIpUpdater deviceIpUpdater;
 
     private class ArpListenerSubscriber implements Subscriber {
@@ -59,14 +57,14 @@ public class ArpListener implements Runnable {
 
     @Inject
     public ArpListener(@Named("arpProbeCache") ConcurrentMap<String, Long> arpProbeCache,
-                       @Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
+                       IpResponseTable ipResponseTable,
                        DeviceOnlineStatusCache deviceOnlineStatusCache,
                        PubSubService pubSubService,
                        NetworkInterfaceWrapper networkInterface,
                        Clock clock,
                        DeviceIpUpdater deviceIpUpdater) {
         this.arpProbeCache = arpProbeCache;
-        this.arpResponseTable = arpResponseTable;
+        this.ipResponseTable = ipResponseTable;
         this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.pubSubService = pubSubService;
         this.networkInterface = networkInterface;
@@ -101,9 +99,7 @@ public class ArpListener implements Runnable {
                 arpProbeCache.put(deviceID, clock.millis());
             } else {
                 Ip4Address sourceAddress = Ip4Address.parse(message.sourceIPAddress);
-                synchronized (arpResponseTable) {
-                    arpResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
-                }
+                ipResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
                 reactToRespondingDevice(deviceID, sourceAddress);
             }
 

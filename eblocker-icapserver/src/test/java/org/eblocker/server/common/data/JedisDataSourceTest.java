@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -160,5 +161,15 @@ public class JedisDataSourceTest {
     public void testSetDeviceScanningInterval() {
         dataSource.setDeviceScanningInterval(42L);
         Mockito.verify(jedis).set(JedisDataSource.KEY_DEVICE_SCANNING_INTERVAL, "42");
+    }
+
+    @Test
+    public void testUpdateLastSeen() {
+        String deviceId = "device:abcdef123456";
+        Device device = new Device();
+        device.setId(deviceId);
+        device.setLastSeen(Instant.ofEpochMilli(1234));
+        dataSource.updateLastSeen(device);
+        Mockito.verify(jedis).hset(deviceId, JedisDataSource.KEY_DEVICE_LAST_SEEN, "1234");
     }
 }

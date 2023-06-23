@@ -35,6 +35,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
@@ -140,6 +141,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_DHCP_LEASE_TIME = "dhcpLeaseTime";
 
     static final String KEY_DEVICE_SCANNING_INTERVAL = "deviceScanningInterval";
+    static final String KEY_DEVICE_LAST_SEEN = "lastSeen";
 
     // map containing key prefixes for entities with different prefix than from class.getSimpleName()
     private static final Map<Class<?>, String> ID_PREFIX = new HashMap<>();
@@ -519,6 +521,11 @@ public class JedisDataSource implements DataSource {
             device.setFilterTrackersEnabled(Boolean.parseBoolean(map.get(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED)));
         }
 
+        String lastSeen = map.get(KEY_DEVICE_LAST_SEEN);
+        if (lastSeen != null) {
+            device.setLastSeen(Instant.ofEpochMilli(Long.valueOf(lastSeen)));
+        }
+
         return device;
     }
 
@@ -575,6 +582,16 @@ public class JedisDataSource implements DataSource {
             map.put(KEY_FILTER_PLUG_AND_PLAY_ADS_ENABLED, Boolean.toString(device.isFilterAdsEnabled()));
             map.put(KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED, Boolean.toString(device.isFilterTrackersEnabled()));
             jedis.hmset(device.getId(), map);
+        }
+    }
+
+    @Override
+    public void updateLastSeen(Device device) {
+        Instant lastSeen = device.getLastSeen();
+        if (lastSeen != null) {
+            try (Jedis jedis = pool.getResource()) {
+                jedis.hset(device.getId(), KEY_DEVICE_LAST_SEEN, String.valueOf(lastSeen.toEpochMilli()));
+            }
         }
     }
 

@@ -19,8 +19,10 @@ package org.eblocker.server.common.network;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.data.IpAddress;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -28,11 +30,16 @@ import java.util.stream.Collectors;
 
 /**
  * This table stores the last time a hardware address has responded to a specific IP address
- * (via ARP response or Neighbor Advertisement)
+ * (via ARP response or Neighbor Advertisement).
+ *
+ * Listeners can be notified if the latest timestamp for a specific hardware address has been
+ * updated. They are not notified more frequently than once per minute.
  */
 @Singleton
 public class IpResponseTable {
+    private static final long MAX_NOTIFICATION_FREQ_MILLIS = 60*1000;
     private final Map<String, IpTimestamps> table;
+    private final List<LatestTimestampUpdateListener> latestTimestampUpdateListeners = new ArrayList<>();
 
     public IpResponseTable() {
         table = new HashMap<>();
@@ -53,6 +60,12 @@ public class IpResponseTable {
     public synchronized void put(String hardwareAddress, IpAddress sourceAddress, long millis) {
         IpTimestamps ipTimestamps = table.computeIfAbsent(hardwareAddress, k -> new IpTimestamps());
         ipTimestamps.put(sourceAddress, millis);
+
+        // notify listeners?
+        if (ipTimestamps.latestNotification + MAX_NOTIFICATION_FREQ_MILLIS <= millis) {
+            notifyListeners(hardwareAddress, millis);
+            ipTimestamps.latestNotification = millis;
+        }
     }
 
     public boolean activeSince(String hardwareAddress, long millis) {
@@ -105,6 +118,7 @@ public class IpResponseTable {
      */
     private static class IpTimestamps {
         private volatile long latestTimestamp = Long.MIN_VALUE;
+        private long latestNotification = Long.MIN_VALUE;
         private final Map<IpAddress, Long> timestamps = new HashMap<>();
 
         private Long get(IpAddress ipAddress) {
@@ -129,5 +143,17 @@ public class IpResponseTable {
                     .map(e -> e.getKey())
                     .collect(Collectors.toSet());
         }
+    }
+
+    private void notifyListeners(String hardwareAddress, long millis) {
+        latestTimestampUpdateListeners.forEach(listener -> listener.onLatestTimestampUpdate(hardwareAddress, millis));
+    }
+
+    public void addLatestTimestampUpdateListener(LatestTimestampUpdateListener listener) {
+        latestTimestampUpdateListeners.add(listener);
+    }
+
+    public interface LatestTimestampUpdateListener {
+        public void onLatestTimestampUpdate(String hardwareAddress, long millis);
     }
 }

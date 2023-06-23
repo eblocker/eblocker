@@ -18,6 +18,7 @@ package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -29,6 +30,7 @@ import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.migrations.DefaultEntities;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.registration.RegistrationState;
@@ -41,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,20 +74,30 @@ public class DeviceService {
 
     private final MacPrefix macPrefix = new MacPrefix();
 
+    private final IpResponseTable ipResponseTable;
+    private final Clock clock;
+    private final int deviceOfflineAfterSeconds;
+
     @Inject
     public DeviceService(DataSource datasource,
                          DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
-                         NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory) {
+                         NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory,
+                         IpResponseTable ipResponseTable, Clock clock,
+                         @Named("device.offline.after.seconds") int deviceOfflineAfterSeconds) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.datasource = datasource;
         this.userAgentService = userAgentService;
         this.deviceFactory = deviceFactory;
         this.networkInterfaceWrapper = networkInterfaceWrapper;
+        this.ipResponseTable = ipResponseTable;
+        this.clock = clock;
+        this.deviceOfflineAfterSeconds = deviceOfflineAfterSeconds;
     }
 
     @SubSystemInit
     public void init() {
         networkInterfaceWrapper.addIpAddressChangeListener(this::onIpAddressChange);
+        ipResponseTable.addLatestTimestampUpdateListener(this::onLatestTimestampUpdate);
         try {
             macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
         } catch (IOException e) {
@@ -287,6 +301,29 @@ public class DeviceService {
                     device.setEnabled(enabled);
                     updateDevice(device);
                 });
+    }
+
+    private void onLatestTimestampUpdate(String hardwareAddress, long millis) {
+        Device device = getDeviceById(Device.ID_PREFIX + hardwareAddress);
+        if (device == null) {
+            log.error("Could not update lastSeen of device {}, because it does not exist.", hardwareAddress);
+        }
+        device.setLastSeen(Instant.ofEpochMilli(millis));
+        datasource.updateLastSeen(device);
+    }
+
+    public void setOnlineStatus(Device device) {
+        if (device.isVpnClient()) {
+            device.setOnline(true);
+        } else {
+            Instant lastSeen = device.getLastSeen();
+            if (lastSeen != null) {
+                Instant now = clock.instant();
+                device.setOnline(lastSeen.plusSeconds(deviceOfflineAfterSeconds).isAfter(now));
+            } else {
+                device.setOnline(false);
+            }
+        }
     }
 
     public interface DeviceChangeListener {

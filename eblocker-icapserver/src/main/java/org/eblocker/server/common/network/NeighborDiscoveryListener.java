@@ -37,7 +37,6 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,6 @@ public class NeighborDiscoveryListener implements Runnable {
     private final PubSubService pubSubService;
     private final RouterAdvertisementCache routerAdvertisementCache;
     private final Ip6AddressDelayedValidator delayedValidator;
-    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final RouterAdvertisementFactory routerAdvertisementFactory;
 
     @Inject
@@ -73,7 +71,6 @@ public class NeighborDiscoveryListener implements Runnable {
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache,
                                      Ip6AddressDelayedValidator delayedValidator,
-                                     DeviceOnlineStatusCache deviceOnlineStatusCache,
                                      RouterAdvertisementFactory routerAdvertisementFactory) {
         this.ipResponseTable = ipResponseTable;
         this.clock = clock;
@@ -83,7 +80,6 @@ public class NeighborDiscoveryListener implements Runnable {
         this.pubSubService = pubSubService;
         this.routerAdvertisementCache = routerAdvertisementCache;
         this.delayedValidator = delayedValidator;
-        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.routerAdvertisementFactory = routerAdvertisementFactory;
     }
 
@@ -128,7 +124,6 @@ public class NeighborDiscoveryListener implements Runnable {
             }
 
             deviceIpUpdater.refresh(deviceId, advertisedAddress);
-            deviceOnlineStatusCache.updateOnlineStatus(deviceId);
 
             ipResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
         } catch (MessageException e) {

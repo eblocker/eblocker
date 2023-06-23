@@ -24,7 +24,6 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.util.IpUtils;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,6 @@ public class ArpListener implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ArpListener.class);
     private final Clock clock;
     private final PubSubService pubSubService;
-    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final NetworkInterfaceWrapper networkInterface;
     private final ConcurrentMap<String, Long> arpProbeCache;
     private final IpResponseTable ipResponseTable;
@@ -58,14 +56,12 @@ public class ArpListener implements Runnable {
     @Inject
     public ArpListener(@Named("arpProbeCache") ConcurrentMap<String, Long> arpProbeCache,
                        IpResponseTable ipResponseTable,
-                       DeviceOnlineStatusCache deviceOnlineStatusCache,
                        PubSubService pubSubService,
                        NetworkInterfaceWrapper networkInterface,
                        Clock clock,
                        DeviceIpUpdater deviceIpUpdater) {
         this.arpProbeCache = arpProbeCache;
         this.ipResponseTable = ipResponseTable;
-        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.pubSubService = pubSubService;
         this.networkInterface = networkInterface;
         this.clock = clock;
@@ -102,9 +98,6 @@ public class ArpListener implements Runnable {
                 ipResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
                 reactToRespondingDevice(deviceID, sourceAddress);
             }
-
-            // Mark corresponding device as active
-            deviceOnlineStatusCache.updateOnlineStatus(deviceID);
         }
     }
 

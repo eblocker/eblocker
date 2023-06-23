@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,5 +88,20 @@ public class IpResponseTableTest {
                 hwAddr2 + "->" + ipAddr2,
                 hwAddr2 + "->" + ipAddr3);
         Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void testNotifyListeners() {
+        List<String> listenerCalls = new ArrayList<>();
+        table.addLatestTimestampUpdateListener(((hardwareAddress, millis) -> {
+            listenerCalls.add(hardwareAddress + " @ " + millis);
+        }));
+        table.put(hwAddr1, ipAddr1, 1234);
+        table.put(hwAddr1, ipAddr1, 2234);
+        table.put(hwAddr1, ipAddr2, 50000);
+        table.put(hwAddr1, ipAddr2, 62000);
+        table.put(hwAddr1, ipAddr1, 70000);
+        List<String> expected = List.of(hwAddr1 + " @ 1234", hwAddr1 + " @ 62000");
+        Assert.assertEquals(expected, listenerCalls);
     }
 }

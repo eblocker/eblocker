@@ -22,6 +22,7 @@ import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
+import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper.IpAddressChangeListener;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
@@ -33,6 +34,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,6 +63,8 @@ public class DeviceServiceTest {
     private List<Device> devices;
     private DeviceRegistrationProperties deviceRegistrationProperties;
     private DeviceFactory deviceFactory;
+    private IpResponseTable ipResponseTable;
+    private Clock clock;
 
     @Before
     public void setup() throws IOException {
@@ -70,6 +75,8 @@ public class DeviceServiceTest {
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = new DeviceFactory(dataSource);
+        ipResponseTable = new IpResponseTable();
+        clock = Mockito.mock(Clock.class);
 
         devices = new ArrayList<>();
         devices.add(createMockDevice(GATEWAY_ID, "192.168.1.1", 100, true, true, true, false));
@@ -100,7 +107,7 @@ public class DeviceServiceTest {
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse(EBLOCKER_IP));
         // setup device service
         deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory);
+                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90);
         deviceService.init();
         deviceService.addListener(listener);
     }
@@ -445,6 +452,24 @@ public class DeviceServiceTest {
         Assert.assertEquals(nextUserId, device.getAssignedUser());
         Assert.assertEquals(nextUserId, device.getDefaultSystemUser());
         Assert.assertEquals(nextUserId, device.getOperatingUser());
+    }
+
+    @Test
+    public void testSetOnlineStatus() {
+        Mockito.when(clock.instant()).thenReturn(Instant.ofEpochMilli(92000L));
+        Device device = createMockDevice("device:111111111111", "192.168.0.2", false, false, false, false);
+        deviceService.setOnlineStatus(device);
+        Assert.assertFalse(device.isOnline());
+
+        // Not online any more
+        device.setLastSeen(Instant.ofEpochMilli(1234L));
+        deviceService.setOnlineStatus(device);
+        Assert.assertFalse(device.isOnline());
+
+        // Still online
+        device.setLastSeen(Instant.ofEpochMilli(3000L));
+        deviceService.setOnlineStatus(device);
+        Assert.assertTrue(device.isOnline());
     }
 
     private Device createMockDevice(String id, String ip, boolean online, boolean ipAddressFixed, boolean isGateway, boolean isEblocker) {

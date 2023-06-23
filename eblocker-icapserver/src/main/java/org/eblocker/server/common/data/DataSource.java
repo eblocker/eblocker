@@ -138,6 +138,11 @@ public interface DataSource {
     void save(Device device);
 
     /**
+     * Update only the last seen timestamp of a device
+     */
+    void updateLastSeen(Device device);
+
+    /**
      * Save a user
      *
      * @param user

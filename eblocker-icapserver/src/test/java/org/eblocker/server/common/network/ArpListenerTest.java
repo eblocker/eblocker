@@ -16,15 +16,12 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.eblocker.server.http.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +39,6 @@ public class ArpListenerTest {
     private ArpListener listener;
     private ConcurrentMap<String, Long> arpProbeCache;
     private IpResponseTable ipResponseTable;
-    private DeviceOnlineStatusCache deviceOnlineStatusCache;
     private PubSubService pubSubService;
     private NetworkInterfaceWrapper networkInterface;
     private TestClock clock;
@@ -52,7 +48,6 @@ public class ArpListenerTest {
 
     @Before
     public void setUp() throws Exception {
-        deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
         Mockito.when(networkInterface.getHardwareAddressHex()).thenReturn("caffee012345");
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.0.2"));
@@ -86,7 +81,7 @@ public class ArpListenerTest {
 
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
 
-        listener = new ArpListener(arpProbeCache, ipResponseTable, deviceOnlineStatusCache, pubSubService, networkInterface, clock, deviceIpUpdater);
+        listener = new ArpListener(arpProbeCache, ipResponseTable, pubSubService, networkInterface, clock, deviceIpUpdater);
     }
 
     @Test
@@ -101,7 +96,6 @@ public class ArpListenerTest {
         listener.run();
         subscriber.process(response("012345abcdef", "192.168.0.100"));
         Mockito.verify(deviceIpUpdater).refresh("device:012345abcdef", Ip4Address.parse("192.168.0.100"));
-        Mockito.verify(deviceOnlineStatusCache).updateOnlineStatus("device:012345abcdef");
     }
 
     @Test
@@ -109,7 +103,6 @@ public class ArpListenerTest {
         listener.run();
         subscriber.process(response("112345abcdee", "192.168.23.100"));
         Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.anyString(), Mockito.any());
-        Mockito.verify(deviceOnlineStatusCache).updateOnlineStatus("device:112345abcdee");
     }
 
     @Test

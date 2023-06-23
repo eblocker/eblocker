@@ -30,7 +30,7 @@ public class Event {
     private Map<String, String> eventDetails = null;
 
     public Event() {
-        // Needed for convertng from json to an object
+        // Needed for converting from json to an object
     }
 
     public EventType getType() {

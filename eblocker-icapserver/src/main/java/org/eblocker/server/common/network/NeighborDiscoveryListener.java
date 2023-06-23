@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.Table;
-import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -39,7 +37,6 @@ import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +44,6 @@ import javax.inject.Inject;
 import javax.xml.bind.DatatypeConverter;
 import java.time.Clock;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -56,7 +52,7 @@ public class NeighborDiscoveryListener implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(NeighborDiscoveryListener.class);
 
-    private final Table<String, IpAddress, Long> arpResponseTable;
+    private final IpResponseTable ipResponseTable;
     private final Clock clock;
     private final DeviceIpUpdater deviceIpUpdater;
     private final FeatureToggleRouter featureToggleRouter;
@@ -64,11 +60,10 @@ public class NeighborDiscoveryListener implements Runnable {
     private final PubSubService pubSubService;
     private final RouterAdvertisementCache routerAdvertisementCache;
     private final Ip6AddressDelayedValidator delayedValidator;
-    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final RouterAdvertisementFactory routerAdvertisementFactory;
 
     @Inject
-    public NeighborDiscoveryListener(@Named("arpResponseTable") Table<String, IpAddress, Long> arpResponseTable,
+    public NeighborDiscoveryListener(IpResponseTable ipResponseTable,
                                      Clock clock,
                                      DeviceIpUpdater deviceIpUpdater,
                                      FeatureToggleRouter featureToggleRouter,
@@ -76,9 +71,8 @@ public class NeighborDiscoveryListener implements Runnable {
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache,
                                      Ip6AddressDelayedValidator delayedValidator,
-                                     DeviceOnlineStatusCache deviceOnlineStatusCache,
                                      RouterAdvertisementFactory routerAdvertisementFactory) {
-        this.arpResponseTable = arpResponseTable;
+        this.ipResponseTable = ipResponseTable;
         this.clock = clock;
         this.deviceIpUpdater = deviceIpUpdater;
         this.featureToggleRouter = featureToggleRouter;
@@ -86,7 +80,6 @@ public class NeighborDiscoveryListener implements Runnable {
         this.pubSubService = pubSubService;
         this.routerAdvertisementCache = routerAdvertisementCache;
         this.delayedValidator = delayedValidator;
-        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.routerAdvertisementFactory = routerAdvertisementFactory;
     }
 
@@ -131,11 +124,8 @@ public class NeighborDiscoveryListener implements Runnable {
             }
 
             deviceIpUpdater.refresh(deviceId, advertisedAddress);
-            deviceOnlineStatusCache.updateOnlineStatus(deviceId);
 
-            synchronized (arpResponseTable) {
-                arpResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
-            }
+            ipResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
         } catch (MessageException e) {
             log.error("invalid message:", e);
         }

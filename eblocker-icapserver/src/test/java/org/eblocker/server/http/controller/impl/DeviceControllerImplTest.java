@@ -31,7 +31,6 @@ import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.RemainingPause;
 import org.eblocker.server.http.service.AnonymousService;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.eblocker.server.http.service.DevicePermissionsService;
 import org.eblocker.server.http.service.DeviceScanningService;
 import org.eblocker.server.http.service.DeviceService;
@@ -67,7 +66,6 @@ public class DeviceControllerImplTest {
     private DeviceControllerImpl controller;
     private AnonymousService anonymousService;
     private DevicePermissionsService devicePermissionsService;
-    private DeviceOnlineStatusCache deviceOnlineStatusCache;
     private DeviceScanningService deviceScanningService;
     private DeviceService deviceService;
     private DeviceRegistrationProperties deviceRegistrationProperties;
@@ -83,7 +81,6 @@ public class DeviceControllerImplTest {
     @Before
     public void setUp() throws Exception {
         anonymousService = Mockito.mock(AnonymousService.class);
-        deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
         devicePermissionsService = Mockito.mock(DevicePermissionsService.class);
         deviceScanningService = Mockito.mock(DeviceScanningService.class);
         deviceService = Mockito.mock(DeviceService.class);
@@ -113,7 +110,6 @@ public class DeviceControllerImplTest {
 
         controller = new DeviceControllerImpl(
                 anonymousService,
-                deviceOnlineStatusCache,
                 devicePermissionsService,
                 deviceScanningService,
                 deviceService,

@@ -23,6 +23,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.http.security.PasswordUtil;
@@ -34,6 +35,7 @@ import org.mockito.Mockito;
 import org.restexpress.exception.BadRequestException;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +59,8 @@ public class UserServiceTest {
     private static byte[] pinA;
     private DeviceRegistrationProperties deviceRegistrationProperties;
     private DeviceFactory deviceFactory;
+    private IpResponseTable ipResponseTable;
+    private Clock clock;
 
     @Before
     public void setup() throws IOException {
@@ -67,8 +71,9 @@ public class UserServiceTest {
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
+        ipResponseTable = new IpResponseTable();
         deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory);
+                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90);
         deviceService.init();
 
         users = new ArrayList<>();

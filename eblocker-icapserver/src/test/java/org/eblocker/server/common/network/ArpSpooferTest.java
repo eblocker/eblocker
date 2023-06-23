@@ -16,8 +16,6 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
@@ -48,7 +46,7 @@ public class ArpSpooferTest {
     private ArpSpoofer arpSpoofer;
     private TestClock clock;
     private ConcurrentMap<String, Long> arpProbeCache;
-    private Table<String, IpAddress, Long> arpResponseTable;
+    private IpResponseTable ipResponseTable;
     private DataSource dataSource;
     private DeviceService deviceService;
     private PubSubService pubSubService;
@@ -59,7 +57,7 @@ public class ArpSpooferTest {
     @Before
     public void setUp() throws Exception {
         arpProbeCache = new ConcurrentHashMap<>(32, 0.75f, 1);
-        arpResponseTable = HashBasedTable.create();
+        ipResponseTable = new IpResponseTable();
         clock = new TestClock(ZonedDateTime.now());
         dataSource = Mockito.mock(DataSource.class);
         deviceService = Mockito.mock(DeviceService.class);
@@ -69,7 +67,7 @@ public class ArpSpooferTest {
         when(networkInterface.getNetworkPrefixLength(IpAddress.parse("192.168.0.10"))).thenReturn(24);
         when(networkInterface.getHardwareAddressHex()).thenReturn("c82a144dc40e");
 
-        arpSpoofer = new ArpSpoofer(5, 10, 5, EMERGENCY_IP, arpProbeCache, arpResponseTable, clock, dataSource, deviceService, pubSubService, networkInterface);
+        arpSpoofer = new ArpSpoofer(5, 10, 5, EMERGENCY_IP, arpProbeCache, ipResponseTable, clock, dataSource, deviceService, pubSubService, networkInterface);
 
         TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
         tdf.addDevice("abcdef012345", GATEWAY, true);
@@ -97,15 +95,15 @@ public class ArpSpooferTest {
         tdf.getDevice("device:11f000000000").setIpAddresses(Arrays.asList(IpAddress.parse("192.168.0.200"), IpAddress.parse("192.168.0.201")));
 
         // fill arp table for devices
-        arpResponseTable.put("abcdef012345", Ip4Address.parse(GATEWAY), clock.millis());
-        arpResponseTable.put("c82a144dc40e", Ip4Address.parse("192.168.0.99"), clock.millis());
-        arpResponseTable.put("11aabbccddee", Ip4Address.parse("192.168.0.100"), clock.millis());
-        arpResponseTable.put("00aabbccddee", Ip4Address.parse("192.168.0.101"), clock.millis());
-        arpResponseTable.put("00aabbccddbb", Ip4Address.parse("192.168.1.101"), clock.millis());
-        arpResponseTable.put("11f000000000", Ip4Address.parse("192.168.0.200"), clock.millis());
-        arpResponseTable.put("11f000000000", Ip4Address.parse("192.168.0.201"), clock.millis());
-        arpResponseTable.put("00aabbccdd00", Ip4Address.parse("192.168.0.102"), clock.millis());
-        arpResponseTable.put("00aabbccdd01", Ip4Address.parse("192.168.0.103"), clock.millis());
+        ipResponseTable.put("abcdef012345", Ip4Address.parse(GATEWAY), clock.millis());
+        ipResponseTable.put("c82a144dc40e", Ip4Address.parse("192.168.0.99"), clock.millis());
+        ipResponseTable.put("11aabbccddee", Ip4Address.parse("192.168.0.100"), clock.millis());
+        ipResponseTable.put("00aabbccddee", Ip4Address.parse("192.168.0.101"), clock.millis());
+        ipResponseTable.put("00aabbccddbb", Ip4Address.parse("192.168.1.101"), clock.millis());
+        ipResponseTable.put("11f000000000", Ip4Address.parse("192.168.0.200"), clock.millis());
+        ipResponseTable.put("11f000000000", Ip4Address.parse("192.168.0.201"), clock.millis());
+        ipResponseTable.put("00aabbccdd00", Ip4Address.parse("192.168.0.102"), clock.millis());
+        ipResponseTable.put("00aabbccdd01", Ip4Address.parse("192.168.0.103"), clock.millis());
     }
 
     @After

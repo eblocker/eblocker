@@ -16,15 +16,12 @@
  */
 package org.eblocker.server.common.network;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.eblocker.server.http.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,8 +38,7 @@ public class ArpListenerTest {
 
     private ArpListener listener;
     private ConcurrentMap<String, Long> arpProbeCache;
-    private Table<String, IpAddress, Long> arpResponseTable;
-    private DeviceOnlineStatusCache deviceOnlineStatusCache;
+    private IpResponseTable ipResponseTable;
     private PubSubService pubSubService;
     private NetworkInterfaceWrapper networkInterface;
     private TestClock clock;
@@ -52,7 +48,6 @@ public class ArpListenerTest {
 
     @Before
     public void setUp() throws Exception {
-        deviceOnlineStatusCache = Mockito.mock(DeviceOnlineStatusCache.class);
         networkInterface = Mockito.mock(NetworkInterfaceWrapper.class);
         Mockito.when(networkInterface.getHardwareAddressHex()).thenReturn("caffee012345");
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("192.168.0.2"));
@@ -82,11 +77,11 @@ public class ArpListenerTest {
         };
 
         arpProbeCache = new ConcurrentHashMap<>(32, 0.75f, 1);
-        arpResponseTable = HashBasedTable.create();
+        ipResponseTable = new IpResponseTable();
 
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
 
-        listener = new ArpListener(arpProbeCache, arpResponseTable, deviceOnlineStatusCache, pubSubService, networkInterface, clock, deviceIpUpdater);
+        listener = new ArpListener(arpProbeCache, ipResponseTable, pubSubService, networkInterface, clock, deviceIpUpdater);
     }
 
     @Test
@@ -101,7 +96,6 @@ public class ArpListenerTest {
         listener.run();
         subscriber.process(response("012345abcdef", "192.168.0.100"));
         Mockito.verify(deviceIpUpdater).refresh("device:012345abcdef", Ip4Address.parse("192.168.0.100"));
-        Mockito.verify(deviceOnlineStatusCache).updateOnlineStatus("device:012345abcdef");
     }
 
     @Test
@@ -109,7 +103,6 @@ public class ArpListenerTest {
         listener.run();
         subscriber.process(response("112345abcdee", "192.168.23.100"));
         Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.anyString(), Mockito.any());
-        Mockito.verify(deviceOnlineStatusCache).updateOnlineStatus("device:112345abcdee");
     }
 
     @Test
@@ -135,7 +128,7 @@ public class ArpListenerTest {
         Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.anyString(), Mockito.any());
         Assert.assertNotNull(arpProbeCache.get(deviceId));
         Assert.assertTrue(Math.abs(System.currentTimeMillis() - arpProbeCache.get(deviceId)) < 1000);
-        Assert.assertTrue(arpResponseTable.isEmpty());
+        Assert.assertTrue(ipResponseTable.isEmpty());
     }
 
     @Test
@@ -148,7 +141,7 @@ public class ArpListenerTest {
         // make sure we don't process them
         Mockito.verify(deviceIpUpdater, Mockito.never()).refresh(Mockito.eq("device:012345aaaaaa"), Mockito.any());
         Assert.assertTrue(arpProbeCache.isEmpty());
-        Assert.assertTrue(arpResponseTable.isEmpty());
+        Assert.assertTrue(ipResponseTable.isEmpty());
     }
 
     @Test
@@ -171,9 +164,9 @@ public class ArpListenerTest {
         clock.setInstant(instants.get(2));
         subscriber.process(response("012345aaaaaa", "192.168.0.242"));
 
-        Assert.assertEquals(instants.get(0).toEpochMilli(), arpResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.22")).longValue());
-        Assert.assertEquals(instants.get(1).toEpochMilli(), arpResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.42")).longValue());
-        Assert.assertEquals(instants.get(2).toEpochMilli(), arpResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.242")).longValue());
+        Assert.assertEquals(instants.get(0).toEpochMilli(), ipResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.22")).longValue());
+        Assert.assertEquals(instants.get(1).toEpochMilli(), ipResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.42")).longValue());
+        Assert.assertEquals(instants.get(2).toEpochMilli(), ipResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.242")).longValue());
     }
 
     private String response(String senderMac, String senderIp) {

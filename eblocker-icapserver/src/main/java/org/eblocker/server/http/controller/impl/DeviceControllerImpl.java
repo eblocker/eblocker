@@ -33,7 +33,6 @@ import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.RemainingPause;
 import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.service.AnonymousService;
-import org.eblocker.server.http.service.DeviceOnlineStatusCache;
 import org.eblocker.server.http.service.DevicePermissionsService;
 import org.eblocker.server.http.service.DeviceScanningService;
 import org.eblocker.server.http.service.DeviceService;
@@ -56,7 +55,6 @@ public class DeviceControllerImpl implements DeviceController {
     private static final String DEVICE_EBLOCKER_VENDOR = "eBlocker";
     private static final Logger log = LoggerFactory.getLogger(DeviceControllerImpl.class);
     private final AnonymousService anonymousService;
-    private final DeviceOnlineStatusCache deviceOnlineStatusCache;
     private final DevicePermissionsService devicePermissionsService;
     private final DeviceScanningService deviceScanningService;
     private final DeviceService deviceService;
@@ -70,7 +68,6 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Inject
     public DeviceControllerImpl(AnonymousService anonymousService,
-                                DeviceOnlineStatusCache deviceOnlineStatusCache,
                                 DevicePermissionsService devicePermissionsService,
                                 DeviceScanningService deviceScanningService,
                                 DeviceService deviceService,
@@ -82,7 +79,6 @@ public class DeviceControllerImpl implements DeviceController {
                                 PauseDeviceController pauseDeviceController,
                                 DeviceFactory deviceFactory) {
         this.anonymousService = anonymousService;
-        this.deviceOnlineStatusCache = deviceOnlineStatusCache;
         this.devicePermissionsService = devicePermissionsService;
         this.deviceScanningService = deviceScanningService;
         this.deviceService = deviceService;
@@ -129,7 +125,7 @@ public class DeviceControllerImpl implements DeviceController {
             if (device.getIpAddresses().contains(requestIPAddress)) {
                 device.markAsCurrentDevice();
             }
-            deviceOnlineStatusCache.setOnlineStatus(device);
+            deviceService.setOnlineStatus(device);
 
             if (device.getId().equals(eBlockerId)) {
                 // eBlocker itself should not be in this list. If it is, remove it.
@@ -272,7 +268,7 @@ public class DeviceControllerImpl implements DeviceController {
             }
         }
 
-        deviceOnlineStatusCache.setOnlineStatus(device);
+        deviceService.setOnlineStatus(device);
     }
 
     @Override

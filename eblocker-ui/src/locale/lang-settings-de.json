@@ -582,7 +582,6 @@
                 "MOBILE_OFF" : "eBlocker Mobile ist für dieses Gerät deaktiviert",
                 "MOBILE_ON" : "eBlocker Mobile ist nicht verbunden",
                 "OFFLINE" : "Gerät ist offline",
-                "NEVER_SEEN" : "-",
                 "ONLINE" : "Gerät ist online",
                 "REMOVE_BUTTON" : "Gateways und der eBlocker können nicht zurück gesetzt werden",
                 "SSL_DISABLED" : "HTTPS-Unterstützung ist für dieses Gerät deaktiviert",

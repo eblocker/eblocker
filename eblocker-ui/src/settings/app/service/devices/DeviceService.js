@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function DeviceService($http, $q, DataCachingService, IpUtilsService) {
+export default function DeviceService($http, $q, moment, DataCachingService, IpUtilsService) {
     'ngInject';
 
     const PATH = '/api/adminconsole/devices';
@@ -172,6 +172,13 @@ export default function DeviceService($http, $q, DataCachingService, IpUtilsServ
             angular.isDefined(device.name) ? device.name :
                 angular.isDefined(device.vendor) ? device.vendor :
                     ipAddress;
+
+        if (angular.isNumber(device.lastSeen) && device.lastSeen > 0.0) {
+            device.lastSeenString = moment.unix(device.lastSeen).fromNow();
+        } else {
+            device.lastSeen = 0.0; // a value is needed for sorting
+            device.lastSeenString = '-';
+        }
 
         // Icon display mode
         if (device.iconMode === 'OFF'){

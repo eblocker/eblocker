@@ -26,7 +26,8 @@ export default {
     }
 };
 
-function Controller(logger, $filter, $stateParams, StateService, VpnService, RegistrationService,
+function Controller(logger, $filter, $stateParams, $translate, moment,
+                    StateService, VpnService, RegistrationService,
                     DeviceService, TableService, VpnHomeService, ArrayUtilsService) {
     'ngInject';
     'use strict';
@@ -40,6 +41,9 @@ function Controller(logger, $filter, $stateParams, StateService, VpnService, Reg
     };
 
     vm.$onInit = function() {
+        // Set locale for relative timestamps used in DeviceService.setDisplayValues()
+        moment.locale($translate.use());
+
         loadMobileStatus();
         // Need correct value for vm.sslEnabled, so initialize callbacks in onInit
         vm.templateCallback = {
@@ -149,7 +153,7 @@ function Controller(logger, $filter, $stateParams, StateService, VpnService, Reg
         {
             label: 'ADMINCONSOLE.DEVICES_LIST.TABLE.COLUMN.ONLINE',
             isSortable: true,
-            sortingKey: 'isOnline',
+            sortingKey: 'lastSeen',
             showHeader: true,
         },
         {

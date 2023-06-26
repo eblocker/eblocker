@@ -45,6 +45,7 @@ import org.restexpress.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -143,6 +144,7 @@ public class DeviceControllerImpl implements DeviceController {
         eblockerDevice.setId(eBlockerId);
         eblockerDevice.setName(deviceRegistrationProperties.getDeviceName());
         eblockerDevice.setVendor(DEVICE_EBLOCKER_VENDOR);
+        eblockerDevice.setLastSeen(Instant.now());
         eblockerDevice.setOnline(true);
         eblockerDevice.setIsEblocker(true);
         result.add(eblockerDevice);

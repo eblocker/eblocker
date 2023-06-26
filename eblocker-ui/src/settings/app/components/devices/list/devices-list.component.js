@@ -26,7 +26,7 @@ export default {
     }
 };
 
-function Controller(logger, $filter, $stateParams, $translate, moment,
+function Controller(logger, $filter, $stateParams, $translate, moment, // jshint ignore: line
                     StateService, VpnService, RegistrationService,
                     DeviceService, TableService, VpnHomeService, ArrayUtilsService) {
     'ngInject';

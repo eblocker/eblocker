@@ -20,11 +20,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,7 +84,6 @@ public class Device extends ModelObject {
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
     private Instant lastSeen;
-    private String lastSeenString = "";
 
     public Device() {
     }
@@ -481,37 +475,9 @@ public class Device extends ModelObject {
 
     public void setLastSeen(Instant lastSeen) {
         this.lastSeen = lastSeen;
-        setLastSeenString();
     }
 
     public Instant getLastSeen() {
         return lastSeen;
     }
-
-    // TODO this should be done in the UI
-    private void setLastSeenString() {
-        if (lastSeen == null) {
-            lastSeenString = "";
-            return;
-        }
-        ZonedDateTime lastSeenZoned = lastSeen.atZone(ZoneId.systemDefault());
-        // If offline since today, show time only
-        if (lastSeenZoned.toLocalDate().isEqual(LocalDate.now())) {
-            lastSeenString = DateTimeFormatter.ofPattern("HH:mm").format(lastSeenZoned);
-        }
-        // If offline for more than 14 days, show date only
-        else if (lastSeenZoned.isBefore(ZonedDateTime.now().minus(14, ChronoUnit.DAYS))) {
-            lastSeenString = DateTimeFormatter.ofPattern("dd.MM.uuuu").format(lastSeenZoned);
-        }
-        // If offline since more than 24 hours, show days only
-        else if (lastSeenZoned.isBefore(ZonedDateTime.now().minus(1, ChronoUnit.DAYS))) {
-            lastSeenString = DateTimeFormatter.ofPattern("dd.MM").format(lastSeenZoned);
-        }
-
-    }
-
-    public String getLastSeenString() {
-        return lastSeenString;
-    }
-
 }

@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -28,30 +29,26 @@ import static org.junit.Assert.assertEquals;
 
 public class DeviceTest {
     @Test
-    public void testGetOfflineSinceString() {
+    public void testGetHardwareAddress() {
         Device device = new Device();
 
-        // Test null case
-        device.setLastSeen(null);
-        assertEquals("", device.getLastSeenString());
+        Assert.assertNull(device.getHardwareAddress());
+        Assert.assertNull(device.getHardwareAddress(false));
+        Assert.assertNull(device.getHardwareAddressPrefix());
 
-        // Test time-only case
-        Instant nowInstant = Instant.now();
-        ZonedDateTime lastSeenTimeOnly = nowInstant.minusSeconds(30).atZone(ZoneId.systemDefault());
-        device.setLastSeen(lastSeenTimeOnly.toInstant());
-        String expectedTimeString = DateTimeFormatter.ofPattern("HH:mm").format(lastSeenTimeOnly);
-        assertEquals(expectedTimeString, device.getLastSeenString());
+        device.setId("device:abcdef012345");
+        Assert.assertEquals("ab:cd:ef:01:23:45", device.getHardwareAddress());
+        Assert.assertEquals("abcdef012345", device.getHardwareAddress(false));
+        Assert.assertEquals("abcdef", device.getHardwareAddressPrefix());
 
-        // Test day-only case
-        ZonedDateTime lastSeenDayOnly = nowInstant.minus(2, ChronoUnit.DAYS).atZone(ZoneId.systemDefault());
-        device.setLastSeen(lastSeenDayOnly.toInstant());
-        String expectedDayString = DateTimeFormatter.ofPattern("dd.MM").format(lastSeenDayOnly);
-        assertEquals(expectedDayString, device.getLastSeenString());
+        device.setId("Not a valid device ID");
+        Assert.assertNull(device.getHardwareAddress());
+        Assert.assertNull(device.getHardwareAddress(false));
+        Assert.assertNull(device.getHardwareAddressPrefix());
 
-        // Test date-only case
-        ZonedDateTime lastSeenDateOnly = nowInstant.minus(15, ChronoUnit.DAYS).atZone(ZoneId.systemDefault());
-        device.setLastSeen(lastSeenDateOnly.toInstant());
-        String expectedDateString = DateTimeFormatter.ofPattern("dd.MM.uuuu").format(lastSeenDateOnly);
-        assertEquals(expectedDateString, device.getLastSeenString());
+        device.setId("device:1234");
+        Assert.assertNull(device.getHardwareAddress());
+        Assert.assertNull(device.getHardwareAddress(false));
+        Assert.assertNull(device.getHardwareAddressPrefix());
     }
 }

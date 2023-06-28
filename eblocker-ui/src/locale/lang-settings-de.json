@@ -566,7 +566,7 @@
                     "NAME" : "Name",
                     "STATUS" : "Status",
                     "USER_ASSIGN" : "Besitzer",
-                    "ONLINE" : "Online"
+                    "ONLINE" : "Zuletzt online"
                 }
             },
             "TOOLTIP" : {

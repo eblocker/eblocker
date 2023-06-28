@@ -561,12 +561,12 @@
             },
             "TABLE" : {
                 "COLUMN" : {
-                    "IP" : "IP address",
+                    "IP" : "IP Address",
                     "IP_ANON" : "IP-Anon",
                     "NAME" : "Name",
                     "STATUS" : "State",
                     "USER_ASSIGN" : "Owner",
-                    "ONLINE" : "Online"
+                    "ONLINE" : "Last Online"
                 }
             },
             "TOOLTIP" : {

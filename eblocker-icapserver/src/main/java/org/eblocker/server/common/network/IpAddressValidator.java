@@ -54,10 +54,12 @@ public class IpAddressValidator {
     private final NetworkInterfaceWrapper networkInterface;
     private final String vpnSubnetIp;
     private final String vpnSubnetNetmask;
-    private boolean firstRun = true;
+    private long lastSendMillis = 0;
+    private final long lastSendMaxDeltaMillis;
 
     @Inject
     public IpAddressValidator(@Named("arp.ip.grace.period.seconds") long recentActivityThreshold,
+                              @Named("executor.arpValidator.fixedRate") long schedulerRate,
                               IpResponseTable ipResponseTable,
                               @Named("network.vpn.subnet.ip") String vpnSubnetIp,
                               @Named("network.vpn.subnet.netmask") String vpnSubnetNetmask,
@@ -68,6 +70,7 @@ public class IpAddressValidator {
                               NetworkStateMachine networkStateMachine,
                               PubSubService pubSubService) {
         this.recentActivityThreshold = recentActivityThreshold * 1000;
+        this.lastSendMaxDeltaMillis = schedulerRate * 2 * 1000;
         this.ipResponseTable = ipResponseTable;
         this.vpnSubnetIp = vpnSubnetIp;
         this.vpnSubnetNetmask = vpnSubnetNetmask;
@@ -80,13 +83,13 @@ public class IpAddressValidator {
     }
 
     public void run() {
-        if (firstRun) {
-            // Do not check responses in the first run to avoid removing addresses that are still valid
-            sendRequests();
-            firstRun = false;
-            return;
+        long now = clock.millis();
+        if (now - lastSendMillis < lastSendMaxDeltaMillis) {
+            checkResponses();
+        } else {
+            log.debug("Not checking responses to avoid removing addresses that are still in use but have not been pinged yet");
         }
-        checkResponses();
+
         sendRequests();
     }
 
@@ -96,6 +99,7 @@ public class IpAddressValidator {
         deviceService.getDevices(false).stream()
                 .filter(device -> !device.isVpnClient())
                 .forEach(sender::sendMessages);
+        lastSendMillis = clock.millis();
     }
 
     private void checkResponses() {
@@ -139,7 +143,7 @@ public class IpAddressValidator {
             return;
         }
 
-        log.debug("{}: ip-address has changed from {} to {}", hardwareAddress, deviceIpAddresses, activeIpAddresses);
+        log.debug("{}: ip-address has changed from {} to {}\n{}", hardwareAddress, deviceIpAddresses, activeIpAddresses, ipResponseTable);
 
         keepIpAddresses(device, activeIpAddresses);
 

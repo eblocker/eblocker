@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.IpAddress;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +114,14 @@ public class IpResponseTable {
         table.remove(hardwareAddress);
     }
 
+    @Override
+    public String toString() {
+        return "IpResponseTable: {\n" + table.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e -> "  " + e.getKey() + ": " + e.getValue().toString())
+                .collect(Collectors.joining(",\n")) + "\n}";
+    }
+
     /**
      * Store timestamps of IP addresses while keeping track of the most recent timestamp
      */
@@ -137,11 +146,19 @@ public class IpResponseTable {
             return timestamps.remove(ipAddress);
         }
 
-        public Set<IpAddress> activeAddressesSince(long millis) {
+        private Set<IpAddress> activeAddressesSince(long millis) {
             return timestamps.entrySet().stream()
                     .filter(e -> e.getValue() > millis)
                     .map(e -> e.getKey())
                     .collect(Collectors.toSet());
+        }
+
+        @Override
+        public String toString() {
+            return "latest " + latestTimestamp + ", {" + timestamps.entrySet().stream()
+                    .sorted(Comparator.comparing(e -> e.getKey().toString()))
+                    .map(e -> e.getKey() + " => " + e.getValue())
+                    .collect(Collectors.joining(", ")) + "}";
         }
     }
 
@@ -154,6 +171,6 @@ public class IpResponseTable {
     }
 
     public interface LatestTimestampUpdateListener {
-        public void onLatestTimestampUpdate(String hardwareAddress, long millis);
+        void onLatestTimestampUpdate(String hardwareAddress, long millis);
     }
 }

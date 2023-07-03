@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -77,6 +78,7 @@ public class IpAddressValidatorTest {
 
         validator = new IpAddressValidator(
                 60,
+                30,
                 ipResponseTable,
                 "10.8.0.0",
                 "255.255.255.0",
@@ -164,6 +166,20 @@ public class IpAddressValidatorTest {
         Mockito.verify(pubSubService).publish("arp:out", "1/001122334455/192.168.7.1/00ff00112233/192.168.7.21");
         Mockito.verify(pubSubService).publish("arp:out", "1/001122334455/192.168.7.1/00ff00112233/192.168.7.22");
         Mockito.verifyNoMoreInteractions(pubSubService);
+    }
+
+    @Test
+    public void doNotCheckResponsesAfterDelay() {
+        Instant now = clock.instant();
+        Device device = devices.get(1);
+        device.getIpAddresses().forEach(ip -> ipResponseTable.put(device.getHardwareAddress(false), ip, now.toEpochMilli()));
+        validator.run();
+        clock.setInstant(now.plusSeconds(1000));
+        // only one address is current (so the device is not considered offline)
+        ipResponseTable.put(device.getHardwareAddress(false), device.getIpAddresses().get(0), now.plusSeconds(990).toEpochMilli());
+        validator.run();
+        // device is not updated, because the last run was too long ago:
+        Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
     }
 
     private Device createDevice(String hwAddress, List<IpAddress> ipAddresses, boolean vpnClient) {

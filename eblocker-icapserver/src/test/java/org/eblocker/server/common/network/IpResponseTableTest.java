@@ -104,4 +104,16 @@ public class IpResponseTableTest {
         List<String> expected = List.of(hwAddr1 + " @ 1234", hwAddr1 + " @ 62000");
         Assert.assertEquals(expected, listenerCalls);
     }
+
+    @Test
+    public void testToString() {
+        table.put(hwAddr1, ipAddr2, 50000);
+        table.put(hwAddr1, ipAddr3, 62000);
+        table.put(hwAddr2, ipAddr1, 70000);
+        String expected = "IpResponseTable: {\n"
+                + "  abcdef111111: latest 62000, {2000::2 => 50000, 2000::3 => 62000},\n"
+                + "  abcdef222222: latest 70000, {192.168.1.2 => 70000}\n"
+                + "}";
+        Assert.assertEquals(expected, table.toString());
+    }
 }

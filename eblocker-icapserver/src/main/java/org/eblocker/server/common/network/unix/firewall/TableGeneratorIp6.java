@@ -103,6 +103,9 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             }
         }
 
+        // Masquerading seems to be necessary for packets that do not go via Squid (or packets from disabled devices)
+        postRouting.rule(new Rule(standardOutput).masquerade());
+
         return natTable;
     }
 

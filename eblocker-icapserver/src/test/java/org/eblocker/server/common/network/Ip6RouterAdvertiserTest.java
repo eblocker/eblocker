@@ -34,6 +34,7 @@ public class Ip6RouterAdvertiserTest {
     private NetworkInterfaceWrapper networkInterface;
     private PubSubService pubSubService;
     private Ip6RouterAdvertiser advertiser;
+    private RouterAdvertisementCache routerAdvertisementCache;
 
     @Before
     public void setUp() {
@@ -43,7 +44,8 @@ public class Ip6RouterAdvertiserTest {
         Mockito.when(networkInterface.getIp6LinkLocalAddress()).thenReturn(Ip6Address.parse("fe80::1:2:3:4:5"));
         Mockito.when(networkInterface.getMtu()).thenReturn(1500);
         pubSubService = Mockito.mock(PubSubService.class);
-        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, networkInterface);
+        routerAdvertisementCache = Mockito.mock(RouterAdvertisementCache.class);
+        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, routerAdvertisementCache, networkInterface);
         advertiser = new Ip6RouterAdvertiser(featureToggleRouter, networkInterface, pubSubService, routerAdvertisementFactory);
     }
 

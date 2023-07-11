@@ -75,7 +75,7 @@ public class NeighborDiscoveryListenerTest {
 
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
 
-        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, networkInterface);
+        RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, routerAdvertisementCache, networkInterface);
         listener = new NeighborDiscoveryListener(ipResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache, routerAdvertisementFactory);
     }
 

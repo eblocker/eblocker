@@ -35,6 +35,7 @@ import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.network.icmpv6.TargetLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
+import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class NeighborDiscoveryListener implements Runnable {
+public class NeighborDiscoveryListener implements Runnable, Subscriber {
 
     private static final Logger log = LoggerFactory.getLogger(NeighborDiscoveryListener.class);
 
@@ -84,10 +85,11 @@ public class NeighborDiscoveryListener implements Runnable {
     }
 
     public void run() {
-        pubSubService.subscribeAndLoop(Channels.IP6_IN, this::subscriber);
+        pubSubService.subscribeAndLoop(Channels.IP6_IN, this);
     }
 
-    private void subscriber(String message) {
+    @Override
+    public void process(String message) {
         if (!featureToggleRouter.isIp6Enabled()) {
             return;
         }
@@ -282,6 +284,14 @@ public class NeighborDiscoveryListener implements Runnable {
             }
         }
         return options;
+    }
+
+    @Override
+    public void onSubscribe() {
+        log.debug("Sending router solicitation in order to get current router advertisement");
+        RouterSolicitation solicitation = new RouterSolicitation(networkInterface.getHardwareAddress(), networkInterface.getIp6LinkLocalAddress(),
+                RouterSolicitation.MULTICAST_ALL_ROUTERS_HW_ADDRESS, Ip6Address.MULTICAST_ALL_ROUTERS_ADDRESS, List.of());
+        pubSubService.publish(Channels.IP6_OUT, solicitation.toString());
     }
 
     private static class MessageException extends Exception {

@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.Ip6Address;
 import java.util.List;
 
 public class RouterSolicitation extends NeighborDiscoveryMessage {
+    public static final byte[] MULTICAST_ALL_ROUTERS_HW_ADDRESS = new byte[]{ 51, 51, 0, 0, 0, 2 };
 
     public static final int ICMP_TYPE = 133;
 

@@ -60,7 +60,7 @@ public class OcspCacheTest {
         CERTIFICATES[0] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/revoked.badssl.com.cert");
         ISSUER_CERTIFICATES[0] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/DigiCertSHA2SecureServerCA.cert");
         CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/www.microsoft.com.cert");
-        ISSUER_CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/SymantecClass3SecureServerCA-G4.cert");
+        ISSUER_CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/MicrosoftAzureTLSIssuingCA06.cert");
         OCSP_RESPONSE_SUCCESS_GOOD = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-good.der");
         OCSP_RESPONSE_SUCCESS_REVOKED = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-revoked.der");
         OCSP_RESPONSE_FAIL = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-fail.der");
@@ -146,7 +146,7 @@ public class OcspCacheTest {
         Mockito.when(connectionBuilder.post(Mockito.any(byte[].class))).thenReturn(connectionEvict);
         byte[] response1 = cache.getOcspResponse(CERTIFICATES[1], ISSUER_CERTIFICATES[1]);
         Assert.assertEquals(1, cache.size());
-        Mockito.verify(connectionBuilder).setUrl("http://ocsp.msocsp.com");
+        Mockito.verify(connectionBuilder).setUrl("http://ocsp.digicert.com");
         Mockito.verify(connectionBuilder, Mockito.times(2)).post(Mockito.any(byte[].class));
         Assert.assertNotEquals(response0, response1);
 

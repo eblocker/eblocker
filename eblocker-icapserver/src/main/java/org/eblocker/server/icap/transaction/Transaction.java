@@ -94,6 +94,19 @@ public interface Transaction extends TransactionContext, TransactionIdentifier {
 
     void setInjections(Injections injections);
 
+    /**
+     * Sets the base URL from which the ControlBar iframe, icons and XMLHttpRequests are loaded.
+     * The ControlBar URL is only set when the ControlBar code should be injected into an HTML response.
+     * @param controlBarUrl
+     */
+    void setControlBarUrl(String controlBarUrl);
+
+    /**
+     * Returns the base URL from which the ControlBar iframe, icons and XMLHttpRequests are loaded.
+     * @return ControlBar base URL or null if the ControlBar should not be injected.
+     */
+    String getControlBarUrl();
+
     ContentEncoding getContentEncoding();
 
     void setContentEncoding(ContentEncoding contentEncoding);
@@ -101,4 +114,19 @@ public interface Transaction extends TransactionContext, TransactionIdentifier {
     StringBuilder getContent();
 
     void setContent(StringBuilder content);
+
+    /**
+     * Sets the nonce that can be used to allow the injected ControlBar script
+     * in the Content-Security-Policy of the response.
+     * The nonce is only set when the ControlBar code should be injected into an HTML response.
+     * @param cspNonce
+     */
+    void setCspNonce(String cspNonce);
+
+    /**
+     * Returns the nonce that can be used to allow the injected ControlBar script
+     * in the Content-Security-Policy of the response.
+     * @return CSP nonce or null if the ControlBar should not be injected.
+     */
+    String getCspNonce();
 }

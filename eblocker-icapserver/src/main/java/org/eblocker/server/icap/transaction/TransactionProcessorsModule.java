@@ -24,6 +24,7 @@ import org.eblocker.server.icap.transaction.processor.BpjmFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.CompressProcessor;
 import org.eblocker.server.icap.transaction.processor.ContentFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.ContentSecurityPoliciesProcessor;
+import org.eblocker.server.icap.transaction.processor.CspControlBarProcessor;
 import org.eblocker.server.icap.transaction.processor.CustomDomainFilterWhitelistProcessor;
 import org.eblocker.server.icap.transaction.processor.DecompressProcessor;
 import org.eblocker.server.icap.transaction.processor.DomainWhiteListProcessor;
@@ -117,6 +118,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             IgnoreEBlockerProcessor ignoreEBlockerProcessor,
                                                             InsertClientSslCheckProcessor insertClientSslCheckProcessor,
                                                             InsertToolbarProcessor insertToolbarProcessor,
+                                                            CspControlBarProcessor cspControlBarProcessor,
                                                             PageContextProcessor pageContextProcessor,
                                                             ResponseShortCutProcessor responseShortCutProcessor,
                                                             SessionProcessor sessionProcessor,
@@ -141,6 +143,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 insertClientSslCheckProcessor,
                 contentFilterProcessor,
                 htmlInjectionProcessor,
+                cspControlBarProcessor,
                 compressProcessor,
                 finalizeProcessor
         );

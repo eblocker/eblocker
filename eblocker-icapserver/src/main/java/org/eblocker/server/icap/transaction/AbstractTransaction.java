@@ -58,6 +58,8 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     private String redirectTarget = null;
     private Decision decision = Decision.NO_DECISION;
     private String baseUrl = null;
+    private String controlBarUrl = null;
+    private String cspNonce = null;
     private FilterResult filterResult = null;
     private PageContext pageContext;
     private Injections injections;
@@ -361,6 +363,26 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
     @Override
     public void setContent(StringBuilder content) {
         this.content = content;
+    }
+
+    @Override
+    public void setControlBarUrl(String controlBarUrl) {
+        this.controlBarUrl = controlBarUrl;
+    }
+
+    @Override
+    public String getControlBarUrl() {
+        return controlBarUrl;
+    }
+
+    @Override
+    public void setCspNonce(String cspNonce) {
+        this.cspNonce = cspNonce;
+    }
+
+    @Override
+    public String getCspNonce() {
+        return cspNonce;
     }
 
     private void logHeaders() {

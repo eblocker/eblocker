@@ -34,6 +34,8 @@ import org.eblocker.server.icap.transaction.TransactionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 @Singleton
 public class InsertToolbarProcessor implements TransactionProcessor {
     private static final Logger log = LoggerFactory.getLogger(InsertToolbarProcessor.class);
@@ -49,6 +51,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
     private static final String TAG_EBLOCKER_ICON_HIDE_AFTER_SECONDS = "@EBLOCKER_HIDE_ICON_AFTER_SECONDS@";
     private static final String TAG_EBLOCKER_REMINDER_ENABLED = "@EBLOCKER_REMINDER_ENABLED@";
     private static final String TAG_EBLOCKER_WELCOME_ENABLED = "@EBLOCKER_WELCOME_ENABLED@";
+    private static final String TAG_EBLOCKER_CSP_NONCE = "@EBLOCKER_CSP_NONCE@";
     private static final String ICON_POSITION_LEFT = "eblocker-icon-left";
     private static final String ICON_POSITION_RIGHT = "eblocker-icon-right";
     private static final String ICON_POSITION_ATTRIBUTE_LEFT = "left";
@@ -71,7 +74,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
     ) {
         this.template = "<style id=\"eblocker-style\" type=\"text/css\">" + minCss + "</style>\n" +
                 template +
-                "<script id=\"eblocker-script\" type=\"text/javascript\">" + minJs + "</script>";
+                "<script id=\"eblocker-script\" type=\"text/javascript\" nonce=\"" + TAG_EBLOCKER_CSP_NONCE + "\">" + minJs + "</script>";
         this.baseURLs = baseURLs;
         this.deviceService = deviceService;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
@@ -175,6 +178,9 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         //show icon
         String controlBarUrl = baseURLs.selectURLForPage(transaction.getRequest().getUri());
         log.debug("Inserting toolbar with link to {}", controlBarUrl);
+        transaction.setControlBarUrl(controlBarUrl);
+        String cspNonce = createCspNonce();
+        transaction.setCspNonce(cspNonce);
         boolean reminderEnabled =
                 deviceRegistrationProperties.isLicenseAboutToExpire() &&
                         reminderService.isReminderNeeded();
@@ -188,7 +194,8 @@ public class InsertToolbarProcessor implements TransactionProcessor {
                 showForSeconds,
                 iconPosition,
                 reminderEnabled,
-                showWelcome
+                showWelcome,
+                cspNonce
         );
     }
 
@@ -206,7 +213,7 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         return ICON_POSITION_ATTRIBUTE_RIGHT;
     }
 
-    protected static String getInlay(
+    private static String getInlay(
             String pageContextId,
             String template,
             String baseUrl,
@@ -215,7 +222,8 @@ public class InsertToolbarProcessor implements TransactionProcessor {
             int showForSeconds,
             Device.DisplayIconPosition iconPosition,
             boolean reminderEnabled,
-            boolean showWelcome
+            boolean showWelcome,
+            String cspNonce
     ) {
         StringReplacer replacer = new StringReplacer()
                 .add(TAG_EBLOCKER_BASEURL, baseUrl)
@@ -226,7 +234,8 @@ public class InsertToolbarProcessor implements TransactionProcessor {
                 .add(TAG_EBLOCKER_CLASS_WHITELISTED, "eblocker-semitransparent")
                 .add(TAG_EBLOCKER_SHOW_WARNING, warningState ? "block" : "none")
                 .add(TAG_EBLOCKER_REMINDER_ENABLED, reminderEnabled ? "true" : "false")
-                .add(TAG_EBLOCKER_WELCOME_ENABLED, showWelcome ? "true" : "false");
+                .add(TAG_EBLOCKER_WELCOME_ENABLED, showWelcome ? "true" : "false")
+                .add(TAG_EBLOCKER_CSP_NONCE, cspNonce);
 
         if (showForSeconds == 0) {
             //always show, so comment the start of the timeout, which will hide everything
@@ -241,4 +250,12 @@ public class InsertToolbarProcessor implements TransactionProcessor {
         return replacer.replace(template);
     }
 
+    /**
+     * Create a nonce for the injected script that can be used in the Content-Security-Policy HTTP header.
+     * @return
+     */
+    private String createCspNonce() {
+        // A random UUID provides the required 128 bits:
+        return UUID.randomUUID().toString().replace("-", ""); // keep only 0-9a-f because result must consist of Base64 characters
+    }
 }

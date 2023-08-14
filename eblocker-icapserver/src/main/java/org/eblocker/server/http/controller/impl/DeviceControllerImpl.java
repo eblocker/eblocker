@@ -492,6 +492,7 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Device.DisplayIconPosition setIconPosition(Request request, Response response) {
+        response.addHeader("Access-Control-Allow-Origin", "*"); // called by controlbar-inlay.js from any domain
         Device device = getCurrentDevice(request);
         Device.DisplayIconPosition iconPosition = Device.DisplayIconPosition.valueOf(request.getHeader("iconPos"));
         return deviceService.setIconPosition(device, iconPosition);

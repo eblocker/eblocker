@@ -57,7 +57,6 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
     /**
      * Perform the injection before the last closing body tag
      *
-     * @param transaction
      * @param content
      * @param injections
      */

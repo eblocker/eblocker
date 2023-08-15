@@ -254,6 +254,8 @@ public class EblockerServerApp {
         shutdownService = injector.getInstance(ShutdownService.class);
         statusReporter.consoleStarted();
 
+        STATUS.info("Initializing eBlocker {}", injector.getInstance(Key.get(String.class, Names.named("project.version"))));
+
         systemStatusService
                 .starting(SubSystem.HTTP_SERVER)
                 .starting(SubSystem.HTTPS_SERVER)

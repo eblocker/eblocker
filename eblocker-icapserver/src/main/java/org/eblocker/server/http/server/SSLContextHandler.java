@@ -29,6 +29,7 @@ import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.ssl.EblockerCa;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -111,6 +112,7 @@ public class SSLContextHandler {
                 try {
                     // check and regenerate certificates if necessary
                     checkCertificates();
+                    registerForIpAddressChanges();
                 } catch (SslContextException e) {
                     log.error("Failed to initialize context - ssl may be unavailable", e);
                 }
@@ -148,7 +150,9 @@ public class SSLContextHandler {
                 listeners.forEach(SslContextChangeListener::onDisable);
             }
         });
+    }
 
+    private void registerForIpAddressChanges() {
         networkInterface.addIpAddressChangeListener(this::notifyIpChange);
     }
 
@@ -170,6 +174,9 @@ public class SSLContextHandler {
      * @return
      */
     private void notifyIpChange(boolean ip4Updated, boolean ip6Updated) {
+        if (! ip4Updated) {
+            return; // IPv6 addresses are not in the certificate yet
+        }
         try {
             log.info("Updating the SSL Context...");
             if (sslService.isCaAvailable()) {

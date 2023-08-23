@@ -41,6 +41,8 @@ import java.util.Optional;
 public abstract class AbstractTransaction implements Transaction, TransactionIdentifier {
     private static final Logger log = LoggerFactory.getLogger(AbstractTransaction.class);
 
+    private static final byte[] DUMMY_SCRIPT = "console.log('Script blocked by eBlocker: %s', document.currentScript.src);".getBytes();
+
     private Session session = null;
     private boolean isRequest = false;
     private boolean isResponse = false;
@@ -232,20 +234,38 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         String url = getUrl();
         Optional<FullHttpResponse> surrogate = surrogateService.surrogateForBlockedUrl(url);
         if (surrogate.isPresent()) {
-            log.info("Returning surrogate for " + url);
+            log.info("Returning surrogate for {}", url);
             setResponse(surrogate.get());
         } else {
-            byte[] image = OnePixelImage.get(baseUrl + "/redirect/prepare?url=" + UrlUtils.urlEncode(url));
-
-            FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
-            httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, OnePixelImage.MIME_TYPE);
-            httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, image.length);
-            setResponse(httpResponse);
+            String destination = getRequest().headers().get("Sec-Fetch-Dest");
+            if ("script".equals(destination)) {
+                log.info("Returning dummy script for {}", url);
+                setResponse(getDummyScriptResponse());
+            } else {
+                log.info("Returning one pixel SVG for {}", url);
+                setResponse(getOnePixelImageResponse(url));
+            }
         }
 
         this.complete = true;
         this.headersChanged = true;
         this.contentChanged = true;
+    }
+
+    private FullHttpResponse getOnePixelImageResponse(String url) {
+        byte[] image = OnePixelImage.get(baseUrl + "/redirect/prepare?url=" + UrlUtils.urlEncode(url));
+
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, OnePixelImage.MIME_TYPE);
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, image.length);
+        return httpResponse;
+    }
+
+    private FullHttpResponse getDummyScriptResponse() {
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(DUMMY_SCRIPT));
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, "text/javascript");
+        httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, DUMMY_SCRIPT.length);
+        return httpResponse;
     }
 
     @Override

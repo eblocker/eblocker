@@ -160,7 +160,7 @@ export default function DeviceService($http, $q, moment, DataCachingService, IpU
         if (angular.isArray(device.ipAddresses) && device.ipAddresses.length > 0) {
             const ipAddresses = IpUtilsService.sortByVersion(device.ipAddresses);
             device.sortingKeyIpAddress = IpUtilsService.sortingKey(ipAddresses[0]);
-            device.displayIpAddresses = ipAddresses.join('\n');
+            device.displayIpAddresses = ipAddresses.join(',\n');
             ipAddress = ipAddresses[0];
         }
 

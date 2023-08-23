@@ -107,6 +107,8 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
         devices.forEach((d) => {
             // allow sorting of true/false value
             d.isOnlineSortable = d.isOnline ? 1 : 0;
+
+            DeviceService.setDisplayValues(d);
         });
 
         vm.tableEditMode = false; // make sure table is not in edit mode when paginator is clicked

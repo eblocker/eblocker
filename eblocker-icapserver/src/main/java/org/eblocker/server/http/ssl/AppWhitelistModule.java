@@ -67,10 +67,10 @@ public class AppWhitelistModule extends AppWhitelistModuleBase {
             if (IpUtils.isIPAddress(tmpDomainIp)) {
                 this.whitelistedIPs.add(tmpDomainIp);
             } else if (IpUtils.isIpRange(tmpDomainIp)) {
-                this.whitelistedIPs.add(IpUtils.shrinkIpRange(tmpDomainIp, IP_RANGE_RANGE_THRESHOLD));
+                this.whitelistedIPs.add(IpUtils.shrinkIpRange(tmpDomainIp));
             } else {
                 // Is it a domain?
-                String domain = UrlUtils.findDomainInString(tmpDomainIp);
+                String domain = UrlUtils.findDomainInString(tmpDomainIp, true);
                 if (domain != null) {
                     this.whitelistedDomains.add(domain);
                 }
@@ -86,7 +86,7 @@ public class AppWhitelistModule extends AppWhitelistModuleBase {
         for (String whitelistedDomain : whitelistedDomains) {
             // Remove heading/trailing whitespaces
             String url = whitelistedDomain.trim();
-            String domain = UrlUtils.findDomainInString(url);
+            String domain = UrlUtils.findDomainInString(url, false);
             if (domain != null) {
                 tmpWhitelistedDomains.add(domain);
             }
@@ -121,7 +121,7 @@ public class AppWhitelistModule extends AppWhitelistModuleBase {
                 tmpWhitelistedIPs.add(ip);
             } else if (IpUtils.isIpRange(ip)) {
                 // make sure the range is not too big
-                tmpWhitelistedIPs.add(IpUtils.shrinkIpRange(ip, IP_RANGE_RANGE_THRESHOLD));
+                tmpWhitelistedIPs.add(IpUtils.shrinkIpRange(ip));
             }
         }
         this.whitelistedIPs = tmpWhitelistedIPs;

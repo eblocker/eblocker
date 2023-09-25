@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.messagecenter.MessageContainer;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,14 +63,14 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
     }
 
     private boolean isLocalDnsServerPresentWhichIsNotGateway(List<String> nameServers, String eblockerIpAddressString, String gatewayIpAddressString, String networkMaskString) {
-        int gatewayIpAddress = IpUtils.convertIpStringToInt(gatewayIpAddressString);
-        int networkMask = IpUtils.convertIpStringToInt(networkMaskString);
+        int gatewayIpAddress = Ip4Utils.convertIpStringToInt(gatewayIpAddressString);
+        int networkMask = Ip4Utils.convertIpStringToInt(networkMaskString);
         int network = gatewayIpAddress & networkMask;
         return nameServers.stream()
-                .filter(ns -> IpUtils.isIPAddress(ns))
+                .filter(ns -> Ip4Utils.isIPAddress(ns))
                 .filter(ns -> !ns.equals(gatewayIpAddressString))
                 .filter(ns -> !ns.equals(eblockerIpAddressString))
-                .map(ns -> IpUtils.convertIpStringToInt(ns) & network)
+                .map(ns -> Ip4Utils.convertIpStringToInt(ns) & network)
                 .filter(ns -> ns == network)
                 .findAny()
                 .isPresent();

@@ -180,7 +180,7 @@ public class AppWhitelistModuleTest {
 
         url = "bla5.de/blubb";
         whitelistedDomains.add(url);
-        expectedDomains.add("bla5.de");
+        notExpectedDomains.add("bla5.de");
 
         url = "http://www.bla6.de/blubb.html#fasel";
         whitelistedDomains.add(url);
@@ -203,5 +203,20 @@ public class AppWhitelistModuleTest {
         for (String domain : notExpectedDomains) {
             assertFalse(module.getWhitelistedDomains().contains(domain));
         }
+    }
+
+    @Test
+    public void testConstructorDisplay() {
+        AppWhitelistModuleDisplay display = new AppWhitelistModuleDisplay(42,
+                "Test Module",
+                Map.of("de", "Test-Modul", "en", "Test Module"),
+                List.of("example.com", "https://eblocker.org/download",
+                        "1.2.3.4", "17.0.0.0/7", "2603:1000::/25"),
+                null,
+                false, false, false, true,
+                null, false, false);
+        AppWhitelistModule module = new AppWhitelistModule(display);
+        assertEquals(List.of("example.com", "eblocker.org"), module.getWhitelistedDomains());
+        assertEquals(List.of("1.2.3.4", "17.0.0.0/8", "2603:1000::/32"), module.getWhitelistedIPs());
     }
 }

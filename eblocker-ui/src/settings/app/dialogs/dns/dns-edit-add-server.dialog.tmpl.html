@@ -12,7 +12,7 @@
             <div layout="column" style="margin-top: 20px;">
                 <md-input-container md-theme="eBlockerThemeInput">
                     <label>{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.LABEL_ADD_DNS_IPS' | translate }}</label>
-                    <input eb-ip-range name="ip" ng-model="vm.entry.server" type="text" md-maxlength="vm.maxLength" required />
+                    <input eb-ip-address name="ip" ng-model="vm.entry.server" type="text" md-maxlength="vm.maxLength" required />
                     <div ng-messages="vm.dnsServerForm.ip.$error" ng-if="vm.dnsServerForm.$submitted || vm.dnsServerForm.ip.$touched">
                         <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.ERROR.REQUIRED' | translate }}</div>
                         <div ng-message="ipRange">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.ERROR.IPS_INVALID' | translate }}</div>

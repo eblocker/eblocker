@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.network.ArpSweeper;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkUtils;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,7 +139,7 @@ public class DeviceScanningService {
 
     private boolean isPrivateNetwork() {
         String ip4vAddress = networkInterface.getFirstIPv4Address().toString();
-        int ip = IpUtils.convertIpStringToInt(ip4vAddress);
+        int ip = Ip4Utils.convertIpStringToInt(ip4vAddress);
 
         return privateNetworks.stream().anyMatch(network -> (ip & network[1]) == network[0]);
     }
@@ -151,8 +151,8 @@ public class DeviceScanningService {
             if (tokens.length != 2) {
                 throw new IllegalArgumentException("not a ipv4 net: " + networkString);
             }
-            int network = IpUtils.convertIpStringToInt(tokens[0]);
-            int subnet = IpUtils.convertCidrToNetMask(Integer.parseInt(tokens[1]));
+            int network = Ip4Utils.convertIpStringToInt(tokens[0]);
+            int subnet = Ip4Utils.convertCidrToNetMask(Integer.parseInt(tokens[1]));
             networks.add(new Integer[]{ network, subnet });
         }
         return networks;

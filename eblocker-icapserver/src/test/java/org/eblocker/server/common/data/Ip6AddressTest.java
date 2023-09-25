@@ -25,21 +25,25 @@ public class Ip6AddressTest {
 
     @Test
     public void testParsing() {
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db80001000200080800200c417a"), Ip6Address.parse("2001:db8:1:2:8:800:200c:417a").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db80000000000080800200c417a"), Ip6Address.parse("2001:db8::8:800:200c:417a").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("FF010000000000000000000000000101"), Ip6Address.parse("FF01::101").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("00010000000000000000000000000000"), Ip6Address.parse("1::").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("00000000000000000000000000000001"), Ip6Address.parse("::1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("00000000000000000000000000000000"), Ip6Address.parse("::").getAddress());
+        assertParse("20010db80001000200080800200c417a", "2001:db8:1:2:8:800:200c:417a");
+        assertParse("20010db80000000000080800200c417a", "2001:db8::8:800:200c:417a");
+        assertParse("FF010000000000000000000000000101", "FF01::101");
+        assertParse("00010000000000000000000000000000", "1::");
+        assertParse("00000000000000000000000000000001", "::1");
+        assertParse("00000000000000000000000000000000", "::");
 
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:db8:0:0:1:0:0:1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:0db8:0:0:1:0:0:1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:db8::1:0:0:1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:db8::0:1:0:0:1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:0db8::1:0:0:1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:db8:0:0:1::1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:db8:0000:0:1::1").getAddress());
-        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001"), Ip6Address.parse("2001:DB8:0:0:1::1").getAddress());
+        assertParse("20010db8000000000001000000000001", "2001:db8:0:0:1:0:0:1");
+        assertParse("20010db8000000000001000000000001", "2001:0db8:0:0:1:0:0:1");
+        assertParse("20010db8000000000001000000000001", "2001:db8::1:0:0:1");
+        assertParse("20010db8000000000001000000000001", "2001:db8::0:1:0:0:1");
+        assertParse("20010db8000000000001000000000001", "2001:0db8::1:0:0:1");
+        assertParse("20010db8000000000001000000000001", "2001:db8:0:0:1::1");
+        assertParse("20010db8000000000001000000000001", "2001:db8:0000:0:1::1");
+        assertParse("20010db8000000000001000000000001", "2001:DB8:0:0:1::1");
+    }
+
+    private void assertParse(String expectedHex, String ipAddress) {
+        Assert.assertArrayEquals(DatatypeConverter.parseHexBinary(expectedHex), Ip6Address.parse(ipAddress).getAddress());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -63,8 +67,38 @@ public class Ip6AddressTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void testParsingTooLargeField2() {
+        Ip6Address.parse("2001:db8:1::8:800:0200c:417a");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void testParsingNonHexadecimalField() {
         Ip6Address.parse("2001:db8:1:2:abcq:800:200c:417a");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParsingNotEnoughFields() {
+        Ip6Address.parse("1:2:3:4:5:6:7");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParsingEmptyString() {
+        Ip6Address.parse("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParsingTrailingGarbage() {
+        Ip6Address.parse("1:2:3:4:5:6:7:8::whatever");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParsingLastFieldEmpty() {
+        Ip6Address.parse("1:2:3:4:5:6:7:");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParsingLastFieldEmptyCollapsedZeros() {
+        Ip6Address.parse("1:2:3::5:6:7:");
     }
 
     @Test
@@ -84,13 +118,17 @@ public class Ip6AddressTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("2001:db8::1:0:0:1", Ip6Address.of(DatatypeConverter.parseHexBinary("20010db8000000000001000000000001")).toString());
-        Assert.assertEquals("2001:db8:1:2:8:800:200c:417a", Ip6Address.of(DatatypeConverter.parseHexBinary("20010db80001000200080800200c417a")).toString());
-        Assert.assertEquals("2001:db8::8:800:200c:417a", Ip6Address.of(DatatypeConverter.parseHexBinary("20010db80000000000080800200c417a")).toString());
-        Assert.assertEquals("ff01::101", Ip6Address.of(DatatypeConverter.parseHexBinary("FF010000000000000000000000000101")).toString());
-        Assert.assertEquals("1::", Ip6Address.of(DatatypeConverter.parseHexBinary("00010000000000000000000000000000")).toString());
-        Assert.assertEquals("::1", Ip6Address.of(DatatypeConverter.parseHexBinary("00000000000000000000000000000001")).toString());
-        Assert.assertEquals("::", Ip6Address.of(DatatypeConverter.parseHexBinary("00000000000000000000000000000000")).toString());
+        assertToString("20010db8000000000001000000000001", "2001:db8::1:0:0:1");
+        assertToString("20010db80001000200080800200c417a", "2001:db8:1:2:8:800:200c:417a");
+        assertToString("20010db80000000000080800200c417a", "2001:db8::8:800:200c:417a");
+        assertToString("FF010000000000000000000000000101", "ff01::101");
+        assertToString("00010000000000000000000000000000", "1::");
+        assertToString("00000000000000000000000000000001", "::1");
+        assertToString("00000000000000000000000000000000", "::");
+    }
+
+    private void assertToString(String ipAddressHex, String expected) {
+        Assert.assertEquals(expected, Ip6Address.of(DatatypeConverter.parseHexBinary(ipAddressHex)).toString());
     }
 
     @Test

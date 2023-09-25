@@ -22,7 +22,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
 import org.eblocker.server.common.network.NetworkUtils;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -147,7 +147,7 @@ public class IscDhcpServerConfiguration {
         return device.getIpAddresses().stream()
                 .filter(IpAddress::isIpv4)
                 .map(IpAddress::toString)
-                .filter(ip -> IpUtils.isInSubnet(ip, subnet, netmask))
+                .filter(ip -> Ip4Utils.isInSubnet(ip, subnet, netmask))
                 .collect(Collectors.toList());
     }
 }

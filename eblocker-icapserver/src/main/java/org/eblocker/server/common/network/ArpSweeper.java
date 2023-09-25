@@ -22,7 +22,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class ArpSweeper implements Runnable {
             for (int i = 0; i < Math.min(maxHosts, config.hosts); ++i) {
                 int targetIp = config.network + 1 + offset;
                 offset = (offset + 1) % config.hosts;
-                message.targetIPAddress = IpUtils.convertIpIntToString(targetIp);
+                message.targetIPAddress = Ip4Utils.convertIpIntToString(targetIp);
                 log.debug("Sending {}", message);
                 pubSubService.publish(Channels.ARP_OUT, message.format());
             }
@@ -91,9 +91,9 @@ public class ArpSweeper implements Runnable {
         Ip4Address ip4Address = networkInterface.getFirstIPv4Address();
         NetworkConfig config = new NetworkConfig();
         config.ip4vAddress = ip4Address.toString();
-        config.ip = IpUtils.convertIpStringToInt(config.ip4vAddress);
+        config.ip = Ip4Utils.convertIpStringToInt(config.ip4vAddress);
         config.cidr = networkInterface.getNetworkPrefixLength(ip4Address);
-        config.netMask = IpUtils.convertCidrToNetMask(config.cidr);
+        config.netMask = Ip4Utils.convertCidrToNetMask(config.cidr);
         config.network = config.ip & config.netMask;
         config.broadcast = config.ip | config.netMask ^ 0xffffffff;
         config.hosts = config.broadcast - config.network - 1;

@@ -14,49 +14,18 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function Ip6AddressDirective() {
+export default function Ip6AddressDirective(IpUtilsService) {
     'ngInject';
 
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, element, attr, ctrl) {
-            const FIELD_REGEX = /^[0-9a-fA-F]{1,4}$/;
-
             ctrl.$validators.ip6Address = function(modelValue, viewValue) {
                 if (ctrl.$isEmpty(modelValue)) {
                     return true;
                 }
-
-                // at most one placeholder is allowed
-                const parts = viewValue.split('::');
-                if (parts.length > 2) {
-                    return false;
-                }
-                const placeholder = parts.length === 2;
-
-                // max 8 fields are allowed
-                const split = function(value) {
-                    if (value.length === 0) {
-                        return [];
-                    }
-                    return value.split(':');
-                };
-                const fieldsA = split(parts[0]);
-                const fieldsB = placeholder ? split(parts[1]) : [];
-                if (fieldsA.length + fieldsB.length > 8 || placeholder && fieldsA.length + fieldsB.length === 8) {
-                    return false;
-                }
-
-                const validateHexFields = function(fields) {
-                    for(let i = 0; i < fields.length; ++i) {
-                        if (!FIELD_REGEX.test(fields[i])) {
-                            return false;
-                        }
-                    }
-                    return true;
-                };
-                return validateHexFields(fieldsA) && validateHexFields(fieldsB);
+                return IpUtilsService.isIpv6Address(viewValue);
             };
         }
     };

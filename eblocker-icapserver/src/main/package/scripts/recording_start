@@ -16,7 +16,7 @@
 # permissions and limitations under the License.
 #
 if [ $# -ne 1 ]; then
-   echo "Usage: $0 <ip>" >&2
+   echo "Usage: $0 <MAC>" >&2
    exit 1
 fi
 
@@ -32,6 +32,6 @@ fi
 
 echo "Starting recording for $1 ..."
 rm -f $PCAP_FILE
-/usr/bin/tshark -i eth0 -f "tcp port 443 and host $1" -w $PCAP_FILE 1>$LOG_FILE 2>&1 &
+/usr/bin/tshark -i eth0 -f "tcp port 443 and ether host $1" -w $PCAP_FILE 1>$LOG_FILE 2>&1 &
 echo $! > $PIDFILE_RECORDING
 echo "... recording running with PID "`cat $PIDFILE_RECORDING`

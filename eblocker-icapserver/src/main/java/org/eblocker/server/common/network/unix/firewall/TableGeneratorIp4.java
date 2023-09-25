@@ -21,7 +21,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkUtils;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +72,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                              @Named("tor.dns.port") int torDnsPort
                           ) {
         super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
-        this.mobileVpnSubnet = IpUtils.convertIpStringToInt(mobileVpnSubnet);
-        this.mobileVpnNetmask = IpUtils.convertIpStringToInt(mobileVpnNetmask);
+        this.mobileVpnSubnet = Ip4Utils.convertIpStringToInt(mobileVpnSubnet);
+        this.mobileVpnNetmask = Ip4Utils.convertIpStringToInt(mobileVpnNetmask);
         this.anonSocksPort = anonSocksPort;
         this.anonSourceIp = anonSourceIp;
         this.squidUid = squidUid;
@@ -212,7 +212,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         if (mobileVpnServerActive()) {
             ipAddressFilter.getMobileVpnDevicesIps()
                     .forEach(ip -> {
-                        if (IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask)) {
+                        if (Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask)) {
                             postRouting.rule(new Rule(standardOutput).sourceIp(ip).masquerade());
                         }
                     });
@@ -254,7 +254,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         // allow some mobile clients access to local networks
         if (mobileVpnServerActive()) {
             ipAddressFilter.getMobileVpnDevicesPrivateNetworkAccessIps().stream()
-                    .filter(ip -> IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask))
+                    .filter(ip -> Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask))
                     .forEach(ip -> forward
                             .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.privateClassC).accept())
                             .rule(new Rule(mobileVpnInput).sourceIp(ip).destinationIp(NetworkUtils.privateClassB).accept())
@@ -351,7 +351,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         }
 
         //do not route packets for the localnet through the VPN tunnels
-        final String localnetString = IpUtils.getSubnet(ownIpAddress, networkMask);
+        final String localnetString = Ip4Utils.getSubnet(ownIpAddress, networkMask);
         vpnRouter.rule(new Rule().destinationIp(localnetString).returnFromChain());
 
         List<String> enabledDevicesIps = ipAddressFilter.getEnabledDevicesIps();
@@ -412,7 +412,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     }
 
     private boolean isMobileClient(String ip) {
-        return IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask);
+        return Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ip), mobileVpnSubnet, mobileVpnNetmask);
     }
 
     private String selectInterfaceForSource(String ip) {

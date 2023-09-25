@@ -20,7 +20,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.service.DeviceService;
 
 public class SquidAclModule extends AbstractModule {
@@ -41,7 +41,7 @@ public class SquidAclModule extends AbstractModule {
         return new DevicePredicateFilterAcl(
                 path, deviceService,
                 device -> device.isEnabled() && device.isVpnClient(),
-                ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
+                ip -> ip.isIpv4() && Ip4Utils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
     }
 
     @Provides
@@ -53,7 +53,7 @@ public class SquidAclModule extends AbstractModule {
         return new DevicePredicateFilterAcl(
                 path, deviceService,
                 device -> device.isEnabled() && device.isVpnClient() && device.isMobilePrivateNetworkAccess(),
-                ip -> ip.isIpv4() && IpUtils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
+                ip -> ip.isIpv4() && Ip4Utils.isInSubnet(ip.toString(), vpnSubnet, vpnNetmask));
     }
 
     @Provides

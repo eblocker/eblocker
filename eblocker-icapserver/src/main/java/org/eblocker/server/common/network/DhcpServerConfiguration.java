@@ -20,7 +20,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.unix.IscDhcpServerConfiguration;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,31 +127,31 @@ public class DhcpServerConfiguration {
                     device.getIpAddresses().stream()
                             .filter(IpAddress::isIpv4)
                             .map(IpAddress::toString)
-                            .map(IpUtils::convertIpStringToInt)
+                            .map(Ip4Utils::convertIpStringToInt)
                             .forEach(numIps::add);
                 }
             }
             // Also add eBlocker's IP to make sure it is not assigned to any device
-            numIps.add(IpUtils.convertIpStringToInt(ipAddress));
+            numIps.add(Ip4Utils.convertIpStringToInt(ipAddress));
 
             // Go through range, make gaps
-            int lastFixedIp = IpUtils.convertIpStringToInt(range.getFirstIpAddress()) - 1;
-            int rangeFirstIpNumerical = IpUtils.convertIpStringToInt(range.getFirstIpAddress());
-            int rangeLastIpNumerical = IpUtils.convertIpStringToInt(range.getLastIpAddress());
+            int lastFixedIp = Ip4Utils.convertIpStringToInt(range.getFirstIpAddress()) - 1;
+            int rangeFirstIpNumerical = Ip4Utils.convertIpStringToInt(range.getFirstIpAddress());
+            int rangeLastIpNumerical = Ip4Utils.convertIpStringToInt(range.getLastIpAddress());
 
             for (Integer numIp : numIps) {
                 if (numIp >= rangeFirstIpNumerical && numIp <= rangeLastIpNumerical) {
                     int curFixedIp = numIp;
                     // If there is an unused IP in the gap
                     if (curFixedIp - lastFixedIp > 1) {
-                        addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), IpUtils.convertIpIntToString(curFixedIp - 1)));
+                        addRange(new DhcpRange(Ip4Utils.convertIpIntToString(lastFixedIp + 1), Ip4Utils.convertIpIntToString(curFixedIp - 1)));
                     }
                     lastFixedIp = curFixedIp;
                 }
             }
             // Last range
             if (rangeLastIpNumerical - lastFixedIp >= 1) {
-                addRange(new DhcpRange(IpUtils.convertIpIntToString(lastFixedIp + 1), range.getLastIpAddress()));
+                addRange(new DhcpRange(Ip4Utils.convertIpIntToString(lastFixedIp + 1), range.getLastIpAddress()));
             }
 
         }

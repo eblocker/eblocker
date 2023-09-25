@@ -14,19 +14,18 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function IpAddressDirective() {
+export default function IpAddressDirective(IpUtilsService) {
     'ngInject';
 
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, element, attr, ctrl) {
-            const IP_ADDRESS_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/; // jshint ignore: line
             ctrl.$validators.ipAddress = function(modelValue, viewValue) {
                 if (ctrl.$isEmpty(modelValue)) {
                     return true;
                 }
-                return IP_ADDRESS_REGEX.test(viewValue);
+                return IpUtilsService.isIpv4Address(viewValue);
             };
         }
     };

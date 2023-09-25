@@ -18,7 +18,53 @@ package org.eblocker.server.common.util;
 
 import org.eblocker.server.common.data.Ip6Address;
 
+import java.util.regex.Pattern;
+
+/**
+ * Utility functions for IPv6 addresses.
+ */
 public class Ip6Utils {
+    private static final Pattern IPv6ADDRESS_FIELD_PATTERN = Pattern.compile("^[0-9a-fA-F]{1,4}$");
+
+    public static boolean isIp6Address(String address) {
+        String[] parts = address.split("::", -1);
+        if (parts.length > 2) {
+            return false;
+        }
+        int nFields = 0;
+        for (String part: parts) {
+            if (part.isEmpty() && parts.length != 2) {
+                return false;
+            }
+            if (!part.isEmpty()) {
+                String[] fields = part.split(":", -1);
+                for (String field: fields) {
+                    nFields++;
+                    if (!IPv6ADDRESS_FIELD_PATTERN.matcher(field).matches()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return (parts.length == 1 && nFields == 8)
+                || (parts.length == 2 && nFields < 8);
+    }
+
+    public static boolean isIp6Range(String ipRange) {
+        String[] parts = ipRange.split("/");
+        if (parts.length != 2) {
+            return false;
+        }
+        if (!isIp6Address(parts[0])) {
+            return false;
+        }
+        try {
+            int prefixLength = Integer.parseInt(parts[1]);
+            return prefixLength >= 0 && prefixLength <= 128;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     public static Ip6Address combine(Ip6Address networkAddress, Ip6Address hostAddress) {
         byte[] address = new byte[16];

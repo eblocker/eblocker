@@ -106,7 +106,7 @@ public class RecordingService {
                 log.debug("recordingStartStop: targetID could not be processed.", e);
                 return false;
             }
-            String deviceIP = device.getIpAddresses().get(0).toString(); // TODO: [EB1-1077] how to handle multiple addresses here? Record all traffic ?
+            String deviceHardwareAddress = device.getHardwareAddress(true);
             // check for meaningful limits
             if (requestData.getTimeLimit() > 0 && requestData.getSizeLimit() > 0) {
                 log.info("Start-stop: starting");
@@ -117,7 +117,7 @@ public class RecordingService {
                 this.recordingSizeLimit = requestData.getSizeLimit();
                 // start the actual recording
                 try {
-                    this.scriptRunner.runScript("recording_start", deviceIP);
+                    this.scriptRunner.runScript("recording_start", deviceHardwareAddress);
                     this.recordingStartTime = this.clock.instant();
 
                 } catch (IOException e) {

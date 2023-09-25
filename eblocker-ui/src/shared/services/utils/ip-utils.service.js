@@ -134,7 +134,8 @@ export default function IpUtilsService() {
         };
         const fieldsA = split(parts[0]);
         const fieldsB = placeholder ? split(parts[1]) : [];
-        if ((!placeholder && fieldsA.length + fieldsB.length !== 8) || (placeholder && fieldsA.length + fieldsB.length > 7)) {
+        if ((!placeholder && fieldsA.length + fieldsB.length !== 8) ||
+            (placeholder && fieldsA.length + fieldsB.length > 7)) {
             return false;
         }
 

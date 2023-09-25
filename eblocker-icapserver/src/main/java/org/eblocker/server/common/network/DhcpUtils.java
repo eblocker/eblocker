@@ -17,7 +17,7 @@
 package org.eblocker.server.common.network;
 
 import com.google.common.base.Splitter;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ public class DhcpUtils {
     public static List<String> parseDnsServersOption(String option) {
         Splitter splitter = Splitter.on(",").trimResults().omitEmptyStrings();
         return StreamSupport.stream(splitter.split(option).spliterator(), false)
-                .filter(IpUtils::isIPAddress)
+                .filter(Ip4Utils::isIPAddress)
                 .filter(ip -> !"0.0.0.0".equals(ip))
                 .collect(Collectors.toList());
     }

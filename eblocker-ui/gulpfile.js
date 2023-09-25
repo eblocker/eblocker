@@ -730,6 +730,7 @@ const test = gulp.series(cleanReport, function(done) {
         done();
     }
 });
+exports.test = test;
 
 function addLicense(item, license) {
     let summary = item.summary;

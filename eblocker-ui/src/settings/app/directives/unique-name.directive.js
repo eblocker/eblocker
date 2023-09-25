@@ -14,8 +14,30 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function UniqueNameDirective($q) {
+export default function UniqueNameDirective($q, IpUtilsService, DomainUtilsService) {
     'ngInject';
+
+    function isValidDomainOrIp(str) {
+        // Domains are accepted
+        if (DomainUtilsService.isDomain(str)) {
+            return true;
+        }
+        // IP addresses or ranges in CIDR notation are accepted
+        if (IpUtilsService.isIpAddressOrRange(str)) {
+            return true;
+        }
+        if (str.startsWith('http://') || str.startsWith('https://')) {
+            try {
+                let url = new URL(str);
+                if (DomainUtilsService.isDomain(url.hostname) || IpUtilsService.isIpAddress(url.hostname)) {
+                    return true;
+                }
+            } catch (e) { // URL parsing failed
+                return false;
+            }
+        }
+        return false;
+    }
 
     return {
         // limit usage to argument only
@@ -31,36 +53,15 @@ export default function UniqueNameDirective($q) {
                     return $q.when();
                 }
 
-                let def = $q.defer();
-
-                let regex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?([^:\/\n]+)/g;
-
                 let lines = viewValue.split('\n');
-                for (let lineIndex in lines) { // jshint ignore: line
-                    // reset regular expression
-                    regex.lastIndex = 0;
-                    let line = lines[lineIndex].trim();
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
                     // empty lines are ignored
                     if (line === '') {
                         continue;
                     }
-                    // see if it is a domain
-                    let arr = regex.exec(line);
-                    let domain = arr[1];
-                    // not allowed to begin with '.' or '-'
-                    if (domain.startsWith('.') || domain.startsWith('-')) {
+                    if (!isValidDomainOrIp(line)) {
                         return false;
-                    }
-                    // must be long enough
-                    let parts = domain.split('.');
-                    if (parts.length < 2) {
-                        return false;
-                    }
-                    // shall not have consecutive periods
-                    for (let part in parts) {
-                        if (parts[part] === '') {
-                            return false;
-                        }
                     }
                 }
                 return true;

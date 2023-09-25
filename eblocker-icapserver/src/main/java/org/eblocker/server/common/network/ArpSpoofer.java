@@ -25,13 +25,12 @@ import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 @Singleton
@@ -143,9 +142,9 @@ public class ArpSpoofer implements Runnable {
         indirectRequestMessage.sourceIPAddress = "0.0.0.0";
         indirectRequestMessage.targetHardwareAddress = "000000000000";
 
-        int ip = IpUtils.convertIpStringToInt(eblockerIp.toString());
+        int ip = Ip4Utils.convertIpStringToInt(eblockerIp.toString());
         int cidr = networkInterface.getNetworkPrefixLength(eblockerIp);
-        int netMask = IpUtils.convertCidrToNetMask(cidr);
+        int netMask = Ip4Utils.convertCidrToNetMask(cidr);
         int network = ip & netMask;
 
         for (Device device : deviceService.getDevices(false)) {
@@ -168,7 +167,7 @@ public class ArpSpoofer implements Runnable {
                     .map(IpAddress::toString)
                     .forEach(ipAddress -> {
                         // ignore if device is outside current network
-                        if (!IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ipAddress), network, netMask)) {
+                        if (!Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ipAddress), network, netMask)) {
                             return;
                         }
 

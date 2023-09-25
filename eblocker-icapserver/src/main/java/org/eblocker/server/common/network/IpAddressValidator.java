@@ -28,7 +28,7 @@ import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +129,7 @@ public class IpAddressValidator {
                 // Preserve vpn ip addresses for mobile clients
                 deviceIpAddresses.stream()
                         .filter(IpAddress::isIpv4)
-                        .filter(ip -> IpUtils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
+                        .filter(ip -> Ip4Utils.isInSubnet(ip.toString(), vpnSubnetIp, vpnSubnetNetmask))
                         .forEach(activeIpAddresses::add);
             } else {
                 log.debug("ignoring vpn client {}", hardwareAddress);

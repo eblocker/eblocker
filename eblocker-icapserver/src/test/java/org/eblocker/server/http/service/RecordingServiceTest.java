@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.RecordedUrl;
+import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.util.StartRecordingRequestData;
 import org.eblocker.server.common.util.TextLineProvider;
@@ -49,9 +50,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class RecordingServiceTest {
+    private Device device;
+
     @Before
     public void setUp() {
-
+        device = TestDeviceFactory.createDevice("abcdef012345", "1.2.3.4", true);
     }
 
     @After
@@ -127,9 +130,6 @@ public class RecordingServiceTest {
 
     @Test
     public void startStopStopped() {
-        // Mock device
-        Device device = Mockito.mock(Device.class);
-        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
         // Mock dataSource
         DataSource dataSource = Mockito.mock(DataSource.class);
         when(dataSource.getDevice(anyString())).thenReturn(device);
@@ -164,7 +164,7 @@ public class RecordingServiceTest {
         // Start recording
         boolean resultStartRecording = recService.recordingStartStop(reqStart);
         try {
-            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+            verify(scriptRunner).runScript("recording_start", "ab:cd:ef:01:23:45");
         } catch (Exception e) {
         }
         assertTrue(resultStartRecording);
@@ -199,9 +199,6 @@ public class RecordingServiceTest {
 
     @Test
     public void stopAfterTime() {
-        // Mock device
-        Device device = Mockito.mock(Device.class);
-        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
         // Mock dataSource
         DataSource dataSource = Mockito.mock(DataSource.class);
         when(dataSource.getDevice(anyString())).thenReturn(device);
@@ -244,7 +241,7 @@ public class RecordingServiceTest {
         // Start recording
         boolean resultStartRecording = recService.recordingStartStop(reqStart);
         try {
-            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+            verify(scriptRunner).runScript("recording_start", "ab:cd:ef:01:23:45");
         } catch (Exception e) {
         }
         assertTrue(resultStartRecording);
@@ -270,9 +267,6 @@ public class RecordingServiceTest {
 
     @Test
     public void stopAfterSize() {
-        // Mock device
-        Device device = Mockito.mock(Device.class);
-        when(device.getIpAddresses()).thenReturn(Collections.singletonList(IpAddress.parse("1.2.3.4")));
         // Mock dataSource
         DataSource dataSource = Mockito.mock(DataSource.class);
         when(dataSource.getDevice(anyString())).thenReturn(device);
@@ -307,7 +301,7 @@ public class RecordingServiceTest {
         // Start recording
         boolean resultStartRecording = recService.recordingStartStop(reqStart);
         try {
-            verify(scriptRunner).runScript("recording_start", "1.2.3.4");
+            verify(scriptRunner).runScript("recording_start", "ab:cd:ef:01:23:45");
         } catch (Exception e) {
         }
         assertTrue(resultStartRecording);

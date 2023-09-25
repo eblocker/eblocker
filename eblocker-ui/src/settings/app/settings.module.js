@@ -296,6 +296,7 @@ import UpnpService from './service/upnp/UpnpService';
 // ** Shared Services
 import NotificationService from '../../shared/services/notification/NotificationService';
 import ArrayUtilsService from '../../shared/services/utils/array-utils.service';
+import DomainUtilsService from '../../shared/services/utils/domain-utils.service';
 import IpUtilsService from '../../shared/services/utils/ip-utils.service';
 import AccessContingentService from '../../shared/services/parentalControl/AccessContingentService';
 import DataCachingService from '../../shared/services/caching/DataCachingService';
@@ -310,7 +311,6 @@ import EbLabelContainer from '../../shared/directives/eb-label-container.directi
 import EbTextContainer from '../../shared/directives/eb-textarea-container.directive';
 import PasswordQualityDirective from './directives/password-quality.directive';
 import UniqueNameDirective from './directives/unique-name.directive';
-import IpRangeDirective from './directives/ip-range.directive';
 import IpAddressDirective from './directives/ip-address.directive';
 import Ip6AddressDirective from './directives/ip6-address.directive';
 import IsUnique from './directives/is-unique.directive';
@@ -529,7 +529,6 @@ angular.module('eblocker.adminconsole', [
     .directive('ebTextContainer', EbTextContainer)
     .directive('passwordQuality', PasswordQualityDirective)
     .directive('ebUrlDomains', UniqueNameDirective)
-    .directive('ebIpRange', IpRangeDirective)
     .directive('ebIpAddress', IpAddressDirective)
     .directive('ebIp6Address', Ip6AddressDirective)
     .directive('ebUnique', IsUnique)
@@ -541,6 +540,7 @@ angular.module('eblocker.adminconsole', [
     .factory('UpdateService', UpdateService)
     .factory('PasswordService', PasswordService)
     .factory('ArrayUtilsService', ArrayUtilsService)
+    .factory('DomainUtilsService', DomainUtilsService)
     .factory('IpUtilsService', IpUtilsService)
     .factory('FeatureToggleService', FeatureToggleService)
     .factory('SystemService', SystemService)

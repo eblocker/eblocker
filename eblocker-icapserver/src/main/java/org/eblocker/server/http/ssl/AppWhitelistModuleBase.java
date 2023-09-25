@@ -47,8 +47,6 @@ public abstract class AppWhitelistModuleBase {
     private boolean updatedVersionAvailable;
     private boolean hidden; // = false;
 
-    protected static final int IP_RANGE_RANGE_THRESHOLD = 8;
-
     @JsonCreator
     public AppWhitelistModuleBase(
             @JsonProperty("id") Integer id,

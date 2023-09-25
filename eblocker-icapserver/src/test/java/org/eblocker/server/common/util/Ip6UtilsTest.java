@@ -82,4 +82,41 @@ public class Ip6UtilsTest {
         Assert.assertEquals("", Ip6Utils.stripBrackets("[]"));
         Assert.assertEquals("[", Ip6Utils.stripBrackets("["));
     }
+
+    @Test
+    public void testIsIp6Address() {
+        Assert.assertTrue(Ip6Utils.isIp6Address("::"));
+        Assert.assertTrue(Ip6Utils.isIp6Address("::1"));
+        Assert.assertTrue(Ip6Utils.isIp6Address("3::"));
+        Assert.assertTrue(Ip6Utils.isIp6Address("AbCd:1234::9876:42"));
+        Assert.assertTrue(Ip6Utils.isIp6Address("1:2:3:4:5:6:7:8"));
+        Assert.assertTrue(Ip6Utils.isIp6Address("1:234:ffff:AA:abc:ab:c:9999"));
+
+        Assert.assertFalse(Ip6Utils.isIp6Address("localhost"));
+        Assert.assertFalse(Ip6Utils.isIp6Address(""));
+        Assert.assertFalse(Ip6Utils.isIp6Address("example.com"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1.2.3.4"));
+        Assert.assertFalse(Ip6Utils.isIp6Address(":"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1::2::3"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4:5:6:7"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4:5:6:7:88888"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4:5:6:7:8:9"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4::5:6:7:8"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4:5:6:7:8/64"));
+        Assert.assertFalse(Ip6Utils.isIp6Address("1:2:3:4:5:6:7:8::"));
+    }
+
+    @Test
+    public void testIsIp6Range() {
+        Assert.assertTrue(Ip6Utils.isIp6Range("::/0"));
+        Assert.assertTrue(Ip6Utils.isIp6Range("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/128"));
+        Assert.assertTrue(Ip6Utils.isIp6Range("2A03::/16"));
+        Assert.assertTrue(Ip6Utils.isIp6Range("2603:1000::/25"));
+
+        Assert.assertFalse(Ip6Utils.isIp6Range(""));
+        Assert.assertFalse(Ip6Utils.isIp6Range("2603:1000::/ 25"));
+        Assert.assertFalse(Ip6Utils.isIp6Range("2a03::/ab"));
+        Assert.assertFalse(Ip6Utils.isIp6Range("2a03::/129"));
+        Assert.assertFalse(Ip6Utils.isIp6Range("1.2.3.4/8"));
+    }
 }

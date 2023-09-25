@@ -36,7 +36,7 @@ public class Ip6Address extends IpAddress {
     }
 
     public static Ip6Address parse(String ip) {
-        String[] parts = ip.split("::");
+        String[] parts = ip.split("::", -1);
         if (parts.length > 2) {
             throw new IllegalArgumentException("invalid ipv6 address: " + ip);
         }
@@ -48,7 +48,7 @@ public class Ip6Address extends IpAddress {
 
         int index = 0;
         if (!parts[0].isEmpty()) {
-            String[] fields = parts[0].split(":");
+            String[] fields = parts[0].split(":", -1);
             if (fields.length > 8) {
                 throw new IllegalArgumentException("invalid ipv6 address: " + ip);
             }
@@ -61,19 +61,23 @@ public class Ip6Address extends IpAddress {
                 address[index++] = (byte) (value >> 8 & 0xff);
                 address[index++] = (byte) (value & 0xff);
             }
-            if (index == 16) {
-                return new Ip6Address(address);
-            }
         }
 
-        if (parts.length == 2) {
-            String[] fields = parts[1].split(":");
+        if (parts.length == 1 && index != 16) { // not enough fields
+            throw new IllegalArgumentException("invalid ipv6 address: " + ip);
+        }
+
+        if (parts.length == 2 && !parts[1].isEmpty()) {
+            String[] fields = parts[1].split(":", -1);
             if (index + fields.length * 2 >= 16) {
                 throw new IllegalArgumentException("invalid ipv6 address: " + ip);
             }
 
             index = 15;
             for (int i = fields.length - 1; i >= 0; --i) {
+                if (fields[i].length() > 4) {
+                    throw new IllegalArgumentException("invalid ipv6 address: " + ip);
+                }
                 int value = Integer.parseInt(fields[i], 16);
                 address[index--] = (byte) (value & 0xff);
                 address[index--] = (byte) (value >> 8 & 0xff);

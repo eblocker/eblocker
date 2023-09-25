@@ -17,6 +17,21 @@
 export default function DomainUtilsService() {
     'ngInject';
 
+    const DOMAIN_REGEX = /^([a-z0-9\-]+\.)+([a-z][a-z0-9\-]*)$/i;
+
+    /**
+       Returns true if the given string is probably a domain.
+       At least two parts (e.g. 'example.com') must be present.
+       An IP address is not valid. We assume that at least the TLD
+       starts with a letter.
+       Although RFC 1035 does not allow parts to start with
+       a hyphen '-', we allow it here, because it seems to be in
+       use on the internet (see Cisco's Umbrella list of the top
+       1M domains).
+    */
+    function isDomain(domain) {
+        return DOMAIN_REGEX.test(domain);
+    }
 
     function truncateDomain(longHost, max, numBefore, numAfter) {
         const maxNum = max || 200;
@@ -35,6 +50,7 @@ export default function DomainUtilsService() {
     }
 
     return {
-        truncateDomain: truncateDomain
+        truncateDomain: truncateDomain,
+        isDomain: isDomain
     };
 }

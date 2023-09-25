@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.service.OpenVpnServerService;
 
 @Singleton
@@ -38,7 +38,7 @@ public class MobileDnsCheckService {
 
     public boolean check() {
         String hostname = openVpnServerService.getOpenVpnServerHost();
-        if (Strings.isNullOrEmpty(hostname) || IpUtils.isIPAddress(hostname)) {
+        if (Strings.isNullOrEmpty(hostname) || Ip4Utils.isIPAddress(hostname)) {
             return true;
         }
         return deviceRegistrationClient.requestMobileDnsCheck(hostname);

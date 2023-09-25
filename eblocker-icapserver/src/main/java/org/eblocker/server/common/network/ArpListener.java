@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,11 +103,11 @@ public class ArpListener implements Runnable {
 
     private boolean isInEblockerNet(Ip4Address sourceIPAddress) {
         Ip4Address eblockerIp = networkInterface.getFirstIPv4Address();
-        int eblockerIpInt = IpUtils.convertIpStringToInt(eblockerIp.toString());
+        int eblockerIpInt = Ip4Utils.convertIpStringToInt(eblockerIp.toString());
         int cidr = networkInterface.getNetworkPrefixLength(eblockerIp);
-        int netMask = IpUtils.convertCidrToNetMask(cidr);
+        int netMask = Ip4Utils.convertCidrToNetMask(cidr);
         int network = eblockerIpInt & netMask;
-        return IpUtils.isInSubnet(IpUtils.convertBytesToIp(sourceIPAddress.getAddress()), network, netMask);
+        return Ip4Utils.isInSubnet(Ip4Utils.convertBytesToIp(sourceIPAddress.getAddress()), network, netMask);
     }
 
     /**

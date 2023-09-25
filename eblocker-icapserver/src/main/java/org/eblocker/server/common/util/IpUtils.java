@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2023 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -16,101 +16,64 @@
  */
 package org.eblocker.server.common.util;
 
-import org.eblocker.server.common.exceptions.EblockerException;
-
-import java.util.regex.Pattern;
-
+/**
+ * Utility functions that can deal with both IPv4 and IPv6 addresses.
+ */
 public class IpUtils {
-    private static final String IPv4ADDRESS_PATTERN =
-            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-    private static final String IPRANGE_PATTERN =
-            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/([0-9]|[12][0-9]|3[0-2])$";
-    private static Pattern ipv4addresspattern = Pattern.compile(IPv4ADDRESS_PATTERN);
-    private static Pattern rangepattern = Pattern.compile(IPRANGE_PATTERN);
-    private static final int IP_RANGE_POSITION_ADDRESS = 0;
-    private static final int IP_RANGE_POSITION_RANGE = 1;
+    private static final int IP4_RANGE_RANGE_THRESHOLD = 8;
+    private static final int IP6_RANGE_RANGE_THRESHOLD = 32;
 
-    public static Boolean isIPAddress(String ipaddress) {
-        return ipv4addresspattern.matcher(ipaddress).matches();
-    }
-
-    public static Boolean isIpRange(String iprange) {
-        return rangepattern.matcher(iprange).matches();
-    }
-
-    public static String shrinkIpRange(String iprange, int size) {
-        String[] segments = iprange.split("/");
-        int range = Integer.parseInt(segments[IP_RANGE_POSITION_RANGE]);
-        if (range < size) {
-            // range is too big, restrict to /size
-            range = size;
-            return segments[IP_RANGE_POSITION_ADDRESS] + "/" + range;
+    /**
+     * Shrinks an IP range to a reasonable limit.
+     * An IPv4 prefix must be at least 8 bits while
+     * an IPv6 prefix must be at least 32 bits.
+     * @param ipRange IP range in CIDR notation, e.g. 17.0.0.0/8 or 2603:1000::/25
+     * @return resulting IP range in CIDR notation
+     */
+    public static String shrinkIpRange(String ipRange) {
+        String[] parts = ipRange.split("/");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Not an IP range: " + ipRange);
         }
-        return iprange;
-    }
-
-    public static String getSubnet(String ipString, String netMaskString) {
-        int ip = convertIpStringToInt(ipString);
-        int netMask = convertIpStringToInt(netMaskString);
-        ip &= netMask;
-        return convertIpIntToString(ip) + "/" + convertNetMaskToCidr(netMask);
-    }
-
-    public static int convertIpStringToInt(String ip) {
-        if (ip == null) {
-            throw new EblockerException("IP must not be null");
+        int ipVersion = 0;
+        if (Ip4Utils.isIPAddress(parts[0])) {
+            ipVersion = 4;
+        } else if (Ip6Utils.isIp6Address(parts[0])) {
+            ipVersion = 6;
+        } else {
+            throw new IllegalArgumentException("Not an IP range: " + ipRange);
         }
-
-        String[] octets = ip.split("\\.");
-        return Integer.valueOf(octets[0]) << 24 | Integer.valueOf(octets[1]) << 16 | Integer.valueOf(octets[2]) << 8 | Integer.valueOf(octets[3]);
+        try {
+            int prefixLength = Integer.parseInt(parts[1]);
+            boolean shrunk = false;
+            if (ipVersion == 4 && prefixLength < IP4_RANGE_RANGE_THRESHOLD) {
+                prefixLength = IP4_RANGE_RANGE_THRESHOLD;
+                shrunk = true;
+            } else if (ipVersion == 6 && prefixLength < IP6_RANGE_RANGE_THRESHOLD) {
+                prefixLength = IP6_RANGE_RANGE_THRESHOLD;
+                shrunk = true;
+            }
+            if (shrunk) {
+                return parts[0] + "/" + prefixLength;
+            } else {
+                return ipRange;
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Not an IP range: " + ipRange);
+        }
     }
 
-    public static String convertIpIntToString(int ip) {
-        return String.format("%d.%d.%d.%d", (ip & 0xff000000) >>> 24, (ip & 0x00ff0000) >> 16, (ip & 0x0000ff00) >> 8, ip & 0x000000ff);
+    /**
+     * Returns true if a string is an IPv4 or IPv6 range in CIDR notation.
+     */
+    public static boolean isIpRange(String ipRange) {
+        return Ip4Utils.isIpRange(ipRange) || Ip6Utils.isIp6Range(ipRange);
     }
 
-    public static int convertNetMaskToCidr(int netMask) {
-        return 32 - Integer.numberOfTrailingZeros(netMask);
-    }
-
-    public static int convertCidrToNetMask(int cidr) {
-        // need to use long as rhs in int shifts is limited to 5-bits
-        // http://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.19
-        return (int) ((0xffffffffl >> cidr) ^ 0xffffffffl);
-    }
-
-    public static boolean isInSubnet(String ip, String subnet, String netmask) {
-        return isInSubnet(IpUtils.convertIpStringToInt(ip), IpUtils.convertIpStringToInt(subnet), IpUtils.convertIpStringToInt(netmask));
-    }
-
-    public static boolean isInSubnet(int ip, int subnet, int netmask) {
-        return (ip & netmask) == subnet;
-    }
-
-    public static int[] convertIpRangeToIpNetmask(String ipRange) {
-        String[] components = ipRange.split("/");
-        int[] ipNetmask = new int[2];
-        ipNetmask[0] = convertIpStringToInt(components[0]);
-        ipNetmask[1] = convertCidrToNetMask(Integer.valueOf(components[1]));
-        return ipNetmask;
-    }
-
-    public static byte[] convertIpToBytes(int ip) {
-        return new byte[]{
-                (byte) ((ip >> 24) & 0xff),
-                (byte) ((ip >> 16) & 0xff),
-                (byte) ((ip >> 8) & 0xff),
-                (byte) (ip & 0xff)
-        };
-    }
-
-    public static int convertBytesToIp(byte[] bytes) {
-        return bytes[0] << 24 | bytes[1] << 16 & 0xff0000 | bytes[2] << 8 & 0xff00 | bytes[3] & 0xff;
+    /**
+     * Returns true if a string is an IPv4 or IPv6 address.
+     */
+    public static boolean isIPAddress(String address) {
+        return Ip4Utils.isIPAddress(address) || Ip6Utils.isIp6Address(address);
     }
 }

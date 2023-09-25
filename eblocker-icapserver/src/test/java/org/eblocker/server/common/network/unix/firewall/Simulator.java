@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +114,7 @@ public class Simulator {
         if (ruleIp == null) { // all IPs allowed
             return true;
         }
-        if (IpUtils.isIpRange(ruleIp)) {
+        if (Ip4Utils.isIpRange(ruleIp)) {
             return isInIpRange(ruleIp, packetIp);
         }
         return packetIp.equals(ruleIp);
@@ -128,8 +128,8 @@ public class Simulator {
     }
 
     private boolean isInIpRange(String ipRange, String ip) {
-        int[] network = IpUtils.convertIpRangeToIpNetmask(ipRange);
-        return IpUtils.isInSubnet(IpUtils.convertIpStringToInt(ip), network[0], network[1]);
+        int[] network = Ip4Utils.convertIpRangeToIpNetmask(ipRange);
+        return Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ip), network[0], network[1]);
     }
 
     private boolean matchInterface(String ruleInterface, String packetInterface) {

@@ -17,6 +17,12 @@
 export default function IpUtilsService() {
     'ngInject';
 
+    const IP4_ADDRESS_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/; // jshint ignore: line
+
+    const IP6_FIELD_REGEX = /^[0-9a-fA-F]{1,4}$/;
+
+    const IP_ADDRESS_OR_RANGE_REGEX = /^([0-9\.]+|[0-9a-fA-F:]+)(\/[0-9]+)?$/;
+
     /*
       Return a string that can be used as a sorting key for an IP address.
       The sort order is first by IP version, then by IP value.
@@ -101,8 +107,96 @@ export default function IpUtilsService() {
         return 0;
     }
 
+    function isIpv4Address(address) {
+        if (!angular.isString(address)) {
+            return false;
+        }
+        return IP4_ADDRESS_REGEX.test(address);
+    }
+
+    function isIpv6Address(address) {
+        if (!angular.isString(address)) {
+            return false;
+        }
+        // at most one placeholder is allowed
+        const parts = address.split('::');
+        if (parts.length > 2) {
+            return false;
+        }
+        const placeholder = parts.length === 2;
+
+        // max 8 fields are allowed
+        const split = function(value) {
+            if (value.length === 0) {
+                return [];
+            }
+            return value.split(':');
+        };
+        const fieldsA = split(parts[0]);
+        const fieldsB = placeholder ? split(parts[1]) : [];
+        if ((!placeholder && fieldsA.length + fieldsB.length !== 8) || (placeholder && fieldsA.length + fieldsB.length > 7)) {
+            return false;
+        }
+
+        const validateHexFields = function(fields) {
+            for(let i = 0; i < fields.length; ++i) {
+                if (!IP6_FIELD_REGEX.test(fields[i])) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        return validateHexFields(fieldsA) && validateHexFields(fieldsB);
+    }
+
+    function isIpAddress(address) {
+        return isIpv4Address(address) || isIpv6Address(address);
+    }
+
+    function isIpv4Range(ipRange) {
+        return isIpRange(ipRange, isIpv4Address, 32);
+    }
+
+    function isIpv6Range(ipRange) {
+        return isIpRange(ipRange, isIpv6Address, 128);
+    }
+
+    function isIpRange(ipRange, isIpAddress, maxLength) {
+        if (!angular.isString(ipRange)) {
+            return false;
+        }
+        const parts = ipRange.split('/');
+        if (parts.length !== 2) {
+            return false;
+        }
+        if (!isIpAddress(parts[0])) {
+            return false;
+        }
+        const len = parseInt(parts[1]);
+        if (isNaN(len)) {
+            return false;
+        }
+        if (len > maxLength) {
+            return false;
+        }
+        return true;
+    }
+
+    function isIpAddressOrRange(address) {
+        if (!IP_ADDRESS_OR_RANGE_REGEX.test(address)) {
+            return false;
+        }
+        return isIpAddress(address) || isIpv4Range(address) || isIpv6Range(address);
+    }
+
     return {
         sortByVersion: sortByVersion,
-        sortingKey: sortingKey
+        sortingKey: sortingKey,
+        isIpAddress: isIpAddress,
+        isIpv4Address: isIpv4Address,
+        isIpv6Address: isIpv6Address,
+        isIpv4Range: isIpv4Range,
+        isIpv6Range: isIpv6Range,
+        isIpAddressOrRange: isIpAddressOrRange
     };
 }

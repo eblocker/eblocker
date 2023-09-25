@@ -21,7 +21,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.EblockerModule;
 import org.eblocker.server.common.network.NetworkUtils;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -40,9 +40,9 @@ public class NetworkAddressFactoryCustomization {
     public NetworkAddressFactoryCustomization(@Named("network.interface.name") String networkInterfaceName) {
         this.networkInterfaceName = networkInterfaceName;
         this.privateNetworkIpNetmasks = Arrays.asList(
-                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassA),
-                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassB),
-                IpUtils.convertIpRangeToIpNetmask(NetworkUtils.privateClassC));
+                Ip4Utils.convertIpRangeToIpNetmask(NetworkUtils.privateClassA),
+                Ip4Utils.convertIpRangeToIpNetmask(NetworkUtils.privateClassB),
+                Ip4Utils.convertIpRangeToIpNetmask(NetworkUtils.privateClassC));
     }
 
     public boolean isUsableAddress(String networkInterfaceName, InetAddress address) {
@@ -50,8 +50,8 @@ public class NetworkAddressFactoryCustomization {
             return false;
         }
 
-        int ip = IpUtils.convertBytesToIp(address.getAddress());
-        return privateNetworkIpNetmasks.stream().anyMatch(ipNetmask -> IpUtils.isInSubnet(ip, ipNetmask[0], ipNetmask[1]));
+        int ip = Ip4Utils.convertBytesToIp(address.getAddress());
+        return privateNetworkIpNetmasks.stream().anyMatch(ipNetmask -> Ip4Utils.isInSubnet(ip, ipNetmask[0], ipNetmask[1]));
     }
 
     public boolean isUsableNetworkInterface(String networkInterfaceName) {

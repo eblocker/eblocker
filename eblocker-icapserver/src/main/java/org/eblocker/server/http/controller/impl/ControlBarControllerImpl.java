@@ -32,7 +32,7 @@ import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.controller.ControlBarController;
 import org.eblocker.server.http.controller.converter.UserModuleConverter;
 import org.eblocker.server.http.model.CredentialsDTO;
@@ -99,7 +99,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
     @Override
     public String getConsoleIp(Request request, Response response) {
         IpAddress remoteIp = ControllerUtils.getRequestIPAddress(request);
-        if (remoteIp.isIpv4() && IpUtils.isInSubnet(remoteIp.toString(), vpnSubnet, vpnNetmask)) {
+        if (remoteIp.isIpv4() && Ip4Utils.isInSubnet(remoteIp.toString(), vpnSubnet, vpnNetmask)) {
             return baseURLs.selectIpForPage(true, getScheme(request));
         }
 

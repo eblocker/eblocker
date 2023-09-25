@@ -29,7 +29,7 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.common.util.IpUtils;
+import org.eblocker.server.common.util.Ip4Utils;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +76,8 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
                                   NetworkStateMachine networkStateMachine,
                                   PubSubService pubSubService) {
 
-        this.vpnSubnetIp = IpUtils.convertIpStringToInt(vpnSubnetIp);
-        this.vpnSubnetNetmask = IpUtils.convertIpStringToInt(vpnSubnetNetmask);
+        this.vpnSubnetIp = Ip4Utils.convertIpStringToInt(vpnSubnetIp);
+        this.vpnSubnetNetmask = Ip4Utils.convertIpStringToInt(vpnSubnetNetmask);
 
         this.deviceService = deviceService;
         this.dnsServer = dnsServer;
@@ -94,7 +94,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
                 .forEach(device -> {
                     Optional<IpAddress> vpnIpAddress = device.getIpAddresses().stream()
                             .filter(IpAddress::isIpv4)
-                            .filter(ip -> (IpUtils.convertBytesToIp(ip.getAddress()) & vpnSubnetNetmask) == vpnSubnetIp)
+                            .filter(ip -> (Ip4Utils.convertBytesToIp(ip.getAddress()) & vpnSubnetNetmask) == vpnSubnetIp)
                             .findAny();
                     if (vpnIpAddress.isPresent()) {
                         ipAddressByDevice.put(device.getId(), vpnIpAddress.get());
@@ -140,7 +140,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
         String ipAddress = matcher.group(2);
         String deviceId = matcher.group(4);
 
-        if (ipAddress == null || !IpUtils.isIPAddress(ipAddress)) {
+        if (ipAddress == null || !Ip4Utils.isIPAddress(ipAddress)) {
             log.error("Ignoring message '{}', because '{}' does not seem to be an IP address", message, ipAddress);
             return;
         }

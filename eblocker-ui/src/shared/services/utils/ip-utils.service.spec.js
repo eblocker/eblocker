@@ -35,13 +35,7 @@ describe('IP utils service', function() { // jshint ignore: line
             const el7 = '2::';
             const unsorted = [el1, el2, el3, el4, el5, el6, el7];
             const sorted = utils.sortByVersion(unsorted);
-            expect(sorted[0]).toEqual(el4);
-            expect(sorted[1]).toEqual(el2);
-            expect(sorted[2]).toEqual(el6);
-            expect(sorted[3]).toEqual(el7);
-            expect(sorted[4]).toEqual(el5);
-            expect(sorted[5]).toEqual(el3);
-            expect(sorted[6]).toEqual(el1);
+            expect(sorted).toEqual([el4, el2, el6, el7, el5, el3, el1]);
         });
     });
 
@@ -52,6 +46,82 @@ describe('IP utils service', function() { // jshint ignore: line
             expect(utils.sortingKey('::1')).toEqual('ipv6_0000:0000:0000:0000:0000:0000:0000:0001');
             expect(utils.sortingKey('2::')).toEqual('ipv6_0002:0000:0000:0000:0000:0000:0000:0000');
             expect(utils.sortingKey('2a04:5432::1:2:3:4')).toEqual('ipv6_2a04:5432:0000:0000:0001:0002:0003:0004');
+        });
+    });
+
+    describe('test isIpv4Address', function() {
+        it('checks whether a string is an IPv4 address', function() {
+            const invalidAddresses = [undefined, '', '42', 'localhost', 'one.one.one.one',
+                                      '1.2.3.4.5', '1.2.3.256', '...', '::1'];
+            const validAddresses = ['127.0.0.1', '1.1.1.1', '255.255.255.255', '0.0.0.0', '192.168.1.2'];
+
+            invalidAddresses.forEach((address) =>
+                expect(utils.isIpv4Address(address)).withContext(address).toEqual(false)
+            );
+            validAddresses.forEach((address) =>
+                expect(utils.isIpv4Address(address)).withContext(address).toEqual(true)
+            );
+        });
+    });
+
+    describe('test isIpv6Address', function() {
+        it('checks whether a string is an IPv6 address', function() {
+            const invalidAddresses = [undefined, '', '42', 'localhost', 'one.one.one.one',
+                                      '1.2.3.4', 'abcd::ef::1',
+                                      '1:2:3:4::5:6:7:8', '1:2:3:4:5:6:7'];
+            const validAddresses = ['::', '::1', '1:2:3:4:5:6:7:8',
+                                    '2a04:5432:abcd:ef:1:2:3:4', '2A04:5432:ABCD:EF:1:2:3:4'];
+
+            invalidAddresses.forEach((address) =>
+                expect(utils.isIpv6Address(address)).withContext(address).toEqual(false)
+            );
+            validAddresses.forEach((address) =>
+                expect(utils.isIpv6Address(address)).withContext(address).toEqual(true)
+            );
+        });
+    });
+
+    describe('test isIpv4Range', function() {
+        it('checks whether a string is an IPv4 address range', function() {
+            const validRanges = ['17.0.0.0/8', '1.2.3.4/32'];
+            const invalidRanges = [undefined, '', 'localhost/23', '1.2.3.4', '1.2.3.4/a', '1.2.3.4/33', '::1/42'];
+
+            invalidRanges.forEach((ipRange) =>
+                expect(utils.isIpv4Range(ipRange)).withContext(ipRange).toEqual(false)
+            );
+            validRanges.forEach((ipRange) =>
+                expect(utils.isIpv4Range(ipRange)).withContext(ipRange).toEqual(true)
+            );
+        });
+    });
+
+    describe('test isIpv6Range', function() {
+        it('checks whether a string is an IPv6 address range', function() {
+            const validRanges = ['2603:1000::/25', 'ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF/128'];
+            const invalidRanges = [undefined, '', 'localhost/42', '::1', '::1/a', '::1/129', '1.2.3.4/32'];
+
+            invalidRanges.forEach((ipRange) =>
+                expect(utils.isIpv6Range(ipRange)).withContext(ipRange).toEqual(false)
+            );
+            validRanges.forEach((ipRange) =>
+                expect(utils.isIpv6Range(ipRange)).withContext(ipRange).toEqual(true)
+            );
+        });
+    });
+
+    describe('test isIpAddressOrRange', function() {
+        it('checks whether a string is an IP address or a range of IP addresses', function() {
+            const validAddresses = ['1.2.3.4', '1.2.3.4/32',
+                                    '::1', '2603:1000::/25', 'ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF/128'];
+            const invalidAddresses = [undefined, '', 'localhost', 'localhost/42', '1.2.3', '1.2.3.4.5', '42/23',
+                                      '::1/a', '::1/129'];
+
+            invalidAddresses.forEach((address) =>
+                expect(utils.isIpAddressOrRange(address)).withContext(address).toEqual(false)
+            );
+            validAddresses.forEach((address) =>
+                expect(utils.isIpAddressOrRange(address)).withContext(address).toEqual(true)
+            );
         });
     });
 });

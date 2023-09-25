@@ -49,8 +49,8 @@ public class UrlUtils {
     private static final String URL_WITHOUT_PROTOCOL_REGEX = "^([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(:|/|$).*";
     private static final Pattern URL_WITHOUT_PROTOCOL_PATTERN = Pattern.compile(URL_WITHOUT_PROTOCOL_REGEX);
 
-    private static final String DOMAIN_IN_STRING_REGEX = "^(?:https?://)?(?:[^@/\\n]+@)?([^:/\\n]+)";
-    private static final Pattern DOMAIN_IN_STRING_PATTERN = Pattern.compile(DOMAIN_IN_STRING_REGEX);
+    private static final String DOMAIN_REGEX = "^([a-z0-9\\-]+\\.)+([a-z][a-z0-9\\-]*)$";
+    private static final Pattern DOMAIN_PATTERN = Pattern.compile(DOMAIN_REGEX, Pattern.CASE_INSENSITIVE);
 
     public static String getHostname(String urlString) {
         Matcher matcher = URL_HOSTNAME_PATTERN.matcher(urlString);
@@ -222,44 +222,29 @@ public class UrlUtils {
      * @return true if the URL contains a valid domain
      */
     public static boolean isInvalidDomain(String url) {
-        Matcher matcher = DOMAIN_IN_STRING_PATTERN.matcher(url);
-        if (matcher.find()) {
-            url = matcher.group(1);
-            if (url != null) {
-                // not allowed to begin with '.' or '-'
-                if (url.startsWith(".") || url.startsWith("-")) {
-                    return true;
-                }
-                String[] parts = url.split("\\.");
-                boolean atLeastOneEmptyPart = false;
-                for (String part : parts) {
-                    if ("".equals(part)) {
-                        atLeastOneEmptyPart = true;
-                    }
-                }
-                return (parts.length < 2) || atLeastOneEmptyPart;
-            }
-        }
-        return false;
+        return findDomainInString(url, false) == null;
     }
 
-    public static String findDomainInString(String url) {
-        Matcher matcher = DOMAIN_IN_STRING_PATTERN.matcher(url);
-        if (matcher.find()) {
-            url = matcher.group(1);
-            if (url != null) {
-                // not allowed to begin with '.' or '-'
-                if (url.startsWith(".") || url.startsWith("-")) {
-                    return null;
+    public static String findDomainInString(String url, boolean allowIpAddress) {
+        Matcher matcher = DOMAIN_PATTERN.matcher(url);
+        if (matcher.matches()) {
+            return url;
+        }
+        if (allowIpAddress && IpUtils.isIPAddress(url)) {
+            return url;
+        }
+        if (url.startsWith("https://") || url.startsWith("http://")) {
+            try {
+                URL urlObj = new URL(url);
+                matcher = DOMAIN_PATTERN.matcher(urlObj.getHost());
+                if (matcher.matches()) {
+                    return urlObj.getHost();
                 }
-                String[] parts = url.split("\\.");
-                boolean atLeastOneEmptyPart = false;
-                for (String part : parts) {
-                    if ("".equals(part)) {
-                        atLeastOneEmptyPart = true;
-                    }
+                if (allowIpAddress && IpUtils.isIPAddress(urlObj.getHost())) {
+                    return urlObj.getHost();
                 }
-                return ((parts.length < 2) || atLeastOneEmptyPart ? null : url);
+            } catch (MalformedURLException e) {
+                return null;
             }
         }
         return null;

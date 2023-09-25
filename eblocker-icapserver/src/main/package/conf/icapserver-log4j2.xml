@@ -37,7 +37,7 @@
             <AppenderRef ref="SYSTEM"/>
         </Root>
         <Logger name="STATUS" level="info"/>
-        <Logger name="FILTER_LOG" level="warn" additivity="false">
+        <Logger name="FILTER_LOG" level="info" additivity="false">
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="AUDIT"/>
         </Logger>

@@ -283,83 +283,48 @@ public class UrlUtilsTest {
 
     @Test
     public void testIsInvalidDomain() {
-        String url = "bla.de";
-        assertFalse(UrlUtils.isInvalidDomain(url));
+        // valid domains
+        assertFalse(UrlUtils.isInvalidDomain("bla.de"));
+        assertFalse(UrlUtils.isInvalidDomain("3com.com"));
+        assertFalse(UrlUtils.isInvalidDomain("http://user:pass@bla.de/blubb"));
+        assertFalse(UrlUtils.isInvalidDomain("http://www.bla.de"));
+        assertFalse(UrlUtils.isInvalidDomain("http://www.bla.de/"));
+        assertFalse(UrlUtils.isInvalidDomain("http://www.bla.de/blubb.html#fasel"));
+        assertFalse(UrlUtils.isInvalidDomain("https://user:pass@bla.de/blubb.php?param1=foo&param2=bar"));
 
-        url = ".";
-        assertTrue(UrlUtils.isInvalidDomain(url));
-
-        url = "..";
-        assertTrue(UrlUtils.isInvalidDomain(url));
-
-        url = "de";
-        assertTrue(UrlUtils.isInvalidDomain(url));
-
-        url = "http://www.bla.de";
-        assertFalse(UrlUtils.isInvalidDomain(url));
-
-        url = "http://www.bla.de/";
-        assertFalse(UrlUtils.isInvalidDomain(url));
-
-        url = "http://www.bla..de/";
-        assertTrue(UrlUtils.isInvalidDomain(url));
-
-        url = "bla.de/blubb";
-        assertFalse(UrlUtils.isInvalidDomain(url));
-
-        url = "http://www.bla.de/blubb.html#fasel";
-        assertFalse(UrlUtils.isInvalidDomain(url));
-
-        url = "http://user:pass@bla.de/blubb";
-        assertFalse(UrlUtils.isInvalidDomain(url));
-
-        url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
-        assertFalse(UrlUtils.isInvalidDomain(url));
+        // invalid domains
+        assertTrue(UrlUtils.isInvalidDomain("."));
+        assertTrue(UrlUtils.isInvalidDomain(".."));
+        assertTrue(UrlUtils.isInvalidDomain("bla.de/blubb"));
+        assertTrue(UrlUtils.isInvalidDomain("de"));
+        assertTrue(UrlUtils.isInvalidDomain("http://1.2.3:80/path"));
+        assertTrue(UrlUtils.isInvalidDomain("http://www.bla..de/"));
     }
 
     @Test
     public void testFindDomainInString() {
-        String url = "http://www.foo.bar/fourty.seven?eleven=true";
-        assertEquals("www.foo.bar", UrlUtils.findDomainInString(url));
+        assertEquals("www.foo.bar", UrlUtils.findDomainInString("http://www.foo.bar/fourty.seven?eleven=true", true));
+        assertEquals("members.paysite.com", UrlUtils.findDomainInString("https://username:password@members.paysite.com/services/purchase.php?item=47&variation=11", true));
+        assertEquals("teatime.uk", UrlUtils.findDomainInString("http://teatime.uk/serve.php&milk=true", true));
+        assertEquals("bla.de", UrlUtils.findDomainInString("bla.de", true));
+        assertEquals("3com.com", UrlUtils.findDomainInString("3com.com", true));
+        assertEquals(null, UrlUtils.findDomainInString(".", true));
+        assertEquals(null, UrlUtils.findDomainInString("..", true));
+        assertEquals(null, UrlUtils.findDomainInString("de", true));
+        assertEquals("www.bla.de", UrlUtils.findDomainInString("http://www.bla.de", true));
+        assertEquals("www.bla.de", UrlUtils.findDomainInString("http://www.bla.de/", true));
+        assertEquals(null, UrlUtils.findDomainInString("http://www.bla..de/", true));
+        assertEquals(null, UrlUtils.findDomainInString("bla.de/blubb", true));
+        assertEquals("www.bla.de", UrlUtils.findDomainInString("http://www.bla.de/blubb.html#fasel", true));
+        assertEquals("bla.de", UrlUtils.findDomainInString("http://user:pass@bla.de/blubb", true));
+        assertEquals("bla.de", UrlUtils.findDomainInString("https://user:pass@bla.de/blubb.php?param1=foo&param2=bar", true));
+        assertEquals(null, UrlUtils.findDomainInString("http://1.2.3.4:80/path", false));
+        assertEquals(null, UrlUtils.findDomainInString("1.2.3.4", false));
+        assertEquals("1.2.3.4", UrlUtils.findDomainInString("http://1.2.3.4:80/path", true));
+        assertEquals("1.2.3.4", UrlUtils.findDomainInString("1.2.3.4", true));
 
-        url = "https://username:password@members.paysite.com/services/purchase.php?item=47&variation=11";
-        assertEquals("members.paysite.com", UrlUtils.findDomainInString(url));
-
-        url = "http://teatime.uk/serve.php&milk=true";
-        assertEquals("teatime.uk", UrlUtils.findDomainInString(url));
-
-        url = "bla.de";
-        assertEquals("bla.de", UrlUtils.findDomainInString(url));
-
-        url = ".";
-        assertEquals(null, UrlUtils.findDomainInString(url));
-
-        url = "..";
-        assertEquals(null, UrlUtils.findDomainInString(url));
-
-        url = "de";
-        assertEquals(null, UrlUtils.findDomainInString(url));
-
-        url = "http://www.bla.de";
-        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
-
-        url = "http://www.bla.de/";
-        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
-
-        url = "http://www.bla..de/";
-        assertEquals(null, UrlUtils.findDomainInString(url));
-
-        url = "bla.de/blubb";
-        assertEquals("bla.de", UrlUtils.findDomainInString(url));
-
-        url = "http://www.bla.de/blubb.html#fasel";
-        assertEquals("www.bla.de", UrlUtils.findDomainInString(url));
-
-        url = "http://user:pass@bla.de/blubb";
-        assertEquals("bla.de", UrlUtils.findDomainInString(url));
-
-        url = "https://user:pass@bla.de/blubb.php?param1=foo&param2=bar";
-        assertEquals("bla.de", UrlUtils.findDomainInString(url));
+        // JavaScript is different here, it interprets 1.2.3 as an abbreviation of 1.2.0.3
+        assertEquals(null, UrlUtils.findDomainInString("http://1.2.3:80/path", true));
     }
 
     @Test

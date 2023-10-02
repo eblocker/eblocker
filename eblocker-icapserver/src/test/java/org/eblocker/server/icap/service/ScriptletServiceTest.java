@@ -43,9 +43,31 @@ public class ScriptletServiceTest {
     public void testResolve() throws IOException {
         String scriptlet = service.resolve("message, Hello\\, world!");
 
-        String expected = "try {\n" +
-                "(function() { alert('Hello, world! {{1}} {{2}}'); })();\n" +
-                "} catch ( e ) { }\n";
+        String expected = ScriptletService.SCRIPTLET_PREFIX +
+                "(function() { alert('Hello, world! {{1}} {{2}}'); })();" +
+                ScriptletService.SCRIPTLET_POSTFIX;
+
+        Assert.assertEquals(expected, scriptlet);
+    }
+
+    @Test
+    public void testEscapeBackslashesInRegexps() throws IOException {
+        String scriptlet = service.resolve("message, /\\/foo/, !/bar\\//");
+
+        String expected = ScriptletService.SCRIPTLET_PREFIX +
+                "(function() { alert('/\\\\/foo/ {{1}} !/bar\\\\//'); })();" +
+                ScriptletService.SCRIPTLET_POSTFIX;
+
+        Assert.assertEquals(expected, scriptlet);
+    }
+
+    @Test
+    public void testDontEscapeBackslashesInStrings() throws IOException {
+        String scriptlet = service.resolve("message, Hello\\nworld!");
+
+        String expected = ScriptletService.SCRIPTLET_PREFIX +
+                "(function() { alert('Hello\\nworld! {{1}} {{2}}'); })();" +
+                ScriptletService.SCRIPTLET_POSTFIX;
 
         Assert.assertEquals(expected, scriptlet);
     }

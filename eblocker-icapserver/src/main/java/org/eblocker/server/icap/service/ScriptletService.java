@@ -33,6 +33,8 @@ import java.nio.file.Path;
  * </ul>
  */
 public class ScriptletService {
+    public static final String SCRIPTLET_PREFIX = "try {\n";
+    public static final String SCRIPTLET_POSTFIX = "\n} catch ( e ) { console.error(`eBlocker scriptlet failed with ${e.name}: ${e.message}`); }\n";
     private final Path scriptletDirectory;
 
     @Inject
@@ -50,12 +52,17 @@ public class ScriptletService {
         String scriptlet = Files.readString(scriptletDirectory.resolve(scriptletFilename));
         for (int i = 1; i < parameters.length; i++) {
             String value = parameters[i].replace("\\,", ",");
+            value = escapeBackslashesInRegExps(value);
             scriptlet = StringUtils.replaceOnce(scriptlet, "{{" + i + "}}", value);
         }
-        return wrapExceptionHandler(scriptlet);
+        return SCRIPTLET_PREFIX + scriptlet + SCRIPTLET_POSTFIX;
     }
 
-    private String wrapExceptionHandler(String scriptlet) {
-        return "try {\n" + scriptlet + "\n} catch ( e ) { }\n";
+    private String escapeBackslashesInRegExps(String value) {
+        if ((value.startsWith("/") || value.startsWith("!/")) && value.endsWith("/")) {
+            return value.replace("\\", "\\\\");
+        }
+        return value;
     }
+
 }

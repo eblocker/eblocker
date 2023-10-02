@@ -233,19 +233,6 @@ public class NetworkStateMachine {
         }
     }
 
-    /**
-     * Call this method when a device's IP address is set to static/dynamic or a
-     * device is removed (to remove it from the config file by rewriting it).
-     * This applies only to be case in which the eBlocker is the local DHCP
-     * server.
-     */
-    public void deviceStateIpAddressFixed() {
-        NetworkStateId currentState = getCurrentNetworkState().getId();
-        if (currentState == NetworkStateId.LOCAL_DHCP) {
-            services.configureDhcpServer(services.getCurrentNetworkConfiguration());
-        }
-    }
-
     public void deviceStateChanged(Device justChangedDevice) {
         deviceStateChanged(); // do the same as normal method
 

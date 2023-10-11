@@ -52,6 +52,11 @@ public class DeviceIpUpdater {
         this.userService = userService;
     }
 
+    /**
+     * Add an IP address to a given device. If the device does not exist, it is created.
+     * @param deviceId the device ID. The device is created if it does not exist.
+     * @param ipAddress the detected IP address
+     */
     public void refresh(String deviceId, IpAddress ipAddress) {
         Device device = deviceService.getDeviceById(deviceId);
 

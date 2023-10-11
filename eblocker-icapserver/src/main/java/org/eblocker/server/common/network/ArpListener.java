@@ -95,8 +95,8 @@ public class ArpListener implements Runnable {
                 arpProbeCache.put(deviceID, clock.millis());
             } else {
                 Ip4Address sourceAddress = Ip4Address.parse(message.sourceIPAddress);
-                ipResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
                 reactToRespondingDevice(deviceID, sourceAddress);
+                ipResponseTable.put(message.sourceHardwareAddress, sourceAddress, clock.millis());
             }
         }
     }
@@ -111,7 +111,8 @@ public class ArpListener implements Runnable {
     }
 
     /**
-     * When we receive an ArpMessage from a device, that was responding to the ArpSweep (sent ARP response/reply)
+     * When we receive an ArpMessage from a device, that was responding to the ArpSweep (sent ARP response/reply).
+     * This method might create a new device.
      */
     private void reactToRespondingDevice(String deviceId, Ip4Address sourceIPAddress) {
         if (!isInEblockerNet(sourceIPAddress)) {

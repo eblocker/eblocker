@@ -67,7 +67,7 @@ public class RemoveTrackingParametersProcessor implements TransactionProcessor {
         if (query != null) {
             String[] params = query.split("&");
             List<String> nonTrackingParams = Arrays.stream(params)
-                    .filter(param -> !TRACKING_PARAMS.contains(param.split("=")[0]))
+                    .filter(param -> !TRACKING_PARAMS.contains(param.split("=", -1)[0]))
                     .collect(Collectors.toList());
 
             if (params.length != nonTrackingParams.size()) {

@@ -82,6 +82,15 @@ public class RemoveTrackingParametersProcessorTest {
     }
 
     @Test
+    public void process_preserves_empty_key_value() {
+        FullHttpRequest request = makeRequest("https://foo.com/?=");
+        Mockito.when(transaction.getRequest()).thenReturn(request);
+        testee.process(transaction);
+
+        assertEquals("https://foo.com/?=", request.uri());
+    }
+
+    @Test
     public void process_untouched() {
         FullHttpRequest request = makeRequest("https://foo.com/?a=b&c=d");
         Mockito.when(transaction.getRequest()).thenReturn(request);

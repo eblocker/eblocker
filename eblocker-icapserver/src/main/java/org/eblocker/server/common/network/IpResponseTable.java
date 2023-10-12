@@ -85,13 +85,31 @@ public class IpResponseTable {
         return ipTimestamps.latestTimestamp;
     }
 
-    public void forEachActiveSince(long millis, BiConsumer<String, Set<IpAddress>> consumer) {
-        table.forEach((hardwareAddress, ipTimestamps) -> {
-            Set<IpAddress> activeAddresses = ipTimestamps.activeAddressesSince(millis);
-            if (!activeAddresses.isEmpty()) {
-                consumer.accept(hardwareAddress, activeAddresses);
-            }
-        });
+    /**
+     * Collects all hardware addresses that have active IP addresses since a given
+     * timestamp
+     * @param millis timestamp
+     * @return set of active hardware addresses
+     */
+    public synchronized Set<String> allActiveSince(long millis) {
+        return table.keySet().stream()
+                .filter(hwAddr -> activeSince(hwAddr, millis))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns all IP addresses of a given hardware address that have been active since
+     * a given timestamp.
+     * @param hardwareAddress
+     * @param millis timestamp
+     * @return set of active IP addresses or null if the hardware address does not exist.
+     */
+    public Set<IpAddress> activeAddressesSince(String hardwareAddress, long millis) {
+        IpTimestamps ipTimestamps = table.get(hardwareAddress);
+        if (ipTimestamps == null) {
+            return null;
+        }
+        return ipTimestamps.activeAddressesSince(millis);
     }
 
     public void removeAll(String hardwareAddress, Collection<IpAddress> ipAddresses) {

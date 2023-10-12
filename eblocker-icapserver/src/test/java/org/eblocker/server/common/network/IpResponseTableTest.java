@@ -29,6 +29,7 @@ import java.util.Set;
 public class IpResponseTableTest {
     private static final String hwAddr1 = "abcdef111111";
     private static final String hwAddr2 = "abcdef222222";
+    private static final String hwAddr3 = "abcdef333333";
     private static final IpAddress ipAddr1 = IpAddress.parse("192.168.1.2");
     private static final IpAddress ipAddr2 = IpAddress.parse("2000::2");
     private static final IpAddress ipAddr3 = IpAddress.parse("2000::3");
@@ -75,19 +76,20 @@ public class IpResponseTableTest {
     }
 
     @Test
-    public void testForEach() {
+    public void testActiveAddresses() {
         table.put(hwAddr1, ipAddr1, 1000);
         table.put(hwAddr2, ipAddr1, 1233);
         table.put(hwAddr2, ipAddr2, 1235);
         table.put(hwAddr2, ipAddr3, 1237);
-        Set<String> result = new HashSet<>();
-        table.forEachActiveSince(1234, (hardwareAddress, ipAddresses) -> {
-            ipAddresses.forEach(ipAddress -> result.add(hardwareAddress + "->" + ipAddress));
-        });
-        Set<String> expected = Set.of(
-                hwAddr2 + "->" + ipAddr2,
-                hwAddr2 + "->" + ipAddr3);
-        Assert.assertEquals(expected, result);
+        long then = 1234;
+        Set<String> activeHw = table.allActiveSince(then);
+        Assert.assertEquals(Set.of(hwAddr2), activeHw);
+        Set<IpAddress> activeIps = table.activeAddressesSince(hwAddr2, then);
+        Assert.assertEquals(Set.of(ipAddr2, ipAddr3), activeIps);
+
+        // no active addresses:
+        Assert.assertTrue(table.activeAddressesSince(hwAddr1, then).isEmpty());
+        Assert.assertNull(table.activeAddressesSince(hwAddr3, then)); // unknown HW address
     }
 
     @Test

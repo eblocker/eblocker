@@ -153,6 +153,19 @@ public class DeviceServiceTest {
     }
 
     @Test
+    public void testUpdateLastSeen() {
+        ipResponseTable.put("000000000003", Ip4Address.parse("192.168.0.23"), 0);
+        Mockito.verify(dataSource).updateLastSeen(devices.get(2));
+    }
+
+    @Test
+    public void testDoNotUpdateLastSeen() {
+        // Non-existing device:
+        ipResponseTable.put("ffffff000001", Ip4Address.parse("192.168.0.23"), 0);
+        Mockito.verify(dataSource, Mockito.never()).updateLastSeen(Mockito.any());
+   }
+
+    @Test
     public void testGetDeviceById() {
         for (Device device : devices) {
             Device retrievedDevice = deviceService.getDeviceById(device.getId());

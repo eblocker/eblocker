@@ -112,7 +112,15 @@ public class IpAddressValidator {
             log.trace("now: {}", now);
             log.trace("response table: {}", ipResponseTable);
         }
-        ipResponseTable.forEachActiveSince(now - recentActivityThreshold, this::dropInactive);
+        long then = now - recentActivityThreshold;
+        for (String hardwareAddress: ipResponseTable.allActiveSince(then)) {
+            Set<IpAddress> activeAddresses = ipResponseTable.activeAddressesSince(hardwareAddress, then);
+            if (activeAddresses != null) {
+                dropInactive(hardwareAddress, activeAddresses);
+            } else {
+                log.warn("Could not get active addresses of device " + hardwareAddress);
+            }
+        }
     }
 
     private void dropInactive(String hardwareAddress, Set<IpAddress> activeIpAddresses) {
@@ -149,7 +157,7 @@ public class IpAddressValidator {
 
         // TODO: refactor to use DeviceIpUpdater
         deviceService.updateDevice(device);
-        networkStateMachine.deviceStateChanged(device);
+        networkStateMachine.deviceStateChanged(device); // this may take some time!
 
         Set<IpAddress> inactiveIpAddresses = new HashSet(deviceIpAddresses);
         inactiveIpAddresses.removeAll(activeIpAddresses);

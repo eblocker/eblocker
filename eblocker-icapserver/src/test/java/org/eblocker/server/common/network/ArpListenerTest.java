@@ -169,6 +169,21 @@ public class ArpListenerTest {
         Assert.assertEquals(instants.get(2).toEpochMilli(), ipResponseTable.get("012345aaaaaa", Ip4Address.parse("192.168.0.242")).longValue());
     }
 
+    @Test
+    public void createDeviceBeforeUpdatingIpResponseTable() {
+        /*
+        The device service is a listener of the IpResponseTable because it needs to update the device's
+        lastSeen field. We want to make sure that a newly discovered device is already created before
+        its IP is put into the IpResponseTable (and as a result the device's lastSeen field is updated).
+         */
+        ipResponseTable.addLatestTimestampUpdateListener((String hardwareAddress, long millis) -> {
+            // Expect the refresh() method to already have been called (so the device was created):
+            Mockito.verify(deviceIpUpdater).refresh("device:012345abcdef", Ip4Address.parse("192.168.0.100"));
+        });
+        listener.run();
+        subscriber.process(response("012345abcdef", "192.168.0.100"));
+    }
+
     private String response(String senderMac, String senderIp) {
         return String.format("2/%s/%s/abcdef012345/192.168.0.99", senderMac, senderIp);
     }

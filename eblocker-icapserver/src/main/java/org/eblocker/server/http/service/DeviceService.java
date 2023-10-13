@@ -307,6 +307,7 @@ public class DeviceService {
         Device device = getDeviceById(Device.ID_PREFIX + hardwareAddress);
         if (device == null) {
             log.error("Could not update lastSeen of device {}, because it does not exist.", hardwareAddress);
+            return;
         }
         device.setLastSeen(Instant.ofEpochMilli(millis));
         datasource.updateLastSeen(device);

@@ -1702,7 +1702,7 @@
         "DOCTOR": {
             "LABEL" : "Doctor",
             "DIAGNOSIS" : {
-                "TITLE": "The diagnoses of the eBlocker Doctor (beta)",
+                "TITLE": "The diagnoses of the eBlocker Doctor",
                 "LEVEL": {
                     "NOVICE" : "Novice",
                     "EXPERT" : "Expert"

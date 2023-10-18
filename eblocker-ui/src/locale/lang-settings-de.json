@@ -1702,7 +1702,7 @@
          "DOCTOR": {
             "LABEL" : "Doktor",
             "DIAGNOSIS" : {
-                "TITLE": "Die Diagnosen des eBlocker Doktors (beta)",
+                "TITLE": "Die Diagnosen des eBlocker Doktors",
                 "LEVEL": {
                     "NOVICE" : "Anfänger",
                     "EXPERT" : "Experte"
@@ -2638,7 +2638,7 @@
                 "GREETINGS" : "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Wichtigste Verbesserungen:",
-                    "LI_1" : "<strong>IPv6-Unterstützung</strong>",
+                    "LI_1" : "<strong>IPv6-Unterstützung (beta)</strong>",
                     "LI_2" : "<strong>Verbesserte Stabilität</strong>",
                     "LI_3" : "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten."
                 },

@@ -309,7 +309,11 @@ public class DeviceService {
             log.error("Could not update lastSeen of device {}, because it does not exist.", hardwareAddress);
             return;
         }
-        device.setLastSeen(Instant.ofEpochMilli(millis));
+        updateLastSeen(device, Instant.ofEpochMilli(millis));
+    }
+
+    public void updateLastSeen(Device device, Instant lastSeen) {
+        device.setLastSeen(lastSeen);
         datasource.updateLastSeen(device);
     }
 

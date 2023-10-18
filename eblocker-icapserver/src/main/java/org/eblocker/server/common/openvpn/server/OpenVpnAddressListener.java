@@ -34,6 +34,7 @@ import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,6 +172,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
             ipAddresses.add(ipAddress);
             device.setIpAddresses(ipAddresses);
             device.setIsVpnClient(true);
+            deviceService.updateLastSeen(device, Instant.now());
             deviceService.updateDevice(device);
             networkStateMachine.deviceStateChanged();
         } else {

@@ -24,6 +24,8 @@
                     <div ng-if="vm.checkResult.ok && !vm.checkResult.expected"
                          aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.OK_UNEXPECTED'}}"
                          ng-click="vm.toggleExplanations()">
+                        <md-icon ng-hide="vm.showExplanations" md-svg-src="/img/icons/ic_keyboard_arrow_down_black.svg"></md-icon>
+                        <md-icon ng-show="vm.showExplanations" md-svg-src="/img/icons/ic_keyboard_arrow_up_black.svg"></md-icon>
                         <md-icon ng-if="vm.showUsageAsText" class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
                         <md-icon ng-if="!vm.showUsageAsText" class="content-error" md-svg-src="/img/icons/ic_check_circle.svg"></md-icon>
                     </div>
@@ -37,6 +39,8 @@
                     <div ng-if="!vm.checkResult.ok && !vm.checkResult.expected"
                          aria-label="{{'CONNECTION_TEST.CARD.TOOLTIP.ERROR_UNEXPECTED'}}"
                          ng-click="vm.toggleExplanations()">
+                        <md-icon ng-hide="vm.showExplanations" md-svg-src="/img/icons/ic_keyboard_arrow_down_black.svg"></md-icon>
+                        <md-icon ng-show="vm.showExplanations" md-svg-src="/img/icons/ic_keyboard_arrow_up_black.svg"></md-icon>
                         <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
                     </div>
                 </div>

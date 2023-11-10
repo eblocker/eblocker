@@ -69,7 +69,7 @@ public class FilterStoreConcurrencyTest {
                         JSONMarshaller.marshall(store, out);
                     } catch (Exception e) {
                         exceptions.add(e);
-                        LOG.debug("JSON run " + i);
+                        LOG.debug("JSON run {}", i);
                         return;
                     }
                 }
@@ -103,7 +103,7 @@ public class FilterStoreConcurrencyTest {
         if (!exceptions.isEmpty()) {
             exceptions.get(0).printStackTrace();
         }
-        LOG.debug("i=" + i[0] + ", t=" + (t1 - t0));
+        LOG.debug("i={}, t={}", i[0], t1 - t0);
         assertTrue(exceptions.isEmpty());
     }
 

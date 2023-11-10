@@ -559,7 +559,7 @@ public class AppModuleService extends Observable {
             storeEnabledState(updatedModule);
             activateEnabledState(updatedModule);
         } else {
-            LOG.warn("Could not find module with ID: " + id);
+            LOG.warn("Could not find module with ID: {}", id);
         }
     }
 
@@ -786,7 +786,7 @@ public class AppModuleService extends Observable {
 
     private List<AppWhitelistModule> loadBuiltin(EblockerResource builtinAppModulesResource) throws BuiltinModulesLoadException {
         try {
-            LOG.debug("Loading appModules from file: " + builtinAppModulesResource.getPath());
+            LOG.debug("Loading appModules from file: {}", builtinAppModulesResource.getPath());
             String jsonAppModules = ResourceHandler.load(builtinAppModulesResource);
 
             List<AppWhitelistModule> modules = objectMapper.readValue(jsonAppModules, new TypeReference<List<AppWhitelistModule>>() {

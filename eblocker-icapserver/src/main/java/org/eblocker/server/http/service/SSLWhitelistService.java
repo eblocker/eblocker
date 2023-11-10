@@ -174,7 +174,7 @@ public class SSLWhitelistService implements Observer {
         //add all urls from the enabled appwhitelistmodules to the urlsList
         List<String> enabledAppModulesUrls = appModuleService.getAllUrlsFromEnabledModules().stream().map(String::toLowerCase).collect(Collectors.toList());
         if (enabledAppModulesUrls != null) {
-            log.debug(Integer.toString(enabledAppModulesUrls.size()) + " URLs are added to SSL Exemption list, because they are linked to enabled AppWhitelistModules");
+            log.debug("{} URLs are added to SSL Exemption list, because they are linked to enabled AppWhitelistModules", enabledAppModulesUrls.size());
             urlList.addAll(enabledAppModulesUrls);
         }
 
@@ -190,7 +190,7 @@ public class SSLWhitelistService implements Observer {
                 }
             }
         }
-        log.info("ssl whitelist domain urls not needed in squid acl anymore: " + notNeededUrls.toString());
+        log.info("ssl whitelist domain urls not needed in squid acl anymore: {}", notNeededUrls);
 
         //remove subdomains from list
         urlList.removeAll(notNeededUrls);
@@ -219,7 +219,7 @@ public class SSLWhitelistService implements Observer {
         // add all IPs from the enabled appwhitelistmodules to the ipList
         List<String> enabledAppModulesIPs = appModuleService.getAllIPsFromEnabledModules();
         if (enabledAppModulesIPs != null) {
-            log.debug(Integer.toString(enabledAppModulesIPs.size()) + " IPs are added to Exemption list, because they are linked to enabled AppWhitelistModules");
+            log.debug("{} IPs are added to Exemption list, because they are linked to enabled AppWhitelistModules", enabledAppModulesIPs.size());
             ipList.addAll(enabledAppModulesIPs);
         }
 
@@ -252,11 +252,11 @@ public class SSLWhitelistService implements Observer {
 
                     if (module.isEnabled()) {
                         // add urls of module to list
-                        log.info("URLs of AppWhitelistModule: " + module.getName() + " are now added to the SSL Exemption list.");
+                        log.info("URLs of AppWhitelistModule: {} are now added to the SSL Exemption list.", module.getName());
                     } else {
                         // module got disabled
                         // remove from map
-                        log.info("URLs of AppWhitelistModule: " + module.getName() + " are now removed from the SSL Exemption list.");
+                        log.info("URLs of AppWhitelistModule: {} are now removed from the SSL Exemption list.", module.getName());
                     }
                 }
             }

@@ -56,9 +56,7 @@ public class TransactionHandler extends ChannelInboundHandlerAdapter {
 
         Transaction transaction = (Transaction) msg;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received transaction:\n>>>>---------------------------" + transaction + ">>>>---------------------------\n");
-        }
+        log.debug("Received transaction:\n>>>>---------------------------{}>>>>---------------------------\n", transaction);
 
         boolean outbound;
         if (transaction.isRequest()) {
@@ -74,9 +72,7 @@ public class TransactionHandler extends ChannelInboundHandlerAdapter {
         transactionRecorder.addTransaction(transaction, outbound);
 
         ctx.channel().writeAndFlush(transaction);
-        if (log.isDebugEnabled()) {
-            log.debug("Processed transaction:\n>>>>---------------------------" + transaction + ">>>>---------------------------\n");
-        }
+        log.debug("Processed transaction:\n>>>>---------------------------{}>>>>---------------------------\n", transaction);
 
     }
 

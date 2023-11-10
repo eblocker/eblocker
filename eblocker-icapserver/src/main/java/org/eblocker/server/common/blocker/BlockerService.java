@@ -521,7 +521,7 @@ public class BlockerService {
         try {
             return new String(Files.readAllBytes(Paths.get(definition.getFile())), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.error("Failed to read content of blocker " + definition.getId(), e);
+            log.error("Failed to read content of blocker {}", definition.getId(), e);
             return null;
         }
     }

@@ -228,7 +228,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
         try {
             scriptRunner.runScript(enableIp6Command, Boolean.toString(ip6Enabled));
         } catch (IOException e) {
-            log.error("failed to set ip6 enabled to " + ip6Enabled, e);
+            log.error("failed to set ip6 enabled to {}", ip6Enabled, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

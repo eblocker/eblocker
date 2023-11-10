@@ -240,7 +240,7 @@ public abstract class DeviceRegistrationTestBase {
             Files.delete(path);
             return path.toString();
         } catch (IOException e) {
-            log.error("Cannot create resource file: " + e.getMessage());
+            log.error("Cannot create resource file: {}", e.getMessage());
             throw new IllegalArgumentException("Cannot create resource file: " + e.getMessage(), e);
         }
     }
@@ -249,7 +249,7 @@ public abstract class DeviceRegistrationTestBase {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            log.error("Cannot deserialize object " + object, e);
+            log.error("Cannot deserialize object {}", object, e);
             return null;
         }
     }

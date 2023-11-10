@@ -190,14 +190,14 @@ public class UserAgentUtilTest {
 
     private void dump(String name, Map<String, List<String>> userAgents) {
         LOG.debug("==========================================================");
-        LOG.debug(name + " (" + userAgents.size() + ")");
+        LOG.debug("{} ({})", name, userAgents.size());
         LOG.debug("----------------------------------------------------------");
 
         for (Entry<String, List<String>> entry : userAgents.entrySet()) {
             LOG.debug(entry.getKey());
             if (entry.getValue() != null) {
                 for (String userAgent : entry.getValue()) {
-                    LOG.debug("    " + userAgent);
+                    LOG.debug("    {}", userAgent);
                 }
             }
         }

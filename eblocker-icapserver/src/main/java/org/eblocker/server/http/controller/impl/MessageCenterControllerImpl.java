@@ -82,7 +82,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
-        log.debug("Message (" + messageVisibility.getMessageId() + ") hide button was clicked by IP: " + session.getIp());
+        log.debug("Message ({}) hide button was clicked by IP: {}", messageVisibility.getMessageId(), session.getIp());
         messageCenterService.hideMessage(messageVisibility.getMessageId(), deviceId);
     }
 
@@ -91,7 +91,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
-        log.debug("Message (" + messageVisibility.getMessageId() + ") action button was clicked by IP: " + session.getIp());
+        log.debug("Message ({}) action button was clicked by IP: {}", messageVisibility.getMessageId(), session.getIp());
         messageCenterService.executeMessageAction(messageVisibility.getMessageId(), deviceId);
     }
 
@@ -102,7 +102,7 @@ public class MessageCenterControllerImpl extends SessionContextController implem
     @Override
     public void setDoNotShowAgain(Request request, Response response) {
         MessageVisibility messageVisibility = request.getBodyAs(MessageVisibility.class);
-        log.info("Received request: messageId: " + messageVisibility.getMessageId() + " doNotShowStatus: " + messageVisibility.isDoNotShowAgain());
+        log.info("Received request: messageId: {}, doNotShowStatus: {}", messageVisibility.getMessageId(), messageVisibility.isDoNotShowAgain());
         messageCenterService.setDoNotShowAgain(messageVisibility.getMessageId(), messageVisibility.isDoNotShowAgain());
     }
 

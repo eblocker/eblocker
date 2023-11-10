@@ -186,7 +186,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
             return;
         }
 
-        log.debug("Starting ArpSpoofer: " + (arpSpoofer != null) + " startupDelay: " + arpSpooferStartupDelay + " fixedDelay: " + arpSpooferFixedDelay);
+        log.debug("Starting ArpSpoofer with startupDelay: {}, fixedDelay: {}", arpSpooferStartupDelay, arpSpooferFixedDelay);
         arpSpooferFuture = executorService.scheduleWithFixedDelay(arpSpoofer, arpSpooferStartupDelay, arpSpooferFixedDelay, TimeUnit.SECONDS);
     }
 

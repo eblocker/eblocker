@@ -85,7 +85,6 @@ public class ArpListener implements Runnable {
             String deviceID = Device.ID_PREFIX + message.sourceHardwareAddress;
 
             if (log.isDebugEnabled()) {
-                log.debug("Got ARP message from device: " + message.sourceIPAddress + " - " + message.sourceHardwareAddress);
                 log.debug("ARP-MESSAGE {} {} {} {}", message.sourceHardwareAddress, message.sourceIPAddress, message.targetHardwareAddress, message.targetIPAddress);
             }
 

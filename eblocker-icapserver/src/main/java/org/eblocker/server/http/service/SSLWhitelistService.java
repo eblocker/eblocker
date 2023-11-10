@@ -190,7 +190,7 @@ public class SSLWhitelistService implements Observer {
                 }
             }
         }
-        log.info("ssl whitelist domain urls not needed in squid acl anymore: {}", notNeededUrls.toString());
+        log.info("ssl whitelist domain urls not needed in squid acl anymore: {}", notNeededUrls);
 
         //remove subdomains from list
         urlList.removeAll(notNeededUrls);

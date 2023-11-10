@@ -56,7 +56,7 @@ class SuccessfulSSLDomains {
         boolean filterChanged = activeBloomFilter.put(domain);
         if (filterChanged) {
             updateForNewDomain(domain);
-            log.debug("Recorded new already successful domain " + domain + " Size is now " + sizeOfActive);
+            log.debug("Recorded new already successful domain {}. Size is now {}", domain, sizeOfActive);
         }
     }
 

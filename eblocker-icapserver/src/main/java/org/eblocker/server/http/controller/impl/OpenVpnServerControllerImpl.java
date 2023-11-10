@@ -405,7 +405,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
                 return true;
             }
         } catch (IOException e) {
-            log.error("Could not get list of active certificates. Could not revoke certificate for " + deviceId, e);
+            log.error("Could not get list of active certificates. Could not revoke certificate for {}", deviceId, e);
             return false;
         }
 

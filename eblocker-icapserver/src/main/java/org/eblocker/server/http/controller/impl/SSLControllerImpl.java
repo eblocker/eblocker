@@ -479,7 +479,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
             result.setExecuteSslBackgroundCheck(!session.getUserAgentInfo().isMsie());
         } else {
             // TODO: implement -- maybe pass Boolean and set to null in this case. That way we can show in the UI device-unavailable
-            log.error("failed to set device SSL status in dashboard status: cannot find device with ID " + session.getDeviceId());
+            log.error("failed to set device SSL status in dashboard status: cannot find device with ID {}", session.getDeviceId());
         }
 
         // Status of current SSL certificate

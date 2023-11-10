@@ -231,7 +231,7 @@ public class ResourceHandler {
         try {
             fileTime = Files.getLastModifiedTime(Paths.get(path));
         } catch (IOException e) {
-            log.warn("Cannot open file resource " + path + " to determine last modified date: ", e);
+            log.warn("Cannot open file resource {} to determine last modified date: ", path, e);
             return null;
         }
         return new Date(fileTime.toMillis());

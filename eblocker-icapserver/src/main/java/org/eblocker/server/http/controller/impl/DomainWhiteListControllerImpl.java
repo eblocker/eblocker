@@ -115,7 +115,7 @@ public class DomainWhiteListControllerImpl extends SessionContextController impl
             userService.updateUser(user.getId(), whiteMap);
 
         } catch (IOException e) {
-            log.error("Error while setting whitelist for user " + user.getId(), e);
+            log.error("Error while setting whitelist for user {}", user.getId(), e);
         }
     }
 

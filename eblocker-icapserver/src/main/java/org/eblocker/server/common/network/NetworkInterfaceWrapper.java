@@ -87,7 +87,7 @@ public class NetworkInterfaceWrapper {
             networkInterface = networkInterfaceFactory.getNetworkInterfaceByName(interfaceName);
 
             if (networkInterface == null) {
-                log.warn("Could not find a network interface named " + interfaceName);
+                log.warn("Could not find a network interface named {}", interfaceName);
             }
 
             firstIPv4Address = readFirstIPv4Address();

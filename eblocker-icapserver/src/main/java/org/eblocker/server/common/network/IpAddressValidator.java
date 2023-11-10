@@ -118,7 +118,7 @@ public class IpAddressValidator {
             if (activeAddresses != null) {
                 dropInactive(hardwareAddress, activeAddresses);
             } else {
-                log.warn("Could not get active addresses of device " + hardwareAddress);
+                log.warn("Could not get active addresses of device {}", hardwareAddress);
             }
         }
     }

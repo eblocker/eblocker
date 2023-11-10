@@ -462,8 +462,8 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     }
 
     private void assertLicenseCredentialsAreAvailable() throws IOException {
-        log.debug("licenseKeyFileName:  " + licenseKeyFileName);
-        log.debug("licenseCertFileName: " + licenseCertFileName);
+        log.debug("licenseKeyFileName:  {}", licenseKeyFileName);
+        log.debug("licenseCertFileName: {}", licenseCertFileName);
 
         assertTrue(Files.exists(Paths.get(licenseCertFileName)));
         assertTrue(Files.exists(Paths.get(licenseKeyFileName)));
@@ -478,8 +478,8 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     }
 
     private void assertLicenseCredentialsAreUnavailable() throws IOException {
-        log.info("licenseKeyFileName:  " + licenseKeyFileName);
-        log.info("licenseCertFileName: " + licenseCertFileName);
+        log.debug("licenseKeyFileName:  {}", licenseKeyFileName);
+        log.debug("licenseCertFileName: {}", licenseCertFileName);
 
         // Test if they are really unavailable / Ok, if file does not exist
         if (Files.exists(Paths.get(licenseCertFileName))) {

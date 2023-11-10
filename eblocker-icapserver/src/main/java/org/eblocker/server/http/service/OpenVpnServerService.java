@@ -288,7 +288,7 @@ public class OpenVpnServerService {
         try {
             openVpnCa.generateClientCertificate(deviceId);
         } catch (Exception e) {
-            log.error("Could not generate client certificate for " + deviceId, e);
+            log.error("Could not generate client certificate for {}", deviceId, e);
             return false;
         }
         return true;
@@ -298,7 +298,7 @@ public class OpenVpnServerService {
         try {
             openVpnCa.revokeClientCertificate(deviceId);
         } catch (Exception e) {
-            log.error("Could not revoke client certificate for " + deviceId, e);
+            log.error("Could not revoke client certificate for {}", deviceId, e);
             return false;
         }
         return vpnServerControl("update-crl");

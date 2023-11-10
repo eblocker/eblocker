@@ -75,9 +75,6 @@ public class IcapResponseHandler extends ChannelOutboundHandlerAdapter {
                 return createIcapResponse(transaction, IcapResponseStatus.CONTINUE);
             }
         }
-        if (!transaction.isComplete()) {
-            //log.warn("eBlocker transaction is not marked as complete - continuing anyway: "+transaction.getUriAsString());
-        }
         if (!transaction.isHeadersChanged() && !transaction.isContentChanged()) {
             if (isResponseAllowed(icapRequest, IcapResponseStatus.NO_CONTENT)) {
                 // Return empty message. Client will process unmodified content.

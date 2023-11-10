@@ -40,7 +40,7 @@ public class SuccessfulSSLDetector implements TransactionProcessor {
     public boolean process(Transaction transaction) {
         String url = transaction.getUrl();
         if (url != null && url.startsWith("https")) {
-            log.debug("Processing HTTPS URL " + url);
+            log.debug("Processing HTTPS URL {}", url);
             autoTrustAppService.recordSuccessfulSSL(UrlUtils.getHostname(url));
         }
         return true;

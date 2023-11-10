@@ -117,7 +117,7 @@ public class DiagnosticsReportService {
                     tokenHandler.generateSystemToken().getToken(),
                     remoteAddress);
             if (result != 0) {
-                log.warn("Unexpected return code from report script: " + result);
+                log.warn("Unexpected return code from report script: {}", result);
             }
         } catch (IOException e) {
             log.error("failed to run report script", e);

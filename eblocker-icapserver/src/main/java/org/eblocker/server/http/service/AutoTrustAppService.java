@@ -162,7 +162,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
                         .sorted(Comparator.comparing(FailedConnection::getLastOccurrence))
                         .peek(fc -> {
                             if (KnownError.hasUnknownError(fc)) {
-                                log.warn("Unknown error in failed connection: " + fc.getErrors());
+                                log.warn("Unknown error in failed connection: {}", fc.getErrors());
                             }
                         })
                         .flatMap(fc ->
@@ -171,7 +171,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
                                         .map(domain -> processDomain(domain, fc))
                                         .flatMap(Optional::stream))
                         .distinct()
-                        .peek(domain -> log.debug("Whitelisting " + domain))
+                        .peek(domain -> log.debug("Whitelisting {}", domain))
                         .map(domain -> new SSLWhitelistUrl("", domain))
                         .collect(Collectors.toList());
 
@@ -189,15 +189,15 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         } else if (tooOld(fc)) {
             return Optional.empty();
         } else if (!isDomainEligibleForAutoTrustApp(domain)) {
-            log.trace("Not eligible for AutoTrustApp: " + domain);
+            log.trace("Not eligible for AutoTrustApp: {}", domain);
             pendingDomains.remove(domain); // border case: just became not eligible
             return Optional.empty();
         } else if (hasNonCertificateError(fc)) {
-            log.debug("Skipping. No cert error " + domain);
+            log.debug("Skipping. No cert error {}", domain);
             // also remove from pending domains?
             return Optional.empty();
         } else if (hasObviousRootCertificateProblemError(fc)) {
-            log.debug("hasObviousRootCertificateProblemError" + domain);
+            log.debug("hasObviousRootCertificateProblemError {}", domain);
             return processCertificateError(domain);
         } else {
             return processWithPendings(domain, fc.getLastOccurrence());
@@ -214,9 +214,9 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     private void logFailedConnection(FailedConnection fc) {
         if (Instant.now().minus(Duration.ofMinutes(61)).isBefore(fc.getLastOccurrence())) {
-            log.debug("Processing failed connection " + fc.getDomains() + " " + fc.getErrors() + " " + fc.getLastOccurrence() + " " + fc.getDeviceIds().stream().map(deviceService::getDeviceById).filter(Objects::nonNull).collect(Collectors.toList()));
+            log.debug("Processing failed connection {} {} {} {}", fc.getDomains(), fc.getErrors(), fc.getLastOccurrence(), fc.getDeviceIds().stream().map(deviceService::getDeviceById).filter(Objects::nonNull).collect(Collectors.toList()));
         } else {
-            log.trace("Processing failed connection " + fc.getDomains() + " " + fc.getErrors() + " " + fc.getLastOccurrence() + " " + fc.getDeviceIds().stream().map(deviceService::getDeviceById).filter(Objects::nonNull).collect(Collectors.toList()));
+            log.trace("Processing failed connection {} {} {} {}", fc.getDomains(), fc.getErrors(), fc.getLastOccurrence(), fc.getDeviceIds().stream().map(deviceService::getDeviceById).filter(Objects::nonNull).collect(Collectors.toList()));
         }
     }
 
@@ -277,7 +277,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     private Optional<String> stillPending(String domain, NavigableSet<Instant> allOccurences) {
         pendingDomains.put(domain, new ArrayList<>(allOccurences));
-        log.debug("Updating " + domain + " in pendingDomains with newer occurence");
+        log.debug("Updating {} in pendingDomains with newer occurence", domain);
         return Optional.empty();
     }
 
@@ -297,7 +297,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
     private boolean isBlocked(String domain) {
         boolean blocked = domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters(domain).isBlocked();
         if (blocked) {
-            log.trace("Domain is blocked: " + domain);
+            log.trace("Domain is blocked: {}", domain);
         }
         return blocked;
     }
@@ -305,7 +305,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
     private boolean isDomainAlreadySucessful(String domain) {
         boolean domainAlreadySucessful = successfulSSLDomains.isDomainAlreadySucessful(domain);
         if (domainAlreadySucessful) {
-            log.debug("Domain already successful: " + domain);
+            log.debug("Domain already successful: {}", domain);
         }
         return domainAlreadySucessful;
     }
@@ -320,7 +320,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
             Map.Entry<String, List<Instant>> e = iterator.next();
             List<Instant> pruned = e.getValue().stream().filter(not(this::tooOld)).collect(Collectors.toList());
             if (pruned.isEmpty()) {
-                log.debug("Removing " + e.getKey() + " from pending domains");
+                log.debug("Removing {} from pending domains", e.getKey());
                 iterator.remove();
             } else {
                 e.setValue(pruned);

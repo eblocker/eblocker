@@ -40,7 +40,7 @@ public class RemoveTrackingParametersProcessor implements TransactionProcessor {
             if (withoutTrackingParameters.isPresent()) {
                 request.setUri(withoutTrackingParameters.get());
                 transaction.setHeadersChanged(true);
-                log.debug("Removed tracking parameter from >>" + requestUri + "<< to >>" + withoutTrackingParameters.get() + "<<");
+                log.debug("Removed tracking parameter from >>{}<< to >>{}<<", requestUri, withoutTrackingParameters.get());
             }
 
             HttpHeaders headers = request.headers();
@@ -50,12 +50,11 @@ public class RemoveTrackingParametersProcessor implements TransactionProcessor {
                 if (refererWithoutTrackingParameters.isPresent()) {
                     headers.set(REFERER_HEADER, refererWithoutTrackingParameters.get());
                     transaction.setHeadersChanged(true);
-                    log.debug("Removed tracking parameter from Referer >>" + existingReferrer + "<< to >>" +
-                            refererWithoutTrackingParameters.get() + "<<");
+                    log.debug("Removed tracking parameter from Referer >>{}<< to >>{}<<", existingReferrer, refererWithoutTrackingParameters.get());
                 }
             }
         } catch (Exception e) {
-            log.error("Cannot parse " + requestUri, e);
+            log.error("Cannot parse {} (or its referrer)", requestUri, e);
         }
         return true;
     }

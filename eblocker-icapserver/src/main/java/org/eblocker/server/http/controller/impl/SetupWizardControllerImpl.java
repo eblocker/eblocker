@@ -72,7 +72,7 @@ public class SetupWizardControllerImpl implements SetupWizardController {
     @Override
     public boolean didUserFinishSetupWizard(Request request, Response response) {
         boolean result = registrationProperties.getRegistrationState() != RegistrationState.NEW;
-        log.debug("User already finished setup wizard?: " + result);
+        log.debug("User already finished setup wizard?: {}", result);
         return result;
     }
 

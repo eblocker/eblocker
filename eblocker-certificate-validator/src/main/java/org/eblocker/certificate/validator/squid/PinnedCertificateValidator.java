@@ -59,9 +59,9 @@ public class PinnedCertificateValidator implements CertificateValidator {
             certificate.checkValidity();
             return true;
         } catch (CertificateExpiredException e) {
-            log.warn("certificate {} has expired", e);
+            log.warn("certificate has expired", e);
         } catch (CertificateNotYetValidException e) {
-            log.warn("certificate {} not yet valid", e);
+            log.warn("certificate not yet valid", e);
         }
         return false;
     }

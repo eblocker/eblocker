@@ -118,7 +118,7 @@ public class CrlCache {
                 log.info("refreshed {} (next update: {}, last modified: {}, next check: {})", url, crl.getNextUpdate(), new Date(e.lastModified), new Date(now + maximumAge));
                 return true;
             } catch (Exception ex) {
-                log.warn("refreshing crl {} failed", ex);
+                log.warn("refreshing crl failed", ex);
                 return false;
             }
         }

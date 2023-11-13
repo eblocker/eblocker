@@ -25,6 +25,7 @@ import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.executor.RetryingRunnable;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.service.DeviceService;
@@ -60,6 +61,7 @@ public class SquidWarningService {
     private final Set<String> ignoredErrors;
     private final long updateTaskInitialDelay;
     private final long updateTaskFixedRate;
+    private final long updateTaskMaxRetries;
     private final Clock clock;
     private final DataSource dataSource;
     private final DeviceService deviceService;
@@ -75,6 +77,7 @@ public class SquidWarningService {
                                @Named("squid.ssl.error.ignored") String ignoredErrors,
                                @Named("executor.squidWarning.startupDelay") long updateTaskInitialDelay,
                                @Named("executor.squidWarning.fixedRate") long updateTaskFixedRate,
+                               @Named("executor.squidWarning.maxRetries") long updateTaskMaxRetries,
                                Clock clock,
                                DataSource dataSource,
                                DeviceService deviceService,
@@ -85,6 +88,7 @@ public class SquidWarningService {
         this.ignoredErrors = splitAndTrim(ignoredErrors);
         this.updateTaskInitialDelay = updateTaskInitialDelay;
         this.updateTaskFixedRate = updateTaskFixedRate;
+        this.updateTaskMaxRetries = updateTaskMaxRetries;
         this.clock = clock;
         this.dataSource = dataSource;
         this.deviceService = deviceService;
@@ -176,7 +180,8 @@ public class SquidWarningService {
         cacheLogReader.start();
 
         log.info("scheduling update task");
-        updateTask = executorService.scheduleAtFixedRate(this::updateFailedConnections, updateTaskInitialDelay, updateTaskFixedRate, TimeUnit.SECONDS);
+        Runnable runnable = new RetryingRunnable(this::updateFailedConnections, updateTaskMaxRetries);
+        updateTask = executorService.scheduleAtFixedRate(runnable, updateTaskInitialDelay, updateTaskFixedRate, TimeUnit.SECONDS);
     }
 
     private void stop() throws IOException {

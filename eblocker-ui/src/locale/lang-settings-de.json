@@ -3933,6 +3933,21 @@
                 "TITLE" : "Netzwerk"
             }
         },
+        "NETWORK_IPV6" : {
+            "DETAILS" : {
+                "P1" : "P1",
+                "P2" : "P2",
+                "P3" : "P3",
+                "P4" : "P4",
+                "P5" : "P5",
+                "P6" : "P6"
+            },
+            "OVERVIEW" : {
+                "P1" : "P1",
+                "P2" : "P2",
+                "TITLE" : "IPv6"
+            }
+        },
         "PARENTAL_CONTROL" : {
             "BLACKLIST" : {
                 "OVERVIEW" : {

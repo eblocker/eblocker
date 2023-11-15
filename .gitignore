@@ -7,6 +7,7 @@ target
 *.iml
 .DS_Store
 *~
+*.log
 
 .cache
 

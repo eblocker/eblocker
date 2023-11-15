@@ -43,6 +43,7 @@ public class SquidWarningServiceTest {
     private final long MAX_BACKLOG_DAYS = 3;
     private final long UPDATE_TASK_INITIAL_DELAY = 300;
     private final long UPDATE_TASK_FIXED_RATE = 900;
+    private final long UPDATE_TASK_MAX_RETRIES = 10;
     private String IGNORED_ERRORS = "ignored:0, ignored:1";
 
     private TestClock clock;
@@ -65,7 +66,9 @@ public class SquidWarningServiceTest {
         squidCacheLogReader = Mockito.mock(SquidCacheLogReader.class);
         Mockito.when(squidCacheLogReader.pollFailedConnections()).thenReturn(Collections.emptyList());
 
-        squidWarningService = new SquidWarningService(MAX_BACKLOG_DAYS, IGNORED_ERRORS, UPDATE_TASK_INITIAL_DELAY, UPDATE_TASK_FIXED_RATE, clock, dataSource, deviceService, scheduledExecutorService, squidCacheLogReader, squidConfigController);
+        squidWarningService = new SquidWarningService(MAX_BACKLOG_DAYS, IGNORED_ERRORS,
+                UPDATE_TASK_INITIAL_DELAY, UPDATE_TASK_FIXED_RATE, UPDATE_TASK_MAX_RETRIES,
+                clock, dataSource, deviceService, scheduledExecutorService, squidCacheLogReader, squidConfigController);
     }
 
     @Test

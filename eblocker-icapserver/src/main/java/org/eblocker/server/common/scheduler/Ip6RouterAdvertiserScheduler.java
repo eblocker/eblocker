@@ -18,6 +18,7 @@ package org.eblocker.server.common.scheduler;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.executor.RetryingRunnable;
 import org.eblocker.server.common.network.Ip6RouterAdvertiser;
 
 public class Ip6RouterAdvertiserScheduler extends FixedRateScheduler {
@@ -25,8 +26,8 @@ public class Ip6RouterAdvertiserScheduler extends FixedRateScheduler {
     @Inject
     public Ip6RouterAdvertiserScheduler(@Named("executor.ip6RouterAdvertisement.startupDelay") long initialDelay,
                                         @Named("executor.ip6RouterAdvertisement.fixedRate") long fixedRate,
+                                        @Named("executor.ip6RouterAdvertisement.maxRetries") long maxRetries,
                                         Ip6RouterAdvertiser ip6RouterAdvertiser) {
-        super(ip6RouterAdvertiser::advertise, initialDelay, fixedRate);
+        super(new RetryingRunnable(ip6RouterAdvertiser::advertise, maxRetries), initialDelay, fixedRate);
     }
 }
-

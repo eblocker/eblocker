@@ -236,6 +236,7 @@ public class LoggingExecutorService implements ScheduledExecutorService {
         }
     }
 
+    /** This wrapper exists so we can use the above LoggingCallable for Runnables, too */
     class RunnableCallable implements Runnable {
         private final Callable<?> callable;
 
@@ -255,6 +256,7 @@ public class LoggingExecutorService implements ScheduledExecutorService {
         }
     }
 
+    /** This wrapper exists so we can use the above LoggingCallable for Runnables, too */
     private class CallableRunnable<T> implements Callable<T> {
         private final Runnable runnable;
 

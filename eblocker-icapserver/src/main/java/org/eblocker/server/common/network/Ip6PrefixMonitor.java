@@ -24,6 +24,8 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
 @Singleton
 @SubSystemService(SubSystem.HTTP_SERVER)
 public class Ip6PrefixMonitor {
+    private static final Logger log = LoggerFactory.getLogger(Ip6PrefixMonitor.class);
+
     private Set<String> currentPrefixes;
     private final NetworkInterfaceWrapper networkInterface;
 
@@ -49,6 +53,7 @@ public class Ip6PrefixMonitor {
     @SubSystemInit
     public void init() {
         currentPrefixes = getPrefixes();
+        log.debug("Loaded initial IPv6 prefixes: {}", currentPrefixes);
         networkInterface.addIpAddressChangeListener(this::updatePrefixes);
     }
 
@@ -58,6 +63,7 @@ public class Ip6PrefixMonitor {
         }
         Set<String> prefixes = getPrefixes();
         if (!currentPrefixes.equals(prefixes)) {
+            log.debug("IPv6 prefixes have changed from {} to {}. Notifying listeners.", currentPrefixes, prefixes);
             currentPrefixes = prefixes;
             notifyPrefixChangeListeners();
         }

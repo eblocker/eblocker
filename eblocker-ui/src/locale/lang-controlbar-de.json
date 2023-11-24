@@ -1,286 +1,285 @@
 {
-    "CONTROLBAR" : {
-        "DIALOGS" : {
-            "CLOAKING" : {
-                "CUSTOM" : {
-                    "BODY" : "Um beispielsweise dynamische Preisdiskriminierung auf Basis der Geräteidentifikation in Shops zu vermeiden, können Sie die Geräteidentifikation anpassen. Die Geräteidentifikation (der sog. UserAgent) wird während des Surfens an den Web-Server gesendet.",
-                    "BUTTON" : {
-                        "CANCEL" : "Abbrechen",
-                        "OK" : "User Agent Einstellen"
+    "CONTROLBAR": {
+        "DIALOGS": {
+            "CLOAKING": {
+                "CUSTOM": {
+                    "BODY": "Um beispielsweise dynamische Preisdiskriminierung auf Basis der Geräteidentifikation in Shops zu vermeiden, kannst du die Geräteidentifikation anpassen. Die Geräteidentifikation (der sog. UserAgent) wird während des Surfens an den Web-Server gesendet.",
+                    "BUTTON": {
+                        "CANCEL": "Abbrechen",
+                        "OK": "User Agent Einstellen"
                     },
-                    "ERROR" : {
-                        "REQUIRED" : "Bitte geben Sie einen UserAgent ein."
+                    "ERROR": {
+                        "REQUIRED": "Bitte gib einen UserAgent ein."
                     },
-                    "INPUT" : "User Agent String",
-                    "TITLE" : "Benutzerdefinierte Geräteidentifikation"
+                    "INPUT": "User Agent String",
+                    "TITLE": "Benutzerdefinierte Geräteidentifikation"
                 }
             },
-            "MESSAGE" : {
-                "CENTER" : {
-                    "DATE_FORMAT" : "D. MMM YYYY",
-                    "DO_NOT_SHOW_AGAIN" : "Nicht mehr anzeigen",
-                    "MESSAGES_AVAILABLE" : "Neue Nachrichten verfügbar: ",
-                    "MESSAGE_NO_NEW" : "Keine neuen Nachrichten.",
-                    "MESSAGE_NO_NEW_EXPLAIN" : "Es gibt derzeit keine neuen Nachrichten.",
-                    "TITLE" : "eBlocker Nachrichten",
-                    "TOOLTIP_CLOSE" : "Diese Nachricht schließen"
+            "MESSAGE": {
+                "CENTER": {
+                    "DATE_FORMAT": "D. MMM YYYY",
+                    "DO_NOT_SHOW_AGAIN": "Nicht mehr anzeigen",
+                    "MESSAGES_AVAILABLE": "Neue Nachrichten verfügbar: ",
+                    "MESSAGE_NO_NEW": "Keine neuen Nachrichten.",
+                    "MESSAGE_NO_NEW_EXPLAIN": "Es gibt derzeit keine neuen Nachrichten.",
+                    "TITLE": "eBlocker Nachrichten",
+                    "TOOLTIP_CLOSE": "Diese Nachricht schließen"
                 }
             },
-            "PAUSE" : {
-                "CONFIRMATION" : {
-                    "BODY_PART_1" : "Wenn der eBlocker für dieses Gerät pausiert, steht auch die ControlBar nicht mehr zur Verfügung. In einem parallelen Browser-Tab wird das eBlocker Dashboard geöffnet.",
-                    "BODY_PART_2" : "Über das Dashboard können Sie die Pause-Zeit jederzeit verlängern oder beenden, sowie andere eBlocker-Funktionen steuern.",
-                    "BUTTON" : {
-                        "CANCEL" : "Abbrechen",
-                        "OK" : "Pause aktivieren"
+            "PAUSE": {
+                "CONFIRMATION": {
+                    "BODY_PART_1": "Wenn der eBlocker für dieses Gerät pausiert, steht auch die ControlBar nicht mehr zur Verfügung. In einem parallelen Browser-Tab wird das eBlocker Dashboard geöffnet.",
+                    "BODY_PART_2": "Über das Dashboard kannst du die Pause-Zeit jederzeit verlängern oder beenden, sowie andere eBlocker-Funktionen steuern.",
+                    "BUTTON": {
+                        "CANCEL": "Abbrechen",
+                        "OK": "Pause aktivieren"
                     },
-                    "DO_NOT_SHOW_AGAIN" : "Nicht mehr anzeigen",
-                    "TITLE" : "Pause Funktion für dieses Gerät"
+                    "DO_NOT_SHOW_AGAIN": "Nicht mehr anzeigen",
+                    "TITLE": "Pause Funktion für dieses Gerät"
                 }
             },
-            "PIN" : {
-                "BUTTON" : {
-                    "CANCEL" : "Abbrechen",
-                    "LOCK" : "Sperren",
-                    "LOGIN" : "Benutzer wechseln",
-                    "OK" : "Ok"
+            "PIN": {
+                "BUTTON": {
+                    "CANCEL": "Abbrechen",
+                    "LOCK": "Sperren",
+                    "LOGIN": "Benutzer wechseln",
+                    "OK": "Ok"
                 },
-                "ERROR" : {
-                    "INVALID" : "PIN ist falsch.",
-                    "REQUIRED" : "PIN ist erforderlich."
+                "ERROR": {
+                    "INVALID": "PIN ist falsch.",
+                    "REQUIRED": "PIN ist erforderlich."
                 },
-                "INPUT" : "PIN-Eingabe",
-                "PIN_CHANGE" : {
-                    "ERROR" : {
-                        "INVALID" : "Falsche PIN",
-                        "MISMATCH" : "PINs stimmen nicht überein.",
-                        "REQUIRED" : "Geben Sie eine PIN ein.",
-                        "TOO_LONG" : "PIN ist zu lang",
-                        "TOO_SHORT" : "PIN muss mindestens 4 Zeichen haben."
+                "INPUT": "PIN-Eingabe",
+                "PIN_CHANGE": {
+                    "ERROR": {
+                        "INVALID": "Falsche PIN",
+                        "MISMATCH": "PINs stimmen nicht überein.",
+                        "REQUIRED": "Gib eine PIN ein.",
+                        "TOO_LONG": "PIN ist zu lang",
+                        "TOO_SHORT": "PIN muss mindestens 4 Zeichen haben."
                     },
-                    "HEADER" : "PIN ändern",
-                    "INPUT_CURRENT" : "Aktuelle PIN",
-                    "INPUT_NEW" : "Neue PIN",
-                    "INPUT_RENEW" : "Neue PIN wiederholen"
+                    "HEADER": "PIN ändern",
+                    "INPUT_CURRENT": "Aktuelle PIN",
+                    "INPUT_NEW": "Neue PIN",
+                    "INPUT_RENEW": "Neue PIN wiederholen"
                 },
-                "PIN_LOCK" : {
-                    "BODY" : "Sind Sie sicher, dass der Internet-Zugang für dieses Gerät gesperrt werden soll?",
-                    "HEADER" : "Internet-Zugang sperren"
+                "PIN_LOCK": {
+                    "BODY": "Bist du sicher, dass der Internet-Zugang für dieses Gerät gesperrt werden soll?",
+                    "HEADER": "Internet-Zugang sperren"
                 },
-                "PIN_SELECT_USER" : {
-                    "BODY_LOCK" : "Alternativ können Sie den Internet-Zugang für das Gerät sperren.",
-                    "BODY_POST" : " ist die Eingabe der Benutzer-PIN notwendig.",
-                    "BODY_PRE" : "Für den Wechsel auf den Benutzer ",
-                    "HEADER" : "PIN-Eingabe erforderlich"
+                "PIN_SELECT_USER": {
+                    "BODY_LOCK": "Alternativ kannst du den Internet-Zugang für das Gerät sperren.",
+                    "BODY_POST": " ist die Eingabe der Benutzer-PIN notwendig.",
+                    "BODY_PRE": "Für den Wechsel auf den Benutzer ",
+                    "HEADER": "PIN-Eingabe erforderlich"
                 }
             },
-            "TOR" : {
-                "VERIFY" : {
-                    "BODY" : "Sie können einen der folgenden Dienste verwenden, um zu überprüfen, ob eine Verbindung über ein Anonymisierungsnetzwerk besteht, bzw. welche Daten von außen sichtbar sind. Bitte beachten Sie, dass eBlocker keine Gewähr für die Verfügbarkeit oder die korrekte Funktion der Dienste übernehmen kann.",
-                    "BUTTON" : {
-                        "CANCEL" : "Abbrechen"
+            "TOR": {
+                "VERIFY": {
+                    "BODY": "Du kannst einen der folgenden Dienste verwenden, um zu überprüfen, ob eine Verbindung über ein Anonymisierungsnetzwerk besteht, bzw. welche Daten von außen sichtbar sind. Bitte beachte, dass eBlocker keine Gewähr für die Verfügbarkeit oder die korrekte Funktion der Dienste übernehmen kann.",
+                    "BUTTON": {
+                        "CANCEL": "Abbrechen"
                     },
-                    "TITLE" : "Verbindung prüfen"
+                    "TITLE": "Verbindung prüfen"
                 }
             },
-            "VPN" : {
-                "ACTIVATION" : {
-                    "BUTTON" : {
-                        "BLANK_PAGE" : "Auf leere Seite wechseln",
-                        "CANCEL" : "Abbrechen",
-                        "CONTINUE" : "Auf dieser Seite bleiben"
+            "VPN": {
+                "ACTIVATION": {
+                    "BUTTON": {
+                        "BLANK_PAGE": "Auf leere Seite wechseln",
+                        "CANCEL": "Abbrechen",
+                        "CONTINUE": "Auf dieser Seite bleiben"
                     },
-                    "ERROR" : {
-                        "CONNECTION_FAILURE" : "Verbindung fehlgeschlagen.",
-                        "CONNECTION_TIMEOUT" : "Zeitüberschreitung bei Verbindungsaufbau.",
-                        "LIST_ERRORS" : "Verbindungsfehler:"
+                    "ERROR": {
+                        "CONNECTION_FAILURE": "Verbindung fehlgeschlagen.",
+                        "CONNECTION_TIMEOUT": "Zeitüberschreitung bei Verbindungsaufbau.",
+                        "LIST_ERRORS": "Verbindungsfehler:"
                     },
-                    "SUCCESS" : "Verbindung erfolgreich hergestellt.",
-                    "SUCCESS_TEXT" : "Der Verbleib auf der aktuellen Website kann durch eine bestehende Sitzung Ihre neue IP-Adresse offenbaren.",
-                    "TITLE" : "Verbindung herstellen mit VPN: {{name}}"
+                    "SUCCESS": "Verbindung erfolgreich hergestellt.",
+                    "SUCCESS_TEXT": "Der Verbleib auf der aktuellen Website kann durch eine bestehende Sitzung deine neue IP-Adresse offenbaren.",
+                    "TITLE": "Verbindung herstellen mit VPN: {{name}}"
                 }
             }
         },
-        "DROPDOWN_FILTERS" : {
-            "ALLOW_ON_THIS_WEBSITE" : "auf dieser Website",
-            "FOUND_ON_THIS_PAGE" : "Auf dieser Website",
-            "LABEL_ENABLE_FILTERS" : "Zu den Einstellungen",
-            "LABEL_FILTERS_DISABLED" : "Blocker sind nicht aktiviert.",
-            "LABEL_LAST_MINUTE" : "Letzte Minute:",
-            "LABEL_TEN_MINUTE" : "Letzten 10 Minuten:",
-            "MORE" : "Mehr..."
+        "DROPDOWN_FILTERS": {
+            "ALLOW_ON_THIS_WEBSITE": "auf dieser Website",
+            "FOUND_ON_THIS_PAGE": "Auf dieser Website",
+            "LABEL_ENABLE_FILTERS": "Zu den Einstellungen",
+            "LABEL_FILTERS_DISABLED": "Blocker sind nicht aktiviert.",
+            "LABEL_LAST_MINUTE": "Letzte Minute:",
+            "LABEL_TEN_MINUTE": "Letzten 10 Minuten:",
+            "MORE": "Mehr..."
         },
-        "MENU" : {
-            "ACTIVATION" : {
-                "LABEL_REGISTER" : "Aktivierung",
-                "LABEL_RENEW" : "Lizenz erneuern",
-                "TOOLTIP_REGISTER" : "Registrieren Sie Ihren eBlocker, um alle Features freizuschalten",
-                "TOOLTIP_RENEW" : "Erneuern Sie Ihre Lizenz, um alle Features weiterhin nutzen zu können."
+        "MENU": {
+            "ACTIVATION": {
+                "LABEL_REGISTER": "Aktivierung",
+                "LABEL_RENEW": "Lizenz erneuern",
+                "TOOLTIP_REGISTER": "Registriere deinen eBlocker, um alle Features freizuschalten",
+                "TOOLTIP_RENEW": "Erneuere deine Lizenz, um alle Features weiterhin nutzen zu können."
             },
-            "ADS" : {
-                "LABEL" : "Werbung",
-                "MENU" : {
-                    "LABEL_ALLOW_LOCAL" : "Erlaube Werbung...",
-                    "LABEL_BLOCKED" : "Werbung blockiert:",
-                    "LABEL_BLOCK_GLOBAL" : "Blockiere Werbung"
+            "ADS": {
+                "LABEL": "Werbung",
+                "MENU": {
+                    "LABEL_ALLOW_LOCAL": "Erlaube Werbung...",
+                    "LABEL_BLOCKED": "Werbung blockiert:",
+                    "LABEL_BLOCK_GLOBAL": "Blockiere Werbung"
                 },
-                "TOOLTIP_ALLOW_GLOBAL" : "Werbung ist global erlaubt",
-                "TOOLTIP_ALLOW_LOCAL" : "Werbung ist auf dieser Seite erlaubt",
-                "TOOLTIP_BLOCK" : "{param, select, 0{Keine Werbung gefunden} 1{Es wird eine Werbung geblockt} other{Es werden {param} Werbungen geblockt}}",
-                "TOOLTIP_BLOCK_DNS" : "Der Domain-Blocker ist aktiv",
-                "TOOLTIP_NO_FILTER" : "Blocker sind nicht aktiv. Aktivieren Sie die Blocker, um dieses Gerät zu schützen."
+                "TOOLTIP_ALLOW_GLOBAL": "Werbung ist global erlaubt",
+                "TOOLTIP_ALLOW_LOCAL": "Werbung ist auf dieser Seite erlaubt",
+                "TOOLTIP_BLOCK": "{param, select, 0{Keine Werbung gefunden} 1{Es wird eine Werbung geblockt} other{Es werden {param} Werbungen geblockt}}",
+                "TOOLTIP_BLOCK_DNS": "Der Domain-Blocker ist aktiv",
+                "TOOLTIP_NO_FILTER": "Blocker sind nicht aktiv. Aktiviere die Blocker, um dieses Gerät zu schützen."
             },
-            "ANON" : {
-                "LABEL" : "IP-Anon",
-                "MENU" : {
-                    "ACTIONS" : {
-                        "CHECK_CONNECTION" : "Verbindung prüfen",
-                        "CONFIGURE_CONNECTION" : "Konfigurieren",
-                        "GET_NEW_TOR_ID" : "Neue Tor-Identität beziehen",
-                        "START_TOR" : "Tor-Netzwerk"
+            "ANON": {
+                "LABEL": "IP-Anon",
+                "MENU": {
+                    "ACTIONS": {
+                        "CHECK_CONNECTION": "Verbindung prüfen",
+                        "CONFIGURE_CONNECTION": "Konfigurieren",
+                        "GET_NEW_TOR_ID": "Neue Tor-Identität beziehen",
+                        "START_TOR": "Tor-Netzwerk"
                     },
-                    "LABEL" : "Anonymisieren über...",
-                    "LABEL_TOR" : "Tor-Netzwerk",
-                    "LABEL_VPN_PREFIX" : "VPN: ",
-                    "TOOLTIP_ACTIVATE" : "Aktiviere",
-                    "TOOLTIP_DEACTIVATE" : "Deaktiviere"
+                    "LABEL": "Anonymisieren über...",
+                    "LABEL_TOR": "Tor-Netzwerk",
+                    "LABEL_VPN_PREFIX": "VPN: ",
+                    "TOOLTIP_ACTIVATE": "Aktiviere",
+                    "TOOLTIP_DEACTIVATE": "Deaktiviere"
                 },
-                "NOTIFICATION" : {
-                    "CONNECTION_DOWN" : "VPN {{name}} wird nicht mehr verwendet.",
-                    "TOR_CONNECT" : "Verbindung zum Tor-Netzwerk wurde aufgebaut.",
-                    "TOR_DISCONNECT" : "Verbindung zum Tor-Netzwerk wurde getrennt.",
-                    "TOR_ID_RENEW_ERROR" : "Fehler beim Beziehen einer neuen Tor-Identität.",
-                    "TOR_ID_RENEW_SUCCESS" : "Die Tor-Identität wurde erneuert.",
-                    "VPN_CONNECT" : "VPN Verbindung wurde aufgebaut.",
-                    "VPN_DISCONNECT" : "VPN Verbindung wurde getrennt."
+                "NOTIFICATION": {
+                    "CONNECTION_DOWN": "VPN {{name}} wird nicht mehr verwendet.",
+                    "TOR_CONNECT": "Verbindung zum Tor-Netzwerk wurde aufgebaut.",
+                    "TOR_DISCONNECT": "Verbindung zum Tor-Netzwerk wurde getrennt.",
+                    "TOR_ID_RENEW_ERROR": "Fehler beim Beziehen einer neuen Tor-Identität.",
+                    "TOR_ID_RENEW_SUCCESS": "Die Tor-Identität wurde erneuert.",
+                    "VPN_CONNECT": "VPN Verbindung wurde aufgebaut.",
+                    "VPN_DISCONNECT": "VPN Verbindung wurde getrennt."
                 },
-                "TOOLTIP_ACTIVATE" : "Aktiviere IP Anonymisierung",
-                "TOOLTIP_DEACTIVATE" : "Ändere oder deaktiviere IP Anonymisierung"
+                "TOOLTIP_ACTIVATE": "Aktiviere IP Anonymisierung",
+                "TOOLTIP_DEACTIVATE": "Ändere oder deaktiviere IP Anonymisierung"
             },
-            "CLOAKING" : {
-                "ALERT_NO_HTTPS" : "HTTPS deaktiviert",
-                "LABEL" : "Tarnung",
-                "MENU" : {
-                    "ACTION" : {
-                        "CUSTOM" : "Benutzerdefiniertes Gerät"
+            "CLOAKING": {
+                "ALERT_NO_HTTPS": "HTTPS deaktiviert",
+                "LABEL": "Tarnung",
+                "MENU": {
+                    "ACTION": {
+                        "CUSTOM": "Benutzerdefiniertes Gerät"
                     },
-                    "DISABLE" : "Nicht getarnt",
-                    "LABEL" : "Tarnen als..."
+                    "DISABLE": "Nicht getarnt",
+                    "LABEL": "Tarnen als..."
                 },
-                "TOOLTIP" : "Tarnen Sie Ihr Gerät",
-                "TOOLTIP_ACTIVATE" : "Tarnen als",
-                "TOOLTIP_ALERT_NO_HTTPS" : "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht 100% wirksam.",
-                "TOOLTIP_CLOAKED" : "Getarnt als {param}",
-                "TOOLTIP_DEACTIVATE" : "Nicht mehr tarnen als"
+                "TOOLTIP": "Tarne dein Gerät",
+                "TOOLTIP_ACTIVATE": "Tarnen als",
+                "TOOLTIP_ALERT_NO_HTTPS": "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht 100% wirksam.",
+                "TOOLTIP_CLOAKED": "Getarnt als {param}",
+                "TOOLTIP_DEACTIVATE": "Nicht mehr tarnen als"
             },
-            "DASHBOARD" : {
-                "LABEL" : "Dashboard",
-                "TOOLTIP" : "Öffnet das Dashboard für dieses Gerät"
+            "DASHBOARD": {
+                "LABEL": "Dashboard",
+                "TOOLTIP": "Öffnet das Dashboard für dieses Gerät"
             },
-            "HELP" : {
-                "LABEL" : "Hilfe",
-                "TOOLTIP" : "Zur Online-Hilfe"
+            "HELP": {
+                "LABEL": "Hilfe",
+                "TOOLTIP": "Zur Online-Hilfe"
             },
-            "MESSAGES" : {
-                "LABEL" : "Nachrichten",
-                "NOTIFICATION" : {
-                    "HAS_ALERT" : "Sie haben wichtige Nachrichten!"
+            "MESSAGES": {
+                "LABEL": "Nachrichten",
+                "NOTIFICATION": {
+                    "HAS_ALERT": "Du hast wichtige Nachrichten!"
                 },
-                "TOOLTIP" : "Sie haben {param, select, 0{keine} other{{param}}} {param, select, 1{Nachricht} other{Nachrichten}}"
+                "TOOLTIP": "Du hast {param, select, 0{keine} other{{param}}} {param, select, 1{Nachricht} other{Nachrichten}}"
             },
-            "ONLINE_TIME" : {
-                "LABEL" : "Online-Zeiten",
-                "MENU" : {
-                    "ACCESS_CONTINGENTS_FOR" : "Online-Zeiten:",
-                    "ACTION" : {
-                        "USAGE_START" : "Start",
-                        "USAGE_STOP" : "Stop"
+            "ONLINE_TIME": {
+                "LABEL": "Online-Zeiten",
+                "MENU": {
+                    "ACCESS_CONTINGENTS_FOR": "Online-Zeiten:",
+                    "ACTION": {
+                        "USAGE_START": "Start",
+                        "USAGE_STOP": "Stop"
                     },
-                    "REMAINING_TIME" : {
-                        "INFIX" : " {hours, select, 1{eine} other{{hours}}} {hours, select, 1{Stunde} other{Stunden}} und ",
-                        "POSTFIX" : " {min, select, 1{eine} other{{min}}} {min, select, 1{Minute} other{Minuten}}",
-                        "PREFIX" : "Noch "
+                    "REMAINING_TIME": {
+                        "INFIX": " {hours, select, 1{eine} other{{hours}}} {hours, select, 1{Stunde} other{Stunden}} und ",
+                        "POSTFIX": " {min, select, 1{eine} other{{min}}} {min, select, 1{Minute} other{Minuten}}",
+                        "PREFIX": "Noch "
                     },
-                    "TOOLTIP" : {
-                        "USAGE_START" : "Internet-Nutzung beginnen",
-                        "USAGE_STOP" : "Internet-Nutzung stoppen"
+                    "TOOLTIP": {
+                        "USAGE_START": "Internet-Nutzung beginnen",
+                        "USAGE_STOP": "Internet-Nutzung stoppen"
                     }
                 },
-                "TOOLTIP" : "Verwalten Sie Ihre Online-Zeiten."
+                "TOOLTIP": "Verwalte deine Online-Zeiten."
             },
-            "PAUSE" : {
-                "LABEL" : "Pause",
-                "TOOLTIP" : "Den eBlocker für dieses Gerät pausieren"
+            "PAUSE": {
+                "LABEL": "Pause",
+                "TOOLTIP": "Den eBlocker für dieses Gerät pausieren"
             },
-            "SETTINGS" : {
-                "LABEL" : "Einstellungen",
-                "TOOLTIP" : "Öffnet die eBlocker Einstellungen"
+            "SETTINGS": {
+                "LABEL": "Einstellungen",
+                "TOOLTIP": "Öffnet die eBlocker Einstellungen"
             },
-            "TRACKERS" : {
-                "LABEL" : "Tracker",
-                "MENU" : {
-                    "LABEL_ALLOW_LOCAL" : "Erlaube Tracker...",
-                    "LABEL_BLOCKED" : "Tracker blockiert:",
-                    "LABEL_BLOCK_GLOBAL" : "Blockiere Tracker"
+            "TRACKERS": {
+                "LABEL": "Tracker",
+                "MENU": {
+                    "LABEL_ALLOW_LOCAL": "Erlaube Tracker...",
+                    "LABEL_BLOCKED": "Tracker blockiert:",
+                    "LABEL_BLOCK_GLOBAL": "Blockiere Tracker"
                 },
-                "TOOLTIP_ALLOW_GLOBAL" : "Tracker sind global erlaubt",
-                "TOOLTIP_ALLOW_LOCAL" : "Tracker sind auf dieser Seite erlaubt",
-                "TOOLTIP_BLOCK" : "{param, select, 0{Keine Tracker gefunden} 1{Es wird ein Tracker geblockt} other{Es werden {param} Tracker geblockt}}",
-                "TOOLTIP_BLOCK_DNS" : "Der Domain-Blocker ist aktiv",
-                "TOOLTIP_NO_FILTER" : "Blocker sind nicht aktiv. Aktivieren Sie die Blocker, um dieses Gerät zu schützen."
+                "TOOLTIP_ALLOW_GLOBAL": "Tracker sind global erlaubt",
+                "TOOLTIP_ALLOW_LOCAL": "Tracker sind auf dieser Seite erlaubt",
+                "TOOLTIP_BLOCK": "{param, select, 0{Keine Tracker gefunden} 1{Es wird ein Tracker geblockt} other{Es werden {param} Tracker geblockt}}",
+                "TOOLTIP_BLOCK_DNS": "Der Domain-Blocker ist aktiv",
+                "TOOLTIP_NO_FILTER": "Blocker sind nicht aktiv. Aktiviere die Blocker, um dieses Gerät zu schützen."
             },
-            "USER" : {
-                "ACTIONS" : {
-                    "CHANGE_PIN" : "PIN ändern",
-                    "CHANGE_USER" : "Benutzer wechseln:",
-                    "LOCK_INTERNET" : "Internet-Zugang sperren",
-                    "RETURN_DEVICE" : "Gerät zurückgeben"
+            "USER": {
+                "ACTIONS": {
+                    "CHANGE_PIN": "PIN ändern",
+                    "CHANGE_USER": "Benutzer wechseln:",
+                    "LOCK_INTERNET": "Internet-Zugang sperren",
+                    "RETURN_DEVICE": "Gerät zurückgeben"
                 },
-                "LABEL" : "Benutzer",
-                "LABEL_NO_OP" : "Gerät ist derzeit gesperrt.",
-                "LABEL_SYSTEM" : "Gesperrt",
-                "MENU" : {
-                    "LABEL_ASSIGNED_USER" : "Dieses Gerät gehört:",
-                    "LABEL_OPERATING_USER" : "Gerät wird verwendet von:"
+                "LABEL": "Benutzer",
+                "LABEL_NO_OP": "Gerät ist derzeit gesperrt.",
+                "LABEL_SYSTEM": "Gesperrt",
+                "MENU": {
+                    "LABEL_ASSIGNED_USER": "Dieses Gerät gehört:",
+                    "LABEL_OPERATING_USER": "Gerät wird verwendet von:"
                 },
-                "TOOLTIP" : "Dieses Gerät wird gerade von {param} genutzt."
+                "TOOLTIP": "Dieses Gerät wird gerade von {param} genutzt."
             }
         },
-        "SERVICE" : {
-            "USER" : {
-                "NOTIFICATION" : {
-                    "ERROR" : {
-                        "CHANGE_PIN_FAIL" : "Die PIN ist falsch.",
-                        "NOT_PERMITTED" : "Diese Aktion ist nicht erlaubt.",
-                        "OTHER_ERROR" : "Die Aktion konnte nicht ausgeführt werden.",
-                        "PIN_INVALID" : "Die PIN ist falsch.",
-                        "USER_NOT_AVAILABLE" : "Benutzer konnten nicht geladen werden."
+        "SERVICE": {
+            "USER": {
+                "NOTIFICATION": {
+                    "ERROR": {
+                        "CHANGE_PIN_FAIL": "Die PIN ist falsch.",
+                        "NOT_PERMITTED": "Diese Aktion ist nicht erlaubt.",
+                        "OTHER_ERROR": "Die Aktion konnte nicht ausgeführt werden.",
+                        "PIN_INVALID": "Die PIN ist falsch.",
+                        "USER_NOT_AVAILABLE": "Benutzer konnten nicht geladen werden."
                     },
-                    "SUCCESS" : {
-                        "CHANGE_PIN" : "Ihre PIN wurde geändert."
+                    "SUCCESS": {
+                        "CHANGE_PIN": "Deine PIN wurde geändert."
                     }
                 }
             }
         }
     },
-    "EXPIRED" : {
-        "CARD" : {
-            "BUTTON" : {
-                "RESUME" : "Weiterarbeiten"
+    "EXPIRED": {
+        "CARD": {
+            "BUTTON": {
+                "RESUME": "Weiterarbeiten"
             },
-            "TEXT" : "Ihre Sitzung ist abgelaufen.",
-            "TITLE" : "Sitzung abgelaufen"
+            "TEXT": "Deine Sitzung ist abgelaufen.",
+            "TITLE": "Sitzung abgelaufen"
         }
     },
-    "IDLE" : {
-        "DIALOG" : {
-            "BUTTON" : {
-                "RESUME" : "Weiter"
+    "IDLE": {
+        "DIALOG": {
+            "BUTTON": {
+                "RESUME": "Weiter"
             },
-            "TEXT" : "Ihre Sitzung läuft in {countdown} {countdown, select, 1{Sekunde} other{Sekunden}} ab.",
-            "TITLE" : "Sitzung läuft ab"
+            "TEXT": "Deine Sitzung läuft in {countdown} {countdown, select, 1{Sekunde} other{Sekunden}} ab.",
+            "TITLE": "Sitzung läuft ab"
         }
     },
-    "PARENTAL_CONTROL_USER_NAME" : "{{ name }}"
+    "PARENTAL_CONTROL_USER_NAME": "{{ name }}"
 }
-

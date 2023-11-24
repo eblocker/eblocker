@@ -27,7 +27,7 @@
             },
             "TAB" : {
                 "DEVICE" : {
-                    "EBLOCKER_DEVICE_NAME_LABEL" : "Optional device name (i.e. \"John’s eBlocker\")",
+                    "EBLOCKER_DEVICE_NAME_LABEL" : "Optional device name (i.e. \"John's eBlocker\")",
                     "INTRO" : "Please enter an optional name for your eBlocker. This is useful, if you are using several eBlockers.",
                     "LABEL" : "Device",
                     "SERIAL_EXPLAIN_PART1" : "Please enter the device serial number. You find it on type label at the bottom side of the eBlocker (Format of the serial number: {{serialSample}}).",
@@ -75,7 +75,7 @@
                     "ERROR_REGISTER_EMAIL_MISSING" : "Please enter an email address.",
                     "LABEL" : "License",
                     "LICENSE_KEY_LABEL" : "License key",
-                    "LICENSE_KEY_WAS_SENT_TO_YOU_IF_NOT" : "If you didn’t receive a license key, ",
+                    "LICENSE_KEY_WAS_SENT_TO_YOU_IF_NOT" : "If you did not receive a license key, ",
                     "PLEASE_ENTER_EMAIL_HERE" : "Please enter your email address here",
                     "PLEASE_LET_US_KNOW" : "please contact us.",
                     "REGISTERING_STATUS_LABEL" : "Activation data are transferred...",
@@ -353,8 +353,8 @@
                 "GENERATE" : "Save Settings",
                 "UPLOAD" : "Restore Settings..."
             },
-	    "DATA_DEVICE_SETTINGS" : "Device settings",
-	    "DATA_TOR_SETTINGS" : "Tor settings",
+            "DATA_DEVICE_SETTINGS" : "Device settings",
+            "DATA_TOR_SETTINGS" : "Tor settings",
             "DATA_TRUSTED_APPS" : "Trusted apps",
             "DATA_TRUSTED_SITES" : "Trusted websites",
             "ERROR" : {
@@ -2018,7 +2018,7 @@
             "LABEL" : "Legal Information",
             "OSS_LABEL" : "Open Source Licenses",
             "TRADEMARK_LABEL": "Trademarks",
-            "TRADEMARK": "The brand name “eBlocker” and the eBlocker icon are licensed trademarks of eBlocker Open Source UG (limited liability). Third parties are prohibited to use them without written permission."
+            "TRADEMARK": "The brand name „eBlocker“ and the eBlocker icon are licensed trademarks of eBlocker Open Source UG (limited liability). Third parties are prohibited to use them without written permission."
         },
         "LICENSE" : {
             "ACTION" : {
@@ -2643,7 +2643,7 @@
                     "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
- 		"LINK_TEXT" : "release notes",
+                "LINK_TEXT" : "release notes",
                 "LINK_URL" : "https://eblocker.org/docs/release-notes-2-11/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",

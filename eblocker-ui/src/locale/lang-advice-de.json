@@ -1,68 +1,67 @@
 {
     "GENERAL": {
-        "ACTION" : {
+        "ACTION": {
             "STOP_COUNTDOWN": "Warten"
         },
         "COUNTDOWN": {
             "LABEL": "Dieses Fenster wird {sec, select, 0{jetzt} 1{in einer Sekunde} other{in {sec} Sekunden}} automatisch geschlossen"
         }
     },
-    "ADVICE" : {
-        "ACTION" : {
-            "DASHBOARD" : "Dashboard öffnen",
-            "OK" : "Weiter"
+    "ADVICE": {
+        "ACTION": {
+            "DASHBOARD": "Dashboard öffnen",
+            "OK": "Weiter"
         },
-        "LABEL_NOT_AGAIN" : "Hinweis auf diesem Gerät nicht mehr anzeigen",
-        "LABEL_NOT_AGAIN_XS" : "Nicht mehr anzeigen",
-        "NOTIFICATION" : {
-            "UDDATE_ERROR" : "Es ist ein Fehler aufgetreten.",
-            "UPDATE_HINT" : "Hinweis wird für dieses Gerät jedes mal angezeigt",
-            "UPDATE_NO_HINT" : "Hinweis wird für dieses Gerät nicht mehr angezeigt"
+        "LABEL_NOT_AGAIN": "Hinweis auf diesem Gerät nicht mehr anzeigen",
+        "LABEL_NOT_AGAIN_XS": "Nicht mehr anzeigen",
+        "NOTIFICATION": {
+            "UDDATE_ERROR": "Es ist ein Fehler aufgetreten.",
+            "UPDATE_HINT": "Hinweis wird für dieses Gerät jedes mal angezeigt",
+            "UPDATE_NO_HINT": "Hinweis wird für dieses Gerät nicht mehr angezeigt"
         },
-        "PROTECTION_BAS" : "Sie können jetzt dieses Gerät mit dem eBlocker anonymisieren!",
-        "PROTECTION_BAS_XS" : "Bleiben Sie anonym mit dem eBlocker!",
-        "PROTECTION_FAM_PRO" : "Der eBlocker schützt Ihre Privatsphäre nun auch auf diesem Gerät!",
-        "PROTECTION_FAM_PRO_XS" : "Der eBlocker schützt jetzt Ihre Privatsphäre!",
-        "REGISTER" : "Bitte registrieren Sie Ihren eBlocker",
-        "TIP" : "Unser Tipp: Öffnen Sie jetzt das Dashboard und legen Sie ein Lesezeichen an, damit Sie jederzeit schnell das eBlocker Dashboard für dieses Gerät aufrufen können!",
-        "TIP_XS" : "Tipp: Legen Sie jetzt ein Lesezeichen des Dashboards an!",
-        "TITLE" : " - Willkommen"
+        "PROTECTION_BAS": "Du kannst jetzt dieses Gerät mit dem eBlocker anonymisieren!",
+        "PROTECTION_BAS_XS": "Bleibe anonym mit dem eBlocker!",
+        "PROTECTION_FAM_PRO": "Der eBlocker schützt deine Privatsphäre nun auch auf diesem Gerät!",
+        "PROTECTION_FAM_PRO_XS": "Der eBlocker schützt jetzt deine Privatsphäre!",
+        "REGISTER": "Bitte registriere deinen eBlocker",
+        "TIP": "Unser Tipp: Öffne jetzt das Dashboard und lege ein Lesezeichen an, damit du jederzeit schnell das eBlocker Dashboard für dieses Gerät aufrufen kannst!",
+        "TIP_XS": "Tipp: Lege dir jetzt ein Lesezeichen des Dashboards an!",
+        "TITLE": " - Willkommen"
     },
-    "REMINDER" : {
-        "DONOTSHOWAGAIN" : {
-            "CANCEL" : "Abbrechen",
-            "LABEL_DO_NOT_SHOW" : "Hinweis nicht mehr anzeigen.",
-            "OK" : "OK",
-            "WARNING" : "Achtung: Sie sind nicht mehr geschützt, wenn der eBlocker keine Updates mehr erhält. Ihre Privatsphäre ist gefährdet.",
-            "WARNING_TITLE" : "Hinweis nicht mehr anzeigen"
+    "REMINDER": {
+        "DONOTSHOWAGAIN": {
+            "CANCEL": "Abbrechen",
+            "LABEL_DO_NOT_SHOW": "Hinweis nicht mehr anzeigen.",
+            "OK": "OK",
+            "WARNING": "Achtung: Du bist nicht mehr geschützt, wenn der eBlocker keine Updates mehr erhält. Deine Privatsphäre ist gefährdet.",
+            "WARNING_TITLE": "Hinweis nicht mehr anzeigen"
         },
-        "FORMAT" : {
-            "DATE" : "D. MMM YYYY"
+        "FORMAT": {
+            "DATE": "D. MMM YYYY"
         },
-        "OVERLAY" : {
-            "BUTTON" : {
-                "CLOSE" : "Ok",
-                "ENTER" : "Lizenzschlüssel eingeben",
-                "PURCHASE" : "Für neue Lizenz spenden"
+        "OVERLAY": {
+            "BUTTON": {
+                "CLOSE": "Ok",
+                "ENTER": "Lizenzschlüssel eingeben",
+                "PURCHASE": "Für neue Lizenz spenden"
             },
-            "TEXT" : {
-                "E0" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
-                "E1" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
-                "E2" : "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
-                "E3" : "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab.",
-                "E4" : "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab."
+            "TEXT": {
+                "E0": "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E1": "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E2": "Deine Lizenz läuft in {{ days }} Tagen am {{ displayDate }} ab.",
+                "E3": "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab.",
+                "E4": "Deine Lizenz lief vor {{ days }} Tagen am {{ displayDate }} ab."
             },
-            "URL" : {
-                "PROMO" : "https://eBlocker.org/de/license-reminder",
-                "PURCHASE" : "https://eBlocker.org/ebl/de/shop"
+            "URL": {
+                "PROMO": "https://eBlocker.org/de/license-reminder",
+                "PURCHASE": "https://eBlocker.org/ebl/de/shop"
             },
-            "WHEN_AGAIN" : {
-                "POST" : " erneut erinnern.",
-                "PRE" : "",
-                "TOMORROW" : "Morgen",
-                "WEEK" : "In einer Woche"
+            "WHEN_AGAIN": {
+                "POST": " erneut erinnern.",
+                "PRE": "",
+                "TOMORROW": "Morgen",
+                "WEEK": "In einer Woche"
             }
         }
     }
 }
-

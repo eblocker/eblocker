@@ -1,20 +1,20 @@
 {
-    "ANONYMIZATION" : {
-        "CARD" : {
-            "TITLE" : "Anonymisierung",
-            "TOOLTIP" : "Hier können Sie einen Anonymisierungsdienst nutzen, um Ihre Identität zu verbergen während Sie sich im Web befinden."
+    "ANONYMIZATION": {
+        "CARD": {
+            "TITLE": "Anonymisierung",
+            "TOOLTIP": "Hier kannst du einen Anonymisierungsdienst nutzen, um deine Identität zu verbergen, während du dich im Web befindest."
         }
     },
-    "APP" : {
-        "CARDS_DROPDOWN" : {
-            "DISABLED_TOOLTIP" : "Diese Karte wird immer angezeigt.",
-            "LABEL" : "Karten anzeigen",
-            "TOOLTIP" : "Dashboardkarten anzeigen"
+    "APP": {
+        "CARDS_DROPDOWN": {
+            "DISABLED_TOOLTIP": "Diese Karte wird immer angezeigt.",
+            "LABEL": "Karten anzeigen",
+            "TOOLTIP": "Dashboardkarten anzeigen"
         },
-        "CONTENT" : {
-            "HELP" : {
-                "LABEL" : "Hilfe",
-                "URL" : "https://eBlocker.org/docs"
+        "CONTENT": {
+            "HELP": {
+                "LABEL": "Hilfe",
+                "URL": "https://eBlocker.org/docs"
             },
             "EXPAND": {
                 "LABEL": "Alle ausklappen"
@@ -23,494 +23,494 @@
                 "LABEL": "Alle einklappen"
             }
         },
-        "DEVICE_MENU" : {
-            "SELECT_LOCAL" : "Dieses Gerät",
-            "SELECT_OTHER" : "Andere Geräte..."
+        "DEVICE_MENU": {
+            "SELECT_LOCAL": "Dieses Gerät",
+            "SELECT_OTHER": "Andere Geräte..."
         },
-        "DRAG_DROP" : {
-            "TOOLTIP" : "Ziehen Sie hier, um die Karte umzusortieren."
+        "DRAG_DROP": {
+            "TOOLTIP": "Ziehe hier, um die Karte umzusortieren."
         },
-        "HEADER" : {
-            "TITLE" : "eBlocker Dashboard",
-            "TITLE_BLOCKER" : "Website geblockt",
-            "TITLE_REDIRECT" : "Website geblockt"
+        "HEADER": {
+            "TITLE": "eBlocker Dashboard",
+            "TITLE_BLOCKER": "Website geblockt",
+            "TITLE_REDIRECT": "Website geblockt"
         },
-        "PAUSED" : {
-            "LABEL_BOTTOM" : "ANGEHALTEN",
-            "LABEL_TOP" : "DASHBOARD"
+        "PAUSED": {
+            "LABEL_BOTTOM": "ANGEHALTEN",
+            "LABEL_TOP": "DASHBOARD"
         },
-        "REMOTE_WARNING" : {
-            "LABEL" : "Remote-Gerät: nicht alle Dashboardkarten sind verfügbar."
+        "REMOTE_WARNING": {
+            "LABEL": "Remote-Gerät: nicht alle Dashboardkarten sind verfügbar."
         },
-        "SERVER_UNAVAILABLE" : {
-            "BOOTING" : "WIRD GESTARTET",
-            "DOWN" : "NICHT VERFÜGBAR",
-            "LABEL_TOP" : "EBLOCKER",
-            "OFF" : "AUSGESCHALTET",
-            "SHUTTING_DOWN" : "FÄHRT HERUNTER",
-            "SHUTTING_DOWN_FOR_REBOOT" : "NEUSTART",
-            "UPDATING" : "AKTUALISIERUNG LÄUFT",
+        "SERVER_UNAVAILABLE": {
+            "BOOTING": "WIRD GESTARTET",
+            "DOWN": "NICHT VERFÜGBAR",
+            "LABEL_TOP": "EBLOCKER",
+            "OFF": "AUSGESCHALTET",
+            "SHUTTING_DOWN": "FÄHRT HERUNTER",
+            "SHUTTING_DOWN_FOR_REBOOT": "NEUSTART",
+            "UPDATING": "AKTUALISIERUNG LÄUFT",
             "ERROR": "FEHLER BEIM STARTEN"
         },
-        "SETTINGS_LINK" : {
-            "TOOLTIP" : "Einstellungen öffnen"
+        "SETTINGS_LINK": {
+            "TOOLTIP": "Einstellungen öffnen"
         },
-        "TOOLBAR" : {
-            "TITLE" : "Dashboard für",
-            "TITLE_FULL" : "Dashboard für dieses Gerät",
-            "USER_LOCKED" : "Gesperrt"
+        "TOOLBAR": {
+            "TITLE": "Dashboard für",
+            "TITLE_FULL": "Dashboard für dieses Gerät",
+            "USER_LOCKED": "Gesperrt"
         }
     },
-    "CONSOLE" : {
-        "CARD" : {
-            "BUTTON" : {
-                "OK" : "Einstellungen öffnen"
+    "CONSOLE": {
+        "CARD": {
+            "BUTTON": {
+                "OK": "Einstellungen öffnen"
             },
-            "NETWORK" : {
-                "DEVICE_IP" : "Dieses Gerät:",
-                "EBLOCKER_IP" : "eBlocker:",
-                "GATEWAY_IP" : "Gateway:"
+            "NETWORK": {
+                "DEVICE_IP": "Dieses Gerät:",
+                "EBLOCKER_IP": "eBlocker:",
+                "GATEWAY_IP": "Gateway:"
             },
-            "TEXT" : "Eventuell ist die Eingabe des Administrator-Passwortes erforderlich.",
-            "TITLE" : "Einstellungen",
-            "TOOLTIP" : "Für die eBlocker Einstellungen muss eventuell das Administrator-Passwort eingegeben werden."
+            "TEXT": "Eventuell ist die Eingabe des Administrator-Passwortes erforderlich.",
+            "TITLE": "Einstellungen",
+            "TOOLTIP": "Für die eBlocker Einstellungen muss eventuell das Administrator-Passwort eingegeben werden."
         }
     },
-    "CONNECTION_TEST" : {
-        "CARD" : {
-            "BUTTON_CHECK" : {
+    "CONNECTION_TEST": {
+        "CARD": {
+            "BUTTON_CHECK": {
                 "LABEL": "eBlocker Funktionstest"
             },
-            "BUTTON_CHECK_REPEAT" : {
+            "BUTTON_CHECK_REPEAT": {
                 "LABEL": "Wiederholen"
             },
             "BUTTON_CLEAR": {
                 "LABEL": "Löschen"
             },
-            "EXPLANATION" : {
-                "RUNNING" : "eBlocker Funktionstest läuft..."
+            "EXPLANATION": {
+                "RUNNING": "eBlocker Funktionstest läuft..."
             },
-            "DASHBOARD_HTTP_LINK" : {
-                "LABEL" : "Funktionstest",
-                "LINKTEXT" : "Dashboard per HTTP laden"
+            "DASHBOARD_HTTP_LINK": {
+                "LABEL": "Funktionstest",
+                "LINKTEXT": "Dashboard per HTTP laden"
             },
-            "PLACEHOLDER" : {
-                "LABEL" : "Noch kein Test durchgeführt."
+            "PLACEHOLDER": {
+                "LABEL": "Noch kein Test durchgeführt."
             },
-            "RESULT" : {
-                "ADSDOMAINBLOCKERTEST" : {
-                    "LABEL" : "Domain Blocker (Werbung)"
+            "RESULT": {
+                "ADSDOMAINBLOCKERTEST": {
+                    "LABEL": "Domain Blocker (Werbung)"
                 },
-                "DOMAINBLOCKERTEST" : {
-                    "LABEL" : "Domain Blocker"
+                "DOMAINBLOCKERTEST": {
+                    "LABEL": "Domain Blocker"
                 },
-                "DNSFIREWALLTEST" : {
-                    "LABEL" : "DNS Firewall"
+                "DNSFIREWALLTEST": {
+                    "LABEL": "DNS Firewall"
                 },
-                "IPV6TEST" : {
-                    "LABEL" : "IPv6-Filterung"
+                "IPV6TEST": {
+                    "LABEL": "IPv6-Filterung"
                 },
-                "WEBFILTERINGTEST" : {
-                    "LABEL" : "Webseiten-Filterung"
+                "WEBFILTERINGTEST": {
+                    "LABEL": "Webseiten-Filterung"
                 },
-                "WEBFILTERINGTEST_WITH_HTTPS" : {
-                    "LABEL" : "Webseiten-Filterung mit HTTPS"
+                "WEBFILTERINGTEST_WITH_HTTPS": {
+                    "LABEL": "Webseiten-Filterung mit HTTPS"
                 },
-                "WEBFILTERINGTEST_HTTP" : {
-                    "LABEL" : "Webseiten-Filterung (HTTP)"
+                "WEBFILTERINGTEST_HTTP": {
+                    "LABEL": "Webseiten-Filterung (HTTP)"
                 },
-                "WEBFILTERINGTEST_HTTPS" : {
-                    "LABEL" : "Webseiten-Filterung (HTTPS)"
+                "WEBFILTERINGTEST_HTTPS": {
+                    "LABEL": "Webseiten-Filterung (HTTPS)"
                 },
-                "PATTERNBLOCKERTEST" : {
-                    "LABEL" : "Pattern Blocker"
+                "PATTERNBLOCKERTEST": {
+                    "LABEL": "Pattern Blocker"
                 },
-                "ROUTINGTEST" : {
-                    "LABEL" : "Gerät wird überwacht"
+                "ROUTINGTEST": {
+                    "LABEL": "Gerät wird überwacht"
                 },
-                "TRACKERDOMAINBLOCKERTEST" : {
-                    "LABEL" : "Domain Blocker (Tracker)"
+                "TRACKERDOMAINBLOCKERTEST": {
+                    "LABEL": "Domain Blocker (Tracker)"
                 },
                 "TOOLTIP": {
-                    "PROGRESS" : "Test läuft...",
-                    "OK_EXPECTED" : "Test bestanden",
-                    "OK_UNEXPECTED" : "",
-                    "ERROR_EXPECTED" : "",
-                    "ERROR_UNEXPECTED" : "Test fehlgeschlagen"
+                    "PROGRESS": "Test läuft...",
+                    "OK_EXPECTED": "Test bestanden",
+                    "OK_UNEXPECTED": "",
+                    "ERROR_EXPECTED": "",
+                    "ERROR_UNEXPECTED": "Test fehlgeschlagen"
                 },
                 "EXPLANATION": {
-                    "CERT_NOT_INSTALLED" : "Für Ihr Gerät ist HTTPS aktiviert, das Zertifikat des eBlockers wurde jedoch nicht korrekt auf dem Gerät hinterlegt.",
-                    "CONFIGURATION_DATA_MISSING" : "Die Konfiguration konnte nicht gelesen werden. Bitte laden Sie diese Seite neu und starten Sie den Test erneut.",
-                    "DHCP_LEASE_OLD" : "Sie haben den eBlocker in die individuellen Einstellungen versetzt, das Gerät jedoch nicht neu gestartet.",
-                    "DNS_RESPONSE_CACHED" : "Ihr Gerät verwendet eine zwischengespeicherte DNS-Antwort. Bitte starten Sie den Test in einigen Minuten erneut.",
-                    "EXISTING_SSL_SESSION" : "Bei Änderung der Einstellungen: Ihr Browser verwendet eine bestehende HTTPS-Verbindung. Bitte starten Sie Ihren Browser neu.",
-                    "HEADING" : "Mögliche Ursachen:",
-                    "INTERNET_CONNECTIVITY" : "Die Verbindung zu Ihrem Internetprovider ist gestört.",
-                    "IPV6_LEAK" : "Es besteht eine IPv6-Verbindung, die nicht durch den eBlocker geschützt wird.",
-                    "NO_IPV6_ON_CLIENT" : "Es besteht keine IPv6-Verbindung.",
-                    "NO_IPV6_ON_EBLOCKER" : "Es besteht keine IPv6-Verbindung auf dem eBlocker.",
-                    "ROUTING_SECOND_NETWORK" : "Ihr Gerät verwendet ein zweites Netzwerk, das nicht durch den eBlocker geschützt wird."
+                    "CERT_NOT_INSTALLED": "Für dein Gerät ist HTTPS aktiviert, das Zertifikat des eBlockers wurde jedoch nicht korrekt auf dem Gerät hinterlegt.",
+                    "CONFIGURATION_DATA_MISSING": "Die Konfiguration konnte nicht gelesen werden. Bitte lade diese Seite neu und starte den Test erneut.",
+                    "DHCP_LEASE_OLD": "Du hast den eBlocker in die individuellen Einstellungen versetzt, das Gerät jedoch nicht neu gestartet.",
+                    "DNS_RESPONSE_CACHED": "Dein Gerät verwendet eine zwischengespeicherte DNS-Antwort. Bitte starte den Test in einigen Minuten erneut.",
+                    "EXISTING_SSL_SESSION": "Bei Änderung der Einstellungen: Dein Browser verwendet eine bestehende HTTPS-Verbindung. Bitte starte deinen Browser neu.",
+                    "HEADING": "Mögliche Ursachen:",
+                    "INTERNET_CONNECTIVITY": "Die Verbindung zu deinem Internetprovider ist gestört.",
+                    "IPV6_LEAK": "Es besteht eine IPv6-Verbindung, die nicht durch den eBlocker geschützt wird.",
+                    "NO_IPV6_ON_CLIENT": "Es besteht keine IPv6-Verbindung.",
+                    "NO_IPV6_ON_EBLOCKER": "Es besteht keine IPv6-Verbindung auf dem eBlocker.",
+                    "ROUTING_SECOND_NETWORK": "Dein Gerät verwendet ein zweites Netzwerk, das nicht durch den eBlocker geschützt wird."
                 },
                 "NOT_USED": "nicht verwendet"
             },
-            "TITLE" : "Funktionstest",
-            "TOOLTIP" : "Überprüfen Sie Ihre Verbindung"
+            "TITLE": "Funktionstest",
+            "TOOLTIP": "Überprüfe deine Verbindung"
         }
     },
-    "DEVICE" : {
-        "CARD" : {
-            "BUTTON" : {
-                "ACTIVATE" : "eBlocker aktivieren",
-                "DEACTIVATE" : "eBlocker deaktivieren",
-                "TEST" : "Testen"
+    "DEVICE": {
+        "CARD": {
+            "BUTTON": {
+                "ACTIVATE": "eBlocker aktivieren",
+                "DEACTIVATE": "eBlocker deaktivieren",
+                "TEST": "Testen"
             },
-            "ENABLED" : {
-                "NO" : "eBlocker ist für dieses Gerät deaktiviert.",
-                "YES" : "eBlocker ist für dieses Gerät aktiviert."
+            "ENABLED": {
+                "NO": "eBlocker ist für dieses Gerät deaktiviert.",
+                "YES": "eBlocker ist für dieses Gerät aktiviert."
             },
-            "IP_ADDRESS" : {
-                "LABEL" : "IP-Adresse"
+            "IP_ADDRESS": {
+                "LABEL": "IP-Adresse"
             },
-            "MAC_ADDRESS" : {
-                "LABEL" : "MAC-Adresse"
+            "MAC_ADDRESS": {
+                "LABEL": "MAC-Adresse"
             },
-            "NAME" : {
-                "LABEL" : "Name (änderbar)"
+            "NAME": {
+                "LABEL": "Name (änderbar)"
             },
-            "TITLE" : "Dieses Gerät",
-            "TOOLTIP" : "Aktivieren oder deaktivieren Sie den eBlocker für dieses Gerät",
-            "VENDOR" : {
-                "LABEL" : "Hersteller"
+            "TITLE": "Dieses Gerät",
+            "TOOLTIP": "Aktiviere oder deaktiviere den eBlocker für dieses Gerät",
+            "VENDOR": {
+                "LABEL": "Hersteller"
             }
         }
     },
-    "DEVICE_FIREWALL" : {
-        "CARD" : {
-            "ACTION" : {
-                "ALLOW" : "Immer erlauben",
-                "APPLY" : "Anwenden",
-                "BLOCK" : "Immer blocken",
-                "LEGEND_HIDE" : "Legende ausblenden",
-                "LEGEND_SHOW" : "Legende anzeigen",
-                "REFRESH" : "Aktualisieren",
-                "RESET" : "Löschen"
+    "DEVICE_FIREWALL": {
+        "CARD": {
+            "ACTION": {
+                "ALLOW": "Immer erlauben",
+                "APPLY": "Anwenden",
+                "BLOCK": "Immer blocken",
+                "LEGEND_HIDE": "Legende ausblenden",
+                "LEGEND_SHOW": "Legende anzeigen",
+                "REFRESH": "Aktualisieren",
+                "RESET": "Löschen"
             },
-            "LEGEND" : {
-                "BLOCK" : "Alle Anfragen wurden geblockt.",
-                "FILTER" : "Einige Anfragen wurden vom Pattern-Blocker geblockt.",
-                "PASS" : "Alle Anfragen an diese Domain wurden erlaubt."
+            "LEGEND": {
+                "BLOCK": "Alle Anfragen wurden geblockt.",
+                "FILTER": "Einige Anfragen wurden vom Pattern-Blocker geblockt.",
+                "PASS": "Alle Anfragen an diese Domain wurden erlaubt."
             },
-            "MESSAGE" : {
-                "BLOCK" : "{{numberOfDomains}} Domain(s) der Blockierliste hinzugefügt",
-                "BLOCK_USER" : "{{numberOfDomains}} Domain(s) der Blockierliste von {{userName}} hinzugefügt",
-                "ALLOW" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste hinzugefügt",
-                "ALLOW_USER" : "{{numberOfDomains}} Domain(s) der Ausnahmeliste von {{userName}} hinzugefügt"
+            "MESSAGE": {
+                "BLOCK": "{{numberOfDomains}} Domain(s) der Blockierliste hinzugefügt",
+                "BLOCK_USER": "{{numberOfDomains}} Domain(s) der Blockierliste von {{userName}} hinzugefügt",
+                "ALLOW": "{{numberOfDomains}} Domain(s) der Ausnahmeliste hinzugefügt",
+                "ALLOW_USER": "{{numberOfDomains}} Domain(s) der Ausnahmeliste von {{userName}} hinzugefügt"
             },
-            "RECORDING" : {
-                "DISABLED" : "Nicht aufzeichnen",
-                "ENABLED" : "Aufzeichnen (letzte 24h)"
+            "RECORDING": {
+                "DISABLED": "Nicht aufzeichnen",
+                "ENABLED": "Aufzeichnen (letzte 24h)"
             },
-            "TITLE" : "Personal Device Firewall",
-            "TOOLTIP" : "Von diesem Gerät aufgerufene Domains prüfen und ggf. blockieren/freigeben"
+            "TITLE": "Personal Device Firewall",
+            "TOOLTIP": "Von diesem Gerät aufgerufene Domains prüfen und ggf. blockieren/freigeben"
         }
     },
-    "DEVICE_STATUS" : {
-        "CARD" : {
-            "BLOCKING" : {
-                "ADS" : "Werbung blocken",
-                "TRACKER" : "Tracker blocken"
+    "DEVICE_STATUS": {
+        "CARD": {
+            "BLOCKING": {
+                "ADS": "Werbung blocken",
+                "TRACKER": "Tracker blocken"
             },
-            "DEVICE" : {
-                "ENABLED" : "eBlocker ist aktiviert für dieses Gerät",
-                "DISABLED" : "eBlocker ist nicht aktiv für dieses Gerät"
+            "DEVICE": {
+                "ENABLED": "eBlocker ist aktiviert für dieses Gerät",
+                "DISABLED": "eBlocker ist nicht aktiv für dieses Gerät"
             },
-            "TITLE" : "Status",
-            "TOOLTIP" : "Status dieses Geräts"
+            "TITLE": "Status",
+            "TOOLTIP": "Status dieses Geräts"
         }
     },
-    "DIALOGS" : {
-        "LOGIN" : {
-            "EXPLAIN" : "Geben Sie Ihr Administratorpasswort ein, um auf andere Geräte zuzugreifen.",
-            "NO_ADMIN_PASSWORD_SET" : "Es ist kein Administratorpasswort gesetzt. Um im Dashboard auf andere Geräte zugreifen zu können, müssen Sie zuvor ein Passwort setzen.",
-            "SELECT_DEVICE" : "Gerät auswählen",
-            "SET_ADMIN_PASSWORD" : "Administratorpasswort setzen"
+    "DIALOGS": {
+        "LOGIN": {
+            "EXPLAIN": "Gib dein Administratorpasswort ein, um auf andere Geräte zuzugreifen.",
+            "NO_ADMIN_PASSWORD_SET": "Es ist kein Administratorpasswort gesetzt. Um im Dashboard auf andere Geräte zugreifen zu können, musst du zuvor ein Passwort setzen.",
+            "SELECT_DEVICE": "Gerät auswählen",
+            "SET_ADMIN_PASSWORD": "Administratorpasswort setzen"
         },
-        "PIN" : {
-            "BUTTON" : {
-                "CANCEL" : "Abbrechen",
-                "LOCK" : "Sperren",
-                "LOGIN" : "Benutzer wechseln",
-                "OK" : "Ok"
+        "PIN": {
+            "BUTTON": {
+                "CANCEL": "Abbrechen",
+                "LOCK": "Sperren",
+                "LOGIN": "Benutzer wechseln",
+                "OK": "Ok"
             },
-            "ERROR" : {
-                "INVALID" : "PIN ist falsch.",
-                "REQUIRED" : "PIN ist erforderlich."
+            "ERROR": {
+                "INVALID": "PIN ist falsch.",
+                "REQUIRED": "PIN ist erforderlich."
             },
-            "INPUT" : "PIN-Eingabe",
-            "PIN_CHANGE" : {
-                "ERROR" : {
-                    "INVALID" : "Falsche PIN",
-                    "MISMATCH" : "PINs stimmen nicht überein.",
-                    "REQUIRED" : "Geben Sie eine PIN ein.",
-                    "TOO_LONG" : "PIN ist zu lang",
-                    "TOO_SHORT" : "PIN muss mindestens 4 Zeichen haben."
+            "INPUT": "PIN-Eingabe",
+            "PIN_CHANGE": {
+                "ERROR": {
+                    "INVALID": "Falsche PIN",
+                    "MISMATCH": "PINs stimmen nicht überein.",
+                    "REQUIRED": "Gib eine PIN ein.",
+                    "TOO_LONG": "PIN ist zu lang",
+                    "TOO_SHORT": "PIN muss mindestens 4 Zeichen haben."
                 },
-                "HEADER" : "PIN für Benutzer {{ name | translate }} ändern",
-                "INPUT_CURRENT" : "Aktuelle PIN",
-                "INPUT_NEW" : "Neue PIN",
-                "INPUT_RENEW" : "Neue PIN wiederholen"
+                "HEADER": "PIN für Benutzer {{ name | translate }} ändern",
+                "INPUT_CURRENT": "Aktuelle PIN",
+                "INPUT_NEW": "Neue PIN",
+                "INPUT_RENEW": "Neue PIN wiederholen"
             },
             "PIN_SET": {
-                "HEADER" : "PIN für Benutzer {{ name | translate }} setzen"
+                "HEADER": "PIN für Benutzer {{ name | translate }} setzen"
             },
-            "PIN_LOCK" : {
-                "BODY" : "Sind Sie sicher, dass der Internet-Zugang für dieses Gerät gesperrt werden soll?",
-                "HEADER" : "Internet-Zugang sperren"
+            "PIN_LOCK": {
+                "BODY": "Bist du sicher, dass der Internet-Zugang für dieses Gerät gesperrt werden soll?",
+                "HEADER": "Internet-Zugang sperren"
             },
-            "PIN_SELECT_USER" : {
+            "PIN_SELECT_USER": {
                 "LABEL": "Benutzer wählen",
-                "BODY_LOCK" : "Alternativ können Sie den Internet-Zugang für das Gerät sperren.",
-                "BODY_POST" : " ist die Eingabe der Benutzer-PIN notwendig.",
-                "BODY_PRE" : "Für den Wechsel auf den Benutzer ",
+                "BODY_LOCK": "Alternativ kannst du den Internet-Zugang für das Gerät sperren.",
+                "BODY_POST": " ist die Eingabe der Benutzer-PIN notwendig.",
+                "BODY_PRE": "Für den Wechsel auf den Benutzer ",
                 "USER_NAME": "{{ name | translate }}",
-                "HEADER" : "PIN-Eingabe erforderlich"
+                "HEADER": "PIN-Eingabe erforderlich"
             }
         },
-        "WELCOME" : {
-            "ACTION" : {
-                "OK" : "Weiter"
+        "WELCOME": {
+            "ACTION": {
+                "OK": "Weiter"
             },
-            "ANDROID_CR_ACTION" : "Als Lesezeichen speichern",
-            "ANDROID_CR_POST" : "und dann auf",
-            "ANDROID_CR_PRE" : "Tippen Sie auf",
-            "ANDROID_FF_ACTION" : "",
-            "ANDROID_FF_POST" : "und dann auf",
-            "ANDROID_FF_PRE" : "Tippen Sie auf",
-            "BOOKMARK" : "Jetzt ein Lesezeichen für das Dashboard anlegen!",
-            "BOOKMARK_XS" : "Lesezeichen anlegen:",
-            "IOS_FF_ACTION" : "Lesezeichen hinzufügen",
-            "IOS_FF_POST" : "und dann",
-            "IOS_FF_PRE" : "Tippen Sie auf",
-            "IOS_SAFARI_ACTION" : "Zum Home-Bildschirm",
-            "IOS_SAFARI_POST" : "und dann",
-            "IOS_SAFARI_PRE" : "Tippen Sie auf",
-            "MAC_OS" : "+ D",
-            "NEVER_AGAIN" : "Hinweis auf diesem Gerät nicht mehr anzeigen",
-            "OTHER" : "Legen Sie jetzt ein Lesezeichen für das eBlocker Dashboard an!",
-            "PAR_1" : "Das eBlocker Dashboard gibt Ihnen eine schnelle Übersicht darüber, wie der eBlocker Sie schützt, während Sie dieses Gerät verwenden.",
-            "PAR_2" : "Sie können des Dashboard auch verwenden, um die Schutzeinstellungen an Ihre Erfordernisse anzupassen.",
-            "PRESS" : "Drücken Sie: ",
-            "TITLE" : "Willkommen beim eBlocker Dashboard",
-            "TITLE_XS" : "Lesezeichen fürs Dashboard",
-            "WIN" : "STRG + D"
+            "ANDROID_CR_ACTION": "Als Lesezeichen speichern",
+            "ANDROID_CR_POST": "und dann auf",
+            "ANDROID_CR_PRE": "Tippe auf",
+            "ANDROID_FF_ACTION": "",
+            "ANDROID_FF_POST": "und dann auf",
+            "ANDROID_FF_PRE": "Tippe auf",
+            "BOOKMARK": "Jetzt ein Lesezeichen für das Dashboard anlegen!",
+            "BOOKMARK_XS": "Lesezeichen anlegen:",
+            "IOS_FF_ACTION": "Lesezeichen hinzufügen",
+            "IOS_FF_POST": "und dann",
+            "IOS_FF_PRE": "Tippe auf",
+            "IOS_SAFARI_ACTION": "Zum Home-Bildschirm",
+            "IOS_SAFARI_POST": "und dann",
+            "IOS_SAFARI_PRE": "Tippe auf",
+            "MAC_OS": "+ D",
+            "NEVER_AGAIN": "Hinweis auf diesem Gerät nicht mehr anzeigen",
+            "OTHER": "Lege jetzt ein Lesezeichen für das eBlocker Dashboard an!",
+            "PAR_1": "Das eBlocker Dashboard gibt dir eine schnelle Übersicht darüber, wie der eBlocker dich schützt, während du dieses Gerät verwendest.",
+            "PAR_2": "Du kannst das Dashboard auch verwenden, um die Schutzeinstellungen an deine Erfordernisse anzupassen.",
+            "PRESS": "Drücke: ",
+            "TITLE": "Willkommen beim eBlocker Dashboard",
+            "TITLE_XS": "Lesezeichen fürs Dashboard",
+            "WIN": "STRG + D"
         }
     },
-    "DOMAIN_BLOCKLIST" : {
-        "CARD" : {
-            "SEARCH_LABEL" : "Domain eingeben...",
-            "TABLE" : {
-                "EMPTY_FOUND" : "Keine Domains gefunden",
-                "EMPTY_LIST" : "Keine Domains geblockt",
-                "MARK_DELETE" : "Diese Domain wird von der Liste entfernt",
-                "USER_HINT" : "Für alle Geräte von"
+    "DOMAIN_BLOCKLIST": {
+        "CARD": {
+            "SEARCH_LABEL": "Domain eingeben...",
+            "TABLE": {
+                "EMPTY_FOUND": "Keine Domains gefunden",
+                "EMPTY_LIST": "Keine Domains geblockt",
+                "MARK_DELETE": "Diese Domain wird von der Liste entfernt",
+                "USER_HINT": "Für alle Geräte von"
             },
-            "TITLE" : "Domains blocken",
-            "TOOLTIP" : "Diese Domains immer blocken"
+            "TITLE": "Domains blocken",
+            "TOOLTIP": "Diese Domains immer blocken"
         }
     },
-    "DOMAIN_PASSLIST" : {
-        "CARD" : {
-            "TABLE" : {
-                "EMPTY_LIST" : "Keine Domains erlaubt"
+    "DOMAIN_PASSLIST": {
+        "CARD": {
+            "TABLE": {
+                "EMPTY_LIST": "Keine Domains erlaubt"
             },
-            "TITLE" : "Domains erlauben",
-            "TOOLTIP" : "Diese Domains immer erlauben"
+            "TITLE": "Domains erlauben",
+            "TOOLTIP": "Diese Domains immer erlauben"
         }
     },
-    "EXPIRED" : {
-        "CARD" : {
-            "BUTTON" : {
-                "RESUME" : "Starten"
+    "EXPIRED": {
+        "CARD": {
+            "BUTTON": {
+                "RESUME": "Starten"
             },
-            "TITLE" : "Dashboard gestoppt"
+            "TITLE": "Dashboard gestoppt"
         }
     },
-    "FILTER" : {
-        "CARD" : {
-            "ACTION" : {
-                "ACTIVATE_SSL" : "HTTPS-Unterstützung aktivieren",
-                "GO_TO_DNS" : "Einstellungen/DNS öffnen",
-                "GO_TO_HTTPS" : "Einstellungen/HTTPS öffnen"
+    "FILTER": {
+        "CARD": {
+            "ACTION": {
+                "ACTIVATE_SSL": "HTTPS-Unterstützung aktivieren",
+                "GO_TO_DNS": "Einstellungen/DNS öffnen",
+                "GO_TO_HTTPS": "Einstellungen/HTTPS öffnen"
             },
-            "MALWARE" : {
-                "LABEL" : "Malware & Phishing Blocker",
-                "OFF" : "Aus",
-                "ON" : "Standard"
+            "MALWARE": {
+                "LABEL": "Malware & Phishing Blocker",
+                "OFF": "Aus",
+                "ON": "Standard"
             },
-            "RADIO" : {
-                "AUTOMATIC" : "Automatisch",
-                "LABEL" : "Tracker und Werbung",
-                "NONE" : "Keine",
-                "PATTERN" : "Pattern Blocker",
-                "PLUG_AND_PLAY" : "Domain Blocker",
-                "RECOMMENDED" : "(Empfohlen)"
+            "RADIO": {
+                "AUTOMATIC": "Automatisch",
+                "LABEL": "Tracker und Werbung",
+                "NONE": "Keine",
+                "PATTERN": "Pattern Blocker",
+                "PLUG_AND_PLAY": "Domain Blocker",
+                "RECOMMENDED": "(Empfohlen)"
             },
-            "TITLE" : "Blocker",
-            "TOOLTIP" : "Hier können Sie Blockereinstellungen vornehmen.",
-            "WARN_DNS_1" : "DNS Server ist deaktiviert.",
-            "WARN_DNS_2" : "Domain Blocker sind nicht funktionsfähig!",
-            "WARN_MALWARE" : "Aktivieren Sie die Schadcode Blocker, um dieses Gerät zu schützen!",
-            "WARN_NO_FILTER" : "Aktivieren Sie Tracker- und Werbe-Blocker, um dieses Gerät zu schützen!",
-            "WARN_SSL" : "Pattern Blocker sind nicht auf HTTPS Websites aktiv.",
-            "WARN_SSL_DEVICE" : "HTTPS-Unterstützung ist für dieses Gerät deaktiviert!",
-            "WARN_SSL_GLOABL" : "HTTPS-Unterstützung ist deaktiviert."
+            "TITLE": "Blocker",
+            "TOOLTIP": "Hier kannst du Blockereinstellungen vornehmen.",
+            "WARN_DNS_1": "DNS Server ist deaktiviert.",
+            "WARN_DNS_2": "Domain Blocker sind nicht funktionsfähig!",
+            "WARN_MALWARE": "Aktiviere die Schadcode Blocker, um dieses Gerät zu schützen!",
+            "WARN_NO_FILTER": "Aktiviere Tracker- und Werbe-Blocker, um dieses Gerät zu schützen!",
+            "WARN_SSL": "Pattern Blocker sind nicht auf HTTPS Websites aktiv.",
+            "WARN_SSL_DEVICE": "HTTPS-Unterstützung ist für dieses Gerät deaktiviert!",
+            "WARN_SSL_GLOABL": "HTTPS-Unterstützung ist deaktiviert."
         }
     },
-    "DNS_STATISTICS" : {
-        "CARD" : {
-            "BIN" : {
-                "QUERIES" : {
-                    "BLOCKED_ADS" : "Werbung",
-                    "BLOCKED_CUSTOM" : "Benutzerdefiniert",
-                    "BLOCKED_TOTAL" : "Blockiert",
-                    "BLOCKED_TRACKERS" : "Tracker"
+    "DNS_STATISTICS": {
+        "CARD": {
+            "BIN": {
+                "QUERIES": {
+                    "BLOCKED_ADS": "Werbung",
+                    "BLOCKED_CUSTOM": "Benutzerdefiniert",
+                    "BLOCKED_TOTAL": "Blockiert",
+                    "BLOCKED_TRACKERS": "Tracker"
                 }
             },
-            "CHART" : {
-                "L18N" : {
-                    "LONG" : "D. MMM",
-                    "MIDDLE" : "ddd H:mm",
-                    "SHORT" : "H:mm"
+            "CHART": {
+                "L18N": {
+                    "LONG": "D. MMM",
+                    "MIDDLE": "ddd H:mm",
+                    "SHORT": "H:mm"
                 },
-                "LABELS" : {
-                    "DAY" : "Tag",
-                    "LAST_HOUR" : "Stunde",
-                    "WEEK" : "Woche"
+                "LABELS": {
+                    "DAY": "Tag",
+                    "LAST_HOUR": "Stunde",
+                    "WEEK": "Woche"
                 },
-                "SERIES" : {
-                    "ADS" : "Werbung",
-                    "CUSTOM" : "Benutzerdefinierte Sperrliste",
-                    "NOT_BLOCKED" : "zugelassen",
-                    "PARENTAL_CONTROL" : "Jugendschutz",
-                    "TRACKERS" : "Tracker",
-                    "UNKNOWN" : "Unbekannte/gelöschte Liste"
+                "SERIES": {
+                    "ADS": "Werbung",
+                    "CUSTOM": "Benutzerdefinierte Sperrliste",
+                    "NOT_BLOCKED": "zugelassen",
+                    "PARENTAL_CONTROL": "Jugendschutz",
+                    "TRACKERS": "Tracker",
+                    "UNKNOWN": "Unbekannte/gelöschte Liste"
                 }
             },
-            "TITLE" : "Blocker Statistik (Gerät)",
-            "TOOLTIP" : "Statistik über geblockte Aufrufe"
+            "TITLE": "Blocker Statistik (Gerät)",
+            "TOOLTIP": "Statistik über geblockte Aufrufe"
         }
     },
-    "BLOCKER_STATISTICS_TOTAL" : {
-        "CARD" : {
-            "BUTTONS" : {
-                "RESET_TOP_N" : "Löschen"
+    "BLOCKER_STATISTICS_TOTAL": {
+        "CARD": {
+            "BUTTONS": {
+                "RESET_TOP_N": "Löschen"
             },
-            "FORMAT_DATE_TIME" : "D. MMM YYYY",
-            "LABELS" : {
-                "BLOCKED_PERCENTAGE" : "Anteil blockiert",
-                "CATEGORY_ADS" : "Werbung",
-                "CATEGORY_CUSTOM" : "Benutzerdefiniert",
-                "CATEGORY_PARENTAL" : "Jugendschutz",
-                "CATEGORY_TRACKERS" : "Tracker",
-                "STATS_EMPTY" : "Bisher keine geblockten Domains.",
-                "STATS_SINCE" : "Blocker Statistik seit {{date}} für alle Geräte",
-                "TOP_N" : "Top {{number}} geblockte Domains für dieses Gerät",
-                "TOTAL_BLOCKED" : "Gesamt blockiert",
-                "TOTAL_REQUESTS" : "Aufrufe gesamt"
+            "FORMAT_DATE_TIME": "D. MMM YYYY",
+            "LABELS": {
+                "BLOCKED_PERCENTAGE": "Anteil blockiert",
+                "CATEGORY_ADS": "Werbung",
+                "CATEGORY_CUSTOM": "Benutzerdefiniert",
+                "CATEGORY_PARENTAL": "Jugendschutz",
+                "CATEGORY_TRACKERS": "Tracker",
+                "STATS_EMPTY": "Bisher keine geblockten Domains.",
+                "STATS_SINCE": "Blocker Statistik seit {{date}} für alle Geräte",
+                "TOP_N": "Top {{number}} geblockte Domains für dieses Gerät",
+                "TOTAL_BLOCKED": "Gesamt blockiert",
+                "TOTAL_REQUESTS": "Aufrufe gesamt"
             },
-            "TITLE" : "Blocker Statistik (Gesamt)",
-            "TOOLTIP" : "Statistik über geblockte Abfragen für alle Geräte"
+            "TITLE": "Blocker Statistik (Gesamt)",
+            "TOOLTIP": "Statistik über geblockte Abfragen für alle Geräte"
         }
     },
-    "ICON" : {
-        "CARD" : {
-            "BUTTON" : {
-                "RESET" : "Auf Standardwerte zurücksetzen"
+    "ICON": {
+        "CARD": {
+            "BUTTON": {
+                "RESET": "Auf Standardwerte zurücksetzen"
             },
-            "LABEL_BROWSER_ONLY" : "Nur in Standard-Browsern anzeigen",
-            "LABEL_DISPLAY_ON" : "eBlocker Symbol",
-            "LABEL_DURATION" : "Nur für 5 Sekunden anzeigen",
-            "LABEL_ICON_HEADING" : "Position eBlocker Symbol:",
-            "LABEL_ICON_LEFT" : "Links",
-            "LABEL_ICON_RIGHT" : "Rechts",
-            "LABEL_NO_HTTPS_IN_MANUAL" : "Ohne HTTPS-Unterstützung kann das eBlocker Symbol nicht auf HTTPS-Websites angezeigt werden.",
-            "TITLE" : "ControlBar",
-            "TOOLTIP" : "Einstellungen, wie und wo das Symbol angezeigt wird."
+            "LABEL_BROWSER_ONLY": "Nur in Standard-Browsern anzeigen",
+            "LABEL_DISPLAY_ON": "eBlocker Symbol",
+            "LABEL_DURATION": "Nur für 5 Sekunden anzeigen",
+            "LABEL_ICON_HEADING": "Position eBlocker Symbol:",
+            "LABEL_ICON_LEFT": "Links",
+            "LABEL_ICON_RIGHT": "Rechts",
+            "LABEL_NO_HTTPS_IN_MANUAL": "Ohne HTTPS-Unterstützung kann das eBlocker Symbol nicht auf HTTPS-Websites angezeigt werden.",
+            "TITLE": "ControlBar",
+            "TOOLTIP": "Einstellungen, wie und wo das Symbol angezeigt wird."
         }
     },
-    "IDLE" : {
-        "DIALOG" : {
-            "BUTTON" : {
-                "RESUME" : "zurück zu den Einstellungen"
+    "IDLE": {
+        "DIALOG": {
+            "BUTTON": {
+                "RESUME": "zurück zu den Einstellungen"
             },
-            "TEXT" : "Ihre Sitzung läuft in {countdown} {countdown, select, 1{Sekunde} other{Sekunden}} ab.",
-            "TITLE" : "Ablaufhinweis"
+            "TEXT": "Deine Sitzung läuft in {countdown} {countdown, select, 1{Sekunde} other{Sekunden}} ab.",
+            "TITLE": "Ablaufhinweis"
         }
     },
-    "MESSAGE" : {
-        "CARD" : {
-            "BUTTON" : {
-                "DO_NOT_SHOW_AGAIN" : "Nicht wieder anzeigen",
-                "HIDE_DETAILS" : "Nachrichten ausblenden",
-                "REFRESH" : "Aktualisieren",
-                "SHOW_DETAILS" : "Nachrichten anzeigen"
+    "MESSAGE": {
+        "CARD": {
+            "BUTTON": {
+                "DO_NOT_SHOW_AGAIN": "Nicht wieder anzeigen",
+                "HIDE_DETAILS": "Nachrichten ausblenden",
+                "REFRESH": "Aktualisieren",
+                "SHOW_DETAILS": "Nachrichten anzeigen"
             },
-            "FORMAT_DATE" : "D. MMM YYYY",
-            "MESSAGES_NOTIFY_CLOSE_TOOLTIP" : "Diese Nachricht schließen",
-            "TEXT" : {
-                "HAS_ALERT" : "Sie haben {count, select, 1{eine} other{{count}}} wichtige {count, select, 1{Nachricht} other{Nachrichten} }.",
-                "HAS_INFO" : "Sie haben {count, select, 1{eine} other{{count}}} {count, select, 1{neue Nachricht} other{neue Nachrichten} }.",
-                "NO_MESSAGES" : "Keine System-Nachrichten"
+            "FORMAT_DATE": "D. MMM YYYY",
+            "MESSAGES_NOTIFY_CLOSE_TOOLTIP": "Diese Nachricht schließen",
+            "TEXT": {
+                "HAS_ALERT": "Du hast {count, select, 1{eine} other{{count}}} wichtige {count, select, 1{Nachricht} other{Nachrichten} }.",
+                "HAS_INFO": "Du hast {count, select, 1{eine} other{{count}}} {count, select, 1{neue Nachricht} other{neue Nachrichten} }.",
+                "NO_MESSAGES": "Keine System-Nachrichten"
             },
-            "TITLE" : "Nachrichten",
-            "TOOLTIP" : "Übersicht über Ihre Nachrichten."
+            "TITLE": "Nachrichten",
+            "TOOLTIP": "Übersicht über deine Nachrichten."
         }
     },
-    "MOBILE" : {
-        "CARD" : {
-            "ACTION" : {
-                "CANCEL_REVOKE" : "Abbrechen",
-                "CONFIRM_REVOKE" : "Ja, zurückziehen",
-                "DOWNLOAD" : "Herunterladen",
-                "HOW_TO_START" : "Hilfe zum Start",
-                "RECOMMENDED_APPS" : "Empfohlene Apps",
-                "REVOKE" : "Zurückziehen",
-                "START_WIZARD" : "Setup Assistent Starten"
+    "MOBILE": {
+        "CARD": {
+            "ACTION": {
+                "CANCEL_REVOKE": "Abbrechen",
+                "CONFIRM_REVOKE": "Ja, zurückziehen",
+                "DOWNLOAD": "Herunterladen",
+                "HOW_TO_START": "Hilfe zum Start",
+                "RECOMMENDED_APPS": "Empfohlene Apps",
+                "REVOKE": "Zurückziehen",
+                "START_WIZARD": "Setup Assistent Starten"
             },
-            "LABEL_STEP_1" : "<b>Schritt 1</b>: Installation der VPN App",
-            "LABEL_STEP_2" : "<b>Schritt 2</b>: Installation der eBlocker Mobile Konfiguration",
-            "LABEL_STEP_3" : "<b>Schritt 3</b>: Mit eBlocker Mobile verbinden",
-            "LINK" : {
-                "HOW_TO_START" : "https://eBlocker.org/startvpn_de/",
-                "RECOMMENDED_APPS" : "https://eBlocker.org/de/openvpn-clients/"
+            "LABEL_STEP_1": "<b>Schritt 1</b>: Installation der VPN App",
+            "LABEL_STEP_2": "<b>Schritt 2</b>: Installation der eBlocker Mobile Konfiguration",
+            "LABEL_STEP_3": "<b>Schritt 3</b>: Mit eBlocker Mobile verbinden",
+            "LINK": {
+                "HOW_TO_START": "https://eBlocker.org/startvpn_de/",
+                "RECOMMENDED_APPS": "https://eBlocker.org/de/openvpn-clients/"
             },
-            "NOTIFICATION" : {
-                "CERTIFICATE_CREATED" : "Zertifikat erzeugt",
-                "CERTIFICATE_REVOKED" : "Zertifikat zurückgezogen",
-                "CONFIRMATION_RESET" : "Server wurde zurück gesetzt",
-                "HOST_CHANGED" : "Der öffentliche eBlocker Hostname wurde geändert. Die Client-Konfiguration muss erneut heruntergeladen und auf Ihrem Gerät importiert werden, damit die Änderung wirksam wird.",
-                "HOST_MISSING" : "Bitte tragen Sie einen Hostnamen oder eine IP-Adresse ein, unter der Ihr Router vom Internet aus erreichbar ist.",
-                "INIT_FAILED" : "Der OpenVPN-Server konnte nicht initialisiert werden. Bitte denken Sie daran, die Netzwerk-Einstellungen zu speichern, falls sie Änderungen an der Netzwerk-Konfiguration vorgenommen haben."
+            "NOTIFICATION": {
+                "CERTIFICATE_CREATED": "Zertifikat erzeugt",
+                "CERTIFICATE_REVOKED": "Zertifikat zurückgezogen",
+                "CONFIRMATION_RESET": "Server wurde zurück gesetzt",
+                "HOST_CHANGED": "Der öffentliche eBlocker Hostname wurde geändert. Du musst die Client-Konfiguration erneut herunterladen und auf deinem Gerät importieren, damit die Änderung wirksam wird.",
+                "HOST_MISSING": "Bitte trage einen Hostnamen oder eine IP-Adresse ein, unter der dein Router vom Internet aus erreichbar ist.",
+                "INIT_FAILED": "Der OpenVPN-Server konnte nicht initialisiert werden. Bitte denke daran, die Netzwerk-Einstellungen zu speichern, falls du Änderungen an der Netzwerk-Konfiguration vorgenommen hast."
             },
-            "REVOKE_CONFIRM_DIALOG" : {
-                "TEXT" : "Möchten Sie die eBlocker Mobile Konfiguration zurückziehen?",
-                "TITLE" : "Konfiguration zurückziehen?"
+            "REVOKE_CONFIRM_DIALOG": {
+                "TEXT": "Möchtest du die eBlocker Mobile Konfiguration zurückziehen?",
+                "TITLE": "Konfiguration zurückziehen?"
             },
-            "TITLE" : "eBlocker Mobile",
-            "TOOLTIP" : "Hier können Sie die eBlocker Mobile Konfiguration für dieses Gerät laden oder erneuern."
+            "TITLE": "eBlocker Mobile",
+            "TOOLTIP": "Hier kannst du die eBlocker Mobile Konfiguration für dieses Gerät laden oder erneuern."
         }
     },
-    "ONLINE_TIME" : {
-        "CARD" : {
-            "BUTTON" : {
-                "HIDE_DETAILS" : "Details schließen",
-                "SHOW_DETAILS" : "Details",
-                "START" : "Start",
-                "STOP" : "Stop"
+    "ONLINE_TIME": {
+        "CARD": {
+            "BUTTON": {
+                "HIDE_DETAILS": "Details schließen",
+                "SHOW_DETAILS": "Details",
+                "START": "Start",
+                "STOP": "Stop"
             },
             "LABEL": {
-                "CONTINGENTS" : "Deine heutigen Online-Zeiten:",
-                "NO_CONTINGENTS" : "Heute keine Zeiträume",
+                "CONTINGENTS": "Deine heutigen Online-Zeiten:",
+                "NO_CONTINGENTS": "Heute keine Zeiträume",
                 "ONLINE": "Online",
                 "OFFLINE": "Offline",
                 "TOTAL": "Gesamt:&nbsp;",
@@ -519,17 +519,17 @@
                 "MIN": "&nbsp;Min.",
                 "INTERNET_BLOCKED": "Internet Zugang gesperrt"
             },
-            "TITLE" : "Online-Zeit",
-            "TOOLTIP" : "Übersicht über die aktuelle Internetnutzung"
+            "TITLE": "Online-Zeit",
+            "TOOLTIP": "Übersicht über die aktuelle Internetnutzung"
         }
     },
-    "PARENTAL_CONTROL_FRAG_FINN_PROFILE_NAME" : "fragFINN-Schutzprofil",
-    "PARENTAL_CONTROL_USER_NAME" : "{{ name }}",
+    "PARENTAL_CONTROL_FRAG_FINN_PROFILE_NAME": "fragFINN-Schutzprofil",
+    "PARENTAL_CONTROL_USER_NAME": "{{ name }}",
     "PARENTAL_CONTROL": {
-        "CARD" : {
-            "TOOLTIP": "Überblicken und ändern Sie alle wichtigen Jugendschutzeinstellungen",
+        "CARD": {
+            "TOOLTIP": "Überblicke und ändere alle wichtigen Jugendschutzeinstellungen",
             "TITLE": "Jugendschutz ({{param}})",
-            "BUTTON" : {
+            "BUTTON": {
                 "EDIT": "Benutzer bearbeiten",
                 "BLOCK_INTERNET": "Internet sperren",
                 "BLOCK_INTERNET_XS": "Sperren",
@@ -560,533 +560,532 @@
             }
         }
     },
-    "PAUSE" : {
-        "CARD" : {
-            "BUTTON" : {
-                "EXTEND" : "5 Minuten verlängern",
-                "MINUS_FIVE" : "- 5 Min",
-                "PLUS_FIVE" : "+ 5 Min",
-                "START" : "eBlocker für dieses Gerät pausieren",
-                "STOP" : "Pause beenden"
+    "PAUSE": {
+        "CARD": {
+            "BUTTON": {
+                "EXTEND": "5 Minuten verlängern",
+                "MINUS_FIVE": "- 5 Min",
+                "PLUS_FIVE": "+ 5 Min",
+                "START": "eBlocker für dieses Gerät pausieren",
+                "STOP": "Pause beenden"
             },
-            "TEXT" : {
-                "NOT_PAUSED" : "eBlocker für dieses Gerät pausieren lassen.",
-                "PAUSED" : "eBlocker pausiert für:"
+            "TEXT": {
+                "NOT_PAUSED": "eBlocker für dieses Gerät pausieren lassen.",
+                "PAUSED": "eBlocker pausiert für:"
             },
-            "TITLE" : "Pause",
-            "TITLE_COLLAPSED_PAUSED" : "Pausiert für {{sec}}",
-            "TOOLTIP" : "Lassen Sie den eBlocker für dieses Gerät kurzzeitig pausieren.",
-            "TOOLTIP_MENU" : "Auf Grund von Jugendschutzeinstellungen ist diese Karte nicht verfügbar."
+            "TITLE": "Pause",
+            "TITLE_COLLAPSED_PAUSED": "Pausiert für {{sec}}",
+            "TOOLTIP": "Lasse den eBlocker für dieses Gerät kurzzeitig pausieren.",
+            "TOOLTIP_MENU": "Auf Grund von Jugendschutzeinstellungen ist diese Karte nicht verfügbar."
         }
     },
-    "FRAG_FINN" : {
-        "CARD" : {
-            "TITLE" : "Suche mit FragFINN",
-            "TOOLTIP" : "Sichere Suche mit FragFINN",
+    "FRAG_FINN": {
+        "CARD": {
+            "TITLE": "Suche mit FragFINN",
+            "TOOLTIP": "Sichere Suche mit FragFINN",
             "OFFLINE_TEXT": "Du bist gerade offline."
         }
     },
-    "REDIRECT" : {
-        "BLOCK_OPTIONS" : {
-            "ACTION" : {
-                "BACK" : "Zurück zur vorherigen Seite",
-                "BACK_XS" : "Zurück",
-                "CONTINUE" : "Fortsetzen und Datenerfassung zulassen",
-                "CONTINUE_XS" : "Trotzdem fortsetzen"
+    "REDIRECT": {
+        "BLOCK_OPTIONS": {
+            "ACTION": {
+                "BACK": "Zurück zur vorherigen Seite",
+                "BACK_XS": "Zurück",
+                "CONTINUE": "Fortsetzen und Datenerfassung zulassen",
+                "CONTINUE_XS": "Trotzdem fortsetzen"
             },
-            "TEXT_1" : "eBlocker hat einen Tracking-Link erkannt, der Ihren Seitenaufruf erfassen will.",
-            "TEXT_2A" : "Dieser Link führt zu ",
-            "TEXT_2B" : ".",
-            "TEXT_3" : "Leider konnte eBlocker die Ziel-Website des Links nicht erkennen.",
-            "TITLE" : "Tracking-Link erkannt"
+            "TEXT_1": "eBlocker hat einen Tracking-Link erkannt, der deinen Seitenaufruf erfassen will.",
+            "TEXT_2A": "Dieser Link führt zu ",
+            "TEXT_2B": ".",
+            "TEXT_3": "Leider konnte eBlocker die Ziel-Website des Links nicht erkennen.",
+            "TITLE": "Tracking-Link erkannt"
         },
-        "REDIRECT_OPTIONS" : {
-            "ACTION" : {
-                "CONTINUE" : "Datenerfassung zustimmen",
-                "SHORTCUT" : "Ohne Datenerfassung zu "
+        "REDIRECT_OPTIONS": {
+            "ACTION": {
+                "CONTINUE": "Datenerfassung zustimmen",
+                "SHORTCUT": "Ohne Datenerfassung zu "
             },
-            "REMEMBER_LABEL" : "Entscheidung für ähnliche Tracking-Links merken.",
-            "TEXT_1" : "eBlocker hat einen Tracking-Link erkannt, der Ihren Seitenaufruf erfassen will.",
-            "TEXT_2A" : "Dieser Link führt zu ",
-            "TEXT_2B" : ",",
-            "TEXT_3A" : "aber Ihr eigentliches Ziel ist wahrscheinlich ",
-            "TEXT_3B" : ".",
-            "TITLE" : "Tracking-Link erkannt"
+            "REMEMBER_LABEL": "Entscheidung für ähnliche Tracking-Links merken.",
+            "TEXT_1": "eBlocker hat einen Tracking-Link erkannt, der deinen Seitenaufruf erfassen will.",
+            "TEXT_2A": "Dieser Link führt zu ",
+            "TEXT_2B": ",",
+            "TEXT_3A": "aber dein eigentliches Ziel ist wahrscheinlich",
+            "TEXT_3B": ".",
+            "TITLE": "Tracking-Link erkannt"
         }
     },
-    "SQUID_BLOCKER" : {
-        "ACCESS_DENIED" : {
-            "ACTION" : {
-                "BACK" : "Zurück",
-                "CONSOLE" : "Konfiguration",
-                "LOGIN" : "Benutzer wechseln",
-                "RETRY" : "Wiederholen",
-                "UNLOCK" : "Sperre aufheben"
+    "SQUID_BLOCKER": {
+        "ACCESS_DENIED": {
+            "ACTION": {
+                "BACK": "Zurück",
+                "CONSOLE": "Konfiguration",
+                "LOGIN": "Benutzer wechseln",
+                "RETRY": "Wiederholen",
+                "UNLOCK": "Sperre aufheben"
             },
-            "BLOCKED_DOMAIN_0" : "Die Domäne ",
-            "BLOCKED_DOMAIN_1" : " ist Teil der gesperrten Webseiten-Kategorie ",
-            "BLOCKED_DOMAIN_2" : ".",
-            "DEVICE_LOCKED" : "Der Internet-Zugang für das Gerät ist gesperrt.",
-            "MAX_USAGE_TIME_RESTRICTION" : "Die maximale Internet-Nutzungszeit wurde für heute erreicht.",
-            "NON_WHITELISTED_DOMAIN" : "Die Domäne {{domain}} ist nicht freigeschaltet.",
-            "USER_0" : "Für dieses Gerät sind die Schutzeinstellungen für den Benutzer ",
-            "USER_1" : " aktiviert.",
-            "REASON" : "Die Sperrung wurde durch folgende Einstellung verursacht:",
-            "TEXT" : "Die eBlocker Jugendschutzfunktionen haben den Zugriff auf die folgende URL verweigert: ",
-            "TIME_RESTRICTION" : "Der Internet Zugriff ist zu dieser Uhrzeit nicht erlaubt.",
-            "TITLE" : "Der Zugriff wurde verweigert",
-            "USAGE_DISABLED" : "Internet-Zugang ist deaktiviert",
-            "USAGE_ENABLED" : "Internet-Zugang ist aktiviert",
-            "USAGE_REMAINING_TIME" : "Verbleibende Zeit: {{ hours }}:{{ minutes }}",
-            "USAGE_TIME_DISABLED" : "Die tägliche Internet-Nutzung ist beschränkt."
+            "BLOCKED_DOMAIN_0": "Die Domäne ",
+            "BLOCKED_DOMAIN_1": " ist Teil der gesperrten Webseiten-Kategorie ",
+            "BLOCKED_DOMAIN_2": ".",
+            "DEVICE_LOCKED": "Der Internet-Zugang für das Gerät ist gesperrt.",
+            "MAX_USAGE_TIME_RESTRICTION": "Die maximale Internet-Nutzungszeit wurde für heute erreicht.",
+            "NON_WHITELISTED_DOMAIN": "Die Domäne {{domain}} ist nicht freigeschaltet.",
+            "USER_0": "Für dieses Gerät sind die Schutzeinstellungen für den Benutzer ",
+            "USER_1": " aktiviert.",
+            "REASON": "Die Sperrung wurde durch folgende Einstellung verursacht:",
+            "TEXT": "Die eBlocker Jugendschutzfunktionen haben den Zugriff auf die folgende URL verweigert: ",
+            "TIME_RESTRICTION": "Der Internet Zugriff ist zu dieser Uhrzeit nicht erlaubt.",
+            "TITLE": "Der Zugriff wurde verweigert",
+            "USAGE_DISABLED": "Internet-Zugang ist deaktiviert",
+            "USAGE_ENABLED": "Internet-Zugang ist aktiviert",
+            "USAGE_REMAINING_TIME": "Verbleibende Zeit: {{ hours }}:{{ minutes }}",
+            "USAGE_TIME_DISABLED": "Die tägliche Internet-Nutzung ist beschränkt."
         },
-        "BLOCKED_ADS_TRACKERS" : {
-            "ACTION" : {
-                "GO_BACK" : "Zurück",
-                "PAUSE_AND_CONTINUE" : "eBlocker pausieren und fortfahren",
-                "REMOVE_DOMAIN" : "Domäne entsperren",
-                "RETRY" : "Nochmals versuchen",
-                "WHITELIST_DOMAIN" : "Ausnahme hinzufügen"
+        "BLOCKED_ADS_TRACKERS": {
+            "ACTION": {
+                "GO_BACK": "Zurück",
+                "PAUSE_AND_CONTINUE": "eBlocker pausieren und fortfahren",
+                "REMOVE_DOMAIN": "Domäne entsperren",
+                "RETRY": "Nochmals versuchen",
+                "WHITELIST_DOMAIN": "Ausnahme hinzufügen"
             },
-            "BLOCKED_ADS_MESSAGE" : "Diese Domäne ist als Werbe-Server bekannt:",
-            "BLOCKED_ADS_TARGET" : "Der eBlocker hat den Zugriff auf die folgende URL verhindert:",
-            "BLOCKED_ADS_TITLE" : "Werbung erkannt!",
-            "BLOCKED_ADS_TRACKERS_ALREADY_WHITELISTED" : "Die Domäne ist bereits als Ausnahme eingerichtet aber der Zugriff wird noch blockiert, bitte löschen Sie den DNS-Cache und starten ihren Browser neu.",
-            "BLOCKED_TRACKERS_MESSAGE" : "Wenn Sie den Zugriff benötigen, dann können Sie den eBlocker für 5 Minuten pausieren und dann fortfahren. Bitte beachten Sie, dass die Pause eventuell nicht sofort wirksam ist. Dies hängt vom Cache in Ihrem Browser / Betriebsystem ab.",
-            "BLOCKED_TRACKERS_TARGET" : "Der eBlocker hat den Zugriff auf die folgende URL verhindert:",
-            "BLOCKED_TRACKERS_TITLE" : "Tracker erkannt!",
-            "BLOCKED_CUSTOM_MESSAGE" : "Wenn Sie Zugriff benötigen, dann können Sie die Domäne von der Blacklist entfernen. Abhängig von ihrem Browser / Betriebsystem wird das nicht sofort wirksam.",
-            "BLOCKED_CUSTOM_TARGET" : "Ihre Liste der gesperrten Domänen hat den Zugriff auf folgende URL geblockt:",
-            "BLOCKED_CUSTOM_TITLE" : "Gesperrte Domäne!",
-            "ERROR_DEVICE_PAUSE_CANNOT_EXECUTE" : "Der eBlocker konnte für dieses Gerät nicht pausiert werden.",
-            "PAUSE_AND_CONTINUE" : {
-                "BUTTON_CANCEL" : "Abbrechen",
-                "BUTTON_OK" : "Pausieren und fortfahren",
-                "TEXT" : "Bitte beachten Sie, dass es anhand von lokalen Caches auf Ihrem Gerät und Browser einige Minuten dauern kann, bevor die Website verfügbar ist.",
-                "TITLE" : "Den eBlocker für dieses Gerät für 5 Minuten pausieren?"
+            "BLOCKED_ADS_MESSAGE": "Diese Domäne ist als Werbe-Server bekannt:",
+            "BLOCKED_ADS_TARGET": "Der eBlocker hat den Zugriff auf die folgende URL verhindert:",
+            "BLOCKED_ADS_TITLE": "Werbung erkannt!",
+            "BLOCKED_ADS_TRACKERS_ALREADY_WHITELISTED": "Die Domäne ist bereits als Ausnahme eingerichtet aber der Zugriff wird noch blockiert, bitte lösche den DNS-Cache und starte deinen Browser neu.",
+            "BLOCKED_TRACKERS_MESSAGE": "Wenn du den Zugriff benötigst, kannst du den eBlocker für 5 Minuten pausieren und dann fortfahren. Beachte bitte, dass die Pause eventuell nicht sofort wirksam ist. Dies hängt vom Cache in deinem Browser / Betriebssystem ab.",
+            "BLOCKED_TRACKERS_TARGET": "Der eBlocker hat den Zugriff auf die folgende URL verhindert:",
+            "BLOCKED_TRACKERS_TITLE": "Tracker erkannt!",
+            "BLOCKED_CUSTOM_MESSAGE": "Wenn du Zugriff benötigst, kannst du die Domäne von der Blacklist entfernen. Abhängig von deinem Browser / Betriebssystem wird das nicht sofort wirksam.",
+            "BLOCKED_CUSTOM_TARGET": "Deine Liste der gesperrten Domänen hat den Zugriff auf folgende URL geblockt:",
+            "BLOCKED_CUSTOM_TITLE": "Gesperrte Domäne!",
+            "ERROR_DEVICE_PAUSE_CANNOT_EXECUTE": "Der eBlocker konnte für dieses Gerät nicht pausiert werden.",
+            "PAUSE_AND_CONTINUE": {
+                "BUTTON_CANCEL": "Abbrechen",
+                "BUTTON_OK": "Pausieren und fortfahren",
+                "TEXT": "Bitte beachte, dass es anhand von lokalen Caches auf deinem Gerät und Browser einige Minuten dauern kann, bevor die Website verfügbar ist.",
+                "TITLE": "Den eBlocker für dieses Gerät für 5 Minuten pausieren?"
             },
-            "PAUSE_WAIT_FOR_REDIRECT" : "Sie werden in kürze weitergeleitet ..."
+            "PAUSE_WAIT_FOR_REDIRECT": "Du wirst in Kürze weitergeleitet ..."
         },
-        "BLOCKED_MALWARE" : {
-            "ACTION" : {
-                "BACK" : "Zurück"
+        "BLOCKED_MALWARE": {
+            "ACTION": {
+                "BACK": "Zurück"
             },
-            "MESSAGE" : "Diese Seite ist bekannt Schadsoftware zu beinhalten:",
-            "TARGET" : "der eBlocker Schadsoftwareschutz hat den Zugriff auf die folgende URL verhindert:",
-            "TITLE" : "Der Zugriff wurde verhindert"
+            "MESSAGE": "Diese Seite ist bekannt Schadsoftware zu beinhalten:",
+            "TARGET": "der eBlocker Schadsoftwareschutz hat den Zugriff auf die folgende URL verhindert:",
+            "TITLE": "Der Zugriff wurde verhindert"
         },
-        "BLOCKED_WHITELISTED" : {
-            "ACTION" : {
-                "BACK" : "Zurück",
-                "RETRY" : "Nochmals versuchen"
+        "BLOCKED_WHITELISTED": {
+            "ACTION": {
+                "BACK": "Zurück",
+                "RETRY": "Nochmals versuchen"
             },
-            "MESSAGE" : "Dies kann passieren wenn ihr Gerät noch DNS-Antworten für die Domäne im Cache hat. Bitte warten Sie einen kurzen Moment und versuchen Sie erneut den Aufruf. Wenn dieser Fehler bestehen bleibt versuchen Sie ihren Browser und/oder ihr Betriebssystem neuzustarten.",
-            "TARGET" : "Ihr Gerät hat die Seite für Zugriffsbeschränkung anstelle der folgenden URL geöffnet:",
-            "TITLE" : "Zugriff geblockt"
+            "MESSAGE": "Das kann passieren, wenn dein Gerät noch DNS-Antworten für die Domäne im Cache hat. Warte bitte einen kurzen Moment und versuche es erneut. Wenn dieser Fehler bestehen bleibt, versuche deinen Browser und/oder dein Betriebssystem neu zu starten.",
+            "TARGET": "Dein Gerät hat die Seite für Zugriffsbeschränkung anstelle der folgenden URL geöffnet:",
+            "TITLE": "Zugriff geblockt"
         },
-        "SQUID_ERROR" : {
-            "ACTION" : {
-                "DISABLE_TOR_TRY_AGAIN" : "IP-Anonymisierung ausschalten und erneut versuchen",
-                "DISABLE_VPN_TRY_AGAIN" : "VPN-Verbindung ausschalten und erneut versuchen",
-                "TRY_AGAIN" : "Erneut versuchen"
+        "SQUID_ERROR": {
+            "ACTION": {
+                "DISABLE_TOR_TRY_AGAIN": "IP-Anonymisierung ausschalten und erneut versuchen",
+                "DISABLE_VPN_TRY_AGAIN": "VPN-Verbindung ausschalten und erneut versuchen",
+                "TRY_AGAIN": "Erneut versuchen"
             },
-            "DETAILS" : "Details",
-            "MESSAGE" : "Aufgetretener Fehler",
-            "MESSAGES" : {
-                "ERR_ACCESS_DENIED" : "Zugriff verweigert.",
-                "ERR_CANNOT_FORWARD" : "Kann die Anfrage zurzeit nicht weiterleiten.",
-                "ERR_CONNECT_FAIL" : "Verbindung fehlgeschlagen.",
-                "ERR_DNS_FAIL" : "Die Domain konnte nicht zu einer IP-Adresse aufgelöst werden.",
-                "ERR_GATEWAY_FAILURE" : "Gateway Proxy Fehler",
-                "ERR_INVALID_REQ" : "Ungültige Anfrage",
-                "ERR_INVALID_RESP" : "Ungültige Antwort",
-                "ERR_INVALID_URL" : "Ungültige URL",
-                "ERR_LIFETIME_EXP" : "Zeitlimit der Verbindung erreicht",
-                "ERR_PRECONDITION_FAILED" : "Vorbedingung nicht erfüllt.",
-                "ERR_PROTOCOL_UNKNOWN" : "Nicht unterstütztes Protokoll",
-                "ERR_READ_ERROR" : "Lesefehler",
-                "ERR_READ_TIMEOUT" : "Zeitüberschreitung beim Lesen.",
-                "ERR_SOCKET_FAILURE" : "Socketfehler",
-                "ERR_UNSUP_HTTPVERSION" : "Nicht unterstützte HTTP Version",
-                "ERR_UNSUP_REQ" : "Anfragemethode und Protokoll nicht unterstützt",
-                "ERR_WRITE_ERROR" : "Fehler beim Schreiben",
-                "ERR_ZERO_SIZE_OBJECT" : "Leere Antwort"
+            "DETAILS": "Details",
+            "MESSAGE": "Aufgetretener Fehler",
+            "MESSAGES": {
+                "ERR_ACCESS_DENIED": "Zugriff verweigert.",
+                "ERR_CANNOT_FORWARD": "Kann die Anfrage zurzeit nicht weiterleiten.",
+                "ERR_CONNECT_FAIL": "Verbindung fehlgeschlagen.",
+                "ERR_DNS_FAIL": "Die Domain konnte nicht zu einer IP-Adresse aufgelöst werden.",
+                "ERR_GATEWAY_FAILURE": "Gateway Proxy Fehler",
+                "ERR_INVALID_REQ": "Ungültige Anfrage",
+                "ERR_INVALID_RESP": "Ungültige Antwort",
+                "ERR_INVALID_URL": "Ungültige URL",
+                "ERR_LIFETIME_EXP": "Zeitlimit der Verbindung erreicht",
+                "ERR_PRECONDITION_FAILED": "Vorbedingung nicht erfüllt.",
+                "ERR_PROTOCOL_UNKNOWN": "Nicht unterstütztes Protokoll",
+                "ERR_READ_ERROR": "Lesefehler",
+                "ERR_READ_TIMEOUT": "Zeitüberschreitung beim Lesen.",
+                "ERR_SOCKET_FAILURE": "Socketfehler",
+                "ERR_UNSUP_HTTPVERSION": "Nicht unterstützte HTTP Version",
+                "ERR_UNSUP_REQ": "Anfragemethode und Protokoll nicht unterstützt",
+                "ERR_WRITE_ERROR": "Fehler beim Schreiben",
+                "ERR_ZERO_SIZE_OBJECT": "Leere Antwort"
             },
-            "POSSIBLE_REASONS" : "Mögliche Ursachen:",
-            "REASON" : {
-                "ERR_ACCESS_DENIED" : "Die Anfrage wurde aufgrund mangelnder Zugriffsrechte verweigert.",
-                "ERR_CANNOT_FORWARD" : "Die Anfrage konnte nicht an den Server weitergeleitet werden.",
-                "ERR_CONNECT_FAIL" : "Der Server oder das Zielnetzwerk sind momentan nicht verfügbar.",
-                "ERR_DNS_FAIL" : "Das heißt, dass der eBlocker nicht in der Lage war den Domainnamen aufzulösen, der in der URL gefunden wurde.",
-                "ERR_GATEWAY_FAILURE" : "Ein nicht-behebbarer interner Fehler oder eine Konfiguration verhindert das die Anfrage erfolgreich ausgeführt werden kann.",
-                "ERR_INVALID_REQ" : "Anfrage ist zu lang.\nContent-Length fehlt für POST oder PUT Anfragen.\nUngültiges Zeichen im Domainnamen.\nVom Server nicht unterstützte HTTP-Version.",
-                "ERR_INVALID_RESP" : "Die HTTP(S)-Antwortnachricht, die vom Server empfangen wurde, wurde nicht verstanden oder ist falsch.",
-                "ERR_INVALID_URL" : "Fehlendes oder ungültiges Protokoll\nFehlender Domainname\nUngültiger Doppel-Escape im URL-Pfad.\nUngültiges Zeichen im Domainnamen.",
-                "ERR_LIFETIME_EXP" : "Der eBlocker hat die Anfrage beendet, da die maximale Verbindungszeit überschritten wurde.",
-                "ERR_PRECONDITION_FAILED" : "Mindestens eine Bedingung, die vom HTTP(S)-Client vorausgesetzt wird, wurde nicht erfüllt.",
-                "ERR_PROTOCOL_UNKNOWN" : "Der eBlocker unterstützt das verwendete Protokoll nicht.",
-                "ERR_READ_ERROR" : "Ein Fehler ist beim Lesen vom Netzwerk aufgetreten.",
-                "ERR_READ_TIMEOUT" : "Zeitüberschreitung beim Warten auf Daten des Netzwerks. Das Netzwerk oder der Server könnten nicht verfügbar oder überlastet sein.",
-                "ERR_SOCKET_FAILURE" : "Der eBlocker kann keinen TCP-Socket erstellen - wahrscheinlich aufgrund von zu großer Systemlast.",
-                "ERR_UNSUP_HTTPVERSION" : "Der eBlocker unterstützt die angeforderte HTTP Version nicht.",
-                "ERR_UNSUP_REQ" : "Der eBlocker unterstützt nicht alle Anfragemethoden für alle Protokolle.",
-                "ERR_WRITE_ERROR" : "Ein Fehler ist beim Schreiben auf das Netzwerk aufgetreten.",
-                "ERR_ZERO_SIZE_OBJECT" : "Der eBlocker hat bei der Anfrage an den Server eine leere Antwort erhalten."
+            "POSSIBLE_REASONS": "Mögliche Ursachen:",
+            "REASON": {
+                "ERR_ACCESS_DENIED": "Die Anfrage wurde aufgrund mangelnder Zugriffsrechte verweigert.",
+                "ERR_CANNOT_FORWARD": "Die Anfrage konnte nicht an den Server weitergeleitet werden.",
+                "ERR_CONNECT_FAIL": "Der Server oder das Zielnetzwerk sind momentan nicht verfügbar.",
+                "ERR_DNS_FAIL": "Das heißt, dass der eBlocker nicht in der Lage war den Domainnamen aufzulösen, der in der URL gefunden wurde.",
+                "ERR_GATEWAY_FAILURE": "Ein nicht-behebbarer interner Fehler oder eine Konfiguration verhindert das die Anfrage erfolgreich ausgeführt werden kann.",
+                "ERR_INVALID_REQ": "Anfrage ist zu lang.\nContent-Length fehlt für POST oder PUT Anfragen.\nUngültiges Zeichen im Domainnamen.\nVom Server nicht unterstützte HTTP-Version.",
+                "ERR_INVALID_RESP": "Die HTTP(S)-Antwortnachricht, die vom Server empfangen wurde, wurde nicht verstanden oder ist falsch.",
+                "ERR_INVALID_URL": "Fehlendes oder ungültiges Protokoll\nFehlender Domainname\nUngültiger Doppel-Escape im URL-Pfad.\nUngültiges Zeichen im Domainnamen.",
+                "ERR_LIFETIME_EXP": "Der eBlocker hat die Anfrage beendet, da die maximale Verbindungszeit überschritten wurde.",
+                "ERR_PRECONDITION_FAILED": "Mindestens eine Bedingung, die vom HTTP(S)-Client vorausgesetzt wird, wurde nicht erfüllt.",
+                "ERR_PROTOCOL_UNKNOWN": "Der eBlocker unterstützt das verwendete Protokoll nicht.",
+                "ERR_READ_ERROR": "Ein Fehler ist beim Lesen vom Netzwerk aufgetreten.",
+                "ERR_READ_TIMEOUT": "Zeitüberschreitung beim Warten auf Daten des Netzwerks. Das Netzwerk oder der Server könnten nicht verfügbar oder überlastet sein.",
+                "ERR_SOCKET_FAILURE": "Der eBlocker kann keinen TCP-Socket erstellen - wahrscheinlich aufgrund von zu großer Systemlast.",
+                "ERR_UNSUP_HTTPVERSION": "Der eBlocker unterstützt die angeforderte HTTP Version nicht.",
+                "ERR_UNSUP_REQ": "Der eBlocker unterstützt nicht alle Anfragemethoden für alle Protokolle.",
+                "ERR_WRITE_ERROR": "Ein Fehler ist beim Schreiben auf das Netzwerk aufgetreten.",
+                "ERR_ZERO_SIZE_OBJECT": "Der eBlocker hat bei der Anfrage an den Server eine leere Antwort erhalten."
             },
-            "TARGET" : "Der eBlocker konnte keine Verbindung herstellen mit",
-            "TITLE" : "Verbindungs-Fehler auf aktueller Website",
-            "TOR" : "Die IP-Anonymisierung ist eventuell gestört.",
-            "VPN" : "Die VPN-Verbindung ist eventuell gestört."
+            "TARGET": "Der eBlocker konnte keine Verbindung herstellen mit",
+            "TITLE": "Verbindungs-Fehler auf aktueller Website",
+            "TOR": "Die IP-Anonymisierung ist eventuell gestört.",
+            "VPN": "Die VPN-Verbindung ist eventuell gestört."
         },
-        "WHITELIST_OPTIONS" : {
-            "ACTION" : {
-                "ADD_AND_CONTINUE" : "Zur HTTPS-Ausnahmeliste hinzufügen und fortsetzen",
-                "ADD_AND_CONTINUE_SHORT" : "Hinzufügen und fortsetzen",
-                "BACK" : "Zurück"
+        "WHITELIST_OPTIONS": {
+            "ACTION": {
+                "ADD_AND_CONTINUE": "Zur HTTPS-Ausnahmeliste hinzufügen und fortsetzen",
+                "ADD_AND_CONTINUE_SHORT": "Hinzufügen und fortsetzen",
+                "BACK": "Zurück"
             },
-            "ENTER_DOMAIN_LABEL" : "Domäne",
-            "ENTER_NAME_LABEL" : "Name der Ausnahmeregel",
-            "TEXT_1" : "Der eBlocker konnte keine HTTPS-Verbindung herstellen mit",
-            "TEXT_2" : "Aufgetretener Fehler",
-            "TEXT_3" : "Sie können die Domäne jetzt zur HTTPS-Ausnahmeliste hinzufügen und das Laden der Seite fortsetzen.",
-            "TITLE" : "HTTPS-Fehler auf aktueller Website"
+            "ENTER_DOMAIN_LABEL": "Domäne",
+            "ENTER_NAME_LABEL": "Name der Ausnahmeregel",
+            "TEXT_1": "Der eBlocker konnte keine HTTPS-Verbindung herstellen mit",
+            "TEXT_2": "Aufgetretener Fehler",
+            "TEXT_3": "Du kannst die Domäne jetzt zur HTTPS-Ausnahmeliste hinzufügen und das Laden der Seite fortsetzen.",
+            "TITLE": "HTTPS-Fehler auf aktueller Website"
         }
     },
-    "SSL" : {
-        "CARD" : {
-            "ACTION" : {
-                "START_WIZARD" : "HTTPS Assistenten Starten"
+    "SSL": {
+        "CARD": {
+            "ACTION": {
+                "START_WIZARD": "HTTPS Assistenten Starten"
             },
-            "CERTIFICATE" : {
-                "ADD" : {
-                    "BUTTON_LABEL" : "Zertifikat hinzufügen"
+            "CERTIFICATE": {
+                "ADD": {
+                    "BUTTON_LABEL": "Zertifikat hinzufügen"
                 },
-                "LABEL" : "Zertifikat vorhanden:",
-                "LABEL_EXPIRATION" : "(läuft in {days} {days, select, 1{Tag} other{Tagen}} ab)",
-                "TOOLTIP" : "{{name}}, gültig bis {{day}}.{{month}}.{{year}}",
-                "TOOLTIP_ADD" : "Fügen Sie das Zertifikat zum Browser/Betriebssystem hinzu. {{name}} Gültig bis {{day}}.{{month}}.{{year}}",
-                "TOOLTIP_OUTDATED" : "Es ist bereits ein neueres Zertifikat verfügbar"
+                "LABEL": "Zertifikat vorhanden:",
+                "LABEL_EXPIRATION": "(läuft in {days} {days, select, 1{Tag} other{Tagen}} ab)",
+                "TOOLTIP": "{{name}}, gültig bis {{day}}.{{month}}.{{year}}",
+                "TOOLTIP_ADD": "Füge das Zertifikat zum Browser/Betriebssystem hinzu. {{name}} Gültig bis {{day}}.{{month}}.{{year}}",
+                "TOOLTIP_OUTDATED": "Es ist bereits ein neueres Zertifikat verfügbar"
             },
-            "RENEWAL" : {
-                "ADD" : {
-                    "BUTTON_LABEL" : "Zertifikat hinzufügen"
+            "RENEWAL": {
+                "ADD": {
+                    "BUTTON_LABEL": "Zertifikat hinzufügen"
                 },
-                "LABEL" : "Erneuertes Zertifikat:",
-                "LINK_LABEL" : "Was ist das?",
-                "LINK_TOOLTIP" : "Hilfe: Die Aufnahme des eBlocker Zertifikats.",
-                "LINK_URL" : "de",
-                "TOOLTIP" : "{{name}}, gültig bis {{day}}.{{month}}.{{year}}",
-                "TOOLTIP_ADD" : "Fügen Sie das Zertifikat zum Browser/Betriebssystem hinzu. {{name}} Gültig bis {{day}}.{{month}}.{{year}}"
+                "LABEL": "Erneuertes Zertifikat:",
+                "LINK_LABEL": "Was ist das?",
+                "LINK_TOOLTIP": "Hilfe: Die Aufnahme des eBlocker Zertifikats.",
+                "LINK_URL": "de",
+                "TOOLTIP": "{{name}}, gültig bis {{day}}.{{month}}.{{year}}",
+                "TOOLTIP_ADD": "Füge das Zertifikat zum Browser/Betriebssystem hinzu. {{name}} Gültig bis {{day}}.{{month}}.{{year}}"
             },
-            "STATUS" : {
-                "ACTIVE" : {
-                    "BUTTON_LABEL" : "HTTPS deaktivieren",
-                    "TOOLTIP" : "HTTPS-Unterstützung ist für dieses Gerät aktiviert"
+            "STATUS": {
+                "ACTIVE": {
+                    "BUTTON_LABEL": "HTTPS deaktivieren",
+                    "TOOLTIP": "HTTPS-Unterstützung ist für dieses Gerät aktiviert"
                 },
-                "INACTIVE" : {
-                    "BUTTON_LABEL" : "HTTPS aktivieren",
-                    "TOOLTIP" : "HTTPS-Unterstützung ist für dieses Gerät nicht aktiviert",
-                    "TOOLTIP_GLOBAL" : "HTTPS-Unterstützung ist allgemein deaktiviert. Gehen Sie zu den Einstellungen/HTTPS, um HTTPS-Unterstützung zu aktivieren."
+                "INACTIVE": {
+                    "BUTTON_LABEL": "HTTPS aktivieren",
+                    "TOOLTIP": "HTTPS-Unterstützung ist für dieses Gerät nicht aktiviert",
+                    "TOOLTIP_GLOBAL": "HTTPS-Unterstützung ist allgemein deaktiviert. Gehe zu den Einstellungen/HTTPS, um die HTTPS-Unterstützung zu aktivieren."
                 },
-                "LABEL" : "HTTPS-Unterstützung:",
-                "RESTRICTED" : {
-                    "BUTTON_LABEL" : "Einstellungen"
+                "LABEL": "HTTPS-Unterstützung:",
+                "RESTRICTED": {
+                    "BUTTON_LABEL": "Einstellungen"
                 }
             },
-            "TITLE" : "HTTPS-Unterstützung",
-            "TOOLTIP" : "Übersicht über Ihre HTTPS Einstellungen. Aktivieren oder deaktivieren Sie hier die HTTPS-Unterstützung für dieses Gerät."
+            "TITLE": "HTTPS-Unterstützung",
+            "TOOLTIP": "Übersicht über deine HTTPS Einstellungen. Aktiviere oder deaktiviere hier die HTTPS-Unterstützung für dieses Gerät."
         }
     },
-    "USER" : {
-        "CARD" : {
-            "ACTION" : {
-                "CHANGE_PIN" : "PIN ändern",
-                "SET_PIN" : "PIN setzen",
-                "CHANGE_USER" : "Nutzer wechseln",
-                "LOCK_ACCESS" : "Gerät sperren",
-                "UNLOCK_ACCESS" : "Gerät entsperren"
+    "USER": {
+        "CARD": {
+            "ACTION": {
+                "CHANGE_PIN": "PIN ändern",
+                "SET_PIN": "PIN setzen",
+                "CHANGE_USER": "Nutzer wechseln",
+                "LOCK_ACCESS": "Gerät sperren",
+                "UNLOCK_ACCESS": "Gerät entsperren"
             },
-            "LABEL_ASSIGNED_USER" : "Gerät gehört:",
-            "LABEL_LOCKED_USER" : "Der Internet-Zugang ist für dieses Gerät gesperrt.",
-            "LABEL_OPERATING_USER" : "Gerät wird genutzt von:",
-            "LABEL_SELECT_USER" : "Benutzer wählen",
-            "TITLE" : "Benutzer",
-            "TOOLTIP_CARD" : "Hier können Sie den Benutzer des aktuellen Geräts ändern, Ihre PIN ändern, das Gerät sperren oder an den eigentlichen Nutzer zurückgeben."
+            "LABEL_ASSIGNED_USER": "Gerät gehört:",
+            "LABEL_LOCKED_USER": "Der Internet-Zugang ist für dieses Gerät gesperrt.",
+            "LABEL_OPERATING_USER": "Gerät wird genutzt von:",
+            "LABEL_SELECT_USER": "Benutzer wählen",
+            "TITLE": "Benutzer",
+            "TOOLTIP_CARD": "Hier kannst du den Benutzer des aktuellen Geräts ändern, deine PIN ändern, das Gerät sperren oder an den eigentlichen Nutzer zurückgeben."
         }
     },
-    "WHITELIST" : {
-        "CARD" : {
-            "ACTION" : {
-                "ADD_DOMAIN" : "Hinzufügen"
+    "WHITELIST": {
+        "CARD": {
+            "ACTION": {
+                "ADD_DOMAIN": "Hinzufügen"
             },
-            "SEARCH_LABEL" : "Website eingeben...",
-            "TABLE" : {
-                "COLUMN" : {
-                    "AD" : "Werbung",
-                    "ALLOW_ALL" : "allen Websites",
-                    "DOMAIN" : "Erlaube auf...",
-                    "TRACKER" : "Tracker"
+            "SEARCH_LABEL": "Website eingeben...",
+            "TABLE": {
+                "COLUMN": {
+                    "AD": "Werbung",
+                    "ALLOW_ALL": "allen Websites",
+                    "DOMAIN": "Erlaube auf...",
+                    "TRACKER": "Tracker"
                 },
-                "EMPTY_FOUND" : "Keine Domains gefunden",
-                "EMPTY_WHITELISTED" : "Keine Domains erlaubt",
-                "MARK_DELETE" : "Der eBlocker ist für diese Website nicht länger deaktiviert. Beim nächsten Laden des Dashboards wird der Eintrag aus der Liste entfernt."
+                "EMPTY_FOUND": "Keine Domains gefunden",
+                "EMPTY_WHITELISTED": "Keine Domains erlaubt",
+                "MARK_DELETE": "Der eBlocker ist für diese Website nicht länger deaktiviert. Beim nächsten Laden des Dashboards wird der Eintrag aus der Liste entfernt."
             },
-            "TITLE" : "Tracker & Werbung",
-            "TOOLTIP" : "Websites, auf denen Tracker-/ Werbe-Blocker deaktiviert sind."
+            "TITLE": "Tracker & Werbung",
+            "TOOLTIP": "Websites, auf denen Tracker-/ Werbe-Blocker deaktiviert sind."
         }
     },
-    "WIZARD" : {
-        "HTTPS" : {
-            "ACTION" : {
-                "BACK" : "Zurück",
-                "CANCEL" : "Abbrechen",
-                "CONTINUE" : "Weiter",
-                "DONE" : "Fertig",
-                "DOWNLOAD_CERT" : "Zertifikat herunterladen",
-                "FINISH" : "Beenden",
-                "LOAD_CERT" : "Zertifikat laden",
-                "LOAD_CERT_OS" : "Zertifikat für Betriebssystem herunterladen",
-                "LOAD_CERT_OS_XS" : "Zertifikat für OS",
-                "TEST" : "Testen"
+    "WIZARD": {
+        "HTTPS": {
+            "ACTION": {
+                "BACK": "Zurück",
+                "CANCEL": "Abbrechen",
+                "CONTINUE": "Weiter",
+                "DONE": "Fertig",
+                "DOWNLOAD_CERT": "Zertifikat herunterladen",
+                "FINISH": "Beenden",
+                "LOAD_CERT": "Zertifikat laden",
+                "LOAD_CERT_OS": "Zertifikat für Betriebssystem herunterladen",
+                "LOAD_CERT_OS_XS": "Zertifikat für OS",
+                "TEST": "Testen"
             },
-            "ALREADY_INSTALLED" : {
-                "TEXT_1" : "Das HTTPS-Zertifikat ist bereits in Ihrem Betriebssystem hinterlegt. Die Mehrzahl der Browser greift auf dieses Zertifikat zurück.",
-                "TEXT_1_FIREFOX" : "Das HTTPS-Zertifikat ist bereits in Firefox hinterlegt. ",
-                "TEXT_2_FIREFOX" : "Damit sichere Verbindungen zum eBlocker von <b>weiteren Browsern</b> aufgebaut werden können, muss das HTTPS-Zertifikat des eBlockers ",
-                "TEXT_2_FIREFOX_LINK" : "<b>einmalig</b> im Betriebssystem hinterlegt werden.",
-                "TEXT_2" : "Sollten Sie Firefox, Cliqz oder Seamonkey verwenden, dann durchlaufen Sie diesen HTTPS-Assistenten auch dort. Diese greifen nicht auf  im Betriebssystem hinterlegte Zertifikate zu. ",
-                "TITLE" : "HTTPS-Zertifikat in weiteren Browsern"
+            "ALREADY_INSTALLED": {
+                "TEXT_1": "Das HTTPS-Zertifikat ist bereits in deinem Betriebssystem hinterlegt. Die Mehrzahl der Browser greift auf dieses Zertifikat zurück.",
+                "TEXT_1_FIREFOX": "Das HTTPS-Zertifikat ist bereits in Firefox hinterlegt. ",
+                "TEXT_2_FIREFOX": "Damit sichere Verbindungen zum eBlocker von <b>weiteren Browsern</b> aufgebaut werden können, muss das HTTPS-Zertifikat des eBlockers ",
+                "TEXT_2_FIREFOX_LINK": "<b>einmalig</b> im Betriebssystem hinterlegt werden.",
+                "TEXT_2": "Wenn du Firefox, Cliqz oder Seamonkey verwendest, durchlaufe diesen HTTPS-Assistenten auch dort. Diese greifen nicht auf im Betriebssystem hinterlegte Zertifikate zu.",
+                "TITLE": "HTTPS-Zertifikat in weiteren Browsern"
             },
-            "ANDROID_ADD_CERT" : {
-                "STEP_1" : "Öffnen Sie den Download-Ordner und klicken Sie auf das heruntergeladene Zertifikat",
-                "STEP_2" : "Geben Sie gegebenenfalls Ihre PIN ein",
-                "STEP_3" : "Geben Sie dem Zertifikat einen Namen (z.B. Mein eBlocker)",
-                "STEP_4" : "Wählen Sie unter „Verwendung der Anmeldedaten“ bitte „VPN and Apps“ aus",
-                "STEP_5" : "Bestätigen Sie mit „OK“",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (Android)"
+            "ANDROID_ADD_CERT": {
+                "STEP_1": "Öffne den Download-Ordner und klicke auf das heruntergeladene Zertifikat",
+                "STEP_2": "Gib gegebenenfalls deine PIN ein",
+                "STEP_3": "Gib dem Zertifikat einen Namen (z.B. Mein eBlocker)",
+                "STEP_4": "Wähle unter „Verwendung der Anmeldedaten“ bitte „VPN and Apps“ aus",
+                "STEP_5": "Bestätige mit „OK“",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (Android)"
             },
-            "ANDROID_TEST_CERT" : {
-                "NOTE" : "Das eBlocker-Zertifikat ist nun in Android hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
-                "STEP_6" : "Laden Sie erneut das Zertifikat oder öffnen Sie das eben heruntergeladene Zertifikat erneut",
-                "STEP_7" : "Geben Sie gegebenenfalls Ihre PIN ein",
-                "STEP_8" : "Geben Sie dem Zertifikat einen Namen (z.B. Mein eBlocker)",
-                "STEP_9" : "Wählen Sie unter „Verwendung der Anmeldedaten“ bitte „WLAN“ aus",
-                "STEP_10" : "Bestätigen Sie mit „OK“",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (Android)"
+            "ANDROID_TEST_CERT": {
+                "NOTE": "Das eBlocker-Zertifikat ist nun in Android hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
+                "STEP_6": "Lade das Zertifikat erneut oder öffne das gerade heruntergeladene Zertifikat erneut",
+                "STEP_7": "Gib gegebenenfalls deine PIN ein",
+                "STEP_8": "Gib dem Zertifikat einen Namen (z.B. Mein eBlocker)",
+                "STEP_9": "Wähle bitte unter „Verwendung der Anmeldedaten“ „WLAN“ aus",
+                "STEP_10": "Bestätige mit „OK“",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (Android)"
             },
-            "CERT_TEST_FAIL" : {
-                "TEXT_FAIL" : "Sie müssen ggf. Ihren Browser neu starten. Sie können den Status des eBlocker-Zertifikats jederzeit im Dashboard einsehen und den HTTPS-Assistenten erneut ausführen.",
-                "TEXT_FAIL_SUPPORT_MAIL" : "https://eBlocker.org/community/",
-                "TEXT_FAIL_SUPPORT_POST" : "",
-                "TEXT_FAIL_SUPPORT_PRE" : "Bei Problemen mit der HTTPS-Unterstützung können Sie im Forum ",
-                "TEXT_FAIL_SUPPORT_TEXT" : "eine Nachricht hinterlassen."
+            "CERT_TEST_FAIL": {
+                "TEXT_FAIL": "Du musst ggf. deinen Browser neu starten. Du kannst den Status des eBlocker-Zertifikats jederzeit im Dashboard einsehen und den HTTPS-Assistenten erneut ausführen.",
+                "TEXT_FAIL_SUPPORT_MAIL": "https://eBlocker.org/community/",
+                "TEXT_FAIL_SUPPORT_POST": "",
+                "TEXT_FAIL_SUPPORT_PRE": "Bei Problemen mit der HTTPS-Unterstützung kannst du im Forum ",
+                "TEXT_FAIL_SUPPORT_TEXT": "eine Nachricht hinterlassen."
             },
-            "FF_ADD_CERT" : {
+            "FF_ADD_CERT": {
                 "IMAGE_1": "de/firefox-CA.png",
-                "STEP_1" : "Laden Sie hier das eBlocker-Zertifikat für Firefox",
-		"STEP_2" : "Speichern Sie die Datei",
-		"STEP_3" : "Öffnen Sie die Zertifikatsverwaltung unter Firefox > „Einstellungen“ > „Datenschutz & Sicherheit“ > „Zertifikate“ > „Zertifikate anzeigen“",
-		"STEP_4" : "Wählen Sie das Tab <b>Zertifizierungsstellen</b> und klicken Sie „Importieren...“",
-		"STEP_5" : "Wählen Sie die zuvor gespeicherte Zertifikatsdatei aus",
-                "STEP_6" : "Wählen Sie im folgenden Dialog: „Dieser CA vertrauen, um Websites zu identifizieren“",
-                "TITLE" : "HTTPS-Zertifikat in Firefox hinterlegen"
+                "STEP_1": "Lade hier das eBlocker-Zertifikat für Firefox",
+                "STEP_2": "Speichere die Datei",
+                "STEP_3": "Öffne die Zertifikatsverwaltung unter Firefox > „Einstellungen“ > „Datenschutz & Sicherheit“ > „Zertifikate“ > „Zertifikate anzeigen“",
+                "STEP_4": "Wähle das Tab <b>Zertifizierungsstellen</b> und klicke „Importieren...“",
+                "STEP_5": "Wähle die zuvor gespeicherte Zertifikatsdatei aus",
+                "STEP_6": "Wähle im folgenden Dialog: „Dieser CA vertrauen, um Websites zu identifizieren“",
+                "TITLE": "HTTPS-Zertifikat in Firefox hinterlegen"
             },
-            "FF_ADD_OS" : {
-                "CONFIRM_INSTALL" : "Zertifikat ist hinterlegt",
-                "EXPLAIN_1" : "Testen Sie, ob das eBlocker-Zertifikat korrekt installiert wurde",
-                "EXPLAIN_2" : "Damit sichere Verbindungen zum eBlocker von <b>weiteren Browsern</b> aufgebaut werden können, muss das HTTPS-Zertifikat des eBlockers ",
-                "EXPLAIN_2_LINK" : "<b>einmalig</b> im Betriebssystem hinterlegt werden.",
-                "TITLE" : "HTTPS-Zertifikat im Betriebssystem hinterlegen"
+            "FF_ADD_OS": {
+                "CONFIRM_INSTALL": "Zertifikat ist hinterlegt",
+                "EXPLAIN_1": "Teste, ob das eBlocker-Zertifikat korrekt installiert wurde",
+                "EXPLAIN_2": "Damit sichere Verbindungen zum eBlocker von <b>weiteren Browsern</b> aufgebaut werden können, muss das HTTPS-Zertifikat des eBlockers ",
+                "EXPLAIN_2_LINK": "<b>einmalig</b> im Betriebssystem hinterlegt werden.",
+                "TITLE": "HTTPS-Zertifikat im Betriebssystem hinterlegen"
             },
-            "FINISH" : {
-                "TEXT_1" : "Wir empfehlen, das eBlocker-Zertifikat auf allen Geräten und in allen Browsern zu hinterlegen. Bitte führen Sie den HTTPS-Assistenten auch dort aus.",
-                "TEXT_2" : "Sie erreichen den Assistenten unter eblocker.box/https",
-                "TITLE" : "Fertig"
+            "FINISH": {
+                "TEXT_1": "Wir empfehlen, das eBlocker-Zertifikat auf allen Geräten und in allen Browsern zu hinterlegen. Führe bitte den HTTPS-Assistenten auch dort aus.",
+                "TEXT_2": "Du erreichst den Assistenten unter eblocker.box/https",
+                "TITLE": "Fertig"
             },
             "NO_WIZARD": {
-                "TITLE" : "Bitte installieren Sie das eBlocker-Zertifikat manuell",
-                "TEXT_1" : "Um das eBlocker-Zertifikat in Ihrem Betriebssystem zu installieren, nutzen Sie bitte den Download-Knopf auf dieser Seite oder laden Sie das Zertifikat in den eBlocker Einstellungen (HTTPS -> Zertifikat) herunter und installieren Sie es manuell."
+                "TITLE": "Bitte installiere das eBlocker-Zertifikat manuell",
+                "TEXT_1": "Um das eBlocker-Zertifikat in deinem Betriebssystem zu installieren, nutze bitte den Download-Knopf auf dieser Seite oder lade das Zertifikat in den eBlocker Einstellungen (HTTPS -> Zertifikat) herunter und installiere es manuell."
             },
-            "INTRO" : {
-                "EXPLAIN" : "<p>Dieser Assistent unterstützt Sie beim Hinterlegen des eBlocker HTTPS-Zertifikats auf dem Gerät, welches Sie aktuell verwenden. </p><p>Führen Sie ihn mit dem Browser Ihres Betriebssystems (Edge, Internet Explorer, bzw. Safari) UND, falls in Verwendung, mit Firefox aus.</p><p>Wiederholen Sie diesen Assistenten auf allen Standard-Computern (Laptops, Desktop-PCs, Tablets und Smartphones) mit denen sie Funktionen verwenden wollen, für die HTTPS notwendig ist (Pattern Werbe Blocker, Pattern Tracker Blocker, Gerätetarnung, Do-Not-Track-Header, etc.). </p>",
-                "EXPLAIN_IOS" : "Um das Zertifikat in iOS zu hinterlegen, muss der Safari Browser verwendet werden. Bitte öffnen Sie Safari und führen Sie den HTTPS-Assistenten erneut aus."
+            "INTRO": {
+                "EXPLAIN": "<p>Dieser Assistent unterstützt dich beim Hinterlegen des eBlocker HTTPS-Zertifikats auf dem Gerät, welches du aktuell verwendest. </p><p>Führe ihn mit dem Browser deines Betriebssystems (Edge, Internet Explorer, bzw. Safari) UND, falls in Verwendung, mit Firefox aus.</p><p>Wiederhole diesen Assistenten auf allen Standard-Computern (Laptops, Desktop-PCs, Tablets und Smartphones), mit denen du Funktionen verwenden willst, für die HTTPS notwendig ist (Pattern Werbe Blocker, Pattern Tracker Blocker, Gerätetarnung, Do-Not-Track-Header, etc.). </p>",
+                "EXPLAIN_IOS": "Um das Zertifikat in iOS zu hinterlegen, musst du den Safari Browser verwenden. Bitte öffne Safari und führe den HTTPS-Assistenten erneut aus."
             },
-            "IOS_ADD_CERT" : {
-                "STEP_2" : "Tippen Sie auf „Zulassen“, um das Konfigurationsprofil zu laden",
-		"STEP_3" : "Öffnen Sie die iOS Einstellungen und wählen Sie das eBlocker-Profil unter „Allgemein“ > „VPN und Geräteverwaltung“ > „Geladenes Profil“ aus",
-                "STEP_4" : "Tippen Sie auf „Installieren“, geben Sie Ihren Code ein und bestätigen Sie erneut mit „Installieren“",
-                "STEP_5" : "Tippen Sie auf „Fertig“",
-                "STEP_6" : "Das Zertifikat muss jetzt noch aktiviert werden (Weiter)",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (iOS)"
+            "IOS_ADD_CERT": {
+                "STEP_2": "Tippe auf „Zulassen“, um das Konfigurationsprofil zu laden",
+                "STEP_3": "Öffne die iOS Einstellungen und wähle das eBlocker-Profil unter „Allgemein“ > „VPN und Geräteverwaltung“ > „Geladenes Profil“ aus",
+                "STEP_4": "Tippe auf „Installieren“, gib deinen Code ein und bestätige erneut mit „Installieren“",
+                "STEP_5": "Tippe auf „Fertig“",
+                "STEP_6": "Das Zertifikat muss jetzt noch aktiviert werden (Weiter)",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (iOS)"
             },
-            "IOS_TEST_CERT" : {
-                "EXPLAIN" : "Das hinterlegte Zertifikat muss jetzt noch aktiviert werden",
-                "NOTE" : "Das eBlocker-Zertifikat ist nun in iOS hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
-                "STEP_1" : "In den iOS Einstellungen gehen Sie zu: „Allgemein“ > „Info“ > „Zertifikatsvertrauenseinstellungen“",
-                "STEP_2" : "Bewegen Sie den Schieberegler neben dem Zertifikat „eBlocker...“ nach rechts",
-                "TITLE" : "HTTPS-Zertifikat aktivieren (iOS)"
+            "IOS_TEST_CERT": {
+                "EXPLAIN": "Das hinterlegte Zertifikat muss jetzt noch aktiviert werden",
+                "NOTE": "Das eBlocker-Zertifikat ist nun in iOS hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
+                "STEP_1": "In den iOS Einstellungen gehst du zu: „Allgemein“ > „Info“ > „Zertifikatsvertrauenseinstellungen“",
+                "STEP_2": "Bewege den Schieberegler neben dem Zertifikat „eBlocker...“ nach rechts",
+                "TITLE": "HTTPS-Zertifikat aktivieren (iOS)"
             },
-            "LABEL_CERT_FAIL" : "Zertifikat konnte nicht erfolgreich überprüft werden",
-            "LABEL_CERT_SUCCESS" : "Zertifikat erfolgreich hinterlegt",
-            "MAC_ADD_CERT" : {
+            "LABEL_CERT_FAIL": "Zertifikat konnte nicht erfolgreich überprüft werden",
+            "LABEL_CERT_SUCCESS": "Zertifikat erfolgreich hinterlegt",
+            "MAC_ADD_CERT": {
                 "IMAGE_1": "de/macOS_04_Objekte_importieren.png",
                 "IMAGE_2": "de/macOS_03_Mac_Speicher_waehlen.png",
-                "CONFIRM_DOWNLOAD" : "Ich habe das eBlocker-Zertifikat heruntergeladen",
-                "CONFIRM_LIST" : "eBlocker-Zertifikat ist in Auflistung",
-                "STEP_1": "Laden Sie das eBlocker-Zertifikat herunter",
-                "STEP_2" : "Öffnen Sie die Schlüsselbundverwaltung unter Programme/Dienstprogramme",
-                "STEP_3" : "Klicken Sie links auf den Schlüsselbund „System“ und Kategorie „Zertifikate“",
-                "STEP_4" : "Wählen Sie im Menü „Ablage / Objekte importieren...“ aus",
-                "STEP_5" : "Wählen Sie das heruntergeladene eBlocker-Zertifikat aus Ihrem Downloads-Ordner und klicken Sie auf „Öffnen“",
-                "STEP_6" : "Eventuell werden Sie nach Ihrem Administrator-Passwort gefragt",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (macOS)"
+                "CONFIRM_DOWNLOAD": "Ich habe das eBlocker-Zertifikat heruntergeladen",
+                "CONFIRM_LIST": "eBlocker-Zertifikat ist in Auflistung",
+                "STEP_1": "Lade das eBlocker-Zertifikat herunter",
+                "STEP_2": "Öffne die Schlüsselbundverwaltung unter Programme/Dienstprogramme",
+                "STEP_3": "Klicke links auf den Schlüsselbund „System“ und die Kategorie „Zertifikate“",
+                "STEP_4": "Wähle im Menü „Ablage / Objekte importieren...“ aus",
+                "STEP_5": "Wähle das heruntergeladene eBlocker-Zertifikat aus deinem Downloads-Ordner und klicke auf „Öffnen“",
+                "STEP_6": "Eventuell wirst du nach deinem Administrator-Passwort gefragt",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (macOS)"
             },
-            "MAC_TEST_CERT" : {
-                "NOTE" : "Das eBlocker-Zertifikat ist nun in macOS hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
-                "STEP_7" : "Doppelklicken Sie auf das importierte eBlocker-Zertifikat",
-                "STEP_8" : "Gehen Sie auf „Vertrauen“ und wählen Sie „Immer vertrauen“ in der Auswahlbox „Secure Sockets Layer (SSL)“ aus.",
-                "STEP_9" : "Schließen Sie das Fenster. Geben Sie das Administrator-Passwort ein.",
-                "STEP_10" : "Führen Sie unseren Test aus",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (macOS)"
+            "MAC_TEST_CERT": {
+                "NOTE": "Das eBlocker-Zertifikat ist nun in macOS hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
+                "STEP_7": "Doppelklicke auf das importierte eBlocker-Zertifikat",
+                "STEP_8": "Gehe auf „Vertrauen“ und wähle „Immer vertrauen“ in der Auswahlbox „Secure Sockets Layer (SSL)“ aus.",
+                "STEP_9": "Schließe das Fenster. Gib das Administrator-Passwort ein.",
+                "STEP_10": "Führe unseren Test aus",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (macOS)"
             },
-            "NOTIFICATION" : {
-                "NOTIFY_NO_CERT" : "Zertifikat konnte nicht getestet werden. Unbekanntest Zertifikat.",
-                "NOTIFY_NO_DEVICE" : "Zertifikat konnte nicht getestet werden. Kein Gerät gefunden."
+            "NOTIFICATION": {
+                "NOTIFY_NO_CERT": "Zertifikat konnte nicht getestet werden. Unbekanntest Zertifikat.",
+                "NOTIFY_NO_DEVICE": "Zertifikat konnte nicht getestet werden. Kein Gerät gefunden."
             },
-            "TITLE" : "eBlocker HTTPS-Assistent",
-            "WIN_ADD_CERT" : {
-                "CONFIRM_SELECT" : "Ja, „Vertrauenswürdige Stammzertifizierungsstellen“ ist gewählt",
+            "TITLE": "eBlocker HTTPS-Assistent",
+            "WIN_ADD_CERT": {
+                "CONFIRM_SELECT": "Ja, „Vertrauenswürdige Stammzertifizierungsstellen“ ist gewählt",
                 "IMAGE_1": "de/Win_05_Durchsuchen.png",
                 "IMAGE_2": "de/Win_06_Speicher_waehlen.png",
-                "STEP_1": "Laden Sie das eBlocker-Zertifikat herunter.",
-                "STEP_2" : "Klicken Sie in dem erscheinenden Dialog erst auf „Speichern“ und danach auf „Öffnen“.",
-                "STEP_2B" : "Gegebenenfalls sehen Sie eine Sicherheitswarnung von Windows. Klicken Sie dort dann bitte auf „Zulassen“.",
-                "STEP_3" : "Klicken Sie in dem erscheinenden Fenster auf „Zertifikat installieren“.",
-                "STEP_4" : "Es öffnet sich der Zertifikatimport-Assistent, bestätigen Sie mit „weiter“.",
-                "STEP_5" : "Wählen Sie „Alle Zertifikate in folgendem Speicher speichern“ aus und klicken Sie auf den Button „Durchsuchen“.",
-                "STEP_6" : "Wählen Sie den zweiten Eintrag „Vertrauenswürdige Stammzertifizierungsstellen“ aus und klicken Sie auf OK.",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (Windows)"
+                "STEP_1": "Lade das eBlocker-Zertifikat herunter.",
+                "STEP_2": "Klicke in dem erscheinenden Dialog erst auf „Speichern“ und danach auf „Öffnen“.",
+                "STEP_2B": "Gegebenenfalls siehst du eine Sicherheitswarnung von Windows. Klicke dort dann bitte auf „Zulassen“.",
+                "STEP_3": "Klicke in dem erscheinenden Fenster auf „Zertifikat installieren“.",
+                "STEP_4": "Es öffnet sich der Zertifikatimport-Assistent, bestätige mit „weiter“.",
+                "STEP_5": "Wähle „Alle Zertifikate in folgendem Speicher speichern“ aus und klicke auf den Button „Durchsuchen“.",
+                "STEP_6": "Wähle den zweiten Eintrag „Vertrauenswürdige Stammzertifizierungsstellen“ aus und klicke auf OK.",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (Windows)"
             },
-            "WIN_TEST_CERT" : {
-                "NOTE" : "Das eBlocker-Zertifikat ist nun in Windows hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
-                "STEP_7" : "Bestätigen Sie die Auswahl mit „Weiter“",
-                "STEP_8" : "Klicken Sie auf „Fertig stellen“ und bestätigen Sie die folgende Sicherheitswarnung mit „Ja“",
-                "STEP_9" : "Führen Sie unseren Test aus",
-                "TITLE" : "HTTPS-Zertifikat hinterlegen (Windows)"
+            "WIN_TEST_CERT": {
+                "NOTE": "Das eBlocker-Zertifikat ist nun in Windows hinterlegt. Die meisten Browser und Programme können jetzt auf das eBlocker-Zertifikat zugreifen.",
+                "STEP_7": "Bestätige die Auswahl mit „Weiter“",
+                "STEP_8": "Klicke auf „Fertig stellen“ und bestätige die folgende Sicherheitswarnung mit „Ja“",
+                "STEP_9": "Führe unseren Test aus",
+                "TITLE": "HTTPS-Zertifikat hinterlegen (Windows)"
             }
         },
-        "MOBILE" : {
-            "ACTION" : {
-                "BACK" : "Zurück",
-                "CANCEL" : "Abbrechen",
-                "CLOSE" : "Schließen",
-                "CONTINUE" : "Weiter",
-                "DONE" : "Fertig"
+        "MOBILE": {
+            "ACTION": {
+                "BACK": "Zurück",
+                "CANCEL": "Abbrechen",
+                "CLOSE": "Schließen",
+                "CONTINUE": "Weiter",
+                "DONE": "Fertig"
             },
-            "CHOOSE_OS" : {
-                "ACTION_DOWNLOAD" : "App herunterladen",
-                "CONFIRM_DOWNLOAD" : "App wurde heruntergeladen",
-                "LABEL_CHOICE" : "Wählen Sie Ihr Betriebssystem aus:",
-                "NOTIFY_NO_DEVICE" : "Ihr Gerät wurde nicht erkannt.",
-                "TITLE" : "1. OpenVPN-App Herunterladen",
-                "VPN_URL" : {
-                    "ANDROID" : "https://play.google.com/store/apps/details?id=net.openvpn.openvpn",
-                    "IOS" : "https://itunes.apple.com/de/app/openvpn-connect/id590379981?mt=8",
-                    "MAC" : "https://tunnelblick.net/",
-                    "OTHER" : "",
-                    "WINDOWS" : "http://build.openvpn.net/downloads/releases/latest/"
+            "CHOOSE_OS": {
+                "ACTION_DOWNLOAD": "App herunterladen",
+                "CONFIRM_DOWNLOAD": "App wurde heruntergeladen",
+                "LABEL_CHOICE": "Wähle dein Betriebssystem aus:",
+                "NOTIFY_NO_DEVICE": "Dein Gerät wurde nicht erkannt.",
+                "TITLE": "1. OpenVPN-App Herunterladen",
+                "VPN_URL": {
+                    "ANDROID": "https://play.google.com/store/apps/details?id=net.openvpn.openvpn",
+                    "IOS": "https://itunes.apple.com/de/app/openvpn-connect/id590379981?mt=8",
+                    "MAC": "https://tunnelblick.net/",
+                    "OTHER": "",
+                    "WINDOWS": "http://build.openvpn.net/downloads/releases/latest/"
                 }
             },
-            "CONNECT_ANDROID" : {
-                "STEP_1" : "Bewegen Sie den Schieberegler nach rechts, um die Verbindung zu starten.",
-                "STEP_2" : "Nach erfolgreichem Verbindungsaufbau erscheint sowohl das VPN-Symbol am oberen Bildschirmrand als auch ein Zähler innerhalb der App.",
-                "TITLE" : "Ihr Gerät mit dem eBlocker verbinden"
+            "CONNECT_ANDROID": {
+                "STEP_1": "Bewege den Schieberegler nach rechts, um die Verbindung zu starten.",
+                "STEP_2": "Nach erfolgreichem Verbindungsaufbau erscheint sowohl das VPN-Symbol am oberen Bildschirmrand als auch ein Zähler innerhalb der App.",
+                "TITLE": "Dein Gerät mit dem eBlocker verbinden"
             },
-            "CONNECT_IOS" : {
-                "STEP_1" : "Bewegen Sie den Schieberegler nach rechts, um die Verbindung zu starten.",
-                "STEP_2" : "Ein grüner Schieberegler signalisiert den erfolgreichen Verbindungsaufbau. Außerdem erscheint ein kleines grünes Icon am oberen Bilschirmrand.",
-                "TITLE" : "Ihr Gerät mit dem eBlocker verbinden"
+            "CONNECT_IOS": {
+                "STEP_1": "Bewege den Schieberegler nach rechts, um die Verbindung zu starten.",
+                "STEP_2": "Ein grüner Schieberegler signalisiert den erfolgreichen Verbindungsaufbau. Außerdem erscheint ein kleines grünes Icon am oberen Bilschirmrand.",
+                "TITLE": "Dein Gerät mit dem eBlocker verbinden"
             },
-            "CONNECT_MAC" : {
-                "STEP_1" : "Klicken Sie auf das Tunnelblick-Icon in der Menüleiste",
-                "STEP_2" : "Wählen Sie „eBlocker_Mobile_MyeBlocker“ verbinden",
-                "STEP_3" : "Ihr Mac verbindet sich jetzt mit Ihrem eBlocker",
-                "TITLE" : "Ihr Gerät mit dem eBlocker verbinden"
+            "CONNECT_MAC": {
+                "STEP_1": "Klicke auf das Tunnelblick-Icon in der Menüleiste",
+                "STEP_2": "Wähle „eBlocker_Mobile_MyeBlocker“ verbinden",
+                "STEP_3": "Dein Mac verbindet sich jetzt mit deinem eBlocker",
+                "TITLE": "Dein Gerät mit dem eBlocker verbinden"
             },
-            "CONNECT_WIN" : {
-                "STEP_1" : "Starten Sie OpenVPN, wenn es nicht schon gestartet ist.",
-                "STEP_2" : "Wählen Sie in der Taskleiste das OpenVPN-Symbol",
-                "TITLE" : "Ihr Gerät mit dem eBlocker verbinden"
+            "CONNECT_WIN": {
+                "STEP_1": "Starte OpenVPN, wenn es nicht schon gestartet ist.",
+                "STEP_2": "Wähle in der Taskleiste das OpenVPN-Symbol",
+                "TITLE": "Dein Gerät mit dem eBlocker verbinden"
             },
-            "DIALOG" : {
-                "CANCEL" : "Nein",
-                "CONFIRM" : "Ja, beenden",
-                "TEXT" : "Sind Sie sicher, dass sie den Assistenten beenden möchten?",
-                "TITLE" : "Wollen Sie den Assistenten wirklich beenden?"
+            "DIALOG": {
+                "CANCEL": "Nein",
+                "CONFIRM": "Ja, beenden",
+                "TEXT": "Bist du sicher, dass du den Assistenten beenden möchtest?",
+                "TITLE": "Möchtest du den Assistenten wirklich beenden?"
             },
-            "DOWNLOAD_CONFIG_ANDROID" : {
-                "ACTION_DOWNLOAD" : "Herunterladen",
-                "CONFIRM_DOWNLOAD" : "Bitte bestätigen Sie, dass Sie die Konfigurationsdatei installiert haben",
-                "STEP_1" : "Laden Sie die OpenVPN Konfigurationsdatei für dieses Gerät.",
-                "STEP_2" : "Bestätigen Sie „In OpenVPN öffnen“ am unteren Bilschirmrand",
-                "STEP_3" : "Es öffnet sich automatisch die OpenVPN App",
-                "STEP_4" : "Bestätigen Sie den Import der Datei mit „OK“",
-                "TITLE" : "Konfiguration (Android)"
+            "DOWNLOAD_CONFIG_ANDROID": {
+                "ACTION_DOWNLOAD": "Herunterladen",
+                "CONFIRM_DOWNLOAD": "Bitte bestätige, dass du die Konfigurationsdatei installiert hast",
+                "STEP_1": "Lade die OpenVPN Konfigurationsdatei für dieses Gerät.",
+                "STEP_2": "Bestätige „In OpenVPN öffnen“ am unteren Bildschirmrand",
+                "STEP_3": "Es öffnet sich automatisch die OpenVPN App",
+                "STEP_4": "Bestätige den Import der Datei mit „OK“",
+                "TITLE": "Konfiguration (Android)"
             },
-            "DOWNLOAD_CONFIG_IOS" : {
-                "ACTION_DOWNLOAD" : "Download",
-                "CONFIRM_DOWNLOAD" : "Bitte bestätigen Sie, dass Sie die Konfigurationsdatei installiert haben",
-                "STEP_1" : "Laden Sie die OpenVPN Konfigurationsdatei für dieses Gerät.",
-                "STEP_2" : "Bestätigen Sie „DATEI ÖFFNEN“ am unteren Bilschirmrand",
-                "STEP_3" : "Es öffnet sich automatisch die OpenVPN App",
-                "STEP_4" : "Bestätigen Sie den Import der Datei mit „OK“",
-                "TITLE" : "Konfiguration (iOS)"
+            "DOWNLOAD_CONFIG_IOS": {
+                "ACTION_DOWNLOAD": "Download",
+                "CONFIRM_DOWNLOAD": "Bitte bestätige, dass du die Konfigurationsdatei installiert hast",
+                "STEP_1": "Lade die OpenVPN Konfigurationsdatei für dieses Gerät.",
+                "STEP_2": "Bestätige „DATEI ÖFFNEN“ am unteren Bildschirmrand",
+                "STEP_3": "Es öffnet sich automatisch die OpenVPN App",
+                "STEP_4": "Bestätige den Import der Datei mit „OK“",
+                "TITLE": "Konfiguration (iOS)"
             },
-            "DOWNLOAD_CONFIG_WIN_MAC" : {
-                "ACTION_DOWNLOAD" : "Herunterladen",
-                "CONFIRM_DOWNLOAD" : "Bitte bestätigen Sie, dass Sie die Konfigurationsdatei heruntergeladen haben",
-                "TEXT" : "OpenVPN Konfigurationsdatei für dieses Gerät laden.",
-                "TITLE" : "Konfiguration"
+            "DOWNLOAD_CONFIG_WIN_MAC": {
+                "ACTION_DOWNLOAD": "Herunterladen",
+                "CONFIRM_DOWNLOAD": "Bitte bestätige, dass du die Konfigurationsdatei heruntergeladen hast",
+                "TEXT": "OpenVPN Konfigurationsdatei für dieses Gerät laden.",
+                "TITLE": "Konfiguration"
             },
-            "FINISH" : {
-                "TEXT_1" : "Die VPN-Verbindung können Sie jederzeit in der OpenVPN App beenden.",
-                "TEXT_2" : "Zum Testen verlassen Sie jetzt Ihr Heimnetzwerk und verbinden Sie sich mit einem externen Netzwerk, wie zum Beispiel mit Ihrem mobilen Netz. Öffnen Sie dann das Dashboard indem Sie auf {{'WIZARD.MOBILE.ACTION.DONE' | translate }} klicken.",
-                "TITLE" : "Test"
+            "FINISH": {
+                "TEXT_1": "Du kannst die VPN-Verbindung jederzeit in der OpenVPN App beenden.",
+                "TEXT_2": "Zum Testen verlasse jetzt dein Heimnetzwerk und verbinde dich mit einem externen Netzwerk, wie zum Beispiel mit deinem mobilen Netz. Öffne dann das Dashboard, indem du auf {{'WIZARD.MOBILE.ACTION.DONE' | translate }} klickst.",
+                "TITLE": "Test"
             },
-            "INSTALL_CONFIG_MAC" : {
-                "CONFIRM_INSTALL" : "Bitte bestätigen Sie, dass Sie die Konfigurationsdatei installiert haben",
-                "STEP_1" : "Doppelklicken Sie die geladene OpenVPN Datei",
-                "STEP_2" : "Bestätigen Sie den Installationsdialog",
-                "TITLE" : "Konfiguration (macOS)"
+            "INSTALL_CONFIG_MAC": {
+                "CONFIRM_INSTALL": "Bitte bestätige, dass du die Konfigurationsdatei installiert hast",
+                "STEP_1": "Doppelklicke die geladene OpenVPN Datei",
+                "STEP_2": "Bestätige den Installationsdialog",
+                "TITLE": "Konfiguration (macOS)"
             },
-            "INSTALL_CONFIG_WIN" : {
-                "CONFIRM_COPY" : "Bitte bestätigen Sie, dass Sie die Konfigurationsdatei kopiert haben",
-                "TEXT" : "Kopieren Sie die OpenVPN Datei in der Ordner für Konfigurationsdateien. Dies ist in der Regel C:\\Programme\\OpenVPN\\config\\",
-                "TEXT_COPY" : "Bitte die Datei „{{name}}“ kopieren.",
-                "TITLE" : "Konfiguration (Windows)"
+            "INSTALL_CONFIG_WIN": {
+                "CONFIRM_COPY": "Bitte bestätige, dass du die Konfigurationsdatei kopiert hast",
+                "TEXT": "Kopiere die OpenVPN Datei in den Ordner für Konfigurationsdateien. Dies ist normalerweise C:\\Programme\\OpenVPN\\config\\",
+                "TEXT_COPY": "Bitte die Datei „{{name}}“ kopieren.",
+                "TITLE": "Konfiguration (Windows)"
             },
-            "INSTALL_MAC" : {
-                "CONFIRM_INSTALL" : "Bitte bestätigen Sie, dass Sie OpenVPN installiert haben",
-                "STEP_1" : "Lokalisieren Sie das heruntergeladene OpenVPN Setup-Programm im Ordner für heruntergeladene Dateien",
-                "STEP_2" : "Doppelklicken Sie die heruntergeladene Datei „Tunnelblick.dmg“",
-                "STEP_3" : "Doppelklicken Sie das enthaltene Installationsprogramm „Tunnelblick“",
-                "STEP_4" : "Folgen Sie den Anweisungen auf dem Bildschirm",
-                "TITLE" : "OpenVPN-App installieren (macOS)"
+            "INSTALL_MAC": {
+                "CONFIRM_INSTALL": "Bitte bestätige, dass du OpenVPN installiert hast.",
+                "STEP_1": "Lokalisiere das heruntergeladene OpenVPN Setup-Programm im Ordner für heruntergeladene Dateien",
+                "STEP_2": "Doppelklicke die heruntergeladene Datei „Tunnelblick.dmg“",
+                "STEP_3": "Doppelklicke das enthaltene Installationsprogramm „Tunnelblick“",
+                "STEP_4": "Folge den Anweisungen auf dem Bildschirm",
+                "TITLE": "OpenVPN-App installieren (macOS)"
             },
-            "INSTALL_WINDOWS" : {
-                "CONFIRM_INSTALL" : "Bitte bestätigen Sie, dass Sie OpenVPN installiert haben",
-                "STEP_1" : "Lokalisieren Sie das heruntergeladene OpenVPN Setup-Programm im Ordner für heruntergeladene Dateien",
-                "STEP_2" : "Starten sie das OpenVPN Setup-Programm und folgen Sie den Anweisungen auf dem Bildschirm",
-                "TITLE" : "OpenVPN-App installieren (Windows)"
+            "INSTALL_WINDOWS": {
+                "CONFIRM_INSTALL": "Bitte bestätige, dass du OpenVPN installiert hast",
+                "STEP_1": "Lokalisiere das heruntergeladene OpenVPN Setup-Programm im Ordner für heruntergeladene Dateien",
+                "STEP_2": "Starte das OpenVPN Setup-Programm und folge den Anweisungen auf dem Bildschirm",
+                "TITLE": "OpenVPN-App installieren (Windows)"
             },
-            "INTRO" : {
-                "EXPLAIN" : "eBlocker Mobile basiert auf dem OpenVPN-Standard und verbindet dieses Gerät mit dem eBlocker daheim.",
-                "EXPLAIN_STEPS" : "Hierzu sind zwei Schritte notwendig:",
-                "EXPLAIN_STEP_1" : "Installation der OpenVPN-App",
-                "EXPLAIN_STEP_2" : "Download und Installation der Konfigurationsdatei in der OpenVPN-App"
+            "INTRO": {
+                "EXPLAIN": "eBlocker Mobile basiert auf dem OpenVPN-Standard und verbindet dieses Gerät mit dem eBlocker daheim.",
+                "EXPLAIN_STEPS": "Hierzu sind zwei Schritte notwendig:",
+                "EXPLAIN_STEP_1": "Installation der OpenVPN-App",
+                "EXPLAIN_STEP_2": "Download und Installation der Konfigurationsdatei in der OpenVPN-App"
             },
-            "TITLE" : "eBlocker Mobile Assistent"
+            "TITLE": "eBlocker Mobile Assistent"
         }
     }
 }
-

@@ -5,8 +5,8 @@
             <PatternLayout pattern="%d{ISO8601} [%-5p] %c [%t] - %m%n"/>
         </Console>
         <RollingFile name="SYSTEM"
-                     fileName="/var/log/eblocker/eblocker-system.log"
-                     filePattern="/var/log/eblocker/eblocker-system.log.%i">
+                     fileName="eblocker-system.log"
+                     filePattern="eblocker-system.log.%i">
             <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -14,8 +14,8 @@
             <DefaultRolloverStrategy max="5"/>
         </RollingFile>
         <RollingFile name="AUDIT"
-                     fileName="/var/log/eblocker/eblocker-audit.log"
-                     filePattern="/var/log/eblocker/eblocker-audit.log.%i">
+                     fileName="eblocker-audit.log"
+                     filePattern="eblocker-audit.log.%i">
             <PatternLayout pattern="%d{ISO8601} [%-5p] %-8X{SESSION} %-8X{PAGE} %c [%t] - %m%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -23,8 +23,8 @@
             <DefaultRolloverStrategy max="5"/>
         </RollingFile>
         <RollingFile name="OPTIMIZE"
-                     fileName="/var/log/eblocker/icapserver-optimize.log"
-                     filePattern="/var/log/eblocker/icapserver-optimize.log.%i">
+                     fileName="icapserver-optimize.log"
+                     filePattern="icapserver-optimize.log.%i">
             <Policies>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>

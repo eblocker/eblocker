@@ -1,9 +1,9 @@
 <div flex-gt-lg="50" flex-md="60" flex-lg="60" layout="column" class="settings-child-view">
 
-    <!--div>
+    <div>
         <eb-help-icon template="app/components/network/settingsIp6/help-network-ipv6.template.html">
         </eb-help-icon>
-    </div-->
+    </div>
 
     <div layout-padding layout-margin></div>
 
@@ -32,10 +32,10 @@
         </div>
         <div layout="column">
             <div layout="row" class="network-label-container">
-                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_LINK_LOCAL' | translate}}" config="vm.localAddresses"></eb-label-container>
+                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_LINK_LOCAL' | translate}}" config="vm.localAddresses" style="white-space: pre;"></eb-label-container>
             </div>
             <div layout="row" class="network-label-container">
-                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_GLOBAL' | translate}}" config="vm.globalAddresses"></eb-label-container>
+                <eb-label-container label="{{'ADMINCONSOLE.NETWORK_SETTINGS_IP6.LABEL_GLOBAL' | translate}}" config="vm.globalAddresses" style="white-space: pre;"></eb-label-container>
             </div>
         </div>
     </div>

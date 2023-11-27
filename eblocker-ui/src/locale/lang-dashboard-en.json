@@ -884,10 +884,10 @@
             "FF_ADD_CERT" : {
                 "IMAGE_1": "en/firefox-01-EN.png",
                 "STEP_1" : "Click on {{'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate}} to download the eBlocker certificate for Firefox",
-		"STEP_2" : "Save the file to disk",
-		"STEP_3" : "Open the Certificate Manager at Firefox > „Options“ > „Privacy & Security“ > „Certificates“ > „View Certificates...“",
-		"STEP_4" : "Select the tab <b>Authorities</b> und klick  „Import...“",
-		"STEP_5" : "Select the previously saved certificate file",
+                "STEP_2" : "Save the file to disk",
+                "STEP_3" : "Open the Certificate Manager at Firefox > „Options“ > „Privacy & Security“ > „Certificates“ > „View Certificates...“",
+                "STEP_4" : "Select the tab <b>Authorities</b> und klick  „Import...“",
+                "STEP_5" : "Select the previously saved certificate file",
                 "STEP_6" : "In the following dialog select „Trust this CA to identify websites“",
                 "TITLE" : "Install HTTPS certificate in Firefox"
             },
@@ -913,7 +913,7 @@
             },
             "IOS_ADD_CERT" : {
                 "STEP_2" : "Tap „Allow“ in the alert box to allow the download of the configuration profile",
-		"STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „VPN & Device Management“ > „Downloaded Profile“",
+                "STEP_3" : "Open the iOS settings and select the eBlocker profile under „General“ > „VPN & Device Management“ > „Downloaded Profile“",
                 "STEP_4" : "Tap „Install“, enter your code and confirm again with „Install“",
                 "STEP_5" : "Tap „Done“",
                 "STEP_6" : "The certificate must now be activated (Continue)",

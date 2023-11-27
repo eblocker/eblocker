@@ -175,7 +175,7 @@
             "MESSAGE_LICENSE_EXPIRED_LABEL": "Für neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRED_TITLE": "Lizenz abgelaufen",
             "MESSAGE_LICENSE_EXPIRED_URL": "https://eBlocker.org/ebl/de/shop",
-            "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT": "Die Lizenz deines eBlockers läuft am {{licenseNotValidAfter| date}} ab. Bitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch tägliche Schutz-Updates.\n\nBitte beachte, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
+            "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT": "Die Lizenz deines eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch tägliche Schutz-Updates.\n\nBitte beachte, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
             "MESSAGE_LICENSE_EXPIRING_LABEL": "Für neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT": "Die Lizenz deines eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch wieder tägliche Schutz-Updates.\n\nBitte beachte, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
             "MESSAGE_LICENSE_EXPIRING_TITLE": "Lizenz läuft bald ab",

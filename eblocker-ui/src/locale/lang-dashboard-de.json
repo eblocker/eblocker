@@ -1054,7 +1054,7 @@
                 "TITLE": "Test"
             },
             "INSTALL_CONFIG_MAC": {
-                "CONFIRM_INSTALL": "Bitte bestätigen, dass du die Konfigurationsdatei installiert hast",
+                "CONFIRM_INSTALL": "Bitte bestätige, dass du die Konfigurationsdatei installiert hast",
                 "STEP_1": "Doppelklicke die geladene OpenVPN Datei",
                 "STEP_2": "Bestätige den Installationsdialog",
                 "TITLE": "Konfiguration (macOS)"

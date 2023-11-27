@@ -60,7 +60,7 @@
                         "ERROR_REGISTER_EMAIL_MISSING": "Bitte gib eine E-Mail Adresse ein.",
                         "ERROR_REGISTER_FILL_IN_ALL_FIELDS": "Fülle bitte alle Felder aus.",
                         "ERROR_REGISTER_INVALIDLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig oder passt nicht zur E-Mail Adresse.",
-                        "ERROR_REGISTER_INVALIDPRODUCTID": "Falsche Format des Lizenzschlüssels. Bitte überprüfe den eingegebenen Lizenzschlüssel.",
+                        "ERROR_REGISTER_INVALIDPRODUCTID": "Falsches Format des Lizenzschlüssels. Bitte überprüfe den eingegebenen Lizenzschlüssel.",
                         "ERROR_REGISTER_LICENSEUSED": "Dieser Lizenzschlüssel wurde bereits verwendet.",
                         "ERROR_REGISTER_LICENSEUSERMISMATCH": "Die E-Mail und der Lizenzschlüssel passen nicht zusammen. Stelle bitte sicher, dass du die korrekte E-Mail und den dazugehörigen Lizenzschlüssel eingegeben hast.",
                         "ERROR_REGISTER_NOLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig. Bitte überprüfe den eingegebenen Lizenzschlüssel.",
@@ -2520,7 +2520,7 @@
                     "CANCEL": "Abbrechen"
                 },
                 "EXPLAIN": "Nachdem die Stromversorgung wieder angeschlossen ist und der eBlocker hochgefahren ist, wird dieser Assistent wieder geöffnet.",
-                "TEXT": "Bitte trenn jetzt die Stromversorgung deines eBlockers! Warte 1 Minute und schließe die Stromversorgung dann erneut an.",
+                "TEXT": "Bitte trenne jetzt die Stromversorgung deines eBlockers! Warte 1 Minute und schließe die Stromversorgung dann erneut an.",
                 "TITLE": "Herunterfahren und neu starten",
                 "WAITING_TITLE": "Warten bis eBlocker ausgeschaltet ist"
             },
@@ -2751,11 +2751,11 @@
             "IMPORTANT_NOTE_RENEWAL": "eBlocker-Zertifikat erneuert!",
             "INFO_1": "Wir empfehlen die <b>HTTPS-Unterstützung</b> für alle Standard-Computer wie Laptops und Desktop-PCs sowie für Tablets und Smartphones zu aktivieren.",
             "INFO_2": "Du musst das <b>eBlocker-Zertifikat</b> in das Betriebssystem aller Geräte aufnehmen, für welche die HTTPS-Unterstützung aktiviert ist. Zusätzlich musst du das Zertifikat in einigen Apps, wie zum Beispiel Firefox, aufnehmen.",
-            "INFO_3": "Falls du nicht möchtest, dass der eBlocker die verschlüsselten Verbindungen zu vertrauenswürdigen Websites überwacht - wie zum Beispiel Banken - dann nimm die URLs oder Domain dieser Websites in die Ausnahmeliste der vertrauenswürdigen Websites auf.",
+            "INFO_3": "Falls du nicht möchtest, dass der eBlocker die verschlüsselten Verbindungen zu vertrauenswürdigen Websites überwacht - wie zum Beispiel Banken - dann nimm die URLs oder Domain dieser Websites in die Ausnahmeliste der <b>vertrauenswürdigen Websites</b> auf.",
             "INFO_4": "Wenn eine App nicht korrekt funktioniert, sobald die HTTPS-Unterstützung aktiviert ist, kannst du die App in der Liste der <b>vertrauenswürdigen Apps</b> als vertrauenswürdig markieren (falls verfügbar) oder du legst selbst eine vertrauenswürdige App an und fügst die relevanten Domains ein.",
             "INFO_TITLE": "Weitere wichtige Informationen und Empfehlungen",
             "LABEL": "Status",
-            "RENEWAL_EXPLANATION_POST": "Bitte nimm das neue Zertifikat jetzt auf allen Geräten auf.",
+            "RENEWAL_EXPLANATION_POST": " ab. Bitte nimm das neue Zertifikat jetzt auf allen Geräten auf.",
             "RENEWAL_EXPLANATION_PRE": "Das alte eBlocker-Zertifikat läuft am ",
             "SWITCH": {
                 "SSL_OFF": "HTTPS-Unterstützung nicht aktiv",
@@ -2887,8 +2887,8 @@
             "ACTION": {
                 "SET_TIMEZONE": "Zeitzone wählen"
             },
-            "ARIA_CITY": "Wähl deine Stadt aus",
-            "ARIA_LANG": "Wähl deine Sprache aus",
+            "ARIA_CITY": "Wähle deine Stadt aus",
+            "ARIA_LANG": "Wähle deine Sprache aus",
             "ARIA_REGION": "Wähle deine Region aus",
             "CITY_LABEL": "Stadt",
             "CONTINENT_LABEL": "Region",
@@ -2980,7 +2980,7 @@
                     "BUILTIN": "Diese Ausnahmeliste wird von eBlocker bereitgestellt",
                     "MODIFIED": "wurde benutzerdefiniert angepasst.",
                     "STOP": ".",
-                    "UPDATES_MODIFIED": "Es liegen Aktualisierungen für diese Ausnahmeliste vor, die jedoch aufgrund von benutzerdefinierten Änderungen nicht angewendet wurden. Bitte setz deine Ausnahmeliste zurück, damit die Aktualisierungen angewendet werden können. Du kannst deine Änderungen notieren, um sie danach gegebenenfalls wieder einzutragen.",
+                    "UPDATES_MODIFIED": "Es liegen Aktualisierungen für diese Ausnahmeliste vor, die jedoch aufgrund von benutzerdefinierten Änderungen nicht angewendet wurden. Bitte setze deine Ausnahmeliste zurück, damit die Aktualisierungen angewendet werden können. Du kannst deine Änderungen notieren, um sie danach gegebenenfalls wieder einzutragen.",
                     "USER_DEFINED": "Diese Ausnahmeliste ist benutzerdefiniert"
                 },
                 "TABLE_DOMAIN": {
@@ -3466,7 +3466,7 @@
             },
             "STEP_CHOOSE_PORT_MAPPING": {
                 "HEADER": "Externer Zugriff auf deinen eBlocker",
-                "MORE1": "Beachte, dass dein eBlocker nur über einen bestimmten Port aus dem Internet erreichbar ist. Dieser Port wir durch gängige Authentifizierungs-Mechanismen geschützt und erlaubt nur deinem mobilen Gerät Zugriff auf deinen eBlocker.",
+                "MORE1": "Beachte, dass dein eBlocker nur über einen bestimmten Port aus dem Internet erreichbar ist. Dieser Port wird durch gängige Authentifizierungs-Mechanismen geschützt und erlaubt nur deinem mobilen Gerät Zugriff auf deinen eBlocker.",
                 "MORE2": "Die Verbindung von deinem mobilen Gerät zu deinem eBlocker ist sicher verschlüsselt.",
                 "MORE3": "Kein anderes Gerät, Dienst oder Applikation innerhalb deines lokalen Netzwerks ist über diesen Port erreichbar.",
                 "OPTION": {
@@ -3641,7 +3641,7 @@
         "ANON": {
             "TOR": {
                 "ADDITIONAL": {
-                    "P1": "Das Tor-Netzwerk ist ein nicht-kommerzieller, weltweiter Zusammenschluss von Menschen, die kostenlos Netzwerk-Infrastruktur bereitstellen, damit du deine IP-Adresse beim Surfen im Internet anonymisieren kannst. Das Tor-Netzwerk garantiert jedoch keine Verfügbarkeit oder Mindestbandbreite. (Quelle: Wikipedia)",
+                    "P1": "Das Tor-Netzwerk ist ein nicht-kommerzieller, weltweiter Zusammenschluss von Menschen, die kostenlos Netzwerk-Infrastruktur bereitstellen, damit Nutzer ihre IP-Adresse beim Surfen im Internet anonymisieren können. Das Tor-Netzwerk garantiert jedoch keine Verfügbarkeit oder Mindestbandbreite. (Quelle: Wikipedia)",
                     "P2": "https://eblocker.org/docs/the-eblocker-tor-network-feature/",
                     "P3_MIDDLE": " und deren ",
                     "P3_PRE": "Für weitere Information lies bitte die ",

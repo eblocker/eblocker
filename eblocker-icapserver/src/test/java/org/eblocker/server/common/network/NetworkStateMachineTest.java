@@ -44,7 +44,6 @@ public class NetworkStateMachineTest {
     private DataSource dataSource;
     private DnsEnableByDefaultChecker dnsChecker;
     private EventLogger eventLogger;
-    private FeatureToggleRouter featureToggleRouter;
     private IpSets ipSets;
     private SslService sslService;
     private EblockerDnsServer dnsServer;
@@ -58,11 +57,10 @@ public class NetworkStateMachineTest {
         dnsChecker = Mockito.mock(DnsEnableByDefaultChecker.class);
         eventLogger = Mockito.mock(EventLogger.class);
         sslService = Mockito.mock(SslService.class);
-        featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         ipSets = Mockito.mock(IpSets.class);
         dnsServer = Mockito.mock(EblockerDnsServer.class);
         ip6PrefixMonitor = Mockito.mock(Ip6PrefixMonitor.class);
-        machine = new NetworkStateMachine(services, dataSource, dnsChecker, eventLogger, featureToggleRouter, ipSets, sslService, dnsServer, ip6PrefixMonitor);
+        machine = new NetworkStateMachine(services, dataSource, dnsChecker, eventLogger, ipSets, sslService, dnsServer, ip6PrefixMonitor);
 
         when(dataSource.getSSLEnabledState()).thenReturn(true);
     }

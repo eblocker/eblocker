@@ -22,6 +22,7 @@ import java.util.List;
 
 public class NetworkIp6Configuration {
     private boolean routerAdvertisementsEnabled;
+    private boolean privacyExtensionsEnabled;
     private List<Ip6Address> localAddresses = List.of();
     private List<Ip6Address> globalAddresses = List.of();
 
@@ -32,6 +33,15 @@ public class NetworkIp6Configuration {
 
     public void setRouterAdvertisementsEnabled(boolean routerAdvertisementsEnabled) {
         this.routerAdvertisementsEnabled = routerAdvertisementsEnabled;
+    }
+
+    @JsonProperty
+    public boolean isPrivacyExtensionsEnabled() {
+        return privacyExtensionsEnabled;
+    }
+
+    public void setPrivacyExtensionsEnabled(boolean privacyExtensionsEnabled) {
+        this.privacyExtensionsEnabled = privacyExtensionsEnabled;
     }
 
     @JsonProperty

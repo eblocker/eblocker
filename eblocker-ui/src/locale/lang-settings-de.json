@@ -2184,6 +2184,10 @@
             "LABEL_ADDRESSES": "IPv6-Adressen (eBlocker)",
             "LABEL_GLOBAL": "Global",
             "LABEL_LINK_LOCAL": "Lokal",
+            "PRIVACY_EXTENSIONS": {
+                "DISABLED": "Privacy-Extensions sind nicht aktiv",
+                "ENABLED": "Privacy-Extensions sind aktiv"
+            },
             "ROUTER_ADVERTISEMENTS": {
                 "DISABLED": "eBlocker nicht als IPv6-Router melden",
                 "ENABLED": "eBlocker als IPv6-Router mit Präferenz \"hoch\" melden"
@@ -2916,7 +2920,7 @@
                 }
             },
             "DASHBOARD": "Dashboard öffnen",
-            "EBLOCKER_TEXT_ONLY": "eBlocker 2",
+            "EBLOCKER_TEXT_ONLY": "eBlocker 3",
             "TITLE": "eBlocker"
         },
         "TOR": {

@@ -29,6 +29,7 @@ import org.eblocker.server.common.network.unix.FirewallConfigurationIp4;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkInterfaceConfiguration;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
+import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.service.DeviceService;
 import org.junit.Before;
@@ -57,6 +58,7 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
     private ScriptRunner scriptRunner;
     private EblockerDnsServer eblockerDnsServer;
     private DeviceService deviceService;
+    private FeatureToggleRouter featureToggleRouter;
 
     @Before
     public void setUp() {
@@ -87,6 +89,7 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
                 networkInterface,
                 arpSpoofer,
                 scriptRunner,
+                featureToggleRouter,
                 0L,
                 0L,
                 "applyNetworkConfigurationCommand",

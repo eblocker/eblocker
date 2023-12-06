@@ -509,4 +509,8 @@ public interface DataSource {
     boolean areRouterAdvertisementsEnabled();
 
     void setRouterAdvertisementsEnabled(boolean enabled);
+
+    boolean arePrivacyExtensionsEnabled();
+
+    void setPrivacyExtensionsEnabled(boolean enabled);
 }

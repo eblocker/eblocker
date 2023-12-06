@@ -45,7 +45,7 @@ public interface NetworkServices {
 
     void setNameserverAddresses(NetworkConfiguration configuration);
 
-    void enableIp6(boolean ip6Enabled);
+    void updateIp6State();
 
     /**
      * Write the firewall configuration

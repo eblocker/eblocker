@@ -38,6 +38,10 @@ public class FeatureToggleRouter {
         return ip6Enabled;
     }
 
+    public boolean arePrivacyExtensionsEnabled() {
+        return ip6Enabled && dataSource.arePrivacyExtensionsEnabled();
+    }
+
     public boolean shouldSendRouterAdvertisements() {
         return ip6Enabled && dataSource.areRouterAdvertisementsEnabled();
     }

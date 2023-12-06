@@ -19,6 +19,7 @@ package org.eblocker.server.common.network.unix;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
@@ -31,7 +32,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.function.Supplier;
 
-public class NetworkServicesUnixTest {
+public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceUnixTest testing the same class!
 
     private static final String APPLY_NETWORK_CONFIG_COMMAND = "apply_config";
     private static final String APPLY_FIREWALL_COMMAND = "apply_firewall";
@@ -42,6 +43,7 @@ public class NetworkServicesUnixTest {
     private ScriptRunner scriptRunner;
     private NetworkServicesUnix networkServices;
     private DeviceService deviceService;
+    private FeatureToggleRouter featureToggleRouter;
 
     @Before
     public void setUp() {
@@ -50,8 +52,9 @@ public class NetworkServicesUnixTest {
         firewallConfigurationIp6 = Mockito.mock(FirewallConfigurationIp6.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
         deviceService = Mockito.mock(DeviceService.class);
+        featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
         networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, firewallConfigurationIp6,
-                null, null, null, scriptRunner, 0, 0,
+                null, null, null, scriptRunner, featureToggleRouter, 0, 0,
                 APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null, deviceService);
     }
 
@@ -93,4 +96,12 @@ public class NetworkServicesUnixTest {
         Assert.assertFalse(captor.getValue().get());
     }
 
+    @Test
+    public void testUpdateIp6State() throws IOException, InterruptedException {
+        Mockito.when(featureToggleRouter.isIp6Enabled()).thenReturn(true);
+        Mockito.when(featureToggleRouter.shouldSendRouterAdvertisements()).thenReturn(true);
+        Mockito.when(featureToggleRouter.arePrivacyExtensionsEnabled()).thenReturn(false);
+        networkServices.updateIp6State();
+        Mockito.verify(scriptRunner).runScript(ENABLE_IP6_COMMAND, "true", "false");
+    }
 }

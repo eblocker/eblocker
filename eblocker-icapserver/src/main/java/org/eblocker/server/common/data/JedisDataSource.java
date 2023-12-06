@@ -99,6 +99,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_MOBILE_PRIVATE_NETWORK_ACCESS = "mobilePrivateNetworkAccess";
     private static final String KEY_RESOLVED_DNS_GATEWAY = "resolved_dns_gateway";
     private static final String KEY_ROUTER_ADVERTISEMENTS_ENABLED = "router_advertisements_enabled";
+    private static final String KEY_PRIVACY_EXTENSIONS_ENABLED = "privacy_extensions_enabled";
 
     private static final int MAX_DATABASES = 16;
     private static final String KEY_USE_ANONYMIZATION_SERVICE = "useAnonymizationService";
@@ -1454,6 +1455,24 @@ public class JedisDataSource implements DataSource {
     public void setRouterAdvertisementsEnabled(boolean enabled) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(KEY_ROUTER_ADVERTISEMENTS_ENABLED, Boolean.toString(enabled));
+        }
+    }
+
+    @Override
+    public boolean arePrivacyExtensionsEnabled() {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(KEY_PRIVACY_EXTENSIONS_ENABLED);
+            if (value == null) {
+                return false; // privacy extensions are disabled by default
+            }
+            return Boolean.parseBoolean(value);
+        }
+    }
+
+    @Override
+    public void setPrivacyExtensionsEnabled(boolean enabled) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_PRIVACY_EXTENSIONS_ENABLED, Boolean.toString(enabled));
         }
     }
 }

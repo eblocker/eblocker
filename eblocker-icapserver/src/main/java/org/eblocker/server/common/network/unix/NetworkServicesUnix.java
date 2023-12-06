@@ -29,6 +29,7 @@ import org.eblocker.server.common.network.ArpSpoofer;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServicesBase;
+import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
@@ -58,6 +59,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
     private final String applyFirewallConfigurationCommand;
     private final String enableIp6Command;
     private final ScriptRunner scriptRunner;
+    private final FeatureToggleRouter featureToggleRouter;
 
     @Inject
     public NetworkServicesUnix(
@@ -71,6 +73,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
             NetworkInterfaceWrapper networkInterface,
             ArpSpoofer arpSpoofer,
             ScriptRunner scriptRunner,
+            FeatureToggleRouter featureToggleRouter,
             @Named("executor.arpSpoofer.startupDelay") long arpSpoofer_startupDelay,
             @Named("executor.arpSpoofer.fixedDelay") long arpSpoofer_fixedDelay,
             @Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand,
@@ -89,6 +92,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
         this.applyNetworkConfigurationCommand = applyNetworkConfigurationCommand;
         this.applyFirewallConfigurationCommand = applyFirewallConfigurationCommand;
         this.enableIp6Command = enableIp6Command;
+        this.featureToggleRouter = featureToggleRouter;
     }
 
     @Override
@@ -224,9 +228,11 @@ public class NetworkServicesUnix extends NetworkServicesBase {
     }
 
     @Override
-    public void enableIp6(boolean ip6Enabled) {
+    public void updateIp6State() {
+        boolean ip6Enabled = featureToggleRouter.isIp6Enabled();
+        boolean privacyExtensionsEnabled = featureToggleRouter.arePrivacyExtensionsEnabled();
         try {
-            scriptRunner.runScript(enableIp6Command, Boolean.toString(ip6Enabled));
+            scriptRunner.runScript(enableIp6Command, Boolean.toString(ip6Enabled), Boolean.toString(privacyExtensionsEnabled));
         } catch (IOException e) {
             log.error("failed to set ip6 enabled to {}", ip6Enabled, e);
         } catch (InterruptedException e) {

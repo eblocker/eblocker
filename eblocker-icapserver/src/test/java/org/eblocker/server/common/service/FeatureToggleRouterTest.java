@@ -34,18 +34,31 @@ public class FeatureToggleRouterTest {
 
     @Test
     public void testRouterAdvertisements() {
-        setFlags(true, true);
+        setFlags(true, true, false);
         Assert.assertTrue(featureToggleRouter.shouldSendRouterAdvertisements());
 
-        setFlags(true, false);
+        setFlags(true, false, false);
         Assert.assertFalse(featureToggleRouter.shouldSendRouterAdvertisements());
 
-        setFlags(false, true);
+        setFlags(false, true, false);
         Assert.assertFalse(featureToggleRouter.shouldSendRouterAdvertisements());
     }
 
-    private void setFlags(boolean ip6Enabled, boolean rasEnabled) {
+    @Test
+    public void testPrivacyExtensions() {
+        setFlags(true, true, true);
+        Assert.assertTrue(featureToggleRouter.arePrivacyExtensionsEnabled());
+
+        setFlags(true, true, false);
+        Assert.assertFalse(featureToggleRouter.arePrivacyExtensionsEnabled());
+
+        setFlags(false, true, true);
+        Assert.assertFalse(featureToggleRouter.arePrivacyExtensionsEnabled());
+    }
+
+    private void setFlags(boolean ip6Enabled, boolean rasEnabled, boolean privacyExtensionsEnabled) {
         Mockito.when(dataSource.areRouterAdvertisementsEnabled()).thenReturn(rasEnabled);
+        Mockito.when(dataSource.arePrivacyExtensionsEnabled()).thenReturn(privacyExtensionsEnabled);
         featureToggleRouter = new FeatureToggleRouter(dataSource, ip6Enabled);
     }
 }

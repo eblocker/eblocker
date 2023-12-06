@@ -245,6 +245,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
     public NetworkIp6Configuration getNetworkIp6Configuration() {
         NetworkIp6Configuration result = new NetworkIp6Configuration();
         result.setRouterAdvertisementsEnabled(dataSource.areRouterAdvertisementsEnabled());
+        result.setPrivacyExtensionsEnabled(dataSource.arePrivacyExtensionsEnabled());
         result.setLocalAddresses(ip6Addresses()
                 .filter(ip -> Ip6Utils.isLinkLocal(ip))
                 .collect(Collectors.toList()));
@@ -263,6 +264,11 @@ public abstract class NetworkServicesBase implements NetworkServices {
     @Override
     public void updateNetworkIp6Configuration(NetworkIp6Configuration networkIp6Configuration) {
         dataSource.setRouterAdvertisementsEnabled(networkIp6Configuration.isRouterAdvertisementsEnabled());
+        // Privacy extensions updated?
+        if (dataSource.arePrivacyExtensionsEnabled() != networkIp6Configuration.isPrivacyExtensionsEnabled()) {
+            dataSource.setPrivacyExtensionsEnabled(networkIp6Configuration.isPrivacyExtensionsEnabled());
+            updateIp6State();
+        }
     }
 
     @Override

@@ -49,7 +49,6 @@ public class NetworkStateMachine {
     private final DataSource dataSource;
     private final DnsEnableByDefaultChecker dnsEnableByDefaultChecker;
     private final EventLogger eventLogger;
-    private final FeatureToggleRouter featureToggleRouter;
     private final IpSets ipSets;
     private final EblockerDnsServer dnsServer;
     private final Ip6PrefixMonitor ip6PrefixMonitor;
@@ -59,7 +58,6 @@ public class NetworkStateMachine {
                                DataSource dataSource,
                                DnsEnableByDefaultChecker dnsEnableByDefaultChecker,
                                EventLogger eventLogger,
-                               FeatureToggleRouter featureToggleRouter,
                                IpSets ipSets,
                                SslService sslService,
                                EblockerDnsServer dnsServer,
@@ -68,7 +66,6 @@ public class NetworkStateMachine {
         this.dataSource = dataSource;
         this.dnsEnableByDefaultChecker = dnsEnableByDefaultChecker;
         this.eventLogger = eventLogger;
-        this.featureToggleRouter = featureToggleRouter;
         this.ipSets = ipSets;
         this.dnsServer = dnsServer;
         this.ip6PrefixMonitor = ip6PrefixMonitor;
@@ -103,7 +100,7 @@ public class NetworkStateMachine {
         }
 
         dnsEnableByDefaultChecker.check();
-        services.enableIp6(featureToggleRouter.isIp6Enabled());
+        services.updateIp6State();
         services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         ip6PrefixMonitor.addPrefixChangeListener(this::updateFirewall);

@@ -29,7 +29,7 @@ function Controller(logger, NetworkService) {
 
     const vm = this;
 
-    vm.toggleRouterAdvertisements = toggleRouterAdvertisements;
+    vm.updateIp6Config = updateIp6Config;
 
     vm.$onInit = function() {
         updateDisplayData(vm.configurationIp6);
@@ -50,14 +50,14 @@ function Controller(logger, NetworkService) {
             config.globalAddresses.length > 0;
     }
 
-    function toggleRouterAdvertisements() {
-        vm.isTogglingRouterAdvertisements = true;
+    function updateIp6Config() {
+        vm.isUpdatingIp6Config = true;
         NetworkService.setNetworkIp6Config(vm.configurationIp6).then(function(response) {
             saved(response.data);
         }, function() {
             cancelled();
         }).finally(function() {
-            vm.isTogglingRouterAdvertisements = false;
+            vm.isUpdatingIp6Config = false;
         });
     }
 

@@ -26,12 +26,20 @@ else
 	FORWARDING=0
 fi
 
+if [ "$2" = "true" ]; then
+  PRIVACY_EXTENSIONS=2
+else
+  PRIVACY_EXTENSIONS=0
+fi
+
 # set current rules
 cat > $CONFFILE <<EOL
 net.ipv6.conf.all.accept_ra=$ACCEPT_RA
 net.ipv6.conf.eth0.accept_ra=$ACCEPT_RA
 net.ipv6.conf.all.forwarding=$FORWARDING
 net.ipv6.conf.eth0.forwarding=$FORWARDING
+net.ipv6.conf.all.use_tempaddr=$PRIVACY_EXTENSIONS
+net.ipv6.conf.eth0.use_tempaddr=$PRIVACY_EXTENSIONS
 EOL
 
 sysctl -p $CONFFILE   

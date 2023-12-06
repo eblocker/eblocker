@@ -25,7 +25,6 @@ import org.eblocker.server.common.data.events.EventType;
 import org.eblocker.server.common.network.unix.DnsEnableByDefaultChecker;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.network.unix.IpSets;
-import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.ssl.SslService;
 import org.junit.Before;
 import org.junit.Test;

@@ -18,7 +18,7 @@
 
 if [ "$1" = configure ] ; then
 
-# Install firewall rules
+# Network configuration
     echo '>>> Initializing IPv4 forwarding..'
     IFACE=eth0 /etc/network/if-up.d/ipforward
 

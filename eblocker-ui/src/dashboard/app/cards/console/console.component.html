@@ -23,7 +23,9 @@
             <div layout="row" style="height: 38px;" ng-if="vm.otherIps.length>0">
                 <span flex="40"></span>
                 <span flex="60">
-                    <md-button style="margin:0;padding:0;" class="md-primary" ng-click="vm.toggleOtherAddresses()">+ {{vm.otherIps.length}} Adressen</md-button>
+                    <md-button style="margin:0;" class="md-primary" ng-click="vm.toggleOtherAddresses()">
+                        + {{'CONSOLE.CARD.NETWORK.MORE_ADDRESSES' | translate:{count:vm.otherIps.length}:'messageformat'}}
+                    </md-button>
                 </span>
             </div>
             <div layout="column" style="margin-top: 16px;" ng-if="vm.showOtherAddresses">

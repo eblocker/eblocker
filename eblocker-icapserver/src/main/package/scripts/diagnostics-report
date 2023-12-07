@@ -76,6 +76,11 @@ FILE=$OUT_DIR/eblocker-status.log
 
     echo "ifconfig eth0:" >> $FILE
     ifconfig eth0 >> $FILE
+    echo "ip a:" >> $FILE
+    ip a >> $FILE
+    echo $SEP >> $FILE
+    echo "ip route show:" >> $FILE
+    ip route show >> $FILE
     echo $SEP >> $FILE
     echo "Last DHCP event:" >> $FILE
     cat /var/log/eblocker/lastreceived_dhcp_ip.log >> $FILE

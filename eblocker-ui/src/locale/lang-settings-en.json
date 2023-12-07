@@ -3723,7 +3723,7 @@
             },
             "SERVER" : {
                 "OVERVIEW" : {
-                    "P1" : "Here you can create a list of DNS servers from external providers you trust. Enter the IP address of the desired DNS server directly using the \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}\" button. To remove an entry, select \"{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}\", select the row and select \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}\". \nUsing the default mode \"by availablity\" will send DNS requests to available DNS servers only. \"Round robin\" mode will use each DNS server from the list in the given order for each DNS request. \"Random\" mode will chose the server randomly for each request.",
+                    "P1" : "Here you can create a list of DNS servers from external providers you trust. Enter the IP address of the desired DNS server directly using the \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}\" button. To remove an entry, select \"{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}\", select the row and select \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}\". \nUsing the default mode \"by availablity\" will send DNS requests to available DNS servers only. \"Round robin\" mode will use each DNS server from the list in the given order for each DNS request. \"Random\" mode will choose the server randomly for each request.",
                     "P2_TEXT" : "Information about external DNS servers",
                     "P2_URL" : "https://eBlocker.org/en/dns-server-list/",
                     "TITLE" : "DNS server list"

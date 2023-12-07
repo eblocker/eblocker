@@ -3940,7 +3940,7 @@
                 "P3": "Dadurch werden alle IPv6 Datenpakete zum eBlocker umgeleitet, der diese dann analysieren und schützen kann.",
                 "P4": "Ist die IPv6 Unterstützung im eBlocker deaktiviert, kann der eBlocker nur IPv4 Datenpakete schützen.",
                 "P5": "Alle Datenpakete, die auf IPv6 basieren werden dann ignoriert und nicht geschützt.",
-                "P6": "Wir empfehlen die IPv6 Datenumleitung stets zu aktivieren, damit du vollstänig geschützt bist."
+                "P6": "Wir empfehlen die IPv6 Datenumleitung stets zu aktivieren, damit du vollständig geschützt bist."
             },
             "OVERVIEW": {
                 "P1": "Das neue Internetprotokoll IPv6 wird auch vom eBlocker unterstützt.",

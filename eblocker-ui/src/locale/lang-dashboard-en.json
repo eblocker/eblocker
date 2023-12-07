@@ -69,7 +69,8 @@
             "NETWORK" : {
                 "DEVICE_IP" : "This device:",
                 "EBLOCKER_IP" : "eBlocker:",
-                "GATEWAY_IP" : "Gateway:"
+                "GATEWAY_IP" : "Gateway:",
+                "MORE_ADDRESSES" : "{count} {count, select, 1{Address} other{Addresses}}"
             },
             "TEXT" : "It might be necessary to provide the administrator password.",
             "TITLE" : "Settings",

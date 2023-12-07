@@ -9,16 +9,25 @@
 
         <div layout="column">
             <div layout="row" style="height: 38px;">
-                <span flex="40">{{ 'CONSOLE.CARD.NETWORK.DEVICE_IP' | translate}}</span>
-                <span flex="60" style="font-weight: bold;">{{vm.device}}</span>
-            </div>
-            <div layout="row" style="height: 38px;">
                 <span flex="40">{{ 'CONSOLE.CARD.NETWORK.EBLOCKER_IP' | translate}}</span>
                 <span flex="60" style="font-weight: bold;">{{vm.eblocker}}</span>
             </div>
             <div layout="row" style="height: 38px;">
                 <span flex="40">{{ 'CONSOLE.CARD.NETWORK.GATEWAY_IP' | translate}}</span>
                 <span flex="60" style="font-weight: bold;">{{vm.gateway}}</span>
+            </div>
+            <div layout="row" style="height: 38px;">
+                <span flex="40">{{ 'CONSOLE.CARD.NETWORK.DEVICE_IP' | translate}}</span>
+                <span flex="60" md-truncate class="md-ellipsis" style="font-weight: bold;">{{vm.device}}</span>
+            </div>
+            <div layout="row" style="height: 38px;" ng-if="vm.otherIps.length>0">
+                <span flex="40"></span>
+                <span flex="60">
+                    <md-button style="margin:0;padding:0;" class="md-primary" ng-click="vm.toggleOtherAddresses()">+ {{vm.otherIps.length}} Adressen</md-button>
+                </span>
+            </div>
+            <div layout="column" style="margin-top: 16px;" ng-if="vm.showOtherAddresses">
+                <span ng-repeat="ipAddress in vm.otherIps" style="font-weight: bold;">{{ipAddress}}</span>
             </div>
         </div>
 

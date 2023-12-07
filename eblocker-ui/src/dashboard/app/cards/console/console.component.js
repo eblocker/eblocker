@@ -24,7 +24,7 @@ export default {
 };
 
 function ConsoleController($scope, $timeout, LanguageService, RedirectService, NetworkService,
-                           CardService, registration, DeviceSelectorService, EVENTS) {
+                           IpUtilsService, CardService, registration, DeviceSelectorService, EVENTS) {
     'ngInject';
     'use strict';
 
@@ -34,19 +34,21 @@ function ConsoleController($scope, $timeout, LanguageService, RedirectService, N
 
     vm.openConsole = openConsole;
 
-    vm.$onInit = function() {
+    vm.showOtherAddresses = false;
+    vm.otherIps = [];
 
+    vm.$onInit = function() {
         NetworkService.getNetworkStatus().then(function success(response) {
             if (angular.isObject(response.data)) {
                 vm.gateway = response.data.gateway;
                 vm.eblocker = response.data.ipAddress;
                 vm.localDevice = response.data.userIpAddress;
-                setDeviceIp();
+                setDeviceIps();
             }
         });
     };
 
-    $scope.$on(EVENTS.DEVICE_SELECTED, setDeviceIp);
+    $scope.$on(EVENTS.DEVICE_SELECTED, setDeviceIps);
 
     vm.$postLink = function() {
         $timeout(function() {
@@ -54,12 +56,15 @@ function ConsoleController($scope, $timeout, LanguageService, RedirectService, N
         }, 300);
     };
 
-    function setDeviceIp() {
-        if (DeviceSelectorService.isLocalDevice()) {
-            vm.device = vm.localDevice;
-        } else {
-            vm.device = DeviceSelectorService.getSelectedDevice().ipAddresses[0];
-        }
+    vm.toggleOtherAddresses = function() {
+        vm.showOtherAddresses = !vm.showOtherAddresses;
+    };
+
+    function setDeviceIps() {
+        let device = DeviceSelectorService.getSelectedDevice();
+        let sortedIps = IpUtilsService.sortByVersion(device.ipAddresses);
+        vm.device = sortedIps.shift();
+        vm.otherIps = sortedIps;
     }
 
     function openConsole() {

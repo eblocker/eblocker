@@ -34,8 +34,6 @@ function Controller() {
 
     vm.showExplanations = false;
     vm.toggleExplanations = function() {
-        console.log('Toggling explanation');
-        console.log(vm.checkResult);
         vm.showExplanations = !vm.showExplanations;
     };
 }

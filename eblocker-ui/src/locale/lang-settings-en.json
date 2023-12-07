@@ -1743,7 +1743,7 @@
                         "COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING" : "The Cookie & Consent filter is enabled. Note that is tends to over-blocking.",
                         "COOKIE_CONSENT_FILTER_DISABLED" : "You might want to enable the Cookie & Consent filter.",
                         "EBLOCKER_ENABLED_FOR_NEW_DEVICES" : "eBlocker will be automatically enabled for new devices. This may cause trouble when a new device is not compatible with the eBlocker.",
-                        "EBLOCKER_DISABLED_FOR_NEW_DEVICES" : "eBlocker will not be automatically enabled for new devices, so you don't run into trouble during setup. Don't forget to enable new devices manually...",
+                        "EBLOCKER_DISABLED_FOR_NEW_DEVICES" : "eBlocker will not be enabled automatically for new devices, so you don't run into trouble during setup. Don't forget to enable new devices manually...",
                         "EBLOCKER_DNS_RESOLVE_BROKEN" : "The eBlocker itself cannot resolve DNS names. Check your DNS settings.",
                         "EBLOCKER_DNS_RESOLVE_WORKING" : "The eBlocker itself can resolve DNS names.",
                         "EBLOCKER_IP4_PING_BROKEN" : "Your eBlocker cannot reach the internet via ICMP/ping!",
@@ -2181,7 +2181,7 @@
         },
         "NETWORK_SETTINGS_IP6" : {
             "LABEL" : "IPv6 (beta)",
-            "LABEL_ADDRESSES" : "IPv6 Adresses (eBlocker)",
+            "LABEL_ADDRESSES" : "IPv6 adresses of your eBlocker",
             "LABEL_GLOBAL" : "Global",
             "LABEL_LINK_LOCAL" : "Local",
             "PRIVACY_EXTENSIONS": {
@@ -2189,11 +2189,11 @@
                 "ENABLED": "Privacy extensions are active"
             },
             "ROUTER_ADVERTISEMENTS" : {
-                "DISABLED" : "Do not advertise eBlocker as IPv6 router",
-                "ENABLED" : "Advertise eBlocker as IPv6 router with preference \"high\""
+                "DISABLED" : "Do not protect IPv6 traffic (not recommended)",
+                "ENABLED" : "Route IPv6 traffic to the eBlocker to protect it"
             },
-            "WARNING_IP6_LEAK" : "IPv6 is enabled in your home network, but eBlocker does not advertise itself as an IPv6 router. As a result, eBlocker can not protect IPv6 traffic.<br>Choose one of these options:<ul><li>Enable the switch above,</li><li>disable IPv6 on your router</li><li>or configure eBlocker's local address (see below) as gateway on clients manually.</li></ul>",
-            "WARNING_NO_GLOBAL_ADDRESS" : "eBlocker does not have a global IPv6 address yet. If you enable IPv6 on your router, eBlocker will advertise itself as an IPv6 router."
+            "WARNING_IP6_LEAK" : "IPv6 is enabled in your home network, but eBlocker is not activated for IPv6. As a result, eBlocker can not protect IPv6 traffic.<br>Choose one of these options:<ul><li>Enable the switch above,</li><li>disable IPv6 on your router</li><li>or configure eBlocker's local address (see below) as gateway on clients manually.</li></ul>",
+            "WARNING_NO_GLOBAL_ADDRESS" : "eBlocker does not have a global IPv6 address yet. Once you activate IPv6 on your router, eBlocker can also protect IPv6 traffic."
         },
         "NETWORK_WIZARD" : {
             "ACTION" : {
@@ -2633,29 +2633,29 @@
                     "OK" : "Ok"
                 },
                 "BLOG_LINK_PRE" : "Learn more about the improvements in our ",
-                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 2.11",
-                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos2.11",
+                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 3",
+                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos3",
                 "ENABLE" : {
                     "NOT_AGAIN" : "Do not show this info box again."
                 },
-                "INTRO" : "With eBlockerOS 2.11 we focused on security maintenance and many improvements in the background.",
+                "INTRO" : "eBlockerOS 3 is a major release that contains many improvements and new features.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
-                    "HEAD" : "Most important improvements:",
-                    "LI_1" : "<strong>IPv6 support (beta)</strong>",
-                    "LI_2" : "<strong>Improved stability</strong>",
-                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all used components."
+                    "HEAD" : "Highlights:",
+                    "LI_1" : "<strong>IPv6 support (beta)</strong>. eBlockerOS now works in any network.",
+                    "LI_2" : "<strong>Improved display of the eBlocker icon</strong> on all websites.",
+                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all components."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-2-11/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-0/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 2.11"
+                "TITLE" : "eBlockerOS Release 3.0"
             },
-            "MENU_LABEL" : "New in eBlockerOS 2.11",
+            "MENU_LABEL" : "New in eBlockerOS 3",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 2.11"
+                "TITLE" : "eBlockerOS Release 3.0"
             }
         },
         "SSL" : {
@@ -3662,7 +3662,7 @@
                     "P1" : "The eBlocker automatically selects the best route and the best Tor exit nodes. If you wish to limit the Tor exit nodes to certain countries, you can select the corresponding menu item on the Tor network page and specify the countries that you want to use as the starting point for your request to the web servers. You can call up specific countries via the search mask, search directly in the list and select them with a mouse click."
                 },
                 "OVERVIEW" : {
-                    "P1" : "If you use the eBlocker IP anonymization, you will receive an IP address from another county. This allows you to bypass censorship or access content that is only available in certain regions of the world.",
+                    "P1" : "If you use the eBlocker IP anonymization, you will receive an IP address (usually from another county). This allows you to bypass censorship or access content that is only available in certain regions of the world.",
                     "P2" : "You can switch the use of the Tor network on and off via the eBlocker toolbar and the corresponding map in the Overview / Dashboard.",
                     "P3" : "In the eBlocker menu under IP Anonymization you can specify whether the Tor network may use all Tor exit nodes or only one of the countries specified.",
                     "TITLE" : "Tor"
@@ -3727,10 +3727,10 @@
             },
             "SERVER" : {
                 "OVERVIEW" : {
-                    "P1" : "Here you can create a list of DNS servers from external providers you trust. Enter the IPv4 address of the desired DNS server directly using the \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}\" button. To remove an entry, select \"{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}\", select the row and select \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}\".",
+                    "P1" : "Here you can create a list of DNS servers from external providers you trust. Enter the IP address of the desired DNS server directly using the \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}\" button. To remove an entry, select \"{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}\", select the row and select \"{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}\". \nUsing the default mode \"by availablity\" will send DNS requests to available DNS servers only. \"Round robin\" mode will use each DNS server from the list in the given order for each DNS request. \"Random\" mode will choose the server randomly for each request.",
                     "P2_TEXT" : "Information about external DNS servers",
                     "P2_URL" : "https://eBlocker.org/en/dns-server-list/",
-                    "TITLE" : "DNS server sist"
+                    "TITLE" : "DNS server list"
                 }
             },
             "STATUS" : {
@@ -3939,17 +3939,17 @@
         },
         "NETWORK_IPV6" : {
             "DETAILS" : {
-                "P1" : "P1",
-                "P2" : "P2",
-                "P3" : "P3",
-                "P4" : "P4",
-                "P5" : "P5",
-                "P6" : "P6"
+				"P1": "In IPv6 networks, all data packets are sent to the router with the highest priority.",
+                "P2": "As soon as IPv6 support has been activated, the eBlocker announces itself as a router with priority \"high\".",
+                "P3": "This routes all IPv6 data packets to the eBlocker, allowing it to analyze and protect them.",
+                "P4": "If IPv6 support is deactivated in the eBlocker, it can only protect IPv4 data packets.",
+                "P5": "All data packets based on IPv6 are then ignored and cannot be protected.",
+                "P6": "We recommend to always activate IPv6 routing to eBlocker for complete protection."
             },
-            "OVERVIEW" : {
-                "P1" : "P1",
-                "P2" : "P2",
-                "TITLE" : "IPv6"
+            "OVERVIEW": {
+                "P1": "The new Internet protocol IPv6 is also supported by eBlocker.",
+                "P2": "To protect IPv6 traffic, the traffic must be routed to the eBlocker.",
+                "TITLE": "IPv6"
             }
         },
         "PARENTAL_CONTROL" : {

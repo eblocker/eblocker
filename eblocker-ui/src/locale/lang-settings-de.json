@@ -1385,13 +1385,13 @@
                     "CONTINUE": "Fortfahren",
                     "ENABLE": "HTTPS-Unterstützung Aktivieren",
                     "GENERATE_CERT": "Zertifikat erstellen",
-                    "INSTALL_CERT": "Zertifikat aufnehmen"
+                    "INSTALL_CERT": "Zertifikat installieren"
                 },
                 "ARIA": "HTTPS-Unterstützung",
                 "DATE_TIME_FORMAT": "D. MMM YYYY HH:mm",
                 "TAB_1": {
                     "INTRO_1": "Damit der eBlocker verschlüsselte HTTPS Verbindungen entschlüsseln kann, wird die HTTPS Verschlüsselung des Servers bei Aktivierung dieser Funktion vom eBlocker terminiert und zum Netzwerkgerät erneut verschlüsselt.",
-                    "INTRO_2": "Bitte beachte, dass du das individuelle eBlocker Zertifikat in jeden verwendeten Browser aufnehmen musst.",
+                    "INTRO_2": "Bitte beachte, dass du das individuelle eBlocker Zertifikat in jeden verwendeten Browser installieren musst.",
                     "INTRO_3": "Wenn du Apps wie beispielsweise Facebook, Twitter oder Online-Spiele benutzt, aktiviere für diese Apps bitte im Tab VERTRAUENSWÜRDIGE APPS die entsprechende Ausnahmeliste.",
                     "LABEL": "Hinweis",
                     "LABEL_SSL_CERTIFICATE_NOT_AFTER": "Gültig bis",
@@ -1409,7 +1409,7 @@
                     "LABEL_SSL_COMMON_NAME": "Name",
                     "MONTHS_VALID": "Monate gültig",
                     "OPTIONS_TEXT": "Dein eBlocker Zertifikat wird mit folgenden Parametern erstellt.",
-                    "PLEASE_BE_PATIENT": "Dies kann mehrere Minuten dauern. Bitte warten bis \"Zertifikat aufnehmen\" erscheint."
+                    "PLEASE_BE_PATIENT": "Dies kann mehrere Minuten dauern. Bitte warten bis \"Zertifikat installieren\" erscheint."
                 },
                 "TAB_3": {
                     "FINGERPRINT_SHA256": "Fingerprint (SHA-256)",
@@ -2181,7 +2181,7 @@
         },
         "NETWORK_SETTINGS_IP6": {
             "LABEL": "IPv6 (beta)",
-            "LABEL_ADDRESSES": "IPv6-Adressen (eBlocker)",
+            "LABEL_ADDRESSES": "IPv6-Adressen des eBlockers",
             "LABEL_GLOBAL": "Global",
             "LABEL_LINK_LOCAL": "Lokal",
             "PRIVACY_EXTENSIONS": {
@@ -2189,11 +2189,11 @@
                 "ENABLED": "Privacy-Extensions sind aktiv"
             },
             "ROUTER_ADVERTISEMENTS": {
-                "DISABLED": "eBlocker nicht als IPv6-Router melden",
-                "ENABLED": "eBlocker als IPv6-Router mit Präferenz \"hoch\" melden"
+                "DISABLED": "IPv6 Datenverkehr nicht schützen (nicht empfohlen)",
+                "ENABLED": "IPv6 Datenverkehr zum eBlocker leiten, damit dieser geschützt wird"
             },
-            "WARNING_IP6_LEAK": "IPv6 ist im Netzwerk aktiv, aber der eBlocker meldet sich nicht als IPv6-Router. Daher kann der eBlocker den IPv6-Verkehr nicht schützen.<br>Wähle eine dieser Möglichkeiten:<ul><li>Aktiviere den obigen Schalter,</li><li>schalte IPv6 auf deinem Router aus</li><li>oder konfiguriere die lokale Adresse (s.u.) des eBlockers als Gateway manuell auf deinen Geräten.</li></ul>",
-            "WARNING_NO_GLOBAL_ADDRESS": "eBlocker hat noch keine globale IPv6-Adresse. Wenn du IPv6 auf deinem Router einschaltest, wird der eBlocker sich als IPv6-Router melden."
+            "WARNING_IP6_LEAK": "IPv6 ist im Netzwerk aktiv, aber der eBlocker ist nicht für IPv6 aktiviert. Daher kann der eBlocker den IPv6-Verkehr nicht schützen.<br>Wähle eine dieser Möglichkeiten:<ul><li>Aktiviere den obigen Schalter,</li><li>schalte IPv6 auf deinem Router aus</li><li>oder konfiguriere die lokale Adresse (s.u.) des eBlockers als Gateway manuell auf allen deinen Geräten.</li></ul>",
+            "WARNING_NO_GLOBAL_ADDRESS": "eBlocker hat noch keine globale IPv6-Adresse. Erst wenn du IPv6 auf deinem Router einschaltest, kann der eBlocker auch den IPv6 Datenverkehr schützen."
         },
         "NETWORK_WIZARD": {
             "ACTION": {
@@ -2633,29 +2633,29 @@
                     "OK": "Ok"
                 },
                 "BLOG_LINK_PRE": "Mehr zu den Neuerungen findest Du im ",
-                "BLOG_LINK_TEXT": "Blog-Beitrag zu eBlockerOS 2.11",
-                "BLOG_LINK_URL": "https://eblocker.org/de/magazin/eos2.11",
+                "BLOG_LINK_TEXT": "Blog-Beitrag zu eBlockerOS 3",
+                "BLOG_LINK_URL": "https://eblocker.org/de/magazin/eos3",
                 "ENABLE": {
                     "NOT_AGAIN": "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO": "Mit eBlockerOS 2.11 haben wir uns auf die Sicherheitswartung und viele Verbesserungen im Hintergrund konzentriert.",
-                "GREETINGS": "Danke für deine Unterstützung - wir sorgen weiter für deinen Schutz,",
+                "INTRO": "eBlockerOS 3 ist ein großes Release, das viele Verbesserungen und neue Features enthält.",
+                "GREETINGS": "Nur mit deiner Unterstütung können wir eBlocker weiter entwickeln und betreiben,",
                 "HIGHLIGHTS": {
-                    "HEAD": "Wichtigste Verbesserungen:",
-                    "LI_1": "<strong>IPv6-Unterstützung (beta)</strong>",
-                    "LI_2": "<strong>Verbesserte Stabilität</strong>",
+                    "HEAD": "Die Highlights:",
+                    "LI_1": "<strong>IPv6-Unterstützung (beta)</strong>. Jetzt funktioniert eBlockerOS in jedem Netzwerk.",
+                    "LI_2": "<strong>Verbesserte Anzeige des eBlocker Icons</strong> auf sämtlichen Websites.",
                     "LI_3": "<strong>Linux Kernel</strong> Update und Sicherheitsupdates aller verwendeten Komponenten."
                 },
                 "LINK_PRE": "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT": "Release Notes",
-                "LINK_URL": "https://eblocker.org/docs/release-notes-2-11/",
+                "LINK_URL": "https://eblocker.org/docs/release-notes-3-0/",
                 "OUTRO": "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN": "Dein eBlocker Team",
-                "TITLE": "eBlockerOS Release 2.11"
+                "TITLE": "eBlockerOS Release 3.0"
             },
-            "MENU_LABEL": "Neu in eBlockerOS 2.11",
+            "MENU_LABEL": "Neu in eBlockerOS 3",
             "TOOLBAR": {
-                "TITLE": "Neues eBlockerOS Release 2.11"
+                "TITLE": "Neues eBlockerOS Release 3.0"
             }
         },
         "SSL": {
@@ -2673,7 +2673,7 @@
                 "TUTORIAL": "https://eBlocker.org/docs/https",
                 "WIZARD": "/https"
             },
-            "EXPLAIN_WIZARD": "Wichtig: Du musst das eBlocker-Zertifikat auf allen aktivierten Geräten aufnehmen!",
+            "EXPLAIN_WIZARD": "Wichtig: Du musst das eBlocker-Zertifikat auf allen aktivierten Geräten installieren!",
             "CURRENT_CN": "Name",
             "CURRENT_TITLE": "Dein eBlocker-Zertifikat",
             "CURRENT_VNA": "Gültig bis",
@@ -2751,15 +2751,15 @@
             },
             "LABEL_TEXT_OFF": "Wenn du diese Funktion aktivierst, musst du mit erweiterten Einstellungen deiner Geräte vertraut sein und ein Verschlüsselungszertifikat auf den Geräten hinterlegen, um den Datenstrom durch den eBlocker analysieren zu lassen. <br />Das Aktivieren der HTTPS Unterstützung schaltet <a target=\"_blank\" href=\"https://support.eblocker.org/hc/de/articles/360006025593-Welche-Funktionen-benötigen-die-Aktivierung-von-HTTPS-SSL-\" class=\"orange\"> weitere Funktionen des eBlockers </a>frei.",
             "DATE_FORMAT": "D. MMM YYYY",
-            "IMPORTANT_NOTE": "Wichtig: Du musst das eBlocker-Zertifikat auf allen aktivierten Geräten aufnehmen!",
+            "IMPORTANT_NOTE": "Wichtig: Du musst das eBlocker-Zertifikat auf allen aktivierten Geräten installieren!",
             "IMPORTANT_NOTE_RENEWAL": "eBlocker-Zertifikat erneuert!",
             "INFO_1": "Wir empfehlen die <b>HTTPS-Unterstützung</b> für alle Standard-Computer wie Laptops und Desktop-PCs sowie für Tablets und Smartphones zu aktivieren.",
-            "INFO_2": "Du musst das <b>eBlocker-Zertifikat</b> in das Betriebssystem aller Geräte aufnehmen, für welche die HTTPS-Unterstützung aktiviert ist. Zusätzlich musst du das Zertifikat in einigen Apps, wie zum Beispiel Firefox, aufnehmen.",
+            "INFO_2": "Du musst das <b>eBlocker-Zertifikat</b> im Betriebssystem aller Geräte installieren, für welche die HTTPS-Unterstützung aktiviert ist. Zusätzlich musst du das Zertifikat in einigen Apps, wie zum Beispiel Firefox, separat installieren.",
             "INFO_3": "Falls du nicht möchtest, dass der eBlocker die verschlüsselten Verbindungen zu vertrauenswürdigen Websites überwacht - wie zum Beispiel Banken - dann nimm die URLs oder Domain dieser Websites in die Ausnahmeliste der <b>vertrauenswürdigen Websites</b> auf.",
             "INFO_4": "Wenn eine App nicht korrekt funktioniert, sobald die HTTPS-Unterstützung aktiviert ist, kannst du die App in der Liste der <b>vertrauenswürdigen Apps</b> als vertrauenswürdig markieren (falls verfügbar) oder du legst selbst eine vertrauenswürdige App an und fügst die relevanten Domains ein.",
             "INFO_TITLE": "Weitere wichtige Informationen und Empfehlungen",
             "LABEL": "Status",
-            "RENEWAL_EXPLANATION_POST": " ab. Bitte nimm das neue Zertifikat jetzt auf allen Geräten auf.",
+            "RENEWAL_EXPLANATION_POST": " ab. Bitte installiere das neue Zertifikat jetzt auf allen Geräten.",
             "RENEWAL_EXPLANATION_PRE": "Das alte eBlocker-Zertifikat läuft am ",
             "SWITCH": {
                 "SSL_OFF": "HTTPS-Unterstützung nicht aktiv",
@@ -3727,7 +3727,7 @@
             },
             "SERVER": {
                 "OVERVIEW": {
-                    "P1": "Hier kannst du eine Liste von DNS Servern externer Anbieter anlegen, denen du dein Vertrauen schenkst. Trage mittels des Buttons „{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}“ direkt die IPv4 Adresse des jeweiligen gewünschten DNS Servers ein. Zum Entfernen eines Eintrages klicke auf „{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}“, wähle die Zeile aus und gehe auf „{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}“.",
+                    "P1": "Hier kannst du eine Liste von DNS Servern externer Anbieter angeben, denen du vertraust. Trage mittels des Buttons „{{'ADMINCONSOLE.DNS_SERVER.ACTION.ADD' | translate }}“ direkt die IP Adresse des jeweiligen gewünschten DNS Servers ein. Zum Entfernen eines Eintrages klicke auf „{{'ADMINCONSOLE.TABLE.ACTION.EDIT' | translate }}“, wähle die Zeile aus und gehe auf „{{'ADMINCONSOLE.DNS_SERVER.ACTION.REMOVE' | translate:{num: 'x'}:'messageformat' }}“. \nBei Verwendung des voreingestellten Modus \"nach Verfügbarkeit\" werden DNS-Anfragen nur an verfügbare DNS-Server gesendet. Im Modus \"Round robin\" wird jeder DNS-Server aus der Liste in der angegebenen Reihenfolge für eine DNS-Anfrage verwendet. Im Modus \"Zufällig\" wird der DNS Server für jede Anfrage nach dem Zufallsprinzip ausgewählt.",
                     "P2_TEXT": "Information zu externen DNS Servern",
                     "P2_URL": "https://eBlocker.org/de/dns-server-liste/",
                     "TITLE": "DNS Server Liste"
@@ -3939,16 +3939,16 @@
         },
         "NETWORK_IPV6": {
             "DETAILS": {
-                "P1": "P1",
-                "P2": "P2",
-                "P3": "P3",
-                "P4": "P4",
-                "P5": "P5",
-                "P6": "P6"
+                "P1": "In IPv6 Netzwerken werden alle Datenpakete zu dem Router geschickt, der die höchste Priorität hat.",
+                "P2": "Sobald die IPv6 Unterstützung aktiviert wurde, meldet sich der eBlocker als Router mit Priorität \"hoch\".",
+                "P3": "Dadurch werden alle IPv6 Datenpakete zum eBlocker umgeleitet, der diese dann analysieren und schützen kann.",
+                "P4": "Ist die IPv6 Unterstützung im eBlocker deaktiviert, kann der eBlocker nur IPv4 Datenpakete schützen.",
+                "P5": "Alle Datenpakete, die auf IPv6 basieren werden dann ignoriert und nicht geschützt.",
+                "P6": "Wir empfehlen die IPv6 Datenumleitung stets zu aktivieren, damit du vollständig geschützt bist."
             },
             "OVERVIEW": {
-                "P1": "P1",
-                "P2": "P2",
+                "P1": "Das neue Internetprotokoll IPv6 wird auch vom eBlocker unterstützt.",
+                "P2": "Um IPv6 Datenverkehr zu schützen muss der Datenverkehr zum eBlocker umgeleitet werden.",
                 "TITLE": "IPv6"
             }
         },

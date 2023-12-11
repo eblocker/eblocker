@@ -271,8 +271,8 @@ public class EasyListLineParser implements FilterLineParser {
         // The ^ indicates a separator character. Anything except letter, digit or _-.%
         //
         if (matchString.contains("^") && !isRegex) {
-            int index = matchString.indexOf('^');
-            if (domain != null && index == matchString.length() - 1) {
+            // optimize for domain-only filters:
+            if (domain != null && ruleGroups[0].equals("|" + domain + "^")) {
                 matchString = null;
                 domainOnly = true;
             } else {

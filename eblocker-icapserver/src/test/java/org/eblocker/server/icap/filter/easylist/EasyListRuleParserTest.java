@@ -26,8 +26,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-
 public class EasyListRuleParserTest {
     private final static Logger log = LoggerFactory.getLogger(EasyListRuleParserTest.class);
 
@@ -262,6 +260,31 @@ public class EasyListRuleParserTest {
         assertFilter(definition, "http://example.com/?url=http://123.45.6.78/", "http://speedvid.net/", "application/javascript", Decision.NO_DECISION);
     }
 
+    @Test
+    public void testSeparator() {
+        // Test filter with path and separator:
+        String definition = "||amazonaws.com/beacon^";
+        assertFilter(definition, "https://example.s3.eu-west-2.amazonaws.com/media/image.jpg", null, null, Decision.NO_DECISION);
+        assertFilter(definition, "https://example.s3.eu-west-2.amazonaws.com/beacon", null, null, Decision.BLOCK);
+        assertFilter(definition, "https://example.s3.eu-west-2.amazonaws.com/beacon?id=42", null, null, Decision.BLOCK);
+        assertFilter(definition, "https://example.s3.eu-west-2.amazonaws.com/beaconstrictor", null, null, Decision.NO_DECISION);
+
+        // Test domain-only filter:
+        definition = "||example.co^";
+        assertFilter(definition, "https://www.example.co/path", null, null, Decision.BLOCK);
+        assertFilter(definition, "https://www.example.com/path", null, null, Decision.NO_DECISION);
+    }
+
+    @Test
+    public void testDomainOnlyOptimization() {
+        // Many filters block a domain with a definition like "||example.com^".
+        // Make sure that a domain-only filter is created instead of a more expensive regex filter.
+        Assert.assertTrue(new EasyListLineParser().parseLine("||example.org^").toString().contains("DOMAIN"));
+        Assert.assertTrue(new EasyListLineParser().parseLine("||example.org^$third-party").toString().contains("DOMAIN"));
+        Assert.assertTrue(new EasyListLineParser().parseLine("@@||example.org^$third-party").toString().contains("DOMAIN"));
+        Assert.assertTrue(new EasyListLineParser().parseLine("||example.org/path^").toString().contains("REGEX"));
+    }
+
     private void assertIgnore(String definition) {
         Assert.assertNull(new EasyListLineParser().parseLine(definition));
     }
@@ -279,8 +302,8 @@ public class EasyListRuleParserTest {
         log.info("Created filter {}", filter);
         TransactionContext context = new TestContext(url, referrer, accept);
         FilterResult filterResult = filter.filter(context);
-        assertEquals(decision, filterResult.getDecision());
-        assertEquals(decisionValue, filterResult.getValue());
+        Assert.assertEquals(decision, filterResult.getDecision());
+        Assert.assertEquals(decisionValue, filterResult.getValue());
     }
 
 }

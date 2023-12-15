@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.eblocker</groupId>
     <artifactId>eblocker-parent</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <packaging>pom</packaging>
     <name>eBlocker - Dependencies</name>
 

@@ -23,16 +23,18 @@ export default {
     }
 };
 
-function Controller(logger, NetworkService) {
+function Controller(logger, DeveloperService, NetworkService) {
     'ngInject';
     'use strict';
 
     const vm = this;
 
     vm.updateIp6Config = updateIp6Config;
+    vm.developer = false;
 
     vm.$onInit = function() {
         updateDisplayData(vm.configurationIp6);
+        vm.developer = DeveloperService.isDeveloper();
     };
 
     function updateDisplayData(config) {

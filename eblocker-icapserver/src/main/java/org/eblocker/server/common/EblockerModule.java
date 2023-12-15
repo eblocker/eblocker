@@ -445,8 +445,19 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public IpSetConfig provideMalwareFilterIpSet(@Named("malware.filter.ipset.name") String name,
                                                  @Named("malware.filter.ipset.type") String type,
+                                                 @Named("malware.filter.ipset.family") String family,
                                                  @Named("malware.filter.ipset.maxSize") int maxSize) {
-        return new IpSetConfig(name, type, maxSize);
+        return new IpSetConfig(name, type, family, maxSize);
+    }
+
+    @Provides
+    @Named("malware.filter.ip6set")
+    @Singleton
+    public IpSetConfig provideMalwareFilterIp6Set(@Named("malware.filter.ip6set.name") String name,
+                                                  @Named("malware.filter.ip6set.type") String type,
+                                                  @Named("malware.filter.ip6set.family") String family,
+                                                  @Named("malware.filter.ip6set.maxSize") int maxSize) {
+        return new IpSetConfig(name, type, family, maxSize);
     }
 
     /**

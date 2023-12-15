@@ -19,11 +19,13 @@ package org.eblocker.server.common.network.unix;
 public class IpSetConfig {
     private String name;
     private String type;
+    private String family;
     private int maxSize;
 
-    public IpSetConfig(String name, String type, int maxSize) {
+    public IpSetConfig(String name, String type, String family, int maxSize) {
         this.name = name;
         this.type = type;
+        this.family = family;
         this.maxSize = maxSize;
     }
 
@@ -33,6 +35,10 @@ public class IpSetConfig {
 
     public String getType() {
         return type;
+    }
+
+    public String getFamily() {
+        return family;
     }
 
     public int getMaxSize() {

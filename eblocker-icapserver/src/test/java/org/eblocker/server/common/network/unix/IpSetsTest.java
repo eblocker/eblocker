@@ -46,7 +46,7 @@ public class IpSetsTest {
 
     @Before
     public void setup() throws IOException, InterruptedException {
-        config = new IpSetConfig("unit-test", "hash:ip,port", 1024);
+        config = new IpSetConfig("unit-test", "hash:ip,port", "inet", 1024);
 
         scriptRunner = Mockito.mock(ScriptRunner.class);
         Mockito.when(scriptRunner.runScript(Mockito.eq(IP_RESTORE_SCRIPT), Mockito.anyString())).then(im -> {

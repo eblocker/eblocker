@@ -73,7 +73,8 @@ public class IpSets {
     }
 
     public void createIpSet(IpSetConfig ipSetConfig) throws IOException {
-        ipSetRestore(ipSetConfig.getName(), writer -> writer.format("create %s %s family inet hashsize 0 maxelem %d -exist\n", ipSetConfig.getName(), ipSetConfig.getType(), ipSetConfig.getMaxSize()));
+        ipSetRestore(ipSetConfig.getName(), writer -> writer.format("create %s %s family %s hashsize 0 maxelem %d -exist\n",
+                ipSetConfig.getName(), ipSetConfig.getType(), ipSetConfig.getFamily(), ipSetConfig.getMaxSize()));
     }
 
     public void updateIpSet(IpSetConfig ipSetConfig, Set<String> entries) throws IOException {
@@ -82,8 +83,10 @@ public class IpSets {
         }
 
         ipSetRestore(ipSetConfig.getName(), writer -> {
-            writer.format("create %s %s family inet hashsize %d maxelem %d -exist\n", ipSetConfig.getName(), ipSetConfig.getType(), entries.size(), ipSetConfig.getMaxSize());
-            writer.format("create %s_tmp %s family inet hashsize %d maxelem %d -exist\n", ipSetConfig.getName(), ipSetConfig.getType(), entries.size(), ipSetConfig.getMaxSize());
+            writer.format("create %s %s family %s hashsize %d maxelem %d -exist\n",
+                    ipSetConfig.getName(), ipSetConfig.getType(), ipSetConfig.getFamily(), entries.size(), ipSetConfig.getMaxSize());
+            writer.format("create %s_tmp %s family %s hashsize %d maxelem %d -exist\n",
+                    ipSetConfig.getName(), ipSetConfig.getType(), ipSetConfig.getFamily(), entries.size(), ipSetConfig.getMaxSize());
             writer.format("flush %s_tmp\n", ipSetConfig.getName());
             entries.forEach(e -> writer.format("add %s_tmp %s\n", ipSetConfig.getName(), e));
             writer.format("swap %s_tmp %s\n", ipSetConfig.getName(), ipSetConfig.getName());

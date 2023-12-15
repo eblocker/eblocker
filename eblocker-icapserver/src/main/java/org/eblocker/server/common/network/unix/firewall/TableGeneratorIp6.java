@@ -31,6 +31,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     final static int publicNetworkPrefixLength = 3;
 
     private Set<String> prefixes = Set.of();
+    private final String malwareIp6SetName;
 
     @Inject
     public TableGeneratorIp6(@Named("network.interface.name") String standardInterface,
@@ -39,9 +40,11 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                              @Named("httpsPort") int httpsPort,
                              @Named("proxyPort") int proxyPort,
                              @Named("proxyHTTPSPort") int proxyHTTPSPort,
-                             @Named("dns.server.port") int localDnsPort
+                             @Named("dns.server.port") int localDnsPort,
+                             @Named("malware.filter.ip6set.name") String malwareIp6SetName
                              ) {
         super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
+        this.malwareIp6SetName = malwareIp6SetName;
     }
 
     @Override
@@ -90,6 +93,18 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                     .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
                     .filter(ip -> isPublicIp(ip))
                     .forEach(ip -> localRedirects.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
+        }
+
+        // Redirect any ip / non-standard-ports known to host malware to squid for filtering
+        if (malwareSetEnabled) {
+            ipAddressFilter.getMalwareDevicesIps().stream()
+                    .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
+                    .filter(ip -> isPublicIp(ip))
+                    .forEach(ip ->
+                            localRedirects.rule(autoInputForSource(ip)
+                                    .tcp()
+                                    .matchSet(true, malwareIp6SetName, "dst", "dst")
+                                    .redirectTo(selectTargetIp(ip), proxyPort)));
         }
 
         for (OpenVpnClientState client : anonVpnClients) {

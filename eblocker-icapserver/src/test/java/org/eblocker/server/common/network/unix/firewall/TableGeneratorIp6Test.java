@@ -49,9 +49,10 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
     private final String anonVpnOnlyIp4DeviceId = "anonVpnIp4OnlyDeviceId";
     private final String anonVpnWithIp6Gateway = "2000:23::1";
 
+    private final String malwareIp6SetName = "malware6";
     @Before
     public void setUp() {
-        generator = new TableGeneratorIp6(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
+        generator = new TableGeneratorIp6(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort, malwareIp6SetName);
 
         deviceIpFilter = Mockito.mock(IpAddressFilter.class);
         Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice));

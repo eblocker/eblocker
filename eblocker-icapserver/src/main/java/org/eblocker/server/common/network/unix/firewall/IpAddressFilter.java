@@ -79,6 +79,7 @@ public class IpAddressFilter {
 
     public List<String> getMalwareDevicesIps() {
         return collectIpAddresses(devices.stream()
+                .filter(Device::isEnabled)
                 .filter(Device::isMalwareFilterEnabled));
     }
 

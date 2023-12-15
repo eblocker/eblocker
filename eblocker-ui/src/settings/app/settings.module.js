@@ -305,6 +305,7 @@ import WindowEventService from '../../shared/services/event/EventService';
 import SystemService from '../../shared/services/system/SystemService';
 import RedirectService from '../../shared/services/redirect/RedirectService';
 import FeatureToggleService from '../../shared/services/system/FeatureToggleService';
+import DeveloperService from '../../shared/services/system/DeveloperService';
 
 // ** Directives
 import EbLabelContainer from '../../shared/directives/eb-label-container.directive';
@@ -543,6 +544,7 @@ angular.module('eblocker.adminconsole', [
     .factory('DomainUtilsService', DomainUtilsService)
     .factory('IpUtilsService', IpUtilsService)
     .factory('FeatureToggleService', FeatureToggleService)
+    .factory('DeveloperService', DeveloperService)
     .factory('SystemService', SystemService)
     .factory('RedirectService', RedirectService)
     .factory('TasksService', TasksService)

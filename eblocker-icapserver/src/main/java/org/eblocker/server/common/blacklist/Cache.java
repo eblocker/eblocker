@@ -186,6 +186,10 @@ class Cache {
 
         // check file format
         JsonNode node = objectMapper.readTree(new File(cacheIndexFile));
+        if (node.isMissingNode()) {
+            log.error("Could not parse cache index file {}. Root node is missing. Treating as non-existing cache.", cacheIndexFile);
+            return false;
+        }
         JsonNode cacheFormatField = node.get("format");
         if (cacheFormatField == null || cacheFormatField.intValue() < CACHE_FORMAT) {
             upgradeIndex(node);

@@ -14,7 +14,7 @@
         </md-switch>
     </div>
 
-    <div layout="row" layout-align="start center">
+    <div layout="row" layout-align="start center" ng-if="vm.developer">
         <md-switch md-theme="eBlockerThemeSwitch" class="md-primary"
                    ng-model="vm.configurationIp6.privacyExtensionsEnabled" ng-change="vm.updateIp6Config()" ng-disabled="vm.isUpdatingIp6Config">
             {{ vm.configurationIp6.privacyExtensionsEnabled ? 'ADMINCONSOLE.NETWORK_SETTINGS_IP6.PRIVACY_EXTENSIONS.ENABLED' : 'ADMINCONSOLE.NETWORK_SETTINGS_IP6.PRIVACY_EXTENSIONS.DISABLED' | translate }}

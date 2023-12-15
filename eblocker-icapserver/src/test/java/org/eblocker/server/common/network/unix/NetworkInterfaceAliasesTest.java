@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 
 public class NetworkInterfaceAliasesTest {
 
-    private final List<Pattern> INTERFACE_NAME_PATTERNS = Stream.of("eth1\\d+", "en\\d+", "enp0s\\d+")
+    private final List<Pattern> INTERFACE_NAME_PATTERNS = Stream.of("eth\\d+", "en\\d+", "enp0s\\d+")
             .map(Pattern::compile)
             .collect(Collectors.toList());
     private final int ALIASES_COUNT = 16;

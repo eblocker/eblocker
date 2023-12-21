@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.IpAddressModule;
 
@@ -45,6 +46,7 @@ public abstract class BackupProvider {
         objectMapper = new ObjectMapper(jsonFactory);
         initializeMapper(objectMapper);
         objectMapper.registerModule(new IpAddressModule());
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     /**

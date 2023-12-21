@@ -1534,7 +1534,7 @@
                         "CANCEL" : "Cancel",
                         "UPDATE" : "Start update"
                     },
-                    "TEXT1" : "The update process can take up to <b>20 minutes</b>. The eBlocker might be restarted at the end of the update process.",
+                    "TEXT1" : "The update process can take up to <b>30 minutes</b>. The eBlocker might be restarted at the end of the update process.",
                     "TEXT2" : "Internet access of other devices might be interrupted during the update! Do not disconnect power or network connection from the eBlocker during the update!",
                     "TITLE" : "Update now"
                 },

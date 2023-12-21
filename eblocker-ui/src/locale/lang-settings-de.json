@@ -1534,7 +1534,7 @@
                         "CANCEL": "Abbrechen",
                         "UPDATE": "Aktualisierung starten"
                     },
-                    "TEXT1": "Der Aktualisierungsprozess kann bis zu <b>20 Minuten</b> dauern. Der eBlocker wird zum Abschluss der Aktualisierung neu gestartet.",
+                    "TEXT1": "Der Aktualisierungsprozess kann bis zu <b>30 Minuten</b> dauern. Der eBlocker wird zum Abschluss der Aktualisierung neu gestartet.",
                     "TEXT2": "Der Internetzugang kann während des Aktualisierungsprozesses für andere Geräte gestört sein. Trenne den eBlocker während der Aktualisierung nicht von der Stromversorgung oder vom Netzwerk!",
                     "TITLE": "Jetzt aktualisieren"
                 },

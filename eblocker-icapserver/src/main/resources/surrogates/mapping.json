@@ -1,0 +1,189 @@
+{
+  "2mdn.net": [
+    {
+      "regexRule": "2mdn\\.net\\/instream\\/html5\\/ima3\\.js",
+      "surrogate": "google-ima.js"
+    }
+  ],
+  "amazon-adsystem.com": [
+    {
+      "regexRule": "amazon-adsystem\\.com\\/aax2\\/apstag\\.js",
+      "surrogate": "amzn_apstag.js"
+    },
+    {
+      "regexRule": "amazon-adsystem\\.com\\/aax2\\/amzn_ads\\.js",
+      "surrogate": "amzn_ads.js"
+    }
+  ],
+  "chartbeat.com": [
+    {
+      "regexRule": "chartbeat\\.com\\/chartbeat\\.js",
+      "surrogate": "chartbeat.js"
+    },
+    {
+      "regexRule": "chartbeat\\.com\\/js\\/chartbeat\\.js",
+      "surrogate": "chartbeat.js"
+    }
+  ],
+  "criteo.net": [
+    {
+      "regexRule": "criteo\\.net\\/js\\/ld\\/publishertag\\.js",
+      "surrogate": "criteo.js"
+    }
+  ],
+  "doubleclick.net": [
+    {
+      "regexRule": "doubleclick\\.net\\/instream\\/ad_status\\.js",
+      "surrogate": "ad_status.js"
+    },
+    {
+      "regexRule": "doubleclick\\.net\\/tag\\/js\\/gpt\\.js",
+      "surrogate": "gpt.js"
+    }
+  ],
+  "facebook.com": [
+    {
+      "regexRule": "facebook\\.com\\/[a-z_A-Z]+\\/sdk\\.js",
+      "surrogate": "fb-sdk.js",
+      "action": "block-ctl-fb"
+    }
+  ],
+  "facebook.net": [
+    {
+      "regexRule": "facebook\\.net\\/.*\\/all\\.js",
+      "surrogate": "fb-sdk.js",
+      "action": "block-ctl-fb"
+    },
+    {
+      "regexRule": "facebook\\.net\\/[a-z_A-Z]+\\/sdk\\.js",
+      "surrogate": "fb-sdk.js",
+      "action": "block-ctl-fb"
+    }
+  ],
+  "gemius.pl": [
+    {
+      "regexRule": "gemius\\.pl\\/gplayer\\.js",
+      "surrogate": "noop.js"
+    }
+  ],
+  "google-analytics.com": [
+    {
+      "regexRule": "google-analytics\\.com\\/ga\\.js",
+      "surrogate": "ga.js"
+    },
+    {
+      "regexRule": "google-analytics\\.com\\/analytics\\.js",
+      "surrogate": "analytics.js"
+    },
+    {
+      "regexRule": "google-analytics\\.com\\/inpage_linkid\\.js",
+      "surrogate": "inpage_linkid.js"
+    },
+    {
+      "regexRule": "google-analytics\\.com\\/plugins\\/ga\\/inpage_linkid\\.js",
+      "surrogate": "inpage_linkid.js"
+    },
+    {
+      "regexRule": "google-analytics\\.com\\/cx\\/api\\.js",
+      "surrogate": "api.js"
+    },
+    {
+      "regexRule": "google-analytics\\.com\\/gtm\\/js",
+      "surrogate": "gtm.js"
+    }
+  ],
+  "googlesyndication.com": [
+    {
+      "regexRule": "googlesyndication\\.com\\/adsbygoogle\\.js",
+      "surrogate": "adsbygoogle.js"
+    },
+    {
+      "regexRule": "googlesyndication\\.com\\/pagead\\/show_ads\\.js",
+      "surrogate": "noop.js"
+    },
+    {
+      "regexRule": "googlesyndication\\.com\\/pagead\\/js\\/adsbygoogle\\.js",
+      "surrogate": "adsbygoogle.js"
+    }
+  ],
+  "googletagmanager.com": [
+    {
+      "regexRule": "googletagmanager\\.com\\/gtm\\.js",
+      "surrogate": "gtm.js"
+    },
+    {
+      "regexRule": "googletagmanager\\.com\\/gtag\\/js",
+      "surrogate": "gtm.js"
+    }
+  ],
+  "googletagservices.com": [
+    {
+      "regexRule": "googletagservices\\.com\\/gpt\\.js",
+      "surrogate": "gpt.js"
+    },
+    {
+      "regexRule": "googletagservices\\.com\\/tag\\/js\\/gpt\\.js",
+      "surrogate": "gpt.js"
+    }
+  ],
+  "htlbid.com": [
+    {
+      "regexRule": "htlbid\\.com\\/v3\\/.*\\/htlbid\\.js",
+      "surrogate": "noop.js"
+    }
+  ],
+  "imasdk.googleapis.com": [
+    {
+      "regexRule": "imasdk\\.googleapis\\.com\\/js\\/sdkloader\\/ima3\\.js",
+      "surrogate": "google-ima.js"
+    }
+  ],
+  "imrworldwide.com": [
+    {
+      "regexRule": "imrworldwide\\.com\\/v60\\.js",
+      "surrogate": "nielsen.js"
+    }
+  ],
+  "npttech.com": [
+    {
+      "regexRule": "npttech\\.com\\/advertising\\.js",
+      "surrogate": "noop.js"
+    }
+  ],
+  "outbrain.com": [
+    {
+      "regexRule": "outbrain\\.com\\/outbrain\\.js",
+      "surrogate": "outbrain.js"
+    }
+  ],
+  "scorecardresearch.com": [
+    {
+      "regexRule": "scorecardresearch\\.com\\/beacon\\.js",
+      "surrogate": "beacon.js"
+    }
+  ],
+  "youtube-nocookie.com": [
+    {
+      "regexRule": "youtube-nocookie\\.com\\/iframe_api",
+      "surrogate": "youtube-iframe-api.js",
+      "action": "block-ctl-yt"
+    },
+    {
+      "regexRule": "youtube-nocookie\\.com\\/player_api",
+      "surrogate": "youtube-iframe-api.js",
+      "action": "block-ctl-yt"
+    }
+  ],
+  "youtube.com": [
+    {
+      "regexRule": "youtube\\.com\\/iframe_api",
+      "surrogate": "youtube-iframe-api.js",
+      "action": "block-ctl-yt"
+    },
+    {
+      "regexRule": "youtube\\.com\\/player_api",
+      "surrogate": "youtube-iframe-api.js",
+      "action": "block-ctl-yt"
+    }
+  ]
+}

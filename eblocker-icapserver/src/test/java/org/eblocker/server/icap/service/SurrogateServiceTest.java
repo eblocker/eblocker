@@ -19,8 +19,8 @@ package org.eblocker.server.icap.service;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -30,9 +30,8 @@ public class SurrogateServiceTest {
 
     @Test
     public void testReadSurrogates() {
-        Map<String, String> urlToSurrogate = surrogateService.getUrlToSurrogate();
+        Map<Pattern, String> urlToSurrogate = surrogateService.getUrlToSurrogate();
         assertTrue(urlToSurrogate.size() > 5);
-        assertEquals("amazon_ads.js", urlToSurrogate.get("amazon-adsystem.com/aax2/amzn_ads.js"));
     }
 
     @Test
@@ -57,14 +56,12 @@ public class SurrogateServiceTest {
     }
 
     @Test
-    public void testHandlesNullUrl() {
-        assertFalse(surrogateService.surrogateForBlockedUrl(null).isPresent());
+    public void testRegexpMatch() {
+        assertTrue(surrogateService.surrogateForBlockedUrl("facebook.net/something/sdk.js").isPresent());
     }
 
     @Test
-    public void testAll() {
-        surrogateService.getUrlToSurrogate().entrySet().forEach(e -> {
-            assertTrue(surrogateService.surrogateForBlockedUrl(e.getKey()).isPresent());
-        });
+    public void testHandlesNullUrl() {
+        assertFalse(surrogateService.surrogateForBlockedUrl(null).isPresent());
     }
 }

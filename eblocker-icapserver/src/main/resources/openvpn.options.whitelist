@@ -78,6 +78,7 @@ tran-window
 single-session:
 tls-exit
 tls-auth
+tls-crypt
 verify-x509-name
 ns-cert-type
 x509-track

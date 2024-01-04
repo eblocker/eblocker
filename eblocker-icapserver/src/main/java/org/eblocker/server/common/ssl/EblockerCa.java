@@ -69,7 +69,7 @@ public class EblockerCa {
     }
 
     private CertificateAndKey generateServerCertificate(CertificateAndKey requestAndKey, Date notValidAfter) throws CryptoException {
-        X509Certificate certificate = PKI.generateTLSServerCertificate(requestAndKey.getCertificate(), null, null, notValidAfter, certificateAndKey);
+        X509Certificate certificate = PKI.generateTLSServerCertificate(requestAndKey.getCertificate(), PKI.getStartDate(), notValidAfter, certificateAndKey);
         return new CertificateAndKey(certificate, requestAndKey.getKey());
     }
 

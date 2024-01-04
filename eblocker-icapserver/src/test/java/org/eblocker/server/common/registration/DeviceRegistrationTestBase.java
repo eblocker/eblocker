@@ -194,8 +194,7 @@ public abstract class DeviceRegistrationTestBase {
     protected DeviceRegistrationResponse simulateBackend(DeviceRegistrationRequest deviceRegistrationRequest, int licenseValidty, boolean autoRenewal) throws CertificateException, CryptoException {
         X509Certificate deviceCertificate = PKI.generateSignedCertificate(
                 decode(deviceRegistrationRequest.getEncodedDeviceCertificate()),
-                ORG_NAME,
-                deviceRegistrationRequest.getDeviceId(),
+                PKI.getStartDate(),
                 DateUtil.addYears(new Date(), 100),
                 deviceIssuer
         );
@@ -204,8 +203,7 @@ public abstract class DeviceRegistrationTestBase {
         if (licenseValidty > 0) {
             licenseCertificate = PKI.generateSignedCertificate(
                     decode(deviceRegistrationRequest.getEncodedLicenseCertificate()),
-                    ORG_NAME,
-                    deviceRegistrationRequest.getDeviceId(),
+                    PKI.getStartDate(),
                     DateUtil.addYears(new Date(), licenseValidty),
                     licenseIssuer
             ).getEncoded();

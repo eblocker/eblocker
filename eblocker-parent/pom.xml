@@ -4,8 +4,7 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-top</artifactId>
-        <version>2.4.12</version>
-        <relativePath>../../eblocker-top</relativePath>
+        <version>2.4.15</version>
     </parent>
     <groupId>org.eblocker</groupId>
     <artifactId>eblocker-parent</artifactId>
@@ -16,18 +15,25 @@
     <properties>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>eblocker-top</id>
+            <url>https://maven.pkg.github.com/eblocker/eblocker-top</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
 
             <dependency>
                 <groupId>org.eblocker</groupId>
                 <artifactId>eblocker-crypto</artifactId>
-                <version>2.9.3</version>
+                <version>2.9.5</version>
             </dependency>
             <dependency>
                 <groupId>org.eblocker</groupId>
                 <artifactId>eblocker-registration-api</artifactId>
-                <version>2.7.6</version>
+                <version>2.7.7</version>
             </dependency>
             <dependency>
                 <groupId>org.eblocker</groupId>

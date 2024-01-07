@@ -191,22 +191,20 @@ public abstract class DeviceRegistrationTestBase {
         );
     }
 
-    protected DeviceRegistrationResponse simulateBackend(DeviceRegistrationRequest deviceRegistrationRequest, int licenseValidty, boolean autoRenewal) throws CertificateException, CryptoException {
+    protected DeviceRegistrationResponse simulateBackend(DeviceRegistrationRequest deviceRegistrationRequest, int licenseValidity, boolean autoRenewal) throws CertificateException, CryptoException {
         X509Certificate deviceCertificate = PKI.generateSignedCertificate(
                 decode(deviceRegistrationRequest.getEncodedDeviceCertificate()),
-                ORG_NAME,
-                deviceRegistrationRequest.getDeviceId(),
+                PKI.getStartDate(),
                 DateUtil.addYears(new Date(), 100),
                 deviceIssuer
         );
         byte[] licenseCertificate;
         LicenseType licenseType;
-        if (licenseValidty > 0) {
+        if (licenseValidity > 0) {
             licenseCertificate = PKI.generateSignedCertificate(
                     decode(deviceRegistrationRequest.getEncodedLicenseCertificate()),
-                    ORG_NAME,
-                    deviceRegistrationRequest.getDeviceId(),
-                    DateUtil.addYears(new Date(), licenseValidty),
+                    PKI.getStartDate(),
+                    DateUtil.addYears(new Date(), licenseValidity),
                     licenseIssuer
             ).getEncoded();
             licenseType = LicenseType.SUBSCRIPTION;
@@ -242,15 +240,6 @@ public abstract class DeviceRegistrationTestBase {
         } catch (IOException e) {
             log.error("Cannot create resource file: {}", e.getMessage());
             throw new IllegalArgumentException("Cannot create resource file: " + e.getMessage(), e);
-        }
-    }
-
-    protected String jsonify(Object object) {
-        try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            log.error("Cannot deserialize object {}", object, e);
-            return null;
         }
     }
 

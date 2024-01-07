@@ -40,6 +40,21 @@ In each project:
     cd eblocker
     mvn test
 
+### Known problems
+#### eblocker-ui tests fail
+
+If the tests of the eblocker-ui module fail and the log (not at the end) says something like this:
+
+    [launcher]: Starting browser PhantomJS
+    [phantomjs.launcher]: Auto configuration failed
+    ... Cannot open the shared object file: File or directory not found
+
+Then the following environment variable could be missing in the system:
+
+    OPENSSL_CONF=/etc/ssl/
+
+To solve the problem, the variable can be entered in the /etc/environment file
+
 ## Configure backend
 
 Create these directories and make sure you can write to them:

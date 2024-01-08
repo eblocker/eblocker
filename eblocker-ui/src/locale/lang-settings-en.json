@@ -171,7 +171,7 @@
             "LABEL" : "Advanced Settings",
             "SETTING" : {
                 "CAPTIVE_PORTAL" : {
-                    "DISABLED" : "Block requests to Google Captive Portal Check.",
+                    "DISABLED" : "Allow requests to Google Captive Portal Check.",
                     "ENABLED" : "Block requests to Google Captive Portal Check and let eBlocker respond to such requests.",
                     "LABEL" : "Captive Portal Check",
                     "TOOLTIP_NO_SSL_FILTER" : "Blocking of Google Captive Portal may not work without HTTPS support",

@@ -171,7 +171,7 @@
             "LABEL": "Erweiterte Einstellungen",
             "SETTING": {
                 "CAPTIVE_PORTAL": {
-                    "DISABLED": "Verbindungsaufbau zum Google Captive Portal Check blockieren.",
+                    "DISABLED": "Verbindungsaufbau zum Google Captive Portal Check erlauben.",
                     "ENABLED": "Verbindungsaufbau zum Google Captive Portal Check blockieren und Anfragen durch den eBlocker beantworten lassen.",
                     "LABEL": "Captive Portal Check",
                     "TOOLTIP_NO_SSL_FILTER": "Blockierung von Google Captive Portal Check funktioniert ohne HTTPS-Unterstützung eventuell nicht richtig",

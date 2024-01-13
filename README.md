@@ -12,15 +12,15 @@ However, some files must be installed unter `/opt`.
 
 ## Dependencies
 
-Build projects:
+This project is dependent on these projects:
 
 * eblocker-top
 * eblocker-crypto
 * eblocker-registration-api
 * netty-icap
-* RestExpress
+* restexpress
 
-Clone each of the above projects from https://github.com/eblocker.
+These can be cloned as follows: https://github.com/eblocker.
 
     cd $SRC
     git clone https://github.com/eblocker/eblocker-top.git
@@ -29,9 +29,6 @@ Clone each of the above projects from https://github.com/eblocker.
     git clone https://github.com/eblocker/netty-icap.git
     git clone https://github.com/eblocker/RestExpress.git
 
-In each project:
-
-    mvn install
 
 ## Build and test backend and frontend
 

@@ -56,6 +56,10 @@ public class DataSourceEventLogger implements EventLogger {
         });
     }
 
+    int queueSize(){
+        return queue.size();
+    }
+
     @Override
     public void log(Event event) {
         boolean appended = queue.offer(event);

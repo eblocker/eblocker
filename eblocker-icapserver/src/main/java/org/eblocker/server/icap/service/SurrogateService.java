@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.icap.service;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.eblocker.server.common.util.ResourceUtil;
@@ -35,14 +35,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SurrogateService {
 
     private static final String SURROGATES_PATH = "surrogates/";
-    private final Logger log = LoggerFactory.getLogger(CustomDomainFilterWhitelistService.class);
+    private final Logger log = LoggerFactory.getLogger(SurrogateService.class);
 
-    private Map<String, String> urlToSurrogate = new HashMap<>();
+    private Map<Pattern, String> urlToSurrogate = new HashMap<>();
     private final Map<String, byte[]> scriptCache = new ConcurrentHashMap<>();
 
     public SurrogateService() {
@@ -60,16 +61,21 @@ public class SurrogateService {
 
     private Optional<String> surrogateForUrl(String url) {
         return urlToSurrogate.entrySet().stream()
-                .filter(e -> url.contains(e.getKey()))
+                .filter(e -> matchesSurrogate(e.getKey(), url))
+                .peek(e -> log.debug("Sending surrogate {} for {}", e.getValue(), url))
                 .findFirst()
                 .map(Map.Entry::getValue);
+    }
+
+    private boolean matchesSurrogate(Pattern surrogateRegexp, String url) {
+        return surrogateRegexp.matcher(url).find();
     }
 
     private FullHttpResponse surrogateAsHttpResponse(String surrogate) {
         byte[] jsBytes = surrogateJavascript(surrogate);
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(jsBytes));
-        httpResponse.headers().add(HttpHeaders.Names.CONTENT_TYPE, "application/javascript");
-        httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, jsBytes.length);
+        httpResponse.headers().add(HttpHeaderNames.CONTENT_TYPE, "application/javascript");
+        httpResponse.headers().add(HttpHeaderNames.CONTENT_LENGTH, jsBytes.length);
         return httpResponse;
     }
 
@@ -83,25 +89,28 @@ public class SurrogateService {
 
     private void readSurrogatesHJson() {
         try {
-            String js = ResourceUtil.loadResource("surrogates/surrogates.hjson");
-            ObjectMapper mapper = createHJsonMapper();
-            Map<String, List<List<String>>> surrogateInfos = mapper.readValue(js, Map.class);
+            String js = ResourceUtil.loadResource("surrogates/mapping.json");
+            ObjectMapper mapper = createObjectMapper();
+            TypeReference<Map<String, List<SurrogateRule>>> typeReference = new TypeReference<>() {
+            };
+            Map<String, List<SurrogateRule>> surrogateInfos = mapper.readValue(js, typeReference);
             urlToSurrogate = surrogateInfos.values().stream()
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toMap(l -> l.get(0), l -> l.get(1)));
+                    .collect(Collectors.toMap(l -> asPattern(l.regexRule), l -> l.surrogate));
         } catch (JsonProcessingException e) {
-            log.error("Error while reading surrogates.hjson", e);
+            log.error("Error while reading mapping.json", e);
         }
     }
 
-    /**
-     * Create ObjectMapper for a subset of Hjson (https://hjson.github.io), supporting YAML comments
-     */
-    private ObjectMapper createHJsonMapper() {
-        return new ObjectMapper().configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
+    private Pattern asPattern(String surrogateRegexp) {
+        return Pattern.compile(".*" + surrogateRegexp);
     }
 
-    /* testing */ Map<String, String> getUrlToSurrogate() {
+    private ObjectMapper createObjectMapper() {
+        return new ObjectMapper();
+    }
+
+    /* testing */ Map<Pattern, String> getUrlToSurrogate() {
         return urlToSurrogate;
     }
 }

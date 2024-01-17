@@ -58,6 +58,7 @@ public class SurrogateServiceTest {
     @Test
     public void testRegexpMatch() {
         assertTrue(surrogateService.surrogateForBlockedUrl("facebook.net/something/sdk.js").isPresent());
+        assertTrue(surrogateService.surrogateForBlockedUrl("https://www.facebook.net/something/sdk.js").isPresent());
     }
 
     @Test

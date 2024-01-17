@@ -103,7 +103,7 @@ public class SurrogateService {
     }
 
     private Pattern asPattern(String surrogateRegexp) {
-        return Pattern.compile(".*" + surrogateRegexp);
+        return Pattern.compile(surrogateRegexp);
     }
 
     private ObjectMapper createObjectMapper() {

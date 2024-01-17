@@ -65,7 +65,7 @@ public class SessionStore {
             throw new EblockerException("Can not retrieve a session for an unknown device (IP = " + ip + ")");
         }
 
-        String sessionId = SessionIdUtil.getSessionId(ip, userAgent, device.getOperatingUser());
+        String sessionId = SessionIdUtil.getSessionId(device.getId(), userAgent, device.getOperatingUser());
         Session session = store.get(sessionId);
         if (session == null) {
             session = createSession(sessionId, userAgent, ip, device.getId(), device.getOperatingUser());

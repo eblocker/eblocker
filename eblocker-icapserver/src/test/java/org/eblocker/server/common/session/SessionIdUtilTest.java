@@ -4,8 +4,6 @@ import org.eblocker.server.common.data.IpAddress;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class SessionIdUtilTest {
 
     @Test

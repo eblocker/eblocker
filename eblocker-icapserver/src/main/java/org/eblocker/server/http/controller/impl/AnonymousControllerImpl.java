@@ -67,7 +67,6 @@ public class AnonymousControllerImpl extends SessionContextController implements
 
     @Override
     public Object getConfig(Request request, Response response) {
-        Map<String, Boolean> result = new HashMap<>();
         Session session = getSession(request);
         Device device = deviceService.getDeviceById(session.getDeviceId());
         return getDeviceConfig(device);

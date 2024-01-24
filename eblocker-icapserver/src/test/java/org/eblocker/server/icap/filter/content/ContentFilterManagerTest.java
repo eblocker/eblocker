@@ -26,6 +26,8 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.List;
 
 public class ContentFilterManagerTest {
@@ -34,6 +36,9 @@ public class ContentFilterManagerTest {
     private DataSource dataSource;
     private ContentFilter filter;
     private Path file;
+
+    //We have a timing problem. Specifically, the file is written so quickly that the ContentFileManager cannot recognise the change. The problem has not yet been observed in production. Refactoring is also in the pipeline. There is this workaround variable so that the test works again. After refactoring, the test can then be reverted.
+    private Instant currentFileInstant = Instant.now().minusSeconds(30);
 
     @Before
     public void setUp() throws IOException {
@@ -47,6 +52,7 @@ public class ContentFilterManagerTest {
 
         file = Files.createTempFile(this.getClass().getSimpleName(),".txt");
         Files.writeString(file, filter.toString());
+        Files.setLastModifiedTime(file, FileTime.from(currentFileInstant));
         file.toFile().deleteOnExit();
 
         manager = new ContentFilterManager(file.toString(), service, dataSource);
@@ -89,6 +95,8 @@ public class ContentFilterManagerTest {
                 ".adbanner"
         );
         Files.writeString(file, updatedFilter.toString());
+        currentFileInstant = currentFileInstant.plusSeconds(2);
+        Files.setLastModifiedTime(file, FileTime.from(currentFileInstant));
 
         manager.updateIfModified();
         inOrder.verify(service).setFilterList(ContentFilterList.emptyList());

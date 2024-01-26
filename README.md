@@ -12,15 +12,15 @@ However, some files must be installed unter `/opt`.
 
 ## Dependencies
 
-Build projects:
+This project is dependent on these projects:
 
 * eblocker-top
 * eblocker-crypto
 * eblocker-registration-api
 * netty-icap
-* RestExpress
+* restexpress
 
-Clone each of the above projects from https://github.com/eblocker.
+These can be cloned as follows: https://github.com/eblocker.
 
     cd $SRC
     git clone https://github.com/eblocker/eblocker-top.git
@@ -29,9 +29,6 @@ Clone each of the above projects from https://github.com/eblocker.
     git clone https://github.com/eblocker/netty-icap.git
     git clone https://github.com/eblocker/RestExpress.git
 
-In each project:
-
-    mvn install
 
 ## Build and test backend and frontend
 
@@ -39,6 +36,21 @@ In each project:
     git clone https://github.com/eblocker/eblocker.git
     cd eblocker
     mvn test
+
+### Known problems
+#### eblocker-ui tests fail
+
+If the tests of the eblocker-ui module fail and the log (not at the end) says something like this:
+
+    [launcher]: Starting browser PhantomJS
+    [phantomjs.launcher]: Auto configuration failed
+    ... Cannot open the shared object file: File or directory not found
+
+Then the following environment variable could be missing in the system:
+
+    OPENSSL_CONF=/etc/ssl/
+
+To solve the problem, the variable can be entered in the /etc/environment file
 
 ## Configure backend
 

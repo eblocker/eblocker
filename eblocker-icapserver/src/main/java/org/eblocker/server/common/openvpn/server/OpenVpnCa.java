@@ -99,7 +99,7 @@ public class OpenVpnCa {
         CertificateAndKey caKeys = loadCaKeys();
         CertificateAndKey clientReq = PKI.generateSelfSignedCertificateRequest(SERVER_NAME, SERVER_KEY_SIZE);
         Date notAfter = getDateAfterDays(SERVER_VALIDITY_DAYS);
-        X509Certificate clientCert = PKI.generateTLSServerCertificate(clientReq.getCertificate(), ORG_NAME, SERVER_NAME, notAfter, caKeys);
+        X509Certificate clientCert = PKI.generateTLSServerCertificate(clientReq.getCertificate(), PKI.getStartDate(), notAfter, caKeys);
         PKI.storePrivateKey(clientReq.getKey(), outstream(getServerKeyPath()));
         PKI.storeCertificate(clientCert, outstream(getServerCertificatePath()));
         log.info("Issued certificate for " + SERVER_NAME);
@@ -109,7 +109,7 @@ public class OpenVpnCa {
         CertificateAndKey caKeys = loadCaKeys();
         CertificateAndKey clientReq = PKI.generateSelfSignedCertificateRequest(clientId, CLIENT_KEY_SIZE);
         Date notAfter = getDateAfterDays(CLIENT_VALIDITY_DAYS);
-        X509Certificate clientCert = PKI.generateTLSClientCertificate(clientReq.getCertificate(), ORG_NAME, clientId, notAfter, caKeys);
+        X509Certificate clientCert = PKI.generateTLSClientCertificate(clientReq.getCertificate(), PKI.getStartDate(), notAfter, caKeys);
         PKI.storePrivateKey(clientReq.getKey(), outstream(getClientKeyPath(clientId)));
         PKI.storeCertificate(clientCert, outstream(getClientCertificatePath(clientId)));
         log.info("Issued certificate for client " + clientId);

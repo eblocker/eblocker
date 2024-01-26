@@ -151,7 +151,6 @@
 "from2","2.3.0","http://github.com/hughsk/from2","MIT"
 "fs-write-stream-atomic","1.0.10","https://github.com/npm/fs-write-stream-atomic","ISC"
 "fs.realpath","1.0.0","https://github.com/isaacs/fs.realpath","ISC"
-"fsevents","2.1.3","(none)","MIT"
 "get-value","2.0.6","https://github.com/jonschlinkert/get-value","MIT"
 "glob","7.2.0","https://github.com/isaacs/node-glob","ISC"
 "glob-parent","5.1.1","(none)","ISC"

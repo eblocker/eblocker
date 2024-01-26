@@ -10,6 +10,35 @@
     <artifactId>eblocker-icapserver</artifactId>
     <name>eBlocker - ICAP-Server</name>
 
+    <properties>
+        <build.timestamp>${maven.build.timestamp}</build.timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <version.netty.icap>2.1.5</version.netty.icap>
+        <version.restexpress>0.12.2</version.restexpress>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>netty-icap</id>
+            <url>https://maven.pkg.github.com/eblocker/netty-icap</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eblocker</groupId>
+                <artifactId>netty-icap</artifactId>
+                <version>${version.netty.icap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eblocker</groupId>
+                <artifactId>restexpress</artifactId>
+                <version>${version.restexpress}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.eblocker</groupId>
@@ -37,7 +66,7 @@
         </dependency>
         <dependency>
             <groupId>org.eblocker</groupId>
-            <artifactId>RestExpress</artifactId>
+            <artifactId>restexpress</artifactId>
         </dependency>
         <dependency>
             <groupId>com.strategicgains</groupId>
@@ -182,10 +211,7 @@
             </exclusions>
         </dependency>
     </dependencies>
-    <properties>
-        <build.timestamp>${maven.build.timestamp}</build.timestamp>
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-    </properties>
+
     <build>
         <finalName>${project.artifactId}_${project.version}.${maven.build.timestamp}_all</finalName>
         <plugins>

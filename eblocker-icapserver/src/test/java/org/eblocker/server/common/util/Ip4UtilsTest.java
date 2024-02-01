@@ -16,11 +16,14 @@
  */
 package org.eblocker.server.common.util;
 
+import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,27 +35,29 @@ public class Ip4UtilsTest {
 
     @Test
     public void testIsIpV4Address() {
-        assertEquals(true, Ip4Utils.isIPAddress("1.1.1.1"));
-        assertEquals(true, Ip4Utils.isIPAddress("255.255.255.255"));
-        assertEquals(true, Ip4Utils.isIPAddress("192.168.1.1"));
-        assertEquals(true, Ip4Utils.isIPAddress("10.10.1.1"));
-        assertEquals(true, Ip4Utils.isIPAddress("132.254.111.10"));
-        assertEquals(true, Ip4Utils.isIPAddress("26.10.2.10"));
-        assertEquals(true, Ip4Utils.isIPAddress("127.0.0.1"));
-        assertEquals(true, Ip4Utils.isIPAddress("255.254.253.252"));
-        assertEquals(true, Ip4Utils.isIPAddress("54.74.90.10"));
-        assertEquals(true, Ip4Utils.isIPAddress("1.255.1.255"));
+        assertTrue(Ip4Utils.isIPAddress("1.1.1.1"));
+        assertTrue(Ip4Utils.isIPAddress("255.255.255.255"));
+        assertTrue(Ip4Utils.isIPAddress("192.168.1.1"));
+        assertTrue(Ip4Utils.isIPAddress("10.10.1.1"));
+        assertTrue(Ip4Utils.isIPAddress("132.254.111.10"));
+        assertTrue(Ip4Utils.isIPAddress("26.10.2.10"));
+        assertTrue(Ip4Utils.isIPAddress("127.0.0.1"));
+        assertTrue(Ip4Utils.isIPAddress("255.254.253.252"));
+        assertTrue(Ip4Utils.isIPAddress("54.74.90.10"));
+        assertTrue(Ip4Utils.isIPAddress("1.255.1.255"));
 
-        assertEquals(false, Ip4Utils.isIPAddress("10.10.10"));
-        assertEquals(false, Ip4Utils.isIPAddress("10.10"));
-        assertEquals(false, Ip4Utils.isIPAddress("10"));
-        assertEquals(false, Ip4Utils.isIPAddress("a.b.c.d"));
-        assertEquals(false, Ip4Utils.isIPAddress("10.10.37.a"));
-        assertEquals(false, Ip4Utils.isIPAddress("3.6.3.256"));
-        assertEquals(false, Ip4Utils.isIPAddress("23.322.23.32"));
-        assertEquals(false, Ip4Utils.isIPAddress("123.0101.99.6"));
-        assertEquals(false, Ip4Utils.isIPAddress("2222.222.22.2"));
-        assertEquals(false, Ip4Utils.isIPAddress("2.22.222.2222"));
+        assertFalse(Ip4Utils.isIPAddress("10.10.10"));
+        assertFalse(Ip4Utils.isIPAddress("10.10"));
+        assertFalse(Ip4Utils.isIPAddress("10"));
+        assertFalse(Ip4Utils.isIPAddress("a.b.c.d"));
+        assertFalse(Ip4Utils.isIPAddress("10.10.37.a"));
+        assertFalse(Ip4Utils.isIPAddress("3.6.3.256"));
+        assertFalse(Ip4Utils.isIPAddress("23.322.23.32"));
+        assertFalse(Ip4Utils.isIPAddress("123.0101.99.6"));
+        assertFalse(Ip4Utils.isIPAddress("2222.222.22.2"));
+        assertFalse(Ip4Utils.isIPAddress("2.22.222.2222"));
+        assertFalse(Ip4Utils.isIPAddress("::1"));
+        assertFalse(Ip4Utils.isIPAddress("1:2::3:4"));
     }
 
     @Test
@@ -82,7 +87,7 @@ public class Ip4UtilsTest {
     }
 
     @Test
-    public void testConvertIpIntToString() {
+    public void testConvertIpStringToInt() {
         assertEquals(0, Ip4Utils.convertIpStringToInt("0.0.0.0"));
         assertEquals(0x000000ff, Ip4Utils.convertIpStringToInt("0.0.0.255"));
         assertEquals(0x0000ff00, Ip4Utils.convertIpStringToInt("0.0.255.0"));
@@ -96,7 +101,18 @@ public class Ip4UtilsTest {
     }
 
     @Test
-    public void testConvertIpStringToInt() {
+    public void testConvertIpToInt() {
+        assertEquals(0, Ip4Utils.convertIpToInt(Ip4Address.parse("0.0.0.0")));
+        assertEquals(0x000000ff, Ip4Utils.convertIpToInt(Ip4Address.parse("0.0.0.255")));
+        assertEquals(0x0000ff00, Ip4Utils.convertIpToInt(Ip4Address.parse("0.0.255.0")));
+        assertEquals(0x00ff0000, Ip4Utils.convertIpToInt(Ip4Address.parse("0.255.0.0")));
+        assertEquals(0xff000000, Ip4Utils.convertIpToInt(Ip4Address.parse("255.0.0.0")));
+        assertEquals(0xffffffff, Ip4Utils.convertIpToInt(Ip4Address.parse("255.255.255.255")));
+        assertEquals(521319188,  Ip4Utils.convertIpToInt(Ip4Address.parse("31.18.179.20")));
+    }
+
+    @Test
+    public void testConvertIpIntToString() {
         assertEquals("0.0.0.0", Ip4Utils.convertIpIntToString(0));
         assertEquals("0.0.0.255", Ip4Utils.convertIpIntToString(0x000000ff));
         assertEquals("0.0.255.0", Ip4Utils.convertIpIntToString(0x0000ff00));
@@ -224,5 +240,36 @@ public class Ip4UtilsTest {
     public void testConvertBytesToIp() {
         assertEquals(0x0a0b0c0d, Ip4Utils.convertBytesToIp(new byte[]{ 0x0a, 0x0b, 0x0c, 0x0d }));
         assertEquals(0xfffefdfc, Ip4Utils.convertBytesToIp(new byte[]{ (byte) 0xff, (byte) 0xfe, (byte) 0xfd, (byte) 0xfc }));
+    }
+
+    @Test
+    public void testIsLinkLocal() {
+        assertTrue(Ip4Utils.isLinkLocal(Ip4Address.parse("169.254.0.0")));
+        assertTrue(Ip4Utils.isLinkLocal(Ip4Address.parse("169.254.7.42")));
+        assertFalse(Ip4Utils.isLinkLocal(Ip4Address.parse("168.254.7.42")));
+        assertFalse(Ip4Utils.isLinkLocal(Ip4Address.parse("192.168.0.1")));
+        assertFalse(Ip4Utils.isLinkLocal(Ip4Address.parse("1.2.3.4")));
+    }
+
+    @Test
+    public void testIsPrivate() {
+        List<String> privateAddresses = List.of(
+                "10.0.0.0", "10.255.42.5", "10.255.255.255",
+                "172.16.0.0", "172.18.19.20", "172.31.255.255",
+                "192.168.0.0", "192.168.178.27", "192.168.255.255"
+        );
+        privateAddresses.forEach(addressString ->
+                assertTrue("Expected " + addressString + " to be a private address",
+                        Ip4Utils.isPrivate(Ip4Address.parse(addressString))));
+
+        List<String> notPrivateAddresses = List.of(
+                "9.255.255.255", "11.0.0.0",
+                "172.15.255.255", "172.32.0.0",
+                "192.167.255.255", "192.169.0.0",
+                "127.0.0.1", "0.0.0.0", "1.2.3.4"
+        );
+        notPrivateAddresses.forEach(addressString ->
+                assertFalse("Expected " + addressString + " not to be a private address",
+                        Ip4Utils.isPrivate(Ip4Address.parse(addressString))));
     }
 }

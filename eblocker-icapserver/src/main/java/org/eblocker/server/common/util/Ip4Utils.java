@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.util;
 
+import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.exceptions.EblockerException;
 
 import java.util.regex.Pattern;
@@ -30,6 +31,18 @@ public class Ip4Utils {
                     "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                     "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
     private static Pattern ipv4addresspattern = Pattern.compile(IPv4ADDRESS_PATTERN);
+
+    private static int LINK_LOCAL_ADDRESS = convertIpStringToInt("169.254.0.0");
+    private static int LINK_LOCAL_NETMASK = convertIpStringToInt("255.255.0.0");
+
+    private static int PRIVATE_CLASS_A_ADDRESS = convertIpStringToInt("10.0.0.0");
+    private static int PRIVATE_CLASS_A_NETMASK = convertIpStringToInt("255.0.0.0");
+
+    private static int PRIVATE_CLASS_B_ADDRESS = convertIpStringToInt("172.16.0.0");
+    private static int PRIVATE_CLASS_B_NETMASK = convertIpStringToInt("255.240.0.0");
+
+    private static int PRIVATE_CLASS_C_ADDRESS = convertIpStringToInt("192.168.0.0");
+    private static int PRIVATE_CLASS_C_NETMASK = convertIpStringToInt("255.255.0.0");
 
     /**
      * Returns true if the given string is an IPv4 address.
@@ -113,5 +126,24 @@ public class Ip4Utils {
 
     public static int convertBytesToIp(byte[] bytes) {
         return bytes[0] << 24 | bytes[1] << 16 & 0xff0000 | bytes[2] << 8 & 0xff00 | bytes[3] & 0xff;
+    }
+
+    public static int convertIpToInt(Ip4Address ip) {
+        byte[] bytes = ip.getAddress();
+        return Byte.toUnsignedInt(bytes[0]) << 24 |
+               Byte.toUnsignedInt(bytes[1]) << 16 |
+               Byte.toUnsignedInt(bytes[2]) <<  8 |
+               Byte.toUnsignedInt(bytes[3]);
+    }
+
+    public static boolean isLinkLocal(Ip4Address ip4Address) {
+        return isInSubnet(convertIpToInt(ip4Address), LINK_LOCAL_ADDRESS, LINK_LOCAL_NETMASK);
+    }
+
+    public static boolean isPrivate(Ip4Address ip4Address) {
+        int ipAddress = convertIpToInt(ip4Address);
+        return isInSubnet(ipAddress, PRIVATE_CLASS_A_ADDRESS, PRIVATE_CLASS_A_NETMASK) ||
+               isInSubnet(ipAddress, PRIVATE_CLASS_B_ADDRESS, PRIVATE_CLASS_B_NETMASK) ||
+               isInSubnet(ipAddress, PRIVATE_CLASS_C_ADDRESS, PRIVATE_CLASS_C_NETMASK);
     }
 }

@@ -125,6 +125,10 @@ public class Ip6Utils {
         return isInNetwork(address, Ip6Address.LINK_LOCAL_NETWORK_ADDRESS, Ip6Address.LINK_LOCAL_NETWORK_PREFIX);
     }
 
+    public static boolean isUniqueLocal(Ip6Address address) {
+        return isInNetwork(address, Ip6Address.UNIQUE_LOCAL_NETWORK_ADDRESS, Ip6Address.UNIQUE_LOCAL_NETWORK_PREFIX);
+    }
+
     /**
      * Strips enclosing brackets from IPv6 addresses
      * @param address address with optional brackets e.g. [::1]

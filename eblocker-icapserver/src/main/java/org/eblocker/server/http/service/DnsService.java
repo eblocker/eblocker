@@ -82,7 +82,7 @@ public class DnsService {
     public List<NameServerStats> testNameServers(List<String> nameServers) {
         return nameServers.stream()
                 .map(nameServer -> dnsStatisticsService.testNameServer(nameServer,
-                        Arrays.asList("eblocker.org", "eblocker.org", "eblocker.org", "eblocker.org", "eblocker.org")))
+                        Arrays.asList("eblocker.org", "eblocker.com", "eblocker.net", "eblocker.eu", "eblocker.de")))
                 .collect(Collectors.toList());
     }
 

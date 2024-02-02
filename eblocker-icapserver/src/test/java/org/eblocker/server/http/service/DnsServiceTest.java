@@ -153,8 +153,7 @@ public class DnsServiceTest {
     public void testTestNameServers() {
         String firstServer = "first.example";
         String secondServer = "second.example";
-        List<String> listNames = Arrays.asList("eblocker.org", "eblocker.org", "eblocker.org", "eblocker.org",
-                "eblocker.org");
+        List<String> listNames = Arrays.asList("eblocker.org", "eblocker.com", "eblocker.net", "eblocker.eu", "eblocker.de");
         NameServerStats firstResponse = new NameServerStats("a", 1, 2, 3, 4, 5L, 6L, 7L, 8L, null, null, null);
         NameServerStats secondResponse = new NameServerStats("aa", 11, 12, 13, 14, 15L, 16L, 17L, 18L, null, null,
                 null);

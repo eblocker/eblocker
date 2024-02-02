@@ -72,6 +72,16 @@ public class Ip6UtilsTest {
     }
 
     @Test
+    public void testIsUniqueLocal() {
+        Assert.assertTrue(Ip6Utils.isUniqueLocal(Ip6Address.parse("fd00::1234")));
+        Assert.assertTrue(Ip6Utils.isUniqueLocal(Ip6Address.parse("fd43:af9e:4892:1ec9:1434:47ce:d268:3b3e")));
+        Assert.assertFalse(Ip6Utils.isUniqueLocal(Ip6Address.parse("fc00::1234")));
+        Assert.assertFalse(Ip6Utils.isUniqueLocal(Ip6Address.parse("fe00::1234")));
+        Assert.assertFalse(Ip6Utils.isUniqueLocal(Ip6Address.parse("::1")));
+        Assert.assertFalse(Ip6Utils.isUniqueLocal(Ip6Address.parse("2a02:8106:21:6f03:d9d0:5cb9:8956:be08")));
+    }
+
+    @Test
     public void testStripBrackets() {
         Assert.assertEquals("::1", Ip6Utils.stripBrackets("[::1]"));
         Assert.assertEquals("1.1.1.1", Ip6Utils.stripBrackets("1.1.1.1"));

@@ -197,7 +197,7 @@ public class StaticFileController {
 
             byte[] bytes = Files.readAllBytes(path);
 
-            log.debug(" --> Returning {} bytes", bytes.length);
+            log.debug(" --> Returning {} bytes", bytes.length);
 
             return Unpooled.wrappedBuffer(bytes);//send file in response body
         }

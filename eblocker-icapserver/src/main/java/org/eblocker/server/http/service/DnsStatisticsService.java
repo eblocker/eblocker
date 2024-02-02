@@ -109,6 +109,10 @@ public class DnsStatisticsService {
         dnsDataSource.addDnsQueryQueue(id, nameServer, queries);
 
         DnsDataSourceDnsResponse result = dnsDataSource.popDnsResolutionQueue(id, 10 * names.size());
+        if (result == null) {
+            log.error("Failed to get response from DNS resolution queue.");
+            return null;
+        }
         if (result.getLog().size() != names.size()) {
             return null;
         }

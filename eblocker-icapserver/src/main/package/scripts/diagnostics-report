@@ -82,6 +82,9 @@ FILE=$OUT_DIR/eblocker-status.log
     echo "ip route show:" >> $FILE
     ip route show >> $FILE
     echo $SEP >> $FILE
+    echo "ip -6 route show:" >> $FILE
+    ip -6 route show >> $FILE
+    echo $SEP >> $FILE
     echo "Last DHCP event:" >> $FILE
     cat /var/log/eblocker/lastreceived_dhcp_ip.log >> $FILE
     echo $SEP >> $FILE
@@ -91,9 +94,6 @@ FILE=$OUT_DIR/eblocker-status.log
     echo $SEP >> $FILE
     echo "Traceroute to my.eblocker.com:" >> $FILE
     traceroute my.eblocker.com >> $FILE
-    echo $SEP >> $FILE
-    echo "IPv6 interface addresses: " >> $FILE
-    cat /proc/net/if_inet6 >> $FILE
     echo $SEP >> $FILE
     echo "Network configuration:" >> $FILE
     echo $NETWORK_CONFIG >> $FILE

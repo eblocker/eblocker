@@ -27,6 +27,8 @@ import org.eblocker.server.common.data.dns.DnsQuery;
 import org.eblocker.server.common.data.dns.DnsRecordType;
 import org.eblocker.server.common.data.dns.DnsResponse;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
+import org.eblocker.server.common.util.Ip4Utils;
+import org.eblocker.server.common.util.Ip6Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,9 +134,15 @@ public class DnsGatewayNames {
         for (DnsResponse response : responses) {
             if (response.getStatus() == 0 && response.getIpAddress() != null) {
                 if (response.getRecordType() == DnsRecordType.A) {
-                    ip4 = (Ip4Address) response.getIpAddress();
+                    Ip4Address address = (Ip4Address) response.getIpAddress();
+                    if (Ip4Utils.isPrivate(address) || Ip4Utils.isLinkLocal(address)) {
+                        ip4 = address;
+                    }
                 } else if (response.getRecordType() == DnsRecordType.AAAA) {
-                    ip6 = (Ip6Address) response.getIpAddress();
+                    Ip6Address address = (Ip6Address) response.getIpAddress();
+                    if (Ip6Utils.isLinkLocal(address) || Ip6Utils.isUniqueLocal(address)) {
+                        ip6 = address;
+                    }
                 }
             }
         }

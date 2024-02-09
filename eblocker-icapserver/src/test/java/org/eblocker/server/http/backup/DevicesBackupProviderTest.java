@@ -38,6 +38,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -115,6 +116,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Integer vpnProfileId = 1122;
         computerBefore.setUseVPNProfileID(vpnProfileId);
         computerBefore.setVendor("Computer-Company, Inc.");
+        computerBefore.setLastSeen(Instant.ofEpochMilli(1703172239000L));
 
         List<Device> devicesBefore = new ArrayList<Device>(
                 Arrays.asList(eblockerBefore, gatewayBefore, computerBefore));
@@ -248,7 +250,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         // VPN Profile of existing device is not restored
         Assert.assertEquals(vpnProfileId, restoredDevice.getUseVPNProfileID());
         Assert.assertEquals(computerBefore.getVendor(), restoredDevice.getVendor());
-
+        Assert.assertNull(restoredDevice.getLastSeen()); // lastSeen is not restored
     }
 
     @Test

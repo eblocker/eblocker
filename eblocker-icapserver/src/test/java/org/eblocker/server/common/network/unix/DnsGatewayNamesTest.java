@@ -154,6 +154,32 @@ public class DnsGatewayNamesTest {
     }
 
     @Test
+    public void testGatewayIgnorePublicIps() {
+        Mockito.when(dnsServer.getLocalDnsRecords()).thenReturn(Arrays.asList(
+                new LocalDnsRecord("test.com", false, false, Ip4Address.parse("1.2.3.4"), null, null, null)));
+        Mockito.when(dnsResolver.resolve(Mockito.eq("192.168.1.1"), Mockito.anyList()))
+                .thenReturn(Arrays.asList(
+                        new DnsResponse(0, DnsRecordType.A, IpAddress.parse("4.3.2.1"), "magnificent.box"),
+                        new DnsResponse(0, DnsRecordType.AAAA, IpAddress.parse("2a04:1:2:3:a:b:c:d"), "magnificent.box"),
+                        new DnsResponse(3),
+                        new DnsResponse(3),
+                        new DnsResponse(3),
+                        new DnsResponse(3)));
+
+        dnsGatewayNames.check();
+
+        Mockito.verify(dataSource).setResolvedDnsGateway("192.168.1.1");
+
+        ArgumentCaptor<List<LocalDnsRecord>> captor = ArgumentCaptor.forClass(List.class);
+        Mockito.verify(dnsServer).setLocalDnsRecords(captor.capture());
+
+        Map<String, LocalDnsRecord> recordsByName = captor.getValue().stream().collect(Collectors.toMap(LocalDnsRecord::getName, Function.identity()));
+        Assert.assertEquals(1, recordsByName.size());
+        Assert.assertNotNull(recordsByName.get("test.com"));
+        Assert.assertEquals(Ip4Address.parse("1.2.3.4"), recordsByName.get("test.com").getIpAddress());
+    }
+
+    @Test
     public void testTooFewResults() {
         Mockito.when(dnsResolver.resolve(Mockito.eq("192.168.1.1"), Mockito.anyList()))
                 .thenReturn(Arrays.asList(new DnsResponse(3)));

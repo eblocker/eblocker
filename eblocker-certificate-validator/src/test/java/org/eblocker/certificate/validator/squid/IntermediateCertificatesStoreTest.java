@@ -18,10 +18,10 @@ package org.eblocker.certificate.validator.squid;
 
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,87 +32,74 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class IntermediateCertificatesStoreTest {
+class IntermediateCertificatesStoreTest {
 
     private Path certificateFilePath;
     private IntermediateCertificatesStore store;
 
     private X509Certificate[] certificates;
 
-    @Before
-    public void setUp() throws IOException, CryptoException {
+    @BeforeEach
+    void setUp() throws IOException, CryptoException {
         certificates = PKI.loadCertificates(ClassLoader.getSystemResourceAsStream("intermediate-certificates.pem"));
 
         certificateFilePath = Files.createTempFile("certificates", ".pem");
         store = new IntermediateCertificatesStore(certificateFilePath);
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         Files.deleteIfExists(certificateFilePath);
     }
 
     @Test
-    public void get() throws Exception {
+    void get() throws Exception {
         writeToCertificateFile(certificates);
         store.refresh();
 
-        Assert.assertEquals(Collections.singletonList(certificates[0]),
-                store.get(certificates[0].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(
-                Collections.singletonList(certificates[0]),
-                store.get(certificates[0].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[0])));
-        Assert.assertEquals(
-                Collections.singletonList(certificates[0]),
-                store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(), null));
-        Assert.assertEquals(
-                Collections.singletonList(certificates[0]),
-                store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(),
-                        PKI.getSubjectKeyIdentifier(certificates[0])));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[0])));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(), null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), certificates[0].getSerialNumber(),
+                PKI.getSubjectKeyIdentifier(certificates[0])));
 
-        Assert.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]),
-                store.get(certificates[1].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]),
-                store.get(certificates[1].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[1])));
+        Assertions.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]), store.get(certificates[1].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Arrays.asList(certificates[1], certificates[2], certificates[3]), store.get(certificates[1].getSubjectX500Principal(), null, PKI.getSubjectKeyIdentifier(certificates[1])));
         for (int i = 1; i < 4; ++i) {
-            Assert.assertEquals(
-                    Collections.singletonList(certificates[i]),
-                    store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), null));
-            Assert.assertEquals(
-                    Collections.singletonList(certificates[i]),
-                    store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), PKI.getSubjectKeyIdentifier(certificates[i])));
+            Assertions.assertEquals(Collections.singletonList(certificates[i]), store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), null));
+            Assertions.assertEquals(Collections.singletonList(certificates[i]), store.get(certificates[i].getSubjectX500Principal(), certificates[i].getSerialNumber(), PKI.getSubjectKeyIdentifier(certificates[i])));
         }
     }
 
     @Test
-    public void refresh() throws Exception {
+    void refresh() throws Exception {
         writeToCertificateFile(certificates[0]);
         Files.setLastModifiedTime(certificateFilePath, FileTime.fromMillis(1527775020000L));
         store.refresh();
-        Assert.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
 
         writeToCertificateFile(certificates[0], certificates[1]);
         Files.setLastModifiedTime(certificateFilePath, FileTime.fromMillis(1527775040000L));
         store.refresh();
-        Assert.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(Collections.singletonList(certificates[1]), store.get(certificates[1].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[1]), store.get(certificates[1].getSubjectX500Principal(), null, null));
 
         Files.delete(certificateFilePath);
         store.refresh();
-        Assert.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(Collections.singletonList(certificates[1]), store.get(certificates[1].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[1]), store.get(certificates[1].getSubjectX500Principal(), null, null));
 
         writeToCertificateFile(certificates[0]);
         Files.setLastModifiedTime(certificateFilePath, FileTime.fromMillis(1527775060000L));
         store.refresh();
-        Assert.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(Collections.emptyList(), store.get(certificates[1].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.emptyList(), store.get(certificates[1].getSubjectX500Principal(), null, null));
 
         writeToCertificateFile(certificates[0], certificates[1]);
         Files.setLastModifiedTime(certificateFilePath, FileTime.fromMillis(1527775060000L));
         store.refresh();
-        Assert.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
-        Assert.assertEquals(Collections.emptyList(), store.get(certificates[1].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.singletonList(certificates[0]), store.get(certificates[0].getSubjectX500Principal(), null, null));
+        Assertions.assertEquals(Collections.emptyList(), store.get(certificates[1].getSubjectX500Principal(), null, null));
     }
 
     private void writeToCertificateFile(X509Certificate... certificates) throws IOException, CryptoException {

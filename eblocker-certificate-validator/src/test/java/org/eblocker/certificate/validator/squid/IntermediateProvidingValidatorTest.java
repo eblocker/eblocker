@@ -17,9 +17,9 @@
 package org.eblocker.certificate.validator.squid;
 
 import com.google.common.collect.Sets;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IntermediateProvidingValidatorTest {
+class IntermediateProvidingValidatorTest {
 
     private X509Certificate[] chain;
     private IntermediateCertificatesStore intermediateCertificatesStore;
@@ -38,8 +38,8 @@ public class IntermediateProvidingValidatorTest {
     private CertificateValidator nextValidator;
     private IntermediateProvidingValidator validator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         chain = createCertificateChain("www.site.com", "level 3 ca", "level 2 ca", "level 1 ca", "root ca");
 
         intermediateCertificatesStore = Mockito.mock(IntermediateCertificatesStore.class);
@@ -52,25 +52,25 @@ public class IntermediateProvidingValidatorTest {
     }
 
     @Test
-    public void testCompletingChainOnlyLeafCertificate() {
+    void testCompletingChainOnlyLeafCertificate() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0] }, new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" }, new String[]{ "cert_0" }, true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
         Mockito.verify(nextValidator).validate(captor.capture(), Mockito.eq(true));
 
-        Assert.assertFalse(request == captor.getValue());
-        Assert.assertEquals(request.getId(), captor.getValue().getId());
-        Assert.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
-        Assert.assertEquals(request.getCipher(), captor.getValue().getCipher());
-        Assert.assertEquals(request.getHost(), captor.getValue().getHost());
-        Assert.assertArrayEquals(chain, captor.getValue().getCert());
-        Assert.assertEquals(0, captor.getValue().getErrorCertId().length);
-        Assert.assertEquals(0, captor.getValue().getErrorName().length);
+        Assertions.assertNotSame(request, captor.getValue());
+        Assertions.assertEquals(request.getId(), captor.getValue().getId());
+        Assertions.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
+        Assertions.assertEquals(request.getCipher(), captor.getValue().getCipher());
+        Assertions.assertEquals(request.getHost(), captor.getValue().getHost());
+        Assertions.assertArrayEquals(chain, captor.getValue().getCert());
+        Assertions.assertEquals(0, captor.getValue().getErrorCertId().length);
+        Assertions.assertEquals(0, captor.getValue().getErrorName().length);
     }
 
     @Test
-    public void testCompletingIncompleteChain() {
+    void testCompletingIncompleteChain() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0], chain[1], chain[3] }, new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY" },
                 new String[]{ "cert_0" }, true);
         validator.validate(request, true);
@@ -78,18 +78,18 @@ public class IntermediateProvidingValidatorTest {
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
         Mockito.verify(nextValidator).validate(captor.capture(), Mockito.eq(true));
 
-        Assert.assertFalse(request == captor.getValue());
-        Assert.assertEquals(request.getId(), captor.getValue().getId());
-        Assert.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
-        Assert.assertEquals(request.getCipher(), captor.getValue().getCipher());
-        Assert.assertEquals(request.getHost(), captor.getValue().getHost());
-        Assert.assertArrayEquals(chain, captor.getValue().getCert());
-        Assert.assertEquals(0, captor.getValue().getErrorCertId().length);
-        Assert.assertEquals(0, captor.getValue().getErrorName().length);
+        Assertions.assertNotSame(request, captor.getValue());
+        Assertions.assertEquals(request.getId(), captor.getValue().getId());
+        Assertions.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
+        Assertions.assertEquals(request.getCipher(), captor.getValue().getCipher());
+        Assertions.assertEquals(request.getHost(), captor.getValue().getHost());
+        Assertions.assertArrayEquals(chain, captor.getValue().getCert());
+        Assertions.assertEquals(0, captor.getValue().getErrorCertId().length);
+        Assertions.assertEquals(0, captor.getValue().getErrorName().length);
     }
 
     @Test
-    public void testCompletingAmbigiousChain() {
+    void testCompletingAmbigiousChain() {
         X509Certificate level2reIssueCertificate = createMockCertificate(chain[2].getSubjectX500Principal(), chain[3].getSubjectX500Principal());
         Mockito.when(intermediateCertificatesStore.get(chain[2].getSubjectX500Principal(), null, null)).thenReturn(Arrays.asList(chain[2], level2reIssueCertificate));
 
@@ -99,24 +99,24 @@ public class IntermediateProvidingValidatorTest {
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
         Mockito.verify(nextValidator).validate(captor.capture(), Mockito.eq(true));
 
-        Assert.assertFalse(request == captor.getValue());
-        Assert.assertEquals(request.getId(), captor.getValue().getId());
-        Assert.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
-        Assert.assertEquals(request.getCipher(), captor.getValue().getCipher());
-        Assert.assertEquals(request.getHost(), captor.getValue().getHost());
-        Assert.assertEquals(Sets.newHashSet(chain[0], chain[1], chain[2], chain[3], level2reIssueCertificate), Sets.newHashSet(Arrays.asList(captor.getValue().getCert())));
-        Assert.assertEquals(0, captor.getValue().getErrorCertId().length);
-        Assert.assertEquals(0, captor.getValue().getErrorName().length);
+        Assertions.assertNotSame(request, captor.getValue());
+        Assertions.assertEquals(request.getId(), captor.getValue().getId());
+        Assertions.assertEquals(request.getProtoVersion(), captor.getValue().getProtoVersion());
+        Assertions.assertEquals(request.getCipher(), captor.getValue().getCipher());
+        Assertions.assertEquals(request.getHost(), captor.getValue().getHost());
+        Assertions.assertEquals(Sets.newHashSet(chain[0], chain[1], chain[2], chain[3], level2reIssueCertificate), Sets.newHashSet(Arrays.asList(captor.getValue().getCert())));
+        Assertions.assertEquals(0, captor.getValue().getErrorCertId().length);
+        Assertions.assertEquals(0, captor.getValue().getErrorName().length);
     }
 
     @Test
-    public void testNoError() {
+    void testNoError() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, "protoVersion", "cipher", "host", new X509Certificate[]{ chain[0] }, new String[0], new String[0], true);
         validator.validate(request, true);
 
         ArgumentCaptor<CertificateValidationRequest> captor = ArgumentCaptor.forClass(CertificateValidationRequest.class);
         Mockito.verify(nextValidator).validate(captor.capture(), Mockito.eq(true));
-        Assert.assertTrue(request == captor.getValue());
+        Assertions.assertSame(request, captor.getValue());
     }
 
     private X509Certificate[] createCertificateChain(String... subjects) {

@@ -16,10 +16,10 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -28,27 +28,27 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.cert.CertStore;
 
-public class CertificateValidatorProviderTest {
+class CertificateValidatorProviderTest {
 
     private Provider provider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         provider = new CertificateValidatorProvider();
         Security.addProvider(provider);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         Security.removeProvider(provider.getName());
     }
 
     @Test
-    public void testProvider() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+    void testProvider() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
         CertStore certStore = CertStore.getInstance("CrlCacheStore", new CrlCacheCertStore.Parameters(Mockito.mock(CrlCache.class)));
-        Assert.assertNotNull(certStore);
-        Assert.assertEquals(provider, certStore.getProvider());
-        Assert.assertEquals("CrlCacheStore", certStore.getType());
+        Assertions.assertNotNull(certStore);
+        Assertions.assertEquals(provider, certStore.getProvider());
+        Assertions.assertEquals("CrlCacheStore", certStore.getType());
     }
 
 }

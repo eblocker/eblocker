@@ -16,8 +16,9 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +39,7 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-public class ConcurrentValidatorAppTest {
+class ConcurrentValidatorAppTest {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentValidatorAppTest.class);
 
     private static final boolean useConcurrency = true;
@@ -53,8 +51,8 @@ public class ConcurrentValidatorAppTest {
 
     private Semaphore concurrentRequestsSemaphore = new Semaphore(16);
 
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         //
         // Create piped streams as replacement for STDIN and STDOUT
         //
@@ -70,7 +68,7 @@ public class ConcurrentValidatorAppTest {
     }
 
     @Test
-    public void testRandomConcurrent() throws Exception {
+    void testRandomConcurrent() throws Exception {
         //
         // Submit some (concurrent) certificate validation requests
         //
@@ -87,12 +85,12 @@ public class ConcurrentValidatorAppTest {
                 }
 
                 for (CertificateValidationResponse response : responses) {
-                    assertNotNull(response);
+                    Assertions.assertNotNull(response);
 
                     CertificateValidationRequest request = data.requestsById.get(response.getId());
-                    assertNotNull(request);
-                    assertEquals(request.getId(), response.getId());
-                    assertEquals(data.validRequests.contains(request), response.isSuccess());
+                    Assertions.assertNotNull(request);
+                    Assertions.assertEquals(request.getId(), response.getId());
+                    Assertions.assertEquals(data.validRequests.contains(request), response.isSuccess());
                 }
             }
         }.start();

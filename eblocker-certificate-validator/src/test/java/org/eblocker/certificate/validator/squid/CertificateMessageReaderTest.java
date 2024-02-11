@@ -19,27 +19,24 @@ package org.eblocker.certificate.validator.squid;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+class CertificateMessageReaderTest {
 
-public class CertificateMessageReaderTest {
-
-    private final String END_CERT = "-----END CERTIFICATE-----";
     private static SimpleResource BAD_EXAMPLE = new SimpleResource("classpath:squid-validation/squid_cert_validator_key_pairs_bad.txt");
     private static SimpleResource GOOD_EXAMPLE = new SimpleResource("classpath:squid-validation/squid_cert_validator_key_pairs_good.txt");
 
     private static List<String> linesGood = new ArrayList<String>();
     private static List<String> linesBad = new ArrayList<String>();
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         linesGood = loadFromFile(GOOD_EXAMPLE);
         linesBad = loadFromFile(BAD_EXAMPLE);
 
@@ -50,25 +47,25 @@ public class CertificateMessageReaderTest {
     }
 
     @Test
-    public void test_ignore_unknown_keys() {
+    void test_ignore_unknown_keys() {
         CertificateValidationMessageReader messageReader = new CertificateValidationMessageReader(false);
         List<String> lines = new ArrayList<>();
         lines.add("host=bla");
         lines.add("unknown_key=hilde");
 
         Map<String, String> map = messageReader.readKeyValues(lines);
-        assertEquals(map.get("host"), "bla");
+        Assertions.assertEquals(map.get("host"), "bla");
     }
 
     @Test
-    public void test_parsing_good() {
+    void test_parsing_good() {
         CertificateValidationMessageReader messageReader = new CertificateValidationMessageReader(false);
         Map<String, String> map = messageReader.readKeyValues(linesGood);
 
-        assertEquals(map.get("host"), "46.101.144.154");
-        assertEquals(map.get("proto_version"), "TLSv1.2");
-        assertEquals(map.get("cipher"), "ECDHE-RSA-AES256-GCM-SHA384");
-        assertEquals(map.get("cert_0"), "-----BEGIN CERTIFICATE-----\n" +
+        Assertions.assertEquals(map.get("host"), "46.101.144.154");
+        Assertions.assertEquals(map.get("proto_version"), "TLSv1.2");
+        Assertions.assertEquals(map.get("cipher"), "ECDHE-RSA-AES256-GCM-SHA384");
+        Assertions.assertEquals(map.get("cert_0"), "-----BEGIN CERTIFICATE-----\n" +
                 "MIIFSzCCBDOgAwIBAgIQAw1JXQKPzTLYgNiaWb00DzANBgkqhkiG9w0BAQsFADCB\n" +
                 "kDELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G\n" +
                 "A1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxNjA0BgNV\n" +
@@ -99,7 +96,7 @@ public class CertificateMessageReaderTest {
                 "KuMymC5auVzF8UZHdmiqdRwexQo1CISJJ84H9eFRb+TNBnFiZGXcucY/FH6hFtRt\n" +
                 "+tEIhztR/a3HOk2Z7mGb\n" +
                 "-----END CERTIFICATE-----");
-        assertEquals(map.get("cert_1"), "-----BEGIN CERTIFICATE-----\n" +
+        Assertions.assertEquals(map.get("cert_1"), "-----BEGIN CERTIFICATE-----\n" +
                 "MIIGCDCCA/CgAwIBAgIQKy5u6tl1NmwUim7bo3yMBzANBgkqhkiG9w0BAQwFADCB\n" +
                 "hTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G\n" +
                 "A1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxKzApBgNV\n" +
@@ -134,7 +131,7 @@ public class CertificateMessageReaderTest {
                 "lBlGGSW4gNfL1IYoakRwJiNiqZ+Gb7+6kHDSVneFeO/qJakXzlByjAA6quPbYzSf\n" +
                 "+AZxAeKCINT+b72x\n" +
                 "-----END CERTIFICATE-----");
-        assertEquals(map.get("cert_2"), "-----BEGIN CERTIFICATE-----\n" +
+        Assertions.assertEquals(map.get("cert_2"), "-----BEGIN CERTIFICATE-----\n" +
                 "MIIFdDCCBFygAwIBAgIQJ2buVutJ846r13Ci/ITeIjANBgkqhkiG9w0BAQwFADBv\n" +
                 "MQswCQYDVQQGEwJTRTEUMBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFk\n" +
                 "ZFRydXN0IEV4dGVybmFsIFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBF\n" +
@@ -166,7 +163,7 @@ public class CertificateMessageReaderTest {
                 "PUsE2JOAWVrgQSQdso8VYFhH2+9uRv0V9dlfmrPb2LjkQLPNlzmuhbsdjrzch5vR\n" +
                 "pu/xO28QOG8=\n" +
                 "-----END CERTIFICATE-----");
-        assertEquals(map.get("cert_3"), "-----BEGIN CERTIFICATE-----\n" +
+        Assertions.assertEquals(map.get("cert_3"), "-----BEGIN CERTIFICATE-----\n" +
                 "MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU\n" +
                 "MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs\n" +
                 "IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290\n" +
@@ -194,11 +191,12 @@ public class CertificateMessageReaderTest {
     }
 
     @Test
-    public void test_parsing_bad() {
+    void test_parsing_bad() {
         CertificateValidationMessageReader messageReader = new CertificateValidationMessageReader(false);
         Map<String, String> map = messageReader.readKeyValues(linesBad);
 
-        assertTrue(map.get("cert_3").endsWith(END_CERT));
-        assertEquals(map.get("host"), "46.101.144.154");
+        String END_CERT = "-----END CERTIFICATE-----";
+        Assertions.assertTrue(map.get("cert_3").endsWith(END_CERT));
+        Assertions.assertEquals(map.get("host"), "46.101.144.154");
     }
 }

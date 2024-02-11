@@ -17,17 +17,17 @@
 package org.eblocker.certificate.validator.squid;
 
 import org.eblocker.crypto.CryptoException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-public class PinnedCertificateValidatorTest {
+class PinnedCertificateValidatorTest {
 
     private static final boolean USE_CONCURRENCY = true;
 
@@ -38,15 +38,15 @@ public class PinnedCertificateValidatorTest {
     private CertificateValidator nextValidator;
     private PinnedCertificateValidator validator;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException, CryptoException {
+    @BeforeAll
+    static void beforeClass() throws IOException, CryptoException {
         PINNED_CERTIFICATE = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/xkcd.org.cert");
         NOT_PINNED_CERTIFICATE = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/www.microsoft.com.cert");
         EXPIRE_CERTIFICATE = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/expired.badssl.com.cert");
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         nextValidator = Mockito.mock(CertificateValidator.class);
         PinnedCertificatesStore pinnedCertificatesStore = Mockito.mock(PinnedCertificatesStore.class);
         Mockito.when(pinnedCertificatesStore.getCertificates()).thenReturn(Collections.singleton(PINNED_CERTIFICATE));
@@ -54,36 +54,36 @@ public class PinnedCertificateValidatorTest {
     }
 
     @Test
-    public void testPinnedCertificate() {
+    void testPinnedCertificate() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isSuccess());
-        Assert.assertArrayEquals(new String[0], response.getErrorCertId());
-        Assert.assertArrayEquals(new String[0], response.getErrorReason());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isSuccess());
+        Assertions.assertArrayEquals(new String[0], response.getErrorCertId());
+        Assertions.assertArrayEquals(new String[0], response.getErrorReason());
 
         Mockito.verifyZeroInteractions(nextValidator);
     }
 
     @Test
-    public void testPinnedCertificateOpenSslError() {
+    void testPinnedCertificateOpenSslError() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ PINNED_CERTIFICATE },
                 new String[]{ "X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY", "X509_V_ERR_CERT_UNTRUSTED", "X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE" }, new String[]{ "cert_0", "cert_0", "cert_0" }, USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isSuccess());
-        Assert.assertArrayEquals(new String[0], response.getErrorCertId());
-        Assert.assertArrayEquals(new String[0], response.getErrorReason());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isSuccess());
+        Assertions.assertArrayEquals(new String[0], response.getErrorCertId());
+        Assertions.assertArrayEquals(new String[0], response.getErrorReason());
 
         Mockito.verifyZeroInteractions(nextValidator);
     }
 
     @Test
-    public void testNotPinnedCertificate() {
+    void testNotPinnedCertificate() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ NOT_PINNED_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         validator.validate(request, USE_CONCURRENCY);
@@ -92,15 +92,15 @@ public class PinnedCertificateValidatorTest {
     }
 
     @Test
-    public void testExpiredCertificate() {
+    void testExpiredCertificate() {
         CertificateValidationRequest request = new CertificateValidationRequest(0L, null, null, null, new X509Certificate[]{ EXPIRE_CERTIFICATE }, new String[0], new String[0], USE_CONCURRENCY);
 
         CertificateValidationResponse response = validator.validate(request, USE_CONCURRENCY);
 
-        Assert.assertNotNull(response);
-        Assert.assertFalse(response.isSuccess());
-        Assert.assertEquals(1, response.getErrorReason().length);
-        Assert.assertEquals(1, response.getErrorName().length);
+        Assertions.assertNotNull(response);
+        Assertions.assertFalse(response.isSuccess());
+        Assertions.assertEquals(1, response.getErrorReason().length);
+        Assertions.assertEquals(1, response.getErrorName().length);
 
         Mockito.verifyZeroInteractions(nextValidator);
     }

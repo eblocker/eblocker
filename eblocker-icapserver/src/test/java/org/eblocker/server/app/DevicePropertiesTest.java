@@ -16,16 +16,16 @@
  */
 package org.eblocker.server.app;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DevicePropertiesTest {
+class DevicePropertiesTest {
 
     @Test
-    public void test_1() {
+    void test_1() {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:device-sample-1.properties");
         assertTrue(deviceProperties.isSerialNumberAvailable());
         assertEquals("bein", deviceProperties.getArchitecture());
@@ -41,7 +41,7 @@ public class DevicePropertiesTest {
     }
 
     @Test
-    public void test_2() {
+    void test_2() {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:device-sample-2.properties");
         assertFalse(deviceProperties.isSerialNumberAvailable());
         assertEquals("bein", deviceProperties.getArchitecture());
@@ -51,7 +51,7 @@ public class DevicePropertiesTest {
     }
 
     @Test
-    public void test_noFile() {
+    void test_noFile() {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:not-existing-file");
         assertFalse(deviceProperties.isSerialNumberAvailable());
         assertEquals("(unknown)", deviceProperties.getArchitecture());

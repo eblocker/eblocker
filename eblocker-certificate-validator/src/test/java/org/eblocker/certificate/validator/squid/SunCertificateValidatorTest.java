@@ -18,10 +18,11 @@ package org.eblocker.certificate.validator.squid;
 
 import org.eblocker.certificate.validator.http.DefaultHttpUrlConnectionBuilderFactory;
 import org.eblocker.crypto.CryptoException;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -31,48 +32,46 @@ import java.security.Security;
 import java.security.cert.CertStore;
 import java.time.Clock;
 
-import static org.junit.Assert.assertEquals;
-
-public class SunCertificateValidatorTest {
+class SunCertificateValidatorTest {
 
     private final boolean useConcurrency = true;
     private SunCertificateValidator certificateValidator;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         Security.addProvider(new CertificateValidatorProvider());
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         Security.removeProvider("eBlockerCertificateValidator");
     }
 
-    @Before
-    public void setup() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+    @BeforeEach
+    void setup() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
         CrlCache crlCache = new CrlCache(16, 1, 65536, Clock.systemUTC(), new DefaultHttpUrlConnectionBuilderFactory());
         CertStore certStore = CertStore.getInstance("crlCacheStore", new CrlCacheCertStore.Parameters(crlCache));
         certificateValidator = new SunCertificateValidator(Paths.get(TestProperties.getCaCertificatesFilePath()), true, certStore, null, null);
     }
 
     @Test
-    public void test_ok() throws IOException, CryptoException {
+    void test_ok() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createValidRequest(useConcurrency);
         CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
-        assertEquals("OK", response.getMessage());
+        Assertions.assertEquals("OK", response.getMessage());
     }
 
     @Test
-    public void test_invalid() throws IOException, CryptoException {
+    void test_invalid() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createInvalidRequest(useConcurrency);
         CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
-        assertEquals("ERR", response.getMessage());
+        Assertions.assertEquals("ERR", response.getMessage());
     }
 
     @Test
-    public void test_revoked() throws IOException, CryptoException {
+    void test_revoked() throws IOException, CryptoException {
         CertificateValidationRequest request = CertificateValidatorTestUtil.createRevokedRequest(useConcurrency);
         CertificateValidationResponse response = certificateValidator.validate(request, useConcurrency);
-        assertEquals("ERR", response.getMessage());
+        Assertions.assertEquals("ERR", response.getMessage());
     }
 }

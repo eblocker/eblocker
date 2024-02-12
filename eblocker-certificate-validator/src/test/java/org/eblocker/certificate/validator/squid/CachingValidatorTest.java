@@ -16,9 +16,8 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -27,26 +26,28 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CachingValidatorTest {
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-    private final int size = 3;
+class CachingValidatorTest {
+
     private final int ttl = 3;
 
     private CertificateValidator mockValidator;
     private CachingValidator cachingValidator;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         mockValidator = Mockito.mock(CertificateValidator.class);
         cachingValidator = new CachingValidator(3, 1, ttl, mockValidator);
     }
 
     @Test
-    public void testCaching() throws CertificateEncodingException {
+    void testCaching() throws CertificateEncodingException {
         // setup mocks
         List<X509Certificate> certificates = new ArrayList<>();
         List<CertificateValidationRequest> requests = new ArrayList<>();
         List<CertificateValidationResponse> responses = new ArrayList<>();
+        int size = 3;
         for (int i = 0; i <= size; ++i) {
             certificates.add(createCertificate(new byte[i]));
             requests.add(createRequest(i, certificates.get(i)));
@@ -60,37 +61,37 @@ public class CachingValidatorTest {
         // query validator to fill cache
         for (int i = 0; i < size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
-            Assert.assertTrue(response == responses.get(i));
+            assertSame(response, responses.get(i));
             validatorInOrder.verify(mockValidator).validate(requests.get(i), false);
         }
 
         // query validator again verifying cached results are returned
         for (int i = 0; i < size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
-            Assert.assertTrue(response == responses.get(i));
+            assertSame(response, responses.get(i));
             validatorInOrder.verifyNoMoreInteractions();
         }
 
         // issue a new query which should evict the first entry
         CertificateValidationResponse nonCachedResponse = cachingValidator.validate(requests.get(size), false);
-        Assert.assertTrue(nonCachedResponse == responses.get(size));
+        assertSame(nonCachedResponse, responses.get(size));
         validatorInOrder.verify(mockValidator).validate(requests.get(size), false);
 
         // check entries 2 .. size are cached
         for (int i = 1; i <= size; ++i) {
             CertificateValidationResponse response = cachingValidator.validate(requests.get(i), false);
-            Assert.assertTrue(response == responses.get(i));
+            assertSame(response, responses.get(i));
             validatorInOrder.verifyNoMoreInteractions();
         }
 
         // check first entry is not anymore in cache
         CertificateValidationResponse evictedResponse = cachingValidator.validate(requests.get(0), false);
-        Assert.assertTrue(evictedResponse == responses.get(0));
+        assertSame(evictedResponse, responses.get(0));
         validatorInOrder.verify(mockValidator).validate(requests.get(0), false);
     }
 
     @Test
-    public void testExpiration() throws InterruptedException, CertificateEncodingException {
+    void testExpiration() throws InterruptedException, CertificateEncodingException {
         CertificateValidationRequest request = createRequest(0, createCertificate(new byte[0]));
         CertificateValidationResponse response = createResponse(request);
         Mockito.when(mockValidator.validate(request, false)).thenReturn(response);

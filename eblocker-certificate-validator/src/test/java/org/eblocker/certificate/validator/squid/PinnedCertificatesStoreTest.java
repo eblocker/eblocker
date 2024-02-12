@@ -19,11 +19,11 @@ package org.eblocker.certificate.validator.squid;
 import com.google.common.collect.Sets;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +32,7 @@ import java.nio.file.Path;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-public class PinnedCertificatesStoreTest {
+class PinnedCertificatesStoreTest {
 
     private static final String TRUST_STORE_PASSWORD = "test";
 
@@ -40,48 +40,48 @@ public class PinnedCertificatesStoreTest {
     private Path storePath;
     private PinnedCertificatesStore store;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException, CryptoException {
+    @BeforeAll
+    static void beforeClass() throws IOException, CryptoException {
         CERTIFICATES = new X509Certificate[]{
                 CertificateValidatorTestUtil.loadCertificateResource("sample-certs/xkcd.org.cert")
         };
     }
 
-    @Before
-    public void setUp() throws IOException, CryptoException {
+    @BeforeEach
+    void setUp() throws IOException, CryptoException {
         storePath = Files.createTempFile("pinned", ".jks");
         createKeyStore(CERTIFICATES[0]);
         store = new PinnedCertificatesStore(storePath, TRUST_STORE_PASSWORD);
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         Files.deleteIfExists(storePath);
     }
 
     @Test
-    public void testNoRefresh() {
-        Assert.assertEquals(Collections.emptySet(), store.getCertificates());
+    void testNoRefresh() {
+        Assertions.assertEquals(Collections.emptySet(), store.getCertificates());
     }
 
     @Test
-    public void testRefresh() throws IOException, CryptoException {
-        Assert.assertEquals(Collections.emptySet(), store.getCertificates());
+    void testRefresh() throws IOException, CryptoException {
+        Assertions.assertEquals(Collections.emptySet(), store.getCertificates());
         store.refresh();
-        Assert.assertEquals(Collections.singleton(CERTIFICATES[0]), store.getCertificates());
+        Assertions.assertEquals(Collections.singleton(CERTIFICATES[0]), store.getCertificates());
         createKeyStore(CERTIFICATES);
         store.refresh();
-        Assert.assertEquals(Sets.newHashSet(CERTIFICATES), store.getCertificates());
+        Assertions.assertEquals(Sets.newHashSet(CERTIFICATES), store.getCertificates());
         Files.deleteIfExists(storePath);
         store.refresh();
-        Assert.assertEquals(Collections.emptySet(), store.getCertificates());
+        Assertions.assertEquals(Collections.emptySet(), store.getCertificates());
     }
 
     @Test
-    public void testCorruptStore() throws IOException {
+    void testCorruptStore() throws IOException {
         Files.write(storePath, new byte[4096]);
         store.refresh();
-        Assert.assertEquals(Collections.emptySet(), store.getCertificates());
+        Assertions.assertEquals(Collections.emptySet(), store.getCertificates());
     }
 
     private void createKeyStore(X509Certificate... certificates) throws IOException, CryptoException {

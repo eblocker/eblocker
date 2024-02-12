@@ -17,12 +17,12 @@
 package org.eblocker.certificate.validator.http;
 
 import com.google.common.io.ByteStreams;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
@@ -30,36 +30,40 @@ import org.mockserver.model.NottableString;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-public class DefaultHttpUrlConnectionBuilderTest {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class DefaultHttpUrlConnectionBuilderTest {
 
     private static ClientAndServer SERVER;
 
     private DefaultHttpUrlConnectionBuilder builder;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SERVER = new ClientAndServer(18080);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         SERVER.stop();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         builder = new DefaultHttpUrlConnectionBuilder();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         SERVER.reset();
     }
 
     @Test
-    public void testGetRequest() throws IOException {
+    void testGetRequest() throws IOException {
         byte[] responseBody = "<xml></xml>".getBytes();
         SERVER
                 .when(HttpRequest.request()
@@ -75,12 +79,12 @@ public class DefaultHttpUrlConnectionBuilderTest {
                 .setRequestProperty("Accept", "application/xml")
                 .get();
 
-        Assert.assertEquals(200, connection.getResponseCode());
-        Assert.assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
+        assertEquals(200, connection.getResponseCode());
+        assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
     }
 
     @Test
-    public void testPostRequest() throws IOException {
+    void testPostRequest() throws IOException {
         byte[] requestBody = "test test test".getBytes();
         byte[] responseBody = "<xml></xml>".getBytes();
         SERVER
@@ -100,12 +104,12 @@ public class DefaultHttpUrlConnectionBuilderTest {
                 .setRequestProperty("Content-Type", "application/text")
                 .post(requestBody);
 
-        Assert.assertEquals(200, connection.getResponseCode());
-        Assert.assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
+        assertEquals(200, connection.getResponseCode());
+        assertArrayEquals(responseBody, ByteStreams.toByteArray(connection.getInputStream()));
     }
 
     @Test
-    public void testIfModifiedSince() throws IOException {
+    void testIfModifiedSince() throws IOException {
         SERVER
                 .when(HttpRequest.request()
                         .withMethod("GET")
@@ -127,14 +131,14 @@ public class DefaultHttpUrlConnectionBuilderTest {
         HttpURLConnection connectionWithoutIfModifiedSince = builder.setUrl("http://127.0.0.1:18080/get").get();
         HttpURLConnection connectionWithIfModifiedSince = builder.setUrl("http://127.0.0.1:18080/get").setIfModifiedSince(System.currentTimeMillis()).get();
 
-        Assert.assertEquals(200, connectionWithoutIfModifiedSince.getResponseCode());
-        Assert.assertEquals("header-not-present", new String(ByteStreams.toByteArray(connectionWithoutIfModifiedSince.getInputStream())));
-        Assert.assertEquals(200, connectionWithIfModifiedSince.getResponseCode());
-        Assert.assertEquals("header-present", new String(ByteStreams.toByteArray(connectionWithIfModifiedSince.getInputStream())));
+        assertEquals(200, connectionWithoutIfModifiedSince.getResponseCode());
+        assertEquals("header-not-present", new String(ByteStreams.toByteArray(connectionWithoutIfModifiedSince.getInputStream())));
+        assertEquals(200, connectionWithIfModifiedSince.getResponseCode());
+        assertEquals("header-present", new String(ByteStreams.toByteArray(connectionWithIfModifiedSince.getInputStream())));
     }
 
-    @Test(expected = java.net.SocketTimeoutException.class)
-    public void testReadTimeout() throws IOException {
+    @Test
+    void testReadTimeout() throws IOException {
         SERVER
                 .when(HttpRequest.request()
                         .withMethod("GET")
@@ -144,13 +148,13 @@ public class DefaultHttpUrlConnectionBuilderTest {
                         .withStatusCode(204));
 
         HttpURLConnection connection = builder.setUrl("http://127.0.0.1:18080/get").setReadTimeout(50).get();
-        connection.getResponseCode();
+        Assertions.assertThrows(SocketTimeoutException.class, connection::getResponseCode);
     }
 
-    @Test(expected = java.net.SocketTimeoutException.class)
-    public void testConnectionTimeout() throws IOException {
+    @Test
+    void testConnectionTimeout() throws IOException {
         // 192.0.2.0/24 is reserved for documentation according to RFC 5737
         HttpURLConnection connection = builder.setUrl("http://192.0.2.1:18080/get").setConnectionTimeout(50).get();
-        connection.getResponseCode();
+        Assertions.assertThrows(SocketTimeoutException.class, connection::getResponseCode);
     }
 }

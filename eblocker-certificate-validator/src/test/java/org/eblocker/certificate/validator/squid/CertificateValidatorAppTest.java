@@ -16,8 +16,9 @@
  */
 package org.eblocker.certificate.validator.squid;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class CertificateValidatorAppTest {
+class CertificateValidatorAppTest {
     private static final Logger LOG = LoggerFactory.getLogger(CertificateValidatorAppTest.class);
 
     private static final boolean useConcurrency = false;
@@ -42,8 +40,8 @@ public class CertificateValidatorAppTest {
 
     private static CertificateValidationResponseReader responseReader = new CertificateValidationResponseReader(useConcurrency);
 
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         //
         // Create piped streams as replacement for STDIN and STDOUT
         //
@@ -59,7 +57,7 @@ public class CertificateValidatorAppTest {
     }
 
     @Test
-    public void testRandom() throws Exception {
+    void testRandom() throws Exception {
         //
         // Submit some (sequential) certificate validation requests
         //
@@ -74,7 +72,7 @@ public class CertificateValidatorAppTest {
     }
 
     @Test
-    public void testCertError() throws Exception {
+    void testCertError() throws Exception {
         checkInvalidCertWithErrors();
     }
 
@@ -101,8 +99,8 @@ public class CertificateValidatorAppTest {
         LOG.info("Reading response...");
         CertificateValidationResponse response = responseReader.readSquidFormat(stdoutReader);
         LOG.info("Response arrived");
-        assertTrue(response != null);
-        assertEquals(valid, response.isSuccess());
+        Assertions.assertTrue(response != null);
+        Assertions.assertEquals(valid, response.isSuccess());
 
     }
 

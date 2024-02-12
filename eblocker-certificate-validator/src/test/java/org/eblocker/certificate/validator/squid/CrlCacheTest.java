@@ -19,10 +19,10 @@ package org.eblocker.certificate.validator.squid;
 import org.eblocker.certificate.validator.http.HttpTestUtils;
 import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilder;
 import org.eblocker.certificate.validator.http.HttpUrlConnectionBuilderFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -40,27 +40,27 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.Semaphore;
 
-public class CrlCacheTest {
+class CrlCacheTest {
     private static byte[] CRL_171011;
     private static byte[] CRL_171017;
 
     private HttpUrlConnectionBuilderFactory connectionBuilderFactory;
     private HttpUrlConnectionBuilder connectionBuilder;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
+    @BeforeAll
+    static void beforeClass() throws IOException {
         CRL_171011 = CertificateValidatorTestUtil.loadResource("sample-certs/AmazonServerCa1b-2017-10-11.crl");
         CRL_171017 = CertificateValidatorTestUtil.loadResource("sample-certs/AmazonServerCa1b-2017-10-17.crl");
     }
 
-    @Before
-    public void setUp() throws MalformedURLException {
+    @BeforeEach
+    void setUp() throws MalformedURLException {
         connectionBuilder = HttpTestUtils.createConnectionBuilderMock();
         connectionBuilderFactory = () -> connectionBuilder;
     }
 
     @Test
-    public void testCaching() throws IOException {
+    void testCaching() throws IOException {
         HttpURLConnection connection = HttpTestUtils.createMockResponse(200, CRL_171011);
         Mockito.when(connectionBuilder.get()).thenReturn(connection);
 
@@ -68,52 +68,52 @@ public class CrlCacheTest {
         CRL crl = crlCache.get("http://127.0.0.1:18080/ca.crl");
 
         Mockito.verify(connectionBuilder).setUrl("http://127.0.0.1:18080/ca.crl");
-        Assert.assertEquals(1, crlCache.size());
-        Assert.assertNotNull(crl);
-        Assert.assertTrue(crl instanceof X509CRL);
-        Assert.assertEquals("CN=Amazon, OU=Server CA 1B, O=Amazon, C=US", ((X509CRL) crl).getIssuerDN().getName());
+        Assertions.assertEquals(1, crlCache.size());
+        Assertions.assertNotNull(crl);
+        Assertions.assertInstanceOf(X509CRL.class, crl);
+        Assertions.assertEquals("CN=Amazon, OU=Server CA 1B, O=Amazon, C=US", ((X509CRL) crl).getIssuerDN().getName());
 
         CRL crl2 = crlCache.get("http://127.0.0.1:18080/ca.crl");
-        Assert.assertTrue(crl == crl2);
+        Assertions.assertSame(crl, crl2);
 
         Mockito.verify(connectionBuilder).get();
     }
 
     @Test
-    public void testLoadError() throws IOException {
+    void testLoadError() throws IOException {
         HttpURLConnection connection = HttpTestUtils.createMockResponse(404);
         Mockito.when(connectionBuilder.get()).thenReturn(connection);
 
         CrlCache crlCache = new CrlCache(4, 1, 600000, Clock.systemUTC(), connectionBuilderFactory);
-        Assert.assertNull(crlCache.get("http://127.0.0.1:18080/crl2"));
+        Assertions.assertNull(crlCache.get("http://127.0.0.1:18080/crl2"));
     }
 
     @Test
-    public void testCacheMaxSizeEvicition() throws IOException {
+    void testCacheMaxSizeEvicition() throws IOException {
         CrlCache crlCache = new CrlCache(1, 1, 600000, Clock.systemUTC(), connectionBuilderFactory);
 
         HttpURLConnection connection = HttpTestUtils.createMockResponse(200, CRL_171011);
         Mockito.when(connectionBuilder.get()).thenReturn(connection);
         CRL crl0 = crlCache.get("http://127.0.0.1:18080/ca-0.crl");
-        Assert.assertEquals(1, crlCache.size());
+        Assertions.assertEquals(1, crlCache.size());
 
         HttpURLConnection connection1 = HttpTestUtils.createMockResponse(200, CRL_171017);
         Mockito.when(connectionBuilder.get()).thenReturn(connection1);
         CRL crl1 = crlCache.get("http://127.0.0.1:18080/ca-1.crl");
-        Assert.assertEquals(1, crlCache.size());
+        Assertions.assertEquals(1, crlCache.size());
 
         HttpURLConnection connection2 = HttpTestUtils.createMockResponse(200, CRL_171011);
         Mockito.when(connectionBuilder.get()).thenReturn(connection2);
         CRL crl2 = crlCache.get("http://127.0.0.1:18080/ca-0.crl");
-        Assert.assertEquals(1, crlCache.size());
+        Assertions.assertEquals(1, crlCache.size());
 
-        Assert.assertTrue(crl0 != crl1);
+        Assertions.assertNotSame(crl0, crl1);
         //Assert.assertTrue(crl0 != crl2); // this does not work as CertificateFactory has a cache and returns the same crl
-        Assert.assertTrue(crl1 != crl2);
+        Assertions.assertNotSame(crl1, crl2);
     }
 
     @Test
-    public void testCacheRefresh() throws IOException {
+    void testCacheRefresh() throws IOException {
         // avoid reloading the crl on first refresh because "Next Update" is already in the past
         Instant now = LocalDateTime.of(2017, 10, 12, 12, 0, 0).toInstant(ZoneOffset.UTC);
         TestClock clock = new TestClock(now);
@@ -141,7 +141,7 @@ public class CrlCacheTest {
         clock.setInstant(now.plusSeconds(1200000));
         crlCache.refresh();
         CRL crl1 = crlCache.get("http://127.0.0.1:18080/ca.crl");
-        Assert.assertTrue(crl0 == crl1);
+        Assertions.assertSame(crl0, crl1);
 
         Mockito.verify(connectionBuilder).setIfModifiedSince(lastModified);
         Mockito.verify(connectionBuilder, Mockito.times(2)).get();
@@ -156,11 +156,11 @@ public class CrlCacheTest {
         Mockito.verify(connectionBuilder, Mockito.times(2)).setIfModifiedSince(lastModified);
         Mockito.verify(connectionBuilder, Mockito.times(3)).get();
 
-        Assert.assertTrue(crl0 != crl2);
+        Assertions.assertNotSame(crl0, crl2);
     }
 
     @Test
-    public void testCacheRefreshFailure() throws IOException {
+    void testCacheRefreshFailure() throws IOException {
         Instant now = LocalDateTime.of(2017, 10, 31, 10, 0).toInstant(ZoneOffset.UTC);
         TestClock clock = new TestClock(now);
 
@@ -187,17 +187,17 @@ public class CrlCacheTest {
 
         inOrder.verify(connectionBuilder).setIfModifiedSince(lastModified);
         inOrder.verify(connectionBuilder).get();
-        Assert.assertEquals(0, crlCache.size());
+        Assertions.assertEquals(0, crlCache.size());
 
         // check entry is correctly reloaded
         Mockito.when(connectionBuilder.get()).thenReturn(connectionReload);
-        Assert.assertNotNull(crlCache.get("http://127.0.0.1:18080/ca.crl"));
+        Assertions.assertNotNull(crlCache.get("http://127.0.0.1:18080/ca.crl"));
         inOrder.verify(connectionBuilder).setIfModifiedSince(null);
         inOrder.verify(connectionBuilder).get();
     }
 
     @Test
-    public void testSerialization() throws IOException, InterruptedException {
+    void testSerialization() throws IOException, InterruptedException {
         HttpURLConnection connection0 = HttpTestUtils.createMockResponse(200, CRL_171011);
         HttpURLConnection connection1 = HttpTestUtils.createMockResponse(200, CRL_171017);
 
@@ -230,9 +230,9 @@ public class CrlCacheTest {
         // wait until stream has been consumed
         streamClosedSemaphore.acquire();
 
-        Assert.assertEquals(2, crlCache2.size());
-        Assert.assertEquals(crl0, crlCache2.get("http://127.0.0.1:18080/ca-0.crl"));
-        Assert.assertEquals(crl1, crlCache2.get("http://127.0.0.1:18080/ca-1.crl"));
+        Assertions.assertEquals(2, crlCache2.size());
+        Assertions.assertEquals(crl0, crlCache2.get("http://127.0.0.1:18080/ca-0.crl"));
+        Assertions.assertEquals(crl1, crlCache2.get("http://127.0.0.1:18080/ca-1.crl"));
         inOrder.verifyNoMoreInteractions();
     }
 }

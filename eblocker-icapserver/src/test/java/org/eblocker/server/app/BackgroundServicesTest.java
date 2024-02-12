@@ -53,20 +53,20 @@ import org.eblocker.server.common.scheduler.UpnpWatchdogScheduler;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.ControlBarAliasUpdater;
 import org.eblocker.server.http.service.DeviceScanningService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class BackgroundServicesTest {
+class BackgroundServicesTest {
     private BackgroundServices services;
 
     private ScheduledExecutorService highPrioExecutorService;
@@ -102,8 +102,8 @@ public class BackgroundServicesTest {
     private BlockerUpdateScheduler blockerUpdateScheduler;
     private ContentFilterUpdateScheduler contentFilterUpdateScheduler;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         highPrioExecutorService = Mockito.mock(ScheduledExecutorService.class);
         lowPrioExecutorService = Mockito.mock(ScheduledExecutorService.class);
         unlimitedCachePoolExecutor = Mockito.mock(ScheduledExecutorService.class);
@@ -194,7 +194,7 @@ public class BackgroundServicesTest {
      * executed on the shared executors.
      */
     @Test
-    public void noBlockingTasksOnSharedExecutors() {
+    void noBlockingTasksOnSharedExecutors() {
         services.run();
 
         verify(highPrioExecutorService, never()).execute(arpListener);
@@ -211,25 +211,25 @@ public class BackgroundServicesTest {
     }
 
     @Test
-    public void blockedExecutorsAreOnlyUsedOnce() {
+    void blockedExecutorsAreOnlyUsedOnce() {
         services.run();
 
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         verify(unlimitedCachePoolExecutor, Mockito.atLeast(1)).execute(captor.capture());
 
-        Assert.assertTrue(captor.getAllValues().stream().anyMatch(r -> r == arpListener));
-        Assert.assertTrue(captor.getAllValues().stream().anyMatch(r -> r instanceof NamedRunnable && ((NamedRunnable) r).getName().startsWith(DhcpListener.class.getSimpleName())));
+        assertTrue(captor.getAllValues().stream().anyMatch(r -> r == arpListener));
+        assertTrue(captor.getAllValues().stream().anyMatch(r -> r instanceof NamedRunnable && ((NamedRunnable) r).getName().startsWith(DhcpListener.class.getSimpleName())));
     }
 
     @Test
-    public void deviceScanningIsStarted() {
+    void deviceScanningIsStarted() {
         services.run();
 
         verify(deviceScanningService).start();
     }
 
     @Test
-    public void torControllerHasHighPrio() {
+    void torControllerHasHighPrio() {
         services.run();
 
         verify(torController).startCheckingConnection(eq(highPrioExecutorService), anyLong());

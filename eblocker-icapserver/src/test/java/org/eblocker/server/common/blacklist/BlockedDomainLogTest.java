@@ -18,29 +18,30 @@ package org.eblocker.server.common.blacklist;
 
 import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.statistic.BlockedDomainsStatisticService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class BlockedDomainLogTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class BlockedDomainLogTest {
 
     private BlockedDomainLog log;
     private BlockedDomainsStatisticService statisticService;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         statisticService = Mockito.mock(BlockedDomainsStatisticService.class);
         Executor executor = Executors.newSingleThreadExecutor();
         log = new BlockedDomainLog(statisticService, executor);
     }
 
     @Test
-    public void test() throws InterruptedException {
+    void test() throws InterruptedException {
         log.addEntry("device:10101099", "setup.eblocker.com", 2);
 
         Thread.sleep(100);
@@ -49,9 +50,9 @@ public class BlockedDomainLogTest {
         Mockito.verify(statisticService).countBlockedDomain(captor.capture());
 
         BlockedDomainLogEntry entry = captor.getValue();
-        Assert.assertEquals("device:10101099", entry.getDeviceId());
-        Assert.assertEquals("setup.eblocker.com", entry.getDomain());
-        Assert.assertEquals(Integer.valueOf(2), entry.getListId());
+        assertEquals("device:10101099", entry.getDeviceId());
+        assertEquals("setup.eblocker.com", entry.getDomain());
+        assertEquals(Integer.valueOf(2), entry.getListId());
     }
 
 }

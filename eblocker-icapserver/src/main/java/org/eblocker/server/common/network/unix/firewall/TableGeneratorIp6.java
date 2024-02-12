@@ -55,6 +55,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Chain output = natTable.chain("OUTPUT").accept();
         Chain postRouting = natTable.chain("POSTROUTING").accept();
         Chain localRedirects = natTable.chain("local-redirects");
+        Chain outputMasquerading = natTable.chain("masquerading");
 
         // always answer dns queries directed at eblocker
         preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
@@ -118,8 +119,12 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             }
         }
 
-        // Masquerading seems to be necessary for packets that do not go via Squid (or packets from disabled devices)
-        postRouting.rule(new Rule(standardOutput).masquerade());
+        // Masquerading is used only for enabled devices
+        postRouting.rule(new Rule(standardOutput).jumpToChain(outputMasquerading.getName()));
+        ipAddressFilter.getDisabledDevicesIps().stream()
+                .filter(ip -> isPublicIp(ip))
+                .forEach(ip -> outputMasquerading.rule(new Rule().sourceIp(ip).returnFromChain()));
+        outputMasquerading.rule(new Rule().masquerade());
 
         return natTable;
     }

@@ -103,6 +103,17 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(torClientDeviceLocal, externalHost, 1234));
     }
 
+    @Test
+    public void testMasquerading() {
+        natPost.setOutput(standardInterface);
+
+        // enabled device: masquerading
+        Assert.assertEquals(Action.masquerade(), natPost.tcpPacket(enabledDevice, externalHost, 1234));
+
+        // disabled device: no masquerading
+        Assert.assertEquals(Action.returnFromChain(), natPost.tcpPacket(disabledDevice, externalHost, 1234));
+    }
+
     private OpenVpnClientState createAnonVpnClient(String anonVpnInterface, int anonVpnRoute, String anonVpnDeviceId, String gateway) {
         OpenVpnClientState client = new OpenVpnClientState();
         client.setState(OpenVpnClientState.State.ACTIVE);

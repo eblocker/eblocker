@@ -50,6 +50,7 @@ public class TableGeneratorTestBase {
         natPre = new Simulator(natTable.chain("PREROUTING"));
         natPost = new Simulator(natTable.chain("POSTROUTING"));
         natOutput = new Simulator(natTable.chain("OUTPUT"));
+        natPost.addSubChain(natTable.chain("masquerading"));
         filterForward = new Simulator(filterTable.chain("FORWARD"));
         filterInput = new Simulator(filterTable.chain("INPUT"));
         mangleVpn = new Simulator(mangleTable.chain("vpn-router"));

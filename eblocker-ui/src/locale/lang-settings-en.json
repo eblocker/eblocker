@@ -1707,6 +1707,7 @@
                     "NOVICE" : "Novice",
                     "EXPERT" : "Expert"
                 },
+                "IN_PROGRESS": "Diagnosis is created...",
                 "TABLE": {
                     "COLUMN" : {
                         "SEVERITY" : "Prio",
@@ -1762,7 +1763,9 @@
                         "DNS_TOR_MAY_LEAD_TO_ERRORS" : "The Tor network is used for DNS requests. Please note that this may lead to sporadic errors.",
                         "ADMIN_PASSWORD_NOT_SET": "The admin password is not set. Anyone with access to your network can change the settings of the eBlocker",
                         "MORE_INFO" : "More information",
-                        "CLICK_FOR_MORE" : "Click for details."
+                        "CLICK_FOR_MORE" : "Click for details.",
+                        "DEVICES_BLOCKING_TEST_DOMAIN": "On the following devices the dashboard function test will not work correctly, because the domain 'eblocker.org' is blocked:",
+                        "TEST_DOMAIN_HTTPS_WHITELISTED": "The dashboard function test will not work correctly, because 'eblocker.org' is configured as a trusted website."
                     }
                 }
             }

@@ -83,7 +83,7 @@ public class ContentSecurityPoliciesProcessorTest {
         Mockito.when(session.isPatternFiltersEnabled()).thenReturn(false);
 
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(filter);
+        Mockito.verifyNoInteractions(filter);
         Mockito.verify(transaction, Mockito.never()).setHeadersChanged(Mockito.anyBoolean());
     }
 

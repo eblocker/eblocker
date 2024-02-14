@@ -79,7 +79,7 @@ public class CustomDomainFilterConfigServiceTest {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
                 .setCustomDomainFilterConfig(0, new CustomDomainFilterConfig(Collections.emptySet(), Collections.emptySet()));
         assertCustomDomainFilter(Collections.emptySet(), Collections.emptySet(), savedFilter);
-        Mockito.verifyZeroInteractions(filterListsService);
+        Mockito.verifyNoInteractions(filterListsService);
         Mockito.verify(userService, Mockito.never()).updateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 

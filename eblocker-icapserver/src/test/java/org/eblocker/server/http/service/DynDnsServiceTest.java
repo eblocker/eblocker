@@ -93,7 +93,7 @@ public class DynDnsServiceTest {
 
         service.update();
 
-        Mockito.verifyZeroInteractions(client);
+        Mockito.verifyNoInteractions(client);
         Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(DynDnsConfig.class));
     }
 

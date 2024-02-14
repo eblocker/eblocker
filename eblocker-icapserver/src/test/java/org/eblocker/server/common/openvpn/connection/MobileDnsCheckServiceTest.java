@@ -40,7 +40,7 @@ public class MobileDnsCheckServiceTest {
     public void checkNoHostname() {
         Assert.assertTrue(mobileDnsCheckService.check());
         Mockito.verify(openVpnServerService).getOpenVpnServerHost();
-        Mockito.verifyZeroInteractions(deviceRegistrationClient);
+        Mockito.verifyNoInteractions(deviceRegistrationClient);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class MobileDnsCheckServiceTest {
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("1.2.3.4");
         Assert.assertTrue(mobileDnsCheckService.check());
         Mockito.verify(openVpnServerService).getOpenVpnServerHost();
-        Mockito.verifyZeroInteractions(deviceRegistrationClient);
+        Mockito.verifyNoInteractions(deviceRegistrationClient);
     }
 
     @Test

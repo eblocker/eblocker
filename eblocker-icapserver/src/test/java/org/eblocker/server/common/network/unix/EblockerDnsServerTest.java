@@ -286,7 +286,7 @@ public class EblockerDnsServerTest {
 
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(ArgumentCaptor.class);
         Mockito.verify(dataSource, Mockito.never()).save(captor.capture());
-        Mockito.verifyZeroInteractions(listener);
+        Mockito.verifyNoInteractions(listener);
     }
 
     @Test
@@ -420,7 +420,7 @@ public class EblockerDnsServerTest {
         Mockito.reset(dataSource);
         eblockerDnsServer.disable();
         Mockito.verify(dataSource, Mockito.times(0)).save(Mockito.any(EblockerDnsServerState.class));
-        Mockito.verifyZeroInteractions(listener);
+        Mockito.verifyNoInteractions(listener);
     }
 
     @Test

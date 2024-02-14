@@ -39,7 +39,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.startsWith;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class ArpSpooferTest {
@@ -228,13 +228,13 @@ public class ArpSpooferTest {
     public void noAssignedIp() {
         when(networkInterface.getFirstIPv4Address()).thenReturn(null);
         arpSpoofer.run();
-        verifyZeroInteractions(pubSubService);
+        verifyNoInteractions(pubSubService);
     }
 
     @Test
     public void emergencyIp() {
         when(networkInterface.getFirstIPv4Address()).thenReturn(EMERGENCY_IP);
         arpSpoofer.run();
-        verifyZeroInteractions(pubSubService);
+        verifyNoInteractions(pubSubService);
     }
 }

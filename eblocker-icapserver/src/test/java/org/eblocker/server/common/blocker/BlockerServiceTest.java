@@ -579,10 +579,10 @@ public class BlockerServiceTest {
     @Test
     public void testRemoveBuiltinBlocker() {
         blockerService.deleteBlocker(1);
-        Mockito.verifyZeroInteractions(filterManager);
+        Mockito.verifyNoInteractions(filterManager);
 
         blockerService.deleteBlocker(11);
-        Mockito.verifyZeroInteractions(filterListsService);
+        Mockito.verifyNoInteractions(filterListsService);
     }
 
     @Test
@@ -606,7 +606,7 @@ public class BlockerServiceTest {
         blockerService.deleteBlocker(1003);
         Mockito.verify(dataSource).delete(ExternalDefinition.class, 1003);
         Assert.assertFalse(Files.exists(blockerFiles.get(3)));
-        Mockito.verifyZeroInteractions(filterManager);
+        Mockito.verifyNoInteractions(filterManager);
     }
 
     @Test

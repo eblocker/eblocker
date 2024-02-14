@@ -68,7 +68,7 @@ public class PatternFilterStatisticsProcessorTest {
         device.setFilterMode(FilterMode.NONE);
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(session).setPatternFiltersEnabled(false);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class PatternFilterStatisticsProcessorTest {
         device.setFilterMode(FilterMode.PLUG_AND_PLAY);
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(session).setPatternFiltersEnabled(false);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class PatternFilterStatisticsProcessorTest {
         Mockito.when(sslService.isSslEnabled()).thenReturn(false);
         Assert.assertTrue(processor.process(transaction));
         Mockito.verify(session).setPatternFiltersEnabled(false);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
 }

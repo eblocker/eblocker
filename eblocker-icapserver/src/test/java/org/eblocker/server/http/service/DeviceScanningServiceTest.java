@@ -125,7 +125,7 @@ public class DeviceScanningServiceTest {
         Mockito.when(dataSource.getDeviceScanningInterval()).thenReturn(0L);
 
         service.start();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
 
         // scanning is enabled:
         service.setScanningInterval(42L);
@@ -143,7 +143,7 @@ public class DeviceScanningServiceTest {
         // scanning is disabled:
         service.setScanningInterval(0L);
         Mockito.verify(future).cancel(true);
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoMoreInteractions(executorService);
     }
 
     @Test
@@ -167,15 +167,15 @@ public class DeviceScanningServiceTest {
     public void testSweepingNonPrivateNets() {
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("169.254.1.2"));
         service.start();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
 
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("12.1.2.254"));
         service.start();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
 
         Mockito.when(networkInterface.getFirstIPv4Address()).thenReturn(Ip4Address.parse("56.200.200.201"));
         service.start();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
     }
 
     @Test
@@ -190,6 +190,6 @@ public class DeviceScanningServiceTest {
                 networkInterface);
 
         service.start();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
     }
 }

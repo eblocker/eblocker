@@ -315,7 +315,7 @@ public class SSLControllerImplTest {
         Mockito.verify(request).getHeader(eq("serialNumber"));
         Mockito.verify(sessionStore).getSession(eq(txId));
         Mockito.verify(session).getDeviceId();
-        Mockito.verifyZeroInteractions(tracker, response);
+        Mockito.verifyNoInteractions(tracker, response);
     }
 
     @Test
@@ -574,7 +574,7 @@ public class SSLControllerImplTest {
         Mockito.verify(sessionStore).getSession(eq(txId));
         Mockito.verify(session).getDeviceId();
         Mockito.verify(deviceService).getDeviceById(eq(deviceId));
-        Mockito.verifyZeroInteractions(userService, parentalControlService);
+        Mockito.verifyNoInteractions(userService, parentalControlService);
         Mockito.verify(deviceService, never()).updateDevice(any());
     }
 

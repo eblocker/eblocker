@@ -116,24 +116,24 @@ public class OpenVpnAddressListenerTest {
     public void badMesssage() {
         String message = "add me please";
         listener.process(message);
-        Mockito.verifyZeroInteractions(deviceService);
-        Mockito.verifyZeroInteractions(networkStateMachine);
+        Mockito.verifyNoInteractions(deviceService);
+        Mockito.verifyNoInteractions(networkStateMachine);
     }
 
     @Test
     public void missingDeviceId() {
         String message = "add 10.8.0.6";
         listener.process(message);
-        Mockito.verifyZeroInteractions(deviceService);
-        Mockito.verifyZeroInteractions(networkStateMachine);
+        Mockito.verifyNoInteractions(deviceService);
+        Mockito.verifyNoInteractions(networkStateMachine);
     }
 
     @Test
     public void badIpAddress() {
         String message = "add 1234 device:abcdef012345";
         listener.process(message);
-        Mockito.verifyZeroInteractions(deviceService);
-        Mockito.verifyZeroInteractions(networkStateMachine);
+        Mockito.verifyNoInteractions(deviceService);
+        Mockito.verifyNoInteractions(networkStateMachine);
     }
 
     @Test

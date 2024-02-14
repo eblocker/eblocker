@@ -67,8 +67,8 @@ public class DhcpBindListenerTest {
     public void dhcpChangeUnknownInterface() {
         dhcpBindListener.process("eth0 192.168.1.23 192.168.1.1 8.8.8.8,8.8.4.4");
         Mockito.verify(networkInterfaceWrapper, Mockito.never()).notifyIPAddressChanged(Mockito.any(Ip4Address.class));
-        Mockito.verifyZeroInteractions(dataSource);
-        Mockito.verifyZeroInteractions(eblockerDnsServer);
+        Mockito.verifyNoInteractions(dataSource);
+        Mockito.verifyNoInteractions(eblockerDnsServer);
     }
 
     // EB-1877: router reports 0.0.0.0 as secondary dns server
@@ -83,17 +83,17 @@ public class DhcpBindListenerTest {
     @Test
     public void noMessage() {
         dhcpBindListener.process(null);
-        Mockito.verifyZeroInteractions(networkInterfaceWrapper);
-        Mockito.verifyZeroInteractions(dataSource);
-        Mockito.verifyZeroInteractions(eblockerDnsServer);
+        Mockito.verifyNoInteractions(networkInterfaceWrapper);
+        Mockito.verifyNoInteractions(dataSource);
+        Mockito.verifyNoInteractions(eblockerDnsServer);
     }
 
     @Test
     public void messageFormatError() {
         dhcpBindListener.process("eth0 192.168.1.23 192.168.1.1");
-        Mockito.verifyZeroInteractions(networkInterfaceWrapper);
-        Mockito.verifyZeroInteractions(dataSource);
-        Mockito.verifyZeroInteractions(eblockerDnsServer);
+        Mockito.verifyNoInteractions(networkInterfaceWrapper);
+        Mockito.verifyNoInteractions(dataSource);
+        Mockito.verifyNoInteractions(eblockerDnsServer);
     }
 
     @Test

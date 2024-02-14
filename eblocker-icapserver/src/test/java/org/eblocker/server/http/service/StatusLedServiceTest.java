@@ -54,7 +54,7 @@ public class StatusLedServiceTest {
     public void setStatusWithoutHardware() throws IOException {
         StatusLedService service = createService(DEVICE_WITHOUT_LED_PROPERTIES);
         service.setStatus(ExecutionState.RUNNING);
-        Mockito.verifyZeroInteractions(telnetConnection);
+        Mockito.verifyNoInteractions(telnetConnection);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class StatusLedServiceTest {
     public void getDefaultBrightness() throws IOException {
         StatusLedService service = createService(DEVICE_WITHOUT_LED_PROPERTIES);
         Assert.assertEquals(1.0f, service.getBrightness(), 0.001);
-        Mockito.verifyZeroInteractions(telnetConnection);
+        Mockito.verifyNoInteractions(telnetConnection);
     }
 
     @Test

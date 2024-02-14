@@ -58,16 +58,17 @@ public class DhcpDiscoveryServiceTest {
                 null
         );
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String[]> captor = ArgumentCaptor.forClass(String[].class);
         Mockito.when(scriptRunner.startScript(Mockito.eq(DISCOVERY_COMMAND), captor.capture())).thenReturn(process);
 
         Set<String> dhcpServers = service.getDhcpServers();
 
         // check arguments
-        Assert.assertEquals(3, captor.getAllValues().size());
-        Assert.assertTrue(captor.getAllValues().stream().anyMatch(arg -> arg.equals("-w " + TIMEOUT)));
-        Assert.assertTrue(captor.getAllValues().stream().anyMatch(arg -> arg.matches("-h [0-9a-f]{12}")));
-        Assert.assertEquals(INTERFACE_NAME, captor.getAllValues().get(2));
+        String[] scriptArgs = captor.getValue();
+        Assert.assertEquals(3, scriptArgs.length);
+        Assert.assertEquals("-w " + TIMEOUT, scriptArgs[0]);
+        Assert.assertTrue(scriptArgs[1].matches("-h [0-9a-f]{12}"));
+        Assert.assertEquals(INTERFACE_NAME, scriptArgs[2]);
 
         Mockito.verify(deviceService).getDeviceById(Mockito.anyString());
 
@@ -78,7 +79,7 @@ public class DhcpDiscoveryServiceTest {
 
     @Test(expected = DhcpDiscoveryException.class)
     public void testDiscoveryProcessException() throws DhcpDiscoveryException, IOException {
-        Mockito.when(scriptRunner.startScript(Mockito.eq(DISCOVERY_COMMAND), Mockito.any())).thenThrow(IOException.class);
+        Mockito.when(scriptRunner.startScript(Mockito.eq(DISCOVERY_COMMAND), Mockito.any(String[].class))).thenThrow(IOException.class);
 
         service.getDhcpServers();
     }
@@ -87,7 +88,7 @@ public class DhcpDiscoveryServiceTest {
     public void testDiscoveryError() throws DhcpDiscoveryException, IOException, InterruptedException {
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(process.waitFor()).thenReturn(1);
-        Mockito.when(scriptRunner.startScript(Mockito.eq(DISCOVERY_COMMAND), Mockito.any())).thenReturn(process);
+        Mockito.when(scriptRunner.startScript(Mockito.eq(DISCOVERY_COMMAND), Mockito.any(String[].class))).thenReturn(process);
 
         service.getDhcpServers();
     }

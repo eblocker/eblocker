@@ -247,7 +247,7 @@ public class DeviceControllerImplTest {
 
         controller.deleteDevice(request, response);
 
-        Mockito.verifyZeroInteractions(networkStateMachine);
+        Mockito.verifyNoInteractions(networkStateMachine);
     }
 
     @Test

@@ -164,9 +164,9 @@ public class RegistrationServiceAvailabilityCheckTest {
 
         initService();
         Assert.assertTrue(registrationServiceAvailabilityCheck.isRegistrationAvailable());
-        Mockito.verifyZeroInteractions(httpClient);
-        Mockito.verifyZeroInteractions(registrationClient);
-        Mockito.verifyZeroInteractions(scriptRunner);
+        Mockito.verifyNoInteractions(httpClient);
+        Mockito.verifyNoInteractions(registrationClient);
+        Mockito.verifyNoInteractions(scriptRunner);
         Mockito.verify(scheduledExecutorService, Mockito.never()).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any(TimeUnit.class));
     }
 

@@ -77,7 +77,7 @@ public class UserAgentSpoofProcessorTest {
 
         processor.process(transaction);
 
-        Mockito.verifyZeroInteractions(headers);
+        Mockito.verifyNoInteractions(headers);
         Mockito.verify(transaction, Mockito.never()).setHeadersChanged(Mockito.anyBoolean());
     }
 }

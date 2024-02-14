@@ -64,7 +64,7 @@ class PinnedCertificateValidatorTest {
         Assertions.assertArrayEquals(new String[0], response.getErrorCertId());
         Assertions.assertArrayEquals(new String[0], response.getErrorReason());
 
-        Mockito.verifyZeroInteractions(nextValidator);
+        Mockito.verifyNoInteractions(nextValidator);
     }
 
     @Test
@@ -79,7 +79,7 @@ class PinnedCertificateValidatorTest {
         Assertions.assertArrayEquals(new String[0], response.getErrorCertId());
         Assertions.assertArrayEquals(new String[0], response.getErrorReason());
 
-        Mockito.verifyZeroInteractions(nextValidator);
+        Mockito.verifyNoInteractions(nextValidator);
     }
 
     @Test
@@ -102,6 +102,6 @@ class PinnedCertificateValidatorTest {
         Assertions.assertEquals(1, response.getErrorReason().length);
         Assertions.assertEquals(1, response.getErrorName().length);
 
-        Mockito.verifyZeroInteractions(nextValidator);
+        Mockito.verifyNoInteractions(nextValidator);
     }
 }

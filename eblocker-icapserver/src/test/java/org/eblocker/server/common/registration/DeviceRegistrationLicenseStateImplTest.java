@@ -41,7 +41,7 @@ public class DeviceRegistrationLicenseStateImplTest {
 
     @Test
     public void testIsRevoked() throws IOException, InterruptedException {
-        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any())).thenReturn("403");
+        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any(String[].class))).thenReturn("403");
         DeviceRegistrationLicenseState registrationState = new DeviceRegistrationLicenseStateImpl(commandRunner, "curl-fake", null, null, null, null, null);
 
         assertEquals(RegistrationState.INVALID, registrationState.checkCertificate());
@@ -49,7 +49,7 @@ public class DeviceRegistrationLicenseStateImplTest {
 
     @Test
     public void testIsNotRevoked() throws IOException, InterruptedException {
-        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any())).thenReturn("200");
+        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any(String[].class))).thenReturn("200");
         DeviceRegistrationLicenseState registrationState = new DeviceRegistrationLicenseStateImpl(commandRunner, "curl-fake", null, null, null, null, null);
 
         assertEquals(RegistrationState.OK, registrationState.checkCertificate());
@@ -57,7 +57,7 @@ public class DeviceRegistrationLicenseStateImplTest {
 
     @Test
     public void testUnknownResponse() throws IOException, InterruptedException {
-        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any())).thenReturn("asd sad -asdasdas-");
+        Mockito.when(commandRunner.runCommandWithOutput(Mockito.anyString(), Mockito.any(String[].class))).thenReturn("asd sad -asdasdas-");
         DeviceRegistrationLicenseState registrationState = new DeviceRegistrationLicenseStateImpl(commandRunner, "curl-fake", null, null, null, null, null);
 
         thrown.expect(EblockerException.class);

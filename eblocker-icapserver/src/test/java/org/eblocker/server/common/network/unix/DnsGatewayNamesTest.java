@@ -62,7 +62,7 @@ public class DnsGatewayNamesTest {
         dnsGatewayNames.check();
 
         Mockito.verify(dnsResolver).resolve(Mockito.anyString(), Mockito.anyList());
-        Mockito.verifyZeroInteractions(dnsServer);
+        Mockito.verifyNoInteractions(dnsServer);
         Mockito.verify(dataSource, Mockito.never()).setResolvedDnsGateway(Mockito.anyString());
     }
 
@@ -187,7 +187,7 @@ public class DnsGatewayNamesTest {
         dnsGatewayNames.check();
 
         Mockito.verify(dnsResolver).resolve(Mockito.anyString(), Mockito.anyList());
-        Mockito.verifyZeroInteractions(dnsServer);
+        Mockito.verifyNoInteractions(dnsServer);
         Mockito.verify(dataSource, Mockito.never()).setResolvedDnsGateway(Mockito.anyString());
     }
 
@@ -199,7 +199,7 @@ public class DnsGatewayNamesTest {
         dnsGatewayNames.check();
 
         Mockito.verify(dnsResolver).resolve(Mockito.anyString(), Mockito.anyList());
-        Mockito.verifyZeroInteractions(dnsServer);
+        Mockito.verifyNoInteractions(dnsServer);
         Mockito.verify(dataSource, Mockito.never()).setResolvedDnsGateway(Mockito.anyString());
     }
 
@@ -209,7 +209,7 @@ public class DnsGatewayNamesTest {
 
         dnsGatewayNames.check();
 
-        Mockito.verifyZeroInteractions(dnsServer);
+        Mockito.verifyNoInteractions(dnsServer);
         Mockito.verify(dataSource, Mockito.never()).setResolvedDnsGateway(Mockito.anyString());
     }
 }

@@ -1,8 +1,25 @@
+/*
+ * Copyright 2024 eBlocker Open Source UG (haftungsbeschraenkt)
+ *
+ * Licensed under the EUPL, Version 1.2 or - as soon they will be
+ * approved by the European Commission - subsequent versions of the EUPL
+ * (the "License"); You may not use this work except in compliance with
+ * the License. You may obtain a copy of the License at:
+ *
+ *   https://joinup.ec.europa.eu/page/eupl-text-11-12
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.blacklist.DomainBlockingService;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.DoctorDiagnosisResult;
@@ -63,6 +80,7 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.COOKIE_C
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DDG_FILTER_DISABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DDG_FILTER_ENABLED_OVERBLOCKING;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_BLOCKING_TEST_DOMAIN;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_MALWARE_FILTER_DISABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_BLOCK_MODE;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_WITHOUT_AUTO_CONTROLBAR;
@@ -89,12 +107,14 @@ import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.STANDARD
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.STANDARD_PATTERN_FILTER_ENABLED;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.SYSTEM_UPDATE_NEVER_RAN;
 import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.SYSTEM_UPDATE_RAN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.TEST_DOMAIN_HTTPS_WHITELISTED;
 
 @Singleton
 public class DoctorService {
     private static final String PING_IPV6_HOST = "ipv6.eblocker.org";
-    private static final String PING_IPV4_HOST = "1.1.1.1";
+    private static final String PING_IPV4_HOST = "ipv4.eblocker.org";
     private static final String DNS_CHECK_HOST = "eblocker.org";
+    private static final String TEST_DOMAIN = "eblocker.org"; // important for dashboard connection test, should not be blocked or HTTPS whitelisted
 
     private final NetworkServices networkServices;
     private final SslService sslService;
@@ -109,6 +129,7 @@ public class DoctorService {
     private final AppModuleService appModuleService;
     private final FilterManager filterManager;
     private final SecurityService securityService;
+    private final DomainBlockingService domainBlockingService;
     private Optional<Boolean> isProblematicRouter = Optional.empty();
 
     @Inject
@@ -116,7 +137,7 @@ public class DoctorService {
                          DeviceFactory deviceFactory,
                          DeviceService deviceService, ParentalControlService parentalControlService, ProblematicRouterDetection problematicRouterDetection,
                          ProductInfoService productInfoService, AppModuleService appModuleService, FilterManager filterManager,
-                         SecurityService securityService) {
+                         SecurityService securityService, DomainBlockingService domainBlockingService) {
         this.networkServices = networkServices;
         this.sslService = sslService;
         this.automaticUpdater = automaticUpdater;
@@ -130,6 +151,7 @@ public class DoctorService {
         this.appModuleService = appModuleService;
         this.filterManager = filterManager;
         this.securityService = securityService;
+        this.domainBlockingService = domainBlockingService;
         problematicRouterDetection.addObserver((observable, arg) -> {
             if (observable instanceof ProblematicRouterDetection && arg instanceof Boolean) {
                 isProblematicRouter = Optional.of((Boolean) arg);
@@ -260,6 +282,7 @@ public class DoctorService {
             }
 
             verifyPatternFilters(diagnoses);
+            verifyTestDomainNotWhitelisted(diagnoses);
         } else {
             diagnoses.add(new DoctorDiagnosisResult(RECOMMENDATION_NOT_FOLLOWED, EXPERT, HTTPS_NOT_ENABLED, ""));
         }
@@ -287,6 +310,12 @@ public class DoctorService {
             diagnoses.add(hintForEveryone(COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING));
         } else {
             diagnoses.add(hintForExpert(COOKIE_CONSENT_FILTER_DISABLED));
+        }
+    }
+
+    private void verifyTestDomainNotWhitelisted(List<DoctorDiagnosisResult> diagnoses) {
+        if (appModuleService.getAllUrlsFromEnabledModules().stream().anyMatch(TEST_DOMAIN::equalsIgnoreCase)) {
+            diagnoses.add(recommendationNotFollowedEveryone(TEST_DOMAIN_HTTPS_WHITELISTED));
         }
     }
 
@@ -370,6 +399,8 @@ public class DoctorService {
 
         diagnoses.add(checkDevicesUseControlBarAutoMode());
 
+        checkDevicesBlockingTestDomain(diagnoses);
+
         return diagnoses;
     }
 
@@ -406,6 +437,20 @@ public class DoctorService {
             return goodForEveryone(ALL_DEVICES_USE_AUTO_CONTROLBAR);
         } else {
             return recommendationNotFollowedEveryone(DEVICES_WITHOUT_AUTO_CONTROLBAR, stringify(nonAutoControlBarModeDevices));
+        }
+    }
+
+    /**
+     * Devices that block the testing domain (eblocker.org) will not be able to perform the
+     * dashboard connection test successfully.
+     */
+    private void checkDevicesBlockingTestDomain(List<DoctorDiagnosisResult> diagnoses) {
+        List<String> testDomainBlockingDevices = enabledDevices()
+                .filter(device -> domainBlockingService.isBlocked(device, TEST_DOMAIN).isBlocked())
+                .map(Device::getName)
+                .collect(Collectors.toList());
+        if (!testDomainBlockingDevices.isEmpty()) {
+            diagnoses.add(recommendationNotFollowedEveryone(DEVICES_BLOCKING_TEST_DOMAIN, stringify(testDomainBlockingDevices)));
         }
     }
 

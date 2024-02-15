@@ -391,7 +391,7 @@ public class SquidConfigControllerTest {
         verify(filteredClientsAcl).update();
         verify(mobileClientsAcl).update();
         verify(mobileClientsPrivateNetworkAccessAcl).update();
-        Mockito.verifyZeroInteractions(executorService);
+        Mockito.verifyNoInteractions(executorService);
     }
 
     @Test

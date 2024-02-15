@@ -286,7 +286,7 @@ public class UpdateTaskTest {
 
         updateTask.run();
 
-        Mockito.verifyZeroInteractions(httpClient);
+        Mockito.verifyNoInteractions(httpClient);
 
         ArgumentCaptor<ParentalControlFilterSummaryData> dataCaptor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);
         Mockito.verify(filterListsService).createFilterList(dataCaptor.capture(), Mockito.eq("blacklist"));
@@ -331,7 +331,7 @@ public class UpdateTaskTest {
 
         updateTask.run();
 
-        Mockito.verifyZeroInteractions(httpClient);
+        Mockito.verifyNoInteractions(httpClient);
 
         ArgumentCaptor<ParentalControlFilterSummaryData> dataCaptor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);
         Mockito.verify(filterListsService).updateFilterList(dataCaptor.capture(), Mockito.eq("blacklist"));

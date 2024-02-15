@@ -87,14 +87,14 @@ public class RequestHandlerTest {
     public void testNonBlockedDomain() {
         String response = request("10.10.10.99 http xkcd.org -");
         Assert.assertEquals("ERR", response);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
     public void testNonBlockedDomainSni() {
         String response = request("10.10.10.99 https - xkcd.org");
         Assert.assertEquals("ERR", response);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class RequestHandlerTest {
     public void testBlockedDomainSniWithProtocol() {
         String response = request("10.10.10.99 https - www.pouet.net");
         Assert.assertEquals("OK message=1,100,www.pouet.net,1,target", response);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
@@ -124,14 +124,14 @@ public class RequestHandlerTest {
     public void testMissingSniWithProtocol() {
         String response = request("10.10.10.90 - www.pouet.net -");
         Assert.assertEquals("ERR", response);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
     public void testMissingSniWithoutProtocol() {
         String response = request("10.10.10.90 https www.pouet.net -");
         Assert.assertEquals("ERR", response);
-        Mockito.verifyZeroInteractions(filterStatisticsService);
+        Mockito.verifyNoInteractions(filterStatisticsService);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class RequestHandlerTest {
     public void testNonBlockedDomainIsNotLogged() {
         String response = request("10.10.10.99 http xkcd.org -");
         Assert.assertEquals("ERR", response);
-        Mockito.verifyZeroInteractions(blockedDomainLog);
+        Mockito.verifyNoInteractions(blockedDomainLog);
     }
 
     private String request(String query) {

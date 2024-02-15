@@ -4,7 +4,8 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-top</artifactId>
-        <version>2.4.15</version>
+        <version>2.4.16</version>
+        <relativePath /><!-- this empty value just overwrites the default value ../pom.xml -->
     </parent>
     <groupId>org.eblocker</groupId>
     <artifactId>eblocker-parent</artifactId>

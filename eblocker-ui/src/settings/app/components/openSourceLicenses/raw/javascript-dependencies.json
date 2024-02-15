@@ -151,6 +151,7 @@
 {"name":"from2","version":"2.3.0","repository":"http://github.com/hughsk/from2","summary":"MIT"},
 {"name":"fs-write-stream-atomic","version":"1.0.10","repository":"https://github.com/npm/fs-write-stream-atomic","summary":"ISC"},
 {"name":"fs.realpath","version":"1.0.0","repository":"https://github.com/isaacs/fs.realpath","summary":"ISC"},
+{"name":"fsevents","version":"2.1.3","repository":"(none)","summary":"MIT"},
 {"name":"get-value","version":"2.0.6","repository":"https://github.com/jonschlinkert/get-value","summary":"MIT"},
 {"name":"glob","version":"7.2.0","repository":"https://github.com/isaacs/node-glob","summary":"ISC"},
 {"name":"glob-parent","version":"5.1.1","repository":"(none)","summary":"ISC"},

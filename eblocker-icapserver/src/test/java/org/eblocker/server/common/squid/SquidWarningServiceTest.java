@@ -88,8 +88,8 @@ public class SquidWarningServiceTest {
     public void testInitDisabled() {
         Mockito.when(dataSource.getSslRecordErrors()).thenReturn(true);
 
-        Mockito.verifyZeroInteractions(squidCacheLogReader);
-        Mockito.verifyZeroInteractions(scheduledExecutorService);
+        Mockito.verifyNoInteractions(squidCacheLogReader);
+        Mockito.verifyNoInteractions(scheduledExecutorService);
     }
 
     @Test

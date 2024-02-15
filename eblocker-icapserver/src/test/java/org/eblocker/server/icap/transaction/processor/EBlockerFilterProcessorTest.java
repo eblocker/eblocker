@@ -71,7 +71,7 @@ public class EBlockerFilterProcessorTest {
     public void testFilterDisabled() {
         Mockito.when(session.isPatternFiltersEnabled()).thenReturn(false);
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(filter);
+        Mockito.verifyNoInteractions(filter);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class EBlockerFilterProcessorTest {
         Assert.assertTrue(processor.process(transaction));
 
         Mockito.verify(transaction, Mockito.never()).block();
-        Mockito.verifyZeroInteractions(filter);
+        Mockito.verifyNoInteractions(filter);
         Mockito.verify(transaction, Mockito.never()).setDecision(Mockito.any());
         Mockito.verify(transaction, Mockito.never()).setFilterResult(Mockito.any());
     }

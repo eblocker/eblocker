@@ -91,7 +91,7 @@ public class ControlBarAliasUpdaterTest {
         Mockito.verify(networkInterfaceAliases).add("8.8.8.8", "255.255.255.255");
 
         // check task is still scheduled
-        Mockito.verifyZeroInteractions(tasks.get(0).future);
+        Mockito.verifyNoInteractions(tasks.get(0).future);
     }
 
     @Test

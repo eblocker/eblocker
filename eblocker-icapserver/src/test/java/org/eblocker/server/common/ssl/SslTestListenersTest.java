@@ -101,7 +101,7 @@ public class SslTestListenersTest {
     public void test() throws Exception {
         // check constructor registers callback and no listeners have been started
         Assert.assertNotNull(contextListener);
-        Mockito.verifyZeroInteractions(handlerFactory);
+        Mockito.verifyNoInteractions(handlerFactory);
 
         // sslcontext init callback
         contextListener.onEnable();

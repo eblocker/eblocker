@@ -69,7 +69,7 @@ public class SslTestRequestHandlerTest {
     @Test
     public void testRequestNoUserAgent() {
         HttpResponse response = handleRequest("/" + encodedDeviceId, null);
-        Mockito.verifyZeroInteractions(tracker);
+        Mockito.verifyNoInteractions(tracker);
         Assert.assertNull(response);
         Assert.assertFalse(embeddedChannel.isActive());
     }
@@ -78,14 +78,14 @@ public class SslTestRequestHandlerTest {
     public void testRequestUnknownDevice() {
         handleRequest("/device%3A000000000002", userAgent);
         Mockito.verify(deviceService).getDeviceById("device:000000000002");
-        Mockito.verifyZeroInteractions(tracker);
+        Mockito.verifyNoInteractions(tracker);
     }
 
     @Test
     public void testRequestMissingDevice() {
         handleRequest("/", userAgent);
-        Mockito.verifyZeroInteractions(deviceService);
-        Mockito.verifyZeroInteractions(tracker);
+        Mockito.verifyNoInteractions(deviceService);
+        Mockito.verifyNoInteractions(tracker);
     }
 
     private HttpResponse handleRequest(String uri, String userAgent) {

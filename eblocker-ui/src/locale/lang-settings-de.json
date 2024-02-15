@@ -1707,6 +1707,7 @@
                     "NOVICE": "Anfänger",
                     "EXPERT": "Experte"
                 },
+                "IN_PROGRESS": "Diagnose wird erstellt...",
                 "TABLE": {
                     "COLUMN": {
                         "SEVERITY": "Prio",
@@ -1762,7 +1763,9 @@
                         "DNS_TOR_MAY_LEAD_TO_ERRORS": "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Bitte beachte, dass dies zu Aussetzern führen kann.",
                         "ADMIN_PASSWORD_NOT_SET": "Es ist kein Administrator-Passwort gesetzt. Jeder mit Zugang zu deinem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
                         "MORE_INFO": "Mehr Information",
-                        "CLICK_FOR_MORE": "Klicke für Details."
+                        "CLICK_FOR_MORE": "Klicke für Details.",
+                        "DEVICES_BLOCKING_TEST_DOMAIN": "Auf folgenden Geräten wird der Funktionstest im Dashboard falsche Ergebnisse liefern, da die Domain 'eblocker.org' geblockt wird:",
+                        "TEST_DOMAIN_HTTPS_WHITELISTED": "Der Funktionstest im Dashboard wird falsche Ergebnisse liefern, da 'eblocker.org' als vertrauenswürdige Website konfiguriert ist."
                     }
                 }
             }

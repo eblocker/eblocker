@@ -75,7 +75,7 @@ public class VpnKeepAliveTest {
         keepAlive.start();
         Mockito.verify(executor).execute(executorCaptor.capture());
         executorCaptor.getValue().run();
-        Mockito.verifyZeroInteractions(callback);
+        Mockito.verifyNoInteractions(callback);
     }
 
     @Test(timeout = 5000)
@@ -98,7 +98,7 @@ public class VpnKeepAliveTest {
         keepAlive.start();
         Mockito.verify(executor).execute(executorCaptor.capture());
         executorCaptor.getValue().run();
-        Mockito.verifyZeroInteractions(callback);
+        Mockito.verifyNoInteractions(callback);
     }
 
     @Test(timeout = 5000)

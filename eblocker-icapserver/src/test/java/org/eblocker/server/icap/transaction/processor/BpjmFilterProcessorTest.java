@@ -96,7 +96,7 @@ public class BpjmFilterProcessorTest {
         setUpProfileMock(false, Collections.singleton(BPJM_FILTER_ID));
         Transaction transaction = createTransaction(BLOCKED_URL, true);
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(bpjmFilterService);
+        Mockito.verifyNoInteractions(bpjmFilterService);
         Mockito.verify(transaction, Mockito.never()).redirect(Mockito.anyString());
     }
 
@@ -105,7 +105,7 @@ public class BpjmFilterProcessorTest {
         setUpProfileMock(true, Collections.singleton(BPJM_FILTER_ID));
         Transaction transaction = createTransaction(BLOCKED_URL, false);
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(bpjmFilterService);
+        Mockito.verifyNoInteractions(bpjmFilterService);
         Mockito.verify(transaction, Mockito.never()).redirect(Mockito.anyString());
     }
 
@@ -123,7 +123,7 @@ public class BpjmFilterProcessorTest {
         setUpProfileMock(true, Collections.singleton(OTHER_FILTER_ID));
         Transaction transaction = createTransaction(BLOCKED_URL, true);
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(bpjmFilterService);
+        Mockito.verifyNoInteractions(bpjmFilterService);
         Mockito.verify(transaction, Mockito.never()).redirect(Mockito.anyString());
     }
 
@@ -131,7 +131,7 @@ public class BpjmFilterProcessorTest {
     public void testNonBlockedUrlFilteringPatternsDisabled() {
         Transaction transaction = createTransaction(NON_BLOCKED_URL, false);
         Assert.assertTrue(processor.process(transaction));
-        Mockito.verifyZeroInteractions(bpjmFilterService);
+        Mockito.verifyNoInteractions(bpjmFilterService);
         Mockito.verify(transaction, Mockito.never()).redirect(Mockito.anyString());
     }
 

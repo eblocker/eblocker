@@ -70,7 +70,7 @@ public class UpdateStatusObserverTest {
         Mockito.reset(systemStatusService);
         Mockito.when(systemUpdater.getUpdateStatus()).thenReturn(SystemUpdater.State.UPDATING);
         runnable.getValue().run();
-        Mockito.verifyZeroInteractions(systemStatusService);
+        Mockito.verifyNoInteractions(systemStatusService);
 
         // ... now it has finished updating
         Mockito.reset(systemStatusService);

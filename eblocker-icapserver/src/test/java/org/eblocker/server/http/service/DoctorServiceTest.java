@@ -31,7 +31,6 @@ import org.eblocker.server.http.security.SecurityService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

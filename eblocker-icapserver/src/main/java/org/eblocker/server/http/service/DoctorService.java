@@ -314,7 +314,7 @@ public class DoctorService {
     }
 
     private void verifyTestDomainNotWhitelisted(List<DoctorDiagnosisResult> diagnoses) {
-        if (appModuleService.getAllUrlsFromEnabledModules().stream().anyMatch(s -> TEST_DOMAIN.equalsIgnoreCase(s))) {
+        if (appModuleService.getAllUrlsFromEnabledModules().stream().anyMatch(TEST_DOMAIN::equalsIgnoreCase)) {
             diagnoses.add(recommendationNotFollowedEveryone(TEST_DOMAIN_HTTPS_WHITELISTED));
         }
     }

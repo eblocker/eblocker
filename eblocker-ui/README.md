@@ -20,3 +20,12 @@ or set an alias in your shell:
 
 If you run the Icapserver as described in the [eblocker README](../README.md),
 you should be able to access the UI at [localhost:3000](http://localhost:3000/).
+
+### Build package for debugging
+
+To quickly build a package that is better suited for debugging on the
+eBlocker, run:
+
+    mvn -am -pl eblocker-ui -P quickrun clean package
+
+The unit tests are not run and the JavaScript code is not obfuscated.

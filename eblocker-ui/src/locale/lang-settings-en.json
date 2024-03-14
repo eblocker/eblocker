@@ -2799,6 +2799,10 @@
                 "REBOOT" : "Reboot",
                 "SHUTDOWN" : "Shutdown"
             },
+            "ERROR" : {
+                "REBOOT" : "The eBlocker cannot be rebooted currently.",
+                "SHUTDOWN" : "The eBlocker cannot be shut down currently."
+            },
             "EXPLANATION" : "To reset or switch off the eBlocker you can reboot or shutdown.",
             "LABEL" : "Reboot"
         },

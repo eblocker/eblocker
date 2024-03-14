@@ -20,7 +20,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(DialogService, SystemService, StateService, STATES) {
+function Controller(DialogService, SystemService, StateService, NotificationService, logger, STATES) {
     'ngInject';
     'use strict';
 
@@ -38,7 +38,7 @@ function Controller(DialogService, SystemService, StateService, STATES) {
     }
 
     function confirmShutdownOrReboot(event, rebooting) {
-        const okAction = rebooting ? SystemService.reboot : SystemService.shutdown;
+        const okAction = function() { return performShutdownOrReboot(rebooting); };
         const cancel = function() {};
         SystemService.setCurrentProcess(rebooting ? 'RESTART' : 'SHUTDOWN');
         DialogService.shutdownOrReboot(event, rebooting, okAction, cancel).then(goToSystemPending);
@@ -48,4 +48,17 @@ function Controller(DialogService, SystemService, StateService, STATES) {
         StateService.goToState(STATES.STAND_BY);
     }
 
+    function performShutdownOrReboot(rebooting) {
+        const action = rebooting ? SystemService.reboot : SystemService.shutdown;
+        return action().then(function(response) {
+            return response;
+        }, function error(reason) {
+            logger.error('Could not shut down or reboot eBlocker', reason);
+            NotificationService.error('ADMINCONSOLE.STATUS.ERROR.' +
+                                      (rebooting ? 'REBOOT' : 'SHUTDOWN'), reason);
+            return true;
+            // the shutdown/reboot was probably denied because a system update
+            // is in progress. We continue and go to the standby state.
+        });
+    }
 }

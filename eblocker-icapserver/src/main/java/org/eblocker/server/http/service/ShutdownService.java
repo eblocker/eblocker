@@ -76,15 +76,25 @@ public class ShutdownService {
     }
 
     public void shutdown() {
+        ensureNotUpdating();
         LOG.info("eBlocker will SHUTDOWN now!");
         shutdownOrReboot(false);
         systemStatusService.setExecutionState(ExecutionState.SHUTTING_DOWN);
     }
 
     public void reboot() {
+        ensureNotUpdating();
         LOG.info("eBlocker will REBOOT now!");
         shutdownOrReboot(true);
         systemStatusService.setExecutionState(ExecutionState.SHUTTING_DOWN_FOR_REBOOT);
+    }
+
+    private void ensureNotUpdating() {
+        if (systemStatusService.getExecutionState() == ExecutionState.UPDATING) {
+            String msg = "Cannot reboot/shut down eBlocker while it is updating.";
+            LOG.error(msg);
+            throw new EblockerException(msg);
+        }
     }
 
     /**

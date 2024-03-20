@@ -90,6 +90,7 @@ public class ShutdownService {
     }
 
     private void ensureNotUpdating() {
+
         if (systemStatusService.getExecutionState() == ExecutionState.UPDATING) {
             String msg = "Cannot reboot/shut down eBlocker while it is updating.";
             LOG.error(msg);

@@ -61,7 +61,8 @@ public class UpdateStatusObserver {
         systemStatusService.setExecutionState(ExecutionState.UPDATING);
         checkingTask = scheduledExecutorService.scheduleWithFixedDelay(() -> {
             try {
-                if (updater.getUpdateStatus() != SystemUpdater.State.UPDATING) {
+                SystemUpdater.State state = updater.getUpdateStatus();
+                if (state != SystemUpdater.State.UPDATING && state != SystemUpdater.State.RECOVERING) {
                     systemStatusService.setExecutionState(stateBeforeUpdating);
                     checkingTask.cancel(true);
                     checkingTask = null;

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+# Copyright 2024 eBlocker Open Source UG (haftungsbeschraenkt)
 #
 # Licensed under the EUPL, Version 1.2 or - as soon they will be
 # approved by the European Commission - subsequent versions of the EUPL
@@ -16,8 +16,25 @@
 # permissions and limitations under the License.
 #
 
-LOG_STDOUT=/var/log/eblocker/install-eblocker-updates.log
-LOG_STDERR=/var/log/eblocker/install-eblocker-updates.errors.log
+ERROR_TAG="eBlocker_Update_Recovery_Error"
 
-/opt/eblocker-icap/bin/install-eblocker-updates.sh >$LOG_STDOUT 2>$LOG_STDERR &
-disown
+# Minimal path needed for apt-get
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+# We have no terminal
+export DEBIAN_FRONTEND=noninteractive
+
+echo "Attempting update recovery"
+date
+
+dpkg --force-confold --force-confdef --configure -a || {
+    echo "$ERROR_TAG: Running 'dpkg --configure -a' failed." >&2
+    exit 1
+}
+
+# Recovery seems to have been successful, remove update error log:
+rm -f /var/log/eblocker/install-eblocker-updates.errors.log
+
+# A reboot ensures that all services (which might have been re-configured) are restarted:
+sync
+reboot

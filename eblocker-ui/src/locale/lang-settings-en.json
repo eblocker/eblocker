@@ -3103,6 +3103,11 @@
             "TOOLTIP" : {
                 "EDIT_AUTO_TIME" : "Edit time range for the automatic updates."
             },
+            "UPDATES_FAILED": {
+                "HEADER": "Updates failed",
+                "TEXT": "The last update failed. Please complete the update to resolve the problem.",
+                "RECOVER": "Complete the update and reboot"
+            },
             "UPDATES_NOT_AVAILABLE" : {
                 "EXPIRED_TEXT1" : "The update license expired.",
                 "EXPIRED_TEXT2" : "Automatic updates are not available at this time.",

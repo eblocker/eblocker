@@ -16,4 +16,4 @@
 # permissions and limitations under the License.
 #
 
-exec pgrep -f /opt/eblocker-icap/bin/install-eblocker-updates.sh
+exec pgrep -f '^/bin/bash /opt/eblocker-icap/bin/install-eblocker-updates.sh'

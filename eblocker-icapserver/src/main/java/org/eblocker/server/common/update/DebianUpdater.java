@@ -51,6 +51,9 @@ public class DebianUpdater implements SystemUpdater {
     private final String updatesDownloadRunningCommand;
     private final String updatesCheckCommand;
     private final String updatesRunningInfoCommand;
+    private final String updatesFailedCommand;
+    private final String updatesRecoveryStartCommand;
+    private final String updatesRecoveryRunningCommand;
     private final DataSource dataSource;
     private LocalDateTime lastUpdate;
     private LoggingProcess updatesCheckRunner;
@@ -76,6 +79,9 @@ public class DebianUpdater implements SystemUpdater {
                          @Named("updates.downloadRunning.command") String updatesDownloadRunningCommand,
                          @Named("updates.check.command") String updatesCheckCommand,
                          @Named("updates.running.info.command") String updatesRunningInfoCommand,
+                         @Named("updates.failed.command") String updatesFailedCommand,
+                         @Named("updates.recovery.start.command") String updatesRecoveryStartCommand,
+                         @Named("updates.recovery.running.command") String updatesRecoveryRunningCommand,
                          @Named("pin.eblocker-lists.command") String pinEblockerListsCommand,
                          @Named("unpin.eblocker-lists.command") String unpinEblockerListsCommand,
                          @Named("eblocker-lists.pinning.filename") String eBlockerListsPinningFilename,
@@ -91,6 +97,9 @@ public class DebianUpdater implements SystemUpdater {
         this.updatesDownloadRunningCommand = updatesDownloadRunningCommand;
         this.updatesCheckCommand = updatesCheckCommand;
         this.updatesRunningInfoCommand = updatesRunningInfoCommand;
+        this.updatesFailedCommand = updatesFailedCommand;
+        this.updatesRecoveryStartCommand = updatesRecoveryStartCommand;
+        this.updatesRecoveryRunningCommand = updatesRecoveryRunningCommand;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.lastUpdate = dataSource.getLastUpdateTime();
         this.pinEblockerListsCommand = pinEblockerListsCommand;
@@ -114,6 +123,17 @@ public class DebianUpdater implements SystemUpdater {
             updateStatusObserver.updateStarted(this);
         } else {
             log.info("There are currently updates or downloads running...");
+        }
+    }
+
+    @Override
+    public synchronized void startUpdateRecovery() throws IOException, InterruptedException {
+        State state = getUpdateStatus();
+        if (state == State.IDLING) {
+            scriptRunner.runScript(updatesRecoveryStartCommand);
+            updateStatusObserver.updateStarted(this);
+        } else {
+            log.error("Expected updating state to be IDLING. Could not start recovery from state {}", state);
         }
     }
 
@@ -144,6 +164,11 @@ public class DebianUpdater implements SystemUpdater {
 
         if (updatesCheckRunner != null && updatesCheckRunner.isAlive()) {
             return State.CHECKING;
+        }
+
+        returnCode = scriptRunner.runScript(updatesRecoveryRunningCommand);
+        if (returnCode == 0) {
+            return State.RECOVERING;
         }
 
         return State.IDLING;
@@ -227,6 +252,7 @@ public class DebianUpdater implements SystemUpdater {
         return updateProgress;
     }
 
+
     @Override
     public boolean invalidLicense() {
         RegistrationState state = deviceRegistrationProperties.getRegistrationState();
@@ -280,6 +306,7 @@ public class DebianUpdater implements SystemUpdater {
         status.setUpdating(state == State.UPDATING);
         status.setChecking(state == State.CHECKING);
         status.setDownloading(state == State.DOWNLOADING);
+        status.setRecovering(state == State.RECOVERING);
 
         status.setLastAutomaticUpdate(formatDate(getLastUpdateTime()));
 
@@ -288,7 +315,14 @@ public class DebianUpdater implements SystemUpdater {
 
         status.setDisabled(invalidLicense());
 
+        status.setLastUpdateAttemptFailed(lastUpdateAttemptFailed());
+
         return status;
+    }
+
+    private boolean lastUpdateAttemptFailed() throws IOException, InterruptedException {
+        int returnCode = scriptRunner.runScript(updatesFailedCommand);
+        return returnCode == 0;
     }
 
     private String formatDate(LocalDateTime time) {

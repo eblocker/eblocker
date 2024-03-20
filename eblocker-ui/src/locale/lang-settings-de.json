@@ -3103,6 +3103,11 @@
             "TOOLTIP": {
                 "EDIT_AUTO_TIME": "Bearbeite hier den zeitlichen Bereich für die automatische Aktualisierungen."
             },
+            "UPDATES_FAILED": {
+                "HEADER": "Aktualisierung fehlgeschlagen",
+                "TEXT": "Die letzte Aktualisierung ist fehlgeschlagen. Bitte schließen Sie die Aktualisierung ab, um das Problem zu beheben.",
+                "RECOVER": "Aktualisierung abschließen und neu starten"
+            },
             "UPDATES_NOT_AVAILABLE": {
                 "EXPIRED_TEXT1": "Die Aktualisierungslizenz ist abgelaufen.",
                 "EXPIRED_TEXT2": "Automatische Aktualisierungen stehen zur Zeit nicht zur Verfügung.",

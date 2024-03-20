@@ -21,15 +21,17 @@
 # Its purpose is to reboot the machine when apt-get has finished.
 
 LOGFILE=/var/log/eblocker/reboot_after_update.log
+UPDATES_RUNNING=/opt/eblocker-icap/scripts/updates-running
+RECOVERY_RUNNING=/opt/eblocker-icap/scripts/updates-recovery-running
 
-echo "reboot_after_udpate started" >> $LOGFILE
+echo "reboot_after_udpate started" > $LOGFILE
 date >> $LOGFILE
 
-while pgrep apt-get; do
-    echo "apt-get is still running. Waiting for it to finish..." >> $LOGFILE
+while $UPDATES_RUNNING || $RECOVERY_RUNNING; do
+    echo "updates (or recovery) are still running. Waiting for them to finish..." >> $LOGFILE
     sleep 3
 done
 
-echo "apt-get is done. Rebooting..." >> $LOGFILE
+echo "updates are done. Rebooting..." >> $LOGFILE
 
 reboot

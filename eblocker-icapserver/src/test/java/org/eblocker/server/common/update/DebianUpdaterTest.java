@@ -50,6 +50,9 @@ public class DebianUpdaterTest {
     private final String updatesDownloadRunningCommand = "updatesDownloadRunningCommand";
     private final String updatesCheckCommand = "updatesCheckCommand";
     private final String updatesRunningInfoCommand = "updatesRunningInfoCommand";
+    private final String updatesFailedCommand = "updatesFailedCommand";
+    private final String updatesRecoveryStartCommand = "updatesRecoveryStartCommand";
+    private final String updatesRecoveryRunningCommand = "updatesRecoveryRunningCommand";
     private final LocalDateTime lastUpdateTime = LocalDateTime.of(2017, 01, 01, 12, 00);
     private final String availableUpdatesString1 = "Inst libtiff5 [4.0.6-1] (4.0.6-1ubuntu0.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])\n"
             + "Conf libtiff5 (4.0.6-1ubuntu0.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])\n";
@@ -97,6 +100,9 @@ public class DebianUpdaterTest {
                 updatesDownloadRunningCommand,
                 updatesCheckCommand,
                 updatesRunningInfoCommand,
+                updatesFailedCommand,
+                updatesRecoveryStartCommand,
+                updatesRecoveryRunningCommand,
                 pinEblockerListsCommand,
                 unpinEblockerListsCommand,
                 eBlockerListsPinningFilename,
@@ -124,8 +130,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartUpdateAlreadyRunningUpdate() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(0);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(true, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startUpdate();
@@ -136,8 +141,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartUpdateAlreadyRunningDownload() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(0);
+        prepareScriptRunner(false, false, true);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startUpdate();
@@ -148,8 +152,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartUpdateSuccessfull() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startUpdate();
@@ -173,8 +176,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartDownloadAlreadyRunningUpdate() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(0);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(true, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startDownload();
@@ -185,8 +187,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartDownloadAlreadyRunningDownload() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(0);
+        prepareScriptRunner(false, false, true);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startDownload();
@@ -197,13 +198,32 @@ public class DebianUpdaterTest {
     @Test
     public void testStartDownloadSuccessfull() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.startDownload();
 
         Mockito.verify(scriptRunner).runScript(updatesDownloadStartCommand);
+    }
+
+    @Test
+    public void testStartRecoveryAlreadyUpdating() throws IOException, InterruptedException {
+        prepareScriptRunner(true, false, false);
+
+        DebianUpdater debianUpdate = createDebianUpdate();
+        debianUpdate.startUpdateRecovery();
+
+        Mockito.verify(scriptRunner, Mockito.times(0)).runScript(updatesRecoveryStartCommand);
+    }
+
+    @Test
+    public void testStartRecovery() throws IOException, InterruptedException {
+        prepareScriptRunner(false, false, false);
+
+        DebianUpdater debianUpdate = createDebianUpdate();
+        debianUpdate.startUpdateRecovery();
+
+        Mockito.verify(scriptRunner).runScript(updatesRecoveryStartCommand);
     }
 
     @Test
@@ -220,8 +240,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdatesAvailableAlreadyRunningUpdate() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(0);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(true, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.updatesAvailable();
@@ -232,8 +251,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdatesAvailableAlreadyRunningDownload() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(0);
+        prepareScriptRunner(false, false, true);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.updatesAvailable();
@@ -244,8 +262,7 @@ public class DebianUpdaterTest {
     @Test
     public void testStartUpdatesAvailableCheck() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
         debianUpdate.updatesAvailable();
@@ -256,8 +273,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdatesAvailableYes() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(process.exitValue()).thenReturn(0);
@@ -279,8 +295,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdatesAvailableWhileCheckIsRunning() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(process.isAlive()).thenReturn(true);
@@ -295,8 +310,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdatesAvailableNo() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(process.exitValue()).thenReturn(1);
@@ -310,8 +324,7 @@ public class DebianUpdaterTest {
 
     @Test
     public void testGetUpdateStatesUpdating() throws IOException, InterruptedException {
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(0);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(true, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
@@ -320,8 +333,7 @@ public class DebianUpdaterTest {
 
     @Test
     public void testGetUpdateStatesDownloading() throws IOException, InterruptedException {
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(0);
+        prepareScriptRunner(false, false, true);
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
@@ -331,8 +343,7 @@ public class DebianUpdaterTest {
     @Test
     public void testGetUpdateStatesChecking() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         LoggingProcess updateCheckRunner = Mockito.mock(LoggingProcess.class);
         Mockito.when(updateCheckRunner.isAlive()).thenReturn(true);
@@ -346,8 +357,7 @@ public class DebianUpdaterTest {
 
     @Test
     public void testGetUpdateStatesIdling() throws IOException, InterruptedException {
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false, false, false);
 
         DebianUpdater debianUpdate = createDebianUpdate();
 
@@ -364,6 +374,15 @@ public class DebianUpdaterTest {
     }
 
     @Test
+    public void testGetUpdateStatesRecovering() throws IOException, InterruptedException {
+        prepareScriptRunner(false, true, false);
+
+        DebianUpdater debianUpdate = createDebianUpdate();
+
+        assertEquals(SystemUpdater.State.RECOVERING, debianUpdate.getUpdateStatus());
+    }
+
+    @Test
     public void testUpdateProgressNeverRun() throws IOException, InterruptedException {
         DebianUpdater debianUpdate = createDebianUpdate();
 
@@ -373,8 +392,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdateProgressAlreadyFinished() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false ,false, false);
 
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(scriptRunner.startScript(updatesRunningInfoCommand)).thenReturn(process);
@@ -394,8 +412,7 @@ public class DebianUpdaterTest {
     @Test
     public void testUpdateProgressRunning() throws IOException, InterruptedException {
         Mockito.when(deviceRegistrationProperties.isSubscriptionValid()).thenReturn(true);
-        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(1);
-        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(1);
+        prepareScriptRunner(false ,false, false);
 
         LoggingProcess process = Mockito.mock(LoggingProcess.class);
         Mockito.when(process.isAlive()).thenReturn(true);
@@ -457,5 +474,11 @@ public class DebianUpdaterTest {
         debianUpdate.unpinEblockerListsPackage();
 
         Mockito.verify(scriptRunner).runScript(unpinEblockerListsCommand);
+    }
+
+    void prepareScriptRunner(boolean updating, boolean recovering, boolean downloading) throws IOException, InterruptedException {
+        Mockito.when(scriptRunner.runScript(updatesRunningCommand)).thenReturn(updating ? 0 : 1);
+        Mockito.when(scriptRunner.runScript(updatesRecoveryRunningCommand)).thenReturn(recovering ? 0 : 1);
+        Mockito.when(scriptRunner.runScript(updatesDownloadRunningCommand)).thenReturn(downloading ? 0 : 1);
     }
 }

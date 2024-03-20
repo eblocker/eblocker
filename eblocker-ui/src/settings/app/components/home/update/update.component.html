@@ -7,6 +7,27 @@
 
     <div layout-padding layout-margin></div>
 
+    <div class="config-frame md-whiteframe-z1" layout="column" ng-if="vm.lastUpdateAttemptFailed">
+
+        <h4>{{'ADMINCONSOLE.UPDATE.UPDATES_FAILED.HEADER' | translate}}</h4>
+
+        <div layout="row" layout-xs="column" layout-align="start center" layout-align-xs="center center">
+            <md-icon class="content-error" md-svg-src="/img/icons/ic_error.svg"></md-icon>
+            <p style="margin-left: 15px;">{{ 'ADMINCONSOLE.UPDATE.UPDATES_FAILED.TEXT' | translate }}</p>
+        </div>
+
+        <div layout="row" layout-xs="column" layout-align="start center" layout-align-xs="center center">
+            <div>
+                <md-button class="md-raised md-secondary"
+                           style="margin-left: 0;"
+                           ng-click="vm.startUpdateRecovery()"
+                           ng-disabled="!vm.isDeviceReady()">
+                    {{'ADMINCONSOLE.UPDATE.UPDATES_FAILED.RECOVER' | translate}}
+                </md-button>
+            </div>
+        </div>
+    </div>
+
     <div class="config-frame md-whiteframe-z1">
 
         <!-- Label / value: eBlocker OS, filter version, license valid till -->
@@ -169,5 +190,4 @@
         </div>
 
     </div>
-
 </div>

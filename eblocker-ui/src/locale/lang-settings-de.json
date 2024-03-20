@@ -2800,7 +2800,7 @@
                 "SHUTDOWN": "Ausschalten"
             },
             "ERROR" : {
-                "REBOOT" : "Der eBlocker kann momentan nicht neu gestarted werden.",
+                "REBOOT" : "Der eBlocker kann momentan nicht neu gestartet werden.",
                 "SHUTDOWN" : "Der eBlocker kann momentan nicht ausgeschaltet werden."
             },
             "EXPLANATION": "eBlocker ausschalten oder neu starten.",

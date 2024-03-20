@@ -21,12 +21,4 @@
         <developerConnection>scm:git:git@github.com:eblocker/eblocker.git</developerConnection>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>eblocker</id>
-            <name>GitHub Packages</name>
-            <!--suppress UnresolvedMavenProperty -->
-            <url>https://maven.pkg.github.com/${githubRepository}</url>
-        </repository>
-    </distributionManagement>
 </project>

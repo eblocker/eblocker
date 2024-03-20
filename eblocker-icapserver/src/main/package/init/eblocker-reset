@@ -113,17 +113,24 @@ EOF
     sync
 }
 
+if [ ! -e $THUMBDRIVE_DEVICE ]; then
+    echo "eBlocker reset functions unavailable: $THUMBDRIVE_DEVICE does not exist."
+    exit 0
+fi
 
-if [ -e $THUMBDRIVE_DEVICE ]; then
-    if mount $THUMBDRIVE_DEVICE $MOUNT_DIR; then
-	if [ -e $EBLOCKER_RESET_FILE ]; then
-	    perform_factory_reset
-	elif [ -e $EBLOCKER_SELFCHECK_FILE ]; then
-	    perform_self_check
-	elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
-	    perform_update_recovery
-	else
-            perform_status_report
-	fi
+if findmnt -rno SOURCE $THUMBDRIVE_DEVICE; then
+    echo "eBlocker reset functions unavailable: $THUMBDRIVE_DEVICE is already mounted."
+    exit 0
+fi
+
+if mount $THUMBDRIVE_DEVICE $MOUNT_DIR; then
+    if [ -e $EBLOCKER_RESET_FILE ]; then
+	perform_factory_reset
+    elif [ -e $EBLOCKER_SELFCHECK_FILE ]; then
+	perform_self_check
+    elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
+	perform_update_recovery
+    else
+        perform_status_report
     fi
 fi

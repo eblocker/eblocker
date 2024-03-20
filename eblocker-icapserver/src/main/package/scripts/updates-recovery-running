@@ -16,8 +16,4 @@
 # permissions and limitations under the License.
 #
 
-LOG_STDOUT=/var/log/eblocker/install-eblocker-updates.log
-LOG_STDERR=/var/log/eblocker/install-eblocker-updates.errors.log
-
-/opt/eblocker-icap/bin/install-eblocker-updates.sh >$LOG_STDOUT 2>$LOG_STDERR &
-disown
+exec pgrep -f '^/bin/bash /opt/eblocker-icap/bin/recover-eblocker-updates.sh'

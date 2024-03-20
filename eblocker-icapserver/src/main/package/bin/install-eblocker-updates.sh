@@ -16,6 +16,8 @@
 # permissions and limitations under the License.
 #
 
+ERROR_TAG="eBlocker_Update_Error"
+
 # Minimal path needed for apt-get
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
@@ -30,7 +32,7 @@ if [ $? -eq 0 ]; then
 fi
 
 apt-get -y update || {
-    echo "ERROR: Could not run apt-get update" >&2
+    echo "$ERROR_TAG: Could not run apt-get update" >&2
     exit 1
 }
 
@@ -38,11 +40,17 @@ apt-get -y update || {
 CHECK_CMD='apt-get -y --just-print dist-upgrade'
 $CHECK_CMD | egrep '^Remv\s+(eblocker-icapserver|eblocker-ui)'
 if [ $? -ne 1 ]; then
-    echo "ERROR: Could not update. Cannot allow removal of eblocker-icapserver or eblocker-ui." >&2
+    echo "$ERROR_TAG: Could not update. Cannot allow removal of eblocker-icapserver or eblocker-ui." >&2
     echo "Output of '$CHECK_CMD':" >&2
     $CHECK_CMD >&2
     exit 1
 fi
 
 # Perform the upgrade
-apt-get -y dist-upgrade && apt-get clean && sleep 30
+apt-get -y dist-upgrade || {
+    echo "$ERROR_TAG: Could not run apt-get dist-upgrade" >&2
+    exit 1
+}
+
+apt-get clean
+sync

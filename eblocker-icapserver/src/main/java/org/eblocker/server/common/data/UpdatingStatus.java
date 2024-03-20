@@ -25,10 +25,12 @@ public class UpdatingStatus {
     private boolean updating = false;
     private boolean downloading = false;
     private boolean checking = false;
+    private boolean recovering = false;
     private boolean updatesAvailable = false;
     private boolean automaticUpdatesActivated = false;
     private boolean automaticUpdatesAllowed = false;
     private boolean disabled = false;
+    private boolean lastUpdateAttemptFailed = false;
     private String lastAutomaticUpdate = "";
     private String nextAutomaticUpdate = "";
     private String projectVersion;
@@ -58,6 +60,11 @@ public class UpdatingStatus {
     @JsonProperty
     public boolean isChecking() {
         return checking;
+    }
+
+    @JsonProperty
+    public boolean isRecovering() {
+        return recovering;
     }
 
     @JsonProperty
@@ -118,6 +125,15 @@ public class UpdatingStatus {
         return this.updateablePackages;
     }
 
+    @JsonProperty
+    public boolean isLastUpdateAttemptFailed() {
+        return lastUpdateAttemptFailed;
+    }
+
+    public void setLastUpdateAttemptFailed(boolean lastUpdateAttemptFailed) {
+        this.lastUpdateAttemptFailed = lastUpdateAttemptFailed;
+    }
+
     public void setListsPacketVersion(String listsPacketVersion) {
         this.listsPacketVersion = listsPacketVersion;
     }
@@ -149,6 +165,10 @@ public class UpdatingStatus {
 
     public void setChecking(boolean checking) {
         this.checking = checking;
+    }
+
+    public void setRecovering(boolean recovering) {
+        this.recovering = recovering;
     }
 
     public void setDisabled(boolean disabled) {

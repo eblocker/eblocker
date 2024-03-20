@@ -27,11 +27,11 @@ import java.util.List;
  * Runs system updates. Only one instance should exist.
  * <p>
  * System updates usually take a few seconds (or minutes), so this is an asynchronous interface.
- * You can start an update and ask if an update is in progress. Updates can also be cancelled.
+ * You can start an update and ask if an update is in progress.
  */
 public interface SystemUpdater {
     public enum State {
-        IDLING, UPDATING, CANCELLING_UPDATE, DOWNLOADING, CHECKING;
+        IDLING, UPDATING, DOWNLOADING, CHECKING, RECOVERING;
     }
 
     /**
@@ -43,6 +43,11 @@ public interface SystemUpdater {
      * @throws EblockerException
      */
     void startUpdate() throws IOException, InterruptedException, EblockerException;
+
+    /**
+     * Start the update recovery process.
+     */
+    void startUpdateRecovery() throws IOException, InterruptedException;
 
     /**
      * @return the update state

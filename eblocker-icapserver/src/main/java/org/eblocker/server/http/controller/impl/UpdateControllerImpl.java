@@ -111,9 +111,14 @@ public class UpdateControllerImpl implements UpdateController {
     @Override
     public UpdatingStatus setUpdatingStatus(Request request, Response response) throws IOException, InterruptedException {
         UpdatingStatus status = request.getBodyAs(UpdatingStatus.class);
-        if (status.isUpdating() && systemUpdater.getUpdateStatus() == State.IDLING) {
-            systemUpdater.startUpdate();
-            status.setUpdating(true);
+        if (systemUpdater.getUpdateStatus() == State.IDLING) {
+            if (status.isUpdating()) {
+                systemUpdater.startUpdate();
+                status.setUpdating(true);
+            } else if (status.isRecovering()) {
+                systemUpdater.startUpdateRecovery();
+                status.setRecovering(true);
+            }
         }
         return status;
     }

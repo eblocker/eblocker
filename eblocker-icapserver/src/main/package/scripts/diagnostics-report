@@ -221,6 +221,9 @@ FILE=$OUT_DIR/eblocker-status.log
 
 ### Copy some log files to make them readable by user icapd ###
     cp /var/log/eblocker/install-eblocker-updates.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/eblocker/install-eblocker-updates.errors.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/eblocker/recover-eblocker-updates.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/eblocker/recover-eblocker-updates.errors.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/log/openvpn.log $OUT_DIR/ > /dev/null 2>&1
     cp /opt/eblocker-dns/log/eblocker-dns.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/log/certvalidator/certificate-validator.log $OUT_DIR/ > /dev/null 2>&1

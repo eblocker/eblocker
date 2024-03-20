@@ -57,6 +57,8 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
 
     vm.autoUpdateTimeSelectVisible = false;
 
+    vm.lastUpdateAttemptFailed = false;
+
     vm.isRegistered = isRegistered;
     vm.hasLicenseExpired = hasLicenseExpired;
     vm.setAutomaticUpdateStatus = setAutomaticUpdateStatus;
@@ -64,13 +66,13 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
     vm.isDeviceReady = isDeviceReady;
     vm.checkForUpdates = checkForUpdates;
     vm.openUpdateDialog = openUpdateDialog;
+    vm.startUpdateRecovery = startUpdateRecovery;
 
     const registrationInfo = RegistrationService.getRegistrationInfo();
 
     vm.$onInit = function() {
         initUpdateTime();
         getUpdateStatus();
-        // startStatusScan();
     };
 
     vm.$onDestroy = function() {
@@ -79,7 +81,7 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
     };
 
     function isDeviceReady() {
-        return !vm.isChecking && !vm.isUpdating && !vm.isPreparingToCheck;
+        return !vm.isChecking && !vm.isUpdating && !vm.isPreparingToCheck && !vm.waitingForUpdateToStart;
     }
 
     function isRegistered() {
@@ -90,22 +92,19 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         return RegistrationService.isRegistered() && registrationInfo.licenseExpired;
     }
 
-    function evaluateStatus(status) {
-        /*if($scope.isUpdating == true && status.updating == false){//update is finished
-                    //reload page
-                    reloadCurrentPage();
-                }*/
-        vm.isUpdating = status.updating;
+    function evaluateStatus(status) { // jshint ignore: line
+        // Note: since the workflows for updating and recovering are very similar,
+        // vm.isUpdating is used for both states.
+        vm.isUpdating = status.updating || status.recovering;
         vm.isChecking = status.checking;
         vm.areUpdatesAvailable = status.updatesAvailable;
         vm.automaticUpdates = status.automaticUpdatesActivated && status.automaticUpdatesAllowed;
         vm.automaticUpdatesAllowed = status.automaticUpdatesAllowed;
-        // $scope.lastAutomaticUpdate = status.lastAutomaticUpdate;
-        // $scope.nextAutomaticUpdate = status.nextAutomaticUpdate;
         vm.projectVersion = status.projectVersion;
         listsPacketVersion = status.listsPacketVersion;
         vm.packageUpdates = status.updateablePackages;
         isDisabled = status.disabled;
+        vm.lastUpdateAttemptFailed = status.lastUpdateAttemptFailed;
 
         vm.dateFormat = $translate.instant('ADMINCONSOLE.UPDATE.DATE_FORMAT');
         vm.dateTimeFormat = $translate.instant('ADMINCONSOLE.UPDATE.DATE_TIME_FORMAT');
@@ -186,10 +185,8 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
             }
 
             vm.numPolledForUpdateStatus++;
-            // vm.updatesStatus = response.data;
             logger.debug('Successfully received update-status. Updates available: ' +
                 vm.areUpdatesAvailable + '. Still checking: ' + vm.isChecking);
-            // vm.updatesAvailable = vm.updatesStatus.updatesAvailable;
             if ((vm.numPolledForUpdateStatus >= NUM_CHECK_FOR_UPDATES && !vm.isChecking) ||
                 vm.areUpdatesAvailable) {
                 vm.isChecking = false;
@@ -209,7 +206,6 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         vm.isPreparingToCheck = true;
         UpdateService.checkForUpdates().then(function successCheckUpdates(response) {
             startStatusScan();
-            // return getUpdateStatus();
         }, function errorCheckUpdates(response) {
             if (response.status === 400) {
                 NotificationService.error('ADMINCONSOLE.UPDATE.NOTIFICATION.ERROR_UPDATES_CHECK_TOO_FREQUENT',
@@ -312,9 +308,13 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
         }
     }
 
-    function updateNow() {
+    function startUpdateRecovery() {
+        setUpdatingStatus({recovering: true});
+    }
+
+    function setUpdatingStatus(status) {
         vm.waitingForUpdateToStart = true;
-        UpdateService.setStatus({updating: true}).then(function success(response) {
+        UpdateService.setStatus(status).then(function success(response) {
             pollForUpdateStart();
         }, function error(response) {
             NotificationService.error('ADMINCONSOLE.UPDATE.NOTIFICATION.ERROR_UPDATES_FAILED', response);
@@ -326,7 +326,7 @@ function UpdateController(logger, UpdateService, RegistrationService, Notificati
     function openUpdateDialog(event) {
         return DialogService.updateStartConfirmDialog(event).then(function update() {
             logger.debug('User clicked on update now.');
-            updateNow();
+            setUpdatingStatus({updating: true});
         }, function cancel() {
             logger.debug('User clicked on cancel.');
         });

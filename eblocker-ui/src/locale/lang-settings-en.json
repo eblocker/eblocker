@@ -2799,6 +2799,10 @@
                 "REBOOT" : "Reboot",
                 "SHUTDOWN" : "Shutdown"
             },
+            "ERROR" : {
+                "REBOOT" : "The eBlocker cannot be rebooted currently.",
+                "SHUTDOWN" : "The eBlocker cannot be shut down currently."
+            },
             "EXPLANATION" : "To reset or switch off the eBlocker you can reboot or shutdown.",
             "LABEL" : "Reboot"
         },
@@ -3098,6 +3102,11 @@
             "TIME_FORMAT" : "h:mm a",
             "TOOLTIP" : {
                 "EDIT_AUTO_TIME" : "Edit time range for the automatic updates."
+            },
+            "UPDATES_FAILED": {
+                "HEADER": "Updates failed",
+                "TEXT": "The last update failed. Please complete the update to resolve the problem.",
+                "RECOVER": "Complete the update and reboot"
             },
             "UPDATES_NOT_AVAILABLE" : {
                 "EXPIRED_TEXT1" : "The update license expired.",

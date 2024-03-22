@@ -2635,30 +2635,30 @@
                     "NOT_AGAIN" : "Do not show again",
                     "OK" : "Ok"
                 },
-                "BLOG_LINK_PRE" : "Learn more about the improvements in our ",
-                "BLOG_LINK_TEXT" : "blog post for eBlockerOS 3",
-                "BLOG_LINK_URL" : "https://eblocker.org/en/magazine/eos3",
+                "BLOG_LINK_PRE" : "",
+                "BLOG_LINK_TEXT" : "",
+                "BLOG_LINK_URL" : "",
                 "ENABLE" : {
-                    "NOT_AGAIN" : "Do not show this info box again."
+                    "NOT_AGAIN" : "Do not show this again."
                 },
-                "INTRO" : "eBlockerOS 3 is a major release that contains many improvements and new features.",
+                "INTRO" : "eBlockerOS 3.1 is a maintenance release with various improvements.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1" : "<strong>IPv6 support (beta)</strong>. eBlockerOS now works in any network.",
-                    "LI_2" : "<strong>Improved display of the eBlocker icon</strong> on all websites.",
-                    "LI_3" : "<strong>Linux Kernel</strong> update and security updates of all components."
+                    "LI_1" : "<strong>IPv6</strong>: Device cloaking and routing work in the same way as with IPv4.",
+                    "LI_2" : "<strong>Update of surrogates</strong> so websites do not recognize the eBlocker.",
+                    "LI_3" : "<strong>Failed updates</strong> can be repaired via the user interface."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-0/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-1/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 3.0"
+                "TITLE" : "eBlockerOS Release 3.1"
             },
-            "MENU_LABEL" : "New in eBlockerOS 3",
+            "MENU_LABEL" : "New in eBlockerOS 3.1",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 3.0"
+                "TITLE" : "eBlockerOS Release 3.1"
             }
         },
         "SSL" : {

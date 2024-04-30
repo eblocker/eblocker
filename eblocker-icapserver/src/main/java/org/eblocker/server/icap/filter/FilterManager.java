@@ -448,7 +448,9 @@ public class FilterManager {
     private List<Filter> parseFilterDefinitions(FilterParser parser, List<EblockerResource> resources) throws IOException {
         List<Filter> filters = new ArrayList<>();
         for (EblockerResource resource : resources) {
-            filters.addAll(parser.parse(ResourceHandler.getInputStream(resource)));
+            try (InputStream inputStream = ResourceHandler.getInputStream(resource)) {
+                filters.addAll(parser.parse(inputStream));
+            }
         }
         return filters;
     }

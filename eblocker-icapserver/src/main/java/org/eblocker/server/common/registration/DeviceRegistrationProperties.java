@@ -526,9 +526,9 @@ public class DeviceRegistrationProperties {
                 throw new EblockerException(msg, e);
             }
 
-            try {
+            try (InputStream inputStream = ResourceHandler.getInputStream(truststore)) {
                 Path temp = Files.createTempFile(tmpDir, "license.", ".truststore");
-                X509Certificate[] certificates = PKI.loadTrustStore(ResourceHandler.getInputStream(truststore), truststorePassword);
+                X509Certificate[] certificates = PKI.loadTrustStore(inputStream, truststorePassword);
                 try (OutputStream out = Files.newOutputStream(temp)) {
                     PKI.storeCertificates(certificates, out);
                 }

@@ -80,8 +80,7 @@ public class DeviceProperties {
     @Inject
     public DeviceProperties(@Named("deviceProperties") String devicePropertiesPath) {
         properties = new Properties();
-        try {
-            InputStream resource = ResourceHandler.getInputStream(new SimpleResource(devicePropertiesPath));
+        try (InputStream resource = ResourceHandler.getInputStream(new SimpleResource(devicePropertiesPath))) {
             if (resource == null) {
                 LOG.info("Cannot load device properties from {}, using default values", devicePropertiesPath);
             } else {

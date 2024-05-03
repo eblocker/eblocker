@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -98,8 +99,8 @@ public class DeviceService {
     public void init() {
         networkInterfaceWrapper.addIpAddressChangeListener(this::onIpAddressChange);
         ipResponseTable.addLatestTimestampUpdateListener(this::onLatestTimestampUpdate);
-        try {
-            macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
+            macPrefix.addInputStream(inputStream);
         } catch (IOException e) {
             log.error("Could not read MAC prefixes", e);
         }

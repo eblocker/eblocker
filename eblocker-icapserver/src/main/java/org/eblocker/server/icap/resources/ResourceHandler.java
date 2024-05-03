@@ -63,8 +63,7 @@ public class ResourceHandler {
     }
 
     public static String load(EblockerResource resource) {
-        try {
-            InputStream in = getInputStream(resource);
+        try (InputStream in = getInputStream(resource)) {
             return IOUtils.toString(in, resource.getCharset());
         } catch (IOException e) {
             throw new EblockerException("Cannot open resource file " + resource.getPath() + " to load resource " + resource.getName(), e);
@@ -72,18 +71,12 @@ public class ResourceHandler {
     }
 
     public static List<String> readLines(EblockerResource resource) {
-        InputStream inputStream = getInputStream(resource);
-        try {
+        try (InputStream inputStream = getInputStream(resource)) {
             return IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.error("Error while reading all lines from this resource {}.", resource.getPath(), e);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
+        // ignore
         return null;
     }
 

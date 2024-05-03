@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class SchemaMigrationVersion24 implements SchemaMigration {
 
@@ -41,8 +42,8 @@ public class SchemaMigrationVersion24 implements SchemaMigration {
         this.dataSource = dataSource;
         this.deviceFactory = deviceFactory;
         this.macPrefix = new MacPrefix();
-        try {
-            macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
+            macPrefix.addInputStream(inputStream);
         } catch (IOException e) {
             log.error("Could not read MAC prefixes", e);
         }

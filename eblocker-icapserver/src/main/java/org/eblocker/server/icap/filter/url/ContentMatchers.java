@@ -20,6 +20,7 @@ import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
@@ -33,9 +34,9 @@ class ContentMatchers {
     }
 
     private static Map<String, ContentMatcher> loadMatchers() {
-        try {
+        try (InputStream inputStream = ResourceHandler.getInputStream(new SimpleResource("content-matcher.properties"))) {
             Properties properties = new Properties();
-            properties.load(ResourceHandler.getInputStream(new SimpleResource("content-matcher.properties")));
+            properties.load(inputStream);
             return properties.stringPropertyNames().stream()
                     .map(key -> key.substring(0, key.indexOf(".")))
                     .distinct()

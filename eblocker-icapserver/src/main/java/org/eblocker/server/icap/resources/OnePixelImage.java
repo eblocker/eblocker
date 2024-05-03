@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class OnePixelImage {
@@ -37,8 +38,8 @@ public class OnePixelImage {
     private static final int TARGET_PARAMETER_END_INDEX;  // exclusive
 
     static {
-        try {
-            IMAGE_TEMPLATE = ByteStreams.toByteArray(ResourceHandler.getInputStream(DefaultEblockerResource.ONE_PIXEL_SVG));
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.ONE_PIXEL_SVG)) {
+            IMAGE_TEMPLATE = ByteStreams.toByteArray(inputStream);
             TARGET_PARAMETER_START_INDEX = Bytes.indexOf(IMAGE_TEMPLATE, TARGET_PARAMETER);
             TARGET_PARAMETER_END_INDEX = TARGET_PARAMETER_START_INDEX + TARGET_PARAMETER.length;
         } catch (IOException e) {

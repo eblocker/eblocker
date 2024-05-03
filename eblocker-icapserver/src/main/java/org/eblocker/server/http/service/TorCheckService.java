@@ -25,6 +25,7 @@ import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -40,7 +41,9 @@ public class TorCheckService {
     @Inject
     public TorCheckService(@Named("tor.check.sites.file.path") String torCheckSitesFile) throws IOException {
         EblockerResource sitesResource = new SimpleResource(torCheckSitesFile);
-        allSites = Arrays.asList(mapper.readValue(ResourceHandler.getInputStream(sitesResource), TorCheckSite[].class));
+        try (InputStream inputStream = ResourceHandler.getInputStream(sitesResource)) {
+            allSites = Arrays.asList(mapper.readValue(inputStream, TorCheckSite[].class));
+        }
     }
 
     /**

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,11 +45,11 @@ public class DeviceFactory {
         this.dataSource = dataSource;
 
         disabledByDefault = new MacPrefix();
-        disabledByDefault.addInputStream(
-                ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES_DISABLED_BY_DEFAULT));
-
-        try {
-            macPrefix.addInputStream(ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES));
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES_DISABLED_BY_DEFAULT)) {
+            disabledByDefault.addInputStream(inputStream);
+        }
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
+            macPrefix.addInputStream(inputStream);
         } catch (IOException e) {
             log.error("Could not read MAC prefixes", e);
         }

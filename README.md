@@ -58,6 +58,8 @@ Create these directories and make sure you can write to them:
 
     mkdir /opt/eblocker-icap
     mkdir /opt/eblocker-icap/conf
+    mkdir /opt/eblocker-icap/conf/eblocker
+    mkdir /opt/eblocker-icap/conf/filter
     mkdir /opt/eblocker-icap/keys
     mkdir /opt/eblocker-icap/network
     mkdir /opt/eblocker-icap/registration
@@ -66,6 +68,19 @@ Create these directories and make sure you can write to them:
     mkdir /opt/eblocker-network/bin
     mkdir /opt/eblocker-lists
     mkdir /opt/eblocker-lists/lists
+
+    mkdir /var/cache/eblocker-icap
+    mkdir /var/cache/eblocker-icap/domainblacklist
+    mkdir /var/cache/eblocker-icap/domainblacklist/lists
+    mkdir /var/cache/eblocker-icap/domainblacklist/profiles
+
+Linux: Make sure you can write to them
+
+    chown $USER /opt/eblocker-icap -R
+    chown $USER /opt/eblocker-network -R
+    chown $USER /opt/eblocker-lists -R
+
+    chown $USER /var/cache/eblocker-icap -R
 
 Create the following configuration file:
 
@@ -79,7 +94,7 @@ Content:
     # only if your network interface is not eth0:
     network.interface.name=ethXYZ
 
-    # only necessary on macOS:
+    # only necessary on macOS and Linux:
     system.path.cpu.info=/home/user/src/eblocker/eblocker-icapserver/src/test/resources/test-data/cpuinfo.txt
 
 Create the following shell script and make it executable:
@@ -92,9 +107,25 @@ Content:
 
     exit 0
 
+Linux: Make it executable
+
+    chmod +x /opt/eblocker-network/bin/script_wrapper
+
+### IPv6
+
+IPV6 must be activated to be able to test the full range of functions locally. Otherwise, exceptions are thrown at startup.
 
 ## Start Redis DB
 
+### With docker
+
+    docker run --name redisEblocker -v /home/user/src/redis:/data -d -p 127.0.0.1:6379:6379 redis:latest --save 60 1
+
+Set the key `gateway` to your router's IP address, e.g.
+
+    redis-cli set gateway 192.168.1.1
+
+### Without docker
 Create a directory for the redis DB and start the `redis-server` process there:
 
     mkdir $SRC/redis
@@ -107,8 +138,11 @@ Set the key `gateway` to your router's IP address, e.g.
 
 ## Start backend
 
-Start class `eblocker/eblocker-icapserver/src/main/java/org/eblocker/server/app/EblockerServerApp.java` from your IDE.
+### IDE
 
+Start class `eblocker/eblocker-icapserver/src/main/java/org/eblocker/server/app/EblockerServerApp.java` from your IDE. (A preconfigured runner is available in the project for IntelliJ)
+
+### Maven
 You can also start this class with Maven:
 
     cd $SRC/eblocker/eblocker-icapserver
@@ -128,9 +162,14 @@ where the first IP is from your local subnet (the second IP does not matter). Fo
 
 ## Update lists
 
-Fork/clone eblocker-lists and run
+Fork/clone eblocker-lists
 
-    mvn package -Pupdate-lists
+    cd $SRC
+    git clone https://github.com/eblocker/eblocker-lists.git
+
+and run
+
+    mvn package -Pupdate-lists -Dmaven.test.skip=true
     
 After that, copy the result to your local installation:
 

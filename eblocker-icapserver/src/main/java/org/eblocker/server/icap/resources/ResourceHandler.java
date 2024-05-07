@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -77,7 +78,7 @@ public class ResourceHandler {
             log.error("Error while reading all lines from this resource {}.", resource.getPath(), e);
         }
         // ignore
-        return null;
+        return new ArrayList<>();
     }
 
     public static Set<String> readLinesAsSet(EblockerResource resource) {

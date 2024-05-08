@@ -57,4 +57,8 @@ public class SimpleResource implements EblockerResource {
         return charset;
     }
 
+    @Override
+    public String toString() {
+        return "SimpleResource{path='" + path + "'}";
+    }
 }

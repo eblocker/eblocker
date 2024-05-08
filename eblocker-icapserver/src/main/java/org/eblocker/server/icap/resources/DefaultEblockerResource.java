@@ -52,4 +52,8 @@ public enum DefaultEblockerResource implements EblockerResource {
         return charset;
     }
 
+    @Override
+    public String toString() {
+        return "DefaultEblockerResource{path='" + path + "'}";
+    }
 }

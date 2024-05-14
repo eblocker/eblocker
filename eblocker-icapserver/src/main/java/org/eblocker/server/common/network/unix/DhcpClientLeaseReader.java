@@ -21,6 +21,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class DhcpClientLeaseReader {
+    private static final Logger log = LoggerFactory.getLogger(DhcpClientLeaseReader.class);
 
     private static final Pattern INTERFACE_PATTERN = Pattern.compile("interface \"(.*)\";");
     private static final Pattern FIXED_ADDRESS_PATTERN = Pattern.compile("fixed-address (.*);");
@@ -42,8 +45,17 @@ public class DhcpClientLeaseReader {
         this.clientLeasesFileName = clientLeasesFileName;
     }
 
+    /**
+     * Reads the last DHCP client lease from the configured leases file.
+     * @return a DhcpClientLease object or null if the leases file does not exist or does not contain any leases.
+     */
     public DhcpClientLease readLease() {
-        List<String> lines = ResourceHandler.readLines(new SimpleResource(clientLeasesFileName));
+        SimpleResource leasesFile = new SimpleResource(clientLeasesFileName);
+        if (!ResourceHandler.exists(leasesFile)) {
+            log.warn("DHCP client leases file does not exist: {}", clientLeasesFileName);
+            return null;
+        }
+        List<String> lines = ResourceHandler.readLines(leasesFile);
         int i = lines.lastIndexOf("lease {");
         if (i == -1) {
             return null;
@@ -80,5 +92,4 @@ public class DhcpClientLeaseReader {
 
         return new DhcpClientLease(interfaceName, fixedAddress, options);
     }
-
 }

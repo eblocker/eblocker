@@ -32,7 +32,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -48,10 +47,16 @@ public class ResourceHandler {
     private ResourceHandler() {
     }
 
+    /**
+     * Tests whether the resource exists. Note that resources with a relative path are searched in
+     * the class path, not in the file system (backward compatibility).
+     * @param resource
+     * @return true if the resource exists
+     */
     public static boolean exists(EblockerResource resource) {
         String path = resource.getPath();
         if (path.startsWith(CLASSPATH_PREFIX)) {
-            return getClassPathInputStream(path.substring(CLASSPATH_PREFIX.length())) != null;
+            return classPathResourceExists(path.substring(CLASSPATH_PREFIX.length()));
         }
         if (path.startsWith(FILE_PREFIX)) {
             return Files.exists(Paths.get(path.substring(FILE_PREFIX.length())));
@@ -60,14 +65,16 @@ public class ResourceHandler {
             return Files.exists(Paths.get(path));
         }
         // Mainly for backward compatibility:
-        return getClassPathInputStream(path) != null;
+        return classPathResourceExists(path);
     }
 
     public static String load(EblockerResource resource) {
         try (InputStream in = getInputStream(resource)) {
             return IOUtils.toString(in, resource.getCharset());
         } catch (IOException e) {
-            throw new EblockerException("Cannot open resource file " + resource.getPath() + " to load resource " + resource.getName(), e);
+            String msg = "Cannot open resource file " + resource.getPath() + " to load resource " + resource.getName();
+            log.error(msg);
+            throw new EblockerException(msg, e);
         }
     }
 
@@ -75,10 +82,10 @@ public class ResourceHandler {
         try (InputStream inputStream = getInputStream(resource)) {
             return IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.error("Error while reading all lines from this resource {}.", resource.getPath(), e);
+            String msg = "Error while reading all lines from resource " + resource.getPath();
+            log.error(msg);
+            throw new EblockerException(msg, e);
         }
-        // ignore
-        return new ArrayList<>();
     }
 
     public static Set<String> readLinesAsSet(EblockerResource resource) {
@@ -110,13 +117,18 @@ public class ResourceHandler {
     }
 
     public static InputStream getClassPathInputStream(String path) {
-        ClassLoader classLLoader = ClassLoader.getSystemClassLoader();
-        InputStream in = classLLoader.getResourceAsStream(path);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream in = classLoader.getResourceAsStream(path);
         if (in == null) {
             String msg = "Cannot load classpath resource " + path;
             throw new EblockerException(msg);
         }
         return in;
+    }
+
+    private static boolean classPathResourceExists(String path) {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        return classLoader.getResource(path) != null;
     }
 
     public static void replaceContent(EblockerResource resource, Iterable<String> lines) {

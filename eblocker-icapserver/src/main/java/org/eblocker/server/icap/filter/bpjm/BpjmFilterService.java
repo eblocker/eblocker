@@ -70,6 +70,10 @@ public class BpjmFilterService {
     }
 
     private void update(Path path) {
+        if (!Files.exists(path)) {
+            log.warn("Optional BPjM list does not exist");
+            return;
+        }
         log.info("Loading bpjm filter");
         try (InputStream in = Files.newInputStream(path)) {
             filter = new BpjmFilter(serializer.read(in));

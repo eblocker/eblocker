@@ -46,7 +46,7 @@ public class Ip6PrefixMonitor {
     private final List<PrefixChangeListener> prefixChangeListeners = new ArrayList<>();
 
     @Inject
-    Ip6PrefixMonitor(NetworkInterfaceWrapper networkInterface) {
+    public Ip6PrefixMonitor(NetworkInterfaceWrapper networkInterface) {
         this.networkInterface = networkInterface;
     }
 

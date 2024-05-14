@@ -18,66 +18,60 @@ package org.eblocker.server.common.data;
 
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class ResourceHandlerTest {
+    private Path testFile, testFile2;
 
-    private final static String TEST_FILE_PATH = "/tmp/testfile";
-    private final static String TEST_FILE_PATH2 = "/tmp/testfile2";
-
-    @Before
-    public void setup() {
-        if (!Files.exists(Paths.get(TEST_FILE_PATH))) {
-            try {
-                Files.createFile(Paths.get(TEST_FILE_PATH));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    @BeforeEach
+    public void setup() throws IOException {
+        testFile = Files.createTempFile("testfile", null);
+        testFile2 = Path.of(testFile.toString() + "2");
     }
 
     @Test
     public void testWritingListOfStringsToFile() {
-        SimpleResource existingFile = new SimpleResource(TEST_FILE_PATH);
-        List<String> strings = new LinkedList<String>();
-        strings.add("Line 0");
-        strings.add("Line 1");
-        strings.add("Line 2");
-        strings.add("Line 3");
+        SimpleResource existingFile = new SimpleResource(testFile.toString());
+        List<String> strings = List.of("Line 0", "Line 1", "Line 2");
 
         ResourceHandler.replaceContent(existingFile, strings);
+
+        Assertions.assertEquals(strings, ResourceHandler.readLines(existingFile));
+    }
+
+    @Test
+    public void testExist() {
+        SimpleResource existingResource = new SimpleResource("classpath:test-data/resource-handler-test.txt");
+        Assertions.assertTrue(ResourceHandler.exists(existingResource));
+
+        SimpleResource missingResource = new SimpleResource("classpath:test-data/no-such-resource.txt");
+        Assertions.assertFalse(ResourceHandler.exists(missingResource));
+
     }
 
     @Test
     public void testCreate() throws IOException {
-        SimpleResource resource = new SimpleResource(TEST_FILE_PATH2);
-        assertFalse(ResourceHandler.exists(resource));
+        SimpleResource resource = new SimpleResource(testFile2.toString());
+        Assertions.assertFalse(ResourceHandler.exists(resource));
 
         ResourceHandler.create(resource);
-        assertTrue(ResourceHandler.exists(resource));
+        Assertions.assertTrue(ResourceHandler.exists(resource));
 
         // clean up
-        Files.delete(Paths.get(TEST_FILE_PATH2));
-        assertFalse(ResourceHandler.exists(resource));
+        Files.delete(testFile2);
+        Assertions.assertFalse(ResourceHandler.exists(resource));
     }
 
-    @After
-    public void cleanUp() {
-        try {
-            Files.delete(Paths.get(TEST_FILE_PATH));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @AfterEach
+    public void cleanUp() throws IOException {
+        Files.deleteIfExists(testFile);
     }
 }

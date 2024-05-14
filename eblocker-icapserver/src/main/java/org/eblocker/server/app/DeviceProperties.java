@@ -87,7 +87,8 @@ public class DeviceProperties {
                 properties.load(resource);
             }
         } catch (EblockerException e) {
-            LOG.info("Cannot load device properties from {}, using default values", devicePropertiesPath, e);
+            LOG.info("Cannot load device properties from {}, using default values", devicePropertiesPath);
+            LOG.debug("Exception from: Cannot load device properties ", e);
         } catch (IOException e) {
             LOG.warn("Cannot load device properties from {}, using default values", devicePropertiesPath, e);
         }

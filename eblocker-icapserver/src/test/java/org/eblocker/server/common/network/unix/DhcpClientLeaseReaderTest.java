@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DhcpClientLeaseReaderTest {
 
@@ -26,16 +26,27 @@ public class DhcpClientLeaseReaderTest {
         DhcpClientLeaseReader reader = new DhcpClientLeaseReader("classpath:test-data/dhclient.leases");
         DhcpClientLease lease = reader.readLease();
 
-        Assert.assertEquals("eth0", lease.getInterfaceName());
-        Assert.assertEquals("10.10.10.100", lease.getFixedAddress());
-        Assert.assertNotNull(lease.getOptions());
-        Assert.assertEquals(6, lease.getOptions().size());
+        Assertions.assertEquals("eth0", lease.getInterfaceName());
+        Assertions.assertEquals("10.10.10.100", lease.getFixedAddress());
+        Assertions.assertNotNull(lease.getOptions());
+        Assertions.assertEquals(6, lease.getOptions().size());
 
-        Assert.assertEquals("255.255.255.0", lease.getOptions().get("subnet-mask"));
-        Assert.assertEquals("10.10.10.10", lease.getOptions().get("routers"));
-        Assert.assertEquals("4294967295", lease.getOptions().get("dhcp-lease-time"));
-        Assert.assertEquals("5", lease.getOptions().get("dhcp-message-type"));
-        Assert.assertEquals("10.10.10.10,192.168.3.20", lease.getOptions().get("domain-name-servers"));
+        Assertions.assertEquals("255.255.255.0", lease.getOptions().get("subnet-mask"));
+        Assertions.assertEquals("10.10.10.10", lease.getOptions().get("routers"));
+        Assertions.assertEquals("4294967295", lease.getOptions().get("dhcp-lease-time"));
+        Assertions.assertEquals("5", lease.getOptions().get("dhcp-message-type"));
+        Assertions.assertEquals("10.10.10.10,192.168.3.20", lease.getOptions().get("domain-name-servers"));
     }
 
+    @Test
+    public void testNoLeases() {
+        DhcpClientLeaseReader reader = new DhcpClientLeaseReader("classpath:test-data/dhclient-noLeases.leases");
+        Assertions.assertNull(reader.readLease());
+    }
+
+    @Test
+    public void testLeasesFileDoesNotExist() {
+        DhcpClientLeaseReader reader = new DhcpClientLeaseReader("classpath:test-data/dhclient-notFound.leases");
+        Assertions.assertNull(reader.readLease());
+    }
 }

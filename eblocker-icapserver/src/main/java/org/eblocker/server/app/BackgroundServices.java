@@ -73,8 +73,6 @@ import java.util.concurrent.TimeUnit;
 @SubSystemService(SubSystem.BACKGROUND_TASKS)
 public class BackgroundServices {
 
-    @SuppressWarnings("unused")
-    private static final Logger log = LoggerFactory.getLogger(BackgroundServices.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
 
     private final ScheduledExecutorService highPrioExecutorService;
@@ -92,8 +90,8 @@ public class BackgroundServices {
 
     private final ProblematicRouterDetectionScheduler problematicRouterDetectionScheduler;
     private final AutomaticUpdater autoUpdater;
-    private DhcpListener dhcpListener;
-    private DhcpBindListener dhcpBindListener;
+    private final DhcpListener dhcpListener;
+    private final DhcpBindListener dhcpBindListener;
     private final TorController torController;
     private final Ip6AddressMonitor ip6AddressMonitor;
 
@@ -263,8 +261,9 @@ public class BackgroundServices {
         contentFilterUpdateScheduler.schedule(lowPrioExecutorService);
 
         //start automatic updating service
-        if (autoUpdater != null && autoUpdater.isActivated())
+        if (autoUpdater != null && autoUpdater.isActivated()) {
             autoUpdater.start();
+        }
 
         lowPrioExecutorService.execute(new NamedRunnable(zeroconfRegistrationService.getClass().getSimpleName(), zeroconfRegistrationService::registerConsoleService));
 

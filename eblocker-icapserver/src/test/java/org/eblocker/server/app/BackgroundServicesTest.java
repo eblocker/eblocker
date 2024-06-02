@@ -24,7 +24,6 @@ import org.eblocker.server.common.network.Ip6AddressMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.network.ZeroconfRegistrationService;
-import org.eblocker.server.common.openvpn.server.OpenVpnAddressListener;
 import org.eblocker.server.common.scheduler.AppModuleServiceScheduler;
 import org.eblocker.server.common.scheduler.BlockedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.BlockerUpdateScheduler;
@@ -73,34 +72,11 @@ class BackgroundServicesTest {
     private ScheduledExecutorService lowPrioExecutorService;
     private ScheduledExecutorService unlimitedCachePoolExecutor;
     private ArpListener arpListener;
-    private IpAdressValidatorScheduler ipAdressValidatorScheduler;
-    private Ip6MulticastPingScheduler ip6MulticastPingScheduler;
-    private Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler;
     private DhcpListener dhcpListener;
     private DhcpBindListener dhcpBindListener;
     private TorController torController;
     private Ip6AddressMonitor ip6AddressMonitor;
-    private PCAccessRestrictionsServiceScheduler contingentEnforcerScheduler;
-    private OpenVpnServiceScheduler openVpnServiceScheduler;
-    private OpenVpnAddressListener openVpnAddressListener;
-    private DeviceServiceScheduler deviceServiceScheduler;
-    private TrafficAccounterScheduler trafficAccounterScheduler;
-    private MessageCenterServiceScheduler messageCenterServiceScheduler;
-    private MalwareUpdateScheduler malwareUpdateScheduler;
-    private NetworkInterfaceWatchdog networkInterfaceWatchdog;
-    private ZeroconfRegistrationService zeroconfRegistrationService;
-    private ControlBarAliasUpdater controlBarAliasUpdater;
-    private DnsStatisticsScheduler dnsStatisticsScheduler;
-    private DnsGatewayNamesScheduler dnsGatewayNamesScheduler;
     private DeviceScanningService deviceScanningService;
-    private LicenseExpirationCheckScheduler licenseExpirationCheckScheduler;
-    private DynDnsUpdateScheduler dynDnsUpdateScheduler;
-    private FilterStatisticsDeleteScheduler filterStatisticsDeleteScheduler;
-    private FilterStatisticsUpdateScheduler filterStatisticsUpdateScheduler;
-    private BlockedDomainsWriteScheduler blockedDomainsWriteScheduler;
-    private UpnpWatchdogScheduler upnpWatchdogScheduler;
-    private BlockerUpdateScheduler blockerUpdateScheduler;
-    private ContentFilterUpdateScheduler contentFilterUpdateScheduler;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -110,31 +86,31 @@ class BackgroundServicesTest {
         dhcpListener = Mockito.mock(DhcpListener.class);
         dhcpBindListener = Mockito.mock(DhcpBindListener.class);
         arpListener = Mockito.mock(ArpListener.class);
-        ipAdressValidatorScheduler = Mockito.mock(IpAdressValidatorScheduler.class);
-        ip6MulticastPingScheduler = Mockito.mock(Ip6MulticastPingScheduler.class);
-        ip6RouterAdvertiserScheduler = Mockito.mock(Ip6RouterAdvertiserScheduler.class);
+        IpAdressValidatorScheduler ipAdressValidatorScheduler = Mockito.mock(IpAdressValidatorScheduler.class);
+        Ip6MulticastPingScheduler ip6MulticastPingScheduler = Mockito.mock(Ip6MulticastPingScheduler.class);
+        Ip6RouterAdvertiserScheduler ip6RouterAdvertiserScheduler = Mockito.mock(Ip6RouterAdvertiserScheduler.class);
         torController = Mockito.mock(TorController.class);
         ip6AddressMonitor = Mockito.mock(Ip6AddressMonitor.class);
-        contingentEnforcerScheduler = Mockito.mock(PCAccessRestrictionsServiceScheduler.class);
-        openVpnServiceScheduler = Mockito.mock(OpenVpnServiceScheduler.class);
-        deviceServiceScheduler = Mockito.mock(DeviceServiceScheduler.class);
-        trafficAccounterScheduler = Mockito.mock(TrafficAccounterScheduler.class);
-        messageCenterServiceScheduler = Mockito.mock(MessageCenterServiceScheduler.class);
-        malwareUpdateScheduler = Mockito.mock(MalwareUpdateScheduler.class);
-        networkInterfaceWatchdog = Mockito.mock(NetworkInterfaceWatchdog.class);
-        zeroconfRegistrationService = Mockito.mock(ZeroconfRegistrationService.class);
-        controlBarAliasUpdater = Mockito.mock(ControlBarAliasUpdater.class);
-        dnsStatisticsScheduler = Mockito.mock(DnsStatisticsScheduler.class);
-        dnsGatewayNamesScheduler = Mockito.mock(DnsGatewayNamesScheduler.class);
+        PCAccessRestrictionsServiceScheduler contingentEnforcerScheduler = Mockito.mock(PCAccessRestrictionsServiceScheduler.class);
+        OpenVpnServiceScheduler openVpnServiceScheduler = Mockito.mock(OpenVpnServiceScheduler.class);
+        DeviceServiceScheduler deviceServiceScheduler = Mockito.mock(DeviceServiceScheduler.class);
+        TrafficAccounterScheduler trafficAccounterScheduler = Mockito.mock(TrafficAccounterScheduler.class);
+        MessageCenterServiceScheduler messageCenterServiceScheduler = Mockito.mock(MessageCenterServiceScheduler.class);
+        MalwareUpdateScheduler malwareUpdateScheduler = Mockito.mock(MalwareUpdateScheduler.class);
+        NetworkInterfaceWatchdog networkInterfaceWatchdog = Mockito.mock(NetworkInterfaceWatchdog.class);
+        ZeroconfRegistrationService zeroconfRegistrationService = Mockito.mock(ZeroconfRegistrationService.class);
+        ControlBarAliasUpdater controlBarAliasUpdater = Mockito.mock(ControlBarAliasUpdater.class);
+        DnsStatisticsScheduler dnsStatisticsScheduler = Mockito.mock(DnsStatisticsScheduler.class);
+        DnsGatewayNamesScheduler dnsGatewayNamesScheduler = Mockito.mock(DnsGatewayNamesScheduler.class);
         deviceScanningService = Mockito.mock(DeviceScanningService.class);
-        licenseExpirationCheckScheduler = Mockito.mock(LicenseExpirationCheckScheduler.class);
-        dynDnsUpdateScheduler = Mockito.mock(DynDnsUpdateScheduler.class);
-        filterStatisticsDeleteScheduler = Mockito.mock(FilterStatisticsDeleteScheduler.class);
-        filterStatisticsUpdateScheduler = Mockito.mock(FilterStatisticsUpdateScheduler.class);
-        blockedDomainsWriteScheduler = Mockito.mock(BlockedDomainsWriteScheduler.class);
-        upnpWatchdogScheduler = Mockito.mock(UpnpWatchdogScheduler.class);
-        blockerUpdateScheduler = Mockito.mock(BlockerUpdateScheduler.class);
-        contentFilterUpdateScheduler = Mockito.mock(ContentFilterUpdateScheduler.class);
+        LicenseExpirationCheckScheduler licenseExpirationCheckScheduler = Mockito.mock(LicenseExpirationCheckScheduler.class);
+        DynDnsUpdateScheduler dynDnsUpdateScheduler = Mockito.mock(DynDnsUpdateScheduler.class);
+        FilterStatisticsDeleteScheduler filterStatisticsDeleteScheduler = Mockito.mock(FilterStatisticsDeleteScheduler.class);
+        FilterStatisticsUpdateScheduler filterStatisticsUpdateScheduler = Mockito.mock(FilterStatisticsUpdateScheduler.class);
+        BlockedDomainsWriteScheduler blockedDomainsWriteScheduler = Mockito.mock(BlockedDomainsWriteScheduler.class);
+        UpnpWatchdogScheduler upnpWatchdogScheduler = Mockito.mock(UpnpWatchdogScheduler.class);
+        BlockerUpdateScheduler blockerUpdateScheduler = Mockito.mock(BlockerUpdateScheduler.class);
+        ContentFilterUpdateScheduler contentFilterUpdateScheduler = Mockito.mock(ContentFilterUpdateScheduler.class);
 
         // Not really used yet:
         SessionPurgerScheduler sessionPurgerScheduler = Mockito.mock(SessionPurgerScheduler.class);
@@ -163,7 +139,7 @@ class BackgroundServicesTest {
                 appModuleServiceScheduler,
                 contingentEnforcerScheduler,
                 openVpnServiceScheduler,
-                openVpnAddressListener,
+                null,
                 deviceServiceScheduler,
                 trafficAccounterScheduler,
                 networkInterfaceWatchdog,
@@ -195,8 +171,12 @@ class BackgroundServicesTest {
      */
     @Test
     void noBlockingTasksOnSharedExecutors() {
+        //given
+
+        //when
         services.run();
 
+        //then
         verify(highPrioExecutorService, never()).execute(arpListener);
         verify(lowPrioExecutorService, never()).execute(arpListener);
 
@@ -212,8 +192,12 @@ class BackgroundServicesTest {
 
     @Test
     void blockedExecutorsAreOnlyUsedOnce() {
+        //given
+
+        //when
         services.run();
 
+        //then
         ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
         verify(unlimitedCachePoolExecutor, Mockito.atLeast(1)).execute(captor.capture());
 
@@ -223,15 +207,23 @@ class BackgroundServicesTest {
 
     @Test
     void deviceScanningIsStarted() {
+        //given
+
+        //when
         services.run();
 
+        //then
         verify(deviceScanningService).start();
     }
 
     @Test
     void torControllerHasHighPrio() {
+        //given
+
+        //when
         services.run();
 
+        //then
         verify(torController).startCheckingConnection(eq(highPrioExecutorService), anyLong());
     }
 }

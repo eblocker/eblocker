@@ -52,9 +52,8 @@ public abstract class BackupProvider {
     /**
      * Use settings similar to those of RestExpress's JacksonJsonProcessor
      *
-     * @param objectMapper
      */
-    protected void initializeMapper(ObjectMapper objectMapper) {
+    private void initializeMapper(ObjectMapper objectMapper) {
         objectMapper
                 // Ignore additional/unknown properties in a payload.
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -70,18 +69,13 @@ public abstract class BackupProvider {
 
     /**
      * Export the configuration to the given JarOutputStream.
-     * @param outputStream
      * @param cryptoService is null if the user has not provided a password
-     * @throws IOException
      */
     public abstract void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException;
 
     /**
      * Import the configuration from the given JarInputStream.
-     * @param inputStream
      * @param cryptoService is null if the user has not provided a password
-     * @param schemaVersion
-     * @throws IOException
      */
     public abstract void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException;
 }

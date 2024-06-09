@@ -18,6 +18,7 @@ package org.eblocker.server.common.blacklist;
 
 import org.eblocker.server.common.collections.ConcurrentFixedSizeCache;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -84,6 +85,7 @@ public class CachingFilter<T> implements DomainFilter<T> {
         return decision;
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.singletonList(filter);

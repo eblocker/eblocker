@@ -23,7 +23,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlacklistCompilerTest {
@@ -50,10 +51,11 @@ class BlacklistCompilerTest {
 
     private BlacklistCompiler blacklistCompiler;
 
+    @SuppressWarnings("DataFlowIssue")
     @BeforeEach
     void setUp() throws IOException {
-        blockedDomains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000"));
-        nonBlockedDomains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/bottom-1000"));
+        blockedDomains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000"), Charset.defaultCharset());
+        nonBlockedDomains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/bottom-1000"), Charset.defaultCharset());
 
         filterFilePath = Files.createTempFile(BlacklistCompilerTest.class.getName(), ".filter");
         Files.delete(filterFilePath);
@@ -72,24 +74,29 @@ class BlacklistCompilerTest {
 
     @Test
     void compileDomainFilterFromCollection() throws IOException {
+        //given
+        //when
         blacklistCompiler.compile(123, "unit-test", blockedDomains, filterFilePath.toString(), bloomFilterFilePath.toString());
 
+        //then
         assertTrue(Files.exists(filterFilePath));
         assertTrue(Files.exists(bloomFilterFilePath));
 
         DomainFilter<String> fileFilter = new SingleFileFilter(Charsets.UTF_8, filterFilePath);
         blockedDomains.forEach(domain -> assertTrue(fileFilter.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.forEach(domain -> Assertions.assertFalse(fileFilter.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> assertFalse(fileFilter.isBlocked(domain).isBlocked()));
 
         BloomDomainFilter<String> bloomDomainFilter = BloomDomainFilter.readFrom(Files.newInputStream(bloomFilterFilePath), new StringFunnel(Charsets.UTF_8), fileFilter);
         blockedDomains.forEach(domain -> assertTrue(bloomDomainFilter.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.forEach(domain -> Assertions.assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void compileDomainFilterFromStream() throws IOException {
+        //given
         Supplier<Stream<String>> domainStreamSupplier = () -> {
-            BufferedReader br = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000")));
+            BufferedReader br = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000"), Charset.defaultCharset()));
             return br.lines().onClose(() -> {
                 try {
                     br.close();
@@ -98,37 +105,42 @@ class BlacklistCompilerTest {
                 }
             });
         };
+        //when
         blacklistCompiler.compile(123, "unit-test", domainStreamSupplier, filterFilePath.toString(), bloomFilterFilePath.toString());
 
+        //then
         assertTrue(Files.exists(filterFilePath));
         assertTrue(Files.exists(bloomFilterFilePath));
 
         DomainFilter<String> fileFilter = new SingleFileFilter(Charsets.UTF_8, filterFilePath);
         blockedDomains.forEach(domain -> assertTrue(fileFilter.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.forEach(domain -> Assertions.assertFalse(fileFilter.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> assertFalse(fileFilter.isBlocked(domain).isBlocked()));
 
         BloomDomainFilter<String> bloomDomainFilter = BloomDomainFilter.readFrom(Files.newInputStream(bloomFilterFilePath), new StringFunnel(Charsets.UTF_8), fileFilter);
         blockedDomains.forEach(domain -> assertTrue(bloomDomainFilter.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.forEach(domain -> Assertions.assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
     }
 
     @Test
     void compileHashFilter() throws IOException {
+        //given
         List<byte[]> hashedBlockedDomains = hash(blockedDomains);
         List<byte[]> hashedNonBlockedDomains = hash(nonBlockedDomains);
 
+        //when
         blacklistCompiler.compileHashFilter(123, "unit-test", "siphash24", hashedBlockedDomains, filterFilePath.toString(), bloomFilterFilePath.toString());
 
+        //then
         assertTrue(Files.exists(filterFilePath));
         assertTrue(Files.exists(bloomFilterFilePath));
 
         DomainFilter<byte[]> fileFilter = new HashFileFilter(filterFilePath);
         hashedBlockedDomains.forEach(domain -> assertTrue(fileFilter.isBlocked(domain).isBlocked()));
-        hashedNonBlockedDomains.forEach(domain -> Assertions.assertFalse(fileFilter.isBlocked(domain).isBlocked()));
+        hashedNonBlockedDomains.forEach(domain -> assertFalse(fileFilter.isBlocked(domain).isBlocked()));
 
         BloomDomainFilter<byte[]> bloomDomainFilter = BloomDomainFilter.readFrom(Files.newInputStream(bloomFilterFilePath), Funnels.byteArrayFunnel(), fileFilter);
         hashedBlockedDomains.forEach(domain -> assertTrue(bloomDomainFilter.isBlocked(domain).isBlocked()));
-        hashedNonBlockedDomains.forEach(domain -> Assertions.assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
+        hashedNonBlockedDomains.forEach(domain -> assertFalse(bloomDomainFilter.isBlocked(domain).isBlocked()));
     }
 
     private List<byte[]> hash(List<String> domains) {

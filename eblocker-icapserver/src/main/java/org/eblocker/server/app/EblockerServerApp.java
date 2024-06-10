@@ -19,10 +19,10 @@ package org.eblocker.server.app;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.name.Names;
 import com.google.inject.spi.Message;
-import org.eblocker.server.common.BaseModule;
 import org.eblocker.server.common.EblockerModule;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.JedisConsistencyCheck;
@@ -204,7 +204,7 @@ public class EblockerServerApp {
      * If it does, the application will stop and there will be no direct
      * feedback to the user.
      */
-    void bootPhase(@Nonnull BaseModule baseModule) {
+    void bootPhase(@Nonnull Module baseModule) {
         try {
             initBootPhase(baseModule);
             startHttpServer();
@@ -251,7 +251,7 @@ public class EblockerServerApp {
 
     // ---
 
-    void initBootPhase(@Nonnull BaseModule baseModule) {
+    void initBootPhase(@Nonnull Module baseModule) {
         LOG.info("Initiating eBlocker Core start-up...");
         injector = Guice.createInjector(baseModule);
 
@@ -452,7 +452,7 @@ public class EblockerServerApp {
         initSubSystemServices(SubSystem.HTTP_SERVER);
     }
 
-    private String doCheckSchemaVersion() {
+    String doCheckSchemaVersion() {
         try {
             return Migrations.run();
 

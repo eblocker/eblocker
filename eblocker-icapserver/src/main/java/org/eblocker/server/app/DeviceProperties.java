@@ -25,6 +25,7 @@ import org.eblocker.server.icap.resources.SimpleResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -50,32 +51,41 @@ public class DeviceProperties {
     private static final Logger LOG = LoggerFactory.getLogger(DeviceProperties.class);
 
     private static final String DEVICE_PROP_ARCH_KEY = "device.arch";
-    private static final String DEVICE_PROP_ARCH_DEFAULT = "(unknown)"; // "arm"
+    @Nonnull
+    static final String DEVICE_PROP_ARCH_DEFAULT = "(unknown)"; // "arm"
 
     private static final String DEVICE_PROP_BOARD_KEY = "device.board";
-    private static final String DEVICE_PROP_BOARD_DEFAULT = "(unknown)"; // "Banana PI M2+"
+    @Nonnull
+    static final String DEVICE_PROP_BOARD_DEFAULT = "(unknown)"; // "Banana PI M2+"
 
     private static final String DEVICE_PROP_CASE_KEY = "device.case";
-    private static final String DEVICE_PROP_CASE_DEFAULT = "(unknown)"; // "Cube 1.0"
+    @Nonnull
+    static final String DEVICE_PROP_CASE_DEFAULT = "(unknown)"; // "Cube 1.0"
 
     private static final String DEVICE_PROP_HAS_SERIALNUMBER_KEY = "device.serialnumber.available";
+    @Nonnull
     private static final String DEVICE_PROP_HAS_SERIALNUMBER_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have a serial number
 
     private static final String DEVICE_PROP_SERIALNUMBER_PATTERN_KEY = "device.serialnumber.pattern";
-    private static final String DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT = "SN(\\d){8}";
+    @Nonnull
+    static final String DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT = "SN(\\d){8}";
 
     private static final String DEVICE_PROP_SERIALNUMBER_EXAMPLE_KEY = "device.serialnumber.example";
-    private static final String DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT = "SN12345678"; // not used, if device.serialnumber.available=false
+    @Nonnull
+    static final String DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT = "SN12345678"; // not used, if device.serialnumber.available=false
 
     private static final String DEVICE_PROP_HAS_WIFI_KEY = "device.wifi.available"; // not used, if device.serialnumber.available=false
+    @Nonnull
     private static final String DEVICE_PROP_HAS_WIFI_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have Wifi
 
     private static final String DEVICE_PROP_HAS_RGB_LED_KEY = "device.led.rgb.available";
+    @Nonnull
     private static final String DEVICE_PROP_HAS_RGB_LED_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have an RGB LED
 
     private final Properties properties;
 
-    private Pattern serialNumberPattern = null;
+    @Nonnull
+    private final Pattern serialNumberPattern;
 
     @Inject
     public DeviceProperties(@Named("deviceProperties") String devicePropertiesPath) {
@@ -93,49 +103,49 @@ public class DeviceProperties {
             LOG.warn("Cannot load device properties from {}, using default values", devicePropertiesPath, e);
         }
 
-        if (getSerialNumberPattern() != null) {
-            serialNumberPattern = Pattern.compile(getSerialNumberPattern(), Pattern.CASE_INSENSITIVE);
-        }
+        serialNumberPattern = Pattern.compile(getSerialNumberPattern(), Pattern.CASE_INSENSITIVE);
     }
 
     public boolean isSerialNumberAvailable() {
         String value = properties.getProperty(DEVICE_PROP_HAS_SERIALNUMBER_KEY, DEVICE_PROP_HAS_SERIALNUMBER_DEFAULT);
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     public boolean isWifiAvailable() {
         String value = properties.getProperty(DEVICE_PROP_HAS_WIFI_KEY, DEVICE_PROP_HAS_WIFI_DEFAULT);
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     public boolean isRgbLedAvailable() {
         String value = properties.getProperty(DEVICE_PROP_HAS_RGB_LED_KEY, DEVICE_PROP_HAS_RGB_LED_DEFAULT);
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
+    @Nonnull
     public String getArchitecture() {
         return properties.getProperty(DEVICE_PROP_ARCH_KEY, DEVICE_PROP_ARCH_DEFAULT);
     }
 
+    @Nonnull
     public String getBoard() {
         return properties.getProperty(DEVICE_PROP_BOARD_KEY, DEVICE_PROP_BOARD_DEFAULT);
     }
 
+    @Nonnull
     public String getCase() {
         return properties.getProperty(DEVICE_PROP_CASE_KEY, DEVICE_PROP_CASE_DEFAULT);
     }
 
+    @Nonnull
     public String getSerialNumberPattern() {
         return properties.getProperty(DEVICE_PROP_SERIALNUMBER_PATTERN_KEY, DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT);
     }
 
     public boolean isSerialNumberMatching(String serialNumber) {
-        if (serialNumberPattern == null) {
-            return true;
-        }
         return serialNumberPattern.matcher(serialNumber).matches();
     }
 
+    @Nonnull
     public String getSerialnumberExample() {
         return properties.getProperty(DEVICE_PROP_SERIALNUMBER_EXAMPLE_KEY, DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT);
     }

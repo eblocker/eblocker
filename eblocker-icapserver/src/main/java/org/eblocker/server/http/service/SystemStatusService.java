@@ -51,9 +51,9 @@ public class SystemStatusService {
 
     private final List<ExecutionStateChangeListener> listeners = new ArrayList<>();
 
-    private List<Exception> warnings = new ArrayList<>();
+    private final List<Exception> warnings = new ArrayList<>();
 
-    private Map<SubSystem, SubSystemDetails> details = new EnumMap<>(SubSystem.class);
+    private final Map<SubSystem, SubSystemDetails> details = new EnumMap<>(SubSystem.class);
 
     private SystemUpdater systemUpdater;
 
@@ -177,7 +177,7 @@ public class SystemStatusService {
 
     // get notified of changes of ExecutionState:
     public interface ExecutionStateChangeListener {
-        public void onChange(ExecutionState newState);
+        void onChange(ExecutionState newState);
     }
 
     public void addListener(ExecutionStateChangeListener listener) {

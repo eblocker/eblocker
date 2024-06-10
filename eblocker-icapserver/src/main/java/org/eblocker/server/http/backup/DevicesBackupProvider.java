@@ -66,10 +66,10 @@ public class DevicesBackupProvider extends BackupProvider {
 
     @Override
     public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        List<Device> devicesToRestore = null;
+        List<Device> devicesToRestore;
         JarEntry entry = inputStream.getNextJarEntry();
         if (entry.getName().equals(DEVICES_ENTRY)) {
-            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<List<Device>>() {
+            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<>() {
             });
             inputStream.closeEntry();
         } else {
@@ -125,7 +125,7 @@ public class DevicesBackupProvider extends BackupProvider {
                 existingDevice.setIpAddressFixed(deviceToRestore.isIpAddressFixed());
                 // Both eBlocker- and gateway-flag default to false
                 // Future: Currently, the VPN settings are not saved
-                existingDevice.setIsVpnClient(deviceToRestore.isVpnClient() && false);
+                existingDevice.setIsVpnClient(false);
                 existingDevice.setMalwareFilterEnabled(deviceToRestore.isMalwareFilterEnabled());
                 existingDevice.setMessageShowAlert(deviceToRestore.isMessageShowAlert());
                 existingDevice.setMessageShowInfo(deviceToRestore.isMessageShowInfo());

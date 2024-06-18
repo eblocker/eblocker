@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -60,6 +61,7 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         return new FilterDecision<>(domain, decision.isBlocked(), decision.getFilter());
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.singletonList(filter);

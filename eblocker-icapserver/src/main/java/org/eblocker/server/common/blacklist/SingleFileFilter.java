@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -135,6 +136,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         return new FilterDecision<>(domain, isBlocked, this);
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.emptyList();

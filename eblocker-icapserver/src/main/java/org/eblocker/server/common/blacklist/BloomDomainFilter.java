@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,21 +33,24 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
     private static final byte[] MAGIC_BYTES = { 0x65, 0x42, 0x6c, 0x6b, 0x42, 0x6c, 0x6d };
     private static final byte FILE_FORMAT_VERSION = 0x01;
 
+    @Nonnull
     private final DomainFilter<T> filter;
+    @Nonnull
     private final BloomFilter<T> bloomFilter;
 
-    public BloomDomainFilter(Funnel<T> funnel, double probability, DomainFilter<T> filter) {
+    public BloomDomainFilter(@Nonnull Funnel<T> funnel, double probability, @Nonnull DomainFilter<T> filter) {
         this.filter = filter;
 
         bloomFilter = BloomFilter.create(funnel, filter.getSize(), probability);
         filter.getDomains().forEach(bloomFilter::put);
     }
 
-    public BloomDomainFilter(BloomFilter<T> bloomFilter, DomainFilter<T> filter) {
+    public BloomDomainFilter(@Nonnull BloomFilter<T> bloomFilter, @Nonnull DomainFilter<T> filter) {
         this.bloomFilter = bloomFilter;
         this.filter = filter;
     }
 
+    @Nonnull
     public BloomFilter<T> getBloomFilter() {
         return bloomFilter;
     }
@@ -80,18 +84,20 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return filter.isBlocked(domain);
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.singletonList(filter);
     }
 
-    public void writeTo(OutputStream os) throws IOException {
+    public void writeTo(@Nonnull OutputStream os) throws IOException {
         os.write(MAGIC_BYTES);
         os.write(FILE_FORMAT_VERSION);
         bloomFilter.writeTo(os);
     }
 
-    public static <T> BloomDomainFilter<T> readFrom(InputStream is, Funnel<T> funnel, DomainFilter<T> filter) throws IOException {
+    @Nonnull
+    public static <T> BloomDomainFilter<T> readFrom(@Nonnull InputStream is, @Nonnull Funnel<T> funnel, @Nonnull DomainFilter<T> filter) throws IOException {
         byte[] magicBytes = new byte[7];
         is.read(magicBytes);
 

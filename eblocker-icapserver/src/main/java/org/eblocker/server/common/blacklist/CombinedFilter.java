@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +60,7 @@ class CombinedFilter<T> implements DomainFilter<T> {
         return filters.stream().flatMap(DomainFilter::getDomains);
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.unmodifiableList(filters);

@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -34,7 +35,7 @@ import java.util.stream.Stream;
 public class BlacklistCompiler {
     private static final Logger log = LoggerFactory.getLogger(BlacklistCompiler.class);
 
-    public void compile(Integer id, String name, List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
+    public void compile(Integer id, String name, @Nonnull List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
         log.debug("Compiling filter {} with {} domains", name, domains.size());
         log.debug("Creating file filter for {}", name);
         SingleFileFilter fileFilter = new SingleFileFilter(Charsets.UTF_8, Paths.get(fileFilterFileName), id, name, domains);

@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -54,6 +55,7 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         return new FilterDecision<>(domain, !decision.isBlocked(), decision.getFilter());
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.singletonList(filter);

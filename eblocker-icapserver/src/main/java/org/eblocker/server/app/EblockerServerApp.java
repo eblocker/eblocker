@@ -19,6 +19,7 @@ package org.eblocker.server.app;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.name.Names;
 import com.google.inject.spi.Message;
@@ -151,6 +152,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -189,62 +191,69 @@ public class EblockerServerApp {
         SLF4JBridgeHandler.install();
         java.util.logging.Logger.getLogger("").setLevel(Level.FINEST);
 
-        //
-        // Boot Phase
-        // ==========
-        // It should be taken care, that it is as unlikely as possible that
-        // anything could go wrong during the boot phase.
-        // If it does, the application will stop and there will be no direct
-        // feedback to the user.
-        //
-        try {
-            app.initBootPhase();
-            app.startHttpServer();
+        app.bootPhase(new EblockerModule());
 
+        app.runtimePhase();
+    }
+
+    /**
+     * Boot Phase
+     * ==========
+     * It should be taken care, that it is as unlikely as possible that
+     * anything could go wrong during the boot phase.
+     * If it does, the application will stop and there will be no direct
+     * feedback to the user.
+     */
+    void bootPhase(@Nonnull Module baseModule) {
+        try {
+            initBootPhase(baseModule);
+            startHttpServer();
         } catch (Throwable t) {
             // We catch Throwable and not just Exception, because we want to be sure that
             // the shutdown hooks are being called and all threads are stopped.
-            app.startupFailed(t);
-            System.exit(1);
-
+            startupFailed(t);
+            exitSystem();
         }
+    }
 
-        //
-        // Runtime Phase
-        // =============
-        // At least the HTTP server is now running with a few REST controllers.
-        // If anything goes wrong from here on, we should not stop the core process,
-        // but provide feedback to the user.
-        // It might even be possible to provide hints and options to fix the system.
-        //
+    void exitSystem() {
+        System.exit(1);
+    }
+
+    /**
+     * Runtime Phase
+     * =============
+     * At least the HTTP server is now running with a few REST controllers.
+     * If anything goes wrong from here on, we should not stop the core process,
+     * but provide feedback to the user.
+     * It might even be possible to provide hints and options to fix the system.
+     */
+    void runtimePhase() {
         try {
-            app.initRuntimePhase();
-            app.openDatabaseConnection();
-            app.wireEventListeners();
-            app.startBackgroundTasks();
-            app.startIcapServer();
-            app.startNetworkStateMachine();
-            app.startHttpsServer();
-            app.startServices();
-            app.injectRESTController();
+            initRuntimePhase();
+            openDatabaseConnection();
+            wireEventListeners();
+            startBackgroundTasks();
+            startIcapServer();
+            startNetworkStateMachine();
+            startHttpsServer();
+            startServices();
+            injectRESTController();
 
             //
             // Start-up complete
             //
-            app.startupCompleted();
-
+            startupCompleted();
         } catch (Exception e) {
-            app.startupFailed(e);
-
+            startupFailed(e);
         }
-
     }
 
     // ---
 
-    private void initBootPhase() throws IOException {
+    void initBootPhase(@Nonnull Module baseModule) {
         LOG.info("Initiating eBlocker Core start-up...");
-        injector = Guice.createInjector(new EblockerModule());
+        injector = Guice.createInjector(baseModule);
 
         subSystemServicesIndex = injector.getInstance(SubSystemServiceIndex.class);
         subSystemServicesIndex.scan(injector.getBindings());
@@ -269,7 +278,7 @@ public class EblockerServerApp {
                 .starting(SubSystem.EBLOCKER_CORE);
     }
 
-    private void startHttpServer() {
+    void startHttpServer() {
         STATUS.info("Starting HTTP server...");
         doStartHttpServer();
         statusReporter.testNetworkInterface();
@@ -279,7 +288,7 @@ public class EblockerServerApp {
         systemStatusService.ok(SubSystem.HTTP_SERVER, key, injector.getInstance(Key.get(Integer.class, Names.named(key))));
     }
 
-    private void initRuntimePhase() {
+    void initRuntimePhase() {
         STATUS.info("Initiating eBlocker Core runtime...");
         eventLogger = injector.getInstance(EventLogger.class);
         shutdownService.setEventLogger(eventLogger);
@@ -393,7 +402,7 @@ public class EblockerServerApp {
         }
     }
 
-    private void startupCompleted() {
+    void startupCompleted() {
         if (haveWarnings) {
             STATUS.warn("eBlocker Core started with warnings!");
             systemStatusService.setExecutionState(ExecutionState.RUNNING);
@@ -414,14 +423,16 @@ public class EblockerServerApp {
 
     private void startupFailed(Throwable t) {
         LOG.error("Starting eBlocker Core failed", t);
-        systemStatusService.setExecutionState(ExecutionState.ERROR);
-        systemStatusService.error(SubSystem.EBLOCKER_CORE);
+        if (systemStatusService != null) {
+            systemStatusService.setExecutionState(ExecutionState.ERROR);
+            systemStatusService.error(SubSystem.EBLOCKER_CORE);
+        }
         if (statusReporter != null) {
             statusReporter.startupFailed(t);
         }
     }
 
-    private void processSubSystemWarning(String msg, SubSystem subSystem, Exception e) {
+    private void processSubSystemWarning(String msg, @Nonnull SubSystem subSystem, Exception e) {
         LOG.error(msg, e);
         systemStatusService.error(subSystem, e.getMessage());
         systemStatusService.addWarning(e);
@@ -441,7 +452,7 @@ public class EblockerServerApp {
         initSubSystemServices(SubSystem.HTTP_SERVER);
     }
 
-    private String doCheckSchemaVersion() {
+    String doCheckSchemaVersion() {
         try {
             return Migrations.run();
 
@@ -536,7 +547,7 @@ public class EblockerServerApp {
     // ---
 
     @SuppressWarnings("unchecked")
-    private <CTRL, IMPL extends CTRL> void injectController(Class<CTRL> clazz, Class<IMPL> implClazz) {
+    private <CTRL, IMPL extends CTRL> void injectController(@Nonnull Class<CTRL> clazz, @Nonnull Class<IMPL> implClazz) {
         CTRL controller = injector.getInstance(clazz);
         IMPL controllerImpl = injector.getInstance(implClazz);
         if (controller instanceof ControllerWrapper) {
@@ -544,7 +555,7 @@ public class EblockerServerApp {
         }
     }
 
-    private void initSubSystemServices(SubSystem subSystem) {
+    void initSubSystemServices(@Nonnull SubSystem subSystem) {
         LOG.debug("initializing sub-system-services for {}", subSystem);
 
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -591,7 +602,7 @@ public class EblockerServerApp {
         executor.shutdown();
     }
 
-    private List<Method> getDeclaredMethodsWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    private List<Method> getDeclaredMethodsWithAnnotation(@Nonnull Class<?> clazz, @Nonnull Class<? extends Annotation> annotationClass) {
         List<Method> methods = new ArrayList<>();
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(annotationClass)) {
@@ -601,7 +612,7 @@ public class EblockerServerApp {
         return methods;
     }
 
-    private void callMethod(SubSystem subSystem, Object instance, Method method) {
+    private void callMethod(@Nonnull SubSystem subSystem, @Nonnull Object instance, @Nonnull Method method) {
         try {
             LOG.debug("{}/{}/{} calling method", subSystem, instance.getClass().getSuperclass().getSimpleName(), method.getName());
             method.invoke(instance);

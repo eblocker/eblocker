@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -61,6 +62,7 @@ public class HashingFilter implements DomainFilter<String> {
         return new FilterDecision<>(domain, decision.isBlocked(), decision.getFilter());
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Collections.singletonList(filter);

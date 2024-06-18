@@ -49,6 +49,7 @@ import org.eblocker.server.http.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -658,6 +659,7 @@ public class DomainBlockingService {
             return new AttributeDecision<>(decision.getDomain(), decision.isBlocked(), decision.getFilter(), decisionAttributes);
         }
 
+        @Nonnull
         @Override
         public List<DomainFilter<?>> getChildFilters() {
             return filter.getChildFilters();
@@ -710,6 +712,7 @@ public class DomainBlockingService {
                     (String) attributes.get(ATTRIBUTE_TARGET));
         }
 
+        @Nonnull
         @Override
         public List<DomainFilter<?>> getChildFilters() {
             return Collections.singletonList(delegate);

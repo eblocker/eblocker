@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,6 +64,7 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
                 .orElse(new FilterDecision<>(domain, false, this));
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Stream.of(filters).collect(Collectors.toList());

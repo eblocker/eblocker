@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +80,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return decision;
     }
 
+    @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
         return Stream.of(filters).collect(Collectors.toList());

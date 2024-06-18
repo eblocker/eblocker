@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,8 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BloomDomainFilterTest {
 
-    private double fpp = 0.25;
-
     private List<String> domains;
     private List<String> nonBlockedDomains;
     private List<String> falsePositives;
@@ -47,28 +46,31 @@ class BloomDomainFilterTest {
     private DomainFilter<String> domainFilter;
     private BloomDomainFilter<String> filter;
 
+    @SuppressWarnings("DataFlowIssue")
     @BeforeEach
-    void setup() throws IOException {
-        domains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000"));
+    void setUp() throws IOException {
+        domains = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/top-1000"), Charset.defaultCharset());
 
         // find some false positives / non blocked sites
+        double fpp = 0.25;
         BloomFilter<String> bloomFilter = BloomFilter.create(new StringFunnel(Charsets.UTF_8), domains.size(), fpp);
         domains.forEach(bloomFilter::put);
-        Map<Boolean, List<String>> mightContain = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/bottom-1000")).stream().collect(Collectors.partitioningBy(bloomFilter::mightContain));
+        Map<Boolean, List<String>> mightContain = IOUtils.readLines(ClassLoader.getSystemResourceAsStream("test-data/domainblacklists/bottom-1000"), Charset.defaultCharset()).stream().collect(Collectors.partitioningBy(bloomFilter::mightContain));
 
         // check non blocked domains
         nonBlockedDomains = mightContain.get(false);
         assertFalse(nonBlockedDomains.isEmpty(), "test setup does not include non-blocked domains");
-        nonBlockedDomains.stream().forEach(domain -> assertFalse(bloomFilter.mightContain(domain)));
+        nonBlockedDomains.forEach(domain -> assertFalse(bloomFilter.mightContain(domain)));
         assertTrue(nonBlockedDomains.contains("pockethcm.com"));
         assertFalse(bloomFilter.mightContain("pockethcm.com"));
 
         // check false positives
         falsePositives = mightContain.get(true);
         assertFalse(falsePositives.isEmpty(), "test setup does not include false positives");
-        falsePositives.stream().forEach(domain -> assertTrue(bloomFilter.mightContain(domain)));
+        falsePositives.forEach(domain -> assertTrue(bloomFilter.mightContain(domain)));
 
         // create test instance
+        //noinspection unchecked
         domainFilter = Mockito.mock(DomainFilter.class);
         Mockito.when(domainFilter.getDomains()).thenReturn(domains.stream());
         Mockito.when(domainFilter.getSize()).thenReturn(domains.size());
@@ -77,14 +79,14 @@ class BloomDomainFilterTest {
     }
 
     @Test
-    void testBloomFilteringNonBlockedDomains() {
+    void bloomFilteringNonBlockedDomains() {
         // for non-blocked domains the backing-filter must never be called
         nonBlockedDomains.forEach(domain -> assertFalse(filter.isBlocked(domain).isBlocked()));
         Mockito.verify(domainFilter, Mockito.never()).isBlocked(Mockito.anyString());
     }
 
     @Test
-    void testBloomFilteringBlockedDomains() {
+    void bloomFilteringBlockedDomains() {
         // each blocked domain must be checked with backing-filter because it may be a
         // false-positive
         Mockito.when(domainFilter.isBlocked(Mockito.anyString())).then(invocationOnMock -> {
@@ -96,7 +98,7 @@ class BloomDomainFilterTest {
     }
 
     @Test
-    void testFalsePositive() throws IOException {
+    void falsePositive() throws IOException {
         int size = 200;
 
         Mockito.when(domainFilter.isBlocked(Mockito.anyString()))
@@ -110,7 +112,7 @@ class BloomDomainFilterTest {
     }
 
     @Test
-    void testSerialization() throws IOException {
+    void serialization() throws IOException {
         // ser- and derserialization
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         filter.writeTo(baos);
@@ -123,13 +125,13 @@ class BloomDomainFilterTest {
             return new FilterDecision<>(domain, domains.contains(domain), domainFilter);
         });
 
-        domains.stream().forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
-        nonBlockedDomains.stream().forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
-        falsePositives.stream().forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        domains.forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        nonBlockedDomains.forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
+        falsePositives.forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), deserialized.isBlocked(domain).isBlocked()));
     }
 
     @Test
-    void testSharedBloomFilter() {
+    void sharedBloomFilter() {
         BloomDomainFilter<String> filter2 = new BloomDomainFilter<>(filter.getBloomFilter(), domainFilter);
 
         Stream.concat(nonBlockedDomains.stream(), domains.stream()).forEach(domain -> Assertions.assertEquals(filter.isBlocked(domain).isBlocked(), filter2.isBlocked(domain).isBlocked()));

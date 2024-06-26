@@ -18,21 +18,21 @@ package org.eblocker.server.upnp;
 
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
-import org.fourthline.cling.UpnpServiceImpl;
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.action.ActionArgumentValue;
-import org.fourthline.cling.model.action.ActionException;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.model.types.DeviceType;
-import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
-import org.fourthline.cling.model.types.UnsignedIntegerTwoBytes;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.support.model.PortMapping.Protocol;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.jupnp.UpnpServiceImpl;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.action.ActionArgumentValue;
+import org.jupnp.model.action.ActionException;
+import org.jupnp.model.meta.Action;
+import org.jupnp.model.meta.Device;
+import org.jupnp.model.meta.Service;
+import org.jupnp.model.types.DeviceType;
+import org.jupnp.model.types.UnsignedIntegerFourBytes;
+import org.jupnp.model.types.UnsignedIntegerTwoBytes;
+import org.jupnp.registry.Registry;
+import org.jupnp.support.model.PortMapping.Protocol;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -202,7 +202,7 @@ public class UpnpManagementServiceTest {
 
         forwardings.add(forwardingA);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
 
         // PortForwardingAdd used to install ForwardingA
         UpnpPortForwardingAdd upnpPortForwardingAddA = Mockito.mock(UpnpPortForwardingAdd.class);
@@ -276,7 +276,7 @@ public class UpnpManagementServiceTest {
 
         forwardings.add(forwardingA);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
 
         // PortForwardingAdd used to install ForwardingA
         UpnpPortForwardingAdd upnpPortForwardingAddA = Mockito.mock(UpnpPortForwardingAdd.class);
@@ -481,7 +481,7 @@ public class UpnpManagementServiceTest {
 
         forwardings.add(forwardingA);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
 
         // PortForwardingDelete used to remove ForwardingA
         UpnpPortForwardingDelete upnpPortForwardingDeleteA = Mockito.mock(UpnpPortForwardingDelete.class);
@@ -553,7 +553,7 @@ public class UpnpManagementServiceTest {
 
         forwardings.add(forwardingA);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
 
         // PortForwardingDelete used to remove ForwardingA
         UpnpPortForwardingDelete upnpPortForwardingDeleteA = Mockito.mock(UpnpPortForwardingDelete.class);
@@ -749,7 +749,7 @@ public class UpnpManagementServiceTest {
 
         Action getPortMappingEntryAction = Mockito.mock(Action.class);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
         Mockito.when(service.getAction(Mockito.eq("GetGenericPortMappingEntry"))).thenReturn(getPortMappingEntryAction);
 
         Device connectionDevice = Mockito.mock(Device.class);
@@ -942,7 +942,7 @@ public class UpnpManagementServiceTest {
 
         Action getPortMappingEntryAction = Mockito.mock(Action.class);
 
-        org.fourthline.cling.model.meta.Service service = Mockito.mock(org.fourthline.cling.model.meta.Service.class);
+        Service service = Mockito.mock(Service.class);
         Mockito.when(service.getAction(Mockito.eq("GetGenericPortMappingEntry"))).thenReturn(getPortMappingEntryAction);
 
         Device connectionDevice = Mockito.mock(Device.class);

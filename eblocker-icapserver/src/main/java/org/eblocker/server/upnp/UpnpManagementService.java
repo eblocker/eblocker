@@ -21,20 +21,18 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.RemoteService;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.model.types.DeviceType;
-import org.fourthline.cling.model.types.ServiceType;
-import org.fourthline.cling.model.types.UDADeviceType;
-import org.fourthline.cling.model.types.UDAServiceType;
-import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
-import org.fourthline.cling.model.types.UnsignedIntegerTwoBytes;
-import org.fourthline.cling.support.model.PortMapping;
-import org.fourthline.cling.support.model.PortMapping.Protocol;
+import org.jupnp.UpnpService;
+import org.jupnp.model.action.ActionInvocation;
+import org.jupnp.model.meta.Action;
+import org.jupnp.model.meta.Device;
+import org.jupnp.model.meta.RemoteService;
+import org.jupnp.model.meta.Service;
+import org.jupnp.model.types.DeviceType;
+import org.jupnp.model.types.ServiceType;
+import org.jupnp.model.types.UDADeviceType;
+import org.jupnp.model.types.UDAServiceType;
+import org.jupnp.model.types.UnsignedIntegerFourBytes;
+import org.jupnp.model.types.UnsignedIntegerTwoBytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +41,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.jupnp.support.model.PortMapping.Protocol;
 
 @Singleton
 public class UpnpManagementService {
@@ -195,7 +195,7 @@ public class UpnpManagementService {
         }
     }
 
-    private Service<?, RemoteService> findService(Device gatewayDevice) {
+    private org.jupnp.model.meta.Service<?, RemoteService> findService(Device gatewayDevice) {
         Service service = gatewayDevice.findService(IP_SERVICE_TYPE);
         if (service == null) {
             service = gatewayDevice.findService(PPP_SERVICE_TYPE);
@@ -366,7 +366,7 @@ public class UpnpManagementService {
                 .setInternalPort(getUIntTwoBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_INTERNAL_PORT));
         newForwarding.setLeaseDurationSeconds(
                 getUIntFourBytesValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_DURATION));
-        newForwarding.setProtocol(PortMapping.Protocol
+        newForwarding.setProtocol(Protocol
                 .valueOf(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_PROTOCOL)));
         newForwarding.setRemoteHost(getStringValue(getForwardingInvocation, RESULT_KEY_PORT_MAPPING_REMOTE_HOST));
 

@@ -18,10 +18,10 @@ package org.eblocker.server.upnp;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.fourthline.cling.controlpoint.ActionCallback;
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.message.UpnpResponse;
+import org.jupnp.controlpoint.ActionCallback;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.action.ActionInvocation;
+import org.jupnp.model.message.UpnpResponse;
 
 public class UpnpActionCallback extends ActionCallback {
 

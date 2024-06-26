@@ -18,11 +18,11 @@ package org.eblocker.server.upnp;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.message.UpnpResponse;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.support.igd.callback.PortMappingDelete;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.action.ActionInvocation;
+import org.jupnp.model.message.UpnpResponse;
+import org.jupnp.model.meta.Service;
+import org.jupnp.support.igd.callback.PortMappingDelete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

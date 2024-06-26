@@ -16,18 +16,18 @@
  */
 package org.eblocker.server.upnp;
 
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.message.UpnpResponse;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.ActionArgument;
-import org.fourthline.cling.model.meta.Service;
-import org.fourthline.cling.model.types.Datatype;
-import org.fourthline.cling.support.model.PortMapping.Protocol;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.action.ActionInvocation;
+import org.jupnp.model.message.UpnpResponse;
+import org.jupnp.model.meta.Action;
+import org.jupnp.model.meta.ActionArgument;
+import org.jupnp.model.meta.Service;
+import org.jupnp.model.types.Datatype;
+import org.jupnp.support.model.PortMapping.Protocol;
 import org.mockito.Mockito;
 
 public class UpnpPortForwardingDeleteTest {

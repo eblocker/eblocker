@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.upnp;
 
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.meta.Service;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.meta.Service;
 
 public interface UpnpPortForwardingAddFactory {
     UpnpPortForwardingAdd create(Service service, ControlPoint controlPoint, UpnpPortForwarding portForwarding,

@@ -16,9 +16,9 @@
  */
 package org.eblocker.server.upnp;
 
-import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
-import org.fourthline.cling.model.types.UnsignedIntegerTwoBytes;
-import org.fourthline.cling.support.model.PortMapping;
+import org.jupnp.model.types.UnsignedIntegerFourBytes;
+import org.jupnp.model.types.UnsignedIntegerTwoBytes;
+import org.jupnp.support.model.PortMapping;
 
 public class UpnpPortForwarding extends PortMapping {
     private boolean permanent;// TODO: discuss if this is needed

@@ -177,11 +177,11 @@ import org.eblocker.server.upnp.UpnpActionCallbackFactory;
 import org.eblocker.server.upnp.UpnpActionInvocationFactory;
 import org.eblocker.server.upnp.UpnpPortForwardingAddFactory;
 import org.eblocker.server.upnp.UpnpPortForwardingDeleteFactory;
-import org.fourthline.cling.DefaultUpnpServiceConfiguration;
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
-import org.fourthline.cling.transport.impl.NetworkAddressFactoryImpl;
-import org.fourthline.cling.transport.spi.NetworkAddressFactory;
+import org.jupnp.DefaultUpnpServiceConfiguration;
+import org.jupnp.UpnpService;
+import org.jupnp.UpnpServiceImpl;
+import org.jupnp.transport.impl.NetworkAddressFactoryImpl;
+import org.jupnp.transport.spi.NetworkAddressFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -470,8 +470,8 @@ public class EblockerModule extends BaseModule {
     public UpnpService provideUpnpService(NetworkAddressFactoryCustomization customization) {
         return new UpnpServiceImpl(new DefaultUpnpServiceConfiguration() {
             @Override
-            protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort) {
-                return new NetworkAddressFactoryImpl(streamListenPort) {
+            protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastResponsePort) {
+                return new NetworkAddressFactoryImpl(streamListenPort, multicastResponsePort) {
                     @Override
                     protected boolean isUsableAddress(NetworkInterface networkInterface, InetAddress address) {
                         return customization.isUsableAddress(networkInterface.getName(), address);

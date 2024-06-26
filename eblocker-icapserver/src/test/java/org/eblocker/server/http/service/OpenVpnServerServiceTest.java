@@ -27,10 +27,10 @@ import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.upnp.UpnpManagementService;
 import org.eblocker.server.upnp.UpnpPortForwarding;
 import org.eblocker.server.upnp.UpnpPortForwardingResult;
-import org.fourthline.cling.support.model.PortMapping.Protocol;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.jupnp.support.model.PortMapping.Protocol;
 import org.mockito.Mockito;
 
 import java.io.IOException;

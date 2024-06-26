@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.upnp;
 
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.RemoteService;
+import org.jupnp.model.meta.Action;
+import org.jupnp.model.meta.RemoteService;
 
 public interface UpnpActionInvocationFactory {
     UpnpActionInvocation create(Action<RemoteService> action);

@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.upnp;
 
-import org.fourthline.cling.controlpoint.ControlPoint;
-import org.fourthline.cling.model.action.ActionInvocation;
+import org.jupnp.controlpoint.ControlPoint;
+import org.jupnp.model.action.ActionInvocation;
 
 public interface UpnpActionCallbackFactory {
     UpnpActionCallback create(ActionInvocation<?> actionInvocation, ControlPoint controlPoint);

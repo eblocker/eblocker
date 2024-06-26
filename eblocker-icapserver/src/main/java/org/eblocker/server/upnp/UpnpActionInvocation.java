@@ -18,9 +18,9 @@ package org.eblocker.server.upnp;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.meta.Action;
-import org.fourthline.cling.model.meta.RemoteService;
+import org.jupnp.model.action.ActionInvocation;
+import org.jupnp.model.meta.Action;
+import org.jupnp.model.meta.RemoteService;
 
 public class UpnpActionInvocation extends ActionInvocation<RemoteService> {
     @Inject

@@ -81,7 +81,7 @@ class CacheTest {
     }
 
     @Test
-    void getFileFilterById_noCachedFileFiler_nullValueReturned() throws IOException {
+    void getFileFilterById_noCachedFileFilter_nullValueReturned() throws IOException {
         //Given
         populateCache();
         Cache cache = new Cache(cachePath, objectMapper);
@@ -94,7 +94,7 @@ class CacheTest {
     }
 
     @Test
-    void getFileFilterById_anyCachedFileFiler_anyValueReturned() throws IOException {
+    void getFileFilterById_anyCachedFileFilter_anyValueReturned() throws IOException {
         //Given
         populateCache();
         Cache cache = new Cache(cachePath, objectMapper);
@@ -107,7 +107,7 @@ class CacheTest {
     }
 
     @Test
-    void getFileFilterById_anyEmptyCachedFileFiler_nullValueReturned() throws IOException {
+    void getFileFilterById_anyEmptyCachedFileFilter_nullValueReturned() throws IOException {
         //Given
         Cache cache = spy(new Cache(cachePath, objectMapper));
         doReturn(new ArrayList<>()).when(cache).getFileFiltersById(anyInt());

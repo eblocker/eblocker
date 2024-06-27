@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,18 +44,26 @@ class Cache {
     private static final Logger log = LoggerFactory.getLogger(Cache.class);
 
     private static final int CACHE_FORMAT = 5;
-    private static final String LIST_DIR = "lists";
+    static final String LIST_DIR = "lists";
+    static final String PROFILES_DIR = "profiles";
+    static final String FILTER_FILE_EXTENSION = ".filter";
+    static final String BLOOM_FILE_EXTENSION = ".bloom";
+    static final String INDEX_JSON = "/index.json";
+
+    @Nonnull
     private final String cachePath;
+    @Nonnull
     private final String cacheIndexFile;
+    @Nonnull
     private final ObjectMapper objectMapper;
 
     private CacheIndex index;
 
-    public Cache(String cachePath, ObjectMapper objectMapper) throws IOException {
+    Cache(@Nonnull String cachePath, @Nonnull ObjectMapper objectMapper) throws IOException {
         this.cachePath = cachePath;
         this.objectMapper = objectMapper;
 
-        this.cacheIndexFile = cachePath + "/index.json";
+        this.cacheIndexFile = cachePath + INDEX_JSON;
 
         initCache();
     }
@@ -61,21 +71,24 @@ class Cache {
     /**
      * Get latest versions of all file filters
      */
-    public List<CachedFileFilter> getFileFilters() {
+    @Nonnull
+    List<CachedFileFilter> getFileFilters() {
         return index.getFilters().values().stream().map(f -> f.get(0)).collect(Collectors.toList());
     }
 
     /**
      * Get all versions of all file filters
      */
-    public List<CachedFileFilter> getAllFileFilters() {
+    @Nonnull
+    List<CachedFileFilter> getAllFileFilters() {
         return index.getFilters().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     /**
      * Get latest version of a cached file filter
      */
-    public CachedFileFilter getFileFilterById(int id) {
+    @Nullable
+    CachedFileFilter getFileFilterById(int id) {
         List<CachedFileFilter> filters = getFileFiltersById(id);
         return filters == null || filters.isEmpty() ? null : filters.get(0);
     }
@@ -83,25 +96,26 @@ class Cache {
     /**
      * Get all versions of a cached file filter
      */
-    public List<CachedFileFilter> getFileFiltersById(int id) {
+    @Nullable
+    List<CachedFileFilter> getFileFiltersById(int id) {
         return index.getFilters().get(id);
     }
 
-    public CachedFileFilter storeFileFilter(int id, long version, String format, String filterFile, String bloomFile) throws IOException {
+    CachedFileFilter storeFileFilter(int id, long version, String format, @Nullable String filterFile, @Nullable String bloomFile) throws IOException {
         CachedFilterKey key = new CachedFilterKey(id, version);
         CachedFileFilter importedFilter = new CachedFileFilter();
         importedFilter.setKey(key);
         importedFilter.setFormat(format);
 
         if (filterFile != null) {
-            String cacheFilterFile = "lists/" + key + ".filter";
+            String cacheFilterFile = LIST_DIR + "/" + key + FILTER_FILE_EXTENSION;
             Files.copy(Paths.get(filterFile), Paths.get(cachePath + "/" + cacheFilterFile),
                     StandardCopyOption.REPLACE_EXISTING);
             importedFilter.setFileFilterFileName(cacheFilterFile);
         }
 
         if (bloomFile != null) {
-            String cacheBloomFile = "lists/" + key + ".bloom";
+            String cacheBloomFile = LIST_DIR + "/" + key + BLOOM_FILE_EXTENSION;
             Files.copy(Paths.get(bloomFile), Paths.get(cachePath + "/" + cacheBloomFile), StandardCopyOption.REPLACE_EXISTING);
             importedFilter.setBloomFilterFileName(cacheBloomFile);
         }
@@ -117,10 +131,10 @@ class Cache {
         return importedFilter;
     }
 
-    public void removeFileFilter(int id, long version) throws IOException {
+    void removeFileFilter(int id, long version) throws IOException {
         CachedFilterKey key = new CachedFilterKey(id, version);
-        String cacheFilterFile = LIST_DIR + "/" + key + ".filter";
-        String cacheBloomFile = LIST_DIR + "/" + key + ".bloom";
+        String cacheFilterFile = LIST_DIR + "/" + key + FILTER_FILE_EXTENSION;
+        String cacheBloomFile = LIST_DIR + "/" + key + BLOOM_FILE_EXTENSION;
 
         Files.deleteIfExists(Paths.get(cachePath + "/" + cacheFilterFile));
         Files.deleteIfExists(Paths.get(cachePath + "/" + cacheBloomFile));
@@ -134,7 +148,7 @@ class Cache {
         writeIndex();
     }
 
-    public void markFilterAsDeleted(int id, long version) throws IOException {
+    void markFilterAsDeleted(int id, long version) throws IOException {
         CachedFilterKey key = new CachedFilterKey(id, version);
         CachedFileFilter filter = getAllFileFilters().stream().filter(e -> e.getKey().equals(key)).findFirst().orElse(null);
         if (filter != null) {
@@ -165,11 +179,11 @@ class Cache {
     }
 
     private void deleteCachedFilters() throws IOException {
-        deleteFilesInDirectory("lists");
-        deleteFilesInDirectory("profiles");
+        deleteFilesInDirectory(LIST_DIR);
+        deleteFilesInDirectory(PROFILES_DIR);
     }
 
-    private void deleteFilesInDirectory(String directory) throws IOException {
+    private void deleteFilesInDirectory(@Nonnull String directory) throws IOException {
         try (Stream<Path> fileStream = Files.list(Paths.get(cachePath + "/" + directory))) {
             List<Path> files = fileStream.collect(Collectors.toList());
             for (Path file : files) {
@@ -198,7 +212,7 @@ class Cache {
         return true;
     }
 
-    private void upgradeIndex(JsonNode node) throws IOException {
+    private void upgradeIndex(@Nonnull JsonNode node) throws IOException {
         index = new CacheIndex();
         index.setFormat(CACHE_FORMAT);
 
@@ -221,6 +235,6 @@ class Cache {
         writeIndex();
 
         // remove obsolete profile filters
-        deleteFilesInDirectory("profiles");
+        deleteFilesInDirectory(PROFILES_DIR);
     }
 }

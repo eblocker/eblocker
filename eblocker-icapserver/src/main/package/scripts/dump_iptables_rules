@@ -15,4 +15,10 @@
 # implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-iptables-save -c > $1
+iptables-save -c | dd of="$1" conv=nocreat status=none
+
+# Why not simply redirect stdout with '>'?
+# The redirection operator uses flag O_CREAT.
+# The /tmp dir is sticky.
+# By default "sysctl fs.protected_regular=2" is set in Debian Bookworm.
+# As a result, root is not allowed to open the file that belongs to icapd with O_CREAT.

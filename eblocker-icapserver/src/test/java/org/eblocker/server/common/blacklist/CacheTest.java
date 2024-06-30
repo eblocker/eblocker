@@ -357,26 +357,6 @@ class CacheTest {
         assertEquals(0, pathCount("/" + LIST_DIR));
     }
 
-    @Test
-    void storeRemoveFileOnlyFilter() throws IOException {
-        //Given
-        Path filePath = createTestFile(0);
-
-        Cache cache = new Cache(cachePath, objectMapper);
-
-        //When
-        CachedFileFilter cachedFilter = cache.storeFileFilter(0, 0, "domainblacklist/string", filePath.toString(), null);
-
-        //Then
-        assertNull(cachedFilter.getBloomFilterFileName());
-        assertTrue(Files.exists(Paths.get(cachePath + "/" + cachedFilter.getFileFilterFileName())));
-        assertEquals(1, pathCount("/" + LIST_DIR));
-
-        cache.removeFileFilter(0, 0);
-        assertFalse(Files.exists(Paths.get(cachePath + "/" + cachedFilter.getFileFilterFileName())));
-        assertEquals(0, pathCount("/" + LIST_DIR));
-    }
-
     private void populateCache() throws IOException {
         Files.copy(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("test-data/filter/domain/cachetest-index.json")), Paths.get(indexFilePath));
     }

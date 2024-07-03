@@ -16,17 +16,30 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class CachedFileFilter {
-    private CachedFilterKey key;
-    private String bloomFilterFileName;
-    private String fileFilterFileName;
-    private String format;
+    @Nonnull
+    private final CachedFilterKey key;
+    @Nonnull
+    private final String bloomFilterFileName;
+    @Nullable
+    private final String fileFilterFileName;
+    private final String format;
     private boolean deleted;
 
-    public CachedFileFilter() {
-    }
-
-    public CachedFileFilter(CachedFilterKey key, String bloomFilterFileName, String fileFilterFileName, String format, boolean deleted) {
+    @JsonCreator
+    CachedFileFilter(@Nonnull @JsonProperty("key") CachedFilterKey key,
+                     @Nonnull @JsonProperty("bloomFilterFileName") String bloomFilterFileName,
+                     @Nullable @JsonProperty("fileFilterFileName") String fileFilterFileName,
+                     @JsonProperty("format") String format,
+                     @JsonProperty("deleted") boolean deleted) {
         this.key = key;
         this.bloomFilterFileName = bloomFilterFileName;
         this.fileFilterFileName = fileFilterFileName;
@@ -34,43 +47,30 @@ class CachedFileFilter {
         this.deleted = deleted;
     }
 
-    public CachedFilterKey getKey() {
+    @Nonnull
+    CachedFilterKey getKey() {
         return key;
     }
 
-    public void setKey(CachedFilterKey key) {
-        this.key = key;
-    }
-
-    public String getBloomFilterFileName() {
+    @Nonnull
+    String getBloomFilterFileName() {
         return bloomFilterFileName;
     }
 
-    public void setBloomFilterFileName(String bloomFilterFileName) {
-        this.bloomFilterFileName = bloomFilterFileName;
-    }
-
-    public String getFileFilterFileName() {
+    @Nullable
+    String getFileFilterFileName() {
         return fileFilterFileName;
     }
 
-    public void setFileFilterFileName(String fileFilterFileName) {
-        this.fileFilterFileName = fileFilterFileName;
-    }
-
-    public String getFormat() {
+    String getFormat() {
         return format;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public boolean isDeleted() {
+    boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    void setDeleted() {
+        this.deleted = true;
     }
 }

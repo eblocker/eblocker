@@ -101,24 +101,20 @@ class Cache {
         return index.getFilters().get(id);
     }
 
-    CachedFileFilter storeFileFilter(int id, long version, String format, @Nullable String filterFile, @Nullable String bloomFile) throws IOException {
+    CachedFileFilter storeFileFilter(int id, long version, String format, @Nullable String filterFile, @Nonnull String bloomFile) throws IOException {
         CachedFilterKey key = new CachedFilterKey(id, version);
-        CachedFileFilter importedFilter = new CachedFileFilter();
-        importedFilter.setKey(key);
-        importedFilter.setFormat(format);
 
+        String cacheFilterFile = null;
         if (filterFile != null) {
-            String cacheFilterFile = LIST_DIR + "/" + key + FILTER_FILE_EXTENSION;
+            cacheFilterFile = LIST_DIR + "/" + key + FILTER_FILE_EXTENSION;
             Files.copy(Paths.get(filterFile), Paths.get(cachePath + "/" + cacheFilterFile),
                     StandardCopyOption.REPLACE_EXISTING);
-            importedFilter.setFileFilterFileName(cacheFilterFile);
         }
+        String cacheBloomFile = LIST_DIR + "/" + key + BLOOM_FILE_EXTENSION;
+        Files.copy(Paths.get(bloomFile), Paths.get(cachePath + "/" + cacheBloomFile),
+                StandardCopyOption.REPLACE_EXISTING);
 
-        if (bloomFile != null) {
-            String cacheBloomFile = LIST_DIR + "/" + key + BLOOM_FILE_EXTENSION;
-            Files.copy(Paths.get(bloomFile), Paths.get(cachePath + "/" + cacheBloomFile), StandardCopyOption.REPLACE_EXISTING);
-            importedFilter.setBloomFilterFileName(cacheBloomFile);
-        }
+        CachedFileFilter importedFilter = new CachedFileFilter(key, cacheBloomFile, cacheFilterFile, format, false);
 
         List<CachedFileFilter> filters = index.getFilters().computeIfAbsent(id, k -> new ArrayList<>());
         int i = 0;
@@ -152,7 +148,7 @@ class Cache {
         CachedFilterKey key = new CachedFilterKey(id, version);
         CachedFileFilter filter = getAllFileFilters().stream().filter(e -> e.getKey().equals(key)).findFirst().orElse(null);
         if (filter != null) {
-            filter.setDeleted(true);
+            filter.setDeleted();
             writeIndex();
         }
     }

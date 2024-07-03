@@ -25,6 +25,7 @@ import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMeta
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -246,7 +247,8 @@ public class DomainBlacklistService {
         }
     }
 
-    private String getAbsoluteFileName(String fileName) {
+    @Nonnull
+    private String getAbsoluteFileName(@Nonnull String fileName) {
         return fileName.startsWith("/") ? fileName : sourcePath + "/" + fileName;
     }
 

@@ -16,24 +16,26 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CachedFilterKey {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+class CachedFilterKey {
     private final int id;
     private final long version;
 
     @JsonCreator
-    public CachedFilterKey(@JsonProperty("id") int id, @JsonProperty("version") long version) {
+    CachedFilterKey(@JsonProperty("id") int id, @JsonProperty("version") long version) {
         this.id = id;
         this.version = version;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public long getVersion() {
+    long getVersion() {
         return version;
     }
 

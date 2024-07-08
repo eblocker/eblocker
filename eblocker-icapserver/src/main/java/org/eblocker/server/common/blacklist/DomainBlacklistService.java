@@ -188,7 +188,7 @@ public class DomainBlacklistService {
             BloomDomainFilter<String> bloomFilter;
 
             try (InputStream in = Files.newInputStream(Paths.get(cachePath, storedFilter.getBloomFilterFileName()))) {
-                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), null);
+                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), StaticFilter.FALSE);
             }
 
             long stop = System.currentTimeMillis();

@@ -16,7 +16,7 @@ class CacheIndexTest {
 
     @BeforeEach
     void setUp() {
-        sut = new CacheIndex(Cache.CACHE_FORMAT);
+        sut = new CacheIndex();
     }
 
     @Test

@@ -41,7 +41,6 @@ import java.util.stream.Stream;
 class Cache {
     private static final Logger log = LoggerFactory.getLogger(Cache.class);
 
-    static final int CACHE_FORMAT = 5;
     static final String LIST_DIR = "lists";
     static final String PROFILES_DIR = "profiles";
     static final String FILTER_FILE_EXTENSION = ".filter";
@@ -145,7 +144,7 @@ class Cache {
         } else {
             log.info("creating new cache");
             deleteCachedFilters();
-            index = new CacheIndex(CACHE_FORMAT);
+            index = new CacheIndex();
             writeIndex();
         }
     }
@@ -185,7 +184,7 @@ class Cache {
             return false;
         }
         JsonNode cacheFormatField = node.get("format");
-        if (cacheFormatField == null || cacheFormatField.intValue() < CACHE_FORMAT) {
+        if (cacheFormatField == null || cacheFormatField.intValue() < CacheIndex.CACHE_FORMAT) {
             upgradeIndex(node);
         }
 
@@ -208,7 +207,7 @@ class Cache {
                 .collect(Collectors.groupingBy(filter -> filter.getKey().getId()));
 
         // write upgraded index
-        index = new CacheIndex(CACHE_FORMAT, updatedFilters);
+        index = new CacheIndex(updatedFilters);
         writeIndex();
 
         // remove obsolete profile filters

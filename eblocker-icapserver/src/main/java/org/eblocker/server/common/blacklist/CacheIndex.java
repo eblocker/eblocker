@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nonnull;
@@ -30,12 +31,19 @@ import java.util.stream.Collectors;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class CacheIndex {
+    @JsonIgnore
+    static final int CACHE_FORMAT = 5;
     private final int format;
     private final Map<Integer, List<CachedFileFilter>> filters;
 
-    CacheIndex(int format) {
-        this.format = format;
+    CacheIndex() {
+        this.format = CACHE_FORMAT;
         filters = new HashMap<>();
+    }
+
+    CacheIndex(@Nonnull Map<Integer, List<CachedFileFilter>> filters) {
+        this.format = CACHE_FORMAT;
+        this.filters = filters;
     }
 
     CacheIndex(@JsonProperty("format") int format, @Nonnull @JsonProperty("filters") Map<Integer, List<CachedFileFilter>> filters) {

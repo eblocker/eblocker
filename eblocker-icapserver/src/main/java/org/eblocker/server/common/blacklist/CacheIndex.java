@@ -43,9 +43,12 @@ class CacheIndex {
 
     CacheIndex(@Nonnull Map<Integer, List<CachedFileFilter>> filters) {
         this.format = CACHE_FORMAT;
-        this.filters = filters;
+        this.filters = new HashMap<>();
+        filters.forEach((id, filterList) -> filterList.forEach(this::addFilterSortedByVersion));
     }
 
+    @SuppressWarnings("unused")
+        //for jackson
     CacheIndex(@JsonProperty("format") int format, @Nonnull @JsonProperty("filters") Map<Integer, List<CachedFileFilter>> filters) {
         this.format = format;
         this.filters = filters;
@@ -81,6 +84,7 @@ class CacheIndex {
         return cachedFileFilters == null || cachedFileFilters.isEmpty() ? null : cachedFileFilters.get(0);
     }
 
+    @Nullable
     List<CachedFileFilter> getFileFilterById(int id) {
         List<CachedFileFilter> cachedFileFilters = filters.get(id);
         if (cachedFileFilters != null) {

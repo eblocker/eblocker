@@ -16,26 +16,94 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class CacheIndex {
-    private int format;
-    private Map<Integer, List<CachedFileFilter>> filters;
+    private final int format;
+    private final Map<Integer, List<CachedFileFilter>> filters;
 
-    public int getFormat() {
+    CacheIndex(int format) {
+        this.format = format;
+        filters = new HashMap<>();
+    }
+
+    CacheIndex(@JsonProperty("format") int format, @Nonnull @JsonProperty("filters") Map<Integer, List<CachedFileFilter>> filters) {
+        this.format = format;
+        this.filters = filters;
+    }
+
+    int getFormat() {
         return format;
     }
 
-    public void setFormat(int format) {
-        this.format = format;
+    /**
+     * Get latest versions of all file filters
+     */
+    @Nonnull
+    List<CachedFileFilter> getAllLatestFileFilters() {
+        return filters.values().stream()
+                .map(f -> f.get(0))
+                .collect(Collectors.toList());
     }
 
-    public Map<Integer, List<CachedFileFilter>> getFilters() {
-        return filters;
+    /**
+     * Get all versions of all file filters
+     */
+    @Nonnull
+    List<CachedFileFilter> getAllFileFilters() {
+        return filters.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
-    public void setFilters(Map<Integer, List<CachedFileFilter>> filters) {
-        this.filters = filters;
+    @Nullable
+    CachedFileFilter getLatestFileFilterById(int id) {
+        List<CachedFileFilter> cachedFileFilters = filters.get(id);
+        return cachedFileFilters == null || cachedFileFilters.isEmpty() ? null : cachedFileFilters.get(0);
     }
+
+    List<CachedFileFilter> getFileFilterById(int id) {
+        List<CachedFileFilter> cachedFileFilters = filters.get(id);
+        if (cachedFileFilters != null) {
+            return new ArrayList<>(cachedFileFilters);
+        }
+        return null;
+    }
+
+    void addFilterSortedByVersion(@Nonnull CachedFileFilter fileFilterToAdd) {
+        CachedFilterKey key = fileFilterToAdd.getKey();
+        List<CachedFileFilter> filterList = filters.computeIfAbsent(key.getId(), k -> new ArrayList<>());
+        int i = 0;
+        while (i < filterList.size() && key.getVersion() < filterList.get(i).getKey().getVersion()) {
+            ++i;
+        }
+        filterList.add(i, fileFilterToAdd);
+    }
+
+    void removeFileFilter(@Nonnull CachedFilterKey key) {
+        List<CachedFileFilter> remainingFilters = filters.computeIfAbsent(key.getId(), k -> new ArrayList<>()).stream()
+                .filter(f -> !f.getKey().equals(key))
+                .collect(Collectors.toList());
+        if (remainingFilters.isEmpty()) {
+            filters.remove(key.getId());
+        } else {
+            filters.put(key.getId(), remainingFilters);
+        }
+    }
+
+    boolean isEmpty() {
+        return filters.isEmpty();
+    }
+
 }

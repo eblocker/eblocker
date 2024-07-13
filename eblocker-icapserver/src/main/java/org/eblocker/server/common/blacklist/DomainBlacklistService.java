@@ -296,7 +296,7 @@ public class DomainBlacklistService {
 
     private void markFilterAsDeleted(CachedFilterKey key) {
         try {
-            cache.markFilterAsDeleted(key.getId(), key.getVersion());
+            cache.markFilterAsDeleted(key);
         } catch (IOException ioe) {
             log.warn("failed to mark filter {} as deleted: ", ioe);
         }

@@ -17,52 +17,49 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class CombinedFilter<T> implements DomainFilter<T> {
+public class CollectionFilter<T> implements DomainFilter<T> {
 
-    private final List<DomainFilter<T>> filters;
+    private final Integer listId;
+    private final Collection<T> collection;
 
-    public CombinedFilter(List<DomainFilter<T>> filters) {
-        this.filters = filters;
-    }
-
-    @Override
-    public FilterDecision<T> isBlocked(T domain) {
-        return filters.parallelStream()
-                .map(f -> f.isBlocked(domain))
-                .filter(FilterDecision::isBlocked)
-                .findAny()
-                .orElse(new FilterDecision<>(domain, false, this));
+    public CollectionFilter(Integer listId, Collection<T> collection) {
+        this.listId = listId;
+        this.collection = collection;
     }
 
     @Override
     public Integer getListId() {
-        return null;
+        return listId;
     }
 
     @Override
     public String getName() {
-        String filterNames = filters.stream().map(DomainFilter::getName).collect(Collectors.joining(" "));
-        return "(combined " + filterNames + ")";
+        return "collection-filter";
     }
 
     @Override
     public int getSize() {
-        return filters.stream().mapToInt(DomainFilter::getSize).sum();
+        return collection.size();
     }
 
     @Override
     public Stream<T> getDomains() {
-        return filters.stream().flatMap(DomainFilter::getDomains);
+        return collection.stream();
+    }
+
+    @Override
+    public FilterDecision<T> isBlocked(T domain) {
+        return new FilterDecision<>(domain, collection.contains(domain), this);
     }
 
     @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
-        return Collections.unmodifiableList(filters);
+        return Collections.emptyList();
     }
 }

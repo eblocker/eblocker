@@ -52,7 +52,6 @@ import org.eblocker.server.http.controller.DeviceController;
 import org.eblocker.server.http.controller.DeviceRegistrationController;
 import org.eblocker.server.http.controller.DnsController;
 import org.eblocker.server.http.controller.DoctorController;
-import org.eblocker.server.http.controller.DomainBlockingController;
 import org.eblocker.server.http.controller.DomainRecorderController;
 import org.eblocker.server.http.controller.DomainWhiteListController;
 import org.eblocker.server.http.controller.EventController;
@@ -160,7 +159,6 @@ public class EblockerHttpsServer implements Preprocessor {
     private final TimestampController timestampController;
     private final TransactionRecorderController transactionRecorderController;
     private final UserController userController;
-    private final DomainBlockingController domainBlockingController;
     private final EventController eventController;
     private final SettingsController settingsController;
     private final PageContextController pageContextController;
@@ -211,7 +209,6 @@ public class EblockerHttpsServer implements Preprocessor {
                                DeviceController deviceController,
                                DeviceRegistrationController deviceRegistrationController,
                                DnsController dnsController,
-                               DomainBlockingController domainBlockingController,
                                DomainWhiteListController domainWhiteListController,
                                EventController eventController,
                                FactoryResetController factoryResetController,
@@ -293,7 +290,6 @@ public class EblockerHttpsServer implements Preprocessor {
         this.networkController = networkController;
         this.parentalControlController = parentalControlController;
         this.userController = userController;
-        this.domainBlockingController = domainBlockingController;
         this.filterController = filterController;
         this.userAgentController = userAgentController;
         this.anonymousController = anonymousController;

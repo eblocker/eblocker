@@ -32,6 +32,7 @@ public class CollectionFilter<T> implements DomainFilter<T> {
         this.collection = collection;
     }
 
+    @Override
     public Integer getListId() {
         return listId;
     }

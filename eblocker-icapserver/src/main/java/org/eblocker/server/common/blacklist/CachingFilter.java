@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import org.eblocker.server.common.collections.ConcurrentFixedSizeCache;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -28,17 +29,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CachingFilter<T> implements DomainFilter<T> {
+public class CachingFilter implements DomainFilter<String> {
 
+    @Nonnull
     private final CacheMode cacheMode;
-    private final Map<T, FilterDecision<T>> cache;
-    private final DomainFilter<T> filter;
+    @Nonnull
+    private final Map<String, FilterDecision<String>> cache;
+    @Nonnull
+    private final DomainFilter<String> filter;
     private final int cacheMaxSize;
+    @Nonnull
     private final AtomicInteger requests = new AtomicInteger();
+    @Nonnull
     private final AtomicInteger hits = new AtomicInteger();
+    @Nonnull
     private final AtomicInteger loads = new AtomicInteger();
 
-    public CachingFilter(int size, CacheMode cacheMode, DomainFilter<T> filter) {
+    CachingFilter(int size, @Nonnull CacheMode cacheMode, @Nonnull DomainFilter<String> filter) {
         this.cache = new ConcurrentFixedSizeCache<>(size, true);
         this.cacheMode = cacheMode;
         this.filter = filter;
@@ -50,6 +57,7 @@ public class CachingFilter<T> implements DomainFilter<T> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(cache " + filter.getName() + ")";
@@ -61,15 +69,15 @@ public class CachingFilter<T> implements DomainFilter<T> {
     }
 
     @Override
-    public Stream<T> getDomains() {
+    public Stream<String> getDomains() {
         return filter.getDomains();
     }
 
     @Override
-    public FilterDecision<T> isBlocked(T domain) {
+    public FilterDecision<String> isBlocked(String domain) {
         requests.incrementAndGet();
 
-        FilterDecision<T> decision = cache.get(domain);
+        FilterDecision<String> decision = cache.get(domain);
         if (decision == null) {
             decision = filter.isBlocked(domain);
             if (cacheMode == CacheMode.ALL
@@ -91,31 +99,22 @@ public class CachingFilter<T> implements DomainFilter<T> {
         return Collections.singletonList(filter);
     }
 
-    public Stats<T> getStats(boolean includeDomains) {
-        Stats<T> stats = new Stats<>();
-        stats.name = getName();
-        stats.cacheMode = cacheMode;
-        stats.maxSize = cacheMaxSize;
-        stats.size = cache.size();
-        stats.requests = requests.get();
-        stats.hits = hits.get();
-        stats.loads = loads.get();
-
+    public Stats getStats(boolean includeDomains) {
+        Map<Boolean, List<String>> statsCache = null;
         if (includeDomains) {
-            Set<FilterDecision<T>> decisions;
+            Set<FilterDecision<String>> decisions;
             synchronized (cache) {
                 decisions = new HashSet<>(cache.values());
             }
 
-            stats.cache = decisions.stream()
+            statsCache = decisions.stream()
                     .collect(Collectors.groupingBy(FilterDecision::isBlocked)).entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             e -> e.getValue().stream().map(FilterDecision::getDomain).collect(Collectors.toList())
                     ));
         }
-
-        return stats;
+        return new Stats(getName(), cacheMode, cacheMaxSize, cache.size(), requests.get(), loads.get(), hits.get(), statsCache);
     }
 
     public void clear() {
@@ -127,21 +126,37 @@ public class CachingFilter<T> implements DomainFilter<T> {
 
     public enum CacheMode {NON_BLOCKED, BLOCKED, ALL}
 
-    public static class Stats<T> {
-        private String name;
-        private CacheMode cacheMode;
-        private int maxSize;
-        private int size;
-        private int requests;
-        private int loads;
-        private int hits;
-        private Map<Boolean, List<T>> cache;
+    public static class Stats {
+        @Nonnull
+        private final String name;
+        @Nonnull
+        private final CacheMode cacheMode;
+        private final int maxSize;
+        private final int size;
+        private final int requests;
+        private final int loads;
+        private final int hits;
+        @Nullable
+        private final Map<Boolean, List<String>> cache;
 
+        Stats(@Nonnull String name, @Nonnull CacheMode cacheMode, int maxSize, int size, int requests, int loads, int hits, @Nullable Map<Boolean, List<String>> cache) {
+            this.name = name;
+            this.cacheMode = cacheMode;
+            this.maxSize = maxSize;
+            this.size = size;
+            this.requests = requests;
+            this.loads = loads;
+            this.hits = hits;
+            this.cache = cache;
+        }
+
+        @Nonnull
         public String getName() {
             return name;
         }
 
-        public CacheMode getCacheMode() {
+        @Nonnull
+        CacheMode getCacheMode() {
             return cacheMode;
         }
 
@@ -165,7 +180,7 @@ public class CachingFilter<T> implements DomainFilter<T> {
             return hits;
         }
 
-        public Map<Boolean, List<T>> getCache() {
+        public Map<Boolean, List<String>> getCache() {
             return cache;
         }
     }

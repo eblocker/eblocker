@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -131,7 +130,7 @@ class CacheTest {
 
         // Check loaded and stored index are the same (empty)
         CacheIndex loadedIndex = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
-        assertTrue(loadedIndex.getFilters().isEmpty());
+        assertTrue(loadedIndex.isEmpty());
         assertTrue(cache.getFileFilters().isEmpty());
     }
 
@@ -161,11 +160,11 @@ class CacheTest {
         Cache cache = new Cache(cachePath, objectMapper);
 
         //When
-        cache.markFilterAsDeleted(1, 1);
+        cache.markFilterAsDeleted(new CachedFilterKey(1, 1));
 
         //Then
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
-        assertTrue(index.getFilters().get(1).get(0).isDeleted());
+        assertTrue(index.getFileFilterById(1).get(0).isDeleted());
     }
 
     @Test
@@ -175,7 +174,7 @@ class CacheTest {
 
         //when
         //then
-        Assertions.assertDoesNotThrow(() -> cache.markFilterAsDeleted(1, 1));
+        Assertions.assertDoesNotThrow(() -> cache.markFilterAsDeleted(new CachedFilterKey(1, 1)));
     }
 
     @Test
@@ -194,8 +193,7 @@ class CacheTest {
 
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         assertEquals(5, index.getFormat());
-        index.getFilters().values().stream()
-                .flatMap(Collection::stream)
+        index.getAllFileFilters()
                 .forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
@@ -215,8 +213,7 @@ class CacheTest {
 
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         assertEquals(5, index.getFormat());
-        index.getFilters().values().stream()
-                .flatMap(Collection::stream)
+        index.getAllFileFilters()
                 .forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
@@ -236,8 +233,7 @@ class CacheTest {
 
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         assertEquals(5, index.getFormat());
-        index.getFilters().values().stream()
-                .flatMap(Collection::stream)
+        index.getAllFileFilters()
                 .forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
     }
 
@@ -258,9 +254,9 @@ class CacheTest {
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         assertEquals(5, index.getFormat());
 
-        index.getFilters().get(0).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
-        index.getFilters().get(1).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
-        index.getFilters().get(2).forEach(cachedFileFilter -> assertEquals("domainblacklist/bloom", cachedFileFilter.getFormat()));
+        index.getFileFilterById(0).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+        index.getFileFilterById(1).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+        index.getFileFilterById(2).forEach(cachedFileFilter -> assertEquals("domainblacklist/bloom", cachedFileFilter.getFormat()));
     }
 
     @Test
@@ -280,9 +276,9 @@ class CacheTest {
         CacheIndex index = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
         assertEquals(5, index.getFormat());
 
-        index.getFilters().get(0).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
-        index.getFilters().get(1).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
-        index.getFilters().get(2).forEach(cachedFileFilter -> assertEquals("domainblacklist/bloom", cachedFileFilter.getFormat()));
+        index.getFileFilterById(0).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+        index.getFileFilterById(1).forEach(cachedFileFilter -> assertEquals("domainblacklist/string", cachedFileFilter.getFormat()));
+        index.getFileFilterById(2).forEach(cachedFileFilter -> assertEquals("domainblacklist/bloom", cachedFileFilter.getFormat()));
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -315,8 +311,8 @@ class CacheTest {
 
         // check disk cache has been updated too
         CacheIndex loadedIndex = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
-        assertEquals(3, loadedIndex.getFilters().get(0).size());
-        assertEquals(1, loadedIndex.getFilters().get(0).get(1).getKey().getVersion());
+        assertEquals(3, loadedIndex.getFileFilterById(0).size());
+        assertEquals(1, loadedIndex.getFileFilterById(0).get(1).getKey().getVersion());
 
         // remove filter again
         cache.removeFileFilter(0, 1);
@@ -332,9 +328,9 @@ class CacheTest {
 
         // check disk cache has been updated too
         loadedIndex = objectMapper.readValue(new File(indexFilePath), CacheIndex.class);
-        assertEquals(2, loadedIndex.getFilters().get(0).size());
-        assertEquals(2, loadedIndex.getFilters().get(0).get(0).getKey().getVersion());
-        assertEquals(0, loadedIndex.getFilters().get(0).get(1).getKey().getVersion());
+        assertEquals(2, loadedIndex.getFileFilterById(0).size());
+        assertEquals(2, loadedIndex.getFileFilterById(0).get(0).getKey().getVersion());
+        assertEquals(0, loadedIndex.getFileFilterById(0).get(1).getKey().getVersion());
     }
 
     @Test

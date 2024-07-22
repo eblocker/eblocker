@@ -148,9 +148,9 @@ public class DomainBlacklistServiceTest {
 
         // check obsolete filter has been marked as deleted
         CacheIndex index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        Assert.assertFalse(index.getFilters().get(0).get(0).isDeleted());
-        Assert.assertTrue(index.getFilters().get(0).get(1).isDeleted());
-        Assert.assertTrue(index.getFilters().get(1).get(0).isDeleted());
+        Assert.assertFalse(index.getFileFilterById(0).get(0).isDeleted());
+        Assert.assertTrue(index.getFileFilterById(0).get(1).isDeleted());
+        Assert.assertTrue(index.getFileFilterById(1).get(0).isDeleted());
 
         Mockito.verify(listener).onUpdate();
 
@@ -173,8 +173,8 @@ public class DomainBlacklistServiceTest {
 
         // check obsolete filter has been marked as deleted
         index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        Assert.assertFalse(index.getFilters().get(0).get(0).isDeleted());
-        Assert.assertTrue(index.getFilters().get(0).get(1).isDeleted());
+        Assert.assertFalse(index.getFileFilterById(0).get(0).isDeleted());
+        Assert.assertTrue(index.getFileFilterById(0).get(1).isDeleted());
     }
 
     private ParentalControlFilterMetaData createFilterMetaData(int id, Date date) {

@@ -188,7 +188,7 @@ public class DomainBlacklistService {
             BloomDomainFilter<String> bloomFilter;
 
             try (InputStream in = Files.newInputStream(Paths.get(cachePath, storedFilter.getBloomFilterFileName()))) {
-                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), null);
+                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), StaticFilter.FALSE);
             }
 
             long stop = System.currentTimeMillis();
@@ -296,9 +296,9 @@ public class DomainBlacklistService {
 
     private void markFilterAsDeleted(CachedFilterKey key) {
         try {
-            cache.markFilterAsDeleted(key.getId(), key.getVersion());
+            cache.markFilterAsDeleted(key);
         } catch (IOException ioe) {
-            log.warn("failed to mark filter {} as deleted: ", ioe);
+            log.warn("failed to mark filter {} as deleted: ", key, ioe);
         }
     }
 

@@ -19,7 +19,6 @@ package org.eblocker.server.common;
 import redis.clients.jedis.JedisPool;
 import redis.embedded.RedisServer;
 
-import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -34,7 +33,7 @@ public class TestRedisServer {
         port = ThreadLocalRandom.current().nextInt(16000, 18000);
         try {
             server = new RedisServer(port);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Could not start embedded Redis server on port " + port, e);
         }
     }

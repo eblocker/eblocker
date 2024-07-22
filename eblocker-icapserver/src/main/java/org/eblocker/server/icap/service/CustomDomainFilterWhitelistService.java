@@ -82,7 +82,7 @@ public class CustomDomainFilterWhitelistService {
         return Filters.cache(256, CachingFilter.CacheMode.NON_BLOCKED, Filters.hostname(filter));
     }
 
-    private class NoFilterException extends Exception {
+    private static class NoFilterException extends Exception {
     }
 
 }

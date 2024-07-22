@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.HashFunction;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class Filters {
         return new DomainFilterAnd<>(nonStaticFilters.toArray(new DomainFilter[0]));
     }
 
+    @Nonnull
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> DomainFilter<T> or(DomainFilter<T>... filters) {
@@ -104,6 +106,7 @@ public class Filters {
         return new DomainFilterOr<>(nonStaticFilters.toArray(new DomainFilter[0]));
     }
 
+    @Nonnull
     public static DomainFilter<String> hostname(DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
@@ -124,12 +127,12 @@ public class Filters {
         return new BloomDomainFilter<>(bloomFilter, filter);
     }
 
-    public static <T> DomainFilter<T> cache(int size, CachingFilter.CacheMode cacheMode, DomainFilter<T> filter) {
+    public static DomainFilter<String> cache(int size, CachingFilter.CacheMode cacheMode, DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
 
-        return new CachingFilter<>(size, cacheMode, filter);
+        return new CachingFilter(size, cacheMode, filter);
     }
 
     @SuppressWarnings("unchecked")

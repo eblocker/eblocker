@@ -16,10 +16,8 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,19 +29,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class Cache {
     private static final Logger log = LoggerFactory.getLogger(Cache.class);
 
-    private static final int CACHE_FORMAT = 5;
     static final String LIST_DIR = "lists";
     static final String PROFILES_DIR = "profiles";
     static final String FILTER_FILE_EXTENSION = ".filter";
@@ -56,8 +48,10 @@ class Cache {
     private final String cacheIndexFile;
     @Nonnull
     private final ObjectMapper objectMapper;
+    @Nonnull
+    private final CacheIndex index;
 
-    private CacheIndex index;
+    private final CacheIndexRepository cacheIndexRepository;
 
     Cache(@Nonnull String cachePath, @Nonnull ObjectMapper objectMapper) throws IOException {
         this.cachePath = cachePath;
@@ -65,7 +59,9 @@ class Cache {
 
         this.cacheIndexFile = cachePath + INDEX_JSON;
 
-        initCache();
+        cacheIndexRepository = new CacheIndexRepository(objectMapper, cacheIndexFile);
+
+        index = initCache();
     }
 
     /**
@@ -73,7 +69,7 @@ class Cache {
      */
     @Nonnull
     List<CachedFileFilter> getFileFilters() {
-        return index.getFilters().values().stream().map(f -> f.get(0)).collect(Collectors.toList());
+        return index.getAllLatestFileFilters();
     }
 
     /**
@@ -81,7 +77,7 @@ class Cache {
      */
     @Nonnull
     List<CachedFileFilter> getAllFileFilters() {
-        return index.getFilters().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        return index.getAllFileFilters();
     }
 
     /**
@@ -89,8 +85,7 @@ class Cache {
      */
     @Nullable
     CachedFileFilter getFileFilterById(int id) {
-        List<CachedFileFilter> filters = getFileFiltersById(id);
-        return filters == null || filters.isEmpty() ? null : filters.get(0);
+        return index.getLatestFileFilterById(id);
     }
 
     /**
@@ -98,7 +93,7 @@ class Cache {
      */
     @Nullable
     List<CachedFileFilter> getFileFiltersById(int id) {
-        return index.getFilters().get(id);
+        return index.getFileFilterById(id);
     }
 
     CachedFileFilter storeFileFilter(int id, long version, String format, @Nullable String filterFile, @Nonnull String bloomFile) throws IOException {
@@ -116,13 +111,8 @@ class Cache {
 
         CachedFileFilter importedFilter = new CachedFileFilter(key, cacheBloomFile, cacheFilterFile, format, false);
 
-        List<CachedFileFilter> filters = index.getFilters().computeIfAbsent(id, k -> new ArrayList<>());
-        int i = 0;
-        while (i < filters.size() && version < filters.get(i).getKey().getVersion()) {
-            ++i;
-        }
-        filters.add(i, importedFilter);
-        writeIndex();
+        index.addFilterSortedByVersion(importedFilter);
+        cacheIndexRepository.write(index);
 
         return importedFilter;
     }
@@ -135,43 +125,31 @@ class Cache {
         Files.deleteIfExists(Paths.get(cachePath + "/" + cacheFilterFile));
         Files.deleteIfExists(Paths.get(cachePath + "/" + cacheBloomFile));
 
-        List<CachedFileFilter> remainingFilters = index.getFilters().get(id).stream().filter(f -> !f.getKey().equals(key)).collect(Collectors.toList());
-        if (remainingFilters.isEmpty()) {
-            index.getFilters().remove(id);
-        } else {
-            index.getFilters().put(id, remainingFilters);
-        }
-        writeIndex();
+        index.removeFileFilter(key);
+        cacheIndexRepository.write(index);
     }
 
-    void markFilterAsDeleted(int id, long version) throws IOException {
-        CachedFilterKey key = new CachedFilterKey(id, version);
-        CachedFileFilter filter = getAllFileFilters().stream().filter(e -> e.getKey().equals(key)).findFirst().orElse(null);
+    void markFilterAsDeleted(CachedFilterKey key) throws IOException {
+        CachedFileFilter filter = index.getAllFileFilters().stream()
+                .filter(e -> e.getKey().equals(key))
+                .findFirst()
+                .orElse(null);
         if (filter != null) {
             filter.setDeleted();
-            writeIndex();
+            cacheIndexRepository.write(index);
         }
     }
 
-    private void initCache() throws IOException {
-        if (checkIndexFile()) {
-            readIndex();
+    private CacheIndex initCache() throws IOException {
+        if (checkIndexFileAndUpgrade()) {
+            return cacheIndexRepository.read();
         } else {
             log.info("creating new cache");
             deleteCachedFilters();
-            index = new CacheIndex();
-            index.setFormat(CACHE_FORMAT);
-            index.setFilters(new HashMap<>());
-            writeIndex();
+            CacheIndex cacheIndex = new CacheIndex();
+            cacheIndexRepository.write(cacheIndex);
+            return cacheIndex;
         }
-    }
-
-    private void readIndex() throws IOException {
-        this.index = objectMapper.readValue(new File(cacheIndexFile), CacheIndex.class);
-    }
-
-    private void writeIndex() throws IOException {
-        objectMapper.writeValue(new File(cacheIndexFile), index);
     }
 
     private void deleteCachedFilters() throws IOException {
@@ -188,7 +166,7 @@ class Cache {
         }
     }
 
-    private boolean checkIndexFile() throws IOException {
+    private boolean checkIndexFileAndUpgrade() throws IOException {
         // check file existence
         if (!Files.exists(Paths.get(cacheIndexFile))) {
             return false;
@@ -201,36 +179,13 @@ class Cache {
             return false;
         }
         JsonNode cacheFormatField = node.get("format");
-        if (cacheFormatField == null || cacheFormatField.intValue() < CACHE_FORMAT) {
-            upgradeIndex(node);
+        if (cacheFormatField == null || cacheFormatField.intValue() < CacheIndex.CACHE_FORMAT) {
+            cacheIndexRepository.upgradeJsonFile(node);
+            // remove obsolete profile filters
+            deleteFilesInDirectory(PROFILES_DIR);
         }
 
         return true;
     }
 
-    private void upgradeIndex(@Nonnull JsonNode node) throws IOException {
-        index = new CacheIndex();
-        index.setFormat(CACHE_FORMAT);
-
-        // update filter meta data
-        ObjectReader filtersReader = objectMapper.readerFor(new TypeReference<Map<Integer, List<CachedFileFilter>>>() {
-        });
-
-        Map<Integer, List<CachedFileFilter>> cachedFilters = filtersReader.readValue(node.get("filters"));
-        Map<Integer, List<CachedFileFilter>> updatedFilters = cachedFilters.values().stream()
-                .flatMap(Collection::stream)
-                .map(filter -> {
-                    String format = filter.getFileFilterFileName() != null ? "domainblacklist/string" : "domainblacklist/bloom";
-                    return new CachedFileFilter(filter.getKey(), filter.getBloomFilterFileName(), filter.getFileFilterFileName(), format, filter.isDeleted());
-                })
-                .sorted(Comparator.comparing(filter -> filter.getKey().getVersion(), Comparator.reverseOrder()))
-                .collect(Collectors.groupingBy(filter -> filter.getKey().getId()));
-
-        // write upgraded index
-        index.setFilters(updatedFilters);
-        writeIndex();
-
-        // remove obsolete profile filters
-        deleteFilesInDirectory(PROFILES_DIR);
-    }
 }

@@ -17,25 +17,38 @@
 package org.eblocker.server.common.blacklist;
 
 import com.google.common.collect.Lists;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CachingFilterTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
-    private List<String> blockedDomains = Arrays.asList("blocked.com", "blocked.net", "blocked.org", "blocked.ru");
-    private List<String> nonBlockedDomains = Arrays.asList("non-blocked.com", "non-blocked.net", "non-blocked.org");
+@ExtendWith(MockitoExtension.class)
+class CachingFilterTest {
+
+    private final List<String> blockedDomains = Arrays.asList("blocked.com", "blocked.net", "blocked.org", "blocked.ru");
+    private final List<String> nonBlockedDomains = Arrays.asList("non-blocked.com", "non-blocked.net", "non-blocked.org");
+    @Mock
     private DomainFilter<String> backingFilter;
 
-    @Before
-    public void setup() {
-        backingFilter = Mockito.mock(DomainFilter.class);
-        Mockito.when(backingFilter.isBlocked(Mockito.anyString()))
+    @BeforeEach
+    void setup() {
+        when(backingFilter.isBlocked(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String domain = invocationOnMock.getArgument(0);
                     return new FilterDecision<>(domain, blockedDomains.contains(domain), backingFilter);
@@ -43,108 +56,136 @@ public class CachingFilterTest {
     }
 
     @Test
-    public void testBlockedCacheMode() {
+    void clear() {
+        //Given
+        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.BLOCKED, backingFilter);
+
+        blockedDomains.forEach(filter::isBlocked);
+        blockedDomains.forEach(filter::isBlocked);
+
+        CachingFilter.Stats statsBefore = filter.getStats(true);
+        assertNotNull(statsBefore.getCache());
+        assertFalse(statsBefore.getCache().isEmpty());
+        assertTrue(statsBefore.getRequests() > 0);
+        assertTrue(statsBefore.getHits() > 0);
+        assertTrue(statsBefore.getLoads() > 0);
+
+        //When
+        filter.clear();
+
+        //Then
+        CachingFilter.Stats stats = filter.getStats(true);
+
+        assertNotNull(stats.getCache());
+        assertEquals(0, stats.getCache().size());
+        assertEquals(0, stats.getRequests());
+        assertEquals(0, stats.getHits());
+        assertEquals(0, stats.getLoads());
+    }
+
+    @Test
+    void isBlocked_BlockedCacheMode() {
         // setup
-        InOrder inOrder = Mockito.inOrder(backingFilter);
-        CachingFilter<String> filter = new CachingFilter<>(1024, CachingFilter.CacheMode.BLOCKED, backingFilter);
+        InOrder inOrder = inOrder(backingFilter);
+        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.BLOCKED, backingFilter);
 
         // first run, any query must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
 
         // second run, only non-blocked domains must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(nonBlockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(nonBlockedDomains.size())).isBlocked(Mockito.anyString());
     }
 
     @Test
-    public void testNonBlockedCacheMode() {
+    void isBlocked_NonBlockedCacheMode() {
         // setup
-        InOrder inOrder = Mockito.inOrder(backingFilter);
-        CachingFilter<String> filter = new CachingFilter<>(1024, CachingFilter.CacheMode.NON_BLOCKED, backingFilter);
+        InOrder inOrder = inOrder(backingFilter);
+        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.NON_BLOCKED, backingFilter);
 
         // first run, any query must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
 
         // second run, only blocked domains must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(blockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(blockedDomains.size())).isBlocked(Mockito.anyString());
     }
 
     @Test
-    public void testAllCacheMode() {
+    void isBlocked_AllCacheMode() {
         // setup
-        InOrder inOrder = Mockito.inOrder(backingFilter);
-        CachingFilter<String> filter = new CachingFilter<>(1024, CachingFilter.CacheMode.ALL, backingFilter);
+        InOrder inOrder = inOrder(backingFilter);
+        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.ALL, backingFilter);
 
         // first run, any query must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(blockedDomains.size() + nonBlockedDomains.size())).isBlocked(Mockito.anyString());
 
         // second run, no query must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertFalse);
-        inOrder.verify(backingFilter, Mockito.times(0)).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        nonBlockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertFalse);
+        inOrder.verify(backingFilter, times(0)).isBlocked(Mockito.anyString());
     }
 
     @Test
-    public void testLru() {
+    void testLru() {
         // setup
-        InOrder inOrder = Mockito.inOrder(backingFilter);
-        CachingFilter<String> filter = new CachingFilter<>(blockedDomains.size() - 1, CachingFilter.CacheMode.ALL, backingFilter);
+        InOrder inOrder = inOrder(backingFilter);
+        CachingFilter filter = new CachingFilter(blockedDomains.size() - 1, CachingFilter.CacheMode.ALL, backingFilter);
 
         // first run, any query must hit backing filter
-        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        inOrder.verify(backingFilter, Mockito.times(blockedDomains.size())).isBlocked(Mockito.anyString());
+        blockedDomains.stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        inOrder.verify(backingFilter, times(blockedDomains.size())).isBlocked(Mockito.anyString());
 
         // second run with reversed order, all but original first entry must come from cache
-        Lists.reverse(blockedDomains).stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assert::assertTrue);
-        inOrder.verify(backingFilter, Mockito.times(1)).isBlocked(blockedDomains.get(0));
+        Lists.reverse(blockedDomains).stream().map(filter::isBlocked).map(FilterDecision::isBlocked).forEach(Assertions::assertTrue);
+        inOrder.verify(backingFilter, times(1)).isBlocked(blockedDomains.get(0));
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testCacheStats() {
+    void cacheStats() {
         // setup
-        CachingFilter<String> filter = new CachingFilter<>(1024, CachingFilter.CacheMode.ALL, backingFilter);
+        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.ALL, backingFilter);
 
         // fill cache
-        blockedDomains.stream().forEach(filter::isBlocked);
-        nonBlockedDomains.stream().forEach(filter::isBlocked);
+        blockedDomains.forEach(filter::isBlocked);
+        nonBlockedDomains.forEach(filter::isBlocked);
 
         // check statistics
         int domains = blockedDomains.size() + nonBlockedDomains.size();
-        CachingFilter.Stats<String> stats = filter.getStats(false);
-        Assert.assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
-        Assert.assertEquals(1024, stats.getMaxSize());
-        Assert.assertEquals(domains, stats.getSize());
-        Assert.assertEquals(domains, stats.getRequests());
-        Assert.assertEquals(0, stats.getHits());
-        Assert.assertEquals(domains, stats.getLoads());
-        Assert.assertNull(stats.getCache());
+        CachingFilter.Stats stats = filter.getStats(false);
+        assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
+        assertEquals(1024, stats.getMaxSize());
+        assertEquals(domains, stats.getSize());
+        assertEquals(domains, stats.getRequests());
+        assertEquals(0, stats.getHits());
+        assertEquals(domains, stats.getLoads());
+        assertNull(stats.getCache());
 
         // re-run queries
-        blockedDomains.stream().forEach(filter::isBlocked);
-        nonBlockedDomains.stream().forEach(filter::isBlocked);
+        blockedDomains.forEach(filter::isBlocked);
+        nonBlockedDomains.forEach(filter::isBlocked);
 
         // check statistics again
         stats = filter.getStats(true);
-        Assert.assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
-        Assert.assertEquals(1024, stats.getMaxSize());
-        Assert.assertEquals(domains, stats.getSize());
-        Assert.assertEquals(2 * domains, stats.getRequests());
-        Assert.assertEquals(domains, stats.getHits());
-        Assert.assertEquals(domains, stats.getLoads());
-        Assert.assertNotNull(stats.getCache());
-        Assert.assertEquals(blockedDomains.size(), stats.getCache().get(Boolean.TRUE).size());
-        Assert.assertTrue(stats.getCache().get(Boolean.TRUE).containsAll(blockedDomains));
-        Assert.assertEquals(nonBlockedDomains.size(), stats.getCache().get(Boolean.FALSE).size());
-        Assert.assertTrue(stats.getCache().get(Boolean.FALSE).containsAll(nonBlockedDomains));
+        assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
+        assertEquals(1024, stats.getMaxSize());
+        assertEquals(domains, stats.getSize());
+        assertEquals(2 * domains, stats.getRequests());
+        assertEquals(domains, stats.getHits());
+        assertEquals(domains, stats.getLoads());
+        assertNotNull(stats.getCache());
+        assertEquals(blockedDomains.size(), stats.getCache().get(Boolean.TRUE).size());
+        assertTrue(stats.getCache().get(Boolean.TRUE).containsAll(blockedDomains));
+        assertEquals(nonBlockedDomains.size(), stats.getCache().get(Boolean.FALSE).size());
+        assertTrue(stats.getCache().get(Boolean.FALSE).containsAll(nonBlockedDomains));
     }
 }

@@ -199,9 +199,9 @@
 
         <!-- Test only -->
         <dependency>
-            <groupId>com.github.kstyrc</groupId>
+            <groupId>org.signal</groupId>
             <artifactId>embedded-redis</artifactId>
-            <!-- fixme: no scope test? -->
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>

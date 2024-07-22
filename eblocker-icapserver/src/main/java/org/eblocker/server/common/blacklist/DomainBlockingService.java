@@ -223,23 +223,6 @@ public class DomainBlockingService {
         }
     }
 
-    public List<CachingFilter.Stats> getCacheStats(boolean includeDomains) {
-        return getCachingFilters()
-                .sorted((a, b) -> {
-                    int cmp = Integer.compare(a.getName().length(), b.getName().length());
-                    if (cmp != 0) {
-                        return cmp;
-                    }
-                    return a.getName().compareTo(b.getName());
-                })
-                .map(f -> f.getStats(includeDomains))
-                .collect(Collectors.toList());
-    }
-
-    public void clearCaches() {
-        getCachingFilters().forEach(CachingFilter::clear);
-    }
-
     private Filter createDeviceFilter(Device device) throws ExecutionException {
         DeviceConfig deviceConfig = new DeviceConfig(device);
         FilterConfig filterConfig = FilterConfig.createFilterConfigForDevice(deviceConfig, isSslEnabledGlobally());

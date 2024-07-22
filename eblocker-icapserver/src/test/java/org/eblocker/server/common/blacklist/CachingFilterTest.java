@@ -29,11 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -53,34 +48,6 @@ class CachingFilterTest {
                     String domain = invocationOnMock.getArgument(0);
                     return new FilterDecision<>(domain, blockedDomains.contains(domain), backingFilter);
                 });
-    }
-
-    @Test
-    void clear() {
-        //Given
-        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.BLOCKED, backingFilter);
-
-        blockedDomains.forEach(filter::isBlocked);
-        blockedDomains.forEach(filter::isBlocked);
-
-        CachingFilter.Stats statsBefore = filter.getStats(true);
-        assertNotNull(statsBefore.getCache());
-        assertFalse(statsBefore.getCache().isEmpty());
-        assertTrue(statsBefore.getRequests() > 0);
-        assertTrue(statsBefore.getHits() > 0);
-        assertTrue(statsBefore.getLoads() > 0);
-
-        //When
-        filter.clear();
-
-        //Then
-        CachingFilter.Stats stats = filter.getStats(true);
-
-        assertNotNull(stats.getCache());
-        assertEquals(0, stats.getCache().size());
-        assertEquals(0, stats.getRequests());
-        assertEquals(0, stats.getHits());
-        assertEquals(0, stats.getLoads());
     }
 
     @Test
@@ -150,42 +117,4 @@ class CachingFilterTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    @Test
-    void cacheStats() {
-        // setup
-        CachingFilter filter = new CachingFilter(1024, CachingFilter.CacheMode.ALL, backingFilter);
-
-        // fill cache
-        blockedDomains.forEach(filter::isBlocked);
-        nonBlockedDomains.forEach(filter::isBlocked);
-
-        // check statistics
-        int domains = blockedDomains.size() + nonBlockedDomains.size();
-        CachingFilter.Stats stats = filter.getStats(false);
-        assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
-        assertEquals(1024, stats.getMaxSize());
-        assertEquals(domains, stats.getSize());
-        assertEquals(domains, stats.getRequests());
-        assertEquals(0, stats.getHits());
-        assertEquals(domains, stats.getLoads());
-        assertNull(stats.getCache());
-
-        // re-run queries
-        blockedDomains.forEach(filter::isBlocked);
-        nonBlockedDomains.forEach(filter::isBlocked);
-
-        // check statistics again
-        stats = filter.getStats(true);
-        assertEquals(CachingFilter.CacheMode.ALL, stats.getCacheMode());
-        assertEquals(1024, stats.getMaxSize());
-        assertEquals(domains, stats.getSize());
-        assertEquals(2 * domains, stats.getRequests());
-        assertEquals(domains, stats.getHits());
-        assertEquals(domains, stats.getLoads());
-        assertNotNull(stats.getCache());
-        assertEquals(blockedDomains.size(), stats.getCache().get(Boolean.TRUE).size());
-        assertTrue(stats.getCache().get(Boolean.TRUE).containsAll(blockedDomains));
-        assertEquals(nonBlockedDomains.size(), stats.getCache().get(Boolean.FALSE).size());
-        assertTrue(stats.getCache().get(Boolean.FALSE).containsAll(nonBlockedDomains));
-    }
 }

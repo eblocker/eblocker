@@ -80,39 +80,39 @@ class CacheTest {
     }
 
     @Test
-    void getFileFilterById_noCachedFileFilter_nullValueReturned() throws IOException {
+    void getFileFilterById_noCachedLatestFileFilter_nullValueReturned() throws IOException {
         //Given
         populateCache();
         Cache cache = new Cache(cachePath, objectMapper);
 
         //When
-        CachedFileFilter fileFilterById = cache.getFileFilterById(2);
+        CachedFileFilter fileFilterById = cache.getLatestFileFilterById(2);
 
         //Then
         assertNull(fileFilterById);
     }
 
     @Test
-    void getFileFilterById_anyCachedFileFilter_anyValueReturned() throws IOException {
+    void getFileFilterById_anyCachedLatestFileFilter_anyValueReturned() throws IOException {
         //Given
         populateCache();
         Cache cache = new Cache(cachePath, objectMapper);
 
         //When
-        CachedFileFilter fileFilterById = cache.getFileFilterById(1);
+        CachedFileFilter fileFilterById = cache.getLatestFileFilterById(1);
 
         //Then
         assertNotNull(fileFilterById);
     }
 
     @Test
-    void getFileFilterById_anyEmptyCachedFileFilter_nullValueReturned() throws IOException {
+    void getFileFilterById_anyEmptyCachedLatestFileFilter_nullValueReturned() throws IOException {
         //Given
         Cache cache = spy(new Cache(cachePath, objectMapper));
         doReturn(new ArrayList<>()).when(cache).getFileFiltersById(anyInt());
 
         //When
-        CachedFileFilter fileFilterById = cache.getFileFilterById(1);
+        CachedFileFilter fileFilterById = cache.getLatestFileFilterById(1);
 
         //Then
         assertNull(fileFilterById);

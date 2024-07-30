@@ -34,8 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -43,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Singleton
 public class DomainBlacklistService {
@@ -59,11 +58,11 @@ public class DomainBlacklistService {
     private Cache cache;
 
     @Inject
-    public DomainBlacklistService(@Named("domainblacklist.charset") String charsetName,
-                                  @Named("domainblacklist.source.path") String sourcePath,
-                                  @Named("domainblacklist.cache.path") String cachePath,
-                                  ObjectMapper objectMapper,
-                                  @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService) {
+    DomainBlacklistService(@Named("domainblacklist.charset") String charsetName,
+                           @Named("domainblacklist.source.path") String sourcePath,
+                           @Named("domainblacklist.cache.path") String cachePath,
+                           ObjectMapper objectMapper,
+                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService) {
         this.charset = Charset.forName(charsetName);
         this.sourcePath = sourcePath;
         this.cachePath = cachePath;
@@ -73,8 +72,9 @@ public class DomainBlacklistService {
             long start = System.currentTimeMillis();
 
             this.cache = new Cache(cachePath, objectMapper);
-            markOldVersionsAsDeleted();
-            deleteMarkedFilters();
+            cache.markOldVersionsAsDeleted();
+            List<CachedFilterKey> deletedFilterKeys = cache.deleteMarkedFilters();
+            deletedFilterKeys.forEach(filtersByName::remove);
             createFiltersFromCache();
 
             long stop = System.currentTimeMillis();
@@ -85,7 +85,7 @@ public class DomainBlacklistService {
     }
 
     public DomainFilter getFilter(Integer id) {
-        return getFilterKeys(Collections.singleton(id)).stream()
+        return Stream.of(cache.getLatestFileFilterKeyById(id))
                 .map(filtersByName::get)
                 .filter(Objects::nonNull)
                 .findAny().orElse(null);
@@ -105,10 +105,11 @@ public class DomainBlacklistService {
         executorService.execute(() -> {
             synchronized (DomainBlacklistService.this) {
                 log.info("updating filters");
-                deleteMarkedFilters();
+                List<CachedFilterKey> deletedFilterKeys = cache.deleteMarkedFilters();
+                deletedFilterKeys.forEach(filtersByName::remove);
 
                 blacklists.forEach(this::updateFileFilter);
-                markOldVersionsAsDeleted();
+                cache.markOldVersionsAsDeleted();
                 markNonExistingFiltersAsDeleted(blacklists);
                 dropDeletedFiltersFromMemory();
             }
@@ -208,7 +209,7 @@ public class DomainBlacklistService {
         }
 
         long version = blacklist.getDate().getTime();
-        CachedFileFilter cachedFileFilter = cache.getFileFilterById(blacklist.getId());
+        CachedFileFilter cachedFileFilter = cache.getLatestFileFilterById(blacklist.getId());
         if (cachedFileFilter == null || cachedFileFilter.getKey().getVersion() < version) {
             if (cachedFileFilter == null) {
                 log.info("inserting {} version {}", blacklist.getId(), version);
@@ -252,75 +253,15 @@ public class DomainBlacklistService {
         return fileName.startsWith("/") ? fileName : sourcePath + "/" + fileName;
     }
 
-    private void deleteMarkedFilters() {
-        log.info("removing filters marked as deleted");
-        cache.getAllFileFilters().stream()
-                .filter(CachedFileFilter::isDeleted)
-                .map(CachedFileFilter::getKey)
-                .forEach(this::deleteFilter);
-    }
-
-    private void deleteFilter(CachedFilterKey key) {
-        try {
-            log.info("Removing filter {}.", key);
-            cache.removeFileFilter(key.getId(), key.getVersion());
-            filtersByName.remove(key);
-        } catch (IOException e) {
-            log.error("Failed to delete filter: {}", key, e);
-        }
-    }
-
-    private void markOldVersionsAsDeleted() {
-        Set<CachedFilterKey> newestKeys = cache.getFileFilters().stream().map(CachedFileFilter::getKey).collect(Collectors.toSet());
-
-        cache.getAllFileFilters().stream()
-                .map(CachedFileFilter::getKey)
-                .filter(key -> !newestKeys.contains(key))
-                .forEach(key -> {
-                    log.debug("marking filter {} as deleted as a newer one exists", key);
-                    markFilterAsDeleted(key);
-                });
-    }
-
     private void markNonExistingFiltersAsDeleted(Collection<ParentalControlFilterMetaData> blacklists) {
         Set<Integer> ids = blacklists.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
 
-        cache.getAllFileFilters().stream()
-                .map(CachedFileFilter::getKey)
-                .filter(key -> !ids.contains(key.getId()))
-                .forEach(key -> {
-                    log.debug("marking filter {} as deleted as it does not exist anymore", key);
-                    markFilterAsDeleted(key);
-                });
-    }
-
-    private void markFilterAsDeleted(CachedFilterKey key) {
-        try {
-            cache.markFilterAsDeleted(key);
-        } catch (IOException ioe) {
-            log.warn("failed to mark filter {} as deleted: ", key, ioe);
-        }
+        cache.markNonExistingFiltersAsDeleted(ids);
     }
 
     private void dropDeletedFiltersFromMemory() {
-        cache.getAllFileFilters().stream()
-                .filter(CachedFileFilter::isDeleted)
-                .map(CachedFileFilter::getKey)
+        cache.getFilterKeysMarkedAsDeleted()
                 .forEach(filtersByName::remove);
-    }
-
-    // get filter keys of latest cached versions
-    private Set<CachedFilterKey> getFilterKeys(Set<Integer> filters) {
-        Set<CachedFilterKey> filterKeys = new HashSet<>();
-        filters.forEach(id -> {
-            CachedFileFilter cachedFileFilter = cache.getFileFilterById(id);
-            if (cachedFileFilter == null) {
-                log.error("no cached file filter for id {}", id);
-            } else {
-                filterKeys.add(cachedFileFilter.getKey());
-            }
-        });
-        return filterKeys;
     }
 
     public interface Listener {

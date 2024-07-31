@@ -79,13 +79,6 @@ public class DnsService {
         dnsServer.flushCache();
     }
 
-    public List<NameServerStats> testNameServers(List<String> nameServers) {
-        return nameServers.stream()
-                .map(nameServer -> dnsStatisticsService.testNameServer(nameServer,
-                        Arrays.asList("eblocker.org", "eblocker.com", "eblocker.net", "eblocker.eu", "eblocker.de")))
-                .collect(Collectors.toList());
-    }
-
     public Object getResolverStats(String resolver, int hours, String lengthValue) {
         if (lengthValue != null) {
             int length = Integer.parseInt(lengthValue);

@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.data.dns;
 
-import com.google.common.base.Strings;
+import io.netty.handler.codec.dns.DnsRecordType;
 import org.eblocker.server.common.data.IpAddress;
 
 public class DnsResponse {
@@ -24,21 +24,6 @@ public class DnsResponse {
     private final DnsRecordType recordType;
     private final String name;
     private final IpAddress ipAddress;
-
-    public DnsResponse(String value) {
-        if (Strings.isNullOrEmpty(value)) {
-            status = null;
-            recordType = null;
-            name = null;
-            ipAddress = null;
-        } else {
-            String[] values = value.split(",");
-            status = Integer.parseInt(values[0]);
-            recordType = values.length >= 2 ? DnsRecordType.valueOf(values[1]) : null;
-            name = values.length >= 3 ? values[2] : null;
-            ipAddress = values.length >= 4 ? IpAddress.parse(values[3]) : null;
-        }
-    }
 
     public DnsResponse() {
         this(null, null, null, null);

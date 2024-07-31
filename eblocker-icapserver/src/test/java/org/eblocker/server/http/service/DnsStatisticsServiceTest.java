@@ -158,26 +158,6 @@ public class DnsStatisticsServiceTest {
 
     }
 
-    @Test
-    public void testTestNameServer() {
-        DnsDataSourceDnsResponse response = new DnsDataSourceDnsResponse();
-        response.setResponses(List.of(new DnsResponse("0,A,eblocker.org.,1.2.3.4")));
-        response.setLog(List.of(new ResolverEvent("1706542836.8161058,192.168.0.1,valid,0.123")));
-        Mockito.when(dnsDataSource.popDnsResolutionQueue(Mockito.anyString(), Mockito.eq(10))).thenReturn(response);
-
-        NameServerStats stats = dnsStatisticsService.testNameServer("1.1.1.1", List.of("eblocker.org"));
-        Assert.assertEquals(0, stats.getError());
-        Assert.assertEquals(123, stats.getResponseTimeMedian());
-    }
-
-    @Test
-    public void testTestNameServerNotRunning() {
-        // DNS not running or timing out:
-        Mockito.when(dnsDataSource.popDnsResolutionQueue(Mockito.anyString(), Mockito.eq(10))).thenReturn(null);
-
-        Assert.assertNull(dnsStatisticsService.testNameServer("1.1.1.1", List.of("eblocker.org")));
-    }
-
     private void assertNameServerStat(int valid, int invalid, int timeout, int error, NameServerStats stats) {
         Assert.assertEquals(valid, stats.getValid());
         Assert.assertEquals(invalid, stats.getInvalid());

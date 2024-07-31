@@ -16,11 +16,11 @@
  */
 package org.eblocker.server.common.network.unix;
 
+import io.netty.handler.codec.dns.DnsRecordType;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.dns.DnsRecordType;
 import org.eblocker.server.common.data.dns.DnsResponse;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
 import org.junit.Assert;

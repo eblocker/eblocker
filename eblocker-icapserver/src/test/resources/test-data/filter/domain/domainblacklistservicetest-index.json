@@ -58,6 +58,18 @@
                 "format": "domainblacklist/hash-md5",
                 "deleted": false
             }
+        ],
+        "4": [
+            {
+                "key": {
+                    "id": 4,
+                    "version": 0
+                },
+                "bloomFilterFileName": "lists/sha1-3-v0.bloom",
+                "fileFilterFileName": "lists/sha1-3-v0.filter",
+                "format": "domainblacklist/hash-sha1",
+                "deleted": false
+            }
         ]
     }
 }

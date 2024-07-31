@@ -80,6 +80,7 @@ class DomainBlacklistServiceTest {
         createStringFilter(1, "filter1", List.of(".filter-1.version-1.com"), cachePath + "/lists/1-v1.filter", cachePath + "/lists/1-v1.bloom");
         createBloomFilter(new StringFunnel(Charsets.UTF_8), List.of(".filter-2.version-0.com"), cachePath + "/lists/2-v0.bloom");
         createHashFilter(List.of(".filter-3.version-0.com"), cachePath + "/lists/3-v0.filter", cachePath + "/lists/3-v0.bloom");
+        createHashSha1Filter(List.of(".filterSha1-3.version-0.com"), cachePath + "/lists/sha1-3-v0.filter", cachePath + "/lists/sha1-3-v0.bloom");
 
         // create object mapper
         objectMapper = new ObjectMapper();
@@ -107,6 +108,7 @@ class DomainBlacklistServiceTest {
         assertTrue(service.getFilter(1).isBlocked(".filter-1.version-1.com").isBlocked());
         assertInstanceOf(BloomDomainFilter.class, service.getFilter(2));
         assertTrue(service.getFilter(3).isBlocked(Hashing.md5().hashString(".filter-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
+        assertTrue(service.getFilter(4).isBlocked(Hashing.sha1().hashString(".filterSha1-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
 
         // check unused and old filter has been removed
         assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
@@ -202,12 +204,25 @@ class DomainBlacklistServiceTest {
         createBloomFilter(Funnels.byteArrayFunnel(), hashes, bloomFilterFileName);
     }
 
+    private void createHashSha1Filter(List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
+        List<byte[]> hashes = domains.stream()
+                .map(domain -> Hashing.sha1().hashString(domain, Charsets.UTF_8))
+                .map(HashCode::asBytes)
+                .collect(Collectors.toList());
+        createHashSha1Filter(hashes, fileFilterFileName);
+        createBloomFilter(Funnels.byteArrayFunnel(), hashes, bloomFilterFileName);
+    }
+
     private void createFileFilter(int id, String name, List<String> domains, String fileFilterFileName) throws IOException {
         new SingleFileFilter(Charsets.UTF_8, Paths.get(fileFilterFileName), id, name, domains);
     }
 
     private void createHashFilter(List<byte[]> hashes, String fileFilterFileName) throws IOException {
         new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", "md5", hashes);
+    }
+
+    private void createHashSha1Filter(List<byte[]> hashes, String fileFilterFileName) throws IOException {
+        new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", "sha1", hashes);
     }
 
     private <T> void createBloomFilter(Funnel<T> funnel, List<T> domains, String bloomFilterFileName) throws IOException {

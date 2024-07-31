@@ -17,7 +17,6 @@
 package org.eblocker.server.common.blacklist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.hash.Funnels;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -26,33 +25,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Singleton
 public class DomainBlacklistService {
     private static final Logger log = LoggerFactory.getLogger(DomainBlacklistService.class);
 
-    private final Charset charset;
     private final String sourcePath;
-    private final String cachePath;
 
     private final ScheduledExecutorService executorService;
-    private final ConcurrentMap<CachedFilterKey, DomainFilter<?>> filtersByName = new ConcurrentHashMap<>();
+    private FilterByKeys filtersByKey;
     private final List<Listener> listeners = new ArrayList<>();
 
     private Cache cache;
@@ -63,19 +56,16 @@ public class DomainBlacklistService {
                            @Named("domainblacklist.cache.path") String cachePath,
                            ObjectMapper objectMapper,
                            @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService) {
-        this.charset = Charset.forName(charsetName);
         this.sourcePath = sourcePath;
-        this.cachePath = cachePath;
         this.executorService = executorService;
 
         try {
             long start = System.currentTimeMillis();
 
-            this.cache = new Cache(cachePath, objectMapper);
+            cache = new Cache(cachePath, objectMapper);
             cache.markOldVersionsAsDeleted();
-            List<CachedFilterKey> deletedFilterKeys = cache.deleteMarkedFilters();
-            deletedFilterKeys.forEach(filtersByName::remove);
-            createFiltersFromCache();
+            cache.deleteMarkedFilters();
+            filtersByKey = new FilterByKeys(cache.getAllFileFilters(), Charset.forName(charsetName), cachePath);
 
             long stop = System.currentTimeMillis();
             log.info("read filters in {}ms", (stop - start));
@@ -85,10 +75,7 @@ public class DomainBlacklistService {
     }
 
     public DomainFilter getFilter(Integer id) {
-        return Stream.of(cache.getLatestFileFilterKeyById(id))
-                .map(filtersByName::get)
-                .filter(Objects::nonNull)
-                .findAny().orElse(null);
+        return filtersByKey.getFilter(cache.getLatestFileFilterKeyById(id));
     }
 
     /**
@@ -106,12 +93,12 @@ public class DomainBlacklistService {
             synchronized (DomainBlacklistService.this) {
                 log.info("updating filters");
                 List<CachedFilterKey> deletedFilterKeys = cache.deleteMarkedFilters();
-                deletedFilterKeys.forEach(filtersByName::remove);
+                filtersByKey.remove(deletedFilterKeys);
 
                 blacklists.forEach(this::updateFileFilter);
                 cache.markOldVersionsAsDeleted();
-                markNonExistingFiltersAsDeleted(blacklists);
-                dropDeletedFiltersFromMemory();
+                cache.markNonExistingFiltersAsDeleted(getBlacklists(blacklists));
+                filtersByKey.remove(cache.getFilterKeysMarkedAsDeleted());
             }
             listeners.forEach(Listener::onUpdate);
         });
@@ -119,87 +106,6 @@ public class DomainBlacklistService {
 
     public void addListener(Listener listener) {
         listeners.add(listener);
-    }
-
-    private void createFiltersFromCache() {
-        cache.getAllFileFilters().forEach(e -> cacheFilter(e.getKey(), loadStoredFilter(e)));
-    }
-
-    private DomainFilter<?> loadStoredFilter(CachedFileFilter storedFilter) {
-        switch (storedFilter.getFormat()) {
-            case "domainblacklist":
-            case "domainblacklist/string":
-                return loadFileFilter(storedFilter);
-            case "domainblacklist/bloom":
-                return loadBloomFilter(storedFilter);
-            case "domainblacklist/hash-md5":
-            case "domainblacklist/hash-sha1":
-                return loadHashFilter(storedFilter);
-            default:
-                log.error("unknown format {}", storedFilter.getFormat());
-                return null;
-        }
-    }
-
-    private DomainFilter<String> loadFileFilter(CachedFileFilter storedFilter) {
-        try {
-            long start = System.currentTimeMillis();
-
-            DomainFilter<String> fileFilter = new SingleFileFilter(charset, Paths.get(cachePath, storedFilter.getFileFilterFileName()));
-
-            BloomDomainFilter<String> bloomFilter;
-            try (InputStream in = Files.newInputStream(Paths.get(cachePath, storedFilter.getBloomFilterFileName()))) {
-                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), fileFilter);
-            }
-
-            long stop = System.currentTimeMillis();
-            log.debug("read file filter {} ({}) with {} domains in {}ms.", storedFilter.getKey().getId(), storedFilter.getKey().getVersion(), fileFilter.getSize(), (stop - start));
-
-            return bloomFilter;
-        } catch (IOException e) {
-            log.error("Failed to load stored file filter {}", storedFilter.getKey(), e);
-            return null;
-        }
-    }
-
-    private DomainFilter<byte[]> loadHashFilter(CachedFileFilter storedFilter) {
-        try {
-            long start = System.currentTimeMillis();
-
-            HashFileFilter fileFilter = new HashFileFilter(Paths.get(cachePath, storedFilter.getFileFilterFileName()));
-
-            BloomDomainFilter<byte[]> bloomFilter;
-            try (InputStream in = Files.newInputStream(Paths.get(cachePath, storedFilter.getBloomFilterFileName()))) {
-                bloomFilter = BloomDomainFilter.readFrom(in, Funnels.byteArrayFunnel(), fileFilter);
-            }
-
-            long stop = System.currentTimeMillis();
-            log.debug("read hash file filter {} ({}) with {} domains in {}ms.", storedFilter.getKey().getId(), storedFilter.getKey().getVersion(), fileFilter.getSize(), (stop - start));
-
-            return bloomFilter;
-        } catch (IOException e) {
-            log.error("Failed to load stored hash file filter {}", storedFilter.getKey(), e);
-            return null;
-        }
-    }
-
-    private DomainFilter<String> loadBloomFilter(CachedFileFilter storedFilter) {
-        try {
-            long start = System.currentTimeMillis();
-            BloomDomainFilter<String> bloomFilter;
-
-            try (InputStream in = Files.newInputStream(Paths.get(cachePath, storedFilter.getBloomFilterFileName()))) {
-                bloomFilter = BloomDomainFilter.readFrom(in, new StringFunnel(charset), StaticFilter.FALSE);
-            }
-
-            long stop = System.currentTimeMillis();
-            log.debug("read bloom filter {} ({}) in {}ms.", storedFilter.getKey().getId(), storedFilter.getKey().getVersion(), (stop - start));
-
-            return bloomFilter;
-        } catch (IOException e) {
-            log.error("Failed to load stored bloom filter {}", storedFilter.getKey(), e);
-            return null;
-        }
     }
 
     private void updateFileFilter(ParentalControlFilterMetaData blacklist) {
@@ -229,8 +135,7 @@ public class DomainBlacklistService {
                 }
 
                 CachedFileFilter importedFilter = cache.storeFileFilter(blacklist.getId(), version, blacklist.getFormat(), filterFileName, bloomFileName);
-                DomainFilter<?> filter = loadStoredFilter(importedFilter);
-                cacheFilter(importedFilter.getKey(), filter);
+                filtersByKey.update(importedFilter);
             } catch (IOException e) {
                 log.error("failed to update file filter", e);
                 throw new UncheckedIOException(e);
@@ -240,31 +145,70 @@ public class DomainBlacklistService {
         }
     }
 
-    private void cacheFilter(CachedFilterKey key, DomainFilter<?> filter) {
-        if (filter != null) {
-            filtersByName.put(key, filter);
-        } else {
-            filtersByName.remove(key);
-        }
-    }
-
     @Nonnull
     private String getAbsoluteFileName(@Nonnull String fileName) {
         return fileName.startsWith("/") ? fileName : sourcePath + "/" + fileName;
     }
 
-    private void markNonExistingFiltersAsDeleted(Collection<ParentalControlFilterMetaData> blacklists) {
-        Set<Integer> ids = blacklists.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
-
-        cache.markNonExistingFiltersAsDeleted(ids);
-    }
-
-    private void dropDeletedFiltersFromMemory() {
-        cache.getFilterKeysMarkedAsDeleted()
-                .forEach(filtersByName::remove);
+    private static Set<Integer> getBlacklists(Collection<ParentalControlFilterMetaData> blacklists) {
+        return blacklists.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
     }
 
     public interface Listener {
         void onUpdate();
+    }
+
+    private static class FilterByKeys {
+
+        private final ConcurrentMap<CachedFilterKey, DomainFilter<?>> filters;
+
+        private final DomainFilterLoader domainFilterLoader;
+
+        private FilterByKeys(List<CachedFileFilter> allFileFilters, Charset charset, String cachePath) {
+            domainFilterLoader = new DomainFilterLoader(charset, cachePath);
+
+            filters = createFilters(allFileFilters);
+        }
+
+        private ConcurrentMap<CachedFilterKey, DomainFilter<?>> createFilters(List<CachedFileFilter> allFileFilters) {
+            ConcurrentHashMap<CachedFilterKey, DomainFilter<?>> filters = new ConcurrentHashMap<>();
+            for (CachedFileFilter fileFilter : allFileFilters) {
+                DomainFilter<?> filter = domainFilterLoader.loadStoredFilter(fileFilter);
+                if (filter != null) {
+                    filters.put(fileFilter.getKey(), filter);
+                }
+            }
+            return filters;
+        }
+
+        @Nullable
+        private DomainFilter<?> getFilter(@Nullable CachedFilterKey key) {
+            if (key == null) {
+                return null;
+            }
+            return filters.get(key);
+        }
+
+        private void put(CachedFilterKey key, DomainFilter<?> filter) {
+            filters.put(key, filter);
+        }
+
+        private void remove(List<CachedFilterKey> toRemove) {
+            toRemove.forEach(this::remove);
+        }
+
+        private void remove(CachedFilterKey key) {
+            filters.remove(key);
+        }
+
+        private void update(CachedFileFilter importedFilter) {
+            DomainFilter<?> filter = domainFilterLoader.loadStoredFilter(importedFilter);
+            CachedFilterKey key = importedFilter.getKey();
+            if (filter != null) {
+                put(key, filter);
+            } else {
+                remove(key);
+            }
+        }
     }
 }

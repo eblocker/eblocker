@@ -4,6 +4,8 @@ import com.google.common.hash.Funnels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -13,15 +15,18 @@ import java.nio.file.Paths;
 class DomainFilterLoader {
     private static final Logger log = LoggerFactory.getLogger(DomainFilterLoader.class);
 
+    @Nonnull
     private final Charset charset;
+    @Nonnull
     private final String cachePath;
 
-    DomainFilterLoader(Charset charset, String cachePath) {
+    DomainFilterLoader(@Nonnull Charset charset, @Nonnull String cachePath) {
         this.charset = charset;
         this.cachePath = cachePath;
     }
 
-    DomainFilter<?> loadStoredFilter(CachedFileFilter storedFilter) {
+    @Nullable
+    DomainFilter<?> loadStoredFilter(@Nonnull CachedFileFilter storedFilter) {
         switch (storedFilter.getFormat()) {
             case "domainblacklist":
             case "domainblacklist/string":
@@ -37,7 +42,8 @@ class DomainFilterLoader {
         }
     }
 
-    private DomainFilter<String> loadFileFilter(CachedFileFilter storedFilter) {
+    @Nullable
+    private DomainFilter<String> loadFileFilter(@Nonnull CachedFileFilter storedFilter) {
         try {
             long start = System.currentTimeMillis();
 
@@ -58,7 +64,8 @@ class DomainFilterLoader {
         }
     }
 
-    private DomainFilter<String> loadBloomFilter(CachedFileFilter storedFilter) {
+    @Nullable
+    private DomainFilter<String> loadBloomFilter(@Nonnull CachedFileFilter storedFilter) {
         try {
             long start = System.currentTimeMillis();
             BloomDomainFilter<String> bloomFilter;
@@ -77,7 +84,8 @@ class DomainFilterLoader {
         }
     }
 
-    private DomainFilter<byte[]> loadHashFilter(CachedFileFilter storedFilter) {
+    @Nullable
+    private DomainFilter<byte[]> loadHashFilter(@Nonnull CachedFileFilter storedFilter) {
         try {
             long start = System.currentTimeMillis();
 

@@ -42,13 +42,18 @@ import java.util.stream.Collectors;
 public class DomainBlacklistService {
     private static final Logger log = LoggerFactory.getLogger(DomainBlacklistService.class);
 
+    @Nonnull
     private final String sourcePath;
 
+    @Nonnull
     private final ScheduledExecutorService executorService;
-    private FilterByKeys filtersByKey;
+    @Nonnull
+    private final FilterByKeys filtersByKey;
+    @Nonnull
     private final List<Listener> listeners = new ArrayList<>();
 
-    private Cache cache;
+    @Nonnull
+    private final Cache cache;
 
     @Inject
     DomainBlacklistService(@Named("domainblacklist.charset") String charsetName,
@@ -75,7 +80,8 @@ public class DomainBlacklistService {
         }
     }
 
-    public DomainFilter getFilter(Integer id) {
+    @Nullable
+    public DomainFilter getFilter(@Nonnull Integer id) {
         return filtersByKey.getFilter(cache.getLatestFileFilterKeyById(id));
     }
 
@@ -89,7 +95,7 @@ public class DomainBlacklistService {
      * <li>filters marked as deleted are dropped from cache</li>
      * </ul>
      */
-    public void setFilters(Collection<ParentalControlFilterMetaData> blacklists) {
+    public void setFilters(@Nonnull Collection<ParentalControlFilterMetaData> blacklists) {
         executorService.execute(() -> {
             synchronized (DomainBlacklistService.this) {
                 log.info("updating filters");
@@ -105,11 +111,11 @@ public class DomainBlacklistService {
         });
     }
 
-    public void addListener(Listener listener) {
+    public void addListener(@Nonnull Listener listener) {
         listeners.add(listener);
     }
 
-    private void updateFileFilter(ParentalControlFilterMetaData blacklist) {
+    private void updateFileFilter(@Nonnull ParentalControlFilterMetaData blacklist) {
         if (!blacklist.getFormat().startsWith("domainblacklist")) {
             log.debug("ignoring non-domainblacklist format {} for {}", blacklist.getFormat(), blacklist.getId());
             return;
@@ -151,7 +157,8 @@ public class DomainBlacklistService {
         return fileName.startsWith("/") ? fileName : sourcePath + "/" + fileName;
     }
 
-    private static Set<Integer> getBlacklists(Collection<ParentalControlFilterMetaData> blacklists) {
+    @Nonnull
+    private static Set<Integer> getBlacklists(@Nonnull Collection<ParentalControlFilterMetaData> blacklists) {
         return blacklists.stream().map(ParentalControlFilterMetaData::getId).collect(Collectors.toSet());
     }
 
@@ -161,11 +168,13 @@ public class DomainBlacklistService {
 
     private static class FilterByKeys {
 
+        @Nonnull
         private final ConcurrentMap<CachedFilterKey, DomainFilter<?>> filters;
 
+        @Nonnull
         private final DomainFilterLoader domainFilterLoader;
 
-        private FilterByKeys(List<CachedFileFilter> allFileFilters, Charset charset, String cachePath) {
+        private FilterByKeys(@Nonnull List<CachedFileFilter> allFileFilters, Charset charset, String cachePath) {
             domainFilterLoader = new DomainFilterLoader(charset, cachePath);
 
             filters = createFilters(allFileFilters);

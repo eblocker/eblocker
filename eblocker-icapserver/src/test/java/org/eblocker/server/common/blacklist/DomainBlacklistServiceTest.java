@@ -25,10 +25,9 @@ import com.google.common.hash.Hashing;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.util.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -41,13 +40,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class DomainBlacklistServiceTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class DomainBlacklistServiceTest {
 
     private String sourcePath;
     private String cachePath;
@@ -55,26 +60,26 @@ public class DomainBlacklistServiceTest {
     private ScheduledExecutorService executorService;
     private DomainBlacklistService service;
 
-    @Before
-    public void setUp() throws IOException {
+    @BeforeEach
+    void setUp() throws IOException {
         // create and populate source path for imports
         sourcePath = Files.createTempDirectory("unit-test-blacklist-source").toString();
         Files.createDirectory(Paths.get(sourcePath + "/lists"));
-        createStringFilter(0, "filter0", Arrays.asList(".filter-0.version-2.com"), sourcePath + "/lists/0-v2.filter", sourcePath + "/lists/0-v2.bloom");
-        createStringFilter(0, "filter0", Arrays.asList(".filter-0.version-3.com"), sourcePath + "/lists/0-v3.filter", sourcePath + "/lists/0-v3.bloom");
+        createStringFilter(0, "filter0", List.of(".filter-0.version-2.com"), sourcePath + "/lists/0-v2.filter", sourcePath + "/lists/0-v2.bloom");
+        createStringFilter(0, "filter0", List.of(".filter-0.version-3.com"), sourcePath + "/lists/0-v3.filter", sourcePath + "/lists/0-v3.bloom");
 
         // create and populate cache
         cachePath = Files.createTempDirectory("unit-test-blacklist-cache").toString();
         Files.createDirectory(Paths.get(cachePath + "/lists"));
         Files.createDirectory(Paths.get(cachePath + "/profiles"));
-        Files.copy(ClassLoader.getSystemResourceAsStream("test-data/filter/domain/domainblacklistservicetest-index.json"), Paths.get(cachePath + "/index.json"));
+        Files.copy(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("test-data/filter/domain/domainblacklistservicetest-index.json")), Paths.get(cachePath + "/index.json"));
 
         // create filters
-        createStringFilter(0, "filter0", Arrays.asList(".filter-0.version-0.com"), cachePath + "/lists/0-v0.filter", cachePath + "/lists/0-v0.bloom");
-        createStringFilter(0, "filter0", Arrays.asList(".filter-0.version-1.com"), cachePath + "/lists/0-v1.filter", cachePath + "/lists/0-v1.bloom");
-        createStringFilter(1, "filter1", Arrays.asList(".filter-1.version-1.com"), cachePath + "/lists/1-v1.filter", cachePath + "/lists/1-v1.bloom");
-        createBloomFilter(new StringFunnel(Charsets.UTF_8), Arrays.asList(".filter-2.version-0.com"), cachePath + "/lists/2-v0.bloom");
-        createHashFilter(3, "filter3", Arrays.asList(".filter-3.version-0.com"), cachePath + "/lists/3-v0.filter", cachePath + "/lists/3-v0.bloom");
+        createStringFilter(0, "filter0", List.of(".filter-0.version-0.com"), cachePath + "/lists/0-v0.filter", cachePath + "/lists/0-v0.bloom");
+        createStringFilter(0, "filter0", List.of(".filter-0.version-1.com"), cachePath + "/lists/0-v1.filter", cachePath + "/lists/0-v1.bloom");
+        createStringFilter(1, "filter1", List.of(".filter-1.version-1.com"), cachePath + "/lists/1-v1.filter", cachePath + "/lists/1-v1.bloom");
+        createBloomFilter(new StringFunnel(Charsets.UTF_8), List.of(".filter-2.version-0.com"), cachePath + "/lists/2-v0.bloom");
+        createHashFilter(List.of(".filter-3.version-0.com"), cachePath + "/lists/3-v0.filter", cachePath + "/lists/3-v0.bloom");
 
         // create object mapper
         objectMapper = new ObjectMapper();
@@ -84,102 +89,103 @@ public class DomainBlacklistServiceTest {
         executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         FileUtils.deleteDirectory(Paths.get(sourcePath));
         FileUtils.deleteDirectory(Paths.get(cachePath));
     }
 
     @Test
-    public void testInit() throws IOException {
+    void init() throws IOException {
         initService();
 
         // check filters have been loaded
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
-        Assert.assertTrue(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
-        Assert.assertFalse(service.getFilter(1).isBlocked(".filter-1.version-0.com").isBlocked());
-        Assert.assertTrue(service.getFilter(1).isBlocked(".filter-1.version-1.com").isBlocked());
-        Assert.assertTrue(service.getFilter(2) instanceof BloomDomainFilter);
-        Assert.assertTrue(service.getFilter(3).isBlocked(Hashing.md5().hashString(".filter-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
+        assertTrue(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
+        assertFalse(service.getFilter(1).isBlocked(".filter-1.version-0.com").isBlocked());
+        assertTrue(service.getFilter(1).isBlocked(".filter-1.version-1.com").isBlocked());
+        assertInstanceOf(BloomDomainFilter.class, service.getFilter(2));
+        assertTrue(service.getFilter(3).isBlocked(Hashing.md5().hashString(".filter-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
 
         // check unused and old filter has been removed
-        Assert.assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
+        assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
     }
 
     @Test
-    public void testInitIoErrorStoredFilter() throws Exception {
+    void initIoErrorStoredFilter() throws Exception {
         Files.write(Paths.get(cachePath + "/lists/0-v1.filter"), new byte[1024], StandardOpenOption.TRUNCATE_EXISTING);
         Files.write(Paths.get(cachePath + "/lists/1-v1.bloom"), new byte[1024], StandardOpenOption.TRUNCATE_EXISTING);
         Files.delete(Paths.get(cachePath + "/lists/3-v0.filter"));
         initService();
 
-        Assert.assertNull(service.getFilter(0));
-        Assert.assertNull(service.getFilter(1));
-        Assert.assertNull(service.getFilter(3));
+        assertNull(service.getFilter(0));
+        assertNull(service.getFilter(1));
+        assertNull(service.getFilter(3));
     }
 
     @Test
-    public void testFilterUpdate() throws InterruptedException, IOException, ExecutionException {
+    void filterUpdate() throws InterruptedException, IOException, ExecutionException {
         initService();
 
         DomainBlacklistService.Listener listener = Mockito.mock(DomainBlacklistService.Listener.class);
         service.addListener(listener);
 
         // replace filters with a single updated version of filter 0
-        service.setFilters(Collections.singletonList(createFilterMetaData(0, new Date(2))));
+        service.setFilters(Collections.singletonList(createFilterMetaData(new Date(2))));
 
         // schedule a dummy job and wait on it to ensure previous task is done
         executorService.submit(() -> {
         }).get();
 
         // check update is handled correctly
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
-        Assert.assertTrue(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-3.com").isBlocked());
-        Assert.assertNull(service.getFilter(1));
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
+        assertTrue(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-3.com").isBlocked());
+        assertNull(service.getFilter(1));
 
         // check last two version of filter 2 are there
-        Assert.assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v2.filter")));
-        Assert.assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v1.filter")));
-        Assert.assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
-        Assert.assertTrue(Files.exists(Paths.get(cachePath + "/lists/1-v1.filter")));
+        assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v2.filter")));
+        assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v1.filter")));
+        assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
+        assertTrue(Files.exists(Paths.get(cachePath + "/lists/1-v1.filter")));
 
         // check obsolete filter has been marked as deleted
         CacheIndex index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        Assert.assertFalse(index.getFileFilterById(0).get(0).isDeleted());
-        Assert.assertTrue(index.getFileFilterById(0).get(1).isDeleted());
-        Assert.assertTrue(index.getFileFilterById(1).get(0).isDeleted());
+        assertFalse(index.getFileFilterById(0).get(0).isDeleted());
+        assertTrue(index.getFileFilterById(0).get(1).isDeleted());
+        assertTrue(index.getFileFilterById(1).get(0).isDeleted());
 
         Mockito.verify(listener).onUpdate();
 
         // run a second update filters with a single updated version of filter 0
-        service.setFilters(Collections.singletonList(createFilterMetaData(0, new Date(3))));
+        service.setFilters(Collections.singletonList(createFilterMetaData(new Date(3))));
 
         executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.MINUTES);
+        boolean finished = executorService.awaitTermination(1, TimeUnit.MINUTES);
 
         // check update is handled correctly
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
-        Assert.assertFalse(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
-        Assert.assertTrue(service.getFilter(0).isBlocked(".filter-0.version-3.com").isBlocked());
+        assertTrue(finished);
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-0.com").isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-1.com").isBlocked());
+        assertFalse(service.getFilter(0).isBlocked(".filter-0.version-2.com").isBlocked());
+        assertTrue(service.getFilter(0).isBlocked(".filter-0.version-3.com").isBlocked());
 
         // check only two version of 2 are still there and the rest is gone
-        Assert.assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v3.filter")));
-        Assert.assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v2.filter")));
-        Assert.assertFalse(Files.exists(Paths.get(cachePath + "/lists/1-v1.filter")));
+        assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v3.filter")));
+        assertTrue(Files.exists(Paths.get(cachePath + "/lists/0-v2.filter")));
+        assertFalse(Files.exists(Paths.get(cachePath + "/lists/1-v1.filter")));
 
         // check obsolete filter has been marked as deleted
         index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        Assert.assertFalse(index.getFileFilterById(0).get(0).isDeleted());
-        Assert.assertTrue(index.getFileFilterById(0).get(1).isDeleted());
+        assertFalse(index.getFileFilterById(0).get(0).isDeleted());
+        assertTrue(index.getFileFilterById(0).get(1).isDeleted());
     }
 
-    private ParentalControlFilterMetaData createFilterMetaData(int id, Date date) {
-        String baseName = "lists/" + id + "-v" + date.getTime();
-        return new ParentalControlFilterMetaData(id, null, null, Category.PARENTAL_CONTROL, Arrays.asList(baseName + ".filter", baseName + ".bloom"), String.valueOf(date.getTime()), date, "domainblacklist", null, false, false, null, null, null);
+    private ParentalControlFilterMetaData createFilterMetaData(Date date) {
+        String baseName = "lists/" + 0 + "-v" + date.getTime();
+        return new ParentalControlFilterMetaData(0, null, null, Category.PARENTAL_CONTROL, Arrays.asList(baseName + ".filter", baseName + ".bloom"), String.valueOf(date.getTime()), date, "domainblacklist", null, false, false, null, null, null);
     }
 
     private void createStringFilter(int id, String name, List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
@@ -187,12 +193,12 @@ public class DomainBlacklistServiceTest {
         createBloomFilter(new StringFunnel(Charsets.UTF_8), domains, bloomFilterFileName);
     }
 
-    private void createHashFilter(int id, String name, List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
+    private void createHashFilter(List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
         List<byte[]> hashes = domains.stream()
                 .map(domain -> Hashing.md5().hashString(domain, Charsets.UTF_8))
                 .map(HashCode::asBytes)
                 .collect(Collectors.toList());
-        createHashFilter(id, name, "md5", hashes, fileFilterFileName);
+        createHashFilter(hashes, fileFilterFileName);
         createBloomFilter(Funnels.byteArrayFunnel(), hashes, bloomFilterFileName);
     }
 
@@ -200,8 +206,8 @@ public class DomainBlacklistServiceTest {
         new SingleFileFilter(Charsets.UTF_8, Paths.get(fileFilterFileName), id, name, domains);
     }
 
-    private void createHashFilter(int id, String name, String hashFunctionName, List<byte[]> hashes, String fileFilterFileName) throws IOException {
-        new HashFileFilter(Paths.get(fileFilterFileName), id, name, hashFunctionName, hashes);
+    private void createHashFilter(List<byte[]> hashes, String fileFilterFileName) throws IOException {
+        new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", "md5", hashes);
     }
 
     private <T> void createBloomFilter(Funnel<T> funnel, List<T> domains, String bloomFilterFileName) throws IOException {

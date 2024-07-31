@@ -55,7 +55,7 @@ public class DomainBlacklistService {
                            @Named("domainblacklist.source.path") String sourcePath,
                            @Named("domainblacklist.cache.path") String cachePath,
                            ObjectMapper objectMapper,
-                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService) {
+                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService) throws IOException {
         this.sourcePath = sourcePath;
         this.executorService = executorService;
 
@@ -71,6 +71,7 @@ public class DomainBlacklistService {
             log.info("read filters in {}ms", (stop - start));
         } catch (IOException e) {
             log.error("Failed to initialize filters, domain blacklisting will be unavailable", e);
+            throw e;
         }
     }
 

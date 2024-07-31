@@ -91,7 +91,7 @@ public class DomainBlacklistServiceTest {
     }
 
     @Test
-    public void testInit() {
+    public void testInit() throws IOException {
         initService();
 
         // check filters have been loaded
@@ -212,7 +212,7 @@ public class DomainBlacklistServiceTest {
         }
     }
 
-    private void initService() {
+    private void initService() throws IOException {
         service = new DomainBlacklistService(Charsets.UTF_8.name(), sourcePath, cachePath, objectMapper, executorService);
     }
 

@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -79,8 +80,8 @@ class DomainBlacklistServiceTest {
         createStringFilter(0, "filter0", List.of(".filter-0.version-1.com"), cachePath + "/lists/0-v1.filter", cachePath + "/lists/0-v1.bloom");
         createStringFilter(1, "filter1", List.of(".filter-1.version-1.com"), cachePath + "/lists/1-v1.filter", cachePath + "/lists/1-v1.bloom");
         createBloomFilter(new StringFunnel(Charsets.UTF_8), List.of(".filter-2.version-0.com"), cachePath + "/lists/2-v0.bloom");
-        createHashFilter(List.of(".filter-3.version-0.com"), cachePath + "/lists/3-v0.filter", cachePath + "/lists/3-v0.bloom");
-        createHashSha1Filter(List.of(".filterSha1-3.version-0.com"), cachePath + "/lists/sha1-3-v0.filter", cachePath + "/lists/sha1-3-v0.bloom");
+        createHashMd5Filter(List.of(".filter-3.version-0.com"), cachePath + "/lists/3-v0.filter", cachePath + "/lists/3-v0.bloom");
+        createHashSha1Filter(List.of(".filterSha1-4.version-0.com"), cachePath + "/lists/sha1-4-v0.filter", cachePath + "/lists/sha1-4-v0.bloom");
 
         // create object mapper
         objectMapper = new ObjectMapper();
@@ -108,7 +109,7 @@ class DomainBlacklistServiceTest {
         assertTrue(service.getFilter(1).isBlocked(".filter-1.version-1.com").isBlocked());
         assertInstanceOf(BloomDomainFilter.class, service.getFilter(2));
         assertTrue(service.getFilter(3).isBlocked(Hashing.md5().hashString(".filter-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
-        assertTrue(service.getFilter(4).isBlocked(Hashing.sha1().hashString(".filterSha1-3.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
+        assertTrue(service.getFilter(4).isBlocked(Hashing.sha1().hashString(".filterSha1-4.version-0.com", Charsets.UTF_8).asBytes()).isBlocked());
 
         // check unused and old filter has been removed
         assertFalse(Files.exists(Paths.get(cachePath + "/lists/0-v0.filter")));
@@ -155,9 +156,13 @@ class DomainBlacklistServiceTest {
 
         // check obsolete filter has been marked as deleted
         CacheIndex index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        assertFalse(index.getFileFilterById(0).get(0).isDeleted());
-        assertTrue(index.getFileFilterById(0).get(1).isDeleted());
-        assertTrue(index.getFileFilterById(1).get(0).isDeleted());
+        List<CachedFileFilter> fileFilterById0 = index.getFileFilterById(0);
+        assertNotNull(fileFilterById0);
+        assertFalse(fileFilterById0.get(0).isDeleted());
+        assertTrue(fileFilterById0.get(1).isDeleted());
+        List<CachedFileFilter> fileFilterById1 = index.getFileFilterById(1);
+        assertNotNull(fileFilterById1);
+        assertTrue(fileFilterById1.get(0).isDeleted());
 
         Mockito.verify(listener).onUpdate();
 
@@ -181,8 +186,10 @@ class DomainBlacklistServiceTest {
 
         // check obsolete filter has been marked as deleted
         index = objectMapper.readValue(new File(cachePath + "/index.json"), CacheIndex.class);
-        assertFalse(index.getFileFilterById(0).get(0).isDeleted());
-        assertTrue(index.getFileFilterById(0).get(1).isDeleted());
+        List<CachedFileFilter> fileFilterById = index.getFileFilterById(0);
+        assertNotNull(fileFilterById);
+        assertFalse(fileFilterById.get(0).isDeleted());
+        assertTrue(fileFilterById.get(1).isDeleted());
     }
 
     private ParentalControlFilterMetaData createFilterMetaData(Date date) {
@@ -195,12 +202,12 @@ class DomainBlacklistServiceTest {
         createBloomFilter(new StringFunnel(Charsets.UTF_8), domains, bloomFilterFileName);
     }
 
-    private void createHashFilter(List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
+    private void createHashMd5Filter(List<String> domains, String fileFilterFileName, String bloomFilterFileName) throws IOException {
         List<byte[]> hashes = domains.stream()
                 .map(domain -> Hashing.md5().hashString(domain, Charsets.UTF_8))
                 .map(HashCode::asBytes)
                 .collect(Collectors.toList());
-        createHashFilter(hashes, fileFilterFileName);
+        createHashFilter(hashes, fileFilterFileName, "md5");
         createBloomFilter(Funnels.byteArrayFunnel(), hashes, bloomFilterFileName);
     }
 
@@ -209,7 +216,7 @@ class DomainBlacklistServiceTest {
                 .map(domain -> Hashing.sha1().hashString(domain, Charsets.UTF_8))
                 .map(HashCode::asBytes)
                 .collect(Collectors.toList());
-        createHashSha1Filter(hashes, fileFilterFileName);
+        createHashFilter(hashes, fileFilterFileName, "sha1");
         createBloomFilter(Funnels.byteArrayFunnel(), hashes, bloomFilterFileName);
     }
 
@@ -217,12 +224,8 @@ class DomainBlacklistServiceTest {
         new SingleFileFilter(Charsets.UTF_8, Paths.get(fileFilterFileName), id, name, domains);
     }
 
-    private void createHashFilter(List<byte[]> hashes, String fileFilterFileName) throws IOException {
-        new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", "md5", hashes);
-    }
-
-    private void createHashSha1Filter(List<byte[]> hashes, String fileFilterFileName) throws IOException {
-        new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", "sha1", hashes);
+    private void createHashFilter(List<byte[]> hashes, String fileFilterFileName, String hashFunctionName) throws IOException {
+        new HashFileFilter(Paths.get(fileFilterFileName), 3, "filter3", hashFunctionName, hashes);
     }
 
     private <T> void createBloomFilter(Funnel<T> funnel, List<T> domains, String bloomFilterFileName) throws IOException {

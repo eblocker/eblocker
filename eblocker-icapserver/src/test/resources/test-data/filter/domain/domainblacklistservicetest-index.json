@@ -65,9 +65,21 @@
                     "id": 4,
                     "version": 0
                 },
-                "bloomFilterFileName": "lists/sha1-3-v0.bloom",
-                "fileFilterFileName": "lists/sha1-3-v0.filter",
+                "bloomFilterFileName": "lists/sha1-4-v0.bloom",
+                "fileFilterFileName": "lists/sha1-4-v0.filter",
                 "format": "domainblacklist/hash-sha1",
+                "deleted": false
+            }
+        ],
+        "5": [
+            {
+                "key": {
+                    "id": 5,
+                    "version": 1
+                },
+                "bloomFilterFileName": "lists/5-v1.bloom",
+                "fileFilterFileName": "lists/5-v1.filter",
+                "format": "domainblacklist",
                 "deleted": false
             }
         ]

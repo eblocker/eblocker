@@ -87,12 +87,6 @@ public class DnsControllerImpl implements DnsController {
     }
 
     @Override
-    public List<NameServerStats> testNameServer(Request request, Response response) {
-        List<String> nameServers = request.getBodyAs(List.class);
-        return dnsService.testNameServers(nameServers);
-    }
-
-    @Override
     public Object getResolverStats(Request request, Response response) {
         String resolver = ControllerUtils.getQueryParameter(request, "resolver",
                 dnsService.getDnsResolvers().getDefaultResolver());

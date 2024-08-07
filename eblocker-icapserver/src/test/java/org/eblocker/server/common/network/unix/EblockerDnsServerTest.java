@@ -36,6 +36,7 @@ import org.eblocker.server.common.network.RouterAdvertisementCache;
 import org.eblocker.server.common.network.icmpv6.Option;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
 import org.eblocker.server.common.network.icmpv6.RouterAdvertisement;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.common.TestClock;
@@ -63,7 +64,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class EblockerDnsServerTest {
-    private final String CHANNEL_NAME = "unit-test-channel";
     private final String FLUSH_COMMAND = "unit-test-flush-command";
     private final String UPDATE_COMMAND = "unit-test-update-command";
     private final String DEFAULT_LOCAL_NAMES = "ns.unit.test, unit.test";
@@ -186,7 +186,7 @@ public class EblockerDnsServerTest {
         EblockerDnsServerState state = filterLast(captor, EblockerDnsServerState.class);
         Assert.assertNotNull(state);
         Assert.assertTrue(state.isEnabled());
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class EblockerDnsServerTest {
 
         EblockerDnsServerState state = filterLast(captor, EblockerDnsServerState.class);
         Assert.assertTrue(state.isEnabled());
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     @Test
@@ -497,7 +497,7 @@ public class EblockerDnsServerTest {
                 new NameServer(NameServer.Protocol.UDP, IpAddress.parse("77.88.8.1"), 53)),
                 config.getResolverConfigs().get("custom").getNameServers());
 
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     private DnsResolvers getDhcpResolver() {
@@ -521,7 +521,6 @@ public class EblockerDnsServerTest {
         Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(serverConfig);
 
         eblockerDnsServer = new EblockerDnsServer(
-                CHANNEL_NAME,
                 FLUSH_COMMAND,
                 UPDATE_COMMAND,
                 DEFAULT_CUSTOM_NAME_SERVERS,
@@ -625,7 +624,7 @@ public class EblockerDnsServerTest {
         Assert.assertEquals(CONTROL_BAR_HOST_NAME, recordsByName.get(CONTROL_BAR_HOST_NAME).getName());
         Assert.assertEquals(CONTROL_BAR_IP_ADDRESS, recordsByName.get(CONTROL_BAR_HOST_NAME).getIpAddress());
 
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     @Test
@@ -792,7 +791,7 @@ public class EblockerDnsServerTest {
         Mockito.verify(dhcpBindListener).addListener(listenerCaptor.capture());
         listenerCaptor.getValue().updateDhcpNameServers(Arrays.asList("77.88.8.8", "77.88.8.1"));
 
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
 
         ArgumentCaptor<DnsServerConfig> configCaptor = ArgumentCaptor.forClass(DnsServerConfig.class);
         Mockito.verify(dataSource).save(configCaptor.capture());
@@ -841,7 +840,7 @@ public class EblockerDnsServerTest {
                 createRouterAdvertisementEntry(lastUpdate, 2000, 5000)
         ));
 
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
 
         ArgumentCaptor<DnsServerConfig> configCaptor = ArgumentCaptor.forClass(DnsServerConfig.class);
         Mockito.verify(dataSource).save(configCaptor.capture());
@@ -872,7 +871,7 @@ public class EblockerDnsServerTest {
         Set<IpAddress> filteredPeerDefaultAllow = Sets.newHashSet(IpAddress.parse("192.168.9.11"));
         eblockerDnsServer.setFilteredPeers(filteredPeers, filteredPeerDefaultAllow);
 
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
 
         ArgumentCaptor<DnsServerConfig> configCaptor = ArgumentCaptor.forClass(DnsServerConfig.class);
         Mockito.verify(dataSource).save(configCaptor.capture());
@@ -896,7 +895,7 @@ public class EblockerDnsServerTest {
         eblockerDnsServer.setFilteredPeers(Sets.newHashSet(IpAddress.parse("192.168.9.10"), IpAddress.parse("192.168.9.9")),
                 Sets.newHashSet(IpAddress.parse("192.168.9.12"), IpAddress.parse("192.168.9.11")));
 
-        Mockito.verify(pubSubService, Mockito.never()).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService, Mockito.never()).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
         Mockito.verify(dataSource, Mockito.never()).save(DnsServerConfig.class);
     }
 
@@ -904,7 +903,7 @@ public class EblockerDnsServerTest {
     public void testFlushCache() {
         setupDnsServer();
         eblockerDnsServer.flushCache();
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, FLUSH_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, FLUSH_COMMAND);
     }
 
     @Test
@@ -916,7 +915,7 @@ public class EblockerDnsServerTest {
 
         ArgumentCaptor<DnsServerConfig> captor = ArgumentCaptor.forClass(DnsServerConfig.class);
         Mockito.verify(dataSource).save(captor.capture());
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
 
         DnsServerConfig config = captor.getValue();
         Assert.assertNotNull(config.getResolverConfigs().containsKey("vpn-5"));
@@ -943,7 +942,7 @@ public class EblockerDnsServerTest {
         eblockerDnsServer.removeVpnResolver(5);
 
         Mockito.verify(dataSource).save(config);
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
         Assert.assertNull(config.getResolverConfigs().get("vpn-5"));
         Assert.assertEquals(1, config.getResolverConfigNameByIp().size());
         Assert.assertNull(config.getResolverConfigNameByIp().get("192.168.1.252"));
@@ -963,7 +962,7 @@ public class EblockerDnsServerTest {
         eblockerDnsServer.useVpnResolver(device, 5);
 
         Mockito.verify(dataSource).save(config);
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
         Assert.assertEquals("vpn-5", config.getResolverConfigNameByIp().get("192.168.3.3"));
     }
 
@@ -982,7 +981,7 @@ public class EblockerDnsServerTest {
         // check resolver has been configured
         Mockito.verify(dataSource).save(config);
         Assert.assertEquals("tor", config.getResolverConfigNameByIp().get("192.168.3.3"));
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     @Test
@@ -1002,7 +1001,7 @@ public class EblockerDnsServerTest {
         // check resolver has been configured
         Mockito.verify(dataSource).save(config);
         Assert.assertNull(config.getResolverConfigNameByIp().get("192.168.3.3"));
-        Mockito.verify(pubSubService).publish(CHANNEL_NAME, UPDATE_COMMAND);
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
     }
 
     @Test
@@ -1019,7 +1018,6 @@ public class EblockerDnsServerTest {
     @Test
     public void testGetCustomNameServersWithoutConfiguration() {
         eblockerDnsServer = new EblockerDnsServer(
-                CHANNEL_NAME,
                 FLUSH_COMMAND,
                 UPDATE_COMMAND,
                 DEFAULT_CUSTOM_NAME_SERVERS,
@@ -1055,7 +1053,6 @@ public class EblockerDnsServerTest {
     @Test
     public void testGetDhcpNameServersWithoutConfiguration() {
         eblockerDnsServer = new EblockerDnsServer(
-                CHANNEL_NAME,
                 FLUSH_COMMAND,
                 UPDATE_COMMAND,
                 DEFAULT_CUSTOM_NAME_SERVERS,
@@ -1086,7 +1083,6 @@ public class EblockerDnsServerTest {
         Mockito.when(dataSource.get(EblockerDnsServerState.class)).thenReturn(state);
 
         eblockerDnsServer = new EblockerDnsServer(
-                CHANNEL_NAME,
                 FLUSH_COMMAND,
                 UPDATE_COMMAND,
                 DEFAULT_CUSTOM_NAME_SERVERS,
@@ -1222,7 +1218,7 @@ public class EblockerDnsServerTest {
     }
 
     private void setupDnsServer() {
-        eblockerDnsServer = new EblockerDnsServer(CHANNEL_NAME,
+        eblockerDnsServer = new EblockerDnsServer(
                 FLUSH_COMMAND,
                 UPDATE_COMMAND,
                 DEFAULT_CUSTOM_NAME_SERVERS,

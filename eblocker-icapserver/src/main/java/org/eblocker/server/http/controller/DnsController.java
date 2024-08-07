@@ -40,7 +40,5 @@ public interface DnsController {
 
     void flushCache(Request request, Response response);
 
-    List<NameServerStats> testNameServer(Request request, Response response);
-
     Object getResolverStats(Request request, Response response);
 }

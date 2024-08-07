@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2024 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -16,48 +16,109 @@
  */
 package org.eblocker.server.common.network.unix;
 
-import org.eblocker.server.common.data.dns.DnsDataSource;
-import org.eblocker.server.common.data.dns.DnsDataSourceDnsResponse;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.handler.codec.dns.DnsRecordType;
+import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.dns.DnsQuery;
-import org.eblocker.server.common.data.dns.DnsRecordType;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.eblocker.server.common.data.dns.DnsResponse;
+import org.eblocker.server.common.network.DnsTestService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DnsResolverTest {
+    public static final String O2_BOX_IP4 = "93.184.215.14";
+    public static final String O2_BOX_IP6 = "2606:2800:21f:cb07:6820:80da:af6b:8b2c";
+    public static final String FRITZ_BOX_IP4 = "212.42.244.122";
 
-    private DnsDataSource dnsDataSource;
     private DnsResolver resolver;
+    private NioEventLoopGroup workerGroup;
+    private DnsTestService dnsTestService;
+    private String dnsServer = "127.0.0.1";
+    private int dnsPort;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        dnsDataSource = Mockito.mock(DnsDataSource.class);
-        this.resolver = new DnsResolver(dnsDataSource);
+        workerGroup = new NioEventLoopGroup(2);
+        resolver = new DnsResolver(workerGroup);
+        dnsPort = 5000 + new Random().nextInt(1000);
+        dnsTestService = new DnsTestService(dnsServer, dnsPort);
+        dnsTestService
+                .respondTo("o2.box")
+                .withCname("example.com")
+                .with("example.com", IpAddress.parse(O2_BOX_IP4));
+        dnsTestService
+                .respondTo("o2.box", "AAAA")
+                .withCname("example.com")
+                .with("example.com", IpAddress.parse(O2_BOX_IP6));
+        dnsTestService.respondTo("fritz.box").with(IpAddress.parse(FRITZ_BOX_IP4));
+        dnsTestService.respondTo("empty.response.box");
+        dnsTestService.respondTo("server.failure.box").withServerFailure();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        dnsTestService.shutdown();
+    }
+
+    @Test
+    public void loadTest() {
+        for (int i = 0; i < 100; i++) {
+            List<DnsQuery> queries = List.of(
+                    new DnsQuery(DnsRecordType.A, "o2.box"),
+                    new DnsQuery(DnsRecordType.AAAA, "o2.box")
+            );
+            List<DnsResponse> responses = resolver.resolve(dnsServer, dnsPort, queries);
+            assertEquals(2, responses.size());
+            assertEquals(IpAddress.parse(O2_BOX_IP4), responses.get(0).getIpAddress());
+            assertEquals(IpAddress.parse(O2_BOX_IP6), responses.get(1).getIpAddress());
+        }
     }
 
     @Test
     public void testResolve() {
-        DnsDataSourceDnsResponse response = new DnsDataSourceDnsResponse();
-        response.setResponses(new ArrayList<>());
-        Mockito.when(dnsDataSource.popDnsResolutionQueue(Mockito.anyString(), Mockito.anyInt())).thenReturn(response);
+        List<DnsQuery> queries = List.of(
+                new DnsQuery(DnsRecordType.A, "o2.box"),
+                new DnsQuery(DnsRecordType.AAAA, "o2.box"),
+                new DnsQuery(DnsRecordType.A, "fritz.box"),
+                new DnsQuery(DnsRecordType.A, "notfound.box"),
+                new DnsQuery(DnsRecordType.A, "server.failure.box"),
+                new DnsQuery(DnsRecordType.A, "empty.response.box")
+        );
+        List<DnsResponse> responses = resolver.resolve(dnsServer, dnsPort, queries);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        assertEquals(queries.size(), responses.size());
 
-        List<DnsQuery> queries = Collections.singletonList(new DnsQuery(DnsRecordType.A, "bread.box"));
-        for (int i = 0; i < 100; ++i) {
-            resolver.resolve("192.168.1.1", queries);
-        }
+        assertEquals(IpAddress.parse(O2_BOX_IP4), responses.get(0).getIpAddress());
+        assertEquals(DnsRecordType.A, responses.get(0).getRecordType());
 
-        Mockito.verify(dnsDataSource, Mockito.times(100)).addDnsQueryQueue(captor.capture(), Mockito.eq("192.168.1.1"), Mockito.eq(queries));
+        assertEquals(IpAddress.parse(O2_BOX_IP6), responses.get(1).getIpAddress());
+        assertEquals(DnsRecordType.AAAA, responses.get(1).getRecordType());
 
-        List<String> ids = captor.getAllValues();
-        Assert.assertEquals(100, new HashSet<>(ids).size());
+        assertEquals(IpAddress.parse(FRITZ_BOX_IP4), responses.get(2).getIpAddress());
+        assertEquals(DnsRecordType.A, responses.get(2).getRecordType());
+
+        assertEquals(Integer.valueOf(3), responses.get(3).getStatus());
+        assertEquals(Integer.valueOf(3), responses.get(4).getStatus());
+        assertEquals(Integer.valueOf(3), responses.get(5).getStatus());
+    }
+
+    @Test
+    public void testTimeout() {
+        List<DnsQuery> queries = List.of(
+                new DnsQuery(DnsRecordType.A, "o2.box"),
+                new DnsQuery(DnsRecordType.AAAA, "o2.box")
+        );
+        int invalidPort = dnsPort + 1;
+        resolver.setTimeout(250);
+        List<DnsResponse> responses = resolver.resolve(dnsServer, invalidPort, queries);
+        assertEquals(2, responses.size());
+        assertEquals(Integer.valueOf(3), responses.get(0).getStatus());
+        assertEquals(Integer.valueOf(3), responses.get(1).getStatus());
     }
 }

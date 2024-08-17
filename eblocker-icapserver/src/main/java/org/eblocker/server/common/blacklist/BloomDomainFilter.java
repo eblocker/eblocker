@@ -20,6 +20,7 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,6 +56,7 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return bloomFilter;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();

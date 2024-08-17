@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         this.replacement = replacement;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();

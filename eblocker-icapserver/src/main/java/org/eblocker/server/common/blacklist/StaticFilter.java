@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -32,6 +33,7 @@ public class StaticFilter<T> implements DomainFilter<T> {
         this.block = block;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return null;

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -106,6 +107,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         initFromFile();
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return listId;

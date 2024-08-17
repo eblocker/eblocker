@@ -19,6 +19,7 @@ package org.eblocker.server.common.blacklist;
 import org.eblocker.server.common.collections.ConcurrentFixedSizeCache;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class CachingFilter implements DomainFilter<String> {
         this.filter = filter;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();

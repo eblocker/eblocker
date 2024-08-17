@@ -42,10 +42,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.eblocker.server.common.data.DoctorDiagnosisResult.Audience.*;
-import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.*;
-import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Audience.EVERYONE;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.GOOD;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Severity.RECOMMENDATION_NOT_FOLLOWED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.ATA_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.DEVICES_BLOCKING_TEST_DOMAIN;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.STANDARD_PATTERN_FILTER_ENABLED;
+import static org.eblocker.server.common.data.DoctorDiagnosisResult.Tag.TEST_DOMAIN_HTTPS_WHITELISTED;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class DoctorServiceTest {

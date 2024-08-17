@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -551,7 +552,7 @@ public class DomainBlockingService {
         private final int userId;
         private final String target;
 
-        public Decision(boolean blocked, String domain, Integer profileId, Integer listId, int userId, String target) {
+        public Decision(boolean blocked, String domain, Integer profileId, @Nullable Integer listId, int userId, String target) {
             super(domain, blocked, null);
             this.blocked = blocked;
             this.domain = domain;
@@ -575,6 +576,7 @@ public class DomainBlockingService {
             return profileId;
         }
 
+        @Nullable
         public Integer getListId() {
             return listId;
         }
@@ -611,6 +613,7 @@ public class DomainBlockingService {
             this.attributes = attributes;
         }
 
+        @Nullable
         @Override
         public Integer getListId() {
             return filter.getListId();
@@ -662,6 +665,7 @@ public class DomainBlockingService {
             this.profileId = profileId;
         }
 
+        @Nullable
         @Override
         public Integer getListId() {
             return null;

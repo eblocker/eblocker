@@ -17,10 +17,12 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface DomainFilter<T> {
+    @Nullable
     Integer getListId();
 
     String getName();

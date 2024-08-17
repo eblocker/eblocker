@@ -130,6 +130,7 @@ public class SingleFileFilter implements DomainFilter<String> {
                 .flatMap(Set::stream);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         boolean isBlocked = findBucket(domainBucketFn.apply(domain), domain);

@@ -108,6 +108,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
                 .flatMap(List::stream);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<byte[]> isBlocked(byte[] domain) {
         boolean isBlocked = findBucket(getBucket(domain), domain);

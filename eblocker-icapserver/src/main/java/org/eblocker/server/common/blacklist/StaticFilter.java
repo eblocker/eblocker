@@ -52,6 +52,7 @@ public class StaticFilter<T> implements DomainFilter<T> {
         return Stream.empty();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return new FilterDecision<>(domain, block, this);

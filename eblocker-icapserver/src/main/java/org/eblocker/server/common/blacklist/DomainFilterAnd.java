@@ -68,6 +68,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return domains.stream();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         FilterDecision<T> decision = new FilterDecision<>(domain, false, this);

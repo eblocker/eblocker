@@ -29,6 +29,7 @@ public interface DomainFilter<T> {
 
     Stream<T> getDomains();
 
+    @Nonnull
     FilterDecision<T> isBlocked(T domain);
 
     @Nonnull

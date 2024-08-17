@@ -54,6 +54,7 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         String transformedDomain = pattern.matcher(domain).replaceAll(replacement);

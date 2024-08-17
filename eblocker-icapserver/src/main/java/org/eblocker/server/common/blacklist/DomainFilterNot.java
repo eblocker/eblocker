@@ -49,6 +49,7 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         FilterDecision<T> decision = filter.isBlocked(domain);

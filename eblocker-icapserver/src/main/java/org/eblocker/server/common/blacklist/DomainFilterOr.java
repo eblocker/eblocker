@@ -55,6 +55,7 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
         return Stream.of(filters).flatMap(DomainFilter::getDomains);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return Stream.of(filters)

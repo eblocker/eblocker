@@ -55,6 +55,7 @@ public class HashingFilter implements DomainFilter<String> {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         byte[] hash = hashFunction.hashString(domain, Charsets.UTF_8).asBytes();

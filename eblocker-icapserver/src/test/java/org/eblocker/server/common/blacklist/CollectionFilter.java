@@ -52,6 +52,7 @@ public class CollectionFilter<T> implements DomainFilter<T> {
         return collection.stream();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return new FilterDecision<>(domain, collection.contains(domain), this);

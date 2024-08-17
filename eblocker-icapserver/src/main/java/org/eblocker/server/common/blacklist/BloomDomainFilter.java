@@ -75,6 +75,7 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return filter.getDomains();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         if (!bloomFilter.mightContain(domain)) {

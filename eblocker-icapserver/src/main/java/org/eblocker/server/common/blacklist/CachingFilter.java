@@ -60,6 +60,7 @@ public class CachingFilter implements DomainFilter<String> {
         return filter.getDomains();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         FilterDecision<String> decision = cache.get(domain);

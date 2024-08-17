@@ -29,6 +29,7 @@ public class HostnameFilter implements DomainFilter<String> {
         this.filter = filter;
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String hostname) {
         String[] labels = hostname.split("\\.");

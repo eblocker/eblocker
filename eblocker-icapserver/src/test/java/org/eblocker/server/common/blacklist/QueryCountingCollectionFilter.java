@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 class QueryCountingCollectionFilter<T> extends CollectionFilter<T> {
@@ -26,6 +27,7 @@ class QueryCountingCollectionFilter<T> extends CollectionFilter<T> {
         super(listId, collection);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         ++queries;

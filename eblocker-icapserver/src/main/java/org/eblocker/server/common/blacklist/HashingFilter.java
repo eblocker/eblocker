@@ -41,6 +41,7 @@ public class HashingFilter implements DomainFilter<String> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         String hashName = hashFunction.toString().replaceAll("^.*\\.", "").replaceAll("\\(\\)", "");

@@ -56,6 +56,7 @@ public class HostnameFilter implements DomainFilter<String> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(hostname " + filter.getName() + ")";

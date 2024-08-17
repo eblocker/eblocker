@@ -41,6 +41,7 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(replace " + filter.getName() + ")";

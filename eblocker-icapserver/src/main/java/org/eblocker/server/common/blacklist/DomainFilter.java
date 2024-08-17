@@ -25,6 +25,7 @@ public interface DomainFilter<T> {
     @Nullable
     Integer getListId();
 
+    @Nonnull
     String getName();
 
     int getSize();

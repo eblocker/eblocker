@@ -38,6 +38,7 @@ class QueryCountingCollectionFilter<T> extends CollectionFilter<T> {
         return queries;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "query-counting-collection-" + getListId();

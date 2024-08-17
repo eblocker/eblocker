@@ -36,6 +36,7 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(not " + filter.getName() + ")";

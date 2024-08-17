@@ -62,6 +62,7 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(bloom " + filter.getName() + ")";

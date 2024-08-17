@@ -39,6 +39,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return null;
     }
 
+    @Nonnull
     public String getName() {
         StringBuilder sb = new StringBuilder("(and");
         for (DomainFilter filter : filters) {

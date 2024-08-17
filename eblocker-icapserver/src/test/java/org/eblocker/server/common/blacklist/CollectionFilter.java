@@ -40,7 +40,7 @@ public class CollectionFilter<T> implements DomainFilter<T> {
     }
 
     @Override
-    public String getName() {
+    public @Nonnull String getName() {
         return "collection-filter";
     }
 

@@ -39,6 +39,7 @@ public class StaticFilter<T> implements DomainFilter<T> {
         return null;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(static " + block + ")";

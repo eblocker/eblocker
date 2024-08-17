@@ -113,6 +113,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         return listId;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(file " + name + ")";

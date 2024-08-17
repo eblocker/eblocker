@@ -619,6 +619,7 @@ public class DomainBlockingService {
             return filter.getListId();
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return "(attribute-filter " + filter.getName() + ")";
@@ -671,6 +672,7 @@ public class DomainBlockingService {
             return null;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return "(domain-blocking-filter-" + userId + "-" + profileId + " " + delegate.getName() + ")";

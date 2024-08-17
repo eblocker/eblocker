@@ -91,6 +91,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         return listId;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(byte-filter-file " + name + ")";

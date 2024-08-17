@@ -50,6 +50,7 @@ public class StaticFilter<T> implements DomainFilter<T> {
         return 0;
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return Stream.empty();

@@ -67,6 +67,7 @@ public class HostnameFilter implements DomainFilter<String> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         return filter.getDomains();

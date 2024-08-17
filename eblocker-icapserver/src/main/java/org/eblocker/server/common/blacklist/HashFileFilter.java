@@ -102,6 +102,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         return size;
     }
 
+    @Nonnull
     @Override
     public Stream<byte[]> getDomains() {
         return Stream

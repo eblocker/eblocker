@@ -53,6 +53,7 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
         return Stream.of(filters).mapToInt(DomainFilter::getSize).sum();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return Stream.of(filters).flatMap(DomainFilter::getDomains);

@@ -53,6 +53,7 @@ public class HashingFilter implements DomainFilter<String> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         throw new UnsupportedOperationException();

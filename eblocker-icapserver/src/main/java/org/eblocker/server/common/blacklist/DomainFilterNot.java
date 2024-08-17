@@ -47,6 +47,7 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         throw new UnsupportedOperationException();

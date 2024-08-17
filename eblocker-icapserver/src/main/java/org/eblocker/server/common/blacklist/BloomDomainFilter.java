@@ -73,6 +73,7 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return filter.getDomains();

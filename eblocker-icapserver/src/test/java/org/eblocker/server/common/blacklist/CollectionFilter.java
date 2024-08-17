@@ -49,6 +49,7 @@ public class CollectionFilter<T> implements DomainFilter<T> {
         return collection.size();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return collection.stream();

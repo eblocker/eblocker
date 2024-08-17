@@ -630,6 +630,7 @@ public class DomainBlockingService {
             return filter.getSize();
         }
 
+        @Nonnull
         @Override
         public Stream<T> getDomains() {
             return filter.getDomains();
@@ -683,6 +684,7 @@ public class DomainBlockingService {
             return delegate.getSize();
         }
 
+        @Nonnull
         @Override
         public Stream<String> getDomains() {
             return delegate.getDomains();

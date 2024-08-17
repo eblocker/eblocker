@@ -55,6 +55,7 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return (int) getDomains().count();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         if (filters.length == 0) {

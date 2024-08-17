@@ -30,6 +30,7 @@ public interface DomainFilter<T> {
 
     int getSize();
 
+    @Nonnull
     Stream<T> getDomains();
 
     @Nonnull

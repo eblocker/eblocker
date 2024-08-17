@@ -124,6 +124,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         return size;
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         return Stream

@@ -103,7 +103,7 @@ class DoctorServiceTest {
         IntStream.range(0, 7).forEach(id ->
                 Mockito.when(filterManager.getFilterStoreConfigurationById(id)).thenReturn(createFilterStoreConfiguration(id)));
         Mockito.when(deviceService.getDevices(true)).thenReturn(List.of(enabledDevice, disabledDevice));
-        Mockito.when(domainBlockingService.isBlocked(Mockito.any(Device.class), Mockito.eq("eblocker.org"))).thenReturn(domainBlockingService.new Decision(false, "eblocker.org", null, null, 0, null));
+        Mockito.when(domainBlockingService.isBlocked(Mockito.any(Device.class), Mockito.eq("eblocker.org"))).thenReturn(new DomainBlockingService.Decision(false, "eblocker.org", null, null, 0, null));
     }
 
     @Test
@@ -119,7 +119,7 @@ class DoctorServiceTest {
 
     @Test
     void testTestDomainBlocked() {
-        Mockito.when(domainBlockingService.isBlocked(enabledDevice, "eblocker.org")).thenReturn(domainBlockingService.new Decision(true, "eblocker.org", null, null, 0, null));
+        Mockito.when(domainBlockingService.isBlocked(enabledDevice, "eblocker.org")).thenReturn(new DomainBlockingService.Decision(true, "eblocker.org", null, null, 0, null));
 
         List<DoctorDiagnosisResult> results = doctorService.runDiagnosis();
 

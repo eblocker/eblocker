@@ -19,12 +19,14 @@ package org.eblocker.server.common.util;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.FilterMode;
 
+import javax.annotation.Nonnull;
+
 public class FilterModeUtils {
 
     private FilterModeUtils() {
     }
 
-    public static FilterMode getEffectiveFilterMode(boolean globalSslEnabled, Device device) {
+    public static FilterMode getEffectiveFilterMode(boolean globalSslEnabled, @Nonnull Device device) {
         if (device.getFilterMode() != FilterMode.AUTOMATIC) {
             return device.getFilterMode();
         }

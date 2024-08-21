@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ public class HostnameFilter implements DomainFilter<String> {
         this.filter = filter;
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String hostname) {
         String[] labels = hostname.split("\\.");
@@ -48,11 +50,13 @@ public class HostnameFilter implements DomainFilter<String> {
         return filter.isBlocked(hostname);
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(hostname " + filter.getName() + ")";
@@ -63,6 +67,7 @@ public class HostnameFilter implements DomainFilter<String> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         return filter.getDomains();

@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,35 +76,46 @@ public class DomainBlockingService {
     private static final String ATTRIBUTE_ADD_PROFILE_ID = "ADD_PROFILE_ID";
     private static final String ATTRIBUTE_TARGET = "TARGET";
 
+    @Nonnull
     private final String accessDeniedIp;
     private final boolean redirectDespiteDisabledSSL;
-
+    @Nonnull
     private final DeviceService deviceService;
+    @Nonnull
     private final DomainBlacklistService domainBlacklistService;
+    @Nonnull
     private final EblockerDnsServer eblockerDnsServer;
+    @Nonnull
     private final ParentalControlService parentalControlService;
+    @Nonnull
     private final ParentalControlFilterListsService filterListsService;
+    @Nonnull
     private final ProductInfoService productInfoService;
+    @Nonnull
     private final SquidConfigController squidConfigController;
+    @Nonnull
     private final SslService sslService;
+    @Nonnull
     private final UserService userService;
 
+    @Nonnull
     private final Cache<FilterConfig, DomainFilter<String>> filtersByConfig;
+    @Nonnull
     private final Cache<String, Filter> filterByDeviceId;
     private boolean sslServiceInitialized;
 
     @Inject
-    public DomainBlockingService(@Named("parentalControl.redirect.ip") String accessDeniedIp,
+    public DomainBlockingService(@Named("parentalControl.redirect.ip") @Nonnull String accessDeniedIp,
                                  @Named("parentalControl.redirect.despite_disabled_ssl") boolean redirectDespiteDisabledSSL,
-                                 DeviceService deviceService,
-                                 DomainBlacklistService domainBlacklistService,
-                                 EblockerDnsServer eblockerDnsServer,
-                                 ParentalControlService parentalControlService,
-                                 ParentalControlFilterListsService filterListsService,
-                                 ProductInfoService productInfoService,
-                                 SquidConfigController squidConfigController,
-                                 SslService sslService,
-                                 UserService userService) {
+                                 @Nonnull DeviceService deviceService,
+                                 @Nonnull DomainBlacklistService domainBlacklistService,
+                                 @Nonnull EblockerDnsServer eblockerDnsServer,
+                                 @Nonnull ParentalControlService parentalControlService,
+                                 @Nonnull ParentalControlFilterListsService filterListsService,
+                                 @Nonnull ProductInfoService productInfoService,
+                                 @Nonnull SquidConfigController squidConfigController,
+                                 @Nonnull SslService sslService,
+                                 @Nonnull UserService userService) {
         this.accessDeniedIp = accessDeniedIp;
         this.redirectDespiteDisabledSSL = redirectDespiteDisabledSSL;
 
@@ -196,7 +208,8 @@ public class DomainBlockingService {
         updateFilteredDevices();
     }
 
-    public Decision isBlocked(Device device, String domain) {
+    @Nonnull
+    public Decision isBlocked(@Nonnull Device device, String domain) {
         try {
             DomainFilter<String> filter = filterByDeviceId.get(device.getId(), () -> createDeviceFilter(device));
             logger.debug("using filter: {}", filter.getName());
@@ -212,6 +225,7 @@ public class DomainBlockingService {
      * <p>
      * Do not use this method for actual blocking as it ignores device-specific settings!
      */
+    @Nonnull
     public Decision isDomainBlockedByMalwareAdsTrackersFilters(String domain) {
         try {
             DomainFilter<String> filter = createDomainBlockedByMalwareAdsTrackersFilter();
@@ -223,21 +237,24 @@ public class DomainBlockingService {
         }
     }
 
+    @Nonnull
     private Filter createDeviceFilter(Device device) throws ExecutionException {
         DeviceConfig deviceConfig = new DeviceConfig(device);
-        FilterConfig filterConfig = FilterConfig.createFilterConfigForDevice(deviceConfig, isSslEnabledGlobally());
+        FilterConfig filterConfig = new FilterConfig(deviceConfig, isSslEnabledGlobally());
         DomainFilter<String> filter = filtersByConfig.get(filterConfig, () -> createFilter(filterConfig));
         return new Filter(filter, filterConfig, deviceConfig.getUser().getId(), deviceConfig.getProfile().getId());
     }
 
+    @Nonnull
     private Filter createDomainBlockedByMalwareAdsTrackersFilter() throws ExecutionException {
-        FilterConfig filterConfig = FilterConfig.createFilterConfigForDomainFiltering();
+        FilterConfig filterConfig = new FilterConfig();
 
         DomainFilter<String> filter = filtersByConfig.get(filterConfig, () -> createFilter(filterConfig));
         return new Filter(filter, filterConfig, -1, -1);
     }
 
-    private DomainFilter<String> createFilter(FilterConfig filterConfig) {
+    @Nonnull
+    private DomainFilter<String> createFilter(@Nonnull FilterConfig filterConfig) {
         Map<Integer, ParentalControlFilterMetaData> metadataById = getEnabledFilterMetadataById();
         DomainFilter<String> malwareFilter = createMalwareFilter(filterConfig, metadataById.values());
         DomainFilter<String> parentalControlFilter = createParentalControlFilter(filterConfig, metadataById);
@@ -246,6 +263,7 @@ public class DomainBlockingService {
         return Filters.cache(8192, CachingFilter.CacheMode.ALL, orFilter);
     }
 
+    @Nonnull
     private Map<Integer, ParentalControlFilterMetaData> getEnabledFilterMetadataById() {
         return filterListsService
                 .getParentalControlFilterMetaData()
@@ -254,7 +272,8 @@ public class DomainBlockingService {
                 .collect(Collectors.toMap(ParentalControlFilterMetaData::getId, Function.identity()));
     }
 
-    private DomainFilter<String> createMalwareFilter(FilterConfig config, Collection<ParentalControlFilterMetaData> metaData) {
+    @Nonnull
+    private DomainFilter<String> createMalwareFilter(@Nonnull FilterConfig config, @Nonnull Collection<ParentalControlFilterMetaData> metaData) {
         if (!productInfoService.hasFeature(ProductFeature.PRO)) {
             return Filters.staticFalse();
         }
@@ -268,7 +287,8 @@ public class DomainBlockingService {
         return attributeFilter(filter, Collections.singletonMap(ATTRIBUTE_TARGET, accessDeniedIp));
     }
 
-    private DomainFilter<String> createParentalControlFilter(FilterConfig config, Map<Integer, ParentalControlFilterMetaData> metaDataById) {
+    @Nonnull
+    private DomainFilter<String> createParentalControlFilter(@Nonnull FilterConfig config, @Nonnull Map<Integer, ParentalControlFilterMetaData> metaDataById) {
         if (!productInfoService.hasFeature(ProductFeature.FAM)) {
             return Filters.staticFalse();
         }
@@ -291,7 +311,8 @@ public class DomainBlockingService {
         return attributeFilter(parentalFilter, attributes);
     }
 
-    private BloomFilter<String> getTopLevelBloomFilter(Collection<ParentalControlFilterMetaData> metaData, Category category) {
+    @Nullable
+    private BloomFilter<String> getTopLevelBloomFilter(@Nonnull Collection<ParentalControlFilterMetaData> metaData, @Nonnull Category category) {
         Set<Integer> ids = filterByCategory(metaData, EnumSet.of(category));
 
         if (ids.isEmpty()) {
@@ -320,8 +341,9 @@ public class DomainBlockingService {
         return bloomFilter.getBloomFilter();
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
-    private DomainFilter<String> createHostnameFilters(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById, BloomFilter<String> topLevelBloomFilter) {
+    private DomainFilter<String> createHostnameFilters(@Nonnull Set<Integer> ids, @Nonnull Map<Integer, ParentalControlFilterMetaData> metaDataById, @Nullable BloomFilter<String> topLevelBloomFilter) {
         List<DomainFilter<String>> filters = new ArrayList<>();
         Map<QueryTransformation, Set<Integer>> queryTransformationsById = getIdsByQueryTransformations(ids, metaDataById);
         for (Map.Entry<QueryTransformation, Set<Integer>> e : queryTransformationsById.entrySet()) {
@@ -334,7 +356,8 @@ public class DomainBlockingService {
         return Filters.hostname(Filters.or(filters.toArray(new DomainFilter[0])));
     }
 
-    private DomainFilter<String> combineFilters(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById, BloomFilter<String> topLevelBloomFilter) {
+    @Nonnull
+    private DomainFilter<String> combineFilters(@Nonnull Set<Integer> ids, @Nonnull Map<Integer, ParentalControlFilterMetaData> metaDataById, @Nullable BloomFilter<String> topLevelBloomFilter) {
         Map<String, List<Integer>> metaDataByFormat = ids.stream()
                 .map(metaDataById::get)
                 .filter(Objects::nonNull)
@@ -361,7 +384,8 @@ public class DomainBlockingService {
                 Filters.hashing(Hashing.sha1(), sha1BasedFilters));
     }
 
-    private Map<QueryTransformation, Set<Integer>> getIdsByQueryTransformations(Set<Integer> ids, Map<Integer, ParentalControlFilterMetaData> metaDataById) {
+    @Nonnull
+    private Map<QueryTransformation, Set<Integer>> getIdsByQueryTransformations(@Nonnull Set<Integer> ids, @Nonnull Map<Integer, ParentalControlFilterMetaData> metaDataById) {
         Map<QueryTransformation, Set<Integer>> transformationsById = new HashMap<>();
         ids.stream().map(metaDataById::get).filter(Objects::nonNull).forEach(
                 metadata -> {
@@ -380,7 +404,8 @@ public class DomainBlockingService {
         return transformationsById;
     }
 
-    private DomainFilter<String> createAdsTrackersFilter(FilterConfig config, Map<Integer, ParentalControlFilterMetaData> metadataById) {
+    @Nonnull
+    private DomainFilter<String> createAdsTrackersFilter(@Nonnull FilterConfig config, @Nonnull Map<Integer, ParentalControlFilterMetaData> metadataById) {
         if (!productInfoService.hasFeature(ProductFeature.PRO)) {
             return Filters.staticFalse();
         }
@@ -406,7 +431,8 @@ public class DomainBlockingService {
         return attributeFilter(filter, Collections.singletonMap(ATTRIBUTE_TARGET, target));
     }
 
-    private Set<Integer> toSet(Integer id) {
+    @Nonnull
+    private Set<Integer> toSet(@Nullable Integer id) {
         if (id == null) {
             return Collections.emptySet();
         }
@@ -414,24 +440,28 @@ public class DomainBlockingService {
         return Collections.singleton(id);
     }
 
-    private DomainFilter<String> wrapBloomFilter(BloomFilter<String> topLevelBloomFilter, DomainFilter<String> filter) {
+    @Nonnull
+    private DomainFilter<String> wrapBloomFilter(@Nullable BloomFilter<String> topLevelBloomFilter, @Nonnull DomainFilter<String> filter) {
         if (filter instanceof BloomDomainFilter && filter.getChildFilters().get(0) instanceof SingleFileFilter) {
             return filter;
         }
         return topLevelBloomFilter != null ? Filters.bloom(topLevelBloomFilter, filter) : filter;
     }
 
-    private List<DomainFilter> getFilters(Collection<Integer> ids) {
+    @Nonnull
+    private List<DomainFilter> getFilters(@Nonnull Collection<Integer> ids) {
         return ids.stream().map(domainBlacklistService::getFilter).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
-    private <T> DomainFilter<T> createFilter(Collection<Integer> ids) {
-        DomainFilter[] filters = getFilters(ids).toArray(new DomainFilter[0]);
+    private <T> DomainFilter<T> createFilter(@Nonnull Collection<Integer> ids) {
+        DomainFilter<T>[] filters = getFilters(ids).toArray(new DomainFilter[0]);
         return Filters.or(filters);
     }
 
-    private Set<Integer> filterByCategory(Collection<ParentalControlFilterMetaData> metaData, EnumSet<Category> categories) {
+    @Nonnull
+    private Set<Integer> filterByCategory(@Nonnull Collection<ParentalControlFilterMetaData> metaData, @Nonnull EnumSet<Category> categories) {
         return metaData.stream()
                 .filter(m -> categories.contains(m.getCategory()))
                 .map(ParentalControlFilterMetaData::getId)
@@ -443,7 +473,7 @@ public class DomainBlockingService {
 
         Map<Device, FilterConfig> configByEnabledDevice = deviceService.getDevices(false).stream()
                 .filter(Device::isEnabled)
-                .collect(Collectors.toMap(Function.identity(), device -> FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally())));
+                .collect(Collectors.toMap(Function.identity(), device -> new FilterConfig(new DeviceConfig(device), isSslEnabledGlobally())));
 
         Set<Device> domainFilteredDevices = filterDomainFilteredDevices(configByEnabledDevice);
         Set<Device> parentalControlledDevices = filterParentalControlFilteredDevices(configByEnabledDevice);
@@ -457,7 +487,8 @@ public class DomainBlockingService {
         }
     }
 
-    private Set<Device> filterParentalControlFilteredDevices(Map<Device, FilterConfig> configByEnabledDevice) {
+    @Nonnull
+    private Set<Device> filterParentalControlFilteredDevices(@Nonnull Map<Device, FilterConfig> configByEnabledDevice) {
         if (!productInfoService.hasFeature(ProductFeature.FAM)) {
             return Collections.emptySet();
         }
@@ -468,7 +499,8 @@ public class DomainBlockingService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Device> filterDomainFilteredDevices(Map<Device, FilterConfig> configByEnabledDevice) {
+    @Nonnull
+    private Set<Device> filterDomainFilteredDevices(@Nonnull Map<Device, FilterConfig> configByEnabledDevice) {
         if (!productInfoService.hasFeature(ProductFeature.PRO)) {
             return Collections.emptySet();
         }
@@ -484,11 +516,12 @@ public class DomainBlockingService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<IpAddress> ipAddresses(Collection<Device> device) {
+    @Nonnull
+    private Set<IpAddress> ipAddresses(@Nonnull Collection<Device> device) {
         return device.stream().flatMap(d -> d.getIpAddresses().stream()).collect(Collectors.toSet());
     }
 
-    private synchronized void checkCachedFilter(Device device) {
+    private synchronized void checkCachedFilter(@Nonnull Device device) {
         logger.debug("checking cached filter for {}", device.getId());
 
         Filter filter = filterByDeviceId.getIfPresent(device.getId());
@@ -497,7 +530,7 @@ public class DomainBlockingService {
             return;
         }
 
-        FilterConfig currentConfig = FilterConfig.createFilterConfigForDevice(new DeviceConfig(device), isSslEnabledGlobally());
+        FilterConfig currentConfig = new FilterConfig(new DeviceConfig(device), isSslEnabledGlobally());
         if (currentConfig.equals(filter.getConfig())) {
             logger.debug("configuration unchanged");
             return;
@@ -515,11 +548,12 @@ public class DomainBlockingService {
         return getFilters().stream().filter(f -> f instanceof CachingFilter).map(f -> (CachingFilter) f);
     }
 
-    private Set<DomainFilter> getFilters() {
-        Queue<DomainFilter> filtersToVisit = new LinkedList<>(filterByDeviceId.asMap().values());
+    @Nonnull
+    private Set<DomainFilter<?>> getFilters() {
+        Queue<Filter> filtersToVisit = new LinkedList<>(filterByDeviceId.asMap().values());
 
-        Set<DomainFilter> filters = new HashSet<>();
-        DomainFilter<?> current;
+        Set<DomainFilter<?>> filters = new HashSet<>();
+        Filter current;
         while ((current = filtersToVisit.poll()) != null) {
             if (!filters.contains(current)) {
                 filters.add(current);
@@ -536,14 +570,15 @@ public class DomainBlockingService {
         return false;
     }
 
-    private <T> DomainFilter<T> attributeFilter(DomainFilter<T> filter, Map<String, Object> attributes) {
+    @Nonnull
+    private <T> DomainFilter<T> attributeFilter(@Nonnull DomainFilter<T> filter, Map<String, Object> attributes) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
         return new AttributeFilter<>(filter, attributes);
     }
 
-    public class Decision extends FilterDecision<String> {
+    public static class Decision extends FilterDecision<String> {
         private final boolean blocked;
         private final String domain;
         private final Integer profileId;
@@ -551,7 +586,7 @@ public class DomainBlockingService {
         private final int userId;
         private final String target;
 
-        public Decision(boolean blocked, String domain, Integer profileId, Integer listId, int userId, String target) {
+        public Decision(boolean blocked, String domain, Integer profileId, @Nullable Integer listId, int userId, String target) {
             super(domain, blocked, null);
             this.blocked = blocked;
             this.domain = domain;
@@ -575,6 +610,7 @@ public class DomainBlockingService {
             return profileId;
         }
 
+        @Nullable
         public Integer getListId() {
             return listId;
         }
@@ -588,7 +624,7 @@ public class DomainBlockingService {
         }
     }
 
-    private class AttributeDecision<T> extends FilterDecision<T> {
+    private static class AttributeDecision<T> extends FilterDecision<T> {
         private final Map<String, Object> attributes;
 
         AttributeDecision(T domain, boolean blocked, DomainFilter<?> filter, Map<String, Object> attributes) {
@@ -601,21 +637,25 @@ public class DomainBlockingService {
         }
     }
 
-    private class AttributeFilter<T> implements DomainFilter<T> {
+    private static class AttributeFilter<T> implements DomainFilter<T> {
 
+        @Nonnull
         private final DomainFilter<T> filter;
+        @Nonnull
         private final Map<String, Object> attributes;
 
-        AttributeFilter(DomainFilter<T> filter, Map<String, Object> attributes) {
+        private AttributeFilter(@Nonnull DomainFilter<T> filter, @Nonnull Map<String, Object> attributes) {
             this.filter = filter;
             this.attributes = attributes;
         }
 
+        @Nullable
         @Override
         public Integer getListId() {
             return filter.getListId();
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return "(attribute-filter " + filter.getName() + ")";
@@ -626,11 +666,13 @@ public class DomainBlockingService {
             return filter.getSize();
         }
 
+        @Nonnull
         @Override
         public Stream<T> getDomains() {
             return filter.getDomains();
         }
 
+        @Nonnull
         @Override
         public FilterDecision<T> isBlocked(T domain) {
             FilterDecision<T> decision = filter.isBlocked(domain);
@@ -649,24 +691,26 @@ public class DomainBlockingService {
         }
     }
 
-    private class Filter implements DomainFilter<String> {
+    private static class Filter implements DomainFilter<String> {
         private final DomainFilter<String> delegate;
         private final FilterConfig config;
         private final int userId;
         private final Integer profileId;
 
-        public Filter(DomainFilter<String> delegate, FilterConfig config, int userId, Integer profileId) {
+        Filter(@Nonnull DomainFilter<String> delegate, FilterConfig config, int userId, Integer profileId) {
             this.delegate = delegate;
             this.config = config;
             this.userId = userId;
             this.profileId = profileId;
         }
 
+        @Nullable
         @Override
         public Integer getListId() {
             return null;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return "(domain-blocking-filter-" + userId + "-" + profileId + " " + delegate.getName() + ")";
@@ -677,11 +721,13 @@ public class DomainBlockingService {
             return delegate.getSize();
         }
 
+        @Nonnull
         @Override
         public Stream<String> getDomains() {
             return delegate.getDomains();
         }
 
+        @Nonnull
         @Override
         public Decision isBlocked(String domain) {
             FilterDecision<String> delegateDecision = delegate.isBlocked(domain);
@@ -707,130 +753,131 @@ public class DomainBlockingService {
     }
 
     private class DeviceConfig {
+        @Nonnull
         private final Device device;
+        @Nonnull
         private final UserModule user;
         private final UserProfileModule profile;
 
-        public DeviceConfig(Device device) {
+        DeviceConfig(@Nonnull Device device) {
             this.device = device;
             user = userService.getUserById(device.getOperatingUser());
             profile = parentalControlService.getProfile(user.getAssociatedProfileId());
         }
 
-        public Device getDevice() {
+        @Nonnull
+        Device getDevice() {
             return device;
         }
 
-        public UserModule getUser() {
+        @Nonnull
+        UserModule getUser() {
             return user;
         }
 
-        public UserProfileModule getProfile() {
+        UserProfileModule getProfile() {
             return profile;
         }
     }
 
     private static class FilterConfig {
-        private FilterMode filterMode;
-        private boolean sslEnabled;
+        private final FilterMode filterMode;
+        private final boolean sslEnabled;
 
-        private boolean filterAds;
-        private boolean filterTrackers;
-        private boolean filterMalware;
-        private boolean domainRecordingEnabled;
-        private Integer customBlacklistId;
-        private Integer customWhitelistId;
+        private final boolean filterAds;
+        private final boolean filterTrackers;
+        private final boolean filterMalware;
+        private final boolean domainRecordingEnabled;
+        private final Integer customBlacklistId;
+        private final Integer customWhitelistId;
 
-        private boolean parentalControlUrlControlModeEnabled;
-        private boolean parentalControlDefaultDeny;
-        private Set<Integer> parentalControlPermittedIds;
-        private Set<Integer> parentalControlProhibitedIds;
+        private final boolean parentalControlUrlControlModeEnabled;
+        private final boolean parentalControlDefaultDeny;
+        private final Set<Integer> parentalControlPermittedIds;
+        private final Set<Integer> parentalControlProhibitedIds;
 
-        public static FilterConfig createFilterConfigForDevice(DeviceConfig deviceConfig, boolean sslEnabledGlobally) {
-            FilterConfig config = new FilterConfig();
+        FilterConfig(DeviceConfig deviceConfig, boolean sslEnabledGlobally) {
             Device device = deviceConfig.getDevice();
-            config.filterMode = FilterModeUtils.getEffectiveFilterMode(sslEnabledGlobally, device);
-            config.sslEnabled = device.isSslEnabled();
-            config.filterAds = device.isFilterAdsEnabled();
-            config.filterTrackers = device.isFilterTrackersEnabled();
-            config.filterMalware = device.isMalwareFilterEnabled();
-            config.domainRecordingEnabled = device.isDomainRecordingEnabled();
+            filterMode = FilterModeUtils.getEffectiveFilterMode(sslEnabledGlobally, device);
+            sslEnabled = device.isSslEnabled();
+            filterAds = device.isFilterAdsEnabled();
+            filterTrackers = device.isFilterTrackersEnabled();
+            filterMalware = device.isMalwareFilterEnabled();
+            domainRecordingEnabled = device.isDomainRecordingEnabled();
 
             UserModule user = deviceConfig.getUser();
-            config.customBlacklistId = user.getCustomBlacklistId();
-            config.customWhitelistId = user.getCustomWhitelistId();
+            customBlacklistId = user.getCustomBlacklistId();
+            customWhitelistId = user.getCustomWhitelistId();
 
             UserProfileModule profile = deviceConfig.getProfile();
-            config.parentalControlUrlControlModeEnabled = profile.isControlmodeUrls();
-            config.parentalControlDefaultDeny = UserProfileModule.InternetAccessRestrictionMode.WHITELIST == profile.getInternetAccessRestrictionMode();
-            config.parentalControlPermittedIds = profile.getAccessibleSitesPackages();
-            config.parentalControlProhibitedIds = profile.getInaccessibleSitesPackages();
-            return config;
+            parentalControlUrlControlModeEnabled = profile.isControlmodeUrls();
+            parentalControlDefaultDeny = UserProfileModule.InternetAccessRestrictionMode.WHITELIST == profile.getInternetAccessRestrictionMode();
+            parentalControlPermittedIds = profile.getAccessibleSitesPackages();
+            parentalControlProhibitedIds = profile.getInaccessibleSitesPackages();
         }
 
-        public static FilterConfig createFilterConfigForDomainFiltering() {
-            FilterConfig config = new FilterConfig();
-            config.filterMode = FilterMode.PLUG_AND_PLAY;
-            config.sslEnabled = true;
-            config.filterAds = true;
-            config.filterTrackers = true;
-            config.filterMalware = true;
+        FilterConfig() {
+            filterMode = FilterMode.PLUG_AND_PLAY;
+            sslEnabled = true;
+            filterAds = true;
+            filterTrackers = true;
+            filterMalware = true;
 
-            config.customBlacklistId = null;
-            config.customWhitelistId = null;
+            customBlacklistId = null;
+            customWhitelistId = null;
 
-            config.parentalControlUrlControlModeEnabled = false;
-            config.parentalControlDefaultDeny = false;
-            config.parentalControlPermittedIds = Collections.emptySet();
-            config.parentalControlProhibitedIds = Collections.emptySet();
-            return config;
+            parentalControlUrlControlModeEnabled = false;
+            parentalControlDefaultDeny = false;
+            parentalControlPermittedIds = Collections.emptySet();
+            parentalControlProhibitedIds = Collections.emptySet();
+            domainRecordingEnabled = false;
         }
 
-        public FilterMode getFilterMode() {
+        FilterMode getFilterMode() {
             return filterMode;
         }
 
-        public boolean isSslEnabled() {
+        boolean isSslEnabled() {
             return sslEnabled;
         }
 
-        public boolean isFilterAds() {
+        boolean isFilterAds() {
             return filterAds;
         }
 
-        public boolean isFilterTrackers() {
+        boolean isFilterTrackers() {
             return filterTrackers;
         }
 
-        public boolean isFilterMalware() {
+        boolean isFilterMalware() {
             return filterMalware;
         }
 
-        public Integer getCustomBlacklistId() {
+        Integer getCustomBlacklistId() {
             return customBlacklistId;
         }
 
-        public Integer getCustomWhitelistId() {
+        Integer getCustomWhitelistId() {
             return customWhitelistId;
         }
 
-        public boolean isDomainRecordingEnabled() {
+        boolean isDomainRecordingEnabled() {
             return domainRecordingEnabled;
         }
 
-        public boolean isParentalControlUrlControlModeEnabled() {
+        boolean isParentalControlUrlControlModeEnabled() {
             return parentalControlUrlControlModeEnabled;
         }
 
-        public boolean isParentalControlDefaultDeny() {
+        boolean isParentalControlDefaultDeny() {
             return parentalControlDefaultDeny;
         }
 
-        public Set<Integer> getParentalControlPermittedIds() {
+        Set<Integer> getParentalControlPermittedIds() {
             return parentalControlPermittedIds;
         }
 
-        public Set<Integer> getParentalControlProhibitedIds() {
+        Set<Integer> getParentalControlProhibitedIds() {
             return parentalControlProhibitedIds;
         }
 

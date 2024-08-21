@@ -127,6 +127,7 @@ public class Filters {
         return new BloomDomainFilter<>(bloomFilter, filter);
     }
 
+    @Nonnull
     public static DomainFilter<String> cache(int size, CachingFilter.CacheMode cacheMode, DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;

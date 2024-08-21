@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -32,13 +33,14 @@ public class CollectionFilter<T> implements DomainFilter<T> {
         this.collection = collection;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return listId;
     }
 
     @Override
-    public String getName() {
+    public @Nonnull String getName() {
         return "collection-filter";
     }
 
@@ -47,11 +49,13 @@ public class CollectionFilter<T> implements DomainFilter<T> {
         return collection.size();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return collection.stream();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return new FilterDecision<>(domain, collection.contains(domain), this);

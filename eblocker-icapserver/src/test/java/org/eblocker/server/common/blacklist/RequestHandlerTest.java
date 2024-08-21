@@ -72,7 +72,7 @@ public class RequestHandlerTest {
         domainBlockingService = Mockito.mock(DomainBlockingService.class);
         Mockito.when(domainBlockingService.isBlocked(Mockito.any(Device.class), Mockito.anyString())).then(im -> {
             String domain = im.getArgument(1);
-            return domainBlockingService.new Decision(BLOCKED_DOMAIN.equals(domain), domain, 1, 100, 1, "target");
+            return new DomainBlockingService.Decision(BLOCKED_DOMAIN.equals(domain), domain, 1, 100, 1, "target");
         });
 
         filterStatisticsService = Mockito.mock(FilterStatisticsService.class);

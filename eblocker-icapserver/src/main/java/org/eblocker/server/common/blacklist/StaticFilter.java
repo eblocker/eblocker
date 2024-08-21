@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -32,11 +33,13 @@ public class StaticFilter<T> implements DomainFilter<T> {
         this.block = block;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return null;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(static " + block + ")";
@@ -47,11 +50,13 @@ public class StaticFilter<T> implements DomainFilter<T> {
         return 0;
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return Stream.empty();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return new FilterDecision<>(domain, block, this);

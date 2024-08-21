@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -34,11 +35,13 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         this.replacement = replacement;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(replace " + filter.getName() + ")";
@@ -49,11 +52,13 @@ public class DomainReplaceFilter implements DomainFilter<String> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         String transformedDomain = pattern.matcher(domain).replaceAll(replacement);

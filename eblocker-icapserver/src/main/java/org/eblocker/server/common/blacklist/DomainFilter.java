@@ -17,18 +17,23 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface DomainFilter<T> {
+    @Nullable
     Integer getListId();
 
+    @Nonnull
     String getName();
 
     int getSize();
 
+    @Nonnull
     Stream<T> getDomains();
 
+    @Nonnull
     FilterDecision<T> isBlocked(T domain);
 
     @Nonnull

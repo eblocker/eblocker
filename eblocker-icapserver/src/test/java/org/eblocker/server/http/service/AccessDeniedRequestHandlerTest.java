@@ -333,7 +333,7 @@ public class AccessDeniedRequestHandlerTest {
     }
 
     private void setupFilterMock(int profileId, boolean blocked, Integer listId, int userId) {
-        Mockito.when(domainBlockingService.isBlocked(Mockito.any(Device.class), Mockito.anyString())).then(im -> domainBlockingService.new Decision(blocked, im.getArgument(1), profileId, listId, userId, null));
+        Mockito.when(domainBlockingService.isBlocked(Mockito.any(Device.class), Mockito.anyString())).then(im -> new DomainBlockingService.Decision(blocked, im.getArgument(1), profileId, listId, userId, null));
     }
 
     private void assertSvgRedirect(String expectedTarget, ByteBuf byteBuf) {

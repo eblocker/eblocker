@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,11 +30,13 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         this.filter = filter;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(not " + filter.getName() + ")";
@@ -44,11 +47,13 @@ public class DomainFilterNot<T> implements DomainFilter<T> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         FilterDecision<T> decision = filter.isBlocked(domain);

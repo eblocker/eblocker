@@ -42,6 +42,8 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -52,9 +54,13 @@ import java.util.List;
 public class DomainBlockingNetworkService {
     private static final AttributeKey<InetSocketAddress> UDP_SENDER = AttributeKey.newInstance("udpSender");
 
+    @Nonnull
     private final ServerBootstrap tcpBootstrap;
+    @Nonnull
     private final Bootstrap udpBootstrap;
+    @Nullable
     private ChannelFuture tcpChannelFuture;
+    @Nullable
     private ChannelFuture udpChannelFuture;
 
     @Inject
@@ -63,7 +69,8 @@ public class DomainBlockingNetworkService {
                                         @Named("nettyBossEventGroupLoop") NioEventLoopGroup bossGroup,
                                         @Named("nettyWorkerEventGroupLoop") NioEventLoopGroup workerGroup,
                                         @Named("DomainBlockingRequestHandler") ChannelHandler requestHandler) {
-        ChannelInitializer channelInitializer = new ChannelInitializer() {
+
+        ChannelInitializer<Channel> channelInitializer = new ChannelInitializer<>() {
             @Override
             protected void initChannel(Channel ch) {
                 ch.pipeline()
@@ -87,7 +94,7 @@ public class DomainBlockingNetworkService {
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .localAddress(host, port)
-                .handler(new ChannelInitializer() {
+                .handler(new ChannelInitializer<>() {
                     @Override
                     protected void initChannel(Channel ch) {
                         ch.pipeline()
@@ -104,39 +111,36 @@ public class DomainBlockingNetworkService {
         udpChannelFuture = udpBootstrap.bind().awaitUninterruptibly();
     }
 
-    void stop() {
-        ChannelFuture tcpCloseFuture = tcpChannelFuture.channel().close();
-        ChannelFuture udpCloseFuture = udpChannelFuture.channel().close();
-        tcpCloseFuture.awaitUninterruptibly();
-        udpCloseFuture.awaitUninterruptibly();
-        tcpChannelFuture = null;
-        udpChannelFuture = null;
-    }
-
+    @Nullable
     Integer getTcpPort() {
         return getPort(tcpChannelFuture);
     }
 
+    @Nullable
     Integer getUdpPort() {
         return getPort(udpChannelFuture);
     }
 
-    private Integer getPort(ChannelFuture channelFuture) {
+    @Nullable
+    private Integer getPort(@Nullable ChannelFuture channelFuture) {
+        if (channelFuture == null) {
+            return null;
+        }
         SocketAddress localAddress = channelFuture.channel().localAddress();
         return localAddress instanceof InetSocketAddress ? ((InetSocketAddress) localAddress).getPort() : null;
     }
 
-    private class UdpMessageDecoder extends SimpleChannelInboundHandler<DatagramPacket> {
+    private static class UdpMessageDecoder extends SimpleChannelInboundHandler<DatagramPacket> {
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) {
+        protected void channelRead0(@Nonnull ChannelHandlerContext ctx, @Nonnull DatagramPacket msg) {
             ctx.channel().attr(UDP_SENDER).set(msg.sender());
             ctx.fireChannelRead(msg.content().retainedDuplicate());
         }
     }
 
-    private class UdpMessageEncoder extends MessageToMessageEncoder<ByteBuf> {
+    private static class UdpMessageEncoder extends MessageToMessageEncoder<ByteBuf> {
         @Override
-        protected void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
+        protected void encode(@Nonnull ChannelHandlerContext ctx, @Nonnull ByteBuf msg, @Nonnull List<Object> out) {
             InetSocketAddress sender = ctx.channel().attr(UDP_SENDER).get();
             out.add(new DatagramPacket(msg.retainedDuplicate(), sender));
         }

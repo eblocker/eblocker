@@ -24,12 +24,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DomainFilterAnd<T> implements DomainFilter<T> {
+public class DomainFilterAnd implements DomainFilter<String> {
 
-    private final DomainFilter<T>[] filters;
+    @Nonnull
+    private final DomainFilter<String>[] filters;
 
     @SafeVarargs
-    public DomainFilterAnd(DomainFilter<T>... filters) {
+    DomainFilterAnd(@Nonnull DomainFilter<String>... filters) {
         this.filters = filters;
     }
 
@@ -39,10 +40,11 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return null;
     }
 
+    @Override
     @Nonnull
     public String getName() {
         StringBuilder sb = new StringBuilder("(and");
-        for (DomainFilter filter : filters) {
+        for (DomainFilter<String> filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }
@@ -57,15 +59,15 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
 
     @Nonnull
     @Override
-    public Stream<T> getDomains() {
+    public Stream<String> getDomains() {
         if (filters.length == 0) {
             return Stream.empty();
         }
 
-        Set<T> domains = new HashSet<>(filters[0].getSize());
+        Set<String> domains = new HashSet<>(filters[0].getSize());
         filters[0].getDomains().forEach(domains::add);
         for (int i = 1; i < filters.length; ++i) {
-            Set<T> filterDomains = filters[i].getDomains().collect(Collectors.toSet());
+            Set<String> filterDomains = filters[i].getDomains().collect(Collectors.toSet());
             domains.retainAll(filterDomains);
         }
 
@@ -74,9 +76,9 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
 
     @Nonnull
     @Override
-    public FilterDecision<T> isBlocked(T domain) {
-        FilterDecision<T> decision = new FilterDecision<>(domain, false, this);
-        for (DomainFilter<T> filter : filters) {
+    public FilterDecision<String> isBlocked(String domain) {
+        FilterDecision<String> decision = new FilterDecision<>(domain, false, this);
+        for (DomainFilter<String> filter : filters) {
             decision = filter.isBlocked(domain);
             if (!decision.isBlocked()) {
                 break;

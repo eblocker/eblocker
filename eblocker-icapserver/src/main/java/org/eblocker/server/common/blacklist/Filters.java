@@ -45,7 +45,7 @@ public class Filters {
 
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T> DomainFilter<T> and(DomainFilter<T>... filters) {
+    public static DomainFilter<String> and(DomainFilter<String>... filters) {
         if (filters.length == 0) {
             return staticFalse();
         }
@@ -54,8 +54,8 @@ public class Filters {
             return filters[0];
         }
 
-        List<DomainFilter<T>> nonStaticFilters = new ArrayList<>(filters.length);
-        for (DomainFilter filter : filters) {
+        List<DomainFilter<String>> nonStaticFilters = new ArrayList<>(filters.length);
+        for (DomainFilter<String> filter : filters) {
             if (StaticFilter.FALSE == filter) {
                 return staticFalse();
             } else if (StaticFilter.TRUE != filter) {
@@ -71,7 +71,7 @@ public class Filters {
             return nonStaticFilters.get(0);
         }
 
-        return new DomainFilterAnd<>(nonStaticFilters.toArray(new DomainFilter[0]));
+        return new DomainFilterAnd(nonStaticFilters.toArray(new DomainFilter[0]));
     }
 
     @Nonnull

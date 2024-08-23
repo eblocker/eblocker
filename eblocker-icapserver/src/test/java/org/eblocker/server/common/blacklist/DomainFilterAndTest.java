@@ -41,7 +41,7 @@ class DomainFilterAndTest {
         filterA = new QueryCountingCollectionFilter<>(0, Arrays.asList("google.com", "youtube.com"));
         filterB = new QueryCountingCollectionFilter<>(1, List.of("google.com"));
         filterC = new QueryCountingCollectionFilter<>(2, List.of("google.com"));
-        domainFilterAnd = new DomainFilterAnd(filterA, filterB, filterC);
+        domainFilterAnd = new DomainFilterAnd(List.of(filterA, filterB, filterC));
     }
 
     @Test

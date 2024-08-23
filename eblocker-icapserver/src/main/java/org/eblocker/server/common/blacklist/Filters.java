@@ -44,7 +44,6 @@ public class Filters {
     }
 
     @SafeVarargs
-    @SuppressWarnings("unchecked")
     public static DomainFilter<String> and(DomainFilter<String>... filters) {
         if (filters.length == 0) {
             return staticFalse();
@@ -71,7 +70,7 @@ public class Filters {
             return nonStaticFilters.get(0);
         }
 
-        return new DomainFilterAnd(nonStaticFilters.toArray(new DomainFilter[0]));
+        return new DomainFilterAnd(nonStaticFilters);
     }
 
     @Nonnull

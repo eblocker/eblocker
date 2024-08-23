@@ -18,6 +18,7 @@ package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,11 +28,10 @@ import java.util.stream.Stream;
 public class DomainFilterAnd implements DomainFilter<String> {
 
     @Nonnull
-    private final DomainFilter<String>[] filters;
+    private final List<DomainFilter<String>> filters;
 
-    @SafeVarargs
-    DomainFilterAnd(@Nonnull DomainFilter<String>... filters) {
-        this.filters = filters;
+    DomainFilterAnd(@Nonnull List<DomainFilter<String>> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     @Nullable
@@ -60,14 +60,14 @@ public class DomainFilterAnd implements DomainFilter<String> {
     @Nonnull
     @Override
     public Stream<String> getDomains() {
-        if (filters.length == 0) {
+        if (filters.isEmpty()) {
             return Stream.empty();
         }
 
-        Set<String> domains = new HashSet<>(filters[0].getSize());
-        filters[0].getDomains().forEach(domains::add);
-        for (int i = 1; i < filters.length; ++i) {
-            Set<String> filterDomains = filters[i].getDomains().collect(Collectors.toSet());
+        Set<String> domains = new HashSet<>(filters.get(0).getSize());
+        filters.get(0).getDomains().forEach(domains::add);
+        for (int i = 1; i < filters.size(); ++i) {
+            Set<String> filterDomains = filters.get(i).getDomains().collect(Collectors.toSet());
             domains.retainAll(filterDomains);
         }
 
@@ -90,6 +90,6 @@ public class DomainFilterAnd implements DomainFilter<String> {
     @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
-        return Stream.of(filters).collect(Collectors.toList());
+        return new ArrayList<>(filters);
     }
 }

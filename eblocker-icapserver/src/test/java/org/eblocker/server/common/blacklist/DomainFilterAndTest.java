@@ -16,75 +16,109 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DomainFilterAndTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class DomainFilterAndTest {
 
     private QueryCountingCollectionFilter<String> filterA;
     private QueryCountingCollectionFilter<String> filterB;
     private QueryCountingCollectionFilter<String> filterC;
-    private DomainFilter<String> filter;
+    private DomainFilter<String> domainFilterAnd;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setUp() {
         filterA = new QueryCountingCollectionFilter<>(0, Arrays.asList("google.com", "youtube.com"));
-        filterB = new QueryCountingCollectionFilter<>(1, Arrays.asList("google.com"));
-        filterC = new QueryCountingCollectionFilter<>(2, Arrays.asList("google.com"));
-        filter = new DomainFilterAnd<>(filterA, filterB, filterC);
+        filterB = new QueryCountingCollectionFilter<>(1, List.of("google.com"));
+        filterC = new QueryCountingCollectionFilter<>(2, List.of("google.com"));
+        domainFilterAnd = new DomainFilterAnd(List.of(filterA, filterB, filterC));
     }
 
     @Test
-    public void testIsBlocked() {
-        // test
-        Assert.assertFalse(filter.isBlocked("baidu.com").isBlocked());
-        Assert.assertFalse(filter.isBlocked("youtube.com").isBlocked());
-        Assert.assertTrue(filter.isBlocked("google.com").isBlocked());
+    void isBlocked() {
+        assertFalse(domainFilterAnd.isBlocked("baidu.com").isBlocked());
+        assertFalse(domainFilterAnd.isBlocked("youtube.com").isBlocked());
+        assertTrue(domainFilterAnd.isBlocked("google.com").isBlocked());
     }
 
     @Test
-    public void testEvaluationOrder() {
-        Assert.assertEquals(filterA, filter.isBlocked("duckduckgo.com").getFilter());
-        Assert.assertEquals(1, filterA.getQueries());
-        Assert.assertEquals(0, filterB.getQueries());
-        Assert.assertEquals(0, filterC.getQueries());
+    void evaluationOrder() {
+        assertEquals(filterA, domainFilterAnd.isBlocked("duckduckgo.com").getFilter());
+        assertEquals(1, filterA.getQueries());
+        assertEquals(0, filterB.getQueries());
+        assertEquals(0, filterC.getQueries());
 
-        Assert.assertEquals(filterB, filter.isBlocked("youtube.com").getFilter());
-        Assert.assertEquals(2, filterA.getQueries());
-        Assert.assertEquals(1, filterB.getQueries());
-        Assert.assertEquals(0, filterC.getQueries());
+        assertEquals(filterB, domainFilterAnd.isBlocked("youtube.com").getFilter());
+        assertEquals(2, filterA.getQueries());
+        assertEquals(1, filterB.getQueries());
+        assertEquals(0, filterC.getQueries());
 
-        Assert.assertEquals(filterC, filter.isBlocked("google.com").getFilter());
-        Assert.assertEquals(3, filterA.getQueries());
-        Assert.assertEquals(2, filterB.getQueries());
-        Assert.assertEquals(1, filterC.getQueries());
+        assertEquals(filterC, domainFilterAnd.isBlocked("google.com").getFilter());
+        assertEquals(3, filterA.getQueries());
+        assertEquals(2, filterB.getQueries());
+        assertEquals(1, filterC.getQueries());
     }
 
     @Test
-    public void testGetDomains() {
-        Set<String> domains = filter.getDomains().collect(Collectors.toSet());
-        Assert.assertEquals(1, domains.size());
-        Assert.assertTrue(domains.contains("google.com"));
+    void getDomains() {
+        //Given
+        //When
+        Set<String> domains = domainFilterAnd.getDomains().collect(Collectors.toSet());
+
+        //Then
+        assertEquals(1, domains.size());
+        assertTrue(domains.contains("google.com"));
     }
 
     @Test
-    public void testGetSize() {
-        Assert.assertEquals(1, filter.getSize());
+    void getSize() {
+        //Given
+        //When
+        int size = domainFilterAnd.getSize();
+
+        //Then
+        assertEquals(1, size);
     }
 
     @Test
-    public void testGetName() {
-        Assert.assertEquals("(and query-counting-collection-0 query-counting-collection-1 query-counting-collection-2)", filter.getName());
+    void getName() {
+        //Given
+        //When
+        String name = domainFilterAnd.getName();
+
+        //Then
+        assertEquals("(and query-counting-collection-0 query-counting-collection-1 query-counting-collection-2)", name);
     }
 
     @Test
-    public void testGetListId() {
-        Assert.assertNull(filter.getListId());
+    void getListId() {
+        //Given
+        //When
+        Integer listId = domainFilterAnd.getListId();
+        //Then
+        assertNull(listId);
     }
 
+    @Test
+    void getChildFilters() {
+        //Given
+        //When
+        List<DomainFilter<?>> childFilters = domainFilterAnd.getChildFilters();
+
+        //Then
+        assertEquals(3, childFilters.size());
+        assertTrue(childFilters.contains(filterA));
+        assertTrue(childFilters.contains(filterB));
+        assertTrue(childFilters.contains(filterC));
+    }
 }

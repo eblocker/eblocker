@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -84,11 +85,13 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         initFromFile();
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return listId;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(byte-filter-file " + name + ")";
@@ -99,6 +102,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
         return size;
     }
 
+    @Nonnull
     @Override
     public Stream<byte[]> getDomains() {
         return Stream
@@ -108,6 +112,7 @@ public class HashFileFilter implements DomainFilter<byte[]> {
                 .flatMap(List::stream);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<byte[]> isBlocked(byte[] domain) {
         boolean isBlocked = findBucket(getBucket(domain), domain);

@@ -17,29 +17,34 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DomainFilterAnd<T> implements DomainFilter<T> {
+public class DomainFilterAnd implements DomainFilter<String> {
 
-    private final DomainFilter<T>[] filters;
+    @Nonnull
+    private final List<DomainFilter<String>> filters;
 
-    @SafeVarargs
-    public DomainFilterAnd(DomainFilter<T>... filters) {
-        this.filters = filters;
+    DomainFilterAnd(@Nonnull List<DomainFilter<String>> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return null;
     }
 
+    @Override
+    @Nonnull
     public String getName() {
         StringBuilder sb = new StringBuilder("(and");
-        for (DomainFilter filter : filters) {
+        for (DomainFilter<String> filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }
@@ -52,26 +57,28 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
         return (int) getDomains().count();
     }
 
+    @Nonnull
     @Override
-    public Stream<T> getDomains() {
-        if (filters.length == 0) {
+    public Stream<String> getDomains() {
+        if (filters.isEmpty()) {
             return Stream.empty();
         }
 
-        Set<T> domains = new HashSet<>(filters[0].getSize());
-        filters[0].getDomains().forEach(domains::add);
-        for (int i = 1; i < filters.length; ++i) {
-            Set<T> filterDomains = filters[i].getDomains().collect(Collectors.toSet());
+        Set<String> domains = new HashSet<>(filters.get(0).getSize());
+        filters.get(0).getDomains().forEach(domains::add);
+        for (int i = 1; i < filters.size(); ++i) {
+            Set<String> filterDomains = filters.get(i).getDomains().collect(Collectors.toSet());
             domains.retainAll(filterDomains);
         }
 
         return domains.stream();
     }
 
+    @Nonnull
     @Override
-    public FilterDecision<T> isBlocked(T domain) {
-        FilterDecision<T> decision = new FilterDecision<>(domain, false, this);
-        for (DomainFilter<T> filter : filters) {
+    public FilterDecision<String> isBlocked(String domain) {
+        FilterDecision<String> decision = new FilterDecision<>(domain, false, this);
+        for (DomainFilter<String> filter : filters) {
             decision = filter.isBlocked(domain);
             if (!decision.isBlocked()) {
                 break;
@@ -83,6 +90,6 @@ public class DomainFilterAnd<T> implements DomainFilter<T> {
     @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
-        return Stream.of(filters).collect(Collectors.toList());
+        return new ArrayList<>(filters);
     }
 }

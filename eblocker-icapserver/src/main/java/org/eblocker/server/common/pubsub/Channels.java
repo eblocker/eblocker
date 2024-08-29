@@ -29,4 +29,5 @@ public class Channels {
     public static final String VPN_ADDRESS_UPDATE = "vpn_address_update:in";
     public static final String IP6_IN = "ip6:in";
     public static final String IP6_OUT = "ip6:out";
+    public static final String DNS_CONFIG = "dns_config";
 }

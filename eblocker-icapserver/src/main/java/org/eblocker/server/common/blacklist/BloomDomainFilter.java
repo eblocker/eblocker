@@ -20,6 +20,7 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,11 +56,13 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return bloomFilter;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(bloom " + filter.getName() + ")";
@@ -70,11 +73,13 @@ public class BloomDomainFilter<T> implements DomainFilter<T> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return filter.getDomains();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         if (!bloomFilter.mightContain(domain)) {

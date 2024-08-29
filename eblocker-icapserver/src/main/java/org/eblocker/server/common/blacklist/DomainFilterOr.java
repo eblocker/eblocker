@@ -17,6 +17,7 @@
 package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,11 +31,13 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
         this.filters = filters;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return null;
     }
 
+    @Nonnull
     public String getName() {
         StringBuilder sb = new StringBuilder("(or");
         for (DomainFilter filter : filters) {
@@ -50,11 +53,13 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
         return Stream.of(filters).mapToInt(DomainFilter::getSize).sum();
     }
 
+    @Nonnull
     @Override
     public Stream<T> getDomains() {
         return Stream.of(filters).flatMap(DomainFilter::getDomains);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
         return Stream.of(filters)

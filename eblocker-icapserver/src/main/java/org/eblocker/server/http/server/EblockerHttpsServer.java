@@ -1158,11 +1158,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getResolverStats", HttpMethod.GET)
                 .name("adminconsole.dns.resolver.stats.get");
 
-        server
-                .uri("/api/adminconsole/dns/test", dnsController)
-                .action("testNameServer", HttpMethod.POST)
-                .name("adminconsole.dns.stats.test");
-
         // ** New Adminconsole: webrtc
         server
                 .uri("/api/adminconsole/webrtc", anonymousController)

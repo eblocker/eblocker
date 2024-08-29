@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -106,11 +107,13 @@ public class SingleFileFilter implements DomainFilter<String> {
         initFromFile();
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return listId;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "(file " + name + ")";
@@ -121,6 +124,7 @@ public class SingleFileFilter implements DomainFilter<String> {
         return size;
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         return Stream
@@ -130,6 +134,7 @@ public class SingleFileFilter implements DomainFilter<String> {
                 .flatMap(Set::stream);
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         boolean isBlocked = findBucket(domainBucketFn.apply(domain), domain);

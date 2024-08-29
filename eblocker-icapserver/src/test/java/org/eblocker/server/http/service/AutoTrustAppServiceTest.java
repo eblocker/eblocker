@@ -337,11 +337,11 @@ public class AutoTrustAppServiceTest {
     }
 
     private DomainBlockingService.Decision notBlocked() {
-        return domainBlockingService.new Decision(false, null, 0, 0, 0, null);
+        return new DomainBlockingService.Decision(false, null, 0, 0, 0, null);
     }
 
     private DomainBlockingService.Decision blocked() {
-        return domainBlockingService.new Decision(true, null, 0, 0, 0, null);
+        return new DomainBlockingService.Decision(true, null, 0, 0, 0, null);
     }
 
     private AppWhitelistModule collectingModule(String... whiteListedDomains) {

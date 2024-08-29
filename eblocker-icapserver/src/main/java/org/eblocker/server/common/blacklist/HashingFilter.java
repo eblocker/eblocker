@@ -20,6 +20,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,11 +35,13 @@ public class HashingFilter implements DomainFilter<String> {
         this.filter = filter;
     }
 
+    @Nullable
     @Override
     public Integer getListId() {
         return filter.getListId();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         String hashName = hashFunction.toString().replaceAll("^.*\\.", "").replaceAll("\\(\\)", "");
@@ -50,11 +53,13 @@ public class HashingFilter implements DomainFilter<String> {
         return filter.getSize();
     }
 
+    @Nonnull
     @Override
     public Stream<String> getDomains() {
         throw new UnsupportedOperationException();
     }
 
+    @Nonnull
     @Override
     public FilterDecision<String> isBlocked(String domain) {
         byte[] hash = hashFunction.hashString(domain, Charsets.UTF_8).asBytes();

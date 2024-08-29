@@ -43,16 +43,12 @@ public class JedisDnsDataSource implements DnsDataSource {
 
     private static final String KEY_PREFIX_EVENTS = "dns_stats:";
     private static final String KEY_PATTERN_EVENTS = "dns_stats:[a-z]*";
-    private static final String DNS_QUERY_QUEUE = "dns_query";
-    private static final String DNS_RESOLUTION_QUEUE_PREFIX = "dns_response:";
 
     private final JedisPool jedisPool;
-    private final ObjectMapper objectMapper;
 
     @Inject
-    public JedisDnsDataSource(JedisPool jedisPool, ObjectMapper objectMapper) {
+    public JedisDnsDataSource(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
-        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -81,29 +77,6 @@ public class JedisDnsDataSource implements DnsDataSource {
         }
     }
 
-    @Override
-    public void addDnsQueryQueue(String id, String nameServer, List<DnsQuery> queries) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            String value = id + "," + nameServer + "," + queries.stream().map(DnsQuery::toString).collect(Collectors.joining(","));
-            jedis.lpush(DNS_QUERY_QUEUE, value);
-        }
-    }
-
-    @Override
-    public DnsDataSourceDnsResponse popDnsResolutionQueue(String id, int timeout) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            List<String> values = jedis.blpop(timeout, DNS_RESOLUTION_QUEUE_PREFIX + id);
-            if (values == null || values.isEmpty()) {
-                return null;
-            }
-
-            return objectMapper.readValue(values.get(1), DnsDataSourceDnsResponse.class);
-        } catch (IOException e) {
-            log.error("failed reading result: {}", DNS_RESOLUTION_QUEUE_PREFIX + id, e);
-            return null;
-        }
-    }
-
     private Map<String, List<ResolverEvent>> getEventsByResolver(Jedis jedis, Collection<String> keys) {
         Pipeline pipeline = jedis.pipelined();
         Map<String, Response<List<String>>> responsesByKeys = keys.stream()
@@ -123,5 +96,4 @@ public class JedisDnsDataSource implements DnsDataSource {
         }
         return i - 1;
     }
-
 }

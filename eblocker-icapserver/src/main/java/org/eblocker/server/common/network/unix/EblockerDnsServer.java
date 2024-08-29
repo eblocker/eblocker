@@ -40,6 +40,7 @@ import org.eblocker.server.common.network.DhcpUtils;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.RouterAdvertisementCache;
 import org.eblocker.server.common.network.icmpv6.RecursiveDnsServerOption;
+import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
@@ -79,7 +80,6 @@ public class EblockerDnsServer {
     private static final String RESOLVER_MODE_ROUND_ROBIN = "round_robin";
     private static final String RESOLVER_MODE_RANDOM = "random";
 
-    private final String channelName;
     private final String updateCommand;
     private final String flushCommand;
     private final String defaultCustomNameServers;
@@ -105,8 +105,7 @@ public class EblockerDnsServer {
     private EblockerDnsServerState state;
 
     @Inject
-    public EblockerDnsServer(@Named("dns.server.channel.name") String channelName,
-                             @Named("dns.server.channel.command.flush") String flushCommand,
+    public EblockerDnsServer(@Named("dns.server.channel.command.flush") String flushCommand,
                              @Named("dns.server.channel.command.update") String updateCommand,
                              @Named("dns.server.default.custom.name.servers") String defaultCustomNameServers,
                              @Named("dns.server.default.local.names") String defaultLocalNames,
@@ -124,7 +123,6 @@ public class EblockerDnsServer {
                              NetworkInterfaceWrapper networkInterface,
                              PubSubService pubSubService,
                              RouterAdvertisementCache routerAdvertisementCache) {
-        this.channelName = channelName;
         this.flushCommand = flushCommand;
         this.updateCommand = updateCommand;
         this.defaultCustomNameServers = defaultCustomNameServers;
@@ -373,7 +371,7 @@ public class EblockerDnsServer {
     }
 
     public void flushCache() {
-        pubSubService.publish(channelName, flushCommand);
+        pubSubService.publish(Channels.DNS_CONFIG, flushCommand);
     }
 
     public synchronized void addVpnResolver(int id, List<String> nameServers, String bindHost) {
@@ -552,7 +550,7 @@ public class EblockerDnsServer {
 
     private void saveConfig(DnsServerConfig config) {
         dataSource.save(config);
-        pubSubService.publish(channelName, updateCommand);
+        pubSubService.publish(Channels.DNS_CONFIG, updateCommand);
     }
 
     private void createEnabledFlagFile() {

@@ -22,10 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.dns.DnsDataSource;
-import org.eblocker.server.common.data.dns.DnsDataSourceDnsResponse;
-import org.eblocker.server.common.data.dns.DnsQuery;
 import org.eblocker.server.common.data.dns.DnsRating;
-import org.eblocker.server.common.data.dns.DnsRecordType;
 import org.eblocker.server.common.data.dns.DnsReliabilityRating;
 import org.eblocker.server.common.data.dns.DnsResponseTimeRating;
 import org.eblocker.server.common.data.dns.NameServerStats;
@@ -101,23 +98,6 @@ public class DnsStatisticsService {
         }
 
         return resolverStats;
-    }
-
-    public NameServerStats testNameServer(String nameServer, List<String> names) {
-        String id = UUID.randomUUID().toString();
-        List<DnsQuery> queries = names.stream().map(name -> new DnsQuery(DnsRecordType.A, name)).collect(Collectors.toList());
-        dnsDataSource.addDnsQueryQueue(id, nameServer, queries);
-
-        DnsDataSourceDnsResponse result = dnsDataSource.popDnsResolutionQueue(id, 10 * names.size());
-        if (result == null) {
-            log.error("Failed to get response from DNS resolution queue.");
-            return null;
-        }
-        if (result.getLog().size() != names.size()) {
-            return null;
-        }
-
-        return aggregateSingleNameServerEvents(result.getLog());
     }
 
     private List<ResolverEvent> eventsBefore(Queue<ResolverEvent> events, Instant instant) {

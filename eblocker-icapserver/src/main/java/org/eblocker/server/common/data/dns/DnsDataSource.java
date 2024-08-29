@@ -24,9 +24,4 @@ public interface DnsDataSource {
     List<ResolverEvent> getEventsByResolver(String resolver);
 
     void deleteEventsBefore(Instant instant);
-
-    void addDnsQueryQueue(String id, String nameServer, List<DnsQuery> queries);
-
-    DnsDataSourceDnsResponse popDnsResolutionQueue(String id, int timeout);
-
 }

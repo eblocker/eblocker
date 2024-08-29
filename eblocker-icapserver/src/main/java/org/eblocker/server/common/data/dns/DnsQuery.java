@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.common.data.dns;
 
+import io.netty.handler.codec.dns.DnsRecordType;
+
 public class DnsQuery {
 
     private final DnsRecordType recordType;

@@ -32,11 +32,16 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Implementation of a Squid ACL external helper.
+ * See also: <a href="https://wiki.squid-cache.org/Features/AddonHelpers">AddonHelpers</a>
+ */
 @ChannelHandler.Sharable
 public class RequestHandler extends SimpleChannelInboundHandler<String> {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private static final String ERR_MESSAGE = "ERR\n";
+    private static final String ERR_MESSAGE = "ERR\n"; // In the context of ACLs this does not mean "error" but "no match"
+    private static final String FAILURE_MESSAGE = "BH\n"; // This is a real error in the helper
 
     private final DomainBlockingService domainBlockingService;
     private final BlockedDomainLog blockedDomainLog;
@@ -115,7 +120,7 @@ public class RequestHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.warn("exception while processing requests", cause);
-        ctx.close();
+        ctx.writeAndFlush(FAILURE_MESSAGE);
     }
 
     private String toString(Object o) {

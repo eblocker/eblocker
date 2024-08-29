@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,8 +85,16 @@ class Cache {
      * Get latest version of a cached file filter
      */
     @Nullable
-    CachedFileFilter getFileFilterById(int id) {
+    CachedFileFilter getLatestFileFilterById(int id) {
         return index.getLatestFileFilterById(id);
+    }
+
+    CachedFilterKey getLatestFileFilterKeyById(int id) {
+        CachedFileFilter latestFileFilterById = index.getLatestFileFilterById(id);
+        if (latestFileFilterById != null) {
+            return latestFileFilterById.getKey();
+        }
+        return null;
     }
 
     /**
@@ -129,14 +138,62 @@ class Cache {
         cacheIndexRepository.write(index);
     }
 
-    void markFilterAsDeleted(CachedFilterKey key) throws IOException {
-        CachedFileFilter filter = index.getAllFileFilters().stream()
-                .filter(e -> e.getKey().equals(key))
-                .findFirst()
-                .orElse(null);
-        if (filter != null) {
-            filter.setDeleted();
-            cacheIndexRepository.write(index);
+    void markOldVersionsAsDeleted() {
+        Set<CachedFilterKey> newestKeys = getFileFilters().stream().map(CachedFileFilter::getKey).collect(Collectors.toSet());
+
+        getAllFileFilters().stream()
+                .map(CachedFileFilter::getKey)
+                .filter(key -> !newestKeys.contains(key))
+                .forEach(key -> {
+                    log.debug("marking filter {} as deleted as a newer one exists", key);
+                    markFilterAsDeleted(key);
+                });
+    }
+
+    void markNonExistingFiltersAsDeleted(Set<Integer> ids) {
+        getAllFileFilters().stream()
+                .map(CachedFileFilter::getKey)
+                .filter(key -> !ids.contains(key.getId()))
+                .forEach(key -> {
+                    log.debug("marking filter {} as deleted as it does not exist anymore", key);
+                    markFilterAsDeleted(key);
+                });
+    }
+
+    void markFilterAsDeleted(CachedFilterKey key) {
+        try {
+            CachedFileFilter filter = index.getAllFileFilters().stream()
+                    .filter(e -> e.getKey().equals(key))
+                    .findFirst()
+                    .orElse(null);
+            if (filter != null) {
+                filter.setDeleted();
+                cacheIndexRepository.write(index);
+            }
+        } catch (IOException ioe) {
+            log.warn("failed to mark filter {} as deleted: ", key, ioe);
+        }
+    }
+
+    List<CachedFilterKey> deleteMarkedFilters() {
+        log.info("removing filters marked as deleted");
+        List<CachedFilterKey> filterKeysToDelete = getFilterKeysMarkedAsDeleted();
+        filterKeysToDelete.forEach(this::deleteFilter);
+        return filterKeysToDelete;
+    }
+
+    List<CachedFilterKey> getFilterKeysMarkedAsDeleted() {
+        return getAllFileFilters().stream()
+                .filter(CachedFileFilter::isDeleted)
+                .map(CachedFileFilter::getKey).collect(Collectors.toList());
+    }
+
+    private void deleteFilter(CachedFilterKey key) {
+        try {
+            log.info("Removing filter {}.", key);
+            removeFileFilter(key.getId(), key.getVersion());
+        } catch (IOException e) {
+            log.error("Failed to delete filter: {}", key, e);
         }
     }
 

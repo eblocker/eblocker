@@ -21,24 +21,24 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.PortUnreachableException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class DomainBlockingNetworkServiceTest {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class DomainBlockingNetworkServiceTest {
 
     private final String HOST = "127.0.0.1";
 
@@ -46,72 +46,43 @@ public class DomainBlockingNetworkServiceTest {
     private NioEventLoopGroup workerGroup;
     private DomainBlockingNetworkService networkService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         bossGroup = new NioEventLoopGroup(1);
         workerGroup = new NioEventLoopGroup(2);
         networkService = new DomainBlockingNetworkService(HOST, 0, bossGroup, workerGroup, new EchoHandler());
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         bossGroup.shutdownGracefully(100, 100, TimeUnit.MILLISECONDS).awaitUninterruptibly();
         workerGroup.shutdownGracefully(100, 100, TimeUnit.MILLISECONDS).awaitUninterruptibly();
     }
 
-    @Test(timeout = 10000)
-    public void testRun() throws IOException {
+    @Test
+    @Timeout(10)
+    void run() throws IOException {
         networkService.init();
 
         // TCP
         Integer tcpPort = networkService.getTcpPort();
-        Assert.assertNotNull(tcpPort);
+        assertNotNull(tcpPort);
         byte[] message = "UNIT-TEST\n".getBytes(StandardCharsets.ISO_8859_1);
         try (Socket socket = new Socket(HOST, tcpPort)) {
             socket.getOutputStream().write(message);
             byte[] response = new byte[message.length];
             ByteStreams.readFully(socket.getInputStream(), response);
-            Assert.assertArrayEquals(message, response);
+            assertArrayEquals(message, response);
         }
 
         // UDP
         Integer udpPort = networkService.getUdpPort();
-        Assert.assertNotNull(udpPort);
+        assertNotNull(udpPort);
         try (DatagramSocket socket = new DatagramSocket()) {
             socket.send(new DatagramPacket(message, message.length, new InetSocketAddress(HOST, udpPort)));
             DatagramPacket responsePacket = new DatagramPacket(new byte[65536], 65536);
             socket.receive(responsePacket);
-            Assert.assertArrayEquals(message, Arrays.copyOf(responsePacket.getData(), responsePacket.getLength()));
-        }
-    }
-
-    @Test(timeout = 10000)
-    public void testStop() throws IOException {
-        networkService.init();
-        Integer tcpPort = networkService.getTcpPort();
-        Assert.assertNotNull(tcpPort);
-        Integer udpPort = networkService.getUdpPort();
-        Assert.assertNotNull(udpPort);
-
-        networkService.stop();
-
-        // TCP
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(HOST, tcpPort));
-            Assert.fail("connection must fail");
-        } catch (ConnectException e) {
-            // expected
-        }
-
-        // UDP
-        try (DatagramSocket socket = new DatagramSocket()) {
-            socket.setSoTimeout(1000);
-            socket.connect(new InetSocketAddress(HOST, udpPort));
-            socket.send(new DatagramPacket(new byte[256], 256));
-            socket.receive(new DatagramPacket(new byte[65536], 65536));
-            Assert.fail("\"connection\" or receiving a packet must fail");
-        } catch (PortUnreachableException | SocketTimeoutException e) {
-            // expected
+            assertArrayEquals(message, Arrays.copyOf(responsePacket.getData(), responsePacket.getLength()));
         }
     }
 

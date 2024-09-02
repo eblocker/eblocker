@@ -16,61 +16,69 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DomainReplaceFilterTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class DomainReplaceFilterTest {
 
     private DomainFilter<String> backingFilter;
     private DomainFilter<String> filter;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         backingFilter = new CollectionFilter<>(0, Arrays.asList("http://eblocker.com", "https://eblocker.de"));
         filter = new DomainReplaceFilter(backingFilter, "^", "http://");
     }
 
     @Test
-    public void testFiltering() {
+    void filtering() {
         assertDecision(true, "eblocker.com", backingFilter, filter.isBlocked("eblocker.com"));
         assertDecision(false, "eblocker.de", backingFilter, filter.isBlocked("eblocker.de"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetDomains() {
-        filter.getDomains();
+    @Test
+    void getDomains() {
+        //given
+        //when
+        UnsupportedOperationException unsupportedOperationException = assertThrows(UnsupportedOperationException.class, () -> filter.getDomains());
+
+        //then
+        Assertions.assertNotNull(unsupportedOperationException);
     }
 
     @Test
-    public void testGetSize() {
-        Assert.assertEquals(2, filter.getSize());
+    void getSize() {
+        assertEquals(2, filter.getSize());
     }
 
     @Test
-    public void testGetChildFilters() {
+    void getChildFilters() {
         List<DomainFilter<?>> childFilters = filter.getChildFilters();
-        Assert.assertEquals(1, childFilters.size());
-        Assert.assertEquals(backingFilter, childFilters.get(0));
+        assertEquals(1, childFilters.size());
+        assertEquals(backingFilter, childFilters.get(0));
     }
 
     @Test
-    public void testGetName() {
-        Assert.assertEquals("(replace collection-filter)", filter.getName());
+    void getName() {
+        assertEquals("(replace collection-filter)", filter.getName());
     }
 
     @Test
-    public void testGetListId() {
-        Assert.assertEquals(Integer.valueOf(0), filter.getListId());
+    void getListId() {
+        assertEquals(Integer.valueOf(0), filter.getListId());
     }
 
     private void assertDecision(boolean expectedBlocked, String expectedDomain, DomainFilter<String> expectedFilter, FilterDecision<String> decision) {
-        Assert.assertEquals(expectedBlocked, decision.isBlocked());
-        Assert.assertEquals(expectedDomain, decision.getDomain());
-        Assert.assertEquals(expectedFilter, decision.getFilter());
+        assertEquals(expectedBlocked, decision.isBlocked());
+        assertEquals(expectedDomain, decision.getDomain());
+        assertEquals(expectedFilter, decision.getFilter());
     }
 
 }

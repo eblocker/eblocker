@@ -25,11 +25,14 @@ import java.util.stream.Stream;
 
 public class DomainReplaceFilter implements DomainFilter<String> {
 
+    @Nonnull
     private final DomainFilter<String> filter;
+    @Nonnull
     private final Pattern pattern;
+    @Nonnull
     private final String replacement;
 
-    public DomainReplaceFilter(DomainFilter<String> filter, String regex, String replacement) {
+    DomainReplaceFilter(@Nonnull DomainFilter<String> filter, @Nonnull String regex, @Nonnull String replacement) {
         this.filter = filter;
         this.pattern = Pattern.compile(regex);
         this.replacement = replacement;

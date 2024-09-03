@@ -22,11 +22,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class DomainFilterNot<T> implements DomainFilter<T> {
+class DomainFilterNot<T> implements DomainFilter<T> {
 
+    @Nonnull
     private final DomainFilter<T> filter;
 
-    public DomainFilterNot(DomainFilter<T> filter) {
+    DomainFilterNot(@Nonnull DomainFilter<T> filter) {
         this.filter = filter;
     }
 

@@ -31,7 +31,7 @@ public class Filters {
     private Filters() {
     }
 
-    public static <T> DomainFilter<T> not(DomainFilter<T> filter) {
+    public static DomainFilter<String> not(DomainFilter<String> filter) {
         if (StaticFilter.FALSE == filter) {
             return staticTrue();
         }
@@ -75,7 +75,6 @@ public class Filters {
 
     @Nonnull
     @SafeVarargs
-    @SuppressWarnings("unchecked")
     public static <T> DomainFilter<T> or(DomainFilter<T>... filters) {
         if (filters.length == 0) {
             return staticFalse();
@@ -102,7 +101,7 @@ public class Filters {
             return nonStaticFilters.get(0);
         }
 
-        return new DomainFilterOr<>(nonStaticFilters.toArray(new DomainFilter[0]));
+        return new DomainFilterOr<>(nonStaticFilters);
     }
 
     @Nonnull
@@ -138,7 +137,7 @@ public class Filters {
     @SuppressWarnings("unchecked")
     public static DomainFilter<String> hashing(HashFunction hashFunction, DomainFilter<byte[]> filter) {
         if (filter instanceof StaticFilter) {
-            return (DomainFilter<String>) (StaticFilter) filter;
+            return (StaticFilter) filter;
         }
 
         return new HashingFilter(hashFunction, filter);
@@ -158,7 +157,7 @@ public class Filters {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> StaticFilter<T> staticTrue() {
+    private static <T> StaticFilter<T> staticTrue() {
         return (StaticFilter<T>) StaticFilter.TRUE;
     }
 }

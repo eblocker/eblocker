@@ -627,7 +627,7 @@ public class DomainBlockingService {
     private static class AttributeDecision<T> extends FilterDecision<T> {
         private final Map<String, Object> attributes;
 
-        AttributeDecision(T domain, boolean blocked, DomainFilter<?> filter, Map<String, Object> attributes) {
+        AttributeDecision(T domain, boolean blocked, @Nullable DomainFilter<?> filter, Map<String, Object> attributes) {
             super(domain, blocked, filter);
             this.attributes = attributes;
         }
@@ -732,11 +732,16 @@ public class DomainBlockingService {
         public Decision isBlocked(String domain) {
             FilterDecision<String> delegateDecision = delegate.isBlocked(domain);
             Map<String, Object> attributes = delegateDecision instanceof AttributeDecision ? ((AttributeDecision<String>) delegateDecision).getAttributes() : Collections.emptyMap();
+            DomainFilter<?> filter = delegateDecision.getFilter();
+            Integer listId = null;
+            if (filter != null) {
+                listId = filter.getListId();
+            }
             return new Decision(
                     delegateDecision.isBlocked(),
                     delegateDecision.getDomain(),
                     attributes.containsKey(ATTRIBUTE_ADD_PROFILE_ID) ? profileId : null,
-                    delegateDecision.getFilter().getListId(),
+                    listId,
                     userId,
                     (String) attributes.get(ATTRIBUTE_TARGET));
         }

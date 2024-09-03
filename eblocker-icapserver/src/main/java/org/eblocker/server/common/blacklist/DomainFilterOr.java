@@ -18,17 +18,17 @@ package org.eblocker.server.common.blacklist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DomainFilterOr<T> implements DomainFilter<T> {
 
-    private final DomainFilter<T>[] filters;
+    @Nonnull
+    private final List<DomainFilter<T>> filters;
 
-    @SafeVarargs
-    public DomainFilterOr(DomainFilter<T>... filters) {
-        this.filters = filters;
+    DomainFilterOr(@Nonnull List<DomainFilter<T>> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     @Nullable
@@ -37,10 +37,11 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
         return null;
     }
 
+    @Override
     @Nonnull
     public String getName() {
         StringBuilder sb = new StringBuilder("(or");
-        for (DomainFilter filter : filters) {
+        for (DomainFilter<?> filter : filters) {
             sb.append(" ");
             sb.append(filter.getName());
         }
@@ -50,19 +51,19 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
 
     @Override
     public int getSize() {
-        return Stream.of(filters).mapToInt(DomainFilter::getSize).sum();
+        return filters.stream().mapToInt(DomainFilter::getSize).sum();
     }
 
     @Nonnull
     @Override
     public Stream<T> getDomains() {
-        return Stream.of(filters).flatMap(DomainFilter::getDomains);
+        return filters.stream().flatMap(DomainFilter::getDomains);
     }
 
     @Nonnull
     @Override
     public FilterDecision<T> isBlocked(T domain) {
-        return Stream.of(filters)
+        return filters.stream()
                 .map(filter -> filter.isBlocked(domain))
                 .filter(FilterDecision::isBlocked)
                 .findFirst()
@@ -72,6 +73,6 @@ public class DomainFilterOr<T> implements DomainFilter<T> {
     @Nonnull
     @Override
     public List<DomainFilter<?>> getChildFilters() {
-        return Stream.of(filters).collect(Collectors.toList());
+        return new ArrayList<>(filters);
     }
 }

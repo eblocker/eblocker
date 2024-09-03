@@ -16,13 +16,16 @@
  */
 package org.eblocker.server.common.blacklist;
 
+import javax.annotation.Nullable;
+
 public class FilterDecision<T> {
 
     private final T domain;
     private final boolean blocked;
+    @Nullable
     private final DomainFilter<?> filter;
 
-    public FilterDecision(T domain, boolean blocked, DomainFilter<?> filter) {
+    public FilterDecision(T domain, boolean blocked, @Nullable DomainFilter<?> filter) {
         this.domain = domain;
         this.blocked = blocked;
         this.filter = filter;
@@ -36,7 +39,8 @@ public class FilterDecision<T> {
         return blocked;
     }
 
-    public DomainFilter getFilter() {
+    @Nullable
+    public DomainFilter<?> getFilter() {
         return filter;
     }
 }

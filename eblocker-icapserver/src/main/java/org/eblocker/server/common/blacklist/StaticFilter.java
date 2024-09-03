@@ -24,8 +24,8 @@ import java.util.stream.Stream;
 
 public class StaticFilter<T> implements DomainFilter<T> {
 
-    public static final StaticFilter FALSE = new StaticFilter(false);
-    public static final StaticFilter TRUE = new StaticFilter(true);
+    static final StaticFilter FALSE = new StaticFilter(false);
+    static final StaticFilter TRUE = new StaticFilter(true);
 
     private final boolean block;
 

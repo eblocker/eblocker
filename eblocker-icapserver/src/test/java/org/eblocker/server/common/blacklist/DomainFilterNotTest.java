@@ -16,21 +16,23 @@
  */
 package org.eblocker.server.common.blacklist;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-public class DomainFilterNotTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class DomainFilterNotTest {
 
     @Test
-    public void testNegation() {
+    void negation() {
         // setup
-        DomainFilter filter = new DomainFilterNot(new CollectionFilter(0, Collections.singletonList("eblocker.com")));
+        DomainFilterNot<String> filter = new DomainFilterNot<>(new CollectionFilter<>(0, Collections.singletonList("eblocker.com")));
 
         // test
-        Assert.assertFalse(filter.isBlocked("eblocker.com").isBlocked());
-        Assert.assertTrue(filter.isBlocked("google-analytics.com").isBlocked());
+        assertFalse(filter.isBlocked("eblocker.com").isBlocked());
+        assertTrue(filter.isBlocked("google-analytics.com").isBlocked());
     }
 
 }

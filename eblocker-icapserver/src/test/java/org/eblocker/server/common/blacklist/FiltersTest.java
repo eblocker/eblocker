@@ -20,113 +20,128 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.google.common.hash.HashFunction;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
-public class FiltersTest {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+class FiltersTest {
+
+    @SuppressWarnings("unchecked")
     @Test
-    public void testNot() {
-        DomainFilter filter = Mockito.mock(DomainFilter.class);
-        Assert.assertTrue(Filters.not(filter) instanceof DomainFilterNot);
+    void not() {
+        DomainFilter<String> filter = mock(DomainFilter.class);
+        assertInstanceOf(DomainFilterNot.class, Filters.not(filter));
 
-        Assert.assertTrue(StaticFilter.TRUE == Filters.not(StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.not(StaticFilter.TRUE));
+        assertSame(StaticFilter.TRUE, Filters.not(StaticFilter.FALSE));
+        assertSame(StaticFilter.FALSE, Filters.not(StaticFilter.TRUE));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testOr() {
-        Assert.assertTrue(StaticFilter.FALSE == Filters.or(new DomainFilter[0]));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.or(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.FALSE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.or(new DomainFilter[]{ StaticFilter.TRUE, Mockito.mock(DomainFilter.class) }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.or());
+    void or() {
+        assertSame(StaticFilter.FALSE, Filters.or());
+        assertSame(StaticFilter.FALSE, Filters.or(StaticFilter.FALSE, StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.or(StaticFilter.FALSE, StaticFilter.TRUE));
+        assertSame(StaticFilter.TRUE, Filters.or(StaticFilter.TRUE, mock(DomainFilter.class)));
+        DomainFilter<String> or = Filters.or();
+        assertSame(StaticFilter.FALSE, or);
 
-        DomainFilter[] singleFilter = new DomainFilter[]{ Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(singleFilter[0] == Filters.or(singleFilter));
+        DomainFilter<String>[] singleFilter = new DomainFilter[]{ mock(DomainFilter.class) };
+        assertSame(singleFilter[0], Filters.or(singleFilter));
 
-        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.FALSE, Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(staticAndNonStaticFilter[1] == Filters.or(staticAndNonStaticFilter));
+        DomainFilter<String>[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.FALSE, mock(DomainFilter.class) };
+        assertSame(staticAndNonStaticFilter[1], Filters.or(staticAndNonStaticFilter));
 
-        DomainFilter[] filters = new DomainFilter[]{ Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(filters[0] == Filters.or(filters[0]));
+        DomainFilter<String>[] filters = new DomainFilter[]{ mock(DomainFilter.class), mock(DomainFilter.class), mock(DomainFilter.class) };
+        assertSame(filters[0], Filters.or(filters[0]));
 
-        Mockito.when(filters[0].isBlocked("test")).thenReturn(new FilterDecision("test", false, filters[0]));
-        Mockito.when(filters[1].isBlocked("test")).thenReturn(new FilterDecision("test", false, filters[1]));
-        Mockito.when(filters[2].isBlocked("test")).thenReturn(new FilterDecision("test", false, filters[2]));
-        Assert.assertTrue(Filters.or(filters) instanceof DomainFilterOr);
-        Assert.assertFalse(Filters.or(filters).isBlocked("test").isBlocked());
-        Mockito.verify(filters[0]).isBlocked("test");
-        Mockito.verify(filters[1]).isBlocked("test");
-        Mockito.verify(filters[2]).isBlocked("test");
+        when(filters[0].isBlocked("test")).thenReturn(new FilterDecision<>("test", false, filters[0]));
+        when(filters[1].isBlocked("test")).thenReturn(new FilterDecision<>("test", false, filters[1]));
+        when(filters[2].isBlocked("test")).thenReturn(new FilterDecision<>("test", false, filters[2]));
+        assertInstanceOf(DomainFilterOr.class, Filters.or(filters));
+        assertFalse(Filters.or(filters).isBlocked("test").isBlocked());
+        verify(filters[0]).isBlocked("test");
+        verify(filters[1]).isBlocked("test");
+        verify(filters[2]).isBlocked("test");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testAnd() {
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[0]));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.FALSE }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.and(new DomainFilter[]{ StaticFilter.TRUE, StaticFilter.TRUE }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and(new DomainFilter[]{ StaticFilter.FALSE, Mockito.mock(DomainFilter.class) }));
-        Assert.assertTrue(StaticFilter.FALSE == Filters.and());
+    void and() {
+        assertSame(StaticFilter.FALSE, Filters.and());
+        assertSame(StaticFilter.FALSE, Filters.and(StaticFilter.FALSE, StaticFilter.FALSE));
+        assertSame(StaticFilter.FALSE, Filters.and(StaticFilter.FALSE, StaticFilter.TRUE));
+        assertSame(StaticFilter.TRUE, Filters.and(StaticFilter.TRUE, StaticFilter.TRUE));
+        assertSame(StaticFilter.FALSE, Filters.and(StaticFilter.FALSE, mock(DomainFilter.class)));
+        assertSame(StaticFilter.FALSE, Filters.and());
 
-        DomainFilter[] singleFilter = new DomainFilter[]{ Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(singleFilter[0] == Filters.and(singleFilter));
+        DomainFilter<String>[] singleFilter = new DomainFilter[]{ mock(DomainFilter.class) };
+        assertSame(singleFilter[0], Filters.and(singleFilter));
 
-        DomainFilter[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.TRUE, Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(staticAndNonStaticFilter[1] == Filters.and(staticAndNonStaticFilter));
+        DomainFilter<String>[] staticAndNonStaticFilter = new DomainFilter[]{ StaticFilter.TRUE, mock(DomainFilter.class) };
+        assertSame(staticAndNonStaticFilter[1], Filters.and(staticAndNonStaticFilter));
 
-        DomainFilter[] filters = new DomainFilter[]{ Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class), Mockito.mock(DomainFilter.class) };
-        Assert.assertTrue(filters[0] == Filters.and(filters[0]));
+        DomainFilter<String>[] filters = new DomainFilter[]{ mock(DomainFilter.class), mock(DomainFilter.class), mock(DomainFilter.class) };
+        assertSame(filters[0], Filters.and(filters[0]));
 
-        Mockito.when(filters[0].isBlocked("test")).thenReturn(new FilterDecision("test", true, filters[0]));
-        Mockito.when(filters[1].isBlocked("test")).thenReturn(new FilterDecision("test", true, filters[1]));
-        Mockito.when(filters[2].isBlocked("test")).thenReturn(new FilterDecision("test", true, filters[2]));
-        Assert.assertTrue(Filters.and(filters) instanceof DomainFilterAnd);
-        Assert.assertTrue(Filters.and(filters).isBlocked("test").isBlocked());
-        Mockito.verify(filters[0]).isBlocked("test");
-        Mockito.verify(filters[1]).isBlocked("test");
-        Mockito.verify(filters[2]).isBlocked("test");
+        when(filters[0].isBlocked("test")).thenReturn(new FilterDecision<>("test", true, filters[0]));
+        when(filters[1].isBlocked("test")).thenReturn(new FilterDecision<>("test", true, filters[1]));
+        when(filters[2].isBlocked("test")).thenReturn(new FilterDecision<>("test", true, filters[2]));
+        assertInstanceOf(DomainFilterAnd.class, Filters.and(filters));
+        assertTrue(Filters.and(filters).isBlocked("test").isBlocked());
+        verify(filters[0]).isBlocked("test");
+        verify(filters[1]).isBlocked("test");
+        verify(filters[2]).isBlocked("test");
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testHostname() {
-        Assert.assertTrue(StaticFilter.FALSE == Filters.hostname(StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.hostname(StaticFilter.TRUE));
-        Assert.assertTrue(Filters.hostname(Mockito.mock(DomainFilter.class)) instanceof HostnameFilter);
+    void hostname() {
+        assertSame(StaticFilter.FALSE, Filters.hostname(StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.hostname(StaticFilter.TRUE));
+        assertInstanceOf(HostnameFilter.class, Filters.hostname(mock(DomainFilter.class)));
 
-        HostnameFilter hostnameFilter = Mockito.mock(HostnameFilter.class);
-        Assert.assertTrue(hostnameFilter == Filters.hostname(hostnameFilter));
+        HostnameFilter hostnameFilter = mock(HostnameFilter.class);
+        assertSame(hostnameFilter, Filters.hostname(hostnameFilter));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testBloom() {
+    void bloom() {
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), 0);
-        Assert.assertTrue(StaticFilter.FALSE == Filters.bloom(bloomFilter, StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.bloom(bloomFilter, StaticFilter.TRUE));
-        Assert.assertTrue(Filters.bloom(bloomFilter, Mockito.mock(DomainFilter.class)) instanceof BloomDomainFilter);
+        assertSame(StaticFilter.FALSE, Filters.bloom(bloomFilter, StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.bloom(bloomFilter, StaticFilter.TRUE));
+        assertInstanceOf(BloomDomainFilter.class, Filters.bloom(bloomFilter, mock(DomainFilter.class)));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testCache() {
-        Assert.assertTrue(StaticFilter.FALSE == Filters.cache(128, CachingFilter.CacheMode.ALL, StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.cache(128, CachingFilter.CacheMode.ALL, StaticFilter.TRUE));
-        Assert.assertTrue(Filters.cache(128, CachingFilter.CacheMode.ALL, Mockito.mock(DomainFilter.class)) instanceof CachingFilter);
+    void cache() {
+        assertSame(StaticFilter.FALSE, Filters.cache(128, CachingFilter.CacheMode.ALL, StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.cache(128, CachingFilter.CacheMode.ALL, StaticFilter.TRUE));
+        assertInstanceOf(CachingFilter.class, Filters.cache(128, CachingFilter.CacheMode.ALL, mock(DomainFilter.class)));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testHashing() {
-        HashFunction hashFunction = Mockito.mock(HashFunction.class);
-        Assert.assertTrue(StaticFilter.FALSE == Filters.hashing(hashFunction, StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.hashing(hashFunction, StaticFilter.TRUE));
-        Assert.assertTrue(Filters.hashing(hashFunction, Mockito.mock(DomainFilter.class)) instanceof HashingFilter);
+    void hashing() {
+        HashFunction hashFunction = mock(HashFunction.class);
+        assertSame(StaticFilter.FALSE, Filters.hashing(hashFunction, StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.hashing(hashFunction, StaticFilter.TRUE));
+        assertInstanceOf(HashingFilter.class, Filters.hashing(hashFunction, mock(DomainFilter.class)));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testReplace() {
-        Assert.assertTrue(StaticFilter.FALSE == Filters.replace("regex", "replacement", StaticFilter.FALSE));
-        Assert.assertTrue(StaticFilter.TRUE == Filters.replace("regex", "replacement", StaticFilter.TRUE));
-        Assert.assertTrue(Filters.replace("regex", "replacement", Mockito.mock(DomainFilter.class)) instanceof DomainReplaceFilter);
+    void replace() {
+        assertSame(StaticFilter.FALSE, Filters.replace("regex", "replacement", StaticFilter.FALSE));
+        assertSame(StaticFilter.TRUE, Filters.replace("regex", "replacement", StaticFilter.TRUE));
+        assertInstanceOf(DomainReplaceFilter.class, Filters.replace("regex", "replacement", mock(DomainFilter.class)));
     }
 }

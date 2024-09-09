@@ -86,6 +86,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
 
     enum KnownError {
         SELF_SIGNED_CERT_IN_CHAIN("crtvd:19:X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN", true),
+        DEPTH_ZERO_SELF_SIGNED_CERT("crtvd:18:X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT", true),
         CERT_UNTRUSTED("crtvd:27:X509_V_ERR_CERT_UNTRUSTED", true), // TODO: also seen for 5thmarket.info, which is a tracker, and for bzz.ch (web only)
         BAD_CERTIFICATE("ssl:1:error:14094412:SSL routines:ssl3_read_bytes:sslv3 alert bad certificate", true), // TODO seen for lookaside.facebook.com, i.instagram.com, graph.instagram.com, graph.facebook.com so is this really a isCertError?
         CERTIFICATE_UNKNOWN("ssl:1:error:14094416:SSL routines:ssl3_read_bytes:sslv3 alert certificate unknown", true), // TODO seen for www.srf.ch
@@ -162,7 +163,7 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
                         .sorted(Comparator.comparing(FailedConnection::getLastOccurrence))
                         .peek(fc -> {
                             if (KnownError.hasUnknownError(fc)) {
-                                log.warn("Unknown error in failed connection: {}", fc.getErrors());
+                                log.warn("Unknown error in failed connection {} for domains {}", fc.getErrors(), fc.getDomains());
                             }
                         })
                         .flatMap(fc ->

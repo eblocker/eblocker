@@ -30,7 +30,7 @@ public class HashingFilter implements DomainFilter<String> {
     private final HashFunction hashFunction;
     private final DomainFilter<byte[]> filter;
 
-    public HashingFilter(HashFunction hashFunction, DomainFilter<byte[]> filter) {
+    HashingFilter(@Nonnull HashFunction hashFunction, @Nonnull DomainFilter<byte[]> filter) {
         this.hashFunction = hashFunction;
         this.filter = filter;
     }

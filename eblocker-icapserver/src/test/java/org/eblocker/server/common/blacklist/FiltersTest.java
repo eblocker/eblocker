@@ -49,8 +49,7 @@ class FiltersTest {
         assertSame(StaticFilter.FALSE, Filters.or(StaticFilter.FALSE, StaticFilter.FALSE));
         assertSame(StaticFilter.TRUE, Filters.or(StaticFilter.FALSE, StaticFilter.TRUE));
         assertSame(StaticFilter.TRUE, Filters.or(StaticFilter.TRUE, mock(DomainFilter.class)));
-        DomainFilter<String> or = Filters.or();
-        assertSame(StaticFilter.FALSE, or);
+        assertSame(StaticFilter.FALSE, Filters.or());
 
         DomainFilter<String>[] singleFilter = new DomainFilter[]{ mock(DomainFilter.class) };
         assertSame(singleFilter[0], Filters.or(singleFilter));

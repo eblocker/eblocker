@@ -83,8 +83,6 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_SHOW_SPLASH_SCREEN = "showSplashScreen";
     private static final String KEY_AUTO_ENABLE_NEW_DEVICES = "autoEnableNewDevices";
     private static final String KEY_COMPRESSION_MODE = "compression_mode";
-    private static final String KEY_LAST_SSL_DEFAULT_WHITELIST_UPDATE = "ssl_default_whitelist_date";
-    private static final String KEY_LAST_APPMODULES_DEFAULT_FILE_UPDATE = "appmodules_default_json_file_update";
     private static final String VALUE_FALSE = "false";
     private static final String VALUE_TRUE = "true";
     private static final String KEY_MESSAGE_SHOW_INFO = "messageShowInfo";
@@ -336,16 +334,6 @@ public class JedisDataSource implements DataSource {
             devices.add(device);
         }
         return devices;
-    }
-
-    @Override
-    public Set<Device> getActiveDevices() {
-        return getDevices().stream().filter(Device::isActive).collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<Device> getDevicesIpFixed() {
-        return getDevices().stream().filter(Device::isIpAddressFixed).collect(Collectors.toSet());
     }
 
     @Override
@@ -645,21 +633,6 @@ public class JedisDataSource implements DataSource {
     public Set<String> getUserIds() {
         try (Jedis jedis = pool.getResource()) {
             return jedis.smembers(KEY_USERS);
-        }
-    }
-
-    @Override
-    @Deprecated
-    public User getUser(String userId) {
-        try (Jedis jedis = pool.getResource()) {
-            Map<String, String> user = jedis.hgetAll(userId);
-            if (user.isEmpty()) {
-                return null;
-            }
-            User result = new User();
-            result.setId(userId);
-            result.setName(user.get(KEY_NAME));
-            return result;
         }
     }
 
@@ -1206,24 +1179,6 @@ public class JedisDataSource implements DataSource {
     }
 
     @Override
-    public ZonedDateTime getLastSSLWhitelistDate() {
-        try (Jedis jedis = pool.getResource()) {
-            String lastModified = jedis.get(KEY_LAST_SSL_DEFAULT_WHITELIST_UPDATE);
-            if (lastModified != null) {
-                return ZonedDateTime.parse(lastModified);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void setLastModifiedSSLDefaultWhitelist(ZonedDateTime defaultSSLWhitelistLastModified) {
-        try (Jedis jedis = pool.getResource()) {
-            jedis.set(KEY_LAST_SSL_DEFAULT_WHITELIST_UPDATE, defaultSSLWhitelistLastModified.toString());
-        }
-    }
-
-    @Override
     public Language getCurrentLanguage() {
         try (Jedis jedis = pool.getResource()) {
             Map<String, String> map = jedis.hgetAll(KEY_LANGUAGE);
@@ -1247,24 +1202,6 @@ public class JedisDataSource implements DataSource {
 
                 jedis.hmset(KEY_LANGUAGE, map);
             }
-        }
-    }
-
-    @Override
-    public ZonedDateTime getLastAppWhitelistModulesDate() {
-        try (Jedis jedis = pool.getResource()) {
-            String lastModified = jedis.get(KEY_LAST_APPMODULES_DEFAULT_FILE_UPDATE);
-            if (lastModified != null) {
-                return ZonedDateTime.parse(lastModified);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void setLastAppWhitelistModuleDate(ZonedDateTime appWhitelistModulesJSONFileLastModified) {
-        try (Jedis jedis = pool.getResource()) {
-            jedis.set(KEY_LAST_APPMODULES_DEFAULT_FILE_UPDATE, appWhitelistModulesJSONFileLastModified.toString());
         }
     }
 

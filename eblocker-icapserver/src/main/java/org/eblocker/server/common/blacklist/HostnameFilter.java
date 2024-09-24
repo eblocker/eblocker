@@ -22,11 +22,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class HostnameFilter implements DomainFilter<String> {
+class HostnameFilter implements DomainFilter<String> {
 
+    @Nonnull
     private final DomainFilter<String> filter;
 
-    public HostnameFilter(DomainFilter<String> filter) {
+    HostnameFilter(@Nonnull DomainFilter<String> filter) {
         this.filter = filter;
     }
 

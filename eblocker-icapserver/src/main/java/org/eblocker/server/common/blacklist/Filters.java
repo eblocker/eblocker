@@ -31,7 +31,8 @@ public class Filters {
     private Filters() {
     }
 
-    public static DomainFilter<String> not(DomainFilter<String> filter) {
+    @Nonnull
+    public static DomainFilter<String> not(@Nonnull DomainFilter<String> filter) {
         if (StaticFilter.FALSE == filter) {
             return staticTrue();
         }
@@ -43,8 +44,9 @@ public class Filters {
         return new DomainFilterNot<>(filter);
     }
 
+    @Nonnull
     @SafeVarargs
-    public static DomainFilter<String> and(DomainFilter<String>... filters) {
+    public static DomainFilter<String> and(@Nonnull DomainFilter<String>... filters) {
         if (filters.length == 0) {
             return staticFalse();
         }
@@ -75,7 +77,7 @@ public class Filters {
 
     @Nonnull
     @SafeVarargs
-    public static <T> DomainFilter<T> or(DomainFilter<T>... filters) {
+    public static <T> DomainFilter<T> or(@Nonnull DomainFilter<T>... filters) {
         if (filters.length == 0) {
             return staticFalse();
         }
@@ -105,7 +107,7 @@ public class Filters {
     }
 
     @Nonnull
-    public static DomainFilter<String> hostname(DomainFilter<String> filter) {
+    public static DomainFilter<String> hostname(@Nonnull DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
@@ -117,7 +119,8 @@ public class Filters {
         return new HostnameFilter(filter);
     }
 
-    public static DomainFilter<String> bloom(BloomFilter<String> bloomFilter, DomainFilter<String> filter) {
+    @Nonnull
+    public static DomainFilter<String> bloom(@Nonnull BloomFilter<String> bloomFilter, @Nonnull DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
@@ -126,7 +129,7 @@ public class Filters {
     }
 
     @Nonnull
-    public static DomainFilter<String> cache(int size, CachingFilter.CacheMode cacheMode, DomainFilter<String> filter) {
+    public static DomainFilter<String> cache(int size, @Nonnull CachingFilter.CacheMode cacheMode, @Nonnull DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
@@ -134,8 +137,9 @@ public class Filters {
         return new CachingFilter(size, cacheMode, filter);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
-    public static DomainFilter<String> hashing(HashFunction hashFunction, DomainFilter<byte[]> filter) {
+    public static DomainFilter<String> hashing(@Nonnull HashFunction hashFunction, @Nonnull DomainFilter<byte[]> filter) {
         if (filter instanceof StaticFilter) {
             return (StaticFilter) filter;
         }
@@ -143,7 +147,8 @@ public class Filters {
         return new HashingFilter(hashFunction, filter);
     }
 
-    public static DomainFilter<String> replace(String regex, String replacement, DomainFilter<String> filter) {
+    @Nonnull
+    public static DomainFilter<String> replace(@Nonnull String regex, @Nonnull String replacement, @Nonnull DomainFilter<String> filter) {
         if (filter instanceof StaticFilter) {
             return filter;
         }
@@ -151,11 +156,13 @@ public class Filters {
         return new DomainReplaceFilter(filter, regex, replacement);
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     public static <T> StaticFilter<T> staticFalse() {
         return (StaticFilter<T>) StaticFilter.FALSE;
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     private static <T> StaticFilter<T> staticTrue() {
         return (StaticFilter<T>) StaticFilter.TRUE;

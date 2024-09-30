@@ -87,21 +87,9 @@ public interface DataSource {
     Set<Device> getDevices();
 
     /**
-     * Returns a sorted set of all ACTIVE devices
-     */
-    Set<Device> getActiveDevices();
-
-    /**
      * Returns a device with a specific ID
      */
     Device getDevice(String deviceId);
-
-    /**
-     * Returns all devices whose IP addresses are fixed
-     *
-     * @return
-     */
-    Set<Device> getDevicesIpFixed();
 
     /**
      * Get the pause in seconds between scanning for new devices
@@ -114,14 +102,6 @@ public interface DataSource {
      * Set the pause in seconds between scanning for new devices
      */
     void setDeviceScanningInterval(Long seconds);
-
-    /**
-     * Returns a user with a specific ID
-     *
-     * @param userId
-     * @return
-     */
-    User getUser(String userId);
 
     /**
      * Returns all user IDs
@@ -355,20 +335,6 @@ public interface DataSource {
     void setSslRecordErrors(boolean recordSslErrors);
 
     /**
-     * Check from when the last SSL domain whitelist is
-     *
-     * @return
-     */
-    ZonedDateTime getLastSSLWhitelistDate();
-
-    /**
-     * Set the last date from which we saw a SSL default whitelist
-     *
-     * @param defaultDomainFileLastModified
-     */
-    void setLastModifiedSSLDefaultWhitelist(ZonedDateTime defaultDomainFileLastModified);
-
-    /**
      * Get the currently used language in the frontend
      *
      * @return
@@ -395,20 +361,6 @@ public interface DataSource {
      * @return
      */
     String getTimezone();
-
-    /**
-     * Check when the last update of the default AppModules list happened
-     *
-     * @return
-     */
-    ZonedDateTime getLastAppWhitelistModulesDate();
-
-    /**
-     * Set the last date from which we saw, that there has been a change in the appWhitelistModules JSCN file
-     *
-     * @param appWhitelistModulesJSONFileLastModified
-     */
-    void setLastAppWhitelistModuleDate(ZonedDateTime appWhitelistModulesJSONFileLastModified);
 
     /**
      * Get the 'enabled' status of the AppWhitelistModule with a certain ID

@@ -150,7 +150,9 @@ public class JedisFilterStatisticsDataSourceTest {
                 new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 1),
                 new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 5, 10, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "blocked_queries", "ads", 3),
                 new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 6, 0, 0, ZoneId.systemDefault()).toInstant(), "dns", IpAddress.parse("192.168.1.15"), "queries", null, 1),
-                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 7, 0, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "queries", null, 1)
+                new StatisticsCounter(ZonedDateTime.of(2018, 4, 10, 9, 7, 0, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("192.168.1.15"), "queries", null, 1),
+                new StatisticsCounter(ZonedDateTime.of(2024, 9, 30, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("2a04::a:b:c:d"), "blocked_queries", "ads", 1),
+                new StatisticsCounter(ZonedDateTime.of(2024, 9, 30, 9, 0, 10, 0, ZoneId.systemDefault()).toInstant(), "pattern", IpAddress.parse("2a04::a:b:c:d"), "queries", null, 2)
         );
         filterStatisticsDataSource.incrementCounters(counters);
 
@@ -159,6 +161,8 @@ public class JedisFilterStatisticsDataSourceTest {
             Assert.assertEquals("3", jedis.get("pattern_stats:201804100905:192.168.1.15:blocked_queries:ads"));
             Assert.assertEquals("1", jedis.get("dns_stats:201804100906:192.168.1.15:queries"));
             Assert.assertEquals("1", jedis.get("pattern_stats:201804100907:192.168.1.15:queries"));
+            Assert.assertEquals("1", jedis.get("pattern_stats:202409300900:2a04__a_b_c_d:blocked_queries:ads"));
+            Assert.assertEquals("2", jedis.get("pattern_stats:202409300900:2a04__a_b_c_d:queries"));
         }
     }
 

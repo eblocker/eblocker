@@ -79,7 +79,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
             type = "*";
         }
 
-        String queryIpAddress = ipAddress == null ? "*" : ipAddress.toString().replaceAll(":", "_");
+        String queryIpAddress = ipAddress == null ? "*" : ipToKey(ipAddress);
 
         Predicate<String> keyPredicate = key -> true;
         if (begin != null && end != null) {
@@ -177,7 +177,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
         String[] splitKey = key.split(":");
         String type = splitKey[0].replace("_stats", "");
         Instant instant = LocalDateTime.parse(splitKey[1], DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault()).toInstant();
-        IpAddress ipAddress = IpAddress.parse(splitKey[2].replaceAll("_", ":"));
+        IpAddress ipAddress = keyToIp(splitKey[2]);
         String name = splitKey[3];
         String reason = splitKey.length == 5 ? splitKey[4] : null;
         int count = Integer.parseInt(value);
@@ -189,7 +189,7 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
         tuple.key = String.format("%s_stats:%s:%s:%s%s",
                 counter.getType(),
                 DATE_TIME_FORMATTER.format(ZonedDateTime.ofInstant(counter.getInstant(), ZoneId.systemDefault())),
-                counter.getIpAddress(),
+                ipToKey(counter.getIpAddress()),
                 counter.getName(),
                 counter.getReason() != null ? ":" + counter.getReason() : "");
         tuple.value = counter.getValue();
@@ -202,6 +202,14 @@ public class JedisFilterStatisticsDataSource implements FilterStatisticsDataSour
 
         Tuple() {
         }
+    }
+
+    private static IpAddress keyToIp(String key) {
+        return IpAddress.parse(key.replace('_', ':'));
+    }
+
+    private static String ipToKey(IpAddress ip) {
+        return ip.toString().replace(':', '_');
     }
 
     private class StatisticsCounterSpliterator implements Spliterator<StatisticsCounter>, Closeable {

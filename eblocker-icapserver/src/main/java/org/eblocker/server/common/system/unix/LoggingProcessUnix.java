@@ -30,7 +30,7 @@ public class LoggingProcessUnix extends LoggingProcess {
     @Override
     public int getPid() {
         try {
-            return (int)process.toHandle().pid();
+            return (int)process.pid();
         } catch (Exception e) {
             throw new EblockerException("Could not get PID of process named '" + name + "'. Not running on Unix?", e);
         }

@@ -4,6 +4,12 @@
 
 You need Java 11, Maven and Redis.
 
+If you have problems with Java 11 or Maven Tests you can use the following to set the correct version: 
+
+    /usr/libexec/java_home -V //show all installed versions copy the path of the java 11 version
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home //paste the path here
+    mvn -v //validate that java 11 is used
+
 In the following sections it is assumed that you install everything below a source directory, e.g.
 
     export SRC=/home/user/src

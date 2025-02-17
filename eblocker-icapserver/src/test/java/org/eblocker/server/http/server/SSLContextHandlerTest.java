@@ -48,7 +48,10 @@ import java.util.stream.Collectors;
 
 public class SSLContextHandlerTest {
 
+    // If this test certificate expires, set a breakpoint in teardown() and
+    // copy the file at "renewalKeyStorePath"
     private final String unitTestHttps = "classpath:test-data/eblocker-https.jks";
+
     private final String unitTestHttpsExpired = "classpath:test-data/eblocker-https-expired.jks";
 
     private final String controlBarHostName = "controlbar.unit.test";

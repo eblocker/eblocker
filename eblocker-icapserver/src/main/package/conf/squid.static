@@ -30,7 +30,7 @@ external_acl_type domainblacklisthelper children-max=8 ttl=10 negative_ttl=10 %S
 acl domainblacklist external domainblacklisthelper
 
 acl disabledClients src "/etc/squid/disabledclients"
-acl mobileCLients src "/etc/squid/mobileClients"
+acl mobileClients src "/etc/squid/mobileClients"
 acl mobileClientsPrivateNetworkAccess src "/etc/squid/mobileClientsPrivateNetworkAccess"
 
 acl localnet src 10.0.0.0/8     # RFC1918 possible internal network

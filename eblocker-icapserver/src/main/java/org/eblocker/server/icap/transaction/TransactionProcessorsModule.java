@@ -21,6 +21,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import org.eblocker.server.icap.transaction.processor.AdBlockerProcessor;
 import org.eblocker.server.icap.transaction.processor.BpjmFilterProcessor;
+import org.eblocker.server.icap.transaction.processor.CaptivePortalCheckProcessor;
 import org.eblocker.server.icap.transaction.processor.CompressProcessor;
 import org.eblocker.server.icap.transaction.processor.ContentFilterProcessor;
 import org.eblocker.server.icap.transaction.processor.ContentSecurityPoliciesProcessor;
@@ -82,7 +83,8 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                            SetDntHeaderProcessor setDntHeaderProcessor,
                                                            TrackingBlockerProcessor trackingBlockerProcessor,
                                                            UserAgentSpoofProcessor userAgentSpoofProcessor,
-                                                           SuccessfulSSLDetector successfulSSLDetector) {
+                                                           SuccessfulSSLDetector successfulSSLDetector,
+                                                           CaptivePortalCheckProcessor captivePortalCheckProcessor) {
         return Arrays.asList(
                 successfulSSLDetector,
                 sessionProcessor,
@@ -98,6 +100,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 userAgentSpoofProcessor,
                 patternFilterStatisticsProcessor,
                 eBlockerFilterProcessor,
+                captivePortalCheckProcessor,
                 adBlockerProcessor,
                 trackingBlockerProcessor,
                 referrerRemoveProcessor,
@@ -126,7 +129,8 @@ public class TransactionProcessorsModule extends AbstractModule {
                                                             SetInjectionsProcessor setInjectionsProcessor,
                                                             WebRTCBlocker webRTCBlocker,
                                                             ContentFilterProcessor contentFilterProcessor,
-                                                            SuccessfulSSLDetector successfulSSLDetector) {
+                                                            SuccessfulSSLDetector successfulSSLDetector,
+                                                            CaptivePortalCheckProcessor captivePortalCheckProcessor) {
         return Arrays.asList(
                 successfulSSLDetector,
                 sessionProcessor,
@@ -136,6 +140,7 @@ public class TransactionProcessorsModule extends AbstractModule {
                 domainWhiteListProcessor,
                 responseShortCutProcessor,
                 contentSecurityPoliciesProcessor,
+                captivePortalCheckProcessor,
                 decompressProcessor,
                 webRTCBlocker,
                 setInjectionsProcessor,

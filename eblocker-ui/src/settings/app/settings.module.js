@@ -152,7 +152,6 @@ import IpAnonComponent from './components/ipAnon/ip-anon.component';
 import SystemComponent from './components/system/system.component';
 import NetworkComponent from './components/network/network.component';
 import NetworkWizardComponent from './components/network/wizard/network-wizard.component';
-import AdvancedComponent from './components/advanced/advanced.component';
 import TorComponent from './components/ipAnon/tor/tor.component';
 import VpnConnectComponent from './components/ipAnon/vpn/vpn-connect.component';
 
@@ -180,12 +179,6 @@ import VpnHomeComponent from './components/vpnHome/vpn-home.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeDevicesComponent from './components/vpnHome/devices/vpn-home-devices.component';
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
-
-import CaptivePortalComponent from './components/advanced/captivePortal/captive-portal.component';
-import CompressionComponent from './components/advanced/compression/compression.component';
-import DoNotTrackComponent from './components/advanced/doNotTrack/do-not-track.component';
-import ReferrerComponent from './components/advanced/referrer/referrer.component';
-import WebRtcComponent from './components/advanced/webRtc/web-rtc.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
 import SslCertificateComponent from './components/ssl/certificate/ssl-certificate.component';
@@ -447,7 +440,6 @@ angular.module('eblocker.adminconsole', [
     .component('systemComponent', SystemComponent)
     .component('networkComponent', NetworkComponent)
     .component('networkWizardComponent', NetworkWizardComponent)
-    .component('advancedComponent', AdvancedComponent)
     .component('dnsComponent', DnsComponent)
     .component('dnsStatusComponent', DnsStatusComponent)
     .component('dnsServerComponent', DnsServerComponent)
@@ -473,11 +465,6 @@ angular.module('eblocker.adminconsole', [
     .component('vpnHomeDevicesComponent', VpnHomeDevicesComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
-    .component('captivePortalComponent', CaptivePortalComponent)
-    .component('compressionComponent', CompressionComponent)
-    .component('doNotTrackComponent', DoNotTrackComponent)
-    .component('webRtcComponent', WebRtcComponent)
-    .component('referrerComponent', ReferrerComponent)
     .component('sslStatusComponent', SslStatusComponent)
     .component('sslCertificateComponent', SslCertificateComponent)
     .component('sslFailsComponent', SslFailsComponent)

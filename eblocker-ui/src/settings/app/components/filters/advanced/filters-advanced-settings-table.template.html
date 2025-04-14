@@ -11,7 +11,7 @@
         <md-tooltip ng-if="!entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled" md-delay="300">{{entry.tooltipNoSslNoFilter | translate }}</md-tooltip>
     </div>
 
-    <div ng-if="entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled" style="margin-left: 5px;">
+    <div ng-if="entry.isActive(entry.selectedValue) && !vm.templateCallback.sslEnabled && entry.warnIfSslDisabled" style="margin-left: 5px;">
         <md-icon class="content-warn"
                  md-svg-src="/img/icons/ic_warning.svg"
                  aria-label="Advanced filter SSL status">

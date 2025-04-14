@@ -171,13 +171,11 @@
             "LABEL" : "Advanced Settings",
             "SETTING" : {
                 "CAPTIVE_PORTAL" : {
-                    "DISABLED" : "Allow requests to Google Captive Portal Check.",
-                    "ENABLED" : "Block requests to Google Captive Portal Check and let eBlocker respond to such requests.",
+                    "DISABLED" : "Allow requests to Captive Portal Check URLs",
+                    "ENABLED" : "Block requests to Captive Portal Check URLs and let eBlocker respond to such requests",
                     "LABEL" : "Captive Portal Check",
-                    "TOOLTIP_NO_SSL_FILTER" : "Blocking of Google Captive Portal may not work without HTTPS support",
-                    "TOOLTIP_NO_SSL_NO_FILTER" : "Blocking of Google Captive Portal may not work without HTTPS support",
-                    "TOOLTIP_SSL_FILTER" : "Google Captive Portal is blocked and a response is simulated by the eBlocker",
-                    "TOOLTIP_SSL_NO_FILTER" : "Google Captive Portal is blocked"
+                    "TOOLTIP_FILTER" : "Captive Portal Check URLs are blocked and eBlocker responds to requests",
+                    "TOOLTIP_NO_FILTER" : "Requests to Captive Portal Check URLs are allowed"
                 },
                 "DO_NOT_TRACK" : {
                     "DISABLED" : "The eBlocker will not modify the Do-Not-Track header in outgoing requests.",
@@ -338,15 +336,6 @@
             "TOOLBAR" : {
                 "TITLE" : "eBlocker Booting"
             }
-        },
-        "CAPTIVE_PORTAL" : {
-            "DISABLED" : "Block requests to Google Captive Portal Check.",
-            "ENABLED" : "Block requests to Google Captive Portal Check and let eBlocker respond to such requests.",
-            "LABEL" : "Captive Portal Check",
-            "TEXT1" : "The Google Captive Portal Check is used by Google products like Android, Chrome, Chromebooks and Chromium to determine if you are connected to internet by sending your IP address and other data as a request to Google.",
-            "TEXT2" : "eBlocker blocks these requests in order to hide your IP address from Google.",
-            "TEXT3" : "Enable this option if your Android device drops the WLAN connection frequently.",
-            "TITLE" : "Google Captive Portal Check"
         },
         "CONFIG_BACKUP" : {
             "ACTION" : {
@@ -1770,15 +1759,6 @@
                 }
             }
         },
-        "DO_NOT_TRACK" : {
-            "DISABLED" : "The eBlocker will not modify the Do-Not-Track header in outgoing requests.",
-            "ENABLED" : "The eBlocker will add the Do-Not-Track header to all outgoing requests.",
-            "LABEL" : "Do-Not-Track",
-            "TEXT1" : "Do-Not-Track (DNT) is an HTTP header field that informs a website that the visitor requests the website to not generate a usage profile.",
-            "TEXT2" : "Unfortunately, this request is not binding and many websites ignore this header field.",
-            "TEXT3" : "Nevertheless, the eBlocker sets this field in all outgoing requests, unless you deactivate it explicitly here.",
-            "TITLE" : "Do-Not-Track"
-        },
         "EVENTS" : {
             "ACTION" : {
                 "RELOAD" : "Refresh",
@@ -2450,14 +2430,6 @@
             "TOOLBAR" : {
                 "TITLE" : ""
             }
-        },
-        "REFERRER" : {
-            "DISABLED" : "Do not change HTTP Referrer Header",
-            "ENABLED" : "Remove HTTP Referrer Header",
-            "LABEL" : "HTTP Referrer Header",
-            "TEXT1" : "HTTP Referrer Header is regularly set when browsing the Web. The referrer reveals the website you have been visiting before reaching the current website.",
-            "TEXT2" : "By using the referrer header websites can partly track your surfing habits. Some websites use the referrer header also for internal purposes and blocking the referrer header can result in some sites not working properly.",
-            "TITLE" : "HTTP Referrer Header"
         },
         "REPORT" : {
             "ACTION" : {
@@ -3589,25 +3561,6 @@
                 "TITLE" : "eBlocker Mobile"
             }
         },
-        "WEB_COMPRESSION" : {
-            "COMPRESS_LABEL" : "Compress HTML pages",
-            "LABEL" : "Compression",
-            "MODE" : {
-                "ALWAYS" : "Always",
-                "OFF" : "Never",
-                "VPN_CLIENTS_ONLY" : "Only for remote devices that are connected over eBlocker Mobile (recommended)"
-            },
-            "TEXT" : "eBlocker needs to decompress web pages and javascript files to insert its icon or filter webrtc requests. Afterwards it can re-compress the content again but this may introduce a small delay. In local networks there is no speed gain from compression so this extra delay can be avoided by disabling compression. eBlocker mobile users may benefit from re-compression as those responses have to be transmitted back to their devices over the internet.",
-            "TITLE" : "Compression"
-        },
-        "WEB_RTC" : {
-            "DISABLED" : "Allow WebRTC Connections",
-            "ENABLED" : "Block WebRTC Connections",
-            "LABEL" : "WebRTC",
-            "TEXT1" : "WebRTC is a browser technology that enables real time communication by establishing peer to peer connections. This is useful for applications like VoIP/internet calls and chats.",
-            "TEXT2" : "Unfortunately WebRTC reveals your real IP address (and even your local LAN IP) to establish the connections. Even when using Tor (IP-anonymization) or a VPN your real IP address is visible when using WebRTC and it can be used to identify you.",
-            "TITLE" : "WebRTC"
-        },
         "WHITELISTS" : {
             "ACTION" : {
                 "ADD" : "New Category",
@@ -3770,9 +3723,9 @@
             },
             "CAPTIVE_PORTAL" : {
                 "OVERVIEW" : {
-                    "P1" : "The Google Captive Portal Check is used by Android, Chrome and Chromebooks to test whether an Internet connection exists. Your IP address and other data will be sent to the Google Captive Portal.",
-                    "P2" : "The eBlocker blocks the connection to the Google Captive Portal, because otherwise your IP address will be collected by Google.",
-                    "P3" : "Activate this option if Android devices are frequently disconnected from your WLAN.",
+                    "P1" : "Captive Portal Check URLs are used by operating systems and browsers like Android, iOS, macOS, Windows and Firefox to test whether an Internet connection exists. Your IP address and OS version will be sent to the vendor.",
+                    "P2" : "With this option the eBlocker blocks connections to Captive Portal Check URLs, because your IP address can be collected by the vendor.",
+                    "P3" : "Disable this option if Android devices are frequently disconnected from your WLAN.",
                     "TITLE" : "Captive Portal Check"
                 }
             },

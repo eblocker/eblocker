@@ -87,18 +87,19 @@ function Controller(logger, TableService, CaptivePortalService, CompressionServi
             name: $translate.instant('ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.LABEL'),
             setValue: setCapitivePortalState,
             selectedValue: vm.captivePortal,
-            isActive: function () {
-                return true;
+            isActive: function (value) {
+                return value;
             },
-            tooltipSslFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_SSL_FILTER',
-            tooltipNoSslFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_NO_SSL_FILTER',
-            tooltipSslNoFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_SSL_NO_FILTER',
-            tooltipNoSslNoFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_NO_SSL_NO_FILTER', // jshint ignore: line
+            tooltipSslFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_FILTER',
+            tooltipNoSslFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_FILTER',
+            tooltipSslNoFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_NO_FILTER',
+            tooltipNoSslNoFilter: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.TOOLTIP_NO_FILTER', // jshint ignore: line
             options: [
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.ENABLED', value: true},
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.CAPTIVE_PORTAL.DISABLED', value: false}
             ],
-            template: 'app/components/filters/advanced/help-filters-captive-portal.template.html'
+            template: 'app/components/filters/advanced/help-filters-captive-portal.template.html',
+            warnIfSslDisabled: false
         });
         tableData.push({
             name: $translate.instant('ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.WEB_COMPRESSION.LABEL'),
@@ -117,7 +118,8 @@ function Controller(logger, TableService, CaptivePortalService, CompressionServi
                     value: 'VPN_CLIENTS_ONLY'},
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.WEB_COMPRESSION.MODE.ALWAYS', value: 'ALWAYS'}
             ],
-            template: 'app/components/filters/advanced/help-filters-web-compression.template.html'
+            template: 'app/components/filters/advanced/help-filters-web-compression.template.html',
+            warnIfSslDisabled: true
         });
         tableData.push({
             name: $translate.instant('ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.WEB_RTC.LABEL'),
@@ -134,7 +136,8 @@ function Controller(logger, TableService, CaptivePortalService, CompressionServi
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.WEB_RTC.ENABLED', value: true},
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.WEB_RTC.DISABLED', value: false}
             ],
-            template: 'app/components/filters/advanced/help-filters-web-rtc.template.html'
+            template: 'app/components/filters/advanced/help-filters-web-rtc.template.html',
+            warnIfSslDisabled: true
         });
         tableData.push({
             name: $translate.instant('ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.REFERRER.LABEL'),
@@ -151,7 +154,8 @@ function Controller(logger, TableService, CaptivePortalService, CompressionServi
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.REFERRER.ENABLED', value: true},
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.REFERRER.DISABLED', value: false}
             ],
-            template: 'app/components/filters/advanced/help-filters-referrer.html'
+            template: 'app/components/filters/advanced/help-filters-referrer.html',
+            warnIfSslDisabled: true
         });
         tableData.push({
             name: $translate.instant('ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.DO_NOT_TRACK.LABEL'),
@@ -168,7 +172,8 @@ function Controller(logger, TableService, CaptivePortalService, CompressionServi
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.DO_NOT_TRACK.ENABLED', value: true},
                 {label: 'ADMINCONSOLE.ADVANCED_FILTER_SETTINGS.SETTING.DO_NOT_TRACK.DISABLED', value: false}
             ],
-            template: 'app/components/filters/advanced/help-filters-do-not-track.html'
+            template: 'app/components/filters/advanced/help-filters-do-not-track.html',
+            warnIfSslDisabled: true
         });
         return tableData;
     }

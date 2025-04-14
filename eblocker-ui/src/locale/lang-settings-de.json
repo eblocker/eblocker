@@ -171,13 +171,11 @@
             "LABEL": "Erweiterte Einstellungen",
             "SETTING": {
                 "CAPTIVE_PORTAL": {
-                    "DISABLED": "Verbindungsaufbau zum Google Captive Portal Check erlauben.",
-                    "ENABLED": "Verbindungsaufbau zum Google Captive Portal Check blockieren und Anfragen durch den eBlocker beantworten lassen.",
+                    "DISABLED": "Verbindungsaufbau zu Captive Portal Check URLs zulassen",
+                    "ENABLED": "Verbindungsaufbau zu Captive Portal Check URLs blockieren und Anfragen durch den eBlocker beantworten lassen",
                     "LABEL": "Captive Portal Check",
-                    "TOOLTIP_NO_SSL_FILTER": "Blockierung von Google Captive Portal Check funktioniert ohne HTTPS-Unterstützung eventuell nicht richtig",
-                    "TOOLTIP_NO_SSL_NO_FILTER": "Blockierung von Google Captive Portal Check funktioniert ohne HTTPS-Unterstützung eventuell nicht richtig",
-                    "TOOLTIP_SSL_FILTER": "Google Captive Portal Check wird blockiert und der eBlocker simuliert eine Antwort",
-                    "TOOLTIP_SSL_NO_FILTER": "Google Captive Portal wird blockiert"
+                    "TOOLTIP_FILTER": "Captive Portal Check URLs werden blockiert und Anfragen durch den eBlocker beantwortet",
+                    "TOOLTIP_NO_FILTER": "Captive Portal Check URLs werden zugelassen"
                 },
                 "DO_NOT_TRACK": {
                     "DISABLED": "Der eBlocker verändert den Do-Not-Track-Header in ausgehenden Anfragen nicht.",
@@ -338,15 +336,6 @@
             "TOOLBAR": {
                 "TITLE": "eBlocker Booting"
             }
-        },
-        "CAPTIVE_PORTAL": {
-            "DISABLED": "Verbindungsaufbau zum Google Captive Portal Check blockieren.",
-            "ENABLED": "Verbindungsaufbau zum Google Captive Portal Check blockieren und Anfragen durch den eBlocker beantworten lassen.",
-            "LABEL": "Captive Portal Check",
-            "TEXT1": "Der Google Captive Portal Check wird von Google-Produkten wie Android, Chrome und Chromebooks benutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei wird deine IP-Adresse und weitere Daten zum Google Captive Portal gesendet.",
-            "TEXT2": "eBlocker blockiert den Aufbau zum Google Captive Portal, da sonst deine IP-Adresse von Google erfasst wird.",
-            "TEXT3": "Aktiviere diese Option, wenn Android-Geräte häufig von deinem WLAN getrennt werden.",
-            "TITLE": "Google Captive Portal Check"
         },
         "CONFIG_BACKUP": {
             "ACTION": {
@@ -1770,15 +1759,6 @@
                 }
             }
         },
-        "DO_NOT_TRACK": {
-            "DISABLED": "Der eBlocker verändert den Do-Not-Track-Header in ausgehenden Anfragen nicht.",
-            "ENABLED": "Der eBlocker fügt allen ausgehenden Anfragen einen Do-Not-Track-Header hinzu.",
-            "LABEL": "Do-Not-Track",
-            "TEXT1": "Do-Not-Track (DNT) ist ein HTTP-Header-Feld, das einer Website signalisiert, dass der Besucher nicht möchte, dass die Website ein Nutzungsprofil erstellt.",
-            "TEXT2": "Leider ist dieser Wunsch des Benutzers unverbindlich und wird daher von sehr vielen Websites nicht beachtet.",
-            "TEXT3": "Der eBlocker setzt dieses Feld trotzdem in allen Anfragen, außer du schaltest es hier explizit ab.",
-            "TITLE": "Do-Not-Track"
-        },
         "EVENTS": {
             "ACTION": {
                 "RELOAD": "Aktualisieren",
@@ -2450,14 +2430,6 @@
             "TOOLBAR": {
                 "TITLE": ""
             }
-        },
-        "REFERRER": {
-            "DISABLED": "HTTP-Referrer Header nicht verändern",
-            "ENABLED": "HTTP-Referrer Header entfernen",
-            "LABEL": "HTTP Referrer Header",
-            "TEXT1": "HTTP Referrer Header werden automatisch erstellt, wenn du im Internet surfst. Der Referrer zeigt die Webseite an, die du besucht hast, bevor du auf die aktuelle Webseite gelangt bist.",
-            "TEXT2": "Durch die Nutzung des Referrer-Headers können Websites deine Surfgewohnheiten teilweise verfolgen. Einige Websites nutzen den Referrer-Header auch für interne Zwecke. Das Blockieren des Referrer-Headers kann daher dazu führen, dass einige Seiten nicht mehr richtig angezeigt werden.",
-            "TITLE": "HTTP Referrer Header"
         },
         "REPORT": {
             "ACTION": {
@@ -3589,25 +3561,6 @@
                 "TITLE": "eBlocker Mobile"
             }
         },
-        "WEB_COMPRESSION": {
-            "COMPRESS_LABEL": "HTML-Seiten komprimieren",
-            "LABEL": "Kompression",
-            "MODE": {
-                "ALWAYS": "Immer",
-                "OFF": "Nie",
-                "VPN_CLIENTS_ONLY": "Nur für eBlocker Mobile Geräte, wenn diese nicht im lokalen Netzwerk sind (empfohlen)"
-            },
-            "TEXT": "Der eBlocker muss Web-Seiten und Javascript-Dateien dekomprimieren, um sein Symbol einzufügen oder WebRTC zu blockieren. Das Wiederkomprimieren des Inhaltes kann zu einer leichten Verzögerung führen. Da in lokalen Netzwerke kein Geschwindigkeitsvorteil von der Kompression zu erwarten ist kann dort darauf auch verzichtet werden. eBlocker Mobile Benutzer können hingegen davon profitieren, da die Daten wieder über das Internet gesendet werden.",
-            "TITLE": "Kompression"
-        },
-        "WEB_RTC": {
-            "DISABLED": "WebRTC-Verbindungen zulassen",
-            "ENABLED": "WebRTC-Verbindungen blockieren",
-            "LABEL": "WebRTC",
-            "TEXT1": "WebRTC ist eine Browser-Technologie, mit der Kommunikation zwischen zwei Parteien in Echtzeit ermöglicht wird. Sie wird beispielsweise für Internet-Telefonie und Chat verwendet.",
-            "TEXT2": "Leider offenbart WebRTC deine echte IP-Adresse (und sogar deine lokale LAN-IP), um die Verbindungen herzustellen. Selbst bei der Verwendung von Tor oder einem VPN (IP-Anonymisierung), kannst du so über deine echte IP-Adresse identifiziert werden, wenn WebRTC nicht blockiert wird.",
-            "TITLE": "WebRTC"
-        },
         "WHITELISTS": {
             "ACTION": {
                 "ADD": "Neue Kategorie",
@@ -3770,9 +3723,9 @@
             },
             "CAPTIVE_PORTAL": {
                 "OVERVIEW": {
-                    "P1": "Der Google Captive Portal Check wird von Android, Chrome und Chromebooks benutzt, um zu testen, ob eine Internetverbindung besteht. Dabei WERDEN deine IP Adresse und weitere Daten zum Google Captive Portal gesendet.",
-                    "P2": "Der eBlocker blockiert den Aufbau zum Google Captive Portal, da ansonsten deine IP Adresse von Google erfasst wird.",
-                    "P3": "Aktiviere diese Option, wenn Android Geräte häufig von deinem WLAN getrennt werden.",
+                    "P1": "Captive Portal Check URLs werden von Betriebssystemen und Browsern wie Android, iOS, macOS, Windows und Firefox genutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei werden deine IP-Adresse und die Version des Betriebssystems an den Hersteller gesendet.",
+                    "P2": "Mit dieser Option blockiert der eBlocker den Verbindungsaufbau zu Captive Portal Check URLs, da ansonsten deine IP-Adresse vom Hersteller erfasst werden kann.",
+                    "P3": "Wenn Android-Geräte häufig von deinem WLAN getrennt werden, solltest du diese Option ausschalten",
                     "TITLE": "Captive Portal Check"
                 }
             },

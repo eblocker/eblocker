@@ -248,8 +248,6 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         }
 
         this.complete = true;
-        this.headersChanged = true;
-        this.contentChanged = true;
     }
 
     private FullHttpResponse getOnePixelImageResponse(String url) {
@@ -278,8 +276,6 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         httpResponse.headers().add("Access-Control-Allow-Origin", "*");
         setResponse(httpResponse);
         this.complete = true;
-        this.headersChanged = true;
-        this.contentChanged = true;
     }
 
     @Override
@@ -294,8 +290,6 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         httpResponse.headers().add(HttpHeaders.Names.LOCATION, targetUrl);
         setResponse(httpResponse);
         this.complete = true;
-        this.headersChanged = true;
-        this.contentChanged = true;
     }
 
     @Override

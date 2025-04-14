@@ -99,7 +99,7 @@ public class EBlockerFilterProcessor implements TransactionProcessor {
                 return false;
 
             case NO_CONTENT:
-                if (featureService.getGoogleCaptivePortalRedirectorState() || isConnectionCheckUrl(transaction.getUrl())) {
+                if (isConnectionCheckUrl(transaction.getUrl())) {
                     transaction.noContent();
                     return false;
                 } else {

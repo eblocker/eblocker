@@ -87,6 +87,9 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
     }
 
     private Map<String, Supplier<FullHttpResponse>> mapUrlsToResponders() {
+        Supplier<FullHttpResponse> generateMsftConnectTest = textGenerator("Microsoft Connect Test");
+        Supplier<FullHttpResponse> generateSuccessFirefox = textGenerator("success\n");
+
         Map<String, Supplier<FullHttpResponse>> responders = Map.ofEntries(
                 // Android:
                 entry("http://clients3.google.com/generate_204", generate204),
@@ -95,13 +98,13 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
                 entry("http://captive.apple.com/hotspot-detect.html", generateSuccessApple),
                 entry("http://www.apple.com/library/test/success.html", generateSuccessApple),
                 // Microsoft:
-                entry("http://www.msftconnecttest.com/connecttest.txt", textGenerator("Microsoft Connect Test")),
-                entry("http://ipv6.msftconnecttest.com/connecttest.txt", textGenerator("Microsoft Connect Test")),
+                entry("http://www.msftconnecttest.com/connecttest.txt", generateMsftConnectTest),
+                entry("http://ipv6.msftconnecttest.com/connecttest.txt", generateMsftConnectTest),
                 entry("http://www.msftncsi.com/ncsi.txt", textGenerator("Microsoft NCSI")),
                 // Firefox:
                 entry("http://detectportal.firefox.com/canonical.html", htmlGenerator("<meta http-equiv=\"refresh\" content=\"0;url=https://support.mozilla.org/kb/captive-portal\"/>")),
-                entry("http://detectportal.firefox.com/success.txt?ipv4", textGenerator("success\n")),
-                entry("http://detectportal.firefox.com/success.txt?ipv6", textGenerator("success\n"))
+                entry("http://detectportal.firefox.com/success.txt?ipv4", generateSuccessFirefox),
+                entry("http://detectportal.firefox.com/success.txt?ipv6", generateSuccessFirefox)
         );
         return responders;
     }
@@ -122,11 +125,12 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
             if (featureService.getGoogleCaptivePortalRedirectorState()) {
                 generateResponse(transaction);
                 return false;
+            } else {
+                return true; // allow request to captive portal check URL
             }
         } else {
             return false; // do not inject eBlocker icon (or other stuff) into response
         }
-        return true;
     }
 
     private void generateResponse(Transaction transaction) {

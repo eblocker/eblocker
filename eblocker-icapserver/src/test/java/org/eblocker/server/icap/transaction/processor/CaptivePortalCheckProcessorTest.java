@@ -87,12 +87,7 @@ class CaptivePortalCheckProcessorTest {
     void matchApple() {
         enableFeature(true);
         makeTransaction("http://captive.apple.com/hotspot-detect.html", true);
-
-        // Important for iOS 18.4 and later:
-        // Stop processing, so no icon is injected into the HTML response.
-        // (An icon would trigger the captive portal dialog.)
         assertFalse(processor.process(transaction));
-
         assertTrue(transaction.isComplete());
         assertTrue(transaction.isResponse());
         assertEquals("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>\n",

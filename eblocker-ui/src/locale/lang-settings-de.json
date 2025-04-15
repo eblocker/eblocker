@@ -2617,7 +2617,7 @@
                 "GREETINGS": "Nur mit deiner Unterstützung können wir eBlocker weiter entwickeln und betreiben,",
                 "HIGHLIGHTS": {
                     "HEAD": "Die Highlights:",
-                    "LI_1": "<strong>Captive Portal Checks</strong> durch Android, iOS, macOS, Windows und Firefox können jetzt vom eBlocker beantwortet werden."
+                    "LI_1": "<strong>Captive Portal Checks</strong> durch Android, iOS, macOS, Windows und Firefox können jetzt vom eBlocker beantwortet werden.",
                     "LI_2": "<strong>Werbung und Tracker über IPv6</strong> werden jetzt in der Blocker-Statistik im Dashboard erfasst.",
                     "LI_3": "<strong>Die Browsernamen und -versionen</strong> für die Gerätetarnung wurden aktualisiert."
                 },

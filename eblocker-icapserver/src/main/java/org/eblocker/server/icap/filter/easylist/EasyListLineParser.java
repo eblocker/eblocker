@@ -45,6 +45,7 @@ public class EasyListLineParser implements FilterLineParser {
     );
 
     private static final List<BooleanOption> UNSUPPORTED_OPTIONS = List.of(
+            BooleanOption.WEBRTC,
             BooleanOption.WEB_SOCKET,
             BooleanOption.PING,
             BooleanOption.POPUP

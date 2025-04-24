@@ -48,7 +48,7 @@ class CaptivePortalCheckProcessorTest {
     @BeforeEach
     void setUp() {
         featureService = Mockito.mock(FeatureServiceSubscriber.class);
-        processor = new CaptivePortalCheckProcessor(featureService);
+        processor = new CaptivePortalCheckProcessor(featureService, false);
     }
 
     @Test

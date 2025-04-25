@@ -18,6 +18,7 @@ package org.eblocker.server.icap.transaction.processor;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -31,7 +32,9 @@ import org.eblocker.server.icap.transaction.TransactionProcessor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -52,6 +55,13 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
         httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, 0);
         httpResponse.headers().add("Cross-Origin-Resource-Policy", "cross-origin");
+        return httpResponse;
+    };
+
+    // Responder for Ubuntu:
+    private final Supplier<FullHttpResponse> generate204Ubuntu = () -> {
+        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
+        httpResponse.headers().add("x-networkmanager-status", "online");
         return httpResponse;
     };
 
@@ -86,7 +96,7 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
         };
     }
 
-    private Map<String, Supplier<FullHttpResponse>> mapUrlsToResponders() {
+    private Map<String, Supplier<FullHttpResponse>> mapUrlsToResponders(boolean simulateCaptivePortal) {
         Supplier<FullHttpResponse> generateMsftConnectTest = textGenerator("Microsoft Connect Test");
         Supplier<FullHttpResponse> generateSuccessFirefox = textGenerator("success\n");
 
@@ -104,15 +114,28 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
                 // Firefox:
                 entry("http://detectportal.firefox.com/canonical.html", htmlGenerator("<meta http-equiv=\"refresh\" content=\"0;url=https://support.mozilla.org/kb/captive-portal\"/>")),
                 entry("http://detectportal.firefox.com/success.txt?ipv4", generateSuccessFirefox),
-                entry("http://detectportal.firefox.com/success.txt?ipv6", generateSuccessFirefox)
+                entry("http://detectportal.firefox.com/success.txt?ipv6", generateSuccessFirefox),
+                // Ubuntu:
+                entry("http://connectivity-check.ubuntu.com/", generate204Ubuntu)
         );
+        if (simulateCaptivePortal) {
+            /*
+            For testing how the client reacts to captive portals:
+            - Go to "Settings / Blocker / Advanced Settings / Captive Portal Check" and enable "Block Requests..."
+            - Set "captivePortal.simulate=true" in configuration.properties
+            - Restart ICAP server.
+            The eBlocker will now respond with an HTML page to all of the above URLs.
+             */
+            Supplier<FullHttpResponse> generateCaptivePortalResponse = htmlGenerator("<html><body><h1>eBlocker Captive Portal Simulator</h1><p>Welcome to eBlocker!</p></body></html>");
+            responders = responders.keySet().stream().collect(Collectors.toUnmodifiableMap(Function.identity(), url -> generateCaptivePortalResponse));
+        }
         return responders;
     }
 
     @Inject
-    public CaptivePortalCheckProcessor(FeatureServiceSubscriber featureService) {
+    public CaptivePortalCheckProcessor(FeatureServiceSubscriber featureService, @Named("captivePortal.simulate") boolean simulateCaptivePortal) {
         this.featureService = featureService;
-        this.captivePortalCheckResponders = mapUrlsToResponders();
+        this.captivePortalCheckResponders = mapUrlsToResponders(simulateCaptivePortal);
     }
 
     @Override

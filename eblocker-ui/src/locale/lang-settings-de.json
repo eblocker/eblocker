@@ -2614,12 +2614,12 @@
                     "NOT_AGAIN": "Diesen Hinweis nicht wieder anzeigen."
                 },
                 "INTRO": "eBlockerOS 3.2 ist ein Wartungsrelease mit diversen Verbesserungen.",
-                "GREETINGS": "Nur mit deiner Unterstützung können wir eBlocker weiter entwickeln und betreiben,",
+                "GREETINGS": "Nur dank deiner Unterstützung können wir eBlocker weiter entwickeln und betreiben,",
                 "HIGHLIGHTS": {
                     "HEAD": "Die Highlights:",
-                    "LI_1": "<strong>Captive Portal Checks</strong> durch Android, iOS, macOS, Windows und Firefox können jetzt vom eBlocker beantwortet werden.",
-                    "LI_2": "<strong>Werbung und Tracker über IPv6</strong> werden jetzt in der Blocker-Statistik im Dashboard erfasst.",
-                    "LI_3": "<strong>Die Browsernamen und -versionen</strong> für die Gerätetarnung wurden aktualisiert."
+                    "LI_1": "<strong>Bugfix Captive Portal Checks:</strong> WLAN-Verbindungsfehler bei Apple Geräten wurden beseitigt.",
+                    "LI_2": "<strong>Werbung und Tracker über IPv6</strong> werden korrekt in der Dashboard Blocker-Statistik erfasst.",
+                    "LI_3": "<strong>Gerätetarnung verbessert</strong>, so dass eBlockerOS die neusten Browserversioen imitieren kann."
                 },
                 "LINK_PRE": "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT": "Release Notes",
@@ -3723,8 +3723,8 @@
             },
             "CAPTIVE_PORTAL": {
                 "OVERVIEW": {
-                    "P1": "Captive Portal Check URLs werden von Betriebssystemen und Browsern wie Android, iOS, macOS, Windows und Firefox genutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei werden deine IP-Adresse und die Version des Betriebssystems an den Hersteller gesendet.",
-                    "P2": "Mit dieser Option blockiert der eBlocker den Verbindungsaufbau zu Captive Portal Check URLs, da ansonsten deine IP-Adresse vom Hersteller erfasst werden kann.",
+                    "P1": "Captive Portal Check URLs werden von Betriebssystemen und Browsern wie Android, iOS, macOS, Windows, Ubuntu und Firefox genutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei werden deine IP-Adresse und die Version des Betriebssystems an den Hersteller gesendet.",
+                    "P2": "Mit dieser Option blockiert der eBlocker den Verbindungsaufbau zu Captive Portal Check URLs, da ansonsten deine IP-Adresse und weitere Daten vom Hersteller erfasst werden können.",
                     "P3": "Wenn Android-Geräte häufig von deinem WLAN getrennt werden, solltest du diese Option ausschalten",
                     "TITLE": "Captive Portal Check"
                 }

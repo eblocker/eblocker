@@ -185,7 +185,7 @@
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_PATCH_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-3-1/",
-            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 3.2: Captive Portal Checks und diverse Verbesserungen",
+            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 3.2: Bugfix für Captive Portal Checks sowie diverse Verbesserungen",
             "MESSAGE_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-3-2/",

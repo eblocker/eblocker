@@ -173,6 +173,12 @@ public class EasyListRuleParserTest {
     }
 
     @Test
+    public void testIgnoringWebRtcRules() {
+        Filter rule = new EasyListLineParser().parseLine("$webrtc,domain=ack.net|allthetests.com");
+        Assert.assertNull(rule);
+    }
+
+    @Test
     public void testIgnoringPingRules() {
         Filter rule = new EasyListLineParser().parseLine("$ping");
         Assert.assertNull(rule);

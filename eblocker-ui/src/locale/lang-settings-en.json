@@ -2611,26 +2611,26 @@
                 "BLOG_LINK_TEXT" : "",
                 "BLOG_LINK_URL" : "",
                 "ENABLE" : {
-                    "NOT_AGAIN" : "Do not show this again."
+                    "NOT_AGAIN" : "Don't show this again."
                 },
-                "INTRO" : "eBlockerOS 3.1 is a maintenance release with various improvements.",
+                "INTRO" : "eBlockerOS 3.2 is a maintenance release with various improvements.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1" : "<strong>IPv6</strong>: Device cloaking and routing work in the same way as with IPv4.",
-                    "LI_2" : "<strong>Update of surrogates</strong> so websites do not recognize the eBlocker.",
-                    "LI_3" : "<strong>Failed updates</strong> can be repaired via the user interface."
+                    "LI_1" : "<strong>Bugfix Captive portal checks:</strong> WLAN connection errors with Apple devices have been fixed.",
+                    "LI_2" : "<strong>Ads and trackers via IPv6</strong> are correctly displayed in Dashbord Blocker Statistics tile.",
+                    "LI_3" : "<strong>Device cloaking improved</strong> so that eBlockerOS can imitate the latest browser versions."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-1/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-2/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 3.1"
+                "TITLE" : "eBlockerOS Release 3.2"
             },
-            "MENU_LABEL" : "New in eBlockerOS 3.1",
+            "MENU_LABEL" : "New in eBlockerOS 3.2",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 3.1"
+                "TITLE" : "eBlockerOS Release 3.2"
             }
         },
         "SSL" : {
@@ -3723,8 +3723,8 @@
             },
             "CAPTIVE_PORTAL" : {
                 "OVERVIEW" : {
-                    "P1" : "Captive Portal Check URLs are used by operating systems and browsers like Android, iOS, macOS, Windows and Firefox to test whether an Internet connection exists. Your IP address and OS version will be sent to the vendor.",
-                    "P2" : "With this option the eBlocker blocks connections to Captive Portal Check URLs, because your IP address can be collected by the vendor.",
+                    "P1" : "Captive Portal Check URLs are used by operating systems and browsers like Android, iOS, macOS, Windows, Ubuntu and Firefox to test whether an Internet connection exists. Your IP address and OS version will be sent to the vendor.",
+                    "P2" : "With this option the eBlocker blocks connections to Captive Portal Check URLs, because your IP address and more data can be collected by the vendor.",
                     "P3" : "Disable this option if Android devices are frequently disconnected from your WLAN.",
                     "TITLE" : "Captive Portal Check"
                 }

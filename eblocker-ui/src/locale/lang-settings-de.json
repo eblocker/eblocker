@@ -2613,24 +2613,24 @@
                 "ENABLE": {
                     "NOT_AGAIN": "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO": "eBlockerOS 3.1 ist ein Wartungsrelease mit diversen Verbesserungen.",
-                "GREETINGS": "Nur mit deiner Unterstütung können wir eBlocker weiter entwickeln und betreiben,",
+                "INTRO": "eBlockerOS 3.2 ist ein Wartungsrelease mit diversen Verbesserungen.",
+                "GREETINGS": "Nur dank deiner Unterstützung können wir eBlocker weiter entwickeln und betreiben,",
                 "HIGHLIGHTS": {
                     "HEAD": "Die Highlights:",
-                    "LI_1": "<strong>IPv6</strong>: Die Gerätetarnung und das Routing funktionieren wie bei IPv4.",
-                    "LI_2": "<strong>Update der Surrogates</strong>, damit Webseiten den eBlocker nicht erkennen.",
-                    "LI_3": "<strong>Fehlgeschlagene Updates</strong> können über die Oberfläche repariert werden."
+                    "LI_1": "<strong>Bugfix Captive Portal Checks:</strong> WLAN-Verbindungsfehler bei Apple Geräten wurden beseitigt.",
+                    "LI_2": "<strong>Werbung und Tracker über IPv6</strong> werden korrekt in der Dashboard Blocker-Statistik erfasst.",
+                    "LI_3": "<strong>Gerätetarnung verbessert</strong>, so dass eBlockerOS die neusten Browserversioen imitieren kann."
                 },
                 "LINK_PRE": "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT": "Release Notes",
-                "LINK_URL": "https://eblocker.org/docs/release-notes-3-1/",
+                "LINK_URL": "https://eblocker.org/docs/release-notes-3-2/",
                 "OUTRO": "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN": "Dein eBlocker Team",
-                "TITLE": "eBlockerOS Release 3.1"
+                "TITLE": "eBlockerOS Release 3.2"
             },
-            "MENU_LABEL": "Neu in eBlockerOS 3.1",
+            "MENU_LABEL": "Neu in eBlockerOS 3.2",
             "TOOLBAR": {
-                "TITLE": "Neues eBlockerOS Release 3.1"
+                "TITLE": "Neues eBlockerOS Release 3.2"
             }
         },
         "SSL": {
@@ -3723,8 +3723,8 @@
             },
             "CAPTIVE_PORTAL": {
                 "OVERVIEW": {
-                    "P1": "Captive Portal Check URLs werden von Betriebssystemen und Browsern wie Android, iOS, macOS, Windows und Firefox genutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei werden deine IP-Adresse und die Version des Betriebssystems an den Hersteller gesendet.",
-                    "P2": "Mit dieser Option blockiert der eBlocker den Verbindungsaufbau zu Captive Portal Check URLs, da ansonsten deine IP-Adresse vom Hersteller erfasst werden kann.",
+                    "P1": "Captive Portal Check URLs werden von Betriebssystemen und Browsern wie Android, iOS, macOS, Windows, Ubuntu und Firefox genutzt, um zu testen, ob eine Internet-Verbindung besteht. Dabei werden deine IP-Adresse und die Version des Betriebssystems an den Hersteller gesendet.",
+                    "P2": "Mit dieser Option blockiert der eBlocker den Verbindungsaufbau zu Captive Portal Check URLs, da ansonsten deine IP-Adresse und weitere Daten vom Hersteller erfasst werden können.",
                     "P3": "Wenn Android-Geräte häufig von deinem WLAN getrennt werden, solltest du diese Option ausschalten",
                     "TITLE": "Captive Portal Check"
                 }

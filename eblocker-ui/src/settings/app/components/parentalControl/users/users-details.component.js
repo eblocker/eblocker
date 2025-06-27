@@ -474,7 +474,7 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
     function updateDevice(d, userId) {
         d.assignedUser = userId;
         d.operatingUser = userId;
-        DeviceService.update(d.id, d).then(function success() {
+        return DeviceService.update(d.id, d).then(function success() {
             vm.user.assignedToDevices.push(d);
             vm.user.operatingDevices.push(d);
 

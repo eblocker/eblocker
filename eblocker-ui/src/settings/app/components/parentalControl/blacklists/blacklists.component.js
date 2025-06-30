@@ -20,8 +20,8 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $translate, $interval, BlockerService, LanguageService, StateService, UserProfileService,
-                    DialogService, TableService, ArrayUtilsService) {
+function Controller(logger, $translate, $interval, BlockerService, LanguageService, StateService, UserProfileService, // jshint ignore: line
+                    DialogService, TableService, ArrayUtilsService, FilterService) {
     'ngInject';
     'use strict';
 
@@ -137,6 +137,8 @@ function Controller(logger, $translate, $interval, BlockerService, LanguageServi
     // Get all blacklists
     function loadAllFilterLists() {
         vm.loading = true;
+
+        FilterService.invalidateCache();
 
         const config = {
             params: {

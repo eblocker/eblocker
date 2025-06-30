@@ -175,6 +175,7 @@ export default function FilterService(logger, $http, $q, $translate, Notificatio
         parseAndSaveFilterList: parseAndSaveFilterList,
         deleteFilterList: deleteFilterList,
         getDomainList: getDomainList,
-        uniqueName: uniqueName
+        uniqueName: uniqueName,
+        invalidateCache: invalidateCache
     };
 }

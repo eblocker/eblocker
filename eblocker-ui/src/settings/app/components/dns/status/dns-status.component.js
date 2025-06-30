@@ -50,7 +50,7 @@ function Controller(logger, DnsService, StateService, STATES, $q, NotificationSe
     };
 
     function loadAndSetNetworkConfiguration() {
-        NetworkService.getNetworkConfig().then(function success(response) {
+        return NetworkService.getNetworkConfig().then(function success(response) {
             vm.networkConfig = response.data;
             vm.isAutoMode = vm.networkConfig.automatic;
         });

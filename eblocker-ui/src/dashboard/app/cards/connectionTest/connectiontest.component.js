@@ -23,8 +23,8 @@ export default {
     }
 };
 
-function ConnectionTestController($timeout, $q, $location, ConnectionTestService, DeviceService, DnsService,
-                                  NetworkService, SslService, CardService) {
+function ConnectionTestController($timeout, $q, $location, ConnectionTestService, DeviceService, DnsService, // jshint ignore: line
+                                  NetworkService, SslService, CardService, $http, logger) {
     'ngInject';
 
     const vm = this;
@@ -73,13 +73,29 @@ function ConnectionTestController($timeout, $q, $location, ConnectionTestService
         vm.showExplanations = {};
     }
 
+    // The connection test only works if the dashboard was loaded via HTTP:
     function setHttpLocation() {
         if ($location.protocol() === 'https') {
             vm.dashboardLoadedViaHttps = true;
-            vm.dashboardHttpLocation = 'http://' + $location.host() + '/dashboard/';
+            // Get IP and port for HTTP. Necessary for modern browsers (that would otherwise switch to HTTPS).
+            $http.get('/controlbar/console/ip', {headers: {'Scheme': 'http:'}}).then(function(response) {
+                if (angular.isDefined(response) && angular.isString(response.data)) {
+                    vm.dashboardHttpLocation = response.data + '/dashboard/';
+                } else {
+                    setFallbackHttpLocation();
+                }
+            }, function(response) {
+                logger.error('Error while getting server url ', response);
+                setFallbackHttpLocation();
+            });
         } else {
             vm.dashboardLoadedViaHttps = false;
         }
+    }
+
+    function setFallbackHttpLocation() {
+        // Fallback (that may not work in modern browsers):
+        vm.dashboardHttpLocation = 'http://' + $location.host() + '/dashboard/';
     }
 
     function connectionTest() {

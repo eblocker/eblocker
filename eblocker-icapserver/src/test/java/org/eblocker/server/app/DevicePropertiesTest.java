@@ -72,7 +72,6 @@ class DevicePropertiesTest {
         assertEquals(DeviceProperties.DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT, deviceProperties.getSerialNumberPattern());
         assertEquals(DeviceProperties.DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT, deviceProperties.getSerialnumberExample());
         assertFalse(deviceProperties.isWifiAvailable());
-        assertFalse(deviceProperties.isRgbLedAvailable());
     }
 
 }

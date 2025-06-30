@@ -61,7 +61,6 @@ import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
 import org.eblocker.server.http.controller.LanguageController;
-import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -174,7 +173,6 @@ public class EblockerHttpsServer implements Preprocessor {
     private final FilterStatisticsController filterStatisticsController;
     private final ConfigurationBackupController configBackupController;
     private final CustomDomainFilterConfigController customDomainFilterConfigController;
-    private final LedSettingsController ledSettingsController;
     private final TasksController tasksController;
     private final FeatureToggleController featureToggleController;
     private final ConnectionCheckController connectionCheckController;
@@ -244,7 +242,6 @@ public class EblockerHttpsServer implements Preprocessor {
                                FilterStatisticsController filterStatisticsController,
                                ConfigurationBackupController configBackupController,
                                CustomDomainFilterConfigController customDomainFilterConfigController,
-                               LedSettingsController ledSettingsController,
                                TasksController tasksController,
                                ConnectionCheckController connectionCheckController,
                                BlockerController blockerController,
@@ -342,7 +339,6 @@ public class EblockerHttpsServer implements Preprocessor {
         this.configBackupController = configBackupController;
         this.customDomainFilterConfigController = customDomainFilterConfigController;
 
-        this.ledSettingsController = ledSettingsController;
         this.tasksController = tasksController;
         this.connectionCheckController = connectionCheckController;
         this.blockerController = blockerController;
@@ -1556,16 +1552,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/device/pause", deviceController)
                 .action("setPauseByDeviceId", HttpMethod.PUT)
                 .name("adminconsole.device.put.pause");
-
-        // ** New Adminconsole: LED settings:
-        server
-                .uri("/api/adminconsole/led", ledSettingsController)
-                .action("getSettings", HttpMethod.GET)
-                .name("adminconsole.led.settings.get");
-        server
-                .uri("/api/adminconsole/led", ledSettingsController)
-                .action("updateSettings", HttpMethod.POST)
-                .name("adminconsole.led.settings.update");
 
         server
                 .uri("/api/adminconsole/console/ip", controlBarController)

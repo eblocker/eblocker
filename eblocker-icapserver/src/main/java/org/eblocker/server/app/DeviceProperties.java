@@ -78,10 +78,6 @@ public class DeviceProperties {
     @Nonnull
     private static final String DEVICE_PROP_HAS_WIFI_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have Wifi
 
-    private static final String DEVICE_PROP_HAS_RGB_LED_KEY = "device.led.rgb.available";
-    @Nonnull
-    private static final String DEVICE_PROP_HAS_RGB_LED_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have an RGB LED
-
     private final Properties properties;
 
     @Nonnull
@@ -113,11 +109,6 @@ public class DeviceProperties {
 
     public boolean isWifiAvailable() {
         String value = properties.getProperty(DEVICE_PROP_HAS_WIFI_KEY, DEVICE_PROP_HAS_WIFI_DEFAULT);
-        return Boolean.parseBoolean(value);
-    }
-
-    public boolean isRgbLedAvailable() {
-        String value = properties.getProperty(DEVICE_PROP_HAS_RGB_LED_KEY, DEVICE_PROP_HAS_RGB_LED_DEFAULT);
         return Boolean.parseBoolean(value);
     }
 

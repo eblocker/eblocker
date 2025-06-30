@@ -116,7 +116,6 @@ import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
 import org.eblocker.server.http.controller.LanguageController;
-import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -761,12 +760,6 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public ConfigurationBackupController configurationBackupController() {
         return ControllerWrapperFactory.wrap(ConfigurationBackupController.class);
-    }
-
-    @Provides
-    @Singleton
-    public LedSettingsController ledSettingsController() {
-        return ControllerWrapperFactory.wrap(LedSettingsController.class);
     }
 
     @Provides

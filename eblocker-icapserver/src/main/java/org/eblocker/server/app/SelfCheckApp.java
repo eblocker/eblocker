@@ -25,12 +25,10 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.ConfigurableModule;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.JedisDataSource;
-import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.network.TelnetConnection;
 import org.eblocker.server.common.network.TelnetConnectionImpl;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
-import org.eblocker.server.http.service.StatusLedService;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,7 +48,6 @@ public class SelfCheckApp {
     private final String version;
     private final ScriptRunner scriptRunner;
     private final String showResultScript;
-    private final StatusLedService statusLedService;
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) throws Exception {
@@ -87,13 +84,11 @@ public class SelfCheckApp {
     public SelfCheckApp(DataSource dataSource,
                         @Named("project.version") String version,
                         ScriptRunner scriptRunner,
-                        @Named("show.selfcheck.result.command") String showResultScript,
-                        StatusLedService statusLedService) {
+                        @Named("show.selfcheck.result.command") String showResultScript) {
         this.dataSource = dataSource;
         this.version = version;
         this.scriptRunner = scriptRunner;
         this.showResultScript = showResultScript;
-        this.statusLedService = statusLedService;
     }
 
     public void run() throws IOException, InterruptedException {
@@ -118,14 +113,12 @@ public class SelfCheckApp {
 
                 w.append("Self-check result:   OK");
                 w.newLine();
-                statusLedService.setStatus(ExecutionState.SELF_CHECK_OK);
             } catch (Exception e) {
                 w.append("ERROR during self-check: " + e.toString());
                 w.newLine();
 
                 w.append("Self-check result:   NOT OK");
                 w.newLine();
-                statusLedService.setStatus(ExecutionState.SELF_CHECK_NOT_OK);
             }
             w.append("***********************************\n\n");
 

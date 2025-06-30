@@ -20,7 +20,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $translate, $interval, BlockerService, LanguageService, StateService, UserProfileService,
+function Controller(logger, $translate, $interval, BlockerService, LanguageService, StateService, UserProfileService, // jshint ignore: line
                     DialogService, TableService, ArrayUtilsService, FilterService) {
     'ngInject';
     'use strict';

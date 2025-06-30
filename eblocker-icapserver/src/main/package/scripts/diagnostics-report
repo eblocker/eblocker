@@ -92,8 +92,8 @@ FILE=$OUT_DIR/eblocker-status.log
     echo $SEP >> $FILE
     echo "DNS-Server: $DNS_SERVER" >> $FILE
     echo $SEP >> $FILE
-    echo "Traceroute to my.eblocker.com:" >> $FILE
-    traceroute my.eblocker.com >> $FILE
+    echo "Traceroute to my.eblocker.org:" >> $FILE
+    traceroute -n -w 1 -m 20 my.eblocker.org >> $FILE
     echo $SEP >> $FILE
     echo "Network configuration:" >> $FILE
     echo $NETWORK_CONFIG >> $FILE

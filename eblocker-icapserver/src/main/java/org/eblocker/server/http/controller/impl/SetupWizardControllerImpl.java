@@ -54,9 +54,6 @@ public class SetupWizardControllerImpl implements SetupWizardController {
     public SetupWizardInfo getInfo(Request request, Response response) {
         return new SetupWizardInfo(
                 registrationProperties.getRegistrationState() == RegistrationState.NEW,
-                deviceProperties.isSerialNumberAvailable(),
-                deviceProperties.getSerialNumberPattern(),
-                deviceProperties.getSerialnumberExample(),
                 registrationServiceAvailabilityCheck.isRegistrationAvailable()
         );
     }
@@ -73,54 +70,6 @@ public class SetupWizardControllerImpl implements SetupWizardController {
     public boolean didUserFinishSetupWizard(Request request, Response response) {
         boolean result = registrationProperties.getRegistrationState() != RegistrationState.NEW;
         log.debug("User already finished setup wizard?: {}", result);
-        return result;
-    }
-
-    /**
-     * Should the wizard ask for the serial number, or not?
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @Override
-    public Object askForSerialNumber(Request request, Response response) {
-        return deviceProperties.isSerialNumberAvailable();
-    }
-
-    /**
-     * Get example for serial number
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @Override
-    public Object getSerialNumberExample(Request request, Response response) {
-        return deviceProperties.getSerialnumberExample();
-    }
-
-    /**
-     * Check if the serial number is valid (right format)
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @Override
-    public Object checkSerialNumber(Request request, Response response) {
-        Map<String, String> map = request.getBodyAs(Map.class);
-        String serialNumber = map.get("deviceSerialNumber");
-        if (serialNumber == null) {
-            return false;
-        }
-        boolean result = deviceProperties.isSerialNumberMatching(serialNumber);
-        if (result) {
-            log.info("Serial number is well formatted.");
-        } else {
-            log.info("Serial number is in wrong format.");
-        }
-
         return result;
     }
 }

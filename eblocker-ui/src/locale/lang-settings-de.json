@@ -29,12 +29,7 @@
                 "DEVICE": {
                     "EBLOCKER_DEVICE_NAME_LABEL": "Optionaler Gerätename (z.B. \"Stefans eBlocker\")",
                     "INTRO": "Gib deinem eBlocker einen optionalen Namen. Dies ist sinnvoll, wenn du mehrere eBlocker verwendest.",
-                    "LABEL": "Gerät",
-                    "SERIAL_EXPLAIN_PART1": "Gib bitte die Geräteseriennummer ein, die du auf dem Typenschild unter dem eBlocker findest (Format der Seriennummer: {{serialSample}}).",
-                    "SERIAL_EXPLAIN_PART2": "",
-                    "SERIAL_NUMBER_ERROR": "Die Seriennummer findest du auf dem Typenschild unter deinem eBlocker.",
-                    "SERIAL_NUMBER_LABEL": "Seriennummer des Gerätes",
-                    "SERIAL_NUMBER_WRONG_FORMAT": "Die Seriennummer ist nicht im erwarteten Format."
+                    "LABEL": "Gerät"
                 },
                 "AUTO_ENABLE_NEW_DEVICES": {
                     "LABEL": "Neue Geräte",
@@ -3792,7 +3787,7 @@
                     "P1": "Bei erstmaliger Aktivierung des eBlocker findest du den Lizenzschlüssel immer im Karton deines neuen Gerätes auf einer extra beigelegten Karte.",
                     "P2": "Nach einem Factory-Reset / Zurücksetzen des eBlockers musst du die Lizenz auch auf dem Lizenzserver zunächst vom Gerät lösen. Folge zu diesem Zweck dem Link \"Lizenz übertragen\" und gib auf der sich öffnenden Webseite die bei der erstmaligen Aktivierung verwendete E-Mail Adresse ein.",
                     "P3_MAIL": "",
-                    "P3_POST": ". Halte die Seriennummer des eBlockers und deinen Lizenzschlüssel bereit.",
+                    "P3_POST": ". Halte deinen Lizenzschlüssel bereit.",
                     "P3_PRE": "Wenn du keinen Zugang mehr zu dieser E-Mail-Adresse hast oder einen gebrauchten eBlocker erworben hast, hinterlasse bitte eine Nachricht im Forum"
                 },
                 "OVERVIEW": {

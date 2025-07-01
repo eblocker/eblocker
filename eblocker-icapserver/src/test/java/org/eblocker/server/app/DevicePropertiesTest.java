@@ -31,17 +31,10 @@ class DevicePropertiesTest {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:device-sample-1.properties");
 
         //then
-        assertTrue(deviceProperties.isSerialNumberAvailable());
         assertEquals("bein", deviceProperties.getArchitecture());
         assertEquals("Cherry Pi X7", deviceProperties.getBoard());
         assertEquals("Pyramid 2.1", deviceProperties.getCase());
         assertFalse(deviceProperties.isWifiAvailable());
-
-        assertTrue(deviceProperties.isSerialNumberMatching("SN0123456789"));
-        assertTrue(deviceProperties.isSerialNumberMatching("sn0123456789"));
-        assertFalse(deviceProperties.isSerialNumberMatching("xx0123456789"));
-        assertFalse(deviceProperties.isSerialNumberMatching("SN012345678"));
-        assertFalse(deviceProperties.isSerialNumberMatching("SN01234567890"));
     }
 
     @Test
@@ -51,7 +44,6 @@ class DevicePropertiesTest {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:device-sample-2.properties");
 
         //then
-        assertFalse(deviceProperties.isSerialNumberAvailable());
         assertEquals("bein", deviceProperties.getArchitecture());
         assertEquals("Cherry Pi X7", deviceProperties.getBoard());
         assertEquals("Classic", deviceProperties.getCase());
@@ -65,12 +57,9 @@ class DevicePropertiesTest {
         DeviceProperties deviceProperties = new DeviceProperties("classpath:not-existing-file");
 
         //then
-        assertFalse(deviceProperties.isSerialNumberAvailable());
         assertEquals(DeviceProperties.DEVICE_PROP_ARCH_DEFAULT, deviceProperties.getArchitecture());
         assertEquals(DeviceProperties.DEVICE_PROP_BOARD_DEFAULT, deviceProperties.getBoard());
         assertEquals(DeviceProperties.DEVICE_PROP_CASE_DEFAULT, deviceProperties.getCase());
-        assertEquals(DeviceProperties.DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT, deviceProperties.getSerialNumberPattern());
-        assertEquals(DeviceProperties.DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT, deviceProperties.getSerialnumberExample());
         assertFalse(deviceProperties.isWifiAvailable());
     }
 

@@ -18,17 +18,12 @@ export default function SetupService($http, DataCachingService, $sce) {
     'ngInject';
 
     const PATH = '/api/adminconsole/setup/';
-    const PATH_CHECK_SERIAL = PATH + 'serial/checkformat';
 
     let infoCache;
 
     function getInfo(reload) {
         infoCache = DataCachingService.loadCache(infoCache, PATH + 'info', reload);
         return infoCache;
-    }
-
-    function checkSerialNumber(serialNumber) {
-        return $http.put(PATH_CHECK_SERIAL, {deviceSerialNumber: serialNumber});
     }
 
     function getTos(langKey) {
@@ -70,7 +65,6 @@ export default function SetupService($http, DataCachingService, $sce) {
 
     return {
         getInfo: getInfo,
-        checkSerialNumber: checkSerialNumber,
         getTos: getTos,
         getTosHtml: getTosHtml,
         hasSetupBeenExecuted: hasSetupBeenExecuted

@@ -29,12 +29,7 @@
                 "DEVICE" : {
                     "EBLOCKER_DEVICE_NAME_LABEL" : "Optional device name (i.e. \"John's eBlocker\")",
                     "INTRO" : "Please enter an optional name for your eBlocker. This is useful, if you are using several eBlockers.",
-                    "LABEL" : "Device",
-                    "SERIAL_EXPLAIN_PART1" : "Please enter the device serial number. You find it on type label at the bottom side of the eBlocker (Format of the serial number: {{serialSample}}).",
-                    "SERIAL_EXPLAIN_PART2" : "",
-                    "SERIAL_NUMBER_ERROR" : "The serial number is printed on the bottom of the eBlocker device.",
-                    "SERIAL_NUMBER_LABEL" : "Device Serial Number",
-                    "SERIAL_NUMBER_WRONG_FORMAT" : "The device serial number is not in the expected format."
+                    "LABEL" : "Device"
                 },
                 "AUTO_ENABLE_NEW_DEVICES" : {
                     "LABEL" : "New Devices",
@@ -3792,7 +3787,7 @@
                     "P1" : "When you activate eBlocker for the first time, you will always find the license key in the box of your new device on a separate card.",
                     "P2" : "After a factory reset of the eBlocker, the license must also be removed from the device on the license server. To do this, follow the link \"Transfer license\" and enter the e-mail address used when you first activated the software on the website that opens.",
                     "P3_MAIL" : "",
-                    "P3_POST" : ". Have the eBlocker serial number and your license key ready.",
+                    "P3_POST" : ". Have your license key ready.",
                     "P3_PRE" : "If you no longer have access to this e-mail address or you have purchased a used eBlocker, please post a note in the forum"
                 },
                 "OVERVIEW" : {

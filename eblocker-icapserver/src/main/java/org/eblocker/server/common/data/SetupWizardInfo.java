@@ -19,37 +19,16 @@ package org.eblocker.server.common.data;
 public class SetupWizardInfo {
 
     private final boolean setupRequired;
-    private final boolean needSerialNumber;
-    private final String serialNumberPattern;
-    private final String serialNumberExample;
     private boolean registrationAvailable;
 
     public SetupWizardInfo(boolean setupRequired,
-                           boolean needSerialNumber,
-                           String serialNumberPattern,
-                           String serialNumberExample,
                            boolean registrationAvailable) {
         this.setupRequired = setupRequired;
-        this.needSerialNumber = needSerialNumber;
-        this.serialNumberPattern = serialNumberPattern;
-        this.serialNumberExample = serialNumberExample;
         this.registrationAvailable = registrationAvailable;
     }
 
     public boolean isSetupRequired() {
         return setupRequired;
-    }
-
-    public boolean isNeedSerialNumber() {
-        return needSerialNumber;
-    }
-
-    public String getSerialNumberPattern() {
-        return serialNumberPattern;
-    }
-
-    public String getSerialNumberExample() {
-        return serialNumberExample;
     }
 
     public boolean isRegistrationAvailable() {

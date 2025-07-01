@@ -47,9 +47,6 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     vm.locale = settings.locale();
 
     vm.$onInit = function() {
-        vm.askForSerialNumber = vm.setupWizardInfo.needSerialNumber;
-        vm.serialSample = vm.setupWizardInfo.serialNumberExample;
-        // configuredSettings.serial = !vm.setupWizardInfo.needSerialNumber;
         vm.registrationAvailable = vm.setupWizardInfo.registrationAvailable;
 
         vm.registrationUserData = {
@@ -176,40 +173,11 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     // TAB DEVICE
     vm.submitDeviceForm = submitDeviceForm;
     function submitDeviceForm() {
-        if (vm.askForSerialNumber) {
-            checkSerialNumber(vm.registrationUserData.serialNumber);
-        } else if (vm.isTosValid() || vm.registrationAvailable) {
+        if (vm.isTosValid() || vm.registrationAvailable) {
             vm.nextStep();
         } else {
             vm.registrationUserData.fallback = true;
             registerWithInformation();
-        }
-    }
-
-    function checkSerialNumber(serialNumber) {
-        vm.deviceForm.serialNumber.$setValidity('wrongFormat', true);
-        if(serialNumber !== undefined) {
-            SetupService.checkSerialNumber(serialNumber).then(function success(response) {
-                const result = response.data;
-                if(!result){
-                    vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
-                }
-                else{
-                    vm.deviceForm.serialNumber.$setValidity('wrongFormat', true);
-                    if (vm.isTosValid() || vm.registrationAvailable) {
-                        vm.nextStep();
-                    } else {
-                        vm.registrationUserData.fallback = true;
-                        registerWithInformation();
-                    }
-                }
-                return result;
-            }, function error() {
-                vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
-            });
-        }
-        else{
-            vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
         }
     }
     // END TAB DEVICE

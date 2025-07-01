@@ -850,10 +850,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/setup/info", setupWizardController)
                 .action("getInfo", HttpMethod.GET)
                 .name("adminconsole.setup.info.route");
-        server
-                .uri("/api/adminconsole/setup/serial/checkformat", setupWizardController)
-                .action("checkSerialNumber", HttpMethod.PUT)
-                .name("adminconsole.setup.serial.check.route");
 
         // ** New Adminconsole: update
         server

@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 /**
  * injectable singleton, which reads a properties file (default: <code>/etc/eblocker-device.properties</code>
@@ -62,26 +61,11 @@ public class DeviceProperties {
     @Nonnull
     static final String DEVICE_PROP_CASE_DEFAULT = "(unknown)"; // "Cube 1.0"
 
-    private static final String DEVICE_PROP_HAS_SERIALNUMBER_KEY = "device.serialnumber.available";
-    @Nonnull
-    private static final String DEVICE_PROP_HAS_SERIALNUMBER_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have a serial number
-
-    private static final String DEVICE_PROP_SERIALNUMBER_PATTERN_KEY = "device.serialnumber.pattern";
-    @Nonnull
-    static final String DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT = "SN(\\d){8}";
-
-    private static final String DEVICE_PROP_SERIALNUMBER_EXAMPLE_KEY = "device.serialnumber.example";
-    @Nonnull
-    static final String DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT = "SN12345678"; // not used, if device.serialnumber.available=false
-
     private static final String DEVICE_PROP_HAS_WIFI_KEY = "device.wifi.available"; // not used, if device.serialnumber.available=false
     @Nonnull
     private static final String DEVICE_PROP_HAS_WIFI_DEFAULT = "false"; // MUST be false by default, because "old" eBlockers do not have Wifi
 
     private final Properties properties;
-
-    @Nonnull
-    private final Pattern serialNumberPattern;
 
     @Inject
     public DeviceProperties(@Named("deviceProperties") String devicePropertiesPath) {
@@ -98,13 +82,6 @@ public class DeviceProperties {
         } catch (IOException e) {
             LOG.warn("Cannot load device properties from {}, using default values", devicePropertiesPath, e);
         }
-
-        serialNumberPattern = Pattern.compile(getSerialNumberPattern(), Pattern.CASE_INSENSITIVE);
-    }
-
-    public boolean isSerialNumberAvailable() {
-        String value = properties.getProperty(DEVICE_PROP_HAS_SERIALNUMBER_KEY, DEVICE_PROP_HAS_SERIALNUMBER_DEFAULT);
-        return Boolean.parseBoolean(value);
     }
 
     public boolean isWifiAvailable() {
@@ -125,19 +102,5 @@ public class DeviceProperties {
     @Nonnull
     public String getCase() {
         return properties.getProperty(DEVICE_PROP_CASE_KEY, DEVICE_PROP_CASE_DEFAULT);
-    }
-
-    @Nonnull
-    public String getSerialNumberPattern() {
-        return properties.getProperty(DEVICE_PROP_SERIALNUMBER_PATTERN_KEY, DEVICE_PROP_SERIALNUMBER_PATTERN_DEFAULT);
-    }
-
-    public boolean isSerialNumberMatching(String serialNumber) {
-        return serialNumberPattern.matcher(serialNumber).matches();
-    }
-
-    @Nonnull
-    public String getSerialnumberExample() {
-        return properties.getProperty(DEVICE_PROP_SERIALNUMBER_EXAMPLE_KEY, DEVICE_PROP_SERIALNUMBER_EXAMPLE_DEFAULT);
     }
 }

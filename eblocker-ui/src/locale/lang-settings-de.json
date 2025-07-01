@@ -1982,11 +1982,6 @@
             "DE": "Deutsch",
             "EN": "English"
         },
-        "LED_SETTINGS": {
-            "BRIGHTNESS": "Helligkeit",
-            "ERROR": "Fehler beim Einstellen der LED",
-            "LABEL": "LED"
-        },
         "LEGAL": {
             "ADDRESS_CITY": "22299 Hamburg",
             "ADDRESS_COUNTRY": "Deutschland",

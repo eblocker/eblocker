@@ -32,7 +32,6 @@ import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
 import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.system.CpuInfo;
 import org.eblocker.server.common.util.DateUtil;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -102,7 +101,6 @@ public class DeviceRegistrationProperties {
     private final char[] truststorePassword;
     private final EblockerResource truststoreCopy;
     private final int keySize;
-    private final CpuInfo cpuInfo;
     private final int defaultRegistrationType;
     private final int warningPeriodDays;
     private final Date lifetimeIndicator;
@@ -140,7 +138,6 @@ public class DeviceRegistrationProperties {
                                         @Named("registration.warning.period") int warningPeriodDays,
                                         @Named("registration.lifetime.indicator") String lifetimeIndicator,
                                         @Named("tmpDir") String tmpDir,
-                                        CpuInfo cpuInfo,
                                         DeviceRegistrationLicenseState licenseState) throws ParseException {
         this.password = Hex.encodeHex(systemKey.get());
         this.registrationProperties = new SimpleResource(registrationProperties);
@@ -151,7 +148,6 @@ public class DeviceRegistrationProperties {
         this.truststoreCopy = new SimpleResource(truststoreCopy);
         this.keySize = keySize;
         this.defaultRegistrationType = defaultRegistrationType;
-        this.cpuInfo = cpuInfo;
         this.warningPeriodDays = warningPeriodDays;
         this.lifetimeIndicator = format.parse(lifetimeIndicator);
         this.tmpDir = Paths.get(tmpDir);
@@ -179,7 +175,10 @@ public class DeviceRegistrationProperties {
         newRegistration.state = RegistrationState.NEW;
         newRegistration.type = defaultRegistrationType;
         newRegistration.id = UUID.randomUUID();
-        newRegistration.cpuSerial = cpuInfo.getSerial();
+        if (newRegistration.type == 1) { // legacy registration with CPU serial required?
+            // CPU serial is not supported anymore, so generate a random one:
+            newRegistration.cpuSerial = UUID.randomUUID().toString();
+        }
 
         String newDeviceId = newRegistration.generateDeviceId();
 
@@ -269,7 +268,9 @@ public class DeviceRegistrationProperties {
         properties.setProperty(PROP_REG_STATE, registration.state.toString());
         properties.setProperty(PROP_REG_TYPE, Integer.toString(registration.type));
         properties.setProperty(PROP_REG_ID, registration.id.toString());
-        properties.setProperty(PROP_REG_CPU_SERIAL, registration.cpuSerial);
+        if (registration.cpuSerial != null) {
+            properties.setProperty(PROP_REG_CPU_SERIAL, registration.cpuSerial);
+        }
 
         properties.setProperty(PROP_DEVICE_ID, deviceId);
         properties.setProperty(PROP_DEVICE_CRED, deviceCredentials);
@@ -325,10 +326,6 @@ public class DeviceRegistrationProperties {
         }
 
         if (registration.type < MIN_ALLOWED_REG_TYPE) {
-            return RegistrationState.INVALID;
-        }
-
-        if (!registration.cpuSerial.equals(cpuInfo.getSerial())) {
             return RegistrationState.INVALID;
         }
 

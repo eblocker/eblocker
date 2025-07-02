@@ -26,7 +26,6 @@ import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
 import org.eblocker.server.common.data.LocaleSettings;
-import org.eblocker.server.common.system.CpuInfo;
 import org.eblocker.server.http.service.SettingsService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,7 +52,8 @@ import static org.mockito.Mockito.when;
 public abstract class DeviceRegistrationTestBase {
     private static final Logger log = LoggerFactory.getLogger(DeviceRegistrationTestBase.class);
 
-    protected final static int REG_TYPE_1 = 1;
+    protected final static int REG_TYPE_0 = 0;
+    protected final static int REG_TYPE_1_LEGACY = 1; // when CPU serial number was required
     protected final static int KEY_SIZE = 2048;
     protected final static String CPU_SERIAL = "0123456789abcdef";
     protected final static String ORG_NAME = "Bright Mammoth Brain GmbH";
@@ -139,13 +139,10 @@ public abstract class DeviceRegistrationTestBase {
     }
 
     protected DeviceRegistrationProperties createDeviceRegistrationProperties() throws IOException, ParseException {
-        return createDeviceRegistrationProperties(CPU_SERIAL);
+        return createDeviceRegistrationProperties(REG_TYPE_0);
     }
 
-    protected DeviceRegistrationProperties createDeviceRegistrationProperties(String cpuSerial) throws IOException, ParseException {
-        CpuInfo cpuInfo = Mockito.mock(CpuInfo.class);
-        when(cpuInfo.getSerial()).thenReturn(cpuSerial);
-
+    protected DeviceRegistrationProperties createDeviceRegistrationProperties(int registrationType) throws IOException, ParseException {
         DeviceRegistrationLicenseState licenseState = Mockito.mock(DeviceRegistrationLicenseState.class);
 
         return new DeviceRegistrationProperties(
@@ -157,11 +154,10 @@ public abstract class DeviceRegistrationTestBase {
                 trustStorePassword,
                 truststoreCopyFileName,
                 KEY_SIZE,
-                REG_TYPE_1,
+                registrationType,
                 WARNING_PERIOD,
                 LIFETIME_INDICATOR,
                 Files.createTempDirectory(null).toString(),
-                cpuInfo,
                 licenseState);
     }
 

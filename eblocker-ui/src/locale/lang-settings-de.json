@@ -1469,7 +1469,7 @@
                     "ACTIVATE": {
                         "LABEL": "Lizenzschlüssel",
                         "LICENSE_KEY_LABEL": "Lizenzschlüssel",
-                        "TEXT1": "Gib den Lizenzschlüssel, um eine neue Lizenz auf deinem eBlocker zu aktivieren."
+                        "TEXT1": "Gib den Lizenzschlüssel ein, um eine neue Lizenz auf deinem eBlocker zu aktivieren."
                     },
                     "CONFIRM": {
                         "CONFIRM": "Bist du sicher, dass du diese Lizenz aktivieren möchtest?",

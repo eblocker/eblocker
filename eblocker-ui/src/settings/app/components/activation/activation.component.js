@@ -52,6 +52,7 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
         vm.registrationUserData = {
             licenseKey: 'FAMLFT-OPENSOURCE'
         };
+        vm.registrationUserData.emailAddress = ''; // removed since eOS 4
         setTosContent();
     };
 
@@ -206,26 +207,9 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
         return string !== undefined && string !== '';
     }
 
-    function validateEmailAddresses(emailAddress) {
-        if(!isStringNotEmpty(emailAddress)){
-            $translate('ADMINCONSOLE.ACTIVATION.TAB.LICENSE.ERROR_REGISTER_EMAIL_MISSING').then(function(translation) {
-                vm.errorString = translation;
-            });
-            return false;
-        }
-
-        return true;
-    }
-
     function registerWithInformation() {
         vm.registering = true;
         vm.licenseForm.licenseKey.$setValidity('invalidKey', true);
-
-        //check the emailAddress
-        if (!vm.registrationUserData.fallback && !validateEmailAddresses(vm.registrationUserData.emailAddress)) {
-            vm.registering = false;
-            return;
-        }
 
         if (angular.isObject(vm.tos)) {
             vm.registrationUserData.tosVersion = vm.tos.licenseVersion;

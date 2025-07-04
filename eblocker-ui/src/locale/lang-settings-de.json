@@ -44,17 +44,12 @@
                     }
                 },
                 "LICENSE": {
-                    "EMAIL_IMPORTANCE_EXPLAIN": "Deine E-Mail verwenden wir nur im Ausnahmefall, falls wir dich über ein Sicherheitsproblem informieren müssen. Sie wird ansonsten nicht verwendet, streng nach <a href=\"https://eblocker.org/de/privacy-policy/\" target=\"_blank\" class=\"orange\">unserer Datenschutzerklärung</a> verarbeitet und nicht an Dritte weitergegeben.",
-                    "EMAIL_LABEL": "E-Mail",
                     "ERROR": {
-                        "ERROR_REGISTER_CONFIRM_EMAIL_MISMATCH": "Die E-Mail Adressen stimmen nicht überein. Stelle bitte sicher, dass du deine E-Mail Adresse zweimal eingibst.",
-                        "ERROR_REGISTER_CONFIRM_EMAIL_MISSING": "Bitte bestätige deine E-Mail Adresse.",
                         "ERROR_REGISTER_DEFAULT": "Fehler bei der Verbindung zum Aktivierungsserver. Versuche es bitte später noch einmal.",
                         "ERROR_REGISTER_DEVICEALREADYREGISTERED": "Dieses Gerät wurde bereits aktiviert.",
                         "ERROR_REGISTER_DEVICECERTIFICATEREQUESTNOTSELFSIGNED": "Dieser Lizenzschlüssel wurde bereits für ein anderes Gerät verwendet.",
-                        "ERROR_REGISTER_EMAIL_MISSING": "Bitte gib eine E-Mail Adresse ein.",
                         "ERROR_REGISTER_FILL_IN_ALL_FIELDS": "Fülle bitte alle Felder aus.",
-                        "ERROR_REGISTER_INVALIDLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig oder passt nicht zur E-Mail Adresse.",
+                        "ERROR_REGISTER_INVALIDLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig.",
                         "ERROR_REGISTER_INVALIDPRODUCTID": "Falsches Format des Lizenzschlüssels. Bitte überprüfe den eingegebenen Lizenzschlüssel.",
                         "ERROR_REGISTER_LICENSEUSED": "Dieser Lizenzschlüssel wurde bereits verwendet.",
                         "ERROR_REGISTER_LICENSEUSERMISMATCH": "Die E-Mail und der Lizenzschlüssel passen nicht zusammen. Stelle bitte sicher, dass du die korrekte E-Mail und den dazugehörigen Lizenzschlüssel eingegeben hast.",
@@ -67,15 +62,12 @@
                         "ERROR_TOS_INVALID": "Aktivierung fehlgeschlagen.",
                         "REGISTRATION_NOT_POSSIBLE": "Aktivierung fehlgeschlagen."
                     },
-                    "ERROR_REGISTER_EMAIL_MISSING": "Bitte gib eine E-Mail Adresse ein.",
                     "LABEL": "Lizenz",
                     "LICENSE_KEY_LABEL": "Lizenzschlüssel",
                     "LICENSE_KEY_WAS_SENT_TO_YOU_IF_NOT": "Falls du keinen Lizenzschlüssel erhalten hast, ",
-                    "PLEASE_ENTER_EMAIL_HERE": "E-Mail Adresse bitte hier eingeben.",
                     "PLEASE_LET_US_KNOW": "kontaktiere uns bitte.",
                     "REGISTERING_STATUS_LABEL": "Aktivierungsdaten werden übermittelt...",
-                    "REGISTRATION_ERROR_INVALID_EMAIL": "Deine E-Mail Adresse ist nicht korrekt.",
-                    "REGISTRATION_PURPOSE_EXPLAIN": "Bestätige bitte den Lizenzschlüssel und gib deine E-Mail-Adresse ein. Damit ist die Aktivierung deines eBlockers abgeschlossen."
+                    "REGISTRATION_PURPOSE_EXPLAIN": "Bestätige bitte den Lizenzschlüssel. Damit ist die Aktivierung deines eBlockers abgeschlossen."
                 },
                 "TIME_LANG": {
                     "INTRO": "Bitte wähle die Zeitzone, in welcher du den eBlocker nutzt.",
@@ -1454,16 +1446,11 @@
                     "OPEN_IN_NEW_WINDOW": "In neuem Fenster öffnen"
                 },
                 "ERROR": {
-                    "EMAIL_INVALID": "Dies ist keine gültige E-Mail-Adresse.",
-                    "EMAIL_REQUIRED": "E-Mail-Adresse ist erforderlich.",
-                    "ERROR_REGISTER_CONFIRM_EMAIL_MISMATCH": "Die E-Mail Adressen stimmen nicht überein. Bitte stelle sicher, dass du deine E-Mail Adresse zweimal eingibst.",
-                    "ERROR_REGISTER_CONFIRM_EMAIL_MISSING": "Bitte bestätige deine E-Mail Adresse.",
                     "ERROR_REGISTER_DEFAULT": "Fehler bei der Verbindung zum Aktivierungsserver. Versuche es bitte später noch einmal.",
                     "ERROR_REGISTER_DEVICEALREADYREGISTERED": "Dieses Gerät wurde bereits aktiviert.",
                     "ERROR_REGISTER_DEVICECERTIFICATEREQUESTNOTSELFSIGNED": "Dieser Lizenzschlüssel wurde bereits für ein anderes Gerät verwendet.",
-                    "ERROR_REGISTER_EMAIL_MISSING": "Bitte gib eine E-Mail Adresse ein.",
                     "ERROR_REGISTER_FILL_IN_ALL_FIELDS": "Bitte fülle alle Felder aus.",
-                    "ERROR_REGISTER_INVALIDLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig oder er passt nicht zur E-Mail Adresse.",
+                    "ERROR_REGISTER_INVALIDLICENSEKEY": "Dieser Lizenzschlüssel ist nicht gültig.",
                     "ERROR_REGISTER_INVALIDPRODUCTID": "Falsches Format des Lizenzschlüssels. Bitte prüfe den eingegebenen Lizenzschlüssel.",
                     "ERROR_REGISTER_LICENSEUSED": "Dieser Lizenzschlüssel wurde bereits verwendet.",
                     "ERROR_REGISTER_LICENSEUSERMISMATCH": "Die E-Mail und der Lizenzschlüssel passen nicht zusammen. Bitte stelle sicher, dass du die korrekte E-Mail und den dazugehörigen Lizenzschlüssel eingegeben hast.",
@@ -1480,11 +1467,9 @@
                 },
                 "TAB": {
                     "ACTIVATE": {
-                        "EMAIL_LABEL": "E-Mail Adresse",
                         "LABEL": "Lizenzschlüssel",
                         "LICENSE_KEY_LABEL": "Lizenzschlüssel",
-                        "TEXT1": "Gib den Lizenzschlüssel und die E-Mail-Adresse ein, um eine neue Lizenz auf deinem eBlocker zu aktivieren.",
-                        "TEXT2": "Deine E-Mail verwenden wir nur im Ausnahmefall, falls wir dich über ein Sicherheitsproblem informieren müssen. Sie wird ansonsten nicht verwendet, streng nach <a href=\"https://eblocker.org/de/privacy-policy/\" target=\"_blank\" class=\"orange\">unserer Datenschutzerklärung</a> verarbeitet und nicht an Dritte weitergegeben."
+                        "TEXT1": "Gib den Lizenzschlüssel, um eine neue Lizenz auf deinem eBlocker zu aktivieren."
                     },
                     "CONFIRM": {
                         "CONFIRM": "Bist du sicher, dass du diese Lizenz aktivieren möchtest?",

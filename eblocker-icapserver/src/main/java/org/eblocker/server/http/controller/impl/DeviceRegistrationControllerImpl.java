@@ -156,7 +156,7 @@ public class DeviceRegistrationControllerImpl implements DeviceRegistrationContr
         }
 
         DeviceRegistrationRequest registrationRequest = deviceRegistrationProperties.generateRequest(
-                parameters.getEmailAddress().trim(),
+                parameters.getEmailAddress() != null ? parameters.getEmailAddress().trim() : "",
                 parameters.getDeviceName(),
                 parameters.getLicenseKey().replaceAll(" ", ""),
                 parameters.getSerialNumber(),

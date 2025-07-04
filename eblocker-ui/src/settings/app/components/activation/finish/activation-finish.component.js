@@ -29,36 +29,6 @@ function Controller(logger, UpdateService, STATES, StateService, $stateParams, $
 
     const vm = this;
 
-    // vm.postRegistrationInformation = {
-    //     'CANCEL': {
-    //         'LABEL':'No, Thanks'
-    //     },
-    //     'TITLE': {
-    //         'TEXT':'VPN Special Offer from Acme VPN'
-    //     },
-    //     'TEXT': {
-    //         'P1': {
-    //             'PRE': 'Take advantage from our VPN special offer:',
-    //             'EM':'',
-    //             'POST':''
-    //         },
-    //         'P2': {
-    //             'PRE': 'Get ',
-    //             'EM':'3 month free VPN',
-    //             'POST':' from premium provider Acme VPN.'
-    //         },
-    //         'P3': {
-    //             'PRE': 'No subscription, no obligations. VPN access will be terminated after 3 month. ',
-    //             'EM':'Save money now',
-    //             'POST':' and benefit from our special VPN partner prices afterwards.'
-    //         }
-    //     },
-    //     'OK': {
-    //         'LABEL': 'More Info',
-    //         'LINK': 'https://www.eblocker.com/en/setup_wizard/acmevpn'
-    //     }
-    // };
-
     vm.nextStep = nextStep;
     vm.vpnRemindLater = vpnRemindLater;
     vm.doNotRemindAgain = doNotRemindAgain;

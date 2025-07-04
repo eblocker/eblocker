@@ -68,20 +68,6 @@
                                 </md-input-container>
                             </div>
 
-                            <div>
-                                <p translate="ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.TEXT2"></p>
-                            </div>
-
-                            <div>
-                                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
-                                    <label>{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.TAB.ACTIVATE.EMAIL_LABEL' | translate }}</label>
-                                    <input name="emailAddress" ng-model="vm.emailAddress" type="email" required>
-                                    <div ng-messages="vm.licenseForm.emailAddress.$error" ng-if="vm.licenseForm.$submitted">
-                                        <div ng-message="required">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.EMAIL_REQUIRED' | translate}}</div>
-                                        <div ng-message="email">{{'ADMINCONSOLE.DIALOG.UPDATE_LICENSE.ERROR.EMAIL_INVALID' | translate}}</div>
-                                    </div>
-                                </md-input-container>
-                            </div>
                         </div>
 
                         <div ng-show="vm.processing" class="spinner-overlay" layout="column" layout-align="center center">

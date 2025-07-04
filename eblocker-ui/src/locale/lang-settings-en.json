@@ -44,17 +44,12 @@
                     }
                 },
                 "LICENSE" : {
-                    "EMAIL_IMPORTANCE_EXPLAIN" : "We will only use your e-mail in exceptional cases if we need to inform you about a security issue. Otherwise it will not be used, processed strictly in accordance with <a href=\"https://eblocker.org/en/privacy-policy/\" target=\"_blank\" class=\"orange\">our privacy policy</a> and not passed on to third parties.",
-                    "EMAIL_LABEL" : "Email",
                     "ERROR" : {
-                        "ERROR_REGISTER_CONFIRM_EMAIL_MISMATCH" : "The email addresses do not match. Please make sure you entered the same email address twice.",
-                        "ERROR_REGISTER_CONFIRM_EMAIL_MISSING" : "Please confirm your email address.",
                         "ERROR_REGISTER_DEFAULT" : "Error while connecting to the activation server. Please try again later.",
                         "ERROR_REGISTER_DEVICEALREADYREGISTERED" : "This device has already been activated.",
                         "ERROR_REGISTER_DEVICECERTIFICATEREQUESTNOTSELFSIGNED" : "The license key was used on another device already.",
-                        "ERROR_REGISTER_EMAIL_MISSING" : "Please enter an email address.",
                         "ERROR_REGISTER_FILL_IN_ALL_FIELDS" : "Please fill in all input fields.",
-                        "ERROR_REGISTER_INVALIDLICENSEKEY" : "The license key is invalid or it doesn't match the email address.",
+                        "ERROR_REGISTER_INVALIDLICENSEKEY" : "The license key is invalid.",
                         "ERROR_REGISTER_INVALIDPRODUCTID" : "Invalid license key format. Please verify the entered license key.",
                         "ERROR_REGISTER_LICENSEUSED" : "This license has already been activated.",
                         "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Email address and license key do not match. Please make sure that you enter the email address corresponding to the license key.",
@@ -67,15 +62,12 @@
                         "ERROR_TOS_INVALID" : "Activation failed.",
                         "REGISTRATION_NOT_POSSIBLE" : "Activation failed."
                     },
-                    "ERROR_REGISTER_EMAIL_MISSING" : "Please enter an email address.",
                     "LABEL" : "License",
                     "LICENSE_KEY_LABEL" : "License key",
                     "LICENSE_KEY_WAS_SENT_TO_YOU_IF_NOT" : "If you did not receive a license key, ",
-                    "PLEASE_ENTER_EMAIL_HERE" : "Please enter your email address here",
                     "PLEASE_LET_US_KNOW" : "please contact us.",
                     "REGISTERING_STATUS_LABEL" : "Activation data are transferred...",
-                    "REGISTRATION_ERROR_INVALID_EMAIL" : "Your email address is incorrect.",
-                    "REGISTRATION_PURPOSE_EXPLAIN" : "Please confirm the license key and enter your email address to complete the eBlocker activation."
+                    "REGISTRATION_PURPOSE_EXPLAIN" : "Please confirm the license key to complete the eBlocker activation."
                 },
                 "TIME_LANG" : {
                     "INTRO" : "Please select the timezone where your eBlocker is in use. ",
@@ -1454,16 +1446,11 @@
                     "OPEN_IN_NEW_WINDOW" : "Open in new window"
                 },
                 "ERROR" : {
-                    "EMAIL_INVALID" : "This is not a valid email address.",
-                    "EMAIL_REQUIRED" : "Email address is required.",
-                    "ERROR_REGISTER_CONFIRM_EMAIL_MISMATCH" : "The email addresses do not match. Please make sure you entered the same email address twice.",
-                    "ERROR_REGISTER_CONFIRM_EMAIL_MISSING" : "Please confirm your email address.",
                     "ERROR_REGISTER_DEFAULT" : "Error while connecting to the activation server. Please try again later.",
                     "ERROR_REGISTER_DEVICEALREADYREGISTERED" : "This device has already been activated.",
                     "ERROR_REGISTER_DEVICECERTIFICATEREQUESTNOTSELFSIGNED" : "The license key was used on another device already.",
-                    "ERROR_REGISTER_EMAIL_MISSING" : "Please enter an email address.",
                     "ERROR_REGISTER_FILL_IN_ALL_FIELDS" : "Please fill in all input fields.",
-                    "ERROR_REGISTER_INVALIDLICENSEKEY" : "The license key is invalid or it doesn't match the email address.",
+                    "ERROR_REGISTER_INVALIDLICENSEKEY" : "The license key is invalid.",
                     "ERROR_REGISTER_INVALIDPRODUCTID" : "Invalid license key format. Please verify the entered license key.",
                     "ERROR_REGISTER_LICENSEUSED" : "This license has already been activated.",
                     "ERROR_REGISTER_LICENSEUSERMISMATCH" : "Email address and license key do not match. Please make sure that you enter the email address corresponding to the license key.",
@@ -1480,11 +1467,9 @@
                 },
                 "TAB" : {
                     "ACTIVATE" : {
-                        "EMAIL_LABEL" : "Email Address",
                         "LABEL" : "License Key",
                         "LICENSE_KEY_LABEL" : "License Key",
-                        "TEXT1" : "Enter license key and email address to activate a new license on your eBlocker.",
-                        "TEXT2" : "We will only use your e-mail in exceptional cases if we need to inform you about a security issue. Otherwise it will not be used, processed strictly in accordance with <a href=\"https://eblocker.org/en/privacy-policy/\" target=\"_blank\" class=\"orange\">our privacy policy</a> and not passed on to third parties."
+                        "TEXT1" : "Enter license key to activate a new license on your eBlocker."
                     },
                     "CONFIRM" : {
                         "CONFIRM" : "Are you sure that you want to activate this license?",

@@ -53,61 +53,29 @@ if [ "$1" = configure ] ; then
 # Make Tor config writable for Icap server (because of the need to reconfigure it)
     chown icapd /etc/tor/torrc-eblocker
 
-    if [ -f /lib/systemd/system/tor.service ]; then
-        # Tor is configured via systemd (Debian Stretch)
-        echo '>>> Configuring tor via systemd..'
+    echo '>>> Configuring tor via systemd..'
 
-        # Stopping tor:
-        echo '>>> Stopping and disablingtor default instance via systemd..'
-        systemctl stop tor
-        systemctl disable tor
+    # Stopping tor:
+    echo '>>> Stopping and disabling tor default instance via systemd..'
+    systemctl stop tor
+    systemctl disable tor
 
-        # Create tor instance (includes a user named _tor-eblocker)
-        echo '>>> Create tor instance'
-        tor-instance-create eblocker
+    # Create tor instance (includes a user named _tor-eblocker)
+    echo '>>> Create tor instance'
+    tor-instance-create eblocker
 
-        # Deploy tor config
-        echo '>>> Provide icapservers tor config'
-        rm /etc/tor/instances/eblocker/torrc
-        touch /etc/tor/torrc-eblocker
-        ln -s /etc/tor/torrc-eblocker /etc/tor/instances/eblocker/torrc
+    # Deploy tor config
+    echo '>>> Provide icapservers tor config'
+    rm /etc/tor/instances/eblocker/torrc
+    touch /etc/tor/torrc-eblocker
+    ln -s /etc/tor/torrc-eblocker /etc/tor/instances/eblocker/torrc
 
-        echo '>>> Start and enable eblocker tor instance'
-        systemctl enable tor@eblocker
-        systemctl start tor@eblocker
-    else
-        # Tor is configured via SysVinit (pre Debian Stretch)
-        echo '>>> Configuring tor via SysVinit'
-
-        # Stopping tor:
-        echo '>>> Stopping tor via invoke-rc..'
-        invoke-rc.d tor stop
-        echo '>>> Removing tor via update-rc..'
-        update-rc.d tor remove
-
-        # Divert the tor start/stop script
-        TOR=/etc/init.d/tor
-
-        echo '>>> Diverting tor...'
-        dpkg-divert --add --package eblocker-baseconfig --rename --divert $TOR.distrib $TOR
-        [ \! -e $TOR -o -L $TOR ] && ln -sf $TOR.site $TOR
-
-        echo '>>> update tor via update.rc...'
-        update-rc.d tor defaults
-
-        # (Re)start services:
-        echo '>>> Restarting tor via invoke-rc...'
-        invoke-rc.d tor start
-    fi
+    echo '>>> Start and enable eblocker tor instance'
+    systemctl enable tor@eblocker
+    systemctl start tor@eblocker
 
 # Copy issue file:
     cp /etc/issue.eblocker /etc/issue
-
-# Repair Armbian systems where logrotate did not run:
-    # Set the date of last password change and maximum number of days the password is valid
-    chage -d `date +%Y-%m-%d` -M 99999 root
-    # Truncate large log files (> 16MB)
-    find /var/log/ /opt/eblocker-dns/log/ /opt/eblocker-led/log/ -type f -size +16M -exec sh -c 'date > "$1" && echo "Truncated by eblocker-baseconfig postinst" >> "$1"' -- {} \;
 
 # Configure logrotate to be run hourly
     dpkg-divert --divert /etc/cron.hourly/logrotate --rename /etc/cron.daily/logrotate

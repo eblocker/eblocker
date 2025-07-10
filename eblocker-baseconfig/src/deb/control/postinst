@@ -18,39 +18,19 @@
 
 if [ "$1" = configure ] ; then
 
-# Network configuration
+    # Network configuration
     echo '>>> Initializing IPv4 forwarding..'
     IFACE=eth0 /etc/network/if-up.d/ipforward
 
-###  R E D S O C K S  ###
+    # Disable redsocks if it is installed
+    if [ -f "/lib/systemd/system/redsocks.service" ]; then
+        systemctl stop redsocks
+        systemctl disable redsocks
+    fi
 
-# Stopping redsocks:
-    echo '>>> Stopping redsocks via invoke-rc..'
-    invoke-rc.d redsocks stop
-    echo '>>> Removing redsocks via update-rc..'
-    update-rc.d redsocks remove
+    ### T O R ###
 
-# Divert the redsocks start/stop script
-    REDSOCKS=/etc/init.d/redsocks
-
-    echo '>>> Diverting redsocks...'
-    dpkg-divert --add --package eblocker-baseconfig --rename --divert $REDSOCKS.distrib $REDSOCKS
-    [ \! -e $REDSOCKS -o -L $REDSOCKS ] && ln -sf $REDSOCKS.site $REDSOCKS
-
-# On Jessie: systemd does not use /etc/init.d/redsocks. Patch /etc/default/redsocks
-    sed -e s/redsocks.conf/redsocks-eblocker.conf/ -i.bak /etc/default/redsocks
-
-    echo '>>> update redsocks via update.rc...'
-    update-rc.d redsocks defaults
-
-# (Re)start services:
-    echo '>>> Restarting redsocks via invoke-rc...'
-    invoke-rc.d redsocks start
-
-
-### T O R ###
-
-# Make Tor config writable for Icap server (because of the need to reconfigure it)
+    # Make Tor config writable for Icap server (because of the need to reconfigure it)
     chown icapd /etc/tor/torrc-eblocker
 
     echo '>>> Configuring tor via systemd..'
@@ -74,13 +54,14 @@ if [ "$1" = configure ] ; then
     systemctl enable tor@eblocker
     systemctl start tor@eblocker
 
-# Copy issue file:
+
+    # Copy issue file:
     cp /etc/issue.eblocker /etc/issue
 
-# Configure logrotate to be run hourly
+    # Configure logrotate to be run hourly
     dpkg-divert --divert /etc/cron.hourly/logrotate --rename /etc/cron.daily/logrotate
 
-# Deploy iptables/rules.v4 file
+    # Deploy iptables/rules.v4 file
     cat >/etc/iptables/rules.v4 <<EOF
 *nat
 :PREROUTING ACCEPT [0:0]

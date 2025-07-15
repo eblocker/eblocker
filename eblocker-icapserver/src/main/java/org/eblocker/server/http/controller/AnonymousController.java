@@ -28,8 +28,6 @@ public interface AnonymousController {
 
     Object putConfigById(Request request, Response response);
 
-    boolean isTorConnected(Request req, Response resp);
-
     void getNewTorIdentity(Request req, Response resp);
 
     Object getTorCountries(Request req, Response resp);

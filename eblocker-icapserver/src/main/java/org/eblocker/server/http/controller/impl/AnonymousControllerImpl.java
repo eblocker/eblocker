@@ -129,11 +129,6 @@ public class AnonymousControllerImpl extends SessionContextController implements
     }
 
     @Override
-    public boolean isTorConnected(Request req, Response resp) {
-        return torControl.isConnectedToTorNetwork();//uses buffer here
-    }
-
-    @Override
     public void getNewTorIdentity(Request req, Response resp) {
         log.info("Tor is getting a new identity...");
         torControl.getNewIdentity();

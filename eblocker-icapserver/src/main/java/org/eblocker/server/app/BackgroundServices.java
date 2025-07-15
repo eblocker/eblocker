@@ -288,6 +288,7 @@ public class BackgroundServices {
         zeroconfRegistrationService.unregisterConsoleService();
         recordedDomainsWriteScheduler.shutdown();
         ip6AddressMonitor.shutdown();
+        torController.shutdown();
         STATUS.info("Background services shut down.");
     }
 }

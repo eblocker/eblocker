@@ -24,27 +24,7 @@ divert_dhcp_defaults() {
     [ \! -e $DHCP_DEFAULTS -o -L $DHCP_DEFAULTS ] && ln -sf $DHCP_DEFAULTS.site $DHCP_DEFAULTS
 }
 
-disable_armbian_ramlog() {
-    # Fix issue EB1-2287:
-    systemctl stop armbian-ramlog
-    echo "ENABLED=false" > /etc/default/armbian-ramlog
-}
-
-import_openvpn_easy_rsa_ca() {
-    if [ -d /etc/openvpn/easy-rsa/ ] ; then
-        (cd /etc/openvpn/easy-rsa/keys/ && \
-             cp ca.key ca.crt crl.pem eblocker.key eblocker.crt /opt/eblocker-icap/keys/mobile/ && \
-             cp crl.pem /etc/openvpn/ && \
-             cp device:*.crt device:*.key /opt/eblocker-icap/keys/mobile/clients/ && \
-             chown -R icapd:icapd /opt/eblocker-icap/keys/mobile/)
-        rm -rf /etc/openvpn/easy-rsa/
-    fi
-}
-
 if [ "$1" = configure ] ; then
-
-    # Import previous ca key / cert
-    /opt/eblocker-icap/bin/import-ca-into-jks.sh
 
     # Install services:
     update-rc.d eblocker-reset defaults
@@ -62,9 +42,6 @@ if [ "$1" = configure ] ; then
     # Install sysstat
     echo "ENABLED=\"true\"" > /etc/default/sysstat
 
-    # Remove Squid's obsolete netdb:
-    rm -f /var/log/squid/netdb.state
-
     # add icapd user to group proxy to allow reading of squid's cache.log
     adduser icapd proxy
 
@@ -72,10 +49,6 @@ if [ "$1" = configure ] ; then
     adduser icapd redis
 
     divert_dhcp_defaults
-
-    disable_armbian_ramlog
-
-    import_openvpn_easy_rsa_ca
 
     if pgrep apt-get; then
         # Reboot the machine after apt-get is finished:

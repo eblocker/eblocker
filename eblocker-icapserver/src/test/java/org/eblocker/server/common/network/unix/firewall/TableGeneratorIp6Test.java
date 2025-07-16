@@ -114,6 +114,13 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.returnFromChain(), natPost.tcpPacket(disabledDevice, externalHost, 1234));
     }
 
+    @Test
+    public void testMissingLinkLocalAddress() {
+        generator.setOwnIpAddress(null);
+        createTablesAndSimulators(generator);
+        Assert.assertEquals(Action.returnFromChain(), natPre.tcpPacket(enabledDevice, externalHost, 80));
+    }
+
     private OpenVpnClientState createAnonVpnClient(String anonVpnInterface, int anonVpnRoute, String anonVpnDeviceId, String gateway) {
         OpenVpnClientState client = new OpenVpnClientState();
         client.setState(OpenVpnClientState.State.ACTIVE);

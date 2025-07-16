@@ -288,8 +288,13 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
 
     @Override
     public void onSubscribe() {
+        Ip6Address ip6LinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
+        if (ip6LinkLocalAddress == null) {
+            log.warn("Cannot send router solicitation, because no IPv6 link-local address is available");
+            return;
+        }
         log.debug("Sending router solicitation in order to get current router advertisement");
-        RouterSolicitation solicitation = new RouterSolicitation(networkInterface.getHardwareAddress(), networkInterface.getIp6LinkLocalAddress(),
+        RouterSolicitation solicitation = new RouterSolicitation(networkInterface.getHardwareAddress(), ip6LinkLocalAddress,
                 RouterSolicitation.MULTICAST_ALL_ROUTERS_HW_ADDRESS, Ip6Address.MULTICAST_ALL_ROUTERS_ADDRESS, List.of());
         pubSubService.publish(Channels.IP6_OUT, solicitation.toString());
     }

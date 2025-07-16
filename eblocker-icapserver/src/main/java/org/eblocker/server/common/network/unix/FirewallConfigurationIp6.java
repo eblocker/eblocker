@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
@@ -60,7 +61,8 @@ public class FirewallConfigurationIp6 extends FirewallConfigurationBase {
 
     @Override
     protected TableGeneratorBase getTableGenerator() {
-        tableGenerator.setOwnIpAddress(networkInterface.getIp6LinkLocalAddress().toString());
+        Ip6Address ip6LinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
+        tableGenerator.setOwnIpAddress(ip6LinkLocalAddress != null ? ip6LinkLocalAddress.toString() : null);
         tableGenerator.setPrefixes(ip6PrefixMonitor.getCurrentPrefixes());
         return tableGenerator;
     }

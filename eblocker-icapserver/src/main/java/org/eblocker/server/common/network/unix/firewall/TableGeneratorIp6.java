@@ -22,11 +22,15 @@ import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
 
 public class TableGeneratorIp6 extends TableGeneratorBase {
+    private static final Logger LOG = LoggerFactory.getLogger(TableGeneratorIp6.class);
+
     final static Ip6Address publicNetwork = Ip6Address.parse("2000::");
     final static int publicNetworkPrefixLength = 3;
 
@@ -57,6 +61,10 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Chain localRedirects = natTable.chain("local-redirects");
         Chain outputMasquerading = natTable.chain("masquerading");
 
+        if (ownIpAddress == null) {
+            LOG.warn("IPv6 link-local address not (yet) available. Unable to set up NAT table.");
+            return natTable;
+        }
         // always answer dns queries directed at eblocker
         preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
 

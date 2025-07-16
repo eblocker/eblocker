@@ -186,11 +186,13 @@ public class IpAddressValidator {
         }
 
         void sendMessages(Device device) {
+            boolean isIpv6Available = featureToggleRouter.isIp6Enabled() && eblockerIp6LinkLocalAddress != null;
+
             for (IpAddress ipAddress : device.getIpAddresses()) {
                 byte[] hardwareAddress = DatatypeConverter.parseHexBinary(device.getHardwareAddress(false));
                 if (ipAddress.isIpv4()) {
                     sendArpMessage(hardwareAddress, (Ip4Address) ipAddress);
-                } else if (featureToggleRouter.isIp6Enabled() && ipAddress.isIpv6()) {
+                } else if (isIpv6Available && ipAddress.isIpv6()) {
                     sendNeighborDiscoverySolicitation(hardwareAddress, (Ip6Address) ipAddress);
                 }
             }

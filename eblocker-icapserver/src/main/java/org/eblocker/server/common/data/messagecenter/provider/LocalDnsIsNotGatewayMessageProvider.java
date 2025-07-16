@@ -24,6 +24,8 @@ import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip4Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,7 @@ import java.util.Set;
 
 @Singleton
 public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider {
+    private static final Logger log = LoggerFactory.getLogger(LocalDnsIsNotGatewayMessageProvider.class);
 
     private final EblockerDnsServer dnsServer;
     private final NetworkServices networkServices;
@@ -50,10 +53,15 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
     @Override
     protected void doUpdate(Map<Integer, MessageContainer> messageContainers) {
         NetworkConfiguration configuration = networkServices.getCurrentNetworkConfiguration();
+        String gateway = configuration.getGateway();
+        if (gateway == null) {
+            log.warn("Gateway is not known (yet). Cannot update messages.");
+            return;
+        }
         if (dnsServer.isEnabled()
                 && configuration.isAutomatic()
                 && !configuration.isDhcp()
-                && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), configuration.getGateway(), configuration.getNetworkMask())) {
+                && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), gateway, configuration.getNetworkMask())) {
             if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId())) {
                 messageContainers.put(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId(), createMessage());
             }

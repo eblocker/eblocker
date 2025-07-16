@@ -208,7 +208,12 @@ public class ArpSpoofer implements Runnable {
      * @return
      */
     public boolean heal(Device device) {
-        IpAddress gatewayIpAddress = IpAddress.parse(dataSource.getGateway());
+        String gateway = dataSource.getGateway();
+        if (gateway == null) {
+            log.warn("Gateway is not known (yet). Cannot heal device.");
+            return false;
+        }
+        IpAddress gatewayIpAddress = IpAddress.parse(gateway);
         Device router = findRouter(gatewayIpAddress);
         if (router != null && device != null && !device.getIpAddresses().isEmpty()) {
             //construct valid (non spoofed) ARP response for client to tell it who the router really is

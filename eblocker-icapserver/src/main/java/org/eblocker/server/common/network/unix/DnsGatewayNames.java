@@ -65,6 +65,10 @@ public class DnsGatewayNames {
 
     public void check() {
         String gateway = dataSource.getGateway();
+        if (gateway == null) {
+            log.warn("Gateway is not known (yet). Cannot check DNS gateway names.");
+            return;
+        }
         String resolvedGateway = dataSource.getResolvedDnsGateway();
         if (Objects.equals(gateway, resolvedGateway)) {
             log.debug("gateway has not changed");

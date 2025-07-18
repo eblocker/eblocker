@@ -16,7 +16,9 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
+import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.util.Ip4Utils;
+import org.eblocker.server.common.util.Ip6Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +52,19 @@ public class Simulator {
     }
 
     public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return getAction(new Packet(Protocol.TCP, sourceIp, destinationIp, destinationPort, state));
+        return tcpPacket(sourceIp, destinationIp, destinationPort, state, 0);
     }
 
     public Action udpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
-        return getAction(new Packet(Protocol.UDP, sourceIp, destinationIp, destinationPort, state));
+        return udpPacket(sourceIp, destinationIp, destinationPort, state, 0);
+    }
+
+    public Action tcpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state, int mark) {
+        return getAction(new Packet(Protocol.TCP, sourceIp, destinationIp, destinationPort, state, mark));
+    }
+
+    public Action udpPacket(String sourceIp, String destinationIp, int destinationPort, Rule.State state, int mark) {
+        return getAction(new Packet(Protocol.UDP, sourceIp, destinationIp, destinationPort, state, mark));
     }
 
     private Action getAction(Packet packet) {
@@ -100,7 +110,17 @@ public class Simulator {
         if (!matchState(rule.getStates(), packet.state)) {
             return false;
         }
+        if (!matchMark(rule.getMark(), packet.mark)) {
+            return false;
+        }
         return true;
+    }
+
+    private boolean matchMark(int ruleMark, int packetMark) {
+        if (ruleMark == 0) { // all marks allowed
+            return true;
+        }
+        return ruleMark == packetMark;
     }
 
     private boolean matchState(Rule.States ruleStates, Rule.State packetState) {
@@ -115,7 +135,10 @@ public class Simulator {
             return true;
         }
         if (Ip4Utils.isIpRange(ruleIp)) {
-            return isInIpRange(ruleIp, packetIp);
+            return isInIp4Range(ruleIp, packetIp);
+        }
+        if (Ip6Utils.isIp6Range(ruleIp)) {
+            return isInIp6Range(ruleIp, packetIp);
         }
         return packetIp.equals(ruleIp);
     }
@@ -127,9 +150,14 @@ public class Simulator {
         return rulePort == packetPort;
     }
 
-    private boolean isInIpRange(String ipRange, String ip) {
+    private boolean isInIp4Range(String ipRange, String ip) {
         int[] network = Ip4Utils.convertIpRangeToIpNetmask(ipRange);
         return Ip4Utils.isInSubnet(Ip4Utils.convertIpStringToInt(ip), network[0], network[1]);
+    }
+
+    private boolean isInIp6Range(String ipRange, String ip) {
+        String[] parts = ipRange.split("/");
+        return Ip6Utils.isInNetwork(Ip6Address.parse(ip), Ip6Address.parse(parts[0]), Integer.parseInt(parts[1]));
     }
 
     private boolean matchInterface(String ruleInterface, String packetInterface) {
@@ -154,13 +182,15 @@ public class Simulator {
         String destinationIp;
         int destinationPort;
         Rule.State state;
+        int mark;
 
-        private Packet(Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state) {
+        private Packet(Protocol protocol, String sourceIp, String destinationIp, int destinationPort, Rule.State state, int mark) {
             this.protocol = protocol;
             this.sourceIp = sourceIp;
             this.destinationIp = destinationIp;
             this.destinationPort = destinationPort;
             this.state = state;
+            this.mark = mark;
         }
     }
 }

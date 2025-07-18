@@ -31,8 +31,6 @@ public class NetworkInterfaceConfiguration {
     private final String interfaceName;
     private final String emergencyIp;
     private final String emergencyNetmask;
-    private final String anonIp;
-    private final String anonIpMask;
 
     private interface InterfaceConfig {
         void append(BufferedWriter writer) throws IOException;
@@ -42,15 +40,11 @@ public class NetworkInterfaceConfiguration {
     public NetworkInterfaceConfiguration(@Named("network.unix.interfaces.config.path") String interfacesConfigPath,
                                          @Named("network.interface.name") String interfaceName,
                                          @Named("network.emergency.ip") String emergencyIp,
-                                         @Named("network.emergency.netmask") String emergencyNetmask,
-                                         @Named("network.unix.anon.source.ip") String anonIpWithRange,
-                                         @Named("network.unix.anon.source.netmask") String anonIpMask) {
+                                         @Named("network.emergency.netmask") String emergencyNetmask) {
         this.interfacesConfigPath = interfacesConfigPath;
         this.interfaceName = interfaceName;
         this.emergencyIp = emergencyIp;
         this.emergencyNetmask = emergencyNetmask;
-        this.anonIp = anonIpWithRange.substring(0, anonIpWithRange.indexOf('/'));
-        this.anonIpMask = anonIpMask;
     }
 
     public void enableDhcp() throws IOException {
@@ -100,11 +94,6 @@ public class NetworkInterfaceConfiguration {
 
             // add emergency IP:
             writeLinkLocalAddress(interfaceName, ":0", emergencyIp, emergencyNetmask, writer);
-
-            writer.newLine();
-
-            // add anonymous IP
-            writeLinkLocalAddress(interfaceName, ":1", anonIp, anonIpMask, writer);
         }
     }
 

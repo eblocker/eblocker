@@ -39,6 +39,7 @@ public class Rule {
     private OwnerModule ownerModule;
     private IcmpType icmpType;
     private String comment;
+    private int mark;
 
     private static Pattern allowedCommentCharacters = Pattern.compile("[ a-zA-Z0-9]+");
 
@@ -60,6 +61,7 @@ public class Rule {
             ownerModule = template.ownerModule;
             icmpType = template.icmpType;
             comment = template.comment;
+            mark = template.mark;
     }
 
     public Rule() {
@@ -146,6 +148,11 @@ public class Rule {
         return this;
     }
 
+    public Rule matchMark(int mark) {
+        this.mark = mark;
+        return this;
+    }
+
     public Rule redirectTo(String targetIp, int targetPort) {
         this.action = Action.redirectTo(targetIp, targetPort);
         return this;
@@ -156,8 +163,8 @@ public class Rule {
         return this;
     }
 
-    public Rule mark(int value) {
-        this.action = Action.mark(value);
+    public Rule setMark(int value) {
+        this.action = Action.setMark(value);
         return this;
     }
 
@@ -236,6 +243,10 @@ public class Rule {
         return states;
     }
 
+    public int getMark() {
+        return mark;
+    }
+
     public String toString() {
         StringBuilder result = new StringBuilder();
         if (inputInterface != null) {
@@ -282,6 +293,10 @@ public class Rule {
             }
             ensureSpace(result);
             result.append(icmpType.toString());
+        }
+        if (mark != 0) {
+            result.append(" -m mark --mark ");
+            result.append(mark);
         }
         if (action == null) {
             throw new IllegalArgumentException("A firewall rule needs an action");

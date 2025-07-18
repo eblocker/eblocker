@@ -84,8 +84,6 @@ public class FirewallConfigurationIp4Test {
                 "255.255.255.0",
                 1234,
                 3333,
-                12345,
-                "169.254.7.53/32",
                 13,
                 3000,
                 3443,
@@ -96,7 +94,9 @@ public class FirewallConfigurationIp4Test {
                 malwareIpSet,
                 1194,
                 5300,
-                9053);
+                12345,
+                9053,
+                256);
 
         return new FirewallConfigurationIp4(
                 configFullFile.toString(),

@@ -58,7 +58,7 @@ public class RuleTest {
     public void testMark() {
         Rule rule = new Rule()
                 .sourceIp("192.168.0.22")
-                .mark(1);
+                .setMark(1);
         Assert.assertEquals("-s 192.168.0.22 -j MARK --set-mark 1", rule.toString());
     }
 

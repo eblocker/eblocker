@@ -30,16 +30,17 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
     private TableGeneratorIp6 generator;
     private final String eBlockerIp = "fe80::eb10";
 
-    private final String disabledDevice = "2a00::d15a:b1ed";
-    private final String enabledDevice = "2a00::ea:b1ed";
-    private final String sslEnabledDevice = "2a00::551:ea:b1ed";
-    private final String torClientDevice = "2a00::709";
+    private final String prefixHome = "2a00:1111::/64";
+    private final String disabledDevice = "2a00:1111::d15a:b1ed";
+    private final String enabledDevice = "2a00:1111::ea:b1ed";
+    private final String sslEnabledDevice = "2a00:1111::551:ea:b1ed";
+    private final String torClientDevice = "2a00:1111::709";
     private final String torClientDeviceLocal = "fe80::709";
-    private final String anonVpnWithIp6Device = "2a00::a6";
-    private final String anonVpnOnlyIp4Device = "2a00::a4";
+    private final String anonVpnWithIp6Device = "2a00:1111::a6";
+    private final String anonVpnOnlyIp4Device = "2a00:1111::a4";
     private final String anonVpnWithIp6DeviceLocal = "fe80::a6";
     private final String anonVpnOnlyIp4DeviceLocal = "fe80::a4";
-    private final String externalHost = "2a00::4321";
+    private final String externalHost = "2a00:eeee::4321";
 
     private final String anonVpnWithIp6Interface = "tun0";
     private final String anonVpnOnlyIp4Interface = "tun1";
@@ -52,12 +53,12 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
     private final String malwareIp6SetName = "malware6";
     @Before
     public void setUp() {
-        generator = new TableGeneratorIp6(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort, malwareIp6SetName);
+        generator = new TableGeneratorIp6(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort, malwareIp6SetName, torPort, torDnsPort, torMark);
 
         deviceIpFilter = Mockito.mock(IpAddressFilter.class);
-        Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice));
+        Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice, torClientDevice));
         Mockito.when(deviceIpFilter.getDisabledDevicesIps()).thenReturn(List.of(disabledDevice));
-        Mockito.when(deviceIpFilter.getSslEnabledDevicesIps()).thenReturn(List.of(sslEnabledDevice));
+        Mockito.when(deviceIpFilter.getSslEnabledDevicesIps()).thenReturn(List.of(sslEnabledDevice, torClientDevice));
         Mockito.when(deviceIpFilter.getDevicesIps(Set.of(anonVpnWithIp6DeviceId))).thenReturn(List.of(anonVpnWithIp6Device, anonVpnWithIp6DeviceLocal));
         Mockito.when(deviceIpFilter.getDevicesIps(Set.of(anonVpnOnlyIp4DeviceId))).thenReturn(List.of(anonVpnOnlyIp4Device, anonVpnOnlyIp4DeviceLocal));
         Mockito.when(deviceIpFilter.getTorDevicesIps()).thenReturn(List.of(torClientDevice, torClientDeviceLocal));
@@ -68,6 +69,8 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         );
 
         generator.setOwnIpAddress(eBlockerIp);
+        generator.setSslEnabled(true);
+        generator.setPrefixes(Set.of(prefixHome));
 
         createTablesAndSimulators(generator);
     }
@@ -89,9 +92,9 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.rejectWithTcpReset(), filterForward.tcpPacket(anonVpnOnlyIp4Device, externalHost, 1234));
         Assert.assertEquals(Action.rejectWithTcpReset(), filterInput.tcpPacket(anonVpnOnlyIp4Device, externalHost, 443));
 
-        // Block IPv6 to Tor (current version does not support IPv6):
-        Assert.assertEquals(Action.rejectWithTcpReset(), filterForward.tcpPacket(torClientDevice, externalHost, 1234));
-        Assert.assertEquals(Action.rejectWithTcpReset(), filterInput.tcpPacket(torClientDevice, externalHost, 443));
+        // Do *not* block IPv6 to Tor (version in Bookworm now supports IPv6):
+        Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(torClientDevice, externalHost, 1234));
+        Assert.assertEquals(Action.returnFromChain(), filterInput.tcpPacket(torClientDevice, externalHost, 443));
 
         // Pass IPv6 to VPN with IPv6 support
         Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(anonVpnWithIp6Device, externalHost, 1234));
@@ -101,6 +104,32 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(anonVpnWithIp6DeviceLocal, externalHost, 1234));
         Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(anonVpnOnlyIp4DeviceLocal, externalHost, 1234));
         Assert.assertEquals(Action.returnFromChain(), filterForward.tcpPacket(torClientDeviceLocal, externalHost, 1234));
+    }
+
+    @Test
+    public void testTorRouting() {
+        natPre.setInput(standardInterface);
+        natOutput.setOutput(standardInterface);
+        filterForward.setInput(standardInterface);
+
+        // HTTP(S) traffic is routed to Squid
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), natPre.tcpPacket(torClientDevice, externalHost, 80));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyHTTPSPort), natPre.tcpPacket(torClientDevice, externalHost, 443));
+
+        // Squid marks traffic from Tor enabled devices with 0x100:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, torPort), natOutput.tcpPacket(eBlockerIp, externalHost, 443, Rule.State.NEW, 256));
+
+        // Unmarked packets are *not* redirected to Tor:
+        Assert.assertEquals(Action.returnFromChain(), natOutput.tcpPacket(eBlockerIp, externalHost, 443));
+
+        // Other TCP traffic is directly routed to Tor:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, torPort), natPre.tcpPacket(torClientDevice, externalHost, 1234));
+
+        // UDP is not supported by Tor, so not processed in NAT table
+        Assert.assertEquals(Action.returnFromChain(), natPre.udpPacket(torClientDevice, externalHost, 1234));
+
+        // ... but it is not forwarded to the router
+        Assert.assertEquals(Action.reject(), filterForward.udpPacket(torClientDevice, externalHost, 1234));
     }
 
     @Test

@@ -30,7 +30,6 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
 
     private final String eBlockerIp = "192.168.1.2";
     private final String fallbackIp = "169.254.94.109";
-    private final String anonSourceIp = "169.254.7.53";
     private final String parentalControlRedirectIp = "169.254.93.109";
 
     private final String disabledDevice = "192.168.1.41";
@@ -60,13 +59,12 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         generator = new TableGeneratorIp4(standardInterface,
                 mobileVpnInterface, mobileVpnSubnet, mobileVpnNetmask,
                 proxyPort, proxyHTTPSPort,
-                anonSocksPort, anonSourceIp,
                 13,
                 httpPort, httpsPort,
                 parentalControlRedirectIp, parentalControlRedirectHttpPort, parentalControlRedirectHttpsPort,
                 fallbackIp,
                 "malware",
-                1194, localDnsPort, 9053);
+                1194, localDnsPort, torPort,9053, 256);
 
         deviceIpFilter = Mockito.mock(IpAddressFilter.class);
         Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice, mobileVpnDevice, mobileVpnLocalAccessDevice, torClientDevice, anonVpnClientDevice));
@@ -198,11 +196,14 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), natPre.tcpPacket(torClientDevice, externalHost, 80));
         Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyHTTPSPort), natPre.tcpPacket(torClientDevice, externalHost, 443));
 
-        // Tor traffic from Squid uses a special IP address which is redirected to redsocks:
-        Assert.assertEquals(Action.redirectTo(eBlockerIp, anonSocksPort), natOutput.tcpPacket(anonSourceIp, externalHost, 1234));
+        // Squid marks traffic from Tor enabled devices with 0x100:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, torPort), natOutput.tcpPacket(eBlockerIp, externalHost, 443, Rule.State.NEW, 256));
 
-        // Other TCP traffic is directly routed to Tor via redsocks
-        Assert.assertEquals(Action.redirectTo(eBlockerIp, anonSocksPort), natPre.tcpPacket(torClientDevice, externalHost, 1234));
+        // Unmarked packets are *not* redirected to Tor:
+        Assert.assertEquals(Action.returnFromChain(), natOutput.tcpPacket(eBlockerIp, externalHost, 443));
+
+        // Other TCP traffic is directly routed to Tor:
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, torPort), natPre.tcpPacket(torClientDevice, externalHost, 1234));
 
         // UDP is not supported by Tor, so not processed in NAT table
         Assert.assertEquals(Action.returnFromChain(), natPre.udpPacket(torClientDevice, externalHost, 1234));
@@ -246,8 +247,8 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.masquerade(), natPost.tcpPacket(anonVpnClientDevice, externalHost, 80));
 
         // packets are marked for VPN routing
-        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleVpn.tcpPacket(anonVpnClientDevice, externalHost, 1234));
-        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleVpn.udpPacket(anonVpnClientDevice, externalHost, 1234));
+        Assert.assertEquals(Action.setMark(anonVpnClientRoute), mangleVpn.tcpPacket(anonVpnClientDevice, externalHost, 1234));
+        Assert.assertEquals(Action.setMark(anonVpnClientRoute), mangleVpn.udpPacket(anonVpnClientDevice, externalHost, 1234));
 
         // packets from other devices are not marked:
         Assert.assertEquals(Action.returnFromChain(), mangleVpn.tcpPacket(enabledDevice, externalHost, 1234));
@@ -255,7 +256,7 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         // eblocker-dns binds to the VPN tunnel's endpoint IP for outgoing DNS packets.
         // If the destination IP (i.e. the DNS server) is not within the tunnel interface's IP range, the packets must also be marked.
         // Otherwise they do not go into the tunnel but take the default route.
-        Assert.assertEquals(Action.mark(anonVpnClientRoute), mangleOutput.udpPacket(anonVpnEndpointIp, externalHost, 53));
+        Assert.assertEquals(Action.setMark(anonVpnClientRoute), mangleOutput.udpPacket(anonVpnEndpointIp, externalHost, 53));
     }
 
     @Test

@@ -27,11 +27,13 @@ public class TableGeneratorTestBase {
     protected final int proxyPort = 3128;
     protected final int proxyHTTPSPort = 3130;
     protected final int localDnsPort = 5300;
-    protected final int anonSocksPort = 12345;
     protected final int parentalControlRedirectHttpPort = 3003;
     protected final int parentalControlRedirectHttpsPort = 3004;
     protected final int httpPort = 3000;
     protected final int httpsPort = 3443;
+    protected final int torPort = 12346;
+    protected final int torDnsPort = 9053;
+    protected final int torMark = 256;
 
     protected final String standardInterface = "eth0";
     protected final String mobileVpnInterface = "tun33";
@@ -48,6 +50,7 @@ public class TableGeneratorTestBase {
         filterTable = generator.generateFilterTable(deviceIpFilter, anonVpnClients);
 
         natPre = new Simulator(natTable.chain("PREROUTING"));
+        natPre.addSubChain(natTable.chain("local-redirects")); // only used for IPv6
         natPost = new Simulator(natTable.chain("POSTROUTING"));
         natOutput = new Simulator(natTable.chain("OUTPUT"));
         natPost.addSubChain(natTable.chain("masquerading"));

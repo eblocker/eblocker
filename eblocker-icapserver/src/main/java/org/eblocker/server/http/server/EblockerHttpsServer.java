@@ -186,6 +186,7 @@ public class EblockerHttpsServer implements Preprocessor {
     public EblockerHttpsServer(@Named("httpPort") int httpPort,
                                @Named("httpsPort") int httpsPort,
                                @Named("http.server.useSystemOut") boolean useSystemOut,
+                               @Named("http.server.maxContentSize") int maxContentSize,
 
                                SecurityProcessor securityProcessor,
                                DashboardAuthorizationProcessor dashboardAuthorizationProcessor,
@@ -271,6 +272,8 @@ public class EblockerHttpsServer implements Preprocessor {
                 .addPostprocessor(new CacheControlPostProcessor())
                 .addFinallyProcessor(new ExceptionLogger())
                 .setExecutorThreadCount(2 * Runtime.getRuntime().availableProcessors())
+                .setMaxContentSize(maxContentSize)
+                .setSupportFileUpload()
                 .noCompression()
                 .mapException(ServiceNotAvailableException.class, ServiceNotAvailableServiceException.class);
 

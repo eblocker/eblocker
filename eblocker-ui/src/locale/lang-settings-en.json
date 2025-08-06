@@ -2588,24 +2588,24 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Don't show this again."
                 },
-                "INTRO" : "eBlockerOS 3.2 is a maintenance release with various improvements.",
+                "INTRO" : "eBlockerOS 4.0 is a maintenance release with various improvements.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1" : "<strong>Bugfix Captive portal checks:</strong> WLAN connection errors with Apple devices have been fixed.",
-                    "LI_2" : "<strong>Ads and trackers via IPv6</strong> are correctly displayed in Dashbord Blocker Statistics tile.",
-                    "LI_3" : "<strong>Device cloaking improved</strong> so that eBlockerOS can imitate the latest browser versions."
+                    "LI_1": "<strong>IPv6 via Tor.</strong>",
+                    "LI_2": "<strong>64-Bit System.</strong> At least <strong>2 GB</strong> memory are required.",
+                    "LI_3": "<strong>Linux System updated</strong> to Debian Bookworm."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-2/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-4-0/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 3.2"
+                "TITLE" : "eBlockerOS Release 4.0"
             },
-            "MENU_LABEL" : "New in eBlockerOS 3.2",
+            "MENU_LABEL" : "New in eBlockerOS 4.0",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 3.2"
+                "TITLE" : "eBlockerOS Release 4.0"
             }
         },
         "SSL" : {
@@ -2874,7 +2874,7 @@
                 }
             },
             "DASHBOARD" : "Open dashboard",
-            "EBLOCKER_TEXT_ONLY" : "eBlocker 3",
+            "EBLOCKER_TEXT_ONLY" : "eBlocker 4",
             "TITLE" : "eBlocker"
         },
         "TOR" : {

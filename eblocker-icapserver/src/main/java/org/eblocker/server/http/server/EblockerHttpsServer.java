@@ -19,9 +19,7 @@ package org.eblocker.server.http.server;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.netty.channel.Channel;
@@ -29,7 +27,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
-import org.eblocker.server.common.BaseModule;
 import org.eblocker.server.common.data.IpAddressModule;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.ServiceNotAvailableException;
@@ -414,11 +411,6 @@ public class EblockerHttpsServer implements Preprocessor {
             log.info("Unbinding open HTTPS port");
             httpsChannel.close().awaitUninterruptibly();
         }
-    }
-
-    public static void main(String[] args) throws Throwable {
-        Injector injector = Guice.createInjector(new BaseModule());
-        injector.getInstance(EblockerHttpsServer.class).run();
     }
 
     private void setUpRoutes() {

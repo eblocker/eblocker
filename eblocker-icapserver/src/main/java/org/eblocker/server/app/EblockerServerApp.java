@@ -141,7 +141,6 @@ import org.eblocker.server.http.controller.impl.UserAgentControllerImpl;
 import org.eblocker.server.http.controller.impl.UserControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
-import org.eblocker.server.http.security.DashboardAuthorizationProcessorImpl;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.slf4j.Logger;
@@ -534,7 +533,7 @@ public class EblockerServerApp {
         injectController(FeatureToggleController.class, FeatureToggleControllerImpl.class);
         injectController(ConnectionCheckController.class, ConnectionCheckControllerImpl.class);
         injectController(BlockerController.class, BlockerControllerImpl.class);
-        injectController(DashboardAuthorizationProcessor.class, DashboardAuthorizationProcessorImpl.class);
+        injectController(DashboardAuthorizationProcessor.class, DashboardAuthorizationProcessor.class);
         injectController(DoctorController.class, DoctorControllerImpl.class);
     }
 

@@ -252,6 +252,7 @@ public class EblockerModule extends BaseModule {
         bind(BlockerService.class);
         bind(BpjmFilterService.class);
         bind(DashboardCardService.class);
+        bind(DashboardAuthorizationProcessor.class);
         bind(DeviceService.class);
         bind(DhcpBindListener.class);
         bind(DomainBlockingNetworkService.class);
@@ -775,19 +776,6 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public BlockerController blockerController() {
         return ControllerWrapperFactory.wrap(BlockerController.class);
-    }
-
-
-    /**
-     * The DashboardAuthorizationProcessor is not really a Controller,
-     * but it must be wrapped by the ControllerWrapperFactory,
-     * because it needs to access the DeviceService.
-     * @return
-     */
-    @Provides
-    @Singleton
-    public DashboardAuthorizationProcessor dashboardAuthorizationProcessor() {
-        return ControllerWrapperFactory.wrap(DashboardAuthorizationProcessor.class);
     }
 
     @Provides

@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.security;
 
+import com.google.inject.Provider;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.TestDeviceFactory;
@@ -30,7 +31,7 @@ import org.restexpress.exception.NotFoundException;
 import org.restexpress.exception.UnauthorizedException;
 import org.restexpress.route.Route;
 
-public class DashboardAuthorizationProcessorImplTest {
+public class DashboardAuthorizationProcessorTest {
     private DashboardAuthorizationProcessor processor;
     private DeviceService deviceService;
     private Request request;
@@ -47,7 +48,9 @@ public class DashboardAuthorizationProcessorImplTest {
         request = Mockito.mock(Request.class);
         route = Mockito.mock(Route.class);
         Mockito.when(request.getResolvedRoute()).thenReturn(route);
-        processor = new DashboardAuthorizationProcessorImpl(deviceService);
+        Provider<DeviceService> deviceServiceProvider = Mockito.mock(Provider.class);
+        Mockito.when(deviceServiceProvider.get()).thenReturn(deviceService);
+        processor = new DashboardAuthorizationProcessor(deviceServiceProvider);
 
         TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
         currentDevice = tdf.createDevice("abcdef000023", "192.168.1.27", true);
@@ -67,11 +70,13 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test
     public void passUnflaggedRequests() {
+        processor.init();
         processor.process(request);
     }
 
     @Test
     public void adminMayAccessAnyDevice() {
+        processor.init();
         setAppContext(AppContext.ADMINDASHBOARD);
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
         processor.process(request);
@@ -79,6 +84,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test
     public void userMayAccessCurrentDevice() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY, currentDevice.getId());
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
@@ -87,6 +93,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test
     public void userMayAccessSecondDevice() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY, secondDevice.getId());
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
@@ -95,6 +102,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = UnauthorizedException.class)
     public void userMayNotAccessOtherUsersDevice() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY, otherUsersDevice.getId());
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
@@ -103,6 +111,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test
     public void adminMayAccessAnyUser() {
+        processor.init();
         setAppContext(AppContext.ADMINDASHBOARD);
         flagRoute(DashboardAuthorizationProcessor.VERIFY_USER_ID);
         processor.process(request);
@@ -110,6 +119,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test
     public void userMayAccessOwnSettings() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.USER_ID_KEY, Integer.toString(userId));
         flagRoute(DashboardAuthorizationProcessor.VERIFY_USER_ID);
@@ -118,6 +128,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = UnauthorizedException.class)
     public void userMayNotAccessOtherUsersSettings() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.USER_ID_KEY, Integer.toString(otherUserId));
         flagRoute(DashboardAuthorizationProcessor.VERIFY_USER_ID);
@@ -126,6 +137,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = NotFoundException.class)
     public void unknownDeviceId() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY, "device:abcdef555555");
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
@@ -134,6 +146,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = UnauthorizedException.class)
     public void unknownUserId() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         setRequestHeader(DashboardAuthorizationProcessor.USER_ID_KEY, "99");
         flagRoute(DashboardAuthorizationProcessor.VERIFY_USER_ID);
@@ -142,6 +155,7 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = BadRequestException.class)
     public void deviceIdMissing() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
         processor.process(request);
@@ -149,8 +163,26 @@ public class DashboardAuthorizationProcessorImplTest {
 
     @Test(expected = BadRequestException.class)
     public void userIdMissing() {
+        processor.init();
         setAppContext(AppContext.DASHBOARD);
         flagRoute(DashboardAuthorizationProcessor.VERIFY_USER_ID);
+        processor.process(request);
+    }
+
+    /*
+    The DashboardAuthorizationProcessor is a pre-processor that runs
+    uninitialized during the boot screen.
+     */
+    @Test
+    public void uninitializedPassUnflaggedRequests() {
+        processor.process(request);
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    public void uninitializedRefuseAuthorization() {
+        setAppContext(AppContext.DASHBOARD);
+        setRequestHeader(DashboardAuthorizationProcessor.DEVICE_ID_KEY, currentDevice.getId());
+        flagRoute(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
         processor.process(request);
     }
 

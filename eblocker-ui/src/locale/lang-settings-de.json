@@ -318,7 +318,10 @@
                 "SUB_SYSTEM_STATUS_REST_SERVER_STARTING": "Starte eBlocker Administrationsdienste.",
                 "SUB_SYSTEM_STATUS_SERVICES_ERROR": "Interne Dienste angehalten: {{error}}",
                 "SUB_SYSTEM_STATUS_SERVICES_OK": "Interne Dienste gestartet.",
-                "SUB_SYSTEM_STATUS_SERVICES_STARTING": "Starte interne Dienste."
+                "SUB_SYSTEM_STATUS_SERVICES_STARTING": "Starte interne Dienste.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR" : "Systemprüfung fehlgeschlagen: {{error}}",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK" : "Systemprüfung abgeschlossen.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING" : "Starte Systemprüfung."
             },
             "TOOLBAR": {
                 "TITLE": "eBlocker Booting"

@@ -20,6 +20,8 @@ public enum SubSystem {
 
     HTTP_SERVER(1000),
 
+    SYSTEM_CHECK(1500),
+
     DATABASE_CLIENT(2000),
 
     EVENT_LISTENER(2500),

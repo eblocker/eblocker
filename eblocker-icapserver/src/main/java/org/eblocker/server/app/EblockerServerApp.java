@@ -42,6 +42,7 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemServiceIndex;
 import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
@@ -226,6 +227,7 @@ public class EblockerServerApp {
     void runtimePhase() {
         try {
             initRuntimePhase();
+            checkSystemRequirements();
             openDatabaseConnection();
             wireEventListeners();
             startBackgroundTasks();
@@ -263,6 +265,7 @@ public class EblockerServerApp {
         systemStatusService
                 .starting(SubSystem.HTTP_SERVER)
                 .starting(SubSystem.HTTPS_SERVER)
+                .starting(SubSystem.SYSTEM_CHECK)
                 .starting(SubSystem.SERVICES)
                 .starting(SubSystem.REST_SERVER)
                 .starting(SubSystem.DATABASE_CLIENT)
@@ -287,6 +290,19 @@ public class EblockerServerApp {
         STATUS.info("Initiating eBlocker Core runtime...");
         eventLogger = injector.getInstance(EventLogger.class);
         shutdownService.setEventLogger(eventLogger);
+    }
+
+    private void checkSystemRequirements() {
+        STATUS.info("Checking system requirements...");
+        try {
+            initSubSystemServices(SubSystem.SYSTEM_CHECK);
+            SystemRequirements systemRequirements = injector.getInstance(SystemRequirements.class);
+            systemRequirements.check();
+            systemStatusService.ok(SubSystem.SYSTEM_CHECK);
+        } catch (Exception e) {
+            systemStatusService.error(SubSystem.SYSTEM_CHECK, e.getMessage());
+            throw e;
+        }
     }
 
     private void openDatabaseConnection() throws RedisBackupService.RedisServiceException {
@@ -370,7 +386,7 @@ public class EblockerServerApp {
                 systemStatusService.off(SubSystem.HTTPS_SERVER);
             }
         } catch (Exception e) {
-            processSubSystemWarning("Cannot HTTPS server", SubSystem.HTTPS_SERVER, e);
+            processSubSystemWarning("Cannot start HTTPS server", SubSystem.HTTPS_SERVER, e);
 
         }
     }

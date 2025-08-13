@@ -318,7 +318,10 @@
                 "SUB_SYSTEM_STATUS_REST_SERVER_STARTING" : "Starting eBlocker administration services.",
                 "SUB_SYSTEM_STATUS_SERVICES_ERROR" : "Internal services stopped: {{error}}",
                 "SUB_SYSTEM_STATUS_SERVICES_OK" : "Internal services started.",
-                "SUB_SYSTEM_STATUS_SERVICES_STARTING" : "Starting internal services."
+                "SUB_SYSTEM_STATUS_SERVICES_STARTING" : "Starting internal services.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR" : "System check failed: {{error}}",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK" : "System check completed.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING" : "Starting system check."
             },
             "TOOLBAR" : {
                 "TITLE" : "eBlocker Booting"

@@ -86,6 +86,7 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemUsageInterceptor;
 import org.eblocker.server.common.system.CommandRunner;
 import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.system.unix.CommandRunnerUnix;
 import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
 import org.eblocker.server.common.update.AutomaticUpdater;
@@ -283,6 +284,7 @@ public class EblockerModule extends BaseModule {
         bind(SquidConfigController.class);
         bind(SquidWarningService.class);
         bind(SslService.class);
+        bind(SystemRequirements.class);
         bind(TorController.class);
         bind(TorExitNodeCountries.class);
         bind(TrafficAccounter.class);

@@ -1,0 +1,17 @@
+[Unit]
+Description=eBlocker certificate validator
+Before=multi-user.target
+Before=graphical.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=certvalidatord
+Restart=on-failure
+RestartSec=5s
+TimeoutSec=5min
+ExecStart=/opt/eblocker-network/certificate-validator/bin/certificate-validator.sh
+
+[Install]
+WantedBy=multi-user.target

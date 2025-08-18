@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+# Copyright 2025 eBlocker Open Source UG (haftungsbeschraenkt)
 #
 # Licensed under the EUPL, Version 1.2 or - as soon they will be
 # approved by the European Commission - subsequent versions of the EUPL
@@ -14,21 +14,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 # implied. See the License for the specific language governing
 # permissions and limitations under the License.
-#
-### BEGIN INIT INFO
-# Provides:          eblocker-reset
-# Required-Start:
-# Required-Stop:
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: eBlocker Factory Reset
-# Description:       This file should be used to construct scripts to be
-#                    placed in /etc/init.d.
-### END INIT INFO
 
-if [ "$1" != "start" ]; then
-    exit 3 # unimplemented
-fi
+# eBlocker factory reset / update recovery / status report
 
 # Load defaults:
 . /etc/default/eblocker-reset
@@ -43,10 +30,6 @@ perform_factory_reset() {
 
     date >> $EBLOCKER_RESET_FILE
     echo "eBlocker factory reset done." >> $EBLOCKER_RESET_FILE
-}
-
-perform_self_check() {
-    console_log "*** PERFORMING SELF CHECK ***"
 }
 
 perform_update_recovery() {
@@ -125,11 +108,9 @@ fi
 
 if mount $THUMBDRIVE_DEVICE $MOUNT_DIR; then
     if [ -e $EBLOCKER_RESET_FILE ]; then
-	perform_factory_reset
-    elif [ -e $EBLOCKER_SELFCHECK_FILE ]; then
-	perform_self_check
+        perform_factory_reset
     elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
-	perform_update_recovery
+        perform_update_recovery
     else
         perform_status_report
     fi

@@ -37,4 +37,5 @@ rm -f /var/log/eblocker/install-eblocker-updates.errors.log
 
 # A reboot ensures that all services (which might have been re-configured) are restarted:
 sync
-reboot
+
+systemctl reboot

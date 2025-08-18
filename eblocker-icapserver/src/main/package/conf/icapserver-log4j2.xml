@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Appenders>
-        <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} [%-5p] %c [%t] - %m%n"/>
-        </Console>
         <RollingFile name="SYSTEM"
                      fileName="/var/log/eblocker/eblocker-system.log"
                      filePattern="/var/log/eblocker/eblocker-system.log.%i">
@@ -33,12 +30,10 @@
     </Appenders>
     <Loggers>
         <Root level="warn">
-            <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="SYSTEM"/>
         </Root>
         <Logger name="STATUS" level="info"/>
         <Logger name="FILTER_LOG" level="warn" additivity="false">
-            <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="AUDIT"/>
         </Logger>
         <Logger name="OPTIMIZE" level="warn">
@@ -49,7 +44,6 @@
         <!-- Logger name="org.eblocker.server.http.server.ExceptionLogger" level="debug"/ -->
 
         <!-- Suppress warnings: -->
-        <Logger name="org.eblocker.server.common.network.TorController" level="error"/>
         <Logger name="javax.jmdns" level="error"/>
         <Logger name="org.fourthline.cling" level="error"/>
     </Loggers>

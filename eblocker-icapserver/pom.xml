@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
         <relativePath>../eblocker-parent</relativePath>
     </parent>
     <artifactId>eblocker-icapserver</artifactId>
@@ -317,22 +317,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-resources-init</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/package/init</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/package/init</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-resources-default</id>
                         <phase>package</phase>
                         <goals>
@@ -458,15 +442,6 @@
                                     </paths>
                                 </data>
                                 <data>
-                                    <src>${project.build.directory}/package/init/</src>
-                                    <type>directory</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/etc/init.d</prefix>
-                                        <filemode>755</filemode>
-                                    </mapper>
-                                </data>
-                                <data>
                                     <src>${project.build.directory}/package/default/</src>
                                     <type>directory</type>
                                     <mapper>
@@ -479,7 +454,7 @@
                                     <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/etc/systemd/system/icapserver.service.d</prefix>
+                                        <prefix>/lib/systemd/system</prefix>
                                     </mapper>
                                 </data>
                                 <data>

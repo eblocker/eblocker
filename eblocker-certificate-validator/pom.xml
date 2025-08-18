@@ -3,7 +3,7 @@
     <parent>
         <artifactId>eblocker-parent</artifactId>
         <groupId>org.eblocker</groupId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
         <relativePath>../eblocker-parent</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -120,16 +120,16 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-resources-etc</id>
+                        <id>copy-resources-systemd</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/package/etc</outputDirectory>
+                            <outputDirectory>${project.build.directory}/package/systemd</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/package/etc</directory>
+                                    <directory>src/main/package/systemd</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
@@ -181,12 +181,12 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${project.build.directory}/package/etc</src>
+                                    <src>${project.build.directory}/package/systemd</src>
                                     <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/etc</prefix>
-                                        <filemode>755</filemode>
+                                        <prefix>/lib/systemd/system</prefix>
+                                        <filemode>644</filemode>
                                     </mapper>
                                 </data>
                                 <data>

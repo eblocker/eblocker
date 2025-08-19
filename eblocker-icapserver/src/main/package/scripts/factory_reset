@@ -54,25 +54,20 @@ reset_network_interfaces
 apt-get clean
 
 # Stopping services...
-service icapserver stop
-service arpread stop
-service arpwrite stop
-service redis-server stop
-service eblocker-dns stop
-service squid stop
-service certvalidator stop
-service eblocker-led stop
+systemctl stop icapserver
+systemctl stop arpread
+systemctl stop arpwrite
+systemctl stop redis-server
+systemctl stop eblocker-coredns
+systemctl stop squid
+systemctl stop certvalidator
 sleep 10
 
 # reset redis database and backups
 rm -f /var/lib/redis/*
 
 # Removing log files...
-find /var/log/ \
-     /var/log.hdd/ \
-     /opt/eblocker-dns/log/ \
-     /opt/eblocker-led/log/ \
-     -type f -exec rm {} \;
+find /var/log/ -type f -exec rm {} \;
 
 # remove flag for eblocker-dns
 rm -f /opt/eblocker-icap/conf/eblocker/eblocker-dns.enabled
@@ -93,8 +88,8 @@ rm -rf /opt/eblocker-icap/tmp/*
 rm -f /opt/eblocker-icap/registration/registration.properties
 
 # Disable DHCP server (eBlocker will start in auto mode)
-service isc-dhcp-server stop
-update-rc.d isc-dhcp-server remove
+systemctl stop isc-dhcp-server
+systemctl disable isc-dhcp-server
 # Remove the leases
 rm -f /var/lib/dhcp/{dhcpd.leases{,~},dhclient{,.*}.leases}
 
@@ -131,7 +126,7 @@ rm -f /var/cache/eblocker-icap/stats.db*
 rm -f /opt/eblocker-icap/conf/customercreated/*
 
 # Remove eBlocker mobile VPN data and configuration
-service openvpn stop
+systemctl stop openvpn
 rm -f /etc/openvpn/ca.crt
 rm -f /etc/openvpn/dh2048.pem
 rm -Rf /etc/openvpn/easy-rsa

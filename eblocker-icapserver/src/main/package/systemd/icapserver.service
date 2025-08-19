@@ -1,0 +1,22 @@
+[Unit]
+Description=eBlocker ICAP server
+Before=multi-user.target
+Before=graphical.target
+After=network-online.target
+After=eblocker-reset.service
+After=redis-server.service
+After=arpread.service
+After=arpwrite.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=icapd
+Restart=on-failure
+RestartSec=5s
+TimeoutSec=5min
+ExecStart=/opt/eblocker-icap/bin/eblocker-icapserver.sh
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

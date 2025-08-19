@@ -27,8 +27,8 @@ divert_dhcp_defaults() {
 if [ "$1" = configure ] ; then
 
     # Install services:
-    update-rc.d eblocker-reset defaults
-    update-rc.d icapserver defaults
+    systemctl enable eblocker-reset
+    systemctl enable icapserver
 
     # Show newest release message in all sessions (again)
     redis-cli del MessageContainer:42
@@ -50,12 +50,17 @@ if [ "$1" = configure ] ; then
 
     divert_dhcp_defaults
 
-    if pgrep apt-get; then
-        # Reboot the machine after apt-get is finished:
-        /opt/eblocker-icap/bin/reboot_after_update_start.sh
+    # Reboot or restart?
+    systemctl status eblocker-updater >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "Service eblocker-updater is running. Requesting reboot."
+        # Signal to the eblocker-updater service that a reboot is required
+        # https://www.debian.org/doc/debian-policy/ch-opersys.html#signaling-that-a-reboot-is-required
+        touch /run/reboot-required
     else
-        # Restart the icapserver:
-        invoke-rc.d icapserver restart
+        # Installed manually, just restart the icapserver:
+        echo "Service eblocker-updater is not running. Restarting icapserver."
+        systemctl restart icapserver
     fi
 fi
 

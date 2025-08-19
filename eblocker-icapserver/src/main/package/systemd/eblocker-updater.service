@@ -1,0 +1,9 @@
+[Unit]
+Description=eBlocker Updater
+OnSuccess=eblocker-reboot.service
+
+[Service]
+Type=simple
+ExecStart=/opt/eblocker-icap/bin/install-eblocker-updates.sh
+StandardOutput=truncate:/var/log/eblocker/install-eblocker-updates.log
+StandardError=truncate:/var/log/eblocker/install-eblocker-updates.errors.log

@@ -29,7 +29,7 @@ if [ "$1" = remove ] ; then
     remove_dhcp_defaults_diversion
 
 # Stop services:
-    invoke-rc.d icapserver stop
+    systemctl stop icapserver
 
 fi
 

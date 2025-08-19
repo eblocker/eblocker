@@ -1,0 +1,11 @@
+[Unit]
+Description=eBlocker Factory Reset
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/eblocker-icap/bin/eblocker-reset.sh
+
+[Install]
+WantedBy=multi-user.target

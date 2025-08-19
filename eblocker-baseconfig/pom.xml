@@ -68,17 +68,12 @@
 		<data>
 		  <src>${project.build.directory}/package/etc/</src>
 		  <type>directory</type>
-		  <excludes>network/if-up.d/*,init.d/*,redsocks/redsocks.conf,tor/*</excludes>
+		  <excludes>network/if-up.d/*,tor/*</excludes>
 		  <conffile>true</conffile>
 		  <mapper>
 		    <type>perm</type>
 		    <prefix>/etc</prefix>
 		  </mapper>
-		</data>
-		<data>
-		  <src>${project.build.directory}/package/etc/redsocks/redsocks.conf</src>
-		  <type>file</type>
-		  <dst>/etc/redsocks-eblocker.conf</dst>
 		</data>
 		<data>
 		  <src>${project.build.directory}/package/etc/tor/torrc</src>
@@ -137,7 +132,7 @@
 		  <!-- executable files in /etc -->
 		  <src>${project.build.directory}/package/etc/</src>
 		  <type>directory</type>
-		  <includes>network/if-up.d/*,init.d/*</includes>
+		  <includes>network/if-up.d/*</includes>
 		  <mapper>
 		    <type>perm</type>
 		    <prefix>/etc</prefix>

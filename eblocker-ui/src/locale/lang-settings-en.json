@@ -2591,13 +2591,13 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Don't show this again."
                 },
-                "INTRO" : "eBlockerOS 4.0 is a maintenance release with various improvements.",
+                "INTRO" : "eBlockerOS 4.0: Raspberry Pi 5 and 64-bit support",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1": "<strong>IPv6 via Tor.</strong>",
-                    "LI_2": "<strong>64-Bit System.</strong> At least <strong>2 GB</strong> memory are required.",
-                    "LI_3": "<strong>Linux System updated</strong> to Debian Bookworm."
+                    "LI_1": "<strong>Fast 64-bit OS with Raspberry Pi 5 support.</strong> Minimum of <strong>2 GB RAM</strong> required.",
+                    "LI_2": "<strong>IPv6 support for the Tor network</strong>",
+                    "LI_3": "<strong>Extensive security updates and numerous bug fixes</strong>"
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",

@@ -185,7 +185,7 @@
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_PATCH_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-0/",
-            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 4.0: IPv6 über Tor und Update auf 64-Bit Debian Bookworm.",
+            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 4.0: Raspberry Pi 5 und 64-Bit Unterstützung",
             "MESSAGE_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
             "MESSAGE_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-0/",

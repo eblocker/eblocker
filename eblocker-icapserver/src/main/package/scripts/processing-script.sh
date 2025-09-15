@@ -23,16 +23,16 @@ HANDSHAKEFILE=/tmp/recording_ssl_handshakes
 APPDATAFILE=/tmp/recording_ssl_data
 
 tshark -r $PCAP_FILE \
-    -R "ssl.handshake" \
+    -R "tls.handshake" \
     -2 \
     -T fields \
     -e ip.dst \
     -e ipv6.dst \
-    -e ssl.handshake.extensions_server_name \
+    -e tls.handshake.extensions_server_name \
     -e tcp.stream > $HANDSHAKEFILE 2>$LOG_FILE
 
 tshark -r $PCAP_FILE \
-    -R "ssl.app_data" \
+    -R "tls.app_data" \
     -2 \
     -T fields \
     -e ip.dst \

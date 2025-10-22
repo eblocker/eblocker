@@ -104,6 +104,7 @@ public class CaptivePortalCheckProcessor implements TransactionProcessor {
                 // Android:
                 entry("http://clients3.google.com/generate_204", generate204),
                 entry("http://connectivitycheck.gstatic.com/generate_204", generate204),
+                entry("http://play.googleapis.com/generate_204", generate204),
                 // Apple:
                 entry("http://captive.apple.com/hotspot-detect.html", generateSuccessApple),
                 entry("http://www.apple.com/library/test/success.html", generateSuccessApple),

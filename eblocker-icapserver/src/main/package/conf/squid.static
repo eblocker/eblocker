@@ -85,6 +85,7 @@ via off
 reply_header_access X-Cache-Lookup deny all
 reply_header_access X-Squid-Error deny all
 reply_header_access X-Cache deny all
+reply_header_access Cache-Status deny all
 
 # faster shutdown
 shutdown_lifetime 1 second

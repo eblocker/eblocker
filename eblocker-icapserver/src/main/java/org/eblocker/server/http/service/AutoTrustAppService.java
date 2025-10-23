@@ -85,17 +85,24 @@ import static java.util.function.Predicate.not;
 public class AutoTrustAppService implements SquidWarningService.FailedConnectionsListener {
 
     enum KnownError {
+        // For decoding OpenSSL errors run: openssl errstr A000...
+        // For decoding system errors run: errno ...
+        DEPTH_ZERO_SELF_SIGNED_CERT("crtvd:18:X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT", true),
         SELF_SIGNED_CERT_IN_CHAIN("crtvd:19:X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN", true),
         CERT_UNTRUSTED("crtvd:27:X509_V_ERR_CERT_UNTRUSTED", true), // TODO: also seen for 5thmarket.info, which is a tracker, and for bzz.ch (web only)
-        BAD_CERTIFICATE("ssl:1:error:14094412:SSL routines:ssl3_read_bytes:sslv3 alert bad certificate", true), // TODO seen for lookaside.facebook.com, i.instagram.com, graph.instagram.com, graph.facebook.com so is this really a isCertError?
-        CERTIFICATE_UNKNOWN("ssl:1:error:14094416:SSL routines:ssl3_read_bytes:sslv3 alert certificate unknown", true), // TODO seen for www.srf.ch
-        UNKNOWN_CA("ssl:1:error:14094418:SSL routines:ssl3_read_bytes:tlsv1 alert unknown ca", true),
-        UNSUPPORTED_PROTOCOL("ssl:1:error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol", true),
-        CONNECTION_RESET("io:104:(104) Connection reset by peer", false),
-        NO_ERROR("io:0:(0) No error.", false),
-        BROKEN_PIPE("io:32:(32) Broken pipe", false),
-        SOME_UNKNOWN_SSL("ssl:6:error:00000000:lib(0):func(0):reason(0)", false), // Don't know what this means
-        DOMAIN_MISMATCH_ERROR("crtvd:-1:SQUID_X509_V_ERR_DOMAIN_MISMATCH", false);
+        CERTIFICATE_UNKNOWN("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000416+TLS_IO_ERR=1:failure", true), // TODO seen for www.srf.ch
+        UNKNOWN_CA("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000418+TLS_IO_ERR=1:failure", true),
+        ILLEGAL_PARAMETER("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000417+TLS_IO_ERR=1:failure", false),
+        INAPPROPRIATE_FALLBACK("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000175+TLS_IO_ERR=1:failure", false),
+        CONNECTION_RESET("SQUID_TLS_ERR_ACCEPT+TLS_IO_ERR=5+errno=104:system call failure", false),
+        DOMAIN_MISMATCH_ERROR("crtvd:-2147483644:SQUID_X509_V_ERR_DOMAIN_MISMATCH", false);
+
+        // Not seen with Squid 7.1 yet:
+        //BAD_CERTIFICATE("ssl:1:error:14094412:SSL routines:ssl3_read_bytes:sslv3 alert bad certificate", true), // TODO seen for lookaside.facebook.com, i.instagram.com, graph.instagram.com, graph.facebook.com so is this really a isCertError?
+        //UNSUPPORTED_PROTOCOL("ssl:1:error:14209102:SSL routines:tls_early_post_process_client_hello:unsupported protocol", true),
+        //NO_ERROR("io:0:(0) No error.", false),
+        //BROKEN_PIPE("io:32:(32) Broken pipe", false),
+
         private final String message;
         private final boolean isCertError;
 

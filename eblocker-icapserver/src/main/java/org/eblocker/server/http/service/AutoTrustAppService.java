@@ -95,7 +95,8 @@ public class AutoTrustAppService implements SquidWarningService.FailedConnection
         ILLEGAL_PARAMETER("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000417+TLS_IO_ERR=1:failure", false),
         INAPPROPRIATE_FALLBACK("SQUID_TLS_ERR_ACCEPT+TLS_LIB_ERR=A000175+TLS_IO_ERR=1:failure", false),
         CONNECTION_RESET("SQUID_TLS_ERR_ACCEPT+TLS_IO_ERR=5+errno=104:system call failure", false),
-        DOMAIN_MISMATCH_ERROR("crtvd:-2147483644:SQUID_X509_V_ERR_DOMAIN_MISMATCH", false);
+        DOMAIN_MISMATCH_ERROR("crtvd:-2147483644:SQUID_X509_V_ERR_DOMAIN_MISMATCH", false),
+        SSL_ERROR_SYSCALL("SQUID_TLS_ERR_ACCEPT+TLS_IO_ERR=5:system call failure", false);
 
         // Not seen with Squid 7.1 yet:
         //BAD_CERTIFICATE("ssl:1:error:14094412:SSL routines:ssl3_read_bytes:sslv3 alert bad certificate", true), // TODO seen for lookaside.facebook.com, i.instagram.com, graph.instagram.com, graph.facebook.com so is this really a isCertError?

@@ -53,8 +53,6 @@ public class SSLWhitelistService implements Observer {
     @Inject
     public SSLWhitelistService(@Named("squid.ssl.domain.whitelist.acl.file.path") String sslWhitelistOnlyDomainsFilePath,
                                @Named("squid.ssl.ip.whitelist.acl.file.path") String whitelistIPsFilePath,
-                               @Named("ssl.url.whitelist.user.add.file.path") String userAddList,
-                               @Named("ssl.url.whitelist.user.remove.file.path") String userRemoveList,
                                SquidConfigController squidConfigController,
                                AppModuleService appModuleService
     ) {
@@ -69,8 +67,6 @@ public class SSLWhitelistService implements Observer {
 
         //this file contains the current IP whitelist in squid ACL format (no names; just IPs or IP ranges)
         this.squidIpWhitelistAclFile = new SimpleResource(whitelistIPsFilePath);
-
-        handleLegacyUserWhitelistFiles(userAddList, userRemoveList);
 
         if (!ResourceHandler.exists(squidDomainWhitelistAclFile)) {
             //create temporary acl file (which will be copied to squid folde when squidconfigcontroller.tellsquidtoReconfigure()... is called)
@@ -89,42 +85,6 @@ public class SSLWhitelistService implements Observer {
         // init squid acl file with list of whitelisted IPs
         writeOnlyIPsToFile(squidIpWhitelistAclFile);
         squidConfigController.tellSquidToReloadConfig();
-    }
-
-    /**
-     * Should be removed in one of the next versions.
-     *
-     * @param userAddList
-     * @param userRemoveList
-     */
-    private void handleLegacyUserWhitelistFiles(String userAddList, String userRemoveList) {
-        //this file contains all additions the user made to the default list
-        EblockerResource userAddListFile = new SimpleResource(userAddList);
-
-        if (ResourceHandler.exists(userAddListFile)) {
-            Set<String> lines = ResourceHandler.readLinesAsSet(userAddListFile);
-            if (lines != null) {
-                List<SSLWhitelistUrl> domainsToAdd = lines.stream().
-                        map(SSLWhitelistUrl::fromString).
-                        filter(entry -> entry != null).collect(Collectors.toList());
-                appModuleService.addDomainsToModule(domainsToAdd, appModuleService.getUserAppModuleId());
-            }
-        }
-        ResourceHandler.replaceContent(userAddListFile, Collections.emptyList());
-
-        //this file contains all the removals the user made from the default list
-        EblockerResource userRemoveListFile = new SimpleResource(userRemoveList);
-
-        if (ResourceHandler.exists(userRemoveListFile)) {
-            Set<String> lines = ResourceHandler.readLinesAsSet(userRemoveListFile);
-            if (lines != null) {
-                List<SSLWhitelistUrl> domainsToRemove = lines.stream().
-                        map(SSLWhitelistUrl::fromString).
-                        filter(entry -> entry != null).collect(Collectors.toList());
-                appModuleService.removeDomainsFromModule(domainsToRemove, appModuleService.getStandardAppModuleId());
-            }
-        }
-        ResourceHandler.replaceContent(userRemoveListFile, Collections.emptyList());
     }
 
     /**

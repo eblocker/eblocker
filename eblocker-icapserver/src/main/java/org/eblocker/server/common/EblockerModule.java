@@ -384,7 +384,7 @@ public class EblockerModule extends BaseModule {
     public String provideToolbarInlayTemplate() {
         String name = "toolbarInlayTemplate";
         String path = getProperty("resource.toolbarInlayTemplate.path");
-        String charsetName = getProperty("toolbarInlayTemplate.resource.charset");
+        String charsetName = getProperty("resource.toolbarInlayTemplate.charset");
         if (charsetName == null) {
             charsetName = "UTF-8";
         }

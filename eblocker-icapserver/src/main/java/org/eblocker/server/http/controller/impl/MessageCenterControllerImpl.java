@@ -17,6 +17,7 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageVisibility;
 import org.eblocker.server.common.page.PageContextStore;
@@ -72,8 +73,8 @@ public class MessageCenterControllerImpl extends SessionContextController implem
     @Override
     public Integer getNumberOfMessages(Request request, Response response) {
         int n = getMessages(request, response).size();
-        response.addHeader("Cache-Control", "private, no-cache, no-store");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.CACHE_CONTROL, "private, no-cache, no-store");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         return n;
     }
 

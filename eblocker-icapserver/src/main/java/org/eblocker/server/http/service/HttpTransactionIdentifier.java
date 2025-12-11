@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
@@ -32,7 +33,7 @@ public class HttpTransactionIdentifier implements TransactionIdentifier {
 
     @Override
     public String getUserAgent() {
-        return request.headers().get("User-Agent");
+        return request.headers().get(HttpHeaders.Names.USER_AGENT);
     }
 
     @Override

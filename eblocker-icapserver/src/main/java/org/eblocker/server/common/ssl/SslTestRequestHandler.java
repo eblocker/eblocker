@@ -23,6 +23,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -96,8 +97,8 @@ public class SslTestRequestHandler extends SimpleChannelInboundHandler<HttpReque
     private HttpResponse createResponse(HttpRequest request) {
         HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
         response.headers()
-                .set("Access-Control-Allow-Origin", "*")
-                .set("Content-Type", "text/plain");
+                .set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+                .set(HttpHeaders.Names.CONTENT_TYPE, "text/plain");
         return response;
     }
 

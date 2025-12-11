@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.http.controller.PageContextController;
@@ -42,6 +43,6 @@ public class PageContextControllerImpl implements PageContextController {
         if (context != null) {
             context.setParentContext(null);
         }
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     }
 }

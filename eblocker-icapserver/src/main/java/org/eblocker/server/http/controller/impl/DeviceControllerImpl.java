@@ -17,6 +17,7 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.PauseDeviceController;
 import org.eblocker.server.common.data.Device;
@@ -492,7 +493,7 @@ public class DeviceControllerImpl implements DeviceController {
 
     @Override
     public Device.DisplayIconPosition setIconPosition(Request request, Response response) {
-        response.addHeader("Access-Control-Allow-Origin", "*"); // called by controlbar-inlay.js from any domain
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*"); // called by controlbar-inlay.js from any domain
         Device device = getCurrentDevice(request);
         Device.DisplayIconPosition iconPosition = Device.DisplayIconPosition.valueOf(request.getHeader("iconPos"));
         return deviceService.setIconPosition(device, iconPosition);

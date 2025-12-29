@@ -617,6 +617,17 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'vpnConnectDetailsComponent'
     };
 
+        const wireguard = {
+        name: 'wireguard',
+        url: slashOptionSubState + 'wireguard',
+        parent: ipAnonState.name,
+        tabOrder: 3,
+        requiredLicense: ipAnonState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
+        component: 'wireguardComponent'
+    };
+
+
 
     // ** MAIN STATE: DNS
     const dns = {
@@ -1114,19 +1125,38 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'vpnHomeWizardComponent'
     };
 
+         // ** MAIN STATE: WIREGUARD
+    const wireguardMain = {
+        name: 'wireguardMain',
+        parent: STATES.MAIN,
+        url: slashOptionUrl + 'wireguard',
+        showInNavbar: true,
+        // Icon erstmal wiederverwenden (später eigenes WireGuard-Icon möglich)
+        iconUrl: '/img/icons/ic_vpn_key_black.svg',
+        navbarOrder: 8,
+        requiredLicense: function() {
+            return 'WOL';
+        },
+        label: 'WireGuard',
+        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
+        component: 'wireguardComponent'
+    };
+   
 
     // FIXME: don't use const for each state. e.g. push into allStates right away
     const allStates = [home, homeLicense, homeUpdate, adminPassword, homeAbout,
         homeLegal, parentalControl, parentalControlState, devices, ssl, sslStatus,
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
-        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, manualRecording, users,
-        blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
+        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, wireguardMain,
+        manualRecording, users,
+        blacklists, whitelists, tor, vpnconnect, wireguard, dns, status, timeAndLanguage,
         events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
         dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
         doctor];
+
 
     // ** MAIN STATE ERROR: NOT LICENSED
     const notLicensed = {

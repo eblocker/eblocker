@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+WG_IF="wg0"
+WG_DIR="/etc/wireguard"
+WG_CONF="$WG_DIR/$WG_IF.conf"
+WG_PRIV="$WG_DIR/$WG_IF.key"
+WG_PUB="$WG_DIR/$WG_IF.pub"
+
+MODE="${1:-}"
+
+ensure_keys() {
+  mkdir -p "$WG_DIR"
+  chmod 700 "$WG_DIR"
+
+  if [ ! -f "$WG_PRIV" ]; then
+    umask 077
+    wg genkey | tee "$WG_PRIV" | wg pubkey > "$WG_PUB"
+    chmod 600 "$WG_PRIV" "$WG_PUB"
+  fi
+}
+
+ensure_conf() {
+  if [ ! -f "$WG_CONF" ]; then
+    umask 077
+    cat > "$WG_CONF" <<CONF
+[Interface]
+PrivateKey = $(cat "$WG_PRIV")
+Address = 10.13.13.1/24
+ListenPort = 51820
+CONF
+    chmod 600 "$WG_CONF"
+  fi
+}
+
+case "$MODE" in
+  init)
+    ensure_keys
+    ensure_conf
+    exit 0
+    ;;
+  start)
+    wg-quick up "$WG_IF"
+    exit 0
+    ;;
+  stop)
+    wg-quick down "$WG_IF"
+    exit 0
+    ;;
+  *)
+    echo "Usage: $0 {init|start|stop}" >&2
+    exit 1
+    ;;
+esac

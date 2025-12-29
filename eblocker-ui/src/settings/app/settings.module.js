@@ -154,6 +154,8 @@ import NetworkComponent from './components/network/network.component';
 import NetworkWizardComponent from './components/network/wizard/network-wizard.component';
 import TorComponent from './components/ipAnon/tor/tor.component';
 import VpnConnectComponent from './components/ipAnon/vpn/vpn-connect.component';
+import WireguardComponent from './components/wireguard/wireguard.component';
+
 
 import DnsComponent from './components/dns/dns.component';
 import DnsStatusComponent from './components/dns/status/dns-status.component';
@@ -446,6 +448,7 @@ angular.module('eblocker.adminconsole', [
     .component('dnsLocalComponent', DnsLocalComponent)
     .component('torComponent', TorComponent)
     .component('vpnConnectComponent', VpnConnectComponent)
+    .component('wireguardComponent', WireguardComponent)
     .component('diagnosticsComponent', DiagnosticsComponent)
     .component('reportComponent', ReportComponent)
     .component('eventsComponent', EventsComponent)

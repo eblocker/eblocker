@@ -65,6 +65,7 @@ import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardServerController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -148,6 +149,7 @@ public class EblockerHttpsServer implements Preprocessor {
     private final AuthenticationController authenticationController;
     private final OpenVpnController openVpnController;
     private final OpenVpnServerController openVpnServerController;
+    private final WireGuardServerController wireGuardServerController;
     private final ControlBarController controlBarController;
     private final SplashController splashController;
     private StartupStatusReporter startupStatusReporter;
@@ -216,6 +218,7 @@ public class EblockerHttpsServer implements Preprocessor {
                                NetworkController networkController,
                                OpenVpnController openVpnController,
                                OpenVpnServerController openVpnServerController,
+                               WireGuardServerController wireGuardServerController,
                                PageContextController pageContextController,
                                ParentalControlController parentalControlController,
                                ParentalControlFilterListsController filterListsController,
@@ -308,6 +311,9 @@ public class EblockerHttpsServer implements Preprocessor {
 
         this.openVpnController = openVpnController;
         this.openVpnServerController = openVpnServerController;
+
+        this.wireGuardServerController = wireGuardServerController;
+        
 
         this.controlBarController = controlBarController;
 
@@ -1479,6 +1485,12 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("check", HttpMethod.POST)
                 .name("adminconsole.vpn.test.dns");
 
+        // ** Adminconsole: WireGuard
+        server
+               .uri("/api/adminconsole/wireguard/status", wireGuardServerController)
+               .action("getStatus", HttpMethod.GET)
+               .name("public.adminconsole.wireguard.status.get");
+               
         // ** New Adminconsole: save customer info (for remind-me-again VPN offer)
         server
                 .uri("/api/adminconsole/customerInfo", customerInfoController)
@@ -2132,7 +2144,7 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/vpn/profiles/{id}/status/{device}", openVpnController)
                 .action("setVpnDeviceStatus", HttpMethod.PUT)
                 .name("dashboard.vpn.setVpnDeviceStatus.route");
-
+       
         server // Similar to the one above - but used in a different place
                 .uri("/api/dashboard/vpn/profiles/{id}/status-this", openVpnController)
                 .action("setVpnThisDeviceStatus", HttpMethod.PUT)

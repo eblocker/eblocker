@@ -2062,11 +2062,12 @@
                 "TITLE": "eBlocker Einstellungen"
             }
         },
-        "WIREGUARD": {
-                  "LABEL": "WireGuard",
-                  "TITLE": "WireGuard",
-                  "DESCRIPTION": "Verwaltung des WireGuard VPN-Servers"
+       "WIREGUARD": {
+            "LABEL": "WireGuard",
+            "TITLE": "WireGuard",
+            "DESCRIPTION": "Verwaltung des WireGuard VPN-Servers"
         },
+
         "MANUAL_RECORDING": {
             "ACTION": {
                 "CLEAR_TABLE": "Tabelle Löschen",

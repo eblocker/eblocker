@@ -1,4 +1,14 @@
 #!/bin/sh
+#
+# WireGuard server control for eBlocker
+#
+# - init        : generate keys + base config (if missing)
+# - start       : wg-quick up
+# - stop        : wg-quick down
+# - restart     : down + up
+# - status-json : machine-readable status for eBlocker backend
+#
+
 set -e
 
 WG_IF="wg0"
@@ -33,6 +43,37 @@ CONF
   fi
 }
 
+status_json() {
+  # systemd service state (optional)
+  SERVICE="unknown"
+  if command -v systemctl >/dev/null 2>&1; then
+    if systemctl list-unit-files "wg-quick@${WG_IF}.service" >/dev/null 2>&1; then
+      SERVICE="$(systemctl is-active "wg-quick@${WG_IF}.service" 2>/dev/null || true)"
+    fi
+  fi
+
+  # wg interface state
+  WG_STATE="down"
+  if command -v wg >/dev/null 2>&1; then
+    if wg show "$WG_IF" >/dev/null 2>&1; then
+      WG_STATE="up"
+    fi
+  fi
+
+  # peer count
+  PEERS=0
+  if command -v wg >/dev/null 2>&1; then
+    PEERS="$(wg show "$WG_IF" peers 2>/dev/null | wc -w || true)"
+  fi
+
+  echo "{\"iface\":\"$WG_IF\",\"service\":\"$SERVICE\",\"wg\":\"$WG_STATE\",\"peers\":$PEERS}"
+}
+
+restart() {
+  wg-quick down "$WG_IF" >/dev/null 2>&1 || true
+  wg-quick up "$WG_IF"
+}
+
 case "$MODE" in
   init)
     ensure_keys
@@ -47,8 +88,16 @@ case "$MODE" in
     wg-quick down "$WG_IF"
     exit 0
     ;;
+  restart)
+    restart
+    exit 0
+    ;;
+  status-json)
+    status_json
+    exit 0
+    ;;
   *)
-    echo "Usage: $0 {init|start|stop}" >&2
+    echo "Usage: $0 {init|start|stop|restart|status-json}" >&2
     exit 1
     ;;
 esac

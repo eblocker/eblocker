@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 
 /**
  * Provides access to nameserver configuration of the system.
+ *
+ * FIXME: this class is not IPv6-safe. It doesn't care about the addresses it writes but it parses only IPv4 addresses.
  */
 public class DnsConfiguration {
     private final String resolvConfReadPath;

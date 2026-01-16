@@ -1048,34 +1048,6 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'vpnHomeStatusComponent'
     };
 
-    // const vpnHomeState = {
-    //     name: 'mobilestate',
-    //     parent: vpnHome.name,
-    //     redirectTo: 'mobilestatus', // auto activate substate, actual tab
-    //     requiredLicense: vpnHome.requiredLicense,
-    //     component: 'vpnHomeComponent'
-    // };
-    //
-    // const vpnHomeStatus = {
-    //     name: 'mobilestatus',
-    //     url: slashOptionSubState + 'mobilestatus',
-    //     parent: vpnHomeState.name,
-    //     tabOrder: 1,
-    //     requiredLicense: vpnHomeState.requiredLicense,
-    //     translationKey: 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL',
-    //     component: 'vpnHomeStatusComponent'
-    // };
-    //
-    // const vpnHomeDevices = {
-    //     name: 'mobiledevices',
-    //     url: slashOptionSubState + 'mobiledevices',
-    //     parent: vpnHomeState.name,
-    //     tabOrder: 2,
-    //     requiredLicense: vpnHomeState.requiredLicense,
-    //     translationKey: 'ADMINCONSOLE.VPN_HOME_DEVICES.LABEL',
-    //     component: 'vpnHomeDevicesComponent'
-    // };
-
     const vpnHomeWizard = {
         name: STATES.VPN_HOME_WIZARD,
         parent: STATES.PARENT,

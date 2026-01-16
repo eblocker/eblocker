@@ -175,9 +175,7 @@ import LedSettingsComponent from './components/system/ledSettings/led-settings.c
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
 import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
-import VpnHomeComponent from './components/vpnHome/vpn-home.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
-import VpnHomeDevicesComponent from './components/vpnHome/devices/vpn-home-devices.component';
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
@@ -460,9 +458,7 @@ angular.module('eblocker.adminconsole', [
     .component('ledSettingsComponent', LedSettingsComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)
     .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
-    .component('vpnHomeComponent', VpnHomeComponent)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
-    .component('vpnHomeDevicesComponent', VpnHomeDevicesComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('sslStatusComponent', SslStatusComponent)

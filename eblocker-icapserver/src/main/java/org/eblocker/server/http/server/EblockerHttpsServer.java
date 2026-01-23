@@ -2261,6 +2261,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.configbackup.upload");
 
         server
+                .uri("/api/configbackup/verify", configBackupController)
+                .action("verifyConfiguration", HttpMethod.POST)
+                .name("adminconsole.configbackup.verify");
+
+        server
                 .uri("/api/configbackup/import", configBackupController)
                 .action("importConfiguration", HttpMethod.POST)
                 .name("adminconsole.configbackup.import");

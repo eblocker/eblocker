@@ -58,30 +58,31 @@ public class DevicesBackupProvider extends BackupProvider {
         List<Device> allDevices = deviceService.getDevices(true).stream()
                 .filter(device -> !device.isEblocker())
                 .collect(Collectors.toList());
-        JarEntry entry = new JarEntry(DEVICES_ENTRY);
-        outputStream.putNextEntry(entry);
-        outputStream.write(objectMapper.writeValueAsBytes(allDevices));
-        outputStream.closeEntry();
+        writeNextEntry(outputStream, DEVICES_ENTRY, objectMapper.writeValueAsBytes(allDevices));
     }
 
     @Override
     public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        List<Device> devicesToRestore;
-        JarEntry entry = inputStream.getNextJarEntry();
-        if (entry.getName().equals(DEVICES_ENTRY)) {
-            devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<>() {
-            });
-            inputStream.closeEntry();
-        } else {
-            throw new EblockerException("Expected entry " + DEVICES_ENTRY + ", got " + entry.getName());
+        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    }
+
+    @Override
+    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    }
+
+    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+        getNextEntry(inputStream, DEVICES_ENTRY);
+        List<Device> devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<>() {});
+
+        if (devicesToRestore == null) {
+            throw new CorruptedBackupException("Deserialized backup object is null");
         }
-        if (devicesToRestore != null && !devicesToRestore.isEmpty()) {
-            // FUTURE: When the format or anything related to the Device
-            // changes, apply the migrations to them here, using the parameter
-            // schemaVersion
+        // FUTURE: When the format or anything related to the Device
+        // changes, apply the migrations to them here, using the parameter
+        // schemaVersion
+        if (!dryRun) {
             restoreDevices(devicesToRestore);
-        } else {
-            throw new EblockerException("Deserialized backup object is null");
         }
     }
 

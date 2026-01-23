@@ -138,6 +138,11 @@ public class ConfigurationBackupServiceTest {
             }
         }
 
+        @Override
+        public void verifyConfiguration(JarInputStream jarStream, CryptoService cryptoService, int schemaVersion) throws IOException {
+
+        }
+
         public void verify() {
             Assert.assertEquals(exportedData, importedData);
         }

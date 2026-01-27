@@ -19,22 +19,22 @@ package org.eblocker.server.http.backup;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.http.service.ConfigurationBackupService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
     private HttpsKeysBackupProvider provider;
     private DataSource dataSource;
     private SslService sslService;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         sslService = Mockito.mock(SslService.class);
         dataSource = Mockito.mock(DataSource.class);
@@ -44,7 +44,7 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
     }
 
     @Test
-    public void test() throws IOException {
+    public void testExportImport() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
         byte[] renewalCaBytes = "This is the renewal CA".getBytes();
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
@@ -76,7 +76,7 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         service.importConfiguration(inputStream, null);
     }
 
-    @Test(expected = DecryptionFailedException.class)
+    @Test
     public void wrongPassword() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
         ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
@@ -87,7 +87,8 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         service.exportConfiguration(outputStream, password);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream, "1234");
-
+        assertThrows(DecryptionFailedException.class, () -> {
+            service.importConfiguration(inputStream, "1234");
+        });
     }
 }

@@ -28,6 +28,7 @@ import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.IpAddressModule;
 
 import java.io.IOException;
+import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
@@ -78,4 +79,43 @@ public abstract class BackupProvider {
      * @param cryptoService is null if the user has not provided a password
      */
     public abstract void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+
+    /**
+     * Verify the configuration from the given JarInputStream.
+     * @param cryptoService is null if the user has not provided a password
+     */
+    public abstract void verifyConfiguration(JarInputStream jarStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+
+    /**
+     * Write the next entry into the given JarOutputStream.
+     * @param outputStream JarOutputStream
+     * @param name name of the next entry
+     * @param content content of the next entry
+     * @throws IOException
+     */
+    protected static void writeNextEntry(JarOutputStream outputStream, String name, byte[] content) throws IOException {
+        JarEntry entry = new JarEntry(name);
+        outputStream.putNextEntry(entry);
+        outputStream.write(content);
+        outputStream.closeEntry();
+    }
+
+    /**
+     * Read the next entry from a JarInputStream and make sure it has the expected name and is not a directory
+     * @param jarStream JarInputStream
+     * @param name expected name of the next entry. If it does not match, a CorruptedBackupException is thrown.
+     * @throws IOException
+     */
+    protected static void getNextEntry(JarInputStream jarStream, String name) throws IOException {
+        JarEntry entry = jarStream.getNextJarEntry();
+        if (entry == null) {
+            throw new CorruptedBackupException("Expected entry " + name + ", but stream does not have a next entry.");
+        }
+        if (!entry.getName().equals(name)) {
+            throw new CorruptedBackupException("Expected entry " + name + ", got " + entry.getName());
+        }
+        if (entry.isDirectory()) {
+            throw new CorruptedBackupException("Entry " + name + " is a directory.");
+        }
+    }
 }

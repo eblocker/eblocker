@@ -131,6 +131,38 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     }
 
     /**
+     * Verifies a previously uploaded configuration backup
+     * @param request
+     * @param response
+     */
+    @Override
+    public void verifyConfiguration(Request request, Response response) {
+        ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
+        if (reference == null) {
+            String message = "ConfigBackupReference is missing from request";
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+        Path localFile = getVerifiedLocalPath(reference.getFileReference());
+        try (InputStream inputStream = Files.newInputStream(localFile)) {
+            backupService.verifyConfiguration(inputStream, reference.getPassword());
+            LOG.info("Successfully verified configuration backup");
+        } catch (CorruptedBackupException e) {
+            LOG.error("Could not verify corrupted backup", e);
+            throw new BadRequestException("adminconsole.config_backup.error.corrupted");
+        } catch (UnsupportedBackupVersionException e) {
+            LOG.error("Could not verify backup with unsupported version", e);
+            throw new BadRequestException("adminconsole.config_backup.error.unsupported_version");
+        } catch (DecryptionFailedException e) {
+            LOG.error("Could not verify backup due to invalid password", e);
+            throw new BadRequestException("adminconsole.config_backup.error.invalid_password");
+        } catch (Exception e) {
+            LOG.error("Could not verify backup", e);
+            throw new EblockerException("adminconsole.config_backup.error.verification_failure");
+        }
+    }
+
+    /**
      * Imports a previously uploaded configuration backup
      * @param request
      * @param response

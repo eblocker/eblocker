@@ -393,14 +393,14 @@ public class TorController {
 
     private boolean sendCommand(String command) {
         log.debug("Attempting to send command '{}'", command);
-        return tryWithReconnectionAttempt(() -> {
+        return Boolean.TRUE.equals(tryWithReconnectionAttempt(() -> {
             telnetConnection.writeLine(command);
             String result = telnetConnection.readLine();
             if (result == null) {
                 throw new IOException("Could not read response for command: " + command);
             }
             return result.equals(RESPONSE_OK);
-        });
+        }));
     }
 
     // A Supplier that might throw an IOException:

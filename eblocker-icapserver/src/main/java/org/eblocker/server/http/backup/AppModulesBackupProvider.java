@@ -53,29 +53,31 @@ public class AppModulesBackupProvider extends BackupProvider {
                 .collect(Collectors.toMap(AppWhitelistModule::getId, AppWhitelistModule::isEnabled));
         AppModulesBackup backup = new AppModulesBackup(modifiedModules, enabledStates);
 
-        JarEntry entry = new JarEntry(APP_MODULES_ENTRY);
-        outputStream.putNextEntry(entry);
-        outputStream.write(objectMapper.writeValueAsBytes(backup));
-        outputStream.closeEntry();
+        writeNextEntry(outputStream, APP_MODULES_ENTRY, objectMapper.writeValueAsBytes(backup));
     }
 
     @Override
     public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        AppModulesBackup backup = null;
-        JarEntry entry = inputStream.getNextJarEntry();
-        if (entry.getName().equals(APP_MODULES_ENTRY)) {
-            backup = objectMapper.readValue(inputStream, AppModulesBackup.class);
-            inputStream.closeEntry();
-        } else {
-            throw new EblockerException("Expected entry " + APP_MODULES_ENTRY + ", got " + entry.getName());
+        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    }
+
+    @Override
+    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    }
+
+    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+        getNextEntry(inputStream, APP_MODULES_ENTRY);
+        AppModulesBackup backup = objectMapper.readValue(inputStream, AppModulesBackup.class);
+        if (backup == null) {
+            throw new CorruptedBackupException("Deserialized backup object is null");
         }
-        if (backup != null) {
-            // FUTURE: When the format or anything related to the App Modules
-            // changes, apply the migrations to them here, using the parameter
-            // schemaVersion
+
+        // FUTURE: When the format or anything related to the App Modules
+        // changes, apply the migrations to them here, using the parameter
+        // schemaVersion
+        if (!dryRun) {
             appModuleService.restoreModified(backup.getModules(), backup.getEnabledStates());
-        } else {
-            throw new EblockerException("Deserialized backup object is null");
         }
     }
 }

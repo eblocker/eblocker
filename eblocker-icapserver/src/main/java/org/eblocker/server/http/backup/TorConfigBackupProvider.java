@@ -19,7 +19,6 @@ package org.eblocker.server.http.backup;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
 import org.eblocker.crypto.CryptoService;
-import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.TorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,28 +44,29 @@ public class TorConfigBackupProvider extends BackupProvider {
     public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
         Set<String> torCountries = torController.getCurrentExitNodeCountries();
 
-        JarEntry entry = new JarEntry(TOR_ENTRY);
-        outputStream.putNextEntry(entry);
-        outputStream.write(objectMapper.writeValueAsBytes(torCountries));
-        outputStream.closeEntry();
+        writeNextEntry(outputStream, TOR_ENTRY, objectMapper.writeValueAsBytes(torCountries));
     }
 
     @Override
     public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        Set<String> restoredTorCountries = null;
-        JarEntry entry = inputStream.getNextJarEntry();
-        if (entry.getName().equals(TOR_ENTRY)) {
-            restoredTorCountries = objectMapper.readValue(inputStream, new TypeReference<Set<String>>() {
-            });
-            inputStream.closeEntry();
-        } else {
-            throw new EblockerException("Expected entry " + TOR_ENTRY + ", got " + entry.getName());
-        }
-        if (restoredTorCountries != null && !restoredTorCountries.isEmpty()) {
-            restoreTorCountries(restoredTorCountries);
-        } else {
-            // When the exit node is chosen automatically, the list is empty
-            restoreTorCountries(Collections.emptySet());
+        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    }
+
+    @Override
+    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    }
+
+    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+        getNextEntry(inputStream, TOR_ENTRY);
+        Set<String> restoredTorCountries = objectMapper.readValue(inputStream, new TypeReference<Set<String>>() {});
+        if (!dryRun) {
+            if (restoredTorCountries != null && !restoredTorCountries.isEmpty()) {
+                restoreTorCountries(restoredTorCountries);
+            } else {
+                // When the exit node is chosen automatically, the list is empty
+                restoreTorCountries(Collections.emptySet());
+            }
         }
     }
 

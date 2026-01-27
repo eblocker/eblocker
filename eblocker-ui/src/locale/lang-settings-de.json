@@ -329,8 +329,14 @@
         },
         "CONFIG_BACKUP": {
             "ACTION": {
-                "GENERATE": "Einstellungen sichern",
-                "UPLOAD": "Einstellungen wiederherstellen..."
+                "CREATE_BACKUP" : "Sicherungsdatei erstellen",
+                "SAVE_BACKUP" : "Sicherungsdatei speichern",
+                "SELECT" : "Datei auswählen",
+                "VERIFY" : "Prüfen",
+                "IMPORT" : "Importieren",
+                "SAVE_SETTINGS" : "Einstellungen sichern...",
+                "RESTORE_SETTINGS" : "Einstellungen wiederherstellen...",
+                "REBOOT" : "Neustart"
             },
             "DATA_DEVICE_SETTINGS": "Geräteeinstellungen",
             "DATA_TOR_SETTINGS": "Einstellungen für Tor",
@@ -343,24 +349,30 @@
                 "IMPORT_FAILURE": "Die Sicherungsdatei konnte nicht wiederhergestellt werden",
                 "INVALID_FILE": "Bitte wähle eine eBlocker-Sicherungsdatei mit der Endung .eblcfg aus",
                 "UNSUPPORTED_VERSION": "Die Version der Sicherungsdatei wird nicht mehr unterstützt",
-                "UPLOAD_FAILURE": "Die Sicherungsdatei konnte nicht hochgeladen werden"
+                "UPLOAD_FAILURE": "Die Sicherungsdatei konnte nicht hochgeladen werden",
+                "VERIFICATION_FAILURE": "Die Prüfung der Sicherungsdatei ist fehlgeschlagen."
             },
             "EXPLAIN": {
+                "TRANSFERRING_FILE" : "Übertrage Sicherungsdatei...",
+                "SELECT_FILE" : "Bitte wähle eine eBlocker-Sicherungsdatei mit der Endung .eblcfg aus, um die Einstellungen wiederherzustellen.",
+                "SAVE_BACKUP" : "Sichere die Datei unten.",
+                "FILENAME" : "Dateiname:",
+                "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Downloads-Verzeichnis gespeichert.",
                 "EXPORT": "Diese Daten kannst du in der aktuellen Version in einer Datei sichern und wiederherstellen:",
-                "IMPORT": "Diese Daten werden wiederhergestellt:"
+                "IMPORT": "Diese Daten werden wiederhergestellt:",
+                "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
+                "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet."
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {
                 "EXPORT": "Schlüssel für HTTPS sichern",
                 "IMPORT": "Schlüssel für HTTPS wiederherstellen"
             },
-            "INFO": {
-                "DOWNLOADED": "Die Sicherungsdatei wurde in deinem Downloads-Verzeichnis gespeichert",
-                "UPLOADED": "Die Einstellungen wurden wiederhergestellt"
-            },
             "LABEL": {
-                "GENERATE": "Einstellungen sichern",
-                "UPLOAD": "Einstellungen wiederherstellen"
+                "CREATE_BACKUP" : "Sicherungsdatei erstellen",
+                "DOWNLOAD_BACKUP" : "Herunterladen",
+                "SAVE_SETTINGS" : "Einstellungen sichern",
+                "RESTORE_SETTINGS" : "Einstellungen wiederherstellen"
             },
             "PASSWORD": {
                 "ERROR": {

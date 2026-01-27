@@ -26,4 +26,5 @@ public interface ConfigurationBackupController {
     ByteBuf downloadConfiguration(Request request, Response response);
     ConfigBackupReference uploadConfiguration(Request request, Response response);
     void importConfiguration(Request request, Response response);
+    void verifyConfiguration(Request request, Response response);
 }

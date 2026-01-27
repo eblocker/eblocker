@@ -8,15 +8,12 @@ target
 .DS_Store
 *~
 *.log
+*.log.*
 
 .cache
 
 .scratch
 /.test-results
-
-# Node.js, npm and gulp files
-eblocker-icapserver/src/node
-eblocker-icapserver/src/node_modules
 
 # temp(old) and working files of controlbar and settings
 eblocker-icapserver/src/htdocs/temp

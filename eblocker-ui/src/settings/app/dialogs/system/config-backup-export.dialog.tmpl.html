@@ -1,0 +1,113 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.SAVE_SETTINGS' | translate}}"
+           style="max-width: 800px;"
+           layout-padding>
+    <md-dialog-content layout="column" layout-padding>
+        <div>
+            <h2 translate="ADMINCONSOLE.CONFIG_BACKUP.LABEL.SAVE_SETTINGS"></h2>
+        </div>
+        <div style="padding-bottom: 0;">
+            <md-tabs md-border-bottom
+                     md-dynamic-height
+                     md-selected="vm.currentStep"
+                     style="margin-top: 10px;">
+                <md-tab ng-disabled="!vm.isStepAllowed(0)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.LABEL.CREATE_BACKUP' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <form name="vm.passwordForm" novalidate ng-submit="vm.createConfigBackup()">
+                            <div layout-margin>
+                                <div>
+                                    <p>{{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.EXPORT' | translate }}
+                                        <ul>
+                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
+                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
+                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
+                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                                <div>
+                                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                                 ng-model="vm.includeKeys"
+                                                 aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
+                                        {{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.EXPORT' | translate }}
+                                    </md-checkbox>
+                                </div>
+                                <!-- PASSWORD -->
+                                <div layout="row" layout-xs="column" ng-if="vm.includeKeys">
+                                    <div flex="60" flex-xs="100">
+                                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                            <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_NEW_PASSWORD' | translate }}</label>
+                                            <input name="newPassword" ng-model="vm.newPassword" type="password" md-maxlength="vm.maxLength" required>
+                                            <div ng-messages="vm.passwordForm.newPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.newPassword.$touched">
+                                                <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.NEW_PASSWORD_REQUIRED' | translate }}</div>
+                                                <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div flex="40" flex-xs="100" layout="column" layout-align="start center" style="min-height: 40px">
+                                        <span style="font-size: 12px;">{{'ADMINCONSOLE.DIALOG.PASSWORD.STRENGTH' | translate}}</span>
+                                        <ul id="strength" password-quality="vm.newPassword" style="margin: 0; padding: 0;"></ul>
+                                    </div>
+                                </div>
+                                <!-- REPEAT PASSWORD -->
+                                <div layout="row" ng-if="vm.includeKeys">
+                                    <div flex="60" flex-xs="100">
+                                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                            <label>{{'ADMINCONSOLE.DIALOG.PASSWORD.LABEL_REPEAT_PASSWORD' | translate }}</label>
+                                            <input name="repeatPassword" ng-model="vm.repeatPassword" type="password" ng-maxlength="vm.maxLength" required>
+                                            <div ng-messages="vm.passwordForm.repeatPassword.$error" ng-if="vm.passwordForm.$submitted || vm.passwordForm.repeatPassword.$touched">
+                                                <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.REPEAT_PASSWORD_REQUIRED' | translate }}</div>
+                                                <div ng-message="mustMatch">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.REPEAT_PASSWORD_MISMATCH' | translate }}</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                </div>
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.WARNING" ng-if="vm.includeKeys">
+                                </div>
+                            </div>
+                            <div layout="row" layout-xs="column" layout-align="end center" style="padding: 0;">
+                                <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                                    {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
+                                </md-button>
+                                <md-button type="submit" ng-click="vm.createConfigBackup()" class="md-raised md-accent" ng-disabled="vm.exporting">
+                                    {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.CREATE_BACKUP' | translate }}
+                                </md-button>
+                                <md-progress-circular md-diameter="36" md-mode="indeterminate" ng-show="vm.exporting"></md-progress-circular>
+                            </div>
+                        </form>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab ng-disabled="!vm.isStepAllowed(1)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.LABEL.DOWNLOAD_BACKUP' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin>
+                            <div ng-hide="vm.downloadSaved" translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.SAVE_BACKUP"></div>
+                            <div ng-show="vm.downloadSaved" translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.BACKUP_SAVED"></div>
+                            <div layout="row" ng-show="vm.blobUrl" layout-padding>
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.FILENAME"></div>
+                                <a id="downloadBlobAnchor" href="{{vm.blobUrl}}" download="{{vm.downloadFilename}}" ng-click="vm.setDownloadSaved()">
+                                    {{vm.downloadFilename}}
+                                </a>
+                            </div>
+                            <div layout="row" ng-hide="vm.blobUrl" layout-align="start center" layout-padding>
+                                <md-progress-circular md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.TRANSFERRING_FILE"></div>
+                            </div>
+                        </div>
+                        <div layout="row" layout-xs="column" layout-align="end center" style="padding: 0;">
+                            <md-button type="button" ng-click="vm.cancel()" ng-hide="vm.downloadSaved" class="md-raised md-secondary">
+                                {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
+                            </md-button>
+                            <md-button type="button" ng-click="vm.saveDownload()" ng-hide="vm.downloadSaved" class="md-raised md-accent" ng-disabled="!vm.blobUrl">
+                                {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.SAVE_BACKUP' | translate }}
+                            </md-button>
+                            <md-button type="button" ng-show="vm.downloadSaved" ng-click="vm.closeDialog()" class="md-raised">
+                                {{ 'ADMINCONSOLE.TASKS.DIALOG.OK' | translate }}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </md-dialog-content>
+</md-dialog>

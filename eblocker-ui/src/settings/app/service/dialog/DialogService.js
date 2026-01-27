@@ -850,21 +850,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function configBackupImport(fileName, passwordRequired, passwordRetry) {
-        return $mdDialog.show({
-            controller: 'ConfigBackupImportController',
-            controllerAs: 'vm',
-            templateUrl: 'app/dialogs/system/config-backup-import.dialog.tmpl.html',
-            parent: angular.element(document.body),
-            clickOutsideToClose:false,
-            locals: {
-                fileName: fileName,
-                passwordRequired: passwordRequired,
-                passwordRetry: passwordRetry
-            }
-        });
-    }
-
     function deleteUserThatIsAssignedOrOperatingDevice(event, okAction, cancelAction) {
         return $mdDialog.show({
             controller: 'ConfirmationDialogController',
@@ -951,7 +936,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         revokeCertificateInfo: revokeCertificateInfo,
         addCertificateInfo: addCertificateInfo,
         editTasksViewConfig: editTasksViewConfig,
-        configBackupImport: configBackupImport,
         resetDeviceConfirm: resetDeviceConfirm,
         deleteUserThatIsAssignedOrOperatingDevice: deleteUserThatIsAssignedOrOperatingDevice,
         updateCustomBlockerList: updateCustomBlockerList

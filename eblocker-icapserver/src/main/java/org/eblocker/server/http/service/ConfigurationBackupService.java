@@ -136,6 +136,29 @@ public class ConfigurationBackupService {
         }
     }
 
+    /**
+     * Verifies the configuration from the given InputStream. If the user has provided a password,
+     * private keys are verified.
+     * @param inputStream
+     * @param password
+     * @throws IOException
+     */
+    public void verifyConfiguration(InputStream inputStream, String password) throws IOException {
+        try (JarInputStream jarStream = new JarInputStream(inputStream)) {
+            Manifest manifest = jarStream.getManifest();
+            if (manifest == null) {
+                throw new CorruptedBackupException("Missing manifest file");
+            }
+            BackupAttributes attribs = new BackupAttributes(manifest.getMainAttributes());
+
+            CryptoService cryptoService = createCryptoService(password);
+
+            for (BackupProvider provider : versionizedBackupProviders.get(attribs.version)) {
+                provider.verifyConfiguration(jarStream, cryptoService, attribs.schemaVersion);
+            }
+        }
+    }
+
     public void importConfiguration(InputStream inputStream) throws IOException {
         importConfiguration(inputStream, null);
     }

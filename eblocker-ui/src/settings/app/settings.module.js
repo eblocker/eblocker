@@ -91,6 +91,7 @@ import NotificationDialogController from './dialogs/notification/notification.di
 import TorActivationDialogController from '../../shared/dialogs/tor/tor-activation.dialog';
 import EditTasksViewConfigController from './dialogs/system/tasks-view-config-edit.dialog';
 import ConfigBackupImportController from './dialogs/system/config-backup-import.dialog';
+import ConfigBackupExportController from './dialogs/system/config-backup-export.dialog';
 import AddCustomListController from './dialogs/blocker/update-custom-list.dialog';
 
 
@@ -407,6 +408,7 @@ angular.module('eblocker.adminconsole', [
     .controller('TorActivationDialogController', TorActivationDialogController)
     .controller('EditTasksViewConfigController', EditTasksViewConfigController)
     .controller('ConfigBackupImportController', ConfigBackupImportController)
+    .controller('ConfigBackupExportController', ConfigBackupExportController)
     .controller('addCustomListController', AddCustomListController)
     .component('settingsComponent', SettingsComponent)
     .component('mainComponent', MainComponent)

@@ -20,78 +20,53 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(logger, $window, ConfigBackupService, DialogService, NotificationService, security) {
+function Controller(logger, $mdDialog) {
     'ngInject';
     'use strict';
 
     const vm = this;
-    vm.exporting = false;
-    vm.includeKeys = true;
-    vm.maxLength = 50;
 
-    function configBackupDownloadUrl(fileReference) {
-        return ConfigBackupService.downloadConfigUrl(fileReference) + '?Authorization=Bearer+' + security.getToken();
+    function configBackupExportDialog() {
+        return $mdDialog.show({
+            controller: 'ConfigBackupExportController',
+            controllerAs: 'vm',
+            templateUrl: 'app/dialogs/system/config-backup-export.dialog.tmpl.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:false
+        });
     }
 
-    vm.getAuthorization = function() {
-        return 'Bearer ' + security.getToken();
-    };
+    function configBackupImportDialog() {
+        return $mdDialog.show({
+            controller: 'ConfigBackupImportController',
+            controllerAs: 'vm',
+            templateUrl: 'app/dialogs/system/config-backup-import.dialog.tmpl.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:false
+        });
+    }
 
-    vm.getDownloadURL = function() {
-        return ConfigBackupService.downloadUrl();
-    };
-
-    vm.createConfigBackup = function() {
-        var password;
-        if (vm.includeKeys) {
-            // Do passwords match?
-            vm.passwordForm.repeatPassword.$setValidity('mustMatch', vm.newPassword === vm.repeatPassword);
-
-            // Any other form error?
-            if (!vm.passwordForm.$valid) {
-                return;
-            }
-            password = vm.newPassword;
-        }
-
-        vm.exporting = true;
-        ConfigBackupService.exportConfig(vm.includeKeys, password).then(function(data) {
-            NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.DOWNLOADED');
-            $window.location = configBackupDownloadUrl(data.fileReference);
+    function showExportDialog() {
+        configBackupExportDialog().then(function(result) {
+            logger.info('Export complete');
         }, function(reason) {
-            logger.error('Could not export backup configuration');
-        }).finally(function() {
-            vm.exporting = false;
-        });
-    };
-
-    function showImportDialog(fileName, fileReference, passwordRequired, passwordRetry) {
-        DialogService.configBackupImport(fileName, passwordRequired, passwordRetry).then(function(password) {
-            ConfigBackupService.importConfig(fileReference, password).then(function(result) {
-                NotificationService.info('ADMINCONSOLE.CONFIG_BACKUP.INFO.UPLOADED');
-            }, function(response) {
-                logger.error('Could not import backup configuration');
-                let errCode = response.toUpperCase();
-                if (errCode === 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.INVALID_PASSWORD') {
-                    showImportDialog(fileName, fileReference, passwordRequired, true);
-                } else {
-                    NotificationService.error(errCode);
-                }
-            });
+            logger.error('Export dialog failed/cancelled');
         });
     }
 
-    vm.uploadConfigBackup = function(file, invalidFiles) {
-        if (file) {
-            ConfigBackupService.uploadConfig(file).then(
-                function success(data) {
-                    showImportDialog(file.name, data.fileReference, data.passwordRequired, false);
-                },
-                function error(response) {
-                    NotificationService.error(response.toUpperCase());
-                });
-        } else {
-            NotificationService.error('ADMINCONSOLE.CONFIG_BACKUP.ERROR.INVALID_FILE');
-        }
+    function showImportDialog() {
+        configBackupImportDialog().then(function(password) {
+            logger.info('Import complete');
+        }, function(response) {
+            logger.error('Import dialog failed/cancelled');
+        });
+    }
+
+    vm.startExportDialog = function() {
+        showExportDialog();
+    };
+
+    vm.startImportDialog = function() {
+        showImportDialog();
     };
 }

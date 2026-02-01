@@ -70,8 +70,8 @@ status_json() {
 }
 
 restart() {
-  wg-quick down "$WG_IF" >/dev/null 2>&1 || true
-  wg-quick up "$WG_IF"
+  sudo -n /usr/bin/wg-quick down "$WG_IF" >/dev/null 2>&1 || true
+  sudo -n /usr/bin/wg-quick up "$WG_IF"
 }
 
 case "$MODE" in
@@ -81,11 +81,19 @@ case "$MODE" in
     exit 0
     ;;
   start)
-    wg-quick up "$WG_IF"
+    # wenn wg0 schon existiert: ok
+    if ip link show "$WG_IF" >/dev/null 2>&1; then
+      exit 0
+    fi
+    sudo -n /usr/bin/wg-quick up "$WG_IF"
     exit 0
     ;;
   stop)
-    wg-quick down "$WG_IF"
+    # wenn wg0 nicht existiert: ok
+    if ! ip link show "$WG_IF" >/dev/null 2>&1; then
+      exit 0
+    fi
+    sudo -n /usr/bin/wg-quick down "$WG_IF"
     exit 0
     ;;
   restart)

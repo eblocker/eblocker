@@ -1487,9 +1487,20 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // ** Adminconsole: WireGuard
         server
-               .uri("/api/adminconsole/wireguard/status", wireGuardServerController)
-               .action("getStatus", HttpMethod.GET)
-               .name("public.adminconsole.wireguard.status.get");
+            .uri("/api/adminconsole/wireguard/status", wireGuardServerController)
+            .action("getStatus", HttpMethod.GET)
+            .name("public.adminconsole.wireguard.status.get");
+
+        server
+            .uri("/api/adminconsole/wireguard/enable", wireGuardServerController)
+            .action("enable", HttpMethod.POST)
+            .name("public.adminconsole.wireguard.enable.post");
+
+        server
+            .uri("/api/adminconsole/wireguard/disable", wireGuardServerController)
+            .action("disable", HttpMethod.POST)
+            .name("public.adminconsole.wireguard.disable.post");
+
                
         // ** New Adminconsole: save customer info (for remind-me-again VPN offer)
         server

@@ -1,91 +1,92 @@
 <div layout="column" layout-padding>
-    <div layout="row" layout-align="space-between center">
-        <h2 style="margin-top:0;">WireGuard</h2>
 
-        <div>
-            <md-button class="md-raised" ng-click="vm.loadStatus()" ng-disabled="vm.loading">
-                Aktualisieren
-            </md-button>
+  <!-- Header -->
+  <h2 style="margin-top:0;">WireGuard</h2>
+
+  <!-- Controls LEFT (OpenVPN-like) -->
+  <div layout="row" layout-align="start center" style="margin: 8px 0 18px 0;">
+    <md-switch
+      ng-model="vm.enabled"
+      ng-change="vm.toggleEnabled()"
+      ng-disabled="vm.loading || vm.toggling">
+      WireGuard
+    </md-switch>
+
+    <span style="margin-left:10px; min-width:60px; opacity:0.8;">
+      {{ vm.enabled ? 'AN' : 'AUS' }}
+    </span>
+
+    <md-button class="md-raised" ng-click="vm.loadStatus()" ng-disabled="vm.loading" style="margin-left:12px;">
+      AKTUALISIEREN
+    </md-button>
+  </div>
+
+  <!-- Optional Infozeile (kannst du auch löschen) -->
+  <div style="opacity:0.7; margin-bottom:18px;">
+    Status wird aus dem Backend geladen: <code>/api/adminconsole/wireguard/status</code>
+  </div>
+
+  <div layout="row" layout-wrap>
+
+    <!-- STATUS -->
+    <md-card flex="33" flex-xs="100">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-title">Status</span>
+        </md-card-title-text>
+      </md-card-title>
+
+      <md-card-content>
+        <div layout="row" layout-align="start center">
+          <span ng-if="vm.loading">Lade…</span>
+
+          <span ng-if="!vm.loading">
+            <strong>{{ (vm.status.wg === 'up') ? 'UP' : 'DOWN' }}</strong>
+            <span style="margin-left:8px; opacity:0.75;">
+              ({{vm.status.iface}})
+            </span>
+          </span>
         </div>
-    </div>
 
-    <md-card>
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">WireGuard</span>
-                <span class="md-subhead">
-                    Vorbereitung – API folgt
-                </span>
-            </md-card-title-text>
-        </md-card-title>
+        <div style="margin-top:6px; opacity:0.8;" ng-if="!vm.loading">
+          Service: {{vm.status.service}}
+        </div>
 
-        <md-card-content>
-            <p>
-                Diese Seite ist aktuell ein Platzhalter für die zukünftige
-                WireGuard-Integration.
-            </p>
-
-            <div ng-if="vm.error" style="margin-top:10px;">
-                <md-icon class="material-icons">error</md-icon>
-                <span style="margin-left:6px;">Status konnte nicht geladen werden.</span>
-            </div>
-        </md-card-content>
+        <div ng-if="vm.error" style="margin-top:10px;">
+          <md-icon class="material-icons">error</md-icon>
+          <span style="margin-left:6px;">{{ vm.errorText || 'Aktion/Status fehlgeschlagen.' }}</span>
+        </div>
+      </md-card-content>
     </md-card>
 
-    <div layout="row" layout-wrap>
-        <!-- STATUS -->
-        <md-card flex="33" flex-xs="100">
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-title">Status</span>
-                </md-card-title-text>
-            </md-card-title>
+    <!-- PEERS -->
+    <md-card flex="33" flex-xs="100">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-title">Peers</span>
+        </md-card-title-text>
+      </md-card-title>
 
-            <md-card-content>
-                <div layout="row" layout-align="start center">
-                    <span ng-if="vm.loading">Lade…</span>
+      <md-card-content>
+        <span ng-if="vm.loading">Lade…</span>
+        <span ng-if="!vm.loading">
+          <strong>{{vm.status.peers}}</strong>
+        </span>
+      </md-card-content>
+    </md-card>
 
-                    <span ng-if="!vm.loading">
-                        <strong>{{ (vm.status.wg === 'up') ? 'UP' : 'DOWN' }}</strong>
-                        <span style="margin-left:8px; opacity:0.75;">
-                            ({{vm.status.iface}})
-                        </span>
-                    </span>
-                </div>
+    <!-- CONFIG / QR -->
+    <md-card flex="33" flex-xs="100">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-title">Konfiguration / QR</span>
+        </md-card-title-text>
+      </md-card-title>
 
-                <div style="margin-top:6px; opacity:0.8;" ng-if="!vm.loading">
-                    Service: {{vm.status.service}}
-                </div>
-            </md-card-content>
-        </md-card>
+      <md-card-content>
+        <span style="opacity:0.75;">Noch nicht implementiert</span>
+      </md-card-content>
+    </md-card>
 
-        <!-- PEERS -->
-        <md-card flex="33" flex-xs="100">
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-title">Peers</span>
-                </md-card-title-text>
-            </md-card-title>
-
-            <md-card-content>
-                <span ng-if="vm.loading">Lade…</span>
-                <span ng-if="!vm.loading">
-                    <strong>{{vm.status.peers}}</strong>
-                </span>
-            </md-card-content>
-        </md-card>
-
-        <!-- CONFIG / QR -->
-        <md-card flex="33" flex-xs="100">
-            <md-card-title>
-                <md-card-title-text>
-                    <span class="md-title">Konfiguration / QR</span>
-                </md-card-title-text>
-            </md-card-title>
-
-            <md-card-content>
-                <span style="opacity:0.75;">Noch nicht implementiert</span>
-            </md-card-content>
-        </md-card>
-    </div>
+  </div>
 </div>

@@ -28,13 +28,12 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
         this.wg = wg;
     }
 
+    // =========================
+    // STATUS
+    // =========================
     @Override
     public Map<String, Object> getStatus(Request request, Response response) {
-        // Wenn du irgendwann init/start/stop brauchst, machen wir das sauber über Service + Routen.
-        // Für status reicht das hier.
-
         String json = runStatusJson();
-
         try {
             return MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
@@ -42,13 +41,56 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
         }
     }
 
+    // =========================
+    // ENABLE (= start)
+    // =========================
+    @Override
+    public Map<String, Object> enable(Request request, Response response) {
+        runControl("start");
+        return getStatus(request, response);
+    }
+
+    // =========================
+    // DISABLE (= stop)
+    // =========================
+    @Override
+    public Map<String, Object> disable(Request request, Response response) {
+        runControl("stop");
+        return getStatus(request, response);
+    }
+
+    // =========================
+    // SCRIPT EXECUTION
+    // =========================
+    private void runControl(String cmd) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "sudo", "-n", WG_CONTROL, cmd
+            );
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+                while (br.readLine() != null) {
+                    // bewusst leer – wir warten nur auf sauberes Ende
+                }
+            }
+
+            p.waitFor();
+        } catch (Exception ignored) {
+            // Fehler sieht man im Status
+        }
+    }
+
     private String runStatusJson() {
         try {
-            ProcessBuilder pb = new ProcessBuilder(WG_CONTROL, "status-json");
+            ProcessBuilder pb = new ProcessBuilder(
+                    "sudo", "-n", WG_CONTROL, "status-json"
+            );
             pb.redirectErrorStream(true);
 
             Process p = pb.start();
-
             String jsonLine = null;
 
             try (BufferedReader br = new BufferedReader(
@@ -57,23 +99,18 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
                 String line;
                 while ((line = br.readLine()) != null) {
                     String t = line.trim();
-                    // wir nehmen die erste Zeile, die nach JSON aussieht
                     if (jsonLine == null && t.startsWith("{")) {
                         jsonLine = t;
-                        // nicht breaken: wir lesen weiter, damit der Prozess sauber durchlaufen kann
                     }
                 }
             }
 
-            // Optional: Exit-Code lesen (falls Script Fehler meldet)
-            // (ohne Timeout – wenn du willst, bauen wir Timeout dazu)
             int exit = p.waitFor();
 
             if (jsonLine != null) {
                 return jsonLine;
             }
 
-            // Wenn Script nix brauchbares liefert, geben wir Fallback-JSON zurück
             return "{\"iface\":\"wg0\",\"service\":\"unknown\",\"wg\":\"down\",\"peers\":0,\"error\":\"no-json\",\"exit\":" + exit + "}";
 
         } catch (Exception e) {

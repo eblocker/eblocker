@@ -6,7 +6,8 @@
                     ng-disabled="subState.disabled"
                     ng-click="vm.switchTab(subState)">
                 <md-tab-label>
-                    {{subState.translationKey | translate}}
+                    <span ng-if="subState.name === 'mobilestatus'">OpenVPN</span>
+                    <span ng-if="subState.name !== 'mobilestatus'">{{subState.translationKey | translate}}</span>
                 </md-tab-label>
             </md-tab>
         </md-tabs>

@@ -617,18 +617,6 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'vpnConnectDetailsComponent'
     };
 
-        const wireguard = {
-        name: 'wireguard',
-        url: slashOptionSubState + 'wireguard',
-        parent: ipAnonState.name,
-        tabOrder: 3,
-        requiredLicense: ipAnonState.requiredLicense,
-        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
-        component: 'wireguardComponent'
-    };
-
-
-
     // ** MAIN STATE: DNS
     const dns = {
         name: 'dns',
@@ -1049,6 +1037,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'mobile',
         url: slashOptionUrl + 'mobile',
         parent: STATES.MAIN,
+        redirectTo: STATES.VPN_HOME_STATE,
         showInNavbar: true,
         iconUrl: '/img/icons/ic_smartphone_black.svg',
         navbarOrder: 5,
@@ -1056,26 +1045,37 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
             return 'BAS';
         },
         translationKey: 'ADMINCONSOLE.VPN_HOME.LABEL',
+        // component: 'vpnHomeStatusComponent'
+    };
+
+    const vpnHomeState = {
+        name: STATES.VPN_HOME_STATE, // 'mobilestate'
+        parent: vpnHome.name,
+        redirectTo: 'mobilestatus', // erster Tab (OpenVPN)
+        requiredLicense: vpnHome.requiredLicense,
+        component: 'vpnHomeComponent'
+    };
+    
+    const vpnHomeStatus = {
+        name: 'mobilestatus',
+        url: slashOptionSubState + 'mobilestatus',
+        parent: vpnHomeState.name,
+        tabOrder: 1,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL',
         component: 'vpnHomeStatusComponent'
     };
 
-    // const vpnHomeState = {
-    //     name: 'mobilestate',
-    //     parent: vpnHome.name,
-    //     redirectTo: 'mobilestatus', // auto activate substate, actual tab
-    //     requiredLicense: vpnHome.requiredLicense,
-    //     component: 'vpnHomeComponent'
-    // };
-    //
-    // const vpnHomeStatus = {
-    //     name: 'mobilestatus',
-    //     url: slashOptionSubState + 'mobilestatus',
-    //     parent: vpnHomeState.name,
-    //     tabOrder: 1,
-    //     requiredLicense: vpnHomeState.requiredLicense,
-    //     translationKey: 'ADMINCONSOLE.VPN_HOME_STATUS.LABEL',
-    //     component: 'vpnHomeStatusComponent'
-    // };
+    const vpnHomeWireGuard = {
+        name: 'mobilewireguard',
+        url: slashOptionSubState + 'wireguard',
+        parent: vpnHomeState.name,
+        tabOrder: 2,
+        requiredLicense: function() { return 'WOL'; },
+        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
+        component: 'wireguardComponent'
+    };
+
     //
     // const vpnHomeDevices = {
     //     name: 'mobiledevices',
@@ -1130,7 +1130,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'wireguardMain',
         parent: STATES.MAIN,
         url: slashOptionUrl + 'wireguard',
-        showInNavbar: true,
+        showInNavbar: false,
         // Icon erstmal wiederverwenden (später eigenes WireGuard-Icon möglich)
         iconUrl: '/img/icons/ic_vpn_key_black.svg',
         navbarOrder: 8,
@@ -1147,15 +1147,23 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     const allStates = [home, homeLicense, homeUpdate, adminPassword, homeAbout,
         homeLegal, parentalControl, parentalControlState, devices, ssl, sslStatus,
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
-        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, wireguardMain,
+        system, network, networkSettings, networkSettingsIp6, networkWizard,
+
+        // eBlocker Mobile (Tabs aktivieren)
+        vpnHome, vpnHomeState, vpnHomeStatus, vpnHomeWireGuard, vpnHomeWizard, 
+
+        // WireGuard (noch unverändert – wird später umgehängt)
+        wireguardMain,
+
         manualRecording, users,
-        blacklists, whitelists, tor, vpnconnect, wireguard, dns, status, timeAndLanguage,
+        blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
         events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
-        vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
+        devicesList, devicesDiscovery, dnsStatus, dnsLocal,
         dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
         doctor];
+
 
 
     // ** MAIN STATE ERROR: NOT LICENSED

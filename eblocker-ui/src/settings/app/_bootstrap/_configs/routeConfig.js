@@ -1053,7 +1053,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         parent: vpnHome.name,
         redirectTo: 'mobilestatus', // erster Tab (OpenVPN)
         requiredLicense: vpnHome.requiredLicense,
-        component: 'vpnHomeComponent'
+        component: 'vpnHomeStatusComponent'
     };
     
     const vpnHomeStatus = {

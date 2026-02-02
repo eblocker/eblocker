@@ -29,9 +29,8 @@ import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -43,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DevicesBackupProviderTest extends BackupProviderTestBase {
     private DeviceService deviceService;
     private UserService userService;
@@ -52,7 +53,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
     private DataSource dataSource;
     private int newDefaultSystemuser = 10;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         deviceService = Mockito.mock(DeviceService.class);
         userService = Mockito.mock(UserService.class);
@@ -197,60 +198,60 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Device restoredGateway = argCaptor.getAllValues().get(0);
         Device restoredDevice = argCaptor.getAllValues().get(1);
         // Verify gateway has been restored correctly
-        Assert.assertTrue(restoredGateway.isGateway());
-        Assert.assertFalse(restoredGateway.isEblocker());
-        Assert.assertEquals(restoredGateway.getName(), gatewayAfter.getName());
+        assertTrue(restoredGateway.isGateway());
+        assertFalse(restoredGateway.isEblocker());
+        assertEquals(restoredGateway.getName(), gatewayAfter.getName());
 
         // Verify computer has been restored correctly
         // User References are set to default value
-        Assert.assertTrue(restoredDevice.isOnline());// The device stayed online
-        Assert.assertEquals(computerBefore.getName(), restoredDevice.getName());
-        Assert.assertEquals(computerBefore.getAreDeviceMessagesSettingsDefault(),
+        assertTrue(restoredDevice.isOnline());// The device stayed online
+        assertEquals(computerBefore.getName(), restoredDevice.getName());
+        assertEquals(computerBefore.getAreDeviceMessagesSettingsDefault(),
                 restoredDevice.getAreDeviceMessagesSettingsDefault());
         // User References of existing device are not restored
-        Assert.assertEquals(computerAfterAssignedUser, restoredDevice.getAssignedUser());
-        Assert.assertEquals(computerBefore.isControlBarAutoMode(), restoredDevice.isControlBarAutoMode());
+        assertEquals(computerAfterAssignedUser, restoredDevice.getAssignedUser());
+        assertEquals(computerBefore.isControlBarAutoMode(), restoredDevice.isControlBarAutoMode());
         // User References of existing device are not restored
-        Assert.assertEquals(computerAfterDefaultSystemUser, restoredDevice.getDefaultSystemUser());
-        Assert.assertEquals(computerBefore.isEnabled(), restoredDevice.isEnabled());
-        Assert.assertEquals(computerBefore.getFilterMode(), restoredDevice.getFilterMode());
-        Assert.assertEquals(computerBefore.isFilterAdsEnabled(),
+        assertEquals(computerAfterDefaultSystemUser, restoredDevice.getDefaultSystemUser());
+        assertEquals(computerBefore.isEnabled(), restoredDevice.isEnabled());
+        assertEquals(computerBefore.getFilterMode(), restoredDevice.getFilterMode());
+        assertEquals(computerBefore.isFilterAdsEnabled(),
                 restoredDevice.isFilterAdsEnabled());
-        Assert.assertEquals(computerBefore.isFilterTrackersEnabled(),
+        assertEquals(computerBefore.isFilterTrackersEnabled(),
                 restoredDevice.isFilterTrackersEnabled());
         // No guarantee the installed certificate is still used by the eBlocker
-        Assert.assertFalse(restoredDevice.hasRootCAInstalled());
-        Assert.assertEquals(computerBefore.getIconMode(), restoredDevice.getIconMode());
-        Assert.assertEquals(computerBefore.getIconPosition(), restoredDevice.getIconPosition());
-        Assert.assertTrue(restoredDevice.getIpAddresses().size() == 1);
-        Assert.assertEquals(Ip4Address.parse("192.168.0.22"), restoredDevice.getIpAddresses().get(0));
-        Assert.assertEquals(computerBefore.isIpAddressFixed(), restoredDevice.isIpAddressFixed());
+        assertFalse(restoredDevice.hasRootCAInstalled());
+        assertEquals(computerBefore.getIconMode(), restoredDevice.getIconMode());
+        assertEquals(computerBefore.getIconPosition(), restoredDevice.getIconPosition());
+        assertTrue(restoredDevice.getIpAddresses().size() == 1);
+        assertEquals(Ip4Address.parse("192.168.0.22"), restoredDevice.getIpAddresses().get(0));
+        assertEquals(computerBefore.isIpAddressFixed(), restoredDevice.isIpAddressFixed());
         // FUTURE: VPN settings are currently not saved
-        //        Assert.assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
-        Assert.assertEquals(computerBefore.isMalwareFilterEnabled(), restoredDevice.isMalwareFilterEnabled());
-        Assert.assertEquals(computerBefore.isMessageShowAlert(), restoredDevice.isMessageShowAlert());
-        Assert.assertEquals(computerBefore.isMessageShowInfo(), restoredDevice.isMessageShowInfo());
-        Assert.assertEquals(computerBefore.isMobilePrivateNetworkAccess(),
+        //        assertEquals(computerBefore.isVpnClient(), computerAfter.isVpnClient());
+        assertEquals(computerBefore.isMalwareFilterEnabled(), restoredDevice.isMalwareFilterEnabled());
+        assertEquals(computerBefore.isMessageShowAlert(), restoredDevice.isMessageShowAlert());
+        assertEquals(computerBefore.isMessageShowInfo(), restoredDevice.isMessageShowInfo());
+        assertEquals(computerBefore.isMobilePrivateNetworkAccess(),
                 restoredDevice.isMobilePrivateNetworkAccess());
-        Assert.assertEquals(computerBefore.isEblockerMobileEnabled(), restoredDevice.isEblockerMobileEnabled());
+        assertEquals(computerBefore.isEblockerMobileEnabled(), restoredDevice.isEblockerMobileEnabled());
         // User References of existing device are not restored
-        Assert.assertEquals(computerAfterOperatingUser, restoredDevice.getOperatingUser());
+        assertEquals(computerAfterOperatingUser, restoredDevice.getOperatingUser());
         // The pause does not survive the backup
-        Assert.assertFalse(restoredDevice.isPaused());
-        Assert.assertEquals(computerBefore.isRoutedThroughTor(), restoredDevice.isRoutedThroughTor());
-        Assert.assertEquals(computerBefore.isShowBookmarkDialog(), restoredDevice.isShowBookmarkDialog());
-        Assert.assertEquals(computerBefore.isShowDnsFilterInfoDialog(), restoredDevice.isShowDnsFilterInfoDialog());
-        Assert.assertEquals(computerBefore.isShowPauseDialog(), restoredDevice.isShowPauseDialog());
-        Assert.assertEquals(computerBefore.isShowPauseDialogDoNotShowAgain(),
+        assertFalse(restoredDevice.isPaused());
+        assertEquals(computerBefore.isRoutedThroughTor(), restoredDevice.isRoutedThroughTor());
+        assertEquals(computerBefore.isShowBookmarkDialog(), restoredDevice.isShowBookmarkDialog());
+        assertEquals(computerBefore.isShowDnsFilterInfoDialog(), restoredDevice.isShowDnsFilterInfoDialog());
+        assertEquals(computerBefore.isShowPauseDialog(), restoredDevice.isShowPauseDialog());
+        assertEquals(computerBefore.isShowPauseDialogDoNotShowAgain(),
                 restoredDevice.isShowPauseDialogDoNotShowAgain());
-        Assert.assertEquals(computerBefore.isShowWelcomePage(), restoredDevice.isShowWelcomePage());
-        Assert.assertEquals(computerBefore.isSslEnabled(), restoredDevice.isSslEnabled());
-        Assert.assertEquals(computerBefore.isSslRecordErrorsEnabled(), restoredDevice.isSslRecordErrorsEnabled());
-        Assert.assertEquals(computerBefore.isUseAnonymizationService(), restoredDevice.isUseAnonymizationService());
+        assertEquals(computerBefore.isShowWelcomePage(), restoredDevice.isShowWelcomePage());
+        assertEquals(computerBefore.isSslEnabled(), restoredDevice.isSslEnabled());
+        assertEquals(computerBefore.isSslRecordErrorsEnabled(), restoredDevice.isSslRecordErrorsEnabled());
+        assertEquals(computerBefore.isUseAnonymizationService(), restoredDevice.isUseAnonymizationService());
         // VPN Profile of existing device is not restored
-        Assert.assertEquals(vpnProfileId, restoredDevice.getUseVPNProfileID());
-        Assert.assertEquals(computerBefore.getVendor(), restoredDevice.getVendor());
-        Assert.assertNull(restoredDevice.getLastSeen()); // lastSeen is not restored
+        assertEquals(vpnProfileId, restoredDevice.getUseVPNProfileID());
+        assertEquals(computerBefore.getVendor(), restoredDevice.getVendor());
+        assertNull(restoredDevice.getLastSeen()); // lastSeen is not restored
     }
 
     @Test
@@ -300,10 +301,10 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         Device restoredDevice = argCaptor.getValue();
 
         // User References are set to default value
-        Assert.assertEquals(newDefaultSystemuser, restoredDevice.getAssignedUser());
-        Assert.assertEquals(newDefaultSystemuser, restoredDevice.getDefaultSystemUser());
-        Assert.assertEquals(newDefaultSystemuser, restoredDevice.getOperatingUser());
+        assertEquals(newDefaultSystemuser, restoredDevice.getAssignedUser());
+        assertEquals(newDefaultSystemuser, restoredDevice.getDefaultSystemUser());
+        assertEquals(newDefaultSystemuser, restoredDevice.getOperatingUser());
         // VPN Profile Reference is set to default value
-        Assert.assertEquals(null, restoredDevice.getUseVPNProfileID());
+        assertEquals(null, restoredDevice.getUseVPNProfileID());
     }
 }

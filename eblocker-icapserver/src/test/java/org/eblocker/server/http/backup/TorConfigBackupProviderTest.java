@@ -18,8 +18,8 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.network.TorController;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
     private TorConfigBackupProvider provider;
     private DataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         torController = Mockito.mock(TorController.class);
         provider = new TorConfigBackupProvider(torController);

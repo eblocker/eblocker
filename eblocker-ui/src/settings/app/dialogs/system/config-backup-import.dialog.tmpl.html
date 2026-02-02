@@ -1,59 +1,126 @@
-<md-dialog id="config-backup-import-dialog" aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate}}">
-    <form name="vm.configBackupImportForm" layout-padding ng-submit="Dialog.save()" novalidate style="overflow: initial;">
-        <md-dialog-content layout="column" layout-padding style="overflow: initial;">
-            <div>
-                <h2>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.UPLOAD' | translate }}</h2>
-            </div>
-
-            <div>
-                {{ 'ADMINCONSOLE.CONFIG_BACKUP.FILE_LABEL' | translate }}: <b>{{ vm.fileName }}</b>
-            </div>
-
-            <div>
-                {{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORT' | translate }}
-                <ul>
-                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
-                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
-                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
-                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
-                </ul>
-            </div>
-
-            <div ng-if="vm.passwordRequired">
-                <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
-                             ng-model="vm.includeKeys" ng-change="vm.updateIncludeKeys()"
-                             aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
-                    {{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.IMPORT' | translate }}
-                </md-checkbox>
-            </div>
-
-            <div ng-if="vm.passwordRequired && vm.includeKeys">
-                <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
-                    <label>{{'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.LABEL' | translate }}</label>
-                    <input name="password" ng-model="vm.password" type="password" md-maxlength="vm.maxLength" required>
-                    <div ng-messages="vm.configBackupImportForm.password.$error" ng-if="vm.configBackupImportForm.$submitted || vm.configBackupImportForm.password.$touched">
-                        <div ng-message="required">{{ 'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.REQUIRED' | translate }}</div>
-                        <div ng-message="md-maxlength">{{ 'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate }}</div>
-                    </div>
-                </md-input-container>
-                <div ng-if="vm.passwordRetry">
-                    <span class="content-error" translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.RETRY"></span>
-                </div>
-            </div>
-        </md-dialog-content>
-
-        <md-dialog-actions layout="row"
-                           layout-align="end center"
-                           layout-xs="column"
-                           layout-align-xs="center center"
-                           style="padding-right: 16px;">
-            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
-                {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
-            </md-button>
-            <md-button type="submit" ng-click="vm.close()" class="md-raised md-primary md-accent">
-                {{ 'ADMINCONSOLE.TASKS.DIALOG.OK' | translate }}
-            </md-button>
-
-        </md-dialog-actions>
-    </form>
+<md-dialog id="config-backup-import-dialog" aria-label="{{'ADMINCONSOLE.CONFIG_BACKUP.LABEL.RESTORE_SETTINGS' | translate}}"
+           style="max-width: 800px;"
+           layout-padding>
+    <md-dialog-content layout="column" layout-padding>
+        <div>
+            <h2 translate="ADMINCONSOLE.CONFIG_BACKUP.LABEL.RESTORE_SETTINGS"></h2>
+        </div>
+        <div style="padding-bottom: 0;">
+            <md-tabs md-border-bottom
+                     md-dynamic-height
+                     md-selected="vm.currentStep"
+                     style="margin-top: 10px;">
+                <md-tab ng-disabled="!vm.isStepAllowed(0)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.SELECT' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin>
+                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.SELECT_FILE"></div>
+                        </div>
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                                {{'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate}}
+                            </md-button>
+                            <md-button class="md-raised md-primary md-accent"
+                                       name="configFile"
+                                       ngf-select="vm.uploadConfigBackup($file, $invalidFiles)"
+                                       ng-model="vm.configFile"
+                                       ngf-pattern="'.eblcfg'"
+                                       accept=".eblcfg"
+                                       ngf-max-size="'1MB'"
+                                       ng-required="required"
+                                       ng-disabled="vm.uploading">
+                                {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.SELECT' | translate}}
+                            </md-button>
+                            <md-progress-circular md-diameter="36" md-mode="indeterminate" ng-show="vm.uploading"></md-progress-circular>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab ng-disabled="!vm.isStepAllowed(1)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.VERIFY' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <form name="vm.configBackupImportForm" novalidate style="overflow: initial;">
+                            <div layout="column" layout-margin>
+                                <div>
+                                    {{'ADMINCONSOLE.CONFIG_BACKUP.FILE_LABEL' | translate}}: <b>{{vm.fileName}}</b>
+                                </div>
+                                <div layout="column">
+                                    <div ng-if="vm.passwordRequired">
+                                        <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
+                                                     ng-model="vm.includeKeys" ng-change="vm.updateIncludeKeys()"
+                                                     aria-label="{{'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
+                                            {{'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.IMPORT' | translate}}
+                                        </md-checkbox>
+                                    </div>
+                                    <div ng-if="vm.passwordRequired && vm.includeKeys">
+                                        <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
+                                            <label>{{'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.LABEL' | translate}}</label>
+                                            <input name="password" ng-model="vm.password" type="password" md-maxlength="vm.maxLength" required>
+                                            <div ng-messages="vm.configBackupImportForm.password.$error" ng-if="vm.configBackupImportForm.$submitted || vm.configBackupImportForm.password.$touched">
+                                                <div ng-message="required">{{'ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.REQUIRED' | translate}}</div>
+                                                <div ng-message="md-maxlength">{{'ADMINCONSOLE.DIALOG.PASSWORD.ERROR.PASSWORD_TOO_LONG' | translate}}</div>
+                                            </div>
+                                        </md-input-container>
+                                        <div ng-if="vm.passwordRetry">
+                                            <span class="content-error" translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.RETRY"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div layout="row" layout-align="end center" style="padding: 0;">
+                                <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                                    {{'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate}}
+                                </md-button>
+                                <md-button type="submit" ng-click="vm.verifyConfigBackup()" class="md-raised md-primary md-accent" ng-disabled="vm.verifying">
+                                    {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.VERIFY' | translate}}
+                                </md-button>
+                                <md-progress-circular md-diameter="36" md-mode="indeterminate" ng-show="vm.verifying"></md-progress-circular>
+                            </div>
+                        </form>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab ng-disabled="!vm.isStepAllowed(2)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.IMPORT' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin>
+                            <div>
+                                {{'ADMINCONSOLE.CONFIG_BACKUP.FILE_LABEL' | translate}}: <b>{{vm.fileName}}</b>
+                            </div>
+                            <div>
+                                {{'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORT' | translate}}
+                                <ul>
+                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
+                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
+                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
+                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button type="button" ng-click="vm.cancel()" class="md-raised md-secondary">
+                                {{'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate}}
+                            </md-button>
+                            <md-button type="button" ng-click="vm.importConfigBackup()" class="md-raised md-primary md-accent" ng-disabled="vm.importing">
+                                {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.IMPORT' | translate}}
+                            </md-button>
+                            <md-progress-circular md-diameter="36" md-mode="indeterminate" ng-show="vm.importing"></md-progress-circular>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+                <md-tab ng-disabled="!vm.isStepAllowed(3)">
+                    <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.REBOOT' | translate}}</md-tab-label>
+                    <md-tab-body>
+                        <div layout="column" layout-margin>
+                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORTED"></div>
+                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.REBOOT"></div>
+                        </div>
+                        <div layout="row" layout-align="end center" style="padding: 0;">
+                            <md-button type="button" ng-click="vm.reboot()" class="md-raised md-primary md-accent">
+                                {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.REBOOT' | translate}}
+                            </md-button>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </md-dialog-content>
 </md-dialog>

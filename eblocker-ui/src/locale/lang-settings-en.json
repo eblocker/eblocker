@@ -339,8 +339,14 @@
         },
         "CONFIG_BACKUP" : {
             "ACTION" : {
-                "GENERATE" : "Save Settings",
-                "UPLOAD" : "Restore Settings..."
+                "CREATE_BACKUP" : "Create backup",
+                "SAVE_BACKUP" : "Save backup",
+                "SELECT" : "Select file",
+                "VERIFY" : "Verify",
+                "IMPORT" : "Import",
+                "SAVE_SETTINGS" : "Save Settings...",
+                "RESTORE_SETTINGS" : "Restore Settings...",
+                "REBOOT" : "Reboot"
             },
             "DATA_DEVICE_SETTINGS" : "Device settings",
             "DATA_TOR_SETTINGS" : "Tor settings",
@@ -353,24 +359,30 @@
                 "IMPORT_FAILURE" : "The settings could not be restored from the file",
                 "INVALID_FILE" : "Please select an eBlocker settings file with extension .eblcfg",
                 "UNSUPPORTED_VERSION" : "This settings file's version is not supported any more",
-                "UPLOAD_FAILURE" : "The settings file could not be uploaded"
+                "UPLOAD_FAILURE" : "The settings file could not be uploaded",
+                "VERIFICATION_FAILURE" : "The backup file could not be verified. It seems to be corrupted."
             },
             "EXPLAIN" : {
+                "TRANSFERRING_FILE" : "Transferring backup file...",
+                "SELECT_FILE" : "Please select a backup file with extension .eblcfg to restore.",
+                "SAVE_BACKUP" : "Save the backup file below.",
+                "FILENAME" : "File name:",
+                "BACKUP_SAVED" : "The backup file was saved to your Downloads folder.",
                 "EXPORT" : "These data can be saved to a file and restored in the current version:",
-                "IMPORT" : "These data are restored:"
+                "IMPORT" : "These data are restored:",
+                "IMPORTED" : "The settings have been restored",
+                "REBOOT" : "To apply the settings eBlocker is now rebooted."
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {
                 "EXPORT" : "Save HTTPS keys",
                 "IMPORT" : "Restore HTTPS keys"
             },
-            "INFO" : {
-                "DOWNLOADED" : "The settings file was saved in your Downloads folder",
-                "UPLOADED" : "The settings have been restored"
-            },
             "LABEL" : {
-                "GENERATE" : "Save Settings",
-                "UPLOAD" : "Restore Settings"
+                "CREATE_BACKUP" : "Create Backup",
+                "DOWNLOAD_BACKUP" : "Download",
+                "SAVE_SETTINGS" : "Save Settings",
+                "RESTORE_SETTINGS" : "Restore Settings"
             },
             "PASSWORD" : {
                 "ERROR" : {

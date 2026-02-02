@@ -1053,7 +1053,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         parent: vpnHome.name,
         redirectTo: 'mobilestatus', // erster Tab (OpenVPN)
         requiredLicense: vpnHome.requiredLicense,
-        component: 'vpnHomeStatusComponent'
+        component: 'mobileWireGuardTabsComponent'
     };
     
     const vpnHomeStatus = {
@@ -1066,15 +1066,16 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'vpnHomeStatusComponent'
     };
 
-    const vpnHomeWireGuard = {
-        name: 'mobilewireguard',
-        url: slashOptionSubState + 'wireguard',
-        parent: vpnHomeState.name,
-        tabOrder: 2,
-        requiredLicense: function() { return 'WOL'; },
-        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
-        component: 'wireguardComponent'
-    };
+	const vpnHomeWireGuard = {
+	    name: 'mobilewireguard',
+	    url: slashOptionSubState + 'wireguard',
+	    parent: vpnHomeState.name,
+            tabOrder: 2,
+	    requiredLicense: function() { return 'WOL'; },
+	    translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
+	    component: 'wireguardComponent'
+	};
+
 
     //
     // const vpnHomeDevices = {

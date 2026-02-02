@@ -180,6 +180,7 @@ import NetworkSettingsComponent from './components/network/settings/network-sett
 import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
+import MobileWireGuardTabsComponent from './components/mobileWireGuardTabs/mobile-wireguard-tabs.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
 import SslCertificateComponent from './components/ssl/certificate/ssl-certificate.component';
@@ -465,6 +466,7 @@ angular.module('eblocker.adminconsole', [
     .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
+    .component('mobileWireGuardTabsComponent', MobileWireGuardTabsComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('sslStatusComponent', SslStatusComponent)
     .component('sslCertificateComponent', SslCertificateComponent)

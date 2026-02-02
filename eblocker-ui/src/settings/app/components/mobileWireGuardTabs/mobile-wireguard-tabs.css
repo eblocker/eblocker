@@ -1,0 +1,29 @@
+/* OpenVPN / WireGuard Tabs – eBlocker Mobile */
+
+/* Abstand zum Header */
+.mobile-wg-tabs {
+    margin: 16px 0 20px 0;
+    display: flex;
+    gap: 24px;
+    padding-left: 2px;
+    border-bottom: 1px solid #ddd;
+}
+
+.mobile-wg-tabs a {
+    position: relative;
+    padding: 10px 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+.mobile-wg-tabs a:hover {
+    color: #000;
+}
+
+.mobile-wg-tabs a.active {
+    color: #e65100;            /* eBlocker Orange */
+    border-bottom-color: #e65100;
+}

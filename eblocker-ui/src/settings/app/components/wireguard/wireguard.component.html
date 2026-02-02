@@ -8,22 +8,20 @@
     <md-switch
       ng-model="vm.enabled"
       ng-change="vm.toggleEnabled()"
-      ng-disabled="vm.loading || vm.toggling">
+      ng-disabled="vm.loading || vm.toggling || vm.error">
       WireGuard
     </md-switch>
 
-    <span style="margin-left:10px; min-width:60px; opacity:0.8;">
+    <span style="margin-left:10px; min-width:80px; opacity:0.8;">
       {{ vm.enabled ? 'AN' : 'AUS' }}
     </span>
 
-    <md-button class="md-raised" ng-click="vm.loadStatus()" ng-disabled="vm.loading" style="margin-left:12px;">
+    <md-button class="md-raised"
+               ng-click="vm.loadStatus()"
+               ng-disabled="vm.loading"
+               style="margin-left:12px;">
       AKTUALISIEREN
     </md-button>
-  </div>
-
-  <!-- Optional Infozeile (kannst du auch löschen) -->
-  <div style="opacity:0.7; margin-bottom:18px;">
-    Status wird aus dem Backend geladen: <code>/api/adminconsole/wireguard/status</code>
   </div>
 
   <div layout="row" layout-wrap>
@@ -40,21 +38,23 @@
         <div layout="row" layout-align="start center">
           <span ng-if="vm.loading">Lade…</span>
 
-          <span ng-if="!vm.loading">
-            <strong>{{ (vm.status.wg === 'up') ? 'UP' : 'DOWN' }}</strong>
+          <span ng-if="!vm.loading && !vm.error">
+            <strong>{{ vm.status.wg === 'up' ? 'aktiv' : 'inaktiv' }}</strong>
+          </span>
+
+          <span ng-if="!vm.loading && vm.error" style="opacity:0.85;">
+            <strong>unbekannt</strong>
             <span style="margin-left:8px; opacity:0.75;">
-              ({{vm.status.iface}})
+              (Backend nicht erreichbar)
             </span>
           </span>
         </div>
 
-        <div style="margin-top:6px; opacity:0.8;" ng-if="!vm.loading">
-          Service: {{vm.status.service}}
-        </div>
-
         <div ng-if="vm.error" style="margin-top:10px;">
           <md-icon class="material-icons">error</md-icon>
-          <span style="margin-left:6px;">{{ vm.errorText || 'Aktion/Status fehlgeschlagen.' }}</span>
+          <span style="margin-left:6px;">
+            {{ vm.errorText || 'Aktion/Status fehlgeschlagen.' }}
+          </span>
         </div>
       </md-card-content>
     </md-card>
@@ -69,22 +69,71 @@
 
       <md-card-content>
         <span ng-if="vm.loading">Lade…</span>
-        <span ng-if="!vm.loading">
-          <strong>{{vm.status.peers}}</strong>
+        <span ng-if="!vm.loading && !vm.error">
+          <strong>{{ vm.status.peers }}</strong>
+        </span>
+        <span ng-if="!vm.loading && vm.error" style="opacity:0.8;">
+          —
         </span>
       </md-card-content>
     </md-card>
 
     <!-- CONFIG / QR -->
-    <md-card flex="33" flex-xs="100">
+    <md-card flex="33" flex-xs="100"
+             ng-style="vm.enabled && {'opacity':'0.45'}">
+
       <md-card-title>
         <md-card-title-text>
-          <span class="md-title">Konfiguration / QR</span>
+          <span class="md-title">Konfiguration</span>
         </md-card-title-text>
       </md-card-title>
 
       <md-card-content>
-        <span style="opacity:0.75;">Noch nicht implementiert</span>
+
+        <!-- Readonly Übersicht -->
+        <div layout="column" style="opacity:0.9;">
+          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+            <span style="opacity:0.75;">Externe Adresse</span>
+            <span>{{ vm.config.externalHost || '—' }}</span>
+          </div>
+
+          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+            <span style="opacity:0.75;">UDP Port</span>
+            <span>{{ vm.config.listenPort || '—' }}</span>
+          </div>
+
+          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+            <span style="opacity:0.75;">WireGuard Subnetz</span>
+            <span>{{ vm.WG_NETWORK_CIDR }}</span>
+          </div>
+
+          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+            <span style="opacity:0.75;">LAN-Zugriff</span>
+            <span>{{ vm.config.allowLanAccess ? 'erlaubt' : 'gesperrt' }}</span>
+          </div>
+
+          <div layout="row" layout-align="space-between center">
+            <span style="opacity:0.75;">Portweiterleitung</span>
+            <span>{{ vm.config.portForwardMode === 'manual' ? 'manuell' : 'UPnP (später)' }}</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <md-button class="md-raised md-primary"
+                     ng-click="vm.openConfigDialog($event)"
+                     ng-disabled="vm.enabled || vm.loading || vm.toggling || vm.error">
+            EINSTELLUNGEN ÄNDERN
+          </md-button>
+
+          <span ng-if="vm.enabled" style="margin-left:10px; opacity:0.7; font-style:italic;">
+            Zum Ändern bitte WireGuard deaktivieren.
+          </span>
+        </div>
+
+        <div style="margin-top:10px; opacity:0.65; font-size: 12px;">
+          Hinweis: QR/Peer-Konfiguration folgt später.
+        </div>
+
       </md-card-content>
     </md-card>
 

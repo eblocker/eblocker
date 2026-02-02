@@ -7,6 +7,8 @@ import org.eblocker.server.http.controller.WireGuardServerController;
 import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,6 +20,10 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
 
     private static final String WG_CONTROL =
             "/opt/eblocker-icap/scripts/wireguard-server-control";
+
+    // neu: persistente UI-Config (noch ohne wg0.conf schreiben)
+    private static final String WG_CONFIG =
+            "/opt/eblocker-icap/conf/wireguard-config.json";
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -57,6 +63,147 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     public Map<String, Object> disable(Request request, Response response) {
         runControl("stop");
         return getStatus(request, response);
+    }
+
+    // =========================
+    // CONFIG (read/write JSON)
+    // =========================
+    @Override
+    public Map<String, Object> getConfig(Request request, Response response) {
+        // Defaults (Subnetz ist fix wie OpenVPN → nur anzeigen)
+        Map<String, Object> cfg = new HashMap<>();
+        cfg.put("externalHost", "");
+        cfg.put("listenPort", 51820);
+        cfg.put("allowLanAccess", Boolean.TRUE);
+        cfg.put("portForwardConfirmed", Boolean.FALSE);
+
+        cfg.put("wgNetworkCidr", "10.13.13.0/24");
+        cfg.put("wgServerIpCidr", "10.13.13.1/24");
+
+        // Datei lesen, wenn vorhanden
+        try {
+            java.nio.file.Path p = java.nio.file.Paths.get(WG_CONFIG);
+            if (java.nio.file.Files.exists(p)) {
+                byte[] bytes = java.nio.file.Files.readAllBytes(p);
+                Map<String, Object> fileCfg = MAPPER.readValue(
+                        bytes, new TypeReference<Map<String, Object>>() {}
+                );
+
+                if (fileCfg != null) {
+                    if (fileCfg.containsKey("externalHost")) {
+                        cfg.put("externalHost", fileCfg.get("externalHost"));
+                    }
+                    if (fileCfg.containsKey("listenPort")) {
+                        cfg.put("listenPort", fileCfg.get("listenPort"));
+                    }
+                    if (fileCfg.containsKey("allowLanAccess")) {
+                        cfg.put("allowLanAccess", fileCfg.get("allowLanAccess"));
+                    }
+                    if (fileCfg.containsKey("portForwardConfirmed")) {
+                        cfg.put("portForwardConfirmed", fileCfg.get("portForwardConfirmed"));
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Defaults reichen erstmal
+        }
+
+        return cfg;
+    }
+
+    @Override
+    public Map<String, Object> setConfig(Request request, Response response) {
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            // JSON aus Request lesen
+            Object raw = request.getBody();
+            String body;
+
+            if (raw == null) {
+                body = "";
+            } else if (raw instanceof String) {
+                body = (String) raw;
+            } else if (raw instanceof byte[]) {
+                body = new String((byte[]) raw, StandardCharsets.UTF_8);
+            } else if (raw instanceof ByteBuf) {
+                body = new String(ByteBufUtil.getBytes((ByteBuf) raw), StandardCharsets.UTF_8);
+            } else {
+                body = String.valueOf(raw);
+            }
+
+            if (body.trim().isEmpty()) {
+                response.setResponseCode(400);
+                result.put("ok", false);
+                result.put("error", "empty body");
+                return result;
+            }
+
+            Map<String, Object> in = MAPPER.readValue(
+                    body, new TypeReference<Map<String, Object>>() {}
+            );
+
+
+
+            // Werte übernehmen (Subnetz NICHT editierbar)
+            Map<String, Object> out = new HashMap<>();
+            out.put("externalHost", in.get("externalHost") != null
+                    ? String.valueOf(in.get("externalHost")).trim()
+                    : "");
+
+            out.put("listenPort", in.get("listenPort") != null
+                    ? Integer.parseInt(String.valueOf(in.get("listenPort")))
+                    : 51820);
+
+            out.put("allowLanAccess", in.get("allowLanAccess") != null
+                    && Boolean.parseBoolean(String.valueOf(in.get("allowLanAccess"))));
+
+            out.put("portForwardConfirmed", in.get("portForwardConfirmed") != null
+                    && Boolean.parseBoolean(String.valueOf(in.get("portForwardConfirmed"))));
+
+            // minimal prüfen: Port und Checkbox
+            int port = (Integer) out.get("listenPort");
+            boolean confirmed = (Boolean) out.get("portForwardConfirmed");
+
+            if (port < 1 || port > 65535) {
+                response.setResponseCode(400);
+                result.put("ok", Boolean.FALSE);
+                result.put("error", "listenPort out of range");
+                return result;
+            }
+
+            if (!confirmed) {
+                response.setResponseCode(400);
+                result.put("ok", Boolean.FALSE);
+                result.put("error", "portForwardConfirmed required");
+                return result;
+            }
+
+            // Schreiben
+            java.nio.file.Path p = java.nio.file.Paths.get(WG_CONFIG);
+            java.nio.file.Files.createDirectories(p.getParent());
+
+            byte[] json = MAPPER.writerWithDefaultPrettyPrinter()
+                    .writeValueAsBytes(out);
+
+            java.nio.file.Files.write(p, json);
+
+            // NEU: UI-Config anwenden (schreibt wg0.conf, restart falls wg0 up)
+            runControl("apply-config");
+
+            result.put("ok", Boolean.TRUE);
+            return result;
+
+
+        } catch (Exception e) {
+            response.setResponseCode(500);
+            result.put("ok", Boolean.FALSE);
+            result.put("error", "exception");
+            // result.put("exceptionClass", e.getClass().getName());
+            // result.put("exceptionMessage", String.valueOf(e.getMessage()));
+            return result;
+        }
+
     }
 
     // =========================

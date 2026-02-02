@@ -2,11 +2,12 @@
 #
 # WireGuard server control for eBlocker
 #
-# - init        : generate keys + base config (if missing)
-# - start       : wg-quick up
-# - stop        : wg-quick down
-# - restart     : down + up
-# - status-json : machine-readable status for eBlocker backend
+# - init         : generate keys + base config (if missing)
+# - apply-config : apply UI config (write wg0.conf, restart if running)
+# - start        : wg-quick up
+# - stop         : wg-quick down
+# - restart      : down + up
+# - status-json  : machine-readable status for eBlocker backend
 #
 
 set -e
@@ -16,6 +17,7 @@ WG_DIR="/etc/wireguard"
 WG_CONF="$WG_DIR/$WG_IF.conf"
 WG_PRIV="$WG_DIR/$WG_IF.key"
 WG_PUB="$WG_DIR/$WG_IF.pub"
+WG_UI_CONF="/opt/eblocker-icap/conf/wireguard-config.json"
 
 MODE="${1:-}"
 
@@ -40,6 +42,38 @@ Address = 10.13.13.1/24
 ListenPort = 51820
 CONF
     chmod 600 "$WG_CONF"
+  fi
+}
+
+apply_config() {
+  ensure_keys
+  ensure_conf
+
+  # Default Port
+  PORT="51820"
+
+  # Port aus UI-Config lesen (nur wenn Datei existiert)
+  if [ -f "$WG_UI_CONF" ]; then
+    PORT="$(sed -n 's/.*"listenPort"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$WG_UI_CONF" | head -n 1 || true)"
+  fi
+
+  # Fallback falls parsing nix lieferte
+  if [ -z "$PORT" ]; then
+    PORT="51820"
+  fi
+
+  # wg0.conf ListenPort ersetzen (oder anhängen, falls fehlt)
+  if grep -q '^ListenPort[[:space:]]*=' "$WG_CONF"; then
+    sed -i "s/^ListenPort[[:space:]]*=.*/ListenPort = $PORT/" "$WG_CONF"
+  else
+    printf "\nListenPort = %s\n" "$PORT" >> "$WG_CONF"
+  fi
+
+  chmod 600 "$WG_CONF"
+
+  # Wenn Interface aktiv ist: restart, sonst nur Datei schreiben
+  if ip link show "$WG_IF" >/dev/null 2>&1; then
+    restart
   fi
 }
 
@@ -80,6 +114,10 @@ case "$MODE" in
     ensure_conf
     exit 0
     ;;
+  apply-config)
+    apply_config
+    exit 0
+    ;;
   start)
     # wenn wg0 schon existiert: ok
     if ip link show "$WG_IF" >/dev/null 2>&1; then
@@ -105,7 +143,7 @@ case "$MODE" in
     exit 0
     ;;
   *)
-    echo "Usage: $0 {init|start|stop|restart|status-json}" >&2
+    echo "Usage: $0 {init|apply-config|start|stop|restart|status-json}" >&2
     exit 1
     ;;
 esac

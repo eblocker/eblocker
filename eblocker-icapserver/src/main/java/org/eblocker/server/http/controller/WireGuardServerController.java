@@ -6,7 +6,17 @@ import org.restexpress.Response;
 import java.util.Map;
 
 public interface WireGuardServerController {
+
     Map<String, Object> getStatus(Request request, Response response);
+
     Map<String, Object> enable(Request request, Response response);
+
     Map<String, Object> disable(Request request, Response response);
+
+    // =========================
+    // CONFIG (neu)
+    // =========================
+    Map<String, Object> getConfig(Request request, Response response);
+
+    Map<String, Object> setConfig(Request request, Response response);
 }

@@ -18,7 +18,6 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.service.ConfigurationBackupService;
-import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,6 +36,9 @@ public class BackupProviderTestBase {
         service.exportConfiguration(outputStream, password);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        service.verifyConfiguration(inputStream, password);
+
+        inputStream.reset();
         service.importConfiguration(inputStream, password);
     }
 }

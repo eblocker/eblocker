@@ -50,10 +50,7 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         } catch (CryptoException e) {
             throw new IOException("Could not encrypt HTTPS keys", e);
         }
-        JarEntry entry = new JarEntry(HTTPS_KEYS_ENTRY);
-        outputStream.putNextEntry(entry);
-        outputStream.write(objectMapper.writeValueAsBytes(backup));
-        outputStream.closeEntry();
+        writeNextEntry(outputStream, HTTPS_KEYS_ENTRY, objectMapper.writeValueAsBytes(backup));
     }
 
     private HttpsKeysBackup exportHttpsKeys(CryptoService cryptoService) throws CryptoException, IOException {
@@ -75,15 +72,21 @@ public class HttpsKeysBackupProvider extends BackupProvider {
 
     @Override
     public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        HttpsKeysBackup backup;
+        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    }
+
+    @Override
+    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    }
+
+    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
         byte[] caBytes = null;
         byte[] renewalCaBytes = null;
-        JarEntry entry = inputStream.getNextJarEntry();
-        if (entry.getName().equals(HTTPS_KEYS_ENTRY)) {
-            backup = objectMapper.readValue(inputStream, HttpsKeysBackup.class);
-            inputStream.closeEntry();
-        } else {
-            throw new EblockerException("Expected entry " + HTTPS_KEYS_ENTRY + ", got " + entry.getName());
+        getNextEntry(inputStream, HTTPS_KEYS_ENTRY);
+        HttpsKeysBackup backup = objectMapper.readValue(inputStream, HttpsKeysBackup.class);
+        if (backup == null) {
+            throw new CorruptedBackupException("Deserialized backup object is null");
         }
         if (cryptoService == null) {
             LOG.warn("No password provided, so CAs are not imported");
@@ -104,6 +107,8 @@ public class HttpsKeysBackupProvider extends BackupProvider {
             LOG.error("Could not decrypt HTTPS keys", e);
             throw new DecryptionFailedException("Could not decrypt HTTPS keys");
         }
-        sslService.importCas(caBytes, renewalCaBytes);
+        if (!dryRun) {
+            sslService.importCas(caBytes, renewalCaBytes);
+        }
     }
 }

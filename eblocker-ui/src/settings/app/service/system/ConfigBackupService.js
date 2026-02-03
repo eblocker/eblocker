@@ -17,14 +17,20 @@
 export default function ConfigBackupService(logger, $http, $q) {
     'ngInject';
 
+    const BACKUP_TIMEOUT = 60000; // importing/exporting backups could take longer than 10s.
+
     const PATH = '/api/configbackup/';
     const PATH_EXPORT = PATH + 'export';
     const PATH_DOWNLOAD = PATH + 'download';
     const PATH_UPLOAD = PATH + 'upload';
     const PATH_IMPORT = PATH + 'import';
+    const PATH_VERIFY = PATH + 'verify';
+    const RE_CONTENT_DISPOSITION = /attachment; filename="(.*?)"/;
 
     function exportConfig(passwordRequired, password) {
-        return $http.post(PATH_EXPORT, {passwordRequired: passwordRequired, password: password}).then(
+        const data = {passwordRequired: passwordRequired, password: password};
+        const config = {timeout: BACKUP_TIMEOUT};
+        return $http.post(PATH_EXPORT, data, config).then(
             function(response) {
                 return response.data;
             }, function(reason) {
@@ -37,8 +43,41 @@ export default function ConfigBackupService(logger, $http, $q) {
         return PATH_DOWNLOAD + '/' + fileReference;
     }
 
+    function extractFilename(contentDisposition) {
+        if (angular.isUndefined(contentDisposition)) {
+            return undefined;
+        }
+        let match = RE_CONTENT_DISPOSITION.exec(contentDisposition);
+        if (match == null) {
+            return undefined;
+        }
+        return match[1];
+    }
+
+    function downloadConfig(fileReference) {
+        const config = {responseType: 'blob'};
+        return $http.get(downloadConfigUrl(fileReference), config).then(
+            function success(response) {
+                if (response.headers('Content-Type') === 'application/octet-stream') {
+                    return {
+                        data: response.data,
+                        filename: extractFilename(response.headers('Content-Disposition'))
+                    };
+                } else {
+                    logger.error('Error downloading config backup. ' +
+                                 'Expected content-type application/octet-stream, but got ' +
+                                 response.headers('Content-Type'));
+                    return $q.reject('bad content-type');
+                }
+            }, function error(response) {
+                logger.error('Error downloading configuration backup ', response);
+                return $q.reject(response.data);
+            });
+    }
+
     function uploadConfig(file) {
-        return $http.put(PATH_UPLOAD, file, {'headers': {'Content-type': 'application/octet-stream'}}).then(
+        const config = {'headers': {'Content-type': 'application/octet-stream'}};
+        return $http.put(PATH_UPLOAD, file, config).then(
             function success(response){
                 return response.data;
             }, function error(response) {
@@ -47,8 +86,22 @@ export default function ConfigBackupService(logger, $http, $q) {
             });
     }
 
+    function verifyConfig(filename, password) {
+        const data = {fileReference: filename, password: password};
+        const config = {timeout: BACKUP_TIMEOUT};
+        return $http.post(PATH_VERIFY, data, config).then(
+            function success(response){
+                return response;
+            }, function error(response) {
+                logger.error('Error verifying configuration backup ', response);
+                return $q.reject(response.data);
+            });
+    }
+
     function importConfig(filename, password) {
-        return $http.post(PATH_IMPORT, {fileReference: filename, password: password}).then(
+        const data = {fileReference: filename, password: password};
+        const config = {timeout: BACKUP_TIMEOUT};
+        return $http.post(PATH_IMPORT, data, config).then(
             function success(response){
                 return response;
             }, function error(response) {
@@ -59,8 +112,9 @@ export default function ConfigBackupService(logger, $http, $q) {
 
     return {
         exportConfig: exportConfig,
-        downloadConfigUrl: downloadConfigUrl,
+        downloadConfig: downloadConfig,
         uploadConfig: uploadConfig,
         importConfig: importConfig,
+        verifyConfig: verifyConfig
     };
 }

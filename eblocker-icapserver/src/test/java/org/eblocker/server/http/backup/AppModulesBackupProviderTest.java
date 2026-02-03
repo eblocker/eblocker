@@ -19,8 +19,8 @@ package org.eblocker.server.http.backup;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class AppModulesBackupProviderTest extends BackupProviderTestBase {
     private AppModulesBackupProvider provider;
     private DataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         service = Mockito.mock(AppModuleService.class);
         provider = new AppModulesBackupProvider(service);

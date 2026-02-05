@@ -1,0 +1,57 @@
+WireGuard – Übergabe / Installations-Checkliste (bereinigt)
+
+A) Repo-Code (eblocker)
+- UI: WireGuard Seite im Admin-/Mobile-UI (Status / Konfiguration / Peers)
+- Backend REST:
+  - GET  /wireguard/status
+  - POST /wireguard/enable
+  - POST /wireguard/disable
+  - GET  /wireguard/peers
+  - POST /wireguard/peers
+  - GET  /wireguard/peers/{id}/config
+- Persistenz:
+  - /opt/eblocker-icap/conf/wireguard-peers.json
+  - /opt/eblocker-icap/conf/wireguard-config.json
+- Build:
+  - UI build: OK
+  - Server build (Maven): OK
+
+B) System-Voraussetzungen
+- Pakete: wireguard, wireguard-tools, iproute2
+- Kernel: WireGuard-Modul verfügbar (wg, wg-quick)
+
+C) Runtime-Scripts (außerhalb Repo)
+- Hauptscript:
+  /opt/eblocker-icap/scripts/wireguard-server-control
+
+- Modi:
+  init | apply-config | start | stop | restart | status-json | public-key
+
+- Systempfade:
+  /etc/wireguard/wg0.conf
+  /etc/wireguard/wg0.key   (privat)
+  /etc/wireguard/wg0.pub   (public)
+
+- sudo:
+  (root) NOPASSWD: /opt/eblocker-icap/scripts/wireguard-server-control *
+
+D) Security
+- Private Keys niemals im Repo
+- Keys ausschließlich unter /etc/wireguard
+- Client-Secrets:
+  /opt/eblocker-icap/conf/wireguard-peers.json
+
+E) Server PublicKey Übergabe
+- Primär (produktiv):
+  sudo -n /opt/eblocker-icap/scripts/wireguard-server-control public-key
+- Quelle: /etc/wireguard/wg0.pub
+- Vorteil: updatefest, keine Kopien, Key-Rotation automatisch korrekt
+
+- Fallback (vorerst aktiv):
+  /opt/eblocker-icap/conf/wireguard-server.pub
+
+F) Offene Punkte
+- Firewall / Routing
+- QR-Code Export
+- Split- vs Full-Tunnel
+- Port Forwarding (UPnP)

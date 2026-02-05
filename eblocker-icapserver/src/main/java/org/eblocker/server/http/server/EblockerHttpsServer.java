@@ -1510,7 +1510,36 @@ public class EblockerHttpsServer implements Preprocessor {
             .uri("/api/adminconsole/wireguard/config", wireGuardServerController)
             .action("setConfig", HttpMethod.POST)
             .name("public.adminconsole.wireguard.config.post");
-                   
+
+        server
+            .uri("/api/adminconsole/wireguard/peers", wireGuardServerController)
+            .action("createPeer", HttpMethod.POST)
+            .name("adminconsole.wireguard.peers.create");
+
+        server
+            .uri("/api/adminconsole/wireguard/peers", wireGuardServerController)
+            .action("getPeers", HttpMethod.GET)
+            .name("adminconsole.wireguard.peers.get");
+        
+        server
+            .uri("/api/adminconsole/wireguard/peers/{id}/config", wireGuardServerController)
+            .action("getPeerConfig", HttpMethod.GET)
+            .name("adminconsole.wireguard.peers.config.get")
+            .noSerialization();
+
+        server
+            .uri("/api/adminconsole/wireguard/peers/{id}", wireGuardServerController)
+            .action("deletePeer", HttpMethod.DELETE)
+            .name("adminconsole.wireguard.peers.delete");
+            //.noSerialization();
+
+        server
+            .uri("/api/adminconsole/wireguard/peers/{id}/qrcode", wireGuardServerController)
+            .action("getPeerQrCode", HttpMethod.GET)
+            .name("adminconsole.wireguard.peers.qrcode.get")
+            .noSerialization();
+      
+
         // ** New Adminconsole: save customer info (for remind-me-again VPN offer)
         server
                 .uri("/api/adminconsole/customerInfo", customerInfoController)

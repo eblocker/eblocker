@@ -8,6 +8,7 @@
 # - stop         : wg-quick down
 # - restart      : down + up
 # - status-json  : machine-readable status for eBlocker backend
+# - public-key   : print server public key
 #
 
 set -e
@@ -77,6 +78,11 @@ apply_config() {
   fi
 }
 
+public_key() {
+  ensure_keys
+  cat "$WG_PUB"
+}
+
 status_json() {
   # systemd service state (optional)
   SERVICE="unknown"
@@ -118,6 +124,10 @@ case "$MODE" in
     apply_config
     exit 0
     ;;
+  public-key)
+    public_key
+    exit 0
+    ;;
   start)
     # wenn wg0 schon existiert: ok
     if ip link show "$WG_IF" >/dev/null 2>&1; then
@@ -143,7 +153,7 @@ case "$MODE" in
     exit 0
     ;;
   *)
-    echo "Usage: $0 {init|apply-config|start|stop|restart|status-json}" >&2
+    echo "Usage: $0 {init|apply-config|public-key|start|stop|restart|status-json}" >&2
     exit 1
     ;;
 esac

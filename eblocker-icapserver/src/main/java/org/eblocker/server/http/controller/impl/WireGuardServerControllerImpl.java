@@ -3,12 +3,15 @@ package org.eblocker.server.http.controller.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+
 import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,17 +24,20 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     private static final String WG_CONTROL =
             "/opt/eblocker-icap/scripts/wireguard-server-control";
 
-    // neu: persistente UI-Config (noch ohne wg0.conf schreiben)
+    // persistente UI-Config
     private static final String WG_CONFIG =
             "/opt/eblocker-icap/conf/wireguard-config.json";
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final WireGuardServerService wg;
+    private final WireGuardPeerService wireGuardPeerService;
 
     @Inject
-    public WireGuardServerControllerImpl(WireGuardServerService wg) {
+    public WireGuardServerControllerImpl(WireGuardServerService wg,
+                                         WireGuardPeerService wireGuardPeerService) {
         this.wg = wg;
+        this.wireGuardPeerService = wireGuardPeerService;
     }
 
     // =========================
@@ -70,7 +76,7 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     // =========================
     @Override
     public Map<String, Object> getConfig(Request request, Response response) {
-        // Defaults (Subnetz ist fix wie OpenVPN → nur anzeigen)
+        // Defaults (Subnetz ist fix → nur anzeigen)
         Map<String, Object> cfg = new HashMap<>();
         cfg.put("externalHost", "");
         cfg.put("listenPort", 51820);
@@ -143,8 +149,6 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
                     body, new TypeReference<Map<String, Object>>() {}
             );
 
-
-
             // Werte übernehmen (Subnetz NICHT editierbar)
             Map<String, Object> out = new HashMap<>();
             out.put("externalHost", in.get("externalHost") != null
@@ -188,23 +192,151 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
 
             java.nio.file.Files.write(p, json);
 
-            // NEU: UI-Config anwenden (schreibt wg0.conf, restart falls wg0 up)
+            // UI-Config anwenden (schreibt wg0.conf, restart falls wg0 up)
             runControl("apply-config");
 
             result.put("ok", Boolean.TRUE);
             return result;
 
-
         } catch (Exception e) {
             response.setResponseCode(500);
             result.put("ok", Boolean.FALSE);
             result.put("error", "exception");
-            // result.put("exceptionClass", e.getClass().getName());
-            // result.put("exceptionMessage", String.valueOf(e.getMessage()));
             return result;
         }
-
     }
+
+    // =========================
+    // PEERS
+    // =========================
+    @Override
+    public Object createPeer(Request request, Response response) {
+        Object raw = request.getBody();
+        String name;
+
+        if (raw == null) {
+            name = "Peer";
+        } else if (raw instanceof String) {
+            name = ((String) raw).trim();
+        } else if (raw instanceof byte[]) {
+            name = new String((byte[]) raw, java.nio.charset.StandardCharsets.UTF_8).trim();
+        } else if (raw instanceof io.netty.buffer.ByteBuf) {
+            name = new String(io.netty.buffer.ByteBufUtil.getBytes((io.netty.buffer.ByteBuf) raw),
+                    java.nio.charset.StandardCharsets.UTF_8).trim();
+        } else {
+            name = String.valueOf(raw).trim();
+        }
+
+        if (name.isEmpty()) {
+            name = "Peer";
+        }
+
+        org.eblocker.server.common.data.wireguard.WireGuardPeer peer =
+                wireGuardPeerService.createPeer(name);
+
+        // Nur Meta zurückgeben (keine Secrets!)
+        java.util.Map<String, Object> out = new java.util.HashMap<>();
+        out.put("id", peer.getId());
+        out.put("name", peer.getName());
+        out.put("allowedIp", peer.getAllowedIp());
+        return out;
+    }
+    
+    @Override
+    public Object getPeers(Request request, Response response) {
+        org.eblocker.server.common.data.wireguard.WireGuardPeerStore store =
+                wireGuardPeerService.getStore(); // kommt im nächsten Schritt, falls noch nicht vorhanden
+
+        java.util.List<java.util.Map<String, Object>> out = new java.util.ArrayList<>();
+
+        for (org.eblocker.server.common.data.wireguard.WireGuardPeer p : store.getPeers()) {
+            java.util.Map<String, Object> m = new java.util.HashMap<>();
+            m.put("id", p.getId());
+            m.put("name", p.getName());
+            m.put("allowedIp", p.getAllowedIp());
+            out.add(m);
+        }
+
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("peers", out);
+        return result;
+    }
+
+    @Override
+    public io.netty.buffer.ByteBuf getPeerConfig(Request request, Response response) {
+        String id = request.getHeader("id"); // so kommt es bei eBlocker an
+
+        if (id == null || id.trim().isEmpty()) {
+            response.setResponseCode(400);
+            response.setContentType("text/plain; charset=utf-8");
+            return io.netty.buffer.Unpooled.wrappedBuffer(
+                    "missing id\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)
+            );
+        }
+
+        String cfg = wireGuardPeerService.renderClientConfig(id.trim());
+
+        response.setContentType("text/plain; charset=utf-8");
+        response.addHeader(
+                "Content-Disposition",
+                "attachment; filename=\"wireguard-" + id.trim() + ".conf\""
+        );
+
+        // WICHTIG: ByteBuf zurückgeben → kein JSON-Serializer mehr
+        return io.netty.buffer.Unpooled.wrappedBuffer(
+                cfg.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        );
+    }
+ 
+    @Override
+    public Map<String, Object> deletePeer(Request request, Response response) {
+
+        String id = request.getHeader("id"); // Route {id} landet hier
+
+        if (id == null || id.trim().isEmpty()) {
+            response.setResponseCode(400);
+            return java.util.Map.of(
+                "ok", false,
+                "error", "missing peer id"
+            );
+        }
+
+        boolean removed = wireGuardPeerService.deletePeer(id.trim());
+
+        if (!removed) {
+            response.setResponseCode(404);
+            return java.util.Map.of(
+                "ok", false,
+                "error", "peer not found"
+            );
+        }
+
+        return java.util.Map.of("ok", true);
+    }
+
+    @Override
+    public io.netty.buffer.ByteBuf getPeerQrCode(Request request, Response response) {
+        String id = request.getHeader("id"); // bei euch kommt {id} als Header an
+
+        if (id == null || id.trim().isEmpty()) {
+            response.setResponseCode(400);
+            response.setContentType("text/plain; charset=utf-8");
+            return io.netty.buffer.Unpooled.wrappedBuffer(
+                "missing id\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)
+            );
+        }
+
+        byte[] png = wireGuardPeerService.renderClientConfigQrPng(id.trim());
+
+        response.setContentType("image/png");
+        response.addHeader(
+            "Content-Disposition",
+            "inline; filename=\"wireguard-" + id.trim() + ".png\""
+        );
+
+        return io.netty.buffer.Unpooled.wrappedBuffer(png);
+    }
+
 
     // =========================
     // SCRIPT EXECUTION

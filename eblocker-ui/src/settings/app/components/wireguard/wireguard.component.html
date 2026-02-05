@@ -24,118 +24,184 @@
     </md-button>
   </div>
 
-  <div layout="row" layout-wrap>
+  <!-- 2-Spalten Layout: links Status+Config, rechts Peers -->
+  <div layout="row" layout-wrap layout-align="start start" layout-gap="16px">
 
-    <!-- STATUS -->
-    <md-card flex="33" flex-xs="100">
-      <md-card-title>
-        <md-card-title-text>
-          <span class="md-title">Status</span>
-        </md-card-title-text>
-      </md-card-title>
+    <!-- LEFT COLUMN -->
+    <div flex="40" flex-xs="100" layout="column">
 
-      <md-card-content>
-        <div layout="row" layout-align="start center">
-          <span ng-if="vm.loading">Lade…</span>
+      <!-- STATUS -->
+      <md-card>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-title">Status</span>
+          </md-card-title-text>
+        </md-card-title>
 
-          <span ng-if="!vm.loading && !vm.error">
-            <strong>{{ vm.status.wg === 'up' ? 'aktiv' : 'inaktiv' }}</strong>
-          </span>
+        <md-card-content>
+          <div layout="row" layout-align="start center">
+            <span ng-if="vm.loading">Lade…</span>
 
-          <span ng-if="!vm.loading && vm.error" style="opacity:0.85;">
-            <strong>unbekannt</strong>
-            <span style="margin-left:8px; opacity:0.75;">
-              (Backend nicht erreichbar)
+            <span ng-if="!vm.loading && !vm.error">
+              <strong>{{ vm.status.wg === 'up' ? 'aktiv' : 'inaktiv' }}</strong>
             </span>
-          </span>
-        </div>
 
-        <div ng-if="vm.error" style="margin-top:10px;">
-          <md-icon class="material-icons">error</md-icon>
-          <span style="margin-left:6px;">
-            {{ vm.errorText || 'Aktion/Status fehlgeschlagen.' }}
-          </span>
-        </div>
-      </md-card-content>
-    </md-card>
-
-    <!-- PEERS -->
-    <md-card flex="33" flex-xs="100">
-      <md-card-title>
-        <md-card-title-text>
-          <span class="md-title">Peers</span>
-        </md-card-title-text>
-      </md-card-title>
-
-      <md-card-content>
-        <span ng-if="vm.loading">Lade…</span>
-        <span ng-if="!vm.loading && !vm.error">
-          <strong>{{ vm.status.peers }}</strong>
-        </span>
-        <span ng-if="!vm.loading && vm.error" style="opacity:0.8;">
-          —
-        </span>
-      </md-card-content>
-    </md-card>
-
-    <!-- CONFIG / QR -->
-    <md-card flex="33" flex-xs="100"
-             ng-style="vm.enabled && {'opacity':'0.45'}">
-
-      <md-card-title>
-        <md-card-title-text>
-          <span class="md-title">Konfiguration</span>
-        </md-card-title-text>
-      </md-card-title>
-
-      <md-card-content>
-
-        <!-- Readonly Übersicht -->
-        <div layout="column" style="opacity:0.9;">
-          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
-            <span style="opacity:0.75;">Externe Adresse</span>
-            <span>{{ vm.config.externalHost || '—' }}</span>
+            <span ng-if="!vm.loading && vm.error" style="opacity:0.85;">
+              <strong>unbekannt</strong>
+              <span style="margin-left:8px; opacity:0.75;">
+                (Backend nicht erreichbar)
+              </span>
+            </span>
           </div>
 
-          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
-            <span style="opacity:0.75;">UDP Port</span>
-            <span>{{ vm.config.listenPort || '—' }}</span>
+          <div ng-if="vm.error" style="margin-top:10px;">
+            <md-icon class="material-icons">error</md-icon>
+            <span style="margin-left:6px;">
+              {{ vm.errorText || 'Aktion/Status fehlgeschlagen.' }}
+            </span>
+          </div>
+        </md-card-content>
+      </md-card>
+
+      <!-- CONFIG -->
+      <md-card ng-style="vm.enabled && {'opacity':'0.45'}">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-title">Konfiguration</span>
+          </md-card-title-text>
+        </md-card-title>
+
+        <md-card-content>
+
+          <!-- Readonly Übersicht -->
+          <div layout="column" style="opacity:0.9;">
+            <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+              <span style="opacity:0.75;">Externe Adresse</span>
+              <span>{{ vm.config.externalHost || '—' }}</span>
+            </div>
+
+            <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+              <span style="opacity:0.75;">UDP Port</span>
+              <span>{{ vm.config.listenPort || '—' }}</span>
+            </div>
+
+            <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+              <span style="opacity:0.75;">WireGuard Subnetz</span>
+              <span>{{ vm.WG_NETWORK_CIDR }}</span>
+            </div>
+
+            <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
+              <span style="opacity:0.75;">LAN-Zugriff</span>
+              <span>{{ vm.config.allowLanAccess ? 'erlaubt' : 'gesperrt' }}</span>
+            </div>
+
+            <div layout="row" layout-align="space-between center">
+              <span style="opacity:0.75;">Portweiterleitung</span>
+              <span>{{ vm.config.portForwardMode === 'manual' ? 'manuell' : 'UPnP (später)' }}</span>
+            </div>
           </div>
 
-          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
-            <span style="opacity:0.75;">WireGuard Subnetz</span>
-            <span>{{ vm.WG_NETWORK_CIDR }}</span>
+          <div style="margin-top:14px;">
+            <md-button class="md-raised md-primary"
+                       ng-click="vm.openConfigDialog($event)"
+                       ng-disabled="vm.enabled || vm.loading || vm.toggling || vm.error">
+              EINSTELLUNGEN ÄNDERN
+            </md-button>
+
+            <span ng-if="vm.enabled" style="margin-left:10px; opacity:0.7; font-style:italic;">
+              Zum Ändern bitte WireGuard deaktivieren.
+            </span>
           </div>
 
-          <div layout="row" layout-align="space-between center" style="margin-bottom:6px;">
-            <span style="opacity:0.75;">LAN-Zugriff</span>
-            <span>{{ vm.config.allowLanAccess ? 'erlaubt' : 'gesperrt' }}</span>
+          <div style="margin-top:10px; opacity:0.65; font-size: 12px;">
+            Hinweis: QR/Peer-Konfiguration folgt später.
           </div>
 
-          <div layout="row" layout-align="space-between center">
-            <span style="opacity:0.75;">Portweiterleitung</span>
-            <span>{{ vm.config.portForwardMode === 'manual' ? 'manuell' : 'UPnP (später)' }}</span>
+        </md-card-content>
+      </md-card>
+
+    </div> <!-- /LEFT COLUMN -->
+
+    <!-- RIGHT COLUMN: PEERS -->
+    <div flex="60" flex-xs="100">
+
+      <md-card>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-title">Peers</span>
+          </md-card-title-text>
+
+          <!-- Header Actions rechts -->
+          <md-card-title-media>
+            <div layout="row" layout-align="end center" layout-gap="8px">
+              <md-button class="md-raised md-primary"
+                         ng-click="vm.createPeerDialog($event)">
+                NEU
+              </md-button>
+
+              <md-button class="md-icon-button"
+                         aria-label="Peers aktualisieren"
+                         ng-click="vm.loadPeers()">
+                <md-icon class="material-icons">refresh</md-icon>
+              </md-button>
+            </div>
+          </md-card-title-media>
+        </md-card-title>
+
+        <md-card-content>
+
+          <div style="margin-bottom:10px;">
+            <strong>{{ (vm.peers && vm.peers.length) || 0 }}</strong>
+            <span style="opacity:0.75; margin-left:6px;">Peers</span>
           </div>
-        </div>
 
-        <div style="margin-top:14px;">
-          <md-button class="md-raised md-primary"
-                     ng-click="vm.openConfigDialog($event)"
-                     ng-disabled="vm.enabled || vm.loading || vm.toggling || vm.error">
-            EINSTELLUNGEN ÄNDERN
-          </md-button>
+          <div ng-if="vm.loading">Lade…</div>
+          <div ng-if="!vm.loading && vm.error" style="opacity:0.8;">—</div>
 
-          <span ng-if="vm.enabled" style="margin-left:10px; opacity:0.7; font-style:italic;">
-            Zum Ändern bitte WireGuard deaktivieren.
-          </span>
-        </div>
+          <div ng-if="!vm.loading && !vm.error">
 
-        <div style="margin-top:10px; opacity:0.65; font-size: 12px;">
-          Hinweis: QR/Peer-Konfiguration folgt später.
-        </div>
+            <div ng-if="!vm.peers || vm.peers.length === 0" style="opacity:0.7;">
+              Noch keine Peers angelegt.
+            </div>
 
-      </md-card-content>
-    </md-card>
+            <div ng-if="vm.peers && vm.peers.length > 0"
+                 style="border:1px solid rgba(0,0,0,0.12); border-radius:4px; overflow:hidden;">
 
-  </div>
-</div>
+              <div ng-repeat="p in vm.peers track by p.id"
+                   layout="row"
+                   layout-align="space-between center"
+                   style="padding:10px 12px; border-bottom:1px solid rgba(0,0,0,0.08);">
+
+                <!-- Left: Text -->
+                <div style="min-width:0;">
+                  <div style="font-weight:600;">{{ p.name }}</div>
+                  <div style="opacity:0.75; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    {{ p.allowedIp }}
+                    <span style="opacity:0.55;">({{ p.id }})</span>
+                  </div>
+                </div>
+
+                <!-- Right: Actions -->
+                <div layout="row" layout-align="end center" layout-gap="6px" style="flex:0 0 auto;">
+                  <md-button class="md-raised"
+                             ng-click="vm.showPeerConfig($event, p)">
+                    ANZEIGEN
+                  </md-button>
+
+                  <md-button class="md-raised md-warn"
+                             ng-click="vm.deletePeer($event, p)">
+                    LÖSCHEN
+                  </md-button>
+                  <md-button class="md-raised"
+                             ng-click="vm.showPeerQr($event, p)">
+                    QR
+                  </md-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div> <!-- /RIGHT COLUMN -->
+  </div> <!-- /2-column layout -->
+</div> <!-- /root -->

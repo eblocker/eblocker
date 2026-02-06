@@ -1,25 +1,27 @@
 package org.eblocker.server.http.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.data.wireguard.WireGuardPeerStore;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 
 public class WireGuardPeerService {
 
@@ -30,24 +32,38 @@ public class WireGuardPeerService {
     private static final int FIRST_PEER_HOST = 2;
     private static final int LAST_PEER_HOST = 254;
 
-    private final WireGuardPeerStoreService storeService;
+    private static final Path WG_CONFIG_FILE =
+            Paths.get("/opt/eblocker-icap/conf/wireguard-config.json");
+    private static final Path WG_SERVER_PUB_FILE =
+            Paths.get("/opt/eblocker-icap/conf/wireguard-server.pub");
+
+    private final DataSource dataSource;
+
+    private final Provider<ObjectMapper> objectMapperProvider;
 
     @Inject
-    public WireGuardPeerService(WireGuardPeerStoreService storeService) {
-        this.storeService = storeService;
+    public WireGuardPeerService(DataSource dataSource, Provider<ObjectMapper> objectMapperProvider) {
+        this.dataSource = dataSource;
+        this.objectMapperProvider = objectMapperProvider;
     }
 
-    public WireGuardPeer createPeer(String name) {
-        WireGuardPeerStore store = storeService.load();
+    // -------------------------
+    // CRUD / UI
+    // -------------------------
 
-        String allowedIp = allocateNextIp(store);
+    public WireGuardPeer createPeer(String name) {
+        // Alle Peers holen (damit IP-Alloc funktioniert)
+        List<WireGuardPeer> peers = dataSource.getAll(WireGuardPeer.class);
+
+        String allowedIp = allocateNextIp(peers);
 
         String privateKey = runWg("genkey");
         String publicKey = runWgWithStdin("pubkey", privateKey);
         String presharedKey = runWg("genpsk");
 
         WireGuardPeer peer = new WireGuardPeer();
-        peer.setId(UUID.randomUUID().toString());
+        int id = dataSource.nextId(WireGuardPeer.class);
+        peer.setId(String.valueOf(id));
         peer.setName((name == null || name.trim().isEmpty()) ? "Peer" : name.trim());
         peer.setAllowedIp(allowedIp);
 
@@ -55,15 +71,108 @@ public class WireGuardPeerService {
         peer.setPublicKey(publicKey);
         peer.setPresharedKey(presharedKey);
 
-        store.getPeers().add(peer);
-        storeService.save(store);
-
+        dataSource.save(peer, id);
         return peer;
     }
 
-    private String allocateNextIp(WireGuardPeerStore store) {
+    public boolean deletePeer(String peerId) {
+        int id;
+        try {
+            id = Integer.parseInt(peerId);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        WireGuardPeer existing = dataSource.get(WireGuardPeer.class, id);
+        if (existing == null) {
+            return false;
+        }
+
+        dataSource.delete(WireGuardPeer.class, id);
+        return true;
+    }
+
+    /**
+     * Für UI: Secrets maskieren (PrivateKey/PresharedKey niemals an UI ausliefern).
+     */
+    public List<WireGuardPeer> listPeersMasked() {
+        List<WireGuardPeer> peers = dataSource.getAll(WireGuardPeer.class);
+
+        for (WireGuardPeer p : peers) {
+            p.setPrivateKey(null);
+            p.setPresharedKey(null);
+            // publicKey kann bleiben (harmlos), wenn du willst kannst du ihn auch nullen
+        }
+        return peers;
+    }
+
+    /**
+     * Für Controller, der WireGuardPeerStore erwartet.
+     */
+    public WireGuardPeerStore getStore() {
+        WireGuardPeerStore store = new WireGuardPeerStore();
+        store.setPeers(listPeersMasked());
+        return store;
+    }
+
+    // -------------------------
+    // Client config + QR
+    // -------------------------
+
+    public String renderClientConfig(String peerId) {
+        WireGuardPeer peer = getPeerOrThrow(peerId);
+
+        String serverPublicKey = resolveServerPublicKey();
+        Endpoint ep = resolveEndpointFromConfig();
+
+        // Hinweis: Address als /32 ist für WireGuard üblich.
+        return ""
+                + "[Interface]\n"
+                + "PrivateKey = " + peer.getPrivateKey() + "\n"
+                + "Address = " + peer.getAllowedIp() + "\n"
+                + "DNS = 10.13.13.1\n"
+                + "\n"
+                + "[Peer]\n"
+                + "PublicKey = " + serverPublicKey + "\n"
+                + "PresharedKey = " + peer.getPresharedKey() + "\n"
+                + "Endpoint = " + ep.host + ":" + ep.port + "\n"
+                + "AllowedIPs = 0.0.0.0/0, ::/0\n"
+                + "PersistentKeepalive = 25\n";
+    }
+
+    public byte[] renderClientConfigQrPng(String peerId) {
+        String cfg = renderClientConfig(peerId);
+
+        try {
+            java.util.Map<com.google.zxing.EncodeHintType, Object> hints =
+                    new java.util.EnumMap<>(com.google.zxing.EncodeHintType.class);
+            hints.put(com.google.zxing.EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(com.google.zxing.EncodeHintType.MARGIN, 1);
+
+            com.google.zxing.common.BitMatrix matrix =
+                    new com.google.zxing.qrcode.QRCodeWriter().encode(
+                            cfg,
+                            com.google.zxing.BarcodeFormat.QR_CODE,
+                            360,
+                            360,
+                            hints
+                    );
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream(matrix, "PNG", out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create QR png for peer " + peerId, e);
+        }
+    }
+
+    // -------------------------
+    // helpers
+    // -------------------------
+
+    private String allocateNextIp(List<WireGuardPeer> peers) {
         Set<String> used = new HashSet<>();
-        for (WireGuardPeer p : store.getPeers()) {
+        for (WireGuardPeer p : peers) {
             if (p.getAllowedIp() != null) {
                 used.add(p.getAllowedIp().trim());
             }
@@ -77,6 +186,117 @@ public class WireGuardPeerService {
         }
 
         throw new IllegalStateException("No free IPs left in 10.13.13.0/24");
+    }
+
+    private WireGuardPeer getPeerOrThrow(String peerId) {
+        if (peerId == null || peerId.trim().isEmpty()) {
+            throw new IllegalArgumentException("peerId is empty");
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(peerId.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid peerId: " + peerId);
+        }
+
+        WireGuardPeer peer = dataSource.get(WireGuardPeer.class, id);
+        if (peer == null) {
+            throw new IllegalArgumentException("Peer not found: " + peerId);
+        }
+        return peer;
+    }
+
+    private String resolveServerPublicKey() {
+        String serverPublicKey = null;
+
+        // 1) bevorzugt: über sudo + wireguard-server-control (updatefest)
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "sudo", "-n",
+                    "/opt/eblocker-icap/scripts/wireguard-server-control",
+                    "public-key"
+            );
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+                String line = br.readLine();
+                if (line != null && !line.trim().isEmpty()) {
+                    serverPublicKey = line.trim();
+                }
+            }
+
+            int rc = p.waitFor();
+            if (rc != 0) {
+                serverPublicKey = null;
+            }
+        } catch (Exception ignored) {
+            serverPublicKey = null;
+        }
+
+        // 2) fallback: lokale Datei (falls sudo nicht verfügbar)
+        if (serverPublicKey == null || serverPublicKey.trim().isEmpty()) {
+            try {
+                if (Files.exists(WG_SERVER_PUB_FILE)) {
+                    serverPublicKey = new String(
+                            Files.readAllBytes(WG_SERVER_PUB_FILE),
+                            StandardCharsets.UTF_8
+                    ).trim();
+                }
+            } catch (Exception ignored) {
+                // ignore
+            }
+        }
+
+        if (serverPublicKey == null || serverPublicKey.trim().isEmpty()) {
+            throw new IllegalStateException("Server public key not available (script and file fallback failed).");
+        }
+
+        return serverPublicKey;
+    }
+
+    private Endpoint resolveEndpointFromConfig() {
+        // Defaults
+        String endpointHost = "YOUR_DDNS_OR_IP";
+        int endpointPort = 51820;
+
+        try {
+            if (Files.exists(WG_CONFIG_FILE)) {
+                String json = new String(Files.readAllBytes(WG_CONFIG_FILE), StandardCharsets.UTF_8).trim();
+                if (!json.isEmpty()) {
+                    ObjectMapper mapper = objectMapperProvider.get();
+                    Map<String, Object> cfg = mapper.readValue(
+                        json, new TypeReference<Map<String, Object>>() {}
+                    );
+
+                    Object eh = cfg.get("externalHost");
+                    if (eh != null && !String.valueOf(eh).trim().isEmpty()) {
+                        endpointHost = String.valueOf(eh).trim();
+                    }
+
+                    Object lp = cfg.get("listenPort");
+                    if (lp != null && !String.valueOf(lp).trim().isEmpty()) {
+                        endpointPort = Integer.parseInt(String.valueOf(lp).trim());
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Defaults bleiben
+        }
+
+        return new Endpoint(endpointHost, endpointPort);
+    }
+
+    private static class Endpoint {
+        final String host;
+        final int port;
+
+        Endpoint(String host, int port) {
+            this.host = host;
+            this.port = port;
+        }
     }
 
     private String runWg(String arg) {
@@ -143,147 +363,6 @@ public class WireGuardPeerService {
             return bos.toString(StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw new RuntimeException("Failed to read process stream", e);
-        }
-    }
-    
-    public WireGuardPeerStore getStore() {
-        return storeService.load();
-    }
-    
-    public String renderClientConfig(String peerId) {
-        WireGuardPeerStore store = storeService.load();
-
-        WireGuardPeer peer = null;
-        for (WireGuardPeer p : store.getPeers()) {
-            if (peerId.equals(p.getId())) {
-                peer = p;
-                break;
-            }
-        }
-        if (peer == null) {
-            throw new IllegalArgumentException("Peer not found: " + peerId);
-        }
-
-        // Server-Werte (aus wireguard-config.json lesen, sonst Defaults)
-        String serverPublicKey = "<SERVER_PUBLIC_KEY_TODO>";
-
-        // 1) bevorzugt: über sudo + wireguard-server-control (updatefest)
-        try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "sudo", "-n",
-                    "/opt/eblocker-icap/scripts/wireguard-server-control",
-                    "public-key"
-            );
-            pb.redirectErrorStream(true);
-            Process p = pb.start();
-
-            String line = null;
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-                line = br.readLine();
-            }
-
-            int rc = p.waitFor();
-            if (rc == 0 && line != null && !line.trim().isEmpty()) {
-                serverPublicKey = line.trim();
-            }
-        } catch (Exception ignored) {
-            // fallback unten
-        }
-
-        // 2) fallback: lokale Datei (falls sudo nicht verfügbar)
-        if ("<SERVER_PUBLIC_KEY_TODO>".equals(serverPublicKey)) {
-            try {
-                java.nio.file.Path pub = java.nio.file.Paths.get("/opt/eblocker-icap/conf/wireguard-server.pub");
-                if (java.nio.file.Files.exists(pub)) {
-                    serverPublicKey = new String(java.nio.file.Files.readAllBytes(pub), StandardCharsets.UTF_8).trim();
-                }
-            } catch (Exception ignored) {
-                // bleibt TODO
-            }
-        }
-
-
-
-        String endpointHost = "YOUR_DDNS_OR_IP";
-        int endpointPort = 51820;
-
-        try {
-            Path cfgPath = Paths.get("/opt/eblocker-icap/conf/wireguard-config.json");
-            if (Files.exists(cfgPath)) {
-                byte[] raw = Files.readAllBytes(cfgPath);
-                String json = new String(raw, StandardCharsets.UTF_8).trim();
-                if (!json.isEmpty()) {
-                    Map<String, Object> cfg = new ObjectMapper().readValue(
-                            json, new TypeReference<Map<String, Object>>() {}
-                    );
-
-                    Object eh = cfg.get("externalHost");
-                    if (eh != null && !String.valueOf(eh).trim().isEmpty()) {
-                        endpointHost = String.valueOf(eh).trim();
-                    }
-
-                    Object lp = cfg.get("listenPort");
-                    if (lp != null) {
-                        endpointPort = Integer.parseInt(String.valueOf(lp));
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            // Defaults bleiben
-        }
-
-
-        // Minimal-Config (Client)
-        // AllowedIPs: full tunnel oder split-tunnel entscheiden wir später in UI
-        return ""
-            + "[Interface]\n"
-            + "PrivateKey = " + peer.getPrivateKey() + "\n"
-            + "Address = " + peer.getAllowedIp().replace("/32", "/24") + "\n"
-            + "DNS = 10.13.13.1\n"
-            + "\n"
-            + "[Peer]\n"
-            + "PublicKey = " + serverPublicKey + "\n"
-            + "PresharedKey = " + peer.getPresharedKey() + "\n"
-            + "Endpoint = " + endpointHost + ":" + endpointPort + "\n"
-            + "AllowedIPs = 0.0.0.0/0, ::/0\n"
-            + "PersistentKeepalive = 25\n";
-    }
-    
-    public boolean deletePeer(String peerId) {
-        WireGuardPeerStore store = storeService.load();
-
-        boolean removed = store.getPeers()
-            .removeIf(p -> peerId.equals(p.getId()));
-
-        if (removed) {
-            storeService.save(store);
-        }
-
-        return removed;
-    }
-    
-    public byte[] renderClientConfigQrPng(String peerId) {
-        String cfg = renderClientConfig(peerId);
-
-        try {
-            java.util.Map<com.google.zxing.EncodeHintType, Object> hints = new java.util.EnumMap<>(com.google.zxing.EncodeHintType.class);
-            hints.put(com.google.zxing.EncodeHintType.CHARACTER_SET, "UTF-8");
-            hints.put(com.google.zxing.EncodeHintType.MARGIN, 1);
-
-            com.google.zxing.common.BitMatrix matrix =
-                new com.google.zxing.qrcode.QRCodeWriter().encode(
-                    cfg,
-                    com.google.zxing.BarcodeFormat.QR_CODE,
-                    360,
-                    360,
-                    hints
-                );
-
-            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
-            com.google.zxing.client.j2se.MatrixToImageWriter.writeToStream(matrix, "PNG", out);
-            return out.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create QR png for peer " + peerId, e);
         }
     }
 }

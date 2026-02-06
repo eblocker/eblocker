@@ -12,6 +12,7 @@ import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -212,36 +213,56 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     @Override
     public Object createPeer(Request request, Response response) {
         Object raw = request.getBody();
-        String name;
+        String body;
 
         if (raw == null) {
-            name = "Peer";
+            body = "";
         } else if (raw instanceof String) {
-            name = ((String) raw).trim();
+            body = (String) raw;
         } else if (raw instanceof byte[]) {
-            name = new String((byte[]) raw, java.nio.charset.StandardCharsets.UTF_8).trim();
-        } else if (raw instanceof io.netty.buffer.ByteBuf) {
-            name = new String(io.netty.buffer.ByteBufUtil.getBytes((io.netty.buffer.ByteBuf) raw),
-                    java.nio.charset.StandardCharsets.UTF_8).trim();
+            body = new String((byte[]) raw, StandardCharsets.UTF_8);
+        } else if (raw instanceof ByteBuf) {
+            body = new String(ByteBufUtil.getBytes((ByteBuf) raw), StandardCharsets.UTF_8);
         } else {
-            name = String.valueOf(raw).trim();
+            body = String.valueOf(raw);
+        }
+
+        String name = null;
+        String trimmed = body.trim();
+
+        // JSON: {"name":"..."}
+        if (trimmed.startsWith("{")) {
+            try {
+                Map<String, Object> in =
+                    MAPPER.readValue(trimmed, new TypeReference<Map<String, Object>>() {});
+                Object n = in.get("name");
+                if (n != null) {
+                    name = String.valueOf(n).trim();
+                }
+            } catch (Exception ignored) {
+                // fallback unten
+            }
+        }
+
+        // Plain-Text Fallback
+        if (name == null) {
+            name = trimmed;
         }
 
         if (name.isEmpty()) {
             name = "Peer";
         }
 
-        org.eblocker.server.common.data.wireguard.WireGuardPeer peer =
-                wireGuardPeerService.createPeer(name);
+        WireGuardPeer peer = wireGuardPeerService.createPeer(name);
 
-        // Nur Meta zurückgeben (keine Secrets!)
-        java.util.Map<String, Object> out = new java.util.HashMap<>();
+        Map<String, Object> out = new HashMap<>();
         out.put("id", peer.getId());
         out.put("name", peer.getName());
         out.put("allowedIp", peer.getAllowedIp());
         return out;
     }
-    
+
+   
     @Override
     public Object getPeers(Request request, Response response) {
         org.eblocker.server.common.data.wireguard.WireGuardPeerStore store =

@@ -16,29 +16,55 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.http.service.ConfigurationBackupService;
+import org.eblocker.crypto.CryptoService;
+import org.eblocker.crypto.CryptoServiceFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 @SuppressWarnings("squid:S2187")
 public class BackupProviderTestBase {
-    protected void exportAndImportWith(DataSource dataSource, BackupProvider provider) throws IOException {
-        exportAndImportWith(dataSource, provider, null);
+    private static final byte[] salt = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+    protected void exportVerifyImport(BackupProvider provider) throws IOException {
+        byte[] exported = exportBackup(provider);
+        verifyBackup(exported, provider);
+        importBackup(exported, provider);
     }
 
-    protected void exportAndImportWith(DataSource dataSource, BackupProvider provider, String password) throws IOException {
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
-
+    protected byte[] exportBackup(BackupProvider provider) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream, password);
+        try (JarOutputStream jarOutputStream = new JarOutputStream(outputStream)) {
+            provider.exportConfiguration(jarOutputStream);
+        }
+        return outputStream.toByteArray();
+    }
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.verifyConfiguration(inputStream, password);
+    protected void verifyBackup(byte[] data, BackupProvider provider) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        try (JarInputStream jarInputStream = new JarInputStream(inputStream)) {
+            provider.verifyConfiguration(jarInputStream, 42);
+        }
+    }
 
-        inputStream.reset();
-        service.importConfiguration(inputStream, password);
+    protected void importBackup(byte[] data, BackupProvider provider) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        try (JarInputStream jarInputStream = new JarInputStream(inputStream)) {
+            provider.importConfiguration(jarInputStream, 42);
+        }
+    }
+
+    protected CryptoService createCryptoService(String password) throws IOException {
+        if (password == null) {
+            return null;
+        }
+        try {
+            return CryptoServiceFactory.getInstance().setSaltedPassword(password.toCharArray(), salt).build();
+        } catch (Exception e) {
+            throw new IOException("Could not create CryptoService", e);
+        }
     }
 }

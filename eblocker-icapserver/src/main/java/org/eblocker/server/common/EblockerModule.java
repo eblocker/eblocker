@@ -93,6 +93,7 @@ import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
 import org.eblocker.server.common.update.AutomaticUpdater;
 import org.eblocker.server.common.update.DebianUpdater;
 import org.eblocker.server.common.update.SystemUpdater;
+import org.eblocker.server.http.backup.BackupProviderFactory;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
 import org.eblocker.server.http.controller.AuthenticationController;
@@ -301,6 +302,7 @@ public class EblockerModule extends BaseModule {
         install(new FactoryModuleBuilder().build(UpnpActionInvocationFactory.class));
         install(new FactoryModuleBuilder().implement(ChannelHandler.class, SslTestRequestHandler.class).build(SslTestRequestHandlerFactory.class));
         install(new FactoryModuleBuilder().build(UpdateTaskFactory.class));
+        install(new FactoryModuleBuilder().build(BackupProviderFactory.class));
 
         install(new TransactionProcessorsModule());
         install(new SquidAclModule());

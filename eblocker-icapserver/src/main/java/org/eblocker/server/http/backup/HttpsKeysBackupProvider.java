@@ -16,18 +16,17 @@
  */
 package org.eblocker.server.http.backup;
 
-import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.EncryptedData;
-import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.ssl.SslService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.List;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
@@ -36,14 +35,16 @@ public class HttpsKeysBackupProvider extends BackupProvider {
     private static final Logger LOG = LoggerFactory.getLogger(HttpsKeysBackupProvider.class);
 
     private final SslService sslService;
+    private final CryptoService cryptoService;
 
-    @Inject
-    public HttpsKeysBackupProvider(SslService sslService) {
+    @AssistedInject
+    public HttpsKeysBackupProvider(SslService sslService, @Assisted @Nullable CryptoService cryptoService) {
         this.sslService = sslService;
+        this.cryptoService = cryptoService;
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         HttpsKeysBackup backup;
         try {
             backup = exportHttpsKeys(cryptoService);
@@ -71,16 +72,16 @@ public class HttpsKeysBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, false);
     }
 
     @Override
-    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    public void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, true);
     }
 
-    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+    private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
         byte[] caBytes = null;
         byte[] renewalCaBytes = null;
         getNextEntry(inputStream, HTTPS_KEYS_ENTRY);

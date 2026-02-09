@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.IpAddressModule;
 
 import java.io.IOException;
@@ -70,21 +69,18 @@ public abstract class BackupProvider {
 
     /**
      * Export the configuration to the given JarOutputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException;
+    public abstract void exportConfiguration(JarOutputStream outputStream) throws IOException;
 
     /**
      * Import the configuration from the given JarInputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+    public abstract void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 
     /**
      * Verify the configuration from the given JarInputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void verifyConfiguration(JarInputStream jarStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+    public abstract void verifyConfiguration(JarInputStream jarStream, int schemaVersion) throws IOException;
 
     /**
      * Write the next entry into the given JarOutputStream.

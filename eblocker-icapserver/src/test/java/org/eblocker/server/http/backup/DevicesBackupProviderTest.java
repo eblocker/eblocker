@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Device.DisplayIconPosition;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -50,7 +49,6 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
     private DeviceFactory deviceFactory;
     private OpenVpnService openVpnService;
     private DevicesBackupProvider provider;
-    private DataSource dataSource;
     private int newDefaultSystemuser = 10;
 
     @BeforeEach
@@ -59,9 +57,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         userService = Mockito.mock(UserService.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
         openVpnService = Mockito.mock(OpenVpnService.class);
-        dataSource = Mockito.mock(DataSource.class);
         provider = new DevicesBackupProvider(deviceService, userService, deviceFactory, openVpnService);
-        Mockito.when(dataSource.getVersion()).thenReturn("42");
     }
 
     @Test
@@ -189,7 +185,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
                 deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(computerAfter);
 
-        exportAndImportWith(dataSource, provider);
+        exportVerifyImport(provider);
 
         //        Mockito.verify(deviceService).updateDevice(gatewayAfter);
         //        Mockito.verify(deviceService).updateDevice(computerAfter);
@@ -293,7 +289,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
                 deviceFactory.createDevice(Mockito.eq("device:22:22:22:22:22:22"), Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(computerAfter);
 
-        exportAndImportWith(dataSource, provider);
+        exportVerifyImport(provider);
 
         // Verify computer has been restored correctly
         ArgumentCaptor<Device> argCaptor = ArgumentCaptor.forClass(Device.class);

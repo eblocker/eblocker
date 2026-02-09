@@ -17,8 +17,6 @@
 package org.eblocker.server.http.backup;
 
 import com.google.inject.Inject;
-import org.eblocker.crypto.CryptoService;
-import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.slf4j.Logger;
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
@@ -43,7 +40,7 @@ public class AppModulesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         List<AppWhitelistModule> allModules = appModuleService.getAll();
         List<AppWhitelistModule> modifiedModules = allModules.stream()
                 .filter(AppWhitelistModule::isModified)
@@ -57,16 +54,16 @@ public class AppModulesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, false);
     }
 
     @Override
-    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    public void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, true);
     }
 
-    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+    private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
         getNextEntry(inputStream, APP_MODULES_ENTRY);
         AppModulesBackup backup = objectMapper.readValue(inputStream, AppModulesBackup.class);
         if (backup == null) {

@@ -3,6 +3,8 @@ package org.eblocker.server.http.controller;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import io.netty.buffer.ByteBuf;
+import org.eblocker.server.http.model.WireGuardStatus;
+
 
 import java.util.Map;
 
@@ -12,11 +14,11 @@ public interface WireGuardServerController {
     // STATUS / CONTROL
     // =========================
 
-    Map<String, Object> getStatus(Request request, Response response);
+    WireGuardStatus getStatus(Request request, Response response);
 
-    Map<String, Object> enable(Request request, Response response);
+    WireGuardStatus enable(Request request, Response response);
 
-    Map<String, Object> disable(Request request, Response response);
+    WireGuardStatus disable(Request request, Response response);
 
     Map<String, Object> deletePeer(Request request, Response response);
 

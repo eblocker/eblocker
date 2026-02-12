@@ -13,6 +13,8 @@ import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.http.model.WireGuardStatus;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -45,20 +47,27 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     // STATUS
     // =========================
     @Override
-    public Map<String, Object> getStatus(Request request, Response response) {
+    public WireGuardStatus getStatus(Request request, Response response) {
         String json = runStatusJson();
         try {
-            return MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {});
+            return MAPPER.readValue(json, WireGuardStatus.class);
         } catch (Exception e) {
-            return fallback("invalid-json");
+            WireGuardStatus s = new WireGuardStatus();
+            s.setIface("wg0");
+            s.setService("unknown");
+            s.setWg("down");
+            s.setPeers(0);
+            s.setError("invalid-json");
+            return s;
         }
+
     }
 
     // =========================
     // ENABLE (= start)
     // =========================
     @Override
-    public Map<String, Object> enable(Request request, Response response) {
+    public WireGuardStatus enable(Request request, Response response) {
         runControl("start");
         return getStatus(request, response);
     }
@@ -67,7 +76,7 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     // DISABLE (= stop)
     // =========================
     @Override
-    public Map<String, Object> disable(Request request, Response response) {
+    public WireGuardStatus disable(Request request, Response response) {
         runControl("stop");
         return getStatus(request, response);
     }

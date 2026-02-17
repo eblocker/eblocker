@@ -47,6 +47,7 @@ import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 import static org.mockito.Mockito.when;
 
@@ -62,7 +63,7 @@ public abstract class DeviceRegistrationTestBase {
     protected final static String VERSION = "9.99.999";
 
     protected static final String HOSTNAME = "localhost";
-    protected static final int PORT = 1080;
+    protected static final int PORT = 10000 + new Random().nextInt(10000);
 
     protected static final String BASE_URL = "https://" + HOSTNAME + ":" + PORT + "/api";
     protected static final String TRUSTSTORE_RESOURCE = "classpath:test-data/mock-server/root-ca.jks";
@@ -119,7 +120,7 @@ public abstract class DeviceRegistrationTestBase {
         when(settingsService.getLocaleSettings()).thenReturn(new LocaleSettings(null, null, null, null, null));
 
         if (doStartMockServer()) {
-            mockServer = ClientAndServer.startClientAndServer(1080);
+            mockServer = ClientAndServer.startClientAndServer(PORT);
         }
     }
 

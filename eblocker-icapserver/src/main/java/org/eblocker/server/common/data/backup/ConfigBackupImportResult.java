@@ -14,17 +14,23 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.http.backup;
+package org.eblocker.server.common.data.backup;
 
-import org.eblocker.crypto.CryptoService;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Creates backup providers at runtime.
- */
-public interface BackupProviderFactory {
-    AppModulesBackupProvider createAppModulesBackupProvider();
-    DevicesBackupProvider createDevicesBackupProvider();
-    TorConfigBackupProvider createTorConfigBackupProvider();
-    HttpsKeysBackupProvider createHttpsKeysBackupProvider(CryptoService cryptoService);
-    OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService);
+public class ConfigBackupImportResult {
+    private final List<BackupWarning> warnings = new ArrayList<>();
+
+    public boolean hasWarnings() {
+        return !warnings.isEmpty();
+    }
+
+    public void addWarnings(List<BackupWarning> warnings) {
+        this.warnings.addAll(warnings);
+    }
+
+    public List<BackupWarning> getWarnings() {
+        return warnings;
+    }
 }

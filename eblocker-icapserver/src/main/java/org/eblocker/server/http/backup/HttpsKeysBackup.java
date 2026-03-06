@@ -19,6 +19,11 @@ package org.eblocker.server.http.backup;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.crypto.EncryptedData;
 
+/**
+ * Store encrypted CA and renewal CA.
+ *
+ * For historical reasons the CAs are stored as EncryptedData attributes instead of byte arrays with @JsonEncrypt annotations.
+ */
 public class HttpsKeysBackup {
     private EncryptedData encryptedCA;
     private EncryptedData encryptedRenewalCA;

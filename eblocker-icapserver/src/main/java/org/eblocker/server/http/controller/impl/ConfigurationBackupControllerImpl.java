@@ -20,7 +20,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.eblocker.server.common.data.ConfigBackupReference;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
+import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DecryptionFailedException;
@@ -136,7 +137,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
      * @param response
      */
     @Override
-    public void verifyConfiguration(Request request, Response response) {
+    public ConfigBackupImportResult verifyConfiguration(Request request, Response response) {
         ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
         if (reference == null) {
             String message = "ConfigBackupReference is missing from request";
@@ -145,8 +146,13 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
         }
         Path localFile = getVerifiedLocalPath(reference.getFileReference());
         try (InputStream inputStream = Files.newInputStream(localFile)) {
-            backupService.verifyConfiguration(inputStream, reference.getPassword());
-            LOG.info("Successfully verified configuration backup");
+            ConfigBackupImportResult result = backupService.verifyConfiguration(inputStream, reference.getPassword());
+            if (result.hasWarnings()) {
+                LOG.warn("Verified configuration backup with warnings: {}", result.getWarnings());
+            } else {
+                LOG.info("Successfully verified configuration backup");
+            }
+            return result;
         } catch (CorruptedBackupException e) {
             LOG.error("Could not verify corrupted backup", e);
             throw new BadRequestException("adminconsole.config_backup.error.corrupted");
@@ -168,7 +174,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
      * @param response
      */
     @Override
-    public void importConfiguration(Request request, Response response) {
+    public ConfigBackupImportResult importConfiguration(Request request, Response response) {
         ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
         if (reference == null) {
             String message = "ConfigBackupReference is missing from request";
@@ -177,8 +183,13 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
         }
         Path localFile = getVerifiedLocalPath(reference.getFileReference());
         try (InputStream inputStream = Files.newInputStream(localFile)) {
-            backupService.importConfiguration(inputStream, reference.getPassword());
-            LOG.info("Successfully imported configuration backup");
+            ConfigBackupImportResult result = backupService.importConfiguration(inputStream, reference.getPassword());
+            if (result.hasWarnings()) {
+                LOG.warn("Imported configuration backup with warnings: {}", result.getWarnings());
+            } else {
+                LOG.info("Successfully imported configuration backup");
+            }
+            return result;
         } catch (CorruptedBackupException e) {
             LOG.error("Could not import corrupted backup", e);
             throw new BadRequestException("adminconsole.config_backup.error.corrupted");

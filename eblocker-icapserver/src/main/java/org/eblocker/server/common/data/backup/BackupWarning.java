@@ -14,17 +14,14 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.http.backup;
-
-import org.eblocker.crypto.CryptoService;
+package org.eblocker.server.common.data.backup;
 
 /**
- * Creates backup providers at runtime.
+ * Warnings that can occur during export or import of a backup.
+ * They should be shown to the user.
  */
-public interface BackupProviderFactory {
-    AppModulesBackupProvider createAppModulesBackupProvider();
-    DevicesBackupProvider createDevicesBackupProvider();
-    TorConfigBackupProvider createTorConfigBackupProvider();
-    HttpsKeysBackupProvider createHttpsKeysBackupProvider(CryptoService cryptoService);
-    OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService);
+public enum BackupWarning {
+    NO_PASSWORD_HTTPS_CA_NOT_IMPORTED,
+    NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED,
+    UPNP_PORT_FORWARDING_FAILURE;
 }

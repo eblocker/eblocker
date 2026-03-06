@@ -18,40 +18,48 @@ package org.eblocker.server.http.service;
 
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.backup.BackupWarning;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.http.backup.AppModulesBackupProvider;
 import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProviderFactory;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
+import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-public class ConfigurationBackupServiceTest {
-    DataSource dataSource;
-    ConfigurationBackupService service;
-    AppModulesBackupProvider appModulesBP;
-    DevicesBackupProvider devicesBP;
-    TorConfigBackupProvider torConfigBP;
-    HttpsKeysBackupProvider httpsKeysBP;
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Before
+public class ConfigurationBackupServiceTest {
+    private DataSource dataSource;
+    private ConfigurationBackupService service;
+    private AppModulesBackupProvider appModulesBP;
+    private DevicesBackupProvider devicesBP;
+    private TorConfigBackupProvider torConfigBP;
+    private HttpsKeysBackupProvider httpsKeysBP;
+    private OpenVpnServerBackupProvider openVpnServerBP;
+    private static final String password = "top secret!";
+
+    @BeforeEach
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         appModulesBP = Mockito.mock(AppModulesBackupProvider.class);
         devicesBP = Mockito.mock(DevicesBackupProvider.class);
         torConfigBP = Mockito.mock(TorConfigBackupProvider.class);
         httpsKeysBP = Mockito.mock(HttpsKeysBackupProvider.class);
+        openVpnServerBP = Mockito.mock(OpenVpnServerBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
@@ -73,6 +81,11 @@ public class ConfigurationBackupServiceTest {
             public HttpsKeysBackupProvider createHttpsKeysBackupProvider(CryptoService cryptoService) {
                 return httpsKeysBP;
             }
+
+            @Override
+            public OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService) {
+                return openVpnServerBP;
+            }
         };
         service = new ConfigurationBackupService(dataSource, providerFactory);
         Mockito.when(dataSource.getVersion()).thenReturn("42");
@@ -83,21 +96,21 @@ public class ConfigurationBackupServiceTest {
         exportImport(service);
     }
 
-    @Test(expected = UnsupportedBackupVersionException.class)
+    @Test
     public void testUnsupportedVersion() throws IOException {
         Manifest manifest = new Manifest();
         BackupAttributes attribs = new BackupAttributes(-666, 42, false);
         attribs.addToAttributes(manifest.getMainAttributes());
         byte[] backup = createJar(manifest);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(backup);
-        service.importConfiguration(inputStream);
+        assertThrows(UnsupportedBackupVersionException.class, () -> service.importConfiguration(inputStream, null));
     }
 
-    @Test(expected = CorruptedBackupException.class)
+    @Test
     public void testMissingManifest() throws IOException {
         byte[] backup = createJar(null);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(backup);
-        service.importConfiguration(inputStream);
+        assertThrows(CorruptedBackupException.class, () -> service.importConfiguration(inputStream, null));
     }
 
     @Test
@@ -107,13 +120,25 @@ public class ConfigurationBackupServiceTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         service.exportConfiguration(outputStream, null);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Assert.assertFalse(service.requiresPassword(inputStream));
+        assertFalse(service.requiresPassword(inputStream));
 
         // with password:
         outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream, "top secret");
+        service.exportConfiguration(outputStream, password);
         inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        Assert.assertTrue(service.requiresPassword(inputStream));
+        assertTrue(service.requiresPassword(inputStream));
+    }
+
+    @Test
+    public void testWarnings() throws IOException {
+        final List<BackupWarning> warnings = List.of(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
+        Mockito.when(openVpnServerBP.getWarnings()).thenReturn(warnings);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        service.exportConfiguration(outputStream, password);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        ConfigBackupImportResult result = service.importConfiguration(inputStream, password);
+        assertTrue(result.hasWarnings());
+        assertEquals(warnings, result.getWarnings());
     }
 
     /**
@@ -122,10 +147,10 @@ public class ConfigurationBackupServiceTest {
      */
     private void exportImport(ConfigurationBackupService service) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream);
+        service.exportConfiguration(outputStream, password);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream);
+        service.importConfiguration(inputStream, password);
     }
 
     private byte[] createJar(Manifest manifest) throws IOException {

@@ -35,7 +35,6 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.FixedLengthFrameDecoder;
 import org.eblocker.registration.MobileConnectionCheck;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.registration.DeviceRegistrationClient;
 import org.eblocker.server.http.service.OpenVpnServerService;
 import org.slf4j.Logger;
@@ -126,11 +125,7 @@ public class MobileConnectionCheckTask implements Runnable {
     @Override
     public void run() {
         try {
-            if (this.openVpnServerService.getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
-                this.mappedPort = this.openVpnServerService.getOpenVpnTempMappedPort();
-            } else {
-                this.mappedPort = this.openVpnServerService.getOpenVpnMappedPort();
-            }
+            this.mappedPort = this.openVpnServerService.getOpenVpnMappedPort();
             start();
             issueRequests();
             awaitRequests();

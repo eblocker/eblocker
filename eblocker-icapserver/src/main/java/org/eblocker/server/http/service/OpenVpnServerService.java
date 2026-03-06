@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.openvpn.ExternalAddressType;
@@ -28,47 +29,41 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.openvpn.server.OpenVpnCa;
+import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.upnp.UpnpManagementService;
-import org.eblocker.server.upnp.UpnpPortForwardingResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 
 @Singleton
 @SubSystemService(value = SubSystem.SERVICES)
-public class OpenVpnServerService {
-    private final ScriptRunner scriptRunner;
+public class OpenVpnServerService extends VpnServerService {
     private final DataSource dataSource;
-    private final UpnpManagementService upnpService;
+    private final ScriptRunner scriptRunner;
+    private final DeviceService deviceService;
     private final EblockerDnsServer dnsServer;
     private final DnsService dnsService;
+    private final DynDnsService dynDnsService;
     private final ScheduledExecutorService executorService;
     private final EventLogger eventLogger;
     private final String openVpnServerCommand;
     private final OpenVpnCa openVpnCa;
-    private final int port;
-    private final String portForwardingDescription;
-    private final int portForwardingTempDuration;
-    private final int duration;
-    private List<UpnpPortForwardingResult> openedPorts;
 
-    private int tempPort;
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerService.class);
-    private static final String ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS = "ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFLICTING_FORWARDINGS";
 
     @Inject
     public OpenVpnServerService(ScriptRunner scriptRunner, DataSource dataSource,
+                                DeviceService deviceService,
                                 UpnpManagementService upnpService,
                                 EblockerDnsServer dnsServer,
                                 DnsService dnsService,
+                                DynDnsService dynDnsService,
                                 @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                                 EventLogger eventLogger,
                                 @Named("openvpn.server.command") String openVpnServerCommand,
@@ -77,24 +72,22 @@ public class OpenVpnServerService {
                                 @Named("openvpn.server.portforwarding.duration.use") int duration,
                                 @Named("openvpn.server.portforwarding.description") String portForwardingDescription,
                                 OpenVpnCa openVpnCa) {
-        this.scriptRunner = scriptRunner;
+        super(upnpService, port, portForwardingDescription, tempDuration, duration);
         this.dataSource = dataSource;
-        this.upnpService = upnpService;
+        this.scriptRunner = scriptRunner;
+        this.deviceService = deviceService;
         this.dnsServer = dnsServer;
         this.executorService = executorService;
         this.dnsService = dnsService;
+        this.dynDnsService = dynDnsService;
         this.openVpnServerCommand = openVpnServerCommand;
-        this.port = port;
-        this.tempPort = getOpenVpnMappedPort(); // This fixes EB1-2250 TODO check if tempPort is still needed: here we essentially set tempPort = port
-        this.portForwardingDescription = portForwardingDescription;
-        this.duration = duration;
-        this.portForwardingTempDuration = tempDuration;
         this.eventLogger = eventLogger;
         this.openVpnCa = openVpnCa;
     }
 
     @SubSystemInit
     public void init() {
+        initDeviceListener();
         // Start server if needed
         if (isOpenVpnServerEnabled()) {
             Runnable task = this::initStartOpenVpnServer;
@@ -102,17 +95,42 @@ public class OpenVpnServerService {
         }
     }
 
+    private void initDeviceListener() {
+        this.deviceService.addListener(new DeviceService.DeviceChangeListener() {
+            @Override
+            public void onChange(Device device) {
+                // Nothing to do here.
+            }
+
+            @Override
+            public void onDelete(Device device) {
+                try {
+                    if (getDeviceIdsWithCertificates().contains(device.getId())) {
+                        revokeClientCertificate(device.getId());
+                    }
+                } catch (IOException e) {
+                    log.error("Could not find out whether device {} has any client certificates for OpenVPN server.", device.getId(), e);
+                }
+            }
+
+            @Override
+            public void onReset(Device device) {
+                // Nothing to do here
+            }
+        });
+    }
+
     private void initStartOpenVpnServer() {
+        startOpenVpnServer();
         try {
-            startOpenVpnServer();
+            enablePortForwarding();
         } catch (UpnpPortForwardingException e) {
             log.error("Problem starting the OpenVPN Server occured", e);
             eventLogger.log(Events.upnpPortForwardingFailed());
-            // FUTURE: Additional handling?
         }
     }
 
-    public boolean startOpenVpnServer() throws UpnpPortForwardingException {
+    private boolean startOpenVpnServer() {
         boolean result = false;
 
         if (!dnsServer.isEnabled() && !dnsService.setStatus(true)) {
@@ -137,8 +155,7 @@ public class OpenVpnServerService {
 
         if (vpnServerControl("start")) {
             setOpenVpnServerfirstRun(false);
-            enableOpenVpnServer();
-
+            dataSource.setOpenVpnServerState(true);
             result = true;
         }
 
@@ -158,57 +175,94 @@ public class OpenVpnServerService {
         return false;
     }
 
-    public void enableOpenVpnServer() throws UpnpPortForwardingException {
-        dataSource.setOpenVpnServerState(true);
-        // Enable port forwarding
-        if (getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
-            int externalPort = dataSource.getOpenVpnMappedPort();
-            openedPorts = upnpService.addPortForwarding(externalPort, port, duration, portForwardingDescription);
-
-            // Check if opening the ports succeeded or if there was a problem
-            UpnpPortForwardingResult failedOpening = openedPorts.stream().filter(res -> !res.isSuccess()).findFirst()
-                    .orElse(null);
-            if (failedOpening != null) {
-                // Analyse situation - maybe we can give the user a hint
-                if (!upnpService.findExistingForwardingsBlockingRequest(externalPort, port).isEmpty()) {
-                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS);
-                }
-                throw new UpnpPortForwardingException(failedOpening.getErrorMsg());
-            }
-        } else if (openedPorts != null) {
-            openedPorts.clear();
-        }
+    public VpnServerStatus getOpenVpnServerStatus() {
+        VpnServerStatus result = new VpnServerStatus();
+        result.setFirstStart(isOpenVpnServerfirstRun());
+        result.setHost(getOpenVpnServerHost());
+        result.setRunning(isOpenVpnServerRunning());
+        result.setExternalAddressType(getOpenVpnExternalAddressType());
+        result.setMappedPort(getOpenVpnMappedPort());
+        result.setPortForwardingMode(getOpenVpnPortForwardingMode());
+        return result;
     }
 
-    public void disableOpenVpnServer() throws UpnpPortForwardingException {
-        dataSource.setOpenVpnServerState(false);
-        // Remove port forwarding
-        if (openedPorts != null && !openedPorts.isEmpty()) {
-            List<UpnpPortForwardingResult> closedPorts = upnpService.removePortForwardings(
-                    openedPorts.stream().map(res -> res.getCorrespondingPortForwarding()).collect(Collectors.toList()));
+    public VpnServerStatus setOpenVpnServerStatus(VpnServerStatus requestedStatus) {
+        VpnServerStatus result = updateServerAccess(requestedStatus);
 
-            // If the closing failed, notify the user
-            UpnpPortForwardingResult failedRemoval = closedPorts.stream().filter(res -> !res.isSuccess()).findFirst()
-                    .orElse(null);
-            if (failedRemoval != null) {
-                throw new UpnpPortForwardingException(failedRemoval.getErrorMsg());
+        // Status of the server:
+        if (isOpenVpnServerRunning() == requestedStatus.isRunning()) {
+            result.setRunning(requestedStatus.isRunning()); // no update of server status necessary
+        } else {
+            if (requestedStatus.isRunning()) {
+                // start server
+                result.setRunning(startOpenVpnServer());
+            } else {
+                // stop server
+                boolean stopped = stopOpenVpnServer();
+                result.setRunning(!stopped);
+                if (stopped) {
+                    disableOpenVpnServer();
+                }
             }
         }
+
+        result.setFirstStart(isOpenVpnServerfirstRun());
+
+        return result;
+
+    }
+
+    private VpnServerStatus updateServerAccess(VpnServerStatus requestedStatus) {
+        VpnServerStatus result = new VpnServerStatus();
+        if (requestedStatus.getExternalAddressType() == ExternalAddressType.EBLOCKER_DYN_DNS) {
+            if (!dynDnsService.isEnabled()) {
+                dynDnsService.enable();
+                dynDnsService.update();
+            }
+            setOpenVpnServerHost(dynDnsService.getHostname());
+        } else {
+            if (dynDnsService.isEnabled()) {
+                dynDnsService.disable();
+            }
+            String newHost = requestedStatus.getHost() != null ? requestedStatus.getHost() : "";
+            setOpenVpnServerHost(newHost);
+        }
+        result.setHost(getOpenVpnServerHost());
+
+        setOpenVpnExternalAddressType(requestedStatus.getExternalAddressType());
+        result.setExternalAddressType(requestedStatus.getExternalAddressType());
+
+        Integer mappedPort = requestedStatus.getMappedPort();
+        if (mappedPort != null) {
+            setOpenVpnMappedPort(mappedPort);
+        }
+        result.setMappedPort(mappedPort);
+        result.setPortForwardingMode(requestedStatus.getPortForwardingMode());
+
+        setOpenVpnPortForwardingMode(requestedStatus.getPortForwardingMode());
+        return result;
+    }
+
+    private void disableOpenVpnServer() {
+        deviceService.getDevices(false).stream()
+                .forEach(device -> device.setIsVpnClient(false));
+
+        dataSource.setOpenVpnServerState(false);
     }
 
     public boolean isOpenVpnServerEnabled() {
         return dataSource.getOpenVpnServerState();
     }
 
-    public boolean isOpenVpnServerfirstRun() {
+    private boolean isOpenVpnServerfirstRun() {
         return dataSource.getOpenVpnServerFirstRun();
     }
 
-    public void setOpenVpnServerfirstRun(boolean state) {
+    private void setOpenVpnServerfirstRun(boolean state) {
         dataSource.setOpenVpnServerFirstRun(state);
     }
 
-    public void setOpenVpnServerHost(String host) {
+    private void setOpenVpnServerHost(String host) {
         dataSource.setOpenVpnServerHost(host);
     }
 
@@ -216,58 +270,48 @@ public class OpenVpnServerService {
         return dataSource.getOpenVpnServerHost();
     }
 
-    public Integer getOpenVpnMappedPort() {
-        Integer mappedPort = dataSource.getOpenVpnMappedPort();
-        return mappedPort != null ? mappedPort : this.port;
-    }
-
-    public void setOpenVpnMappedPort(Integer port) {
-        dataSource.setOpenVpnMappedPort(port);
-    }
-
-    public void setOpenVpnTempMappedPort(Integer port) {
-        tempPort = port;
-    }
-
-    public int getOpenVpnTempMappedPort() {
-        return tempPort;
-    }
-
-    public PortForwardingMode getOpenVpnPortForwardingMode() {
-        return dataSource.getOpenVpnPortForwardingMode();
-    }
-
-    public void setOpenVpnPortForwardingMode(PortForwardingMode mode) {
-        dataSource.setOpenVpnPortForwardingMode(mode);
-    }
-
-    public void setAndMapExternalPortTemporarily(Integer externalPort) throws UpnpPortForwardingException {
-        tempPort = externalPort;
-        if (getOpenVpnPortForwardingMode() == PortForwardingMode.AUTO) {
-            openedPorts = upnpService.addPortForwarding(externalPort, port, portForwardingTempDuration,
-                    portForwardingDescription);
-
-            UpnpPortForwardingResult failedOpening = openedPorts.stream().filter(res -> !res.isSuccess()).findFirst()
-                    .orElse(null);
-            if (failedOpening != null) {
-                // Analyse situation - maybe we can give the user a hint
-                if (!upnpService.findExistingForwardingsBlockingRequest(externalPort, port).isEmpty()) {
-                    throw new UpnpPortForwardingException(ERROR_MSG_POTENTIALLY_CONFLICTING_FORWARDINGS);
-                }
-                throw new UpnpPortForwardingException(failedOpening.getErrorMsg());
-            }
-        }
-    }
-
-    public ExternalAddressType getOpenVpnExternalAddressType() {
+    private ExternalAddressType getOpenVpnExternalAddressType() {
         return dataSource.getOpenVpnExternalAddressType();
     }
 
-    public void setOpenVpnExternalAddressType(ExternalAddressType type) {
+    private void setOpenVpnExternalAddressType(ExternalAddressType type) {
         dataSource.setOpenVpnExternalAddressType(type);
     }
 
-    public boolean stopOpenVpnServer() {
+    /**
+     * Reset the OpenVPN server and CA to the factory state. The server is stopped and disabled.
+     * All CA, server and client certificates and keys are removed.
+     * @return true if reset was successful
+     */
+    public boolean resetOpenVpnServer() {
+        boolean result;
+
+        // first we set 'first-run' to true. So if anything goes wrong during the purge, the next restart
+        // of eBlocker mobile should clean up anything that is left.
+        setOpenVpnServerfirstRun(true);
+        result = stopOpenVpnServer();
+        if (result) {
+            // save consistent reset-state in redis: to avoid eBlocker mobile to be re-enabled
+            // when the ICAP server boots after the reset.
+            disableOpenVpnServer();
+
+            try {
+                disablePortForwarding();
+            } catch (UpnpPortForwardingException e) {
+                log.error("Unable to reset port forwarding during eBlocker mobile reset", e);
+            }
+            // even if port forwarding has not been removed, we have already disabled the server,
+            // so we want to continue the reset.
+            result = purgeOpenVpnServer();
+        }
+        return result;
+    }
+
+    /**
+     * Stops the OpenVPN server
+     * @return returns true if the server was stopped or not running, false in case of an error
+     */
+    private boolean stopOpenVpnServer() {
         return vpnServerControl("stop");
     }
 
@@ -275,13 +319,28 @@ public class OpenVpnServerService {
      * Get running status of the OpenVPN server
      * @return true if the OpenVPN server is running, false otherwise
      */
-    public boolean getOpenVpnServerStatus() {
+    private boolean isOpenVpnServerRunning() {
         return vpnServerControl("status");
     }
 
-    public boolean purgeOpenVpnServer() {
+    private boolean purgeOpenVpnServer() {
         openVpnCa.tearDown();
         return vpnServerControl("purge");
+    }
+
+    /**
+     * Restores key material for OpenVpnServer:
+     * <ul>
+     *     <li>CA certificate</li>
+     *     <li>Server key and certificate</li>
+     *     <li>CRL</li>
+     *     <li>Diffie-Hellman parameters</li>
+     *     <li>Shared secret</li>
+     * </ul>
+     * @return
+     */
+    public boolean restoreOpenVpnServer() {
+        return vpnServerControl("restore");
     }
 
     public boolean createClientCertificate(String deviceId) {
@@ -306,5 +365,32 @@ public class OpenVpnServerService {
 
     public Set<String> getDeviceIdsWithCertificates() throws IOException {
         return openVpnCa.getActiveClientIds();
+    }
+
+    @Override
+    protected int getMappedPort() {
+        return getOpenVpnMappedPort();
+    }
+
+    @Override
+    protected PortForwardingMode getPortForwardingMode() {
+        return getOpenVpnPortForwardingMode();
+    }
+
+    public Integer getOpenVpnMappedPort() {
+        Integer mappedPort = dataSource.getOpenVpnMappedPort();
+        return mappedPort != null ? mappedPort : this.serverPort;
+    }
+
+    private void setOpenVpnMappedPort(Integer port) {
+        dataSource.setOpenVpnMappedPort(port);
+    }
+
+    public PortForwardingMode getOpenVpnPortForwardingMode() {
+        return dataSource.getOpenVpnPortForwardingMode();
+    }
+
+    private void setOpenVpnPortForwardingMode(PortForwardingMode mode) {
+        dataSource.setOpenVpnPortForwardingMode(mode);
     }
 }

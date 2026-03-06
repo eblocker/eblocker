@@ -16,12 +16,14 @@
  */
 package org.eblocker.server.http.backup;
 
+import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.ssl.SslService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,13 +51,14 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         exportVerifyImport(provider);
 
         Mockito.verify(sslService).importCas(caBytes, renewalCaBytes);
+        assertEquals(0, provider.getWarnings().size());
     }
 
     @Test
     public void noPasswordForExport() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
-        exportVerifyImport(providerNoPassword);
+        assertThrows(EncryptionUnavailableException.class, () -> exportBackup(providerNoPassword));
     }
 
     @Test
@@ -64,8 +67,10 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
 
         byte[] backup = exportBackup(provider);
+        assertEquals(0, provider.getWarnings().size());
 
         importBackup(backup, providerNoPassword);
+        assertEquals(List.of(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED), providerNoPassword.getWarnings());
     }
 
     @Test

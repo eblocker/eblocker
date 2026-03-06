@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.CryptoServiceFactory;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProvider;
 import org.eblocker.server.http.backup.BackupProviderFactory;
@@ -47,7 +48,8 @@ public class ConfigurationBackupService {
     private static final int VERSION_2_APP_MODULES_AND_DEVICES = 2;
     private static final int VERSION_3_APP_MODULES_DEVICES_TOR = 3;
     private static final int VERSION_4_WITH_KEYS = 4;
-    private static final int CURRENT_VERSION = VERSION_4_WITH_KEYS;
+    private static final int VERSION_5_FULL = 5;
+    private static final int CURRENT_VERSION = VERSION_5_FULL;
     private static final int MIN_VERSION = VERSION_1_ONLY_APP_MODULES;
     private static final int MAX_VERSION = CURRENT_VERSION;
     private static final byte[] salt = {-58, -73, 41, -28, 37, 23, -61, 93, 47, -57, -45, 23, -77, 97, 102, 49};
@@ -84,13 +86,18 @@ public class ConfigurationBackupService {
                         providerFactory.createAppModulesBackupProvider(),
                         providerFactory.createDevicesBackupProvider(),
                         providerFactory.createTorConfigBackupProvider());
+
+            case VERSION_5_FULL:
+                return List.of(
+                        providerFactory.createHttpsKeysBackupProvider(cryptoService),
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createTorConfigBackupProvider(),
+                        providerFactory.createOpenVpnServerBackupProvider(cryptoService));
+
             default:
                 throw new UnsupportedBackupVersionException(version);
         }
-    }
-
-    public void exportConfiguration(OutputStream outputStream) throws IOException {
-        exportConfiguration(outputStream, null);
     }
 
     /**
@@ -136,7 +143,8 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void verifyConfiguration(InputStream inputStream, String password) throws IOException {
+    public ConfigBackupImportResult verifyConfiguration(InputStream inputStream, String password) throws IOException {
+        ConfigBackupImportResult result = new ConfigBackupImportResult();
         try (JarInputStream jarStream = new JarInputStream(inputStream)) {
             Manifest manifest = jarStream.getManifest();
             BackupAttributes attribs = getVerifiedAttributes(manifest);
@@ -144,12 +152,10 @@ public class ConfigurationBackupService {
 
             for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
                 provider.verifyConfiguration(jarStream, attribs.getSchemaVersion());
+                result.addWarnings(provider.getWarnings());
             }
         }
-    }
-
-    public void importConfiguration(InputStream inputStream) throws IOException {
-        importConfiguration(inputStream, null);
+        return result;
     }
 
     /**
@@ -159,7 +165,8 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void importConfiguration(InputStream inputStream, String password) throws IOException {
+    public ConfigBackupImportResult importConfiguration(InputStream inputStream, String password) throws IOException {
+        ConfigBackupImportResult result = new ConfigBackupImportResult();
         try (JarInputStream jarStream = new JarInputStream(inputStream)) {
             Manifest manifest = jarStream.getManifest();
             BackupAttributes attribs = getVerifiedAttributes(manifest);
@@ -167,8 +174,10 @@ public class ConfigurationBackupService {
 
             for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
                 provider.importConfiguration(jarStream, attribs.getSchemaVersion());
+                result.addWarnings(provider.getWarnings());
             }
         }
+        return result;
     }
 
     CryptoService createCryptoService(String password) throws IOException {

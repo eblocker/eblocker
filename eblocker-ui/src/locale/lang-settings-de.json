@@ -348,10 +348,6 @@
                 "RESTORE_SETTINGS" : "Einstellungen wiederherstellen...",
                 "REBOOT" : "Neustart"
             },
-            "DATA_DEVICE_SETTINGS": "Geräteeinstellungen",
-            "DATA_TOR_SETTINGS": "Einstellungen für Tor",
-            "DATA_TRUSTED_APPS": "Vertrauenswürdige Apps",
-            "DATA_TRUSTED_SITES": "Vertrauenswürdige Websites",
             "ERROR": {
                 "CORRUPTED": "Die Sicherungsdatei ist beschädigt und konnte nicht importiert werden",
                 "DOWNLOAD_FAILURE": "Die Sicherungsdatei konnte nicht heruntergeladen werden",
@@ -368,15 +364,16 @@
                 "SAVE_BACKUP" : "Sichere die Datei unten.",
                 "FILENAME" : "Dateiname:",
                 "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Downloads-Verzeichnis gespeichert.",
-                "EXPORT": "Diese Daten kannst du in der aktuellen Version in einer Datei sichern und wiederherstellen:",
-                "IMPORT": "Diese Daten werden wiederhergestellt:",
+                "EXPORT": "Ein neues Passwort wird benötigt, um die HTTPS- und OpenVPN-Schlüssel in der Sicherungsdatei zu schützen.",
                 "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
-                "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet."
+                "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
+                "WARNINGS" : "Es sind Warnungen aufgetreten:",
+                "VERIFIED": "Die Einstellungen aus der Sicherungsdatei wurden überprüft und können nun wiederhergestellt werden."
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {
                 "EXPORT": "Schlüssel für HTTPS sichern",
-                "IMPORT": "Schlüssel für HTTPS wiederherstellen"
+                "IMPORT": "Schlüssel für HTTPS und OpenVPN wiederherstellen"
             },
             "LABEL": {
                 "CREATE_BACKUP" : "Sicherungsdatei erstellen",
@@ -390,7 +387,13 @@
                     "RETRY": "Die Schlüssel konnten mit dem eingebenen Passwort nicht wiederhergestellt werden. Bitte versuche es erneut."
                 },
                 "LABEL": "Passwort eingeben",
-                "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht."
+                "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht.",
+                "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS- und OpenVPN-Schlüssel nicht wiederhergestellt."
+            },
+            "WARNING": {
+                "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die OpenVPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
+                "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen."
             }
         },
         "DETAILS_VIEW": {
@@ -1572,15 +1575,6 @@
                 "TEST_SUCCESS": "OK",
                 "TEST_TIMEOUT": "Timeout",
                 "TITLE": "VPN-Verbindungstest"
-            },
-            "VPN_HOME_START": {
-                "ACTION": {
-                    "CANCEL": "Abbrechen",
-                    "OK": "Start"
-                },
-                "START_TEXT": "Der Server wird jetzt zum ersten Mal gestartet. Dieser Vorgang kann einige Minuten dauern.",
-                "TITLE": "OpenVPN Server starten",
-                "WAITING_TEXT": "Bitte warte, während der Server gestartet wird."
             }
         },
         "DNS": {

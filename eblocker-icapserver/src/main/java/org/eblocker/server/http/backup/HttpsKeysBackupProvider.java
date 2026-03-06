@@ -21,6 +21,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.EncryptedData;
+import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.ssl.SslService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,9 @@ import java.io.IOException;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
+/**
+ * Backup of HTTPS keys and certificates.
+ */
 public class HttpsKeysBackupProvider extends BackupProvider {
     public static final String HTTPS_KEYS_ENTRY = "eblocker-config/httpsKeys.json";
     private static final Logger LOG = LoggerFactory.getLogger(HttpsKeysBackupProvider.class);
@@ -37,6 +41,12 @@ public class HttpsKeysBackupProvider extends BackupProvider {
     private final SslService sslService;
     private final CryptoService cryptoService;
 
+    /**
+     * The provider has its own CryptoService because it does not use the @JsonEncrypt annotation.
+     * So it does not call the super(cryptoService) constructor.
+     * @param sslService
+     * @param cryptoService
+     */
     @AssistedInject
     public HttpsKeysBackupProvider(SslService sslService, @Assisted @Nullable CryptoService cryptoService) {
         this.sslService = sslService;
@@ -66,7 +76,8 @@ public class HttpsKeysBackupProvider extends BackupProvider {
                 backup.setEncryptedRenewalCA(cryptoService.encrypt(renewalCaBytes));
             }
         } else {
-            LOG.warn("No password provided, so CAs are not backed up");
+            LOG.error("cryptoService is null. Cannot encrypt HTTPS keys");
+            throw new EncryptionUnavailableException("No password provided, cannot encrypt HTTPS keys");
         }
         return backup;
     }
@@ -91,6 +102,7 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         }
         if (cryptoService == null) {
             LOG.warn("No password provided, so CAs are not imported");
+            addWarning(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED);
             return;
         }
         try {

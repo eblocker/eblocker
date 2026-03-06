@@ -15,22 +15,7 @@
                     <md-tab-body>
                         <form name="vm.passwordForm" novalidate ng-submit="vm.createConfigBackup()">
                             <div layout-margin>
-                                <div>
-                                    <p>{{ 'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.EXPORT' | translate }}
-                                        <ul>
-                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
-                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
-                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
-                                            <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
-                                        </ul>
-                                    </p>
-                                </div>
-                                <div>
-                                    <md-checkbox md-theme="eBlockerThemeCheckbox" class="md-primary"
-                                                 ng-model="vm.includeKeys"
-                                                 aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS' | translate}}">
-                                        {{ 'ADMINCONSOLE.CONFIG_BACKUP.INCLUDE_KEYS.EXPORT' | translate }}
-                                    </md-checkbox>
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.EXPORT">
                                 </div>
                                 <!-- PASSWORD -->
                                 <div layout="row" layout-xs="column" ng-if="vm.includeKeys">

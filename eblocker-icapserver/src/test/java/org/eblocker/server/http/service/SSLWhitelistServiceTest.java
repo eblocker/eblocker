@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.common.squid.SquidReloadingService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +37,7 @@ public class SSLWhitelistServiceTest {
     private Path usersDomainPath;
     private Path usersIpPath;
 
-    private SquidConfigController squidConfigController;
+    private SquidReloadingService squidReloadingService;
     private AppModuleService appModuleService;
 
     private SSLWhitelistService sslWhitelistService;
@@ -49,9 +49,9 @@ public class SSLWhitelistServiceTest {
         usersDomainPath = Files.createTempFile("user-domains", ".acl");
         usersIpPath = Files.createTempFile("user-ips", ".acl");
 
-        squidConfigController = Mockito.mock(SquidConfigController.class);
+        squidReloadingService = Mockito.mock(SquidReloadingService.class);
         appModuleService = Mockito.mock(AppModuleService.class);
-        sslWhitelistService = new SSLWhitelistService(domainsPath.toString(), ipsPath.toString(), usersDomainPath.toString(), usersIpPath.toString(), squidConfigController, appModuleService);
+        sslWhitelistService = new SSLWhitelistService(domainsPath.toString(), ipsPath.toString(), usersDomainPath.toString(), usersIpPath.toString(), squidReloadingService, appModuleService);
     }
 
     @After

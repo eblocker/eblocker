@@ -22,18 +22,19 @@ import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.Ip6Address;
-import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
+import org.eblocker.server.common.service.FeatureService;
+import org.eblocker.server.common.service.FeatureServiceSubscriber;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAclFactory;
 import org.eblocker.server.common.squid.acl.SquidAcl;
@@ -42,7 +43,6 @@ import org.eblocker.server.common.ssl.SslService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
-import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
@@ -57,19 +57,13 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,26 +77,23 @@ public class SquidConfigController {
     private static final Logger log = LoggerFactory.getLogger(SquidConfigController.class);
 
     private final String squidConfigFilePath; //local squid config output file -> copy this in squid_reconfigure to real squid config path
-    private final String squidReconfigureScript;
     private final String squidClearCertCacheScript;
 
-    private final Clock clock;
     private final ScriptRunner scriptRunner;
+    private final SquidReloadingService reloadingService;
     private final DataSource dataSource;
     private final NetworkInterfaceWrapper networkInterface;
     private final SslService sslService;
     private final JsonWebTokenHandler tokenHandler;
-    private final ScheduledExecutorService executorService;
     private final ConfigurableDeviceFilterAclFactory squidAclFactory;
     private final Ip6PrefixMonitor prefixMonitor;
+    private final FeatureService featureService;
 
     private final SimpleResource mimeTypesAcl;//list of MIME types to send to this Icapserver (Squid has to forward/hand files of these MIMEtypes to the ICAP server...)
     private final SimpleResource squidConfigTemplateFile; //template part of squid config
     private final SimpleResource squidConfigStaticFile; //static part of squid config
     private final SimpleResource squidConfigSslExclusiveFile; // options only set in case ssl is enabled
     private final SimpleResource squidConfigNoSslExclusiveFile; // options only set in case ssl is disabled
-
-    private final Set<String> filteredMimeTypes = new ConcurrentSkipListSet<>();
 
     private final SquidAcl disabledClientsAcl;
     private final ConfigurableDeviceFilterAcl filteredClientsAcl; // devices with domain filtering enabled
@@ -121,13 +112,10 @@ public class SquidConfigController {
     private final String cacheLog;
     private final Environment environment;
 
-    private final Set<String> javascriptMimeTypes = new HashSet<>(); //default Mimetypes to be used when we need Javascript filtering
+    private final List<String> defaultMimeTypes = List.of("text/html", "text/xhtml");
+    private final List<String> javascriptMimeTypes = List.of("text/javascript", "application/javascript", "application/x-javascript", "text/ecmascript", "application/ecmascript");
     private boolean enableJavascriptFiltering = false;
 
-    private final int graceTimeBeforeReloads;
-    private final int minimumTimeBetweenReloads;
-    private long lastReload = 0;
-    private ScheduledFuture reloadFuture;
 
     @Inject
     public SquidConfigController(@Named("squid.acl.ssl.clients") SquidAcl sslClientsAcl,
@@ -141,7 +129,6 @@ public class SquidConfigController {
                                  @Named("squid.xForward.domains.acl.file.path") String xForwardDomainsAclFilePath,
                                  @Named("squid.xForward.ips.acl.file.path") String xForwardIpsAclFilePath,
                                  @Named("squid.xForward.ips") String xForwardIps,
-                                 @Named("squidReconfigure.command") String squidReconfigureScript,
                                  @Named("squid.clear.cert.cache.command") String squidClearCertCacheScript,
                                  @Named("squid.config.template.file.path") String confTemplateFilePath,
                                  @Named("squid.config.static.file.path") String confStaticFilePath,
@@ -149,42 +136,36 @@ public class SquidConfigController {
                                  @Named("squid.config.noSsl.exclusive.file.path") String squidConfigNoSslExclusiveFile,
                                  @Named("squid.config.file.path") String confFilePath,
                                  @Named("squid.cache.log") String cacheLog,
-                                 @Named("squid.config.graceTimeBeforeReload") Integer graceTimeBeforeReloads,
-                                 @Named("squid.config.minimumTimeBetweenReloads") Integer minimumTimeBetweenReloads,
                                  @Named("squid.ssl.ca.key") String sslKeyFilePath,
                                  @Named("squid.ssl.ca.cert") String sslCertFilePath,
                                  @Named("squid.workers") String squidWorkers,
                                  @Named("network.control.bar.host.name") String controlBarHostName,
                                  @Named("network.control.bar.host.fallback.ip") String controlBarHostFallbackIp,
                                  @Named("dns.server.default.local.names") String dnsLocalNames,
-                                 Clock clock,
                                  ScriptRunner scriptRunner,
+                                 SquidReloadingService reloadingService,
                                  DataSource dataSource,
                                  SslService sslService,
                                  NetworkInterfaceWrapper networkInterface,
                                  JsonWebTokenHandler tokenHandler,
-                                 @Named("highPrioScheduledExecutor") ScheduledExecutorService executorService,
                                  NetworkServices networkServices,
                                  DeviceService deviceService,
                                  ConfigurableDeviceFilterAclFactory squidAclFactory,
                                  OpenVpnServerService openVpnServerService,
                                  Environment environment,
-                                 Ip6PrefixMonitor prefixMonitor) {
+                                 Ip6PrefixMonitor prefixMonitor,
+                                 FeatureServiceSubscriber featureServiceSubscriber) {
 
-        this.squidReconfigureScript = squidReconfigureScript;
         this.squidClearCertCacheScript = squidClearCertCacheScript;
         this.squidConfigFilePath = confFilePath;
         this.cacheLog = cacheLog;
-        this.graceTimeBeforeReloads = graceTimeBeforeReloads;
-        this.minimumTimeBetweenReloads = minimumTimeBetweenReloads;
 
-        this.clock = clock;
         this.scriptRunner = scriptRunner;
+        this.reloadingService = reloadingService;
         this.dataSource = dataSource;
         this.networkInterface = networkInterface;
         this.sslService = sslService;
         this.tokenHandler = tokenHandler;
-        this.executorService = executorService;
         this.squidAclFactory = squidAclFactory;
 
         this.squidConfigStaticFile = new SimpleResource(confStaticFilePath);
@@ -212,6 +193,7 @@ public class SquidConfigController {
         this.environment = environment;
 
         this.prefixMonitor = prefixMonitor;
+        this.featureService = featureServiceSubscriber;
 
         if (!ResourceHandler.exists(squidConfigStaticFile)) {
             log.error("Squid static config filepart does not exist at {}", confStaticFilePath);
@@ -226,14 +208,14 @@ public class SquidConfigController {
             ResourceHandler.create(this.mimeTypesAcl);
         }
 
-        initJavascriptMimeTypes();
-        initMimeTypeACL();
+        initMimeTypesACL();
+        featureServiceSubscriber.addListener(this::updateMimeTypes);
 
         initXForwardDomainsAcl(dnsLocalNames, xForwardDomainsAclFilePath);
         initXForwardIpsAcl(xForwardIps, xForwardIpsAclFilePath);
 
         // register callback to trigger reload on name server changes
-        networkServices.addListener(l -> tellSquidToReloadConfig());
+        networkServices.addListener(l -> reloadingService.tellSquidToReloadConfig());
 
         // register callback to trigger on device changes
         deviceService.addListener(new DeviceChangeListener() {
@@ -259,7 +241,7 @@ public class SquidConfigController {
             @Override
             public void onInit(boolean sslEnabled) {
                 writeKeys();
-                setSslEnabled(sslEnabled);
+                updateSquidConfig();
                 updateAcls();
             }
 
@@ -267,17 +249,17 @@ public class SquidConfigController {
             public void onCaChange() {
                 writeKeys();
                 clearCertificateCache();
-                tellSquidToReloadConfig();
+                reloadingService.tellSquidToReloadConfig();
             }
 
             @Override
             public void onEnable() {
-                setSslEnabled(true);
+                updateSquidConfig();
             }
 
             @Override
             public void onDisable() {
-                setSslEnabled(false);
+                updateSquidConfig();
             }
         });
     }
@@ -286,39 +268,6 @@ public class SquidConfigController {
     public void init() {
         // this requires the SslService to be initialized:
         prefixMonitor.addPrefixChangeListener(this::updateSquidConfig);
-    }
-
-    /**
-     * Tell squid that its configuration has been updated, so please reconfigure
-     */
-    public synchronized void tellSquidToReloadConfig() {
-        log.debug("squid reload requested at {} - last reload {} future done {} future delay {}", clock.millis(), lastReload, reloadFuture != null ? reloadFuture.isDone() : "-", reloadFuture != null ? reloadFuture.getDelay(TimeUnit.MILLISECONDS) : "-");
-
-        long delay;
-        if (reloadFuture == null) {
-            delay = graceTimeBeforeReloads;
-        } else if (reloadFuture.isDone()) {
-            delay = Math.max(lastReload + minimumTimeBetweenReloads - clock.millis(), graceTimeBeforeReloads);
-        } else if (reloadFuture.getDelay(TimeUnit.MILLISECONDS) <= 0) {
-            delay = minimumTimeBetweenReloads;
-        } else {
-            log.info("ignoring reload request as one is already scheduled in {}ms.", reloadFuture.getDelay(TimeUnit.MILLISECONDS));
-            return;
-        }
-        log.info("scheduling squid reload in {}ms", delay);
-        reloadFuture = executorService.schedule(this::reloadSquid, delay, TimeUnit.MILLISECONDS);
-    }
-
-    private synchronized void reloadSquid() {
-        log.info("reloading squid");
-        try {
-            synchronized (SquidConfigController.this) {
-                scriptRunner.runScript(squidReconfigureScript);
-                lastReload = clock.millis();
-            }
-        } catch (Exception e) {
-            log.error("Problem while running the squid reload script", e);
-        }
     }
 
     /**
@@ -352,78 +301,46 @@ public class SquidConfigController {
     private synchronized void updateAcl(ConfigurableDeviceFilterAcl acl, Set<Device> devices) {
         acl.setDevices(devices);
         acl.update();
-        tellSquidToReloadConfig();
-    }
-
-    //------MIME Type management---------------------
-
-    /**
-     * Set the default Javascript Mime types to use, when the filtering of Javascript is needed for some functions of the ICAP server
-     * FIXME: load these Javascript mime types from configuration.properties (and not hardcoded like here?!)
-     */
-    private void initJavascriptMimeTypes() {
-        javascriptMimeTypes.add("text/javascript");
-        javascriptMimeTypes.add("application/x-javascript");
-        javascriptMimeTypes.add("application/javascript");
-        javascriptMimeTypes.add("application/ecmascript");
-        javascriptMimeTypes.add("text/ecmascript");
+        reloadingService.tellSquidToReloadConfig();
     }
 
     /**
      * Prepare the MimeTypes that Squid should send to the Icapserver
      */
-    private void initMimeTypeACL() {
-        //init state
-        enableJavascriptFiltering = dataSource.getWebRTCBlockingState();
+    private void initMimeTypesACL() {
+        enableJavascriptFiltering = featureService.getWebRTCBlockingState();
+        writeMimeTypesAcl();
+    }
 
-        //always add the default Mime types to send to the Icap server (text/html and text/xhtml)
-        addDefaultMimeTypes(filteredMimeTypes);
+    private @NonNull List<String> getFilteredMimeTypes() {
+        List<String> filteredMimeTypes = new ArrayList<>(8);
 
-        //if e.g. WebRTC is enabled we have to also send Javascripts to the Icapserver
+        // always add the default Mime types to send to the ICAP server (text/html and text/xhtml)
+        filteredMimeTypes.addAll(defaultMimeTypes);
+
+        // if WebRTC is enabled we have to also send JavaScripts to the ICAP server
         if (enableJavascriptFiltering) {
-            addJavascriptMimeTypes(filteredMimeTypes);
+            filteredMimeTypes.addAll(javascriptMimeTypes);
         }
-        //write MimeType acl file
-        writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
-    }
-
-    /**
-     * Add the default MIME types (HTML) to the set
-     *
-     * @param filteredMimeTypes
-     */
-    private void addDefaultMimeTypes(Set<String> filteredMimeTypes) {
-        filteredMimeTypes.add("text/html");
-        filteredMimeTypes.add("text/xhtml");
-    }
-
-    /**
-     * Adds all Javascript MIME types to the set
-     *
-     * @param filteredMimeTypes
-     */
-    private void addJavascriptMimeTypes(Set<String> filteredMimeTypes) {
-        filteredMimeTypes.addAll(javascriptMimeTypes);
-    }
-
-    /**
-     * Remove all Javascript MIME types from the set
-     *
-     * @param mimeTypes
-     */
-    private void removeJavascriptMimeTypes(Set<String> mimeTypes) {
-        mimeTypes.removeAll(javascriptMimeTypes);
+        return filteredMimeTypes;
     }
 
     /**
      * Write a set of Mime type strings to the squid acl file
-     *
-     * @param filteredMimeTypes
-     * @param mimeTypeAclFile
      */
-    private synchronized void writeMimeTypeAcl(Set<String> filteredMimeTypes, SimpleResource mimeTypeAclFile) {
-        if (ResourceHandler.exists(mimeTypeAclFile)) {
-            ResourceHandler.replaceContent(mimeTypeAclFile, filteredMimeTypes);//write lines of mimetype strings to mimetype acl file
+    private synchronized void writeMimeTypesAcl() {
+        ResourceHandler.replaceContent(mimeTypesAcl, getFilteredMimeTypes());
+    }
+
+    /**
+     * Enable/disable providing of JavaScript files to the ICAP server through Squid
+     */
+    public void updateMimeTypes() {
+        boolean enabled = featureService.getWebRTCBlockingState();
+        if (enableJavascriptFiltering != enabled) { //state changed -> apply this setting
+            enableJavascriptFiltering = enabled;
+            writeMimeTypesAcl();
+            reloadingService.tellSquidToReloadConfig();
         }
     }
 
@@ -450,70 +367,16 @@ public class SquidConfigController {
         ResourceHandler.replaceContent(domainsAcl, ips);
     }
 
-    //----------------------------------------------------------------------
-
     /**
-     * Enabled/disable providing of Javascript files to the ICAP server through Squid
-     *
-     * @param enabled
-     */
-    public void setSendJavascriptToIcapserver(boolean enabled) {
-        if (enableJavascriptFiltering != enabled) {//state changed -> apply this setting
-            enableJavascriptFiltering = enabled;
-            if (enabled) {
-                log.debug("Enabling Javascript Mimetypes...");
-                addJavascriptMimeTypes(filteredMimeTypes);
-                writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
-            } else {
-                log.debug("Disabling Javascript Mimetypes...");
-                removeJavascriptMimeTypes(filteredMimeTypes);
-                writeMimeTypeAcl(filteredMimeTypes, mimeTypesAcl);
-            }
-            //reconfigure
-            tellSquidToReloadConfig();
-        }
-    }
-
-    /**
-     * Check whether Javascript files are sent to the ICAP server
+     * This function will reconstruct the squid.conf and reload the squid.
      *
      * @return
      */
-    public boolean isSendJavascriptToIcapserverEnabled() {
-        return enableJavascriptFiltering;
-    }
-
-    //----------------------------------------------------------------------------+
-
-    private void setSslEnabled(boolean enabled) {
-        updateSquidConfig(enabled);
-        tellSquidToReloadConfig();
-    }
-
-    /**
-     * Rewrite the squid config (without reload event) WITHOUT VPN stuff
-     *
-     * @param sslReady
-     * @return
-     */
-    private boolean updateSquidConfig(boolean sslReady) { //handy for the sslcontroller
-        String squidConfContent = constructSquidConfigString(sslReady, dataSource.getAll(OpenVpnClientState.class));
-        if (squidConfContent != null) {
-            return writeSquidConfig(squidConfContent);
-        }
-        return false;
-    }
-
-    /**
-     * This function will reconstruct the squid.conf and take into account the active vpnclients.
-     *
-     * @return
-     */
-    public boolean updateSquidConfig() {
+    public void updateSquidConfig() {
         String squidConfigContent = constructSquidConfigString(sslService.isSslEnabled(), dataSource.getAll(OpenVpnClientState.class));
-        writeSquidConfig(squidConfigContent);
-        tellSquidToReloadConfig();
-        return true;
+        if (writeSquidConfig(squidConfigContent)) {
+            reloadingService.tellSquidToReloadConfig();
+        }
     }
 
     /**
@@ -706,7 +569,7 @@ public class SquidConfigController {
         }
 
         if (update) {
-            tellSquidToReloadConfig();
+            reloadingService.tellSquidToReloadConfig();
         }
     }
 

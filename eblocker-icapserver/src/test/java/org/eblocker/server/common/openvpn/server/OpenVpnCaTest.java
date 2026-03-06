@@ -19,11 +19,12 @@ package org.eblocker.server.common.openvpn.server;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.crypto.pki.RevocationInfo;
+import org.eblocker.server.common.data.openvpn.OpenVpnServerCaKeys;
+import org.eblocker.server.common.data.openvpn.OpenVpnServerDeviceKeys;
 import org.eblocker.server.common.util.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,19 +37,22 @@ import java.nio.file.StandardCopyOption;
 import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OpenVpnCaTest {
     private Path caPath;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         caPath = Files.createTempDirectory("mobile");
         Files.createDirectory(caPath.resolve("clients"));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         FileUtils.deleteDirectory(caPath);
     }
@@ -59,36 +63,36 @@ public class OpenVpnCaTest {
         ca.generateCa();
 
         // Initially there should be an empty CRL:
-        Assert.assertEquals(0, getCrlEntries(ca).size());
+        assertEquals(0, getCrlEntries(ca).size());
 
         ca.generateClientCertificate("device:0");
 
         // Verify client certificate and key:
         X509Certificate device0Cert = PKI.loadCertificate(instream(ca.getClientCertificatePath("device:0")));
-        Assert.assertEquals("CN=device:0", device0Cert.getSubjectX500Principal().getName());
+        assertEquals("CN=device:0", device0Cert.getSubjectX500Principal().getName());
         PrivateKey device0Key = PKI.loadPrivateKey(instream(ca.getClientKeyPath("device:0")));
-        Assert.assertNotNull(device0Key);
+        assertNotNull(device0Key);
 
         // Another client:
         ca.generateClientCertificate("device:1");
         X509Certificate device1Cert = PKI.loadCertificate(instream(ca.getClientCertificatePath("device:1")));
 
-        Assert.assertNotEquals(device0Cert.getSerialNumber(), device1Cert.getSerialNumber());
+        assertNotEquals(device0Cert.getSerialNumber(), device1Cert.getSerialNumber());
 
         // Revoke device:0
         ca.revokeClientCertificate("device:0");
 
-        Assert.assertEquals(1, getCrlEntries(ca).size());
+        assertEquals(1, getCrlEntries(ca).size());
 
         // Key and cert are gone:
-        Assert.assertFalse(ca.getClientCertificatePath("device:0").toFile().exists());
-        Assert.assertFalse(ca.getClientKeyPath("device:0").toFile().exists());
+        assertFalse(ca.getClientCertificatePath("device:0").toFile().exists());
+        assertFalse(ca.getClientKeyPath("device:0").toFile().exists());
 
         // Revoke device:1
         ca.revokeClientCertificate("device:1");
 
         // Check the CRL again
-        Assert.assertEquals(2, getCrlEntries(ca).size());
+        assertEquals(2, getCrlEntries(ca).size());
     }
 
     @Test
@@ -99,9 +103,9 @@ public class OpenVpnCaTest {
 
         // Verify client certificate and key:
         X509Certificate certificate = PKI.loadCertificate(instream(ca.getServerCertificatePath()));
-        Assert.assertEquals("CN=eBlocker Mobile Server", certificate.getSubjectX500Principal().getName());
+        assertEquals("CN=eBlocker Mobile Server", certificate.getSubjectX500Principal().getName());
         PrivateKey device0Key = PKI.loadPrivateKey(instream(ca.getServerKeyPath()));
-        Assert.assertNotNull(device0Key);
+        assertNotNull(device0Key);
     }
 
     @Test
@@ -119,7 +123,7 @@ public class OpenVpnCaTest {
         ca.generateClientCertificate(clientId);
         X509Certificate clientCert = PKI.loadCertificate(instream(ca.getClientCertificatePath(clientId)));
         ca.revokeClientCertificate(clientId);
-        Assert.assertEquals(2, getCrlEntries(ca).size());
+        assertEquals(2, getCrlEntries(ca).size());
     }
 
     @Test
@@ -141,7 +145,7 @@ public class OpenVpnCaTest {
                 ca.getClientKeyPath(clientId))
 
                 .forEach(path -> {
-                    Assert.assertFalse(path.toString() + " should be gone", path.toFile().exists());
+                    assertFalse(path.toFile().exists(), path.toString() + " should be gone");
                 });
     }
 
@@ -149,22 +153,64 @@ public class OpenVpnCaTest {
     public void testGetActiveClientIds() throws Exception {
         OpenVpnCa ca = new OpenVpnCa(caPath.toString());
         ca.generateCa();
-        Assert.assertEquals(0, ca.getActiveClientIds().size());
+        assertEquals(0, ca.getActiveClientIds().size());
 
         ca.generateClientCertificate("device:0");
-        Assert.assertEquals(1, ca.getActiveClientIds().size());
-        Assert.assertTrue(ca.getActiveClientIds().contains("device:0"));
+        assertEquals(1, ca.getActiveClientIds().size());
+        assertTrue(ca.getActiveClientIds().contains("device:0"));
 
         ca.generateClientCertificate("device:1");
-        Assert.assertEquals(2, ca.getActiveClientIds().size());
-        Assert.assertTrue(ca.getActiveClientIds().contains("device:1"));
+        assertEquals(2, ca.getActiveClientIds().size());
+        assertTrue(ca.getActiveClientIds().contains("device:1"));
 
         ca.revokeClientCertificate("device:1");
-        Assert.assertEquals(1, ca.getActiveClientIds().size());
-        Assert.assertTrue(ca.getActiveClientIds().contains("device:0"));
+        assertEquals(1, ca.getActiveClientIds().size());
+        assertTrue(ca.getActiveClientIds().contains("device:0"));
 
         ca.tearDown();
-        Assert.assertEquals(0, ca.getActiveClientIds().size());
+        assertEquals(0, ca.getActiveClientIds().size());
+    }
+
+    @Test
+    public void testExportCaNotGeneratedYet() throws Exception {
+        OpenVpnCa ca = new OpenVpnCa(caPath.toString());
+        assertNull(ca.exportCertificatesAndKeys());
+    }
+
+    @Test
+    public void testExportImportCertificatesAndKeys() throws Exception {
+        OpenVpnCa ca = new OpenVpnCa(caPath.toString());
+        ca.generateCa();
+        ca.generateServerCertificate();
+        ca.generateClientCertificate("device:1");
+        ca.generateClientCertificate("device:2");
+        ca.generateClientCertificate("device:3");
+
+        // Destroy key of device:3
+        Files.delete(ca.getClientKeyPath("device:3"));
+
+        OpenVpnServerCaKeys data = ca.exportCertificatesAndKeys();
+        assertTrue(data.getCaCert().contains("BEGIN CERTIFICATE"));
+        assertTrue(data.getCaKey().contains("BEGIN PRIVATE KEY"));
+        assertTrue(data.getServerCert().contains("BEGIN CERTIFICATE"));
+        assertTrue(data.getServerKey().contains("BEGIN PRIVATE KEY"));
+        assertTrue(data.getCrl().contains("BEGIN X509 CRL"));
+        List<OpenVpnServerDeviceKeys> deviceKeysList = data.getDeviceKeys();
+        assertEquals(2, deviceKeysList.size());
+        for (OpenVpnServerDeviceKeys deviceKeys: deviceKeysList) {
+            assertNotEquals("device:3", deviceKeys.getDeviceId()); // device:3 without key is not included in backup
+            assertTrue(deviceKeys.getClientCert().contains("BEGIN CERTIFICATE"));
+            assertTrue(deviceKeys.getClientKey().contains("BEGIN PRIVATE KEY"));
+        }
+
+        ca.tearDown();
+
+        OpenVpnCa restoredCA = new OpenVpnCa(caPath.toString());
+        restoredCA.importCertificatesAndKeys(data);
+
+        // restored CA is usable:
+        restoredCA.generateClientCertificate("device:3");
+        assertEquals(Set.of("device:1", "device:2", "device:3"), restoredCA.getActiveClientIds());
     }
 
     private Set<RevocationInfo> getCrlEntries(OpenVpnCa ca) throws CryptoException, IOException {

@@ -24,6 +24,8 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -37,6 +39,8 @@ public class FeatureServiceSubscriber implements FeatureService {
     private final PubSubService pubSubService;
 
     private final Executor executor;
+
+    private List<FeatureServiceListener> listeners = new ArrayList();
 
     private boolean webRTCBlockingState;
     private boolean httpRefererRemovingState;
@@ -82,6 +86,9 @@ public class FeatureServiceSubscriber implements FeatureService {
         googleCaptivePortalRedirectorState = dataSource.getGoogleCaptivePortalRedirectorState();
         dntHeaderState = dataSource.getDntHeaderState();
         compressionMode = dataSource.getCompressionMode();
+
+        // notify listeners
+        listeners.forEach(FeatureServiceListener::onReload);
     }
 
     @Override
@@ -107,5 +114,22 @@ public class FeatureServiceSubscriber implements FeatureService {
     @Override
     public CompressionMode getCompressionMode() {
         return compressionMode;
+    }
+
+    /**
+     * Add a listener to be notified of reload events on a background thread.
+     */
+    public void addListener(FeatureServiceListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Listeners get notified when features have been reloaded
+     */
+    public interface FeatureServiceListener {
+        /**
+         * Called after features have been reloaded
+         */
+        void onReload();
     }
 }

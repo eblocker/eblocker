@@ -29,11 +29,7 @@ function purge {
     cd $CONFIG_PATH && rm -f ca.crt crl.pem eblocker.crt eblocker.key dh2048.pem ta.key
 }
 
-# Initialize with a new CA
-# Prerequisite: OpenVpnCa.java has generated a CA, server key/certificate and an empty CRL in $CA_PATH
-function init {
-    purge
-
+function install_files {
     # Generate Diffie-Hellman parameters
     openssl dhparam -dsaparam -out $CONFIG_PATH/dh2048.pem 2048 2>&1
 
@@ -42,12 +38,31 @@ function init {
 
     # Update CRL (which is initially empty)
     update_crl
+}
+
+# Initialize with a new CA
+# Prerequisite: OpenVpnCa.java has generated a CA, server key/certificate and an empty CRL in $CA_PATH
+function init {
+    purge
+
+    install_files
 
     # Generate shared secret for protection against DoS attacks
     # (must be readable by icapd for client configuration)
     openvpn --genkey --secret $CONFIG_PATH/ta.key
     chmod 640 $CONFIG_PATH/ta.key
     chgrp icapd $CONFIG_PATH/ta.key
+}
+
+# Restore keys, certificates and CRL from a backup
+# Prerequisite: the CA, server key/certificate, CRL and shared secret were restored from a backup in $CA_PATH
+function restore {
+    install_files
+
+    # Move shared secret
+    mv $CA_PATH/ta.key $CONFIG_PATH/ta.key
+    chmod 640 $CONFIG_PATH/ta.key
+    chown root:icapd $CONFIG_PATH/ta.key
 }
 
 # Copy the updated CRL to OpenVPN's config directory
@@ -91,10 +106,14 @@ if [ $# -ge '1' ]; then
         update_crl
         exit $?
         ;;
+    "restore")
+        restore
+        exit $?
+        ;;
     esac
 fi
 
 echo "Error: Wrong mode." 1>&2
-echo "Expected format: $SCRIPT_NAME start | stop | status | init | purge | update-crl" 1>&2
+echo "Expected format: $SCRIPT_NAME start | stop | status | init | purge | update-crl | restore" 1>&2
 
 exit 1

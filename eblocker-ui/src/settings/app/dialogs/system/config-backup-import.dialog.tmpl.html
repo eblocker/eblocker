@@ -64,6 +64,8 @@
                                             <span class="content-error" translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.ERROR.RETRY"></span>
                                         </div>
                                     </div>
+                                    <div ng-if="vm.passwordRequired && !vm.includeKeys" translate="ADMINCONSOLE.CONFIG_BACKUP.PASSWORD.WARNING_NO_PASSWORD">
+                                    </div>
                                 </div>
                             </div>
                             <div layout="row" layout-align="end center" style="padding: 0;">
@@ -82,16 +84,14 @@
                     <md-tab-label>{{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.IMPORT' | translate}}</md-tab-label>
                     <md-tab-body>
                         <div layout="column" layout-margin>
+                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.VERIFIED"></div>
                             <div>
                                 {{'ADMINCONSOLE.CONFIG_BACKUP.FILE_LABEL' | translate}}: <b>{{vm.fileName}}</b>
                             </div>
-                            <div>
-                                {{'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORT' | translate}}
+                            <div ng-hide="vm.warnings.length === 0">
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WARNINGS"></div>
                                 <ul>
-                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_DEVICE_SETTINGS' | translate}}</li>
-                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_APPS' | translate}}</li>
-                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TRUSTED_SITES' | translate}}</li>
-                                    <li>{{'ADMINCONSOLE.CONFIG_BACKUP.DATA_TOR_SETTINGS' | translate}}</li>
+                                    <li ng-repeat="warning in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + warning | translate}}</li>
                                 </ul>
                             </div>
                         </div>
@@ -112,6 +112,12 @@
                         <div layout="column" layout-margin>
                             <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.IMPORTED"></div>
                             <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.REBOOT"></div>
+                            <div ng-hide="vm.warnings.length === 0">
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WARNINGS"></div>
+                                <ul>
+                                    <li ng-repeat="warning in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + warning | translate}}</li>
+                                </ul>
+                            </div>
                         </div>
                         <div layout="row" layout-align="end center" style="padding: 0;">
                             <md-button type="button" ng-click="vm.reboot()" class="md-raised md-primary md-accent">

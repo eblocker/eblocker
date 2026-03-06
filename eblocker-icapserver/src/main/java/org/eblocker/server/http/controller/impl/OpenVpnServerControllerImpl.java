@@ -22,18 +22,13 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.common.data.openvpn.ExternalAddressType;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.squid.SquidConfigController;
 import org.eblocker.server.http.controller.OpenVpnServerController;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
-import org.eblocker.server.http.service.DynDnsService;
 import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.http.utils.NormalizationUtils;
 import org.restexpress.Request;
@@ -48,16 +43,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
     private final OpenVpnServerService openVpnServerService;
     private final DeviceService deviceService;
-    private final DynDnsService dynDnsService;
     private final OpenVpnClientConfigurationService openVpnClientConfigurationService;
-    private final SquidConfigController squidConfigController;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final NetworkStateMachine networkStateMachine;
 
@@ -65,108 +57,37 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     public OpenVpnServerControllerImpl(OpenVpnServerService openVpnServerService,
                                        OpenVpnClientConfigurationService openVpnClientConfigurationService,
                                        DeviceService deviceService,
-                                       DynDnsService dynDnsService,
-                                       SquidConfigController squidConfigController,
                                        DeviceRegistrationProperties deviceRegistrationProperties,
                                        NetworkStateMachine networkStateMachine) {
         this.openVpnServerService = openVpnServerService;
-        this.dynDnsService = dynDnsService;
         this.openVpnClientConfigurationService = openVpnClientConfigurationService;
-        this.squidConfigController = squidConfigController;
         this.deviceService = deviceService;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.networkStateMachine = networkStateMachine;
-        this.deviceService.addListener(new DeviceChangeListener() {
-            @Override
-            public void onChange(Device device) {
-                // Nothing to do here.
-            }
-
-            @Override
-            public void onDelete(Device device) {
-                revoke(device.getId());
-            }
-
-            @Override
-            public void onReset(Device device) {
-                // Nothing to do here
-            }
-        });
     }
 
     @Override
     public VpnServerStatus getOpenVpnServerStatus(Request request, Response response) {
         log.info("getStatus");
 
-        VpnServerStatus result = new VpnServerStatus();
-        result.setFirstStart(openVpnServerService.isOpenVpnServerfirstRun());
-        result.setHost(openVpnServerService.getOpenVpnServerHost());
-        result.setRunning(obtainServerStatus());
-        result.setExternalAddressType(openVpnServerService.getOpenVpnExternalAddressType());
-        result.setMappedPort(openVpnServerService.getOpenVpnMappedPort());
-        result.setPortForwardingMode(openVpnServerService.getOpenVpnPortForwardingMode());
-
-        return result;
+        return openVpnServerService.getOpenVpnServerStatus();
     }
 
     @Override
     public VpnServerStatus setOpenVpnServerStatus(Request request, Response response) {
         VpnServerStatus newStatus = request.getBodyAs(VpnServerStatus.class);
         log.info("setStatus {}", newStatus.isRunning());
-        VpnServerStatus result = new VpnServerStatus();
 
-        if (newStatus.getExternalAddressType() == ExternalAddressType.EBLOCKER_DYN_DNS) {
-            if (!dynDnsService.isEnabled()) {
-                dynDnsService.enable();
-                dynDnsService.update();
-            }
-            openVpnServerService.setOpenVpnServerHost(dynDnsService.getHostname());
-        } else {
-            if (dynDnsService.isEnabled()) {
-                dynDnsService.disable();
-            }
-            String newHost = newStatus.getHost() != null ? newStatus.getHost() : "";
-            openVpnServerService.setOpenVpnServerHost(newHost);
-        }
-        result.setHost(openVpnServerService.getOpenVpnServerHost());
-
-        openVpnServerService.setOpenVpnExternalAddressType(newStatus.getExternalAddressType());
-        result.setExternalAddressType(newStatus.getExternalAddressType());
-
-        Integer mappedPort = newStatus.getMappedPort();
-        if (mappedPort != null && newStatus.getPortForwardingMode() == PortForwardingMode.AUTO) {
-            openVpnServerService.setOpenVpnTempMappedPort(mappedPort);
-        } else if (mappedPort != null) {
-            // this fixes the issue where the wrong port was used in the connection test (EB1-1867)
-            // TODO check if tempPort is still needed, doesn't seem to make sense anymore. See MobileConnectionCheckTask: but there we actually want to use the mappedPort, not tempPort
-            openVpnServerService.setOpenVpnMappedPort(mappedPort);
-        }
-        result.setMappedPort(mappedPort);
-        result.setPortForwardingMode(newStatus.getPortForwardingMode());
-
-        openVpnServerService.setOpenVpnPortForwardingMode(newStatus.getPortForwardingMode());
-
-        if (obtainServerStatus() == newStatus.isRunning()) {
-            result.setRunning(newStatus.isRunning()); // no update of server status necessary
-        } else {
-            if (newStatus.isRunning()) {
-                openVpnServerService.setOpenVpnMappedPort(mappedPort);
-                try {
-                    result.setRunning(openVpnServerService.startOpenVpnServer());
-                } catch (UpnpPortForwardingException e) {
-                    throw new InternalServerErrorException(e);
-                }
+        VpnServerStatus result = openVpnServerService.setOpenVpnServerStatus(newStatus);
+        try {
+            if (result.isRunning()) {
+                openVpnServerService.enablePortForwarding();
             } else {
-                result.setRunning(!openVpnServerService.stopOpenVpnServer());
-                if (!result.isRunning()) {
-                    disableOpenVpnServer();
-                }
+                openVpnServerService.disablePortForwarding();
             }
-            squidConfigController.tellSquidToReloadConfig();
+        } catch (UpnpPortForwardingException e) {
+            throw new InternalServerErrorException(e);
         }
-
-        result.setFirstStart(openVpnServerService.isOpenVpnServerfirstRun());
-
         return result;
     }
 
@@ -181,43 +102,11 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         }
     }
 
-    private void disableOpenVpnServer() {
-        Collection<Device> devices = deviceService.getDevices(false);
-        for (Device device : devices) {
-            device.setIsVpnClient(false);
-        }
-
-        try {
-            openVpnServerService.disableOpenVpnServer();
-        } catch (UpnpPortForwardingException e) {
-            throw new InternalServerErrorException(e);
-        }
-    }
-
     @Override
     public boolean resetOpenVpnServerStatus(Request request, Response response) {
         log.info("resetStatus");
 
-        boolean result;
-
-        // first we set 'first-run' to true. So if anything goes wrong during the purge, the next restart
-        // of eBlocker mobile should clean up anything that is left.
-        openVpnServerService.setOpenVpnServerfirstRun(true);
-        result = openVpnServerService.stopOpenVpnServer();
-        if (result) {
-            try {
-                // save consistent reset-state in redis: to avoid eBlocker mobile to be re-enabled
-                // when the ICAP server boots after the reset.
-                openVpnServerService.disableOpenVpnServer();
-            } catch (UpnpPortForwardingException e) {
-                log.error("Unable to reset port forwarding during eBlocker mobile reset", e);
-            }
-            // even if port forwarding has not been removed, we have already disabled the server,
-            // so we want to continue the reset.
-            result = openVpnServerService.purgeOpenVpnServer();
-        }
-
-        return result;
+        return openVpnServerService.resetOpenVpnServer();
     }
 
     @Override
@@ -426,10 +315,6 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         }
 
         return null;
-    }
-
-    private boolean obtainServerStatus() {
-        return openVpnServerService.getOpenVpnServerStatus();
     }
 
     private boolean setCertificate(String deviceId) {

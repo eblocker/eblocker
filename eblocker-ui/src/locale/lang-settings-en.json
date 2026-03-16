@@ -1797,6 +1797,7 @@
                 "REDIS_BACKUP_FAILED" : "Database backup failed.",
                 "REDIS_BACKUP_RESTORED" : "Corrupt database restored from backup.",
                 "REDIS_BACKUP_RESTORE_FAILED" : "Corrupt database could not be restored from backup.",
+                "CONFIGURATION_BACKUP_RESTORED" : "Configuration restored ({{ clientFileName }}).",
                 "SHUTDOWN_CONSOLE" : "eBlocker is shutting down.",
                 "UPDATE_EBLOCKER_OS_INSTALLED" : "eBlockerOS has been updated.",
                 "UPNP_PORT_FORWARDING_FAILED" : "Establishing the port forwarding failed.",

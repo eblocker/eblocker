@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
+import org.eblocker.server.common.data.events.EventLogger;
+import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DecryptionFailedException;
@@ -50,11 +52,15 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     public static final String FILE_PREFIX = "eblocker-config-";
     public static final String FILE_SUFFIX = ".eblcfg";
     private final ConfigurationBackupService backupService;
+    private final EventLogger eventLogger;
     private final Path tmpDir;
 
     @Inject
-    public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService, @Named("tmpDir") String tmpDir) {
+    public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService,
+                                             EventLogger eventLogger,
+                                             @Named("tmpDir") String tmpDir) {
         this.backupService = backupService;
+        this.eventLogger = eventLogger;
         this.tmpDir = Paths.get(tmpDir);
     }
 
@@ -189,6 +195,8 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             } else {
                 LOG.info("Successfully imported configuration backup");
             }
+            String clientFileName = reference.getClientFileName();
+            eventLogger.log(Events.configurationBackupRestored(clientFileName != null ? clientFileName : "unknown file"));
             return result;
         } catch (CorruptedBackupException e) {
             LOG.error("Could not import corrupted backup", e);

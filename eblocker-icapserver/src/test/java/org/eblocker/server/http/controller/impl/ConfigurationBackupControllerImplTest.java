@@ -21,6 +21,9 @@ import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
+import org.eblocker.server.common.data.events.EventLogger;
+import org.eblocker.server.common.data.events.EventType;
+import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
@@ -46,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ConfigurationBackupControllerImplTest {
     private ConfigurationBackupController controller;
     private ConfigurationBackupService service;
+    private EventLogger eventLogger;
     private ConfigBackupImportResult serviceImportResult;
     private Request request;
     private Response response;
@@ -56,7 +60,8 @@ public class ConfigurationBackupControllerImplTest {
         serviceImportResult = new ConfigBackupImportResult();
         tmpDir = Files.createTempDirectory(null);
         service = Mockito.mock(ConfigurationBackupService.class);
-        controller = new ConfigurationBackupControllerImpl(service, tmpDir.toString());
+        eventLogger = Mockito.mock(EventLogger.class);
+        controller = new ConfigurationBackupControllerImpl(service, eventLogger, tmpDir.toString());
         request = Mockito.mock(Request.class);
         response = Mockito.mock(Response.class);
         Mockito.when(service.importConfiguration(Mockito.any(), Mockito.any())).thenReturn(serviceImportResult);
@@ -156,5 +161,6 @@ public class ConfigurationBackupControllerImplTest {
         Mockito.when(request.getBodyAs(ConfigBackupReference.class)).thenReturn(reference);
         ConfigBackupImportResult result = controller.importConfiguration(request, response);
         assertEquals(warnings, result.getWarnings());
+        Mockito.verify(eventLogger).log(Mockito.argThat(event -> event.getType() == EventType.CONFIGURATION_BACKUP_RESTORED));
     }
 }

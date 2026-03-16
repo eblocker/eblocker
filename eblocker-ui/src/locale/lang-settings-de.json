@@ -1797,6 +1797,7 @@
                 "REDIS_BACKUP_FAILED": "Backup der Datenbank fehlgeschlagen.",
                 "REDIS_BACKUP_RESTORED": "Korrupte Datenbank vom Backup wiederhergestellt.",
                 "REDIS_BACKUP_RESTORE_FAILED": "Korrupte Datenbank konnte nicht vom Backup wiederhergestellt werden.",
+                "CONFIGURATION_BACKUP_RESTORED" : "Einstellungen wiederhergestellt ({{ clientFileName }}).",
                 "SHUTDOWN_CONSOLE": "Der eBlocker fährt herunter.",
                 "UPDATE_EBLOCKER_OS_INSTALLED": "eBlockerOS wurde aktualisiert.",
                 "UPNP_PORT_FORWARDING_FAILED": "Einrichten der Port-Weiterleitung ist fehlgeschlagen.",

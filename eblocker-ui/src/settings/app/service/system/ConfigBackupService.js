@@ -86,8 +86,8 @@ export default function ConfigBackupService(logger, $http, $q) {
             });
     }
 
-    function verifyConfig(filename, password) {
-        const data = {fileReference: filename, password: password};
+    function verifyConfig(fileReference, password) {
+        const data = {fileReference: fileReference, password: password};
         const config = {timeout: BACKUP_TIMEOUT};
         return $http.post(PATH_VERIFY, data, config).then(
             function success(response){
@@ -98,8 +98,8 @@ export default function ConfigBackupService(logger, $http, $q) {
             });
     }
 
-    function importConfig(filename, password) {
-        const data = {fileReference: filename, password: password};
+    function importConfig(fileReference, password, clientFileName) {
+        const data = {fileReference: fileReference, password: password, clientFileName: clientFileName};
         const config = {timeout: BACKUP_TIMEOUT};
         return $http.post(PATH_IMPORT, data, config).then(
             function success(response){

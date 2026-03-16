@@ -44,6 +44,9 @@ import java.util.jar.Manifest;
  * The configuration version is written to the JAR's manifest file.
  */
 public class ConfigurationBackupService {
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupService.class);
+    private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
+
     private static final int VERSION_1_ONLY_APP_MODULES = 1;
     private static final int VERSION_2_APP_MODULES_AND_DEVICES = 2;
     private static final int VERSION_3_APP_MODULES_DEVICES_TOR = 3;
@@ -55,7 +58,6 @@ public class ConfigurationBackupService {
     private static final byte[] salt = {-58, -73, 41, -28, 37, 23, -61, 93, 47, -57, -45, 23, -77, 97, 102, 49};
     private final BackupProviderFactory providerFactory;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupService.class);
     private DataSource dataSource;
 
     @Inject
@@ -173,8 +175,13 @@ public class ConfigurationBackupService {
             CryptoService cryptoService = createCryptoService(password);
 
             for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
+                long start = System.currentTimeMillis();
                 provider.importConfiguration(jarStream, attribs.getSchemaVersion());
+                long elapsed = System.currentTimeMillis() - start;
+
                 result.addWarnings(provider.getWarnings());
+
+                STATUS.info("Configuration backup imported by {} in {}ms", provider.getClass().getSimpleName(), elapsed);
             }
         }
         return result;

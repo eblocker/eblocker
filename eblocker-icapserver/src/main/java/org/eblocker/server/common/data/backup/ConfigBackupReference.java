@@ -22,6 +22,7 @@ public class ConfigBackupReference {
     private String fileReference;
     private String password;
     private boolean passwordRequired;
+    private String clientFileName;
 
     public ConfigBackupReference() {
     }
@@ -57,5 +58,19 @@ public class ConfigBackupReference {
 
     public void setPasswordRequired(boolean passwordRequired) {
         this.passwordRequired = passwordRequired;
+    }
+
+    /**
+     * The client filename is only meaningful for the user.
+     * It is useful for the event log.
+     * @return
+     */
+    @JsonProperty
+    public String getClientFileName() {
+        return clientFileName;
+    }
+
+    public void setClientFileName(String clientFileName) {
+        this.clientFileName = clientFileName;
     }
 }

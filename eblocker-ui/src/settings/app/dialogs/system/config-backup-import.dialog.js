@@ -92,7 +92,7 @@ export default function ConfigBackupImportController(logger, $scope, $mdDialog, 
 
     vm.importConfigBackup = function() {
         vm.importing = true;
-        ConfigBackupService.importConfig(vm.fileReference, vm.password).then(function(result) {
+        ConfigBackupService.importConfig(vm.fileReference, vm.password, vm.fileName).then(function(result) {
             vm.warnings = result.warnings;
             vm.currentStep = 3;
         }, function(response) {

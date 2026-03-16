@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class Events {
     private static final String KEY_USER_NAME = "userName";
+    private static final String KEY_CLIENT_FILE_NAME = "clientFileName";
 
     private static Event eventOfType(EventType type) {
         return eventOfType(type, Collections.emptyMap());
@@ -109,6 +110,10 @@ public class Events {
 
     public static Event redisBackupRestoreFailed() {
         return eventOfType(EventType.REDIS_BACKUP_RESTORE_FAILED);
+    }
+
+    public static Event configurationBackupRestored(String clientFileName) {
+        return eventOfType(EventType.CONFIGURATION_BACKUP_RESTORED, Map.of(KEY_CLIENT_FILE_NAME, clientFileName));
     }
 
     public static Event adminPasswordChanged(Map<String, String> details) {

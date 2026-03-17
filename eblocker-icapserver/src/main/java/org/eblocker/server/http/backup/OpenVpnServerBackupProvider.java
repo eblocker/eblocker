@@ -116,11 +116,16 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
     private void restoreBackup(OpenVpnServerBackup backup) throws IOException {
         service.resetOpenVpnServer();
 
-        VpnServerStatus serverStatus = backup.getServerStatus();
-        service.setOpenVpnServerStatus(serverStatus);
         ca.importCertificatesAndKeys(backup.getCaKeys());
         writeSharedSecret(backup.getSharedSecret());
         service.restoreOpenVpnServer();
+
+        VpnServerStatus serverStatus = backup.getServerStatus();
+        if (!serverStatus.isFirstStart()) {
+            service.setOpenVpnServerfirstRun(false); // remove firstRun flag, so no new CA is created
+        }
+        service.setOpenVpnServerStatus(serverStatus);
+
         try {
             if (serverStatus.isRunning()) {
                 service.enablePortForwarding();

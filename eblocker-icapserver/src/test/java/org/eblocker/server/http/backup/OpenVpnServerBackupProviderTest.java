@@ -81,6 +81,13 @@ class OpenVpnServerBackupProviderTest extends BackupProviderTestBase {
     }
 
     @Test
+    public void importRemovesFirstRunFlag() throws Exception {
+        byte[] backup = exportBackup(provider);
+        importBackup(backup, provider);
+        Mockito.verify(service).setOpenVpnServerfirstRun(false);
+    }
+
+    @Test
     public void testSharedSecret() throws IOException {
         Files.writeString(serverPath.resolve("ta.key"), "shared secret", Charsets.US_ASCII);
         exportVerifyImport(provider);

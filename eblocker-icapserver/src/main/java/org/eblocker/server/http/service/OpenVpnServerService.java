@@ -254,11 +254,11 @@ public class OpenVpnServerService extends VpnServerService {
         return dataSource.getOpenVpnServerState();
     }
 
-    private boolean isOpenVpnServerfirstRun() {
+    public boolean isOpenVpnServerfirstRun() {
         return dataSource.getOpenVpnServerFirstRun();
     }
 
-    private void setOpenVpnServerfirstRun(boolean state) {
+    public void setOpenVpnServerfirstRun(boolean state) {
         dataSource.setOpenVpnServerFirstRun(state);
     }
 

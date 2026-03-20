@@ -273,7 +273,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .addFinallyProcessor(new ExceptionLogger())
                 .setExecutorThreadCount(2 * Runtime.getRuntime().availableProcessors())
                 .setMaxContentSize(maxContentSize)
-                .setSupportFileUpload()
                 .noCompression()
                 .mapException(ServiceNotAvailableException.class, ServiceNotAvailableServiceException.class);
 

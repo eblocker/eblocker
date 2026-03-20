@@ -127,11 +127,16 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
 
         // restore profiles
         for (OpenVpnClientBackup backup: backups) {
+            // Save a new empty profile to get a new ID:
+            OpenVpnProfile newProfile = openVpnService.saveProfile(new OpenVpnProfile());
+            Integer newId = newProfile.getId();
+
             OpenVpnProfile profile = backup.getProfile();
+            profile.setId(newId);
             openVpnService.saveProfile(profile);
-            openVpnService.setProfileClientConfig(profile.getId(), backup.getConfiguration().getSourceConfig());
+            openVpnService.setProfileClientConfig(newId, backup.getConfiguration().getSourceConfig());
             for (EncryptedContainer container: backup.getExternalFiles()) {
-                openVpnService.setProfileClientConfigOptionFile(profile.getId(), container.getName(), container.getContent());
+                openVpnService.setProfileClientConfigOptionFile(newId, container.getName(), container.getContent());
             }
         }
     }

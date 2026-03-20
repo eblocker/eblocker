@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.data.openvpn;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.crypto.json.JsonEncrypt;
 
 /**
@@ -37,6 +38,7 @@ public class VpnLoginCredentials {
         return username;
     }
 
+    @JsonProperty
     @JsonEncrypt
     public String getPassword() {
         return password;

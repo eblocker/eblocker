@@ -107,7 +107,7 @@ public abstract class BackupProvider {
     /**
      * Verify the configuration from the given JarInputStream.
      */
-    public abstract void verifyConfiguration(JarInputStream jarStream, int schemaVersion) throws IOException;
+    public abstract void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 
     /**
      * Write the next entry into the given JarOutputStream.

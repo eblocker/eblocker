@@ -14,15 +14,34 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.eblocker.server.common.data.backup;
+package org.eblocker.server.http.backup;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.crypto.json.JsonEncrypt;
 
 /**
- * Warnings that can occur during export or import of a backup.
- * They should be shown to the user.
+ * Stores a name and bytes, e.g. the name of a file and its content.
+ * The content is encrypted if the container is serialized to JSON.
  */
-public enum BackupWarning {
-    NO_PASSWORD_HTTPS_CA_NOT_IMPORTED,
-    NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED,
-    NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED,
-    UPNP_PORT_FORWARDING_FAILURE;
+public class EncryptedContainer {
+    private String name;
+    private byte[] content;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @JsonProperty
+    @JsonEncrypt
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 }

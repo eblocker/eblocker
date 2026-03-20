@@ -24,7 +24,9 @@ import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.openvpn.server.OpenVpnCa;
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
+import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.service.OpenVpnServerService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.jar.JarInputStream;
 
@@ -57,6 +60,12 @@ class OpenVpnServerBackupProviderTest extends BackupProviderTestBase {
         ca = Mockito.mock(OpenVpnCa.class);
         provider = new OpenVpnServerBackupProvider(service, ca, serverPath.toString(), caPath.toString(), createCryptoService("top secret!!!"));
         providerNoPassword = new OpenVpnServerBackupProvider(service, ca, serverPath.toString(), caPath.toString(), null);
+    }
+
+    @AfterEach
+    public void tearDown() throws IOException {
+        FileUtils.deleteDirectory(caPath);
+        FileUtils.deleteDirectory(serverPath);
     }
 
     @Test

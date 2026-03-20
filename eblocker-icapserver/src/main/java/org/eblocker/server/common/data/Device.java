@@ -228,6 +228,10 @@ public class Device extends ModelObject {
         this.useAnonymizationService = useAnonymizationService;
     }
 
+    /**
+     * Returns true if device is routed through Tor.
+     * Note that the "useAnonymizationService" flag must also be set to true.
+     */
     public boolean isRoutedThroughTor() {
         return routeThroughTor;
     }
@@ -319,6 +323,9 @@ public class Device extends ModelObject {
         this.hasDownloadedRootCA = installed;
     }
 
+    /**
+     * VPN profile to use if flag "useAnonymizationService" is set
+     */
     public Integer getUseVPNProfileID() {
         return useVPNProfileID;
     }

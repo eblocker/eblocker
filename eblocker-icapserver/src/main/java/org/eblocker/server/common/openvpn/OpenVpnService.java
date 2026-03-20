@@ -242,7 +242,7 @@ public class OpenVpnService {
     /**
      * Get all VPN profiles
      *
-     * @return
+     * @return Collection of VpnProfile objects with masked passwords.
      */
     public Collection<VpnProfile> getVpnProfiles() {
         return dataSource.getAll(OpenVpnProfile.class).stream().filter(p -> !p.isDeleted()).map(this::maskPassword).collect(Collectors.toList());
@@ -395,10 +395,20 @@ public class OpenVpnService {
      * Get a VPN profile for a given ID
      *
      * @param id
-     * @return
+     * @return VpnProfile with masked password
      */
     public VpnProfile getVpnProfileById(int id) {
         return maskPassword(dataSource.get(OpenVpnProfile.class, id));
+    }
+
+    /**
+     * Get a OpenVpn profile for a given ID
+     *
+     * @param id
+     * @return OpenVpnProfile with clear-text password
+     */
+    public OpenVpnProfile getOpenVpnProfileById(int id) {
+        return dataSource.get(OpenVpnProfile.class, id);
     }
 
     public void routeClientThroughVpnTunnel(Device device, VpnProfile vpnProfile) {

@@ -81,6 +81,9 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
+                if (response.status === 413) { // request entity too large?
+                    response.data = 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.UPLOAD_TOO_LARGE';
+                }
                 logger.error('Error uploading configuration backup', response);
                 return $q.reject(response.data);
             });

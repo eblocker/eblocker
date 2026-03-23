@@ -356,6 +356,7 @@
                 "INVALID_FILE" : "Please select an eBlocker settings file with extension .eblcfg",
                 "UNSUPPORTED_VERSION" : "This settings file's version is not supported any more",
                 "UPLOAD_FAILURE" : "The settings file could not be uploaded",
+                "UPLOAD_TOO_LARGE" : "The settings file is too large",
                 "VERIFICATION_FAILURE" : "The backup file could not be verified. It seems to be corrupted."
             },
             "EXPLAIN" : {

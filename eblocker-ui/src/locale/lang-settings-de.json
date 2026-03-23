@@ -356,6 +356,7 @@
                 "INVALID_FILE": "Bitte wähle eine eBlocker-Sicherungsdatei mit der Endung .eblcfg aus",
                 "UNSUPPORTED_VERSION": "Die Version der Sicherungsdatei wird nicht mehr unterstützt",
                 "UPLOAD_FAILURE": "Die Sicherungsdatei konnte nicht hochgeladen werden",
+                "UPLOAD_TOO_LARGE": "Die Sicherungsdatei ist zu groß",
                 "VERIFICATION_FAILURE": "Die Prüfung der Sicherungsdatei ist fehlgeschlagen."
             },
             "EXPLAIN": {

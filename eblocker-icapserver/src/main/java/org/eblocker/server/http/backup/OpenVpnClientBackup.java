@@ -28,6 +28,7 @@ public class OpenVpnClientBackup {
     private OpenVpnProfile profile;
     private OpenVpnConfiguration configuration;
     private List<EncryptedContainer> externalFiles;
+    private List<String> deviceIds;
 
     public OpenVpnProfile getProfile() {
         return profile;
@@ -51,5 +52,13 @@ public class OpenVpnClientBackup {
 
     public void setExternalFiles(List<EncryptedContainer> externalFiles) {
         this.externalFiles = externalFiles;
+    }
+
+    public List<String> getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(List<String> deviceIds) {
+        this.deviceIds = deviceIds;
     }
 }

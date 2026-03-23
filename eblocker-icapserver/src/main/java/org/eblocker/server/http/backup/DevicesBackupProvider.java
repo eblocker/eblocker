@@ -146,21 +146,8 @@ public class DevicesBackupProvider extends BackupProvider {
                 existingDevice.setSslEnabled(deviceToRestore.isSslEnabled());
                 existingDevice.setSslRecordErrorsEnabled(deviceToRestore.isSslRecordErrorsEnabled());
                 existingDevice.setUseAnonymizationService(deviceToRestore.isUseAnonymizationService());
-                // Check VPN Profile ID for consistency before copying
-                Integer vpnProfileId = deviceToRestore.getUseVPNProfileID();
-                if (vpnProfileId == null || openVpnService.getVpnProfileById(vpnProfileId) == null) {
-                    // Use default value
-                    existingDevice.setUseVPNProfileID(null);
-                    // If routed through tor, keep using anonymization. If no
-                    // VPN Profile can be used and tor is not used, use no
-                    // anonymization
-                    existingDevice.setUseAnonymizationService(
-                            deviceToRestore.isUseAnonymizationService() && deviceToRestore.isRoutedThroughTor());
-                } else {
-                    // Copy value
-                    existingDevice.setUseVPNProfileID(deviceToRestore.getUseVPNProfileID());
-                }
                 existingDevice.setVendor(deviceToRestore.getVendor());
+                existingDevice.setUseVPNProfileID(null); // VPN client profile is restored by OpenVpnClientBackupProvider.
             }
             deviceService.updateDevice(existingDevice);
             LOG.info("Device copied and written back");

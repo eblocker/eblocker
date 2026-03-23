@@ -18,6 +18,8 @@ package org.eblocker.server.http.backup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
@@ -26,6 +28,7 @@ import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.openvpn.configuration.OpenVpnConfiguration;
 import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.util.FileUtils;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,23 +50,29 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
     private OpenVpnClientBackupProvider providerNoPassword;
     private OpenVpnService openVpnService;
     private OpenVpnProfile openVpnProfile;
+    private OpenVpnProfile newProfile;
     private OpenVpnProfileFiles profileFiles;
     private OpenVpnConfiguration openVpnConfiguration;
     private VpnLoginCredentials credentials;
+    private DeviceService deviceService;
+    private Device device;
+    private static final String deviceMAC = "0123456789ab";
+    private static final String deviceId = "device:" + deviceMAC;
     private static final String username = "TestUser";
     private static final String password = "TestPassword";
     private static final int profileId = 23;
     private static final String privateKey = "private key";
+    private static final int nextProfileId = 42;
     private Path openVpnDir;
 
     @BeforeEach
     void setUp() throws IOException {
         openVpnDir = Files.createTempDirectory("OpenVpnClientBackupProviderTest");
         profileFiles = new OpenVpnProfileFiles(openVpnDir.toString(), new ObjectMapper());
-        openVpnService = Mockito.mock(OpenVpnService.class);
         setUpOpenVpnService();
-        provider = new OpenVpnClientBackupProvider(openVpnService, profileFiles, createCryptoService("top secret!!!"));
-        providerNoPassword = new OpenVpnClientBackupProvider(openVpnService, profileFiles, null);
+        setUpDeviceService();
+        provider = new OpenVpnClientBackupProvider(openVpnService, profileFiles, deviceService, createCryptoService("top secret!!!"));
+        providerNoPassword = new OpenVpnClientBackupProvider(openVpnService, profileFiles, deviceService, null);
     }
 
     @AfterEach
@@ -72,7 +81,9 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
     }
 
     private void setUpOpenVpnService() throws IOException {
+        openVpnService = Mockito.mock(OpenVpnService.class);
         openVpnProfile = new OpenVpnProfile(profileId, "Affordable VPN Services Inc.");
+        newProfile = new OpenVpnProfile(nextProfileId, null);
         credentials = new VpnLoginCredentials();
         credentials.setUsername(username);
         credentials.setPassword(password);
@@ -90,8 +101,18 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
         Mockito.when(openVpnService.getVpnProfiles()).thenReturn(List.of(openVpnProfile));
         Mockito.when(openVpnService.getOpenVpnProfileById(profileId)).thenReturn(openVpnProfile);
         Mockito.when(openVpnService.getProfileClientConfig(profileId)).thenReturn(openVpnConfiguration);
+        Mockito.when(openVpnService.saveProfile(Mockito.argThat((profile) -> profile.getId() == null))).thenReturn(newProfile);
     }
 
+    private void setUpDeviceService() {
+        deviceService = Mockito.mock(DeviceService.class);
+        TestDeviceFactory tdf = new TestDeviceFactory(deviceService);
+        tdf.addDevice(deviceMAC, "192.168.0.23", true);
+        tdf.commit();
+        device = tdf.getDevice(deviceId);
+        device.setUseVPNProfileID(profileId);
+        device.setUseAnonymizationService(true);
+    }
     @Test
     void credentialsAreEncrypted() throws IOException {
         byte[] backup = exportBackup(provider);
@@ -107,6 +128,13 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
         byte[] backup = exportBackup(provider);
         importBackup(backup, providerNoPassword);
         assertEquals(List.of(BackupWarning.NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED), providerNoPassword.getWarnings());
+    }
+
+    @Test
+    public void deviceMapping() throws Exception {
+        byte[] backup = exportBackup(provider);
+        importBackup(backup, provider);
+        Mockito.verify(deviceService).updateDevice(Mockito.argThat((device) -> device.getUseVPNProfileID() == nextProfileId && device.getId().equals(deviceId)));
     }
 
     @Test

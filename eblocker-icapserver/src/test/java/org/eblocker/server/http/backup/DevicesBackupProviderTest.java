@@ -245,7 +245,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         assertEquals(computerBefore.isSslRecordErrorsEnabled(), restoredDevice.isSslRecordErrorsEnabled());
         assertEquals(computerBefore.isUseAnonymizationService(), restoredDevice.isUseAnonymizationService());
         // VPN Profile of existing device is not restored
-        assertEquals(vpnProfileId, restoredDevice.getUseVPNProfileID());
+        assertNull(restoredDevice.getUseVPNProfileID());
         assertEquals(computerBefore.getVendor(), restoredDevice.getVendor());
         assertNull(restoredDevice.getLastSeen()); // lastSeen is not restored
     }

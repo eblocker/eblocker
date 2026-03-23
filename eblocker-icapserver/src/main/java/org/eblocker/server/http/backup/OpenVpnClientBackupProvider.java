@@ -20,12 +20,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import org.eblocker.crypto.CryptoService;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.openvpn.OpenVpnProfileFiles;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.common.openvpn.configuration.OpenVpnConfiguration;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 
 public class OpenVpnClientBackupProvider extends BackupProvider {
     private static final Logger LOG = LoggerFactory.getLogger(OpenVpnClientBackupProvider.class);
@@ -44,14 +48,17 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
 
     private final OpenVpnService openVpnService;
     private final OpenVpnProfileFiles openVpnProfileFiles;
+    private final DeviceService deviceService;
 
     @AssistedInject
     public OpenVpnClientBackupProvider(OpenVpnService openVpnService,
                                        OpenVpnProfileFiles openVpnProfileFiles,
+                                       DeviceService deviceService,
                                        @Assisted @Nullable CryptoService cryptoService) {
         super(cryptoService);
         this.openVpnService = openVpnService;
         this.openVpnProfileFiles = openVpnProfileFiles;
+        this.deviceService = deviceService;
     }
 
     @Override
@@ -90,6 +97,9 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
     private List<OpenVpnClientBackup> createBackups() throws IOException {
         List<OpenVpnClientBackup> result = new ArrayList<>();
         Collection<VpnProfile> profiles = openVpnService.getVpnProfiles();
+        Set<Device> vpnClientDevices = deviceService.getDevices(true).stream()
+                .filter(device -> device.isUseAnonymizationService() && !device.isRoutedThroughTor() && device.getUseVPNProfileID() != null)
+                .collect(Collectors.toSet());
         for (VpnProfile profile : profiles) {
             Integer profileId = profile.getId();
             OpenVpnClientBackup backup = new OpenVpnClientBackup();
@@ -102,6 +112,11 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
             backup.setConfiguration(configuration);
 
             addExternalFiles(backup, profileId, configuration);
+
+            backup.setDeviceIds(vpnClientDevices.stream()
+                    .filter(device -> device.getUseVPNProfileID().equals(profileId))
+                    .map(Device::getId)
+                    .collect(Collectors.toList()));
             result.add(backup);
         }
         return result;
@@ -137,6 +152,17 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
             openVpnService.setProfileClientConfig(newId, backup.getConfiguration().getSourceConfig());
             for (EncryptedContainer container: backup.getExternalFiles()) {
                 openVpnService.setProfileClientConfigOptionFile(newId, container.getName(), container.getContent());
+            }
+            restoreClientDevices(newId, backup.getDeviceIds());
+        }
+    }
+
+    private void restoreClientDevices(Integer profileId, List<String> deviceIds) {
+        for (String deviceId: deviceIds) {
+            Device device = deviceService.getDeviceById(deviceId);
+            if (device != null) {
+                device.setUseVPNProfileID(profileId);
+                deviceService.updateDevice(device);
             }
         }
     }

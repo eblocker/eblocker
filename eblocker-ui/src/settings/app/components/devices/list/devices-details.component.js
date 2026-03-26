@@ -47,6 +47,8 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
     vm.selectedIndex = 0;
     vm.editable = editable;
     vm.editName = editName;
+    vm.editIpV4 = editIpV4;
+    vm.editIpV6 = editIpV6;
     vm.hasFeature = hasFeature;
     vm.onChange = onChange;
     vm.onChangeOwner = onChangeOwner;
@@ -186,6 +188,12 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
             vm.deviceVendor = {
                 value: getVendor(vm.device.vendor, vm.device.hardwareAddress)
             };
+            vm.deviceStaticIpV4 = {
+                value: vm.device.staticIpAddress || ''
+            };
+            vm.deviceStaticIpV6 = {
+                value: vm.device.staticIpV6Address || ''
+            };
         }
     }
 
@@ -231,6 +239,46 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
 
     function editNameActionOk(name) {
         vm.device.name = name;
+        return onChange(vm.device);
+    }
+
+    function editIpV4(event, entry) {
+        if (!vm.dhcpActive || !angular.isObject(entry) || entry.isGateway || entry.isEblocker) {
+            return;
+        }
+        const msgKeys = {
+            label: 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_STATIC_IPV4'
+        };
+        const subject = {value: entry.staticIpAddress || '', id: entry.id};
+        DialogService.
+        openEditDialog(event, subject, msgKeys, editIpV4ActionOk, undefined, 15, 1).
+        then(function success(updated) {
+            vm.deviceStaticIpV4.value = vm.device.staticIpAddress || '';
+        });
+    }
+
+    function editIpV4ActionOk(ip) {
+        vm.device.staticIpAddress = ip;
+        return onChange(vm.device);
+    }
+
+    function editIpV6(event, entry) {
+        if (!vm.dhcpActive || !angular.isObject(entry) || entry.isGateway || entry.isEblocker) {
+            return;
+        }
+        const msgKeys = {
+            label: 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_STATIC_IPV6'
+        };
+        const subject = {value: entry.staticIpV6Address || '', id: entry.id};
+        DialogService.
+        openEditDialog(event, subject, msgKeys, editIpV6ActionOk, undefined, 39, 1).
+        then(function success() {
+            vm.deviceStaticIpV6.value = vm.device.staticIpV6Address || '';
+        });
+    }
+
+    function editIpV6ActionOk(ip) {
+        vm.device.staticIpV6Address = ip;
         return onChange(vm.device);
     }
 

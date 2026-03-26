@@ -60,6 +60,8 @@ public class Device extends ModelObject {
     private boolean isEblocker = false;
     // About DHCP
     private boolean ipAddressFixed = true;
+    private String staticIpAddress;   // Manually configured static IPv4 address for DHCP
+    private String staticIpV6Address; // Manually configured static IPv6 address for DHCPv6
     // For parental control
 
     private Integer assignedUser;
@@ -333,6 +335,22 @@ public class Device extends ModelObject {
 
     public void setIpAddressFixed(boolean fixed) {
         this.ipAddressFixed = fixed;
+    }
+
+    public String getStaticIpAddress() {
+        return staticIpAddress;
+    }
+
+    public void setStaticIpAddress(String staticIpAddress) {
+        this.staticIpAddress = staticIpAddress;
+    }
+
+    public String getStaticIpV6Address() {
+        return staticIpV6Address;
+    }
+
+    public void setStaticIpV6Address(String staticIpV6Address) {
+        this.staticIpV6Address = staticIpV6Address;
     }
 
     public int getAssignedUser() {

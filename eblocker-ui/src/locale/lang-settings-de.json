@@ -465,6 +465,8 @@
                     "LABEL_IP": "IP-Adressen",
                     "LABEL_IP_ADDRESS_FIXED": "Gerät stets dieselbe IP-Adresse zuweisen.",
                     "LABEL_IP_ADDRESS_NOT_FIXED": "Gerät eine beliebige IP-Adresse zuweisen.",
+                    "LABEL_STATIC_IPV4": "Statische IPv4",
+                    "LABEL_STATIC_IPV6": "Statische IPv6",
                     "LABEL_IS_EBLOCKER": "Gerät ist eBlocker",
                     "LABEL_IS_GATEWAY": "Gerät ist Gateway",
                     "LABEL_MAC": "Hardware Adresse (MAC)",

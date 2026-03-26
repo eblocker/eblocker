@@ -112,6 +112,8 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_VPNPROFILE_ID = "vpn_profile_id";
     private static final String KEY_DHCP_FIXED_IP = "dhcp_fixed_ip";
     private static final String KEY_DHCP_IP_FIXED_BY_DEFAULT = "dhcp_ip_fixed_by_default";
+    private static final String KEY_DHCP_STATIC_IP = "dhcp_static_ip";
+    private static final String KEY_DHCP_STATIC_IPV6 = "dhcp_static_ipv6";
     private static final String KEY_NETWORK_IS_EXPERT_MODE = "network_is_expert_mode";
 
     private static final String KEY_CLEAN_SHUTDOWN = "clean_shutdown";
@@ -498,6 +500,9 @@ public class JedisDataSource implements DataSource {
         }
         device.setIpAddressFixed(fixed);
 
+        device.setStaticIpAddress(map.get(KEY_DHCP_STATIC_IP));
+        device.setStaticIpV6Address(map.get(KEY_DHCP_STATIC_IPV6));
+
         String isVpnClient = map.get(KEY_IS_OPENVPN_CLIENT);
         if (isVpnClient != null) {
             device.setIsVpnClient(isVpnClient.equals(VALUE_TRUE));
@@ -563,6 +568,16 @@ public class JedisDataSource implements DataSource {
             }
             map.put(KEY_SHOW_WARNINGS, device.getAreDeviceMessagesSettingsDefault() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_DHCP_FIXED_IP, device.isIpAddressFixed() ? VALUE_TRUE : VALUE_FALSE);
+            if (device.getStaticIpAddress() != null && !device.getStaticIpAddress().isEmpty()) {
+                map.put(KEY_DHCP_STATIC_IP, device.getStaticIpAddress());
+            } else {
+                jedis.hdel(device.getId(), KEY_DHCP_STATIC_IP);
+            }
+            if (device.getStaticIpV6Address() != null && !device.getStaticIpV6Address().isEmpty()) {
+                map.put(KEY_DHCP_STATIC_IPV6, device.getStaticIpV6Address());
+            } else {
+                jedis.hdel(device.getId(), KEY_DHCP_STATIC_IPV6);
+            }
             map.put(KEY_PARENTAL_CONTROL_USER_ID, String.valueOf(device.getAssignedUser()));
             map.put(KEY_PARENTAL_CONTROL_OPERATING_USER_ID, String.valueOf(device.getOperatingUser()));
             map.put(KEY_DEFAULT_SYSTEM_USER_ID, String.valueOf(device.getDefaultSystemUser()));

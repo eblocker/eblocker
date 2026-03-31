@@ -21,6 +21,7 @@ package org.eblocker.server.common.data.backup;
  * They should be shown to the user.
  */
 public enum BackupWarning {
+    LICENSE_CRYPTO_FAILURE,
     NO_PASSWORD_HTTPS_CA_NOT_IMPORTED,
     NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED,
     NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED,

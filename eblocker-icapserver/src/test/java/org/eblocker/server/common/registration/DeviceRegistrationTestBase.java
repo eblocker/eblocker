@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.common.registration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.keys.SystemKey;
@@ -29,9 +28,9 @@ import org.eblocker.registration.LicenseType;
 import org.eblocker.server.common.data.LocaleSettings;
 import org.eblocker.server.common.system.CpuInfo;
 import org.eblocker.server.http.service.SettingsService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockserver.integration.ClientAndServer;
 import org.slf4j.Logger;
@@ -93,13 +92,13 @@ public abstract class DeviceRegistrationTestBase {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException, CryptoException {
         deviceIssuer = PKI.generateRoot(ORG_NAME, "Device Root A", 10, KEY_SIZE);
         licenseIssuer = PKI.generateRoot(ORG_NAME, "License Root X", 10, KEY_SIZE);
     }
 
-    @Before
+    @BeforeEach
     public void init() throws IOException, ParseException {
         systemKey = new SystemKey(createResource("system.", ".key"));
         registrationPropertiesFileName = createResource("registration.", ".properties");
@@ -132,7 +131,7 @@ public abstract class DeviceRegistrationTestBase {
         return mockServer;
     }
 
-    @After
+    @AfterEach
     public void shutDown() {
         if (mockServer != null) {
             mockServer.stop();

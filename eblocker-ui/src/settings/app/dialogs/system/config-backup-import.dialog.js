@@ -30,6 +30,7 @@ export default function ConfigBackupImportController(logger, $scope, $mdDialog, 
     vm.uploading = false;
     vm.verifying = false;
     vm.importing = false;
+    vm.warnings = [];
 
     vm.isStepAllowed = function(step) {
         // reboot? No turning back...
@@ -75,6 +76,7 @@ export default function ConfigBackupImportController(logger, $scope, $mdDialog, 
         vm.passwordRetry = false;
         vm.verifying = true;
         ConfigBackupService.verifyConfig(vm.fileReference, vm.password).then(function(result) {
+            vm.warnings = result.warnings;
             vm.currentStep = 2;
         }, function(response) {
             const errCode = response.toUpperCase();
@@ -90,7 +92,8 @@ export default function ConfigBackupImportController(logger, $scope, $mdDialog, 
 
     vm.importConfigBackup = function() {
         vm.importing = true;
-        ConfigBackupService.importConfig(vm.fileReference, vm.password).then(function(result) {
+        ConfigBackupService.importConfig(vm.fileReference, vm.password, vm.fileName).then(function(result) {
+            vm.warnings = result.warnings;
             vm.currentStep = 3;
         }, function(response) {
             NotificationService.error(response.toUpperCase());

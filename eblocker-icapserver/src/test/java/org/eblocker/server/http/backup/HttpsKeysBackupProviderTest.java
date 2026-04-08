@@ -16,31 +16,29 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.ssl.SslService;
-import org.eblocker.server.http.service.ConfigurationBackupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
     private HttpsKeysBackupProvider provider;
-    private DataSource dataSource;
+    private HttpsKeysBackupProvider providerNoPassword;
+    private HttpsKeysBackupProvider providerBadPassword;
     private SslService sslService;
 
     @BeforeEach
     public void setUp() throws Exception {
         sslService = Mockito.mock(SslService.class);
-        dataSource = Mockito.mock(DataSource.class);
-        provider = new HttpsKeysBackupProvider(sslService);
-
-        Mockito.when(dataSource.getVersion()).thenReturn("42");
+        provider = new HttpsKeysBackupProvider(sslService, createCryptoService("top secret"));
+        providerNoPassword = new HttpsKeysBackupProvider(sslService, null);
+        providerBadPassword = new HttpsKeysBackupProvider(sslService, createCryptoService("wrong!"));
     }
 
     @Test
@@ -50,45 +48,40 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
         Mockito.when(sslService.exportRenewalCa()).thenReturn(renewalCaBytes);
 
-        exportAndImportWith(dataSource, provider, "top secret");
+        exportVerifyImport(provider);
 
         Mockito.verify(sslService).importCas(caBytes, renewalCaBytes);
+        assertEquals(0, provider.getWarnings().size());
     }
 
     @Test
     public void noPasswordForExport() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
-        exportAndImportWith(dataSource, provider, null);
+        assertThrows(EncryptionUnavailableException.class, () -> exportBackup(providerNoPassword));
     }
 
     @Test
     public void noPasswordForImport() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
 
-        String password = "top secret";
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream, password);
+        byte[] backup = exportBackup(provider);
+        assertEquals(0, provider.getWarnings().size());
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-        service.importConfiguration(inputStream, null);
+        importBackup(backup, providerNoPassword);
+        assertEquals(List.of(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED), providerNoPassword.getWarnings());
     }
 
     @Test
     public void wrongPassword() throws IOException {
         byte[] caBytes = "This is the CA".getBytes();
-        ConfigurationBackupService service = new ConfigurationBackupService(dataSource, provider);
         Mockito.when(sslService.exportCa()).thenReturn(caBytes);
 
-        String password = "top secret";
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        service.exportConfiguration(outputStream, password);
+        byte[] backup = exportBackup(provider);
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         assertThrows(DecryptionFailedException.class, () -> {
-            service.importConfiguration(inputStream, "1234");
+            importBackup(backup, providerBadPassword);
         });
     }
 }

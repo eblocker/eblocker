@@ -459,14 +459,16 @@ public class OpenVpnClient implements VpnClient, Closeable {
 
         @Override
         public void up6(List<String> gateways, List<String> networks, List<String> nameServers) {
-            Optional<String> publicGateway = Ip6GatewaySelector.selectPublicGateway(gateways, networks);
-            if (publicGateway.isEmpty()) {
-                logger.warn("Could not find gateway in gateways {} for networks {}. Not routing VPN traffic via Ip6", gateways, networks);
-                return;
-            }
-            clientState.setGatewayIp6(publicGateway.get());
-            saveClientState();
-            routeClientsIp6();
+            executeLocked("up6", () -> {
+                Optional<String> publicGateway = Ip6GatewaySelector.selectPublicGateway(gateways, networks);
+                if (publicGateway.isEmpty()) {
+                    logger.warn("Could not find gateway in gateways {} for networks {}. Not routing VPN traffic via Ip6", gateways, networks);
+                    return;
+                }
+                clientState.setGatewayIp6(publicGateway.get());
+                saveClientState();
+                routeClientsIp6();
+            });
         }
 
         @Override

@@ -24,6 +24,7 @@ import com.google.inject.name.Named;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.keys.KeyHandler;
 import org.eblocker.crypto.keys.KeyWrapper;
 import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.crypto.pki.PKI;
@@ -69,8 +70,8 @@ public class DeviceRegistrationProperties {
 
     private static final Logger log = LoggerFactory.getLogger(DeviceRegistrationProperties.class);
 
-    private static final String DEVICE_KEY_ALIAS = "eBlocker Device Key";
-    private static final String LICENSE_KEY_ALIAS = "eBlocker License Key";
+    public static final String DEVICE_KEY_ALIAS = "eBlocker Device Key";
+    public static final String LICENSE_KEY_ALIAS = "eBlocker License Key";
     private static final int MIN_ALLOWED_REG_TYPE = 0;
 
     private static final String PROP_REG_STATE = "registrationState";
@@ -563,6 +564,51 @@ public class DeviceRegistrationProperties {
             log.error(msg);
             throw new EblockerException(msg, e);
         }
+    }
+
+    public DeviceRegistrationExport exportRegistration() throws IOException, CryptoException {
+        DeviceRegistrationExport export = new DeviceRegistrationExport();
+        char[] password = Hex.encodeHex(KeyHandler.createKey());
+        export.setKeyStorePassword(password);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PKI.generateKeyStore(decodedDeviceCredentials, DEVICE_KEY_ALIAS, password, baos);
+        export.setDeviceCredentials(baos.toByteArray());
+
+        baos = new ByteArrayOutputStream();
+        PKI.generateKeyStore(decodedLicenseCredentials, LICENSE_KEY_ALIAS, password, baos);
+        export.setLicenseCredentials(baos.toByteArray());
+
+        export.setRegistrationState(getRegistrationState());
+        export.setRegistrationId(registration.id);
+        export.setRegistrationType(registration.type);
+        export.setCpuSerial(registration.cpuSerial);
+        export.setDeviceName(deviceName);
+        export.setDeviceId(deviceId);
+        export.setRegisteredAt(deviceRegisteredAt);
+        export.setRegisteredBy(deviceRegisteredBy);
+        return export;
+    }
+
+    public void importRegistration(DeviceRegistrationExport export) throws IOException, CryptoException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(export.getDeviceCredentials());
+        decodedDeviceCredentials = PKI.loadKeyStore(DeviceRegistrationProperties.DEVICE_KEY_ALIAS, bais, export.getKeyStorePassword());
+        deviceCredentials = Base64.encodeBase64String(encodeKeyStore(decodedDeviceCredentials, DEVICE_KEY_ALIAS));
+
+        bais = new ByteArrayInputStream(export.getLicenseCredentials());
+        decodedLicenseCredentials = PKI.loadKeyStore(DeviceRegistrationProperties.LICENSE_KEY_ALIAS, bais, export.getKeyStorePassword());
+        licenseCredentials = Base64.encodeBase64String(encodeKeyStore(decodedLicenseCredentials, LICENSE_KEY_ALIAS));
+
+        registration = new RegistrationData();
+        registration.state = export.getRegistrationState();
+        registration.id = export.getRegistrationId();
+        registration.type = export.getRegistrationType();
+        registration.cpuSerial = export.getCpuSerial();
+        deviceName = export.getDeviceName();
+        deviceId = export.getDeviceId();
+        deviceRegisteredAt = export.getRegisteredAt();
+        deviceRegisteredBy = export.getRegisteredBy();
+        store();
     }
 
     public RegistrationState getRegistrationState() {

@@ -33,9 +33,9 @@ export default function ConfigBackupService(logger, $http, $q) {
         return $http.post(PATH_EXPORT, data, config).then(
             function(response) {
                 return response.data;
-            }, function(reason) {
-                logger.error('Could not export config: ' + reason);
-                return $q.reject(reason);
+            }, function(response) {
+                logger.error('Error exporting configuration backup', response);
+                return $q.reject(response.data);
             });
     }
 
@@ -70,7 +70,7 @@ export default function ConfigBackupService(logger, $http, $q) {
                     return $q.reject('bad content-type');
                 }
             }, function error(response) {
-                logger.error('Error downloading configuration backup ', response);
+                logger.error('Error downloading configuration backup', response);
                 return $q.reject(response.data);
             });
     }
@@ -81,31 +81,34 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error uploading configuration backup ', response);
+                if (response.status === 413) { // request entity too large?
+                    response.data = 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.UPLOAD_TOO_LARGE';
+                }
+                logger.error('Error uploading configuration backup', response);
                 return $q.reject(response.data);
             });
     }
 
-    function verifyConfig(filename, password) {
-        const data = {fileReference: filename, password: password};
+    function verifyConfig(fileReference, password) {
+        const data = {fileReference: fileReference, password: password};
         const config = {timeout: BACKUP_TIMEOUT};
         return $http.post(PATH_VERIFY, data, config).then(
             function success(response){
-                return response;
+                return response.data;
             }, function error(response) {
-                logger.error('Error verifying configuration backup ', response);
+                logger.error('Error verifying configuration backup', response);
                 return $q.reject(response.data);
             });
     }
 
-    function importConfig(filename, password) {
-        const data = {fileReference: filename, password: password};
+    function importConfig(fileReference, password, clientFileName) {
+        const data = {fileReference: fileReference, password: password, clientFileName: clientFileName};
         const config = {timeout: BACKUP_TIMEOUT};
         return $http.post(PATH_IMPORT, data, config).then(
             function success(response){
-                return response;
+                return response.data;
             }, function error(response) {
-                logger.error('Error importing configuration backup ', response);
+                logger.error('Error importing configuration backup', response);
                 return $q.reject(response.data);
             });
     }

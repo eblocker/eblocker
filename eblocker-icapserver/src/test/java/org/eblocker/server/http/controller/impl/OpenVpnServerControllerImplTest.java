@@ -20,36 +20,23 @@ package org.eblocker.server.http.controller.impl;
 import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
-import org.eblocker.server.common.data.openvpn.ExternalAddressType;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
-import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
-import org.eblocker.server.common.squid.SquidConfigController;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.DnsService;
-import org.eblocker.server.http.service.DynDnsService;
 import org.eblocker.server.http.service.OpenVpnServerService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OpenVpnServerControllerImplTest {
     private static final String registrationEblockerName = "my eBlocker (the white cube)";
@@ -57,27 +44,21 @@ public class OpenVpnServerControllerImplTest {
     private OpenVpnServerService openVpnServerService;
     private OpenVpnServerControllerImpl controller;
     private DeviceService deviceService;
-    private DnsService dnsService;
-    private DynDnsService dynDnsService;
     private Response response;
     private OpenVpnClientConfigurationService openVpnClientConfigurationService;
-    private SquidConfigController squidConfigController;
     private String deviceId = "device:001122334455";
     private OperatingSystemType osType = OperatingSystemType.OTHER;
     private DeviceRegistrationProperties deviceRegistrationProperties;
     private NetworkStateMachine networkStateMachine;
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException, IOException {
         deviceService = Mockito.mock(DeviceService.class);
-        dnsService = Mockito.mock(DnsService.class);
-        dynDnsService = Mockito.mock(DynDnsService.class);
         openVpnClientConfigurationService = Mockito.mock(OpenVpnClientConfigurationService.class);
         openVpnServerService = Mockito.mock(OpenVpnServerService.class);
 
         Mockito.when(openVpnServerService.isOpenVpnServerEnabled()).thenReturn(true);
         Mockito.when(openVpnServerService.getDeviceIdsWithCertificates()).thenReturn(Collections.singleton(deviceId));
-        squidConfigController = Mockito.mock(SquidConfigController.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         Mockito.when(deviceRegistrationProperties.getDeviceName()).thenReturn(registrationEblockerName);
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
@@ -86,106 +67,9 @@ public class OpenVpnServerControllerImplTest {
                 openVpnServerService,
                 openVpnClientConfigurationService,
                 deviceService,
-                dynDnsService,
-                squidConfigController,
                 deviceRegistrationProperties,
                 networkStateMachine);
         response = new Response();
-    }
-
-    @Test
-    public void getOpenVpnServerStatus() {
-        Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
-        Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("eblocker.com");
-        Mockito.when(openVpnServerService.getOpenVpnServerStatus()).thenReturn(true);
-
-        Request request = Mockito.mock(Request.class);
-        VpnServerStatus status = controller.getOpenVpnServerStatus(request, response);
-
-        assertTrue(status.isFirstStart());
-        assertEquals("eblocker.com", status.getHost());
-        assertTrue(status.isRunning());
-    }
-
-    @Test
-    public void startOpenVpnServerFirstStartFailed() {
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
-        Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
-
-        VpnServerStatus status = controller.setOpenVpnServerStatus(request, response);
-        assertFalse(status.isRunning());
-    }
-
-    @Test
-    public void startOpenVpnServerSuccessfully() throws UpnpPortForwardingException {
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
-        Mockito.when(openVpnServerService.isOpenVpnServerfirstRun()).thenReturn(true);
-        Mockito.when(openVpnServerService.startOpenVpnServer()).thenReturn(true);
-        Mockito.when(openVpnServerService.getOpenVpnServerStatus()).thenReturn(false);
-
-        VpnServerStatus status = controller.setOpenVpnServerStatus(request, response);
-        assertTrue(status.isRunning());
-
-        // Simulate that server is running to prevent another "start"
-        Mockito.when(openVpnServerService.getOpenVpnServerStatus()).thenReturn(true);
-
-        controller.setOpenVpnServerStatus(request, response);
-
-        Mockito.verify(squidConfigController, Mockito.times(1)).tellSquidToReloadConfig();
-    }
-
-    @Test
-    public void startOpenVpnServerAndEnableDns() throws UpnpPortForwardingException {
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(startServerRequest());
-        Mockito.when(dnsService.setStatus(true)).thenReturn(true);
-        Mockito.when(openVpnServerService.startOpenVpnServer()).thenReturn(true);
-
-        VpnServerStatus status = controller.setOpenVpnServerStatus(request, response);
-
-        assertTrue(status.isRunning());
-        Mockito.verify(squidConfigController, Mockito.times(1)).tellSquidToReloadConfig();
-    }
-
-    @Test
-    public void stopOpenVpnServer() {
-        Request request = Mockito.mock(Request.class);
-        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(stopServerRequest());
-
-        Collection<Device> devices = new LinkedList<>();
-        Device device = Mockito.mock(Device.class);
-        devices.add(device);
-        Mockito.when(deviceService.getDevices(false)).thenReturn(devices);
-        Mockito.when(openVpnServerService.stopOpenVpnServer()).thenReturn(true);
-        Mockito.when(openVpnServerService.getOpenVpnServerStatus()).thenReturn(true);// <-?
-
-        controller.setOpenVpnServerStatus(request, response);
-        Mockito.verify(device, Mockito.times(1)).setIsVpnClient(false);
-        Mockito.verify(squidConfigController, Mockito.times(1)).tellSquidToReloadConfig();
-    }
-
-    @Test
-    public void startWithEblockerDynDns() {
-        Request request = Mockito.mock(Request.class);
-        VpnServerStatus statusIn = startServerRequest();
-        final String dynDnsHost = "abcdefghijklmnop.home.eblocker.com";
-        final Integer mappedPort = 1195;
-        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
-        statusIn.setPortForwardingMode(PortForwardingMode.AUTO);
-        statusIn.setMappedPort(mappedPort);
-        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(statusIn);
-        Mockito.when(dynDnsService.getHostname()).thenReturn(dynDnsHost);
-        Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn(dynDnsHost);
-        VpnServerStatus statusOut = controller.setOpenVpnServerStatus(request, response);
-
-        assertEquals(dynDnsHost, statusOut.getHost());
-        assertEquals(ExternalAddressType.EBLOCKER_DYN_DNS, statusOut.getExternalAddressType());
-        assertEquals(PortForwardingMode.AUTO, statusOut.getPortForwardingMode());
-        assertEquals(mappedPort, statusOut.getMappedPort());
-
-        Mockito.verify(openVpnServerService).setOpenVpnServerHost(dynDnsHost);
     }
 
     @Test
@@ -279,10 +163,8 @@ public class OpenVpnServerControllerImplTest {
         Request request = Mockito.mock(Request.class);
 
         // Stop and reset server
-        Mockito.when(openVpnServerService.stopOpenVpnServer()).thenReturn(true);
-        Mockito.when(openVpnServerService.purgeOpenVpnServer()).thenReturn(true);
+        Mockito.when(openVpnServerService.resetOpenVpnServer()).thenReturn(true);
         assertTrue(controller.resetOpenVpnServerStatus(request, response));
-        Mockito.verify(openVpnServerService, Mockito.times(1)).setOpenVpnServerfirstRun(true);
     }
 
     @Test
@@ -489,7 +371,7 @@ public class OpenVpnServerControllerImplTest {
 
         controller.setPrivateNetworkAccess(request, response);
 
-        Assert.assertTrue(device.isMobilePrivateNetworkAccess());
+        assertTrue(device.isMobilePrivateNetworkAccess());
         Mockito.verify(deviceService).updateDevice(device);
         Mockito.verify(networkStateMachine).deviceStateChanged(device);
     }
@@ -506,21 +388,20 @@ public class OpenVpnServerControllerImplTest {
 
         controller.setPrivateNetworkAccess(request, response);
 
-        Assert.assertFalse(device.isMobilePrivateNetworkAccess());
+        assertFalse(device.isMobilePrivateNetworkAccess());
         Mockito.verify(deviceService).updateDevice(device);
         Mockito.verify(networkStateMachine).deviceStateChanged(device);
     }
 
-    private VpnServerStatus startServerRequest() {
-        VpnServerStatus status = new VpnServerStatus();
-        status.setHost("eblocker.com");
-        status.setRunning(true);
-        return status;
-    }
-
-    private VpnServerStatus stopServerRequest() {
-        VpnServerStatus status = new VpnServerStatus();
-        status.setRunning(false);
-        return status;
+    @Test
+    public void testEnablingPortForwarding() throws Exception {
+        Request request = Mockito.mock(Request.class);
+        VpnServerStatus newStatus = new VpnServerStatus();
+        VpnServerStatus result = new VpnServerStatus();
+        result.setRunning(true);
+        Mockito.when(openVpnServerService.setOpenVpnServerStatus(newStatus)).thenReturn(result);
+        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(newStatus);
+        controller.setOpenVpnServerStatus(request, response);
+        Mockito.verify(openVpnServerService).enablePortForwarding();
     }
 }

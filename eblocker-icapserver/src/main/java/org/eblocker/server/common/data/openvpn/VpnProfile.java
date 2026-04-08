@@ -17,8 +17,8 @@
 package org.eblocker.server.common.data.openvpn;
 
 /**
- * This interface can model VPNProfiles. It has quite a huge API to be quite general for future additional implementations of not only OpenVPN,
- * so you dont have to make use of all the available methods, just return a good default value or nullpointer when you dont need a certain method.
+ * This interface can model VPN profiles. It has quite a huge API to be quite general for future additional implementations of not only OpenVPN,
+ * so you don't have to make use of all the available methods, just return a good default value or null pointer when you don't need a certain method.
  */
 public interface VpnProfile {
 

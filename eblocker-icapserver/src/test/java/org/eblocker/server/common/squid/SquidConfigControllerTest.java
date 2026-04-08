@@ -21,11 +21,11 @@ import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
-import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
+import org.eblocker.server.common.service.FeatureServiceSubscriber;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAcl;
 import org.eblocker.server.common.squid.acl.ConfigurableDeviceFilterAclFactory;
 import org.eblocker.server.common.squid.acl.SquidAcl;
@@ -37,7 +37,6 @@ import org.eblocker.server.http.security.JsonWebToken;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.OpenVpnServerService;
-import org.eblocker.server.common.TestClock;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
 import org.junit.After;
@@ -45,7 +44,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -53,18 +51,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
@@ -82,20 +73,16 @@ public class SquidConfigControllerTest {
     private static final Ip4Address ip4Address = Ip4Address.parse("192.168.178.42");
 
     private SquidConfigController controller;
+    private SquidReloadingService reloadingService;
     private String outputConfigFile;
     private String mimeAclFilePath;
     private String xForwardDomainsPath = "xforward.domains.acl";
     private String xForwardIpsPath = "xforward.ips.acl";
     private String sslKeyFilePath;
     private String sslCertFilePath;
-    private Integer graceTimeBeforeReloads = 200;
-    private Integer minimumTimeBetweenReloads = 2000;
     private ScriptRunner scriptRunner;
-    private final String squidReconfigureScript = "squidReconfigureScript";
     private final String squidClearCertCacheScript = "squidClearCertCacheScript";
     private final String squidWorkers = "3";
-    private ScheduledExecutorService executorService;
-    private TestClock clock;
     private DataSource dataSource;
     private DeviceService deviceService;
     private SslService sslService;
@@ -104,6 +91,7 @@ public class SquidConfigControllerTest {
     private Environment environment;
     private NetworkInterfaceWrapper networkInterface;
     private Ip6PrefixMonitor prefixMonitor;
+    private FeatureServiceSubscriber featureServiceSubscriber;
 
     private SquidAcl torClientsAcl;
     private SquidAcl sslClientsAcl;
@@ -123,13 +111,11 @@ public class SquidConfigControllerTest {
         sslKeyFilePath = makeTempPath("ssl.key");
         sslCertFilePath = makeTempPath("ssl.cert");
 
-        clock = new TestClock(LocalDateTime.now());
         scriptRunner = Mockito.mock(ScriptRunner.class);
+        reloadingService = Mockito.mock(SquidReloadingService.class);
         dataSource = Mockito.mock(DataSource.class);
-
-        executorService = Mockito.mock(ScheduledExecutorService.class);
-
         prefixMonitor = Mockito.mock(Ip6PrefixMonitor.class);
+        featureServiceSubscriber = Mockito.mock(FeatureServiceSubscriber.class);
 
         // simulate that SSL is enabled and certificates are ready:
         sslService = Mockito.mock(SslService.class);
@@ -138,8 +124,6 @@ public class SquidConfigControllerTest {
         Mockito.when(sslService.isCaAvailable()).thenReturn(true);
         eblockerCa = new EblockerCa(SslTestUtils.loadCertificateAndKey(SslTestUtils.CA_RESOURCE, SslTestUtils.UNIT_TEST_CA_PASSWORD));
         Mockito.when(sslService.getCa()).thenReturn(eblockerCa);
-
-        executorService = Mockito.mock(ScheduledExecutorService.class);
 
         deviceService = Mockito.mock(DeviceService.class);
         environment = Mockito.mock(Environment.class);
@@ -183,7 +167,7 @@ public class SquidConfigControllerTest {
         verify(sslClientsAcl).update();
         verify(disabledClientsAcl).update();
         verify(filteredClientsAcl).update();
-        verify(executorService).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService).tellSquidToReloadConfig();
 
         // verify correct key / cert has been written to disk
         Assert.assertTrue(Files.exists(Paths.get(sslKeyFilePath)));
@@ -195,6 +179,7 @@ public class SquidConfigControllerTest {
     @Test
     public void initTestSslDisabled() {
         Mockito.when(sslService.getCa()).thenReturn(null);
+        Mockito.when(sslService.isSslEnabled()).thenReturn(false);
 
         // verify listener has been registered
         Assert.assertNotNull(sslStateListener);
@@ -212,7 +197,7 @@ public class SquidConfigControllerTest {
         verify(sslClientsAcl).update();
         verify(disabledClientsAcl).update();
         verify(filteredClientsAcl).update();
-        verify(executorService).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService).tellSquidToReloadConfig();
 
         // verify keys has not been written
         Assert.assertFalse(Files.exists(Paths.get(sslKeyFilePath)));
@@ -274,60 +259,13 @@ public class SquidConfigControllerTest {
         Assert.assertNotNull(sslStateListener);
         sslStateListener.onInit(true);
 
-        controller.setSendJavascriptToIcapserver(true);
+        Mockito.when(featureServiceSubscriber.getWebRTCBlockingState()).thenReturn(true);
+        controller.updateMimeTypes();
         compareToReference(mimeAclFilePath, "mimetypes-with-javascript.conf");
         // expecting two runs as it's already scheduled once in constructor
-        verify(executorService, times(2)).schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService, times(2)).tellSquidToReloadConfig();
     }
 
-    @Test
-    public void testMinimumTimeBetweenReloads() {
-        // init service
-        Assert.assertNotNull(sslStateListener);
-        sslStateListener.onInit(true);
-
-        // forget initial run after initialization
-        Mockito.reset(executorService);
-
-        // create mock future
-        MockFuture future = new MockFuture();
-        Mockito.when(executorService.schedule(Mockito.any(Runnable.class), Mockito.anyLong(), Mockito.any(TimeUnit.class)))
-                .thenReturn(future);
-        // run first squid reload
-        clock.setInstant(Instant.now());
-        controller.tellSquidToReloadConfig();
-
-        // reload must have been scheduled after grace period
-        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-        InOrder inOrder = Mockito.inOrder(executorService);
-        inOrder.verify(executorService).schedule(captor.capture(), Mockito.eq((long) graceTimeBeforeReloads), Mockito.eq(TimeUnit.MILLISECONDS));
-        // actually run update
-        captor.getValue().run();
-
-        // run second reload within grace period
-        clock.setInstant(clock.instant().plus(100, ChronoUnit.MILLIS));
-        future.setDelay(100L);  // previous reload (1) is still in grace period
-        controller.tellSquidToReloadConfig();
-        inOrder.verifyNoMoreInteractions();
-
-        // run third reload after grace period but within minimum reload time
-        clock.setInstant(clock.instant().plus(200, ChronoUnit.MILLIS));
-        future.setDelay(-100L);  // reload (1) is in progress
-        controller.tellSquidToReloadConfig();
-        inOrder.verify(executorService).schedule(Mockito.any(Runnable.class), Mockito.eq(2000L), Mockito.eq(TimeUnit.MILLISECONDS));
-
-        // run fourth reload within minimum reload time of first one -> should be ignored as one is already scheduled
-        clock.setInstant(clock.instant().plus(100, ChronoUnit.MILLIS));
-        future.setDelay(1900L); // previous scheduled reload (3) has not been started yet
-        controller.tellSquidToReloadConfig();
-        inOrder.verifyNoMoreInteractions();
-
-        // run fifth reload after minimum reload time
-        clock.setInstant(clock.instant().plus(2 * minimumTimeBetweenReloads, ChronoUnit.MILLIS));
-        future.setDone(true);
-        controller.tellSquidToReloadConfig();
-        inOrder.verify(executorService).schedule(Mockito.any(Runnable.class), Mockito.eq((long) graceTimeBeforeReloads), Mockito.eq(TimeUnit.MILLISECONDS));
-    }
 
     @Test
     public void testScheduledReload() throws IOException, InterruptedException {
@@ -335,10 +273,7 @@ public class SquidConfigControllerTest {
         Assert.assertNotNull(sslStateListener);
         sslStateListener.onInit(true);
 
-        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-        Mockito.verify(executorService).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
-        captor.getValue().run();
-        Mockito.verify(scriptRunner).runScript(squidReconfigureScript);
+        verify(reloadingService).tellSquidToReloadConfig();
     }
 
     @Test
@@ -350,8 +285,7 @@ public class SquidConfigControllerTest {
         Mockito.verify(squidAclMocks.get("vpn/vpn-1.acl")).setDevices(devices);
         Mockito.verify(squidAclMocks.get("vpn/vpn-1.acl")).update();
 
-        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-        Mockito.verify(executorService).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService).tellSquidToReloadConfig();
     }
 
     @Test
@@ -374,8 +308,7 @@ public class SquidConfigControllerTest {
         Mockito.verify(filteredClientsAcl).setDevices(devices);
         Mockito.verify(filteredClientsAcl).update();
 
-        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-        Mockito.verify(executorService).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService).tellSquidToReloadConfig();
     }
 
     @Test
@@ -391,7 +324,7 @@ public class SquidConfigControllerTest {
         verify(filteredClientsAcl).update();
         verify(mobileClientsAcl).update();
         verify(mobileClientsPrivateNetworkAccessAcl).update();
-        Mockito.verifyNoInteractions(executorService);
+        Mockito.verifyNoInteractions(reloadingService);
     }
 
     @Test
@@ -413,8 +346,7 @@ public class SquidConfigControllerTest {
             changeListenerCaptor.getValue().onChange(new Device());
         }
 
-        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
-        Mockito.verify(executorService, Mockito.times(aclMocks.length)).schedule(captor.capture(), Mockito.anyLong(), Mockito.eq(TimeUnit.MILLISECONDS));
+        verify(reloadingService, Mockito.times(aclMocks.length)).tellSquidToReloadConfig();
     }
 
     @Test
@@ -474,7 +406,6 @@ public class SquidConfigControllerTest {
                 xForwardDomainsPath,
                 xForwardIpsPath,
                 X_FORWARD_IPS,
-                squidReconfigureScript,
                 squidClearCertCacheScript,
                 confTemplateFilePath,
                 confStaticFilePath,
@@ -482,67 +413,19 @@ public class SquidConfigControllerTest {
                 confNoSslExclusivePath,
                 outputConfigFile,
                 CACHE_LOG,
-                graceTimeBeforeReloads,
-                minimumTimeBetweenReloads,
                 sslKeyFilePath,
                 sslCertFilePath,
                 squidWorkers,
                 CONTROL_BAR_HOST,
                 CONTROL_BAR_FALLBACK_IP,
                 EBLOCKER_DNS_NAMES,
-                clock, scriptRunner, dataSource, sslService,
-                networkInterface, jsonWebTokenHandler, executorService, networkServices,
+                scriptRunner, reloadingService, dataSource, sslService,
+                networkInterface, jsonWebTokenHandler, networkServices,
                 deviceService, squidAclFactory,
                 openVpnServerService,
                 environment,
-                prefixMonitor);
+                prefixMonitor,
+                featureServiceSubscriber);
     }
 
-    private static class MockFuture<V> implements ScheduledFuture<V> {
-        private boolean done;
-        private long delay;
-
-        @Override
-        public long getDelay(TimeUnit unit) {
-            return delay;
-        }
-
-        public void setDelay(long delay) {
-            this.delay = delay;
-        }
-
-        @Override
-        public int compareTo(Delayed o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isCancelled() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isDone() {
-            return done;
-        }
-
-        public void setDone(boolean done) {
-            this.done = done;
-        }
-
-        @Override
-        public V get() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public V get(long timeout, TimeUnit unit) {
-            throw new UnsupportedOperationException();
-        }
-    }
 }

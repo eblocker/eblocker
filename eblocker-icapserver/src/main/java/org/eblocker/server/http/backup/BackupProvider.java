@@ -25,9 +25,14 @@ import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.eblocker.crypto.CryptoService;
+import org.eblocker.crypto.json.JsonEncryptionModule;
 import org.eblocker.server.common.data.IpAddressModule;
+import org.eblocker.server.common.data.backup.BackupWarning;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -35,9 +40,18 @@ import java.util.jar.JarOutputStream;
 /**
  * A BackupProvider exports/imports configuration data to/from one or more
  * files in the configuration JAR file.
+ *
+ * A new BackupProvider is created for each export, import and verification action.
+ *
+ * It stores any warnings that may have occurred during an action. For example,
+ * if the password was not provided for the import (because the user forgot it),
+ * all providers that restore encrypted data should add a warning that they could
+ * not restore it.
  */
 public abstract class BackupProvider {
     final ObjectMapper objectMapper; // provide a non-closing ObjectMapper for derived classes
+    final private List<BackupWarning> warnings = new ArrayList<>();
+    protected boolean encryptionEnabled;
 
     public BackupProvider() {
         // It is important that the ObjectMapper does not close the stream,
@@ -48,6 +62,18 @@ public abstract class BackupProvider {
         initializeMapper(objectMapper);
         objectMapper.registerModule(new IpAddressModule());
         objectMapper.registerModule(new JavaTimeModule());
+    }
+
+    /**
+     * Create a backup provider with optional support for @JsonEncrypt annotation.
+     * @param cryptoService if not null, a JsonEncryptionModule is registered in the ObjectMapper
+     */
+    public BackupProvider(@Nullable CryptoService cryptoService) {
+        this();
+        if (cryptoService != null) {
+            encryptionEnabled = true;
+            objectMapper.registerModule(new JsonEncryptionModule(objectMapper, cryptoService));
+        }
     }
 
     /**
@@ -70,21 +96,18 @@ public abstract class BackupProvider {
 
     /**
      * Export the configuration to the given JarOutputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException;
+    public abstract void exportConfiguration(JarOutputStream outputStream) throws IOException;
 
     /**
      * Import the configuration from the given JarInputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+    public abstract void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 
     /**
      * Verify the configuration from the given JarInputStream.
-     * @param cryptoService is null if the user has not provided a password
      */
-    public abstract void verifyConfiguration(JarInputStream jarStream, CryptoService cryptoService, int schemaVersion) throws IOException;
+    public abstract void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 
     /**
      * Write the next entry into the given JarOutputStream.
@@ -117,5 +140,21 @@ public abstract class BackupProvider {
         if (entry.isDirectory()) {
             throw new CorruptedBackupException("Entry " + name + " is a directory.");
         }
+    }
+
+    protected void addWarning(BackupWarning warning) {
+        warnings.add(warning);
+    }
+
+    public List<BackupWarning> getWarnings() {
+        return warnings;
+    }
+
+    public boolean canEncrypt() {
+        return encryptionEnabled;
+    }
+
+    public boolean canDecrypt() {
+        return encryptionEnabled;
     }
 }

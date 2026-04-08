@@ -20,8 +20,11 @@ import org.eblocker.server.common.data.openvpn.ExternalAddressType;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 
 public class VpnServerStatus {
+    // Server status:
     private boolean isRunning;
     private boolean isFirstStart;
+
+    // External access to server:
     private String host;
     private Integer mappedPort;
     private ExternalAddressType externalAddressType;

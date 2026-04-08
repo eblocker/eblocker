@@ -17,5 +17,5 @@
 package org.eblocker.server.common.data.events;
 
 public interface EventLogger {
-    public void log(Event event);
+    void log(Event event);
 }

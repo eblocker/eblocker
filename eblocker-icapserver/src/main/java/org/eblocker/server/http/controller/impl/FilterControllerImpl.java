@@ -17,6 +17,7 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.page.PageContext;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
@@ -60,8 +61,8 @@ public class FilterControllerImpl extends SessionContextController implements Fi
         if (pageContext != null) {
             totalBlocked = pageContext.getBlockedAds() + pageContext.getBlockedTrackings();
         }
-        response.addHeader("Cache-Control", "private, no-cache, no-store");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.CACHE_CONTROL, "private, no-cache, no-store");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         return Collections.singletonMap("badge", totalBlocked);
     }
 

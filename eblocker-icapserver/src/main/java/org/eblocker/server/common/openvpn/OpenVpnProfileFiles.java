@@ -132,6 +132,10 @@ public class OpenVpnProfileFiles {
         }
     }
 
+    public byte[] readConfigOptionFile(int id, String option) throws IOException {
+        return Files.readAllBytes(Paths.get(getOptionFile(id, option)));
+    }
+
     public File writeTransientCredentialsFile(VpnProfile vpnProfile) {
         VpnLoginCredentials credentials = vpnProfile.getLoginCredentials();
         if (credentials != null) {

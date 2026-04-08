@@ -23,9 +23,12 @@ import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.crypto.pki.RevocationInfo;
 import org.eblocker.crypto.pki.RevocationReason;
+import org.eblocker.server.common.data.openvpn.OpenVpnServerCaKeys;
+import org.eblocker.server.common.data.openvpn.OpenVpnServerDeviceKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,9 +50,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * CA for OpenVPN
+ */
 public class OpenVpnCa {
     private static final String CERT_EXTENSION = ".crt";
     private static final String KEY_EXTENSION = ".key";
@@ -153,6 +161,62 @@ public class OpenVpnCa {
     }
 
     /**
+     * Create a backup of all certificates, all keys and the CRL
+     * @return OpenVpnServerCaKey or null if the CA has not been created yet
+     */
+    @Nullable
+    public OpenVpnServerCaKeys exportCertificatesAndKeys() throws IOException {
+        OpenVpnServerCaKeys data = new OpenVpnServerCaKeys();
+        data.setCaCert(readFile(getCaCertificatePath()));
+        data.setCaKey(readFile(getCaKeyPath()));
+        if (data.getCaKey() == null || data.getCaCert() == null) {
+            // CA was not created yet
+            return null;
+        }
+        data.setServerCert(readFile(getServerCertificatePath()));
+        data.setServerKey(readFile(getServerKeyPath()));
+        data.setCrl(readFile(getCrlPath()));
+        data.setDeviceKeys(getActiveClientIds().stream()
+                .map(deviceId -> {
+                    try {
+                        OpenVpnServerDeviceKeys deviceKeys = new OpenVpnServerDeviceKeys();
+                        deviceKeys.setDeviceId(deviceId);
+                        deviceKeys.setClientCert(readFile(getClientCertificatePath(deviceId)));
+                        deviceKeys.setClientKey(readFile(getClientKeyPath(deviceId)));
+                        if (deviceKeys.getClientKey() == null || deviceKeys.getClientCert() == null) {
+                            log.error("Could not get key and/or certificate for device {}. Omitting it from export.", deviceId);
+                            return null;
+                        }
+                        return deviceKeys;
+                    } catch (IOException e) {
+                        log.error("Could not get key and/or certificate for device {}. Omitting it from export.", deviceId, e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+        return data;
+    }
+
+    /**
+     * Import a backup of all certificates, all keys and the CRL
+     */
+    public void importCertificatesAndKeys(@Nullable OpenVpnServerCaKeys data) throws IOException {
+        if (data == null) {
+            return; // nothing to import
+        }
+        writeFile(getCaKeyPath(), data.getCaKey());
+        writeFile(getCaCertificatePath(), data.getCaCert());
+        writeFile(getServerKeyPath(), data.getServerKey());
+        writeFile(getServerCertificatePath(), data.getServerCert());
+        writeFile(getCrlPath(), data.getCrl());
+        for (OpenVpnServerDeviceKeys deviceKeys: data.getDeviceKeys()) {
+            writeFile(getClientKeyPath(deviceKeys.getDeviceId()), deviceKeys.getClientKey());
+            writeFile(getClientCertificatePath(deviceKeys.getDeviceId()), deviceKeys.getClientCert());
+        }
+    }
+
+    /**
      * Returns IDs of all clients that currently have a certificate which has not been revoked
      */
     public Set<String> getActiveClientIds() throws IOException {
@@ -219,6 +283,33 @@ public class OpenVpnCa {
         X509Certificate cert = PKI.loadCertificate(instream(getCaCertificatePath()));
         PrivateKey key = PKI.loadPrivateKey(instream(getCaKeyPath()));
         return new CertificateAndKey(cert, key);
+    }
+
+    /**
+     * Reads ASCII encoded file
+     * @param path Path to read from
+     * @return String or null if file does not exist
+     * @throws IOException
+     */
+    @Nullable
+    private String readFile(Path path) throws IOException {
+        if (path.toFile().exists()) {
+            return new String(instream(path).readAllBytes(), StandardCharsets.US_ASCII);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Write ASCII encoded string to file.
+     * @param path Path of the file to write.
+     * @param data String to write. If this is null, the file is not written.
+     */
+    private void writeFile(Path path, @Nullable String data) throws IOException {
+        if (data == null) {
+            return;
+        }
+        outstream(path).write(data.getBytes(StandardCharsets.US_ASCII));
     }
 
     // Ensure that all CRL entries have a revocation reason

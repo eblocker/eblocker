@@ -125,7 +125,7 @@ public class CompressProcessor implements TransactionProcessor {
 
         // no brotli compressor available so we just re-compress it as gzip or deflate if acceptable
         if (transaction.getContentEncoding() == ContentEncoding.BROTLI) {
-            String acceptEncodingValue = transaction.getRequest().headers().get("Accept-Encoding");
+            String acceptEncodingValue = transaction.getRequest().headers().get(HttpHeaders.Names.ACCEPT_ENCODING);
             if (acceptEncodingValue == null) {
                 return ContentEncoding.NONE;
             }

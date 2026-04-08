@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.network.TorController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,14 +29,11 @@ import java.util.Set;
 public class TorConfigBackupProviderTest extends BackupProviderTestBase {
     private TorController torController;
     private TorConfigBackupProvider provider;
-    private DataSource dataSource;
 
     @BeforeEach
     public void setUp() {
         torController = Mockito.mock(TorController.class);
         provider = new TorConfigBackupProvider(torController);
-        dataSource = Mockito.mock(DataSource.class);
-        Mockito.when(dataSource.getVersion()).thenReturn("42");
     }
 
     @Test
@@ -48,7 +44,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
 
         Mockito.when(torController.getCurrentExitNodeCountries()).thenReturn(countries);
 
-        exportAndImportWith(dataSource, provider);
+        exportVerifyImport(provider);
 
         Set<String> expectedCountries = new HashSet<>();
         expectedCountries.add("xy");
@@ -62,7 +58,7 @@ public class TorConfigBackupProviderTest extends BackupProviderTestBase {
 
         Mockito.when(torController.getCurrentExitNodeCountries()).thenReturn(countries);
 
-        exportAndImportWith(dataSource, provider);
+        exportVerifyImport(provider);
 
         Mockito.verify(torController).setAllowedExitNodesCountries(Collections.EMPTY_SET);
     }

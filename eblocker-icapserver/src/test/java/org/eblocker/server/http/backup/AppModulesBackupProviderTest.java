@@ -16,7 +16,6 @@
  */
 package org.eblocker.server.http.backup;
 
-import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.http.service.AppModuleService;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,14 +32,11 @@ import java.util.stream.Collectors;
 public class AppModulesBackupProviderTest extends BackupProviderTestBase {
     private AppModuleService service;
     private AppModulesBackupProvider provider;
-    private DataSource dataSource;
 
     @BeforeEach
     public void setUp() {
         service = Mockito.mock(AppModuleService.class);
         provider = new AppModulesBackupProvider(service);
-        dataSource = Mockito.mock(DataSource.class);
-        Mockito.when(dataSource.getVersion()).thenReturn("40");
     }
 
     @Test
@@ -53,7 +49,7 @@ public class AppModulesBackupProviderTest extends BackupProviderTestBase {
         List<AppWhitelistModule> allModules = Arrays.asList(builtInTemp, builtInUnmodified, builtInModified, userDefined);
         Mockito.when(service.getAll()).thenReturn(allModules);
 
-        exportAndImportWith(dataSource, provider);
+        exportVerifyImport(provider);
 
         List<AppWhitelistModule> modulesToBeImported = Arrays.asList(builtInModified, userDefined);
         Map<Integer, Boolean> enabledStates = allModules.stream().collect(Collectors.toMap(AppWhitelistModule::getId, AppWhitelistModule::isEnabled));

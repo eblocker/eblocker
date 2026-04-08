@@ -98,7 +98,7 @@ public class MobileConnectionCheckService {
     }
 
     private void openPort() throws UpnpPortForwardingException {
-        int externalPort = openVpnServerService.getOpenVpnTempMappedPort();
+        int externalPort = openVpnServerService.getOpenVpnMappedPort();
         List<UpnpPortForwardingResult> openedPorts = upnpService.addPortForwarding(externalPort, internalPort,
                 portForwardingDuration, portForwardingDescription);
         Optional<UpnpPortForwardingResult> potentiallyFailedOpening = openedPorts.stream()

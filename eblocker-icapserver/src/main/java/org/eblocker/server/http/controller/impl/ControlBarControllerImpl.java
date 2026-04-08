@@ -18,6 +18,7 @@ package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.UserModule;
@@ -166,8 +167,8 @@ public class ControlBarControllerImpl extends SessionContextController implement
 
     @Override
     public Boolean getDeviceRestrictions(Request request, Response response) {
-        response.addHeader("Cache-Control", "private, no-cache, no-store");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.CACHE_CONTROL, "private, no-cache, no-store");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
@@ -244,8 +245,8 @@ public class ControlBarControllerImpl extends SessionContextController implement
 
     @Override
     public IconState getIconState(Request request, Response response) {
-        response.addHeader("Cache-Control", "private, no-cache, no-store");
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.CACHE_CONTROL, "private, no-cache, no-store");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         // First, find out if an anonymization service is used
         Session session = getSession(request);
         Device device = deviceService.getDeviceById(session.getDeviceId());

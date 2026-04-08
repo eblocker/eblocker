@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.http.controller.ConnectionCheckController;
 import org.restexpress.Request;
@@ -31,7 +32,7 @@ public class ConnectionCheckControllerImpl implements ConnectionCheckController 
     public void routingTest(Request request, Response response) {
         response.setResponseCode(HttpResponseStatus.NO_CONTENT.code());
         response.setResponseStatus(HttpResponseStatus.NO_CONTENT);
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     }
 
 }

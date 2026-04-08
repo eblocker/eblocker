@@ -17,27 +17,23 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
-import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.CryptoServiceFactory;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.http.backup.AppModulesBackupProvider;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
+import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProvider;
+import org.eblocker.server.http.backup.BackupProviderFactory;
 import org.eblocker.server.http.backup.CorruptedBackupException;
-import org.eblocker.server.http.backup.DevicesBackupProvider;
-import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
-import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -48,53 +44,63 @@ import java.util.jar.Manifest;
  * The configuration version is written to the JAR's manifest file.
  */
 public class ConfigurationBackupService {
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupService.class);
+    private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
+
     private static final int VERSION_1_ONLY_APP_MODULES = 1;
     private static final int VERSION_2_APP_MODULES_AND_DEVICES = 2;
     private static final int VERSION_3_APP_MODULES_DEVICES_TOR = 3;
     private static final int VERSION_4_WITH_KEYS = 4;
-    private static final int CURRENT_VERSION = 4;
+    private static final int VERSION_5_FULL = 5;
+    private static final int CURRENT_VERSION = VERSION_5_FULL;
+    private static final int MIN_VERSION = VERSION_1_ONLY_APP_MODULES;
+    private static final int MAX_VERSION = CURRENT_VERSION;
     private static final byte[] salt = {-58, -73, 41, -28, 37, 23, -61, 93, 47, -57, -45, 23, -77, 97, 102, 49};
-    static final String CURRENT_VERSION_KEY = "eBlocker-Backup-Version";
-    static final String CURRENT_SCHEMA_VERSION = "Schema-Version";
-    static final String FALLBACK_SCHEMA_VERSION = "0";
-    static final String PASSWORD_REQUIRED = "Password-Required";
-    static final String PASSWORD_REQUIRED_DEFAULT = "false";
+    private final BackupProviderFactory providerFactory;
 
-    private Map<Integer, List<BackupProvider>> versionizedBackupProviders;
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupService.class);
     private DataSource dataSource;
 
     @Inject
-    public ConfigurationBackupService(DataSource dataSource, AppModulesBackupProvider appModulesBackupProvider,
-                                      DevicesBackupProvider devicesBackupProvider, TorConfigBackupProvider torConfigBackupProvider,
-                                      HttpsKeysBackupProvider httpsKeysBackupProvider) {
-        this(dataSource);
-
-        versionizedBackupProviders.put(VERSION_1_ONLY_APP_MODULES,
-                List.of(appModulesBackupProvider));
-
-        versionizedBackupProviders.put(VERSION_2_APP_MODULES_AND_DEVICES,
-                List.of(appModulesBackupProvider, devicesBackupProvider));
-
-        versionizedBackupProviders.put(VERSION_3_APP_MODULES_DEVICES_TOR,
-                List.of(appModulesBackupProvider, devicesBackupProvider, torConfigBackupProvider));
-
-        versionizedBackupProviders.put(VERSION_4_WITH_KEYS,
-                List.of(httpsKeysBackupProvider, appModulesBackupProvider, devicesBackupProvider, torConfigBackupProvider)); // fail early if the password is wrong!
-    }
-
-    public ConfigurationBackupService(DataSource dataSource, BackupProvider backupProvider) {
-        this(dataSource);
-        versionizedBackupProviders.put(CURRENT_VERSION, List.of(backupProvider));
-    }
-
-    public ConfigurationBackupService(DataSource dataSource) {
-        versionizedBackupProviders = new HashMap<>();
+    public ConfigurationBackupService(DataSource dataSource, BackupProviderFactory providerFactory) {
+        this.providerFactory = providerFactory;
         this.dataSource = dataSource;
     }
 
-    public void exportConfiguration(OutputStream outputStream) throws IOException {
-        exportConfiguration(outputStream, null);
+    private List<BackupProvider> createBackupProviders(int version, @Nullable CryptoService cryptoService) {
+        switch (version) {
+            case VERSION_1_ONLY_APP_MODULES:
+                return List.of(providerFactory.createAppModulesBackupProvider());
+
+            case VERSION_2_APP_MODULES_AND_DEVICES:
+                return List.of(
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createDevicesBackupProvider());
+
+            case VERSION_3_APP_MODULES_DEVICES_TOR:
+                return List.of(
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createTorConfigBackupProvider());
+
+            case VERSION_4_WITH_KEYS:
+                return List.of(
+                        providerFactory.createHttpsKeysBackupProvider(cryptoService), // fail early if the password is wrong!
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createTorConfigBackupProvider());
+
+            case VERSION_5_FULL:
+                return List.of(
+                        providerFactory.createHttpsKeysBackupProvider(cryptoService),
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createTorConfigBackupProvider(),
+                        providerFactory.createOpenVpnServerBackupProvider(cryptoService),
+                        providerFactory.createOpenVpnClientBackupProvider(cryptoService));
+
+            default:
+                throw new UnsupportedBackupVersionException(version);
+        }
     }
 
     /**
@@ -112,8 +118,8 @@ public class ConfigurationBackupService {
         CryptoService cryptoService = createCryptoService(password);
 
         try (JarOutputStream jarStream = new JarOutputStream(outputStream, manifest)) {
-            for (BackupProvider provider : versionizedBackupProviders.get(CURRENT_VERSION)) {
-                provider.exportConfiguration(jarStream, cryptoService);
+            for (BackupProvider provider : createBackupProviders(CURRENT_VERSION, cryptoService)) {
+                provider.exportConfiguration(jarStream);
             }
         }
     }
@@ -128,11 +134,8 @@ public class ConfigurationBackupService {
     public boolean requiresPassword(InputStream inputStream) throws IOException {
         try (JarInputStream jarStream = new JarInputStream(inputStream)) {
             Manifest manifest = jarStream.getManifest();
-            if (manifest == null) {
-                throw new CorruptedBackupException("Missing manifest file");
-            }
-            BackupAttributes attribs = new BackupAttributes(manifest.getMainAttributes());
-            return attribs.passwordRequired;
+            BackupAttributes attribs = getVerifiedAttributes(manifest);
+            return attribs.isPasswordRequired();
         }
     }
 
@@ -143,24 +146,19 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void verifyConfiguration(InputStream inputStream, String password) throws IOException {
+    public ConfigBackupImportResult verifyConfiguration(InputStream inputStream, String password) throws IOException {
+        ConfigBackupImportResult result = new ConfigBackupImportResult();
         try (JarInputStream jarStream = new JarInputStream(inputStream)) {
             Manifest manifest = jarStream.getManifest();
-            if (manifest == null) {
-                throw new CorruptedBackupException("Missing manifest file");
-            }
-            BackupAttributes attribs = new BackupAttributes(manifest.getMainAttributes());
-
+            BackupAttributes attribs = getVerifiedAttributes(manifest);
             CryptoService cryptoService = createCryptoService(password);
 
-            for (BackupProvider provider : versionizedBackupProviders.get(attribs.version)) {
-                provider.verifyConfiguration(jarStream, cryptoService, attribs.schemaVersion);
+            for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
+                provider.verifyConfiguration(jarStream, attribs.getSchemaVersion());
+                result.addWarnings(provider.getWarnings());
             }
         }
-    }
-
-    public void importConfiguration(InputStream inputStream) throws IOException {
-        importConfiguration(inputStream, null);
+        return result;
     }
 
     /**
@@ -170,20 +168,24 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void importConfiguration(InputStream inputStream, String password) throws IOException {
+    public ConfigBackupImportResult importConfiguration(InputStream inputStream, String password) throws IOException {
+        ConfigBackupImportResult result = new ConfigBackupImportResult();
         try (JarInputStream jarStream = new JarInputStream(inputStream)) {
             Manifest manifest = jarStream.getManifest();
-            if (manifest == null) {
-                throw new CorruptedBackupException("Missing manifest file");
-            }
-            BackupAttributes attribs = new BackupAttributes(manifest.getMainAttributes());
-
+            BackupAttributes attribs = getVerifiedAttributes(manifest);
             CryptoService cryptoService = createCryptoService(password);
 
-            for (BackupProvider provider : versionizedBackupProviders.get(attribs.version)) {
-                provider.importConfiguration(jarStream, cryptoService, attribs.schemaVersion);
+            for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
+                long start = System.currentTimeMillis();
+                provider.importConfiguration(jarStream, attribs.getSchemaVersion());
+                long elapsed = System.currentTimeMillis() - start;
+
+                result.addWarnings(provider.getWarnings());
+
+                STATUS.info("Configuration backup imported by {} in {}ms", provider.getClass().getSimpleName(), elapsed);
             }
         }
+        return result;
     }
 
     CryptoService createCryptoService(String password) throws IOException {
@@ -198,41 +200,20 @@ public class ConfigurationBackupService {
         }
     }
 
+    private BackupAttributes getVerifiedAttributes(Manifest manifest) {
+        if (manifest == null) {
+            throw new CorruptedBackupException("Missing manifest file");
+        }
+        BackupAttributes attribs = new BackupAttributes(manifest.getMainAttributes());
+        int version = attribs.getVersion();
+        if (version < MIN_VERSION || version > MAX_VERSION) {
+            throw new UnsupportedBackupVersionException(version);
+        }
+        return attribs;
+    }
+
     BackupAttributes getBackupAttributes(boolean passwordRequired) {
         return new BackupAttributes(CURRENT_VERSION, Integer.parseInt(dataSource.getVersion()), passwordRequired);
-
     }
 
-    public class BackupAttributes {
-        private int version;
-        private int schemaVersion;
-        private boolean passwordRequired = false;
-
-        public BackupAttributes(int version, int schemaVersion, boolean passwordRequired) {
-            this.version = version;
-            this.schemaVersion = schemaVersion;
-            this.passwordRequired = passwordRequired;
-        }
-
-        private BackupAttributes(Attributes attributes) {
-            version = Integer.parseInt(attributes.getValue(CURRENT_VERSION_KEY));
-            if (!versionizedBackupProviders.containsKey(version)) {
-                throw new UnsupportedBackupVersionException(version);
-            }
-            schemaVersion = Integer.parseInt(getOrDefault(attributes, CURRENT_SCHEMA_VERSION, FALLBACK_SCHEMA_VERSION));
-            passwordRequired = Boolean.parseBoolean(getOrDefault(attributes, PASSWORD_REQUIRED, PASSWORD_REQUIRED_DEFAULT));
-        }
-
-        private String getOrDefault(Attributes attributes, String key, String defaultValue) {
-            String value = attributes.getValue(key);
-            return value != null ? value : defaultValue;
-        }
-
-        private void addToAttributes(Attributes attributes) {
-            attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
-            attributes.putValue(CURRENT_VERSION_KEY, String.valueOf(version));
-            attributes.putValue(CURRENT_SCHEMA_VERSION, String.valueOf(schemaVersion));
-            attributes.putValue(PASSWORD_REQUIRED, String.valueOf(passwordRequired));
-        }
-    }
 }

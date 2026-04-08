@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
@@ -49,7 +50,7 @@ public class HttpTransactionContext implements TransactionContext {
 
     @Override
     public String getReferrer() {
-        return request.headers().get("Referer");
+        return request.headers().get(HttpHeaders.Names.REFERER);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class HttpTransactionContext implements TransactionContext {
 
     @Override
     public String getAccept() {
-        return request.headers().get("Accept");
+        return request.headers().get(HttpHeaders.Names.ACCEPT);
     }
 
     @Override

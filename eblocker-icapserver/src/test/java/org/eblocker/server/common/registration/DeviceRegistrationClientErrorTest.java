@@ -18,14 +18,13 @@ package org.eblocker.server.common.registration;
 
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.error.ClientRequestException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockserver.model.Header;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 

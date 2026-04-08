@@ -18,7 +18,6 @@ package org.eblocker.server.http.backup;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
-import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.network.TorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
@@ -41,23 +39,23 @@ public class TorConfigBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         Set<String> torCountries = torController.getCurrentExitNodeCountries();
 
         writeNextEntry(outputStream, TOR_ENTRY, objectMapper.writeValueAsBytes(torCountries));
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, false);
     }
 
     @Override
-    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    public void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, true);
     }
 
-    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+    private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
         getNextEntry(inputStream, TOR_ENTRY);
         Set<String> restoredTorCountries = objectMapper.readValue(inputStream, new TypeReference<Set<String>>() {});
         if (!dryRun) {

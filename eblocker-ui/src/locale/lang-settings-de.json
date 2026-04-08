@@ -943,6 +943,7 @@
                     "OK": "OK"
                 },
                 "ERROR": {
+                    "INVALID_FORMAT": "Ungültiges Format.",
                     "VALUE_NOT_UNIQUE": "Diese Eingabe ist bereits vergeben.",
                     "VALUE_REQUIRED": "Bitte gib einen Wert an.",
                     "VALUE_TOO_LONG": "Die Eingabe ist zu lang.",

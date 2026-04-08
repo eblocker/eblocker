@@ -38,14 +38,14 @@
                                     is-edit="true"
                                     edit-callback="vm.editIpV4($event, vm.device)"></eb-label-container>
             </div>
-            <!-- Statische IPv6 (nur wenn DHCP aktiv) -->
-            <div ng-if="vm.dhcpActive && !vm.device.isGateway && !vm.device.isEblocker"
+            <!-- Statische IPv6: eBlocker weist Geräten noch keine IPv6-Adressen zu, daher ausgeblendet -->
+            <!-- <div ng-if="vm.dhcpActive && !vm.device.isGateway && !vm.device.isEblocker"
                  flex-gt-xs="25" style="width: 100%;">
                 <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_STATIC_IPV6' | translate}}"
                                     config="vm.deviceStaticIpV6"
                                     is-edit="true"
                                     edit-callback="vm.editIpV6($event, vm.device)"></eb-label-container>
-            </div>
+            </div> -->
         </div>
     </div>
 

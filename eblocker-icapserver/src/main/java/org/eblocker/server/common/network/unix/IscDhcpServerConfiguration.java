@@ -111,8 +111,8 @@ public class IscDhcpServerConfiguration {
                     if (device.isIpAddressFixed() && !device.isGateway()) {
                         // Use manually configured static IP if set, otherwise fall back to the observed IP
                         String fixedAddress = null;
-                        if (device.getStaticIpAddress() != null && !device.getStaticIpAddress().isEmpty()) {
-                            fixedAddress = device.getStaticIpAddress();
+                        if (device.getStaticIpAddress() != null) {
+                            fixedAddress = device.getStaticIpAddress().toString();
                         } else if (localIpAddresses.size() == 1 && !localIpAddresses.get(0).equals(c.getIpAddress())) {
                             fixedAddress = localIpAddresses.get(0);
                         }
@@ -139,8 +139,8 @@ public class IscDhcpServerConfiguration {
                         && device.isEnabled()) {
                     // Use manually configured static IP if set, otherwise fall back to the observed IP
                     String fixedAddress = null;
-                    if (device.getStaticIpAddress() != null && !device.getStaticIpAddress().isEmpty()) {
-                        fixedAddress = device.getStaticIpAddress();
+                    if (device.getStaticIpAddress() != null) {
+                        fixedAddress = device.getStaticIpAddress().toString();
                     } else if (localIpAddresses.size() == 1
                             && !localIpAddresses.get(0).equals(c.getIpAddress())) {
                         fixedAddress = localIpAddresses.get(0);

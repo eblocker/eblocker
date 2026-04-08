@@ -943,6 +943,7 @@
                     "OK" : "Ok"
                 },
                 "ERROR" : {
+                    "INVALID_FORMAT" : "Invalid format.",
                     "VALUE_NOT_UNIQUE" : "Input has already been used.",
                     "VALUE_REQUIRED" : "Input is required.",
                     "VALUE_TOO_LONG" : "Input is too long.",

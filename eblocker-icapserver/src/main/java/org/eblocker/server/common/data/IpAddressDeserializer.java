@@ -31,7 +31,10 @@ public class IpAddressDeserializer<T extends IpAddress> extends StdDeserializer<
     @Override
     public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String value = p.getValueAsString();
-        return value != null ? (T) IpAddress.parse(value) : null;
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        return (T) IpAddress.parse(value);
     }
 
 }

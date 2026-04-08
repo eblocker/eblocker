@@ -242,6 +242,20 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         return onChange(vm.device);
     }
 
+    // Validates an IPv4 address string. Returns a resolved promise if valid (or empty),
+    // or a rejected promise with reason 'invalid-format' if the format is invalid.
+    function validateIpV4(ip) {
+        if (!ip || ip === '') {
+            return $q.resolve();
+        }
+        const ipv4Pattern = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+        const match = ipv4Pattern.exec(ip);
+        if (!match || match.slice(1).some(function(octet) { return parseInt(octet, 10) > 255; })) {
+            return $q.reject('invalid-format');
+        }
+        return $q.resolve();
+    }
+
     function editIpV4(event, entry) {
         if (!vm.dhcpActive || !angular.isObject(entry) || entry.isGateway || entry.isEblocker) {
             return;
@@ -251,14 +265,14 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         };
         const subject = {value: entry.staticIpAddress || '', id: entry.id};
         DialogService.
-        openEditDialog(event, subject, msgKeys, editIpV4ActionOk, undefined, 15, 1).
+        openEditDialog(event, subject, msgKeys, editIpV4ActionOk, validateIpV4, 15, 0).
         then(function success(updated) {
             vm.deviceStaticIpV4.value = vm.device.staticIpAddress || '';
         });
     }
 
     function editIpV4ActionOk(ip) {
-        vm.device.staticIpAddress = ip;
+        vm.device.staticIpAddress = ip || null;
         return onChange(vm.device);
     }
 
@@ -271,14 +285,14 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         };
         const subject = {value: entry.staticIpV6Address || '', id: entry.id};
         DialogService.
-        openEditDialog(event, subject, msgKeys, editIpV6ActionOk, undefined, 39, 1).
+        openEditDialog(event, subject, msgKeys, editIpV6ActionOk, undefined, 39, 0).
         then(function success() {
             vm.deviceStaticIpV6.value = vm.device.staticIpV6Address || '';
         });
     }
 
     function editIpV6ActionOk(ip) {
-        vm.device.staticIpV6Address = ip;
+        vm.device.staticIpV6Address = ip || null;
         return onChange(vm.device);
     }
 

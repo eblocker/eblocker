@@ -500,8 +500,22 @@ public class JedisDataSource implements DataSource {
         }
         device.setIpAddressFixed(fixed);
 
-        device.setStaticIpAddress(map.get(KEY_DHCP_STATIC_IP));
-        device.setStaticIpV6Address(map.get(KEY_DHCP_STATIC_IPV6));
+        String staticIp = map.get(KEY_DHCP_STATIC_IP);
+        if (staticIp != null && !staticIp.isEmpty()) {
+            try {
+                device.setStaticIpAddress(Ip4Address.parse(staticIp));
+            } catch (IllegalArgumentException e) {
+                log.warn("Ignoring invalid stored static IPv4 address '{}' for device {}", staticIp, device.getId());
+            }
+        }
+        String staticIpV6 = map.get(KEY_DHCP_STATIC_IPV6);
+        if (staticIpV6 != null && !staticIpV6.isEmpty()) {
+            try {
+                device.setStaticIpV6Address(Ip6Address.parse(staticIpV6));
+            } catch (IllegalArgumentException e) {
+                log.warn("Ignoring invalid stored static IPv6 address '{}' for device {}", staticIpV6, device.getId());
+            }
+        }
 
         String isVpnClient = map.get(KEY_IS_OPENVPN_CLIENT);
         if (isVpnClient != null) {
@@ -568,13 +582,13 @@ public class JedisDataSource implements DataSource {
             }
             map.put(KEY_SHOW_WARNINGS, device.getAreDeviceMessagesSettingsDefault() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_DHCP_FIXED_IP, device.isIpAddressFixed() ? VALUE_TRUE : VALUE_FALSE);
-            if (device.getStaticIpAddress() != null && !device.getStaticIpAddress().isEmpty()) {
-                map.put(KEY_DHCP_STATIC_IP, device.getStaticIpAddress());
+            if (device.getStaticIpAddress() != null) {
+                map.put(KEY_DHCP_STATIC_IP, device.getStaticIpAddress().toString());
             } else {
                 jedis.hdel(device.getId(), KEY_DHCP_STATIC_IP);
             }
-            if (device.getStaticIpV6Address() != null && !device.getStaticIpV6Address().isEmpty()) {
-                map.put(KEY_DHCP_STATIC_IPV6, device.getStaticIpV6Address());
+            if (device.getStaticIpV6Address() != null) {
+                map.put(KEY_DHCP_STATIC_IPV6, device.getStaticIpV6Address().toString());
             } else {
                 jedis.hdel(device.getId(), KEY_DHCP_STATIC_IPV6);
             }

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufOutputStream;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eblocker.crypto.CryptoException;
@@ -317,7 +318,7 @@ public class SSLControllerImpl extends SessionContextController implements SSLCo
 
         tracker.markCertificateAsInstalled(deviceId, userAgent, serialNumber, false);
 
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.setResponseCode(HttpResponseStatus.NO_CONTENT.code());
     }
 

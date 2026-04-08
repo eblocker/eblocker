@@ -59,7 +59,7 @@ public class MobileConnectionCheckServiceTest {
         upnpService = Mockito.mock(UpnpManagementService.class);
 
         OpenVpnServerService openVpnServerService = Mockito.mock(OpenVpnServerService.class);
-        Mockito.when(openVpnServerService.getOpenVpnTempMappedPort()).thenReturn(portNum);
+        Mockito.when(openVpnServerService.getOpenVpnMappedPort()).thenReturn(portNum);
 
         dataSource = Mockito.mock(DataSource.class);
 

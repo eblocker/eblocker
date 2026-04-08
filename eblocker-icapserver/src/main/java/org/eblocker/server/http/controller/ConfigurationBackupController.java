@@ -17,7 +17,8 @@
 package org.eblocker.server.http.controller;
 
 import io.netty.buffer.ByteBuf;
-import org.eblocker.server.common.data.ConfigBackupReference;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
+import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -25,6 +26,6 @@ public interface ConfigurationBackupController {
     ConfigBackupReference exportConfiguration(Request request, Response response);
     ByteBuf downloadConfiguration(Request request, Response response);
     ConfigBackupReference uploadConfiguration(Request request, Response response);
-    void importConfiguration(Request request, Response response);
-    void verifyConfiguration(Request request, Response response);
+    ConfigBackupImportResult importConfiguration(Request request, Response response);
+    ConfigBackupImportResult verifyConfiguration(Request request, Response response);
 }

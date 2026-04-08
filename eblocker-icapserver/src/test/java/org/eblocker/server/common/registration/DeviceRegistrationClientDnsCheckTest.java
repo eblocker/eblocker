@@ -16,9 +16,8 @@
  */
 package org.eblocker.server.common.registration;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.model.MediaType;
@@ -26,11 +25,13 @@ import org.mockserver.model.MediaType;
 import java.io.IOException;
 import java.text.ParseException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTestBase {
 
     private DeviceRegistrationClient deviceRegistrationClient;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException, ParseException {
         deviceRegistrationClient = createDeviceRegistrationClient();
     }
@@ -49,7 +50,7 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
                         .withBody("true")
         );
 
-        Assert.assertTrue(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));
+        assertTrue(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class DeviceRegistrationClientDnsCheckTest extends DeviceRegistrationTest
                         .withBody("false")
         );
 
-        Assert.assertFalse(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));
+        assertFalse(deviceRegistrationClient.requestMobileDnsCheck("helloworld.com"));
     }
 
     @Override

@@ -443,20 +443,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function homeVpnStart(event, status) {
-        return $mdDialog.show({
-            controller: 'VpnHomeStartController',
-            controllerAs: 'vm',
-            templateUrl: 'app/dialogs/vpn/vpn-home-start.dialog.tmpl.html',
-            parent: angular.element(document.body),
-            clickOutsideToClose:false,
-            targetEvent: event,
-            locals: {
-                status: status
-            }
-        });
-    }
-
     function networkEditMode(event, config) {
         return $mdDialog.show({
             controller: 'NetworkEditModeController',
@@ -915,7 +901,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         recordingDomainIpRangeEdit: recordingDomainIpRangeEdit,
         addDomainToApp: addDomainToApp,
         homeVpnReset: homeVpnReset,
-        homeVpnStart: homeVpnStart,
         networkEditMode: networkEditMode,
         networkEditContent: networkEditContent,
         networkExpertConfirm: networkExpertConfirm,

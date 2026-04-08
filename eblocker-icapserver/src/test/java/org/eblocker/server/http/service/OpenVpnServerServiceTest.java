@@ -16,38 +16,42 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.server.common.MockScheduledExecutorService;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.openvpn.ExternalAddressType;
 import org.eblocker.server.common.data.openvpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.openvpn.server.OpenVpnCa;
+import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.upnp.UpnpManagementService;
-import org.eblocker.server.upnp.UpnpPortForwarding;
-import org.eblocker.server.upnp.UpnpPortForwardingResult;
-import org.fourthline.cling.support.model.PortMapping.Protocol;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.time.Duration;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.LinkedList;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OpenVpnServerServiceTest {
     OpenVpnServerService service;
     ScriptRunner scriptRunner;
     DataSource dataSource;
+    DeviceService deviceService;
     UpnpManagementService upnpService;
     EblockerDnsServer dnsServer;
     DnsService dnsService;
-    ScheduledExecutorService executorService;
+    DynDnsService dynDnsService;
+    MockScheduledExecutorService executorService;
     EventLogger eventLogger;
     OpenVpnCa openVpnCa;
     String openVpnServerCommand = "openvpn-server-control";
@@ -56,109 +60,157 @@ public class OpenVpnServerServiceTest {
     int duration = 0;
     String portForwardingDescription = "eBlocker Mobile";
 
-    @Before
+    @BeforeEach
     public void setup() {
         scriptRunner = Mockito.mock(ScriptRunner.class);
         dataSource = Mockito.mock(DataSource.class);
+        deviceService = Mockito.mock(DeviceService.class);
         upnpService = Mockito.mock(UpnpManagementService.class);
         dnsServer = Mockito.mock(EblockerDnsServer.class);
         dnsService = Mockito.mock(DnsService.class);
-        executorService = Mockito.mock(ScheduledExecutorService.class);
+        dynDnsService = Mockito.mock(DynDnsService.class);
+        executorService = new MockScheduledExecutorService(Duration.ofSeconds(1)); // Method init() might take a while
         eventLogger = Mockito.mock(EventLogger.class);
         openVpnCa = Mockito.mock(OpenVpnCa.class);
     }
 
     private OpenVpnServerService createOpenVpnServerService() {
-        return new OpenVpnServerService(scriptRunner, dataSource, upnpService, dnsServer, dnsService,
-                executorService, eventLogger, openVpnServerCommand, port, tempDuration, duration,
-                portForwardingDescription, openVpnCa);
+        return new OpenVpnServerService(scriptRunner, dataSource, deviceService, upnpService, dnsServer,
+                dnsService, dynDnsService, executorService, eventLogger, openVpnServerCommand, port, tempDuration,
+                duration, portForwardingDescription, openVpnCa);
+    }
+
+    private void createAndInitService() {
+        service = createOpenVpnServerService();
+        service.init();
+        executorService.elapse(Duration.ofSeconds(2)); // so the initStartOpenVpnServer task has completed
     }
 
     @Test
-    public void testDontStartServerIfDisabled() throws IOException, InterruptedException {
+    public void testDontStartServerIfDisabled() throws Exception {
         Mockito.when(dataSource.getOpenVpnServerState()).thenReturn(false);
+        Mockito.when(dnsServer.isEnabled()).thenReturn(true);
 
-        service = createOpenVpnServerService();
-        service.init();
+        createAndInitService();
 
-        Mockito.verify(scriptRunner, Mockito.times(0)).runScript(openVpnServerCommand, "start");
+        Mockito.verify(scriptRunner, Mockito.never()).runScript(openVpnServerCommand, "start");
     }
 
     @Test
-    public void testStartServerIfEnabled() throws IOException, InterruptedException {
+    public void testStartServerIfEnabled() throws Exception {
         Mockito.when(dataSource.getOpenVpnServerState()).thenReturn(true);
+        Mockito.when(dnsServer.isEnabled()).thenReturn(true);
 
-        service = createOpenVpnServerService();
-        service.init();
+        createAndInitService();
 
-        Mockito.verify(executorService).execute(Mockito.any(Runnable.class));
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "start");
     }
 
     @Test
-    public void testSetGetExternalAddressType() {
-        service = createOpenVpnServerService();
-        service.init();
+    public void startOpenVpnServerFirstStartFailed() throws Exception {
+        Mockito.when(dataSource.getOpenVpnServerFirstRun()).thenReturn(true);
+        Mockito.when(dnsServer.isEnabled()).thenReturn(true);
 
-        service.setOpenVpnExternalAddressType(ExternalAddressType.DYN_DNS);
-        Mockito.verify(dataSource).setOpenVpnExternalAddressType(ExternalAddressType.DYN_DNS);
+        createAndInitService();
 
-        service.setOpenVpnExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
-        Mockito.verify(dataSource).setOpenVpnExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // not running
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "start")).thenReturn(1); // start fails
 
-        service.setOpenVpnExternalAddressType(ExternalAddressType.FIXED_IP);
-        Mockito.verify(dataSource).setOpenVpnExternalAddressType(ExternalAddressType.FIXED_IP);
-
-        Mockito.when(dataSource.getOpenVpnExternalAddressType()).thenReturn(ExternalAddressType.DYN_DNS,
-                ExternalAddressType.EBLOCKER_DYN_DNS, ExternalAddressType.FIXED_IP);
-        Assert.assertEquals(ExternalAddressType.DYN_DNS, service.getOpenVpnExternalAddressType());
-        Assert.assertEquals(ExternalAddressType.EBLOCKER_DYN_DNS, service.getOpenVpnExternalAddressType());
-        Assert.assertEquals(ExternalAddressType.FIXED_IP, service.getOpenVpnExternalAddressType());
-
-        Mockito.verify(dataSource, Mockito.times(3)).getOpenVpnExternalAddressType();
+        VpnServerStatus status = service.setOpenVpnServerStatus(startServerRequest());
+        assertFalse(status.isRunning());
     }
 
     @Test
-    public void testSetGetPortForwardingMode() {
-        service = createOpenVpnServerService();
-        service.init();
+    public void startOpenVpnServerSuccessfully() throws Exception {
+        Mockito.when(dataSource.getOpenVpnServerFirstRun()).thenReturn(true);
+        Mockito.when(dnsServer.isEnabled()).thenReturn(true);
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // not running
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "start")).thenReturn(0); // start OK
 
-        service.setOpenVpnPortForwardingMode(PortForwardingMode.AUTO);
-        Mockito.verify(dataSource).setOpenVpnPortForwardingMode(PortForwardingMode.AUTO);
+        createAndInitService();
 
-        service.setOpenVpnPortForwardingMode(PortForwardingMode.MANUAL);
-        Mockito.verify(dataSource).setOpenVpnPortForwardingMode(PortForwardingMode.MANUAL);
+        VpnServerStatus status = service.setOpenVpnServerStatus(startServerRequest());
+        assertTrue(status.isRunning());
 
-        Mockito.when(dataSource.getOpenVpnPortForwardingMode()).thenReturn(PortForwardingMode.AUTO,
-                PortForwardingMode.MANUAL);
-        Assert.assertEquals(PortForwardingMode.AUTO, service.getOpenVpnPortForwardingMode());
-        Assert.assertEquals(PortForwardingMode.MANUAL, service.getOpenVpnPortForwardingMode());
+        // Simulate that server is running to prevent another "start"
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(0); // running
 
-        Mockito.verify(dataSource, Mockito.times(2)).getOpenVpnPortForwardingMode();
+        service.setOpenVpnServerStatus(startServerRequest());
+    }
+
+    @Test
+    public void startOpenVpnServerAndEnableDns() throws Exception {
+        Mockito.when(dnsService.setStatus(true)).thenReturn(true);
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // not running
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "start")).thenReturn(0); // start OK
+
+        createAndInitService();
+
+        VpnServerStatus status = service.setOpenVpnServerStatus(startServerRequest());
+
+        assertTrue(status.isRunning());
+    }
+
+    @Test
+    public void stopOpenVpnServer() throws Exception {
+        Collection<Device> devices = new LinkedList<>();
+        Device device = Mockito.mock(Device.class);
+        devices.add(device);
+        Mockito.when(deviceService.getDevices(false)).thenReturn(devices);
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(0); // running
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "stop")).thenReturn(0); // stop OK
+
+        createAndInitService();
+
+        VpnServerStatus status = service.setOpenVpnServerStatus(stopServerRequest());
+
+        assertFalse(status.isRunning());
+        Mockito.verify(device, Mockito.times(1)).setIsVpnClient(false);
+    }
+
+    @Test
+    public void startWithEblockerDynDns() {
+        VpnServerStatus statusIn = startServerRequest();
+        final String dynDnsHost = "abcdefghijklmnop.home.eblocker.com";
+        final Integer mappedPort = 1195;
+        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        statusIn.setPortForwardingMode(PortForwardingMode.AUTO);
+        statusIn.setMappedPort(mappedPort);
+        Mockito.when(dynDnsService.getHostname()).thenReturn(dynDnsHost);
+        Mockito.when(dataSource.getOpenVpnServerHost()).thenReturn(dynDnsHost);
+
+        createAndInitService();
+
+        VpnServerStatus statusOut = service.setOpenVpnServerStatus(statusIn);
+
+        assertEquals(dynDnsHost, statusOut.getHost());
+        assertEquals(ExternalAddressType.EBLOCKER_DYN_DNS, statusOut.getExternalAddressType());
+        assertEquals(PortForwardingMode.AUTO, statusOut.getPortForwardingMode());
+        assertEquals(mappedPort, statusOut.getMappedPort());
+
+        Mockito.verify(dataSource).setOpenVpnServerHost(dynDnsHost);
     }
 
     @Test
     public void testSetAndMapManualMode() {
-        service = createOpenVpnServerService();
-        service.init();
+        createAndInitService();
 
         Mockito.when(dataSource.getOpenVpnPortForwardingMode()).thenReturn(PortForwardingMode.MANUAL);
         int portNum = 1337;
         try {
             service.setAndMapExternalPortTemporarily(portNum);
         } catch (UpnpPortForwardingException e) {
-            Assert.assertTrue(false);
+            assertTrue(false);
         }
 
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
         Mockito.verify(upnpService, Mockito.never()).addPortForwarding(Mockito.anyInt(), Mockito.anyInt(),
                 Mockito.anyInt(), Mockito.anyString());
-        Assert.assertEquals(portNum, service.getOpenVpnTempMappedPort());
     }
 
     @Test
-    public void testSetAndMapAutoMode() throws UpnpPortForwardingException {
-        service = createOpenVpnServerService();
-        service.init();
+    public void testSetAndMapAutoMode() throws Exception {
+        createAndInitService();
 
         Mockito.when(dataSource.getOpenVpnPortForwardingMode()).thenReturn(PortForwardingMode.AUTO);
         int portNum = 1337;
@@ -167,50 +219,46 @@ public class OpenVpnServerServiceTest {
         Mockito.verify(dataSource).getOpenVpnPortForwardingMode();
         Mockito.verify(upnpService).addPortForwarding(portNum, port, tempDuration,
                 portForwardingDescription);
-        Assert.assertEquals(portNum, service.getOpenVpnTempMappedPort());
-
     }
 
     @Test
-    public void testStartOpenVpnServerDnsServerCouldNotBeStarted() throws UpnpPortForwardingException {
+    public void testStartOpenVpnServerDnsServerCouldNotBeStarted() throws Exception {
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // server not running
 
-        service = createOpenVpnServerService();
-        service.init();
-
-        service.startOpenVpnServer();
+        createAndInitService();
+        service.setOpenVpnServerStatus(startServerRequest());
 
         Mockito.verify(dnsServer).isEnabled();
         Mockito.verify(dnsService).setStatus(true);
-        Mockito.verify(dataSource, Mockito.never()).getOpenVpnServerFirstRun();
+        Mockito.verify(scriptRunner, Mockito.never()).runScript(openVpnServerCommand, "start");
 
     }
 
     @Test
-    public void testStartOpenVpnServerCouldNotBeInitialized()
-            throws UpnpPortForwardingException, IOException, InterruptedException {
+    public void testStartOpenVpnServerCouldNotBeInitialized() throws Exception {
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // server not running
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "init")).thenReturn(1); // initialization fails
+
         Mockito.when(dnsServer.isEnabled()).thenReturn(true);
         Mockito.when(dnsService.setStatus(true)).thenReturn(true);
         Mockito.when(dataSource.getOpenVpnServerFirstRun()).thenReturn(true);
         Mockito.when(dataSource.getOpenVpnPortForwardingMode()).thenReturn(PortForwardingMode.AUTO);
 
-        Mockito.when(scriptRunner.runScript("openvpn-server-control", "init")).thenReturn(1);
 
         Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
                 Mockito.anyString())).thenReturn(Collections.emptyList());
 
-        service = createOpenVpnServerService();
-        service.init();
-
-        service.startOpenVpnServer();
+        createAndInitService();
+        service.setOpenVpnServerStatus(startServerRequest());
 
         Mockito.verify(dnsServer).isEnabled();
-        Mockito.verify(dataSource).getOpenVpnServerFirstRun();
 
-        Mockito.verify(scriptRunner, Mockito.never()).runScript("openvpn-server-control", "start");
+        Mockito.verify(scriptRunner, Mockito.never()).runScript(openVpnServerCommand, "start");
     }
 
     @Test
     public void testStartOpenVpnServer() throws Exception {
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // server not running
         Mockito.when(dnsServer.isEnabled()).thenReturn(true);
         Mockito.when(dnsService.setStatus(true)).thenReturn(true);
         Mockito.when(dataSource.getOpenVpnServerFirstRun()).thenReturn(true);
@@ -218,65 +266,22 @@ public class OpenVpnServerServiceTest {
         int externalPort = 1337;
         Mockito.when(dataSource.getOpenVpnMappedPort()).thenReturn(externalPort);
 
-        Mockito.when(scriptRunner.runScript("openvpn-server-control", "init")).thenReturn(0);
-
-        Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyString())).thenReturn(Collections.emptyList());
-
-        service = createOpenVpnServerService();
-        service.init();
-
-        Assert.assertTrue(service.startOpenVpnServer());
+        createAndInitService();
+        service.setOpenVpnServerStatus(startServerRequest());
 
         Mockito.verify(dnsServer).isEnabled();
-        Mockito.verify(dataSource).getOpenVpnServerFirstRun();
 
         Mockito.verify(openVpnCa).generateCa();
         Mockito.verify(openVpnCa).generateServerCertificate();
-        Mockito.verify(scriptRunner).runScript("openvpn-server-control", "init");
-        Mockito.verify(scriptRunner).runScript("openvpn-server-control", "start");
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "init");
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "start");
         Mockito.verify(dataSource).setOpenVpnServerFirstRun(false);
         Mockito.verify(dataSource).setOpenVpnServerState(true);
-        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription);
     }
 
     @Test
-    public void testSetGetTempOrt() {
-        service = createOpenVpnServerService();
-        service.init();
-
-        port = 2342;
-        service.setOpenVpnTempMappedPort(port);
-        Assert.assertEquals(port, service.getOpenVpnTempMappedPort());
-    }
-
-    @Test
-    public void testSetGetHost() {
-        service = createOpenVpnServerService();
-        service.init();
-
-        String host = "host.tld";
-        Mockito.when(dataSource.getOpenVpnServerHost()).thenReturn(host);
-        service.setOpenVpnServerHost(host);
-        Assert.assertEquals(host, service.getOpenVpnServerHost());
-        Mockito.verify(dataSource).setOpenVpnServerHost(host);
-    }
-
-    @Test
-    public void testSetGetMappedPort() {
-        service = createOpenVpnServerService();
-        service.init();
-
-        int portTest = 31337;
-        Mockito.when(dataSource.getOpenVpnMappedPort()).thenReturn(portTest, null);
-        service.setOpenVpnMappedPort(portTest);
-        Assert.assertEquals(Integer.valueOf(portTest), service.getOpenVpnMappedPort());
-        Mockito.verify(dataSource).setOpenVpnMappedPort(portTest);
-        Assert.assertEquals(Integer.valueOf(port), service.getOpenVpnMappedPort());
-    }
-
-    @Test
-    public void testDisableServer() throws UpnpPortForwardingException, IOException, InterruptedException {
+    public void testDisableServer() throws Exception {
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(1); // server not running
         Mockito.when(dnsServer.isEnabled()).thenReturn(true);
         Mockito.when(dnsService.setStatus(true)).thenReturn(true);
         Mockito.when(dataSource.getOpenVpnServerFirstRun()).thenReturn(true);
@@ -284,33 +289,68 @@ public class OpenVpnServerServiceTest {
         int externalPort = 1337;
         Mockito.when(dataSource.getOpenVpnMappedPort()).thenReturn(externalPort);
 
-        Mockito.when(scriptRunner.runScript("openvpn-server-control", "init")).thenReturn(0);
-
-        UpnpPortForwarding forwarding = new UpnpPortForwarding(1, 2, "intHostIp", 3, "description", Protocol.TCP, true);
-        UpnpPortForwardingResult forwardingResult = new UpnpPortForwardingResult(forwarding, true, null);
-        List<UpnpPortForwardingResult> forwardingResults = new ArrayList<>(Arrays.asList(forwardingResult));
-        Mockito.when(upnpService.addPortForwarding(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(),
-                Mockito.anyString())).thenReturn(forwardingResults);
-
-        service = createOpenVpnServerService();
-        service.init();
-
-        Assert.assertTrue(service.startOpenVpnServer());
+        createAndInitService();
+        service.setOpenVpnServerStatus(startServerRequest());
 
         Mockito.verify(dnsServer).isEnabled();
-        Mockito.verify(dataSource).getOpenVpnServerFirstRun();
 
-        Mockito.verify(scriptRunner).runScript("openvpn-server-control", "init");
-        Mockito.verify(scriptRunner).runScript("openvpn-server-control", "start");
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "init");
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "start");
         Mockito.verify(dataSource).setOpenVpnServerFirstRun(false);
         Mockito.verify(dataSource).setOpenVpnServerState(true);
-        Mockito.verify(upnpService).addPortForwarding(externalPort, port, duration, portForwardingDescription);
 
         // Now the service has a list of opened ports
+        Mockito.when(scriptRunner.runScript(openVpnServerCommand, "status")).thenReturn(0); // server is running
 
-        service.disableOpenVpnServer();
+        // Disable the server:
+        service.setOpenVpnServerStatus(stopServerRequest());
 
         Mockito.verify(dataSource).setOpenVpnServerState(false);
-        Mockito.verify(upnpService).removePortForwardings(new ArrayList<>(Arrays.asList(forwarding)));
+    }
+
+    @Test
+    public void testResetServer() throws IOException, InterruptedException {
+        createAndInitService();
+        assertTrue(service.resetOpenVpnServer());
+        Mockito.verify(dataSource).setOpenVpnServerFirstRun(true);
+        Mockito.verify(dataSource).setOpenVpnServerState(false);
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "stop");
+        Mockito.verify(scriptRunner).runScript(openVpnServerCommand, "purge");
+    }
+
+    @Test
+    public void testRevokeDeletedDevices() throws Exception {
+        service = createOpenVpnServerService();
+        ArgumentCaptor<DeviceService.DeviceChangeListener> captor = ArgumentCaptor.forClass(DeviceService.DeviceChangeListener.class);
+        Mockito.when(openVpnCa.getActiveClientIds()).thenReturn(Set.of("device:a", "device:b"));
+        service.init();
+
+        // Simulate device deletion by DeviceService:
+        Mockito.verify(deviceService).addListener(captor.capture());
+        Device device = new Device();
+        device.setId("device:b");
+        captor.getValue().onDelete(device);
+
+        // Only device b was revoked:
+        Mockito.verify(openVpnCa, Mockito.never()).revokeClientCertificate("device:a");
+        Mockito.verify(openVpnCa).revokeClientCertificate("device:b");
+
+        // Another device without eBlocker Mobile access:
+        device.setId("device:c");
+        captor.getValue().onDelete(device);
+        Mockito.verify(openVpnCa, Mockito.never()).revokeClientCertificate("device:c");
+    }
+
+    private VpnServerStatus startServerRequest() {
+        VpnServerStatus status = new VpnServerStatus();
+        status.setHost("eblocker.com");
+        status.setRunning(true);
+        return status;
+    }
+
+    private VpnServerStatus stopServerRequest() {
+        VpnServerStatus status = new VpnServerStatus();
+        status.setRunning(false);
+        return status;
     }
 }

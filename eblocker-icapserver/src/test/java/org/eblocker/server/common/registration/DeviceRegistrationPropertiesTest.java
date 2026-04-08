@@ -17,17 +17,19 @@
 package org.eblocker.server.common.registration;
 
 import org.eblocker.crypto.CryptoException;
+import org.eblocker.crypto.pki.CertificateAndKey;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.crypto.util.DateUtil;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,13 +44,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase {
 
@@ -70,7 +66,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
 
     private DeviceRegistrationProperties drp;
 
-    @Before
+    @BeforeEach
     public void init() throws IOException, ParseException {
         super.init();
         drp = createDeviceRegistrationProperties();
@@ -368,7 +364,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     @Test
     public void testCertificateRevoked() throws IOException, InterruptedException, CertificateException, CryptoException, ParseException {
         DeviceRegistrationLicenseState revokationState = Mockito.mock(DeviceRegistrationLicenseState.class);
-        when(revokationState.checkCertificate()).thenReturn(RegistrationState.INVALID);
+        Mockito.when(revokationState.checkCertificate()).thenReturn(RegistrationState.INVALID);
 
         registerWithSubscriptionLicense();
 
@@ -405,6 +401,25 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         } finally {
             future.cancel(true);
         }
+    }
+
+    @Test
+    public void testExportRegistration() throws Exception{
+        registerWithSubscriptionLicense();
+        DeviceRegistrationExport export = drp.exportRegistration();
+
+        String expectedCN = "CN=" + drp.getDeviceId();
+        ByteArrayInputStream bais = new ByteArrayInputStream(export.getDeviceCredentials());
+        CertificateAndKey deviceCredentials = PKI.loadKeyStore(DeviceRegistrationProperties.DEVICE_KEY_ALIAS, bais, export.getKeyStorePassword());
+        assertEquals(expectedCN, deviceCredentials.getCertificate().getSubjectX500Principal().getName());
+
+        bais = new ByteArrayInputStream(export.getLicenseCredentials());
+        CertificateAndKey licenseCredentials = PKI.loadKeyStore(DeviceRegistrationProperties.LICENSE_KEY_ALIAS, bais, export.getKeyStorePassword());
+        assertEquals(expectedCN, licenseCredentials.getCertificate().getSubjectX500Principal().getName());
+
+        drp.reset();
+        drp.importRegistration(export);
+        assertEquals(RegistrationState.OK, drp.getRegistrationState());
     }
 
     private void registerWithCommunityLicense() throws CertificateException, CryptoException {

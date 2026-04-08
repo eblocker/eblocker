@@ -18,10 +18,8 @@ package org.eblocker.server.http.backup;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
-import org.eblocker.crypto.CryptoService;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
-import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
@@ -31,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
@@ -54,7 +51,7 @@ public class DevicesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void exportConfiguration(JarOutputStream outputStream, CryptoService cryptoService) throws IOException {
+    public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         List<Device> allDevices = deviceService.getDevices(true).stream()
                 .filter(device -> !device.isEblocker())
                 .collect(Collectors.toList());
@@ -62,16 +59,16 @@ public class DevicesBackupProvider extends BackupProvider {
     }
 
     @Override
-    public void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, false);
+    public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, false);
     }
 
     @Override
-    public void verifyConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion) throws IOException {
-        importConfiguration(inputStream, cryptoService, schemaVersion, true);
+    public void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, true);
     }
 
-    private void importConfiguration(JarInputStream inputStream, CryptoService cryptoService, int schemaVersion, boolean dryRun) throws IOException {
+    private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
         getNextEntry(inputStream, DEVICES_ENTRY);
         List<Device> devicesToRestore = objectMapper.readValue(inputStream, new TypeReference<>() {});
 
@@ -149,21 +146,8 @@ public class DevicesBackupProvider extends BackupProvider {
                 existingDevice.setSslEnabled(deviceToRestore.isSslEnabled());
                 existingDevice.setSslRecordErrorsEnabled(deviceToRestore.isSslRecordErrorsEnabled());
                 existingDevice.setUseAnonymizationService(deviceToRestore.isUseAnonymizationService());
-                // Check VPN Profile ID for consistency before copying
-                Integer vpnProfileId = deviceToRestore.getUseVPNProfileID();
-                if (vpnProfileId == null || openVpnService.getVpnProfileById(vpnProfileId) == null) {
-                    // Use default value
-                    existingDevice.setUseVPNProfileID(null);
-                    // If routed through tor, keep using anonymization. If no
-                    // VPN Profile can be used and tor is not used, use no
-                    // anonymization
-                    existingDevice.setUseAnonymizationService(
-                            deviceToRestore.isUseAnonymizationService() && deviceToRestore.isRoutedThroughTor());
-                } else {
-                    // Copy value
-                    existingDevice.setUseVPNProfileID(deviceToRestore.getUseVPNProfileID());
-                }
                 existingDevice.setVendor(deviceToRestore.getVendor());
+                existingDevice.setUseVPNProfileID(null); // VPN client profile is restored by OpenVpnClientBackupProvider.
             }
             deviceService.updateDevice(existingDevice);
             LOG.info("Device copied and written back");

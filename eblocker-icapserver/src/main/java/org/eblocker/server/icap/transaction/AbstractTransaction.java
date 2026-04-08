@@ -273,7 +273,7 @@ public abstract class AbstractTransaction implements Transaction, TransactionIde
         }
         FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
         httpResponse.headers().add(HttpHeaders.Names.CONTENT_LENGTH, 0);
-        httpResponse.headers().add("Access-Control-Allow-Origin", "*");
+        httpResponse.headers().add(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         setResponse(httpResponse);
         this.complete = true;
     }

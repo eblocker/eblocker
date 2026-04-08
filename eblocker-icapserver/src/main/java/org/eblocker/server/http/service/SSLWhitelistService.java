@@ -22,6 +22,7 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.data.SSLWhitelistUrl;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.common.squid.SquidReloadingService;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
 import org.eblocker.server.icap.resources.EblockerResource;
@@ -45,7 +46,7 @@ public class SSLWhitelistService implements Observer {
     private static final Logger log = LoggerFactory.getLogger(SSLWhitelistService.class);
 
     private final AppModuleService appModuleService;
-    private final SquidConfigController squidConfigController;
+    private final SquidReloadingService squidReloadingService;
 
     private SimpleResource squidDomainWhitelistAclFile;//this file we write only the urls into, so that it can be used by squid to disable ssl bumping for these domains
     private SimpleResource squidIpWhitelistAclFile;// file to contain all whitelisted IPs
@@ -53,14 +54,14 @@ public class SSLWhitelistService implements Observer {
     @Inject
     public SSLWhitelistService(@Named("squid.ssl.domain.whitelist.acl.file.path") String sslWhitelistOnlyDomainsFilePath,
                                @Named("squid.ssl.ip.whitelist.acl.file.path") String whitelistIPsFilePath,
-                               SquidConfigController squidConfigController,
+                               SquidReloadingService squidReloadingService,
                                AppModuleService appModuleService
     ) {
 
         this.appModuleService = appModuleService;
         appModuleService.addObserver(this);
 
-        this.squidConfigController = squidConfigController;
+        this.squidReloadingService = squidReloadingService;
 
         //this file contains the current domain whitelist in squid ACL format (no names; just urls)
         this.squidDomainWhitelistAclFile = new SimpleResource(sslWhitelistOnlyDomainsFilePath);
@@ -84,7 +85,7 @@ public class SSLWhitelistService implements Observer {
         writeOnlyURLsToFile(squidDomainWhitelistAclFile);
         // init squid acl file with list of whitelisted IPs
         writeOnlyIPsToFile(squidIpWhitelistAclFile);
-        squidConfigController.tellSquidToReloadConfig();
+        squidReloadingService.tellSquidToReloadConfig();
     }
 
     /**
@@ -226,7 +227,7 @@ public class SSLWhitelistService implements Observer {
             //
             writeOnlyURLsToFile(squidDomainWhitelistAclFile);
             writeOnlyIPsToFile(squidIpWhitelistAclFile);
-            squidConfigController.tellSquidToReloadConfig();
+            squidReloadingService.tellSquidToReloadConfig();
         }
     }
 }

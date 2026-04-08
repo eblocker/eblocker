@@ -68,7 +68,7 @@ public class Ip6AddressMonitor implements Runnable {
         } catch (IOException e) {
             log.error("Could not start IP address monitor", e);
         } catch (InterruptedException e) {
-            log.error("Interrupted. Stopping IP address monitor.", e);
+            log.info("Interrupted. Stopping IP address monitor.", e);
             Thread.currentThread().interrupt();
         }
     }

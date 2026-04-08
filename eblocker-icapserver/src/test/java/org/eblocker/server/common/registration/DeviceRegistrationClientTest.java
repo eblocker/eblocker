@@ -20,8 +20,8 @@ import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.RegistrationState;
 import org.eblocker.registration.error.ClientRequestException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,9 @@ import java.text.ParseException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Ignore("Tests need running eBlocker Backend Server with fresh database")
+@Disabled("Tests need running eBlocker Backend Server with fresh database")
 public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(DeviceRegistrationClientTest.class);
 
@@ -122,7 +123,7 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         Files.readAllLines(Paths.get(licenseKeyFileName)).forEach(LOG::info);
     }
 
-    @Test(expected = javax.ws.rs.ProcessingException.class)
+    @Test
     public void test_untrustedServer() throws IOException, GeneralSecurityException, ParseException {
         //
         // Provide a different truststore, so that the backend's server certificate cannot be validated
@@ -134,7 +135,9 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         startDevice();
 
         // Try to egister the device -> should fail with an exception
-        register(EMAIL, DEVICE_NAME, LICENSE_KEY_2, HARDWARE_ID);
+        assertThrows(javax.ws.rs.ProcessingException.class, () -> {
+            register(EMAIL, DEVICE_NAME, LICENSE_KEY_2, HARDWARE_ID);
+        });
     }
 
     @Test
@@ -163,7 +166,7 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         fail("Expected ClientRequestException exception");
     }
 
-    @Test(expected = ClientRequestException.class)
+    @Test
     public void test_invalidRequest() throws IOException, ParseException {
         // Start with a fresh device
         startDevice();
@@ -172,8 +175,9 @@ public class DeviceRegistrationClientTest extends DeviceRegistrationTestBase {
         assertEquals(RegistrationState.NEW, properties.getRegistrationState());
 
         // Register the device
-        register(null, null, null, null);
-
+        assertThrows(ClientRequestException.class, () -> {
+            register(null, null, null, null);
+        });
     }
 
 }

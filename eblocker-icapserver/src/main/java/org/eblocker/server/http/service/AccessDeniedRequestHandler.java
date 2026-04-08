@@ -28,6 +28,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -150,7 +151,7 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
     }
 
     private HttpResponse handleBlockedDomain(Device device, IpAddress remoteAddress, String url, HttpRequest request) {
-        DomainBlockingService.Decision decision = domainBlockingService.isBlocked(device, request.headers().get("Host"));
+        DomainBlockingService.Decision decision = domainBlockingService.isBlocked(device, request.headers().get(HttpHeaders.Names.HOST));
         if (decision.isBlocked()) {
             Category category = getCategory(decision.getListId());
             if (category == Category.ADS || category == Category.TRACKERS || category == Category.CUSTOM || category == Category.MALWARE) {
@@ -201,7 +202,7 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
 
     private String getUrl(Channel channel, HttpRequest request) {
         String scheme = channel.attr(SCHEME_KEY).get();
-        return scheme + "://" + request.headers().get("Host") + request.uri();
+        return scheme + "://" + request.headers().get(HttpHeaders.Names.HOST) + request.uri();
     }
 
     private String getAdsTrackerLocation(Category category, DomainBlockingService.Decision decision, String url) {
@@ -240,14 +241,14 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
         byte[] content = OnePixelImage.get(target);
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(content));
         response.headers()
-                .set("Access-Control-Allow-Origin", selectAccessControlAllowOrigin(request))
-                .set("Content-Length", content.length)
-                .set("Content-Type", "image/svg+xml");
+                .set(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, selectAccessControlAllowOrigin(request))
+                .set(HttpHeaders.Names.CONTENT_LENGTH, content.length)
+                .set(HttpHeaders.Names.CONTENT_TYPE, "image/svg+xml");
         return response;
     }
 
     private String selectAccessControlAllowOrigin(HttpRequest request) {
-        String header = request.headers().get("Origin");
+        String header = request.headers().get(HttpHeaders.Names.ORIGIN);
         return Strings.isNullOrEmpty(header) ? "*" : header;
     }
 
@@ -270,7 +271,7 @@ public class AccessDeniedRequestHandler extends SimpleChannelInboundHandler<Http
 
     private HttpResponse redirect(String location) {
         HttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.SEE_OTHER);
-        response.headers().set("Location", location);
+        response.headers().set(HttpHeaders.Names.LOCATION, location);
         return response;
     }
 }

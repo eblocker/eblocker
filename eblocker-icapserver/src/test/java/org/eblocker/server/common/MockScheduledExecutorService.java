@@ -283,7 +283,8 @@ public class MockScheduledExecutorService implements ScheduledExecutorService {
 
     @Override
     public void execute(Runnable command) {
-        notImplemented();
+        ScheduledFutureTask<Void> task = new ScheduledFutureTask<>(command, duration(10, TimeUnit.MILLISECONDS));
+        tasks.add(task);
     }
 
     @Override

@@ -77,7 +77,6 @@ import TrustedAppAddController from './dialogs/trustedApps/trusted-app-add.dialo
 import TrustedDomainAddEditController from './dialogs/trustedDomains/trusted-domain-add-edit.dialog';
 import DomainIpRangeController from './dialogs/recording/domain-ip-range.dialog';
 import AddDomainToAppController from './dialogs/trustedApps/add-domain-to-app.dialog';
-import VpnHomeStartController from './dialogs/vpn/vpn-home-start.dialog';
 import NetworkEditModeController from './dialogs/network/network-edit-mode-add-server.dialog';
 import NetworkEditContentController from './dialogs/network/network-edit-content.dialog';
 import ExpertConfirmationDialogController from './dialogs/network/expert-confirmation.dialog';
@@ -394,7 +393,6 @@ angular.module('eblocker.adminconsole', [
     .controller('DomainIpRangeController', DomainIpRangeController)
     .controller('AnalysisToolDetailsController', AnalysisToolDetailsController)
     .controller('AddDomainToAppController', AddDomainToAppController)
-    .controller('VpnHomeStartController', VpnHomeStartController)
     .controller('NetworkEditModeController', NetworkEditModeController)
     .controller('NetworkEditContentController', NetworkEditContentController)
     .controller('ExpertConfirmationDialogController', ExpertConfirmationDialogController)

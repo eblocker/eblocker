@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2026 eBlocker Open Source GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,24 +14,12 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function VpnHomeStartController($mdDialog, VpnHomeService, status) {
-    'ngInject';
+package org.eblocker.server.http.backup;
 
-    const vm = this;
+import org.eblocker.server.common.exceptions.EblockerException;
 
-    vm.starting = false;
-
-    vm.cancel = function() {
-        $mdDialog.cancel();
-    };
-
-    vm.save = function() {
-        vm.starting = true;
-        VpnHomeService.startStopServer(status).then(function(response) {
-            vm.starting = response.data.isRunning;
-            $mdDialog.hide(response.data);
-        }, function() {
-            vm.starting = false;
-        });
-    };
+public class EncryptionUnavailableException extends EblockerException {
+    public EncryptionUnavailableException(String msg) {
+        super(msg);
+    }
 }

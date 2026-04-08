@@ -22,7 +22,6 @@ import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
@@ -53,6 +52,7 @@ import org.eblocker.server.icap.resources.SimpleResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -312,7 +312,8 @@ public class SquidConfigController {
         writeMimeTypesAcl();
     }
 
-    private @NonNull List<String> getFilteredMimeTypes() {
+    @Nonnull
+    private List<String> getFilteredMimeTypes() {
         List<String> filteredMimeTypes = new ArrayList<>(8);
 
         // always add the default Mime types to send to the ICAP server (text/html and text/xhtml)

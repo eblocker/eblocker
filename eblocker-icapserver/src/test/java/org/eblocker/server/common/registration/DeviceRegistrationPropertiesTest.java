@@ -23,7 +23,6 @@ import org.eblocker.crypto.util.DateUtil;
 import org.eblocker.registration.DeviceRegistrationRequest;
 import org.eblocker.registration.DeviceRegistrationResponse;
 import org.eblocker.registration.LicenseType;
-import org.eblocker.server.common.system.CpuInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -104,8 +103,8 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         // Check some properties from the file, fow which we do not have getters
         assertNotNull(initialProperties.getProperty("registrationId"));
         assertNotNull(UUID.fromString(initialProperties.getProperty("registrationId"))); // should be a valid UUID
-        assertEquals(CPU_SERIAL, initialProperties.getProperty("registrationCpuSerial"));
-        assertEquals(REG_TYPE_1, Integer.valueOf(initialProperties.getProperty("registrationType")).intValue());
+        assertEquals(null, initialProperties.getProperty("registrationCpuSerial"));
+        assertEquals(REG_TYPE_0, Integer.valueOf(initialProperties.getProperty("registrationType")).intValue());
 
         // Simulate restart of unregistered device by initializing a new instance
         DeviceRegistrationProperties drp2 = createDeviceRegistrationProperties();
@@ -306,16 +305,6 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         drp.makeLicenseCredentialsAvailable();
         assertTrue(drp.isSubscriptionValid());
 
-        // Load registration properties on different HW
-        DeviceRegistrationProperties drp2 = createDeviceRegistrationProperties(OTHER_CPU_SERIAL);
-
-        // Assert that license credentials are not available now
-        assertLicenseCredentialsAreUnavailable();
-
-        // Assert that they cannot be made available on wrong device
-        drp2.makeLicenseCredentialsAvailable();
-        assertFalse(drp2.isSubscriptionValid());
-
         // reset registration
         drp.reset();
 
@@ -365,35 +354,15 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     }
 
     @Test
-    public void testFileHackedDeviceID_invalid() throws CertificateException, CryptoException, IOException, ParseException {
-        // Register the device with SUBSCRIPTION license
+    public void testLegacyRegistrationWithCpuSerial() throws CertificateException, CryptoException, IOException, ParseException {
+        drp = createDeviceRegistrationProperties(REG_TYPE_1_LEGACY);
         registerWithSubscriptionLicense();
 
-        // Simulate restart of registered device ON DIFFERENT HW by initializing a new instance WITH DIFFERENT MAC!
-        DeviceRegistrationProperties drp2 = createDeviceRegistrationProperties(OTHER_CPU_SERIAL);
-
-        // Assert that the device registration is now invalid
-        assertEquals(RegistrationState.INVALID, drp2.getRegistrationState());
-
-        // Assert that the deviceId has not changed
-        assertEquals(drp.getDeviceId(), drp2.getDeviceId());
-
-        // Assert that other propertes have not changed
-        assertEquals(drp.getDeviceName(), drp2.getDeviceName());
-        assertEquals(drp.getDeviceRegisteredAt(), drp2.getDeviceRegisteredAt());
-        assertEquals(drp.getDeviceRegisteredBy(), drp2.getDeviceRegisteredBy());
-        assertEquals(drp.getDeviceCertificate(), drp2.getDeviceCertificate());
-        assertEquals(drp.getLicenseType(), drp2.getLicenseType());
-        assertEquals(drp.getLicenseNotValidAfter(), drp2.getLicenseNotValidAfter());
-        assertEquals(drp.getLicenseCertificate(), drp2.getLicenseCertificate());
-        assertEquals(drp.isLicenseAutoRenewal(), drp2.isLicenseAutoRenewal());
+        assertEquals(RegistrationState.OK, drp.getRegistrationState());
     }
 
     @Test
     public void testCertificateRevoked() throws IOException, InterruptedException, CertificateException, CryptoException, ParseException {
-        CpuInfo cpuInfo = Mockito.mock(CpuInfo.class);
-        Mockito.when(cpuInfo.getSerial()).thenReturn(CPU_SERIAL);
-
         DeviceRegistrationLicenseState revokationState = Mockito.mock(DeviceRegistrationLicenseState.class);
         Mockito.when(revokationState.checkCertificate()).thenReturn(RegistrationState.INVALID);
 
@@ -408,11 +377,10 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
                 trustStorePassword,
                 truststoreCopyFileName,
                 KEY_SIZE,
-                REG_TYPE_1,
+                REG_TYPE_0,
                 WARNING_PERIOD,
                 LIFETIME_INDICATOR,
                 Files.createTempDirectory(null).toString(),
-                cpuInfo,
                 revokationState);
 
         // Initially the registration state is ok
@@ -436,7 +404,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     }
 
     @Test
-    public void testExportRegistration() throws Exception{
+    public void testExportImportRegistration() throws Exception{
         registerWithSubscriptionLicense();
         DeviceRegistrationExport export = drp.exportRegistration();
 
@@ -452,6 +420,20 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         drp.reset();
         drp.importRegistration(export);
         assertEquals(RegistrationState.OK, drp.getRegistrationState());
+        assertEquals(expectedCN, drp.getDeviceCertificate().getSubjectX500Principal().getName());
+        assertEquals(expectedCN, drp.getLicenseCertificate().getSubjectX500Principal().getName());
+    }
+
+    @Test
+    public void testExportNotOkRegistration() throws Exception {
+        String initialDeviceId = drp.getDeviceId();
+        DeviceRegistrationExport export = drp.exportRegistration();
+        assertEquals(RegistrationState.NEW, drp.getRegistrationState());
+        assertNull(export.getDeviceId());
+
+        // Nothing happens during import of "empty" registration
+        drp.importRegistration(export);
+        assertEquals(initialDeviceId, drp.getDeviceId());
     }
 
     private void registerWithCommunityLicense() throws CertificateException, CryptoException {

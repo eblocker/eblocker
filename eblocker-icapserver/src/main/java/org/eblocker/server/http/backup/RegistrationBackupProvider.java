@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.CryptoService;
@@ -35,6 +36,7 @@ public class RegistrationBackupProvider extends BackupProvider {
     public static final String REGISTRATION_ENTRY = "eblocker-config/registration.json";
     private final DeviceRegistrationProperties deviceRegistrationProperties;
 
+    @Inject
     public RegistrationBackupProvider(DeviceRegistrationProperties deviceRegistrationProperties,
                                       @Assisted @Nullable CryptoService cryptoService) {
         super(cryptoService);
@@ -43,7 +45,13 @@ public class RegistrationBackupProvider extends BackupProvider {
 
     @Override
     public void exportConfiguration(JarOutputStream outputStream) throws IOException {
-        DeviceRegistrationExport export = null;
+        DeviceRegistrationExport export;
+
+        if (!canEncrypt()) {
+            LOG.error("Cannot encrypt registration");
+            throw new EncryptionUnavailableException("Cannot encrypt registration");
+        }
+
         try {
             export = deviceRegistrationProperties.exportRegistration();
         } catch (CryptoException e) {
@@ -56,11 +64,37 @@ public class RegistrationBackupProvider extends BackupProvider {
 
     @Override
     public void importConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
-
+        importConfiguration(inputStream, schemaVersion, false);
     }
 
     @Override
     public void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException {
+        importConfiguration(inputStream, schemaVersion, true);
+    }
 
+    private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
+        getNextEntry(inputStream, REGISTRATION_ENTRY);
+        DeviceRegistrationExport backup = objectMapper.readValue(inputStream, DeviceRegistrationExport.class);
+        if (backup == null) {
+            throw new CorruptedBackupException("Deserialized backup object is null");
+        }
+
+        if (!canDecrypt()) {
+            addWarning(BackupWarning.NO_PASSWORD_REGISTRATION_NOT_IMPORTED);
+            return;
+        }
+
+        if (!dryRun) {
+            try {
+                restoreBackup(backup);
+            } catch (CryptoException e) {
+                LOG.error("Failed to restore backup", e);
+                addWarning(BackupWarning.LICENSE_CRYPTO_FAILURE);
+            }
+        }
+    }
+
+    private void restoreBackup(DeviceRegistrationExport backup) throws CryptoException, IOException {
+        deviceRegistrationProperties.importRegistration(backup);
     }
 }

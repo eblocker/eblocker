@@ -28,4 +28,5 @@ public interface BackupProviderFactory {
     HttpsKeysBackupProvider createHttpsKeysBackupProvider(CryptoService cryptoService);
     OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService);
     OpenVpnClientBackupProvider createOpenVpnClientBackupProvider(CryptoService cryptoService);
+    RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService);
 }

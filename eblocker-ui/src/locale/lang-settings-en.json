@@ -363,8 +363,7 @@
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {
-                "EXPORT" : "Save HTTPS keys",
-                "IMPORT" : "Restore HTTPS and OpenVPN keys"
+                "IMPORT" : "Restore HTTPS, OpenVPN and license keys"
             },
             "LABEL" : {
                 "CREATE_BACKUP" : "Create Backup",
@@ -379,11 +378,14 @@
                 },
                 "LABEL" : "Enter password",
                 "WARNING" : "<b>Please note:</b> this password is needed to restore the keys later. It cannot be recovered if it is lost.",
-                "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS and OpenVPN keys are not restored."
+                "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, OpenVPN and license keys are not restored."
             },
             "WARNING": {
+                "LICENSE_CRYPTO_FAILURE": "License keys cannot be decrypted.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "HTTPS keys cannot be restored.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "OpenVPN keys for eBlocker Mobile cannot be restored.",
+                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "OpenVPN keys for anonymization cannot be restored.",
+                "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed."
             }
         },

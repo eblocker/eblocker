@@ -404,7 +404,7 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
     }
 
     @Test
-    public void testExportRegistration() throws Exception{
+    public void testExportImportRegistration() throws Exception{
         registerWithSubscriptionLicense();
         DeviceRegistrationExport export = drp.exportRegistration();
 
@@ -420,6 +420,20 @@ public class DeviceRegistrationPropertiesTest extends DeviceRegistrationTestBase
         drp.reset();
         drp.importRegistration(export);
         assertEquals(RegistrationState.OK, drp.getRegistrationState());
+        assertEquals(expectedCN, drp.getDeviceCertificate().getSubjectX500Principal().getName());
+        assertEquals(expectedCN, drp.getLicenseCertificate().getSubjectX500Principal().getName());
+    }
+
+    @Test
+    public void testExportNotOkRegistration() throws Exception {
+        String initialDeviceId = drp.getDeviceId();
+        DeviceRegistrationExport export = drp.exportRegistration();
+        assertEquals(RegistrationState.NEW, drp.getRegistrationState());
+        assertNull(export.getDeviceId());
+
+        // Nothing happens during import of "empty" registration
+        drp.importRegistration(export);
+        assertEquals(initialDeviceId, drp.getDeviceId());
     }
 
     private void registerWithCommunityLicense() throws CertificateException, CryptoException {

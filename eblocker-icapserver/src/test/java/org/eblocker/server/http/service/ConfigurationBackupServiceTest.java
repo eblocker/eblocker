@@ -28,6 +28,7 @@ import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnClientBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
+import org.eblocker.server.http.backup.RegistrationBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,7 @@ public class ConfigurationBackupServiceTest {
     private HttpsKeysBackupProvider httpsKeysBP;
     private OpenVpnServerBackupProvider openVpnServerBP;
     private OpenVpnClientBackupProvider openVpnClientBP;
+    private RegistrationBackupProvider registrationBP;
     private static final String password = "top secret!";
 
     @BeforeEach
@@ -63,6 +65,7 @@ public class ConfigurationBackupServiceTest {
         httpsKeysBP = Mockito.mock(HttpsKeysBackupProvider.class);
         openVpnServerBP = Mockito.mock(OpenVpnServerBackupProvider.class);
         openVpnClientBP = Mockito.mock(OpenVpnClientBackupProvider.class);
+        registrationBP = Mockito.mock(RegistrationBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
@@ -93,6 +96,11 @@ public class ConfigurationBackupServiceTest {
             @Override
             public OpenVpnClientBackupProvider createOpenVpnClientBackupProvider(CryptoService cryptoService) {
                 return openVpnClientBP;
+            }
+
+            @Override
+            public RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService) {
+                return registrationBP;
             }
         };
         service = new ConfigurationBackupService(dataSource, providerFactory);

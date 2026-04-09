@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import org.eblocker.crypto.CryptoException;
 import org.eblocker.crypto.CryptoService;
@@ -35,6 +36,7 @@ public class RegistrationBackupProvider extends BackupProvider {
     public static final String REGISTRATION_ENTRY = "eblocker-config/registration.json";
     private final DeviceRegistrationProperties deviceRegistrationProperties;
 
+    @Inject
     public RegistrationBackupProvider(DeviceRegistrationProperties deviceRegistrationProperties,
                                       @Assisted @Nullable CryptoService cryptoService) {
         super(cryptoService);
@@ -44,6 +46,12 @@ public class RegistrationBackupProvider extends BackupProvider {
     @Override
     public void exportConfiguration(JarOutputStream outputStream) throws IOException {
         DeviceRegistrationExport export;
+
+        if (!canEncrypt()) {
+            LOG.error("Cannot encrypt registration");
+            throw new EncryptionUnavailableException("Cannot encrypt registration");
+        }
+
         try {
             export = deviceRegistrationProperties.exportRegistration();
         } catch (CryptoException e) {

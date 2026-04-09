@@ -565,6 +565,15 @@ public class DeviceRegistrationProperties {
 
     public DeviceRegistrationExport exportRegistration() throws IOException, CryptoException {
         DeviceRegistrationExport export = new DeviceRegistrationExport();
+        RegistrationState registrationState = getRegistrationState();
+        if (registrationState != RegistrationState.OK) {
+            export.setRegistrationState(RegistrationState.NEW);
+            log.warn("Not exporting registration in state {}", registrationState);
+            return export;
+        }
+
+        export.setRegistrationState(registrationState);
+
         char[] password = Hex.encodeHex(KeyHandler.createKey());
         export.setKeyStorePassword(password);
 
@@ -576,7 +585,6 @@ public class DeviceRegistrationProperties {
         PKI.generateKeyStore(decodedLicenseCredentials, LICENSE_KEY_ALIAS, password, baos);
         export.setLicenseCredentials(baos.toByteArray());
 
-        export.setRegistrationState(getRegistrationState());
         export.setRegistrationId(registration.id);
         export.setRegistrationType(registration.type);
         export.setCpuSerial(registration.cpuSerial);
@@ -584,10 +592,25 @@ public class DeviceRegistrationProperties {
         export.setDeviceId(deviceId);
         export.setRegisteredAt(deviceRegisteredAt);
         export.setRegisteredBy(deviceRegisteredBy);
+        export.setLicenseType(licenseType);
+        export.setLicenseNotValidAfter(licenseNotValidAfter);
+        export.setTosVersion(tosVersion);
+        export.setLicenseAutoRenewal(licenseAutoRenewal);
+
         return export;
     }
 
     public void importRegistration(DeviceRegistrationExport export) throws IOException, CryptoException {
+        if (export.getRegistrationState() != RegistrationState.OK) {
+            log.warn("No valid registration found to import");
+            return;
+        }
+        Date notAfter = export.getLicenseNotValidAfter();
+        if (notAfter != null && notAfter.before(new Date())) {
+            log.warn("License from backup has already expired at {}. Not importing it.", notAfter);
+            return;
+        }
+
         ByteArrayInputStream bais = new ByteArrayInputStream(export.getDeviceCredentials());
         decodedDeviceCredentials = PKI.loadKeyStore(DeviceRegistrationProperties.DEVICE_KEY_ALIAS, bais, export.getKeyStorePassword());
         deviceCredentials = Base64.encodeBase64String(encodeKeyStore(decodedDeviceCredentials, DEVICE_KEY_ALIAS));
@@ -605,6 +628,10 @@ public class DeviceRegistrationProperties {
         deviceId = export.getDeviceId();
         deviceRegisteredAt = export.getRegisteredAt();
         deviceRegisteredBy = export.getRegisteredBy();
+        licenseType = export.getLicenseType();
+        licenseNotValidAfter = export.getLicenseNotValidAfter();
+        tosVersion = export.getTosVersion();
+        licenseAutoRenewal = export.isLicenseAutoRenewal();
         store();
     }
 

@@ -96,7 +96,8 @@ public class ConfigurationBackupService {
                         providerFactory.createDevicesBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
                         providerFactory.createOpenVpnServerBackupProvider(cryptoService),
-                        providerFactory.createOpenVpnClientBackupProvider(cryptoService));
+                        providerFactory.createOpenVpnClientBackupProvider(cryptoService),
+                        providerFactory.createRegistrationBackupProvider(cryptoService));
 
             default:
                 throw new UnsupportedBackupVersionException(version);

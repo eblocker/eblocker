@@ -17,6 +17,7 @@
 package org.eblocker.server.http.backup;
 
 import com.google.common.base.Charsets;
+import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.registration.DeviceRegistrationExport;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,12 +26,14 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.jar.JarInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegistrationBackupProviderTest extends BackupProviderTestBase {
     private RegistrationBackupProvider provider;
+    private RegistrationBackupProvider providerNoPassword;
     private DeviceRegistrationProperties deviceRegistrationProperties;
     private static final String keyStorePassword = "secret_password";
 
@@ -38,6 +41,7 @@ class RegistrationBackupProviderTest extends BackupProviderTestBase {
     void setUp() throws Exception {
         setUpProperties();
         provider = new RegistrationBackupProvider(deviceRegistrationProperties, createCryptoService("top secret!!!"));
+        providerNoPassword = new RegistrationBackupProvider(deviceRegistrationProperties, null);
     }
 
     private void setUpProperties() throws Exception {
@@ -56,5 +60,22 @@ class RegistrationBackupProviderTest extends BackupProviderTestBase {
         // JSON contains the key of the password, but not the password itself:
         assertTrue(rawJson.contains("keyStorePassword"));
         assertFalse(rawJson.contains(keyStorePassword));
+    }
+
+    @Test
+    public void noPasswordForExport() {
+        assertThrows(EncryptionUnavailableException.class, () -> exportBackup(providerNoPassword));
+    }
+
+    @Test
+    public void noPasswordForImport() throws Exception {
+        byte[] backup = exportBackup(provider);
+        importBackup(backup, providerNoPassword);
+        assertEquals(List.of(BackupWarning.NO_PASSWORD_REGISTRATION_NOT_IMPORTED), providerNoPassword.getWarnings());
+    }
+
+    @Test
+    public void testExportVerifyImport() throws IOException {
+        exportVerifyImport(provider);
     }
 }

@@ -18,6 +18,7 @@ package org.eblocker.server.common.registration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.crypto.json.JsonEncrypt;
+import org.eblocker.registration.LicenseType;
 
 import java.util.Date;
 import java.util.UUID;
@@ -37,6 +38,10 @@ public class DeviceRegistrationExport {
     private String deviceId;
     private Date registeredAt;
     private String registeredBy;
+    private LicenseType licenseType;
+    private Date licenseNotValidAfter;
+    private boolean licenseAutoRenewal;
+    private String tosVersion;
 
     @JsonProperty
     @JsonEncrypt
@@ -126,5 +131,37 @@ public class DeviceRegistrationExport {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public LicenseType getLicenseType() {
+        return licenseType;
+    }
+
+    public void setLicenseType(LicenseType licenseType) {
+        this.licenseType = licenseType;
+    }
+
+    public Date getLicenseNotValidAfter() {
+        return licenseNotValidAfter;
+    }
+
+    public void setLicenseNotValidAfter(Date licenseNotValidAfter) {
+        this.licenseNotValidAfter = licenseNotValidAfter;
+    }
+
+    public boolean isLicenseAutoRenewal() {
+        return licenseAutoRenewal;
+    }
+
+    public void setLicenseAutoRenewal(boolean licenseAutoRenewal) {
+        this.licenseAutoRenewal = licenseAutoRenewal;
+    }
+
+    public String getTosVersion() {
+        return tosVersion;
+    }
+
+    public void setTosVersion(String tosVersion) {
+        this.tosVersion = tosVersion;
     }
 }

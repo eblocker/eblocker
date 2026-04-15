@@ -3147,7 +3147,6 @@
                         "EDIT_USERNAME" : "Edit profile name",
                         "REMOVE_TIME_RESTRICTIONS" : "Remove time range"
                     },
-                    "UPDATE_RUNNING" : "Blockers are generated according to your selection. This may take a while.",
                     "USAGE_RESTRICTIONS_ACTIVATED" : "Restrictions on daily Internet usage:",
                     "USAGE_RESTRICTIONS_DEACTIVATED" : "No restrictions on daily Internet usage.",
                     "USAGE_RESTRICTIONS_HOURS" : "{{hours}} hours",

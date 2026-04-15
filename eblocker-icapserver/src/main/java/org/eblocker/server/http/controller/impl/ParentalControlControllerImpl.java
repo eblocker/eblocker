@@ -125,11 +125,6 @@ public class ParentalControlControllerImpl extends SessionContextController impl
     }
 
     @Override
-    public Set<Integer> getProfilesBeingUpdated(Request request, Response response) {
-        return parentalControlService.getProfilesBeingUpdated();
-    }
-
-    @Override
     public boolean startUsage(Request request, Response response) {
         Device device = deviceService.getDeviceById(getSession(request).getDeviceId());
         return parentalControlUsageService.startUsage(device);

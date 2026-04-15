@@ -3147,7 +3147,6 @@
                         "EDIT_USERNAME": "Schutzprofilnamen ändern",
                         "REMOVE_TIME_RESTRICTIONS": "Zeitraum entfernen"
                     },
-                    "UPDATE_RUNNING": "Blockierliste wird nach ihrer Auswahl generiert. Dies kann etwas dauern.",
                     "USAGE_RESTRICTIONS_ACTIVATED": "Beschränkungen der täglichen Nutzungsdauer:",
                     "USAGE_RESTRICTIONS_DEACTIVATED": "Keine Beschränkung der täglichen Nutzungsdauer.",
                     "USAGE_RESTRICTIONS_HOURS": "{{hours}} Stunden",

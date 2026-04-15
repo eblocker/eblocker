@@ -163,10 +163,6 @@ public class ParentalControlService {
         return profiles.get(id);
     }
 
-    public Set<Integer> getProfilesBeingUpdated() {
-        return Collections.emptySet();
-    }
-
     public void addListener(ParentalControlProfileChangeListener listener) {
         listeners.add(listener);
     }

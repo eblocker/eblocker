@@ -261,19 +261,6 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
 
     }
 
-    /**
-     * Calls BE method: getProfilesBeingUpdated
-     */
-    function updates() {
-        return $http.get(PATH + '/updates').then(function success(response) {
-            return response;
-        }, function error(response) {
-            return $q.reject(response);
-        }).finally(function () {
-            invalidateCache();
-        });
-    }
-
     function isLicensed() {
         if (!angular.isDefined(registrationInfo.productInfo)) {
             return false;
@@ -291,7 +278,6 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         deleteAllProfiles: deleteAllProfiles,
         isLicensed: isLicensed,
         normalizeMaxUsageTimeByDay: normalizeMaxUsageTimeByDay,
-        updates: updates,
         getAll: getAll,
         invalidateCache: invalidateCache,
         uniqueName: uniqueName,

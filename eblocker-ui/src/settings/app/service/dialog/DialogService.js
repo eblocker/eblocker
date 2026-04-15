@@ -225,21 +225,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function profileAddEdit(profile, openDetails, event) {
-        return $mdDialog.show({
-            controller: 'AddUserProfileDialogController',
-            controllerAs: 'vm',
-            templateUrl: 'app/dialogs/parentalControl/user-profile-add.dialog.tmpl.html',
-            parent: angular.element(document.body),
-            clickOutsideToClose:false,
-            targetEvent: event,
-            locals: {
-                module: profile,
-                openDetails: openDetails
-            }
-        });
-    }
-
     function filterNewEdit(module, event, filterType) {
         return $mdDialog.show({
             controller: 'FilterAddDialogController',
@@ -888,7 +873,6 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         confirmReassignUser: confirmReassignUser,
         userUpdatePIN: userUpdatePIN,
         userResetPIN: userResetPIN,
-        profileAddEdit: profileAddEdit,
         filterNewEdit: filterNewEdit,
         deleteEntries: deleteEntries,
         vpnConnectionEdit: vpnConnectionEdit,

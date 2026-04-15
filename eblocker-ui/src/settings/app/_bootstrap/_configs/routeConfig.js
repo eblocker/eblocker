@@ -242,26 +242,6 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'usersDetailsComponent'
     };
 
-    // TODO remove when new parental control is done, until then it may be useful for debugging
-    // const userProfiles = {
-    //     name: 'userprofiles',
-    //     url: slashOptionSubState + 'userprofiles',
-    //     parent: parentalControlState.name,
-    //     tabOrder: 2,
-    //     requiredLicense: parentalControl.requiredLicense,
-    //     translationKey: 'ADMINCONSOLE.USER_PROFILES.LABEL',
-    //     component: 'userProfilesComponent'
-    // };
-
-    const usersProfileDetails = {
-        name: 'userprofiledetails',
-        url: slashOptionSubState + 'userprofiles/details',
-        parent: parentalControl.name,
-        ignoreTab: true,
-        requiredLicense: parentalControl.requiredLicense,
-        component: 'userProfileDetailsComponent'
-    };
-
     const blacklists = {
         name: 'blacklists',
         url: slashOptionSubState + 'blacklists/:id',
@@ -1093,7 +1073,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
         system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, manualRecording, users,
         blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
-        events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
+        events, backup, reset, diagnostics, usersDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,

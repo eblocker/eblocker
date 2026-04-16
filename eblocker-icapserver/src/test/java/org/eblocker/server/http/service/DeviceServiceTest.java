@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
@@ -65,6 +66,7 @@ public class DeviceServiceTest {
     private DeviceFactory deviceFactory;
     private IpResponseTable ipResponseTable;
     private Clock clock;
+    private MacPrefix macPrefix;
 
     @Before
     public void setup() throws IOException {
@@ -74,7 +76,8 @@ public class DeviceServiceTest {
         userAgentService = Mockito.mock(UserAgentService.class);
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
-        deviceFactory = new DeviceFactory(dataSource);
+        macPrefix = new MacPrefix();
+        deviceFactory = new DeviceFactory(dataSource, macPrefix);
         ipResponseTable = new IpResponseTable();
         clock = Mockito.mock(Clock.class);
 
@@ -107,7 +110,7 @@ public class DeviceServiceTest {
         Mockito.when(networkInterfaceWrapper.getFirstIPv4Address()).thenReturn(Ip4Address.parse(EBLOCKER_IP));
         // setup device service
         deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90);
+                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90, macPrefix);
         deviceService.init();
         deviceService.addListener(listener);
     }

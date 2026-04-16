@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Language;
+import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
@@ -44,13 +45,15 @@ public class DeviceIpUpdaterTest {
     private DeviceFactory deviceFactory;
     private UserService userService;
     private TestDeviceFactory tdf;
+    private MacPrefix macPrefix;
 
     @Before
     public void setUp() throws Exception {
         dataSource = Mockito.mock(DataSource.class);
         deviceService = Mockito.mock(DeviceService.class);
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
-        deviceFactory = new DeviceFactory(dataSource);
+        macPrefix = new MacPrefix();
+        deviceFactory = new DeviceFactory(dataSource, macPrefix);
         userService = Mockito.mock(UserService.class);
 
         tdf = new TestDeviceFactory(deviceService);

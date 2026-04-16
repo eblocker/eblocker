@@ -73,7 +73,7 @@ public class DeviceService {
     private final NetworkInterfaceWrapper networkInterfaceWrapper;
     private final DeviceFactory deviceFactory;
 
-    private final MacPrefix macPrefix = new MacPrefix();
+    private final MacPrefix macPrefix;
 
     private final IpResponseTable ipResponseTable;
     private final Clock clock;
@@ -84,7 +84,8 @@ public class DeviceService {
                          DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
                          NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory,
                          IpResponseTable ipResponseTable, Clock clock,
-                         @Named("device.offline.after.seconds") int deviceOfflineAfterSeconds) {
+                         @Named("device.offline.after.seconds") int deviceOfflineAfterSeconds,
+                         MacPrefix macPrefix) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.datasource = datasource;
         this.userAgentService = userAgentService;
@@ -93,17 +94,13 @@ public class DeviceService {
         this.ipResponseTable = ipResponseTable;
         this.clock = clock;
         this.deviceOfflineAfterSeconds = deviceOfflineAfterSeconds;
+        this.macPrefix = macPrefix;
     }
 
     @SubSystemInit
     public void init() {
         networkInterfaceWrapper.addIpAddressChangeListener(this::onIpAddressChange);
         ipResponseTable.addLatestTimestampUpdateListener(this::onLatestTimestampUpdate);
-        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
-            macPrefix.addInputStream(inputStream);
-        } catch (IOException e) {
-            log.error("Could not read MAC prefixes", e);
-        }
 
         onIpAddressChange(true, false);
     }

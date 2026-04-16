@@ -35,19 +35,21 @@ public class DeviceFactoryTest {
     private DeviceFactory deviceFactory;
     private DataSource dataSource;
     private UserService userService;
+    private MacPrefix macPrefix;
 
     @Before
     public void setUp() throws IOException {
         // Mock DataSource
         dataSource = Mockito.mock(DataSource.class);
         userService = Mockito.mock(UserService.class);
+        macPrefix = new MacPrefix();
 
         Language lang = new Language("de", "German");
         UserModule user = new UserModule(123456, null, null, null, null, null, true, null, null, null, null, null);
 
         Mockito.when(dataSource.getCurrentLanguage()).thenReturn(lang);
         Mockito.when(userService.createDefaultSystemUser(any())).thenReturn(user);
-        deviceFactory = new DeviceFactory(dataSource);
+        deviceFactory = new DeviceFactory(dataSource, macPrefix);
     }
 
     @After

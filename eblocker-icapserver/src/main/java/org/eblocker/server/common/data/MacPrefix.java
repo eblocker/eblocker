@@ -16,6 +16,13 @@
  */
 package org.eblocker.server.common.data;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eblocker.server.icap.resources.DefaultEblockerResource;
+import org.eblocker.server.icap.resources.ResourceHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,11 +31,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class MacPrefix {
+    private static final Logger log = LoggerFactory.getLogger(MacPrefix.class);
+
     private Map<String, String> prefixToVendor;
 
+    @Inject
     public MacPrefix() {
         prefixToVendor = new HashMap<>();
+
+        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
+            addInputStream(inputStream);
+        } catch (IOException e) {
+            log.error("Could not read MAC prefixes", e);
+        }
     }
 
     public void addInputStream(InputStream in) throws IOException {

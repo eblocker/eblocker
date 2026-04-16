@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserRole;
@@ -61,6 +62,7 @@ public class UserServiceTest {
     private DeviceFactory deviceFactory;
     private IpResponseTable ipResponseTable;
     private Clock clock;
+    private MacPrefix macPrefix;
 
     @Before
     public void setup() throws IOException {
@@ -72,8 +74,9 @@ public class UserServiceTest {
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
         ipResponseTable = new IpResponseTable();
+        macPrefix = new MacPrefix();
         deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90);
+                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90, macPrefix);
         deviceService.init();
 
         users = new ArrayList<>();

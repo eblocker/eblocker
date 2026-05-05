@@ -74,30 +74,30 @@ public class ConfigurationBackupService {
             case VERSION_2_APP_MODULES_AND_DEVICES:
                 return List.of(
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider());
+                        providerFactory.createDevicesLegacyBackupProvider());
 
             case VERSION_3_APP_MODULES_DEVICES_TOR:
                 return List.of(
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createDevicesLegacyBackupProvider(),
                         providerFactory.createTorConfigBackupProvider());
 
             case VERSION_4_WITH_KEYS:
                 return List.of(
                         providerFactory.createHttpsKeysBackupProvider(cryptoService), // fail early if the password is wrong!
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createDevicesLegacyBackupProvider(),
                         providerFactory.createTorConfigBackupProvider());
 
             case VERSION_5_FULL:
                 return List.of(
                         providerFactory.createHttpsKeysBackupProvider(cryptoService),
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
                         providerFactory.createOpenVpnServerBackupProvider(cryptoService),
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
-                        providerFactory.createRegistrationBackupProvider(cryptoService));
+                        providerFactory.createRegistrationBackupProvider(cryptoService),
+                        providerFactory.createUsersBackupProvider());
 
             default:
                 throw new UnsupportedBackupVersionException(version);

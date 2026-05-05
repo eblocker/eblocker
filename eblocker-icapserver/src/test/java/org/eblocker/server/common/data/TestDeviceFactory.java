@@ -31,17 +31,23 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.when;
 
 /**
- * Factory for adding devices to a mock DataSource
+ * Factory for adding devices to a mock DataSource or DeviceService.
  */
 public class TestDeviceFactory {
     private Map<String, Device> devices = new HashMap<>();
     private DataSource dataSource;
     private DeviceService deviceService;
 
+    /**
+     * Create a test device factory from a mock DataSource.
+     */
     public TestDeviceFactory(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Create a test device factory from a mock DeviceService.
+     */
     public TestDeviceFactory(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
@@ -64,6 +70,10 @@ public class TestDeviceFactory {
 
     public Device getDevice(String id) {
         return devices.get(id);
+    }
+
+    public Device getDeviceByHwAddress(String hwAddress) {
+        return devices.get(Device.ID_PREFIX + hwAddress);
     }
 
     public void commit() {
@@ -90,7 +100,7 @@ public class TestDeviceFactory {
 
     public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled, boolean fixed) {
         Device device = new Device();
-        device.setId("device:" + hwAddress);
+        device.setId(Device.ID_PREFIX + hwAddress);
         device.setName(name);
         if (ipAddress != null) {
             device.setIpAddresses(Collections.singletonList(IpAddress.parse(ipAddress)));

@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 @Singleton
 @SubSystemService(value = SubSystem.EVENT_LISTENER, allowUninitializedCalls = false)
 public class UserService {
+    private final Object userIdLock = new Object();
 
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
@@ -115,7 +116,7 @@ public class UserService {
             throw new ConflictException("Name of user must be unique");
         }
 
-        int nextId = dataSource.nextId(UserModule.class);
+        int nextId = getNextUserId();
 
         checkAndUpdateParentalControlData(nextId, userRole, null);
 
@@ -145,6 +146,25 @@ public class UserService {
         notifyListeners(savedUser);
 
         return savedUser;
+    }
+
+    private int getNextUserId() {
+        synchronized (userIdLock) {
+            return dataSource.nextId(UserModule.class);
+        }
+    }
+
+    /**
+     * Make sure that the next user ID is greater than the given maximum ID.
+     * The next user ID will also be greater than the current maximum ID.
+     * @param maxId
+     */
+    public void ensureNextUserIdGreaterThan(int maxId) {
+        synchronized (userIdLock) {
+            int currId = getNextUserId() - 1;
+            currId = Integer.max(maxId, currId);
+            dataSource.setIdSequence(UserModule.class, currId);
+        }
     }
 
     public UserModule updateUser(Integer id, Integer associatedProfileId,
@@ -499,7 +519,7 @@ public class UserService {
     }
 
     public UserModule createDefaultSystemUser(String name) {
-        int userId = dataSource.nextId(UserModule.class);
+        int userId = getNextUserId();
         return createDefaultSystemUser(name, userId);
     }
 
@@ -521,7 +541,7 @@ public class UserService {
     }
 
     public UserModule restoreDefaultSystemUser(String name) {
-        int userId = dataSource.nextId(UserModule.class);
+        int userId = getNextUserId();
         return restoreDefaultSystemUser(name, userId);
     }
 
@@ -531,7 +551,7 @@ public class UserService {
         if (defaultSystemUser == null) {
             restoredDefaultSystemUser = createDefaultSystemUser(name, userId);
             // within createDefaultSystemUser we do not yet have the default profile, so the getDashboardForUser call
-            // will get the default dashboardColumnsView (not based on profile). Here we reset the the dashboardColumnsView
+            // will get the default dashboardColumnsView (not based on profile). Here we reset the dashboardColumnsView
             // of the just created user, which is now based the correct profile.
             restoredDefaultSystemUser.setDashboardColumnsView(getDashboardForUser(restoredDefaultSystemUser, restoredDefaultSystemUser.getUserRole()));
         } else {

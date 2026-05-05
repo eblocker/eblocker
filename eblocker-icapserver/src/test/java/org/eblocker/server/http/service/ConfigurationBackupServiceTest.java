@@ -24,13 +24,14 @@ import org.eblocker.server.http.backup.AppModulesBackupProvider;
 import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProviderFactory;
 import org.eblocker.server.http.backup.CorruptedBackupException;
-import org.eblocker.server.http.backup.DevicesBackupProvider;
+import org.eblocker.server.http.backup.DevicesLegacyBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnClientBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
 import org.eblocker.server.http.backup.RegistrationBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
+import org.eblocker.server.http.backup.UsersBackupProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -48,24 +49,26 @@ public class ConfigurationBackupServiceTest {
     private DataSource dataSource;
     private ConfigurationBackupService service;
     private AppModulesBackupProvider appModulesBP;
-    private DevicesBackupProvider devicesBP;
+    private DevicesLegacyBackupProvider devicesLegacyBP;
     private TorConfigBackupProvider torConfigBP;
     private HttpsKeysBackupProvider httpsKeysBP;
     private OpenVpnServerBackupProvider openVpnServerBP;
     private OpenVpnClientBackupProvider openVpnClientBP;
     private RegistrationBackupProvider registrationBP;
+    private UsersBackupProvider usersBP;
     private static final String password = "top secret!";
 
     @BeforeEach
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
         appModulesBP = Mockito.mock(AppModulesBackupProvider.class);
-        devicesBP = Mockito.mock(DevicesBackupProvider.class);
+        devicesLegacyBP = Mockito.mock(DevicesLegacyBackupProvider.class);
         torConfigBP = Mockito.mock(TorConfigBackupProvider.class);
         httpsKeysBP = Mockito.mock(HttpsKeysBackupProvider.class);
         openVpnServerBP = Mockito.mock(OpenVpnServerBackupProvider.class);
         openVpnClientBP = Mockito.mock(OpenVpnClientBackupProvider.class);
         registrationBP = Mockito.mock(RegistrationBackupProvider.class);
+        usersBP = Mockito.mock(UsersBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
@@ -74,8 +77,8 @@ public class ConfigurationBackupServiceTest {
             }
 
             @Override
-            public DevicesBackupProvider createDevicesBackupProvider() {
-                return devicesBP;
+            public DevicesLegacyBackupProvider createDevicesLegacyBackupProvider() {
+                return devicesLegacyBP;
             }
 
             @Override
@@ -101,6 +104,11 @@ public class ConfigurationBackupServiceTest {
             @Override
             public RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService) {
                 return registrationBP;
+            }
+
+            @Override
+            public UsersBackupProvider createUsersBackupProvider() {
+                return usersBP;
             }
         };
         service = new ConfigurationBackupService(dataSource, providerFactory);

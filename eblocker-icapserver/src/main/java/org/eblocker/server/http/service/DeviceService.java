@@ -217,19 +217,18 @@ public class DeviceService {
     }
 
     /**
-     * Delete a device from the cache and data source
+     * Delete a device from the cache and data source.
+     * A device is only deleted if it is not online.
      *
      * @param device the device to be deleted
+     * @return the deleted device or null (if the given device is online)
      */
     public Device delete(Device device) {
-        // Make sure online devices are not deleted
         Device deviceFromCache = devicesById.get(device.getId());
         if (deviceFromCache != null && deviceFromCache.isOnline()) {
             return null;
         }
         datasource.delete(device);
-        // TODO: Is it possible that the device is not in the cache?
-        //       If so, shouldn't we still execute the listeners?
         Device cachedDevice = devicesById.remove(device.getId());
         cachedDevice.getIpAddresses().forEach(devicesByIp::remove);
         listeners.forEach(listener -> listener.onDelete(cachedDevice));

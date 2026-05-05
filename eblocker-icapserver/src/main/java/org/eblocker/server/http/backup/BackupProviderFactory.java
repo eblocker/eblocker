@@ -23,10 +23,11 @@ import org.eblocker.crypto.CryptoService;
  */
 public interface BackupProviderFactory {
     AppModulesBackupProvider createAppModulesBackupProvider();
-    DevicesBackupProvider createDevicesBackupProvider();
+    DevicesLegacyBackupProvider createDevicesLegacyBackupProvider();
     TorConfigBackupProvider createTorConfigBackupProvider();
     HttpsKeysBackupProvider createHttpsKeysBackupProvider(CryptoService cryptoService);
     OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService);
     OpenVpnClientBackupProvider createOpenVpnClientBackupProvider(CryptoService cryptoService);
     RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService);
+    UsersBackupProvider createUsersBackupProvider();
 }

@@ -331,7 +331,9 @@ public class JedisDataSource implements DataSource {
 
         for (String deviceId : deviceIds) {
             Device device = getDevice(deviceId);
-            devices.add(device);
+            if (device != null) {
+                devices.add(device);
+            }
         }
         return devices;
     }

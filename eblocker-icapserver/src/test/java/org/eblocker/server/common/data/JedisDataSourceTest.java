@@ -17,9 +17,8 @@
 package org.eblocker.server.common.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
@@ -29,6 +28,9 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JedisDataSourceTest {
 
@@ -38,7 +40,7 @@ public class JedisDataSourceTest {
 
     private JedisDataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setup() {
         jedis = Mockito.mock(Jedis.class);
         jedisPool = Mockito.mock(JedisPool.class);
@@ -64,7 +66,7 @@ public class JedisDataSourceTest {
     @Test
     public void testNextId() {
         Mockito.when(jedis.incr("Entity:sequence")).thenReturn(5L);
-        Assert.assertEquals(5L, dataSource.nextId(Entity.class));
+        assertEquals(5L, dataSource.nextId(Entity.class));
     }
 
     public static class Entity {
@@ -92,7 +94,7 @@ public class JedisDataSourceTest {
 
         Device device = dataSource.getDevice(deviceId);
 
-        Assert.assertFalse(device.isPaused());
+        assertFalse(device.isPaused());
     }
 
     @Test
@@ -107,7 +109,7 @@ public class JedisDataSourceTest {
         Mockito.verify(jedis).hmset(Mockito.eq("device:112233445566"), captor.capture());
 
         Map<String, String> map = captor.getValue();
-        Assert.assertEquals("10.10.10.10,10.10.10.11", map.get("ipAddress"));
+        assertEquals("10.10.10.10,10.10.10.11", map.get("ipAddress"));
     }
 
     @Test
@@ -119,11 +121,11 @@ public class JedisDataSourceTest {
         Mockito.when(jedis.hgetAll(deviceId)).thenReturn(map);
 
         Device device = dataSource.getDevice(deviceId);
-        Assert.assertNotNull(device);
-        Assert.assertNotNull(device.getIpAddresses());
-        Assert.assertEquals(2, device.getIpAddresses().size());
-        Assert.assertTrue(device.getIpAddresses().contains(IpAddress.parse("10.10.10.10")));
-        Assert.assertTrue(device.getIpAddresses().contains(IpAddress.parse("10.10.10.11")));
+        assertNotNull(device);
+        assertNotNull(device.getIpAddresses());
+        assertEquals(2, device.getIpAddresses().size());
+        assertTrue(device.getIpAddresses().contains(IpAddress.parse("10.10.10.10")));
+        assertTrue(device.getIpAddresses().contains(IpAddress.parse("10.10.10.11")));
     }
 
     @Test
@@ -136,25 +138,27 @@ public class JedisDataSourceTest {
         Mockito.when(jedis.get("gateway")).thenReturn("192.168.1.1");
 
         Device device = dataSource.getDevice(deviceId);
-        Assert.assertTrue(device.isGateway());
+        assertTrue(device.isGateway());
     }
 
     @Test
     public void testGetDeviceScanningInterval() {
         // good value:
         Mockito.when(jedis.get(JedisDataSource.KEY_DEVICE_SCANNING_INTERVAL)).thenReturn("42");
-        Assert.assertEquals(Long.valueOf(42), dataSource.getDeviceScanningInterval());
+        assertEquals(Long.valueOf(42), dataSource.getDeviceScanningInterval());
 
         // empty value:
         Mockito.when(jedis.get(JedisDataSource.KEY_DEVICE_SCANNING_INTERVAL)).thenReturn(null);
-        Assert.assertNull(dataSource.getDeviceScanningInterval());
+        assertNull(dataSource.getDeviceScanningInterval());
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testGetDeviceScanningIntervalBadValue() {
         // bad value:
         Mockito.when(jedis.get(JedisDataSource.KEY_DEVICE_SCANNING_INTERVAL)).thenReturn("not an integer");
-        dataSource.getDeviceScanningInterval();
+        assertThrows(NumberFormatException.class, () -> {
+            dataSource.getDeviceScanningInterval();
+        });
     }
 
     @Test
@@ -171,5 +175,20 @@ public class JedisDataSourceTest {
         device.setLastSeen(Instant.ofEpochMilli(1234));
         dataSource.updateLastSeen(device);
         Mockito.verify(jedis).hset(deviceId, JedisDataSource.KEY_DEVICE_LAST_SEEN, "1234");
+    }
+
+    /**
+     * Test a race condition where a device is deleted between the calls to getDeviceIds() and getDevice().
+     * (See issue #420).
+     */
+    @Test
+    public void testGetDevicesRaceCondition() {
+        Mockito.when(jedis.keys("device:*")).thenReturn(Set.of("device:111111111111", "device:222222222222"));
+        // device 2 was deleted
+        Map<String, String> device1 = Map.of("ipAddress", "192.168.23.42");
+        Mockito.when(jedis.hgetAll("device:111111111111")).thenReturn(device1);
+        Set<Device> devices = dataSource.getDevices();
+        assertFalse(devices.contains(null));
+        assertEquals(1, devices.size());
     }
 }

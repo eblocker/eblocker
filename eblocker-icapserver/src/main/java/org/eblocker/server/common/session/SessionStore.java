@@ -21,7 +21,6 @@ import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserAgentService;
@@ -39,25 +38,22 @@ public class SessionStore {
     private static final Logger log = LoggerFactory.getLogger(SessionStore.class);
     private final Map<String, SessionImpl> store = new ConcurrentHashMap<>();
     private static final long MILLIS_TO_KEEP = 24 * 3600 * 1000L;
-    private final NetworkInterfaceWrapper networkInterface;
     private final DeviceService deviceService;
     private final UserAgentService userAgentService;
 
     @Inject
     public SessionStore(
-            NetworkInterfaceWrapper networkInterface,
             DeviceService deviceService,
             UserAgentService userAgentService
     ) {
         log.info("Creating a session store");
-        this.networkInterface = networkInterface;
         this.deviceService = deviceService;
         this.userAgentService = userAgentService;
     }
 
     public Session getSession(TransactionIdentifier transactionId) {
         String userAgent = SessionIdUtil.normalizeUserAgent(transactionId.getUserAgent());
-        IpAddress ip = SessionIdUtil.normalizeIp(transactionId.getOriginalClientIP(), networkInterface.getFirstIPv4Address());
+        IpAddress ip = transactionId.getOriginalClientIP();
 
         Device device = deviceService.getDeviceByIp(ip);
         if (device == null) {

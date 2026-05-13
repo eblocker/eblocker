@@ -49,7 +49,7 @@ public class SessionProcessor implements TransactionProcessor {
         } else {
             String sessionId = request.headers().get(HEADER);
             if (sessionId != null) {
-                session = sessionStore.findSession(request.headers().get(HEADER));
+                session = sessionStore.findSession(sessionId);
             }
             if (session == null) {
                 session = sessionStore.getSession(transaction);

@@ -498,10 +498,7 @@ public class UserService {
     }
 
     private void doReset(Device device) {
-        UserModule defaultSystemUser = restoreDefaultSystemUser(device.getId());
-        device.setDefaultSystemUser(defaultSystemUser.getId());
-        device.setAssignedUser(defaultSystemUser.getId());
-        device.setOperatingUser(defaultSystemUser.getId());
+        restoreDefaultSystemUserAsUsers(device);
     }
 
     private boolean doDelete(int userId) {

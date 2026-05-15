@@ -370,8 +370,6 @@ public class SquidConfigController {
 
     /**
      * This function will reconstruct the squid.conf and reload the squid.
-     *
-     * @return
      */
     public void updateSquidConfig() {
         String squidConfigContent = constructSquidConfigString(sslService.isSslEnabled(), dataSource.getAll(OpenVpnClientState.class));

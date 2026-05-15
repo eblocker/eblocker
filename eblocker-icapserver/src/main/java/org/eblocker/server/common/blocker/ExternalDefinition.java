@@ -112,6 +112,9 @@ public class ExternalDefinition {
         return referenceId;
     }
 
+    /**
+     * @param referenceId
+     */
     public void setReferenceId(Integer referenceId) {
         this.referenceId = referenceId;
     }

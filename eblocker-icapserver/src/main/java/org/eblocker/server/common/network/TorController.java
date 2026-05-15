@@ -48,7 +48,6 @@ import java.util.regex.Pattern;
  * See https://gitweb.torproject.org/torspec.git/tree/control-spec.txt for the usage of the control port. It can be used to control and
  * query information of the running Tor instance.
  * <p>
- * <p>
  * NOTE: To be able to specifiy certain exit nodes for tor to use we need the TOR-GEOIPDB debian package!!!
  * For the BananaPi M2 it can be found in this repository (mirror) :
  * deb http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi

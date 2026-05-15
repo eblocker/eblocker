@@ -88,7 +88,7 @@ public class RedisBackupService {
      * Checks the current state of redis-database. In case of errors restoring the database from backups is attempted.
      * If redis is running it will also schedule a periodic backup task.
      *
-     * @Returns restoring from backup has been necessary
+     * @return restoring from backup has been necessary
      */
     public boolean check() throws RedisServiceException {
         if (isRedisRunning()) {

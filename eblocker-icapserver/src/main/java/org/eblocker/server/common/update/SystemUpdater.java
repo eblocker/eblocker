@@ -66,7 +66,6 @@ public interface SystemUpdater {
     /**
      * Starts downloading new updates
      *
-     * @return the update state
      * @throws InterruptedException
      * @throws IOException
      */

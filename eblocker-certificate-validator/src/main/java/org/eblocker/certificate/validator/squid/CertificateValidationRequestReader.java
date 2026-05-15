@@ -49,7 +49,6 @@ public class CertificateValidationRequestReader extends CertificateValidationMes
     }
 
     /**
-     * @param in
      * @return null if end of inputstream is reached
      */
     public CertificateValidationRequest read(BufferedReader reader) {

@@ -216,7 +216,7 @@ public class UrlUtils {
      * lots of domains, and should therefore be forbidden to add. Domains may be
      * given as bare domains (e.g. www.server.tld) but also as URLs as
      * copy-pasted from the browsers address bar (e.g.
-     * https://user:pass@server.tld/folder/script.php?param=value&param2=value2)
+     * https://user:pass@server.tld/folder/script.php?param=value&amp;param2=value2)
      *
      * @param url The URL to check
      * @return true if the URL contains a valid domain

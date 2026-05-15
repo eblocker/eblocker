@@ -29,10 +29,12 @@ import java.util.function.Function;
  * This implementation distinguishes between substitutions x->y and x->x named substitution and no operation here.
  * <p>
  * Default cost functions are:
- * <li>deletion: + 1
- * <li>insertion: + 1
- * <li>substitution: + 2
- * <li>no operation: + 0
+ * <ul>
+ *   <li>deletion: + 1
+ *   <li>insertion: + 1
+ *   <li>substitution: + 2
+ *   <li>no operation: + 0
+ * </ul>
  */
 public class Levenshtein<T> {
 

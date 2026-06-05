@@ -141,7 +141,6 @@ public class UsersBackupProvider extends BackupProvider {
 
     private void restoreBackupAlternative(UsersBackup backup) throws IOException {
         int maxUserId = getMaximumUserId(backup);
-        userService.ensureNextUserIdGreaterThan(maxUserId);
         deleteNonSystemUsers();
         List<Device> devicesNotInBackup = getDevicesNotInBackup(backup);
         deleteOrResetDevices(devicesNotInBackup);

@@ -29,6 +29,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * The DeviceFactory is responsible for creating new devices that have been found in
+ * the local network. It sets the "enabled" flag of new devices according to the global
+ * "autoEnableNewDevices" parameter. It also sets the default names of new devices.
+ */
 @Singleton
 public class DeviceFactory {
     private static final Logger log = LoggerFactory.getLogger(DeviceFactory.class);

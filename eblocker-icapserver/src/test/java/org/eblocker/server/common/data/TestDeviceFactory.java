@@ -52,11 +52,26 @@ public class TestDeviceFactory {
         this.deviceService = deviceService;
     }
 
-    public void addDevice(String hwAddress, String ipAddress, boolean enabled) {
+    /**
+     * Creates and adds a device.
+     *
+     * NOTE: call {@link #commit()} after adding devices.
+     * @param hwAddress the device's MAC address
+     * @param ipAddress the device's IP address
+     * @param enabled whether the device should be enabled
+     */
+    public Device addDevice(String hwAddress, String ipAddress, boolean enabled) {
         Device device = createDevice(hwAddress, ipAddress, enabled);
         addDevice(device);
+        return device;
     }
 
+    /**
+     * Adds a device.
+     *
+     * NOTE: call {@link #commit()} after adding devices.
+     * @param device the device to add
+     */
     public void addDevice(Device device) {
         devices.put(device.getId(), device);
         if (dataSource != null) {
@@ -76,6 +91,9 @@ public class TestDeviceFactory {
         return devices.get(Device.ID_PREFIX + hwAddress);
     }
 
+    /**
+     * Sets up the mock object to return all added devices.
+     */
     public void commit() {
         if (dataSource != null) {
             when(dataSource.getDeviceIds()).thenReturn(new TreeSet<>(devices.keySet()));

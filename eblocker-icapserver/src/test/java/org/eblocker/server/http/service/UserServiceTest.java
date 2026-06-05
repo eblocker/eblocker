@@ -406,19 +406,4 @@ public class UserServiceTest {
         // make sure proper methods have been called
         Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()), Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
     }
-
-    @Test
-    public void testEnsureNextUserIdGreaterThan() {
-        // Note: setIdSequence() sets the sequence number
-        // while nextId() returns the incremented sequence number
-        Mockito.when(dataSource.nextId(UserModule.class))
-                .thenReturn(23);
-        userService.ensureNextUserIdGreaterThan(12);
-        Mockito.verify(dataSource).setIdSequence(UserModule.class, 22);
-        // ... next ID will be 23
-
-        userService.ensureNextUserIdGreaterThan(42);
-        Mockito.verify(dataSource).setIdSequence(UserModule.class, 42);
-        // ... next ID will be 43
-    }
 }

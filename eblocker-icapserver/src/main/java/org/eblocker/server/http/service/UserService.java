@@ -56,8 +56,6 @@ import java.util.stream.Collectors;
 @Singleton
 @SubSystemService(value = SubSystem.EVENT_LISTENER, allowUninitializedCalls = false)
 public class UserService {
-    private final Object userIdLock = new Object();
-
     private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
     private static final Logger STATUS = LoggerFactory.getLogger("STATUS");
 
@@ -149,22 +147,7 @@ public class UserService {
     }
 
     private int getNextUserId() {
-        synchronized (userIdLock) {
-            return dataSource.nextId(UserModule.class);
-        }
-    }
-
-    /**
-     * Make sure that the next user ID is greater than the given maximum ID.
-     * The next user ID will also be greater than the current maximum ID.
-     * @param maxId
-     */
-    public void ensureNextUserIdGreaterThan(int maxId) {
-        synchronized (userIdLock) {
-            int currId = getNextUserId() - 1;
-            currId = Integer.max(maxId, currId);
-            dataSource.setIdSequence(UserModule.class, currId);
-        }
+        return dataSource.nextId(UserModule.class);
     }
 
     public UserModule updateUser(Integer id, Integer associatedProfileId,

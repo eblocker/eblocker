@@ -155,7 +155,7 @@ public class ConfigurationBackupServiceTest {
 
     @Test
     public void testWarnings() throws IOException {
-        final List<BackupWarning> warnings = List.of(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
+        final List<BackupWarning> warnings = List.of(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE));
         Mockito.when(openVpnServerBP.getWarnings()).thenReturn(warnings);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         service.exportConfiguration(outputStream, password);

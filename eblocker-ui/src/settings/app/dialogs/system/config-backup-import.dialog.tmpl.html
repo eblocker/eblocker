@@ -91,7 +91,7 @@
                             <div ng-hide="vm.warnings.length === 0">
                                 <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WARNINGS"></div>
                                 <ul>
-                                    <li ng-repeat="warning in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + warning | translate}}</li>
+                                    <li ng-repeat="w in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + w.id | translate:{itemId: w.itemId, itemName: w.itemName} }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                             <div ng-hide="vm.warnings.length === 0">
                                 <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WARNINGS"></div>
                                 <ul>
-                                    <li ng-repeat="warning in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + warning | translate}}</li>
+                                    <li ng-repeat="w in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + w.id | translate:{itemId: w.itemId, itemName: w.itemName} }}</li>
                                 </ul>
                             </div>
                         </div>

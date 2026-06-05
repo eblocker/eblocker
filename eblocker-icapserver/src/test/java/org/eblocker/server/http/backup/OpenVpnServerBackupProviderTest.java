@@ -81,7 +81,7 @@ class OpenVpnServerBackupProviderTest extends BackupProviderTestBase {
     public void noPasswordForImport() throws Exception {
         byte[] backup = exportBackup(provider);
         importBackup(backup, providerNoPassword);
-        assertEquals(List.of(BackupWarning.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED), providerNoPassword.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED)), providerNoPassword.getWarnings());
     }
 
     @Test
@@ -140,6 +140,6 @@ class OpenVpnServerBackupProviderTest extends BackupProviderTestBase {
                 .when(service).enablePortForwarding();
         byte[] backup = exportBackup(provider);
         importBackup(backup, provider);
-        assertEquals(List.of(BackupWarning.UPNP_PORT_FORWARDING_FAILURE), provider.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE)), provider.getWarnings());
     }
 }

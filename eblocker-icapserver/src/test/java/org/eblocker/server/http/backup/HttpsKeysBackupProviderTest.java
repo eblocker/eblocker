@@ -70,7 +70,7 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         assertEquals(0, provider.getWarnings().size());
 
         importBackup(backup, providerNoPassword);
-        assertEquals(List.of(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED), providerNoPassword.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED)), providerNoPassword.getWarnings());
     }
 
     @Test

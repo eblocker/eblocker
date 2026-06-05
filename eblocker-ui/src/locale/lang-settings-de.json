@@ -391,12 +391,17 @@
                 "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN- und Lizenz-Schlüssel nicht wiederhergestellt."
             },
             "WARNING": {
+                "ITEM": {
+                    "VPN_PROFILE": "Das VPN-Profil"
+                },
                 "LICENSE_CRYPTO_FAILURE": "Die Lizenz-Schlüssel können nicht entschlüsselt werden.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die OpenVPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die OpenVPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "Die Lizenz-Schlüssel können nicht wiederhergestellt werden.",
-                "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen."
+                "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen.",
+                "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht gesichert werden.",
+                "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht wiederhergestellt werden."
             }
         },
         "DETAILS_VIEW": {

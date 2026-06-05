@@ -102,7 +102,7 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         }
         if (cryptoService == null) {
             LOG.warn("No password provided, so CAs are not imported");
-            addWarning(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED));
             return;
         }
         try {

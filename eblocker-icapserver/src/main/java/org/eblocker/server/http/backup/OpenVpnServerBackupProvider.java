@@ -86,7 +86,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
         }
 
         if (!canDecrypt()) {
-            addWarning(BackupWarning.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED));
             return;
         }
 
@@ -134,7 +134,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
             }
         } catch (Exception e) {
             LOG.warn("Could not update port forwarding during backup restore", e);
-            addWarning(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
+            addWarning(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE));
         }
     }
 

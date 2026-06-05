@@ -391,12 +391,17 @@
                 "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, OpenVPN and license keys are not restored."
             },
             "WARNING": {
+                "ITEM": {
+                    "VPN_PROFILE": "The VPN profile"
+                },
                 "LICENSE_CRYPTO_FAILURE": "License keys cannot be decrypted.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "HTTPS keys cannot be restored.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "OpenVPN keys for eBlocker Mobile cannot be restored.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "OpenVPN keys for anonymization cannot be restored.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
-                "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed."
+                "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed.",
+                "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be saved.",
+                "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be restored."
             }
         },
         "DETAILS_VIEW" : {

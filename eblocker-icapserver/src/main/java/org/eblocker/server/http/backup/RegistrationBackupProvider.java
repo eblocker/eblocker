@@ -56,7 +56,7 @@ public class RegistrationBackupProvider extends BackupProvider {
             export = deviceRegistrationProperties.exportRegistration();
         } catch (CryptoException e) {
             LOG.error("Failed to export registration", e);
-            addWarning(BackupWarning.LICENSE_CRYPTO_FAILURE);
+            addWarning(new BackupWarning(BackupWarning.Id.LICENSE_CRYPTO_FAILURE));
             export = new DeviceRegistrationExport();
         }
         writeNextEntry(outputStream, REGISTRATION_ENTRY, objectMapper.writeValueAsBytes(export));
@@ -80,7 +80,7 @@ public class RegistrationBackupProvider extends BackupProvider {
         }
 
         if (!canDecrypt()) {
-            addWarning(BackupWarning.NO_PASSWORD_REGISTRATION_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_REGISTRATION_NOT_IMPORTED));
             return;
         }
 
@@ -89,7 +89,7 @@ public class RegistrationBackupProvider extends BackupProvider {
                 restoreBackup(backup);
             } catch (CryptoException e) {
                 LOG.error("Failed to restore backup", e);
-                addWarning(BackupWarning.LICENSE_CRYPTO_FAILURE);
+                addWarning(new BackupWarning(BackupWarning.Id.LICENSE_CRYPTO_FAILURE));
             }
         }
     }

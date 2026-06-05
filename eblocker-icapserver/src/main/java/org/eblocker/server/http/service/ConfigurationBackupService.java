@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.CryptoServiceFactory;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProvider;
@@ -93,11 +94,11 @@ public class ConfigurationBackupService {
                 return List.of(
                         providerFactory.createHttpsKeysBackupProvider(cryptoService),
                         providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createUsersBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
                         providerFactory.createOpenVpnServerBackupProvider(cryptoService),
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
-                        providerFactory.createRegistrationBackupProvider(cryptoService),
-                        providerFactory.createUsersBackupProvider());
+                        providerFactory.createRegistrationBackupProvider(cryptoService));
 
             default:
                 throw new UnsupportedBackupVersionException(version);
@@ -111,7 +112,8 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void exportConfiguration(OutputStream outputStream, String password) throws IOException {
+    public ConfigBackupExportResult exportConfiguration(OutputStream outputStream, String password) throws IOException {
+        ConfigBackupExportResult result = new ConfigBackupExportResult();
         Manifest manifest = new Manifest();
         BackupAttributes attribs = getBackupAttributes(password != null);
         attribs.addToAttributes(manifest.getMainAttributes());
@@ -121,8 +123,10 @@ public class ConfigurationBackupService {
         try (JarOutputStream jarStream = new JarOutputStream(outputStream, manifest)) {
             for (BackupProvider provider : createBackupProviders(CURRENT_VERSION, cryptoService)) {
                 provider.exportConfiguration(jarStream);
+                result.addWarnings(provider.getWarnings());
             }
         }
+        return result;
     }
 
     /**

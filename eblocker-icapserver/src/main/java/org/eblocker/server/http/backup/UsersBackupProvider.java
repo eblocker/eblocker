@@ -139,16 +139,6 @@ public class UsersBackupProvider extends BackupProvider {
         }
     }
 
-    private void restoreBackupAlternative(UsersBackup backup) throws IOException {
-        int maxUserId = getMaximumUserId(backup);
-        deleteNonSystemUsers();
-        List<Device> devicesNotInBackup = getDevicesNotInBackup(backup);
-        deleteOrResetDevices(devicesNotInBackup);
-        // importProfiles(backup);
-        // importUsers(backup);
-        // importDevices(backup);
-    }
-
     private void restoreBackup(UsersBackup backup) throws IOException {
         Collection<Device> currentDevices = deviceService.getDevices(true);
         deleteOrResetDevices(new ArrayList<>(currentDevices));
@@ -190,6 +180,8 @@ public class UsersBackupProvider extends BackupProvider {
                 Integer oldId = profile.getId();
                 profile.setId(null);
                 UserProfileModule newProfile = parentalControlService.storeNewProfile(profile);
+                // TODO: names of profiles contain the user ID, e.g. PROFILE_FOR_USER_102
+                // these names are not updated currently (user IDs change during import)
                 profileIdMapping.put(oldId, newProfile.getId());
             }
         }
@@ -241,24 +233,5 @@ public class UsersBackupProvider extends BackupProvider {
             device.setIpAddresses(List.of());
             deviceService.updateDevice(device);
         }
-    }
-
-    private List<Device> getDevicesNotInBackup(UsersBackup backup) {
-        Collection<Device> currentDevices = deviceService.getDevices(true);
-
-        Set<String> deviceIdsInBackup = backup.getDevices().stream()
-                .map(Device::getId)
-                .collect(Collectors.toSet());
-
-        return currentDevices.stream()
-                .filter(device -> !deviceIdsInBackup.contains(device.getId()))
-                .collect(Collectors.toList());
-    }
-
-    private int getMaximumUserId(UsersBackup backup) {
-        return backup.getUsers().stream()
-                .mapToInt(UserModule::getId)
-                .max()
-                .orElse(0);
     }
 }

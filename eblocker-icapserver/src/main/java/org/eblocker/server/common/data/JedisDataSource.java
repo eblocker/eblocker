@@ -505,7 +505,7 @@ public class JedisDataSource implements DataSource {
             try {
                 device.setStaticIpAddress(Ip4Address.parse(staticIp));
             } catch (IllegalArgumentException e) {
-                log.warn("Ignoring invalid stored static IPv4 address '{}' for device {}", staticIp, device.getId());
+                LOG.warn("Ignoring invalid stored static IPv4 address '{}' for device {}", staticIp, device.getId());
             }
         }
         String staticIpV6 = map.get(KEY_DHCP_STATIC_IPV6);
@@ -513,7 +513,7 @@ public class JedisDataSource implements DataSource {
             try {
                 device.setStaticIpV6Address(Ip6Address.parse(staticIpV6));
             } catch (IllegalArgumentException e) {
-                log.warn("Ignoring invalid stored static IPv6 address '{}' for device {}", staticIpV6, device.getId());
+                LOG.warn("Ignoring invalid stored static IPv6 address '{}' for device {}", staticIpV6, device.getId());
             }
         }
 

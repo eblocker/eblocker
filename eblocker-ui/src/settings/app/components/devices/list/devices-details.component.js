@@ -29,8 +29,8 @@ export default {
 function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $translate, // jshint ignore: line
                     StateService, STATES, ArrayUtilsService,
                     RegistrationService, SslService, DeviceService, CloakingService, NetworkService, DialogService,
-                    VpnService, TorService, VpnHomeService, NotificationService, PauseService, ConsoleService,
-                    deviceDetector) {
+                    IpUtilsService, VpnService, TorService, VpnHomeService, NotificationService, PauseService,
+                    ConsoleService, deviceDetector) {
     'ngInject';
     'use strict';
 
@@ -248,9 +248,7 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         if (!ip || ip === '') {
             return $q.resolve();
         }
-        const ipv4Pattern = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
-        const match = ipv4Pattern.exec(ip);
-        if (!match || match.slice(1).some(function(octet) { return parseInt(octet, 10) > 255; })) {
+        if (!IpUtilsService.isIpv4Address(ip)) {
             return $q.reject('invalid-format');
         }
         return $q.resolve();

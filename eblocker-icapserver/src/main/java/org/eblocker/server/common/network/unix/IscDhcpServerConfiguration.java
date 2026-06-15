@@ -108,11 +108,17 @@ public class IscDhcpServerConfiguration {
                     writerExcluded.append(device.getHardwareAddress(false));
                     writerExcluded.append(" { hardware ethernet ");
                     writerExcluded.append(device.getHardwareAddress(true));
-                    if (localIpAddresses.size() == 1
-                            && device.isIpAddressFixed()
-                            && !localIpAddresses.get(0).equals(c.getIpAddress())
-                            && !device.isGateway()) {
-                        writerExcluded.append("; fixed-address ").append(localIpAddresses.get(0));
+                    if (device.isIpAddressFixed() && !device.isGateway()) {
+                        // Use manually configured static IP if set, otherwise fall back to the observed IP
+                        String fixedAddress = null;
+                        if (device.getStaticIpAddress() != null) {
+                            fixedAddress = device.getStaticIpAddress().toString();
+                        } else if (localIpAddresses.size() == 1 && !localIpAddresses.get(0).equals(c.getIpAddress())) {
+                            fixedAddress = localIpAddresses.get(0);
+                        }
+                        if (fixedAddress != null) {
+                            writerExcluded.append("; fixed-address ").append(fixedAddress);
+                        }
                     }
                     writerExcluded.append("; }\n");
                     excludedDevicesPresent = true;
@@ -128,15 +134,23 @@ public class IscDhcpServerConfiguration {
             for (Device device : c.getDevices()) {
                 List<String> localIpAddresses = getLocalIpv4Addresses(device, NetworkUtils.getIPv4NetworkAddress(c.getIpAddress(), c.getNetmask()), c.getNetmask());
 
-                if (localIpAddresses.size() == 1
-                        && device.isIpAddressFixed()
-                        && !localIpAddresses.get(0).equals(c.getIpAddress())
+                if (device.isIpAddressFixed()
                         && !device.isGateway()
                         && device.isEnabled()) {
-                    writer.append("host ").append(device.getHardwareAddress(false)).append(" {\n")
-                            .append("  hardware ethernet ").append(device.getHardwareAddress(true)).append(";\n")
-                            .append("  fixed-address ").append(localIpAddresses.get(0)).append(";\n")
-                            .append("}\n");
+                    // Use manually configured static IP if set, otherwise fall back to the observed IP
+                    String fixedAddress = null;
+                    if (device.getStaticIpAddress() != null) {
+                        fixedAddress = device.getStaticIpAddress().toString();
+                    } else if (localIpAddresses.size() == 1
+                            && !localIpAddresses.get(0).equals(c.getIpAddress())) {
+                        fixedAddress = localIpAddresses.get(0);
+                    }
+                    if (fixedAddress != null) {
+                        writer.append("host ").append(device.getHardwareAddress(false)).append(" {\n")
+                                .append("  hardware ethernet ").append(device.getHardwareAddress(true)).append(";\n")
+                                .append("  fixed-address ").append(fixedAddress).append(";\n")
+                                .append("}\n");
+                    }
                 }
             }
         }

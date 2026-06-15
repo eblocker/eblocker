@@ -31,6 +31,7 @@ export default function EditDialogController(logger, $mdDialog, subject, msgKeys
 
     vm.valueChanged = function() {
         vm.editForm.value.$setValidity('unique', true);
+        vm.editForm.value.$setValidity('invalid-format', true);
     };
 
     vm.cancel = function() {
@@ -53,6 +54,7 @@ export default function EditDialogController(logger, $mdDialog, subject, msgKeys
         doSubmit().then(function() {
             if (angular.isDefined(vm.editForm.value)) {
                 vm.editForm.value.$setValidity('unique', true);
+                vm.editForm.value.$setValidity('invalid-format', true);
             }
             if (!vm.editForm.$valid) {
                 return;
@@ -65,8 +67,12 @@ export default function EditDialogController(logger, $mdDialog, subject, msgKeys
             }, function(data) {
                 logger.error('okAction failed ', data);
             });
-        }, function() {
-            vm.editForm.value.$setValidity('unique', false);
+        }, function(reason) {
+            if (reason === 'invalid-format') {
+                vm.editForm.value.$setValidity('invalid-format', false);
+            } else {
+                vm.editForm.value.$setValidity('unique', false);
+            }
         });
     };
 }

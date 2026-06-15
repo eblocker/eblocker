@@ -471,6 +471,8 @@
                     "LABEL_IP" : "IP addresses",
                     "LABEL_IP_ADDRESS_FIXED" : "Always assign the same IP address to this device",
                     "LABEL_IP_ADDRESS_NOT_FIXED" : "Assign dynamic IP address to this device",
+                    "LABEL_STATIC_IPV4" : "Static IPv4",
+                    "LABEL_STATIC_IPV6" : "Static IPv6",
                     "LABEL_IS_EBLOCKER" : "Device is eBlocker",
                     "LABEL_IS_GATEWAY" : "Device is gateway",
                     "LABEL_MAC" : "Hardware address (MAC)",
@@ -947,6 +949,7 @@
                     "OK" : "Ok"
                 },
                 "ERROR" : {
+                    "INVALID_FORMAT" : "Invalid format.",
                     "VALUE_NOT_UNIQUE" : "Input has already been used.",
                     "VALUE_REQUIRED" : "Input is required.",
                     "VALUE_TOO_LONG" : "Input is too long.",

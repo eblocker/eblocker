@@ -333,6 +333,24 @@ public class DeviceServiceTest {
     }
 
     @Test
+    public void testUpdateClearsPausedFlagForEnabledDevice() {
+        // setup updated device with illegal enabled+paused state
+        Device device = createMockDevice(devices.get(0).getId(), "192.168.3.1", devices.get(0).getOperatingUser(), true, true, false, false);
+        device.setEnabled(true);
+        device.setPaused(true);
+
+        // update device
+        deviceService.updateDevice(device);
+
+        // check it has been normalized before being cached and stored
+        Device retrievedDevice = deviceService.getDeviceById(device.getId());
+        Assert.assertTrue(retrievedDevice.isEnabled());
+        Assert.assertFalse(retrievedDevice.isPaused());
+        Mockito.verify(dataSource).save(Mockito.<Device>argThat(savedDevice ->
+                savedDevice.getId().equals(device.getId()) && savedDevice.isEnabled() && !savedDevice.isPaused()));
+    }
+
+    @Test
     public void testUpdateOperatingUserNotExisting() {
         // ensure original device is in cache
         Device device = devices.get(0);
@@ -411,6 +429,22 @@ public class DeviceServiceTest {
 
         // check listener has been notified
         Mockito.verify(listener).onChange(retrievedDevice);
+    }
+
+    @Test
+    public void testRefreshClearsPausedFlagForEnabledDevice() {
+        Device device = devices.get(0);
+        device.setEnabled(true);
+        device.setPaused(true);
+        Mockito.clearInvocations(dataSource);
+
+        deviceService.refresh();
+
+        Device retrievedDevice = deviceService.getDeviceById(device.getId());
+        Assert.assertTrue(retrievedDevice.isEnabled());
+        Assert.assertFalse(retrievedDevice.isPaused());
+        Mockito.verify(dataSource).save(Mockito.<Device>argThat(savedDevice ->
+                savedDevice.getId().equals(device.getId()) && savedDevice.isEnabled() && !savedDevice.isPaused()));
     }
 
     @Test
@@ -519,6 +553,8 @@ public class DeviceServiceTest {
         copy.setIpAddresses(device.getIpAddresses());
         copy.setAssignedUser(device.getAssignedUser());
         copy.setOperatingUser(device.getOperatingUser());
+        copy.setEnabled(device.isEnabled());
+        copy.setPaused(device.isPaused());
         copy.setOnline(device.isOnline());
         copy.setIpAddressFixed(device.isIpAddressFixed());
         copy.setIsGateway(device.isGateway());

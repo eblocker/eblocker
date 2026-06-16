@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Copyright 2026 eBlocker Open Source UG (haftungsbeschraenkt)
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# Format: wireguard_setclientroute_ip6 [ID] [IFACENAME]
+
+if [ $# -ge '2' ]; then
+    ID=$1
+    IFACENAME=$2
+
+    VPNTABLE_NAME="wireguard$ID"
+
+    if ip -6 route show table $VPNTABLE_NAME default | grep -qs 'default'; then
+        ip -6 route del table $VPNTABLE_NAME default
+    fi
+    ip -6 route add table $VPNTABLE_NAME default dev $IFACENAME
+
+    ip -6 route flush cache
+else
+    echo "Wrong number of arguments! Expected: wireguard_setclientroute_ip6 [ID] [IFACENAME]" 1>&2
+    exit 1
+fi

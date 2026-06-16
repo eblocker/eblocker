@@ -516,6 +516,20 @@
                                     </paths>
                                 </data>
 
+                                <!-- wireguard profiles -->
+                                <data>
+                                    <type>template</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <user>icapd</user>
+                                        <group>icapd</group>
+                                        <dirmode>755</dirmode>
+                                    </mapper>
+                                    <paths>
+                                        <path>/opt/eblocker-icap/network/wireguard</path>
+                                    </paths>
+                                </data>
+
                                 <!-- domain black lists cache -->
                                 <data>
                                     <type>template</type>

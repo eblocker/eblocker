@@ -16,23 +16,29 @@
  */
 package org.eblocker.server.common.wireguard.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WireGuardPeer {
-    private final String publicKey;
-    private final String presharedKey;
-    private final String endpoint;
-    private final List<String> allowedIps;
-    private final Integer persistentKeepalive;
+    private String publicKey;
+    private String presharedKey;
+    private String endpoint;
+    private List<String> allowedIps = new ArrayList<>();
+    private Integer persistentKeepalive;
+
+    public WireGuardPeer() {
+    }
 
     public WireGuardPeer(String publicKey, String presharedKey, String endpoint, List<String> allowedIps,
                          Integer persistentKeepalive) {
         this.publicKey = publicKey;
         this.presharedKey = presharedKey;
         this.endpoint = endpoint;
-        this.allowedIps = immutableCopy(allowedIps);
+        this.allowedIps = copy(allowedIps);
         this.persistentKeepalive = persistentKeepalive;
     }
 
@@ -40,20 +46,47 @@ public class WireGuardPeer {
         return publicKey;
     }
 
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
     public String getPresharedKey() {
         return presharedKey;
+    }
+
+    public void setPresharedKey(String presharedKey) {
+        this.presharedKey = presharedKey;
     }
 
     public String getEndpoint() {
         return endpoint;
     }
 
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public List<String> getAllowedIps() {
-        return allowedIps;
+        return immutableCopy(allowedIps);
+    }
+
+    public void setAllowedIps(List<String> allowedIps) {
+        this.allowedIps = copy(allowedIps);
     }
 
     public Integer getPersistentKeepalive() {
         return persistentKeepalive;
+    }
+
+    public void setPersistentKeepalive(Integer persistentKeepalive) {
+        this.persistentKeepalive = persistentKeepalive;
+    }
+
+    private static <T> List<T> copy(List<T> values) {
+        if (values == null || values.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(values);
     }
 
     private static <T> List<T> immutableCopy(List<T> values) {

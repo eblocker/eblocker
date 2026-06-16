@@ -16,44 +16,77 @@
  */
 package org.eblocker.server.common.wireguard.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WireGuardConfiguration {
-    private final String privateKey;
-    private final List<String> addresses;
-    private final List<String> dnsServers;
-    private final Integer mtu;
-    private final List<WireGuardPeer> peers;
+    private String privateKey;
+    private List<String> addresses = new ArrayList<>();
+    private List<String> dnsServers = new ArrayList<>();
+    private Integer mtu;
+    private List<WireGuardPeer> peers = new ArrayList<>();
+
+    public WireGuardConfiguration() {
+    }
 
     public WireGuardConfiguration(String privateKey, List<String> addresses, List<String> dnsServers,
                                   Integer mtu, List<WireGuardPeer> peers) {
         this.privateKey = privateKey;
-        this.addresses = immutableCopy(addresses);
-        this.dnsServers = immutableCopy(dnsServers);
+        this.addresses = copy(addresses);
+        this.dnsServers = copy(dnsServers);
         this.mtu = mtu;
-        this.peers = immutableCopy(peers);
+        this.peers = copy(peers);
     }
 
     public String getPrivateKey() {
         return privateKey;
     }
 
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
     public List<String> getAddresses() {
-        return addresses;
+        return immutableCopy(addresses);
+    }
+
+    public void setAddresses(List<String> addresses) {
+        this.addresses = copy(addresses);
     }
 
     public List<String> getDnsServers() {
-        return dnsServers;
+        return immutableCopy(dnsServers);
+    }
+
+    public void setDnsServers(List<String> dnsServers) {
+        this.dnsServers = copy(dnsServers);
     }
 
     public Integer getMtu() {
         return mtu;
     }
 
+    public void setMtu(Integer mtu) {
+        this.mtu = mtu;
+    }
+
     public List<WireGuardPeer> getPeers() {
-        return peers;
+        return immutableCopy(peers);
+    }
+
+    public void setPeers(List<WireGuardPeer> peers) {
+        this.peers = copy(peers);
+    }
+
+    private static <T> List<T> copy(List<T> values) {
+        if (values == null || values.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(values);
     }
 
     private static <T> List<T> immutableCopy(List<T> values) {

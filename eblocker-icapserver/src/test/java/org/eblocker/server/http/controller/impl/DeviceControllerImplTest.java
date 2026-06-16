@@ -26,7 +26,7 @@ import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.openvpn.OpenVpnService;
+import org.eblocker.server.common.wireguard.WireGuardService;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.RemainingPause;
@@ -73,7 +73,7 @@ public class DeviceControllerImplTest {
     private FeatureToggleRouter featureToggleRouter;
     private NetworkInterfaceWrapper networkInterfaceWrapper;
     private NetworkStateMachine networkStateMachine;
-    private OpenVpnService openVpnService;
+    private WireGuardService wireGuardService;
     private PauseDeviceController pauseDeviceController;
 
     private Response response;
@@ -92,7 +92,7 @@ public class DeviceControllerImplTest {
 
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
 
-        openVpnService = Mockito.mock(OpenVpnService.class);
+        wireGuardService = Mockito.mock(WireGuardService.class);
 
         networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
         Mockito.when(networkInterfaceWrapper.getHardwareAddressHex()).thenReturn("eb0000000000");
@@ -117,7 +117,7 @@ public class DeviceControllerImplTest {
                 featureToggleRouter,
                 networkInterfaceWrapper,
                 networkStateMachine,
-                openVpnService,
+                wireGuardService,
                 pauseDeviceController,
                 deviceFactory);
     }
@@ -354,7 +354,7 @@ public class DeviceControllerImplTest {
         Integer vpnProfileId = 23;
         device.setUseVPNProfileID(vpnProfileId);
         VpnProfile profile = Mockito.mock(VpnProfile.class);
-        Mockito.when(openVpnService.getVpnProfileById(vpnProfileId)).thenReturn(profile);
+        Mockito.when(wireGuardService.getVpnProfileById(vpnProfileId)).thenReturn(profile);
 
         Request request = ControllerTestUtils.createRequest(ControllerTestUtils.toJSON(device), HttpMethod.PUT,
                 "/api/adminconsole/devices/device:0123456789ab");

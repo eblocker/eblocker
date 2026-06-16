@@ -28,7 +28,7 @@ import org.eblocker.server.common.data.ShowWelcomeFlags;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.openvpn.OpenVpnService;
+import org.eblocker.server.common.wireguard.WireGuardService;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.RemainingPause;
@@ -65,7 +65,7 @@ public class DeviceControllerImpl implements DeviceController {
     private final FeatureToggleRouter featureToggleRouter;
     private final NetworkInterfaceWrapper networkInterfaceWrapper;
     private final NetworkStateMachine networkStateMachine;
-    private final OpenVpnService openVpnService;
+    private final WireGuardService wireGuardService;
     private final PauseDeviceController pauseDeviceController;
     private final DeviceFactory deviceFactory;
 
@@ -78,7 +78,7 @@ public class DeviceControllerImpl implements DeviceController {
                                 FeatureToggleRouter featureToggleRouter,
                                 NetworkInterfaceWrapper networkInterfaceWrapper,
                                 NetworkStateMachine networkStateMachine,
-                                OpenVpnService openVpnService,
+                                WireGuardService wireGuardService,
                                 PauseDeviceController pauseDeviceController,
                                 DeviceFactory deviceFactory) {
         this.anonymousService = anonymousService;
@@ -89,7 +89,7 @@ public class DeviceControllerImpl implements DeviceController {
         this.featureToggleRouter = featureToggleRouter;
         this.networkInterfaceWrapper = networkInterfaceWrapper;
         this.networkStateMachine = networkStateMachine;
-        this.openVpnService = openVpnService;
+        this.wireGuardService = wireGuardService;
         this.pauseDeviceController = pauseDeviceController;
         this.deviceFactory = deviceFactory;
     }
@@ -259,7 +259,7 @@ public class DeviceControllerImpl implements DeviceController {
             } else if (device.isRoutedThroughTor()) {
                 anonymousService.enableTor(device);
             } else if (device.getUseVPNProfileID() != null) {
-                VpnProfile profile = openVpnService.getVpnProfileById(device.getUseVPNProfileID());
+                VpnProfile profile = wireGuardService.getVpnProfileById(device.getUseVPNProfileID());
                 if (profile != null) {
                     anonymousService.enableVpn(device, profile);
                 } else {

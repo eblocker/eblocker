@@ -17,10 +17,19 @@
 package org.eblocker.server.common.wireguard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.openvpn.KeepAliveMode;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.openvpn.VpnStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
+import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.openvpn.RoutingController;
+import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.common.wireguard.configuration.WireGuardConfiguration;
@@ -39,11 +48,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 public class WireGuardServiceTest {
     private Path profileRoot;
     private DataSource dataSource;
     private ScriptRunner scriptRunner;
+    private RoutingController routingController;
+    private SquidConfigController squidConfigController;
+    private NetworkStateMachine networkStateMachine;
+    private EblockerDnsServer eblockerDnsServer;
     private WireGuardProfileFiles profileFiles;
     private WireGuardService service;
 
@@ -52,16 +66,26 @@ public class WireGuardServiceTest {
         profileRoot = Files.createTempDirectory("wireguard-service-test");
         dataSource = Mockito.mock(DataSource.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
+        routingController = Mockito.mock(RoutingController.class);
+        squidConfigController = Mockito.mock(SquidConfigController.class);
+        networkStateMachine = Mockito.mock(NetworkStateMachine.class);
+        eblockerDnsServer = Mockito.mock(EblockerDnsServer.class);
         profileFiles = new WireGuardProfileFiles(profileRoot.toString(), new ObjectMapper());
         service = new WireGuardService(
                 scriptRunner,
                 dataSource,
+                routingController,
+                squidConfigController,
+                networkStateMachine,
+                eblockerDnsServer,
                 new WireGuardConfigurationParser(),
                 new WireGuardRuntimeConfigurationRenderer(),
                 profileFiles,
                 "wireguard_killall",
                 "wireguard_start",
                 "wireguard_down",
+                "wireguard_setclientroute",
+                "wireguard_clearclientroute",
                 "eblocker.org");
     }
 
@@ -91,6 +115,15 @@ public class WireGuardServiceTest {
         Assert.assertFalse(Files.exists(profileRoot.resolve("1")));
         Assert.assertFalse(Files.exists(profileRoot.resolve("2")));
         Assert.assertTrue(Files.exists(profileRoot.resolve("3")));
+    }
+
+    @Test
+    public void serviceIsStartedWithHttpsSubsystem() throws Exception {
+        SubSystemService serviceAnnotation = WireGuardService.class.getAnnotation(SubSystemService.class);
+
+        Assert.assertNotNull(serviceAnnotation);
+        Assert.assertEquals(SubSystem.HTTPS_SERVER, serviceAnnotation.value());
+        Assert.assertNotNull(WireGuardService.class.getMethod("init").getAnnotation(SubSystemInit.class));
     }
 
     @Test
@@ -186,4 +219,88 @@ public class WireGuardServiceTest {
         Mockito.verify(scriptRunner).runScript("wireguard_start", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
         Mockito.verify(scriptRunner).runScript("wireguard_down", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
     }
+
+    @Test
+    public void routeClientStartsWireGuardConfiguresPolicyRoutingDnsAndAcls() throws Exception {
+        WireGuardProfile profile = new WireGuardProfile(7, "provider");
+        profile.setNameServersEnabled(true);
+        Device device = createDevice("device:1");
+        Mockito.when(routingController.createRoute()).thenReturn(17);
+        storeConfig(7, "[Interface]\n" +
+                "PrivateKey = private=\n" +
+                "Address = 10.0.0.2/32\n" +
+                "DNS = 10.0.0.1\n" +
+                "\n" +
+                "[Peer]\n" +
+                "PublicKey = public=\n" +
+                "Endpoint = vpn.example.net:51820\n" +
+                "AllowedIPs = 0.0.0.0/0\n");
+
+        service.routeClientThroughVpnTunnel(device, profile);
+
+        Mockito.verify(scriptRunner).runScript("wireguard_start", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
+        Mockito.verify(scriptRunner).runScript("wireguard_setclientroute", "17", "wg7");
+        Mockito.verify(eblockerDnsServer).addVpnResolver(7, Collections.singletonList("10.0.0.1"), "10.0.0.2");
+        Mockito.verify(eblockerDnsServer).useVpnResolver(device, 7);
+        Mockito.verify(squidConfigController).updateVpnDevicesAcl(7, Collections.singleton(device));
+        Mockito.verify(networkStateMachine).deviceStateChanged();
+
+        VpnStatus status = service.getStatus(profile);
+        Assert.assertEquals(7, status.getProfileId());
+        Assert.assertTrue(status.isActive());
+        Assert.assertTrue(status.isUp());
+        Assert.assertEquals(Collections.singleton("device:1"), status.getDevices());
+        VpnStatus deviceStatus = service.getStatusByDevice(device);
+        Assert.assertNotNull(deviceStatus);
+        Assert.assertEquals(status.getProfileId(), deviceStatus.getProfileId());
+        Assert.assertEquals(status.getDevices(), deviceStatus.getDevices());
+    }
+
+    @Test
+    public void restoreNormalRoutingStopsLastWireGuardClientAndClearsState() throws Exception {
+        WireGuardProfile profile = new WireGuardProfile(7, "provider");
+        profile.setNameServersEnabled(true);
+        Device device = createDevice("device:1");
+        Mockito.when(routingController.createRoute()).thenReturn(17);
+        storeConfig(7, "[Interface]\n" +
+                "PrivateKey = private=\n" +
+                "Address = 10.0.0.2/32\n" +
+                "DNS = 10.0.0.1\n" +
+                "\n" +
+                "[Peer]\n" +
+                "PublicKey = public=\n" +
+                "Endpoint = vpn.example.net:51820\n" +
+                "AllowedIPs = 0.0.0.0/0\n");
+        service.routeClientThroughVpnTunnel(device, profile);
+
+        service.restoreNormalRoutingForClient(device);
+
+        Mockito.verify(eblockerDnsServer).useDefaultResolver(device);
+        Mockito.verify(scriptRunner).runScript("wireguard_clearclientroute", "17");
+        Mockito.verify(scriptRunner).runScript("wireguard_down", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
+        Mockito.verify(eblockerDnsServer).removeVpnResolver(7);
+        Mockito.verify(routingController).deleteRoute(17);
+        Mockito.verify(squidConfigController).updateVpnDevicesAcl(7, Collections.emptySet());
+        Mockito.verify(networkStateMachine, Mockito.times(2)).deviceStateChanged();
+
+        VpnStatus status = service.getStatus(profile);
+        Assert.assertFalse(status.isActive());
+        Assert.assertFalse(status.isUp());
+        Assert.assertTrue(status.getDevices().isEmpty());
+        Assert.assertNull(service.getStatusByDevice(device));
+    }
+
+    private void storeConfig(int id, String config) throws Exception {
+        WireGuardConfiguration configuration = new WireGuardConfigurationParser().parse(config);
+        profileFiles.createProfileDirectory(id);
+        profileFiles.writeParsedConfiguration(id, configuration);
+        profileFiles.writeRuntimeConfig(id, new WireGuardRuntimeConfigurationRenderer().render(configuration));
+    }
+
+    private Device createDevice(String id) {
+        Device device = new Device();
+        device.setId(id);
+        return device;
+    }
+
 }

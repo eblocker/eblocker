@@ -34,7 +34,7 @@ then
     OFFSET=$3
 
     # clear all previously set rules
-    for rule in `ip $IP_VERSION rule | sed -n 's/^\([0-9]\+\):.*openvpn[0-9]\+/\1/p'`; do
+    for rule in `ip $IP_VERSION rule | sed -n "s/^\([0-9]\+\):.*${TABLE_NAME_PREFIX}[0-9]\+/\1/p"`; do
         ip $IP_VERSION rule del pref $rule
     done
 

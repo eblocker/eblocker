@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.network.BaseURLs;
-import org.eblocker.server.common.openvpn.OpenVpnService;
+import org.eblocker.server.common.wireguard.WireGuardService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.http.service.DeviceService;
@@ -47,7 +47,7 @@ public class ControlBarControllerImplTest {
         DeviceService deviceService = Mockito.mock(DeviceService.class);
         ParentalControlService parentalControlService = Mockito.mock(ParentalControlService.class);
         UserService userService = Mockito.mock(UserService.class);
-        OpenVpnService openVpnService = Mockito.mock(OpenVpnService.class);
+        WireGuardService wireGuardService = Mockito.mock(WireGuardService.class);
         MessageCenterService messageCenterService = Mockito.mock(MessageCenterService.class);
         SessionStore sessionStore = Mockito.mock(SessionStore.class);
         PageContextStore pageContextStore = Mockito.mock(PageContextStore.class);
@@ -59,7 +59,7 @@ public class ControlBarControllerImplTest {
                 deviceService,
                 parentalControlService,
                 userService,
-                openVpnService,
+                wireGuardService,
                 messageCenterService,
                 "10.8.0.0",
                 "255.255.255.0");

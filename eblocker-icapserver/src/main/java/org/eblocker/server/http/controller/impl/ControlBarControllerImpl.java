@@ -29,7 +29,7 @@ import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.data.openvpn.VpnStatus;
 import org.eblocker.server.common.network.BaseURLs;
-import org.eblocker.server.common.openvpn.OpenVpnService;
+import org.eblocker.server.common.wireguard.WireGuardService;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
@@ -63,7 +63,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
     private final DeviceService deviceService;
     private final ParentalControlService parentalControlService;
     private final UserService userService;
-    private final OpenVpnService openVpnService;
+    private final WireGuardService wireGuardService;
     private final MessageCenterService messageCenterService;
     private final String vpnSubnet;
     private final String vpnNetmask;
@@ -76,7 +76,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
             DeviceService deviceService,
             ParentalControlService parentalControlService,
             UserService userService,
-            OpenVpnService openVpnService,
+            WireGuardService wireGuardService,
             MessageCenterService messageCenterService,
             @Named("network.vpn.subnet.ip") String vpnSubnet,
             @Named("network.vpn.subnet.netmask") String vpnNetmask
@@ -86,7 +86,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
         this.deviceService = deviceService;
         this.parentalControlService = parentalControlService;
         this.userService = userService;
-        this.openVpnService = openVpnService;
+        this.wireGuardService = wireGuardService;
         this.messageCenterService = messageCenterService;
         this.vpnSubnet = vpnSubnet;
         this.vpnNetmask = vpnNetmask;
@@ -257,7 +257,7 @@ public class ControlBarControllerImpl extends SessionContextController implement
         if (device.isUseAnonymizationService() && device.isRoutedThroughTor()) {
             return new IconState("info", "TOR");
         } else {
-            VpnStatus status = openVpnService.getStatusByDevice(device);
+            VpnStatus status = wireGuardService.getStatusByDevice(device);
             if (status != null && status.isActive()) {
                 return new IconState("info", "VPN");
             }

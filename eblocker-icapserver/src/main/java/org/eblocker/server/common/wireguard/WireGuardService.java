@@ -20,9 +20,17 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.KeepAliveMode;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.openvpn.VpnStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
+import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.openvpn.RoutingController;
+import org.eblocker.server.common.squid.SquidConfigController;
+import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.startup.SubSystemInit;
+import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.wireguard.configuration.WireGuardConfiguration;
 import org.eblocker.server.common.wireguard.configuration.WireGuardConfigurationParser;
@@ -33,44 +41,70 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
+@SubSystemService(value = SubSystem.HTTPS_SERVER, initPriority = 200)
 public class WireGuardService {
     private static final Logger log = LoggerFactory.getLogger(WireGuardService.class);
 
     private final ScriptRunner scriptRunner;
     private final DataSource dataSource;
+    private final RoutingController routingController;
+    private final SquidConfigController squidConfigController;
+    private final NetworkStateMachine networkStateMachine;
+    private final EblockerDnsServer eblockerDnsServer;
     private final WireGuardConfigurationParser parser;
     private final WireGuardRuntimeConfigurationRenderer renderer;
     private final WireGuardProfileFiles profileFiles;
     private final String killAllInstancesScript;
     private final String startInstanceScript;
     private final String stopInstanceScript;
+    private final String setClientRouteScript;
+    private final String clearClientRouteScript;
     private final String keepAliveTarget;
+    private final Map<Integer, ClientState> clientStatesByProfileId = new HashMap<>();
 
     @Inject
     public WireGuardService(ScriptRunner scriptRunner,
                             DataSource dataSource,
+                            RoutingController routingController,
+                            SquidConfigController squidConfigController,
+                            NetworkStateMachine networkStateMachine,
+                            EblockerDnsServer eblockerDnsServer,
                             WireGuardConfigurationParser parser,
                             WireGuardRuntimeConfigurationRenderer renderer,
                             WireGuardProfileFiles profileFiles,
                             @Named("killall.wireguard.command") String killAllInstancesScript,
                             @Named("start.wireguard.instance.command") String startInstanceScript,
                             @Named("stop.wireguard.instance.command") String stopInstanceScript,
+                            @Named("wireguard.set.client.route.command") String setClientRouteScript,
+                            @Named("wireguard.clear.client.route.command") String clearClientRouteScript,
                             @Named("vpn.keepalive.ping.target") String keepAliveTarget) {
         this.scriptRunner = scriptRunner;
         this.dataSource = dataSource;
+        this.routingController = routingController;
+        this.squidConfigController = squidConfigController;
+        this.networkStateMachine = networkStateMachine;
+        this.eblockerDnsServer = eblockerDnsServer;
         this.parser = parser;
         this.renderer = renderer;
         this.profileFiles = profileFiles;
         this.killAllInstancesScript = killAllInstancesScript;
         this.startInstanceScript = startInstanceScript;
         this.stopInstanceScript = stopInstanceScript;
+        this.setClientRouteScript = setClientRouteScript;
+        this.clearClientRouteScript = clearClientRouteScript;
         this.keepAliveTarget = keepAliveTarget;
     }
 
+    @SubSystemInit
     public void init() {
         cleanUpProfiles();
         killDanglingInterfaces();
@@ -80,6 +114,14 @@ public class WireGuardService {
         return dataSource.getAll(WireGuardProfile.class).stream()
                 .filter(profile -> !profile.isDeleted())
                 .collect(Collectors.toList());
+    }
+
+    public VpnProfile getVpnProfileById(int id) {
+        WireGuardProfile profile = dataSource.get(WireGuardProfile.class, id);
+        if (profile == null || profile.isDeleted()) {
+            return null;
+        }
+        return profile;
     }
 
     public WireGuardProfile saveProfile(WireGuardProfile profile) throws IOException {
@@ -149,6 +191,142 @@ public class WireGuardService {
 
     public void stopVpn(VpnProfile profile) {
         runScript(stopInstanceScript, profile);
+    }
+
+    public synchronized void routeClientThroughVpnTunnel(Device device, VpnProfile vpnProfile) {
+        WireGuardProfile profile = getStoredProfile(vpnProfile);
+        ClientState state = clientStatesByProfileId.computeIfAbsent(profile.getId(), id -> createClientState(profile));
+
+        state.devicesById.put(device.getId(), device);
+        if (!state.up) {
+            startVpn(profile);
+            configureDnsResolver(profile);
+            runRouteScript(setClientRouteScript, state.routeId, getInterfaceName(profile.getId()));
+            state.active = true;
+            state.up = true;
+        }
+
+        if (profile.isNameServersEnabled()) {
+            eblockerDnsServer.useVpnResolver(device, profile.getId());
+        }
+        reconfigureAclsAndRouting(profile.getId(), state);
+    }
+
+    public synchronized void restoreNormalRoutingForClient(Device device) {
+        ClientState state = clientStatesByProfileId.values().stream()
+                .filter(clientState -> clientState.devicesById.containsKey(device.getId()))
+                .findFirst()
+                .orElse(null);
+        if (state == null) {
+            eblockerDnsServer.useDefaultResolver(device);
+            return;
+        }
+
+        state.devicesById.remove(device.getId());
+        eblockerDnsServer.useDefaultResolver(device);
+        reconfigureAclsAndRouting(state.profile.getId(), state);
+
+        if (state.devicesById.isEmpty()) {
+            runRouteScript(clearClientRouteScript, state.routeId);
+            stopVpn(state.profile);
+            eblockerDnsServer.removeVpnResolver(state.profile.getId());
+            routingController.deleteRoute(state.routeId);
+            state.active = false;
+            state.up = false;
+            clientStatesByProfileId.remove(state.profile.getId());
+        }
+    }
+
+    public synchronized VpnStatus getStatus(VpnProfile profile) {
+        ClientState state = clientStatesByProfileId.get(profile.getId());
+        if (state == null) {
+            return createStatus(profile.getId(), false, false, Collections.emptySet());
+        }
+        return createStatus(state.profile.getId(), state.active, state.up, state.devicesById.keySet());
+    }
+
+    public synchronized VpnStatus getStatusByDevice(Device device) {
+        return clientStatesByProfileId.values().stream()
+                .filter(state -> state.devicesById.containsKey(device.getId()))
+                .findFirst()
+                .map(state -> createStatus(state.profile.getId(), state.active, state.up, state.devicesById.keySet()))
+                .orElse(null);
+    }
+
+    private VpnStatus createStatus(int profileId, boolean active, boolean up, Set<String> devices) {
+        VpnStatus status = new VpnStatus();
+        status.setProfileId(profileId);
+        status.setActive(active);
+        status.setUp(up);
+        status.setDevices(Set.copyOf(devices));
+        return status;
+    }
+
+    private ClientState createClientState(WireGuardProfile profile) {
+        Integer route = routingController.createRoute();
+        if (route == null) {
+            throw new IllegalStateException("no WireGuard policy route available");
+        }
+        return new ClientState(profile, route);
+    }
+
+    private WireGuardProfile getStoredProfile(VpnProfile vpnProfile) {
+        WireGuardProfile profile = dataSource.get(WireGuardProfile.class, vpnProfile.getId());
+        if (profile != null) {
+            return profile;
+        }
+        if (vpnProfile instanceof WireGuardProfile) {
+            return (WireGuardProfile) vpnProfile;
+        }
+        throw new IllegalArgumentException("unknown WireGuard profile " + vpnProfile.getId());
+    }
+
+    private void configureDnsResolver(WireGuardProfile profile) {
+        if (!profile.isNameServersEnabled()) {
+            return;
+        }
+
+        try {
+            WireGuardConfiguration configuration = profileFiles.readParsedConfiguration(profile.getId());
+            if (!configuration.getDnsServers().isEmpty()) {
+                eblockerDnsServer.addVpnResolver(profile.getId(), configuration.getDnsServers(), getFirstAddressWithoutCidr(configuration));
+            }
+        } catch (IOException e) {
+            log.warn("failed to configure WireGuard DNS resolver for profile {}", profile.getId(), e);
+        }
+    }
+
+    private String getFirstAddressWithoutCidr(WireGuardConfiguration configuration) {
+        return configuration.getAddresses().stream()
+                .findFirst()
+                .map(address -> {
+                    int cidrSeparator = address.indexOf('/');
+                    return cidrSeparator >= 0 ? address.substring(0, cidrSeparator) : address;
+                })
+                .orElse(null);
+    }
+
+    private void reconfigureAclsAndRouting(int profileId, ClientState state) {
+        squidConfigController.updateVpnDevicesAcl(profileId, Set.copyOf(state.devicesById.values()));
+        networkStateMachine.deviceStateChanged();
+    }
+
+    private void runRouteScript(String script, int routeId, String... additionalArguments) {
+        String[] arguments = new String[1 + additionalArguments.length];
+        arguments[0] = Integer.toString(routeId);
+        System.arraycopy(additionalArguments, 0, arguments, 1, additionalArguments.length);
+        try {
+            scriptRunner.runScript(script, arguments);
+        } catch (IOException e) {
+            throw new IllegalStateException("failed to run WireGuard routing script " + script, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("interrupted running WireGuard routing script " + script, e);
+        }
+    }
+
+    private String getInterfaceName(int profileId) {
+        return "wg" + profileId;
     }
 
     private void runScript(String script, VpnProfile profile) {
@@ -230,5 +408,18 @@ public class WireGuardService {
             return endpoint.substring(0, portSeparator);
         }
         return endpoint;
+    }
+
+    private static class ClientState {
+        private final WireGuardProfile profile;
+        private final int routeId;
+        private final Map<String, Device> devicesById = new LinkedHashMap<>();
+        private boolean active;
+        private boolean up;
+
+        private ClientState(WireGuardProfile profile, int routeId) {
+            this.profile = profile;
+            this.routeId = routeId;
+        }
     }
 }

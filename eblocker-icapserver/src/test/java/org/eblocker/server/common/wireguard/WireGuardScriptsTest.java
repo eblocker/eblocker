@@ -97,12 +97,11 @@ public class WireGuardScriptsTest {
     }
 
     @Test
-    public void wireGuardSetClientRouteAddsEndpointAndPolicyDefaultRoute() throws Exception {
-        ProcessResult result = runScript("wireguard_setclientroute", "42", "wg42", "192.168.1.1", "203.0.113.9");
+    public void wireGuardSetClientRouteAddsPolicyDefaultRoute() throws Exception {
+        ProcessResult result = runScript("wireguard_setclientroute", "42", "wg42");
 
         Assert.assertEquals(result.stderr, 0, result.exitCode);
         Assert.assertEquals(Arrays.asList(
-                "ip route add 203.0.113.9/32 via 192.168.1.1",
                 "ip route show table wireguard42 default",
                 "ip route add table wireguard42 default dev wg42",
                 "ip route flush cache"), readCommandLog());
@@ -120,11 +119,14 @@ public class WireGuardScriptsTest {
     }
 
     @Test
-    public void wireGuardClearClientRouteDeletesEndpointRoute() throws Exception {
-        ProcessResult result = runScript("wireguard_clearclientroute", "42", "203.0.113.9");
+    public void wireGuardClearClientRouteDeletesPolicyDefaultRoute() throws Exception {
+        ProcessResult result = runScript("wireguard_clearclientroute", "42");
 
         Assert.assertEquals(result.stderr, 0, result.exitCode);
-        Assert.assertEquals(Arrays.asList("ip route del 203.0.113.9/32"), readCommandLog());
+        Assert.assertEquals(Arrays.asList(
+                "ip route show table wireguard42 default",
+                "ip route del table wireguard42 default",
+                "ip route flush cache"), readCommandLog());
     }
 
     @Test

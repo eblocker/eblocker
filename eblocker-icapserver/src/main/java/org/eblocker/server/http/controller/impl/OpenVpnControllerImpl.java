@@ -21,19 +21,16 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.io.IOUtils;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.openvpn.OpenVpnConfigurationViewModel;
-import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnStatus;
+import org.eblocker.server.common.data.wireguard.WireGuardProfile;
 import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.openvpn.OpenVpnService;
-import org.eblocker.server.common.openvpn.configuration.OpenVpnConfiguration;
-import org.eblocker.server.common.openvpn.configuration.OpenVpnConfigurator;
-import org.eblocker.server.common.openvpn.configuration.OpenVpnFileOptionValidator;
-import org.eblocker.server.common.openvpn.configuration.Option;
-import org.eblocker.server.common.openvpn.configuration.SimpleOption;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
+import org.eblocker.server.common.wireguard.WireGuardService;
+import org.eblocker.server.common.wireguard.configuration.WireGuardConfiguration;
+import org.eblocker.server.common.wireguard.configuration.WireGuardPeer;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.service.AnonymousService;
 import org.eblocker.server.http.service.DeviceService;
@@ -41,42 +38,33 @@ import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * This is the REST-Controller to provide the interface between frontend and backend for handling the routing of client
- * traffic through OpenVPN instances (user configured VPN services).
+ * REST controller for user configured VPN provider profiles.
+ *
+ * The route/interface names still contain OpenVPN for frontend compatibility, but provider profiles are stored and
+ * executed as WireGuard configurations.
  */
 public class OpenVpnControllerImpl implements OpenVpnController {
-    @SuppressWarnings("unused")
-    private static final Logger log = LoggerFactory.getLogger(OpenVpnControllerImpl.class);
-
     private final AnonymousService anonymousService;
-    private final OpenVpnService openVpnService;
+    private final WireGuardService wireGuardService;
     private final SessionStore sessionStore;
     private final DeviceService deviceService;
-    private final OpenVpnConfigurator configurator;
 
     @Inject
-    public OpenVpnControllerImpl(AnonymousService anonymousService, OpenVpnService openVpnService, SessionStore sessionStore, DeviceService deviceService, OpenVpnConfigurator configurator) {
+    public OpenVpnControllerImpl(AnonymousService anonymousService, WireGuardService wireGuardService,
+                                 SessionStore sessionStore, DeviceService deviceService) {
         this.anonymousService = anonymousService;
-        this.openVpnService = openVpnService;
+        this.wireGuardService = wireGuardService;
         this.sessionStore = sessionStore;
         this.deviceService = deviceService;
-        this.configurator = configurator;
     }
 
     //
@@ -84,17 +72,17 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     //
     @Override
     public Collection<VpnProfile> getProfiles(Request request, Response response) {
-        return openVpnService.getVpnProfiles();
+        return wireGuardService.getVpnProfiles();
     }
 
     @Override
     public VpnProfile createProfile(Request request, Response response) {
-        OpenVpnProfile profile = request.getBodyAs(OpenVpnProfile.class);
+        WireGuardProfile profile = request.getBodyAs(WireGuardProfile.class);
         if (profile == null) {
-            profile = new OpenVpnProfile();
+            profile = new WireGuardProfile();
         }
         try {
-            profile = openVpnService.saveProfile(profile);
+            profile = wireGuardService.saveProfile(profile);
             response.setResponseCode(HttpResponseStatus.CREATED.code());
             response.addHeader("Location", "/anonymous/vpn/profile/" + profile.getId());
             return profile;
@@ -111,13 +99,13 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     @Override
     public VpnProfile updateProfile(Request request, Response response) {
         int id = getId(request);
-        OpenVpnProfile openVpnProfile = request.getBodyAs(OpenVpnProfile.class);
-        if (id != openVpnProfile.getId()) {
+        WireGuardProfile wireGuardProfile = request.getBodyAs(WireGuardProfile.class);
+        if (wireGuardProfile == null || id != wireGuardProfile.getId()) {
             throw new BadRequestException();
         }
 
         try {
-            return openVpnService.saveProfile(openVpnProfile);
+            return wireGuardService.saveProfile(wireGuardProfile);
         } catch (IOException e) {
             throw new EblockerException("failed to save profile", e);
         }
@@ -136,13 +124,17 @@ public class OpenVpnControllerImpl implements OpenVpnController {
                     deviceService.updateDevice(d);
                 });
 
-        openVpnService.deleteVpnProfile(id);
+        wireGuardService.deleteVpnProfile(id);
     }
 
     @Override
     public OpenVpnConfigurationViewModel getProfileConfig(Request request, Response response) {
         try {
-            return mapConfiguration(openVpnService.getProfileClientConfig(getId(request)));
+            WireGuardConfiguration configuration = wireGuardService.getProfileClientConfig(getId(request));
+            if (configuration == null) {
+                throw new NotFoundException();
+            }
+            return mapConfiguration(configuration);
         } catch (FileNotFoundException e) {
             throw new NotFoundException(e);
         } catch (IOException e) {
@@ -154,7 +146,11 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     public OpenVpnConfigurationViewModel uploadProfileConfig(Request request, Response response) {
         try {
             String config = IOUtils.toString(request.getBodyAsStream());
-            return mapConfiguration(openVpnService.setProfileClientConfig(getId(request), config));
+            WireGuardConfiguration configuration = wireGuardService.setProfileClientConfig(getId(request), config);
+            if (configuration == null) {
+                throw new BadRequestException();
+            }
+            return mapConfiguration(configuration);
         } catch (IOException e) {
             throw new EblockerException("failed to get config from request", e);
         }
@@ -162,15 +158,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
     @Override
     public OpenVpnConfigurationViewModel uploadProfileConfigOption(Request request, Response response) {
-        try {
-            byte[] content = new byte[request.getBody().readableBytes()];
-            request.getBody().readBytes(content);
-            return mapConfiguration(openVpnService.setProfileClientConfigOptionFile(getId(request), getOption(request), content));
-        } catch (OpenVpnFileOptionValidator.ValidationException e) {
-            throw new BadRequestException(e);
-        } catch (IOException e) {
-            throw new EblockerException("failed to upload inline content", e);
-        }
+        throw new BadRequestException("WireGuard provider configurations do not use external OpenVPN option files");
     }
 
     //
@@ -178,7 +166,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     //
     @Override
     public VpnStatus getVpnStatusByDevice(Request request, Response response) {
-        VpnStatus status = openVpnService.getStatusByDevice(getDevice(request));
+        VpnStatus status = wireGuardService.getStatusByDevice(getDevice(request));
         if (status != null) {
             return status;
         } else {
@@ -190,7 +178,7 @@ public class OpenVpnControllerImpl implements OpenVpnController {
     @Override
     public VpnStatus getVpnStatus(Request request, Response response) {
         VpnProfile profile = getProfile(request);
-        VpnStatus status = openVpnService.getStatus(profile);
+        VpnStatus status = wireGuardService.getStatus(profile);
         status.setProfileId(profile.getId());
         return status;
     }
@@ -204,17 +192,17 @@ public class OpenVpnControllerImpl implements OpenVpnController {
         }
 
         if (status.isActive()) {
-            openVpnService.startVpn(profile);
+            wireGuardService.startVpn(profile);
         } else {
-            openVpnService.stopVpn(profile);
+            wireGuardService.stopVpn(profile);
         }
 
-        return openVpnService.getStatus(profile);
+        return wireGuardService.getStatus(profile);
     }
 
     @Override
     public boolean getVpnDeviceStatus(Request request, Response response) {
-        VpnStatus status = openVpnService.getStatus(getProfile(request));
+        VpnStatus status = wireGuardService.getStatus(getProfile(request));
         return status.getDevices().contains(getDevice(request).getId());
     }
 
@@ -269,19 +257,11 @@ public class OpenVpnControllerImpl implements OpenVpnController {
 
     private VpnProfile getProfile(Request request) {
         int id = getId(request);
-        VpnProfile profile = openVpnService.getVpnProfileById(id);
+        VpnProfile profile = wireGuardService.getVpnProfileById(id);
         if (profile == null) {
             throw new NotFoundException();
         }
         return profile;
-    }
-
-    private String getOption(Request request) {
-        String optionParameter = request.getHeader("option");
-        if (optionParameter == null) {
-            throw new BadRequestException();
-        }
-        return optionParameter;
     }
 
     private String getDeviceId(Request request) {
@@ -313,81 +293,52 @@ public class OpenVpnControllerImpl implements OpenVpnController {
         return sessionStore.getSession((TransactionIdentifier) request.getAttachment("transactionIdentifier"));
     }
 
-    private OpenVpnConfigurationViewModel mapConfiguration(OpenVpnConfiguration configuration) {
+    private OpenVpnConfigurationViewModel mapConfiguration(WireGuardConfiguration configuration) {
         OpenVpnConfigurationViewModel model = new OpenVpnConfigurationViewModel();
+        List<OpenVpnConfigurationViewModel.ConfigLine> activeOptions = new ArrayList<>();
+        int[] lineNumber = new int[]{ 1 };
 
-        Map<OpenVpnConfigurator.OptionState, Set<Option>> userOptionsByState = configurator.getUserOptionsByState(configuration.getUserOptions());
-        model.setActiveOptions(configurator.getActiveConfiguration(configuration, "credentials.txt", new HashMap<>()).stream()
-                .map(o -> mapActiveOption(configuration, userOptionsByState, o)).collect(Collectors.toList()));
-        model.setBlacklistedOptions(mapOptions(userOptionsByState.get(OpenVpnConfigurator.OptionState.BLACKLISTED)));
-        model.setIgnoredOptions(mapOptions(userOptionsByState.get(OpenVpnConfigurator.OptionState.IGNORED)));
-        model.setRequiredFiles(userOptionsByState.get(OpenVpnConfigurator.OptionState.FILE_REQUIRED).stream()
-                .map(o -> mapInliningRequiredOption(configuration, (SimpleOption) o))
-                .collect(Collectors.toList()));
-        model.setCredentialsRequired(configurator.credentialsRequired(configuration));
-        model.setValidationErrors(configurator.validateConfiguration(configuration));
+        addLine(activeOptions, lineNumber, "PrivateKey = " + configuration.getPrivateKey());
+        addJoinedLine(activeOptions, lineNumber, "Address", configuration.getAddresses());
+        addJoinedLine(activeOptions, lineNumber, "DNS", configuration.getDnsServers());
+        if (configuration.getMtu() != null) {
+            addLine(activeOptions, lineNumber, "MTU = " + configuration.getMtu());
+        }
+        for (WireGuardPeer peer: configuration.getPeers()) {
+            addLine(activeOptions, lineNumber, "PublicKey = " + peer.getPublicKey());
+            if (peer.getPresharedKey() != null) {
+                addLine(activeOptions, lineNumber, "PresharedKey = " + peer.getPresharedKey());
+            }
+            if (peer.getEndpoint() != null) {
+                addLine(activeOptions, lineNumber, "Endpoint = " + peer.getEndpoint());
+            }
+            addJoinedLine(activeOptions, lineNumber, "AllowedIPs", peer.getAllowedIps());
+            if (peer.getPersistentKeepalive() != null) {
+                addLine(activeOptions, lineNumber, "PersistentKeepalive = " + peer.getPersistentKeepalive());
+            }
+        }
+
+        model.setActiveOptions(activeOptions);
+        model.setBlacklistedOptions(Collections.emptyList());
+        model.setIgnoredOptions(Collections.emptyList());
+        model.setRequiredFiles(Collections.emptyList());
+        model.setCredentialsRequired(false);
+        model.setValidationErrors(Collections.emptyList());
         return model;
     }
 
-    private List<OpenVpnConfigurationViewModel.ConfigLine> mapOptions(Set<Option> options) {
-        if (options == null) {
-            return Collections.emptyList();
+    private void addJoinedLine(List<OpenVpnConfigurationViewModel.ConfigLine> lines, int[] lineNumber,
+                               String option, List<String> values) {
+        if (values != null && !values.isEmpty()) {
+            addLine(lines, lineNumber, option + " = " + String.join(", ", values));
         }
-        return options.stream()
-                .map(this::mapOption)
-                .sorted(Comparator.comparingInt(a -> a.lineNumber))
-                .collect(Collectors.toList());
     }
 
-    private OpenVpnConfigurationViewModel.ConfigLine mapActiveOption(OpenVpnConfiguration configuration,
-                                                                     Map<OpenVpnConfigurator.OptionState,
-                                                                             Set<Option>> userOptionsByState,
-                                                                     Option option) {
-        Optional<Option> userOption = findOptionByName(configuration.getUserOptions(), option.getName());
-        boolean isEblockerOption = findOptionByName(configurator.getEblockerOptions(), option.getName()).isPresent();
-        Option newOption = option;
-
-        // show orginal user option instead of inlined one
-        if (userOption.isPresent() && findOptionByName(userOptionsByState.get(OpenVpnConfigurator.OptionState.FILE_REQUIRED), option.getName()).isPresent()) {
-            isEblockerOption = false;
-            newOption = userOption.get();
-        }
-
+    private void addLine(List<OpenVpnConfigurationViewModel.ConfigLine> lines, int[] lineNumber, String value) {
         OpenVpnConfigurationViewModel.ConfigLine line = new OpenVpnConfigurationViewModel.ConfigLine();
-        if (isEblockerOption) {
-            line.source = "eblocker";
-            if (userOption.isPresent()) {
-                Option overwrittenUserOption = userOption.get();
-                line.overriddenLineNumber = overwrittenUserOption.getLineNumber();
-                line.overriddenLine = overwrittenUserOption.toString();
-            }
-        } else {
-            line.source = "user";
-        }
-
-        line.lineNumber = newOption.getLineNumber();
-        line.line = newOption.toString();
-
-        return line;
-    }
-
-    private Optional<Option> findOptionByName(Collection<Option> options, String name) {
-        return options.stream().filter(o -> o.getName().equals(name)).findAny();
-    }
-
-    private OpenVpnConfigurationViewModel.ConfigLine mapOption(Option option) {
-        OpenVpnConfigurationViewModel.ConfigLine line = new OpenVpnConfigurationViewModel.ConfigLine();
-        line.lineNumber = option.getLineNumber();
-        line.line = option.toString();
         line.source = "user";
-        return line;
-    }
-
-    private OpenVpnConfigurationViewModel.RequiredFile mapInliningRequiredOption(OpenVpnConfiguration configuration, SimpleOption option) {
-        OpenVpnConfigurationViewModel.RequiredFile requiredFile = new OpenVpnConfigurationViewModel.RequiredFile();
-        requiredFile.option = option.getName();
-        requiredFile.name = option.getArguments() != null && option.getArguments().length > 0 ? option.getArguments()[0] : "";
-        requiredFile.uploaded = configuration.getInlinedContentByName().containsKey(option.getName());
-        return requiredFile;
+        line.lineNumber = lineNumber[0]++;
+        line.line = value;
+        lines.add(line);
     }
 }

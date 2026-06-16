@@ -16,14 +16,17 @@
 # permissions and limitations under the License.
 #
 
-# Format: wireguard_clearclientroute [ID] [ENDPOINT_IP]
+# Format: wireguard_clearclientroute [ID]
 
-if [ $# -ge '2' ]; then
+if [ $# -ge '1' ]; then
     ID=$1
-    endpoint_ip=$2
 
-    ip route del "$endpoint_ip/32" || true
+    VPNTABLE_NAME="wireguard$ID"
+
+    ip route show table $VPNTABLE_NAME default > /dev/null || true
+    ip route del table $VPNTABLE_NAME default || true
+    ip route flush cache
 else
-    echo "Wrong number of arguments! Expected: wireguard_clearclientroute [ID] [ENDPOINT_IP]" 1>&2
+    echo "Wrong number of arguments! Expected: wireguard_clearclientroute [ID]" 1>&2
     exit 1
 fi

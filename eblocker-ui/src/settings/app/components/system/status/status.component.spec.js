@@ -20,7 +20,26 @@ describe('App settings; status component controller', function() {
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
-    let ctrl, $componentController, StateService;
+    let ctrl, $componentController, ConsoleService, StateService, SystemService;
+
+    ConsoleService = {
+        init: function() {},
+        initiallyShowNavBar: function() {
+            return false;
+        },
+        isGlobalSpinner: function() {
+            return false;
+        },
+        isInitialized: function() {
+            return true;
+        },
+        isPageSpinner: function() {
+            return false;
+        },
+        showDashboardButton: function() {
+            return false;
+        }
+    };
 
     StateService = {
         goToState: function() {},
@@ -33,15 +52,24 @@ describe('App settings; status component controller', function() {
         }
     };
 
+    SystemService = {
+        reboot: function() {},
+        setCurrentProcess: function() {},
+        shutdown: function() {}
+    };
+
     beforeEach(angular.mock.module(function($provide, $translateProvider) {
+        $provide.value('ConsoleService', ConsoleService);
         $provide.value('StateService', StateService);
+        $provide.value('SystemService', SystemService);
         // Workaround angular-translate issue:
         // https://angular-translate.github.io/docs/#/guide/22_unit-testing-with-angular-translate
         $translateProvider.translations('en', {});
     }));
 
-    beforeEach(inject(function(_$componentController_) {
+    beforeEach(inject(function(_$componentController_, _SystemService_) {
         $componentController = _$componentController_;
+        SystemService = _SystemService_;
         ctrl = $componentController('statusComponent', {}, {});
     }));
 
@@ -50,4 +78,5 @@ describe('App settings; status component controller', function() {
             expect(angular.isDefined(ctrl)).toBe(true);
         });
     });
+
 });

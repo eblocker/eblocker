@@ -1,0 +1,71 @@
+<div flex-gt-lg="60" flex-md="70" flex-lg="70" layout="column" layout-fill class="settings-child-view">
+
+    <div>
+        <p>{{ 'ADMINCONSOLE.SYSTEM_INFO.EXPLANATION' | translate }}</p>
+
+        <div layout="row" layout-align="end center" layout-align-xs="start center">
+            <span ng-if="vm.lastUpdated" class="md-caption">
+                {{ 'ADMINCONSOLE.SYSTEM_INFO.LAST_UPDATED' | translate }} {{ vm.lastUpdated | date:'HH:mm:ss' }}
+            </span>
+            <md-button class="md-raised" ng-click="vm.refresh()">
+                {{ 'ADMINCONSOLE.SYSTEM_INFO.ACTION.REFRESH' | translate }}
+            </md-button>
+        </div>
+
+        <div class="config-frame md-whiteframe-z1" ng-if="vm.systemParameters">
+            <div layout="column" layout-padding>
+                <h3>{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.TITLE' | translate }}</h3>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.CPU_TEMPERATURE' | translate }}</div>
+                    <div flex>{{ vm.formatTemperature(vm.systemParameters.cpuTemperatureCelsius) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.CPU_LOAD' | translate }}</div>
+                    <div flex>{{ vm.formatLoad(vm.systemParameters) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.MEMORY' | translate }}</div>
+                    <div flex>{{ vm.formatMemory(vm.systemParameters) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.SWAP' | translate }}</div>
+                    <div flex>{{ vm.formatSwap(vm.systemParameters) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.ROOT_DISK' | translate }}</div>
+                    <div flex>{{ vm.formatDisk(vm.systemParameters) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.LIVE.UPTIME' | translate }}</div>
+                    <div flex>{{ vm.formatUptime(vm.systemParameters.uptimeSeconds) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-frame md-whiteframe-z1" ng-if="vm.systemParameters">
+            <div layout="column" layout-padding>
+                <h3>{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.TITLE' | translate }}</h3>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.MODEL' | translate }}</div>
+                    <div flex>{{ vm.formatValue(vm.systemParameters.hardwareModel) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.OS' | translate }}</div>
+                    <div flex>{{ vm.formatValue(vm.systemParameters.operatingSystemName) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.KERNEL' | translate }}</div>
+                    <div flex>{{ vm.formatValue(vm.systemParameters.kernelVersion) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.ARCHITECTURE' | translate }}</div>
+                    <div flex>{{ vm.formatValue(vm.systemParameters.architecture) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.SYSTEM_INFO.SPECS.CPU_CORES' | translate }}</div>
+                    <div flex>{{ vm.formatValue(vm.systemParameters.cpuCoreCount) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

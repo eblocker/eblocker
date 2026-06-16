@@ -49,6 +49,7 @@ public class WireGuardScriptsTest {
         writeFakeCommand("redis-cli", "printf 'redis-cli %s\\n' \"$*\" >> \"$COMMAND_LOG\"\n");
         writeFakeCommand("wg-quick", "printf 'wg-quick %s\\n' \"$*\" >> \"$COMMAND_LOG\"\nprintf 'wg-quick %s\\n' \"$*\"\n");
         writeFakeCommand("ip", "printf 'ip %s\\n' \"$*\" >> \"$COMMAND_LOG\"\n");
+        writeFakeCommand("wg", "printf 'wg %s\\n' \"$*\" >> \"$COMMAND_LOG\"\ncase \"$1\" in\n  genkey) printf 'private-key\\n' ;;\n  genpsk) printf 'preshared-key\\n' ;;\n  pubkey) read PRIVATE_KEY; printf 'public-for-%s\\n' \"$PRIVATE_KEY\" ;;\nesac\n");
     }
 
     @After
@@ -144,6 +145,33 @@ public class WireGuardScriptsTest {
         Assert.assertEquals(Arrays.asList(
                 "wg-quick down " + configOne,
                 "wg-quick down " + configTwo), readCommandLog());
+    }
+
+    @Test
+    public void wireGuardGenKeyPrintsNewPrivateKey() throws Exception {
+        ProcessResult result = runScript("wireguard_genkey");
+
+        Assert.assertEquals(result.stderr, 0, result.exitCode);
+        Assert.assertEquals("private-key\n", result.stdout);
+        Assert.assertEquals(Arrays.asList("wg genkey"), readCommandLog());
+    }
+
+    @Test
+    public void wireGuardPubKeyDerivesPublicKeyFromPrivateKeyArgument() throws Exception {
+        ProcessResult result = runScript("wireguard_pubkey", "private-key");
+
+        Assert.assertEquals(result.stderr, 0, result.exitCode);
+        Assert.assertEquals("public-for-private-key\n", result.stdout);
+        Assert.assertEquals(Arrays.asList("wg pubkey"), readCommandLog());
+    }
+
+    @Test
+    public void wireGuardGenPskPrintsNewPresharedKey() throws Exception {
+        ProcessResult result = runScript("wireguard_genpsk");
+
+        Assert.assertEquals(result.stderr, 0, result.exitCode);
+        Assert.assertEquals("preshared-key\n", result.stdout);
+        Assert.assertEquals(Arrays.asList("wg genpsk"), readCommandLog());
     }
 
     private ProcessResult runScript(String scriptName, String... arguments) throws IOException, InterruptedException {

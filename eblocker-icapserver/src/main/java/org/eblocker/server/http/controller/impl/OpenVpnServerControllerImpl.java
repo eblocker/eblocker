@@ -24,12 +24,12 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.http.controller.OpenVpnServerController;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.OpenVpnServerService;
+import org.eblocker.server.http.service.WireGuardMobileService;
 import org.eblocker.server.http.utils.NormalizationUtils;
 import org.restexpress.Request;
 import org.restexpress.Response;
@@ -49,18 +49,18 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     private static final Logger log = LoggerFactory.getLogger(OpenVpnServerControllerImpl.class);
     private final OpenVpnServerService openVpnServerService;
     private final DeviceService deviceService;
-    private final OpenVpnClientConfigurationService openVpnClientConfigurationService;
+    private final WireGuardMobileService wireGuardMobileService;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final NetworkStateMachine networkStateMachine;
 
     @Inject
     public OpenVpnServerControllerImpl(OpenVpnServerService openVpnServerService,
-                                       OpenVpnClientConfigurationService openVpnClientConfigurationService,
+                                       WireGuardMobileService wireGuardMobileService,
                                        DeviceService deviceService,
                                        DeviceRegistrationProperties deviceRegistrationProperties,
                                        NetworkStateMachine networkStateMachine) {
         this.openVpnServerService = openVpnServerService;
-        this.openVpnClientConfigurationService = openVpnClientConfigurationService;
+        this.wireGuardMobileService = wireGuardMobileService;
         this.deviceService = deviceService;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.networkStateMachine = networkStateMachine;
@@ -138,23 +138,28 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
             return null;
         }
 
-        if (!getCertificates().contains(device.getId())) {
-            if (!setCertificate(device.getId())) {
-                log.error("Could not create certificate for device {}", device.getId());
-                response.setResponseCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-                return null;
-            } else {
-                log.info("Certificate for device {} created successfully.", device.getId());
-            }
-        }
-
         OperatingSystemType osType = getOsType(request);
         String downloadFilename = generateDownloadFileName(device, osType);
         response.setContentType("application/octet-stream");
         response.addHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-        String stream = new String(openVpnClientConfigurationService.getOvpnProfile(device.getId(), osType));
 
-        return Unpooled.wrappedBuffer(stream.getBytes());
+        try {
+            Integer mappedPort = openVpnServerService.getOpenVpnMappedPort();
+            String stream = wireGuardMobileService.generateClientConfiguration(
+                    device.getId(),
+                    openVpnServerService.getOpenVpnServerHost(),
+                    mappedPort != null ? mappedPort : 1194);
+            return Unpooled.wrappedBuffer(stream.getBytes());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Could not generate WireGuard configuration for device {}", device.getId(), e);
+            response.setResponseCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            return null;
+        } catch (IOException e) {
+            log.error("Could not generate WireGuard configuration for device {}", device.getId(), e);
+            response.setResponseCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            return null;
+        }
     }
 
     /*
@@ -192,7 +197,7 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
     }
 
     private String generateDownloadFileName(Device device, OperatingSystemType osType) {
-        return String.format("eBlockerMobile-%s-%s-%s.ovpn",
+        return String.format("eBlockerMobile-%s-%s-%s.conf",
                 NormalizationUtils.normalizeStringForFilename(deviceRegistrationProperties.getDeviceName(), 12,
                         "My_eBlocker"),
                 NormalizationUtils.normalizeStringForFilename(device.getName(), 12, device.getId()),

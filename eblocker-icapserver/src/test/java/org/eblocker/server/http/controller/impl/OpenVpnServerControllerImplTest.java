@@ -21,11 +21,11 @@ import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
 import org.eblocker.server.common.network.NetworkStateMachine;
-import org.eblocker.server.common.openvpn.server.OpenVpnClientConfigurationService;
 import org.eblocker.server.common.openvpn.server.VpnServerStatus;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.OpenVpnServerService;
+import org.eblocker.server.http.service.WireGuardMobileService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,7 +45,7 @@ public class OpenVpnServerControllerImplTest {
     private OpenVpnServerControllerImpl controller;
     private DeviceService deviceService;
     private Response response;
-    private OpenVpnClientConfigurationService openVpnClientConfigurationService;
+    private WireGuardMobileService wireGuardMobileService;
     private String deviceId = "device:001122334455";
     private OperatingSystemType osType = OperatingSystemType.OTHER;
     private DeviceRegistrationProperties deviceRegistrationProperties;
@@ -54,18 +54,19 @@ public class OpenVpnServerControllerImplTest {
     @BeforeEach
     public void setup() throws URISyntaxException, IOException {
         deviceService = Mockito.mock(DeviceService.class);
-        openVpnClientConfigurationService = Mockito.mock(OpenVpnClientConfigurationService.class);
+        wireGuardMobileService = Mockito.mock(WireGuardMobileService.class);
         openVpnServerService = Mockito.mock(OpenVpnServerService.class);
 
         Mockito.when(openVpnServerService.isOpenVpnServerEnabled()).thenReturn(true);
         Mockito.when(openVpnServerService.getDeviceIdsWithCertificates()).thenReturn(Collections.singleton(deviceId));
+        Mockito.when(openVpnServerService.getOpenVpnMappedPort()).thenReturn(1194);
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         Mockito.when(deviceRegistrationProperties.getDeviceName()).thenReturn(registrationEblockerName);
         networkStateMachine = Mockito.mock(NetworkStateMachine.class);
 
         controller = new OpenVpnServerControllerImpl(
                 openVpnServerService,
-                openVpnClientConfigurationService,
+                wireGuardMobileService,
                 deviceService,
                 deviceRegistrationProperties,
                 networkStateMachine);
@@ -73,7 +74,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void downloadClientConf() throws IOException {
+    public void downloadClientConf() throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
 
@@ -82,7 +83,7 @@ public class OpenVpnServerControllerImplTest {
         Mockito.when(device.isEblockerMobileEnabled()).thenReturn(true);
         Mockito.when(device.getUserFriendlyName()).thenReturn("device%//%%-from-Äggard");
         Mockito.when(deviceService.getDeviceById(deviceId)).thenReturn(device);
-        Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS)).thenReturn("test".getBytes());
+        Mockito.when(wireGuardMobileService.generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194)).thenReturn("test");
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("vpn.hh.eblocker.com");
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.WINDOWS.toString());
 
@@ -91,8 +92,8 @@ public class OpenVpnServerControllerImplTest {
         buffer.readBytes(bytes);
 
         assertArrayEquals("test".getBytes(), bytes);
-        Mockito.verify(openVpnClientConfigurationService, Mockito.times(1)).getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS);
-        assertEquals("attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.ovpn\"", response.getHeader("Content-Disposition"));
+        Mockito.verify(wireGuardMobileService, Mockito.times(1)).generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194);
+        assertEquals("attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.conf\"", response.getHeader("Content-Disposition"));
 
         // Client is not allowed to use eBlocker mobile
         Mockito.when(device.isEblockerMobileEnabled()).thenReturn(false);
@@ -100,7 +101,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void downloadClientConfWithoutCertifcatePresent() throws IOException {
+    public void downloadClientConfWithoutCertifcatePresent() throws Exception {
         String newDeviceId = "device:001122334456";
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(newDeviceId);
@@ -110,25 +111,20 @@ public class OpenVpnServerControllerImplTest {
         Mockito.when(device.isEblockerMobileEnabled()).thenReturn(true);
         Mockito.when(device.getUserFriendlyName()).thenReturn("device%//%%-from-Äggard");
         Mockito.when(deviceService.getDeviceById(newDeviceId)).thenReturn(device);
-        Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS))
-                .thenReturn("test-xyz".getBytes());
+        Mockito.when(wireGuardMobileService.generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194))
+                .thenReturn("test-xyz");
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("vpn.hh.eblocker.com");
-        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId)).thenReturn(true);
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.WINDOWS.toString());
 
         ByteBuf buffer = (ByteBuf) controller.downloadClientConf(request, response);
         byte[] bytes = new byte[buffer.readableBytes()];
         buffer.readBytes(bytes);
         assertArrayEquals("test-xyz".getBytes(), bytes);
-        Mockito.verify(openVpnServerService).createClientCertificate(newDeviceId);
-
-        // Certificate creation failed
-        Mockito.when(openVpnServerService.createClientCertificate(newDeviceId)).thenReturn(false);
-        assertNull(controller.downloadClientConf(request, response));
+        Mockito.verify(wireGuardMobileService).generateClientConfiguration(newDeviceId, "vpn.hh.eblocker.com", 1194);
     }
 
     @Test
-    public void downloadUnixClientConf() throws IOException {
+    public void downloadUnixClientConf() throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.ANDROID.toString());
@@ -136,7 +132,7 @@ public class OpenVpnServerControllerImplTest {
         Device device = new Device();
         device.setId(deviceId);
         Mockito.when(deviceService.getDeviceById(deviceId)).thenReturn(device);
-        Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.ANDROID)).thenReturn("test".getBytes());
+        Mockito.when(wireGuardMobileService.generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194)).thenReturn("test");
 
         Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("vpn.hh.eblocker.com");
 
@@ -145,11 +141,11 @@ public class OpenVpnServerControllerImplTest {
         buffer.readBytes(bytes);
 
         assertArrayEquals("test".getBytes(), bytes);
-        Mockito.verify(openVpnClientConfigurationService, Mockito.times(1)).getOvpnProfile(device.getId(), OperatingSystemType.ANDROID);
+        Mockito.verify(wireGuardMobileService, Mockito.times(1)).generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194);
     }
 
     @Test
-    public void downloadInvalidClientConfFails() throws IOException {
+    public void downloadInvalidClientConfFails() throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn("--invalid--");
 
@@ -178,7 +174,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void enableADisabledDevice() throws IOException {
+    public void enableADisabledDevice() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
 
@@ -193,7 +189,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void enableAnEnabledDevice() throws IOException {
+    public void enableAnEnabledDevice() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
 
@@ -208,7 +204,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void disableEnabledDevice() throws IOException {
+    public void disableEnabledDevice() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
 
@@ -232,7 +228,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void disableEnabledDeviceWithoutCertificates() throws IOException {
+    public void disableEnabledDeviceWithoutCertificates() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
         String enabledDeviceId = "device:001122334456";
@@ -250,7 +246,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void disableDisableDeviceWithCertificates() throws IOException {
+    public void disableDisableDeviceWithCertificates() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
 
@@ -269,7 +265,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void disableDisableDeviceWithoutCertificates() throws IOException {
+    public void disableDisableDeviceWithoutCertificates() throws Exception {
         Request request = Mockito.mock(Request.class);
         Device device = Mockito.mock(Device.class);
         String disabledDeviceId = "device:001122334456";
@@ -287,7 +283,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void generateDownloadUrlTest() throws IOException {
+    public void generateDownloadUrlTest() throws Exception {
         String authString = "Bearer+asdjaksldaasjdaskjdlsajda";
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
@@ -307,7 +303,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void testInvalidDeviceParameter() throws IOException {
+    public void testInvalidDeviceParameter() throws Exception {
         Request request = Mockito.mock(Request.class);
 
         assertFalse(controller.enableDevice(request, response));
@@ -324,24 +320,24 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void testFilenameNormalizationSpecialCharacters() throws IOException {
-        assertFilenameNormalization("attachment; filename=\"eBlockerMobile-my_eBlocker_-aou012345678-Windows.ovpn\"",
+    public void testFilenameNormalizationSpecialCharacters() throws Exception {
+        assertFilenameNormalization("attachment; filename=\"eBlockerMobile-my_eBlocker_-aou012345678-Windows.conf\"",
                 "äöü¹²³¼½¬{[]}0123456789");
     }
 
     @Test
-    public void testFilenameNormalizationNull() throws IOException {
+    public void testFilenameNormalizationNull() throws Exception {
         assertFilenameNormalization(
-                "attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.ovpn\"", null);
+                "attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.conf\"", null);
     }
 
     @Test
-    public void testFilenameNormalizationEmpty() throws IOException {
+    public void testFilenameNormalizationEmpty() throws Exception {
         assertFilenameNormalization(
-                "attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.ovpn\"", "¹²³¼½¬{[]}");
+                "attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.conf\"", "¹²³¼½¬{[]}");
     }
 
-    private void assertFilenameNormalization(String expectedContentDisposition, String deviceName) throws IOException {
+    private void assertFilenameNormalization(String expectedContentDisposition, String deviceName) throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
 
@@ -350,8 +346,9 @@ public class OpenVpnServerControllerImplTest {
         Mockito.when(device.isEblockerMobileEnabled()).thenReturn(true);
         Mockito.when(device.getName()).thenReturn(deviceName);
         Mockito.when(deviceService.getDeviceById(deviceId)).thenReturn(device);
-        Mockito.when(openVpnClientConfigurationService.getOvpnProfile(device.getId(), OperatingSystemType.WINDOWS))
-                .thenReturn("test".getBytes());
+        Mockito.when(wireGuardMobileService.generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194))
+                .thenReturn("test");
+        Mockito.when(openVpnServerService.getOpenVpnServerHost()).thenReturn("vpn.hh.eblocker.com");
         Mockito.when(request.getHeader("deviceType")).thenReturn(OperatingSystemType.WINDOWS.toString());
 
         controller.downloadClientConf(request, response);
@@ -360,7 +357,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void testSettingPrivateNetworkAccessAllowed() throws IOException {
+    public void testSettingPrivateNetworkAccessAllowed() throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(Boolean.class)).thenReturn(true);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);
@@ -377,7 +374,7 @@ public class OpenVpnServerControllerImplTest {
     }
 
     @Test
-    public void testSettingPrivateNetworkAccessProhibited() throws IOException {
+    public void testSettingPrivateNetworkAccessProhibited() throws Exception {
         Request request = Mockito.mock(Request.class);
         Mockito.when(request.getBodyAs(Boolean.class)).thenReturn(false);
         Mockito.when(request.getHeader("deviceId")).thenReturn(deviceId);

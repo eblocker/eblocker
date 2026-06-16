@@ -46,6 +46,17 @@ public class CustomDomainFilterConfigService {
                                            UserService userService) {
         this.filterListsService = filterListsService;
         this.userService = userService;
+        this.userService.addListener(new UserService.UserChangeListener() {
+            @Override
+            public void onChange(UserModule user) {
+                // No action required for regular user updates.
+            }
+
+            @Override
+            public void onDelete(UserModule user) {
+                deleteCustomDomainFilters(user);
+            }
+        });
     }
 
     public CustomDomainFilterConfig getCustomDomainFilterConfig(int userId) {
@@ -82,11 +93,20 @@ public class CustomDomainFilterConfigService {
         return new HashSet<>(filterListsService.getFilterListDomains(listId));
     }
 
+    private void deleteCustomDomainFilters(UserModule user) {
+        deleteFilterList(user.getCustomBlacklistId());
+        deleteFilterList(user.getCustomWhitelistId());
+    }
+
+    private void deleteFilterList(Integer id) {
+        if (id != null) {
+            filterListsService.deleteFilterList(id);
+        }
+    }
+
     private Integer updateDnsFilter(Integer id, int userId, String type, Set<String> domains) {
         if (domains.isEmpty()) {
-            if (id != null) {
-                filterListsService.deleteFilterList(id);
-            }
+            deleteFilterList(id);
             return null;
         }
 

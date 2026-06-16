@@ -176,15 +176,20 @@ public class UserService {
         if (userId == null) {
             throw new BadRequestException("Cannot delete user without valid user id.");
         }
+        UserModule user = cache.get(userId);
         // make sure it is not a system user
-        if (cache.get(userId).isSystem()) {
+        if (user.isSystem()) {
             throw new BadRequestException("Cannot delete user " + userId + ", because it is a system user.");
         }
 
         // may remove parental control card and update all parent's dashboardColumnView
         checkAndUpdateParentalControlData(userId, null, null);
 
-        return doDelete(userId);
+        boolean deleted = doDelete(userId);
+        if (deleted) {
+            notifyDeleteListeners(user);
+        }
+        return deleted;
     }
 
     private UserModule updateSystemUser(Integer id,
@@ -448,6 +453,10 @@ public class UserService {
         listeners.forEach(listener -> listener.onChange(user));
     }
 
+    private void notifyDeleteListeners(UserModule user) {
+        listeners.forEach(listener -> listener.onDelete(user));
+    }
+
     private void updateCacheEntries(List<UserModule> users) {
         users.forEach(this::cacheUser);
     }
@@ -601,6 +610,9 @@ public class UserService {
 
     public interface UserChangeListener {
         void onChange(UserModule user);
+
+        default void onDelete(UserModule user) {
+        }
     }
 
     private UserModule findUpdatableUser(Integer id) {

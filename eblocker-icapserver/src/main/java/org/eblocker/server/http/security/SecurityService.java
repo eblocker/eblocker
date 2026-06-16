@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.data.AdminConsoleSettings;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
@@ -218,6 +219,21 @@ public class SecurityService {
     public long passwordEntryInSeconds(IpAddress ip) {
         Instant now = clock.instant();
         return Duration.between(now, this.nextPasswordEntryPermittedAt.getOrDefault(ip, now)).getSeconds();
+    }
+
+    public AdminConsoleSettings getAdminConsoleSettings() {
+        AdminConsoleSettings settings = dataSource.get(AdminConsoleSettings.class);
+        if (settings == null || settings.getSessionTimeoutSeconds() < 0) {
+            return new AdminConsoleSettings();
+        }
+        return settings;
+    }
+
+    public AdminConsoleSettings setAdminConsoleSettings(AdminConsoleSettings settings) {
+        if (settings == null || settings.getSessionTimeoutSeconds() < 0) {
+            throw new BadRequestException("error.adminConsoleSettings.invalidSessionTimeout");
+        }
+        return dataSource.save(settings);
     }
 
     public boolean isPasswordRequired() {

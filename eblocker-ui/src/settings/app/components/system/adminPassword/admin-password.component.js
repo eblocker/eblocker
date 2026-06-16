@@ -25,12 +25,18 @@ function AdminPasswordController(logger, $mdDialog, $translate,
     'ngInject';
 
     const vm = this;
+    const SECONDS_PER_MINUTE = 60;
 
     vm.openChangePasswordDialog = openChangePasswordDialog;
     vm.togglePasswordRequired = togglePasswordRequired;
     vm.changePassword = changePassword;
+    vm.saveSessionTimeout = saveSessionTimeout;
 
     vm.enabled = security.isPasswordRequired();
+    vm.sessionTimeoutMinutes = 20;
+    vm.isSavingSessionTimeout = false;
+
+    loadAdminConsoleSettings();
 
     function togglePasswordRequired() {
         if (security.isPasswordRequired()) {
@@ -56,6 +62,46 @@ function AdminPasswordController(logger, $mdDialog, $translate,
     function changePassword() {
         openChangePasswordDialog(true).then(function success() {
             NotificationService.info('ADMINCONSOLE.ADMIN_PASSWORD.NOTIFICATION.INFO_PASSWORD_CHANGED');
+        });
+    }
+
+    function loadAdminConsoleSettings() {
+        if (!angular.isFunction(security.getSettings)) {
+            return;
+        }
+        security.getSettings().then(function success(response) {
+            setSessionTimeoutMinutes(response.data.sessionTimeoutSeconds);
+        }, function error(response) {
+            logger.error('Unable to load admin console settings ', response);
+        });
+    }
+
+    function setSessionTimeoutMinutes(seconds) {
+        if (angular.isNumber(seconds) && seconds >= 0) {
+            vm.sessionTimeoutMinutes = seconds / SECONDS_PER_MINUTE;
+        }
+    }
+
+    function saveSessionTimeout() {
+        const minutes = angular.isNumber(vm.sessionTimeoutMinutes) ? vm.sessionTimeoutMinutes :
+            parseInt(vm.sessionTimeoutMinutes, 10);
+        const normalizedMinutes = isNaN(minutes) ? 0 : Math.max(0, Math.floor(minutes));
+        const settings = {
+            sessionTimeoutSeconds: normalizedMinutes * SECONDS_PER_MINUTE
+        };
+
+        vm.sessionTimeoutMinutes = normalizedMinutes;
+        vm.isSavingSessionTimeout = true;
+        return security.setSettings(settings).then(function success(response) {
+            setSessionTimeoutMinutes(response.data.sessionTimeoutSeconds);
+            NotificationService.info('ADMINCONSOLE.ADMIN_PASSWORD.NOTIFICATION.INFO_SESSION_TIMEOUT_CHANGED');
+        }, function error(response) {
+            NotificationService.error(
+                'ADMINCONSOLE.ADMIN_PASSWORD.NOTIFICATION.ERROR_SESSION_TIMEOUT_CHANGED',
+                response
+            );
+        }).finally(function() {
+            vm.isSavingSessionTimeout = false;
         });
     }
 

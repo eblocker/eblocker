@@ -16,8 +16,6 @@
  */
 import 'angular-mocks';
 
-/* global spyOn */
-
 describe('App settings; status component controller', function() {
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
@@ -55,7 +53,6 @@ describe('App settings; status component controller', function() {
     };
 
     SystemService = {
-        loadSystemParameters: function() {},
         reboot: function() {},
         setCurrentProcess: function() {},
         shutdown: function() {}
@@ -82,29 +79,4 @@ describe('App settings; status component controller', function() {
         });
     });
 
-    describe('system parameters', function() {
-        it('loads and formats system parameters', function() {
-            spyOn(SystemService, 'loadSystemParameters').and.returnValue({
-                then: function(success) {
-                    return success({
-                        data: {
-                            cpuTemperatureCelsius: 52.375,
-                            loadAverage1Minute: 0.11,
-                            loadAverage5Minutes: 0.22,
-                            loadAverage15Minutes: 0.33,
-                            memoryAvailableBytes: 524288000,
-                            memoryTotalBytes: 1048576000
-                        }
-                    });
-                }
-            });
-
-            ctrl.$onInit();
-
-            expect(ctrl.systemParameters.cpuTemperatureCelsius).toBe(52.375);
-            expect(ctrl.formatTemperature(ctrl.systemParameters.cpuTemperatureCelsius)).toBe('52.4 °C');
-            expect(ctrl.formatLoad(ctrl.systemParameters)).toBe('0.11 / 0.22 / 0.33');
-            expect(ctrl.formatMemory(ctrl.systemParameters)).toBe('500 MB / 1000 MB');
-        });
-    });
 });

@@ -2766,13 +2766,32 @@
                 "REBOOT" : "The eBlocker cannot be rebooted currently.",
                 "SHUTDOWN" : "The eBlocker cannot be shut down currently."
             },
-            "EXPLANATION" : "To reset or switch off the eBlocker you can reboot or shutdown.",
-            "LABEL" : "Reboot",
-            "SYSTEM_PARAMETERS" : {
+            "EXPLANATION" : "To reboot or switch off the eBlocker, use the actions below.",
+            "LABEL" : "Reboot"
+        },
+        "SYSTEM_INFO" : {
+            "ACTION" : {
+                "REFRESH" : "Refresh"
+            },
+            "EXPLANATION" : "Live system values and Raspberry Pi specifications.",
+            "LABEL" : "Raspberry Pi",
+            "LAST_UPDATED" : "Updated:",
+            "LIVE" : {
                 "CPU_LOAD" : "CPU load (1 / 5 / 15 min)",
                 "CPU_TEMPERATURE" : "CPU temperature",
-                "MEMORY_AVAILABLE" : "Available memory",
-                "TITLE" : "System parameters"
+                "MEMORY" : "Memory free / total",
+                "ROOT_DISK" : "System storage free / total",
+                "SWAP" : "Swap free / total",
+                "TITLE" : "Live values",
+                "UPTIME" : "Uptime"
+            },
+            "SPECS" : {
+                "ARCHITECTURE" : "Architecture",
+                "CPU_CORES" : "CPU cores",
+                "KERNEL" : "Kernel",
+                "MODEL" : "Model",
+                "OS" : "Operating system",
+                "TITLE" : "Specifications"
             }
         },
         "SYSTEM" : {

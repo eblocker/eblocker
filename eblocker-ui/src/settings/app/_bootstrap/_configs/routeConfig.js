@@ -877,11 +877,21 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'adminPasswordComponent'
     };
 
+    const systemInfo = {
+        name: 'systeminfo',
+        url: slashOptionSubState + 'systeminfo',
+        parent: system.name,
+        tabOrder: 3,
+        requiredLicense: system.requiredLicense,
+        translationKey: 'ADMINCONSOLE.SYSTEM_INFO.LABEL',
+        component: 'systemInfoComponent'
+    };
+
     const diagnostics = {
         name: 'diagnostics',
         url: slashOptionSubState + 'diagnostics',
         parent: system.name,
-        tabOrder: 6,
+        tabOrder: 7,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.DIAGNOSTICS.LABEL',
         component: 'diagnosticsComponent'
@@ -891,7 +901,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'events',
         url: slashOptionSubState + 'events',
         parent: system.name,
-        tabOrder: 4,
+        tabOrder: 5,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.EVENTS.LABEL',
         component: 'eventsComponent'
@@ -901,7 +911,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'backup',
         url: slashOptionSubState + 'backup',
         parent: system.name,
-        tabOrder: 7,
+        tabOrder: 8,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.BACKUP.LABEL',
         component: 'backupComponent'
@@ -911,7 +921,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'reset',
         url: slashOptionSubState + 'reset',
         parent: system.name,
-        tabOrder: 8,
+        tabOrder: 9,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.RESET.LABEL',
         component: 'resetComponent'
@@ -921,7 +931,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'status',
         url: slashOptionSubState + 'status',
         parent: system.name,
-        tabOrder: 2,
+        tabOrder: 4,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.STATUS.LABEL',
         component: 'statusComponent'
@@ -931,7 +941,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         name: 'tasks',
         url: slashOptionSubState + 'tasks',
         parent: system.name,
-        tabOrder: 5,
+        tabOrder: 6,
         requiredLicense: system.requiredLicense,
         translationKey: 'ADMINCONSOLE.TASKS.LABEL',
         component: 'tasksComponent',
@@ -1092,7 +1102,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         homeLegal, parentalControl, parentalControlState, devices, ssl, sslStatus,
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
         system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, manualRecording, users,
-        blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
+        blacklists, whitelists, tor, vpnconnect, dns, systemInfo, status, timeAndLanguage,
         events, backup, reset, diagnostics, usersDetails, usersProfileDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,

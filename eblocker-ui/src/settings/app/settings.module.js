@@ -169,6 +169,7 @@ import ConfigBackupComponent from './components/system/configBackup/config-backu
 import ResetComponent from './components/system/reset/reset.component';
 import ResetActivationComponent from './components/home/license/resetActivation/reset-activation.component';
 import StatusComponent from './components/system/status/status.component';
+import SystemInfoComponent from './components/system/systemInfo/system-info.component';
 import TasksComponent from './components/system/tasks/tasks.component';
 import TimeLangComponent from './components/system/timeLang/time-language.component';
 
@@ -449,6 +450,7 @@ angular.module('eblocker.adminconsole', [
     .component('factoryResetComponent', FactoryResetComponent)
     .component('resetActivationComponent', ResetActivationComponent)
     .component('statusComponent', StatusComponent)
+    .component('systemInfoComponent', SystemInfoComponent)
     .component('tasksComponent', TasksComponent)
     .component('timeLanguageComponent', TimeLangComponent)
     .component('backupComponent', BackupComponent)

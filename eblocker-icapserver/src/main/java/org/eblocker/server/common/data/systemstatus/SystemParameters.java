@@ -25,6 +25,16 @@ public class SystemParameters {
     private final Double loadAverage15Minutes;
     private final Long memoryAvailableBytes;
     private final Long memoryTotalBytes;
+    private final Long swapFreeBytes;
+    private final Long swapTotalBytes;
+    private final Long uptimeSeconds;
+    private final Long rootDiskAvailableBytes;
+    private final Long rootDiskTotalBytes;
+    private final Integer cpuCoreCount;
+    private final String architecture;
+    private final String operatingSystemName;
+    private final String kernelVersion;
+    private final String hardwareModel;
 
     public SystemParameters(
             Double cpuTemperatureCelsius,
@@ -32,7 +42,17 @@ public class SystemParameters {
             Double loadAverage5Minutes,
             Double loadAverage15Minutes,
             Long memoryAvailableBytes,
-            Long memoryTotalBytes
+            Long memoryTotalBytes,
+            Long swapFreeBytes,
+            Long swapTotalBytes,
+            Long uptimeSeconds,
+            Long rootDiskAvailableBytes,
+            Long rootDiskTotalBytes,
+            Integer cpuCoreCount,
+            String architecture,
+            String operatingSystemName,
+            String kernelVersion,
+            String hardwareModel
     ) {
         this.cpuTemperatureCelsius = cpuTemperatureCelsius;
         this.loadAverage1Minute = loadAverage1Minute;
@@ -40,6 +60,16 @@ public class SystemParameters {
         this.loadAverage15Minutes = loadAverage15Minutes;
         this.memoryAvailableBytes = memoryAvailableBytes;
         this.memoryTotalBytes = memoryTotalBytes;
+        this.swapFreeBytes = swapFreeBytes;
+        this.swapTotalBytes = swapTotalBytes;
+        this.uptimeSeconds = uptimeSeconds;
+        this.rootDiskAvailableBytes = rootDiskAvailableBytes;
+        this.rootDiskTotalBytes = rootDiskTotalBytes;
+        this.cpuCoreCount = cpuCoreCount;
+        this.architecture = architecture;
+        this.operatingSystemName = operatingSystemName;
+        this.kernelVersion = kernelVersion;
+        this.hardwareModel = hardwareModel;
     }
 
     @JsonProperty
@@ -70,5 +100,55 @@ public class SystemParameters {
     @JsonProperty
     public Long getMemoryTotalBytes() {
         return memoryTotalBytes;
+    }
+
+    @JsonProperty
+    public Long getSwapFreeBytes() {
+        return swapFreeBytes;
+    }
+
+    @JsonProperty
+    public Long getSwapTotalBytes() {
+        return swapTotalBytes;
+    }
+
+    @JsonProperty
+    public Long getUptimeSeconds() {
+        return uptimeSeconds;
+    }
+
+    @JsonProperty
+    public Long getRootDiskAvailableBytes() {
+        return rootDiskAvailableBytes;
+    }
+
+    @JsonProperty
+    public Long getRootDiskTotalBytes() {
+        return rootDiskTotalBytes;
+    }
+
+    @JsonProperty
+    public Integer getCpuCoreCount() {
+        return cpuCoreCount;
+    }
+
+    @JsonProperty
+    public String getArchitecture() {
+        return architecture;
+    }
+
+    @JsonProperty
+    public String getOperatingSystemName() {
+        return operatingSystemName;
+    }
+
+    @JsonProperty
+    public String getKernelVersion() {
+        return kernelVersion;
+    }
+
+    @JsonProperty
+    public String getHardwareModel() {
+        return hardwareModel;
     }
 }

@@ -2767,12 +2767,31 @@
                 "SHUTDOWN" : "Der eBlocker kann momentan nicht ausgeschaltet werden."
             },
             "EXPLANATION": "eBlocker ausschalten oder neu starten.",
-            "LABEL": "Neustart",
-            "SYSTEM_PARAMETERS": {
+            "LABEL": "Neustart"
+        },
+        "SYSTEM_INFO": {
+            "ACTION": {
+                "REFRESH": "Aktualisieren"
+            },
+            "EXPLANATION": "Live-Systemwerte und Raspberry-Pi-Spezifikationen.",
+            "LABEL": "Raspberry Pi",
+            "LAST_UPDATED": "Aktualisiert:",
+            "LIVE": {
                 "CPU_LOAD": "CPU-Last (1 / 5 / 15 Min.)",
                 "CPU_TEMPERATURE": "CPU-Temperatur",
-                "MEMORY_AVAILABLE": "Verfügbarer Speicher",
-                "TITLE": "Systemparameter"
+                "MEMORY": "Arbeitsspeicher frei / gesamt",
+                "ROOT_DISK": "Systemspeicher frei / gesamt",
+                "SWAP": "Swap frei / gesamt",
+                "TITLE": "Live-Werte",
+                "UPTIME": "Laufzeit"
+            },
+            "SPECS": {
+                "ARCHITECTURE": "Architektur",
+                "CPU_CORES": "CPU-Kerne",
+                "KERNEL": "Kernel",
+                "MODEL": "Modell",
+                "OS": "Betriebssystem",
+                "TITLE": "Spezifikationen"
             }
         },
         "SYSTEM": {

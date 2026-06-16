@@ -7,6 +7,23 @@
 
     <div>
         <p>{{ 'ADMINCONSOLE.STATUS.EXPLANATION' | translate }}</p>
+        <div class="config-frame md-whiteframe-z1" ng-if="vm.systemParameters">
+            <div layout="column" layout-padding>
+                <h3>{{ 'ADMINCONSOLE.STATUS.SYSTEM_PARAMETERS.TITLE' | translate }}</h3>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.STATUS.SYSTEM_PARAMETERS.CPU_TEMPERATURE' | translate }}</div>
+                    <div flex>{{ vm.formatTemperature(vm.systemParameters.cpuTemperatureCelsius) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.STATUS.SYSTEM_PARAMETERS.CPU_LOAD' | translate }}</div>
+                    <div flex>{{ vm.formatLoad(vm.systemParameters) }}</div>
+                </div>
+                <div layout="row" layout-xs="column">
+                    <div flex="40">{{ 'ADMINCONSOLE.STATUS.SYSTEM_PARAMETERS.MEMORY_AVAILABLE' | translate }}</div>
+                    <div flex>{{ vm.formatMemory(vm.systemParameters) }}</div>
+                </div>
+            </div>
+        </div>
         <div class="config-frame md-whiteframe-z1">
             <div layout="column">
                 <div layout="row" layout-align="space-around center">

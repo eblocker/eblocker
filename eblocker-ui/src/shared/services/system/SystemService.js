@@ -138,6 +138,14 @@ export default function SystemService(logger, $rootScope, $http, $q, $interval) 
         return systemStatusPromise;
     }
 
+    function loadSystemParameters() {
+        return $http.get(PATH + '/parameters', {timeout: 2000}).then(function success(response) {
+            return response;
+        }, function error(response) {
+            return $q.reject(response);
+        });
+    }
+
     function isServerRunning() {
         return serverIsRunning;
     }
@@ -215,6 +223,7 @@ export default function SystemService(logger, $rootScope, $http, $q, $interval) 
         start: startSyncTimer,
         stop: stopSyncTimer,
         loadSystemStatus: loadSystemStatus,
+        loadSystemParameters: loadSystemParameters,
         isScanningForStatus: isScanningForStatus,
         getStatusPromise: getStatusPromise,
         setCurrentProcess: setCurrentProcess,

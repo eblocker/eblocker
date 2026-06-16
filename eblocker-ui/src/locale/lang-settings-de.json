@@ -2767,7 +2767,13 @@
                 "SHUTDOWN" : "Der eBlocker kann momentan nicht ausgeschaltet werden."
             },
             "EXPLANATION": "eBlocker ausschalten oder neu starten.",
-            "LABEL": "Neustart"
+            "LABEL": "Neustart",
+            "SYSTEM_PARAMETERS": {
+                "CPU_LOAD": "CPU-Last (1 / 5 / 15 Min.)",
+                "CPU_TEMPERATURE": "CPU-Temperatur",
+                "MEMORY_AVAILABLE": "Verfügbarer Speicher",
+                "TITLE": "Systemparameter"
+            }
         },
         "SYSTEM": {
             "LABEL": "System"

@@ -733,6 +733,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("reboot", HttpMethod.POST)
                 .name("adminconsole.systemstatus.reboot");
 
+        server
+                .uri("/api/adminconsole/systemstatus/parameters", systemStatusController)
+                .action("getSystemParameters", HttpMethod.GET)
+                .name("adminconsole.systemstatus.parameters.get");
+
         //
         // Must be public routes, as these are used, before the system is really started.
         // In particular, before the DB and the admin password are available.

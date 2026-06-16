@@ -16,11 +16,32 @@
  */
 import 'angular-mocks';
 
+/* global spyOn */
+
 describe('App settings; status component controller', function() {
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
-    let ctrl, $componentController, StateService;
+    let ctrl, $componentController, ConsoleService, StateService, SystemService;
+
+    ConsoleService = {
+        init: function() {},
+        initiallyShowNavBar: function() {
+            return false;
+        },
+        isGlobalSpinner: function() {
+            return false;
+        },
+        isInitialized: function() {
+            return true;
+        },
+        isPageSpinner: function() {
+            return false;
+        },
+        showDashboardButton: function() {
+            return false;
+        }
+    };
 
     StateService = {
         goToState: function() {},
@@ -33,21 +54,57 @@ describe('App settings; status component controller', function() {
         }
     };
 
+    SystemService = {
+        loadSystemParameters: function() {},
+        reboot: function() {},
+        setCurrentProcess: function() {},
+        shutdown: function() {}
+    };
+
     beforeEach(angular.mock.module(function($provide, $translateProvider) {
+        $provide.value('ConsoleService', ConsoleService);
         $provide.value('StateService', StateService);
+        $provide.value('SystemService', SystemService);
         // Workaround angular-translate issue:
         // https://angular-translate.github.io/docs/#/guide/22_unit-testing-with-angular-translate
         $translateProvider.translations('en', {});
     }));
 
-    beforeEach(inject(function(_$componentController_) {
+    beforeEach(inject(function(_$componentController_, _SystemService_) {
         $componentController = _$componentController_;
+        SystemService = _SystemService_;
         ctrl = $componentController('statusComponent', {}, {});
     }));
 
     describe('initially', function() {
         it('should create a controller instance', function() {
             expect(angular.isDefined(ctrl)).toBe(true);
+        });
+    });
+
+    describe('system parameters', function() {
+        it('loads and formats system parameters', function() {
+            spyOn(SystemService, 'loadSystemParameters').and.returnValue({
+                then: function(success) {
+                    return success({
+                        data: {
+                            cpuTemperatureCelsius: 52.375,
+                            loadAverage1Minute: 0.11,
+                            loadAverage5Minutes: 0.22,
+                            loadAverage15Minutes: 0.33,
+                            memoryAvailableBytes: 524288000,
+                            memoryTotalBytes: 1048576000
+                        }
+                    });
+                }
+            });
+
+            ctrl.$onInit();
+
+            expect(ctrl.systemParameters.cpuTemperatureCelsius).toBe(52.375);
+            expect(ctrl.formatTemperature(ctrl.systemParameters.cpuTemperatureCelsius)).toBe('52.4 °C');
+            expect(ctrl.formatLoad(ctrl.systemParameters)).toBe('0.11 / 0.22 / 0.33');
+            expect(ctrl.formatMemory(ctrl.systemParameters)).toBe('500 MB / 1000 MB');
         });
     });
 });

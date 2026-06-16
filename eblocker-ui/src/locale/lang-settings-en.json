@@ -2767,7 +2767,13 @@
                 "SHUTDOWN" : "The eBlocker cannot be shut down currently."
             },
             "EXPLANATION" : "To reset or switch off the eBlocker you can reboot or shutdown.",
-            "LABEL" : "Reboot"
+            "LABEL" : "Reboot",
+            "SYSTEM_PARAMETERS" : {
+                "CPU_LOAD" : "CPU load (1 / 5 / 15 min)",
+                "CPU_TEMPERATURE" : "CPU temperature",
+                "MEMORY_AVAILABLE" : "Available memory",
+                "TITLE" : "System parameters"
+            }
         },
         "SYSTEM" : {
             "LABEL" : "System"

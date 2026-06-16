@@ -26,8 +26,57 @@ function Controller(DialogService, SystemService, StateService, NotificationServ
 
     const vm = this;
 
+    vm.$onInit = $onInit;
     vm.reboot = reboot;
     vm.shutdown = shutdown;
+    vm.formatTemperature = formatTemperature;
+    vm.formatLoad = formatLoad;
+    vm.formatMemory = formatMemory;
+
+    function $onInit() {
+        loadSystemParameters();
+    }
+
+    function loadSystemParameters() {
+        return SystemService.loadSystemParameters().then(function success(response) {
+            vm.systemParameters = response.data;
+            return vm.systemParameters;
+        }, function error(reason) {
+            logger.warn('Could not load system parameters', reason);
+            vm.systemParameters = null;
+            return null;
+        });
+    }
+
+    function formatTemperature(value) {
+        return angular.isNumber(value) ? value.toFixed(1) + ' °C' : '-';
+    }
+
+    function formatLoad(parameters) {
+        if (!angular.isObject(parameters) ||
+            !angular.isNumber(parameters.loadAverage1Minute) ||
+            !angular.isNumber(parameters.loadAverage5Minutes) ||
+            !angular.isNumber(parameters.loadAverage15Minutes)) {
+            return '-';
+        }
+        return parameters.loadAverage1Minute.toFixed(2) + ' / ' +
+            parameters.loadAverage5Minutes.toFixed(2) + ' / ' +
+            parameters.loadAverage15Minutes.toFixed(2);
+    }
+
+    function formatMemory(parameters) {
+        if (!angular.isObject(parameters) ||
+            !angular.isNumber(parameters.memoryAvailableBytes) ||
+            !angular.isNumber(parameters.memoryTotalBytes)) {
+            return '-';
+        }
+        return formatMegabytes(parameters.memoryAvailableBytes) + ' / ' +
+            formatMegabytes(parameters.memoryTotalBytes);
+    }
+
+    function formatMegabytes(bytes) {
+        return Math.round(bytes / 1024 / 1024) + ' MB';
+    }
 
     function reboot(event) {
         confirmShutdownOrReboot(event, true);

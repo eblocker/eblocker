@@ -19,8 +19,10 @@ package org.eblocker.server.http.controller.boot;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
+import org.eblocker.server.common.data.systemstatus.SystemParameters;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
 import org.eblocker.server.http.service.ShutdownService;
+import org.eblocker.server.http.service.SystemParametersService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.restexpress.Request;
 import org.restexpress.Response;
@@ -31,18 +33,25 @@ public class SystemStatusController {
     private final SystemStatusService systemStatusService;
 
     private final ShutdownService shutdownService;
+    private final SystemParametersService systemParametersService;
 
     @Inject
     public SystemStatusController(
             SystemStatusService systemStatusService,
-            ShutdownService shutdownService
+            ShutdownService shutdownService,
+            SystemParametersService systemParametersService
     ) {
         this.systemStatusService = systemStatusService;
         this.shutdownService = shutdownService;
+        this.systemParametersService = systemParametersService;
     }
 
     public SystemStatusDetails get(Request request, Response response) {
         return systemStatusService.getSystemStatusDetails();
+    }
+
+    public SystemParameters getSystemParameters(Request request, Response response) {
+        return systemParametersService.getSystemParameters();
     }
 
     public void shutdownOnError(Request request, Response response) {

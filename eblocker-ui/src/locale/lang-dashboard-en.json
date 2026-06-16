@@ -27,6 +27,10 @@
             "SELECT_LOCAL" : "This device",
             "SELECT_OTHER" : "Other devices..."
         },
+        "DASHBOARD_ERROR" : {
+            "MESSAGE" : "The eBlocker could not identify this device. Please check the network connection and try again.",
+            "TITLE" : "Dashboard is not available"
+        },
         "DRAG_DROP" : {
             "TOOLTIP" : "Drag here to reorder this card."
         },

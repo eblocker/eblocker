@@ -51,6 +51,7 @@ import static org.junit.Assert.assertEquals;
 public class FilterManagerTest {
     private static final String FILTER_NAME = "test-filter";
     private static final String TRACKER_URL = "http://0tracker.com/";
+    private static final String LEARNED_URL = "http://www.example.org/ads.example.test/script.js";
     private static final String FILE_SUFFIX = ".json.enc";
 
     private List<FilterStoreConfiguration> defaultConfigurations;
@@ -184,6 +185,28 @@ public class FilterManagerTest {
     }
 
     @Test
+    public void testAddedAsynchronousFilterPersistsLearnedMatchesAfterRestart() throws Exception {
+        objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());
+
+        FilterManager manager = createManager();
+        writeCsvFilterToCache("ads.example.test");
+        FilterStoreConfiguration newConfiguration = new FilterStoreConfiguration(null, "test", Category.ADS, false, System.currentTimeMillis(), new String[]{ resourceFile.toString() }, FilterLearningMode.ASYNCHRONOUS, FilterDefinitionFormat.CSV, true,
+                new String[0], true);
+        FilterStoreConfiguration savedConfiguration = manager.addFilter(newConfiguration);
+
+        assertEquals(Decision.NO_DECISION, decisionForURL(manager.getFilter(Category.ADS), LEARNED_URL));
+        manager.getAsynchronousLearnersUpdater().run();
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), LEARNED_URL));
+
+        Mockito.when(dataSource.getAll(FilterStoreConfiguration.class)).thenReturn(Collections.singletonList(savedConfiguration));
+        FilterManager restartedManager = createManager();
+
+        assertEquals(Decision.BLOCK, decisionForURL(restartedManager.getFilter(Category.ADS), LEARNED_URL));
+        Assert.assertFalse(Files.exists(cacheDirectory.resolve("null" + FILE_SUFFIX)));
+        Assert.assertTrue(Files.exists(cacheDirectory.resolve(savedConfiguration.getId() + FILE_SUFFIX)));
+    }
+
+    @Test
     public void testRemoveFilter() throws IOException, CryptoException {
         // create single non-default config
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());
@@ -254,5 +277,10 @@ public class FilterManagerTest {
         SimpleResource source = new SimpleResource("classpath:test-data/filter/easyprivacy.txt");
         String list = ResourceHandler.load(source);
         Files.write(resourceFile, list.getBytes(Charset.forName("UTF-8")));
+    }
+
+    private void writeCsvFilterToCache(String pattern) throws IOException {
+        String filter = "BLOCK\tMEDIUM\t-\tCONTAINS\t" + pattern + "\t-\t-\t-\n";
+        Files.write(resourceFile, filter.getBytes(Charset.forName("UTF-8")));
     }
 }

@@ -132,8 +132,6 @@ public class FilterManager {
     }
 
     public synchronized FilterStoreConfiguration addFilter(FilterStoreConfiguration configuration) {
-        FilterStore store = createFilterStore(configuration);
-
         int id = dataSource.nextId(FilterStoreConfiguration.class);
         FilterStoreConfiguration addedConfiguration = new FilterStoreConfiguration(id,
                 configuration.getName(),
@@ -146,6 +144,7 @@ public class FilterManager {
                 configuration.isLearnForAllDomains(),
                 configuration.getRuleFilters(),
                 configuration.isEnabled());
+        FilterStore store = createFilterStore(addedConfiguration);
 
         List<FilterStoreConfiguration> newConfigurations = new ArrayList<>(configurations);
         newConfigurations.add(addedConfiguration);
@@ -473,13 +472,20 @@ public class FilterManager {
 
     public Runnable getAsynchronousLearnersUpdater() {
         return () -> {
-            if (cache == null) {
-                return;
+            synchronized (FilterManager.this) {
+                if (cache == null) {
+                    return;
+                }
+                configurations.stream()
+                        .filter(configuration -> FilterLearningMode.ASYNCHRONOUS == configuration.getLearningMode())
+                        .forEach(configuration -> {
+                            FilterStore filterStore = cache.storeById.get(configuration.getId());
+                            AsynchronousLearningFilter filter = (AsynchronousLearningFilter) filterStore.getFilter();
+                            if (filter.processQueue()) {
+                                save(filterStore, configuration);
+                            }
+                        });
             }
-            configurations.stream()
-                    .filter(configuration -> FilterLearningMode.ASYNCHRONOUS == configuration.getLearningMode())
-                    .map(configuration -> ((Runnable) cache.storeById.get(configuration.getId()).getFilter()))
-                    .forEach(Runnable::run);
         };
     }
 

@@ -55,14 +55,21 @@ public class AsynchronousLearningFilter extends LearningFilter implements Runnab
 
     @Override
     public void run() {
+        processQueue();
+    }
+
+    public boolean processQueue() {
+        boolean processed = false;
         try {
             Entry entry;
             while ((entry = queue.poll()) != null) {
+                processed = true;
                 learn(entry.result, entry.context);
             }
         } catch (Exception e) {
             log.error("aborting learning due to exception", e);
         }
+        return processed;
     }
 
     private class Entry {

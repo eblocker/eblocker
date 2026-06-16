@@ -39,6 +39,7 @@ export default function TableService(logger, $window) {
 
     const largeTableVisibleItems = {};
     const smallTableVisibleItems = {};
+    const tableSortStates = {};
     const prefixCounter = {};
 
     let idCounter = 1;
@@ -136,12 +137,31 @@ export default function TableService(logger, $window) {
         return isSmallScreen() ? smallTableVisibleItems[tableId] : largeTableVisibleItems[tableId];
     }
 
+    function setTableSortState(tableId, orderKey, reverseOrder, oldOrderKey) {
+        if (angular.isString(tableId) && angular.isString(orderKey)) {
+            tableSortStates[tableId] = {
+                orderKey: orderKey,
+                reverseOrder: reverseOrder === true,
+                oldOrderKey: oldOrderKey
+            };
+        }
+    }
+
+    function getTableSortState(tableId) {
+        if (angular.isString(tableId) && angular.isObject(tableSortStates[tableId])) {
+            return angular.copy(tableSortStates[tableId]);
+        }
+        return undefined;
+    }
+
     return {
         getUniqueTableId: getUniqueTableId,
         getLargeTableRowHeight: getLargeTableRowHeight,
         getSmallTableRowHeight: getSmallTableRowHeight,
         tableNumVisibleItems: tableNumVisibleItems,
         getTablePaginatorOptions: getTablePaginatorOptions,
-        getNumOfVisibleItems: getNumOfVisibleItems
+        getNumOfVisibleItems: getNumOfVisibleItems,
+        setTableSortState: setTableSortState,
+        getTableSortState: getTableSortState
     };
 }

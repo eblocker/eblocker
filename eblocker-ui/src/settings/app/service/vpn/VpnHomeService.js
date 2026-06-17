@@ -17,7 +17,7 @@
 export default function VpnHomeService(logger, $http, $q, NotificationService, $interval) {
     'ngInject';
 
-    const PATH = '/api/adminconsole/openvpn';
+    const PATH = '/api/adminconsole/wireguard';
     const PATH_CONNECTION_TEST = PATH + '/test';
     const PATH_HOSTNAME_TEST = PATH + '/dns';
     const STATUS_UPDATE_TIMEOUT = 60000; // one minute in ms
@@ -54,16 +54,16 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
         });
     }
 
-    function loadCertificates() {
-        return $http.get(PATH + '/certificates').
+    function loadConfigurations() {
+        return $http.get(PATH + '/configurations').
         then(standardSuccess, function(response) {
-            NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CERTIFICATES_GET', response);
+            NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFIGURATIONS_GET', response);
             return $q.reject(response);
         });
     }
 
     function generateDownloadUrl(deviceId, operatingSystemType) {
-        return $http.get(PATH + '/certificates/generateDownloadUrl/' + deviceId + '/' + operatingSystemType).
+        return $http.get(PATH + '/configurations/generateDownloadUrl/' + deviceId + '/' + operatingSystemType).
         then(standardSuccess, function(response) {
             NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFIG_DOWNLOAD', response);
             return $q.reject(response);
@@ -220,7 +220,7 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
         setStatus: setStatus,
         resetServer: resetServer,
         loadStatus: loadStatus,
-        loadCertificates: loadCertificates,
+        loadConfigurations: loadConfigurations,
         generateDownloadUrl: generateDownloadUrl,
         doConnectionTest: doConnectionTest,
         cancelConnectionTest: cancelConnectionTest,

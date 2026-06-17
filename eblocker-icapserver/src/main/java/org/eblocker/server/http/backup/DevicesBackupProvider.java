@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
-import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
 import org.slf4j.Logger;
@@ -38,16 +37,13 @@ public class DevicesBackupProvider extends BackupProvider {
     private final DeviceService deviceService;
     private final UserService userService;
     private final DeviceFactory deviceFactory;
-    private final OpenVpnService openVpnService;
     private static final Logger LOG = LoggerFactory.getLogger(DevicesBackupProvider.class);
 
     @Inject
-    public DevicesBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory,
-                                 OpenVpnService openVpnService) {
+    public DevicesBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.deviceFactory = deviceFactory;
-        this.openVpnService = openVpnService;
     }
 
     @Override
@@ -147,7 +143,7 @@ public class DevicesBackupProvider extends BackupProvider {
                 existingDevice.setSslRecordErrorsEnabled(deviceToRestore.isSslRecordErrorsEnabled());
                 existingDevice.setUseAnonymizationService(deviceToRestore.isUseAnonymizationService());
                 existingDevice.setVendor(deviceToRestore.getVendor());
-                existingDevice.setUseVPNProfileID(null); // VPN client profile is restored by OpenVpnClientBackupProvider.
+                existingDevice.setUseVPNProfileID(null); // VPN provider profile is restored separately.
             }
             deviceService.updateDevice(existingDevice);
             LOG.info("Device copied and written back");

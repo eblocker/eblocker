@@ -52,7 +52,7 @@ public interface NetworkServices {
      *
      * @param masquerade should SNAT or masquerading be enabled?
      */
-    void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableOpenVpnServer, boolean enableMalwareSet);
+    void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableMobileVpnServer, boolean enableMalwareSet);
 
     void applyNetworkConfiguration(NetworkConfiguration networkConfiguration);
 

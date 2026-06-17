@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.http.controller.impl;
 
-import org.eblocker.server.common.openvpn.connection.MobileDnsCheckService;
+import org.eblocker.server.common.vpn.connection.MobileDnsCheckService;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.junit.Assert;
 import org.junit.Test;

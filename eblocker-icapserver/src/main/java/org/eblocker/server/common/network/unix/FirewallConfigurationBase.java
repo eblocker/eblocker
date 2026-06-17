@@ -19,7 +19,7 @@ package org.eblocker.server.common.network.unix;
 import com.google.common.collect.Sets;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.network.unix.firewall.Chain;
 import org.eblocker.server.common.network.unix.firewall.IpAddressFilter;
 import org.eblocker.server.common.network.unix.firewall.Table;
@@ -66,9 +66,9 @@ public abstract class FirewallConfigurationBase {
 
     abstract protected TableGeneratorBase getTableGenerator();
 
-    public synchronized void enable(Set<Device> allDevices, Collection<OpenVpnClientState> anonVpnClients,
+    public synchronized void enable(Set<Device> allDevices, Collection<VpnClientState> anonVpnClients,
                                     boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
-                                    boolean enableOpenVpnServer, boolean enableMalwareSet,
+                                    boolean enableMobileVpnServer, boolean enableMalwareSet,
                                     Supplier<Boolean> applyFirewallRules) throws IOException {
 
         // Get IP version specific generator
@@ -78,14 +78,14 @@ public abstract class FirewallConfigurationBase {
         tableGenerator.setMasqueradeEnabled(masquerade);
         tableGenerator.setSslEnabled(enableSSL);
         tableGenerator.setDnsEnabled(enableEblockerDns);
-        tableGenerator.setMobileVpnServerEnabled(enableOpenVpnServer);
+        tableGenerator.setMobileVpnServerEnabled(enableMobileVpnServer);
         tableGenerator.setMalwareSetEnabled(enableMalwareSet);
         tableGenerator.setServerEnvironment(environment.isServer());
 
         // ensure stable order to prevent deltas due to rule order changes
         Set<Device> devicesByMac = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
         devicesByMac.addAll(allDevices);
-        Set<OpenVpnClientState> anonVpnClientsById = new TreeSet<>(Comparator.comparing(OpenVpnClientState::getId));
+        Set<VpnClientState> anonVpnClientsById = new TreeSet<>(Comparator.comparing(VpnClientState::getId));
         anonVpnClientsById.addAll(anonVpnClients);
 
         IpAddressFilter ipAddressFilter = getIpAddressFilter(devicesByMac);

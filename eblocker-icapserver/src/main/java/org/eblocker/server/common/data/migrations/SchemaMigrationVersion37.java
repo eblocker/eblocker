@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -58,7 +58,7 @@ public class SchemaMigrationVersion37 implements SchemaMigration {
     @Override
     public void migrate() {
         try (Jedis jedis = jedisPool.getResource()) {
-            update(jedis, "OpenVpnClientState:[0-9]*", this::updateMetaData);
+            update(jedis, "VpnClientState:[0-9]*", this::updateMetaData);
         }
 
         dataSource.setVersion("37");
@@ -79,7 +79,7 @@ public class SchemaMigrationVersion37 implements SchemaMigration {
         try {
             ObjectNode metaDataNode = (ObjectNode) objectMapper.readTree(json);
             JsonNode activeFlagNode = metaDataNode.remove("active");
-            OpenVpnClientState.State state = mapClientState(activeFlagNode);
+            VpnClientState.State state = mapClientState(activeFlagNode);
             metaDataNode.put("state", state.name());
             return objectMapper.writeValueAsString(metaDataNode);
         } catch (IOException e) {
@@ -88,10 +88,10 @@ public class SchemaMigrationVersion37 implements SchemaMigration {
         }
     }
 
-    private OpenVpnClientState.State mapClientState(JsonNode node) {
+    private VpnClientState.State mapClientState(JsonNode node) {
         if (node == null || node.isNull() || !node.isBoolean() || !node.booleanValue()) {
-            return OpenVpnClientState.State.INACTIVE;
+            return VpnClientState.State.INACTIVE;
         }
-        return OpenVpnClientState.State.ACTIVE;
+        return VpnClientState.State.ACTIVE;
     }
 }

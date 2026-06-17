@@ -21,7 +21,7 @@ export default {
     bindings: {
         users: '<',
         vpnHomeStatus: '<',
-        vpnHomeCertificates: '<'
+        vpnHomeConfigurations: '<'
     }
 };
 
@@ -156,8 +156,8 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
                 getUserAgentList();
             }
 
-            vm.device.hasCertificate = angular.isDefined(vm.vpnHomeCertificates) &&
-                vm.vpnHomeCertificates.indexOf(vm.device.id) > -1;
+            vm.device.hasCertificate = angular.isDefined(vm.vpnHomeConfigurations) &&
+                vm.vpnHomeConfigurations.indexOf(vm.device.id) > -1;
 
             DeviceService.setDisplayValues(vm.device);
 
@@ -956,7 +956,7 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         } else {
             vm.isDownloadingConf = true;
             VpnHomeService.generateDownloadUrl(device.id, vm.operatingSystemType.type).then(function success(response) {
-                // Sort certificates into dic
+                // Sort configurations into dic
                 $window.location = response.data;
             }, function error(response) {
                 // fail

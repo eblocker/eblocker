@@ -27,7 +27,7 @@ import org.eblocker.crypto.pki.PKI;
 import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
@@ -45,7 +45,6 @@ import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.DeviceService.DeviceChangeListener;
-import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.icap.resources.EblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
@@ -106,7 +105,6 @@ public class SquidConfigController {
     private final String sslKeyFilePath;
     private final String sslCertFilePath;
     private final String squidWorkers;
-    private final OpenVpnServerService openVpnServerService;
     private final String controlBarHostName;
     private final String controlBarHostFallbackIp;
     private final String cacheLog;
@@ -151,7 +149,6 @@ public class SquidConfigController {
                                  NetworkServices networkServices,
                                  DeviceService deviceService,
                                  ConfigurableDeviceFilterAclFactory squidAclFactory,
-                                 OpenVpnServerService openVpnServerService,
                                  Environment environment,
                                  Ip6PrefixMonitor prefixMonitor,
                                  FeatureServiceSubscriber featureServiceSubscriber) {
@@ -179,7 +176,6 @@ public class SquidConfigController {
         this.sslKeyFilePath = sslKeyFilePath;
         this.sslCertFilePath = sslCertFilePath;
         this.squidWorkers = squidWorkers;
-        this.openVpnServerService = openVpnServerService;
         this.controlBarHostName = controlBarHostName;
         this.controlBarHostFallbackIp = controlBarHostFallbackIp;
 
@@ -374,7 +370,7 @@ public class SquidConfigController {
      * @return
      */
     public void updateSquidConfig() {
-        String squidConfigContent = constructSquidConfigString(sslService.isSslEnabled(), dataSource.getAll(OpenVpnClientState.class));
+        String squidConfigContent = constructSquidConfigString(sslService.isSslEnabled(), dataSource.getAll(VpnClientState.class));
         if (writeSquidConfig(squidConfigContent)) {
             reloadingService.tellSquidToReloadConfig();
         }
@@ -410,7 +406,7 @@ public class SquidConfigController {
      * @param sslReady whether squid should do SSL bumping or not (should only be true, if the root CA and private key exist already !!! -> otherwise Squid will fail and terminate!!!)
      * @return
      */
-    private String constructSquidConfigString(boolean sslReady, Collection<OpenVpnClientState> vpnClients) {
+    private String constructSquidConfigString(boolean sslReady, Collection<VpnClientState> vpnClients) {
         //template exists?
         if (!ResourceHandler.exists(squidConfigTemplateFile)) {
             log.error("Squid config template file can not be found here {}", squidConfigTemplateFile.getPath());
@@ -434,7 +430,7 @@ public class SquidConfigController {
         configContent.append(confStatic);
         configContent.append(confDynamic);
 
-        if (sslReady) { //just if SSL is enabled and the certificates are created already
+        if (sslReady) { //just if SSL is enabled and the configurations are created already
             log.info("Adding SSL Support in squid config...");
             configContent.append(sslConfPart);
             if (!environment.isServer()) {
@@ -447,7 +443,7 @@ public class SquidConfigController {
         return configContent.toString();
     }
 
-    private String createDynamicOptions(Collection<OpenVpnClientState> vpnClients) {
+    private String createDynamicOptions(Collection<VpnClientState> vpnClients) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(createLogOptions());
@@ -474,7 +470,7 @@ public class SquidConfigController {
         return sb.toString();
     }
 
-    private String createVpnOptions(Collection<OpenVpnClientState> vpnClients) {
+    private String createVpnOptions(Collection<VpnClientState> vpnClients) {
         if (vpnClients != null && !vpnClients.isEmpty()) {
 
             StringBuilder squidConfigContent = new StringBuilder();
@@ -484,8 +480,8 @@ public class SquidConfigController {
             squidConfigContent.append("# VPN clients support\n");
             squidConfigContent.append("#------------------------------------------------------------------------------\n");
 
-            for (OpenVpnClientState client : vpnClients) {
-                if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+            for (VpnClientState client : vpnClients) {
+                if (client.getState() == VpnClientState.State.ACTIVE) {
                     String line1 = String.format("acl outbound_vpn_%d src \"/etc/squid/vpn-%d.acl\"", client.getId(), client.getId());
                     String line2 = String.format("tcp_outgoing_mark 0x%x outbound_vpn_%d !disabledClients", client.getRoute(), client.getId());
 
@@ -508,7 +504,7 @@ public class SquidConfigController {
     private String createErrHtmlOption() {
         try {
             Map<String, Object> dynamicConfig = new LinkedHashMap<>(); // must ensure order to get exact match in unit test :(
-            if (openVpnServerService.isOpenVpnServerEnabled()) {
+            if (dataSource.getWireGuardMobileServerState()) {
                 dynamicConfig.put("ip", controlBarHostName);
             } else if (networkInterface.getFirstIPv4Address() != null) {
                 dynamicConfig.put("ip", networkInterface.getFirstIPv4Address().toString());

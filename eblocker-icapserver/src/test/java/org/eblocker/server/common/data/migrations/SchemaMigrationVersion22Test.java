@@ -17,7 +17,7 @@
 package org.eblocker.server.common.data.migrations;
 
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
+import org.eblocker.server.common.data.wireguard.WireGuardProfile;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class SchemaMigrationVersion22Test {
     @Before
     public void setUp() {
         dataSource = Mockito.mock(DataSource.class);
-        Mockito.when(dataSource.getAll(OpenVpnProfile.class)).thenReturn(Arrays.asList(
+        Mockito.when(dataSource.getAll(WireGuardProfile.class)).thenReturn(Arrays.asList(
                 createProfile(0),
                 createProfile(1),
                 createProfile(2)
@@ -59,7 +59,7 @@ public class SchemaMigrationVersion22Test {
 
         Mockito.verify(dataSource).setVersion("22");
 
-        ArgumentCaptor<OpenVpnProfile> captor = ArgumentCaptor.forClass(OpenVpnProfile.class);
+        ArgumentCaptor<WireGuardProfile> captor = ArgumentCaptor.forClass(WireGuardProfile.class);
         Mockito.verify(dataSource).save(captor.capture(), Mockito.eq(0));
         Mockito.verify(dataSource).save(captor.capture(), Mockito.eq(1));
         Mockito.verify(dataSource).save(captor.capture(), Mockito.eq(2));
@@ -68,8 +68,8 @@ public class SchemaMigrationVersion22Test {
         Assert.assertTrue(captor.getAllValues().get(2).isNameServersEnabled());
     }
 
-    private OpenVpnProfile createProfile(int id) {
-        OpenVpnProfile profile = new OpenVpnProfile(id, "profile-" + id);
+    private WireGuardProfile createProfile(int id) {
+        WireGuardProfile profile = new WireGuardProfile(id, "profile-" + id);
         profile.setNameServersEnabled(false);
         return profile;
     }

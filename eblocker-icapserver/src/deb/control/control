@@ -5,7 +5,7 @@ Priority: optional
 Architecture: all
 Breaks: unattended-upgrades
 Replaces: unattended-upgrades
-Depends: default-jdk-headless, redis-server, eblocker-network-tools, eblocker-certificate-validator (>= 1.10), eblocker-ui, eblocker-squid, isc-dhcp-client, isc-dhcp-server, tshark, openvpn, wireguard-tools, ipset, sysstat, netcat, curl, traceroute, iputils-ping, procps
+Depends: default-jdk-headless, redis-server, eblocker-network-tools, eblocker-certificate-validator (>= 1.10), eblocker-ui, eblocker-squid, isc-dhcp-client, isc-dhcp-server, tshark, wireguard-tools, ipset, sysstat, netcat, curl, traceroute, iputils-ping, procps
 Maintainer: eBlocker Open Source UG <dev@eblocker.org>
 Description: eBlocker Device - Server
 Distribution: development

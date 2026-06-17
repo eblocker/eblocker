@@ -2564,9 +2564,9 @@
             },
             "VPN_HOME" : {
                 "NOTIFICATION" : {
-                    "CERTIFICATES_DELETE" : "Error revoking the configuration",
-                    "CERTIFICATES_GET" : "Error while loading the configurations",
-                    "CERTIFICATES_POST" : "Error creating the configuration",
+                    "CONFIGURATIONS_DELETE" : "Error revoking the configuration",
+                    "CONFIGURATIONS_GET" : "Error while loading the configurations",
+                    "CONFIGURATIONS_POST" : "Error creating the configuration",
                     "CONFIG_DOWNLOAD" : "Error while downloading the configuration",
                     "CONFLICTING_FORWARDINGS" : "Conflicting port forwarding detected, check your router",
                     "DISABLE_DEVICE" : "Error while disabling the device",
@@ -3833,7 +3833,7 @@
                     "P2" : "If the button is green and the text states \"{{'ADMINCONSOLE.SSL_STATUS.SWITCH.SSL_ON' | translate}}\", you have activated this option. The eBlocker now accepts encrypted communication, decrypts it and checks it for trackers and tracking advertisements. The data stream is then re-encrypted with the eBlocker certificate. With this technology, tracking advertisements and trackers can be blocked even more efficiently.",
                     "P3" : "Store the certificate required for this process:",
                     "P4" : "If the HTTPS support is activated, the \"{{ 'ADMINCONSOLE.SSL_STATUS.ACTION.HTTPS_WIZARD' | translate}}\" button opens the assistant that will guide you through the certificate installation process.",
-                    "P5" : "If you are familiar with handling certificates, you can also download them manually from the \"Certificate\" tab and store them in the certificate store for trusted certification authorities. Both procedures are described for the most common systems on the \"{{'ADMINCONSOLE.SSL_STATUS.ACTION.TUTORIALS' | translate}}\" link.",
+                    "P5" : "If you are familiar with handling configurations, you can also download them manually from the \"Certificate\" tab and store them in the certificate store for trusted certification authorities. Both procedures are described for the most common systems on the \"{{'ADMINCONSOLE.SSL_STATUS.ACTION.TUTORIALS' | translate}}\" link.",
                     "TITLE" : "HTTPS Support"
                 }
             },

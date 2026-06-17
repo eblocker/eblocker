@@ -21,12 +21,12 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
-import org.eblocker.server.common.data.openvpn.VpnStatus;
+import org.eblocker.server.common.data.vpn.VpnProfile;
+import org.eblocker.server.common.data.vpn.VpnStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
-import org.eblocker.server.common.openvpn.RoutingController;
+import org.eblocker.server.common.vpn.RoutingController;
 import org.eblocker.server.common.squid.SquidConfigController;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
@@ -380,7 +380,7 @@ public class WireGuardService {
                 storedProfile.setKeepAlivePingTarget(keepAliveTarget);
                 break;
             case DISABLED:
-            case OPENVPN_REMOTE:
+            case PROVIDER_ENDPOINT:
             default:
                 storedProfile.setKeepAlivePingTarget(profile.getKeepAlivePingTarget());
                 break;

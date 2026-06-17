@@ -101,7 +101,7 @@ public class NetworkStateMachine {
 
         dnsEnableByDefaultChecker.check();
         services.updateIp6State();
-        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isWireGuardMobileServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         ip6PrefixMonitor.addPrefixChangeListener(this::updateFirewall);
     }
@@ -111,8 +111,8 @@ public class NetworkStateMachine {
         return dataSource.getSSLEnabledState();
     }
 
-    private boolean isOpenVpnServerEnabled() {
-        boolean state = dataSource.getOpenVpnServerState();
+    private boolean isWireGuardMobileServerEnabled() {
+        boolean state = dataSource.getWireGuardMobileServerState();
         log.debug("eBlocker mobile state is :{}", state);
         return state;
     }
@@ -120,14 +120,14 @@ public class NetworkStateMachine {
     private void sslStateChanged(boolean sslEnabled) {
         //reconfigure firewall
         NetworkStateId currentState = getCurrentNetworkState().getId();
-        services.enableFirewall(shouldMasquerade(currentState), sslEnabled, isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), sslEnabled, isWireGuardMobileServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         log.debug("SSL state is now {}", sslEnabled);
     }
 
     private void updateFirewall() {
         NetworkStateId currentState = getCurrentNetworkState().getId();
-        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isWireGuardMobileServerEnabled(), ipSets.isSupportedByOperatingSystem());
     }
 
     // Masquerading is not a good idea when ARP-spoofing is used (see https://trac.bmb-dev.de/trac/wiki/NetworkConfiguration)
@@ -186,7 +186,7 @@ public class NetworkStateMachine {
         services.configureEblockerDns(networkConfiguration);
 
         services.applyNetworkConfiguration(networkConfiguration);
-        services.enableFirewall(shouldMasquerade(selected.getId()), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(selected.getId()), isSSLEnabled(), isWireGuardMobileServerEnabled(), ipSets.isSupportedByOperatingSystem());
 
         setCurrentNetworkState(selected);
 
@@ -224,7 +224,7 @@ public class NetworkStateMachine {
      */
     public void deviceStateChanged() {
         NetworkStateId currentState = getCurrentNetworkState().getId();
-        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isOpenVpnServerEnabled(), ipSets.isSupportedByOperatingSystem());
+        services.enableFirewall(shouldMasquerade(currentState), isSSLEnabled(), isWireGuardMobileServerEnabled(), ipSets.isSupportedByOperatingSystem());
         if (currentState == NetworkStateId.LOCAL_DHCP) {
             services.configureDhcpServer(services.getCurrentNetworkConfiguration());
         }

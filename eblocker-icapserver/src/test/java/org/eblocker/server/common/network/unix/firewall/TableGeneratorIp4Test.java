@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
     private final String mobileVpnSubnet = "10.8.0.0";
     private final String mobileVpnNetmask = "255.255.255.0";
 
-    // Setting for anonymization via OpenVPN
+    // Setting for anonymization via WireGuard
     private static final String anonVpnClientDeviceId = "anonVpnClientDeviceId";
     private final String anonVpnEndpointIp = "100.42.23.7";
     private final int anonVpnClientRoute = 1;
@@ -75,10 +75,10 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         Mockito.when(deviceIpFilter.getMobileVpnDevicesIps()).thenReturn(List.of(mobileVpnDevice, mobileVpnLocalAccessDevice));
         Mockito.when(deviceIpFilter.getMobileVpnDevicesPrivateNetworkAccessIps()).thenReturn(List.of(mobileVpnLocalAccessDevice));
 
-        OpenVpnClientState vpnClient = new OpenVpnClientState();
+        VpnClientState vpnClient = new VpnClientState();
         vpnClient.setLocalEndpointIp(anonVpnEndpointIp);
         vpnClient.setDevices(Set.of(anonVpnClientDeviceId));
-        vpnClient.setState(OpenVpnClientState.State.ACTIVE);
+        vpnClient.setState(VpnClientState.State.ACTIVE);
         vpnClient.setVirtualInterfaceName(anonVpnInterface);
         vpnClient.setRoute(anonVpnClientRoute);
         anonVpnClients = Set.of(vpnClient);

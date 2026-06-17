@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Copyright 2026 eBlocker Open Source GmbH
+# Licensed under the EUPL, Version 1.2 or later.
+#
+# Format: wireguard_mobile_start [CONFIG_FILE]
+
+set -e
+
+if [ $# != '1' ]; then
+    echo "Error: Wrong number of parameters!" 1>&2
+    echo "Expected format: wireguard_mobile_start [CONFIG_FILE]" 1>&2
+    exit 1
+fi
+
+CONFFILE=$1
+
+if [ ! -f "$CONFFILE" ]; then
+    echo "The config file can not be found here: $CONFFILE" 1>&2
+    exit 1
+fi
+
+wg-quick up "$CONFFILE"

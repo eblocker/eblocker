@@ -488,7 +488,7 @@
                                     </paths>
                                 </data>
 
-                                <!-- openvpn squid acls-->
+                                <!-- wireguard squid acls-->
                                 <data>
                                     <type>template</type>
                                     <mapper>
@@ -498,11 +498,11 @@
                                         <dirmode>755</dirmode>
                                     </mapper>
                                     <paths>
-                                        <path>/etc/squid/openvpn</path>
+                                        <path>/etc/squid/wireguard</path>
                                     </paths>
                                 </data>
 
-                                <!-- openvpn profiles -->
+                                <!-- wireguard profiles -->
                                 <data>
                                     <type>template</type>
                                     <mapper>
@@ -512,7 +512,7 @@
                                         <dirmode>755</dirmode>
                                     </mapper>
                                     <paths>
-                                        <path>/opt/eblocker-icap/network/openvpn</path>
+                                        <path>/opt/eblocker-icap/network/wireguard</path>
                                     </paths>
                                 </data>
 

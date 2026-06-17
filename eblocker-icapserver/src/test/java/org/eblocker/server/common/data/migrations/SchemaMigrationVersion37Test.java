@@ -19,7 +19,7 @@ package org.eblocker.server.common.data.migrations;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,11 +65,11 @@ public class SchemaMigrationVersion37Test {
     public void migrate() throws IOException {
         // setup mock data
         Map<String, String> clientStateById = new HashMap<>();
-        clientStateById.put("OpenVpnClientState:0",
+        clientStateById.put("VpnClientState:0",
                 "{\"id\":0,\"active\":false,\"virtualInterfaceName\":\"tun0\",\"linkLocalInterfaceAlias\":\"eth0:36\",\"linkLocalIpAddress\":\"169.254.8.2\",\"route\":1,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.8.0.5\",\"trustedIp\":\"10.10.10.102\",\"devices\":[\"device:64200c454900\"],\"nameServers\":[]}");
-        clientStateById.put("OpenVpnClientState:1",
+        clientStateById.put("VpnClientState:1",
                 "{\"id\":1,\"active\":true,\"virtualInterfaceName\":\"tun1\",\"linkLocalInterfaceAlias\":\"eth0:37\",\"linkLocalIpAddress\":\"169.254.8.3\",\"route\":2,\"routeNetGateway\":\"10.10.10.10\",\"routeVpnGateway\":\"10.9.0.5\",\"trustedIp\":\"10.10.20.102\",\"devices\":[\"device:64200c454901\"],\"nameServers\":[]}");
-        Mockito.when(jedis.keys("OpenVpnClientState:[0-9]*")).thenReturn(clientStateById.keySet());
+        Mockito.when(jedis.keys("VpnClientState:[0-9]*")).thenReturn(clientStateById.keySet());
         Mockito.when(jedis.get(Mockito.anyString())).then(im -> clientStateById.get(im.getArgument(0)));
 
         // run migration
@@ -77,17 +77,17 @@ public class SchemaMigrationVersion37Test {
 
         // check results
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(jedis).set(Mockito.eq("OpenVpnClientState:0"), captor.capture());
+        Mockito.verify(jedis).set(Mockito.eq("VpnClientState:0"), captor.capture());
         JsonNode node = objectMapper.readTree(captor.getValue());
         Assert.assertNull(node.get("active"));
         Assert.assertNotNull(node.get("state"));
-        Assert.assertEquals(OpenVpnClientState.State.INACTIVE.name(), node.get("state").textValue());
+        Assert.assertEquals(VpnClientState.State.INACTIVE.name(), node.get("state").textValue());
 
-        Mockito.verify(jedis).set(Mockito.eq("OpenVpnClientState:1"), captor.capture());
+        Mockito.verify(jedis).set(Mockito.eq("VpnClientState:1"), captor.capture());
         node = objectMapper.readTree(captor.getValue());
         Assert.assertNull(node.get("active"));
         Assert.assertNotNull(node.get("state"));
-        Assert.assertEquals(OpenVpnClientState.State.ACTIVE.name(), node.get("state").textValue());
+        Assert.assertEquals(VpnClientState.State.ACTIVE.name(), node.get("state").textValue());
 
         Mockito.verify(dataSource).setVersion("37");
     }

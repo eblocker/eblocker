@@ -41,7 +41,6 @@ import org.eblocker.server.common.scheduler.IpAdressValidatorScheduler;
 import org.eblocker.server.common.scheduler.LicenseExpirationCheckScheduler;
 import org.eblocker.server.common.scheduler.MalwareUpdateScheduler;
 import org.eblocker.server.common.scheduler.MessageCenterServiceScheduler;
-import org.eblocker.server.common.scheduler.OpenVpnServiceScheduler;
 import org.eblocker.server.common.scheduler.PCAccessRestrictionsServiceScheduler;
 import org.eblocker.server.common.scheduler.ProblematicRouterDetectionScheduler;
 import org.eblocker.server.common.scheduler.RecordedDomainsWriteScheduler;
@@ -92,7 +91,6 @@ class BackgroundServicesTest {
         torController = Mockito.mock(TorController.class);
         ip6AddressMonitor = Mockito.mock(Ip6AddressMonitor.class);
         PCAccessRestrictionsServiceScheduler contingentEnforcerScheduler = Mockito.mock(PCAccessRestrictionsServiceScheduler.class);
-        OpenVpnServiceScheduler openVpnServiceScheduler = Mockito.mock(OpenVpnServiceScheduler.class);
         DeviceServiceScheduler deviceServiceScheduler = Mockito.mock(DeviceServiceScheduler.class);
         TrafficAccounterScheduler trafficAccounterScheduler = Mockito.mock(TrafficAccounterScheduler.class);
         MessageCenterServiceScheduler messageCenterServiceScheduler = Mockito.mock(MessageCenterServiceScheduler.class);
@@ -138,8 +136,6 @@ class BackgroundServicesTest {
                 autoUpdater,
                 appModuleServiceScheduler,
                 contingentEnforcerScheduler,
-                openVpnServiceScheduler,
-                null,
                 deviceServiceScheduler,
                 trafficAccounterScheduler,
                 networkInterfaceWatchdog,

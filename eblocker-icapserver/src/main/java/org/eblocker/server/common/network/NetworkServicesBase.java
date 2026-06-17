@@ -24,7 +24,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.NetworkIp6Configuration;
 import org.eblocker.server.common.data.NetworkStateId;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
@@ -202,12 +202,12 @@ public abstract class NetworkServicesBase implements NetworkServices {
         arpSpooferFuture = null;
     }
 
-    protected abstract void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients, boolean masquerade, boolean enableSSL, boolean enableEblockerDns, boolean enableEblockerMobile, boolean enableMalwareSet);
+    protected abstract void enableFirewall(Set<Device> allDevices, Collection<VpnClientState> vpnClients, boolean masquerade, boolean enableSSL, boolean enableEblockerDns, boolean enableEblockerMobile, boolean enableMalwareSet);
 
     @Override
     public void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableEblockerMobile, boolean enableMalwareSet) {
         Set<Device> allDevices = getDevices();
-        Collection<OpenVpnClientState> vpnClients = dataSource.getAll(OpenVpnClientState.class);
+        Collection<VpnClientState> vpnClients = dataSource.getAll(VpnClientState.class);
         enableFirewall(allDevices, vpnClients, masquerade, enableSSL, eblockerDnsServer.isEnabled(), enableEblockerMobile, enableMalwareSet);
     }
 

@@ -2564,9 +2564,9 @@
             },
             "VPN_HOME": {
                 "NOTIFICATION": {
-                    "CERTIFICATES_DELETE": "Fehler beim Zurückziehen der Konfiguration",
-                    "CERTIFICATES_GET": "Fehler beim Laden der Konfigurationen",
-                    "CERTIFICATES_POST": "Fehler beim Erzeugen der Konfiguration",
+                    "CONFIGURATIONS_DELETE": "Fehler beim Zurückziehen der Konfiguration",
+                    "CONFIGURATIONS_GET": "Fehler beim Laden der Konfigurationen",
+                    "CONFIGURATIONS_POST": "Fehler beim Erzeugen der Konfiguration",
                     "CONFIG_DOWNLOAD": "Fehler beim Herunterladen der Konfiguration",
                     "CONFLICTING_FORWARDINGS": "Konflikt mit bereits bestehender Portweiterleitung, überprüfe bitte die Einstellungen am Router",
                     "DISABLE_DEVICE": "Fehler beim Deaktivieren des Gerätes",

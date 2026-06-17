@@ -19,9 +19,9 @@
 # This script creates the policy based routing rules. It expects the routing tables to be already registered and named with a common prefix.
 #
 # Usage:
-#   openvpn_policy [-4|-6] prefix offset [id...]
+#   vpn_policy_reconfigure [-4|-6] prefix offset [id...]
 # where
-#   prefix is the routing table prefix (e.g. openvpn)
+#   prefix is the routing table prefix (e.g. wireguard)
 #   offset each rule is given a priority of offset + id
 #
 

@@ -18,7 +18,7 @@ package org.eblocker.server.common.network.unix.firewall;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkUtils;
 import org.eblocker.server.common.util.Ip4Utils;
@@ -61,7 +61,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                              @Named("parentalControl.redirect.https.port") int parentalControlRedirectHttpsPort,
                              @Named("network.control.bar.host.fallback.ip") String fallbackIp,
                              @Named("malware.filter.ipset.name") String malwareIpSetName,
-                             @Named("openvpn.server.port") int mobileVpnServerPort,
+                             @Named("wireguard.mobile.server.port") int mobileVpnServerPort,
                              @Named("dns.server.port") int localDnsPort,
                              @Named("tor.port") int torPort,
                              @Named("tor.dns.port") int torDnsPort,
@@ -79,7 +79,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         this.mobileVpnServerPort = mobileVpnServerPort;
     }
 
-    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table natTable = new Table("nat");
 
         Chain preRouting = natTable.chain("PREROUTING").accept();
@@ -210,8 +210,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                     });
         }
 
-        for (OpenVpnClientState client : anonVpnClients) {
-            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+        for (VpnClientState client : anonVpnClients) {
+            if (client.getState() == VpnClientState.State.ACTIVE) {
                 if (client.getVirtualInterfaceName() == null) {
                     throw new EblockerException("Error while trying to create firewall rules for VPN profile (" + client.getId() + ") , no name of virtual interface set!");
                 }
@@ -223,7 +223,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         return natTable;
     }
 
-    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table filterTable = new Table("filter");
 
         Chain input = filterTable.chain("INPUT").accept();
@@ -292,9 +292,9 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         ipAddressFilter.getSslEnabledDevicesIps().forEach(ip ->
             forward.rule(new Rule().sourceIp(ip).http3().reject()));
 
-        for (OpenVpnClientState client : anonVpnClients) {
+        for (VpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
-            if (client.getState() == OpenVpnClientState.State.PENDING_RESTART) {
+            if (client.getState() == VpnClientState.State.PENDING_RESTART) {
                 // disable forwarding all traffic to non-local networks to prevent leaking packets while vpn is re-established
                 clientIps.forEach(ip -> forward.rule(new Rule(standardInput).sourceIp(ip).drop()));
             }
@@ -322,7 +322,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         return filterTable;
     }
 
-    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table mangleTable = new Table("mangle");
 
         //create vpn-routing or decision chain
@@ -373,9 +373,9 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         preRouting.rule(new Rule().jumpToChain(accountIn.getName()));
         postRouting.rule(new Rule().jumpToChain(accountOut.getName()));
 
-        for (OpenVpnClientState client : anonVpnClients) {
+        for (VpnClientState client : anonVpnClients) {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
-            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+            if (client.getState() == VpnClientState.State.ACTIVE) {
                 // mark VPN traffic
                 Rule markClientRoute = new Rule().setMark(client.getRoute());
                 clientIps.forEach(ip -> vpnRouter.rule(new Rule(markClientRoute).sourceIp(ip)));

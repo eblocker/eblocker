@@ -18,7 +18,7 @@ package org.eblocker.server.http.service;
 
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.vpn.VpnProfile;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.wireguard.WireGuardService;

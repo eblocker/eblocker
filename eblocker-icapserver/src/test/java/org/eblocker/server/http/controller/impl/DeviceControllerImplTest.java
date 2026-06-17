@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.ShowWelcomeFlags;
 import org.eblocker.server.common.data.TestDeviceFactory;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.vpn.VpnProfile;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.wireguard.WireGuardService;

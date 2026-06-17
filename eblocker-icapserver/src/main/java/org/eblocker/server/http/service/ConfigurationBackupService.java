@@ -95,8 +95,6 @@ public class ConfigurationBackupService {
                         providerFactory.createAppModulesBackupProvider(),
                         providerFactory.createDevicesBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
-                        providerFactory.createOpenVpnServerBackupProvider(cryptoService),
-                        providerFactory.createOpenVpnClientBackupProvider(cryptoService),
                         providerFactory.createRegistrationBackupProvider(cryptoService));
 
             default:

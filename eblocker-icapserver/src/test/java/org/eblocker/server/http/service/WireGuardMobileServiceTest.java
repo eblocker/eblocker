@@ -20,6 +20,12 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.wireguard.WireGuardKeyPair;
 import org.eblocker.server.common.data.wireguard.WireGuardMobilePeer;
 import org.eblocker.server.common.data.wireguard.WireGuardMobileServer;
+import org.eblocker.server.common.data.events.EventLogger;
+import org.eblocker.server.common.network.unix.EblockerDnsServer;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.eblocker.server.upnp.UpnpManagementService;
+
+import java.util.concurrent.ScheduledExecutorService;
 import org.eblocker.server.common.wireguard.WireGuardKeyService;
 import org.eblocker.server.common.wireguard.WireGuardMobileConfigurationRenderer;
 import org.eblocker.server.common.wireguard.WireGuardMobileServerConfigurationRenderer;
@@ -45,10 +51,27 @@ public class WireGuardMobileServiceTest {
         dataSource = Mockito.mock(DataSource.class);
         keyService = Mockito.mock(WireGuardKeyService.class);
         service = new WireGuardMobileService(
+                Mockito.mock(ScriptRunner.class),
                 dataSource,
+                Mockito.mock(DeviceService.class),
+                Mockito.mock(UpnpManagementService.class),
+                Mockito.mock(EblockerDnsServer.class),
+                Mockito.mock(DnsService.class),
+                Mockito.mock(DynDnsService.class),
+                Mockito.mock(ScheduledExecutorService.class),
+                Mockito.mock(EventLogger.class),
                 keyService,
                 new WireGuardMobileConfigurationRenderer(),
                 new WireGuardMobileServerConfigurationRenderer(),
+                1194,
+                60,
+                600,
+                "eBlocker Mobile WireGuard",
+                "/tmp/wg-mobile.conf",
+                "wireguard_mobile_start",
+                "wireguard_mobile_down",
+                "wireguard_mobile_status",
+                "wireguard_mobile_purge",
                 "10.8.0.1/24",
                 "10.8.0.",
                 "10.8.0.1",

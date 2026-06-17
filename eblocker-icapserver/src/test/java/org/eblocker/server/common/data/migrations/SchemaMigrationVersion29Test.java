@@ -18,7 +18,7 @@ package org.eblocker.server.common.data.migrations;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DeviceFactory;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,20 +52,20 @@ public class SchemaMigrationVersion29Test {
 
     @Test
     public void test_openVpnInUse() {
-        Mockito.when(dataSource.getOpenVpnServerState()).thenReturn(true);
+        Mockito.when(dataSource.getWireGuardMobileServerState()).thenReturn(true);
         migration.migrate();
 
-        Mockito.verify(dataSource).setOpenVpnMappedPort(port);
-        Mockito.verify(dataSource).setOpenVpnPortForwardingMode(Mockito.eq(PortForwardingMode.MANUAL));
+        Mockito.verify(dataSource).setWireGuardMobileMappedPort(port);
+        Mockito.verify(dataSource).setWireGuardMobilePortForwardingMode(Mockito.eq(PortForwardingMode.MANUAL));
     }
 
     @Test
     public void test_openVpnNotInUse() {
-        Mockito.when(dataSource.getOpenVpnServerState()).thenReturn(false);
+        Mockito.when(dataSource.getWireGuardMobileServerState()).thenReturn(false);
         migration.migrate();
 
-        Mockito.verify(dataSource).setOpenVpnMappedPort(port);
-        Mockito.verify(dataSource).setOpenVpnPortForwardingMode(Mockito.eq(PortForwardingMode.AUTO));
+        Mockito.verify(dataSource).setWireGuardMobileMappedPort(port);
+        Mockito.verify(dataSource).setWireGuardMobilePortForwardingMode(Mockito.eq(PortForwardingMode.AUTO));
     }
 
 }

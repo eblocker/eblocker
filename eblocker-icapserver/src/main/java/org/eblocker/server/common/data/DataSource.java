@@ -16,8 +16,8 @@
  */
 package org.eblocker.server.common.data;
 
-import org.eblocker.server.common.data.openvpn.ExternalAddressType;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.data.vpn.ExternalAddressType;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.update.AutomaticUpdaterConfiguration;
 import org.eblocker.server.http.ssl.AppWhitelistModule;
@@ -418,29 +418,29 @@ public interface DataSource {
      */
     void setCleanShutdownFlag(boolean cleanShutdown);
 
-    void setOpenVpnServerState(boolean state);
+    void setWireGuardMobileServerState(boolean state);
 
-    boolean getOpenVpnServerState();
+    boolean getWireGuardMobileServerState();
 
-    void setOpenVpnServerFirstRun(boolean state);
+    void setWireGuardMobileServerFirstRun(boolean state);
 
-    boolean getOpenVpnServerFirstRun();
+    boolean getWireGuardMobileServerFirstRun();
 
-    void setOpenVpnServerHost(String host);
+    void setWireGuardMobileServerHost(String host);
 
-    String getOpenVpnServerHost();
+    String getWireGuardMobileServerHost();
 
-    Integer getOpenVpnMappedPort();
+    Integer getWireGuardMobileMappedPort();
 
-    void setOpenVpnMappedPort(Integer port);
+    void setWireGuardMobileMappedPort(Integer port);
 
-    PortForwardingMode getOpenVpnPortForwardingMode();
+    PortForwardingMode getWireGuardMobilePortForwardingMode();
 
-    void setOpenVpnPortForwardingMode(PortForwardingMode mode);
+    void setWireGuardMobilePortForwardingMode(PortForwardingMode mode);
 
-    ExternalAddressType getOpenVpnExternalAddressType();
+    ExternalAddressType getWireGuardMobileExternalAddressType();
 
-    void setOpenVpnExternalAddressType(ExternalAddressType type);
+    void setWireGuardMobileExternalAddressType(ExternalAddressType type);
 
     String getResolvedDnsGateway();
 

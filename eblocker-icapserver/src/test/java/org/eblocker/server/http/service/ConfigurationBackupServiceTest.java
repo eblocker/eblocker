@@ -26,8 +26,6 @@ import org.eblocker.server.http.backup.BackupProviderFactory;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DevicesBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
-import org.eblocker.server.http.backup.OpenVpnClientBackupProvider;
-import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
 import org.eblocker.server.http.backup.RegistrationBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
@@ -51,8 +49,6 @@ public class ConfigurationBackupServiceTest {
     private DevicesBackupProvider devicesBP;
     private TorConfigBackupProvider torConfigBP;
     private HttpsKeysBackupProvider httpsKeysBP;
-    private OpenVpnServerBackupProvider openVpnServerBP;
-    private OpenVpnClientBackupProvider openVpnClientBP;
     private RegistrationBackupProvider registrationBP;
     private static final String password = "top secret!";
 
@@ -63,8 +59,6 @@ public class ConfigurationBackupServiceTest {
         devicesBP = Mockito.mock(DevicesBackupProvider.class);
         torConfigBP = Mockito.mock(TorConfigBackupProvider.class);
         httpsKeysBP = Mockito.mock(HttpsKeysBackupProvider.class);
-        openVpnServerBP = Mockito.mock(OpenVpnServerBackupProvider.class);
-        openVpnClientBP = Mockito.mock(OpenVpnClientBackupProvider.class);
         registrationBP = Mockito.mock(RegistrationBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
@@ -88,15 +82,6 @@ public class ConfigurationBackupServiceTest {
                 return httpsKeysBP;
             }
 
-            @Override
-            public OpenVpnServerBackupProvider createOpenVpnServerBackupProvider(CryptoService cryptoService) {
-                return openVpnServerBP;
-            }
-
-            @Override
-            public OpenVpnClientBackupProvider createOpenVpnClientBackupProvider(CryptoService cryptoService) {
-                return openVpnClientBP;
-            }
 
             @Override
             public RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService) {
@@ -148,7 +133,7 @@ public class ConfigurationBackupServiceTest {
     @Test
     public void testWarnings() throws IOException {
         final List<BackupWarning> warnings = List.of(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
-        Mockito.when(openVpnServerBP.getWarnings()).thenReturn(warnings);
+        Mockito.when(devicesBP.getWarnings()).thenReturn(warnings);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         service.exportConfiguration(outputStream, password);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());

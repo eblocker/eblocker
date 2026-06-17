@@ -19,7 +19,7 @@ package org.eblocker.server.common.network.unix.firewall;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Ip6Address;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     }
 
     @Override
-    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table natTable = new Table("nat");
         Chain preRouting = natTable.chain("PREROUTING").accept();
         natTable.chain("INPUT").accept();
@@ -131,8 +131,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         // Send traffic from Squid marked with 0x100 to Tor
         output.rule(new Rule(standardOutput).matchMark(torMark).tcp().redirectTo(ownIpAddress, torPort));
 
-        for (OpenVpnClientState client : anonVpnClients) {
-            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+        for (VpnClientState client : anonVpnClients) {
+            if (client.getState() == VpnClientState.State.ACTIVE) {
                 if (client.getVirtualInterfaceName() == null) {
                     throw new EblockerException("Error while trying to create firewall rules for VPN profile (" + client.getId() + ") , no name of virtual interface set!");
                 }
@@ -153,7 +153,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     }
 
     @Override
-    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table filterTable = new Table("filter");
 
         Chain forward = filterTable.chain("FORWARD").accept();
@@ -170,8 +170,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                 forward.rule(new Rule().sourceIp(ip).http3().reject()));
 
         // block IPv6 for VPN provider that do not support it
-        for (OpenVpnClientState client : anonVpnClients) {
-            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+        for (VpnClientState client : anonVpnClients) {
+            if (client.getState() == VpnClientState.State.ACTIVE) {
                 List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
                 if (client.getGatewayIp6() == null) {
                     clientIps.forEach(ip -> blockFromPublicIp(ip, input, forward));
@@ -198,7 +198,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
     }
 
     @Override
-    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
+    public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients) {
         Table mangleTable = new Table("mangle");
 
         //create vpn-routing or decision chain
@@ -208,8 +208,8 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         mangleTable.chain("OUTPUT").rule(jumpToVpnChain);
         mangleTable.chain("PREROUTING").rule(jumpToVpnChain);
 
-        for (OpenVpnClientState client : anonVpnClients) {
-            if (client.getState() == OpenVpnClientState.State.ACTIVE) {
+        for (VpnClientState client : anonVpnClients) {
+            if (client.getState() == VpnClientState.State.ACTIVE) {
                 // mark VPN traffic
                 List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
                 Rule markClientRoute = new Rule().setMark(client.getRoute());

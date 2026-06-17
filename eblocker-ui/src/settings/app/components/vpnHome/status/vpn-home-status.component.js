@@ -96,12 +96,12 @@ function Controller(logger, VpnHomeService, NotificationService, DialogService, 
 
     function resetServer(event) {
         DialogService.homeVpnReset(event, tryResetServer);
-        // If there are certificates, ask for confirmation
-        // if (angular.isDefined(vm.certificates) && vm.certificates.length > 0) {
+        // If there are configurations, ask for confirmation
+        // if (angular.isDefined(vm.configurations) && vm.configurations.length > 0) {
         //     // Ask for confirmation
         //     DialogService.homeVpnReset(event, tryResetServer);
         // } else {
-        //     // No certificates, do not ask
+        //     // No configurations, do not ask
         //     tryResetServer();
         // }
     }

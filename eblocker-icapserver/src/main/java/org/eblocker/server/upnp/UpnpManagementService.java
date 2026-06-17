@@ -82,8 +82,8 @@ public class UpnpManagementService {
                                  UpnpPortForwardingAddFactory upnpPortForwardingAddFactory,
                                  UpnpPortForwardingDeleteFactory upnpPortForwardingDeleteFactory,
                                  UpnpActionCallbackFactory upnpActionCallbackFactory, UpnpActionInvocationFactory upnpActionInvocationFacory,
-                                 @Named("openvpn.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
-                                 @Named("openvpn.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
+                                 @Named("wireguard.mobile.server.portforwarding.upnp.discovery.max.steps") int upnpDiscoveryMaxSteps,
+                                 @Named("wireguard.mobile.server.portforwarding.upnp.discovery.waiting.time") int upnpDiscoveryWaitingTime) {
         this.discoveryWaitingTime = upnpDiscoveryWaitingTime;
         this.maxDiscoverySteps = upnpDiscoveryMaxSteps;
         activePortForwardings = new ArrayList<>();

@@ -21,7 +21,7 @@ import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.network.Ip6PrefixMonitor;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.NetworkServices;
@@ -36,7 +36,6 @@ import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.security.JsonWebToken;
 import org.eblocker.server.http.security.JsonWebTokenHandler;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.eblocker.server.icap.resources.SimpleResource;
 import org.junit.After;
@@ -117,7 +116,7 @@ public class SquidConfigControllerTest {
         prefixMonitor = Mockito.mock(Ip6PrefixMonitor.class);
         featureServiceSubscriber = Mockito.mock(FeatureServiceSubscriber.class);
 
-        // simulate that SSL is enabled and certificates are ready:
+        // simulate that SSL is enabled and configurations are ready:
         sslService = Mockito.mock(SslService.class);
         Mockito.doAnswer(im -> sslStateListener = im.getArgument(0)).when(sslService).addListener(Mockito.any(SslService.SslStateListener.class));
         Mockito.when(sslService.isSslEnabled()).thenReturn(true);
@@ -290,11 +289,11 @@ public class SquidConfigControllerTest {
 
     @Test
     public void testVpnClient() {
-        OpenVpnClientState clientState = new OpenVpnClientState();
-        clientState.setState(OpenVpnClientState.State.ACTIVE);
+        VpnClientState clientState = new VpnClientState();
+        clientState.setState(VpnClientState.State.ACTIVE);
         clientState.setId(7);
         clientState.setRoute(18);
-        Mockito.when(dataSource.getAll(OpenVpnClientState.class)).thenReturn(List.of(clientState));
+        Mockito.when(dataSource.getAll(VpnClientState.class)).thenReturn(List.of(clientState));
         sslStateListener.onInit(true);
 
         compareToReference(outputConfigFile, "squid-eblocker-vpnclient.conf");
@@ -376,9 +375,8 @@ public class SquidConfigControllerTest {
 
         JsonWebTokenHandler jsonWebTokenHandler = Mockito.mock(JsonWebTokenHandler.class);
         NetworkServices networkServices = Mockito.mock(NetworkServices.class);
-        OpenVpnServerService openVpnServerService = Mockito.mock(OpenVpnServerService.class);
-        Mockito.when(openVpnServerService.isOpenVpnServerEnabled()).thenReturn(serverMode);
         Mockito.when(environment.isServer()).thenReturn(serverMode);
+        Mockito.when(dataSource.getWireGuardMobileServerState()).thenReturn(serverMode);
 
         ConfigurableDeviceFilterAclFactory squidAclFactory = path -> {
             ConfigurableDeviceFilterAcl acl = Mockito.mock(ConfigurableDeviceFilterAcl.class);
@@ -422,7 +420,6 @@ public class SquidConfigControllerTest {
                 scriptRunner, reloadingService, dataSource, sslService,
                 networkInterface, jsonWebTokenHandler, networkServices,
                 deviceService, squidAclFactory,
-                openVpnServerService,
                 environment,
                 prefixMonitor,
                 featureServiceSubscriber);

@@ -29,7 +29,6 @@ import org.eblocker.server.common.network.NeighborDiscoveryListener;
 import org.eblocker.server.common.network.NetworkInterfaceWatchdog;
 import org.eblocker.server.common.network.TorController;
 import org.eblocker.server.common.network.ZeroconfRegistrationService;
-import org.eblocker.server.common.openvpn.server.OpenVpnAddressListener;
 import org.eblocker.server.common.scheduler.AppModuleServiceScheduler;
 import org.eblocker.server.common.scheduler.BlockedDomainsWriteScheduler;
 import org.eblocker.server.common.scheduler.BlockerUpdateScheduler;
@@ -47,7 +46,6 @@ import org.eblocker.server.common.scheduler.IpAdressValidatorScheduler;
 import org.eblocker.server.common.scheduler.LicenseExpirationCheckScheduler;
 import org.eblocker.server.common.scheduler.MalwareUpdateScheduler;
 import org.eblocker.server.common.scheduler.MessageCenterServiceScheduler;
-import org.eblocker.server.common.scheduler.OpenVpnServiceScheduler;
 import org.eblocker.server.common.scheduler.PCAccessRestrictionsServiceScheduler;
 import org.eblocker.server.common.scheduler.ProblematicRouterDetectionScheduler;
 import org.eblocker.server.common.scheduler.RecordedDomainsWriteScheduler;
@@ -99,8 +97,6 @@ public class BackgroundServices {
 
     private final AppModuleServiceScheduler appModuleServiceScheduler;
     private final PCAccessRestrictionsServiceScheduler pcAccessRestrictionsServiceScheduler;
-    private final OpenVpnServiceScheduler openVpnServiceScheduler;
-    private final OpenVpnAddressListener openVpnAddressListener;
     private final DeviceServiceScheduler deviceServiceScheduler;
     private final TrafficAccounterScheduler trafficAccounterScheduler;
     private final NetworkInterfaceWatchdog networkInterfaceWatchdog;
@@ -139,8 +135,6 @@ public class BackgroundServices {
             AutomaticUpdater autoUpdater,
             AppModuleServiceScheduler appModuleServiceScheduler,
             PCAccessRestrictionsServiceScheduler pcAccessRestrictionsServiceScheduler,
-            OpenVpnServiceScheduler openVpnServiceScheduler,
-            OpenVpnAddressListener openVpnAddressListener,
             DeviceServiceScheduler deviceServiceScheduler,
             TrafficAccounterScheduler trafficAccounterScheduler,
             NetworkInterfaceWatchdog networkInterfaceWatchdog,
@@ -181,8 +175,6 @@ public class BackgroundServices {
         this.problematicRouterDetectionScheduler = problematicRouterDetectionScheduler;
         this.appModuleServiceScheduler = appModuleServiceScheduler;
         this.pcAccessRestrictionsServiceScheduler = pcAccessRestrictionsServiceScheduler;
-        this.openVpnServiceScheduler = openVpnServiceScheduler;
-        this.openVpnAddressListener = openVpnAddressListener;
         this.deviceServiceScheduler = deviceServiceScheduler;
         this.autoUpdater = autoUpdater;
         this.networkInterfaceWatchdog = networkInterfaceWatchdog;
@@ -233,7 +225,6 @@ public class BackgroundServices {
         //check if interface 'eth0' gets a new IP address assigned via DHCP and tell NetworkInterfaceWrapper
         unlimitedCachePoolExecutor.execute(dhcpBindListener);
         unlimitedCachePoolExecutor.execute(ip6AddressMonitor);
-        unlimitedCachePoolExecutor.execute(openVpnAddressListener);
 
         //start Tor control port connection
         if (torConnectionCheckDelay >= 0) {
@@ -241,9 +232,6 @@ public class BackgroundServices {
         }
 
         pcAccessRestrictionsServiceScheduler.schedule(highPrioExecutorService);
-
-        // schedule OpenVpnService Cache Cleaner
-        openVpnServiceScheduler.schedule(highPrioExecutorService);
 
         highPrioExecutorService.scheduleAtFixedRate(networkInterfaceWatchdog, 1, 3, TimeUnit.SECONDS);
 

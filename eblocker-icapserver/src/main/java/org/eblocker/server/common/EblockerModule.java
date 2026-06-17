@@ -66,11 +66,6 @@ import org.eblocker.server.common.network.unix.IpSetConfig;
 import org.eblocker.server.common.network.unix.IpSets;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
-import org.eblocker.server.common.openvpn.OpenVpnChannelFactory;
-import org.eblocker.server.common.openvpn.OpenVpnClientFactory;
-import org.eblocker.server.common.openvpn.OpenVpnService;
-import org.eblocker.server.common.openvpn.VpnKeepAliveFactory;
-import org.eblocker.server.common.openvpn.server.OpenVpnAddressListener;
 import org.eblocker.server.common.pubsub.JedisPubSubService;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.registration.DeviceRegistrationLicenseState;
@@ -120,8 +115,8 @@ import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
-import org.eblocker.server.http.controller.OpenVpnController;
-import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardController;
+import org.eblocker.server.http.controller.WireGuardMobileController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -153,7 +148,6 @@ import org.eblocker.server.http.service.AutoTrustAppService;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.MessageCenterService;
-import org.eblocker.server.http.service.OpenVpnServerService;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.eblocker.server.http.service.ParentalControlEnforcerService;
 import org.eblocker.server.http.service.ParentalControlSearchEngineConfigService;
@@ -271,9 +265,6 @@ public class EblockerModule extends BaseModule {
         bind(NetworkInterfaceWatchdog.class);
         bind(NetworkInterfaceWrapper.class);
         bind(NetworkStateMachine.class);
-        bind(OpenVpnAddressListener.class);
-        bind(OpenVpnServerService.class);
-        bind(OpenVpnService.class);
         bind(ParentalControlAccessRestrictionsService.class);
         bind(ParentalControlEnforcerService.class);
         bind(ParentalControlSearchEngineConfigService.class);
@@ -291,9 +282,6 @@ public class EblockerModule extends BaseModule {
         bind(TrafficAccounter.class);
         bind(UserService.class);
 
-        install(new FactoryModuleBuilder().build(OpenVpnChannelFactory.class));
-        install(new FactoryModuleBuilder().build(OpenVpnClientFactory.class));
-        install(new FactoryModuleBuilder().build(VpnKeepAliveFactory.class));
         install(new FactoryModuleBuilder().build(UpnpPortForwardingAddFactory.class));
         install(new FactoryModuleBuilder().build(UpnpPortForwardingDeleteFactory.class));
         install(new FactoryModuleBuilder().build(UpnpActionCallbackFactory.class));
@@ -622,14 +610,14 @@ public class EblockerModule extends BaseModule {
 
     @Provides
     @Singleton
-    public OpenVpnController openVpnController() {
-        return ControllerWrapperFactory.wrap(OpenVpnController.class);
+    public WireGuardController wireGuardController() {
+        return ControllerWrapperFactory.wrap(WireGuardController.class);
     }
 
     @Provides
     @Singleton
-    public OpenVpnServerController openVpnServerController() {
-        return ControllerWrapperFactory.wrap(OpenVpnServerController.class);
+    public WireGuardMobileController wireGuardMobileController() {
+        return ControllerWrapperFactory.wrap(WireGuardMobileController.class);
     }
 
     @Provides

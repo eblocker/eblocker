@@ -17,9 +17,9 @@
 package org.eblocker.server.common.data.wireguard;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.eblocker.server.common.data.openvpn.KeepAliveMode;
-import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.vpn.KeepAliveMode;
+import org.eblocker.server.common.data.vpn.VpnLoginCredentials;
+import org.eblocker.server.common.data.vpn.VpnProfile;
 
 import java.util.Objects;
 

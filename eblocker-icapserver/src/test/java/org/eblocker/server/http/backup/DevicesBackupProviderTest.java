@@ -23,9 +23,6 @@ import org.eblocker.server.common.data.DisplayIconMode;
 import org.eblocker.server.common.data.FilterMode;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.IpAddress;
-import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
-import org.eblocker.server.common.openvpn.OpenVpnService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +44,6 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
     private DeviceService deviceService;
     private UserService userService;
     private DeviceFactory deviceFactory;
-    private OpenVpnService openVpnService;
     private DevicesBackupProvider provider;
     private int newDefaultSystemuser = 10;
 
@@ -56,8 +52,7 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
         deviceService = Mockito.mock(DeviceService.class);
         userService = Mockito.mock(UserService.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
-        openVpnService = Mockito.mock(OpenVpnService.class);
-        provider = new DevicesBackupProvider(deviceService, userService, deviceFactory, openVpnService);
+        provider = new DevicesBackupProvider(deviceService, userService, deviceFactory);
     }
 
     @Test
@@ -120,8 +115,6 @@ public class DevicesBackupProviderTest extends BackupProviderTestBase {
 
         Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(devicesBefore);
 
-        VpnProfile vpnProfile = new OpenVpnProfile();
-        Mockito.when(openVpnService.getVpnProfileById(Mockito.eq(vpnProfileId))).thenReturn(vpnProfile);
         // Devices after Backup - they have been modified
         Device eblockerAfter = new Device();
         eblockerAfter.setId("device:00:00:00:00:00:00");

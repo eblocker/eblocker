@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.upnp.UpnpManagementService;
 import org.eblocker.server.upnp.UpnpPortForwardingResult;

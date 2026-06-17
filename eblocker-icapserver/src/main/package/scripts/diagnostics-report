@@ -169,10 +169,10 @@ FILE=$OUT_DIR/eblocker-status.log
     echo "eblocker-device.properties:" >> $FILE
     cat /etc/eblocker-device.properties >>  $FILE
 
-### eBlocker mobile (openVPN server) ###
+### eBlocker mobile (WireGuard server) ###
     echo $SEP >> $FILE
-    echo "OpenVPN server directory (/etc/openvpn):" >> $FILE
-    ls -lR /etc/openvpn/ >> $FILE
+    echo "WireGuard server directory (/etc/wireguard):" >> $FILE
+    ls -lR /etc/wireguard/ >> $FILE
 
 ### Schedulers ###
     STATS_JSON=$(curl -s -X GET --header "$AUTHZ_HEADER" localhost:3000/api/adminconsole/tasks/stats)
@@ -224,7 +224,7 @@ FILE=$OUT_DIR/eblocker-status.log
     cp /var/log/eblocker/install-eblocker-updates.errors.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/log/eblocker/recover-eblocker-updates.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/log/eblocker/recover-eblocker-updates.errors.log $OUT_DIR/ > /dev/null 2>&1
-    cp /var/log/openvpn.log $OUT_DIR/ > /dev/null 2>&1
+    cp /var/log/wireguard.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/log/certvalidator/certificate-validator.log $OUT_DIR/ > /dev/null 2>&1
     cp /var/lib/dhcp/dhcpd.leases $OUT_DIR/ > /dev/null 2>&1
 

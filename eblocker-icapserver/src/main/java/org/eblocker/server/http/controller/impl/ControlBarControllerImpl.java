@@ -27,7 +27,7 @@ import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.messagecenter.IconState;
 import org.eblocker.server.common.data.messagecenter.MessageCenterMessage;
 import org.eblocker.server.common.data.messagecenter.MessageSeverity;
-import org.eblocker.server.common.data.openvpn.VpnStatus;
+import org.eblocker.server.common.data.vpn.VpnStatus;
 import org.eblocker.server.common.network.BaseURLs;
 import org.eblocker.server.common.wireguard.WireGuardService;
 import org.eblocker.server.common.page.PageContextStore;

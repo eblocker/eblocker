@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 
 import java.util.List;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class TableGeneratorTestBase {
     protected final String mobileVpnInterface = "tun33";
 
     protected IpAddressFilter deviceIpFilter;
-    protected Set<OpenVpnClientState> anonVpnClients;
+    protected Set<VpnClientState> anonVpnClients;
 
     protected Simulator natPre, natPost, natOutput, filterForward, filterInput, mangleVpn, mangleOutput;
     protected Table natTable, filterTable, mangleTable;

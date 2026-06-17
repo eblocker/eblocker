@@ -19,7 +19,7 @@ package org.eblocker.server.common.data.migrations;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.PortForwardingMode;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 
 public class SchemaMigrationVersion29 implements SchemaMigration {
 
@@ -27,7 +27,7 @@ public class SchemaMigrationVersion29 implements SchemaMigration {
     private final int port;
 
     @Inject
-    public SchemaMigrationVersion29(DataSource dataSource, @Named("openvpn.server.port") int portForwardingPort) {
+    public SchemaMigrationVersion29(DataSource dataSource, @Named("wireguard.mobile.server.port") int portForwardingPort) {
         this.dataSource = dataSource;
         this.port = portForwardingPort;
     }
@@ -44,13 +44,13 @@ public class SchemaMigrationVersion29 implements SchemaMigration {
 
     @Override
     public void migrate() {
-        if (dataSource.getOpenVpnServerState()) {
+        if (dataSource.getWireGuardMobileServerState()) {
             // Server is running
-            dataSource.setOpenVpnPortForwardingMode(PortForwardingMode.MANUAL);
+            dataSource.setWireGuardMobilePortForwardingMode(PortForwardingMode.MANUAL);
         } else {
-            dataSource.setOpenVpnPortForwardingMode(PortForwardingMode.AUTO);
+            dataSource.setWireGuardMobilePortForwardingMode(PortForwardingMode.AUTO);
         }
-        dataSource.setOpenVpnMappedPort(port);
+        dataSource.setWireGuardMobileMappedPort(port);
 
         dataSource.setVersion("29");
     }

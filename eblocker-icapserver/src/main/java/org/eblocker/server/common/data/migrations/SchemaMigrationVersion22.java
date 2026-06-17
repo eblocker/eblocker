@@ -18,10 +18,10 @@ package org.eblocker.server.common.data.migrations;
 
 import com.google.inject.Inject;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
+import org.eblocker.server.common.data.wireguard.WireGuardProfile;
 
 /**
- * Sets name servers enabled flag for all existing openvpn client profiles
+ * Sets name servers enabled flag for all existing WireGuard provider profiles
  */
 public class SchemaMigrationVersion22 implements SchemaMigration {
 
@@ -44,7 +44,7 @@ public class SchemaMigrationVersion22 implements SchemaMigration {
 
     @Override
     public void migrate() {
-        dataSource.getAll(OpenVpnProfile.class).forEach(
+        dataSource.getAll(WireGuardProfile.class).forEach(
                 profile -> {
                     profile.setNameServersEnabled(true);
                     dataSource.save(profile, profile.getId());

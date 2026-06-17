@@ -23,7 +23,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
 import org.eblocker.server.common.data.NetworkConfiguration;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.ArpSpoofer;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
@@ -210,7 +210,7 @@ public class NetworkServicesUnix extends NetworkServicesBase {
     }
 
     @Override
-    protected synchronized void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients,
+    protected synchronized void enableFirewall(Set<Device> allDevices, Collection<VpnClientState> vpnClients,
                                                boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
                                                boolean enableEblockerMobile, boolean enableMalwareSet) {
         try {

@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.http.controller;
 
-import org.eblocker.server.common.openvpn.connection.MobileConnectionCheckStatus;
+import org.eblocker.server.common.vpn.connection.MobileConnectionCheckStatus;
 import org.restexpress.Request;
 import org.restexpress.Response;
 

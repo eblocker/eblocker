@@ -351,9 +351,9 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
                     return null;
                 });
             }],
-            vpnHomeCertificates: ['VpnHomeService', 'vpnHomeStatus', function(VpnHomeService, vpnHomeStatus) {
+            vpnHomeConfigurations: ['VpnHomeService', 'vpnHomeStatus', function(VpnHomeService, vpnHomeStatus) {
                 if (vpnHomeStatus.isRunning) {
-                    return VpnHomeService.loadCertificates().then(function success(response) {
+                    return VpnHomeService.loadConfigurations().then(function success(response) {
                         return response.data;
                     }, function error() {
                         return null;

@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,9 +150,9 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         Assert.assertEquals(Action.returnFromChain(), natPre.tcpPacket(enabledDevice, externalHost, 80));
     }
 
-    private OpenVpnClientState createAnonVpnClient(String anonVpnInterface, int anonVpnRoute, String anonVpnDeviceId, String gateway) {
-        OpenVpnClientState client = new OpenVpnClientState();
-        client.setState(OpenVpnClientState.State.ACTIVE);
+    private VpnClientState createAnonVpnClient(String anonVpnInterface, int anonVpnRoute, String anonVpnDeviceId, String gateway) {
+        VpnClientState client = new VpnClientState();
+        client.setState(VpnClientState.State.ACTIVE);
         client.setDevices(Set.of(anonVpnDeviceId));
         client.setVirtualInterfaceName(anonVpnInterface);
         client.setRoute(anonVpnRoute);

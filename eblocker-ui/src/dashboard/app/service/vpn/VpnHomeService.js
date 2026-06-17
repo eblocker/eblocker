@@ -17,7 +17,7 @@
 export default function VpnHomeService(logger, $http, $q, NotificationService, $interval, DataCachingService) {
     'ngInject';
 
-    const PATH = '/api/dashboard/openvpn';
+    const PATH = '/api/dashboard/wireguard';
     const PATH_CONNECTION_TEST = PATH + '/test';
 
     function getConfigurationFileName(deviceId, osType) {
@@ -56,23 +56,23 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
     }
 
     function loadConfigurations() {
-        return $http.get(PATH + '/certificates').
+        return $http.get(PATH + '/configurations').
         then(standardSuccess, function(response) {
-            // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CERTIFICATES_GET', response);
+            // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFIGURATIONS_GET', response);
             return $q.reject(response);
         });
     }
 
     function revokeConfiguration(deviceId) {
-        return $http.delete(PATH + '/certificates/' + deviceId).
+        return $http.delete(PATH + '/configurations/' + deviceId).
         then(standardSuccess, function(response) {
-            // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CERTIFICATES_DELETE', response);
+            // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFIGURATIONS_DELETE', response);
             return $q.reject(response);
         });
     }
 
     function generateDownloadUrl(deviceId, operatingSystemType) {
-        return $http.get(PATH + '/certificates/generateDownloadUrl/' + deviceId + '/' + operatingSystemType).
+        return $http.get(PATH + '/configurations/generateDownloadUrl/' + deviceId + '/' + operatingSystemType).
         then(standardSuccess, function(response) {
             // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CONFIG_DOWNLOAD', response);
             return $q.reject(response);

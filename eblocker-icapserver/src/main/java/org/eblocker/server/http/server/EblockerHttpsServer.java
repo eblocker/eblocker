@@ -62,8 +62,8 @@ import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
-import org.eblocker.server.http.controller.OpenVpnController;
-import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardController;
+import org.eblocker.server.http.controller.WireGuardMobileController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -145,8 +145,8 @@ public class EblockerHttpsServer implements Preprocessor {
     private final MessageCenterController messageCenterController;
     private final AppWhitelistModuleController appModulesController;
     private final AuthenticationController authenticationController;
-    private final OpenVpnController openVpnController;
-    private final OpenVpnServerController openVpnServerController;
+    private final WireGuardController wireGuardController;
+    private final WireGuardMobileController wireGuardMobileController;
     private final ControlBarController controlBarController;
     private final SplashController splashController;
     private StartupStatusReporter startupStatusReporter;
@@ -213,8 +213,8 @@ public class EblockerHttpsServer implements Preprocessor {
                                LanguageController languageController,
                                MessageCenterController messageCenterController,
                                NetworkController networkController,
-                               OpenVpnController openVpnController,
-                               OpenVpnServerController openVpnServerController,
+                               WireGuardController wireGuardController,
+                               WireGuardMobileController wireGuardMobileController,
                                PageContextController pageContextController,
                                ParentalControlController parentalControlController,
                                ParentalControlFilterListsController filterListsController,
@@ -305,8 +305,8 @@ public class EblockerHttpsServer implements Preprocessor {
         this.messageCenterController = messageCenterController;
         this.appModulesController = appModulesController;
 
-        this.openVpnController = openVpnController;
-        this.openVpnServerController = openVpnServerController;
+        this.wireGuardController = wireGuardController;
+        this.wireGuardMobileController = wireGuardMobileController;
 
         this.controlBarController = controlBarController;
 
@@ -457,27 +457,27 @@ public class EblockerHttpsServer implements Preprocessor {
 
     private void addVpnRoutes() {
         server
-                .uri("/anonymous/vpn/profiles", openVpnController)
+                .uri("/anonymous/vpn/profiles", wireGuardController)
                 .action("getProfiles", HttpMethod.GET)
                 .name("controlbar.vpn.profiles.get.route");// Called from controlbar
 
         server
-                .uri("/anonymous/vpn/profiles/status/{device}", openVpnController)
+                .uri("/anonymous/vpn/profiles/status/{device}", wireGuardController)
                 .action("getVpnStatusByDevice", HttpMethod.GET)
                 .name("errorpage.vpn.profiles.get.status.device");// Called from controlbar and squid error page
 
         server
-                .uri("/anonymous/vpn/profile/{id}/status", openVpnController)
+                .uri("/anonymous/vpn/profile/{id}/status", wireGuardController)
                 .action("getVpnStatus", HttpMethod.GET)
                 .name("controlbar.vpn.profile.get.status");// Called from controlbar
 
         server // Similar to the one below - but used in a different place
-                .uri("/anonymous/vpn/profile/{id}/status/{device}", openVpnController)
+                .uri("/anonymous/vpn/profile/{id}/status/{device}", wireGuardController)
                 .action("setVpnDeviceStatus", HttpMethod.PUT)
                 .name("controlbar.vpn.profile.status.device.set");// Called from controlbar
 
         server // Similar to the one above - but used in a different place
-                .uri("/anonymous/vpn/profile/{id}/status-this", openVpnController)
+                .uri("/anonymous/vpn/profile/{id}/status-this", wireGuardController)
                 .action("setVpnThisDeviceStatus", HttpMethod.PUT)
                 .name("errorpageExclusive.vpn.profile.status.device.set");// Called from squid error page
     }
@@ -1319,55 +1319,55 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // ** New Adminconsole: VPN
         server
-                .uri("/api/adminconsole/vpn/profiles", openVpnController)
+                .uri("/api/adminconsole/vpn/profiles", wireGuardController)
                 .action("getProfiles", HttpMethod.GET)
                 .name("adminconsole.vpn.profiles.get.route");
         server
-                .uri("/api/adminconsole/vpn/profile", openVpnController)
+                .uri("/api/adminconsole/vpn/profile", wireGuardController)
                 .action("createProfile", HttpMethod.POST)
                 .name("adminconsole.vpn.profiles.create.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}", wireGuardController)
                 .action("getProfile", HttpMethod.GET)
                 .name("adminconsole.vpn.profile.get.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}", wireGuardController)
                 .action("updateProfile", HttpMethod.PUT)
                 .name("adminconsole.vpn.profile.update.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}", wireGuardController)
                 .action("deleteProfile", HttpMethod.DELETE)
                 .name("adminconsole.vpn.profile.delete.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/config", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/config", wireGuardController)
                 .action("getProfileConfig", HttpMethod.GET)
                 .name("adminconsole.vpn.profile.get.config.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/config", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/config", wireGuardController)
                 .action("uploadProfileConfig", HttpMethod.PUT)
                 .name("adminconsole.vpn.profile.create.config.route");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/config/{option}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/config/{option}", wireGuardController)
                 .action("uploadProfileConfigOption", HttpMethod.PUT)
                 .name("adminconsole.vpn.profile.set.config.option");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/status", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/status", wireGuardController)
                 .action("setVpnStatus", HttpMethod.PUT)
                 .name("adminconsole.vpn.profile.set.status");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/status", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/status", wireGuardController)
                 .action("getVpnStatus", HttpMethod.GET)
                 .name("adminconsole.vpn.profile.get.status");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/status/{device}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/status/{device}", wireGuardController)
                 .action("getVpnDeviceStatus", HttpMethod.GET)
                 .name("adminconsole.vpn.profile.status.device.get");
         server
-                .uri("/api/adminconsole/vpn/profile/{id}/status/{device}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/{id}/status/{device}", wireGuardController)
                 .action("setVpnDeviceStatus", HttpMethod.PUT)
                 .name("adminconsole.vpn.profile.status.device.set");
         server
-                .uri("/api/adminconsole/vpn/profile/status/{device}", openVpnController)
+                .uri("/api/adminconsole/vpn/profile/status/{device}", wireGuardController)
                 .action("getVpnStatusByDevice", HttpMethod.GET)
                 .name("adminconsole.vpn.getVpnStatusByDevice.route");
 
@@ -1411,65 +1411,65 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getRecordedDomainList", HttpMethod.GET)
                 .name("adminconsole.recording.get.recorded.domain.list");
 
-        // ** New Adminconsole: OPEN VPN (eBlocker mobile)
+        // ** New Adminconsole: WireGuard (eBlocker Mobile)
         server
-                .uri("/api/adminconsole/openvpn/status", openVpnServerController)
-                .action("getOpenVpnServerStatus", HttpMethod.GET)
+                .uri("/api/adminconsole/wireguard/status", wireGuardMobileController)
+                .action("getWireGuardMobileStatus", HttpMethod.GET)
                 .name("adminconsole.vpn.server.status.get");
         server
-                .uri("/api/adminconsole/openvpn/status", openVpnServerController)
-                .action("setOpenVpnServerStatus", HttpMethod.POST)
+                .uri("/api/adminconsole/wireguard/status", wireGuardMobileController)
+                .action("setWireGuardMobileStatus", HttpMethod.POST)
                 .name("adminconsole.vpn.server.status.set");
         server
-                .uri("/api/adminconsole/openvpn/status", openVpnServerController)
-                .action("resetOpenVpnServerStatus", HttpMethod.DELETE)
+                .uri("/api/adminconsole/wireguard/status", wireGuardMobileController)
+                .action("resetWireGuardMobileStatus", HttpMethod.DELETE)
                 .name("adminconsole.vpn.server.status.delete");
         server
-                .uri("/api/adminconsole/openvpn/certificates", openVpnServerController)
-                .action("getCertificates", HttpMethod.GET)
-                .name("adminconsole.vpn.server.certificates.get");
+                .uri("/api/adminconsole/wireguard/configurations", wireGuardMobileController)
+                .action("getConfigurations", HttpMethod.GET)
+                .name("adminconsole.vpn.mobile.configurations.get");
         server
-                .uri("/api/adminconsole/openvpn/certificates/generateDownloadUrl/{deviceId}/{deviceType}", openVpnServerController)
+                .uri("/api/adminconsole/wireguard/configurations/generateDownloadUrl/{deviceId}/{deviceType}", wireGuardMobileController)
                 .action("generateDownloadUrl", HttpMethod.GET)
-                .name("adminconsole.vpn.server.certificates.generateDownloadUrl.get");
+                .name("adminconsole.vpn.mobile.configurations.generateDownloadUrl.get");
         server
-                .uri("/api/adminconsole/openvpn/certificates/downloadClientConf/{deviceId}", openVpnServerController)
+                .uri("/api/adminconsole/wireguard/configurations/downloadClientConf/{deviceId}", wireGuardMobileController)
                 .action("downloadClientConf", HttpMethod.GET)
-                .name("adminconsole.vpn.server.certificates.downloadClientConf.get")
+                .name("adminconsole.vpn.mobile.configurations.downloadClientConf.get")
                 .noSerialization();
         server
-                .uri("/api/adminconsole/openvpn/enable/{deviceId}", openVpnServerController)
+                .uri("/api/adminconsole/wireguard/enable/{deviceId}", wireGuardMobileController)
                 .action("enableDevice", HttpMethod.POST)
                 .name("adminconsole.vpn.server.enable.device.post");
         server
-                .uri("/api/adminconsole/openvpn/disable/{deviceId}", openVpnServerController)
+                .uri("/api/adminconsole/wireguard/disable/{deviceId}", wireGuardMobileController)
                 .action("disableDevice", HttpMethod.POST)
                 .name("adminconsole.vpn.server.disable.device.post");
         server
-                .uri("/api/adminconsole/openvpn/privateNetworkAccess/{deviceId}", openVpnServerController)
+                .uri("/api/adminconsole/wireguard/privateNetworkAccess/{deviceId}", wireGuardMobileController)
                 .action("setPrivateNetworkAccess", HttpMethod.PUT)
                 .name("adminconsole.vpn.server.privateNetworkAccess.device.put");
         server
-                .uri("/api/adminconsole/upnpn/{port}", openVpnServerController)
+                .uri("/api/adminconsole/upnpn/{port}", wireGuardMobileController)
                 .action("setPortForwarding", HttpMethod.PUT)
                 .name("adminconsole.vpn.upnp.portForwarding");
 
         // ** New Adminconsole: eBlocker Mobile test connection
         server
-                .uri("/api/adminconsole/openvpn/test", mobileConnectionCheckController)
+                .uri("/api/adminconsole/wireguard/test", mobileConnectionCheckController)
                 .action("start", HttpMethod.POST)
                 .name("adminconsole.vpn.test.start");
         server
-                .uri("/api/adminconsole/openvpn/test", mobileConnectionCheckController)
+                .uri("/api/adminconsole/wireguard/test", mobileConnectionCheckController)
                 .action("stop", HttpMethod.DELETE)
                 .name("adminconsole.vpn.test.stop");
         server
-                .uri("/api/adminconsole/openvpn/test", mobileConnectionCheckController)
+                .uri("/api/adminconsole/wireguard/test", mobileConnectionCheckController)
                 .action("getStatus", HttpMethod.GET)
                 .name("adminconsole.vpn.test.status");
 
         server
-                .uri("/api/adminconsole/openvpn/dns", mobileDnsCheckController)
+                .uri("/api/adminconsole/wireguard/dns", mobileDnsCheckController)
                 .action("check", HttpMethod.POST)
                 .name("adminconsole.vpn.test.dns");
 
@@ -1673,22 +1673,22 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // ** New Controlbar: IP-Anon
         server
-                .uri("/api/vpn/profiles", openVpnController)
+                .uri("/api/vpn/profiles", wireGuardController)
                 .action("getProfiles", HttpMethod.GET)
                 .name("controlbar.vpn.getProfiles.route");
         // get VPN status: in setVpnActivationState, but basically the poller
         server
-                .uri("/api/vpn/profiles/{id}/status", openVpnController)
+                .uri("/api/vpn/profiles/{id}/status", wireGuardController)
                 .action("getVpnStatus", HttpMethod.GET)
                 .name("controlbar.vpn.getVpnStatus.route");
         // updateVpnStatus /anonymous/vpn/profiles/status/me
         server
-                .uri("/api/vpn/profiles/status/{device}", openVpnController)
+                .uri("/api/vpn/profiles/status/{device}", wireGuardController)
                 .action("getVpnStatusByDevice", HttpMethod.GET)
                 .name("controlbar.vpn.getVpnStatusByDevice.route");
         // setVpnActivationState
         server
-                .uri("/api/vpn/profiles/{id}/status/{device}", openVpnController)
+                .uri("/api/vpn/profiles/{id}/status/{device}", wireGuardController)
                 .action("setVpnDeviceStatus", HttpMethod.PUT)
                 .name("controlbar.vpn.setVpnDeviceStatus.route");
         server
@@ -2041,33 +2041,33 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // eBlocker mobile
         server
-                .uri("/api/dashboard/openvpn/filename/{deviceId}/{deviceType}", openVpnServerController)
-                .action("getOpenVpnFileName", HttpMethod.GET)
+                .uri("/api/dashboard/wireguard/filename/{deviceId}/{deviceType}", wireGuardMobileController)
+                .action("getWireGuardConfigurationFileName", HttpMethod.GET)
                 .name("dashboard.vpn.server.filename.get");
         server
-                .uri("/api/dashboard/openvpn/status", openVpnServerController)
-                .action("getOpenVpnServerStatus", HttpMethod.GET)
+                .uri("/api/dashboard/wireguard/status", wireGuardMobileController)
+                .action("getWireGuardMobileStatus", HttpMethod.GET)
                 .name("dashboard.vpn.server.status.get");
         server
-                .uri("/api/dashboard/openvpn/status", openVpnServerController)
-                .action("setOpenVpnServerStatus", HttpMethod.POST)
+                .uri("/api/dashboard/wireguard/status", wireGuardMobileController)
+                .action("setWireGuardMobileStatus", HttpMethod.POST)
                 .name("dashboard.vpn.server.status.set");
         server
-                .uri("/api/dashboard/openvpn/status", openVpnServerController)
-                .action("resetOpenVpnServerStatus", HttpMethod.DELETE)
+                .uri("/api/dashboard/wireguard/status", wireGuardMobileController)
+                .action("resetWireGuardMobileStatus", HttpMethod.DELETE)
                 .name("dashboard.vpn.server.status.delete");
         server
-                .uri("/api/dashboard/openvpn/certificates", openVpnServerController)
-                .action("getCertificates", HttpMethod.GET)
-                .name("dashboard.vpn.server.certificates.get");
+                .uri("/api/dashboard/wireguard/configurations", wireGuardMobileController)
+                .action("getConfigurations", HttpMethod.GET)
+                .name("dashboard.vpn.mobile.configurations.get");
         server
-                .uri("/api/dashboard/openvpn/certificates/generateDownloadUrl/{deviceId}/{deviceType}", openVpnServerController)
+                .uri("/api/dashboard/wireguard/configurations/generateDownloadUrl/{deviceId}/{deviceType}", wireGuardMobileController)
                 .action("generateDownloadUrl", HttpMethod.GET)
-                .name("dashboard.vpn.server.certificates.generateDownloadUrl.get");
+                .name("dashboard.vpn.mobile.configurations.generateDownloadUrl.get");
         server
-                .uri("/api/dashboard/openvpn/certificates/downloadClientConf/{deviceId}", openVpnServerController)
+                .uri("/api/dashboard/wireguard/configurations/downloadClientConf/{deviceId}", wireGuardMobileController)
                 .action("downloadClientConf", HttpMethod.GET)
-                .name("dashboard.vpn.server.certificates.downloadClientConf.get")
+                .name("dashboard.vpn.mobile.configurations.downloadClientConf.get")
                 .noSerialization();
         server
                 .uri("/api/dashboard/customdomainfilter/{userId}", customDomainFilterConfigController)
@@ -2098,27 +2098,27 @@ public class EblockerHttpsServer implements Preprocessor {
 
         // ** Dashboard IP-Anon
         server
-                .uri("/api/dashboard/vpn/profiles", openVpnController)
+                .uri("/api/dashboard/vpn/profiles", wireGuardController)
                 .action("getProfiles", HttpMethod.GET)
                 .name("dashboard.vpn.getProfiles.route");
         // get VPN status: in setVpnActivationState, but basically the poller
         server
-                .uri("/api/dashboard/vpn/profiles/{id}/status", openVpnController)
+                .uri("/api/dashboard/vpn/profiles/{id}/status", wireGuardController)
                 .action("getVpnStatus", HttpMethod.GET)
                 .name("dashboard.vpn.getVpnStatus.route");
         // updateVpnStatus /anonymous/vpn/profiles/status/me
         server
-                .uri("/api/dashboard/vpn/profiles/status/{device}", openVpnController)
+                .uri("/api/dashboard/vpn/profiles/status/{device}", wireGuardController)
                 .action("getVpnStatusByDevice", HttpMethod.GET)
                 .name("dashboard.vpn.getVpnStatusByDevice.route");
         // setVpnActivationState
         server
-                .uri("/api/dashboard/vpn/profiles/{id}/status/{device}", openVpnController)
+                .uri("/api/dashboard/vpn/profiles/{id}/status/{device}", wireGuardController)
                 .action("setVpnDeviceStatus", HttpMethod.PUT)
                 .name("dashboard.vpn.setVpnDeviceStatus.route");
 
         server // Similar to the one above - but used in a different place
-                .uri("/api/dashboard/vpn/profiles/{id}/status-this", openVpnController)
+                .uri("/api/dashboard/vpn/profiles/{id}/status-this", wireGuardController)
                 .action("setVpnThisDeviceStatus", HttpMethod.PUT)
                 .name("dashboard.vpn.profile.status.device.set");// Called from squid error page
 

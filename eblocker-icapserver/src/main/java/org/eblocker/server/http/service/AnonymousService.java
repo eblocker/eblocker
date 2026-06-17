@@ -19,7 +19,7 @@ package org.eblocker.server.http.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
-import org.eblocker.server.common.data.openvpn.VpnProfile;
+import org.eblocker.server.common.data.vpn.VpnProfile;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.network.TorController;

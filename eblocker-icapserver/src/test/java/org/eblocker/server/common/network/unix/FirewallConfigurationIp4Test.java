@@ -25,7 +25,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.TestDeviceFactory;
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.firewall.TableGeneratorIp4;
@@ -239,7 +239,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testEnabledVPNProfile() throws IOException {
-        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
+        VpnClientState client = createVpnClient(VpnClientState.State.ACTIVE);
 
         configuration.enable(new HashSet<>(), Collections.singleton(client), false, true, false, false, true, () -> true);
 
@@ -248,7 +248,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWithOneClient() throws IOException {
-        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
+        VpnClientState client = createVpnClient(VpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -260,7 +260,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWithOneClientWithoutIp() throws IOException {
-        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.ACTIVE);
+        VpnClientState client = createVpnClient(VpnClientState.State.ACTIVE);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", (String) null, true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -272,7 +272,7 @@ public class FirewallConfigurationIp4Test {
 
     @Test
     public void testActiveVPNProfileWhileRestart() throws IOException {
-        OpenVpnClientState client = createVpnClient(OpenVpnClientState.State.PENDING_RESTART);
+        VpnClientState client = createVpnClient(VpnClientState.State.PENDING_RESTART);
 
         Device device = TestDeviceFactory.createDevice("aa25e78b8602", "192.168.0.22", true);
         client.setDevices(Collections.singleton(device.getId()));
@@ -308,7 +308,7 @@ public class FirewallConfigurationIp4Test {
     public void testEblockerMobileServerDisabled() throws EblockerException, IOException {
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new HashSet<>(devices), new HashSet<>(), false, true, false, false, true, () -> true);
-        assertEqualContent("test-data/firewall/server-openvpn-server-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-wireguard-mobile-server-disabled.conf", configFullFile);
     }
 
     @Test
@@ -316,14 +316,14 @@ public class FirewallConfigurationIp4Test {
         networkServices = createNetworkServicesMock(null);
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall/server-openvpn-server-disabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-wireguard-mobile-server-disabled.conf", configFullFile);
     }
 
     @Test
     public void testEblockerMobileServerEnabled() throws EblockerException, IOException {
         List<Device> devices = setUpEblockerMobileTest();
         configuration.enable(new LinkedHashSet<>(devices), new HashSet<>(), false, true, false, true, true, () -> true);
-        assertEqualContent("test-data/firewall/server-openvpn-server-enabled.conf", configFullFile);
+        assertEqualContent("test-data/firewall/server-wireguard-mobile-server-enabled.conf", configFullFile);
     }
 
     private List<Device> setUpEblockerMobileTest() {
@@ -440,8 +440,8 @@ public class FirewallConfigurationIp4Test {
         return device;
     }
 
-    private OpenVpnClientState createVpnClient(OpenVpnClientState.State state) {
-        OpenVpnClientState client = new OpenVpnClientState();
+    private VpnClientState createVpnClient(VpnClientState.State state) {
+        VpnClientState client = new VpnClientState();
         client.setId(1);
         client.setState(state);
         client.setVirtualInterfaceName("tun0");

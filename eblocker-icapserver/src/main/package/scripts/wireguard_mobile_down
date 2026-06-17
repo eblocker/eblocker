@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Copyright 2026 eBlocker Open Source GmbH
+# Licensed under the EUPL, Version 1.2 or later.
+#
+# Format: wireguard_mobile_down [CONFIG_FILE]
+
+set -e
+
+if [ $# != '1' ]; then
+    echo "Error: Wrong number of parameters!" 1>&2
+    echo "Expected format: wireguard_mobile_down [CONFIG_FILE]" 1>&2
+    exit 1
+fi
+
+CONFFILE=$1
+IFACENAME=$(basename "$CONFFILE" .conf)
+
+if ip link show "$IFACENAME" >/dev/null 2>&1; then
+    wg-quick down "$CONFFILE"
+fi

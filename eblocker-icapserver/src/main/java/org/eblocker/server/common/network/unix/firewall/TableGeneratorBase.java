@@ -16,7 +16,7 @@
  */
 package org.eblocker.server.common.network.unix.firewall;
 
-import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 
 import java.util.Set;
 
@@ -70,9 +70,9 @@ public abstract class TableGeneratorBase {
         standardOutput = new Rule().output(standardInterface);
     }
 
-    abstract public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients);
-    abstract public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients);
-    abstract public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients);
+    abstract public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients);
+    abstract public Table generateFilterTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients);
+    abstract public Table generateMangleTable(IpAddressFilter ipAddressFilter, Set<VpnClientState> anonVpnClients);
 
     public void setServerEnvironment(boolean serverEnvironment) {
         this.serverEnvironment = serverEnvironment;

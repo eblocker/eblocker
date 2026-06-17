@@ -21,6 +21,7 @@ import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
 import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 import org.eblocker.server.common.data.vpn.VpnServerStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardMobilePeer;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
@@ -66,6 +67,7 @@ public class WireGuardMobileControllerImplTest {
                 deviceRegistrationProperties,
                 networkStateMachine);
         response = new Response();
+        Mockito.when(wireGuardMobileService.reloadServerConfiguration()).thenReturn(true);
     }
 
     @Test
@@ -88,6 +90,7 @@ public class WireGuardMobileControllerImplTest {
 
         assertArrayEquals("test".getBytes(), bytes);
         Mockito.verify(wireGuardMobileService, Mockito.times(1)).generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194);
+        Mockito.verify(wireGuardMobileService).reloadServerConfiguration();
         assertEquals("attachment; filename=\"eBlockerMobile-my_eBlocker_-device:001122334455-Windows.conf\"", response.getHeader("Content-Disposition"));
 
         // Client is not allowed to use eBlocker mobile
@@ -116,6 +119,7 @@ public class WireGuardMobileControllerImplTest {
         buffer.readBytes(bytes);
         assertArrayEquals("test-xyz".getBytes(), bytes);
         Mockito.verify(wireGuardMobileService).generateClientConfiguration(newDeviceId, "vpn.hh.eblocker.com", 1194);
+        Mockito.verify(wireGuardMobileService).reloadServerConfiguration();
     }
 
     @Test
@@ -137,6 +141,7 @@ public class WireGuardMobileControllerImplTest {
 
         assertArrayEquals("test".getBytes(), bytes);
         Mockito.verify(wireGuardMobileService, Mockito.times(1)).generateClientConfiguration(device.getId(), "vpn.hh.eblocker.com", 1194);
+        Mockito.verify(wireGuardMobileService).reloadServerConfiguration();
     }
 
     @Test
@@ -210,6 +215,7 @@ public class WireGuardMobileControllerImplTest {
         assertTrue(controller.disableDevice(request, response));
 
         Mockito.verify(wireGuardMobileService, Mockito.times(1)).removePeer(deviceId);
+        Mockito.verify(wireGuardMobileService).reloadServerConfiguration();
         Mockito.verify(device, Mockito.times(1)).setMobileState(false);
         Mockito.verify(deviceService, Mockito.times(1)).updateDevice(device);
 
@@ -245,6 +251,7 @@ public class WireGuardMobileControllerImplTest {
         assertTrue(controller.disableDevice(request, response));
 
         Mockito.verify(wireGuardMobileService, Mockito.times(1)).removePeer(deviceId);
+        Mockito.verify(wireGuardMobileService).reloadServerConfiguration();
         Mockito.verify(device, Mockito.times(1)).setMobileState(false);
         Mockito.verify(deviceService, Mockito.times(1)).updateDevice(device);
     }
@@ -376,14 +383,33 @@ public class WireGuardMobileControllerImplTest {
     }
 
     @Test
-    public void testEnablingPortForwarding() throws Exception {
+    public void testEnablingPortForwardingInAutoMode() throws Exception {
         Request request = Mockito.mock(Request.class);
         VpnServerStatus newStatus = new VpnServerStatus();
+        newStatus.setPortForwardingMode(PortForwardingMode.AUTO);
         VpnServerStatus result = new VpnServerStatus();
         result.setRunning(true);
+        result.setPortForwardingMode(PortForwardingMode.AUTO);
         Mockito.when(wireGuardMobileService.setServerStatus(newStatus)).thenReturn(result);
         Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(newStatus);
         controller.setWireGuardMobileStatus(request, response);
         Mockito.verify(wireGuardMobileService).enablePortForwarding();
+    }
+
+    @Test
+    public void testNotEnablingPortForwardingInManualMode() throws Exception {
+        Request request = Mockito.mock(Request.class);
+        VpnServerStatus newStatus = new VpnServerStatus();
+        newStatus.setPortForwardingMode(PortForwardingMode.MANUAL);
+        VpnServerStatus result = new VpnServerStatus();
+        result.setRunning(true);
+        result.setPortForwardingMode(PortForwardingMode.MANUAL);
+        Mockito.when(wireGuardMobileService.setServerStatus(newStatus)).thenReturn(result);
+        Mockito.when(request.getBodyAs(VpnServerStatus.class)).thenReturn(newStatus);
+
+        controller.setWireGuardMobileStatus(request, response);
+
+        Mockito.verify(wireGuardMobileService, Mockito.never()).enablePortForwarding();
+        Mockito.verify(wireGuardMobileService).disablePortForwarding();
     }
 }

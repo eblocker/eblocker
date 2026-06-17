@@ -14,9 +14,6 @@ if [ $# != '1' ]; then
 fi
 
 CONFFILE=$1
-IFACENAME=$(basename "$CONFFILE" .conf)
 
-if ip link show "$IFACENAME" >/dev/null 2>&1; then
-    wg-quick down "$CONFFILE" || true
-fi
+wireguard_mobile_down "$CONFFILE" || true
 rm -f "$CONFFILE"

@@ -249,16 +249,25 @@ function Controller(logger, $interval, $q, StateService, STATES, ArrayUtilsServi
     }
 
     function editProfile(profile) {
+        if (profile.temporary) {
+            openEditDialog(true, profile, null);
+            return;
+        }
+
         $q.all([
             VpnService.getProfile(profile),
             VpnService.getProfileConfig(profile)
         ]).then(function(responses) {
             // isProfileNew, profile, parsedOptions
-            DialogService.vpnConnectionEdit(vm.dialog, false, responses[0].data, responses[1].data).
-            then(function success(profile) {
-                updateDisplayData(profile);
-                vm.profile = profile;
-            });
+            openEditDialog(false, responses[0].data, responses[1].data);
+        });
+    }
+
+    function openEditDialog(isProfileNew, profile, parsedOptions) {
+        DialogService.vpnConnectionEdit(vm.dialog, isProfileNew, profile, parsedOptions).
+        then(function success(profile) {
+            updateDisplayData(profile);
+            vm.profile = profile;
         });
     }
 

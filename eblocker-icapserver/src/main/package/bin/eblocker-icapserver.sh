@@ -17,6 +17,7 @@
 #
 
 BASEDIR=/opt/eblocker-icap
+export PATH="$BASEDIR/scripts:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j2.xml
 
 SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')

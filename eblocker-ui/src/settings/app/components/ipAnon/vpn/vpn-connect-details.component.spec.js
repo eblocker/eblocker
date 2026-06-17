@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2026 eBlocker Open Source UG (haftungsbeschraenkt)
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -17,12 +17,12 @@
 import 'angular-mocks';
 /* global jasmine */
 
-describe('App settings; VPN connect component controller', function() {
+describe('App settings; VPN connect details component controller', function() {
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
     let ctrl, $componentController, $httpBackend, $q, $rootScope, ConsoleService, DialogService,
-        StateService, SystemService, TableService, VpnService;
+        StateService, SystemService, VpnService;
 
     function resolved(response) {
         return {
@@ -43,14 +43,7 @@ describe('App settings; VPN connect component controller', function() {
 
     StateService = {
         goToState: function() {},
-        getWorkflowState: function() {},
-        setStates: function() {},
-        isStateValid: function() {
-            return true;
-        },
-        getSubStates: function() {
-            return [];
-        }
+        setStates: function() {}
     };
 
     ConsoleService = {
@@ -77,31 +70,23 @@ describe('App settings; VPN connect component controller', function() {
         }
     };
 
-    TableService = {
-        getUniqueTableId: function() {
-            return 'ip-anon-vpn-table-test';
-        }
-    };
-
     DialogService = {
         vpnConnectionEdit: jasmine.createSpy('vpnConnectionEdit')
     };
 
     VpnService = {
-        getProfiles: jasmine.createSpy('getProfiles'),
-        createProfile: jasmine.createSpy('createProfile'),
-        deleteProfile: jasmine.createSpy('deleteProfile')
+        getProfile: jasmine.createSpy('getProfile'),
+        getProfileConfig: jasmine.createSpy('getProfileConfig'),
+        getVpnStatus: jasmine.createSpy('getVpnStatus'),
+        updateProfile: jasmine.createSpy('updateProfile')
     };
 
     beforeEach(angular.mock.module(function($provide, $translateProvider) {
         $provide.value('ConsoleService', ConsoleService);
         $provide.value('StateService', StateService);
         $provide.value('SystemService', SystemService);
-        $provide.value('TableService', TableService);
         $provide.value('DialogService', DialogService);
         $provide.value('VpnService', VpnService);
-        // Workaround angular-translate issue:
-        // https://angular-translate.github.io/docs/#/guide/22_unit-testing-with-angular-translate
         $translateProvider.translations('en', {});
     }));
 
@@ -111,30 +96,29 @@ describe('App settings; VPN connect component controller', function() {
         $q = _$q_;
         $rootScope = _$rootScope_;
         $httpBackend.whenGET('/api/settings').respond(200, {});
-        VpnService.getProfiles.and.returnValue($q.resolve({data: []}));
-        ctrl = $componentController('vpnConnectComponent', {}, {});
+        DialogService.vpnConnectionEdit.and.callFake(function(dialog, isProfileNew, profile) {
+            return $q.resolve(profile);
+        });
+        ctrl = $componentController('vpnConnectDetailsComponent', {
+            $stateParams: {param: {}}
+        }, {});
     }));
 
-    describe('initially', function() {
-        it('should create a controller instance', function() {
-            expect(angular.isDefined(ctrl)).toBe(true);
-        });
-    });
+    it('reopens the assistant for a temporary profile without loading a missing config file', function() {
+        const dialog = {requiredFileError: {}};
+        const profile = {
+            id: 1,
+            temporary: true,
+            loginCredentials: {},
+            configurationFileVersion: 1
+        };
+        ctrl.dialog = dialog;
 
-    it('filters temporary VPN profiles from the table', function() {
-        VpnService.getProfiles.and.returnValue($q.resolve({
-            data: [
-                {id: 1, name: 'Temporary provider', temporary: true},
-                {id: 2, name: 'Configured provider', temporary: false},
-                {id: 3, name: 'Legacy provider'}
-            ]
-        }));
-
-        ctrl.$onInit();
+        ctrl.editProfile(profile);
         $rootScope.$digest();
 
-        expect(ctrl.tableData.length).toBe(2);
-        expect(ctrl.tableData[0].id).toBe(2);
-        expect(ctrl.tableData[1].id).toBe(3);
+        expect(VpnService.getProfile).not.toHaveBeenCalled();
+        expect(VpnService.getProfileConfig).not.toHaveBeenCalled();
+        expect(DialogService.vpnConnectionEdit).toHaveBeenCalledWith(dialog, true, profile, null);
     });
 });

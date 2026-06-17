@@ -17,5 +17,15 @@ CONFFILE=$1
 IFACENAME=$(basename "$CONFFILE" .conf)
 
 if ip link show "$IFACENAME" >/dev/null 2>&1; then
+    OUT_IF=$(ip route show default | awk '{print $5; exit}')
+    VPN_NET=$(ip -4 route show dev "$IFACENAME" proto kernel scope link | awk '{print $1; exit}')
+    DNS_SERVER=$(ip -4 address show dev "$IFACENAME" | awk '/inet / { split($2, a, "/"); print a[1]; exit }')
+
+    while iptables -D FORWARD -i "$IFACENAME" -o "$OUT_IF" -j ACCEPT 2>/dev/null; do :; done
+    while iptables -D FORWARD -i "$OUT_IF" -o "$IFACENAME" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null; do :; done
+    while iptables -t nat -D POSTROUTING -s "$VPN_NET" -o "$OUT_IF" -j MASQUERADE 2>/dev/null; do :; done
+    while iptables -t nat -D PREROUTING -i "$IFACENAME" -p udp --dport 53 -j DNAT --to-destination "$DNS_SERVER:5300" 2>/dev/null; do :; done
+    while iptables -t nat -D PREROUTING -i "$IFACENAME" -p tcp --dport 53 -j DNAT --to-destination "$DNS_SERVER:5300" 2>/dev/null; do :; done
+
     wg-quick down "$CONFFILE"
 fi

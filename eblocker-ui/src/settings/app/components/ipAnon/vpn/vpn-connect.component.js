@@ -94,8 +94,7 @@ function Controller(VpnService, StateService, STATES, DialogService, TableServic
         vm.loading = true;
         return VpnService.getProfiles().then(function(r) {
             const loadedProfiles = r.data.filter(function(profile) {
-                // TODO switch this if we really want to ignore tmp profiles
-                return true; //!profile.temporary;
+                return !profile.temporary;
             });
             vm.tableData = loadedProfiles;
             vm.filteredTableData = angular.copy(vm.tableData);

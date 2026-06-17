@@ -22,6 +22,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.OperatingSystemType;
+import org.eblocker.server.common.data.vpn.PortForwardingMode;
 import org.eblocker.server.common.exceptions.UpnpPortForwardingException;
 import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.data.vpn.VpnServerStatus;
@@ -76,7 +77,7 @@ public class WireGuardMobileControllerImpl implements WireGuardMobileController 
 
         VpnServerStatus result = wireGuardMobileService.setServerStatus(newStatus);
         try {
-            if (result.isRunning()) {
+            if (result.isRunning() && result.getPortForwardingMode() == PortForwardingMode.AUTO) {
                 wireGuardMobileService.enablePortForwarding();
             } else {
                 wireGuardMobileService.disablePortForwarding();
@@ -145,6 +146,11 @@ public class WireGuardMobileControllerImpl implements WireGuardMobileController 
                     device.getId(),
                     wireGuardMobileService.getServerHost(),
                     mappedPort != null ? mappedPort : 1194);
+            if (!wireGuardMobileService.reloadServerConfiguration()) {
+                log.error("Could not reload WireGuard mobile server configuration after generating configuration for device {}", device.getId());
+                response.setResponseCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+                return null;
+            }
             return Unpooled.wrappedBuffer(stream.getBytes());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -300,7 +306,7 @@ public class WireGuardMobileControllerImpl implements WireGuardMobileController 
         }
 
         wireGuardMobileService.removePeer(deviceId);
-        boolean result = true;
+        boolean result = wireGuardMobileService.reloadServerConfiguration();
 
         if (result) {
             log.info("WireGuard peer removal of {} successful.", deviceId);

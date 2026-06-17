@@ -20,6 +20,10 @@ export default function UpdateDialogController(logger, $mdDialog, dialog, VpnSer
     const vm = this;
 
     vm.dialog = VpnService.updateCompletionStatus(dialog);
+    vm.dialog.profile = angular.isObject(vm.dialog.profile) ? vm.dialog.profile : {};
+    vm.dialog.profile.loginCredentials = angular.isObject(vm.dialog.profile.loginCredentials) ?
+        vm.dialog.profile.loginCredentials : {};
+    vm.dialog.requiredFileError = angular.isObject(vm.dialog.requiredFileError) ? vm.dialog.requiredFileError : {};
 
     vm.hide = function() {
         $mdDialog.hide();

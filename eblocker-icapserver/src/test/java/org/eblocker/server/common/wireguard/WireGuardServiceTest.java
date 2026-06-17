@@ -334,6 +334,7 @@ public class WireGuardServiceTest {
 
         service.routeClientThroughVpnTunnel(device, profile);
 
+        Mockito.verify(routingController).setClientRouteIp6(17, "wg7", "fd42::2");
         ArgumentCaptor<VpnClientState> vpnClientStateCaptor = ArgumentCaptor.forClass(VpnClientState.class);
         Mockito.verify(dataSource).save(vpnClientStateCaptor.capture(), Mockito.eq(7));
         Assert.assertEquals("fd42::2", vpnClientStateCaptor.getValue().getGatewayIp6());

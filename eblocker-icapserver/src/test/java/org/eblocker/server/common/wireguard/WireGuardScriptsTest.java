@@ -127,7 +127,10 @@ public class WireGuardScriptsTest {
         Assert.assertEquals(Arrays.asList(
                 "ip route show table wireguard42 default",
                 "ip route del table wireguard42 default",
-                "ip route flush cache"), readCommandLog());
+                "ip -6 route show table wireguard42 default",
+                "ip -6 route del table wireguard42 default",
+                "ip route flush cache",
+                "ip -6 route flush cache"), readCommandLog());
     }
 
     @Test

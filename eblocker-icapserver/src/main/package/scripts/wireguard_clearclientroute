@@ -25,7 +25,10 @@ if [ $# -ge '1' ]; then
 
     ip route show table $VPNTABLE_NAME default > /dev/null || true
     ip route del table $VPNTABLE_NAME default || true
+    ip -6 route show table $VPNTABLE_NAME default > /dev/null || true
+    ip -6 route del table $VPNTABLE_NAME default || true
     ip route flush cache
+    ip -6 route flush cache
 else
     echo "Wrong number of arguments! Expected: wireguard_clearclientroute [ID]" 1>&2
     exit 1

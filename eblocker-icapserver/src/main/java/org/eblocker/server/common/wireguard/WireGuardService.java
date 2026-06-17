@@ -207,6 +207,7 @@ public class WireGuardService {
             startVpn(profile);
             configureDnsResolver(profile);
             runRouteScript(setClientRouteScript, state.routeId, getInterfaceName(profile.getId()));
+            configureIp6Route(profile, state);
             state.active = true;
             state.up = true;
         }
@@ -321,6 +322,18 @@ public class WireGuardService {
                 .filter(address -> address.contains(":"))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private void configureIp6Route(WireGuardProfile profile, ClientState state) {
+        try {
+            WireGuardConfiguration configuration = profileFiles.readParsedConfiguration(profile.getId());
+            String gatewayIp6 = getFirstIp6AddressWithoutCidr(configuration);
+            if (gatewayIp6 != null) {
+                routingController.setClientRouteIp6(state.routeId, getInterfaceName(profile.getId()), gatewayIp6);
+            }
+        } catch (IOException e) {
+            log.warn("failed to configure WireGuard IPv6 route for profile {}", profile.getId(), e);
+        }
     }
 
     private void reconfigureAclsAndRouting(int profileId, ClientState state) {

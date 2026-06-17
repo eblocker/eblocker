@@ -18,14 +18,28 @@ IFACENAME=$(basename "$CONFFILE" .conf)
 
 if ip link show "$IFACENAME" >/dev/null 2>&1; then
     OUT_IF=$(ip route show default | awk '{print $5; exit}')
+    OUT_IF_IP6=$(ip -6 route show default | awk '{print $5; exit}')
+    if [ -z "$OUT_IF_IP6" ]; then
+        OUT_IF_IP6=$OUT_IF
+    fi
     VPN_NET=$(ip -4 route show dev "$IFACENAME" proto kernel scope link | awk '{print $1; exit}')
+    VPN_NET_IP6=$(ip -6 route show dev "$IFACENAME" | awk '$1 !~ /^fe80:/ {print $1; exit}')
     DNS_SERVER=$(ip -4 address show dev "$IFACENAME" | awk '/inet / { split($2, a, "/"); print a[1]; exit }')
+    DNS_SERVER_IP6=$(ip -6 address show dev "$IFACENAME" | awk '/inet6 / && $2 !~ /^fe80:/ { split($2, a, "/"); print a[1]; exit }')
 
     while iptables -D FORWARD -i "$IFACENAME" -o "$OUT_IF" -j ACCEPT 2>/dev/null; do :; done
     while iptables -D FORWARD -i "$OUT_IF" -o "$IFACENAME" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null; do :; done
     while iptables -t nat -D POSTROUTING -s "$VPN_NET" -o "$OUT_IF" -j MASQUERADE 2>/dev/null; do :; done
     while iptables -t nat -D PREROUTING -i "$IFACENAME" -p udp --dport 53 -j DNAT --to-destination "$DNS_SERVER:5300" 2>/dev/null; do :; done
     while iptables -t nat -D PREROUTING -i "$IFACENAME" -p tcp --dport 53 -j DNAT --to-destination "$DNS_SERVER:5300" 2>/dev/null; do :; done
+
+    if [ -n "$VPN_NET_IP6" ] && [ -n "$DNS_SERVER_IP6" ]; then
+        while ip6tables -D FORWARD -i "$IFACENAME" -o "$OUT_IF_IP6" -j ACCEPT 2>/dev/null; do :; done
+        while ip6tables -D FORWARD -i "$OUT_IF_IP6" -o "$IFACENAME" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null; do :; done
+        while ip6tables -t nat -D POSTROUTING -s "$VPN_NET_IP6" -o "$OUT_IF_IP6" -j MASQUERADE 2>/dev/null; do :; done
+        while ip6tables -t nat -D PREROUTING -i "$IFACENAME" -p udp --dport 53 -j DNAT --to-destination "[$DNS_SERVER_IP6]:5300" 2>/dev/null; do :; done
+        while ip6tables -t nat -D PREROUTING -i "$IFACENAME" -p tcp --dport 53 -j DNAT --to-destination "[$DNS_SERVER_IP6]:5300" 2>/dev/null; do :; done
+    fi
 
     wg-quick down "$CONFFILE"
 fi

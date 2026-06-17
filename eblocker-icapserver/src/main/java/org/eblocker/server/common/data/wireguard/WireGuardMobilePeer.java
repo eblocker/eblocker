@@ -28,6 +28,7 @@ public class WireGuardMobilePeer {
     private String publicKey;
     private String presharedKey;
     private String address;
+    private String addressIp6;
 
     public WireGuardMobilePeer() {
     }
@@ -87,5 +88,13 @@ public class WireGuardMobilePeer {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAddressIp6() {
+        return addressIp6;
+    }
+
+    public void setAddressIp6(String addressIp6) {
+        this.addressIp6 = addressIp6;
     }
 }

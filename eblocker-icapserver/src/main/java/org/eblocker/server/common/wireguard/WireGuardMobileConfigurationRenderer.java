@@ -25,7 +25,7 @@ public class WireGuardMobileConfigurationRenderer {
         StringBuilder builder = new StringBuilder();
         builder.append("[Interface]\n");
         builder.append("PrivateKey = ").append(peer.getPrivateKey()).append('\n');
-        builder.append("Address = ").append(peer.getAddress()).append('\n');
+        builder.append("Address = ").append(formatAddresses(peer.getAddress(), peer.getAddressIp6())).append('\n');
         if (dns != null && !dns.isEmpty()) {
             builder.append("DNS = ").append(dns).append('\n');
         }
@@ -41,5 +41,12 @@ public class WireGuardMobileConfigurationRenderer {
             builder.append("PersistentKeepalive = ").append(persistentKeepalive).append('\n');
         }
         return builder.toString();
+    }
+
+    private String formatAddresses(String addressIp4, String addressIp6) {
+        if (addressIp6 == null || addressIp6.isEmpty()) {
+            return addressIp4;
+        }
+        return addressIp4 + ", " + addressIp6;
     }
 }

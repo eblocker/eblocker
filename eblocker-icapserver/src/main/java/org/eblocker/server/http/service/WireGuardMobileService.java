@@ -80,6 +80,7 @@ public class WireGuardMobileService extends VpnServerService {
     private final Path serverConfigPath;
     private final String serverAddress;
     private final String peerAddressPrefix;
+    private final String peerAddressIp6Prefix;
     private final String dns;
     private final String allowedIps;
     private final int persistentKeepalive;
@@ -113,6 +114,7 @@ public class WireGuardMobileService extends VpnServerService {
                                   @Named("wireguard.mobile.server.purge.command") String purgeCommand,
                                   @Named("wireguard.mobile.server.address") String serverAddress,
                                   @Named("wireguard.mobile.peer.address.prefix") String peerAddressPrefix,
+                                  @Named("wireguard.mobile.peer.address.ip6.prefix") String peerAddressIp6Prefix,
                                   @Named("wireguard.mobile.dns") String dns,
                                   @Named("wireguard.mobile.allowed.ips") String allowedIps,
                                   @Named("wireguard.mobile.persistent.keepalive") int persistentKeepalive) {
@@ -136,6 +138,7 @@ public class WireGuardMobileService extends VpnServerService {
         this.purgeCommand = purgeCommand;
         this.serverAddress = serverAddress;
         this.peerAddressPrefix = peerAddressPrefix;
+        this.peerAddressIp6Prefix = peerAddressIp6Prefix;
         this.dns = dns;
         this.allowedIps = allowedIps;
         this.persistentKeepalive = persistentKeepalive;
@@ -230,7 +233,7 @@ public class WireGuardMobileService extends VpnServerService {
     }
 
     public String renderServerConfiguration(int listenPort) throws IOException, InterruptedException {
-        return serverRenderer.render(getOrCreateServer(), getPeers(), listenPort);
+        return serverRenderer.render(getOrCreateServer(), getRepairedPeers(), listenPort);
     }
 
     public void writeServerConfiguration(Path path, int listenPort) throws IOException, InterruptedException {
@@ -405,7 +408,13 @@ public class WireGuardMobileService extends VpnServerService {
     }
 
     private void markPeerDevicesConnectedToMobileVpn() {
-        getPeers().forEach(this::markDeviceConnectedToMobileVpn);
+        getRepairedPeers().forEach(this::markDeviceConnectedToMobileVpn);
+    }
+
+    private List<WireGuardMobilePeer> getRepairedPeers() {
+        List<WireGuardMobilePeer> peers = getPeers();
+        peers.forEach(this::repairPeerAddressIfNecessary);
+        return peers;
     }
 
     private void markAllPeerDevicesDisconnectedFromMobileVpn() {
@@ -423,14 +432,15 @@ public class WireGuardMobileService extends VpnServerService {
             return;
         }
 
-        IpAddress peerIp = peerIpAddress(peer);
+        List<IpAddress> peerIps = peerIpAddresses(peer);
         List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
         boolean changed = false;
 
-        if (!ipAddresses.contains(peerIp)) {
-            ipAddresses.add(peerIp);
-            device.setIpAddresses(ipAddresses);
-            changed = true;
+        for (IpAddress peerIp : peerIps) {
+            if (!ipAddresses.contains(peerIp)) {
+                ipAddresses.add(peerIp);
+                changed = true;
+            }
         }
 
         if (!device.isVpnClient()) {
@@ -439,6 +449,7 @@ public class WireGuardMobileService extends VpnServerService {
         }
 
         if (changed) {
+            device.setIpAddresses(ipAddresses);
             deviceService.updateDevice(device);
         }
         networkStateMachine.deviceStateChanged(device);
@@ -450,9 +461,9 @@ public class WireGuardMobileService extends VpnServerService {
             return;
         }
 
-        IpAddress peerIp = peerIpAddress(peer);
+        List<IpAddress> peerIps = peerIpAddresses(peer);
         List<IpAddress> ipAddresses = new ArrayList<>(device.getIpAddresses());
-        boolean changed = ipAddresses.remove(peerIp);
+        boolean changed = ipAddresses.removeAll(peerIps);
 
         if (device.isVpnClient()) {
             device.setIsVpnClient(false);
@@ -482,17 +493,27 @@ public class WireGuardMobileService extends VpnServerService {
         }
     }
 
-    private IpAddress peerIpAddress(WireGuardMobilePeer peer) {
-        return IpAddress.parse(peer.getAddress().replaceFirst("/.*$", ""));
+    private List<IpAddress> peerIpAddresses(WireGuardMobilePeer peer) {
+        List<IpAddress> addresses = new ArrayList<>();
+        addresses.add(IpAddress.parse(addressWithoutCidr(peer.getAddress())));
+        if (peer.getAddressIp6() != null && !peer.getAddressIp6().isEmpty()) {
+            addresses.add(IpAddress.parse(addressWithoutCidr(peer.getAddressIp6())));
+        }
+        return addresses;
+    }
+
+    private String addressWithoutCidr(String address) {
+        return address.replaceFirst("/.*$", "");
     }
 
     private boolean isMobileVpnPeerIp(IpAddress ipAddress) {
-        return ipAddress.toString().startsWith(peerAddressPrefix);
+        return ipAddress.toString().startsWith(peerAddressPrefix) || ipAddress.toString().startsWith(peerAddressIp6Prefix);
     }
 
     private WireGuardMobileServer getOrCreateServer() throws IOException, InterruptedException {
         WireGuardMobileServer server = dataSource.get(WireGuardMobileServer.class);
         if (server != null) {
+            repairServerAddressIfNecessary(server);
             return server;
         }
         WireGuardKeyPair keyPair = keyService.generateKeyPair();
@@ -502,6 +523,13 @@ public class WireGuardMobileService extends VpnServerService {
         server.setAddress(serverAddress);
         dataSource.save(server);
         return server;
+    }
+
+    private void repairServerAddressIfNecessary(WireGuardMobileServer server) {
+        if (server.getAddress() == null || !server.getAddress().contains(":")) {
+            server.setAddress(serverAddress);
+            dataSource.save(server);
+        }
     }
 
     private WireGuardMobilePeer getOrCreatePeer(String deviceId) throws IOException, InterruptedException {
@@ -517,14 +545,23 @@ public class WireGuardMobileService extends VpnServerService {
         peer.setPublicKey(keyPair.getPublicKey());
         peer.setPresharedKey(keyService.generatePresharedKey());
         peer.setAddress(allocatePeerAddress(id, peer));
+        peer.setAddressIp6(allocatePeerAddressIp6(id, peer));
         dataSource.save(peer, id);
         return peer;
     }
 
     private void repairPeerAddressIfNecessary(WireGuardMobilePeer peer) {
         String serverPeerAddress = serverAddress.replaceFirst("/.*$", "/32");
+        boolean changed = false;
         if (peer.getAddress() == null || serverPeerAddress.equals(peer.getAddress())) {
             peer.setAddress(allocatePeerAddress(peer.getId(), peer));
+            changed = true;
+        }
+        if (peer.getAddressIp6() == null || peer.getAddressIp6().isEmpty()) {
+            peer.setAddressIp6(allocatePeerAddressIp6(peer.getId(), peer));
+            changed = true;
+        }
+        if (changed) {
             dataSource.save(peer, peer.getId());
         }
     }
@@ -545,6 +582,49 @@ public class WireGuardMobileService extends VpnServerService {
         }
 
         throw new IllegalStateException("No WireGuard mobile peer address available");
+    }
+
+    private String allocatePeerAddressIp6(Integer id, WireGuardMobilePeer currentPeer) {
+        Set<String> usedAddresses = getPeers().stream()
+                .filter(peer -> !peer.getId().equals(currentPeer.getId()))
+                .map(WireGuardMobilePeer::getAddressIp6)
+                .collect(Collectors.toSet());
+
+        int preferredHost = getPreferredIp6Host(id, currentPeer);
+        for (int offset = 0; offset < 253; offset++) {
+            int host = 2 + Math.floorMod(preferredHost - 2 + offset, 253);
+            String address = peerAddressIp6Prefix + Integer.toHexString(host) + "/128";
+            if (!usedAddresses.contains(address)) {
+                return address;
+            }
+        }
+
+        throw new IllegalStateException("No WireGuard mobile IPv6 peer address available");
+    }
+
+    private int getPreferredIp6Host(Integer id, WireGuardMobilePeer currentPeer) {
+        Integer hostFromIp4 = getIp4Host(currentPeer.getAddress());
+        if (hostFromIp4 != null) {
+            return hostFromIp4;
+        }
+        return id != null ? id + 1 : 2;
+    }
+
+    private Integer getIp4Host(String address) {
+        if (address == null) {
+            return null;
+        }
+        String ip = addressWithoutCidr(address);
+        int lastDot = ip.lastIndexOf('.');
+        if (lastDot < 0 || lastDot == ip.length() - 1) {
+            return null;
+        }
+        try {
+            int host = Integer.parseInt(ip.substring(lastDot + 1));
+            return host >= 2 && host <= 254 ? host : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private WireGuardMobilePeer getPeer(String deviceId) {

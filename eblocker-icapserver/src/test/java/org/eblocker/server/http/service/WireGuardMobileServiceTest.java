@@ -95,9 +95,10 @@ public class WireGuardMobileServiceTest {
                 "wireguard_mobile_down",
                 "wireguard_mobile_status",
                 "wireguard_mobile_purge",
-                "10.8.0.1/24",
+                "10.8.0.1/24, fd42:eb10:8::1/64",
                 "10.8.0.",
-                "10.8.0.1",
+                "fd42:eb10:8::",
+                "10.8.0.1, fd42:eb10:8::1",
                 "0.0.0.0/0, ::/0",
                 25);
     }
@@ -118,7 +119,7 @@ public class WireGuardMobileServiceTest {
         Mockito.verify(dataSource).save(serverCaptor.capture());
         Assert.assertEquals("server-private-key", serverCaptor.getValue().getPrivateKey());
         Assert.assertEquals("server-public-key", serverCaptor.getValue().getPublicKey());
-        Assert.assertEquals("10.8.0.1/24", serverCaptor.getValue().getAddress());
+        Assert.assertEquals("10.8.0.1/24, fd42:eb10:8::1/64", serverCaptor.getValue().getAddress());
 
         ArgumentCaptor<WireGuardMobilePeer> peerCaptor = ArgumentCaptor.forClass(WireGuardMobilePeer.class);
         Mockito.verify(dataSource).save(peerCaptor.capture(), Mockito.eq(7));
@@ -128,10 +129,11 @@ public class WireGuardMobileServiceTest {
         Assert.assertEquals("peer-public-key", peerCaptor.getValue().getPublicKey());
         Assert.assertEquals("peer-psk", peerCaptor.getValue().getPresharedKey());
         Assert.assertEquals("10.8.0.8/32", peerCaptor.getValue().getAddress());
+        Assert.assertEquals("fd42:eb10:8::8/128", peerCaptor.getValue().getAddressIp6());
 
         Assert.assertTrue(config.contains("PrivateKey = peer-private-key"));
-        Assert.assertTrue(config.contains("Address = 10.8.0.8/32"));
-        Assert.assertTrue(config.contains("DNS = 10.8.0.1"));
+        Assert.assertTrue(config.contains("Address = 10.8.0.8/32, fd42:eb10:8::8/128"));
+        Assert.assertTrue(config.contains("DNS = 10.8.0.1, fd42:eb10:8::1"));
         Assert.assertTrue(config.contains("PublicKey = server-public-key"));
         Assert.assertTrue(config.contains("PresharedKey = peer-psk"));
         Assert.assertTrue(config.contains("Endpoint = vpn.example.org:51820"));
@@ -144,12 +146,13 @@ public class WireGuardMobileServiceTest {
         WireGuardMobileServer server = new WireGuardMobileServer();
         server.setPrivateKey("server-private-key");
         server.setPublicKey("server-public-key");
-        server.setAddress("10.8.0.1/24");
+        server.setAddress("10.8.0.1/24, fd42:eb10:8::1/64");
         WireGuardMobilePeer peer = new WireGuardMobilePeer(4, "device:001122334455");
         peer.setPrivateKey("peer-private-key");
         peer.setPublicKey("peer-public-key");
         peer.setPresharedKey("peer-psk");
         peer.setAddress("10.8.0.4/32");
+        peer.setAddressIp6("fd42:eb10:8::4/128");
         Device device = new Device();
         device.setId("device:001122334455");
         device.setIpAddresses(List.of(IpAddress.parse("192.168.1.42")));
@@ -160,9 +163,9 @@ public class WireGuardMobileServiceTest {
 
         String config = service.generateClientConfiguration("device:001122334455", "vpn.example.org", 51820);
 
-        Assert.assertTrue(config.contains("Address = 10.8.0.4/32"));
+        Assert.assertTrue(config.contains("Address = 10.8.0.4/32, fd42:eb10:8::4/128"));
         Assert.assertTrue(device.isVpnClient());
-        Assert.assertEquals(List.of(IpAddress.parse("192.168.1.42"), IpAddress.parse("10.8.0.4")), device.getIpAddresses());
+        Assert.assertEquals(List.of(IpAddress.parse("192.168.1.42"), IpAddress.parse("10.8.0.4"), IpAddress.parse("fd42:eb10:8::4")), device.getIpAddresses());
         Mockito.verify(deviceService).updateDevice(device);
         Mockito.verify(networkStateMachine).deviceStateChanged(device);
     }
@@ -171,10 +174,11 @@ public class WireGuardMobileServiceTest {
     public void removePeerClearsMobileVpnStateFromDevice() {
         WireGuardMobilePeer peer = new WireGuardMobilePeer(4, "device:001122334455");
         peer.setAddress("10.8.0.4/32");
+        peer.setAddressIp6("fd42:eb10:8::4/128");
         Device device = new Device();
         device.setId("device:001122334455");
         device.setIsVpnClient(true);
-        device.setIpAddresses(List.of(IpAddress.parse("192.168.1.42"), IpAddress.parse("10.8.0.4")));
+        device.setIpAddresses(List.of(IpAddress.parse("192.168.1.42"), IpAddress.parse("10.8.0.4"), IpAddress.parse("fd42:eb10:8::4")));
 
         Mockito.when(dataSource.getAll(WireGuardMobilePeer.class)).thenReturn(Arrays.asList(peer));
         Mockito.when(deviceService.getDeviceById("device:001122334455")).thenReturn(device);
@@ -193,7 +197,31 @@ public class WireGuardMobileServiceTest {
         WireGuardMobileServer server = new WireGuardMobileServer();
         server.setPrivateKey("server-private-key");
         server.setPublicKey("server-public-key");
-        server.setAddress("10.8.0.1/24");
+        server.setAddress("10.8.0.1/24, fd42:eb10:8::1/64");
+        WireGuardMobilePeer peer = new WireGuardMobilePeer(4, "device:001122334455");
+        peer.setPublicKey("peer-public-key");
+        peer.setPresharedKey("peer-psk");
+        peer.setAddress("10.8.0.4/32");
+        peer.setAddressIp6("fd42:eb10:8::4/128");
+
+        Mockito.when(dataSource.get(WireGuardMobileServer.class)).thenReturn(server);
+        Mockito.when(dataSource.getAll(WireGuardMobilePeer.class)).thenReturn(Arrays.asList(peer));
+
+        String config = service.renderServerConfiguration(51820);
+
+        Assert.assertTrue(config.contains("PrivateKey = server-private-key"));
+        Assert.assertTrue(config.contains("Address = 10.8.0.1/24, fd42:eb10:8::1/64"));
+        Assert.assertTrue(config.contains("ListenPort = 51820"));
+        Assert.assertTrue(config.contains("PublicKey = peer-public-key"));
+        Assert.assertTrue(config.contains("AllowedIPs = 10.8.0.4/32, fd42:eb10:8::4/128"));
+    }
+
+    @Test
+    public void renderServerConfigurationRepairsPersistedPeerIpv6Address() throws Exception {
+        WireGuardMobileServer server = new WireGuardMobileServer();
+        server.setPrivateKey("server-private-key");
+        server.setPublicKey("server-public-key");
+        server.setAddress("10.8.0.1/24, fd42:eb10:8::1/64");
         WireGuardMobilePeer peer = new WireGuardMobilePeer(4, "device:001122334455");
         peer.setPublicKey("peer-public-key");
         peer.setPresharedKey("peer-psk");
@@ -204,11 +232,9 @@ public class WireGuardMobileServiceTest {
 
         String config = service.renderServerConfiguration(51820);
 
-        Assert.assertTrue(config.contains("PrivateKey = server-private-key"));
-        Assert.assertTrue(config.contains("Address = 10.8.0.1/24"));
-        Assert.assertTrue(config.contains("ListenPort = 51820"));
-        Assert.assertTrue(config.contains("PublicKey = peer-public-key"));
-        Assert.assertTrue(config.contains("AllowedIPs = 10.8.0.4/32"));
+        Assert.assertEquals("fd42:eb10:8::4/128", peer.getAddressIp6());
+        Assert.assertTrue(config.contains("AllowedIPs = 10.8.0.4/32, fd42:eb10:8::4/128"));
+        Mockito.verify(dataSource).save(peer, 4);
     }
 
     @Test
@@ -250,6 +276,12 @@ public class WireGuardMobileServiceTest {
         Assert.assertEquals(
                 "eblocker-mobile",
                 properties.getProperty("network.vpn.interface.name"));
+        Assert.assertEquals(
+                "fd42:eb10:8::",
+                properties.getProperty("wireguard.mobile.peer.address.ip6.prefix"));
+        Assert.assertEquals(
+                "10.8.0.1, fd42:eb10:8::1",
+                properties.getProperty("wireguard.mobile.dns"));
     }
 
     @Test
@@ -329,7 +361,10 @@ public class WireGuardMobileServiceTest {
         String config = service.generateClientConfiguration("device:001122334455", "vpn.example.org", 51820);
 
         Assert.assertEquals("10.8.0.2/32", peer.getAddress());
-        Assert.assertTrue(config.contains("Address = 10.8.0.2/32"));
+        Assert.assertEquals("fd42:eb10:8::2/128", peer.getAddressIp6());
+        Assert.assertEquals("10.8.0.1/24, fd42:eb10:8::1/64", server.getAddress());
+        Assert.assertTrue(config.contains("Address = 10.8.0.2/32, fd42:eb10:8::2/128"));
+        Mockito.verify(dataSource).save(server);
         Mockito.verify(dataSource).save(peer, 1);
     }
 
@@ -338,12 +373,13 @@ public class WireGuardMobileServiceTest {
         WireGuardMobileServer server = new WireGuardMobileServer();
         server.setPrivateKey("server-private-key");
         server.setPublicKey("server-public-key");
-        server.setAddress("10.8.0.1/24");
+        server.setAddress("10.8.0.1/24, fd42:eb10:8::1/64");
         WireGuardMobilePeer peer = new WireGuardMobilePeer(4, "device:001122334455");
         peer.setPrivateKey("peer-private-key");
         peer.setPublicKey("peer-public-key");
         peer.setPresharedKey("peer-psk");
         peer.setAddress("10.8.0.4/32");
+        peer.setAddressIp6("fd42:eb10:8::4/128");
 
         Mockito.when(dataSource.get(WireGuardMobileServer.class)).thenReturn(server);
         Mockito.when(dataSource.getAll(WireGuardMobilePeer.class)).thenReturn(Arrays.asList(peer));
@@ -353,7 +389,7 @@ public class WireGuardMobileServiceTest {
         Mockito.verifyNoInteractions(keyService);
         Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(WireGuardMobileServer.class));
         Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(WireGuardMobilePeer.class), Mockito.anyInt());
-        Assert.assertTrue(config.contains("Address = 10.8.0.4/32"));
+        Assert.assertTrue(config.contains("Address = 10.8.0.4/32, fd42:eb10:8::4/128"));
         Assert.assertTrue(config.contains("PublicKey = server-public-key"));
     }
 

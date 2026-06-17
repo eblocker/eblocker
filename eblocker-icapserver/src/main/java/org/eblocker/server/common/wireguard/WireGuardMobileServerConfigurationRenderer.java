@@ -39,9 +39,16 @@ public class WireGuardMobileServerConfigurationRenderer {
             if (peer.getPresharedKey() != null && !peer.getPresharedKey().isEmpty()) {
                 builder.append("PresharedKey = ").append(peer.getPresharedKey()).append('\n');
             }
-            builder.append("AllowedIPs = ").append(peer.getAddress()).append('\n');
+            builder.append("AllowedIPs = ").append(formatAllowedIps(peer)).append('\n');
         }
 
         return builder.toString();
+    }
+
+    private String formatAllowedIps(WireGuardMobilePeer peer) {
+        if (peer.getAddressIp6() == null || peer.getAddressIp6().isEmpty()) {
+            return peer.getAddress();
+        }
+        return peer.getAddress() + ", " + peer.getAddressIp6();
     }
 }

@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.data.vpn.VpnProfile;
 import org.eblocker.server.common.data.vpn.VpnStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
@@ -228,7 +229,6 @@ public class WireGuardService {
 
         state.devicesById.remove(device.getId());
         eblockerDnsServer.useDefaultResolver(device);
-        reconfigureAclsAndRouting(state.profile.getId(), state);
 
         if (state.devicesById.isEmpty()) {
             runRouteScript(clearClientRouteScript, state.routeId);
@@ -239,6 +239,7 @@ public class WireGuardService {
             state.up = false;
             clientStatesByProfileId.remove(state.profile.getId());
         }
+        reconfigureAclsAndRouting(state.profile.getId(), state);
     }
 
     public synchronized VpnStatus getStatus(VpnProfile profile) {
@@ -311,9 +312,47 @@ public class WireGuardService {
                 .orElse(null);
     }
 
+    private String getFirstIp6AddressWithoutCidr(WireGuardConfiguration configuration) {
+        return configuration.getAddresses().stream()
+                .map(address -> {
+                    int cidrSeparator = address.indexOf('/');
+                    return cidrSeparator >= 0 ? address.substring(0, cidrSeparator) : address;
+                })
+                .filter(address -> address.contains(":"))
+                .findFirst()
+                .orElse(null);
+    }
+
     private void reconfigureAclsAndRouting(int profileId, ClientState state) {
+        persistVpnClientState(profileId, state);
         squidConfigController.updateVpnDevicesAcl(profileId, Set.copyOf(state.devicesById.values()));
+        squidConfigController.updateSquidConfig();
         networkStateMachine.deviceStateChanged();
+    }
+
+    private void persistVpnClientState(int profileId, ClientState state) {
+        if (!state.active || state.devicesById.isEmpty()) {
+            dataSource.delete(VpnClientState.class, profileId);
+            return;
+        }
+
+        VpnClientState vpnClientState = new VpnClientState();
+        vpnClientState.setId(profileId);
+        vpnClientState.setState(VpnClientState.State.ACTIVE);
+        vpnClientState.setVirtualInterfaceName(getInterfaceName(profileId));
+        vpnClientState.setRoute(state.routeId);
+        vpnClientState.setDevices(Set.copyOf(state.devicesById.keySet()));
+
+        try {
+            WireGuardConfiguration configuration = profileFiles.readParsedConfiguration(profileId);
+            vpnClientState.setLocalEndpointIp(getFirstAddressWithoutCidr(configuration));
+            vpnClientState.setNameServers(configuration.getDnsServers());
+            vpnClientState.setGatewayIp6(getFirstIp6AddressWithoutCidr(configuration));
+        } catch (IOException e) {
+            log.warn("failed to enrich WireGuard VPN client state for profile {}", profileId, e);
+        }
+
+        dataSource.save(vpnClientState, profileId);
     }
 
     private void runRouteScript(String script, int routeId, String... additionalArguments) {

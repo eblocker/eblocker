@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.vpn.KeepAliveMode;
+import org.eblocker.server.common.data.vpn.VpnClientState;
 import org.eblocker.server.common.data.vpn.VpnProfile;
 import org.eblocker.server.common.data.vpn.VpnStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardProfile;
@@ -49,6 +50,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 public class WireGuardServiceTest {
     private Path profileRoot;
@@ -254,7 +256,18 @@ public class WireGuardServiceTest {
         Mockito.verify(scriptRunner).runScript("wireguard_setclientroute", "17", "wg7");
         Mockito.verify(eblockerDnsServer).addVpnResolver(7, Collections.singletonList("10.0.0.1"), "10.0.0.2");
         Mockito.verify(eblockerDnsServer).useVpnResolver(device, 7);
+        ArgumentCaptor<VpnClientState> vpnClientStateCaptor = ArgumentCaptor.forClass(VpnClientState.class);
+        Mockito.verify(dataSource).save(vpnClientStateCaptor.capture(), Mockito.eq(7));
+        VpnClientState vpnClientState = vpnClientStateCaptor.getValue();
+        Assert.assertEquals(Integer.valueOf(7), vpnClientState.getId());
+        Assert.assertEquals(VpnClientState.State.ACTIVE, vpnClientState.getState());
+        Assert.assertEquals("wg7", vpnClientState.getVirtualInterfaceName());
+        Assert.assertEquals(Integer.valueOf(17), vpnClientState.getRoute());
+        Assert.assertEquals(Collections.singleton("device:1"), vpnClientState.getDevices());
+        Assert.assertEquals("10.0.0.2", vpnClientState.getLocalEndpointIp());
+        Assert.assertEquals(Collections.singletonList("10.0.0.1"), vpnClientState.getNameServers());
         Mockito.verify(squidConfigController).updateVpnDevicesAcl(7, Collections.singleton(device));
+        Mockito.verify(squidConfigController).updateSquidConfig();
         Mockito.verify(networkStateMachine).deviceStateChanged();
 
         VpnStatus status = service.getStatus(profile);
@@ -292,7 +305,9 @@ public class WireGuardServiceTest {
         Mockito.verify(scriptRunner).runScript("wireguard_down", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
         Mockito.verify(eblockerDnsServer).removeVpnResolver(7);
         Mockito.verify(routingController).deleteRoute(17);
+        Mockito.verify(dataSource).delete(VpnClientState.class, 7);
         Mockito.verify(squidConfigController).updateVpnDevicesAcl(7, Collections.emptySet());
+        Mockito.verify(squidConfigController, Mockito.times(2)).updateSquidConfig();
         Mockito.verify(networkStateMachine, Mockito.times(2)).deviceStateChanged();
 
         VpnStatus status = service.getStatus(profile);
@@ -300,6 +315,29 @@ public class WireGuardServiceTest {
         Assert.assertFalse(status.isUp());
         Assert.assertTrue(status.getDevices().isEmpty());
         Assert.assertNull(service.getStatusByDevice(device));
+    }
+
+    @Test
+    public void routeClientStateIncludesIp6GatewayWhenProviderSupportsIp6() throws Exception {
+        WireGuardProfile profile = new WireGuardProfile(7, "provider");
+        Device device = createDevice("device:1");
+        Mockito.when(routingController.createRoute()).thenReturn(17);
+        storeConfig(7, "[Interface]\n" +
+                "PrivateKey = private=\n" +
+                "Address = 10.0.0.2/32, fd42::2/128\n" +
+                "DNS = 10.0.0.1\n" +
+                "\n" +
+                "[Peer]\n" +
+                "PublicKey = public=\n" +
+                "Endpoint = vpn.example.net:51820\n" +
+                "AllowedIPs = 0.0.0.0/0, ::/0\n");
+
+        service.routeClientThroughVpnTunnel(device, profile);
+
+        ArgumentCaptor<VpnClientState> vpnClientStateCaptor = ArgumentCaptor.forClass(VpnClientState.class);
+        Mockito.verify(dataSource).save(vpnClientStateCaptor.capture(), Mockito.eq(7));
+        Assert.assertEquals("fd42::2", vpnClientStateCaptor.getValue().getGatewayIp6());
+        Assert.assertEquals(Set.of("device:1"), vpnClientStateCaptor.getValue().getDevices());
     }
 
     private void storeConfig(int id, String config) throws Exception {

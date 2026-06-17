@@ -10,7 +10,7 @@
             <div style="width: 100%;">
                 <md-input-container md-theme="eBlockerThemeInput" style="width: 100%;">
                     <label>{{ 'WIZARD.MOBILE.CHOOSE_OS.LABEL_CHOICE' | translate }}</label>
-                    <md-select ng-model="vm.deviceOs" ng-change="vm.getOpenVPNName(vm.device)" aria-label="Choose operating system">
+                    <md-select ng-model="vm.deviceOs" ng-change="vm.updateConfigFileName(vm.device)" aria-label="{{ 'WIZARD.MOBILE.CHOOSE_OS.LABEL_CHOICE' | translate }}">
                         <div ng-repeat="type in vm.osTypes">
                             <md-option ng-value="type">{{ type.value | translate }}</md-option>
                         </div>
@@ -33,7 +33,7 @@
                          ng-model="vm.downloadConfirmed"
                          class="md-primary"
                          style="margin-bottom: -1px;"
-                         aria-label="Confirm download checkbox">
+                         aria-label="{{'WIZARD.MOBILE.CHOOSE_OS.CONFIRM_DOWNLOAD' | translate}}">
                 {{'WIZARD.MOBILE.CHOOSE_OS.CONFIRM_DOWNLOAD' | translate}}
             </md-checkbox>
         </div>

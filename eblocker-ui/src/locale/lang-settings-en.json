@@ -355,7 +355,7 @@
                 "SAVE_BACKUP" : "Save the backup file below.",
                 "FILENAME" : "File name:",
                 "BACKUP_SAVED" : "The backup file was saved to your Downloads folder.",
-                "EXPORT" : "A new password is required to protect the HTTPS and OpenVPN keys in the backup file.",
+                "EXPORT" : "A new password is required to protect the HTTPS and VPN keys in the backup file.",
                 "IMPORTED" : "The settings have been restored",
                 "REBOOT" : "To apply the settings eBlocker is now rebooted.",
                 "WARNINGS" : "There were warnings:",
@@ -363,7 +363,7 @@
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {
-                "IMPORT" : "Restore HTTPS, OpenVPN and license keys"
+                "IMPORT" : "Restore HTTPS, VPN and license keys"
             },
             "LABEL" : {
                 "CREATE_BACKUP" : "Create Backup",
@@ -378,13 +378,13 @@
                 },
                 "LABEL" : "Enter password",
                 "WARNING" : "<b>Please note:</b> this password is needed to restore the keys later. It cannot be recovered if it is lost.",
-                "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, OpenVPN and license keys are not restored."
+                "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, VPN and license keys are not restored."
             },
             "WARNING": {
                 "LICENSE_CRYPTO_FAILURE": "License keys cannot be decrypted.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "HTTPS keys cannot be restored.",
-                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "OpenVPN keys for eBlocker Mobile cannot be restored.",
-                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "OpenVPN keys for anonymization cannot be restored.",
+                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "VPN keys for eBlocker Mobile cannot be restored.",
+                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "VPN keys for anonymization cannot be restored.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed."
             }
@@ -1169,8 +1169,8 @@
                 },
                 "TAB_1" : {
                     "SELECT_SERVICE" : "Select VPN provider",
-                    "SELECT_SERVICE_TEXT_1" : "This configuration wizard will help you to set up a VPN connection to an external OpenVPN provider.",
-                    "SELECT_SERVICE_TEXT_2" : "To proceed, you need an OpenVPN configuration file from a VPN provider.",
+                    "SELECT_SERVICE_TEXT_1" : "This configuration wizard will help you to set up a VPN connection to an external WireGuard provider.",
+                    "SELECT_SERVICE_TEXT_2" : "To proceed, you need a WireGuard configuration file from a VPN provider.",
                     "SELECT_SERVICE_TEXT_3_LABEL" : "tested and compiled a list of compatible VPN providers",
                     "SELECT_SERVICE_TEXT_3_POST" : " for your convenience.",
                     "SELECT_SERVICE_TEXT_3_PRE" : "We have already ",
@@ -1195,7 +1195,7 @@
                         "FILE_STATUS_ERROR" : "Uploaded file contains no suitable information for this option. Please make sure the correct file is uploaded."
                     },
                     "UPLOAD_CONFIG" : "Upload Config",
-                    "UPLOAD_TEXT_1" : "Upload the OpenVPN configuration file you have received from your VPN provider. In general, it is named *.ovpn."
+                    "UPLOAD_TEXT_1" : "Upload the WireGuard configuration file you have received from your VPN provider. In general, it is named *.conf."
                 },
                 "TAB_3" : {
                     "ACTIVE_OPTIONS_HEADER" : "Used Settings",
@@ -1275,8 +1275,8 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Reset"
                 },
-                "TEXT" : "This will revoke all certificates. You will have to install all certificates again next time the OpenVPN server is used.",
-                "TITLE" : "Reset OpenVPN server"
+                "TEXT" : "This will revoke all WireGuard configurations. You will have to install all configurations again next time the WireGuard server is used.",
+                "TITLE" : "Reset WireGuard server"
             },
             "RESET_PIN_CONFIRM" : {
                 "ACTION" : {
@@ -2564,9 +2564,9 @@
             },
             "VPN_HOME" : {
                 "NOTIFICATION" : {
-                    "CERTIFICATES_DELETE" : "Error revoking the certificate",
-                    "CERTIFICATES_GET" : "Error while loading the certificates",
-                    "CERTIFICATES_POST" : "Error creating the certificate",
+                    "CERTIFICATES_DELETE" : "Error revoking the configuration",
+                    "CERTIFICATES_GET" : "Error while loading the configurations",
+                    "CERTIFICATES_POST" : "Error creating the configuration",
                     "CONFIG_DOWNLOAD" : "Error while downloading the configuration",
                     "CONFLICTING_FORWARDINGS" : "Conflicting port forwarding detected, check your router",
                     "DISABLE_DEVICE" : "Error while disabling the device",
@@ -3340,30 +3340,30 @@
             "HOST_LABEL" : "Public domain or IP address of your router",
             "LABEL" : "eBlocker Mobile",
             "NOTIFICATION" : {
-                "CERTIFICATE_CREATED" : "Certificate created",
-                "CERTIFICATE_REVOKED" : "Certificate revoked",
+                "CERTIFICATE_CREATED" : "Configuration created",
+                "CERTIFICATE_REVOKED" : "Configuration revoked",
                 "CONFIRMATION_RESET" : "Server has been reset",
                 "DEVICE_DISABLED" : "Device has been disabled.",
                 "DEVICE_ENABLED" : "Device has been activated.",
                 "HOST_CHANGED" : "Public eBlocker hostname has been changed. You have to download the client configuration and import it to your device in order to apply the new settings.",
                 "HOST_MISSING" : "Please enter the public hostname or IP address of your router. The eBlocker must be accessible from the Internet.",
-                "INIT_FAILED" : "Could not initialize the OpenVPN server. Please remember to save the network settings, in case you modified the network configuration."
+                "INIT_FAILED" : "Could not initialize the WireGuard server. Please remember to save the network settings, in case you modified the network configuration."
             }
         },
         "VPN_HOME_DEVICES" : {
             "LABEL" : "Devices",
             "TABLE" : {
                 "COLUMN" : {
-                    "CREATE_CERT" : "Create Certificate",
-                    "DOWNLOAD_CERT" : "Download Certificate",
+                    "CREATE_CERT" : "Create configuration",
+                    "DOWNLOAD_CERT" : "Download configuration",
                     "IP" : "IP address",
                     "NAME" : "Name of device",
-                    "REVOKE_CERT" : "Revoke Certificate"
+                    "REVOKE_CERT" : "Revoke configuration"
                 }
             },
             "TOOLTIP" : {
-                "HAS_CERT" : "Certificate is installed on this device.",
-                "HAS_NO_CERT" : "Certificate is not installed on this device."
+                "HAS_CERT" : "WireGuard configuration is installed on this device.",
+                "HAS_NO_CERT" : "WireGuard configuration is not installed on this device."
             }
         },
         "VPN_HOME_STATUS" : {
@@ -3626,15 +3626,15 @@
             },
             "VPN" : {
                 "DETAILS" : {
-                    "P1" : "As you select \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\", the wizard for new VPN connections opens, there you have to upload the OpenVPN configuration file(s) of your VPN provider. The eBlocker checks all settings of the script and discards some unsupported entries if necessary, after entering the name and password you receive from your VPN provider and a name for the newly created profile you can use VPN by using the toolbar again to activate the VPN there."
+                    "P1" : "When you select \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\", the wizard for new VPN connections opens. Upload the WireGuard configuration file from your VPN provider there. The eBlocker checks all settings and discards unsupported entries if necessary. After entering the credentials from your VPN provider and a name for the new profile, you can activate the VPN from the toolbar."
                 },
                 "OVERVIEW" : {
-                    "P1" : "Instead of Tor you can also use other VPN providers for IP anonymization that support the OpenVPN protocol. Please note that you may incur additional costs through alternative VPN providers.",
+                    "P1" : "Instead of Tor you can also use other VPN providers for IP anonymization that support WireGuard. Please note that you may incur additional costs through alternative VPN providers.",
                     "P2_LIST_TEXT" : "compiled them for you.",
                     "P2_LIST_URL" : "https://eBlocker.org/en/vpn_provider",
                     "P2_PRE" : "We have already tested some VPN providers for compatibility and ",
                     "P3_POST" : ".",
-                    "P3_PRE" : "Basically, however, most OpenVPN providers should work without problems. If you still have problems with your provider, please share this in the forum.",
+                    "P3_PRE" : "Basically, most WireGuard providers should work without problems. If you still have problems with your provider, please share this in the forum.",
                     "P3_SUPPORT" : "",
                     "TITLE" : "Virtual Private Network (VPN)"
                 }
@@ -3861,10 +3861,10 @@
                 "P2" : "The wizard for setting up eBlocker Mobile is intended to create the following prerequisites for using the function: Access to your eBlocker from outside is established. If your router can be reached from the Internet with a static IP address, enter it. If you can only be reached from the Internet with a different IP address, you need a Dynamic DNS service to establish a fixed access to your home network. eBlocker Open Source provides you with such a service for an initial test.",
                 "P3" : "If a fixed access point is established from the Internet, your router must determine an information channel / \"port\" for the eBlocker under External access to your eBlocker, which can be used for communication. You can do this yourself or use the setup wizard if you have activated the \"Universal Plug and Play\" function on the router. Port forwarding must be set up in the router that connects your local network to the Internet: Port 1194 (protocol UDP) must be forwarded to the IP address eBlockers with the same port number 1194. We recommend assigning a fixed IP address to the eBlocker in the network settings.",
                 "P4" : "The last step of the connection test wizard allows you to test the connection you have just created.",
-                "P5_LINK_TEXT" : "More information about the OpenVPN Apps",
-                "P5_LINK_URL" : "https://eblocker.org/docs/where-can-i-download-a-compatible-openvpn-app/",
+                "P5_LINK_TEXT" : "More information about WireGuard apps",
+                "P5_LINK_URL" : "https://www.wireguard.com/install/",
                 "P5_POST" : "",
-                "P5_PRE" : "On your mobile phone you need an app to access your home network via OpenVPN. The eBlocker provides an OpenVPN configuration file for the OpenVPN connection from your mobile device, which you can download and use to contact the eBlocker."
+                "P5_PRE" : "On your mobile phone you need a WireGuard app to access your home network. The eBlocker provides a WireGuard configuration file for the WireGuard connection from your mobile device, which you can download and use to contact the eBlocker."
             },
             "OVERVIEW" : {
                 "P1" : "With the eBlocker Mobile function you can protect your mobile devices, such as mobile phones, tablets and notebooks, with your own eBlocker. To do this, you have to make the eBlocker accessible with a few settings on the router and the respective mobile device.",

@@ -355,7 +355,7 @@
                 "SAVE_BACKUP" : "Sichere die Datei unten.",
                 "FILENAME" : "Dateiname:",
                 "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Downloads-Verzeichnis gespeichert.",
-                "EXPORT": "Ein neues Passwort wird benötigt, um die HTTPS- und OpenVPN-Schlüssel in der Sicherungsdatei zu schützen.",
+                "EXPORT": "Ein neues Passwort wird benötigt, um die HTTPS- und VPN-Schlüssel in der Sicherungsdatei zu schützen.",
                 "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
                 "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
                 "WARNINGS" : "Es sind Warnungen aufgetreten:",
@@ -363,7 +363,7 @@
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {
-                "IMPORT": "Schlüssel für HTTPS, OpenVPN und Lizenz wiederherstellen"
+                "IMPORT": "Schlüssel für HTTPS, VPN und Lizenz wiederherstellen"
             },
             "LABEL": {
                 "CREATE_BACKUP" : "Sicherungsdatei erstellen",
@@ -378,13 +378,13 @@
                 },
                 "LABEL": "Passwort eingeben",
                 "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht.",
-                "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN- und Lizenz-Schlüssel nicht wiederhergestellt."
+                "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, VPN- und Lizenz-Schlüssel nicht wiederhergestellt."
             },
             "WARNING": {
                 "LICENSE_CRYPTO_FAILURE": "Die Lizenz-Schlüssel können nicht entschlüsselt werden.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
-                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die OpenVPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
-                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die OpenVPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die VPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die VPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "Die Lizenz-Schlüssel können nicht wiederhergestellt werden.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen."
             }
@@ -1169,8 +1169,8 @@
                 },
                 "TAB_1": {
                     "SELECT_SERVICE": "VPN-Anbieter auswählen",
-                    "SELECT_SERVICE_TEXT_1": "Dieser Wizard unterstützt dich bei der Einrichtung einer VPN-Verbindung zu einem OpenVPN Anbieter.",
-                    "SELECT_SERVICE_TEXT_2": "Du brauchst dazu eine OpenVPN-Konfiguration von einem VPN-Anbieter.",
+                    "SELECT_SERVICE_TEXT_1": "Dieser Wizard unterstützt dich bei der Einrichtung einer VPN-Verbindung zu einem WireGuard-Anbieter.",
+                    "SELECT_SERVICE_TEXT_2": "Du brauchst dazu eine WireGuard-Konfigurationsdatei von einem VPN-Anbieter.",
                     "SELECT_SERVICE_TEXT_3_LABEL": "Liste kompatibler VPN-Anbieter",
                     "SELECT_SERVICE_TEXT_3_POST": "für dich erstellt.",
                     "SELECT_SERVICE_TEXT_3_PRE": "Wir haben bereits eine ",
@@ -1195,7 +1195,7 @@
                         "FILE_STATUS_ERROR": "Die hochgeladene Datei enthält keine geeigneten Informationen für diese Option. Bitte überprüfe, ob die richtige Datei hochgeladen wurde."
                     },
                     "UPLOAD_CONFIG": "Konfiguration hochladen",
-                    "UPLOAD_TEXT_1": "Lade die OpenVPN Konfiguration deines Anbieters hoch. Der Name der Konfigurationsdatei endet in der Regel mit *.ovpn."
+                    "UPLOAD_TEXT_1": "Lade die WireGuard-Konfiguration deines Anbieters hoch. Der Name der Konfigurationsdatei endet in der Regel mit *.conf."
                 },
                 "TAB_3": {
                     "ACTIVE_OPTIONS_HEADER": "Verwendete Einstellungen",
@@ -1275,8 +1275,8 @@
                     "CANCEL": "Abbrechen",
                     "OK": "zurücksetzen"
                 },
-                "TEXT": "Beim Zurücksetzen werden alle Zertifikate zurückgezogen und müssen später neu verteilt werden.",
-                "TITLE": "OpenVPN Server zurücksetzen"
+                "TEXT": "Beim Zurücksetzen werden alle WireGuard-Konfigurationen zurückgezogen und müssen später neu verteilt werden.",
+                "TITLE": "WireGuard-Server zurücksetzen"
             },
             "RESET_PIN_CONFIRM": {
                 "ACTION": {
@@ -2564,9 +2564,9 @@
             },
             "VPN_HOME": {
                 "NOTIFICATION": {
-                    "CERTIFICATES_DELETE": "Fehler beim Zurückziehen des Zertifikats",
-                    "CERTIFICATES_GET": "Fehler beim Laden der Zertifikate",
-                    "CERTIFICATES_POST": "Fehler beim Erzeugen des Zertifikats",
+                    "CERTIFICATES_DELETE": "Fehler beim Zurückziehen der Konfiguration",
+                    "CERTIFICATES_GET": "Fehler beim Laden der Konfigurationen",
+                    "CERTIFICATES_POST": "Fehler beim Erzeugen der Konfiguration",
                     "CONFIG_DOWNLOAD": "Fehler beim Herunterladen der Konfiguration",
                     "CONFLICTING_FORWARDINGS": "Konflikt mit bereits bestehender Portweiterleitung, überprüfe bitte die Einstellungen am Router",
                     "DISABLE_DEVICE": "Fehler beim Deaktivieren des Gerätes",
@@ -3340,30 +3340,30 @@
             "HOST_LABEL": "Öffentlicher Domainname oder IP-Adresse deines Routers",
             "LABEL": "eBlocker Mobile",
             "NOTIFICATION": {
-                "CERTIFICATE_CREATED": "Zertifikat erzeugt",
-                "CERTIFICATE_REVOKED": "Zertifikat zurückgezogen",
+                "CERTIFICATE_CREATED": "Konfiguration erstellt",
+                "CERTIFICATE_REVOKED": "Konfiguration zurückgezogen",
                 "CONFIRMATION_RESET": "Server wurde zurück gesetzt",
                 "DEVICE_DISABLED": "Das Gerät wurde deaktiviert.",
                 "DEVICE_ENABLED": "Das Gerät wurde aktiviert.",
                 "HOST_CHANGED": "Der öffentliche eBlocker Hostname wurde geändert. Du musst die Client-Konfiguration erneut herunterladen und auf deinem Gerät importieren, damit die Änderung wirksam wird.",
                 "HOST_MISSING": "Bitte trage einen Hostnamen oder eine IP-Adresse ein, unter der dein Router vom Internet aus erreichbar ist.",
-                "INIT_FAILED": "Der OpenVPN-Server konnte nicht initialisiert werden. Bitte denke daran, die Netzwerk-Einstellungen zu speichern, falls du Änderungen an der Netzwerk-Konfiguration vorgenommen hast."
+                "INIT_FAILED": "Der WireGuard-Server konnte nicht initialisiert werden. Bitte denke daran, die Netzwerk-Einstellungen zu speichern, falls du Änderungen an der Netzwerk-Konfiguration vorgenommen hast."
             }
         },
         "VPN_HOME_DEVICES": {
             "LABEL": "Geräte",
             "TABLE": {
                 "COLUMN": {
-                    "CREATE_CERT": "Zertifikat erstellen",
-                    "DOWNLOAD_CERT": "Zertifikat herunterladen",
+                    "CREATE_CERT": "Konfiguration erstellen",
+                    "DOWNLOAD_CERT": "Konfiguration herunterladen",
                     "IP": "IP-Adresse",
                     "NAME": "Gerätename",
-                    "REVOKE_CERT": "Zertifikat zurückziehen"
+                    "REVOKE_CERT": "Konfiguration zurückziehen"
                 }
             },
             "TOOLTIP": {
-                "HAS_CERT": "Das Zertifikat ist auf diesem Gerät installiert.",
-                "HAS_NO_CERT": "Das Zertifikat ist auf diesem Gerät nicht installiert."
+                "HAS_CERT": "Die WireGuard-Konfiguration ist auf diesem Gerät installiert.",
+                "HAS_NO_CERT": "Die WireGuard-Konfiguration ist auf diesem Gerät nicht installiert."
             }
         },
         "VPN_HOME_STATUS": {
@@ -3626,15 +3626,15 @@
             },
             "VPN": {
                 "DETAILS": {
-                    "P1": "Wähle \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\" und es öffnet sich der Assistent für neue VPN Verbindungen. Dort musst du die OpenVPN Konfigurationsdatei(en) deines VPN Providers hochladen. Der eBlocker prüft alle Einstellungen des Skriptes und verwirft gegebenenfalls einige nicht unterstützte Einträge. Nach Eingabe von Name und Passwort, die du von deinem VPN Provider erhalten hast, und einem Namen für das eben angelegte Profil kannst du VPN nutzen, indem du die Symbolleiste verwendest, um das VPN zu aktivieren."
+                    "P1": "Wähle \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\" und es öffnet sich der Assistent für neue VPN-Verbindungen. Dort musst du die WireGuard-Konfigurationsdatei deines VPN-Providers hochladen. Der eBlocker prüft alle Einstellungen und verwirft gegebenenfalls nicht unterstützte Einträge. Nach Eingabe der Zugangsdaten deines VPN-Providers und eines Profilnamens kannst du VPN über die Symbolleiste aktivieren."
                 },
                 "OVERVIEW": {
-                    "P1": "Du kannst anstelle des Tor-Netzwerks auch andere VPN-Anbieter zur IP-Anonymisierung nutzen, die das OpenVPN Protokoll unterstützen. Bitte beachte, dass dir in der Regel durch alternative VPN-Anbieter zusätzliche Kosten entstehen.",
+                    "P1": "Du kannst anstelle des Tor-Netzwerks auch andere VPN-Anbieter zur IP-Anonymisierung nutzen, die WireGuard unterstützen. Bitte beachte, dass dir in der Regel durch alternative VPN-Anbieter zusätzliche Kosten entstehen.",
                     "P2_LIST_TEXT": "für dich zusammengestellt.",
                     "P2_LIST_URL": "https://eBlocker.org/de/vpn_provider",
                     "P2_PRE": "Wir haben bereits einige VPN-Anbieter auf Kompatibilität getestet und",
                     "P3_POST": ".",
-                    "P3_PRE": "Grundsätzlich sollten jedoch die meisten OpenVPN-Anbieter problemlos funktionieren. Falls mit deinem Anbieter dennoch Probleme auftreten, teile dies gerne im Forum.",
+                    "P3_PRE": "Grundsätzlich sollten die meisten WireGuard-Anbieter problemlos funktionieren. Falls mit deinem Anbieter dennoch Probleme auftreten, teile dies gerne im Forum.",
                     "P3_SUPPORT": "",
                     "TITLE": "Virtual Private Network (VPN)"
                 }
@@ -3861,10 +3861,10 @@
                 "P2": "Mit dem Assistenten für die Einrichtung von eBlocker Mobile sollen folgende Voraussetzungen geschaffen werden, um die Funktion nutzen zu können: Der <b>Zugriff auf deinen eBlocker von außerhalb</b> wird hergestellt. Wenn dein Router vom Internet aus mit einer statischen IP-Adresse erreichbar ist, gib diese an. Wenn du vom Internet aus nur über eine wechselnde IP-Adresse erreichbar bist, benötigst du einen Dynamic DNS Dienst, um einen festen Zugang zu deinem Heimnetz herzustellen. Für einen ersten Test stellt eBlocker Open Source dir einen solchen Dienst zur Verfügung.",
                 "P3": "Ist ein fester Zugangspunkt vom Internet aus hergestellt, so muss dein Router unter <b>Externer Zugriff auf deinen eBlocker</b> noch einen Informationskanal / „Port“ für den eBlocker bestimmen, der für die Kommunikation verwendet werden kann. Du kannst dies selbst vornehmen oder den Assistenten für die Einrichtung verwenden, sofern du auf dem Router die Funktion „Universal Plug and Play“ aktiviert hast. In dem Router, der dein lokales Netzwerk mit dem Internet verbindet, muss eine Portweiterleitung eingerichtet werden: Port 1194 (Protokoll UDP) muss auf die IP-Adresse deines eBlockers mit derselben Portnummer 1194 weitergeleitet werden. Wir empfehlen dazu, dem eBlocker in den Netzwerkeinstellungen eine feste IP-Adresse zuzuweisen.",
                 "P4": "Der letzte Schritt <b>Verbindungstest</b> des Assistenten ermöglicht das testen der soeben angelegten Verbindung.",
-                "P5_LINK_TEXT": "Weitergehende Informationen zu den OpenVPN Apps",
-                "P5_LINK_URL": "https://eblocker.org/docs/where-can-i-download-a-compatible-openvpn-app/",
+                "P5_LINK_TEXT": "Weitergehende Informationen zu WireGuard-Apps",
+                "P5_LINK_URL": "https://www.wireguard.com/install/",
                 "P5_POST": "",
-                "P5_PRE": "Auf deinem Mobiltelefon benötigst du eine App zum Zugriff auf dein Heimnetzwerk mittels OpenVPN. Der eBlocker stellt für die OpenVPN Verbindung von deinem Mobilgerät aus eine eigene OpenVPN Konfigurationsdatei bereit, die du herunterladen und zur Kontaktaufnahme mit dem eBlocker verwenden kannst."
+                "P5_PRE": "Auf deinem Mobiltelefon benötigst du eine WireGuard-App zum Zugriff auf dein Heimnetzwerk. Der eBlocker stellt für die WireGuard-Verbindung von deinem Mobilgerät aus eine eigene WireGuard-Konfigurationsdatei bereit, die du herunterladen und zur Kontaktaufnahme mit dem eBlocker verwenden kannst."
             },
             "OVERVIEW": {
                 "P1": "Mit der eBlocker Mobile Funktion schützt du deine mobilen Geräte, wie Handys, Tablets und Notebooks, auch von unterwegs mit deinem eigenen eBlocker. Um dies zu ermöglichen, musst du den eBlocker mit wenigen Einstellungen am Router und dem jeweiligen Mobilgerät erreichbar machen.",

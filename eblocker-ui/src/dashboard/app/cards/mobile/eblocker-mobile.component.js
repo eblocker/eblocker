@@ -48,7 +48,7 @@ function Controller(logger, $timeout, $window, $q, CardService, VpnHomeService, 
 
     vm.$onInit = function() {
         loadStatus().then(function success() {
-            return loadCertificates();
+            return loadConfigurations();
         }).then(function success() {
             return loadDevice();
         });
@@ -82,8 +82,8 @@ function Controller(logger, $timeout, $window, $q, CardService, VpnHomeService, 
         DeviceService.getDevice().then(function success(response) {
             if (angular.isObject(response.data)) {
                 vm.device = response.data;
-                vm.device.hasCertificate = angular.isDefined(vm.vpnHomeCertificates) &&
-                    vm.vpnHomeCertificates.indexOf(vm.device.id) > -1;
+                vm.device.hasMobileConfiguration = angular.isDefined(vm.vpnHomeConfigurations) &&
+                    vm.vpnHomeConfigurations.indexOf(vm.device.id) > -1;
             }
         });
     }
@@ -92,14 +92,14 @@ function Controller(logger, $timeout, $window, $q, CardService, VpnHomeService, 
 
     }
 
-    function loadCertificates() {
+    function loadConfigurations() {
         if (vm.vpnHomeStatus.isRunning) {
-            return VpnHomeService.loadCertificates().then(function success(response) {
-                vm.vpnHomeCertificates = response.data;
+            return VpnHomeService.loadConfigurations().then(function success(response) {
+                vm.vpnHomeConfigurations = response.data;
                 return response;
             });
         } else {
-            vm.vpnHomeCertificates = [];
+            vm.vpnHomeConfigurations = [];
             return $q.resolve({data: []});
         }
     }
@@ -110,7 +110,6 @@ function Controller(logger, $timeout, $window, $q, CardService, VpnHomeService, 
         } else {
             vm.isDownloadingConf = true;
             VpnHomeService.generateDownloadUrl(device.id, vm.operatingSystemType.type).then(function success(response) {
-                // Sort certificates into dic
                 $window.location = response.data;
             }, function error(response) {
                 // fail

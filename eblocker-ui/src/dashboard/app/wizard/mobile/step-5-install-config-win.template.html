@@ -8,10 +8,6 @@
     </div>
 
     <div>
-        <img style="width: 70%;" src="/img/openVpn/Screenshot_Windows_OpenVPN_copy-config.png"/>
-    </div>
-
-    <div>
         <p>{{'WIZARD.MOBILE.INSTALL_CONFIG_WIN.TEXT_COPY' | translate:{name: vm.getConfigFileName()} }}</p>
     </div>
 
@@ -21,7 +17,7 @@
                      ng-model="vm.confirmInstallConfigWin"
                      class="md-primary"
                      style="margin-bottom: -1px;"
-                     aria-label="Tor country checkbox">
+                     aria-label="{{'WIZARD.MOBILE.INSTALL_CONFIG_WIN.CONFIRM_COPY' | translate}}">
             {{'WIZARD.MOBILE.INSTALL_CONFIG_WIN.CONFIRM_COPY' | translate}}
         </md-checkbox>
     </div>

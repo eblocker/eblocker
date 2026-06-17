@@ -20,7 +20,7 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
     const PATH = '/api/dashboard/openvpn';
     const PATH_CONNECTION_TEST = PATH + '/test';
 
-    function getOpenVpnFileName(deviceId, osType) {
+    function getConfigurationFileName(deviceId, osType) {
         return $http.get(PATH + '/filename/' + deviceId + '/' + osType).then(standardSuccess, standardError);
     }
 
@@ -55,7 +55,7 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
         return statusCache;
     }
 
-    function loadCertificates() {
+    function loadConfigurations() {
         return $http.get(PATH + '/certificates').
         then(standardSuccess, function(response) {
             // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CERTIFICATES_GET', response);
@@ -63,7 +63,7 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
         });
     }
 
-    function revokeCertificate(deviceId) {
+    function revokeConfiguration(deviceId) {
         return $http.delete(PATH + '/certificates/' + deviceId).
         then(standardSuccess, function(response) {
             // NotificationService.error('ADMINCONSOLE.SERVICE.VPN_HOME.NOTIFICATION.CERTIFICATES_DELETE', response);
@@ -185,12 +185,12 @@ export default function VpnHomeService(logger, $http, $q, NotificationService, $
         setStatus: setStatus,
         resetServer: resetServer,
         loadStatus: loadStatus,
-        loadCertificates: loadCertificates,
-        revokeCertificate: revokeCertificate,
+        loadConfigurations: loadConfigurations,
+        revokeConfiguration: revokeConfiguration,
         generateDownloadUrl: generateDownloadUrl,
         doConnectionTest: doConnectionTest,
         getConnectionTestResult: getConnectionTestResult,
-        getOpenVpnFileName: getOpenVpnFileName
+        getConfigurationFileName: getConfigurationFileName
     };
 
     function standardSuccess(response) {

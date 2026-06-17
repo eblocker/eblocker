@@ -33,7 +33,7 @@ function Controller(logger, $state, $window, deviceDetector, DeviceService, VpnH
     vm.nextStep = nextStep;
     vm.prevStep = prevStep;
     vm.getConfigFileName = getConfigFileName;
-    vm.getOpenVPNName = getOpenVPNName;
+    vm.updateConfigFileName = updateConfigFileName;
 
     vm.isWindows = isWindows;
     vm.isIos = isIos;
@@ -54,7 +54,7 @@ function Controller(logger, $state, $window, deviceDetector, DeviceService, VpnH
         ];
         vm.deviceOs = getDeviceTypeObject(vm.osTypes, deviceDetector.os);
         loadDevice().then(function success() {
-            getOpenVPNName(vm.device);
+            updateConfigFileName(vm.device);
         });
     };
 
@@ -139,7 +139,7 @@ function Controller(logger, $state, $window, deviceDetector, DeviceService, VpnH
     }
 
     function getConfigFileName() {
-        return vm.openVpnFileName || '';
+        return vm.configFileName || '';
     }
 
     // STEP 2 -- Choose OS, download config
@@ -154,13 +154,13 @@ function Controller(logger, $state, $window, deviceDetector, DeviceService, VpnH
         return ret;
     }
 
-    function getOpenVPNName(device) {
+    function updateConfigFileName(device) {
         if (!angular.isObject(device) || angular.isUndefined(device.id)) {
             NotificationService.error('WIZARD.MOBILE.CHOOSE_OS.NOTIFY_NO_DEVICE');
             return;
         }
-        VpnHomeService.getOpenVpnFileName(device.id, vm.deviceOs.type).then(function success(response) {
-            vm.openVpnFileName = response.data;
+        VpnHomeService.getConfigurationFileName(device.id, vm.deviceOs.type).then(function success(response) {
+            vm.configFileName = response.data;
         }, function(response) {
             logger.error('Error getting VPN file name ', response);
         });
@@ -173,7 +173,6 @@ function Controller(logger, $state, $window, deviceDetector, DeviceService, VpnH
         }
         vm.isDownloadingConf = true;
         VpnHomeService.generateDownloadUrl(device.id, vm.deviceOs.type).then(function success(response) {
-            // Sort certificates into dic
             $window.location = response.data;
         }, function error(response) {
             // fail

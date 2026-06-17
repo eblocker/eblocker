@@ -473,25 +473,25 @@
                 "CANCEL_REVOKE" : "Cancel",
                 "CONFIRM_REVOKE" : "Yes, revoke",
                 "DOWNLOAD" : "Download",
-                "HOW_TO_START" : "How to start the VPN connection",
-                "RECOMMENDED_APPS" : "Recommended Apps",
+                "HOW_TO_START" : "How to start the WireGuard connection",
+                "RECOMMENDED_APPS" : "WireGuard app",
                 "REVOKE" : "Revoke",
                 "START_WIZARD" : "Start Setup Wizard"
             },
-            "LABEL_STEP_1" : "Step 1: Install VPN App",
-            "LABEL_STEP_2" : "Step 2: Install eBlocker Mobile configuration",
-            "LABEL_STEP_3" : "Step 3: Open connection to eBlocker Mobile",
+            "LABEL_STEP_1" : "Step 1: Install the WireGuard app",
+            "LABEL_STEP_2" : "Step 2: Import the eBlocker Mobile configuration",
+            "LABEL_STEP_3" : "Step 3: Start the WireGuard connection to eBlocker Mobile",
             "LINK" : {
-                "HOW_TO_START" : "https://eBlocker.org/startvpn_en/",
-                "RECOMMENDED_APPS" : "https://eBlocker.org/en/openvpn-clients/"
+                "HOW_TO_START" : "https://www.wireguard.com/quickstart/",
+                "RECOMMENDED_APPS" : "https://www.wireguard.com/install/"
             },
             "NOTIFICATION" : {
-                "CERTIFICATE_CREATED" : "Certificate created",
-                "CERTIFICATE_REVOKED" : "Certificate revoked",
+                "CERTIFICATE_CREATED" : "Configuration created",
+                "CERTIFICATE_REVOKED" : "Configuration revoked",
                 "CONFIRMATION_RESET" : "Server has been reset",
                 "HOST_CHANGED" : "Public eBlocker hostname has been changed. You have to download the client configuration and import it to your device in order to apply the new settings.",
                 "HOST_MISSING" : "Please enter the public hostname or IP address of your router. The eBlocker must be accessible from the Internet.",
-                "INIT_FAILED" : "Could not initialize the OpenVPN server. Please remember to save the network settings, in case you modified the network configuration."
+                "INIT_FAILED" : "Could not initialize the WireGuard server. Please remember to save the network settings, in case you modified the network configuration."
             },
             "REVOKE_CONFIRM_DIALOG" : {
                 "TEXT" : "Are you sure you want to revoke the eBlocker Mobile configuration?",
@@ -986,16 +986,16 @@
             },
             "CHOOSE_OS" : {
                 "ACTION_DOWNLOAD" : "Download App",
-                "CONFIRM_DOWNLOAD" : "App has been downloaded",
+                "CONFIRM_DOWNLOAD" : "WireGuard app has been downloaded",
                 "LABEL_CHOICE" : "Select your operating system:",
                 "NOTIFY_NO_DEVICE" : "Unable to detect your device.",
-                "TITLE" : "1. Download OpenVPN app",
+                "TITLE" : "1. Download WireGuard app",
                 "VPN_URL" : {
-                    "ANDROID" : "https://play.google.com/store/apps/details?id=net.openvpn.openvpn",
-                    "IOS" : "https://itunes.apple.com/de/app/openvpn-connect/id590379981?mt=8",
-                    "MAC" : "https://tunnelblick.net/",
+                    "ANDROID" : "https://www.wireguard.com/install/",
+                    "IOS" : "https://www.wireguard.com/install/",
+                    "MAC" : "https://www.wireguard.com/install/",
                     "OTHER" : "",
-                    "WINDOWS" : "http://build.openvpn.net/downloads/releases/latest/"
+                    "WINDOWS" : "https://www.wireguard.com/install/"
                 }
             },
             "CONNECT_ANDROID" : {
@@ -1009,14 +1009,14 @@
                 "TITLE" : "Connect your device with your eBlocker"
             },
             "CONNECT_MAC" : {
-                "STEP_1" : "Click on the Tunnelblick icon in the menu",
-                "STEP_2" : "Select connect \"eBlocker_Mobile_MyeBlocker\"",
-                "STEP_3" : "Your Mac is now connecting to your eBlocker",
+                "STEP_1" : "Open the WireGuard app.",
+                "STEP_2" : "Select the imported eBlocker Mobile configuration.",
+                "STEP_3" : "Activate the tunnel. Your Mac is now connecting to your eBlocker.",
                 "TITLE" : "Connect your device with your eBlocker"
             },
             "CONNECT_WIN" : {
-                "STEP_1" : "Start the OpenVPN app if it is not already started.",
-                "STEP_2" : "Select the OpenVPN icon in the taskbar.",
+                "STEP_1" : "Start WireGuard if the app is not already open.",
+                "STEP_2" : "Select the eBlocker Mobile configuration and activate the tunnel.",
                 "TITLE" : "Connect your device with your eBlocker"
             },
             "DIALOG" : {
@@ -1028,63 +1028,63 @@
             "DOWNLOAD_CONFIG_ANDROID" : {
                 "ACTION_DOWNLOAD" : "Download",
                 "CONFIRM_DOWNLOAD" : "Please confirm that you have installed the configuration",
-                "STEP_1" : "Download OpenVPN configuration for this device.",
-                "STEP_2" : "Confirm \"Open with OpenVPN\".",
-                "STEP_3" : "The OpenVPN app will open automatically",
-                "STEP_4" : "Confirm the file import by tapping on the green \"+\"",
+                "STEP_1" : "Download the WireGuard configuration file (.conf) for this device.",
+                "STEP_2" : "Open the downloaded file with the WireGuard app.",
+                "STEP_3" : "The WireGuard app opens automatically.",
+                "STEP_4" : "Confirm the file import.",
                 "TITLE" : "Configuration (Android)"
             },
             "DOWNLOAD_CONFIG_IOS" : {
                 "ACTION_DOWNLOAD" : "Download",
                 "CONFIRM_DOWNLOAD" : "Please confirm that you have installed the configuration",
-                "STEP_1" : "Download OpenVPN configuration for this device.",
-                "STEP_2" : "Confirm \"Open File\" on the bottom of your screen",
-                "STEP_3" : "The OpenVPN app will open automatically",
-                "STEP_4" : "Press \"OK\" to confirm the file import",
+                "STEP_1" : "Download the WireGuard configuration file (.conf) for this device.",
+                "STEP_2" : "Open the downloaded file with the WireGuard app.",
+                "STEP_3" : "The WireGuard app opens automatically.",
+                "STEP_4" : "Confirm the file import.",
                 "TITLE" : "Configuration (iOS)"
             },
             "DOWNLOAD_CONFIG_WIN_MAC" : {
                 "ACTION_DOWNLOAD" : "Download",
                 "CONFIRM_DOWNLOAD" : "Please confirm that you have downloaded the configuration",
-                "TEXT" : "Download OpenVPN configuration for this device.",
+                "TEXT" : "Download the WireGuard configuration file (.conf) for this device.",
                 "TITLE" : "Configuration"
             },
             "FINISH" : {
-                "TEXT_1" : "You may disconnect the VPN connection at any time using the OpenVPN app.",
+                "TEXT_1" : "You may disconnect the VPN connection at any time using the WireGuard app.",
                 "TEXT_2" : "To test the VPN connection please disconnect from your home network, enter an external network, e.g. your mobile network and open the Dashboard by clicking on {{'WIZARD.MOBILE.ACTION.DONE' | translate }}.",
                 "TITLE" : "Test"
             },
             "INSTALL_CONFIG_MAC" : {
                 "CONFIRM_INSTALL" : "Please confirm that you have installed the configuration",
-                "STEP_1" : "Double click the downloaded OpenVPN file",
-                "STEP_2" : "Confirm the installation dialog",
+                "STEP_1" : "Open the WireGuard app and import the downloaded .conf file.",
+                "STEP_2" : "Confirm the configuration import.",
                 "TITLE" : "Configuration (macOS)"
             },
             "INSTALL_CONFIG_WIN" : {
                 "CONFIRM_COPY" : "Please confirm that you have copied the configuration",
-                "TEXT" : "Copy the OpenVPN file into the folder for configuration files. This usually is C:\\Programm Files\\OpenVPN\\config\\",
-                "TEXT_COPY" : "Please copy the file \"{{name}}\".",
+                "TEXT" : "Open WireGuard and import the downloaded configuration file as a new tunnel.",
+                "TEXT_COPY" : "Please select the file \"{{name}}\".",
                 "TITLE" : "Configuration (Windows)"
             },
             "INSTALL_MAC" : {
-                "CONFIRM_INSTALL" : "Please confirm that you have installed OpenVPN",
-                "STEP_1" : "Find the downloaded OpenVPN installer in your download folder",
-                "STEP_2" : "Double click the downloaded \"Tunnelblick.dmg\"",
-                "STEP_3" : "Double click the installer contained within the .dmg file",
-                "STEP_4" : "Follow the instructions on your screen",
-                "TITLE" : "Install OpenVPN app (macOS)"
+                "CONFIRM_INSTALL" : "Please confirm that you have installed WireGuard",
+                "STEP_1" : "Install WireGuard from the Mac App Store or wireguard.com.",
+                "STEP_2" : "Open the WireGuard app after installation.",
+                "STEP_3" : "Allow WireGuard to add VPN configurations.",
+                "STEP_4" : "Follow the instructions on your screen.",
+                "TITLE" : "Install WireGuard app (macOS)"
             },
             "INSTALL_WINDOWS" : {
-                "CONFIRM_INSTALL" : "Please confirm that you have installed OpenVPN",
-                "STEP_1" : "Find the downloaded OpenVPN installer in your download folder",
-                "STEP_2" : "Execute the OpenVPN installer and follow the instructions on your screen",
-                "TITLE" : "Install OpenVPN app (Windows)"
+                "CONFIRM_INSTALL" : "Please confirm that you have installed WireGuard",
+                "STEP_1" : "Find the downloaded WireGuard installer in your download folder.",
+                "STEP_2" : "Execute the WireGuard installer and follow the instructions on your screen.",
+                "TITLE" : "Install WireGuard app (Windows)"
             },
             "INTRO" : {
-                "EXPLAIN" : "eBlocker Mobile is based on OpenVPN. It connects this device with your eBlocker at home.",
-                "EXPLAIN_STEPS" : "Only two step are required:",
-                "EXPLAIN_STEP_1" : "Installation of the OpenVPN app",
-                "EXPLAIN_STEP_2" : "Download and installation of the configuration to your OpenVPN app"
+                "EXPLAIN" : "eBlocker Mobile is based on WireGuard. It connects this device with your eBlocker at home.",
+                "EXPLAIN_STEPS" : "Only two steps are required:",
+                "EXPLAIN_STEP_1" : "Installation of the WireGuard app",
+                "EXPLAIN_STEP_2" : "Download and import of the configuration into your WireGuard app"
             },
             "TITLE" : "eBlocker Mobile Wizard"
         }

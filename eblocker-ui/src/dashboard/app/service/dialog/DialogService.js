@@ -44,7 +44,7 @@ export default function DialogService($mdDialog, $q) {
         });
     }
 
-    function mobileRevokeCertificate(event, subject, okCallback, cancelCallback) {
+    function mobileRevokeConfiguration(event, subject, okCallback, cancelCallback) {
         return confirmationDialog(
             event,
             'MOBILE.CARD.REVOKE_CONFIRM_DIALOG.TITLE',
@@ -202,7 +202,7 @@ export default function DialogService($mdDialog, $q) {
 
     return {
         confirmationDialog: confirmationDialog,
-        mobileRevokeCertificate: mobileRevokeCertificate,
+        mobileRevokeConfiguration: mobileRevokeConfiguration,
         userChangePin: userChangePin,
         userProvidePin: userProvidePin,
         adminLogin: adminLogin,

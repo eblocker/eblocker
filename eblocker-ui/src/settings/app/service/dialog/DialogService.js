@@ -756,7 +756,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
     }
 
 
-    function revokeCertificateInfo(event, okAction, cancelAction, subject) {
+    function revokeConfigurationInfo(event, okAction, cancelAction, subject) {
         return $mdDialog.show({
             controller: 'ConfirmationDialogController',
             controllerAs: 'vm',
@@ -766,10 +766,10 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             clickOutsideToClose: false,
             locals: {
                 msgKeys: {
-                    title: 'ADMINCONSOLE.DIALOG.REVOKE_CERTIFICATE.TITLE',
-                    text: 'ADMINCONSOLE.DIALOG.REVOKE_CERTIFICATE.TEXT',
-                    okButton: 'ADMINCONSOLE.DIALOG.REVOKE_CERTIFICATE.ACTION.OK',
-                    cancelButton: 'ADMINCONSOLE.DIALOG.REVOKE_CERTIFICATE.ACTION.CANCEL'
+                    title: 'ADMINCONSOLE.DIALOG.REVOKE_CONFIGURATION.TITLE',
+                    text: 'ADMINCONSOLE.DIALOG.REVOKE_CONFIGURATION.TEXT',
+                    okButton: 'ADMINCONSOLE.DIALOG.REVOKE_CONFIGURATION.ACTION.OK',
+                    cancelButton: 'ADMINCONSOLE.DIALOG.REVOKE_CONFIGURATION.ACTION.CANCEL'
                 },
                 subject: subject,
                 okAction: okAction,
@@ -800,7 +800,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function addCertificateInfo(event, okAction, device) {
+    function addConfigurationInfo(event, okAction, device) {
         return $mdDialog.show({
             controller: 'InformationDialogController',
             controllerAs: 'vm',
@@ -810,9 +810,9 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             clickOutsideToClose:false,
             locals: {
                 msgKeys : {
-                    title: 'ADMINCONSOLE.DIALOG.ADD_CERTIFICATE.TITLE',
-                    text: 'ADMINCONSOLE.DIALOG.ADD_CERTIFICATE.TEXT',
-                    okButton: 'ADMINCONSOLE.DIALOG.ADD_CERTIFICATE.ACTION.OK',
+                    title: 'ADMINCONSOLE.DIALOG.ADD_CONFIGURATION.TITLE',
+                    text: 'ADMINCONSOLE.DIALOG.ADD_CONFIGURATION.TEXT',
+                    okButton: 'ADMINCONSOLE.DIALOG.ADD_CONFIGURATION.ACTION.OK',
                 },
                 subject: device,
                 checkbox: undefined,
@@ -918,8 +918,8 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         dnsFilterChangeInfo: dnsFilterChangeInfo,
         sslDisableWarning: sslDisableWarning,
         showTorActivationDialog: showTorActivationDialog,
-        revokeCertificateInfo: revokeCertificateInfo,
-        addCertificateInfo: addCertificateInfo,
+        revokeConfigurationInfo: revokeConfigurationInfo,
+        addConfigurationInfo: addConfigurationInfo,
         editTasksViewConfig: editTasksViewConfig,
         resetDeviceConfirm: resetDeviceConfirm,
         deleteUserThatIsAssignedOrOperatingDevice: deleteUserThatIsAssignedOrOperatingDevice,

@@ -383,8 +383,8 @@
             "WARNING": {
                 "LICENSE_CRYPTO_FAILURE": "Die Lizenz-Schlüssel können nicht entschlüsselt werden.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
-                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die VPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
-                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die VPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_WIREGUARD_SERVER_NOT_IMPORTED": "Die VPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_VPN_CLIENTS_NOT_IMPORTED": "Die VPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "Die Lizenz-Schlüssel können nicht wiederhergestellt werden.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen."
             }
@@ -525,10 +525,10 @@
                 },
                 "MOBILE": {
                     "ACTION": {
-                        "CREATE_CERT": "Konfiguration erstellen",
-                        "DOWNLOAD_CERT": "Konfiguration herunterladen",
-                        "DOWNLOAD_CERT_XS": "Konfig herunterladen",
-                        "REVOKE_CERT": "Konfiguration zurückziehen"
+                        "CREATE_CONF": "Konfiguration erstellen",
+                        "DOWNLOAD_CONF": "Konfiguration herunterladen",
+                        "DOWNLOAD_CONF_XS": "Konfig herunterladen",
+                        "REVOKE_CONF": "Konfiguration zurückziehen"
                     },
                     "HINT_LINK": "eBlocker Dashboard",
                     "HINT_POST": "auf deinem mobilen Gerät, um die Konfiguration direkt in deiner VPN App zu installieren!",
@@ -604,7 +604,7 @@
                     "OK": "Speichern"
                 }
             },
-            "ADD_CERTIFICATE": {
+            "ADD_CONFIGURATION": {
                 "ACTION": {
                     "OK": "Ok"
                 },
@@ -1286,7 +1286,7 @@
                 "TEXT": "Möchtest du die PIN entfernen?",
                 "TITLE": "PIN entfernen"
             },
-            "REVOKE_CERTIFICATE": {
+            "REVOKE_CONFIGURATION": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
                     "OK": "Konfiguration löschen"
@@ -3309,7 +3309,7 @@
                         "CUSTOM": "Regelmäßiger Ping zu anderem Host",
                         "DISABLED": "Deaktiviert",
                         "EBLOCKER": "Regelmäßiger Ping zu eBlocker",
-                        "OPENVPN_REMOTE": "Regelmäßiger Ping zum VPN-Anbieter"
+                        "PROVIDER_ENDPOINT": "Regelmäßiger Ping zum VPN-Anbieter"
                     },
                     "TARGET": "Ping-Ziel für aktive Überwachung"
                 },
@@ -3340,8 +3340,8 @@
             "HOST_LABEL": "Öffentlicher Domainname oder IP-Adresse deines Routers",
             "LABEL": "eBlocker Mobile",
             "NOTIFICATION": {
-                "CERTIFICATE_CREATED": "Konfiguration erstellt",
-                "CERTIFICATE_REVOKED": "Konfiguration zurückgezogen",
+                "CONFIGURATION_CREATED": "Konfiguration erstellt",
+                "CONFIGURATION_REVOKED": "Konfiguration zurückgezogen",
                 "CONFIRMATION_RESET": "Server wurde zurück gesetzt",
                 "DEVICE_DISABLED": "Das Gerät wurde deaktiviert.",
                 "DEVICE_ENABLED": "Das Gerät wurde aktiviert.",
@@ -3354,16 +3354,16 @@
             "LABEL": "Geräte",
             "TABLE": {
                 "COLUMN": {
-                    "CREATE_CERT": "Konfiguration erstellen",
-                    "DOWNLOAD_CERT": "Konfiguration herunterladen",
+                    "CREATE_CONF": "Konfiguration erstellen",
+                    "DOWNLOAD_CONF": "Konfiguration herunterladen",
                     "IP": "IP-Adresse",
                     "NAME": "Gerätename",
-                    "REVOKE_CERT": "Konfiguration zurückziehen"
+                    "REVOKE_CONF": "Konfiguration zurückziehen"
                 }
             },
             "TOOLTIP": {
-                "HAS_CERT": "Die WireGuard-Konfiguration ist auf diesem Gerät installiert.",
-                "HAS_NO_CERT": "Die WireGuard-Konfiguration ist auf diesem Gerät nicht installiert."
+                "HAS_CONF": "Die WireGuard-Konfiguration ist auf diesem Gerät installiert.",
+                "HAS_NO_CONF": "Die WireGuard-Konfiguration ist auf diesem Gerät nicht installiert."
             }
         },
         "VPN_HOME_STATUS": {

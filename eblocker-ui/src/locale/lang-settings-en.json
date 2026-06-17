@@ -383,8 +383,8 @@
             "WARNING": {
                 "LICENSE_CRYPTO_FAILURE": "License keys cannot be decrypted.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "HTTPS keys cannot be restored.",
-                "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "VPN keys for eBlocker Mobile cannot be restored.",
-                "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "VPN keys for anonymization cannot be restored.",
+                "NO_PASSWORD_WIREGUARD_SERVER_NOT_IMPORTED": "VPN keys for eBlocker Mobile cannot be restored.",
+                "NO_PASSWORD_VPN_CLIENTS_NOT_IMPORTED": "VPN keys for anonymization cannot be restored.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed."
             }
@@ -525,10 +525,10 @@
                 },
                 "MOBILE" : {
                     "ACTION" : {
-                        "CREATE_CERT" : "Create configuration",
-                        "DOWNLOAD_CERT" : "Download configuration",
-                        "DOWNLOAD_CERT_XS" : "Download config",
-                        "REVOKE_CERT" : "Revoke configuration"
+                        "CREATE_CONF" : "Create configuration",
+                        "DOWNLOAD_CONF" : "Download configuration",
+                        "DOWNLOAD_CONF_XS" : "Download config",
+                        "REVOKE_CONF" : "Revoke configuration"
                     },
                     "HINT_LINK" : "eBlocker Dashboard",
                     "HINT_POST" : "on the mobile device to install the configuration directly into your VPN app!",
@@ -604,7 +604,7 @@
                     "OK" : "Save"
                 }
             },
-            "ADD_CERTIFICATE" : {
+            "ADD_CONFIGURATION" : {
                 "ACTION" : {
                     "OK" : "Ok"
                 },
@@ -1286,7 +1286,7 @@
                 "TEXT" : "Do you want to remove the PIN?",
                 "TITLE" : "Remove PIN"
             },
-            "REVOKE_CERTIFICATE" : {
+            "REVOKE_CONFIGURATION" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Revoke configuration"
@@ -3309,7 +3309,7 @@
                         "CUSTOM" : "Regularly ping custom host",
                         "DISABLED" : "Disabled",
                         "EBLOCKER" : "Regularly ping eBlocker",
-                        "OPENVPN_REMOTE" : "Regularly ping VPN provider"
+                        "PROVIDER_ENDPOINT" : "Regularly ping VPN provider"
                     },
                     "TARGET" : "Ping destination for active monitoring"
                 },
@@ -3340,8 +3340,8 @@
             "HOST_LABEL" : "Public domain or IP address of your router",
             "LABEL" : "eBlocker Mobile",
             "NOTIFICATION" : {
-                "CERTIFICATE_CREATED" : "Configuration created",
-                "CERTIFICATE_REVOKED" : "Configuration revoked",
+                "CONFIGURATION_CREATED" : "Configuration created",
+                "CONFIGURATION_REVOKED" : "Configuration revoked",
                 "CONFIRMATION_RESET" : "Server has been reset",
                 "DEVICE_DISABLED" : "Device has been disabled.",
                 "DEVICE_ENABLED" : "Device has been activated.",
@@ -3354,16 +3354,16 @@
             "LABEL" : "Devices",
             "TABLE" : {
                 "COLUMN" : {
-                    "CREATE_CERT" : "Create configuration",
-                    "DOWNLOAD_CERT" : "Download configuration",
+                    "CREATE_CONF" : "Create configuration",
+                    "DOWNLOAD_CONF" : "Download configuration",
                     "IP" : "IP address",
                     "NAME" : "Name of device",
-                    "REVOKE_CERT" : "Revoke configuration"
+                    "REVOKE_CONF" : "Revoke configuration"
                 }
             },
             "TOOLTIP" : {
-                "HAS_CERT" : "WireGuard configuration is installed on this device.",
-                "HAS_NO_CERT" : "WireGuard configuration is not installed on this device."
+                "HAS_CONF" : "WireGuard configuration is installed on this device.",
+                "HAS_NO_CONF" : "WireGuard configuration is not installed on this device."
             }
         },
         "VPN_HOME_STATUS" : {

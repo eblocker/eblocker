@@ -51,7 +51,7 @@ public class SchemaMigrationVersion29Test {
     }
 
     @Test
-    public void test_openVpnInUse() {
+    public void test_wireGuardInUse() {
         Mockito.when(dataSource.getWireGuardMobileServerState()).thenReturn(true);
         migration.migrate();
 
@@ -60,7 +60,7 @@ public class SchemaMigrationVersion29Test {
     }
 
     @Test
-    public void test_openVpnNotInUse() {
+    public void test_wireGuardNotInUse() {
         Mockito.when(dataSource.getWireGuardMobileServerState()).thenReturn(false);
         migration.migrate();
 

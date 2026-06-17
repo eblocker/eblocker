@@ -486,8 +486,8 @@
                 "RECOMMENDED_APPS" : "https://www.wireguard.com/install/"
             },
             "NOTIFICATION" : {
-                "CERTIFICATE_CREATED" : "Configuration created",
-                "CERTIFICATE_REVOKED" : "Configuration revoked",
+                "CONFIGURATION_CREATED" : "Configuration created",
+                "CONFIGURATION_REVOKED" : "Configuration revoked",
                 "CONFIRMATION_RESET" : "Server has been reset",
                 "HOST_CHANGED" : "Public eBlocker hostname has been changed. You have to download the client configuration and import it to your device in order to apply the new settings.",
                 "HOST_MISSING" : "Please enter the public hostname or IP address of your router. The eBlocker must be accessible from the Internet.",
@@ -886,7 +886,7 @@
                 "IMAGE_1": "en/firefox-01-EN.png",
                 "STEP_1" : "Click on {{'WIZARD.HTTPS.ACTION.DOWNLOAD_CERT' | translate}} to download the eBlocker certificate for Firefox",
                 "STEP_2" : "Save the file to disk",
-                "STEP_3" : "Open the Certificate Manager at Firefox > „Options“ > „Privacy & Security“ > „Configurations“ > „View Configurations...“",
+                "STEP_3" : "Open the Certificate Manager at Firefox > „Options“ > „Privacy & Security“ > „Certificates“ > „View Certificates...“",
                 "STEP_4" : "Select the tab <b>Authorities</b> und klick  „Import...“",
                 "STEP_5" : "Select the previously saved certificate file",
                 "STEP_6" : "In the following dialog select „Trust this CA to identify websites“",

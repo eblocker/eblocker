@@ -32,7 +32,7 @@ export default function UpdateDialogController(logger, $mdDialog, dialog, VpnSer
     vm.save = function() {
         const profile = vm.dialog.profile;
         profile.temporary = false;
-        profile.keepAliveMode = vm.dialog.profile.keepAlivePingEnabled ? 'OPENVPN_REMOTE' : 'DISABLED';
+        profile.keepAliveMode = vm.dialog.profile.keepAlivePingEnabled ? 'PROVIDER_ENDPOINT' : 'DISABLED';
         VpnService.updateProfile(profile).then(function(response) {
             $mdDialog.hide(response.data);
         });

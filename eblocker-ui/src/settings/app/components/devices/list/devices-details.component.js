@@ -156,7 +156,7 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
                 getUserAgentList();
             }
 
-            vm.device.hasCertificate = angular.isDefined(vm.vpnHomeConfigurations) &&
+            vm.device.hasMobileConfiguration = angular.isDefined(vm.vpnHomeConfigurations) &&
                 vm.vpnHomeConfigurations.indexOf(vm.device.id) > -1;
 
             DeviceService.setDisplayValues(vm.device);
@@ -880,9 +880,9 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
 
     function onChangeMobile(event, device) {
         if (vm.tmpMobileState === false) {
-            DialogService.revokeCertificateInfo(event, onChangeDisable, cancel, device);
+            DialogService.revokeConfigurationInfo(event, onChangeDisable, cancel, device);
         } else {
-            DialogService.addCertificateInfo(event, onChangeMobileEnable, device);
+            DialogService.addConfigurationInfo(event, onChangeMobileEnable, device);
         }
     }
 

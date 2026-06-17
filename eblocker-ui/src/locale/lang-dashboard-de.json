@@ -486,8 +486,8 @@
                 "RECOMMENDED_APPS": "https://www.wireguard.com/install/"
             },
             "NOTIFICATION": {
-                "CERTIFICATE_CREATED": "Konfiguration erstellt",
-                "CERTIFICATE_REVOKED": "Konfiguration zurückgezogen",
+                "CONFIGURATION_CREATED": "Konfiguration erstellt",
+                "CONFIGURATION_REVOKED": "Konfiguration zurückgezogen",
                 "CONFIRMATION_RESET": "Server wurde zurück gesetzt",
                 "HOST_CHANGED": "Der öffentliche eBlocker Hostname wurde geändert. Du musst die Client-Konfiguration erneut herunterladen und auf deinem Gerät importieren, damit die Änderung wirksam wird.",
                 "HOST_MISSING": "Bitte trage einen Hostnamen oder eine IP-Adresse ein, unter der dein Router vom Internet aus erreichbar ist.",

@@ -42,20 +42,12 @@
                 </div>
                 <div>
                     <md-button class="md-raised md-primary md-accent"
-                               ng-disabled="vm.vpnHomeStatus.isFirstStart || vm.isCreatingCertificate || vm.isDownloadingConf"
+                               ng-disabled="vm.vpnHomeStatus.isFirstStart || vm.isDownloadingConf"
                                ng-click="vm.downloadClientConf(vm.device)"
                                aria-label="{{ 'MOBILE.CARD.ACTION.DOWNLOAD' | translate }}">
                         {{'MOBILE.CARD.ACTION.DOWNLOAD' | translate}}
                     </md-button>
                 </div>
-                <!--<div>-->
-                    <!--<md-button class="md-raised eb-delete-button"-->
-                               <!--ng-disabled="!vm.device.hasCertificate || vm.vpnHomeStatus.isFirstStart || vm.isRevokingCertificate"-->
-                               <!--ng-click="vm.clickRevokeCert($event, vm.device)"-->
-                               <!--aria-label="{{ 'MOBILE.CARD.ACTION.REVOKE' | translate }}">-->
-                        <!--{{'MOBILE.CARD.ACTION.REVOKE' | translate}}-->
-                    <!--</md-button>-->
-                <!--</div>-->
             </div>
 
             <p translate="MOBILE.CARD.LABEL_STEP_3" style="margin-bottom: 0;"></p>

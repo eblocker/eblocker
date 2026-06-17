@@ -36,7 +36,7 @@ function Controller(logger, $interval, $q, StateService, STATES, ArrayUtilsServi
     vm.editUserName = editUserName;
     vm.editPassword = editPassword;
     vm.editKeepAlivePingTarget = editKeepAlivePingTarget;
-    vm.connected = true;
+    vm.connected = false;
 
     vm.backState = STATES.VPN_CONNECT;
     vm.stateParams = $stateParams;
@@ -61,6 +61,8 @@ function Controller(logger, $interval, $q, StateService, STATES, ArrayUtilsServi
     };
 
     function updateDisplayData(profile) {
+        profile.loginCredentials = angular.isObject(profile.loginCredentials) ? profile.loginCredentials : {};
+
         vm.profileName = {
             value: profile.name
         };
@@ -244,8 +246,17 @@ function Controller(logger, $interval, $q, StateService, STATES, ArrayUtilsServi
 
     function getVpnStatus() {
         VpnService.getVpnStatus(vm.profile).then(function success(response) {
-            vm.connected = response.data.active;
+            vm.connected = hasAssignedDevices(response.data);
+        }, function error() {
+            vm.connected = false;
         });
+    }
+
+    function hasAssignedDevices(status) {
+        if (!angular.isObject(status) || !angular.isArray(status.devices)) {
+            return false;
+        }
+        return status.devices.length > 0;
     }
 
     function editProfile(profile) {

@@ -121,4 +121,60 @@ describe('App settings; VPN connect details component controller', function() {
         expect(VpnService.getProfileConfig).not.toHaveBeenCalled();
         expect(DialogService.vpnConnectionEdit).toHaveBeenCalledWith(dialog, true, profile, null);
     });
+
+    it('does not show an unused WireGuard profile as connected before status has loaded', function() {
+        const deferred = $q.defer();
+        const profile = {id: 7, name: 'Cloudflare'};
+        VpnService.getVpnStatus.and.returnValue(deferred.promise);
+        ctrl = $componentController('vpnConnectDetailsComponent', {
+            $stateParams: {param: {entry: profile}}
+        }, {});
+
+        ctrl.$onInit();
+
+        expect(ctrl.connected).toBe(false);
+        expect(ctrl.profileUsername.value).toBeUndefined();
+        expect(ctrl.profilePasswordSet.value).toBeUndefined();
+        ctrl.$onDestroy();
+    });
+
+    it('only reports profile usage when the VPN status contains assigned devices', function() {
+        const profile = {id: 7, name: 'Cloudflare', loginCredentials: {}};
+        VpnService.getVpnStatus.and.returnValue($q.resolve({
+            data: {
+                active: true,
+                up: true,
+                devices: []
+            }
+        }));
+        ctrl = $componentController('vpnConnectDetailsComponent', {
+            $stateParams: {param: {entry: profile}}
+        }, {});
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        expect(ctrl.connected).toBe(false);
+        ctrl.$onDestroy();
+    });
+
+    it('reports profile usage when at least one device is assigned', function() {
+        const profile = {id: 7, name: 'Cloudflare', loginCredentials: {}};
+        VpnService.getVpnStatus.and.returnValue($q.resolve({
+            data: {
+                active: true,
+                up: true,
+                devices: ['device:0123456789ab']
+            }
+        }));
+        ctrl = $componentController('vpnConnectDetailsComponent', {
+            $stateParams: {param: {entry: profile}}
+        }, {});
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        expect(ctrl.connected).toBe(true);
+        ctrl.$onDestroy();
+    });
 });

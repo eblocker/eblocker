@@ -431,8 +431,8 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             targetEvent: event,
             locals: {
                 msgKeys: {
-                    title: 'ADMINCONSOLE.DIALOG.RESET_OPEN_VPN_CONFIRM.TITLE',
-                    text: 'ADMINCONSOLE.DIALOG.RESET_OPEN_VPN_CONFIRM.TEXT',
+                    title: 'ADMINCONSOLE.DIALOG.RESET_WIREGUARD_CONFIRM.TITLE',
+                    text: 'ADMINCONSOLE.DIALOG.RESET_WIREGUARD_CONFIRM.TEXT',
                     okButton: 'ADMINCONSOLE.DIALOG.DELETE_CONFIRM.ACTION.OK',
                     cancelButton: 'ADMINCONSOLE.DIALOG.DELETE_CONFIRM.ACTION.CANCEL'
                 },

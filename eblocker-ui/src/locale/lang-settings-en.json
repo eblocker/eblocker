@@ -1270,7 +1270,7 @@
                 "TEXT" : "Are you sure to reset this device?",
                 "TITLE" : "Reset device"
             },
-            "RESET_OPEN_VPN_CONFIRM" : {
+            "RESET_WIREGUARD_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Reset"

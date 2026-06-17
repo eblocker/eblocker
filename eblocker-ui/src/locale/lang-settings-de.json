@@ -1270,7 +1270,7 @@
                 "TEXT": "Möchtest du das Gerät wirklich zurücksetzen?",
                 "TITLE": "Gerät zurücksetzen"
             },
-            "RESET_OPEN_VPN_CONFIRM": {
+            "RESET_WIREGUARD_CONFIRM": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
                     "OK": "zurücksetzen"

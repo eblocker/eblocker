@@ -225,7 +225,7 @@ describe('App controlbar; Component: IP anon', function() {
     });
 
     describe('toggleVpn', function() {
-        it('should open VPN dialog', function () {
+        it('should show VPN dialog', function () {
             /* jshint ignore:start */
             spyOn($mdDialog, 'show').and.callThrough();
             ctrl.torConfig.sessionUseTor = false;

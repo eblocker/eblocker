@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -70,6 +71,7 @@ public class WireGuardService {
     private final String clearClientRouteScript;
     private final String keepAliveTarget;
     private final Map<Integer, ClientState> clientStatesByProfileId = new HashMap<>();
+    private final Set<Integer> startedProfileIds = new HashSet<>();
 
     @Inject
     public WireGuardService(ScriptRunner scriptRunner,
@@ -185,12 +187,14 @@ public class WireGuardService {
         deleteProfile(id);
     }
 
-    public void startVpn(VpnProfile profile) {
+    public synchronized void startVpn(VpnProfile profile) {
         runScript(startInstanceScript, profile);
+        startedProfileIds.add(profile.getId());
     }
 
-    public void stopVpn(VpnProfile profile) {
+    public synchronized void stopVpn(VpnProfile profile) {
         runScript(stopInstanceScript, profile);
+        startedProfileIds.remove(profile.getId());
     }
 
     public synchronized void routeClientThroughVpnTunnel(Device device, VpnProfile vpnProfile) {
@@ -240,7 +244,8 @@ public class WireGuardService {
     public synchronized VpnStatus getStatus(VpnProfile profile) {
         ClientState state = clientStatesByProfileId.get(profile.getId());
         if (state == null) {
-            return createStatus(profile.getId(), false, false, Collections.emptySet());
+            boolean started = startedProfileIds.contains(profile.getId());
+            return createStatus(profile.getId(), started, started, Collections.emptySet());
         }
         return createStatus(state.profile.getId(), state.active, state.up, state.devicesById.keySet());
     }

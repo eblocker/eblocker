@@ -38,7 +38,6 @@ public class WireGuardRuntimeConfigurationRendererTest {
         Assert.assertEquals("[Interface]\n" +
                 "PrivateKey = private=\n" +
                 "Address = 10.66.66.2/32, fd42:42:42::2/128\n" +
-                "DNS = 10.66.66.1, fd42:42:42::1\n" +
                 "MTU = 1420\n" +
                 "Table = off\n" +
                 "\n" +

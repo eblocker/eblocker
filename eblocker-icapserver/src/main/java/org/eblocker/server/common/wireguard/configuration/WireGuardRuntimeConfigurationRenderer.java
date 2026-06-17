@@ -26,7 +26,6 @@ public class WireGuardRuntimeConfigurationRenderer {
         builder.append("[Interface]\n");
         append(builder, "PrivateKey", configuration.getPrivateKey());
         appendList(builder, "Address", configuration.getAddresses());
-        appendList(builder, "DNS", configuration.getDnsServers());
         append(builder, "MTU", configuration.getMtu());
         builder.append("Table = off\n");
 

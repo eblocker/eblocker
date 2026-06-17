@@ -189,8 +189,10 @@ public class WireGuardServiceTest {
         Assert.assertNotNull(parsed);
         Assert.assertEquals(config, profileFiles.readImportedConfig(7));
         Assert.assertEquals("private=", profileFiles.readParsedConfiguration(7).getPrivateKey());
+        Assert.assertEquals(Collections.singletonList("10.0.0.1"), profileFiles.readParsedConfiguration(7).getDnsServers());
         String runtimeConfig = Files.readString(Path.of(profileFiles.getRuntimeConfig(7)), StandardCharsets.UTF_8);
         Assert.assertTrue(runtimeConfig.contains("Table = off\n"));
+        Assert.assertFalse(runtimeConfig.contains("DNS ="));
         Assert.assertTrue(runtimeConfig.contains("Endpoint = vpn.example.net:51820\n"));
         ArgumentCaptor<WireGuardProfile> profileCaptor = ArgumentCaptor.forClass(WireGuardProfile.class);
         Mockito.verify(dataSource).save(profileCaptor.capture(), Mockito.eq(7));
@@ -214,7 +216,17 @@ public class WireGuardServiceTest {
         Mockito.when(dataSource.get(WireGuardProfile.class, 7)).thenReturn(profile);
 
         service.startVpn(profile);
+
+        VpnStatus startedStatus = service.getStatus(profile);
+        Assert.assertTrue(startedStatus.isActive());
+        Assert.assertTrue(startedStatus.isUp());
+        Assert.assertTrue(startedStatus.getDevices().isEmpty());
+
         service.stopVpn(profile);
+
+        VpnStatus stoppedStatus = service.getStatus(profile);
+        Assert.assertFalse(stoppedStatus.isActive());
+        Assert.assertFalse(stoppedStatus.isUp());
 
         Mockito.verify(scriptRunner).runScript("wireguard_start", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));
         Mockito.verify(scriptRunner).runScript("wireguard_down", "7", profileFiles.getRuntimeConfig(7), profileFiles.getLogFile(7));

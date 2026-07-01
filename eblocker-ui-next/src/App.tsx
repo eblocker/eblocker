@@ -1,7 +1,6 @@
 import {
   activityEvents,
   dashboardMetrics,
-  deviceRows,
   familyProfiles,
   getCriticalServiceCount,
   getProtectedDeviceCount,
@@ -16,9 +15,19 @@ import {
   threatPosture,
   topBlockedDomains,
   trafficSeries,
-  type HealthLevel,
-  type ProtectionState
+  type HealthLevel
 } from './domain/dashboard';
+import {
+  deviceCenterCapabilities,
+  deviceCenterEndpoints,
+  deviceCenterRows,
+  deviceDetailTabs,
+  deviceDiscoverySettings,
+  getDeviceCenterTotals,
+  getSelectedDeviceDetail,
+  type DeviceConnectionState,
+  type DeviceProtectionMode
+} from './domain/deviceCenter';
 import {
   getLegacyParityTotals,
   legacyParityGroups,
@@ -52,10 +61,15 @@ function healthLabel(status: HealthLevel): string {
   return t('status.offline');
 }
 
-function protectionLabel(status: ProtectionState): string {
+function protectionLabel(status: DeviceProtectionMode): string {
   if (status === 'protected') return t('status.protected');
   if (status === 'learning') return t('status.learning');
-  return t('status.paused');
+  if (status === 'paused') return t('status.paused');
+  return t('status.disabled');
+}
+
+function connectionLabel(status: DeviceConnectionState): string {
+  return status === 'online' ? t('status.online') : t('status.offline');
 }
 
 function formatNumber(value: number): string {
@@ -69,6 +83,8 @@ function parityStageClass(stage: LegacyParityStage): string {
 function App() {
   const topDomain = getTopBlockedDomain();
   const parityTotals = getLegacyParityTotals();
+  const deviceTotals = getDeviceCenterTotals();
+  const selectedDevice = getSelectedDeviceDetail();
 
   return (
     <div className="app-frame">
@@ -367,36 +383,132 @@ function App() {
           </article>
         </section>
 
-        <section className="panel" id="devices">
-          <div className="panel-header">
+        <section className="panel device-center-panel" id="devices">
+          <div className="panel-header device-center-header">
             <div>
+              <span className="mini-label">{t('label.deviceLegacyModern')}</span>
               <h2>{t('section.devices.title')}</h2>
               <p>{t('section.devices.description')}</p>
             </div>
-            <div className="filter-pills">
-              <span>{t('status.protected')}</span>
-              <span>{t('status.learning')}</span>
-              <span>{t('status.paused')}</span>
+            <div className="device-summary-grid">
+              <span><b>{deviceTotals.total}</b> Geräte</span>
+              <span><b>{deviceTotals.protected}</b> geschützt</span>
+              <span><b>{deviceTotals.offline}</b> offline</span>
+              <span><b>{deviceTotals.deletable}</b> löschbar</span>
             </div>
           </div>
-          <div className="device-table" role="table" aria-label={t('section.devices.title')}>
-            <div className="table-row table-head" role="row">
-              <span>{t('table.device')}</span>
-              <span>{t('table.ip')}</span>
-              <span>{t('table.profile')}</span>
-              <span>{t('table.protection')}</span>
-              <span>{t('table.blocked')}</span>
-              <span>{t('table.status')}</span>
-            </div>
-            {deviceRows.map((device) => (
-              <div className="table-row" role="row" key={device.id}>
-                <span className="device-name"><b>{device.name}</b><small>{device.type}</small></span>
-                <span className="mono">{device.ipAddress}</span>
-                <span>{device.profile}</span>
-                <span><em className={`protection-badge ${device.protection}`}>{protectionLabel(device.protection)}</em></span>
-                <span>{formatNumber(device.blockedToday)}</span>
-                <span><em className={`status-chip ${device.status}`}>{healthLabel(device.status)}</em></span>
+
+          <div className="device-center-layout">
+            <article className="device-list-card">
+              <div className="device-list-toolbar">
+                <div>
+                  <strong>Geräteliste</strong>
+                  <small>Alt: `deviceslist` · Suche, Sortierung, aktuelles Gerät, Offline-/No-IP-Auswahl</small>
+                </div>
+                <button className="ghost-button small" type="button">Aktuelles Gerät: {deviceTotals.currentDeviceName}</button>
               </div>
+              <div className="device-modern-table" role="table" aria-label={t('section.devices.title')}>
+                <div className="device-modern-row device-modern-head" role="row">
+                  <span>{t('table.device')}</span>
+                  <span>{t('table.ip')}</span>
+                  <span>{t('table.profile')}</span>
+                  <span>{t('table.protection')}</span>
+                  <span>Flags</span>
+                  <span>{t('table.status')}</span>
+                </div>
+                {deviceCenterRows.map((device) => (
+                  <div className={`device-modern-row ${device.isCurrentDevice ? 'current' : ''}`} role="row" key={device.id}>
+                    <span className="device-name"><b>{device.name}</b><small>{device.vendor} · {device.macAddress}</small></span>
+                    <span className="mono">{device.ipAddresses.length > 0 ? device.ipAddresses.join(' · ') : 'Keine IP'}</span>
+                    <span>{device.assignedProfile}<small>{device.assignedUser}</small></span>
+                    <span><em className={`protection-badge ${device.protectionMode}`}>{protectionLabel(device.protectionMode)}</em></span>
+                    <span className="device-flags">
+                      {device.sslEnabled && <i>HTTPS</i>}
+                      {device.mobileEnabled && <i>Mobile</i>}
+                      {device.vpnActive && <i>VPN</i>}
+                      {device.torActive && <i>Tor</i>}
+                      {device.deletable && <i>Löschbar</i>}
+                    </span>
+                    <span><em className={`status-chip ${device.connectionState}`}>{connectionLabel(device.connectionState)}</em><small>{device.lastSeen}</small></span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <aside className="device-side-stack">
+              <article className="device-discovery-card">
+                <div className="panel-header compact">
+                  <div>
+                    <h3>Discovery & Scan</h3>
+                    <p>Alt: `devicesdiscovery` · Scan-Intervall, manueller Scan und Auto-Aktivierung.</p>
+                  </div>
+                </div>
+                <div className="discovery-grid">
+                  <span><b>{deviceDiscoverySettings.scanIntervalSeconds}s</b> Scan-Intervall</span>
+                  <span><b>{deviceDiscoverySettings.scanningAvailable ? 'Ja' : 'Nein'}</b> Scan verfügbar</span>
+                  <span><b>{deviceDiscoverySettings.autoEnableNewDevices ? 'An' : 'Aus'}</b> Auto-Aktivierung</span>
+                  <span><b>{deviceDiscoverySettings.lastManualScan}</b> letzter Scan</span>
+                </div>
+                <div className="device-action-row">
+                  <button className="primary-button" type="button">Netzwerk scannen</button>
+                  <button className="ghost-button" type="button">Auto-Aktivierung ändern</button>
+                </div>
+              </article>
+
+              <article className="device-api-card">
+                <h3>API-Migration</h3>
+                <p>Jeder alte DeviceService-Endpunkt hat einen neuen `/api/v1/devices`-Zielpfad.</p>
+                <div className="endpoint-list">
+                  {deviceCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={endpoint.id}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacyPath}</code>
+                      <b>→</b>
+                      <code>{endpoint.modernPath}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </aside>
+          </div>
+
+          <div className="device-detail-grid">
+            <article className="device-detail-card">
+              <div className="panel-header compact">
+                <div>
+                  <h3>Details: {selectedDevice.name}</h3>
+                  <p>Alt: `devicedetails` mit Tabs für Gerät, Benutzer, Anonymisierung, Mobile, Filter, HTTPS, Icon und Nachrichten.</p>
+                </div>
+                <span className="status-chip online">{selectedDevice.enabledActions.length} Aktionen</span>
+              </div>
+              <div className="detail-panel-grid">
+                {selectedDevice.detailPanels.map((panel) => (
+                  <div className="detail-panel" key={panel.id}>
+                    <strong>{panel.label}</strong>
+                    <p>{panel.value}</p>
+                    <button className="ghost-button small" type="button">{panel.action}</button>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="device-tabs-card">
+              <h3>Legacy-Tabs abgedeckt</h3>
+              <div className="detail-tab-list">
+                {deviceDetailTabs.map((tab) => (
+                  <div className="detail-tab-row" key={tab.id}>
+                    <strong>{tab.label}</strong>
+                    <span>{tab.modernIntent}</span>
+                    <code>{tab.legacyTemplate}</code>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
+
+          <div className="device-capability-strip">
+            {deviceCenterCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
             ))}
           </div>
         </section>

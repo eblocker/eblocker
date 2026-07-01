@@ -6,7 +6,6 @@ import {
   getProtectedDeviceCount,
   getTopBlockedDomain,
   getTotalBlockedToday,
-  networkCards,
   networkSegments,
   protectionModules,
   quickActions,
@@ -33,6 +32,19 @@ import {
   legacyParityGroups,
   type LegacyParityStage
 } from './domain/legacyParity';
+import {
+  dnsLocalRecords,
+  dnsResolverModes,
+  dnsServerRows,
+  getDnsServerRatingTotals,
+  getNetworkCenterTotals,
+  networkCenterCapabilities,
+  networkCenterEndpoints,
+  networkDhcpServers,
+  networkIpv4Config,
+  networkIpv6Config,
+  networkWizardFlows
+} from './domain/networkCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -85,6 +97,8 @@ function App() {
   const parityTotals = getLegacyParityTotals();
   const deviceTotals = getDeviceCenterTotals();
   const selectedDevice = getSelectedDeviceDetail();
+  const networkTotals = getNetworkCenterTotals();
+  const dnsRatingTotals = getDnsServerRatingTotals();
 
   return (
     <div className="app-frame">
@@ -513,25 +527,169 @@ function App() {
           </div>
         </section>
 
-        <section className="dashboard-grid two">
-          <article className="panel" id="network">
-            <div className="panel-header compact">
-              <div>
-                <h2>{t('section.network.title')}</h2>
-                <p>{t('section.network.description')}</p>
-              </div>
+        <section className="panel network-center-panel" id="network">
+          <div className="panel-header network-center-header">
+            <div>
+              <span className="mini-label">{t('label.networkLegacyModern')}</span>
+              <h2>{t('section.network.title')}</h2>
+              <p>{t('section.network.description')}</p>
             </div>
-            <div className="network-grid">
-              {networkCards.map((card) => (
-                <div className="network-card" key={card.id}>
-                  <span>{card.label}</span>
-                  <strong>{card.value}</strong>
-                  <p>{card.detail}</p>
-                </div>
-              ))}
+            <div className="network-summary-grid" aria-label="Netzwerk/DNS Parity-Übersicht">
+              <span><b>{networkTotals.legacyStates}</b> alte States</span>
+              <span><b>{networkTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{networkTotals.dnsServers}</b> DNS-Server</span>
+              <span><b>{networkTotals.localRecords}</b> lokale Records</span>
             </div>
-          </article>
+          </div>
 
+          <div className="network-center-layout">
+            <div className="network-main-stack">
+              <article className="network-dns-status-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>DNS-Status & Resolver</h3>
+                    <p>Alt: `dnsstatus` mit Schalter, DHCP/Tor/Custom-Modus und Cache-Flush.</p>
+                  </div>
+                  <span className="status-chip online">DNS aktiv</span>
+                </div>
+                <div className="resolver-mode-grid">
+                  {dnsResolverModes.map((mode) => (
+                    <div className={`resolver-mode-card ${mode.id}`} key={mode.id}>
+                      <strong>{mode.label}</strong>
+                      <p>{mode.description}</p>
+                      <code>{mode.legacyTemplate}</code>
+                    </div>
+                  ))}
+                </div>
+                <div className="device-action-row">
+                  <button className="primary-button" type="button">DNS-Cache leeren</button>
+                  <button className="ghost-button" type="button">Zur Custom-Liste</button>
+                  <button className="ghost-button" type="button">Resolver-Modus speichern</button>
+                </div>
+              </article>
+
+              <article className="network-dns-server-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>DNS-Serverliste</h3>
+                    <p>Alt: `dnsserver` mit Suche, Sortierung, Bulk-Löschen, OrderNumber, Stats und Rating.</p>
+                  </div>
+                  <div className="dns-rating-summary">
+                    <span>{dnsRatingTotals.good} gut</span>
+                    <span>{dnsRatingTotals.medium} mittel</span>
+                    <span>{dnsRatingTotals.bad} schlecht</span>
+                  </div>
+                </div>
+                <div className="dns-server-table">
+                  <div className="dns-server-row dns-server-head">
+                    <span>Reihenfolge</span>
+                    <span>Server</span>
+                    <span>Antwortzeit</span>
+                    <span>Zuverlässigkeit</span>
+                    <span>Bewertung</span>
+                  </div>
+                  {dnsServerRows.map((server) => (
+                    <div className={`dns-server-row rating-${server.rating.toLowerCase()}`} key={server.server}>
+                      <span>{server.orderNumber}</span>
+                      <span className="mono">{server.server}</span>
+                      <span>{server.responseTimeRating} · {server.responseTimeAverageMs}ms</span>
+                      <span>{server.reliabilityRating} · {server.valid}/{server.invalid}/{server.timeout}/{server.error}</span>
+                      <span><b>{server.rating}</b></span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="network-record-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Lokale DNS-Records</h3>
+                    <p>Alt: `dnslocal` mit IPv4/IPv6-Spalten, Built-in-Schutz, Suche, Editieren und Bulk-Löschen.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Record hinzufügen</button>
+                </div>
+                <div className="local-record-grid">
+                  {dnsLocalRecords.map((record) => (
+                    <div className={`local-record-row ${record.builtin ? 'builtin' : 'custom'}`} key={record.name}>
+                      <strong>{record.name}</strong>
+                      <span>{record.ipAddress ?? '—'}</span>
+                      <span>{record.ip6Address ?? 'IPv6 leer'}</span>
+                      <em>{record.builtin ? 'Built-in geschützt' : 'editierbar'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="network-side-stack">
+              <article className="network-config-card">
+                <h3>IPv4 & DHCP</h3>
+                <p>Alt: `networksettings` mit Modus, IP, Netzmaske, Gateway, DHCP-Bereich und Lease-Time.</p>
+                <div className="network-kv-grid">
+                  <span><b>{networkIpv4Config.mode}</b> Modus</span>
+                  <span><b>{networkIpv4Config.ipAddress}</b> eBlocker IP</span>
+                  <span><b>{networkIpv4Config.networkMask}</b> Netzmaske</span>
+                  <span><b>{networkIpv4Config.gateway}</b> Gateway</span>
+                  <span><b>{networkIpv4Config.dhcpService}</b> DHCP-Dienst</span>
+                  <span><b>{networkIpv4Config.dhcpRangeFirst}–{networkIpv4Config.dhcpRangeLast}</b> DHCP-Bereich</span>
+                  <span><b>{networkIpv4Config.dhcpLeaseTimeSeconds / 3600}h</b> Lease-Time</span>
+                  <span><b>{networkIpv4Config.advisedNameServer}</b> empfohlener DNS</span>
+                </div>
+                <div className="dhcp-server-strip">
+                  {networkDhcpServers.map((server) => <span key={server}>{server}</span>)}
+                </div>
+              </article>
+
+              <article className="network-config-card ipv6-card">
+                <h3>IPv6</h3>
+                <p>Alt: `networksettingsip6` mit Router Advertisements, Privacy Extensions, lokalen/globalen Adressen und Warnungen.</p>
+                <div className="network-kv-grid two-col">
+                  <span><b>{networkIpv6Config.routerAdvertisementsEnabled ? 'Ein' : 'Aus'}</b> Router Advertisements</span>
+                  <span><b>{networkIpv6Config.privacyExtensionsEnabled ? 'Ein' : 'Aus'}</b> Privacy Extensions</span>
+                  <span><b>{networkIpv6Config.localAddresses.join(', ')}</b> Link-local</span>
+                  <span><b>{networkIpv6Config.globalAddresses.length || 'Keine'}</b> globale Adressen</span>
+                </div>
+                <div className="warning-strip">
+                  {networkIpv6Config.warnings.map((warning) => <span key={warning}>{warning}</span>)}
+                </div>
+              </article>
+
+              <article className="network-api-card">
+                <h3>API-Migration</h3>
+                <p>DnsService und NetworkService werden auf neue `/api/v1`-Ziele gemappt.</p>
+                <div className="endpoint-list compact-endpoints">
+                  {networkCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="network-wizard-grid">
+            {networkWizardFlows.map((flow) => (
+              <article className="network-wizard-card" key={flow.id}>
+                <strong>{flow.title}</strong>
+                <p>{flow.dhcpCheck}</p>
+                <div>{flow.legacySteps.map((step) => <span key={step}>{step}</span>)}</div>
+                <code>{flow.id === 'automatic' ? 'automatic-*.html' : 'individual-*.html + print-settings.template.html'}</code>
+              </article>
+            ))}
+          </div>
+
+          <div className="device-capability-strip">
+            {networkCenterCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
+            ))}
+          </div>
+        </section>
+
+        <section className="dashboard-grid two">
           <article className="panel" id="family">
             <div className="panel-header compact">
               <div>

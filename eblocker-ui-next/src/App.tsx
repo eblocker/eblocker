@@ -113,6 +113,18 @@ import {
   redirectDecisionRows,
   squidMitigationRows
 } from './domain/blockPagesCenter';
+import {
+  activationWizardSteps,
+  adviceOverlayFlows,
+  applianceStatePages,
+  authEntryFlow,
+  getLifecycleCenterTotals,
+  lifecycleCapabilities,
+  lifecycleEndpointMap,
+  lifecycleLegacyStates,
+  lifecycleSurfaceCards,
+  passwordResetFlow
+} from './domain/lifecycleCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -126,6 +138,7 @@ const navItems = [
   { id: 'family', label: t('nav.family'), icon: '◌' },
   { id: 'vpn', label: t('nav.vpn'), icon: '⇆' },
   { id: 'block-pages', label: t('nav.blockPages'), icon: '⛔' },
+  { id: 'lifecycle', label: t('nav.lifecycle'), icon: '↻' },
   { id: 'system', label: t('nav.system'), icon: '⚙' }
 ] as const;
 
@@ -265,6 +278,47 @@ function accessReasonConditionLabel(condition: string): string {
   return labels[condition] ?? condition;
 }
 
+function lifecycleActionLabel(action: string): string {
+  const labels: Record<string, string> = {
+    'resolve locale': 'Locale laden',
+    'resolve device': 'Gerät laden',
+    'resolve product info': 'Produktinfo laden',
+    'loading flag': 'Ladezustand setzen',
+    'AutoClose countdown': 'AutoClose-Countdown',
+    'toggle welcome/bookmark flags': 'Welcome/Bookmark-Flags umschalten',
+    'go to dashboard': 'Dashboard öffnen',
+    'close overlay': 'Overlay schließen',
+    'open license page': 'Lizenzseite öffnen',
+    'open purchase URL': 'Kaufseite öffnen',
+    'save remind-later selection': 'Erinnerungsauswahl speichern',
+    'postMessage close overlay': 'Overlay per postMessage schließen'
+  };
+  return labels[action] ?? action;
+}
+
+function lifecycleTransitionLabel(value: string): string {
+  const labels: Record<string, string> = {
+    'RUNNING/OK after >3 checks → auth/dashboard/setup': 'RUNNING/OK nach >3 Prüfungen → Auth/Dashboard/Setup',
+    'stable non-BOOTING/RESTARTING/ERROR for >2 checks → standby': 'Stabiler Nicht-Booting-Status nach >2 Prüfungen → Standby',
+    'non-UPDATING for >2 checks → standby with reloadAfterBoot': 'Nicht-UPDATING nach >2 Prüfungen → Standby mit Reload nach Boot',
+    'non-SHUTTING_DOWN for >2 checks → standby': 'Nicht-SHUTTING_DOWN nach >2 Prüfungen → Standby',
+    'DOWN/OFF → standby': 'DOWN/OFF → Standby',
+    'loop threshold → standby': 'Schleifen-Grenze → Standby'
+  };
+  return labels[value] ?? value;
+}
+
+function lifecycleThresholdLabel(value: string): string {
+  const labels: Record<string, string> = {
+    'shutdown 120s': 'Shutdown 120s',
+    'reboot 600s': 'Reboot 600s',
+    'reboot hint countdown 30s': 'Reboot-Hinweis 30s',
+    'stable-state timeout 2 checks': 'Stabilitätsgrenze 2 Prüfungen',
+    'escape loop after 120 checks': 'Escape nach 120 Prüfungen'
+  };
+  return labels[value] ?? value;
+}
+
 function recordingColumnLabel(column: string): string {
   const labels: Record<string, string> = {
     domain: 'Domain',
@@ -304,6 +358,7 @@ function App() {
   const vpnTotals = getVpnMobileCenterTotals();
   const systemAdminTotals = getSystemAdminCenterTotals();
   const blockPageTotals = getBlockPageCenterTotals();
+  const lifecycleTotals = getLifecycleCenterTotals();
 
   return (
     <div className="app-frame">
@@ -1555,6 +1610,132 @@ function App() {
 
           <div className="device-capability-strip">
             {blockPageCapabilities.map((capability) => <span key={capability}>{capability}</span>)}
+          </div>
+        </section>
+
+        <section className="panel lifecycle-panel" id="lifecycle">
+          <div className="panel-header lifecycle-header">
+            <div>
+              <span className="mini-label">{t('label.lifecycleLegacyModern')}</span>
+              <h2>{t('section.lifecycle.title')}</h2>
+              <p>{t('section.lifecycle.description')}</p>
+            </div>
+            <div className="lifecycle-summary-grid" aria-label="Lifecycle Parity-Übersicht">
+              <span><b>{lifecycleTotals.legacyStates}</b> alte States</span>
+              <span><b>{lifecycleTotals.surfaces}</b> Oberflächen</span>
+              <span><b>{lifecycleTotals.activationSteps}</b> Wizard-Schritte</span>
+              <span><b>{lifecycleTotals.endpoints}</b> Endpunkte</span>
+            </div>
+          </div>
+
+          <div className="lifecycle-layout">
+            <div className="lifecycle-main-stack">
+              <article className="lifecycle-surface-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Fünf moderne Lifecycle-Oberflächen</h3>
+                    <p>Alt: 16 States aus Settings- und Advice-App. Neu: Auth/Login/Reset, Aktivierung, Appliance-Pending, Lizenz/Splash/Session und Advice-Overlays.</p>
+                  </div>
+                  <span className="status-chip online">{lifecycleTotals.surfaces} Flächen</span>
+                </div>
+                <div className="lifecycle-surface-grid">
+                  {lifecycleSurfaceCards.map((card) => (
+                    <span key={card.key}><b>{card.title}</b>{card.states.join(' · ')}<small>{card.summary}</small></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="lifecycle-auth-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Auth, Login & Passwort-Reset</h3>
+                    <p>`auth`, `login`, `resetpassword` und `expired`: Token laden/erneuern, Login-Fehler zeigen, Workflow fortsetzen und Reset über Reboot persistent halten.</p>
+                  </div>
+                  <span className="status-chip warning">{authEntryFlow.errorStates.length} Fehler</span>
+                </div>
+                <div className="lifecycle-flow-grid">
+                  {authEntryFlow.steps.map((step) => <span key={step.key}><b>{step.label}</b>{step.key}</span>)}
+                </div>
+                <div className="reset-flow-strip">
+                  {passwordResetFlow.steps.map((step) => <span key={step.key}>{step.label}</span>)}
+                </div>
+                <div className="error-chip-strip">
+                  {passwordResetFlow.failureReasons.map((reason) => <span key={reason}>{reason}</span>)}
+                </div>
+              </article>
+
+              <article className="activation-wizard-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Aktivierungswizard</h3>
+                    <p>Willkommen, AGB, Sprache/Zeitzone, Gerät, Auto-Enable und Lizenz bleiben in alter Reihenfolge mit Guards und Service-Abhängigkeiten sichtbar.</p>
+                  </div>
+                  <span className="status-chip online">{lifecycleTotals.activationSteps} Schritte</span>
+                </div>
+                <div className="activation-step-grid">
+                  {activationWizardSteps.map((step, index) => (
+                    <span key={step.key}><b>{index + 1}. {step.label}</b>{step.guard}<small>{step.services.join(' · ')}</small></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="appliance-pages-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Appliance-Statusseiten</h3>
+                    <p>Standby, Booting, Updating, Shutdown und Factory-Reset bleiben echte Statusseiten statt versteckter Polling-Logik.</p>
+                  </div>
+                  <span className="status-chip warning">{lifecycleTotals.pendingPages} Seiten</span>
+                </div>
+                <div className="appliance-page-grid">
+                  {applianceStatePages.map((page) => (
+                    <span className={`appliance-page-tile ${page.severity}`} key={page.legacyState}>
+                      <b>{page.title}</b>{page.legacyState}
+                      <small>{page.executionStates.join(' · ')}</small>
+                      <em>{lifecycleTransitionLabel(page.transitions[0])}</em>
+                      <em>{page.thresholds.map(lifecycleThresholdLabel).join(' · ')}</em>
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="lifecycle-side-stack">
+              <article className="legacy-state-card">
+                <h3>Legacy-State-Abdeckung</h3>
+                <div className="legacy-state-grid">
+                  {lifecycleLegacyStates.map((state) => <span key={`${state.module}-${state.stateName}`}><b>{state.stateName}</b>{state.component}<small>{state.modernSurface}</small></span>)}
+                </div>
+              </article>
+
+              <article className="advice-flow-card">
+                <h3>Advice Welcome & Reminder</h3>
+                <div className="advice-flow-grid">
+                  {adviceOverlayFlows.map((flow) => (
+                    <span key={flow.legacyState}><b>{flow.title}</b>{flow.actions.map(lifecycleActionLabel).join(' · ')}<small>{flow.phaseKeys.length ? flow.phaseKeys.join(' · ') : flow.legacyState}</small></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="lifecycle-api-card">
+                <h3>API-Migration</h3>
+                <p>Authentication, PasswordReset, Settings/Timezone, Setup/TOS, Registration, SystemStatus, Updates, CustomerInfo und Advice als `/api/v1/lifecycle`-Ziele.</p>
+                <div className="endpoint-list lifecycle-endpoints">
+                  {lifecycleEndpointMap.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {lifecycleCapabilities.map((capability) => <span key={capability}>{capability}</span>)}
           </div>
         </section>
 

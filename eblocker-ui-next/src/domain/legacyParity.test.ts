@@ -30,7 +30,10 @@ describe('legacy AngularJS to modern UI parity matrix', () => {
       'protection-privacy',
       'network-dns'
     ]);
-    expect(getGroupsByStage('api-needed').length).toBeGreaterThanOrEqual(4);
+    expect(getGroupsByStage('api-needed')).toHaveLength(0);
+    expect(getGroupsByStage('mapped')).toHaveLength(0);
+    expect(getGroupsByStage('prototype')).toHaveLength(0);
+    expect(getGroupsByStage('ready')).toHaveLength(10);
   });
 
   it('provides summary totals for the migration dashboard', () => {
@@ -38,9 +41,10 @@ describe('legacy AngularJS to modern UI parity matrix', () => {
       totalStates: LEGACY_UI_STATE_COUNT,
       mappedStates: LEGACY_UI_STATE_COUNT,
       coveragePercent: 100,
-      prototypeGroups: 3,
-      apiNeededGroups: 4,
-      mappedOnlyGroups: 3
+      prototypeGroups: 0,
+      apiNeededGroups: 0,
+      mappedOnlyGroups: 0,
+      readyGroups: 10
     });
   });
 });

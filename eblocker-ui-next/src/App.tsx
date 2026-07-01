@@ -19,12 +19,18 @@ import {
   type HealthLevel,
   type ProtectionState
 } from './domain/dashboard';
+import {
+  getLegacyParityTotals,
+  legacyParityGroups,
+  type LegacyParityStage
+} from './domain/legacyParity';
 import { t } from './i18n/messages';
 import './App.css';
 
 const navItems = [
   { id: 'dashboard', label: t('nav.dashboard'), icon: '⌁' },
   { id: 'devices', label: t('nav.devices'), icon: '◈' },
+  { id: 'legacy-parity', label: t('nav.parity'), icon: '⇄' },
   { id: 'protection', label: t('nav.protection'), icon: '◆' },
   { id: 'network', label: t('nav.network'), icon: '◎' },
   { id: 'family', label: t('nav.family'), icon: '◌' },
@@ -56,8 +62,13 @@ function formatNumber(value: number): string {
   return value.toLocaleString('de-DE');
 }
 
+function parityStageClass(stage: LegacyParityStage): string {
+  return `stage-${stage}`;
+}
+
 function App() {
   const topDomain = getTopBlockedDomain();
+  const parityTotals = getLegacyParityTotals();
 
   return (
     <div className="app-frame">
@@ -114,6 +125,40 @@ function App() {
             <span>{t('app.release')}</span>
             <strong>{getProtectedDeviceCount()} geschützt</strong>
             <small>{formatNumber(getTotalBlockedToday())} blockiert</small>
+          </div>
+        </section>
+
+        <section className="panel legacy-parity-panel" id="legacy-parity">
+          <div className="panel-header parity-header">
+            <div>
+              <span className="mini-label">{t('label.legacyModern')}</span>
+              <h2>{t('section.parity.title')}</h2>
+              <p>{t('section.parity.description')}</p>
+            </div>
+            <div className="parity-scoreboard">
+              <span><b>{parityTotals.totalStates}</b> {t('label.legacyStates')}</span>
+              <span><b>{parityTotals.mappedStates}</b> {t('label.mapped')}</span>
+              <span><b>{parityTotals.coveragePercent}%</b> {t('label.parity')}</span>
+            </div>
+          </div>
+          <div className="parity-groups">
+            {legacyParityGroups.map((group) => (
+              <article className={`parity-card ${parityStageClass(group.stage)} priority-${group.priority}`} key={group.id}>
+                <div className="parity-card-top">
+                  <div>
+                    <strong>{group.title}</strong>
+                    <small>{group.legacyModules.join(' · ')}</small>
+                  </div>
+                  <span>{group.legacyStateNames.length} {t('label.legacyStates')}</span>
+                </div>
+                <p className="legacy-copy">{t('label.old')}: {group.legacyDescription}</p>
+                <p className="modern-copy">{t('label.new')}: {group.modernCoverage}</p>
+                <div className="parity-card-footer">
+                  <em>{group.stageLabel}</em>
+                  <code>{group.targetSurfaces.join(' · ')}</code>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 

@@ -7,7 +7,6 @@ import {
   getTopBlockedDomain,
   getTotalBlockedToday,
   networkSegments,
-  protectionModules,
   quickActions,
   recommendations,
   serviceHealth,
@@ -45,6 +44,18 @@ import {
   networkIpv6Config,
   networkWizardFlows
 } from './domain/networkCenter';
+import {
+  advancedPrivacySettings,
+  analysisRecorder,
+  doctorProbeRows,
+  filterListRows,
+  getBlockedProtectionTotal,
+  getProtectionCenterTotals,
+  protectionCenterCapabilities,
+  protectionCenterEndpoints,
+  protectionModulesModern,
+  torExitPolicy
+} from './domain/protectionCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -99,6 +110,8 @@ function App() {
   const selectedDevice = getSelectedDeviceDetail();
   const networkTotals = getNetworkCenterTotals();
   const dnsRatingTotals = getDnsServerRatingTotals();
+  const protectionTotals = getProtectionCenterTotals();
+  const blockedProtectionTotal = getBlockedProtectionTotal();
 
   return (
     <div className="app-frame">
@@ -332,28 +345,146 @@ function App() {
             </div>
           </article>
 
-          <article className="panel" id="protection">
-            <div className="panel-header compact">
-              <div>
-                <h2>{t('section.modules.title')}</h2>
-                <p>{t('section.modules.description')}</p>
-              </div>
+        </section>
+
+        <section className="panel protection-center-panel" id="protection">
+          <div className="panel-header protection-center-header">
+            <div>
+              <span className="mini-label">{t('label.protectionLegacyModern')}</span>
+              <h2>{t('section.modules.title')}</h2>
+              <p>{t('section.modules.description')}</p>
             </div>
-            <div className="module-list">
-              {protectionModules.map((module) => (
-                <div className="module-card" key={module.id}>
+            <div className="protection-summary-grid" aria-label="Schutz Parity-Übersicht">
+              <span><b>{protectionTotals.legacyStates}</b> alte States</span>
+              <span><b>{protectionTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{protectionTotals.modules}</b> Module</span>
+              <span><b>{formatNumber(blockedProtectionTotal)}</b> Treffer heute</span>
+            </div>
+          </div>
+
+          <div className="protection-center-layout">
+            <div className="protection-main-stack">
+              <article className="protection-modules-card">
+                <div className="card-title-row">
                   <div>
-                    <strong>{module.name}</strong>
-                    <p>{module.description}</p>
+                    <h3>Filtermodule</h3>
+                    <p>Alt: `filteroverview` mit Domain-/Pattern-Blockern, Geräteabdeckung, DNS/SSL-Abhängigkeiten und Blockzählern.</p>
                   </div>
-                  <div className="progress-line" aria-label={`${module.coverage}%`}>
-                    <span style={{ width: `${module.coverage}%` }} />
-                  </div>
-                  <small>{module.coverage}% Abdeckung</small>
+                  <span className="status-chip online">DNS + Pattern aktiv</span>
                 </div>
-              ))}
+                <div className="protection-module-grid">
+                  {protectionModulesModern.map((module) => (
+                    <div className={`protection-module-row ${module.type}`} key={module.id}>
+                      <strong>{module.label}</strong>
+                      <span>{module.type} · {module.category}</span>
+                      <b>{formatNumber(module.blockedToday)}</b>
+                      <em>{module.usedByDevices} Geräte</em>
+                      <code>{module.legacyTemplate}</code>
+                      <small>{module.needsSsl ? 'HTTPS nötig' : module.needsDns ? 'DNS nötig' : 'direkt'}</small>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="filter-list-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Filterlisten</h3>
+                    <p>Alt: `filter-details` mit Built-in/Custom, Domains, Name/Beschreibung, Update und CRUD.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Liste anlegen</button>
+                </div>
+                <div className="filter-list-grid">
+                  {filterListRows.map((row) => (
+                    <div className={`filter-list-row ${row.builtin ? 'builtin' : 'custom'}`} key={row.id}>
+                      <strong>{row.name}</strong>
+                      <span>{row.type}</span>
+                      <span>{formatNumber(row.domains)} Domains</span>
+                      <span>{row.lastUpdate}</span>
+                      <em>{row.editable ? 'editierbar' : 'Built-in geschützt'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="analysis-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Filteranalyse & Doctor</h3>
+                    <p>Alt: `filteranalysis`, `analysisdetails` und `doctor` mit Recorder, What-if, CSV, Details und Diagnose.</p>
+                  </div>
+                  <span className="status-chip warning">What-if aktiv</span>
+                </div>
+                <div className="analysis-grid">
+                  <span><b>{analysisRecorder.device}</b> Analysegerät</span>
+                  <span><b>{analysisRecorder.timeLimitSeconds}s</b> Zeitlimit</span>
+                  <span><b>{Math.round(analysisRecorder.sizeLimitBytes / 1048576)}MB</b> Größenlimit</span>
+                  <span><b>{analysisRecorder.recordedTransactions}</b> Transaktionen</span>
+                </div>
+                <div className="doctor-list">
+                  {doctorProbeRows.map((probe) => (
+                    <div className={`doctor-row severity-${probe.severity.toLowerCase()}`} key={probe.tag}>
+                      <span>{probe.severity}</span>
+                      <strong>{probe.message}</strong>
+                      <small>{probe.audience}</small>
+                    </div>
+                  ))}
+                </div>
+              </article>
             </div>
-          </article>
+
+            <div className="protection-side-stack">
+              <article className="privacy-settings-card">
+                <h3>Erweiterte Privatsphäre</h3>
+                <p>Alt: `advancedsettings`, `anonymizationstate`, CloakingService und anonyme Schutzdienste.</p>
+                <div className="privacy-setting-grid">
+                  {advancedPrivacySettings.map((setting) => (
+                    <div className={`privacy-setting-row ${setting.state}`} key={setting.id}>
+                      <strong>{setting.label}</strong>
+                      <span>{setting.value}</span>
+                      <code>{setting.endpoint}</code>
+                      <em>{setting.warnsIfSslDisabled ? 'SSL-Hinweis' : 'kein SSL-Hinweis'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="tor-card">
+                <h3>Tor Exit Nodes</h3>
+                <p>Alt: `tor` mit Auto/Manuell-Modus, Länderliste, Suche, Löschen, Warnungen und neuer Identität.</p>
+                <div className="tor-summary">
+                  <span><b>{torExitPolicy.mode}</b> Modus</span>
+                  <span><b>{torExitPolicy.availableCountries}</b> Länder verfügbar</span>
+                  <span><b>{torExitPolicy.showWarnings ? 'Ein' : 'Aus'}</b> Warnungen</span>
+                </div>
+                <div className="warning-strip">
+                  {torExitPolicy.selectedCountries.map((country) => <span key={country}>{country}</span>)}
+                </div>
+                <button className="ghost-button" type="button">Neue Tor-Identität anfordern</button>
+              </article>
+
+              <article className="protection-api-card">
+                <h3>API-Migration</h3>
+                <p>FilterService, Advanced-Privacy-Services, TorService, AnalysisToolService und DoctorService als `/api/v1`-Ziele.</p>
+                <div className="endpoint-list protection-endpoints">
+                  {protectionCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {protectionCenterCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
+            ))}
+          </div>
         </section>
 
         <section className="dashboard-grid two action-layout">

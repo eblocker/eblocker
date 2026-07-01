@@ -1,7 +1,6 @@
 import {
   activityEvents,
   dashboardMetrics,
-  familyProfiles,
   getCriticalServiceCount,
   getProtectedDeviceCount,
   getTopBlockedDomain,
@@ -67,6 +66,15 @@ import {
   trustedApps,
   trustedDomains
 } from './domain/httpsCenter';
+import {
+  familyCapabilities,
+  familyCenterEndpoints,
+  familyFilterLists,
+  familyProfilesModern,
+  familyUsers,
+  getFamilyCenterTotals,
+  weeklyUsageRows
+} from './domain/familyCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -111,6 +119,23 @@ function formatNumber(value: number): string {
   return value.toLocaleString('de-DE');
 }
 
+function formatMinutesAsClock(minutes: number): string {
+  if (minutes >= 1440) return '24:00';
+  const hours = Math.floor(minutes / 60).toString().padStart(2, '0');
+  const mins = (minutes % 60).toString().padStart(2, '0');
+  return `${hours}:${mins}`;
+}
+
+function familyRoleLabel(role: string): string {
+  if (role === 'CHILD') return 'Kind';
+  if (role === 'PARENT') return 'Elternteil';
+  return 'Sonstige';
+}
+
+function filterTypeLabel(type: string): string {
+  return type === 'whitelist' ? 'Whitelist' : 'Blacklist';
+}
+
 function recordingColumnLabel(column: string): string {
   const labels: Record<string, string> = {
     domain: 'Domain',
@@ -146,6 +171,7 @@ function App() {
   const protectionTotals = getProtectionCenterTotals();
   const blockedProtectionTotal = getBlockedProtectionTotal();
   const httpsTotals = getHttpsCenterTotals();
+  const familyTotals = getFamilyCenterTotals();
 
   return (
     <div className="app-frame">
@@ -1029,27 +1055,136 @@ function App() {
           </div>
         </section>
 
-        <section className="dashboard-grid two">
-          <article className="panel" id="family">
-            <div className="panel-header compact">
-              <div>
-                <h2>{t('section.family.title')}</h2>
-                <p>{t('section.family.description')}</p>
-              </div>
-              <button className="ghost-button small" type="button">{t('action.newProfile')}</button>
+        <section className="panel family-center-panel" id="family">
+          <div className="panel-header family-center-header">
+            <div>
+              <span className="mini-label">{t('label.familyLegacyModern')}</span>
+              <h2>{t('section.family.title')}</h2>
+              <p>{t('section.family.description')}</p>
             </div>
-            <div className="profile-list">
-              {familyProfiles.map((profile) => (
-                <div className="profile-row" key={profile.id}>
+            <div className="family-summary-grid" aria-label="Familie/Kinderschutz Parity-Übersicht">
+              <span><b>{familyTotals.legacyStates}</b> alte States</span>
+              <span><b>{familyTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{familyTotals.users}</b> Benutzer</span>
+              <span><b>{familyTotals.activeTimeWindows}</b> Zeitfenster</span>
+            </div>
+          </div>
+
+          <div className="family-center-layout">
+            <div className="family-main-stack">
+              <article className="family-users-card">
+                <div className="card-title-row">
                   <div>
-                    <strong>{profile.name}</strong>
-                    <span>{profile.devices} Geräte · {profile.schedule}</span>
+                    <h3>Benutzer & Geräte</h3>
+                    <p>Alt: `users`/`user-details` mit Rollen, PIN, Geburtstag, Profil, Online-Status, Gerätezuordnung und DNS/SSL-Warnungen.</p>
                   </div>
-                  <em>{profile.level}</em>
+                  <button className="ghost-button small" type="button">Benutzer anlegen</button>
                 </div>
-              ))}
+                <div className="family-users-table">
+                  {familyUsers.map((user) => (
+                    <div className={`family-user-row ${user.showSslDnsWarning ? 'warning' : ''}`} key={user.id}>
+                      <strong>{user.name}<small>{familyRoleLabel(user.role)}{user.age ? ` · ${user.age} Jahre` : ''}</small></strong>
+                      <span>{user.profileName}</span>
+                      <span>{user.assignedDevices.join(' · ') || 'keine Geräte'}</span>
+                      <em>{user.online ? 'online' : 'offline'}</em>
+                      <div>
+                        {user.containsPin && <i>PIN</i>}
+                        {user.hasContentRestrictions && <i>Web</i>}
+                        {user.hasTimeRestrictions && <i>Zeit</i>}
+                        {user.showSslDnsWarning && <i>DNS/SSL</i>}
+                        {user.standardUser && <i>Standard</i>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="family-profiles-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Profile & Regeln</h3>
+                    <p>Alt: `userprofiledetails` mit URL-Restriktionen, Black-/Whitelists, Zeitfenstern, Tageslimits und Bonuszeit.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">{t('action.newProfile')}</button>
+                </div>
+                <div className="family-profile-grid">
+                  {familyProfilesModern.map((profile) => (
+                    <div className={`family-profile-row ${profile.showSslWarningMessage ? 'warning' : ''}`} key={profile.id}>
+                      <strong>{profile.name}<small>{profile.description}</small></strong>
+                      <span>{profile.assignedUsers.join(' · ') || 'nicht zugeordnet'}</span>
+                      <span>{profile.controlmodeUrls ? profile.internetAccessRestrictionMode === 'blacklisting' ? 'Blacklisting' : 'Whitelisting' : 'ohne Weblimit'}</span>
+                      <span>{profile.internetAccessContingents.length} Fenster</span>
+                      <em>{profile.bonusMinutesToday > 0 ? `+${profile.bonusMinutesToday} min Bonus` : profile.builtin ? 'Built-in' : 'Custom'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="weekly-usage-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Tageslimits</h3>
+                    <p>Alt: `access-usage-edit` mit Stunden/15-Minuten-Auswahl und Max-Usage pro Wochentag.</p>
+                  </div>
+                  <span className="status-chip online">7 Tage</span>
+                </div>
+                <div className="weekly-usage-grid">
+                  {weeklyUsageRows.map((row) => (
+                    <span key={row.day}><b>{row.day}</b>{Math.floor(row.minutes / 60)}h {row.minutes % 60}m</span>
+                  ))}
+                </div>
+                <div className="time-window-strip">
+                  {familyProfilesModern.flatMap((profile) => profile.internetAccessContingents.map((contingent) => (
+                    <span key={`${profile.id}-${contingent.id}`}>{profile.name}: {contingent.onDay} {formatMinutesAsClock(contingent.fromMinutes)}–{formatMinutesAsClock(contingent.tillMinutes)}</span>
+                  )))}
+                </div>
+              </article>
             </div>
-          </article>
+
+            <div className="family-side-stack">
+              <article className="family-lists-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Blacklists & Whitelists</h3>
+                    <p>Alt: `blacklists`, `whitelists`, Details, Domain/URL-Format, Update-Status, Profilzuordnung und Löschbarkeit.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Liste anlegen</button>
+                </div>
+                <div className="family-filter-list-grid">
+                  {familyFilterLists.map((list) => (
+                    <div className={`family-filter-list-row ${list.filterType} ${list.deletable ? 'deletable' : ''}`} key={list.id}>
+                      <strong>{list.name}<small>{list.description}</small></strong>
+                      <span>{filterTypeLabel(list.filterType)} · {list.format}</span>
+                      <span>{formatNumber(list.domains)} Domains</span>
+                      <span>{list.assignedProfiles.join(' · ') || 'frei'}</span>
+                      <em>{list.updateStatus}{list.deletable ? ' · löschbar' : ''}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="family-api-card">
+                <h3>API-Migration</h3>
+                <p>UserService, UserProfileService, FilterService, BlockerService und AccessContingent-Dialoge als moderne `/api/v1/family`-Ziele.</p>
+                <div className="endpoint-list family-endpoints">
+                  {familyCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {familyCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
+            ))}
+          </div>
         </section>
 
         <section className="panel activity-panel">

@@ -28,6 +28,7 @@ import org.eblocker.crypto.json.JSONCryptoHandler;
 import org.eblocker.crypto.keys.KeyWrapper;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.icap.filter.csv.CSVLineParser;
@@ -132,8 +133,6 @@ public class FilterManager {
     }
 
     public synchronized FilterStoreConfiguration addFilter(FilterStoreConfiguration configuration) {
-        FilterStore store = createFilterStore(configuration);
-
         int id = dataSource.nextId(FilterStoreConfiguration.class);
         FilterStoreConfiguration addedConfiguration = new FilterStoreConfiguration(id,
                 configuration.getName(),
@@ -146,6 +145,8 @@ public class FilterManager {
                 configuration.isLearnForAllDomains(),
                 configuration.getRuleFilters(),
                 configuration.isEnabled());
+
+        FilterStore store = createFilterStore(addedConfiguration);
 
         List<FilterStoreConfiguration> newConfigurations = new ArrayList<>(configurations);
         newConfigurations.add(addedConfiguration);
@@ -351,7 +352,13 @@ public class FilterManager {
     }
 
     private Path getPath(FilterStoreConfiguration configuration) {
-        return cacheDirectory.resolve(configuration.getId() + fileSuffix);
+        Integer id = configuration.getId();
+        if (id == null) {
+            String msg = "Cannot create path in cache directory for FilterStoreConfiguration without ID";
+            log.error(msg);
+            throw new EblockerException(msg);
+        }
+        return cacheDirectory.resolve(id + fileSuffix);
     }
 
     private FilterStore createFilterStore(FilterStoreConfiguration configuration) {

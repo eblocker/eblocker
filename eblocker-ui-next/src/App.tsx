@@ -5,10 +5,17 @@ import {
   familyProfiles,
   getCriticalServiceCount,
   getProtectedDeviceCount,
+  getTopBlockedDomain,
   getTotalBlockedToday,
   networkCards,
+  networkSegments,
   protectionModules,
+  quickActions,
+  recommendations,
   serviceHealth,
+  threatPosture,
+  topBlockedDomains,
+  trafficSeries,
   type HealthLevel,
   type ProtectionState
 } from './domain/dashboard';
@@ -24,6 +31,15 @@ const navItems = [
   { id: 'system', label: t('nav.system'), icon: '⚙' }
 ] as const;
 
+const maxRequests = Math.max(...trafficSeries.map((point) => point.requests));
+const maxBlocked = Math.max(...trafficSeries.map((point) => point.blocked));
+const requestPolyline = trafficSeries
+  .map((point, index) => `${(index / (trafficSeries.length - 1)) * 100},${96 - (point.requests / maxRequests) * 82}`)
+  .join(' ');
+const blockedPolyline = trafficSeries
+  .map((point, index) => `${(index / (trafficSeries.length - 1)) * 100},${96 - (point.blocked / maxBlocked) * 82}`)
+  .join(' ');
+
 function healthLabel(status: HealthLevel): string {
   if (status === 'online') return t('status.online');
   if (status === 'warning') return t('status.warning');
@@ -36,7 +52,13 @@ function protectionLabel(status: ProtectionState): string {
   return t('status.paused');
 }
 
+function formatNumber(value: number): string {
+  return value.toLocaleString('de-DE');
+}
+
 function App() {
+  const topDomain = getTopBlockedDomain();
+
   return (
     <div className="app-frame">
       <aside className="sidebar" aria-label="eBlocker navigation">
@@ -57,6 +79,12 @@ function App() {
           ))}
         </nav>
 
+        <div className="sidebar-signal">
+          <span className="signal-dot" />
+          <strong>{threatPosture.score}% Schutzlage</strong>
+          <small>{threatPosture.openWarnings} offene Hinweise · {getCriticalServiceCount()} kritisch</small>
+        </div>
+
         <div className="sidebar-card">
           <span className="mini-label">{t('label.nextStep')}</span>
           <p>{t('copy.nextStep')}</p>
@@ -76,26 +104,69 @@ function App() {
           </div>
         </header>
 
-        <section className="hero" id="dashboard">
+        <section className="command-hero" id="dashboard">
           <div>
             <p className="eyebrow">{t('app.badge')}</p>
             <h1>{t('app.title')}</h1>
             <p className="hero-copy">{t('app.subtitle')}</p>
           </div>
-          <div className="release-card">
+          <div className="hero-status-strip">
             <span>{t('app.release')}</span>
-            <strong>{getProtectedDeviceCount()} geschützte Geräte</strong>
-            <small>{getTotalBlockedToday().toLocaleString('de-DE')} Anfragen heute blockiert</small>
-            <small>{getCriticalServiceCount()} kritische Dienste</small>
+            <strong>{getProtectedDeviceCount()} geschützt</strong>
+            <small>{formatNumber(getTotalBlockedToday())} blockiert</small>
           </div>
         </section>
 
-        <section className="section-heading">
-          <div>
-            <h2>{t('section.overview.title')}</h2>
-            <p>{t('section.overview.description')}</p>
-          </div>
-          <span>{t('copy.noPr')}</span>
+        <section className="mission-grid" aria-label="eBlocker Mission Control">
+          <article className="panel posture-card">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.threat.title')}</h2>
+                <p>{t('section.threat.description')}</p>
+              </div>
+              <span className="status-chip online">{threatPosture.label}</span>
+            </div>
+            <div className="posture-body">
+              <div
+                className="score-ring"
+                style={{ background: `conic-gradient(#3ecf8e ${threatPosture.score * 3.6}deg, rgba(255,255,255,0.07) 0deg)` }}
+                aria-label={`${threatPosture.score}%`}
+              >
+                <div>
+                  <strong>{threatPosture.score}</strong>
+                  <span>/100</span>
+                </div>
+              </div>
+              <div className="posture-copy">
+                <p>{threatPosture.summary}</p>
+                <div className="posture-stats">
+                  <span><b>{formatNumber(threatPosture.blockedRequests)}</b> blockiert</span>
+                  <span><b>{formatNumber(threatPosture.inspectedConnections)}</b> geprüft</span>
+                  <span><b>{threatPosture.openWarnings}</b> Hinweise</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article className="panel topology-card">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.topology.title')}</h2>
+                <p>Gateway → LAN → Filter → Internet, als schneller Betriebsblick.</p>
+              </div>
+            </div>
+            <div className="topology-flow">
+              {networkSegments.map((segment, index) => (
+                <div className="topology-node" key={segment.id}>
+                  <span className={`status-dot ${segment.health}`} />
+                  <strong>{segment.label}</strong>
+                  <b>{segment.value}</b>
+                  <small>{segment.detail}</small>
+                  {index < networkSegments.length - 1 && <em>→</em>}
+                </div>
+              ))}
+            </div>
+          </article>
         </section>
 
         <section className="metrics-grid" aria-label={t('section.overview.title')}>
@@ -107,6 +178,59 @@ function App() {
               <small>{metric.trend}</small>
             </article>
           ))}
+        </section>
+
+        <section className="dashboard-grid telemetry-layout">
+          <article className="panel telemetry-panel">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.telemetry.title')}</h2>
+                <p>{t('section.telemetry.description')}</p>
+              </div>
+              <span className="mono-chip">Peak {getPeakLabel()}</span>
+            </div>
+            <svg className="traffic-chart" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Traffic chart">
+              <defs>
+                <linearGradient id="trafficFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(62,207,142,0.28)" />
+                  <stop offset="100%" stopColor="rgba(62,207,142,0)" />
+                </linearGradient>
+              </defs>
+              <polyline className="chart-line requests" points={requestPolyline} />
+              <polyline className="chart-line blocked" points={blockedPolyline} />
+              <polygon className="chart-fill" points={`0,100 ${blockedPolyline} 100,100`} />
+            </svg>
+            <div className="chart-legend">
+              <span><i className="legend requests" /> DNS-Anfragen</span>
+              <span><i className="legend blocked" /> Blockiert</span>
+              <span>{trafficSeries[0].hour}:00–{trafficSeries[trafficSeries.length - 1].hour}:00</span>
+            </div>
+          </article>
+
+          <article className="panel top-domain-panel">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.topDomains.title')}</h2>
+                <p>Stärkste Block-Treiber, nach Treffern sortiert.</p>
+              </div>
+            </div>
+            <div className="domain-focus">
+              <span>Top-Ziel</span>
+              <strong>{topDomain.domain}</strong>
+              <small>{formatNumber(topDomain.hits)} Treffer · {topDomain.category}</small>
+            </div>
+            <div className="domain-list">
+              {topBlockedDomains.map((domain) => (
+                <div className="domain-row" key={domain.domain}>
+                  <div>
+                    <strong>{domain.domain}</strong>
+                    <span>{domain.category} · {domain.source}</span>
+                  </div>
+                  <b>{formatNumber(domain.hits)}</b>
+                </div>
+              ))}
+            </div>
+          </article>
         </section>
 
         <section className="dashboard-grid">
@@ -157,6 +281,47 @@ function App() {
           </article>
         </section>
 
+        <section className="dashboard-grid two action-layout">
+          <article className="panel recommendation-panel">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.recommendations.title')}</h2>
+                <p>Priorisierte nächste Schritte, damit das Dashboard nicht nur zeigt, sondern führt.</p>
+              </div>
+            </div>
+            <div className="recommendation-list">
+              {recommendations.map((item) => (
+                <div className={`recommendation-row priority-${item.priority}`} key={item.id}>
+                  <span>{item.priority}</span>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.detail}</p>
+                    <small>{item.impact}</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel quick-panel">
+            <div className="panel-header compact">
+              <div>
+                <h2>{t('section.quickActions.title')}</h2>
+                <p>Häufige Admin-Aktionen direkt erreichbar, später API-gebunden.</p>
+              </div>
+            </div>
+            <div className="quick-action-grid">
+              {quickActions.map((action) => (
+                <button className={`quick-action ${action.tone}`} type="button" key={action.id}>
+                  <strong>{action.label}</strong>
+                  <span>{action.detail}</span>
+                  <code>{action.targetApiPrefix}</code>
+                </button>
+              ))}
+            </div>
+          </article>
+        </section>
+
         <section className="panel" id="devices">
           <div className="panel-header">
             <div>
@@ -184,7 +349,7 @@ function App() {
                 <span className="mono">{device.ipAddress}</span>
                 <span>{device.profile}</span>
                 <span><em className={`protection-badge ${device.protection}`}>{protectionLabel(device.protection)}</em></span>
-                <span>{device.blockedToday.toLocaleString('de-DE')}</span>
+                <span>{formatNumber(device.blockedToday)}</span>
                 <span><em className={`status-chip ${device.status}`}>{healthLabel(device.status)}</em></span>
               </div>
             ))}
@@ -254,6 +419,11 @@ function App() {
       </main>
     </div>
   );
+}
+
+function getPeakLabel(): string {
+  const peak = trafficSeries.reduce((highest, point) => point.blocked > highest.blocked ? point : highest, trafficSeries[0]);
+  return `${peak.hour}:00 · ${formatNumber(peak.blocked)} blockiert`;
 }
 
 export default App;

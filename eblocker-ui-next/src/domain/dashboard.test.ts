@@ -6,8 +6,17 @@ import {
   protectionModules,
   activityEvents,
   getCriticalServiceCount,
+  getGatewayRiskScore,
+  getPeakTraffic,
   getProtectedDeviceCount,
-  getTotalBlockedToday
+  getTopBlockedDomain,
+  getTotalBlockedToday,
+  networkSegments,
+  quickActions,
+  recommendations,
+  threatPosture,
+  topBlockedDomains,
+  trafficSeries
 } from './dashboard';
 
 describe('modern eBlocker dashboard model', () => {
@@ -37,5 +46,22 @@ describe('modern eBlocker dashboard model', () => {
     expect(deviceRows.every((device) => device.ipAddress.startsWith('10.0.'))).toBe(true);
     expect(serviceHealth.length).toBeGreaterThanOrEqual(5);
     expect(activityEvents.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('adds executive security posture, traffic telemetry and top blocked domains', () => {
+    expect(threatPosture.score).toBeGreaterThanOrEqual(80);
+    expect(getGatewayRiskScore()).toBe(threatPosture.score);
+    expect(trafficSeries.length).toBe(12);
+    expect(getPeakTraffic().blocked).toBeGreaterThan(1000);
+    expect(topBlockedDomains.length).toBeGreaterThanOrEqual(5);
+    expect(getTopBlockedDomain().domain).toContain('.');
+  });
+
+  it('includes action-ready recommendations, quick actions and network topology', () => {
+    expect(recommendations.length).toBeGreaterThanOrEqual(4);
+    expect(recommendations.some((item) => item.priority === 'high')).toBe(true);
+    expect(quickActions.length).toBeGreaterThanOrEqual(5);
+    expect(quickActions.every((action) => action.targetApiPrefix.startsWith('/api/v1/'))).toBe(true);
+    expect(networkSegments.map((segment) => segment.id)).toEqual(['gateway', 'lan', 'filtering', 'internet']);
   });
 });

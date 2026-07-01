@@ -1,5 +1,6 @@
 export type HealthLevel = 'online' | 'warning' | 'offline';
 export type ProtectionState = 'protected' | 'learning' | 'paused';
+export type Priority = 'high' | 'medium' | 'low';
 
 export interface DashboardMetric {
   readonly id: string;
@@ -60,6 +61,52 @@ export interface FamilyProfile {
   readonly level: string;
 }
 
+export interface ThreatPosture {
+  readonly score: number;
+  readonly label: string;
+  readonly summary: string;
+  readonly blockedRequests: number;
+  readonly inspectedConnections: number;
+  readonly openWarnings: number;
+}
+
+export interface TrafficPoint {
+  readonly hour: string;
+  readonly requests: number;
+  readonly blocked: number;
+}
+
+export interface BlockedDomain {
+  readonly domain: string;
+  readonly category: string;
+  readonly hits: number;
+  readonly source: 'dns' | 'https' | 'tracker' | 'malware';
+}
+
+export interface Recommendation {
+  readonly id: string;
+  readonly title: string;
+  readonly detail: string;
+  readonly impact: string;
+  readonly priority: Priority;
+}
+
+export interface QuickAction {
+  readonly id: string;
+  readonly label: string;
+  readonly detail: string;
+  readonly targetApiPrefix: string;
+  readonly tone: 'safe' | 'attention' | 'neutral';
+}
+
+export interface NetworkSegment {
+  readonly id: 'gateway' | 'lan' | 'filtering' | 'internet';
+  readonly label: string;
+  readonly value: string;
+  readonly detail: string;
+  readonly health: HealthLevel;
+}
+
 export const dashboardMetrics: readonly DashboardMetric[] = [
   {
     id: 'devices',
@@ -95,6 +142,38 @@ export const dashboardMetrics: readonly DashboardMetric[] = [
   }
 ];
 
+export const threatPosture: ThreatPosture = {
+  score: 91,
+  label: 'Sehr gut geschützt',
+  summary: 'Keine kritischen Dienste offline, hohe Filterabdeckung, wenige HTTPS-Hinweise offen.',
+  blockedRequests: 12486,
+  inspectedConnections: 38422,
+  openWarnings: 4
+};
+
+export const trafficSeries: readonly TrafficPoint[] = [
+  { hour: '08', requests: 3820, blocked: 410 },
+  { hour: '09', requests: 5210, blocked: 620 },
+  { hour: '10', requests: 6840, blocked: 930 },
+  { hour: '11', requests: 7420, blocked: 1180 },
+  { hour: '12', requests: 6900, blocked: 1040 },
+  { hour: '13', requests: 8040, blocked: 1350 },
+  { hour: '14', requests: 9120, blocked: 1560 },
+  { hour: '15', requests: 8730, blocked: 1460 },
+  { hour: '16', requests: 9570, blocked: 1680 },
+  { hour: '17', requests: 8920, blocked: 1520 },
+  { hour: '18', requests: 7210, blocked: 1210 },
+  { hour: '19', requests: 6410, blocked: 1026 }
+];
+
+export const topBlockedDomains: readonly BlockedDomain[] = [
+  { domain: 'ads.doubleclick.net', category: 'Tracking/Ads', hits: 2140, source: 'tracker' },
+  { domain: 'graph.facebook.com', category: 'Social Tracking', hits: 1432, source: 'https' },
+  { domain: 'metrics.icloud.example', category: 'Telemetry', hits: 1120, source: 'dns' },
+  { domain: 'cdn-malware-check.invalid', category: 'Malware', hits: 348, source: 'malware' },
+  { domain: 'collector.smarttv.example', category: 'IoT Tracking', hits: 277, source: 'tracker' }
+];
+
 export const deviceRows: readonly DeviceRow[] = [
   { id: 'macbook', name: 'MacBook Pro', type: 'Laptop', ipAddress: '10.0.17.24', profile: 'Erwachsene', protection: 'protected', blockedToday: 1842, status: 'online' },
   { id: 'iphone', name: 'iPhone', type: 'Mobile', ipAddress: '10.0.17.42', profile: 'Erwachsene', protection: 'protected', blockedToday: 921, status: 'online' },
@@ -126,6 +205,28 @@ export const networkCards: readonly NetworkCard[] = [
   { id: 'blocklists', label: 'Blocklisten', value: '42', detail: 'Letzte Aktualisierung vor 38 Minuten' }
 ];
 
+export const networkSegments: readonly NetworkSegment[] = [
+  { id: 'gateway', label: 'Gateway', value: '10.0.17.254', detail: 'OPNsense · DHCP/DNS Übergabe', health: 'online' },
+  { id: 'lan', label: 'LAN Clients', value: '18 Geräte', detail: '14 geschützt · 2 lernen · 2 pausiert', health: 'online' },
+  { id: 'filtering', label: 'eBlocker Filter', value: 'ICAP + DNS', detail: 'Squid, Redis und Filterlisten aktiv', health: 'online' },
+  { id: 'internet', label: 'Internet', value: 'Upstream OK', detail: '31 ms DNS Ø · 0 kritische Fehler', health: 'warning' }
+];
+
+export const recommendations: readonly Recommendation[] = [
+  { id: 'https-apps', title: 'HTTPS-Ausnahmen prüfen', detail: '4 Apps nutzen noch Legacy-Ausnahmen. Moderne UI kann diese gesammelt bewerten.', impact: 'Bessere TLS-Abdeckung', priority: 'high' },
+  { id: 'gaming-profile', title: 'Gaming-Profil finalisieren', detail: 'Ein Gerät befindet sich im Lernmodus. Nach 24h sollte daraus ein festes Profil werden.', impact: 'Weniger Falsch-Positiv-Pausen', priority: 'medium' },
+  { id: 'wireguard', title: 'WireGuard-Ansicht vorbereiten', detail: 'OpenVPN bleibt kompatibel, aber Mobile-Konfiguration sollte WireGuard-first werden.', impact: 'Einfacheres Mobile-Onboarding', priority: 'medium' },
+  { id: 'backup', title: 'Backup-Automation sichtbar machen', detail: 'Letztes Backup ist bereit. Dashboard sollte Restore/Download direkt anbieten.', impact: 'Schnellere Recovery', priority: 'low' }
+];
+
+export const quickActions: readonly QuickAction[] = [
+  { id: 'pause-device', label: 'Gerät pausieren', detail: 'Temporäre Ausnahme für ein ausgewähltes Gerät', targetApiPrefix: '/api/v1/devices', tone: 'attention' },
+  { id: 'add-allowlist', label: 'Domain freigeben', detail: 'Allowlist-Eintrag mit Profil-Ziel', targetApiPrefix: '/api/v1/dns', tone: 'neutral' },
+  { id: 'download-ca', label: 'Root-CA laden', detail: 'Zertifikat und Onboarding-Hilfe', targetApiPrefix: '/api/v1/ssl', tone: 'safe' },
+  { id: 'create-profile', label: 'Profil erstellen', detail: 'Zeitplan und Schutzstufe definieren', targetApiPrefix: '/api/v1/parental-control', tone: 'neutral' },
+  { id: 'run-diagnostics', label: 'Diagnose starten', detail: 'Service-, DNS- und Proxy-Check ausführen', targetApiPrefix: '/api/v1/system', tone: 'safe' }
+];
+
 export const activityEvents: readonly ActivityEvent[] = [
   { id: 'update', time: '19:08', title: 'Blocklisten aktualisiert', detail: '42 Listen synchronisiert, 18.201 neue Domains geprüft.', tone: 'success' },
   { id: 'device', time: '18:52', title: 'Neues Gerät erkannt', detail: 'Gaming PC wurde dem Profil „Gaming“ zugeordnet.', tone: 'info' },
@@ -149,4 +250,16 @@ export function getTotalBlockedToday(): number {
 
 export function getCriticalServiceCount(): number {
   return serviceHealth.filter((service) => service.status === 'offline').length;
+}
+
+export function getGatewayRiskScore(): number {
+  return threatPosture.score;
+}
+
+export function getPeakTraffic(): TrafficPoint {
+  return trafficSeries.reduce((peak, point) => point.blocked > peak.blocked ? point : peak, trafficSeries[0]);
+}
+
+export function getTopBlockedDomain(): BlockedDomain {
+  return topBlockedDomains.reduce((top, domain) => domain.hits > top.hits ? domain : top, topBlockedDomains[0]);
 }

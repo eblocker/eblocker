@@ -693,6 +693,93 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
 .family-filter-list-row.whitelist em { color: #a7f3d0; background: rgba(62,207,142,0.08); }
 .family-filter-list-row.deletable { border: 1px solid rgba(62,207,142,0.18); }
 .family-api-card p { color: #d0d6e0; }
+.vpn-center-panel {
+  border-color: rgba(56,189,248,0.2);
+  background:
+    radial-gradient(circle at 0 8%, rgba(56,189,248,0.1), transparent 32rem),
+    radial-gradient(circle at 100% 10%, rgba(59,130,246,0.08), transparent 30rem),
+    rgba(15,16,17,0.82);
+}
+.vpn-center-header { align-items: flex-start; }
+.vpn-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(112px,1fr));
+  gap: 10px;
+  min-width: 620px;
+}
+.vpn-summary-grid span {
+  padding: 11px 12px;
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 15px;
+  color: #8a8f98;
+  background: rgba(255,255,255,0.03);
+}
+.vpn-summary-grid b { display: block; color: #f7f8f8; font-size: 23px; }
+.vpn-center-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr);
+  gap: 16px;
+  align-items: start;
+}
+.vpn-main-stack, .vpn-side-stack { display: grid; gap: 14px; min-width: 0; }
+.vpn-profiles-card, .vpn-home-card, .vpn-mobile-card, .wireguard-card, .vpn-api-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.025);
+}
+.vpn-profile-table, .vpn-mobile-grid, .vpn-endpoints, .wireguard-hints { display: grid; gap: 8px; }
+.vpn-profile-row {
+  display: grid;
+  grid-template-columns: minmax(0,1.05fr) minmax(0,0.58fr) minmax(0,0.85fr) minmax(0,0.82fr) minmax(82px,0.45fr) minmax(0,0.82fr);
+  gap: 8px;
+  align-items: center;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.026);
+}
+.vpn-profile-row > *, .vpn-mobile-row > * { min-width: 0; }
+.vpn-profile-row strong small, .vpn-mobile-row strong small { display: block; margin-top: 3px; color: #8a8f98; font-weight: 500; }
+.vpn-profile-row span, .vpn-mobile-row span { color: #a5acb8; overflow-wrap: anywhere; }
+.vpn-profile-row em, .vpn-mobile-row em { justify-self: start; padding: 4px 7px; border-radius: 999px; color: #bae6fd; background: rgba(56,189,248,0.1); font-style: normal; font-size: 12px; }
+.vpn-profile-row.incomplete { border: 1px solid rgba(251,191,36,0.22); }
+.vpn-profile-row div { display: flex; flex-wrap: wrap; gap: 5px; }
+.vpn-profile-row i { padding: 4px 7px; border-radius: 999px; color: #fde68a; background: rgba(251,191,36,0.11); font-style: normal; font-size: 11px; }
+.vpn-home-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 9px;
+}
+.vpn-home-grid span { padding: 12px; border-radius: 14px; color: #a5acb8; background: rgba(255,255,255,0.028); overflow-wrap: anywhere; }
+.vpn-home-grid b { display: block; color: #f7f8f8; font-size: 18px; }
+.vpn-wizard-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.vpn-wizard-steps span { min-width: 0; padding: 10px; border-radius: 13px; color: #d0d6e0; background: rgba(255,255,255,0.028); }
+.vpn-wizard-steps b { display: inline-grid; place-items: center; width: 21px; height: 21px; margin-right: 6px; border-radius: 999px; color: #081018; background: #7dd3fc; }
+.vpn-wizard-steps small { display: block; margin-top: 4px; color: #8a8f98; overflow-wrap: break-word; }
+.vpn-mobile-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,0.68fr) minmax(0,0.8fr) minmax(0,0.72fr);
+  gap: 8px;
+  align-items: center;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.026);
+}
+.vpn-mobile-row.enabled { border: 1px solid rgba(62,207,142,0.16); }
+.vpn-mobile-row.disabled em { color: #d0d6e0; background: rgba(255,255,255,0.06); }
+.remote-dashboard-strip, .wireguard-hints { margin-top: 12px; }
+.remote-dashboard-strip { display: flex; flex-wrap: wrap; gap: 8px; }
+.remote-dashboard-strip span, .wireguard-hints span { padding: 7px 9px; border-radius: 999px; color: #bfdbfe; background: rgba(56,189,248,0.08); font-size: 12px; }
+.remote-dashboard-strip code { color: #7dd3fc; }
+.wireguard-card p, .vpn-api-card p { color: #d0d6e0; }
+.wireguard-hints { display: flex; flex-wrap: wrap; }
+.vpn-endpoints .endpoint-row code { font-size: 10px; line-height: 1.35; }
 .profile-row { display: flex; justify-content: space-between; gap: 14px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); }
 .profile-row em { color: #7dd3fc; font-style: normal; white-space: nowrap; }
 .activity-row { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -894,14 +981,14 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
   overflow-wrap: anywhere;
 }
 @media (max-width: 1180px) {
-  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout, .https-center-layout, .family-center-layout { grid-template-columns: 1fr; }
+  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout, .https-center-layout, .family-center-layout, .vpn-center-layout { grid-template-columns: 1fr; }
   .topology-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .topology-node em { display: none; }
 }
 @media (max-width: 720px) {
   .workspace { padding: 12px; }
   .topbar, .section-heading, .panel-header { flex-direction: column; align-items: stretch; }
-  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
+  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .vpn-summary-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .vpn-home-grid, .vpn-wizard-steps, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
   .hero, .command-hero { grid-template-columns: 1fr; padding: 24px; }
   .posture-body { grid-template-columns: 1fr; }
   h1 { font-size: 3rem; }

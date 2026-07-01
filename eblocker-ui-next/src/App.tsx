@@ -75,6 +75,17 @@ import {
   getFamilyCenterTotals,
   weeklyUsageRows
 } from './domain/familyCenter';
+import {
+  getVpnMobileCenterTotals,
+  mobileDeviceRows,
+  remoteDashboardRows,
+  vpnClientProfiles,
+  vpnHomeStatus,
+  vpnMobileCapabilities,
+  vpnMobileCenterEndpoints,
+  vpnSetupWizardSteps,
+  wireGuardMigrationHints
+} from './domain/vpnMobileCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -86,6 +97,7 @@ const navItems = [
   { id: 'https', label: t('nav.https'), icon: '◇' },
   { id: 'network', label: t('nav.network'), icon: '◎' },
   { id: 'family', label: t('nav.family'), icon: '◌' },
+  { id: 'vpn', label: t('nav.vpn'), icon: '⇆' },
   { id: 'system', label: t('nav.system'), icon: '⚙' }
 ] as const;
 
@@ -136,6 +148,37 @@ function filterTypeLabel(type: string): string {
   return type === 'whitelist' ? 'Whitelist' : 'Blacklist';
 }
 
+function vpnConnectionTestLabel(state: string): string {
+  const labels: Record<string, string> = {
+    success: 'erfolgreich',
+    failed: 'fehlgeschlagen',
+    auth_failed: 'Auth-Fehler',
+    timeout: 'Timeout',
+    not_tested: 'nicht getestet'
+  };
+  return labels[state] ?? state;
+}
+
+function vpnOsLabel(os: string): string {
+  const labels: Record<string, string> = {
+    WINDOWS: 'Windows',
+    MAC: 'macOS',
+    IOS: 'iOS',
+    ANDROID: 'Android',
+    OTHER: 'Sonstige'
+  };
+  return labels[os] ?? os;
+}
+
+function vpnAccessLabel(type: string): string {
+  const labels: Record<string, string> = {
+    FIXED_IP: 'Feste IP',
+    DYN_DNS: 'DynDNS',
+    EBLOCKER_DYN_DNS: 'eBlocker DynDNS'
+  };
+  return labels[type] ?? type;
+}
+
 function recordingColumnLabel(column: string): string {
   const labels: Record<string, string> = {
     domain: 'Domain',
@@ -172,6 +215,7 @@ function App() {
   const blockedProtectionTotal = getBlockedProtectionTotal();
   const httpsTotals = getHttpsCenterTotals();
   const familyTotals = getFamilyCenterTotals();
+  const vpnTotals = getVpnMobileCenterTotals();
 
   return (
     <div className="app-frame">
@@ -1182,6 +1226,131 @@ function App() {
 
           <div className="device-capability-strip">
             {familyCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel vpn-center-panel" id="vpn">
+          <div className="panel-header vpn-center-header">
+            <div>
+              <span className="mini-label">{t('label.vpnLegacyModern')}</span>
+              <h2>{t('section.vpn.title')}</h2>
+              <p>{t('section.vpn.description')}</p>
+            </div>
+            <div className="vpn-summary-grid" aria-label="VPN/Mobile/Remote Parity-Übersicht">
+              <span><b>{vpnTotals.legacyStates}</b> alte States</span>
+              <span><b>{vpnTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{vpnTotals.clientProfiles}</b> Profile</span>
+              <span><b>{vpnTotals.mobileDevices}</b> Mobile Geräte</span>
+            </div>
+          </div>
+
+          <div className="vpn-center-layout">
+            <div className="vpn-main-stack">
+              <article className="vpn-profiles-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>OpenVPN-Clientprofile</h3>
+                    <p>Alt: `vpnconnect`/`vpnconnectdetails` mit Config-Upload, Pflichtdateien, Credentials, KeepAlive und Verbindungstest.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Profil importieren</button>
+                </div>
+                <div className="vpn-profile-table">
+                  {vpnClientProfiles.map((profile) => (
+                    <div className={`vpn-profile-row ${profile.configurationComplete ? 'complete' : 'incomplete'}`} key={profile.id}>
+                      <strong>{profile.name}<small>{profile.description}</small></strong>
+                      <span>{profile.enabled ? 'aktiv' : 'aus'} · Config {profile.configurationFileVersion}</span>
+                      <span>{profile.username || 'kein Login'} · {profile.passwordConfigured ? 'Passwort gesetzt' : 'ohne Passwort'}</span>
+                      <span>{profile.keepAliveMode === 'OPENVPN_REMOTE' ? `KeepAlive ${profile.keepAlivePingTarget}` : 'kein KeepAlive'}</span>
+                      <em>{vpnConnectionTestLabel(profile.connectionTest)}</em>
+                      <div>
+                        {profile.temporary && <i>temporär</i>}
+                        {!profile.configurationComplete && <i>unvollständig</i>}
+                        {profile.requiredFilesMissing.map((file) => <i key={file}>{file}</i>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="vpn-home-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Home-VPN Server</h3>
+                    <p>Alt: `vpn-home` und `vpn-home-wizard`: Status, Host/DynDNS, Port 1194, UPnP/Manuell, Tests, Reset und Serverstart.</p>
+                  </div>
+                  <span className={`status-chip ${vpnHomeStatus.isRunning ? 'online' : 'offline'}`}>{vpnHomeStatus.isRunning ? 'läuft' : 'gestoppt'}</span>
+                </div>
+                <div className="vpn-home-grid">
+                  <span><b>{vpnHomeStatus.protocol}</b>Protokoll</span>
+                  <span><b>{vpnAccessLabel(vpnHomeStatus.externalAddressType)}</b>{vpnHomeStatus.host}</span>
+                  <span><b>{vpnHomeStatus.port}</b>Mobile-Port</span>
+                  <span><b>{vpnHomeStatus.mappedPort}</b>{vpnHomeStatus.portForwardingMode === 'AUTO' ? 'UPnP Auto' : 'Manuell'}</span>
+                  <span><b>{vpnHomeStatus.certificates}</b>Zertifikate</span>
+                  <span><b>{vpnHomeStatus.connectionTest.state}</b>UDP {vpnHomeStatus.connectionTest.udpMessagesReceived}/{vpnHomeStatus.connectionTest.udpMessagesSent} · TCP {vpnHomeStatus.connectionTest.tcpMessagesReceived}/{vpnHomeStatus.connectionTest.tcpMessagesSent}</span>
+                </div>
+                <div className="vpn-wizard-steps">
+                  {vpnSetupWizardSteps.map((step, index) => (
+                    <span key={step.key}><b>{index + 1}</b>{step.title}<small>{step.actions.join(' · ')}</small></span>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="vpn-side-stack">
+              <article className="vpn-mobile-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Mobile Geräte & Remote</h3>
+                    <p>Alt: `mobile`, Geräte-Detail-Mobile-Tab und leerer `remote`-State mit DeviceSelector/Remote-Warnung.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Mobile Wizard</button>
+                </div>
+                <div className="vpn-mobile-grid">
+                  {mobileDeviceRows.map((device) => (
+                    <div className={`vpn-mobile-row ${device.mobileEnabled ? 'enabled' : 'disabled'}`} key={device.id}>
+                      <strong>{device.name}<small>{vpnOsLabel(device.os)}</small></strong>
+                      <span>{device.mobileEnabled ? 'Mobile aktiv' : 'Mobile aus'}</span>
+                      <span>{device.privateNetworkAccess ? 'LAN-Zugriff' : 'kein LAN-Zugriff'}</span>
+                      <em>{device.configDownloadEnabled ? 'Download bereit' : 'Download gesperrt'}</em>
+                    </div>
+                  ))}
+                </div>
+                <div className="remote-dashboard-strip">
+                  {remoteDashboardRows.map((row) => (
+                    <span key={row.deviceId}>{row.deviceName}: <code>{row.route}</code></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="wireguard-card">
+                <h3>WireGuard-Pfad</h3>
+                <p>Kein erfundener Legacy-Endpunkt: WireGuard wird als Zielpfad sichtbar, während OpenVPN-Flows vollständig erhalten bleiben.</p>
+                <div className="wireguard-hints">
+                  {wireGuardMigrationHints.map((hint) => <span key={hint}>{hint}</span>)}
+                </div>
+              </article>
+
+              <article className="vpn-api-card">
+                <h3>API-Migration</h3>
+                <p>VpnService, VpnHomeService, Dashboard-Mobile, UPnP und Remote-State als moderne `/api/v1/vpn`-Ziele.</p>
+                <div className="endpoint-list vpn-endpoints">
+                  {vpnMobileCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {vpnMobileCapabilities.map((capability) => (
               <span key={capability}>{capability}</span>
             ))}
           </div>

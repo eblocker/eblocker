@@ -179,6 +179,9 @@ public class FilterManagerTest {
         Assert.assertSame(savedConfiguration, manager.getFilterStoreConfigurationById(savedConfiguration.getId()));
         assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), TRACKER_URL)); // Now the list has been updated with easyprivacy.txt
 
+        // check for issue with "null.json.enc" file
+        Assert.assertTrue(Files.exists(cacheDirectory.resolve(savedConfiguration.getId() + FILE_SUFFIX)));
+
         Mockito.verify(dataSource).nextId(FilterStoreConfiguration.class);
         Mockito.verify(dataSource).save(Mockito.any(FilterStoreConfiguration.class), Mockito.eq(savedConfiguration.getId()));
     }

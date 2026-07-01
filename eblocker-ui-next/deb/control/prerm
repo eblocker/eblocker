@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+echo '>>> Removing eBlocker Modern UI preview package files'

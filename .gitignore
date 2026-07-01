@@ -20,3 +20,10 @@ eblocker-icapserver/src/htdocs/temp
 /eblocker-malware/
 
 eblocker-icapserver/src/htdocs/stylesheets/app.css
+
+# modern UI workspace outputs
+/eblocker-ui-next/node/
+/eblocker-ui-next/node_modules/
+/eblocker-ui-next/dist/
+/eblocker-ui-next/coverage/
+/eblocker-ui-next/*.tsbuildinfo

@@ -16,6 +16,7 @@
         <module>eblocker-baseconfig</module>
         <module>eblocker-certificate-validator</module>
         <module>eblocker-ui</module>
+        <module>eblocker-ui-next</module>
     </modules>
     <scm>
         <developerConnection>scm:git:git@github.com:eblocker/eblocker.git</developerConnection>

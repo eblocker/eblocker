@@ -1,0 +1,9 @@
+Package: [[artifactId]]
+Version: [[version]]
+Section: web
+Priority: optional
+Architecture: all
+Depends:
+Maintainer: eBlocker Open Source UG <dev@eblocker.org>
+Description: eBlocker Modern UI preview package
+Distribution: development

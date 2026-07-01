@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = configure ] ; then
+  echo '>>> eBlocker Modern UI preview installed under /opt/eblocker-icap/htdocs-next'
+fi

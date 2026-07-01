@@ -1,0 +1,109 @@
+name: Build Debian packages and release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Optional tag to create/update a GitHub release for the current commit, e.g. v4.0.3-modern-ui.1"
+        required: false
+        type: string
+      prerelease:
+        description: "Mark the GitHub release as a prerelease"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  build-debs:
+    name: Build Maven Debian packages
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          java-version: "11"
+          distribution: temurin
+          cache: maven
+
+      - name: Build Debian packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mvn -B -s settings.xml package -DskipTests=true
+
+      - name: Collect Debian package assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          find . -type f -path '*/target/*' -name '*.deb' -print -exec cp '{}' release-assets/ \;
+          if ! find release-assets -maxdepth 1 -type f -name '*.deb' | grep -q .; then
+            echo "No .deb artifacts found below Maven target directories" >&2
+            exit 1
+          fi
+          (cd release-assets && sha256sum *.deb > SHA256SUMS)
+          printf 'Collected Debian artifacts:\n'
+          find release-assets -maxdepth 1 -type f -print | sort
+
+      - name: Upload Debian package artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: eblocker-debian-packages
+          path: release-assets/*
+          if-no-files-found: error
+
+      - name: Create or update GitHub release
+        if: github.ref_type == 'tag' || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            release_tag="${GITHUB_REF_NAME}"
+          else
+            release_tag="${INPUT_RELEASE_TAG}"
+          fi
+
+          if [ -z "${release_tag}" ]; then
+            echo "No release tag supplied; skipping release creation."
+            exit 0
+          fi
+
+          notes_file="release-assets/RELEASE_NOTES.md"
+          {
+            echo "# eBlocker ${release_tag}"
+            echo
+            echo "Automated Debian package build for commit ${GITHUB_SHA}."
+            echo
+            echo "## Artifacts"
+            echo
+            sed 's/^/- /' release-assets/SHA256SUMS
+          } > "${notes_file}"
+
+          prerelease_args=()
+          if [ "${INPUT_PRERELEASE}" = "true" ]; then
+            prerelease_args+=(--prerelease)
+          fi
+
+          if gh release view "${release_tag}" >/dev/null 2>&1; then
+            gh release edit "${release_tag}" --notes-file "${notes_file}" "${prerelease_args[@]}"
+            gh release upload "${release_tag}" release-assets/*.deb release-assets/SHA256SUMS --clobber
+          else
+            gh release create "${release_tag}" release-assets/*.deb release-assets/SHA256SUMS \
+              --target "${GITHUB_SHA}" \
+              --title "${release_tag}" \
+              --notes-file "${notes_file}" \
+              "${prerelease_args[@]}"
+          fi

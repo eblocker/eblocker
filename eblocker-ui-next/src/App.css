@@ -511,6 +511,103 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
 .privacy-setting-row em { justify-self: start; padding: 4px 7px; border-radius: 999px; color: #c7d2fe; background: rgba(113,112,255,0.12); font-style: normal; font-size: 12px; }
 .tor-card .ghost-button { margin-top: 12px; }
 .protection-endpoints { display: grid; gap: 8px; }
+.https-center-panel {
+  border-color: rgba(251,191,36,0.2);
+  background:
+    radial-gradient(circle at 0 5%, rgba(251,191,36,0.09), transparent 30rem),
+    radial-gradient(circle at 100% 12%, rgba(14,165,233,0.08), transparent 30rem),
+    rgba(15,16,17,0.82);
+}
+.https-center-header { align-items: flex-start; }
+.https-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(112px, 1fr));
+  gap: 10px;
+  min-width: 620px;
+}
+.https-summary-grid span {
+  padding: 11px 12px;
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 15px;
+  color: #8a8f98;
+  background: rgba(255,255,255,0.03);
+}
+.https-summary-grid b { display: block; color: #f7f8f8; font-size: 23px; }
+.https-center-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(430px, 0.88fr);
+  gap: 16px;
+  align-items: start;
+}
+.https-main-stack, .https-side-stack { display: grid; gap: 14px; }
+.https-status-card, .root-ca-card, .trusted-apps-card, .manual-recording-card, .trusted-domains-card, .ssl-fails-card, .https-api-card {
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.025);
+}
+.https-status-grid, .certificate-grid, .recording-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 9px;
+}
+.https-status-grid span, .certificate-grid span, .recording-summary-grid span {
+  padding: 10px;
+  border-radius: 13px;
+  color: #8a8f98;
+  background: rgba(255,255,255,0.028);
+}
+.https-status-grid b, .certificate-grid b, .recording-summary-grid b { display: block; color: #f7f8f8; overflow-wrap: anywhere; }
+.certificate-grid small { display: block; color: #62666d; margin-bottom: 4px; }
+.trusted-app-grid, .trusted-domain-grid, .ssl-failure-grid, .https-endpoints { display: grid; gap: 8px; }
+.trusted-app-row {
+  display: grid;
+  grid-template-columns: minmax(130px,0.9fr) minmax(140px,1fr) minmax(180px,1.15fr) minmax(102px,0.55fr);
+  gap: 9px;
+  align-items: center;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.026);
+}
+.trusted-domain-row, .ssl-failure-row {
+  display: grid;
+  grid-template-columns: minmax(118px,0.86fr) minmax(135px,1fr) minmax(96px,0.75fr) minmax(92px,0.58fr);
+  gap: 9px;
+  align-items: center;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.026);
+}
+.trusted-app-row > *, .trusted-domain-row > *, .ssl-failure-row > * { min-width: 0; }
+.trusted-app-row span, .trusted-domain-row span, .ssl-failure-row span, .ssl-failure-row small { color: #a5acb8; }
+.trusted-app-row code, .trusted-domain-row code { color: #7dd3fc; font-size: 11px; overflow-wrap: anywhere; }
+.trusted-app-row em, .trusted-domain-row em, .ssl-failure-row em {
+  justify-self: start;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #a7f3d0;
+  background: rgba(62,207,142,0.08);
+  font-style: normal;
+  font-size: 12px;
+}
+.trusted-app-row.disabled em, .ssl-failure-row em { color: #fde68a; background: rgba(251,191,36,0.11); }
+.trusted-domain-row.builtin em { color: #c7d2fe; background: rgba(113,112,255,0.12); }
+.recording-table { display: grid; gap: 8px; margin-top: 12px; }
+.recording-row {
+  display: grid;
+  grid-template-columns: minmax(120px,1fr) minmax(94px,0.72fr) 72px 76px 84px 82px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 13px;
+  background: rgba(255,255,255,0.026);
+}
+.recording-row > * { min-width: 0; overflow-wrap: anywhere; }
+.recording-head { color: #8a8f98; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(255,255,255,0.014); }
+.recording-row span { color: #bae6fd; }
+.recording-row em { justify-self: start; padding: 4px 7px; border-radius: 999px; color: #d0d6e0; background: rgba(255,255,255,0.06); font-style: normal; font-size: 12px; }
+.recording-row em:nth-of-type(2) { color: #a7f3d0; background: rgba(62,207,142,0.08); }
+.https-api-card p { color: #d0d6e0; }
 .profile-row { display: flex; justify-content: space-between; gap: 14px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); }
 .profile-row em { color: #7dd3fc; font-style: normal; white-space: nowrap; }
 .activity-row { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -712,14 +809,14 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
   overflow-wrap: anywhere;
 }
 @media (max-width: 1180px) {
-  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout { grid-template-columns: 1fr; }
+  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout, .https-center-layout { grid-template-columns: 1fr; }
   .topology-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .topology-node em { display: none; }
 }
 @media (max-width: 720px) {
   .workspace { padding: 12px; }
   .topbar, .section-heading, .panel-header { flex-direction: column; align-items: stretch; }
-  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
+  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
   .hero, .command-hero { grid-template-columns: 1fr; padding: 24px; }
   .posture-body { grid-template-columns: 1fr; }
   h1 { font-size: 3rem; }

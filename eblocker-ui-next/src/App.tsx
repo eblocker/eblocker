@@ -56,6 +56,17 @@ import {
   protectionModulesModern,
   torExitPolicy
 } from './domain/protectionCenter';
+import {
+  getHttpsCenterTotals,
+  httpsCapabilities,
+  httpsCenterEndpoints,
+  httpsStatus,
+  manualRecording,
+  rootCertificate,
+  sslFailureSuggestions,
+  trustedApps,
+  trustedDomains
+} from './domain/httpsCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -64,6 +75,7 @@ const navItems = [
   { id: 'devices', label: t('nav.devices'), icon: '◈' },
   { id: 'legacy-parity', label: t('nav.parity'), icon: '⇄' },
   { id: 'protection', label: t('nav.protection'), icon: '◆' },
+  { id: 'https', label: t('nav.https'), icon: '◇' },
   { id: 'network', label: t('nav.network'), icon: '◎' },
   { id: 'family', label: t('nav.family'), icon: '◌' },
   { id: 'system', label: t('nav.system'), icon: '⚙' }
@@ -99,6 +111,27 @@ function formatNumber(value: number): string {
   return value.toLocaleString('de-DE');
 }
 
+function recordingColumnLabel(column: string): string {
+  const labels: Record<string, string> = {
+    domain: 'Domain',
+    ip: 'IP',
+    protocol: 'Protokoll',
+    currentRule: 'Aktuell',
+    recommendedRule: 'Empfohlen',
+    tempRule: 'Testregel'
+  };
+  return labels[column] ?? column;
+}
+
+function recordingRuleLabel(rule: string): string {
+  const labels: Record<string, string> = {
+    FILTER: 'Blocken',
+    ALLOW: 'Erlauben',
+    NO_CHANGE: 'gleich'
+  };
+  return labels[rule] ?? rule;
+}
+
 function parityStageClass(stage: LegacyParityStage): string {
   return `stage-${stage}`;
 }
@@ -112,6 +145,7 @@ function App() {
   const dnsRatingTotals = getDnsServerRatingTotals();
   const protectionTotals = getProtectionCenterTotals();
   const blockedProtectionTotal = getBlockedProtectionTotal();
+  const httpsTotals = getHttpsCenterTotals();
 
   return (
     <div className="app-frame">
@@ -482,6 +516,181 @@ function App() {
 
           <div className="device-capability-strip">
             {protectionCenterCapabilities.map((capability) => (
+              <span key={capability}>{capability}</span>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel https-center-panel" id="https">
+          <div className="panel-header https-center-header">
+            <div>
+              <span className="mini-label">{t('label.httpsLegacyModern')}</span>
+              <h2>{t('section.https.title')}</h2>
+              <p>{t('section.https.description')}</p>
+            </div>
+            <div className="https-summary-grid" aria-label="HTTPS/Zertifikate Parity-Übersicht">
+              <span><b>{httpsTotals.legacyStates}</b> alte States</span>
+              <span><b>{httpsTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{httpsTotals.trustedApps}</b> Trusted Apps</span>
+              <span><b>{httpsTotals.sslFailures}</b> SSL-Fehler</span>
+            </div>
+          </div>
+
+          <div className="https-center-layout">
+            <div className="https-main-stack">
+              <article className="https-status-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>HTTPS-Inspection & ATA</h3>
+                    <p>Alt: `sslstatus` mit HTTPS-Schalter, Warn-Dialog, Pattern-/Icon-Abhängigkeiten und Attack-Target-Analysis.</p>
+                  </div>
+                  <span className={`status-chip ${httpsStatus.enabled ? 'online' : 'offline'}`}>{httpsStatus.enabled ? 'Inspection aktiv' : 'Inspection aus'}</span>
+                </div>
+                <div className="https-status-grid">
+                  <span><b>{httpsStatus.enabled ? 'Aktiv' : 'Aus'}</b> HTTPS-Inspection</span>
+                  <span><b>{httpsStatus.ataEnabled ? 'Aktiv' : 'Aus'}</b> Attack-Target-Analysis</span>
+                  <span><b>{httpsStatus.certificatesReady ? 'Bereit' : 'Fehlt'}</b> Zertifikate</span>
+                  <span><b>{httpsStatus.recordingEnabled ? 'Ein' : 'Aus'}</b> SSL-Fehler-Recording</span>
+                  <span><b>{httpsStatus.patternDevices}</b> Pattern-Geräte</span>
+                  <span><b>{httpsStatus.controlBarDevices}</b> Icon-Geräte</span>
+                </div>
+                <div className="device-action-row">
+                  <button className="primary-button" type="button">HTTPS-Assistent öffnen</button>
+                  <button className="ghost-button" type="button">ATA umschalten</button>
+                  <button className="ghost-button" type="button">Fehler-Recording ändern</button>
+                </div>
+              </article>
+
+              <article className="root-ca-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Root-CA & Zertifikatsstatus</h3>
+                    <p>Alt: `sslcertificate` und `ssl/status/renewal` mit Root-CA, Gültigkeit, Erneuerung und Download-Hinweisen.</p>
+                  </div>
+                  <span className="status-chip online">Renewal bereit</span>
+                </div>
+                <div className="certificate-grid">
+                  <span><small>Aktuelle CA</small><b>{rootCertificate.commonName}</b></span>
+                  <span><small>Gültig ab</small><b>{rootCertificate.validFrom}</b></span>
+                  <span><small>Gültig bis</small><b>{rootCertificate.validUntil}</b></span>
+                  <span><small>Neue CA</small><b>{rootCertificate.renewalCommonName}</b></span>
+                  <span><small>Erneuerungsfenster</small><b>{rootCertificate.caRenewWeeks} Wochen</b></span>
+                  <span><small>Status</small><b>{rootCertificate.renewalReady ? 'Renewal verfügbar' : 'keine Erneuerung'}</b></span>
+                </div>
+              </article>
+
+              <article className="trusted-apps-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Trusted Apps</h3>
+                    <p>Alt: `trustedapps`/`trustedappsdetails` mit Built-in/Custom, Aktivierung, Reset, CRUD und Domains/IPs.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Trusted App anlegen</button>
+                </div>
+                <div className="trusted-app-grid">
+                  {trustedApps.map((app) => (
+                    <div className={`trusted-app-row ${app.enabled ? 'enabled' : 'disabled'}`} key={app.id}>
+                      <strong>{app.name}</strong>
+                      <span>{app.description}</span>
+                      <code>{app.domainsIps.join(' · ')}</code>
+                      <em>{app.builtin ? (app.modified ? 'Built-in geändert' : 'Built-in') : 'Custom'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="manual-recording-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Manuelle HTTPS-Aufzeichnung</h3>
+                    <p>Alt: `manualrecording` mit Device-Auswahl, Zeit-/Größenlimit, Testregel, Empfehlung und App-Speicherung.</p>
+                  </div>
+                  <span className="status-chip warning">{manualRecording.recordingStatus ? 'Recording läuft' : 'bereit'}</span>
+                </div>
+                <div className="recording-summary-grid">
+                  <span><b>{manualRecording.selectedDevice}</b> Zielgerät</span>
+                  <span><b>{manualRecording.timeLimitMinutes}min</b> Zeitlimit</span>
+                  <span><b>{manualRecording.sizeLimitMb}MB</b> Größenlimit</span>
+                  <span><b>{manualRecording.recordedConnections.length}</b> Verbindungen</span>
+                </div>
+                <div className="recording-table">
+                  <div className="recording-row recording-head">
+                    {manualRecording.tableColumns.map((column) => <span key={column}>{recordingColumnLabel(column)}</span>)}
+                  </div>
+                  {manualRecording.recordedConnections.map((connection) => (
+                    <div className="recording-row" key={`${connection.recordedDomain ?? connection.recordedIp}-${connection.recordedIp}`}>
+                      <strong>{connection.recordedDomain ?? 'nur IP'}</strong>
+                      <span>{connection.recordedIp}</span>
+                      <span>{connection.protocol}</span>
+                      <em>{recordingRuleLabel(connection.currentRule)}</em>
+                      <em>{recordingRuleLabel(connection.recommendedRule)}</em>
+                      <em>{recordingRuleLabel(connection.tempRule)}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="https-side-stack">
+              <article className="trusted-domains-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Trusted Domains</h3>
+                    <p>Alt: `trusteddomains` mit Einzeleinträgen, App-Zuordnung, Status, Suche und Bulk-Löschen.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Domain hinzufügen</button>
+                </div>
+                <div className="trusted-domain-grid">
+                  {trustedDomains.map((domain) => (
+                    <div className={`trusted-domain-row ${domain.deletable ? 'deletable' : 'builtin'}`} key={domain.url}>
+                      <strong>{domain.name}</strong>
+                      <code>{domain.url}</code>
+                      <span>{domain.trustedAppName ?? 'Direkte Ausnahme'}</span>
+                      <em>{domain.deletable ? 'löschbar' : 'Built-in geschützt'}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="ssl-fails-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>SSL-Fehler & Vorschläge</h3>
+                    <p>Alt: `sslfails` mit App-/Domain-Tabellen, Last-Seen, Auswahl, Trust-Aktionen und Fehlerliste leeren.</p>
+                  </div>
+                  <button className="ghost-button small" type="button">Fehler leeren</button>
+                </div>
+                <div className="ssl-failure-grid">
+                  {sslFailureSuggestions.domainsIps.map((failure) => (
+                    <div className="ssl-failure-row" key={failure.domainIp}>
+                      <strong>{failure.domainIp}</strong>
+                      <span>{failure.devices.join(' · ')}</span>
+                      <small>{failure.lastOccurrence}</small>
+                      <em>{failure.enabledModule ?? (failure.enabledWhitelist ? 'Whitelist aktiv' : 'nicht vertraut')}</em>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="https-api-card">
+                <h3>API-Migration</h3>
+                <p>SslService, SslSuggestionsService, TrustedAppsService, TrustedDomainsService und ManualRecordingService als `/api/v1`-Ziele.</p>
+                <div className="endpoint-list https-endpoints">
+                  {httpsCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {httpsCapabilities.map((capability) => (
               <span key={capability}>{capability}</span>
             ))}
           </div>

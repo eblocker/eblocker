@@ -86,6 +86,22 @@ import {
   vpnSetupWizardSteps,
   wireGuardMigrationHints
 } from './domain/vpnMobileCenter';
+import {
+  adminPasswordState,
+  backupFlows,
+  diagnosticReport,
+  eventRows,
+  getSystemAdminCenterTotals,
+  licenseInfo,
+  localeSettings,
+  openSourceLicenseGroups,
+  schedulerStats,
+  systemAdminCapabilities,
+  systemAdminCenterEndpoints,
+  systemStatusCards,
+  taskRows,
+  updateStatus
+} from './domain/systemAdminCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -216,6 +232,7 @@ function App() {
   const httpsTotals = getHttpsCenterTotals();
   const familyTotals = getFamilyCenterTotals();
   const vpnTotals = getVpnMobileCenterTotals();
+  const systemAdminTotals = getSystemAdminCenterTotals();
 
   return (
     <div className="app-frame">
@@ -426,7 +443,7 @@ function App() {
         </section>
 
         <section className="dashboard-grid">
-          <article className="panel large" id="system">
+          <article className="panel large" id="health">
             <div className="panel-header">
               <div>
                 <h2>{t('section.health.title')}</h2>
@@ -1353,6 +1370,126 @@ function App() {
             {vpnMobileCapabilities.map((capability) => (
               <span key={capability}>{capability}</span>
             ))}
+          </div>
+        </section>
+
+        <section className="panel system-admin-panel" id="system">
+          <div className="panel-header system-admin-header">
+            <div>
+              <span className="mini-label">{t('label.systemLegacyModern')}</span>
+              <h2>{t('section.systemAdmin.title')}</h2>
+              <p>{t('section.systemAdmin.description')}</p>
+            </div>
+            <div className="system-summary-grid" aria-label="System/Admin Parity-Übersicht">
+              <span><b>{systemAdminTotals.legacyStates}</b> alte States</span>
+              <span><b>{systemAdminTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{systemAdminTotals.statusCards}</b> Admin-Karten</span>
+              <span><b>{systemAdminTotals.tasks}</b> Tasks</span>
+            </div>
+          </div>
+
+          <div className="system-admin-layout">
+            <div className="system-main-stack">
+              <article className="system-status-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Status & Administration</h3>
+                    <p>Alt: `license`, `update`, `diagnostics`, `events`, `backup`, `tasks`, `timeandlanguage`, `adminpassword` und Open-Source-Lizenzstates.</p>
+                  </div>
+                  <span className="status-chip online">Admin bereit</span>
+                </div>
+                <div className="system-status-grid">
+                  {systemStatusCards.map((card) => (
+                    <span className={`system-status-tile ${card.tone}`} key={card.key}><b>{card.value}</b>{card.title}<small>{card.detail}</small></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="system-updates-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Lizenz & Updates</h3>
+                    <p>RegistrationService und UpdateService: Produktfeatures, Aktivierung, Auto-Update, Update-Check, Recovery und Fortschritt.</p>
+                  </div>
+                  <span className="status-chip warning">{updateStatus.progress}%</span>
+                </div>
+                <div className="system-license-grid">
+                  <span><b>{licenseInfo.registrationState}</b>{licenseInfo.licenseType} · {licenseInfo.productFeatures.join(' · ')}</span>
+                  <span><b>{licenseInfo.deviceName}</b>{licenseInfo.registeredBy} · {licenseInfo.validUntil}</span>
+                  <span><b>{updateStatus.projectVersion}</b>Filter {updateStatus.displayFilterVersion}</span>
+                  <span><b>{updateStatus.automaticUpdatesActivated ? 'Auto' : 'Manuell'}</b>{updateStatus.lastAutomaticUpdate} → {updateStatus.nextAutomaticUpdate}</span>
+                </div>
+                <div className="package-strip">
+                  {updateStatus.updateablePackages.map((pkg) => <span key={pkg}>{pkg}</span>)}
+                </div>
+              </article>
+
+              <article className="system-ops-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Diagnose, Events, Backup & Tasks</h3>
+                    <p>Diagnosebericht, Event-Tabelle, Backup/Restore-Dialoge und Task-/Scheduler-Tabellen als direkte Admin-Flows.</p>
+                  </div>
+                  <span className="status-chip online">{diagnosticReport.status}</span>
+                </div>
+                <div className="system-ops-grid">
+                  <div>
+                    <h4>Events</h4>
+                    {eventRows.map((event) => <span className={`event-pill ${event.severity.toLowerCase()}`} key={event.id}>{event.timestamp} · {event.severity} · {event.message}</span>)}
+                  </div>
+                  <div>
+                    <h4>Backup</h4>
+                    {backupFlows.map((flow) => <span className="event-pill" key={flow.key}>{flow.key} · {flow.requiresPassword ? 'Passwort' : 'ohne Passwort'} · {flow.state}</span>)}
+                  </div>
+                  <div>
+                    <h4>Tasks</h4>
+                    {taskRows.map((task) => <span className={`event-pill ${task.status.toLowerCase()}`} key={task.name}>{task.name} · {task.status} · {task.executions} Läufe</span>)}
+                  </div>
+                  <div>
+                    <h4>Scheduler</h4>
+                    {schedulerStats.map((scheduler) => <span className="event-pill" key={scheduler.name}>{scheduler.name} · Queue {scheduler.queueLength} · Tasks {scheduler.taskCount}</span>)}
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div className="system-side-stack">
+              <article className="locale-admin-card">
+                <h3>Sprache, Zeit & Passwort</h3>
+                <div className="locale-grid">
+                  <span><b>{localeSettings.language}</b>{localeSettings.timezone}</span>
+                  <span><b>{localeSettings.regions.length}</b>Regionen · {localeSettings.cities.join(' · ')}</span>
+                  <span><b>{adminPasswordState.passwordRequired ? 'aktiv' : 'aus'}</b>Admin-Passwort</span>
+                  <span><b>{adminPasswordState.resetFlowSteps.length}</b>Reset-Schritte</span>
+                </div>
+              </article>
+
+              <article className="oss-card">
+                <h3>Open-Source-Lizenzen</h3>
+                <div className="oss-grid">
+                  {openSourceLicenseGroups.map((group) => <span key={group.key}><b>{group.label}</b>{group.packageCount} Pakete · {group.route}</span>)}
+                </div>
+              </article>
+
+              <article className="system-api-card">
+                <h3>API-Migration</h3>
+                <p>Registration, Updates, Diagnostics, Events, Tasks, ConfigBackup, Locale, Timezone und Authentication als `/api/v1/system`-Ziele.</p>
+                <div className="endpoint-list system-endpoints">
+                  {systemAdminCenterEndpoints.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {systemAdminCapabilities.map((capability) => <span key={capability}>{capability}</span>)}
           </div>
         </section>
 

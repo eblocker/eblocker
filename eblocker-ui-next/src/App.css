@@ -780,6 +780,44 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
 .wireguard-card p, .vpn-api-card p { color: #d0d6e0; }
 .wireguard-hints { display: flex; flex-wrap: wrap; }
 .vpn-endpoints .endpoint-row code { font-size: 10px; line-height: 1.35; }
+.system-admin-panel {
+  border-color: rgba(167,139,250,0.2);
+  background:
+    radial-gradient(circle at 0 8%, rgba(167,139,250,0.1), transparent 32rem),
+    radial-gradient(circle at 100% 12%, rgba(14,165,233,0.07), transparent 30rem),
+    rgba(15,16,17,0.82);
+}
+.system-admin-header { align-items: flex-start; }
+.system-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(112px,1fr));
+  gap: 10px;
+  min-width: 620px;
+}
+.system-summary-grid span { padding: 11px 12px; border: 1px solid rgba(255,255,255,0.075); border-radius: 15px; color: #8a8f98; background: rgba(255,255,255,0.03); }
+.system-summary-grid b { display: block; color: #f7f8f8; font-size: 23px; }
+.system-admin-layout { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr); gap: 16px; align-items: start; }
+.system-main-stack, .system-side-stack { display: grid; gap: 14px; min-width: 0; }
+.system-status-card, .system-updates-card, .system-ops-card, .locale-admin-card, .oss-card, .system-api-card { min-width: 0; padding: 16px; border: 1px solid rgba(255,255,255,0.075); border-radius: 20px; background: rgba(255,255,255,0.025); }
+.system-status-grid, .system-license-grid, .system-ops-grid, .locale-grid, .oss-grid, .system-endpoints { display: grid; gap: 8px; }
+.system-status-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.system-license-grid, .locale-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.system-ops-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.system-status-tile, .system-license-grid span, .locale-grid span, .oss-grid span { min-width: 0; padding: 11px 12px; border-radius: 14px; color: #a5acb8; background: rgba(255,255,255,0.028); overflow-wrap: anywhere; }
+.system-status-tile b, .system-license-grid b, .locale-grid b, .oss-grid b { display: block; color: #f7f8f8; font-size: 17px; }
+.system-status-tile small { display: block; color: #8a8f98; }
+.system-status-tile.green { border: 1px solid rgba(62,207,142,0.16); }
+.system-status-tile.amber { border: 1px solid rgba(251,191,36,0.18); }
+.system-status-tile.red { border: 1px solid rgba(239,68,68,0.2); }
+.system-ops-grid h4 { margin: 0 0 8px; }
+.event-pill { display: block; padding: 7px 9px; margin-bottom: 6px; border-radius: 12px; color: #d0d6e0; background: rgba(255,255,255,0.04); overflow-wrap: anywhere; font-size: 12px; }
+.event-pill.error { color: #fecaca; background: rgba(239,68,68,0.12); }
+.event-pill.warning { color: #fde68a; background: rgba(251,191,36,0.11); }
+.event-pill.running { color: #bfdbfe; background: rgba(56,189,248,0.1); }
+.package-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.package-strip span { padding: 6px 9px; border-radius: 999px; color: #c4b5fd; background: rgba(167,139,250,0.1); font-size: 12px; }
+.system-api-card p { color: #d0d6e0; }
+.system-endpoints .endpoint-row code { font-size: 10px; line-height: 1.35; }
 .profile-row { display: flex; justify-content: space-between; gap: 14px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); }
 .profile-row em { color: #7dd3fc; font-style: normal; white-space: nowrap; }
 .activity-row { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -981,14 +1019,14 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
   overflow-wrap: anywhere;
 }
 @media (max-width: 1180px) {
-  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout, .https-center-layout, .family-center-layout, .vpn-center-layout { grid-template-columns: 1fr; }
+  .mission-grid, .telemetry-layout, .device-center-layout, .device-detail-grid, .network-center-layout, .protection-center-layout, .https-center-layout, .family-center-layout, .vpn-center-layout, .system-admin-layout { grid-template-columns: 1fr; }
   .topology-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .topology-node em { display: none; }
 }
 @media (max-width: 720px) {
   .workspace { padding: 12px; }
   .topbar, .section-heading, .panel-header { flex-direction: column; align-items: stretch; }
-  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .vpn-summary-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .vpn-home-grid, .vpn-wizard-steps, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
+  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .vpn-summary-grid, .system-summary-grid, .system-status-grid, .system-license-grid, .system-ops-grid, .locale-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .vpn-home-grid, .vpn-wizard-steps, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
   .hero, .command-hero { grid-template-columns: 1fr; padding: 24px; }
   .posture-body { grid-template-columns: 1fr; }
   h1 { font-size: 3rem; }

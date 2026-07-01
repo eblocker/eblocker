@@ -102,6 +102,17 @@ import {
   taskRows,
   updateStatus
 } from './domain/systemAdminCenter';
+import {
+  accessDeniedReasons,
+  blockPageActions,
+  blockPageCapabilities,
+  blockPageEndpointMap,
+  blockPageScenarios,
+  blockRouteDecisions,
+  getBlockPageCenterTotals,
+  redirectDecisionRows,
+  squidMitigationRows
+} from './domain/blockPagesCenter';
 import { t } from './i18n/messages';
 import './App.css';
 
@@ -114,6 +125,7 @@ const navItems = [
   { id: 'network', label: t('nav.network'), icon: '◎' },
   { id: 'family', label: t('nav.family'), icon: '◌' },
   { id: 'vpn', label: t('nav.vpn'), icon: '⇆' },
+  { id: 'block-pages', label: t('nav.blockPages'), icon: '⛔' },
   { id: 'system', label: t('nav.system'), icon: '⚙' }
 ] as const;
 
@@ -195,6 +207,64 @@ function vpnAccessLabel(type: string): string {
   return labels[type] ?? type;
 }
 
+function blockSeverityLabel(severity: string): string {
+  const labels: Record<string, string> = {
+    info: 'Info',
+    warning: 'Warnung',
+    danger: 'Blockiert'
+  };
+  return labels[severity] ?? severity;
+}
+
+function blockPageKindLabel(kind: string): string {
+  const labels: Record<string, string> = {
+    redirect: 'Redirect',
+    'block-options': 'Block-Optionen',
+    'access-denied': 'Access Denied',
+    'ads-trackers': 'Ads/Tracker',
+    malware: 'Malware',
+    whitelisted: 'Whitelist',
+    'ssl-whitelist': 'SSL-Ausnahme',
+    'squid-error': 'Squid-Fehler',
+    console: 'Konsole',
+    logout: 'Logout'
+  };
+  return labels[kind] ?? kind;
+}
+
+function blockActionLabel(action: string): string {
+  const labels: Record<string, string> = {
+    'PASS decision': 'PASS erlauben',
+    'REDIRECT decision': 'Umleitung folgen',
+    'remember redirect decision': 'Entscheidung merken',
+    'back to browser history': 'Zurück',
+    'retry target URL': 'Erneut versuchen',
+    'open parental-control console': 'Kinderschutz öffnen',
+    'change/unlock operating user by PIN': 'Nutzer per PIN wechseln',
+    'toggle remaining online time': 'Restzeit umschalten',
+    'pause protection for 300 seconds': 'Schutz 300s pausieren',
+    'remove custom blocked domain': 'Custom-Domain entfernen',
+    'add SSL whitelist domain and continue': 'SSL-Ausnahme speichern',
+    'disable Tor and retry': 'Tor aus + erneut',
+    'disable VPN and retry': 'VPN aus + erneut',
+    'logout admin token and return to dashboard': 'Admin abmelden'
+  };
+  return labels[action] ?? action;
+}
+
+function accessReasonConditionLabel(condition: string): string {
+  const labels: Record<string, string> = {
+    'externalAclMessage or listId/domain with blacklisting mode': 'External-ACL oder Liste/Domain im Blacklist-Modus',
+    'domain with whitelisting mode': 'Domain im Whitelist-Modus nicht erlaubt',
+    'restrictions contains TIME_FRAME': 'Restriction enthält TIME_FRAME',
+    'restrictions contains MAX_USAGE_TIME': 'Restriction enthält MAX_USAGE_TIME',
+    'restrictions contains USAGE_TIME_DISABLED': 'Restriction enthält USAGE_TIME_DISABLED',
+    'INTERNET_ACCESS_BLOCKED or profile.internetBlocked': 'INTERNET_ACCESS_BLOCKED oder Profil-Internetsperre',
+    'no profile/external ACL data': 'Keine Profil- oder External-ACL-Daten'
+  };
+  return labels[condition] ?? condition;
+}
+
 function recordingColumnLabel(column: string): string {
   const labels: Record<string, string> = {
     domain: 'Domain',
@@ -233,6 +303,7 @@ function App() {
   const familyTotals = getFamilyCenterTotals();
   const vpnTotals = getVpnMobileCenterTotals();
   const systemAdminTotals = getSystemAdminCenterTotals();
+  const blockPageTotals = getBlockPageCenterTotals();
 
   return (
     <div className="app-frame">
@@ -1370,6 +1441,120 @@ function App() {
             {vpnMobileCapabilities.map((capability) => (
               <span key={capability}>{capability}</span>
             ))}
+          </div>
+        </section>
+
+        <section className="panel block-pages-panel" id="block-pages">
+          <div className="panel-header block-pages-header">
+            <div>
+              <span className="mini-label">{t('label.blockPagesLegacyModern')}</span>
+              <h2>{t('section.blockPages.title')}</h2>
+              <p>{t('section.blockPages.description')}</p>
+            </div>
+            <div className="block-summary-grid" aria-label="Blockseiten Parity-Übersicht">
+              <span><b>{blockPageTotals.legacyStates}</b> alte States</span>
+              <span><b>{blockPageTotals.scenarios}</b> Seiten</span>
+              <span><b>{blockPageTotals.endpoints}</b> Endpunkte</span>
+              <span><b>{blockPageTotals.actions}</b> Aktionen</span>
+            </div>
+          </div>
+
+          <div className="block-pages-layout">
+            <div className="block-main-stack">
+              <article className="block-scenarios-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Nutzerseiten statt Admin-Karten</h3>
+                    <p>Alt: Dashboard-App-Routen für Redirects, Access-Denied, Malware, Ads/Tracker, SSL-Ausnahmen und Squid-Fehler. Neu: eigenes Center, damit die alten Browse-Time-Seiten nicht vergessen werden.</p>
+                  </div>
+                  <span className="status-chip warning">{blockPageTotals.scenarios} Seiten</span>
+                </div>
+                <div className="block-scenario-grid">
+                  {blockPageScenarios.map((scenario) => (
+                    <div className={`block-scenario-card ${scenario.severity}`} key={scenario.key}>
+                      <strong>{scenario.title}<small>{scenario.legacyState} · {blockPageKindLabel(scenario.pageKind)}</small></strong>
+                      <span>{blockSeverityLabel(scenario.severity)}</span>
+                      <p>Parameter: {scenario.params.length ? scenario.params.join(' · ') : 'keine'}</p>
+                      <div>
+                        {scenario.preservedActions.map((action) => <em key={action}>{blockActionLabel(action)}</em>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="block-routing-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Router-Entscheidungen</h3>
+                    <p>`blocker.component.js` leitet nach `type` auf die konkreten Nutzerseiten. Der Fallback bleibt Squid-Fehler.</p>
+                  </div>
+                  <span className="status-chip online">{blockPageTotals.routeDecisions} Regeln</span>
+                </div>
+                <div className="block-route-grid">
+                  {blockRouteDecisions.map((decision) => (
+                    <span key={`${decision.type}-${decision.targetState}`}><b>{decision.type}</b>{decision.targetState}<small>{blockPageKindLabel(decision.pageKind)}</small></span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="access-reasons-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Access-Denied-Gründe</h3>
+                    <p>Profil-, Listen-, Zeitfenster-, Max-Usage- und Gerätesperren bleiben als sichtbare Gründe erhalten.</p>
+                  </div>
+                  <span className="status-chip warning">{blockPageTotals.accessReasons} Gründe</span>
+                </div>
+                <div className="access-reason-list">
+                  {accessDeniedReasons.map((reason) => (
+                    <span key={reason.key}><b>{reason.visibleMessage}</b>{accessReasonConditionLabel(reason.legacyCondition)}</span>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="block-side-stack">
+              <article className="redirect-decision-card">
+                <h3>Redirect-Entscheidungen</h3>
+                <div className="redirect-decision-grid">
+                  {redirectDecisionRows.map((row) => <span key={row.decision}><b>{row.decision}</b>{row.target}<small>{row.rememberable ? 'merkbar per PUT' : 'nur temporär'}</small></span>)}
+                </div>
+              </article>
+
+              <article className="squid-mitigation-card">
+                <h3>Squid-Mitigations</h3>
+                <div className="squid-grid">
+                  {squidMitigationRows.map((row) => <span key={row.key}><b>{row.action}</b>{row.legacyService}<small>{row.delayMs} ms</small></span>)}
+                </div>
+              </article>
+
+              <article className="block-actions-card">
+                <h3>Erhaltene Aktionen</h3>
+                <div className="block-action-strip">
+                  {blockPageActions.map((action) => <span key={action}>{blockActionLabel(action)}</span>)}
+                </div>
+              </article>
+
+              <article className="block-api-card">
+                <h3>API-Migration</h3>
+                <p>Redirect, Console-IP, Dashboard-Filter/User/Profile, OnlineTime, CustomDomainFilter, Pause, SSL, Tor, VPN und Token-Erneuerung als `/api/v1/block-pages`-Ziele.</p>
+                <div className="endpoint-list block-endpoints">
+                  {blockPageEndpointMap.map((endpoint) => (
+                    <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>
+                      <span>{endpoint.method}</span>
+                      <code>{endpoint.legacy}</code>
+                      <b>→</b>
+                      <code>{endpoint.modern}</code>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div className="device-capability-strip">
+            {blockPageCapabilities.map((capability) => <span key={capability}>{capability}</span>)}
           </div>
         </section>
 

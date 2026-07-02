@@ -618,6 +618,87 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.modernapi.lifecycle.appliance.reboot");
 
         server
+                .uri("/api/v1/lifecycle/appliance/shutdown-on-error", modernApiBridgeController)
+                .action("shutdownOnError", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.appliance.shutdown.on.error")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/appliance/reboot-on-error", modernApiBridgeController)
+                .action("rebootOnError", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.appliance.reboot.on.error")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/auth/init-token/{appContext}", modernApiBridgeController)
+                .action("generateConsoleToken", HttpMethod.GET)
+                .name("public.modernapi.lifecycle.auth.init.token.get");
+
+        server
+                .uri("/api/v1/lifecycle/auth/login/{appContext}", modernApiBridgeController)
+                .action("login", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.auth.login.post");
+
+        server
+                .uri("/api/v1/lifecycle/auth/renew/{appContext}", modernApiBridgeController)
+                .action("renewToken", HttpMethod.GET)
+                .name("adminconsole.modernapi.lifecycle.auth.renew.get");
+
+        server
+                .uri("/api/v1/lifecycle/auth/login-wait", modernApiBridgeController)
+                .action("passwordEntryInSeconds", HttpMethod.GET)
+                .name("public.modernapi.lifecycle.auth.login.wait.get")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/password-reset/initiate", modernApiBridgeController)
+                .action("initiateReset", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.password.reset.initiate")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/password-reset/execute", modernApiBridgeController)
+                .action("executeReset", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.password.reset.execute")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/password-reset/cancel", modernApiBridgeController)
+                .action("cancelReset", HttpMethod.POST)
+                .name("public.modernapi.lifecycle.password.reset.cancel")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/v1/lifecycle/setup/tos", modernApiBridgeController)
+                .action("getTos", HttpMethod.GET)
+                .name("adminconsole.modernapi.lifecycle.setup.tos.get");
+
+        server
+                .uri("/api/v1/lifecycle/registration", modernApiBridgeController)
+                .action("registrationStatus", HttpMethod.GET)
+                .name("adminconsole.modernapi.lifecycle.registration.get");
+
+        server
+                .uri("/api/v1/lifecycle/registration", modernApiBridgeController)
+                .action("register", HttpMethod.POST)
+                .name("adminconsole.modernapi.lifecycle.registration.post");
+
+        server
+                .uri("/api/v1/lifecycle/registration", modernApiBridgeController)
+                .action("resetRegistration", HttpMethod.DELETE)
+                .name("adminconsole.modernapi.lifecycle.registration.delete");
+
+        server
+                .uri("/api/v1/lifecycle/splash", modernApiBridgeController)
+                .action("getSplash", HttpMethod.GET)
+                .name("adminconsole.modernapi.lifecycle.splash.get");
+
+        server
+                .uri("/api/v1/lifecycle/splash", modernApiBridgeController)
+                .action("setSplash", HttpMethod.POST)
+                .name("adminconsole.modernapi.lifecycle.splash.post");
+
+        server
                 .uri("/api/v1/devices", modernApiBridgeController)
                 .action("getDevices", HttpMethod.GET)
                 .name("adminconsole.modernapi.devices.get");

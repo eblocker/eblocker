@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   activityEvents,
   dashboardMetrics,
@@ -127,6 +128,12 @@ import {
   setupStatusCards
 } from './domain/lifecycleCenter';
 import { t } from './i18n/messages';
+import {
+  getLiveDeviceCenterTotals,
+  loadLiveModernUiState,
+  type LiveModernUiState,
+  type ModernUiLiveStatus
+} from './domain/liveApi';
 import './App.css';
 
 const navItems = [
@@ -345,11 +352,53 @@ function parityStageClass(stage: LegacyParityStage): string {
   return `stage-${stage}`;
 }
 
+interface LiveUiRuntime {
+  readonly status: ModernUiLiveStatus;
+  readonly data?: LiveModernUiState;
+  readonly error?: string;
+}
+
 function App() {
+  const [liveState, setLiveState] = useState<LiveUiRuntime>({ status: 'loading' });
+
+  useEffect(() => {
+    let cancelled = false;
+    loadLiveModernUiState()
+      .then((data) => {
+        if (!cancelled) {
+          setLiveState({ status: 'live', data });
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setLiveState({ status: 'fallback', error: error instanceof Error ? error.message : String(error) });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const topDomain = getTopBlockedDomain();
   const parityTotals = getLegacyParityTotals();
-  const deviceTotals = getDeviceCenterTotals();
-  const selectedDevice = getSelectedDeviceDetail();
+  const liveData = liveState.status === 'live' ? liveState.data : undefined;
+  const liveDeviceRows = liveData ? liveData.devices : deviceCenterRows;
+  const deviceTotals = liveData ? getLiveDeviceCenterTotals(liveDeviceRows) : getDeviceCenterTotals();
+  const staticSelectedDevice = getSelectedDeviceDetail();
+  const currentLiveDevice = liveDeviceRows.find((device) => device.isCurrentDevice) ?? liveDeviceRows[0];
+  const selectedDevice = liveData && currentLiveDevice ? { ...staticSelectedDevice, ...currentLiveDevice } : staticSelectedDevice;
+  const liveSystemStatusCards = liveData ? [
+    {
+      key: 'live-appliance',
+      title: 'Appliance Live',
+      value: liveData.applianceStatus.executionState,
+      detail: liveData.applianceStatus.detail,
+      tone: liveData.applianceStatus.tone
+    },
+    ...systemStatusCards
+  ] : systemStatusCards;
+  const liveStatusLabel = liveState.status === 'live' ? '● Live /api/v1' : liveState.status === 'fallback' ? '● Parity-Fallback' : '● Live-Check';
+  const liveStatusTitle = liveState.error ? `Live API nicht erreichbar: ${liveState.error}` : 'Modern UI Live API Status';
   const networkTotals = getNetworkCenterTotals();
   const dnsRatingTotals = getDnsServerRatingTotals();
   const protectionTotals = getProtectionCenterTotals();
@@ -400,7 +449,7 @@ function App() {
             <input aria-label={t('app.search')} placeholder={t('app.search')} />
           </div>
           <div className="topbar-actions">
-            <span className="sync-pill">● {t('app.sync')}</span>
+            <span className="sync-pill" title={liveStatusTitle}>{liveStatusLabel}</span>
             <a className="ghost-button" href="/swagger/">{t('action.openApiDocs')}</a>
             <a className="ghost-button" href="/settings/">{t('action.openLegacy')}</a>
             <button className="primary-button" type="button">{t('action.reviewChanges')}</button>
@@ -985,7 +1034,7 @@ function App() {
                   <span>Flags</span>
                   <span>{t('table.status')}</span>
                 </div>
-                {deviceCenterRows.map((device) => (
+                {liveDeviceRows.map((device) => (
                   <div className={`device-modern-row ${device.isCurrentDevice ? 'current' : ''}`} role="row" key={device.id}>
                     <span className="device-name"><b>{device.name}</b><small>{device.vendor} · {device.macAddress}</small></span>
                     <span className="mono">{device.ipAddresses.length > 0 ? device.ipAddresses.join(' · ') : 'Keine IP'}</span>
@@ -1786,7 +1835,7 @@ function App() {
                   <span className="status-chip online">Admin bereit</span>
                 </div>
                 <div className="system-status-grid">
-                  {systemStatusCards.map((card) => (
+                  {liveSystemStatusCards.map((card) => (
                     <span className={`system-status-tile ${card.tone}`} key={card.key}><b>{card.value}</b>{card.title}<small>{card.detail}</small></span>
                   ))}
                 </div>

@@ -16,10 +16,18 @@
  */
 package org.eblocker.server.http.controller.impl;
 
+import org.eblocker.registration.TosContainer;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.systemstatus.SystemStatusDetails;
+import org.eblocker.server.common.registration.DeviceRegistrationInfo;
+import org.eblocker.server.http.controller.AuthenticationController;
 import org.eblocker.server.http.controller.DeviceController;
+import org.eblocker.server.http.controller.DeviceRegistrationController;
+import org.eblocker.server.http.controller.SplashController;
+import org.eblocker.server.http.controller.TosController;
 import org.eblocker.server.http.controller.boot.SystemStatusController;
+import org.eblocker.server.http.security.JsonWebToken;
+import org.eblocker.server.http.security.PasswordResetToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -37,6 +45,10 @@ public class ModernApiBridgeControllerTest {
     private ModernApiBridgeController controller;
     private DeviceController deviceController;
     private SystemStatusController systemStatusController;
+    private AuthenticationController authenticationController;
+    private DeviceRegistrationController deviceRegistrationController;
+    private SplashController splashController;
+    private TosController tosController;
     private Request request;
     private Response response;
 
@@ -44,7 +56,11 @@ public class ModernApiBridgeControllerTest {
     public void setUp() {
         deviceController = Mockito.mock(DeviceController.class);
         systemStatusController = Mockito.mock(SystemStatusController.class);
-        controller = new ModernApiBridgeController(deviceController, systemStatusController);
+        authenticationController = Mockito.mock(AuthenticationController.class);
+        deviceRegistrationController = Mockito.mock(DeviceRegistrationController.class);
+        splashController = Mockito.mock(SplashController.class);
+        tosController = Mockito.mock(TosController.class);
+        controller = new ModernApiBridgeController(deviceController, systemStatusController, authenticationController, deviceRegistrationController, splashController, tosController);
         request = Mockito.mock(Request.class);
         response = new Response();
     }
@@ -108,9 +124,64 @@ public class ModernApiBridgeControllerTest {
         assertSame(details, controller.getSystemStatus(request, response));
         controller.shutdown(request, response);
         controller.reboot(request, response);
+        controller.shutdownOnError(request, response);
+        controller.rebootOnError(request, response);
 
         verify(systemStatusController).get(request, response);
         verify(systemStatusController).shutdown(request, response);
         verify(systemStatusController).reboot(request, response);
+        verify(systemStatusController).shutdownOnError(request, response);
+        verify(systemStatusController).rebootOnError(request, response);
+    }
+
+    @Test
+    public void delegatesAuthenticationAndPasswordResetLifecycleEndpoints() {
+        JsonWebToken token = Mockito.mock(JsonWebToken.class);
+        PasswordResetToken resetToken = Mockito.mock(PasswordResetToken.class);
+        when(authenticationController.generateConsoleToken(request, response)).thenReturn(token);
+        when(authenticationController.login(request, response)).thenReturn(token);
+        when(authenticationController.renewToken(request, response)).thenReturn(token);
+        when(authenticationController.passwordEntryInSeconds(request, response)).thenReturn(42L);
+        when(authenticationController.initiateReset(request, response)).thenReturn(resetToken);
+
+        assertSame(token, controller.generateConsoleToken(request, response));
+        assertSame(token, controller.login(request, response));
+        assertSame(token, controller.renewToken(request, response));
+        assertEquals(42L, controller.passwordEntryInSeconds(request, response));
+        assertSame(resetToken, controller.initiateReset(request, response));
+        controller.executeReset(request, response);
+        controller.cancelReset(request, response);
+
+        verify(authenticationController).generateConsoleToken(request, response);
+        verify(authenticationController).login(request, response);
+        verify(authenticationController).renewToken(request, response);
+        verify(authenticationController).passwordEntryInSeconds(request, response);
+        verify(authenticationController).initiateReset(request, response);
+        verify(authenticationController).executeReset(request, response);
+        verify(authenticationController).cancelReset(request, response);
+    }
+
+    @Test
+    public void delegatesRegistrationSplashAndTosLifecycleEndpoints() throws Exception {
+        DeviceRegistrationInfo registrationInfo = Mockito.mock(DeviceRegistrationInfo.class);
+        TosContainer tosContainer = Mockito.mock(TosContainer.class);
+        when(deviceRegistrationController.registrationStatus(request, response)).thenReturn(registrationInfo);
+        when(deviceRegistrationController.register(request, response)).thenReturn(registrationInfo);
+        when(splashController.get(request, response)).thenReturn(Boolean.TRUE);
+        when(tosController.getTos(request, response)).thenReturn(tosContainer);
+
+        assertSame(registrationInfo, controller.registrationStatus(request, response));
+        assertSame(registrationInfo, controller.register(request, response));
+        controller.resetRegistration(request, response);
+        assertSame(Boolean.TRUE, controller.getSplash(request, response));
+        controller.setSplash(request, response);
+        assertSame(tosContainer, controller.getTos(request, response));
+
+        verify(deviceRegistrationController).registrationStatus(request, response);
+        verify(deviceRegistrationController).register(request, response);
+        verify(deviceRegistrationController).resetRegistration(request, response);
+        verify(splashController).get(request, response);
+        verify(splashController).set(request, response);
+        verify(tosController).getTos(request, response);
     }
 }

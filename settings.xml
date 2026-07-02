@@ -6,13 +6,13 @@
     <servers>
         <server>
             <id>eblocker-top</id>
-            <username>NoUserName</username>
-            <password>&#103;hp_Cei0Aao5u77MAOxJu7Hlwc1piSERTk3rv8Pt</password>
+            <username>${env.GITHUB_ACTOR}</username>
+            <password>${env.GITHUB_TOKEN}</password>
         </server>
         <server>
             <id>netty-icap</id>
-            <username>NoUserName</username>
-            <password>&#103;hp_Cei0Aao5u77MAOxJu7Hlwc1piSERTk3rv8Pt</password>
+            <username>${env.GITHUB_ACTOR}</username>
+            <password>${env.GITHUB_TOKEN}</password>
         </server>
         <server>
             <id>eblocker</id>

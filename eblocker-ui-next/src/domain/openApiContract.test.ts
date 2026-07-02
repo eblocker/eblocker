@@ -45,7 +45,7 @@ describe('modern eBlocker OpenAPI / Swagger contract', () => {
     const document = buildModernUiOpenApiDocument();
     const statuses = Object.values(document.paths).flatMap((pathItem) => Object.values(pathItem).map((operation) => operation?.['x-backend-status']));
 
-    expect(statuses.filter((status) => status === 'live-bridge')).toHaveLength(14);
+    expect(statuses.filter((status) => status === 'live-bridge')).toHaveLength(29);
     expect(document.paths['/api/v1/devices']?.get?.['x-backend-status']).toBe('live-bridge');
     expect(document.paths['/api/v1/devices/{id}']?.get?.['x-backend-status']).toBe('live-bridge');
     expect(document.paths['/api/v1/devices/{id}']?.put?.['x-backend-status']).toBe('live-bridge');

@@ -101,7 +101,22 @@ const liveBridgeOperations = new Set([
   'POST /api/v1/devices/discovery/auto-enable-new-devices',
   'GET /api/v1/lifecycle/appliance/status',
   'POST /api/v1/lifecycle/appliance/reboot',
-  'POST /api/v1/lifecycle/appliance/shutdown'
+  'POST /api/v1/lifecycle/appliance/shutdown',
+  'POST /api/v1/lifecycle/appliance/reboot-on-error',
+  'POST /api/v1/lifecycle/appliance/shutdown-on-error',
+  'GET /api/v1/lifecycle/auth/init-token/{context}',
+  'POST /api/v1/lifecycle/auth/login/{context}',
+  'GET /api/v1/lifecycle/auth/renew/{context}',
+  'GET /api/v1/lifecycle/auth/login-wait',
+  'POST /api/v1/lifecycle/password-reset/initiate',
+  'POST /api/v1/lifecycle/password-reset/execute',
+  'POST /api/v1/lifecycle/password-reset/cancel',
+  'GET /api/v1/lifecycle/setup/tos',
+  'GET /api/v1/lifecycle/registration',
+  'POST /api/v1/lifecycle/registration',
+  'DELETE /api/v1/lifecycle/registration',
+  'GET /api/v1/lifecycle/splash',
+  'POST /api/v1/lifecycle/splash'
 ]);
 
 function getBackendStatus(operation) {

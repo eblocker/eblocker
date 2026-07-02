@@ -17,10 +17,16 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
+import org.eblocker.server.http.controller.AuthenticationController;
 import org.eblocker.server.http.controller.DeviceController;
+import org.eblocker.server.http.controller.DeviceRegistrationController;
+import org.eblocker.server.http.controller.SplashController;
+import org.eblocker.server.http.controller.TosController;
 import org.eblocker.server.http.controller.boot.SystemStatusController;
 import org.restexpress.Request;
 import org.restexpress.Response;
+
+import java.io.IOException;
 
 /**
  * First /api/v1 bridge for the modern React UI.
@@ -32,12 +38,24 @@ import org.restexpress.Response;
 public class ModernApiBridgeController {
     private final DeviceController deviceController;
     private final SystemStatusController systemStatusController;
+    private final AuthenticationController authenticationController;
+    private final DeviceRegistrationController deviceRegistrationController;
+    private final SplashController splashController;
+    private final TosController tosController;
 
     @Inject
     public ModernApiBridgeController(DeviceController deviceController,
-                                     SystemStatusController systemStatusController) {
+                                     SystemStatusController systemStatusController,
+                                     AuthenticationController authenticationController,
+                                     DeviceRegistrationController deviceRegistrationController,
+                                     SplashController splashController,
+                                     TosController tosController) {
         this.deviceController = deviceController;
         this.systemStatusController = systemStatusController;
+        this.authenticationController = authenticationController;
+        this.deviceRegistrationController = deviceRegistrationController;
+        this.splashController = splashController;
+        this.tosController = tosController;
     }
 
     public Object getDevices(Request request, Response response) {
@@ -94,5 +112,65 @@ public class ModernApiBridgeController {
 
     public void reboot(Request request, Response response) {
         systemStatusController.reboot(request, response);
+    }
+
+    public void shutdownOnError(Request request, Response response) {
+        systemStatusController.shutdownOnError(request, response);
+    }
+
+    public void rebootOnError(Request request, Response response) {
+        systemStatusController.rebootOnError(request, response);
+    }
+
+    public Object generateConsoleToken(Request request, Response response) {
+        return authenticationController.generateConsoleToken(request, response);
+    }
+
+    public Object login(Request request, Response response) {
+        return authenticationController.login(request, response);
+    }
+
+    public Object renewToken(Request request, Response response) {
+        return authenticationController.renewToken(request, response);
+    }
+
+    public long passwordEntryInSeconds(Request request, Response response) {
+        return authenticationController.passwordEntryInSeconds(request, response);
+    }
+
+    public Object initiateReset(Request request, Response response) {
+        return authenticationController.initiateReset(request, response);
+    }
+
+    public void executeReset(Request request, Response response) {
+        authenticationController.executeReset(request, response);
+    }
+
+    public void cancelReset(Request request, Response response) {
+        authenticationController.cancelReset(request, response);
+    }
+
+    public Object registrationStatus(Request request, Response response) {
+        return deviceRegistrationController.registrationStatus(request, response);
+    }
+
+    public Object register(Request request, Response response) {
+        return deviceRegistrationController.register(request, response);
+    }
+
+    public void resetRegistration(Request request, Response response) throws IOException, InterruptedException {
+        deviceRegistrationController.resetRegistration(request, response);
+    }
+
+    public Object getSplash(Request request, Response response) {
+        return splashController.get(request, response);
+    }
+
+    public void setSplash(Request request, Response response) {
+        splashController.set(request, response);
+    }
+
+    public Object getTos(Request request, Response response) {
+        return tosController.getTos(request, response);
     }
 }

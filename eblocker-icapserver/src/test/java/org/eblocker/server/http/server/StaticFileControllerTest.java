@@ -195,6 +195,26 @@ public class StaticFileControllerTest {
     }
 
     @Test
+    public void serveModernUiAliases() throws Exception {
+        URL documentRoot = ClassLoader.getSystemResource("test-data/document-root");
+        URL modernRoot = ClassLoader.getSystemResource("test-data/htdocs-next");
+        Map<String, String> aliases = new HashMap<>();
+        aliases.put("modern/(.*)", modernRoot.toURI().getPath());
+        aliases.put("swagger/(.*)", modernRoot.toURI().getPath() + "/swagger");
+        aliases.put("openapi/(.*)", modernRoot.toURI().getPath() + "/openapi");
+        StaticFileController controller = new StaticFileController(documentRoot.toURI().getPath(), aliases, testDataCacheTime, dashboardHost, httpsPath);
+
+        ByteBuf modernIndex = (ByteBuf) controller.read(makeHttpGetRequest("/modern/"), new Response());
+        assertEquals("<html><head></head><body>Modern UI</body></html>", modernIndex.toString(charset));
+
+        ByteBuf swaggerIndex = (ByteBuf) controller.read(makeHttpGetRequest("/swagger/"), new Response());
+        assertEquals("<html><head></head><body>Swagger UI</body></html>", swaggerIndex.toString(charset));
+
+        ByteBuf openApi = (ByteBuf) controller.read(makeHttpGetRequest("/openapi/eblocker-modern-api.openapi.json"), new Response());
+        assertEquals("{\"openapi\":\"3.1.0\"}", openApi.toString(charset));
+    }
+
+    @Test
     public void redirectToDashboardFromShortURLs() throws IOException {
         // Map: URL -> Path
         HashMap<String, String> urls = new HashMap<>();

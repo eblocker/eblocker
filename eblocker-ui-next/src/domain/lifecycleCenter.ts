@@ -1,5 +1,5 @@
 export type LifecycleEndpointMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
-export type LifecycleModule = 'settings' | 'advice';
+export type LifecycleModule = 'settings' | 'setup' | 'advice';
 export type LifecycleSeverity = 'info' | 'warning' | 'danger' | 'success';
 
 export interface LifecycleLegacyState {
@@ -40,6 +40,9 @@ export const lifecycleLegacyStates: LifecycleLegacyState[] = [
   { module: 'settings', stateName: 'auth', stateVar: 'auth', component: 'authComponent', modernSurface: 'auth-login-reset', userOutcome: 'Token holen, Workflow fortsetzen und Idle-Watch starten' },
   { module: 'settings', stateName: 'splash', stateVar: 'splashScreen', component: 'splashScreenComponent', modernSurface: 'license-gates-splash', userOutcome: 'Splash einmalig anzeigen oder dauerhaft ausblenden' },
   { module: 'settings', stateName: 'expired', stateVar: 'expired', component: 'expiredComponent', modernSurface: 'license-gates-splash', userOutcome: 'Abgelaufene Session zurück in Auth führen' },
+  { module: 'setup', stateName: 'setup.app', stateVar: 'setupApp', component: 'AppController', modernSurface: 'setup-status-shell', userOutcome: 'Setup-App-Shell mit Locale, Token und Ziel-URLs initialisieren' },
+  { module: 'setup', stateName: 'setup.main', stateVar: 'setupMain', component: 'MainController', modernSurface: 'setup-status-shell', userOutcome: 'Geräte-, Netzwerk- und Lizenzstatus mit Dashboard/Konsole-Aktionen anzeigen' },
+  { module: 'setup', stateName: 'setup.expired', stateVar: 'setupExpired', component: 'ExpiredController', modernSurface: 'setup-status-shell', userOutcome: 'Abgelaufene Setup-Session mit Fortsetzen-Aktion anzeigen' },
   { module: 'advice', stateName: 'app', stateVar: 'app', component: 'adviceComponent', modernSurface: 'advice-overlays', userOutcome: 'Advice-Shell mit Locale/Gerät/Produktinfo auflösen' },
   { module: 'advice', stateName: 'welcome', stateVar: 'welcome', component: 'welcomeComponent', modernSurface: 'advice-overlays', userOutcome: 'Welcome-/Bookmark-Hinweis mit AutoClose und Dashboard-Link zeigen' },
   { module: 'advice', stateName: 'reminder', stateVar: 'reminder', component: 'reminderComponent', modernSurface: 'advice-overlays', userOutcome: 'Lizenz-Erinnerung mit Phasen E0–E4 und Kauf-/Lizenzaktionen zeigen' }
@@ -138,6 +141,33 @@ export const applianceStatePages = [
   }
 ];
 
+export const setupStatusCards = [
+  {
+    key: 'device',
+    title: 'Gerätestatus',
+    checks: ['eBlocker device found', 'enabled/protecting', 'internet online', 'server execution state'],
+    fields: ['online', 'protecting', 'internet'],
+    actions: ['open dashboard'],
+    endpoints: ['GET /devices', 'GET /api/adminconsole/systemstatus']
+  },
+  {
+    key: 'network',
+    title: 'Netzwerkstatus',
+    checks: ['automatic/manual mode', 'gateway reachable', 'user IP visible'],
+    fields: ['mode', 'eblockerIp', 'gatewayIp', 'userIp'],
+    actions: ['open dashboard'],
+    endpoints: ['GET /network/setupPageInfo', 'GET /api/settings']
+  },
+  {
+    key: 'license',
+    title: 'Lizenzstatus',
+    checks: ['registration state', 'product name', 'valid-until date'],
+    fields: ['registered', 'productName', 'validUntil'],
+    actions: ['open admin console for activation'],
+    endpoints: ['GET /registration', 'GET /api/token/{context}']
+  }
+];
+
 export const adviceOverlayFlows = [
   {
     legacyState: 'app',
@@ -167,10 +197,16 @@ export const lifecycleSurfaceCards = [
   { key: 'activation-setup', title: 'Aktivierung & Setup', states: ['activation', 'activationfinish'], summary: 'Wizard mit Sprache, AGB, Zeitzone, Gerät, Auto-Enable, Lizenz und Post-Registration.' },
   { key: 'appliance-pending', title: 'Appliance-Statusseiten', states: ['standby', 'booting', 'updating', 'shutdown', 'factoryResetScreen'], summary: 'Polling-Übergänge für Reboot, Shutdown, Update, Factory Reset und Fehler.' },
   { key: 'license-gates-splash', title: 'Lizenz, Splash & Session', states: ['nolicense', 'splash', 'expired'], summary: 'Upsell, Splash-Ausblendung und Session-Expired-Rückkehr zu Auth.' },
+  { key: 'setup-status-shell', title: 'Setup-Status-Shell', states: ['setup.app', 'setup.main', 'setup.expired'], summary: 'Geräte-, Netzwerk- und Lizenzstatus mit Sprung zu Dashboard/Konsole und Setup-Session-Expired.' },
   { key: 'advice-overlays', title: 'Advice Overlays', states: ['app', 'welcome', 'reminder'], summary: 'Welcome, Bookmark-Flags, AutoClose und Lizenz-Reminder-Phasen.' }
 ];
 
 export const lifecycleEndpointMap: LifecycleEndpoint[] = [
+  { method: 'GET', legacy: '/api/token/{context}', modern: '/api/v1/lifecycle/setup/auth-token/{context}', purpose: 'Setup-App JWT und Idle-Watch starten' },
+  { method: 'GET', legacy: '/api/settings', modern: '/api/v1/lifecycle/setup/settings', purpose: 'Setup-App Locale/Zeitzone laden' },
+  { method: 'GET', legacy: '/devices', modern: '/api/v1/lifecycle/setup/devices', purpose: 'eBlocker-Gerät und Schutz-/Online-Status laden' },
+  { method: 'GET', legacy: '/network/setupPageInfo', modern: '/api/v1/lifecycle/setup/network', purpose: 'Setup-Seite Netzwerkmodus und IPs laden' },
+  { method: 'GET', legacy: '/registration', modern: '/api/v1/lifecycle/setup/license', purpose: 'Setup-Seite Lizenz-/Produktstatus laden' },
   { method: 'GET', legacy: '/api/adminconsole/authentication/token/{context}', modern: '/api/v1/lifecycle/auth/init-token/{context}', purpose: 'initiales JWT für Adminconsole-Kontext' },
   { method: 'POST', legacy: '/api/adminconsole/authentication/login/{context}', modern: '/api/v1/lifecycle/auth/login/{context}', purpose: 'Admin-Passwort gegen Kontext prüfen' },
   { method: 'GET', legacy: '/api/adminconsole/authentication/wait', modern: '/api/v1/lifecycle/auth/login-wait', purpose: 'Login-Countdown nach Fehlversuchen' },
@@ -214,6 +250,7 @@ export const lifecycleCapabilities = [
   'Aktivierungswizard mit Sprache, AGB, Zeitzone, Gerät, Auto-Enable und Lizenz erhalten',
   'Standby/Booting/Updating/Shutdown/Factory-Reset als echte Appliance-Statusseiten modellieren',
   'No-License, Splash und Session-Expired als Gate-/Recovery-Seiten sichtbar behalten',
+  'Setup-Status-Shell mit Geräte-, Netzwerk- und Lizenzstatus erhalten',
   'Advice Welcome/Reminder inklusive AutoClose, Phasen E0–E4 und Reminder-POST erhalten'
 ];
 

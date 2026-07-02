@@ -832,18 +832,20 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
 .lifecycle-summary-grid b { display: block; color: #f7f8f8; font-size: 23px; }
 .lifecycle-layout { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr); gap: 16px; align-items: start; }
 .lifecycle-main-stack, .lifecycle-side-stack { display: grid; gap: 14px; min-width: 0; }
-.lifecycle-surface-card, .lifecycle-auth-card, .activation-wizard-card, .appliance-pages-card, .legacy-state-card, .advice-flow-card, .lifecycle-api-card { min-width: 0; padding: 16px; border: 1px solid rgba(255,255,255,0.075); border-radius: 20px; background: rgba(255,255,255,0.025); }
-.lifecycle-surface-grid, .lifecycle-flow-grid, .activation-step-grid, .appliance-page-grid, .legacy-state-grid, .advice-flow-grid, .lifecycle-endpoints { display: grid; gap: 8px; }
+.lifecycle-surface-card, .lifecycle-auth-card, .activation-wizard-card, .appliance-pages-card, .legacy-state-card, .setup-status-card, .advice-flow-card, .lifecycle-api-card { min-width: 0; padding: 16px; border: 1px solid rgba(255,255,255,0.075); border-radius: 20px; background: rgba(255,255,255,0.025); }
+.lifecycle-surface-grid, .lifecycle-flow-grid, .activation-step-grid, .appliance-page-grid, .legacy-state-grid, .setup-status-grid, .advice-flow-grid, .lifecycle-endpoints { display: grid; gap: 8px; }
 .lifecycle-surface-grid, .activation-step-grid, .appliance-page-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .lifecycle-flow-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
-.lifecycle-surface-grid span, .lifecycle-flow-grid span, .activation-step-grid span, .appliance-page-tile, .legacy-state-grid span, .advice-flow-grid span { min-width: 0; padding: 11px 12px; border-radius: 14px; color: #a5acb8; background: rgba(255,255,255,0.028); overflow-wrap: anywhere; }
-.lifecycle-surface-grid b, .lifecycle-flow-grid b, .activation-step-grid b, .appliance-page-tile b, .legacy-state-grid b, .advice-flow-grid b { display: block; color: #f7f8f8; }
-.lifecycle-surface-grid small, .activation-step-grid small, .appliance-page-tile small, .legacy-state-grid small, .advice-flow-grid small { display: block; color: #8a8f98; margin-top: 4px; }
+.lifecycle-surface-grid span, .lifecycle-flow-grid span, .activation-step-grid span, .appliance-page-tile, .legacy-state-grid span, .setup-status-grid span, .advice-flow-grid span { min-width: 0; padding: 11px 12px; border-radius: 14px; color: #a5acb8; background: rgba(255,255,255,0.028); overflow-wrap: anywhere; }
+.lifecycle-surface-grid b, .lifecycle-flow-grid b, .activation-step-grid b, .appliance-page-tile b, .legacy-state-grid b, .setup-status-grid b, .advice-flow-grid b { display: block; color: #f7f8f8; }
+.lifecycle-surface-grid small, .activation-step-grid small, .appliance-page-tile small, .legacy-state-grid small, .setup-status-grid small, .advice-flow-grid small { display: block; color: #8a8f98; margin-top: 4px; }
 .appliance-page-tile.warning { border: 1px solid rgba(251,191,36,0.18); }
 .appliance-page-tile.info { border: 1px solid rgba(56,189,248,0.16); }
 .appliance-page-tile.success { border: 1px solid rgba(34,197,94,0.16); }
 .appliance-page-tile.danger { border: 1px solid rgba(239,68,68,0.22); }
 .appliance-page-tile em { display: block; margin-top: 6px; color: #d0d6e0; font-style: normal; }
+.setup-status-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.setup-status-grid em { display: block; margin-top: 6px; color: #bfdbfe; font-style: normal; font-size: 12px; }
 .reset-flow-strip, .error-chip-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .reset-flow-strip span { padding: 6px 9px; border-radius: 999px; color: #bfdbfe; background: rgba(59,130,246,0.11); font-size: 12px; }
 .error-chip-strip span { padding: 5px 8px; border-radius: 999px; color: #fecaca; background: rgba(239,68,68,0.12); font-size: 11px; }
@@ -1097,7 +1099,7 @@ h2 { margin-bottom: 6px; font-size: 22px; letter-spacing: -0.035em; }
 @media (max-width: 720px) {
   .workspace { padding: 12px; }
   .topbar, .section-heading, .panel-header { flex-direction: column; align-items: stretch; }
-  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .vpn-summary-grid, .block-summary-grid, .block-scenario-grid, .block-route-grid, .lifecycle-summary-grid, .lifecycle-surface-grid, .lifecycle-flow-grid, .activation-step-grid, .appliance-page-grid, .system-summary-grid, .system-status-grid, .system-license-grid, .system-ops-grid, .locale-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .vpn-home-grid, .vpn-wizard-steps, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
+  .metrics-grid, .network-grid, .network-summary-grid, .network-wizard-grid, .resolver-mode-grid, .protection-summary-grid, .https-summary-grid, .family-summary-grid, .vpn-summary-grid, .block-summary-grid, .block-scenario-grid, .block-route-grid, .lifecycle-summary-grid, .lifecycle-surface-grid, .lifecycle-flow-grid, .activation-step-grid, .appliance-page-grid, .setup-status-grid, .system-summary-grid, .system-status-grid, .system-license-grid, .system-ops-grid, .locale-grid, .https-status-grid, .certificate-grid, .recording-summary-grid, .weekly-usage-grid, .vpn-home-grid, .vpn-wizard-steps, .analysis-grid, .tor-summary, .nav-list, .quick-action-grid, .topology-flow, .posture-stats, .parity-groups, .parity-scoreboard { grid-template-columns: 1fr; }
   .hero, .command-hero { grid-template-columns: 1fr; padding: 24px; }
   .posture-body { grid-template-columns: 1fr; }
   h1 { font-size: 3rem; }

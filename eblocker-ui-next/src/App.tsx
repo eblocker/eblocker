@@ -123,7 +123,8 @@ import {
   lifecycleEndpointMap,
   lifecycleLegacyStates,
   lifecycleSurfaceCards,
-  passwordResetFlow
+  passwordResetFlow,
+  setupStatusCards
 } from './domain/lifecycleCenter';
 import { t } from './i18n/messages';
 import './App.css';
@@ -1633,8 +1634,8 @@ function App() {
               <article className="lifecycle-surface-card">
                 <div className="card-title-row">
                   <div>
-                    <h3>Fünf moderne Lifecycle-Oberflächen</h3>
-                    <p>Alt: 16 States aus Settings- und Advice-App. Neu: Auth/Login/Reset, Aktivierung, Appliance-Pending, Lizenz/Splash/Session und Advice-Overlays.</p>
+                    <h3>Sechs moderne Lifecycle-Oberflächen</h3>
+                    <p>Alt: 19 States aus Settings-, Setup- und Advice-App. Neu: Auth/Login/Reset, Aktivierung, Appliance-Pending, Lizenz/Splash/Session, Setup-Status und Advice-Overlays.</p>
                   </div>
                   <span className="status-chip online">{lifecycleTotals.surfaces} Flächen</span>
                 </div>
@@ -1708,6 +1709,25 @@ function App() {
                 </div>
               </article>
 
+              <article className="setup-status-card">
+                <div className="card-title-row">
+                  <div>
+                    <h3>Setup-Status-Shell</h3>
+                    <p>`setup.app`, `setup.main`, `setup.expired`: Geräte-, Netzwerk- und Lizenzstatus mit Sprung zu Dashboard/Konsole.</p>
+                  </div>
+                  <span className="status-chip online">{setupStatusCards.length} Checks</span>
+                </div>
+                <div className="setup-status-grid">
+                  {setupStatusCards.map((card) => (
+                    <span key={card.key}>
+                      <b>{card.title}</b>{card.fields.join(' · ')}
+                      <small>{card.checks.join(' · ')}</small>
+                      <em>{card.actions.join(' · ')}</em>
+                    </span>
+                  ))}
+                </div>
+              </article>
+
               <article className="advice-flow-card">
                 <h3>Advice Welcome & Reminder</h3>
                 <div className="advice-flow-grid">
@@ -1719,7 +1739,7 @@ function App() {
 
               <article className="lifecycle-api-card">
                 <h3>API-Migration</h3>
-                <p>Authentication, PasswordReset, Settings/Timezone, Setup/TOS, Registration, SystemStatus, Updates, CustomerInfo und Advice als `/api/v1/lifecycle`-Ziele.</p>
+                <p>Authentication, PasswordReset, Setup-Status, Settings/Timezone, Setup/TOS, Registration, SystemStatus, Updates, CustomerInfo und Advice als `/api/v1/lifecycle`-Ziele.</p>
                 <div className="endpoint-list lifecycle-endpoints">
                   {lifecycleEndpointMap.map((endpoint) => (
                     <div className="endpoint-row" key={`${endpoint.method}-${endpoint.legacy}-${endpoint.modern}`}>

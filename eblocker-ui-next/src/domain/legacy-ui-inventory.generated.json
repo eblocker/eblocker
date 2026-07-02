@@ -1,7 +1,7 @@
 {
   "source": "Generated from legacy AngularJS route files; use this as the old-UI comparison source before removing AngularJS screens.",
   "routeFileCount": 6,
-  "legacyStateCount": 109,
+  "legacyStateCount": 112,
   "groups": [
     {
       "id": "dashboard-controlbar",
@@ -65,10 +65,11 @@
     },
     {
       "id": "access-onboarding-lifecycle",
-      "legacyStateCount": 16,
+      "legacyStateCount": 19,
       "modules": [
         "advice",
-        "settings"
+        "settings",
+        "setup"
       ]
     },
     {
@@ -1931,6 +1932,57 @@
       "showInNavbar": false,
       "tabOrder": null,
       "legacyFile": "eblocker-ui/src/advice/app/_bootstrap/_configs/routeConfig.js",
+      "group": "access-onboarding-lifecycle"
+    },
+    {
+      "id": "setup-app",
+      "module": "setup",
+      "stateVar": "setupApp",
+      "stateName": "setup.app",
+      "url": "/{lang}",
+      "parent": "",
+      "redirectTo": "",
+      "templateUrl": "app/app.html",
+      "component": "",
+      "controller": "AppController",
+      "translationKey": "",
+      "showInNavbar": false,
+      "tabOrder": null,
+      "legacyFile": "eblocker-ui/src/setup/app/app.router.js",
+      "group": "access-onboarding-lifecycle"
+    },
+    {
+      "id": "setup-main",
+      "module": "setup",
+      "stateVar": "setupMain",
+      "stateName": "setup.main",
+      "url": "",
+      "parent": "",
+      "redirectTo": "",
+      "templateUrl": "app/main.html",
+      "component": "",
+      "controller": "MainController",
+      "translationKey": "",
+      "showInNavbar": false,
+      "tabOrder": null,
+      "legacyFile": "eblocker-ui/src/setup/app/app.router.js",
+      "group": "access-onboarding-lifecycle"
+    },
+    {
+      "id": "setup-expired",
+      "module": "setup",
+      "stateVar": "setupExpired",
+      "stateName": "setup.expired",
+      "url": "",
+      "parent": "",
+      "redirectTo": "",
+      "templateUrl": "app/common/expired.html",
+      "component": "",
+      "controller": "ExpiredController",
+      "translationKey": "",
+      "showInNavbar": false,
+      "tabOrder": null,
+      "legacyFile": "eblocker-ui/src/setup/app/app.router.js",
       "group": "access-onboarding-lifecycle"
     }
   ]

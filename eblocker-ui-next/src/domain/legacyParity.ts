@@ -15,7 +15,7 @@ export interface LegacyParityGroup {
 }
 
 export const LEGACY_ROUTE_FILE_COUNT = 6;
-export const LEGACY_UI_STATE_COUNT = 109;
+export const LEGACY_UI_STATE_COUNT = 112;
 
 export const legacyParityGroups: readonly LegacyParityGroup[] = [
   {
@@ -118,9 +118,9 @@ export const legacyParityGroups: readonly LegacyParityGroup[] = [
     id: "access-onboarding-lifecycle",
     title: "Zugang, Setup & Lifecycle",
     legacyDescription: "Login/Auth, Setup, Aktivierung, Splash-/Boot-/Update-/Shutdown-/Factory-Reset-/Standby-Screens und Hinweise/Erinnerungen.",
-    modernCoverage: "Lifecycle-Center mit Login/Auth, Passwort-Reset, Aktivierung, Appliance-Statusseiten, Splash/No-License/Expired und Advice-Overlays ist sichtbar umgesetzt.",
-    legacyStateNames: ["nolicense", "standby", "factoryResetScreen", "booting", "updating", "shutdown", "activation", "activationfinish", "login", "resetpassword", "auth", "splash", "expired", "app", "welcome", "reminder"],
-    legacyModules: ["advice", "settings"],
+    modernCoverage: "Lifecycle-Center mit Login/Auth, Passwort-Reset, Aktivierung, Setup-Status-Shell, Appliance-Statusseiten, Splash/No-License/Expired und Advice-Overlays ist sichtbar umgesetzt.",
+    legacyStateNames: ["nolicense", "standby", "factoryResetScreen", "booting", "updating", "shutdown", "activation", "activationfinish", "login", "resetpassword", "auth", "splash", "expired", "setup.app", "setup.main", "setup.expired", "app", "welcome", "reminder"],
+    legacyModules: ["advice", "settings", "setup"],
     targetSurfaces: ["#lifecycle", "/api/v1/lifecycle"],
     priority: "medium" as LegacyParityPriority,
     stage: "ready" as LegacyParityStage,

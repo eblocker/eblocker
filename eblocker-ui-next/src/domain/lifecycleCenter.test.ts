@@ -9,11 +9,12 @@ import {
   lifecycleEndpointMap,
   lifecycleLegacyStates,
   lifecycleSurfaceCards,
-  passwordResetFlow
+  passwordResetFlow,
+  setupStatusCards
 } from './lifecycleCenter';
 
 describe('lifecycle center legacy parity model', () => {
-  it('covers all 16 legacy Zugang/Setup/Lifecycle states from settings and advice apps', () => {
+  it('covers all 19 legacy Zugang/Setup/Lifecycle states from settings, setup and advice apps', () => {
     const expectedStates = [
       'nolicense',
       'standby',
@@ -28,6 +29,9 @@ describe('lifecycle center legacy parity model', () => {
       'auth',
       'splash',
       'expired',
+      'setup.app',
+      'setup.main',
+      'setup.expired',
       'app',
       'welcome',
       'reminder'
@@ -37,6 +41,7 @@ describe('lifecycle center legacy parity model', () => {
     expect(lifecycleLegacyStates.map((state) => state.stateName)).toEqual(expectedStates);
     expect(new Set(lifecycleLegacyStates.map((state) => state.stateName)).size).toBe(expectedStates.length);
     expect(lifecycleLegacyStates.every((state) => state.component && state.modernSurface && state.userOutcome)).toBe(true);
+    expect(lifecycleLegacyStates.filter((state) => state.module === 'setup')).toHaveLength(3);
     expect(lifecycleLegacyStates.filter((state) => state.module === 'advice')).toHaveLength(3);
   });
 
@@ -105,6 +110,25 @@ describe('lifecycle center legacy parity model', () => {
     expect(byState.factoryResetScreen.thresholds).toContain('escape loop after 120 checks');
   });
 
+  it('preserves setup status shell for device, network and license checks', () => {
+    expect(setupStatusCards.map((card) => card.key)).toEqual(['device', 'network', 'license']);
+    expect(setupStatusCards.find((card) => card.key === 'device')?.checks).toEqual([
+      'eBlocker device found',
+      'enabled/protecting',
+      'internet online',
+      'server execution state'
+    ]);
+    expect(setupStatusCards.find((card) => card.key === 'network')?.fields).toEqual(['mode', 'eblockerIp', 'gatewayIp', 'userIp']);
+    expect(setupStatusCards.find((card) => card.key === 'license')?.actions).toContain('open admin console for activation');
+    expect(setupStatusCards.flatMap((card) => card.endpoints)).toEqual(expect.arrayContaining([
+      'GET /devices',
+      'GET /network/setupPageInfo',
+      'GET /registration',
+      'GET /api/token/{context}',
+      'GET /api/settings'
+    ]));
+  });
+
   it('preserves Advice welcome/reminder overlays and license phase behavior', () => {
     expect(adviceOverlayFlows.map((flow) => flow.legacyState)).toEqual(['app', 'welcome', 'reminder']);
     expect(adviceOverlayFlows.find((flow) => flow.legacyState === 'welcome')?.actions).toEqual([
@@ -118,7 +142,7 @@ describe('lifecycle center legacy parity model', () => {
   });
 
   it('maps every legacy lifecycle endpoint to a modern lifecycle API target', () => {
-    expect(lifecycleEndpointMap).toHaveLength(35);
+    expect(lifecycleEndpointMap).toHaveLength(40);
     expect(lifecycleEndpointMap.every((endpoint) => endpoint.modern.startsWith('/api/v1/lifecycle/'))).toBe(true);
     expect(lifecycleEndpointMap.map((endpoint) => `${endpoint.method} ${endpoint.legacy}`)).toEqual(expect.arrayContaining([
       'GET /api/adminconsole/authentication/token/{context}',
@@ -137,11 +161,11 @@ describe('lifecycle center legacy parity model', () => {
 
   it('reports center totals and visible parity capabilities', () => {
     expect(getLifecycleCenterTotals()).toEqual({
-      legacyStates: 16,
+      legacyStates: 19,
       surfaces: lifecycleSurfaceCards.length,
       activationSteps: 6,
       pendingPages: 5,
-      endpoints: 35,
+      endpoints: 40,
       capabilities: lifecycleCapabilities.length
     });
     expect(lifecycleSurfaceCards.map((card) => card.key)).toEqual([
@@ -149,12 +173,14 @@ describe('lifecycle center legacy parity model', () => {
       'activation-setup',
       'appliance-pending',
       'license-gates-splash',
+      'setup-status-shell',
       'advice-overlays'
     ]);
     expect(lifecycleCapabilities).toEqual(expect.arrayContaining([
       'Login/Auth/Token-Renewal inklusive Idle-Watch und Fehlerzuständen sichtbar abbilden',
       'Aktivierungswizard mit Sprache, AGB, Zeitzone, Gerät, Auto-Enable und Lizenz erhalten',
       'Standby/Booting/Updating/Shutdown/Factory-Reset als echte Appliance-Statusseiten modellieren',
+      'Setup-Status-Shell mit Geräte-, Netzwerk- und Lizenzstatus erhalten',
       'Advice Welcome/Reminder inklusive AutoClose, Phasen E0–E4 und Reminder-POST erhalten'
     ]));
   });

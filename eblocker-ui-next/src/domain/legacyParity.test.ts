@@ -13,8 +13,8 @@ import {
 describe('legacy AngularJS to modern UI parity matrix', () => {
   it('is generated from the known legacy route surface', () => {
     expect(LEGACY_ROUTE_FILE_COUNT).toBe(6);
-    expect(LEGACY_UI_STATE_COUNT).toBeGreaterThan(100);
-    expect(legacyParityGroups.length).toBeGreaterThanOrEqual(10);
+    expect(LEGACY_UI_STATE_COUNT).toBe(112);
+    expect(legacyParityGroups.length).toBe(10);
   });
 
   it('maps every legacy AngularJS state to a modern UI target group', () => {

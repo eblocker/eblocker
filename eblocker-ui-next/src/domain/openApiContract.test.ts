@@ -15,7 +15,7 @@ describe('modern eBlocker OpenAPI / Swagger contract', () => {
     expect(document.openapi).toBe('3.1.0');
     expect(document.info.title).toBe('eBlocker Modern UI API');
     expect(document.servers).toEqual([{ url: '/', description: 'Current eBlocker appliance origin' }]);
-    expect(getOpenApiOperationCount(document)).toBe(205);
+    expect(getOpenApiOperationCount(document)).toBe(210);
   });
 
   it('keeps every operation unique, tagged and bound to /api/v1 targets with legacy traceability', () => {
@@ -33,11 +33,27 @@ describe('modern eBlocker OpenAPI / Swagger contract', () => {
         expect(operation.tags.length).toBeGreaterThan(0);
         expect(operation.summary.length).toBeGreaterThan(0);
         expect(operation['x-legacy-path']).toMatch(/^\//);
+        expect(['live-bridge', 'contract-only']).toContain((operation as unknown as { readonly 'x-backend-status': string })['x-backend-status']);
         expect(operation.responses).toHaveProperty('200');
       }
     }
 
-    expect(operationIds.size).toBe(205);
+    expect(operationIds.size).toBe(210);
+  });
+
+  it('marks the currently implemented backend bridge operations explicitly', () => {
+    const document = buildModernUiOpenApiDocument();
+    const statuses = Object.values(document.paths).flatMap((pathItem) => Object.values(pathItem).map((operation) => operation?.['x-backend-status']));
+
+    expect(statuses.filter((status) => status === 'live-bridge')).toHaveLength(14);
+    expect(document.paths['/api/v1/devices']?.get?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/devices/{id}']?.get?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/devices/{id}']?.put?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/devices/{id}']?.delete?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/devices/{id}/reset']?.put?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/lifecycle/appliance/status']?.get?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/lifecycle/appliance/reboot']?.post?.['x-backend-status']).toBe('live-bridge');
+    expect(document.paths['/api/v1/lifecycle/appliance/shutdown']?.post?.['x-backend-status']).toBe('live-bridge');
   });
 
   it('ships the OpenAPI JSON and Swagger HTML as static public artifacts', () => {
@@ -48,7 +64,7 @@ describe('modern eBlocker OpenAPI / Swagger contract', () => {
     expect(existsSync(swaggerPath)).toBe(true);
 
     const spec = JSON.parse(readFileSync(openApiPath, 'utf8'));
-    expect(getOpenApiOperationCount(spec)).toBe(205);
+    expect(getOpenApiOperationCount(spec)).toBe(210);
     expect(readFileSync(swaggerPath, 'utf8')).toContain('/openapi/eblocker-modern-api.openapi.json');
   });
 });

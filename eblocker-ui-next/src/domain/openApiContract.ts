@@ -29,6 +29,7 @@ export interface OpenApiOperation {
     readonly '200': { readonly description: string };
   };
   readonly 'x-legacy-path': string;
+  readonly 'x-backend-status': 'live-bridge' | 'contract-only';
 }
 
 export interface OpenApiDocument {
@@ -151,6 +152,27 @@ function getPathParameters(path: string): readonly OpenApiParameter[] | undefine
   }));
 }
 
+const liveBridgeOperations = new Set([
+  'GET /api/v1/devices',
+  'GET /api/v1/devices/{id}',
+  'PUT /api/v1/devices/{id}',
+  'DELETE /api/v1/devices/{id}',
+  'PUT /api/v1/devices/{id}/reset',
+  'GET /api/v1/devices/discovery/scan-availability',
+  'GET /api/v1/devices/discovery/scanning-interval',
+  'POST /api/v1/devices/discovery/scanning-interval',
+  'POST /api/v1/devices/discovery/scan',
+  'GET /api/v1/devices/discovery/auto-enable-new-devices',
+  'POST /api/v1/devices/discovery/auto-enable-new-devices',
+  'GET /api/v1/lifecycle/appliance/status',
+  'POST /api/v1/lifecycle/appliance/reboot',
+  'POST /api/v1/lifecycle/appliance/shutdown'
+]);
+
+function getBackendStatus(operation: SourceOperation): OpenApiOperation['x-backend-status'] {
+  return liveBridgeOperations.has(`${operation.method.toUpperCase()} ${operation.modernPath}`) ? 'live-bridge' : 'contract-only';
+}
+
 function toOpenApiOperation(operation: SourceOperation, usedOperationIds: Set<string>): OpenApiOperation {
   const operationId = toOperationId(operation);
   if (usedOperationIds.has(operationId)) {
@@ -167,7 +189,8 @@ function toOpenApiOperation(operation: SourceOperation, usedOperationIds: Set<st
     responses: {
       '200': { description: 'Successful response from the modern eBlocker API bridge.' }
     },
-    'x-legacy-path': operation.legacyPath
+    'x-legacy-path': operation.legacyPath,
+    'x-backend-status': getBackendStatus(operation)
   };
 }
 
@@ -196,7 +219,7 @@ export function buildModernUiOpenApiDocument(): OpenApiDocument {
     info: {
       title: 'eBlocker Modern UI API',
       version: '1.0.0-preview',
-      description: 'OpenAPI contract for the modern eBlocker UI /api/v1 bridge. Operations retain x-legacy-path traceability to the AngularJS-era APIs.'
+      description: 'OpenAPI contract for the modern eBlocker UI /api/v1 bridge. Operations retain x-legacy-path traceability to the AngularJS-era APIs and x-backend-status to distinguish live backend bridges from contract-only targets.'
     },
     servers: [{ url: '/', description: 'Current eBlocker appliance origin' }],
     tags: tagNames.map((name) => ({ name, description: tagDescriptions[name] ?? `${name} endpoints` })),

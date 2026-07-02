@@ -87,25 +87,53 @@ export const deviceCenterEndpoints: readonly DeviceCenterEndpoint[] = [
     purpose: 'Geräteliste laden, sortieren, filtern und mit Anzeige-IP/Name normalisieren.'
   },
   {
+    id: 'detail-read',
+    method: 'GET',
+    legacyPath: '/api/adminconsole/devices/{deviceId}',
+    modernPath: '/api/v1/devices/{id}',
+    purpose: 'Geräte-Details laden.'
+  },
+  {
     id: 'detail-update',
     method: 'PUT',
-    legacyPath: '/api/adminconsole/devices/{id}',
+    legacyPath: '/api/adminconsole/devices/{deviceId}',
     modernPath: '/api/v1/devices/{id}',
     purpose: 'Geräte-Details aktualisieren: Name, statische IPs, Benutzer, HTTPS, Filter, Icon, Nachrichten.'
   },
   {
-    id: 'bulk-delete',
+    id: 'detail-delete',
     method: 'DELETE',
-    legacyPath: '/api/adminconsole/devices/all/{mode}',
-    modernPath: '/api/v1/devices/bulk-delete/{mode}',
-    purpose: 'Mehrfachauswahl löschen: Offline, No-IP oder alle löschbaren Geräte.'
+    legacyPath: '/api/adminconsole/devices/{deviceId}',
+    modernPath: '/api/v1/devices/{id}',
+    purpose: 'Ein löschbares Gerät entfernen.'
   },
   {
-    id: 'scan-interval',
+    id: 'detail-reset',
+    method: 'PUT',
+    legacyPath: '/api/adminconsole/devices/reset/{deviceId}',
+    modernPath: '/api/v1/devices/{id}/reset',
+    purpose: 'Gerätekonfiguration zurücksetzen.'
+  },
+  {
+    id: 'scan-availability',
+    method: 'GET',
+    legacyPath: '/api/adminconsole/devices/scan',
+    modernPath: '/api/v1/devices/discovery/scan-availability',
+    purpose: 'Prüfen, ob ein manueller Netzwerkscan verfügbar ist.'
+  },
+  {
+    id: 'scan-interval-read',
+    method: 'GET',
+    legacyPath: '/api/adminconsole/devices/scanningInterval',
+    modernPath: '/api/v1/devices/discovery/scanning-interval',
+    purpose: 'Automatisches Scan-Intervall laden.'
+  },
+  {
+    id: 'scan-interval-write',
     method: 'POST',
     legacyPath: '/api/adminconsole/devices/scanningInterval',
     modernPath: '/api/v1/devices/discovery/scanning-interval',
-    purpose: 'Automatisches Scan-Intervall lesen/ändern.'
+    purpose: 'Automatisches Scan-Intervall ändern.'
   },
   {
     id: 'manual-scan',
@@ -115,7 +143,14 @@ export const deviceCenterEndpoints: readonly DeviceCenterEndpoint[] = [
     purpose: 'Manuellen Netzwerkscan starten und Fortschritt anzeigen.'
   },
   {
-    id: 'auto-enable',
+    id: 'auto-enable-read',
+    method: 'GET',
+    legacyPath: '/api/adminconsole/devices/autoEnableNewDevices',
+    modernPath: '/api/v1/devices/discovery/auto-enable-new-devices',
+    purpose: 'Status für automatische Aktivierung neuer Geräte laden.'
+  },
+  {
+    id: 'auto-enable-write',
     method: 'POST',
     legacyPath: '/api/adminconsole/devices/autoEnableNewDevices',
     modernPath: '/api/v1/devices/discovery/auto-enable-new-devices',

@@ -24,13 +24,19 @@ describe('modern devices center parity with legacy AngularJS devices UI', () => 
   });
 
   it('keeps the legacy DeviceService endpoint surface visible for API migration', () => {
-    expect(deviceCenterEndpoints.map((endpoint) => endpoint.legacyPath)).toEqual([
-      '/api/adminconsole/devices',
-      '/api/adminconsole/devices/{id}',
-      '/api/adminconsole/devices/all/{mode}',
-      '/api/adminconsole/devices/scanningInterval',
-      '/api/adminconsole/devices/scan',
-      '/api/adminconsole/devices/autoEnableNewDevices'
+    expect(deviceCenterEndpoints).toHaveLength(11);
+    expect(deviceCenterEndpoints.map((endpoint) => `${endpoint.method} ${endpoint.legacyPath}`)).toEqual([
+      'GET /api/adminconsole/devices',
+      'GET /api/adminconsole/devices/{deviceId}',
+      'PUT /api/adminconsole/devices/{deviceId}',
+      'DELETE /api/adminconsole/devices/{deviceId}',
+      'PUT /api/adminconsole/devices/reset/{deviceId}',
+      'GET /api/adminconsole/devices/scan',
+      'GET /api/adminconsole/devices/scanningInterval',
+      'POST /api/adminconsole/devices/scanningInterval',
+      'POST /api/adminconsole/devices/scan',
+      'GET /api/adminconsole/devices/autoEnableNewDevices',
+      'POST /api/adminconsole/devices/autoEnableNewDevices'
     ]);
     expect(deviceCenterEndpoints.every((endpoint) => endpoint.modernPath.startsWith('/api/v1/devices'))).toBe(true);
   });

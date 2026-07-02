@@ -85,6 +85,7 @@ import org.eblocker.server.http.controller.UserAgentController;
 import org.eblocker.server.http.controller.UserController;
 import org.eblocker.server.http.controller.boot.DiagnosticsReportController;
 import org.eblocker.server.http.controller.boot.SystemStatusController;
+import org.eblocker.server.http.controller.impl.ModernApiBridgeController;
 import org.eblocker.server.http.exceptions.restexpress.ServiceNotAvailableServiceException;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.security.SecurityProcessor;
@@ -176,6 +177,7 @@ public class EblockerHttpsServer implements Preprocessor {
     private final BlockerController blockerController;
     private final DomainRecorderController domainRecorderController;
     private final DoctorController doctorController;
+    private final ModernApiBridgeController modernApiBridgeController;
 
     private Channel httpsChannel;
 
@@ -244,7 +246,8 @@ public class EblockerHttpsServer implements Preprocessor {
                                ConnectionCheckController connectionCheckController,
                                BlockerController blockerController,
                                DomainRecorderController domainRecorderController,
-                               DoctorController doctorController
+                               DoctorController doctorController,
+                               ModernApiBridgeController modernApiBridgeController
     ) {
         // Set up SerializationProvider to make sure special characters like "&"
         // are transported to the frontend without encoding
@@ -344,6 +347,7 @@ public class EblockerHttpsServer implements Preprocessor {
         this.doctorController = doctorController;
 
         this.domainRecorderController = domainRecorderController;
+        this.modernApiBridgeController = modernApiBridgeController;
 
         setUpRoutes();
 
@@ -446,6 +450,7 @@ public class EblockerHttpsServer implements Preprocessor {
         addFeatureToggleRoutes();
         addConnectionCheckRoutes();
         addBlockerRoutes();
+        addModernApiRoutes();
 
         // This must be the last route (catch all):
         server
@@ -594,6 +599,78 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/summary/whitelist/config", filterController)
                 .action("putConfig", HttpMethod.PUT)
                 .name("dashboard.filter.save.config.route");
+    }
+
+    private void addModernApiRoutes() {
+        server
+                .uri("/api/v1/lifecycle/appliance/status", modernApiBridgeController)
+                .action("getSystemStatus", HttpMethod.GET)
+                .name("public.modernapi.lifecycle.appliance.status.get");
+
+        server
+                .uri("/api/v1/lifecycle/appliance/shutdown", modernApiBridgeController)
+                .action("shutdown", HttpMethod.POST)
+                .name("adminconsole.modernapi.lifecycle.appliance.shutdown");
+
+        server
+                .uri("/api/v1/lifecycle/appliance/reboot", modernApiBridgeController)
+                .action("reboot", HttpMethod.POST)
+                .name("adminconsole.modernapi.lifecycle.appliance.reboot");
+
+        server
+                .uri("/api/v1/devices", modernApiBridgeController)
+                .action("getDevices", HttpMethod.GET)
+                .name("adminconsole.modernapi.devices.get");
+
+        server
+                .uri("/api/v1/devices/{deviceId}", modernApiBridgeController)
+                .action("getDevice", HttpMethod.GET)
+                .name("adminconsole.modernapi.device.get");
+
+        server
+                .uri("/api/v1/devices/{deviceId}", modernApiBridgeController)
+                .action("updateDevice", HttpMethod.PUT)
+                .name("adminconsole.modernapi.device.put");
+
+        server
+                .uri("/api/v1/devices/{deviceId}", modernApiBridgeController)
+                .action("deleteDevice", HttpMethod.DELETE)
+                .name("adminconsole.modernapi.device.delete");
+
+        server
+                .uri("/api/v1/devices/{deviceId}/reset", modernApiBridgeController)
+                .action("resetDevice", HttpMethod.PUT)
+                .name("adminconsole.modernapi.device.reset");
+
+        server
+                .uri("/api/v1/devices/discovery/scan-availability", modernApiBridgeController)
+                .action("isScanningAvailable", HttpMethod.GET)
+                .name("adminconsole.modernapi.devices.discovery.scan.availability");
+
+        server
+                .uri("/api/v1/devices/discovery/scan", modernApiBridgeController)
+                .action("scanDevices", HttpMethod.POST)
+                .name("adminconsole.modernapi.devices.discovery.scan");
+
+        server
+                .uri("/api/v1/devices/discovery/scanning-interval", modernApiBridgeController)
+                .action("getScanningInterval", HttpMethod.GET)
+                .name("adminconsole.modernapi.devices.discovery.scanning.interval.get");
+
+        server
+                .uri("/api/v1/devices/discovery/scanning-interval", modernApiBridgeController)
+                .action("setScanningInterval", HttpMethod.POST)
+                .name("adminconsole.modernapi.devices.discovery.scanning.interval.post");
+
+        server
+                .uri("/api/v1/devices/discovery/auto-enable-new-devices", modernApiBridgeController)
+                .action("isAutoEnableNewDevices", HttpMethod.GET)
+                .name("adminconsole.modernapi.devices.discovery.auto.enable.get");
+
+        server
+                .uri("/api/v1/devices/discovery/auto-enable-new-devices", modernApiBridgeController)
+                .action("setAutoEnableNewDevices", HttpMethod.POST)
+                .name("adminconsole.modernapi.devices.discovery.auto.enable.post");
     }
 
     private void addDeviceRoutes() {

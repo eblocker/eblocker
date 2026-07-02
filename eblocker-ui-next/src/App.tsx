@@ -401,6 +401,7 @@ function App() {
           </div>
           <div className="topbar-actions">
             <span className="sync-pill">● {t('app.sync')}</span>
+            <a className="ghost-button" href="/swagger/">{t('action.openApiDocs')}</a>
             <a className="ghost-button" href="/settings/">{t('action.openLegacy')}</a>
             <button className="primary-button" type="button">{t('action.reviewChanges')}</button>
           </div>

@@ -6,8 +6,11 @@
   "description": "Modern eBlocker UI shell built with React, TypeScript and Vite.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "generate:openapi": "node scripts/generate-openapi-assets.mjs",
+    "prebuild": "npm run generate:openapi",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --host 0.0.0.0",
+    "pretest": "npm run generate:openapi",
     "test": "vitest run"
   },
   "dependencies": {
@@ -18,9 +21,14 @@
     "vite": "8.1.2"
   },
   "devDependencies": {
+    "@types/node": "26.1.0",
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.5",
+    "swagger-ui-dist": "5.32.8",
     "vitest": "4.1.9"
+  },
+  "scarfSettings": {
+    "enabled": false
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0",

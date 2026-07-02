@@ -26,4 +26,7 @@ eblocker-icapserver/src/htdocs/stylesheets/app.css
 /eblocker-ui-next/node_modules/
 /eblocker-ui-next/dist/
 /eblocker-ui-next/coverage/
+/eblocker-ui-next/public/openapi/
+/eblocker-ui-next/public/swagger/
+/eblocker-ui-next/public/swagger-ui/
 /eblocker-ui-next/*.tsbuildinfo

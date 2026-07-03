@@ -21,6 +21,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
+/**
+ * Stores meta-data for a user-defined filter list.
+ * The filter list is stored on disk at the path given by {@link #getFile()}.
+ * If the URL field is set, the list was downloaded, otherwise it was edited manually.
+ */
 public class ExternalDefinition {
     private int id;
     private String name;

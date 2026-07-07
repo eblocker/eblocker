@@ -146,6 +146,7 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
             controlmodeUrls: profile.controlmodeUrls,
             controlmodeTime: profile.controlmodeTime,
             controlmodeMaxUsage: profile.controlmodeMaxUsage,
+            forSingleUser: profile.forSingleUser,
             internetAccessRestrictionMode: profile.internetAccessRestrictionMode,
             accessibleSitesPackages: profile.accessibleSitesPackages,
             inaccessibleSitesPackages: profile.inaccessibleSitesPackages,

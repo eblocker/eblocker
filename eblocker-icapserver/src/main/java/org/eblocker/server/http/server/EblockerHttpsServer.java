@@ -947,10 +947,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("deleteAllProfiles", HttpMethod.POST)
                 .name("adminconsole.delete.all.profile.route");
         server
-                .uri("/api/adminconsole/userprofiles/unique", parentalControlController)
-                .action("isUnique", HttpMethod.GET)
-                .name("adminconsole.unique.profil.route");
-        server
                 .uri("/api/adminconsole/userprofile/bonustime/{id}", parentalControlController)
                 .action("addOnlineTimeForToday", HttpMethod.POST)
                 .name("adminconsole.userprofile.set.bonustime.route");

@@ -285,52 +285,6 @@ public class ParentalControlServiceTest {
     }
 
     @Test
-    public void createNewProfileExistingName() {
-        // Mock behaviour of dataSource
-        List<UserProfileModule> getAllResult = new ArrayList<>();
-        getAllResult.add(sampleProfiles.get("default"));
-        getAllResult.add(sampleProfiles.get("alice"));
-        getAllResult.add(sampleProfiles.get("bob"));
-        when(dataSource.getAll(eq(UserProfileModule.class))).thenReturn(getAllResult);
-        when(dataSource.get(eq(UserProfileModule.class), eq(ALICE_PROFILE_ID))).thenReturn(sampleProfiles.get("alice"));
-        when(dataSource.get(eq(UserProfileModule.class), eq(BOB_PROFILE_ID))).thenReturn(sampleProfiles.get("bob"));
-
-        ParentalControlService parentalControlService = createParentalControlService();
-
-        UserProfileModule bobProfile = sampleProfiles.get("bob");
-        UserProfileModule newProfile = new UserProfileModule(
-                null,
-                bobProfile.getName(),
-                bobProfile.getDescription(),
-                null,
-                null,
-                false,
-                false,
-                bobProfile.getAccessibleSitesPackages(),
-                bobProfile.getInaccessibleSitesPackages(),
-                UserProfileModule.InternetAccessRestrictionMode.BLACKLIST,
-                bobProfile.getInternetAccessContingents(),
-                new HashMap<>(),
-                null,
-                false,
-                null
-        );
-
-        // Test behaviour
-        try {
-            parentalControlService.storeNewProfile(newProfile);
-            fail("expected ConflictException because of provided ID in new profile");
-
-        } catch (ConflictException e) {
-            // ok, expected this
-        }
-
-        // Verify
-        verify(dataSource).getAll(eq(UserProfileModule.class));
-        verify(dataSource, never()).save(sampleProfiles.get("bob"), BOB_PROFILE_ID);
-    }
-
-    @Test
     public void getProfiles() {
         // Mock behaviour of dataSource
         List<UserProfileModule> getAllResult = new ArrayList<>();

@@ -244,23 +244,6 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         });
     }
 
-    function uniqueName(name, id) {
-        let def = $q.defer();
-
-        $http.get(PATH + '/unique?name='+encodeURIComponent(name)+(angular.isDefined(id) ? '&id=' + id : ''))
-            .then(function(){
-                def.resolve();
-            }, function(response) {
-                if (response.status === 409) {
-                    return def.reject(response);
-                } else {
-                    return def.resolve(response);
-                }
-            });
-        return def.promise;
-
-    }
-
     function isLicensed() {
         if (!angular.isDefined(registrationInfo.productInfo)) {
             return false;
@@ -280,7 +263,6 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         normalizeMaxUsageTimeByDay: normalizeMaxUsageTimeByDay,
         getAll: getAll,
         invalidateCache: invalidateCache,
-        uniqueName: uniqueName,
         getEmptyProfile: getEmptyProfile,
         getProfileWithParentalControlPresets: getProfileWithParentalControlPresets,
         getBonusTimeForToday: getBonusTimeForToday,

@@ -70,9 +70,6 @@ public class ParentalControlService {
     }
 
     public synchronized UserProfileModule storeNewProfile(UserProfileModule profile) {
-        if (!isUniqueCustomerCreatedName(profile.getId(), profile.getName())) {
-            throw new ConflictException("Name of user profile must be unique");
-        }
         if (profile.getId() != null) {
             throw new BadRequestException("Must not provide ID for new entity");
         }
@@ -115,10 +112,6 @@ public class ParentalControlService {
             //			profile.setNameKey(null);
             profile.setDescriptionKey(null);
         }
-        // If new name conflicts with other profile, just reset the name
-        if (!isUniqueCustomerCreatedName(profile.getId(), profile.getName())) {
-            profile.setName(dbProfile.getName());
-        }
 
         UserProfileModule savedProfile = dataSource.save(profile, profile.getId());
         profiles.put(savedProfile.getId(), savedProfile);
@@ -141,22 +134,6 @@ public class ParentalControlService {
         }
         dataSource.delete(UserProfileModule.class, profileId);
         profiles.remove(profileId);
-    }
-
-    /**
-     * Checks if module name is unique among customer created profiles.
-     * <p>
-     * Please note that customer created modules may have the same name as builtin ones.
-     *
-     * @param id   id of module if it is a already persistent (may be null)
-     * @param name name of module
-     * @return if module name is unique among customer created modules.
-     */
-    public boolean isUniqueCustomerCreatedName(Integer id, String name) {
-        Predicate<UserProfileModule> isCustomerCreatedModuleWithSameNameButDifferentId = m -> !m.isBuiltin() && m.getName().equals(name) && !m.getId().equals(id);
-        List<UserProfileModule> list = getProfiles();
-        LOG.info("list={}", list);
-        return getProfiles().stream().noneMatch(isCustomerCreatedModuleWithSameNameButDifferentId);
     }
 
     public UserProfileModule getProfile(int id) {

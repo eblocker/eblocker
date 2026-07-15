@@ -21,6 +21,11 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
+import org.eblocker.server.common.data.dashboard.ParentalControlCard;
+import org.eblocker.server.common.data.dashboard.UiCard;
+import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
+import org.eblocker.server.common.data.migrations.DefaultEntities;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -36,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
@@ -149,7 +155,56 @@ public class UsersBackupProvider extends BackupProvider {
         Map<Integer, Integer> userIdMapping = new HashMap<>(); // map old (from backup) to new user IDs
         importUsers(backup.getUsers(), userIdMapping);
         updateUserIds(backup.getDevices(), userIdMapping);
+        Map<Integer, Integer> cardIdMapping = getCardIdMapping(backup.getUiCards(), userIdMapping);
+        updateDashboardColumnsViews(backup.getUsers(), userIdMapping, cardIdMapping);
         importDevices(backup.getDevices());
+    }
+
+    private void updateDashboardColumnsViews(List<UserModule> users, Map<Integer, Integer> userIdMapping, Map<Integer, Integer> cardIdMapping) {
+        for (UserModule user: users) {
+            DashboardColumnsView view = user.getDashboardColumnsView();
+            view = updateUiCardIds(view, cardIdMapping);
+            userService.updateUser(userIdMapping.get(user.getId()), view);
+        }
+    }
+
+    private DashboardColumnsView updateUiCardIds(DashboardColumnsView view, Map<Integer, Integer> cardIdMapping) {
+        Function<UiCardColumnPosition, UiCardColumnPosition> mapper = (UiCardColumnPosition pos) ->
+                new UiCardColumnPosition(cardIdMapping.get(pos.getId()), pos.getColumn(), pos.getIndex(), pos.isVisible(), pos.isExpanded());
+        List<UiCardColumnPosition> oneColumn = view.getOneColumn().stream().map(mapper).collect(Collectors.toList());
+        List<UiCardColumnPosition> twoColumn = view.getTwoColumn().stream().map(mapper).collect(Collectors.toList());
+        List<UiCardColumnPosition> threeColumn = view.getThreeColumn().stream().map(mapper).collect(Collectors.toList());
+        return new DashboardColumnsView(oneColumn, twoColumn, threeColumn);
+    }
+
+    /**
+     * Create a map from old (from backup) to new (from DB) UiCard and ParentalControlCard IDs.
+     *
+     * ParentalControlCards are mapped via their referencing user ID (the child). The user IDs might have changed.
+     * Normal UiCards are mapped via their names.
+     */
+    private Map<Integer, Integer> getCardIdMapping(List<UiCard> backupCards, Map<Integer, Integer> userIdMapping) {
+        Map<Integer, Integer> cardIdMapping = new HashMap<>(backupCards.size());
+        List<UiCard> newCards = dashboardCardService.getAll();
+        Map<String, Integer> cardName2newCardId = new HashMap<>();
+        Map<Integer, Integer> newUserId2newCardId = new HashMap<>();
+        for (UiCard card: newCards) {
+            if (card instanceof ParentalControlCard) {
+                Integer newUserId = ((ParentalControlCard) card).getReferencingUserId();
+                newUserId2newCardId.put(newUserId, card.getId());
+            } else {
+                cardName2newCardId.put(card.getName(), card.getId());
+            }
+        }
+        for (UiCard card: backupCards) {
+            if (card instanceof ParentalControlCard) {
+                Integer userId = ((ParentalControlCard) card).getReferencingUserId();
+                cardIdMapping.put(card.getId(), newUserId2newCardId.get(userIdMapping.get(userId)));
+            } else {
+                cardIdMapping.put(card.getId(), cardName2newCardId.get(card.getName()));
+            }
+        }
+        return cardIdMapping;
     }
 
     private void deleteOrResetDevices(List<Device> devices) {
@@ -179,13 +234,13 @@ public class UsersBackupProvider extends BackupProvider {
             if (!profile.isBuiltin()) {
                 Integer oldId = profile.getId();
                 profile.setId(null);
+                profile.setName(null); // remove names, they are not defined by the admin anymore
                 UserProfileModule newProfile = parentalControlService.storeNewProfile(profile);
-                // TODO: names of profiles contain the user ID, e.g. PROFILE_FOR_USER_102
-                // these names are not updated currently (user IDs change during import)
                 profileIdMapping.put(oldId, newProfile.getId());
+            } else if (profile.getId() == DefaultEntities.PARENTAL_CONTROL_DEFAULT_PROFILE_ID) {
+                parentalControlService.updateProfile(profile);
             }
         }
-        // TODO: default profile 1 can also have restrictions! So it must be updated in place.
     }
 
     private void updateProfileIds(List<UserModule> users, Map<Integer, Integer> profileIdMapping) {
@@ -218,6 +273,9 @@ public class UsersBackupProvider extends BackupProvider {
 
     private void updateUserIds(List<Device> devices, Map<Integer, Integer> userIdMapping) {
         for (Device device : devices) {
+            if (userIdMapping.containsKey(device.getDefaultSystemUser())) {
+                device.setDefaultSystemUser(userIdMapping.get(device.getDefaultSystemUser()));
+            }
             if (userIdMapping.containsKey(device.getAssignedUser())) {
                 device.setAssignedUser(userIdMapping.get(device.getAssignedUser()));
             }
@@ -225,7 +283,6 @@ public class UsersBackupProvider extends BackupProvider {
                 device.setOperatingUser(userIdMapping.get(device.getOperatingUser()));
             }
         }
-        // TODO: update ParentalControlCard.referencingUserId
     }
 
     private void importDevices(List<Device> devices) {

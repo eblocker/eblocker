@@ -16,146 +16,215 @@
  */
 package org.eblocker.server.http.backup;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.eblocker.registration.ProductFeature;
+import org.eblocker.server.common.TestClock;
+import org.eblocker.server.common.TestRedisServer;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
+import org.eblocker.server.common.data.DeviceFactory;
+import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.JedisDataSource;
+import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserRole;
+import org.eblocker.server.common.data.dashboard.DashboardColumnsView;
+import org.eblocker.server.common.data.dashboard.UiCard;
+import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
+import org.eblocker.server.common.data.migrations.DefaultEntities;
+import org.eblocker.server.common.network.IpResponseTable;
+import org.eblocker.server.common.network.NetworkInterfaceWrapper;
+import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlService;
+import org.eblocker.server.http.service.UserAgentService;
 import org.eblocker.server.http.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UsersBackupProviderTest extends BackupProviderTestBase {
-    private UsersBackupProvider providerExport, providerImport;
-    private DeviceService deviceServiceExport, deviceServiceImport;
-    private UserService userServiceExport, userServiceImport;
-    private ParentalControlService parentalControlServiceExport, parentalControlServiceImport;
-    private DashboardCardService dashboardCardServiceExport, dashboardCardServiceImport;
-    private DataSource dataSourceExport, dataSourceImport;
-    private TestDeviceFactory tdfExport, tdfImport;
-    private final String deviceMacA = "aaaaaaaaaaaa";
-    private final String deviceMacB = "bbbbbbbbbbbb";
-    private final String deviceMacC = "cccccccccccc";
-    private Device deviceA, deviceB, deviceB2, deviceC;
-    UserProfileModule defaultProfile, childProfileExport, childProfileImport;
-    UserModule child;
+    /**
+     * Create two DBSystems, one for exporting and one for importing the backup
+     */
+    @Test
+    void testExportVerifyImport() throws IOException {
+        DBSystem exp = new DBSystem();
+        exp.start();
+        UsersBackupProvider exportProvider = exp.createProvider();
+        exp.setUpDefaultData();
 
-    @BeforeEach
-    void setUp() {
-        deviceServiceExport = Mockito.mock(DeviceService.class);
-        userServiceExport = Mockito.mock(UserService.class);
-        parentalControlServiceExport = Mockito.mock(ParentalControlService.class);
-        dashboardCardServiceExport = Mockito.mock(DashboardCardService.class);
-        dataSourceExport = Mockito.mock(DataSource.class);
-        providerExport = new UsersBackupProvider(deviceServiceExport, userServiceExport, parentalControlServiceExport, dashboardCardServiceExport, dataSourceExport);
-        setUpDataBeforeExport();
+        // Data to be backed up:
+        Device device21 = exp.addDevice("device:abcdef000021", "192.168.0.21");
+        Device device22 = exp.addDevice("device:abcdef000022", "192.168.0.22");
+        UserModule parent = exp.addUser("Mom", UserRole.PARENT);
+        UserModule child = exp.addUser("Billy the kid", UserRole.CHILD);
+        exp.assignUser(child, device22);
 
-        deviceServiceImport = Mockito.mock(DeviceService.class);
-        userServiceImport = Mockito.mock(UserService.class);
-        parentalControlServiceImport = Mockito.mock(ParentalControlService.class);
-        dashboardCardServiceImport = Mockito.mock(DashboardCardService.class);
-        dataSourceImport = Mockito.mock(DataSource.class);
-        providerImport = new UsersBackupProvider(deviceServiceImport, userServiceImport, parentalControlServiceImport, dashboardCardServiceImport, dataSourceImport);
-        setUpDataBeforeImport();
+        // edit dashboard: hide pause card in all layouts
+        exp.setCardVisibility("PAUSE", false, parent);
+
+        byte[] backup = exportBackup(exportProvider);
+        exp.stop();
+
+        DBSystem imp = new DBSystem();
+        imp.start();
+        UsersBackupProvider importProvider = imp.createProvider();
+        imp.addUiCard("NEW_CARD"); // the IDs of UiCards in the target system can be different
+        imp.setUpDefaultData();
+
+        // Data to be overwritten by the backup import:
+        Device device23 = imp.addDevice("device:abcdef000023", "192.168.0.23");
+        UserModule otherUser = imp.addUser("To be removed", UserRole.OTHER);
+        imp.assignUser(otherUser, device23);
+
+        verifyBackup(backup, importProvider);
+        importBackup(backup, importProvider);
+
+        // Check imported data:
+        Collection<Device> devices = imp.deviceService.getDevices(true);
+        assertEquals(2, devices.size());
+        Device out21 = imp.deviceService.getDeviceById(device21.getId());
+        assertEquals(0, out21.getIpAddresses().size()); // IP addresses are removed!
+        Device out22 = imp.deviceService.getDeviceById(device22.getId());
+        UserModule childOut = imp.userService.getUserById(out22.getAssignedUser());
+        assertNotNull(childOut);
+        assertEquals(child.getName(), childOut.getName());
+        parent = imp.getUserByName("Mom");
+        imp.checkCardVisibility("PAUSE", false, parent);
+        imp.checkUsersExist();
+
+        // Overwritten data is gone:
+        assertNull(imp.deviceService.getDeviceById(device23.getId()));
+        assertNull(imp.userService.getUserById(otherUser.getId()));
+
+        imp.stop();
     }
 
     /**
-     * Devices A and B are exported to the backup.
+     * Creates a test Redis DB and services that work on it.
      */
-    void setUpDataBeforeExport() {
-        tdfExport = new TestDeviceFactory(deviceServiceExport);
-        deviceA = tdfExport.addDevice(deviceMacA, "192.168.1.10", true);
-        deviceB = tdfExport.addDevice(deviceMacB, "192.168.1.11", true);
-        tdfExport.commit();
-        defaultProfile = createProfile(1, null, true, true);
-        childProfileExport = createProfile(101, "PROFILE_FOR_USER_103", false, false);
-        UserModule systemUser1 = createSystemDefaultUser(101, deviceA.getId());
-        UserModule systemUser2 = createSystemDefaultUser(102, deviceB.getId());
-        child = createUser(103, childProfileExport.getId(), "Billy", UserRole.CHILD);
-        setAllUsers(deviceA, systemUser1.getId());
-        deviceB.setDefaultSystemUser(systemUser2.getId());
-        deviceB.setAssignedUser(child.getId());
-        deviceB.setOperatingUser(child.getId());
+    class DBSystem {
+        TestRedisServer redis;
+        ObjectMapper objectMapper;
+        DataSource dataSource;
+        DeviceFactory deviceFactory;
+        DeviceService deviceService;
+        DashboardCardService dashboardCardService;
+        UserService userService;
+        ParentalControlService parentalControlService;
 
-        Mockito.when(userServiceExport.getUsers(Mockito.anyBoolean())).thenReturn(List.of(systemUser1, systemUser2, child));
-        Mockito.when(parentalControlServiceExport.getProfiles()).thenReturn(List.of(defaultProfile, childProfileExport));
-    }
+        DBSystem() throws IOException {
+            redis = new TestRedisServer();
+            JedisPool pool = redis.getPool();
+            objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            dataSource = new JedisDataSource(pool, objectMapper);
+            DeviceRegistrationProperties deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
+            UserAgentService userAgentService = Mockito.mock(UserAgentService.class);
+            NetworkInterfaceWrapper networkInterfaceWrapper = Mockito.mock(NetworkInterfaceWrapper.class);
+            MacPrefix macPrefix = new MacPrefix();
+            deviceFactory = new DeviceFactory(dataSource, macPrefix);
+            deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService, networkInterfaceWrapper, deviceFactory, new IpResponseTable(), Clock.systemDefaultZone(), 120, macPrefix);
+            dashboardCardService = new DashboardCardService(dataSource);
+            userService = new UserService(dataSource, deviceService, dashboardCardService,"SHARED.USER.NAME.STANDARD_USER");
+            parentalControlService = new ParentalControlService(dataSource, userService);
+        }
 
-    /**
-     * Devices B and C are in the DB before the import.
-     */
-    void setUpDataBeforeImport() {
-        tdfImport = new TestDeviceFactory(deviceServiceImport);
-        deviceB2 = tdfImport.addDevice(deviceMacB, "192.168.1.23", true);
-        deviceC = tdfImport.addDevice(deviceMacC, "192.168.1.13", true);
-        tdfImport.commit();
-        UserModule systemUser2 = createSystemDefaultUser(102, deviceB2.getId());
-        UserModule systemUser3 = createSystemDefaultUser(103, deviceC.getId());
-        setAllUsers(deviceB2, systemUser2.getId());
-        setAllUsers(deviceC, systemUser3.getId());
+        UsersBackupProvider createProvider() {
+            return new UsersBackupProvider(deviceService, userService, parentalControlService, dashboardCardService, dataSource);
+        }
 
-        childProfileImport = createProfile(102, "PROFILE_FOR_USER_103", false, false);
-        Mockito.when(userServiceImport.getUsers(Mockito.anyBoolean())).thenReturn(List.of(systemUser2, systemUser3));
-        Mockito.when(userServiceImport.createUser(childProfileImport.getId(), "Billy", null, null, UserRole.CHILD, null))
-                .thenReturn(createUser(104, childProfileImport.getId(), "Billy", UserRole.CHILD));
-        Mockito.when(userServiceImport.restoreDefaultSystemUser(deviceA.getId())).thenReturn(createSystemDefaultUser(105, deviceA.getId()));
-        Mockito.when(userServiceImport.restoreDefaultSystemUser(deviceB.getId())).thenReturn(createSystemDefaultUser(106, deviceB.getId()));
-        Mockito.when(userServiceImport.restoreDefaultSystemUser(deviceC.getId())).thenReturn(createSystemDefaultUser(107, deviceC.getId()));
-        Mockito.when(parentalControlServiceImport.getProfiles()).thenReturn(List.of(defaultProfile));
-        Mockito.when(parentalControlServiceImport.storeNewProfile(Mockito.argThat(profile -> profile.getName().equals("PROFILE_FOR_USER_103"))))
-                .thenReturn(childProfileImport);
-    }
+        void start() {
+            redis.start();
+        }
+        void stop() {
+            redis.stop();
+        }
 
-    private UserModule createSystemDefaultUser(int id, String name) {
-        return new UserModule(id, defaultProfile.getId(), name, null, null, null, true, null, null, null, null, null);
-    }
-
-    private UserModule createUser(int id, int profileId, String name, UserRole role) {
-        return new UserModule(id, profileId, name, null, null, role, false, null, null, null, null, null);
-    }
-
-    private UserProfileModule createProfile(int id, String name, boolean builtin, boolean standard) {
-        UserProfileModule profile = new UserProfileModule(id, name, null, null, null, standard, false, null, null, null, null, null, null, null, null);
-        profile.setBuiltin(builtin);
-        return profile;
-    }
-
-    private void setAllUsers(Device device, Integer userId) {
-        device.setDefaultSystemUser(userId);
-        device.setOperatingUser(userId);
-        device.setAssignedUser(userId);
-    }
-
-    @Test
-    void missingUser() {
-        deviceA.setOperatingUser(404);
-        assertThrows(CorruptedBackupException.class, () -> {
-            exportBackup(providerExport);
-        });
-    }
-
-    @Test
-    void missingProfile() {
-        child.setAssociatedProfileId(404);
-        assertThrows(CorruptedBackupException.class, () -> {
-            exportBackup(providerExport);
-        });
-    }
-
-    @Test
-    void testImport() throws IOException {
-        byte[] backup = exportBackup(providerExport);
-        importBackup(backup, providerImport);
-        Mockito.verify(deviceServiceImport).delete(deviceC);
+        void setUpDefaultData() {
+            parentalControlService.createDefaultProfile();
+            dataSource.setIdSequence(UserProfileModule.class, DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_USER_PROFILE_MODULE);
+            addUiCard("PAUSE");
+        }
+        Device addDevice(String deviceId, String deviceIp) {
+            Device device = deviceFactory.createDevice(deviceId, List.of(IpAddress.parse(deviceIp)), false);
+            userService.restoreDefaultSystemUserAsUsers(device);
+            deviceService.updateDevice(device);
+            return device;
+        }
+        UserModule addUser(String userName, UserRole role) {
+            UserProfileModule profile = new UserProfileModule(null, null,null, null, null, false, false, null, null, null, null, null, null, null, null);
+            profile.setBuiltin(false);
+            profile = parentalControlService.storeNewProfile(profile);
+            return userService.createUser(profile.getId(), userName, "PARENTAL_CONTROL_USER_NAME", LocalDate.of(2001, 2, 3), role, "topsecret!");
+        }
+        void assignUser(UserModule user, Device device) {
+            device.setAssignedUser(user.getId());
+            device.setOperatingUser(user.getId());
+            deviceService.updateDevice(device);
+        }
+        void addUiCard(String name) {
+            int id = dataSource.nextId(UiCard.class);
+            UiCard card = new UiCard(id, name, ProductFeature.BAS.name(), List.of(UserRole.PARENT, UserRole.OTHER), null);
+            dashboardCardService.saveNewDashboardCard(card);
+        }
+        UiCard getCardByName(String cardName) {
+            return dashboardCardService.getAll().stream().filter(c -> cardName.equals(c.getName())).findFirst().get();
+        }
+        void setCardVisibility(String cardName, boolean visible, UserModule user) {
+            DashboardColumnsView view = user.getDashboardColumnsView();
+            UiCard card = getCardByName(cardName);
+            Function<UiCardColumnPosition, UiCardColumnPosition> mapper = (UiCardColumnPosition pos) ->
+                    new UiCardColumnPosition(pos.getId(), pos.getColumn(), pos.getIndex(), pos.getId() == card.getId() ? visible : pos.isVisible(), pos.isExpanded());
+            List<UiCardColumnPosition> oneColumn = view.getOneColumn().stream().map(mapper).collect(Collectors.toList());
+            List<UiCardColumnPosition> twoColumn = view.getTwoColumn().stream().map(mapper).collect(Collectors.toList());
+            List<UiCardColumnPosition> threeColumn = view.getThreeColumn().stream().map(mapper).collect(Collectors.toList());
+            userService.updateUser(user.getId(), new DashboardColumnsView(oneColumn, twoColumn, threeColumn));
+        }
+        void checkCardVisibility(String cardName, boolean visible, UserModule user) {
+            DashboardColumnsView view = user.getDashboardColumnsView();
+            UiCard card = getCardByName(cardName);
+            Consumer<UiCardColumnPosition> checker = (UiCardColumnPosition pos) -> {
+                if (card.getId() == pos.getId()) {
+                    assertEquals(visible, pos.isVisible());
+                }
+            };
+            view.getOneColumn().stream().forEach(checker);
+            view.getTwoColumn().stream().forEach(checker);
+            view.getThreeColumn().stream().forEach(checker);
+        }
+        UserModule getUserByName(String name) {
+            return userService.getUsers(true).stream().filter(user -> name.equals(user.getName())).findFirst().get();
+        }
+        void checkUsersExist() {
+            for (Device device: deviceService.getDevices(true)) {
+                assertNotNull(userService.getUserById(device.getDefaultSystemUser()));
+                assertNotNull(userService.getUserById(device.getOperatingUser()));
+                assertNotNull(userService.getUserById(device.getAssignedUser()));
+            }
+        }
     }
 }

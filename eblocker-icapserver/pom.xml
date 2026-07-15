@@ -125,6 +125,10 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
@@ -199,8 +203,8 @@
 
         <!-- Test only -->
         <dependency>
-            <groupId>org.signal</groupId>
-            <artifactId>embedded-redis</artifactId>
+            <groupId>com.github.fppt</groupId>
+            <artifactId>jedis-mock</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

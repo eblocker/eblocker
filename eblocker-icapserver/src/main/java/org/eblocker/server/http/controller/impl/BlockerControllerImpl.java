@@ -30,6 +30,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for the {@link BlockerService}.
+ */
 public class BlockerControllerImpl implements BlockerController {
 
     private final BlockerService blockerService;

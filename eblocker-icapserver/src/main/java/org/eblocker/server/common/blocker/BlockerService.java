@@ -50,6 +50,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Class for managing user-defined blockers.
+ *
+ * User-defined blockers are stored as {@link ExternalDefinition} objects.
+ */
 @Singleton
 @SubSystemService(SubSystem.SERVICES)
 public class BlockerService {

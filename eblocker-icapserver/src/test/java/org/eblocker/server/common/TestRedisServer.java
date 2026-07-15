@@ -16,23 +16,32 @@
  */
 package org.eblocker.server.common;
 
+import com.github.fppt.jedismock.RedisServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPool;
-import redis.embedded.RedisServer;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Provides a local Redis server listening on a random port
  * between 16000 and 18000 for unit tests.
+ *
+ * The port is logged.
+ *
+ * Debugging: To look into Redis, set a breakpoint that suspends only the thread that hit the breakpoint
+ * (not all threads).
  */
 public class TestRedisServer {
+    private static final Logger LOG = LoggerFactory.getLogger(TestRedisServer.class);
     private int port;
     private RedisServer server;
 
     public TestRedisServer() {
         port = ThreadLocalRandom.current().nextInt(16000, 18000);
         try {
-            server = new RedisServer(port);
+            server = RedisServer.newRedisServer(port);
         } catch (Exception e) {
             throw new RuntimeException("Could not start embedded Redis server on port " + port, e);
         }
@@ -43,10 +52,20 @@ public class TestRedisServer {
     }
 
     public void start() {
-        server.start();
+        try {
+            LOG.info("Starting test Redis server on port {}", port);
+            server.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void stop() {
-        server.stop();
+        try {
+            LOG.info("Stopping test Redis server on port {}", port);
+            server.stop();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

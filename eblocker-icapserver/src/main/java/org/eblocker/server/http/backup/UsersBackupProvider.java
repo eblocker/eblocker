@@ -26,6 +26,8 @@ import org.eblocker.server.common.data.dashboard.ParentalControlCard;
 import org.eblocker.server.common.data.dashboard.UiCard;
 import org.eblocker.server.common.data.dashboard.UiCardColumnPosition;
 import org.eblocker.server.common.data.migrations.DefaultEntities;
+import org.eblocker.server.http.model.CustomDomainFilterConfig;
+import org.eblocker.server.http.service.CustomDomainFilterConfigService;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.ParentalControlService;
@@ -55,14 +57,16 @@ public class UsersBackupProvider extends BackupProvider {
     private final ParentalControlService parentalControlService;
     private final DashboardCardService dashboardCardService;
     private final DataSource dataSource;
+    private final CustomDomainFilterConfigService filterConfigService;
 
     @Inject
-    public UsersBackupProvider(DeviceService deviceService, UserService userService, ParentalControlService parentalControlService, DashboardCardService dashboardCardService, DataSource dataSource) {
+    public UsersBackupProvider(DeviceService deviceService, UserService userService, ParentalControlService parentalControlService, DashboardCardService dashboardCardService, DataSource dataSource, CustomDomainFilterConfigService filterConfigService) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.parentalControlService = parentalControlService;
         this.dashboardCardService = dashboardCardService;
         this.dataSource = dataSource;
+        this.filterConfigService = filterConfigService;
     }
 
     @Override
@@ -118,7 +122,18 @@ public class UsersBackupProvider extends BackupProvider {
         backup.setUsers(List.copyOf(users));
         backup.setProfiles(parentalControlService.getProfiles());
         backup.setUiCards(dashboardCardService.getAll());
+        backup.setCustomDomainFilters(collectCustomDomainFilters(users));
         return backup;
+    }
+
+    private Map<Integer, CustomDomainFilterConfig> collectCustomDomainFilters(Collection<UserModule> users) {
+        Map<Integer, CustomDomainFilterConfig> result = new HashMap<>();
+        for (UserModule user: users) {
+            if (user.getCustomWhitelistId() != null || user.getCustomBlacklistId() != null) {
+                result.put(user.getId(), filterConfigService.getCustomDomainFilterConfig(user.getId()));
+            }
+        }
+        return result;
     }
 
     @Override
@@ -158,6 +173,18 @@ public class UsersBackupProvider extends BackupProvider {
         Map<Integer, Integer> cardIdMapping = getCardIdMapping(backup.getUiCards(), userIdMapping);
         updateDashboardColumnsViews(backup.getUsers(), userIdMapping, cardIdMapping);
         importDevices(backup.getDevices());
+        importCustomDomainFilters(backup.getCustomDomainFilters(), userIdMapping);
+    }
+
+    private void importCustomDomainFilters(Map<Integer, CustomDomainFilterConfig> customDomainFilters, Map<Integer, Integer> userIdMapping) {
+        for (Integer oldUserId: customDomainFilters.keySet()) {
+            Integer newUserId = userIdMapping.get(oldUserId);
+            if (newUserId != null) {
+                filterConfigService.setCustomDomainFilterConfig(newUserId, customDomainFilters.get(oldUserId));
+            } else {
+                LOG.warn("Could not import custom domain filters for user ID {}", oldUserId);
+            }
+        }
     }
 
     private void updateDashboardColumnsViews(List<UserModule> users, Map<Integer, Integer> userIdMapping, Map<Integer, Integer> cardIdMapping) {
@@ -266,7 +293,7 @@ public class UsersBackupProvider extends BackupProvider {
                     newUser.setPin(user.getPin());
                     dataSource.save(newUser, newUser.getId());
                 }
-                // TODO: update "real" user with settings from backup
+                // TODO: update "real" user with custom black/whitelist settings from backup
             }
         }
     }

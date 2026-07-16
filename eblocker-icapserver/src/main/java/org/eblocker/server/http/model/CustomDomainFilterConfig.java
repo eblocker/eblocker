@@ -17,6 +17,7 @@
 package org.eblocker.server.http.model;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 public class CustomDomainFilterConfig {
@@ -47,5 +48,18 @@ public class CustomDomainFilterConfig {
 
     public void setWhitelistedDomains(Set<String> whitelistedDomains) {
         this.whitelistedDomains = whitelistedDomains;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        CustomDomainFilterConfig that = (CustomDomainFilterConfig) o;
+        return Objects.equals(blacklistedDomains, that.blacklistedDomains) && Objects.equals(whitelistedDomains, that.whitelistedDomains);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(blacklistedDomains, whitelistedDomains);
     }
 }

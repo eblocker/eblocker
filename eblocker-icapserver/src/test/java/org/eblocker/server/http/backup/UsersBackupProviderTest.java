@@ -44,8 +44,11 @@ import org.eblocker.server.common.data.migrations.DefaultEntities;
 import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.http.model.CustomDomainFilterConfig;
+import org.eblocker.server.http.service.CustomDomainFilterConfigService;
 import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.UserAgentService;
 import org.eblocker.server.http.service.UserService;
@@ -59,6 +62,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -85,6 +89,11 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
 
         // edit dashboard: hide pause card in all layouts
         exp.setCardVisibility("PAUSE", false, parent);
+
+        // whitelist a domain:
+        Mockito.when(exp.filterConfigService.getCustomDomainFilterConfig(device21.getDefaultSystemUser()))
+                .thenReturn(new CustomDomainFilterConfig(Set.of(), Set.of("good-tracker.biz")));
+        exp.userService.updateUser(device21.getDefaultSystemUser(), null, 1001);
 
         byte[] backup = exportBackup(exportProvider);
         exp.stop();
@@ -116,6 +125,9 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         imp.checkCardVisibility("PAUSE", false, parent);
         imp.checkUsersExist();
 
+        // Check domain is whitelisted:
+        Mockito.verify(imp.filterConfigService).setCustomDomainFilterConfig(out21.getDefaultSystemUser(), new CustomDomainFilterConfig(Set.of(), Set.of("good-tracker.biz")));
+
         // Overwritten data is gone:
         assertNull(imp.deviceService.getDeviceById(device23.getId()));
         assertNull(imp.userService.getUserById(otherUser.getId()));
@@ -135,6 +147,7 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         DashboardCardService dashboardCardService;
         UserService userService;
         ParentalControlService parentalControlService;
+        CustomDomainFilterConfigService filterConfigService;
 
         DBSystem() throws IOException {
             redis = new TestRedisServer();
@@ -151,10 +164,11 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
             dashboardCardService = new DashboardCardService(dataSource);
             userService = new UserService(dataSource, deviceService, dashboardCardService,"SHARED.USER.NAME.STANDARD_USER");
             parentalControlService = new ParentalControlService(dataSource, userService);
+            filterConfigService = Mockito.mock(CustomDomainFilterConfigService.class);
         }
 
         UsersBackupProvider createProvider() {
-            return new UsersBackupProvider(deviceService, userService, parentalControlService, dashboardCardService, dataSource);
+            return new UsersBackupProvider(deviceService, userService, parentalControlService, dashboardCardService, dataSource, filterConfigService);
         }
 
         void start() {
@@ -167,6 +181,7 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         void setUpDefaultData() {
             parentalControlService.createDefaultProfile();
             dataSource.setIdSequence(UserProfileModule.class, DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_USER_PROFILE_MODULE);
+            dataSource.setIdSequence(UserModule.class, DefaultEntities.PARENTAL_CONTROL_ID_SEQUENCE_USER_MODULE);
             addUiCard("PAUSE");
         }
         Device addDevice(String deviceId, String deviceIp) {

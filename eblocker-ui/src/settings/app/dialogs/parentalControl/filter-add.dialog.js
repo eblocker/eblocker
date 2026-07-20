@@ -14,7 +14,7 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function AddUserController(logger, $mdDialog, module, BlockerService, filterType,
+export default function AddBlockerController(logger, $mdDialog, module, BlockerService, filterType,
                                           BLOCKER_TYPE) {
     'ngInject';
 

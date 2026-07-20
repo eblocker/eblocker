@@ -288,7 +288,7 @@ public class BlockerService {
     }
 
     public void update() {
-        // tasks are not scheduled individually to avoid blocking the scheduler for other tasks (UpdateTask::run is synchronized)
+        // tasks are not scheduled individually to avoid blocking the scheduler for other tasks
         List<UpdateTask> tasks = dataSource.getAll(ExternalDefinition.class)
                 .stream()
                 .filter(definition -> definition.getReferenceId() != null)

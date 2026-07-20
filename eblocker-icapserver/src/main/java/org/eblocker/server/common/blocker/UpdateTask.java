@@ -76,7 +76,7 @@ public class UpdateTask implements Runnable {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         log.info("updating {}", id);
         ExternalDefinition definition = dataSource.get(ExternalDefinition.class, id);
         if (definition == null) {

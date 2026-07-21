@@ -125,37 +125,6 @@ public class BlockerService {
         return blockers;
     }
 
-    public Blocker getBlockerById(int id) {
-        ExternalDefinition definition = dataSource.get(ExternalDefinition.class, id);
-        Type type;
-        Integer referenceId;
-        if (definition != null) {
-            type = definition.getType();
-            referenceId = definition.getReferenceId();
-            if (referenceId == null) {
-                return mapDefinition(definition, null, true);
-            }
-        } else {
-            TypeId typeId = idCache.getTypeId(id);
-            if (typeId == null) {
-                return null;
-            }
-            type = typeId.type;
-            referenceId = typeId.id;
-        }
-
-        switch (type) {
-            case DOMAIN:
-                return getDomainBlockerById(referenceId, definition);
-            case PATTERN:
-                return getPatternBlockerById(referenceId, definition);
-            case MALWARE_URL:
-                return getMalwareUrlFilter();
-            default:
-                throw new IllegalArgumentException("unknown type " + type);
-        }
-    }
-
     public Blocker createBlocker(Blocker blocker) {
         int id = dataSource.nextId(ExternalDefinition.class);
 
@@ -311,14 +280,6 @@ public class BlockerService {
             return null;
         }
         return mapParentControlFilterMetadata(metadata, externalDefinition);
-    }
-
-    private Blocker getPatternBlockerById(int id, ExternalDefinition externalDefinition) {
-        FilterStoreConfiguration configuration = filterManager.getFilterStoreConfigurationById(id);
-        if (configuration == null) {
-            return null;
-        }
-        return mapFilterStoreConfiguration(configuration, externalDefinition);
     }
 
     private List<Blocker> getPendingFilters(List<ExternalDefinition> externalDefinitions) {

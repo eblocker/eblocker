@@ -229,35 +229,6 @@ public class BlockerServiceTest {
     }
 
     @Test
-    public void testGetBlockerById() {
-        assertDefinitionMatchesBlocker(definitions.get(0), blockerService.getBlockerById(1000));
-        assertDefinitionMatchesBlocker(definitions.get(1), blockerService.getBlockerById(1001));
-        assertDefinitionMatchesBlocker(definitions.get(2), blockerService.getBlockerById(1002));
-        assertDefinitionMatchesBlocker(definitions.get(3), blockerService.getBlockerById(1003));
-        assertDefinitionMatchesBlocker(definitions.get(4), blockerService.getBlockerById(1004));
-        assertDefinitionMatchesBlocker(definitions.get(5), blockerService.getBlockerById(1005));
-
-        assertDefinitionMatchesBlocker(definitions.get(6), blockerService.getBlockerById(1006));
-        Assert.assertEquals(BLOCKER_SOURCE_CONTENT, blockerService.getBlockerById(1006).getContent());
-
-        Assert.assertNull(blockerService.getBlockerById(1100));
-        assertBlocker(11, "builtin-domain-ADS", BlockerType.DOMAIN, Category.ADS, true, blockerService.getBlockerById(11));
-        Assert.assertNull(blockerService.getBlockerById(12));
-        assertBlocker(13, "custom-domain-CUSTOM", BlockerType.DOMAIN, Category.CUSTOM, false, blockerService.getBlockerById(13));
-        assertBlocker(14, "builtin-domain-MALWARE", BlockerType.DOMAIN, Category.MALWARE, true, blockerService.getBlockerById(14));
-        assertBlocker(15, "builtin-domain-PARENTAL_CONTROL", BlockerType.DOMAIN, Category.PARENTAL_CONTROL, true, blockerService.getBlockerById(15));
-        Assert.assertNull(blockerService.getBlockerById(16));
-        Assert.assertNull(blockerService.getBlockerById(17));
-        assertBlocker(18, "builtin-domain-TRACKERS", BlockerType.DOMAIN, Category.TRACKER, true, blockerService.getBlockerById(18));
-        Assert.assertNull(blockerService.getBlockerById(0));
-        assertBlocker(1, "builtin-pattern-ADS", BlockerType.PATTERN, Category.ADS, true, blockerService.getBlockerById(1));
-        Assert.assertNull(blockerService.getBlockerById(2));
-        Assert.assertNull(blockerService.getBlockerById(3));
-        assertBlocker(4, "builtin-pattern-TRACKER_BLOCKER", BlockerType.PATTERN, Category.TRACKER, true, blockerService.getBlockerById(4));
-        assertBlocker(19, "Malware", BlockerType.PATTERN, Category.MALWARE, true, blockerService.getBlockerById(19));
-    }
-
-    @Test
     public void testDisableBuiltinDomainBlocker() {
         // return value is not tested it as it would require mocking multiple calls and mutating state
         blockerService.updateBlocker(new Blocker(11, null, null, null, null, null, true, null, null, null, null, null, null, false, null));

@@ -2279,11 +2279,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.blocker.getAll");
 
         server
-                .uri("/api/blockers/{id}", blockerController)
-                .action("getBlockerById", HttpMethod.GET)
-                .name("adminconsole.blocker.get");
-
-        server
                 .uri("/api/blockers/", blockerController)
                 .action("createBlocker", HttpMethod.POST)
                 .name("adminconsole.blocker.post");

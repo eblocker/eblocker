@@ -55,11 +55,6 @@ public class BlockerControllerImpl implements BlockerController {
     }
 
     @Override
-    public Blocker getBlockerById(Request request, Response response) {
-        return blockerService.getBlockerById(Integer.parseInt(request.getHeader("id")));
-    }
-
-    @Override
     public Blocker createBlocker(Request request, Response response) {
         Blocker blocker = request.getBodyAs(Blocker.class);
         return blockerService.createBlocker(blocker);

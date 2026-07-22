@@ -51,7 +51,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Class for managing user-defined blockers.
+ * Class for managing user-defined blockers. It also enables/disables built-in blockers.
  *
  * User-defined blockers are stored as {@link ExternalDefinition} objects.
  */

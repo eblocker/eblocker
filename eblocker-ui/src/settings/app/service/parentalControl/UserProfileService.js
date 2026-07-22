@@ -35,7 +35,8 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         const tmp = angular.copy(profile);
         delete tmp.tmpUsageToday;
         delete tmp.tmpActivatedFilterList;
-        return $http.put(PATH, stripDownProfile(tmp)).then(function success(response){
+        return $http.put(PATH, stripDownProfile(tmp)).then(function success(response) {
+            invalidateCache();
             return normalizeProfile(response.data);
         }, function error(response){
             return response;

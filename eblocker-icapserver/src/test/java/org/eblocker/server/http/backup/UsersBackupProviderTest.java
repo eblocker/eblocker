@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eblocker.registration.ProductFeature;
 import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.TestRedisServer;
+import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
@@ -148,6 +149,7 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         UserService userService;
         ParentalControlService parentalControlService;
         CustomDomainFilterConfigService filterConfigService;
+        BlockerService blockerService;
 
         DBSystem() throws IOException {
             redis = new TestRedisServer();
@@ -165,10 +167,11 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
             userService = new UserService(dataSource, deviceService, dashboardCardService,"SHARED.USER.NAME.STANDARD_USER");
             parentalControlService = new ParentalControlService(dataSource, userService);
             filterConfigService = Mockito.mock(CustomDomainFilterConfigService.class);
+            blockerService = Mockito.mock(BlockerService.class);
         }
 
         UsersBackupProvider createProvider() {
-            return new UsersBackupProvider(deviceService, userService, parentalControlService, dashboardCardService, dataSource, filterConfigService);
+            return new UsersBackupProvider(deviceService, userService, parentalControlService, dashboardCardService, dataSource, filterConfigService, blockerService);
         }
 
         void start() {

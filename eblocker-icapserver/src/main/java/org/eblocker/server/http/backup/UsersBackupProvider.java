@@ -17,6 +17,10 @@
 package org.eblocker.server.http.backup;
 
 import com.google.inject.Inject;
+import org.eblocker.server.common.blocker.Blocker;
+import org.eblocker.server.common.blocker.BlockerService;
+import org.eblocker.server.common.blocker.Category;
+import org.eblocker.server.common.blocker.ExternalDefinition;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
@@ -58,15 +62,18 @@ public class UsersBackupProvider extends BackupProvider {
     private final DashboardCardService dashboardCardService;
     private final DataSource dataSource;
     private final CustomDomainFilterConfigService filterConfigService;
+    private final BlockerService blockerService;
 
     @Inject
-    public UsersBackupProvider(DeviceService deviceService, UserService userService, ParentalControlService parentalControlService, DashboardCardService dashboardCardService, DataSource dataSource, CustomDomainFilterConfigService filterConfigService) {
+    public UsersBackupProvider(DeviceService deviceService, UserService userService, ParentalControlService parentalControlService, DashboardCardService dashboardCardService,
+                               DataSource dataSource, CustomDomainFilterConfigService filterConfigService, BlockerService blockerService) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.parentalControlService = parentalControlService;
         this.dashboardCardService = dashboardCardService;
         this.dataSource = dataSource;
         this.filterConfigService = filterConfigService;
+        this.blockerService = blockerService;
     }
 
     @Override
@@ -123,7 +130,25 @@ public class UsersBackupProvider extends BackupProvider {
         backup.setProfiles(parentalControlService.getProfiles());
         backup.setUiCards(dashboardCardService.getAll());
         backup.setCustomDomainFilters(collectCustomDomainFilters(users));
+        backup.setParentalControlBlockers(collectCustomParentalControlBlockers());
         return backup;
+    }
+
+    private Map<Integer, Blocker> collectCustomParentalControlBlockers() {
+        Map<Integer, Blocker> customParentalControlBlockersById = blockerService.getBlockers().stream()
+                .filter(blocker -> blocker.getCategory() == Category.PARENTAL_CONTROL)
+                .filter(blocker -> !blocker.isProvidedByEblocker())
+                .collect(Collectors.toMap(Blocker::getId, Function.identity()));
+
+        // ExternalDefinition.id == Blocker.id, see BlockerService
+        return dataSource.getAll(ExternalDefinition.class).stream()
+                .filter(definition -> definition.getCategory() == Category.PARENTAL_CONTROL)
+                .filter(definition -> definition.getReferenceId() != null)
+                .filter(definition -> customParentalControlBlockersById.containsKey(definition.getId()))
+                .collect(Collectors.toMap(
+                        ExternalDefinition::getReferenceId,
+                        definition -> customParentalControlBlockersById.get(definition.getId())
+                        ));
     }
 
     private Map<Integer, CustomDomainFilterConfig> collectCustomDomainFilters(Collection<UserModule> users) {
@@ -164,6 +189,10 @@ public class UsersBackupProvider extends BackupProvider {
         Collection<Device> currentDevices = deviceService.getDevices(true);
         deleteOrResetDevices(new ArrayList<>(currentDevices));
         deleteNonSystemUsers();
+        deleteCustomParentalControlBlockers();
+        Map<Integer, Integer> listIdMapping = new HashMap<>(); // map old (from backup) to new custom parental control lists
+        importCustomParentalControlBlockers(backup.getParentalControlBlockers(), listIdMapping);
+        updateCustomParentalControlBlockers(backup.getProfiles(), listIdMapping);
         Map<Integer, Integer> profileIdMapping = new HashMap<>(); // map old (from backup) to new profile IDs
         importProfiles(backup.getProfiles(), profileIdMapping);
         updateProfileIds(backup.getUsers(), profileIdMapping);
@@ -174,6 +203,39 @@ public class UsersBackupProvider extends BackupProvider {
         updateDashboardColumnsViews(backup.getUsers(), userIdMapping, cardIdMapping);
         importDevices(backup.getDevices());
         importCustomDomainFilters(backup.getCustomDomainFilters(), userIdMapping);
+    }
+
+    private void updateCustomParentalControlBlockers(List<UserProfileModule> profiles, Map<Integer, Integer> listIdMapping) {
+        for (UserProfileModule profile: profiles) {
+            Set<Integer> accessible = profile.getAccessibleSitesPackages().stream()
+                    .map(id -> listIdMapping.getOrDefault(id, id))
+                    .collect(Collectors.toSet());
+            Set<Integer> inaccessible = profile.getInaccessibleSitesPackages().stream()
+                    .map(id -> listIdMapping.getOrDefault(id, id))
+                    .collect(Collectors.toSet());
+            profile.setAccessibleSitesPackages(accessible);
+            profile.setInaccessibleSitesPackages(inaccessible);
+        }
+    }
+
+    private void importCustomParentalControlBlockers(Map<Integer, Blocker> parentalControlBlockers, Map<Integer, Integer> listIdMapping) {
+        for (Integer listId: parentalControlBlockers.keySet()) {
+            Blocker blocker = parentalControlBlockers.get(listId);
+            Blocker newBlocker = blockerService.createBlocker(blocker); // TODO: synchronously!
+            Integer newListId = 42; // TODO: get from Ext.Def.
+            listIdMapping.put(listId, newListId);
+        }
+    }
+
+    private void deleteCustomParentalControlBlockers() {
+        List<Integer> customParentalControlBlockerIds = blockerService.getBlockers().stream()
+                .filter(blocker -> blocker.getCategory() == Category.PARENTAL_CONTROL)
+                .filter(blocker -> !blocker.isProvidedByEblocker())
+                .map(Blocker::getId)
+                .collect(Collectors.toList());
+        for (Integer id: customParentalControlBlockerIds) {
+            blockerService.deleteBlocker(id);
+        }
     }
 
     private void importCustomDomainFilters(Map<Integer, CustomDomainFilterConfig> customDomainFilters, Map<Integer, Integer> userIdMapping) {

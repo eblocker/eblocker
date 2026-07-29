@@ -1,5 +1,6 @@
 package org.eblocker.server.http.backup;
 
+import org.eblocker.server.common.blocker.Blocker;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
@@ -16,6 +17,8 @@ public class UsersBackup {
     private List<UiCard> uiCards;
     // Map user IDs to custom domain filters:
     private Map<Integer, CustomDomainFilterConfig> customDomainFilters;
+    // Map ParentalControlFilterMetaData IDs to user-defined blockers:
+    private Map<Integer, Blocker> parentalControlBlockers;
 
     public List<Device> getDevices() {
         return devices;
@@ -55,5 +58,13 @@ public class UsersBackup {
 
     public void setCustomDomainFilters(Map<Integer, CustomDomainFilterConfig> customDomainFilters) {
         this.customDomainFilters = customDomainFilters;
+    }
+
+    public Map<Integer, Blocker> getParentalControlBlockers() {
+        return parentalControlBlockers;
+    }
+
+    public void setParentalControlBlockers(Map<Integer, Blocker> parentalControlBlockers) {
+        this.parentalControlBlockers = parentalControlBlockers;
     }
 }

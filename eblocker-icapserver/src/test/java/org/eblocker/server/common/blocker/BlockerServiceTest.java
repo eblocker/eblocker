@@ -18,6 +18,7 @@ package org.eblocker.server.common.blocker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -66,6 +68,8 @@ public class BlockerServiceTest {
     private ScheduledExecutorService executorService;
     private UpdateTaskFactory updateTaskFactory;
     private BlockerService blockerService;
+    private DomainBlockerService domainBlockerService;
+    private PatternBlockerService patternBlockerService;
 
     private Path localStoragePath;
     private List<ExternalDefinition> definitions;
@@ -191,7 +195,11 @@ public class BlockerServiceTest {
         Mockito.when(idCache.getId(Mockito.any(TypeId.class))).then(im -> idByTypeId.get(im.getArgument(0)));
         Mockito.when(idCache.getTypeId(Mockito.anyInt())).then(im -> idByTypeId.inverse().get(im.getArgument(0)));
 
-        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, filterManager, malwareFilterService, contentFilterManager, filterListsService, executorService, updateTaskFactory);
+        TestClock clock = new TestClock(LocalDateTime.of(2026, 7, 24, 14, 29, 17, 0));
+        domainBlockerService = new DomainBlockerService(clock, idCache, filterListsService);
+        patternBlockerService = new PatternBlockerService(idCache, filterManager, malwareFilterService, contentFilterManager);
+
+        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, domainBlockerService, patternBlockerService, executorService, updateTaskFactory);
     }
 
     @After

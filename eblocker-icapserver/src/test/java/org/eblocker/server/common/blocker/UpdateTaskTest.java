@@ -19,6 +19,7 @@ package org.eblocker.server.common.blocker;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
+import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.util.HttpClient;
 import org.eblocker.server.http.service.ParentalControlFilterListsService;
 import org.eblocker.server.common.TestClock;
@@ -26,6 +27,7 @@ import org.eblocker.server.icap.filter.FilterDefinitionFormat;
 import org.eblocker.server.icap.filter.FilterLearningMode;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +54,11 @@ public class UpdateTaskTest {
     private DataSource dataSource;
     private FilterManager filterManager;
     private ParentalControlFilterListsService filterListsService;
+    private DomainBlockerService domainBlockerService;
+    private PatternBlockerService patternBlockerService;
+    private MalwareFilterService malwareFilterService;
+    private ContentFilterManager contentFilterManager;
+
     private HttpClient httpClient;
     private UpdateTask updateTask;
 
@@ -74,11 +81,16 @@ public class UpdateTaskTest {
 
         filterManager = Mockito.mock(FilterManager.class);
         filterListsService = Mockito.mock(ParentalControlFilterListsService.class);
+        malwareFilterService = Mockito.mock(MalwareFilterService.class);
+        contentFilterManager = Mockito.mock(ContentFilterManager.class);
         httpClient = Mockito.mock(HttpClient.class);
 
         sourceFile = Files.createTempFile(UpdateTaskTest.class.getSimpleName(), ".test");
 
-        updateTask = new UpdateTask(clock, dataSource, filterManager, filterListsService, httpClient, 0);
+        BlockerIdTypeIdCache idCache = new BlockerIdTypeIdCache();
+        domainBlockerService = new DomainBlockerService(clock, idCache, filterListsService);
+        patternBlockerService = new PatternBlockerService(idCache, filterManager, malwareFilterService, contentFilterManager);
+        updateTask = new UpdateTask(dataSource, domainBlockerService, patternBlockerService, httpClient, 0);
     }
 
     @After

@@ -20,15 +20,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
-import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.http.service.ParentalControlFilterListsService;
-import org.eblocker.server.icap.filter.FilterManager;
-import org.eblocker.server.icap.filter.FilterStoreConfiguration;
 import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +35,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -64,10 +55,8 @@ public class BlockerService {
     private final Path localStoragePath;
     private final BlockerIdTypeIdCache idCache;
     private final DataSource dataSource;
-    private final FilterManager filterManager;
-    private final MalwareFilterService malwareFilterService;
-    private final ContentFilterManager contentFilterManager;
-    private final ParentalControlFilterListsService filterListsService;
+    private final DomainBlockerService domainBlockerService;
+    private final PatternBlockerService patternBlockerService;
     private final ScheduledExecutorService executorService;
     private final UpdateTaskFactory updateTaskFactory;
 
@@ -75,19 +64,15 @@ public class BlockerService {
     public BlockerService(@Named("blocker.localStorage.path") String localStoragePath,
                           BlockerIdTypeIdCache idCache,
                           DataSource dataSource,
-                          FilterManager filterManager,
-                          MalwareFilterService malwareFilterService,
-                          ContentFilterManager contentFilterManager,
-                          ParentalControlFilterListsService filterListsService,
+                          DomainBlockerService domainBlockerService,
+                          PatternBlockerService patternBlockerService,
                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
                           UpdateTaskFactory updateTaskFactory) {
         this.localStoragePath = Paths.get(localStoragePath);
         this.idCache = idCache;
         this.dataSource = dataSource;
-        this.filterManager = filterManager;
-        this.malwareFilterService = malwareFilterService;
-        this.contentFilterManager = contentFilterManager;
-        this.filterListsService = filterListsService;
+        this.domainBlockerService = domainBlockerService;
+        this.patternBlockerService = patternBlockerService;
         this.executorService = executorService;
         this.updateTaskFactory = updateTaskFactory;
     }
@@ -118,10 +103,10 @@ public class BlockerService {
 
         List<Blocker> blockers = new ArrayList<>();
         blockers.addAll(getPendingFilters(definitions));
-        blockers.addAll(getDomainFilters(definitionByTypeId));
-        blockers.addAll(getPatternFilters(definitionByTypeId));
-        blockers.add(getMalwareUrlFilter());
-        blockers.add(getContentFilter());
+        blockers.addAll(domainBlockerService.getDomainFilters(definitionByTypeId));
+        blockers.addAll(patternBlockerService.getPatternFilters(definitionByTypeId));
+        blockers.add(patternBlockerService.getMalwareUrlFilter());
+        blockers.add(patternBlockerService.getContentFilter());
         return blockers;
     }
 
@@ -142,10 +127,10 @@ public class BlockerService {
         }
 
         ExternalDefinition definition = new ExternalDefinition(id,
-                firstValue(blocker.getName()),
-                firstValue(blocker.getDescription()),
+                BlockerUtils.firstValue(blocker.getName()),
+                BlockerUtils.firstValue(blocker.getDescription()),
                 blocker.getCategory(),
-                mapBlockerType(blocker.getType()),
+                BlockerUtils.mapBlockerType(blocker.getType()),
                 null,
                 blocker.getFormat(),
                 blocker.getUrl(),
@@ -158,7 +143,7 @@ public class BlockerService {
         dataSource.save(definition, id);
 
         executorService.submit(updateTaskFactory.create(id));
-        return mapDefinition(definition, null, true);
+        return BlockerUtils.mapDefinition(definition, null, true);
     }
 
     public Blocker updateBlocker(Blocker blocker) {
@@ -171,19 +156,19 @@ public class BlockerService {
 
             switch (typeId.type) {
                 case DOMAIN:
-                    return enableDomainFilter(typeId.id, null, blocker.isEnabled());
+                    return domainBlockerService.enableDomainFilter(typeId.id, null, blocker.isEnabled());
                 case PATTERN:
-                    return enablePatternFilter(typeId.id, null, blocker.isEnabled());
+                    return patternBlockerService.enablePatternFilter(typeId.id, null, blocker.isEnabled());
                 case MALWARE_URL:
-                    return enableMalwareUrlFilter(blocker.isEnabled());
+                    return patternBlockerService.enableMalwareUrlFilter(blocker.isEnabled());
                 case CONTENT:
-                    return enableContentFilter(blocker.isEnabled());
+                    return patternBlockerService.enableContentFilter(blocker.isEnabled());
                 default:
                     throw new IllegalArgumentException("unknown type " + typeId.type);
             }
         }
 
-        if (mapBlockerType(blocker.getType()) != definition.getType()) {
+        if (BlockerUtils.mapBlockerType(blocker.getType()) != definition.getType()) {
             throw new UnsupportedOperationException("can not change blocker type");
         }
 
@@ -192,8 +177,8 @@ public class BlockerService {
         }
 
         boolean needsUpdate = blocker.getFormat() != definition.getFormat() || blocker.getContent() != null || !blocker.getUrl().equals(definition.getUrl());
-        definition.setName(firstValue(blocker.getName()));
-        definition.setDescription(firstValue(blocker.getDescription()));
+        definition.setName(BlockerUtils.firstValue(blocker.getName()));
+        definition.setDescription(BlockerUtils.firstValue(blocker.getDescription()));
         definition.setFormat(blocker.getFormat());
         definition.setUrl(blocker.getUrl());
         definition.setUpdateInterval(blocker.getUpdateInterval());
@@ -221,14 +206,14 @@ public class BlockerService {
         }
 
         if (definition.getReferenceId() == null) {
-            return mapDefinition(definition, null, definition.isEnabled());
+            return BlockerUtils.mapDefinition(definition, null, definition.isEnabled());
         }
 
         if (definition.getType() == Type.DOMAIN) {
-            return enableDomainFilter(definition.getReferenceId(), definition, definition.isEnabled());
+            return domainBlockerService.enableDomainFilter(definition.getReferenceId(), definition, definition.isEnabled());
         }
 
-        return enablePatternFilter(definition.getReferenceId(), definition, definition.isEnabled());
+        return patternBlockerService.enablePatternFilter(definition.getReferenceId(), definition, definition.isEnabled());
     }
 
     public void deleteBlocker(int id) {
@@ -242,9 +227,9 @@ public class BlockerService {
         // filter does not stay activated unseen.
         if (definition.getReferenceId() != null) {
             if (definition.getType() == Type.DOMAIN) {
-                filterListsService.deleteFilterList(definition.getReferenceId());
+                domainBlockerService.deleteFilter(definition.getReferenceId());
             } else {
-                filterManager.removeFilter(definition.getReferenceId());
+                patternBlockerService.deleteFilter(definition.getReferenceId());
             }
         }
 
@@ -274,271 +259,12 @@ public class BlockerService {
         log.info("Updating {} blockers finished in {}ms", tasks.size(), elapsed);
     }
 
-    private Blocker getDomainBlockerById(int id, ExternalDefinition externalDefinition) {
-        ParentalControlFilterMetaData metadata = filterListsService.getParentalControlFilterMetaData(id);
-        if (metadata == null) {
-            return null;
-        }
-        return mapParentControlFilterMetadata(metadata, externalDefinition);
-    }
-
     private List<Blocker> getPendingFilters(List<ExternalDefinition> externalDefinitions) {
         return externalDefinitions.stream()
                 .filter(definition -> definition.getReferenceId() == null)
-                .map(definition -> mapDefinition(definition, null, true))
+                .map(definition -> BlockerUtils.mapDefinition(definition, null, true))
                 .collect(Collectors.toList());
     }
 
-    private Blocker mapDefinition(ExternalDefinition definition, Long lastUpdate, boolean enabled) {
-        return new Blocker(definition.getId(),
-                localizedMap(definition.getName()),
-                localizedMap(definition.getDescription()),
-                mapType(definition.getType()),
-                definition.getCategory(),
-                lastUpdate,
-                false,
-                definition.getUrl(),
-                readContent(definition),
-                definition.getFormat(),
-                null,
-                definition.getUpdateInterval(),
-                definition.getUpdateStatus(),
-                enabled,
-                definition.getFilterType());
-    }
-
-    private List<Blocker> getDomainFilters(Map<TypeId, ExternalDefinition> definitionsByTypeReference) {
-        return filterListsService.getParentalControlFilterMetaData()
-                .stream()
-                .map(m -> mapParentControlFilterMetadata(m, definitionsByTypeReference.get(new TypeId(Type.DOMAIN, m.getId()))))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private List<Blocker> getPatternFilters(Map<TypeId, ExternalDefinition> definitionsByTypeReference) {
-        return filterManager.getFilterConfigurations()
-                .stream()
-                .map(c -> mapFilterStoreConfiguration(c, definitionsByTypeReference.get(new TypeId(Type.PATTERN, c.getId()))))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private Blocker getMalwareUrlFilter() {
-        return new Blocker(
-                idCache.getId(new TypeId(Type.MALWARE_URL, 0)),
-                localizedMap("Malware"),
-                Collections.emptyMap(),
-                BlockerType.PATTERN,
-                Category.MALWARE,
-                malwareFilterService.getLastUpdate(),
-                true,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                malwareFilterService.isEnabled(),
-                "blacklist"
-        );
-    }
-
-    private Blocker getContentFilter() {
-        return new Blocker(
-                idCache.getId(new TypeId(Type.CONTENT, 0)),
-                localizedMap("uBlock Filters"),
-                Collections.emptyMap(),
-                BlockerType.PATTERN,
-                Category.CONTENT,
-                contentFilterManager.getLastUpdate(),
-                true,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                contentFilterManager.isEnabled(),
-                "content"
-        );
-    }
-
-    private Blocker mapParentControlFilterMetadata(ParentalControlFilterMetaData metadata, ExternalDefinition definition) {
-        if (definition == null) {
-            Category category = mapDomainFilterCategory(metadata.getCategory());
-            if (category == null) {
-                return null;
-            }
-            return new Blocker(idCache.getId(new TypeId(Type.DOMAIN, metadata.getId())),
-                    metadata.getName(),
-                    metadata.getDescription(),
-                    BlockerType.DOMAIN,
-                    category,
-                    metadata.getDate().getTime(),
-                    metadata.isBuiltin(),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    !metadata.isDisabled(),
-                    metadata.getFilterType());
-        }
-
-        return mapDefinition(definition, metadata.getDate().getTime(), !metadata.isDisabled());
-    }
-
-    private Category mapDomainFilterCategory(org.eblocker.server.common.data.parentalcontrol.Category category) {
-        switch (category) {
-            case ADS:
-                return Category.ADS;
-            case CUSTOM:
-                return Category.CUSTOM;
-            case MALWARE:
-                return Category.MALWARE;
-            case PARENTAL_CONTROL:
-                return Category.PARENTAL_CONTROL;
-            case TRACKERS:
-                return Category.TRACKER;
-            default:
-                return null;
-        }
-    }
-
-    private Blocker mapFilterStoreConfiguration(FilterStoreConfiguration configuration, ExternalDefinition definition) {
-
-        Long lastUpdate = filterManager.getFilterStore(configuration.getId()) != null &&
-                filterManager.getFilterStore(configuration.getId()).getLastUpdate() != null ?
-                filterManager.getFilterStore(configuration.getId()).getLastUpdate().getTime() : new Date().getTime();
-
-        if (definition == null) {
-            Category category = mapPatternFilterCategory(configuration.getCategory());
-            if (category == null) {
-                return null;
-            }
-            return new Blocker(idCache.getId(new TypeId(Type.PATTERN, configuration.getId())),
-                    localizedMap(configuration.getName()),
-                    Collections.emptyMap(),
-                    BlockerType.PATTERN,
-                    category,
-                    lastUpdate,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    configuration.isEnabled(),
-                    "blacklist"); // TODO ??
-        }
-
-        return mapDefinition(definition, lastUpdate, configuration.isEnabled());
-    }
-
-    private Category mapPatternFilterCategory(org.eblocker.server.icap.filter.Category category) {
-        switch (category) {
-            case ADS:
-                return Category.ADS;
-            case TRACKER_BLOCKER:
-                return Category.TRACKER;
-            case CONTENT:
-                return Category.CONTENT;
-            default:
-                return null;
-        }
-    }
-
-    private Blocker enableDomainFilter(int id, ExternalDefinition definition, boolean enabled) {
-        ParentalControlFilterMetaData metadata = filterListsService.getParentalControlFilterMetaData(id);
-        if (metadata.isDisabled() == enabled) {
-            metadata.setDisabled(!enabled);
-            filterListsService.updateFilterList(new ParentalControlFilterSummaryData(metadata), metadata.getFilterType());
-        }
-        return getDomainBlockerById(id, definition);
-    }
-
-    private Blocker enablePatternFilter(int id, ExternalDefinition definition, boolean enabled) {
-        FilterStoreConfiguration configuration = filterManager.getFilterStoreConfigurationById(id);
-        if (configuration.isEnabled() != enabled) {
-            FilterStoreConfiguration updatedConfiguration = filterManager.updateFilter(new FilterStoreConfiguration(
-                    configuration.getId(),
-                    configuration.getName(),
-                    configuration.getCategory(),
-                    configuration.isBuiltin(),
-                    configuration.getVersion(),
-                    configuration.getResources(),
-                    configuration.getLearningMode(),
-                    configuration.getFormat(),
-                    configuration.isLearnForAllDomains(),
-                    configuration.getRuleFilters(),
-                    enabled
-            ));
-            return mapFilterStoreConfiguration(updatedConfiguration, definition);
-        }
-        return mapFilterStoreConfiguration(configuration, definition);
-    }
-
-    private String readContent(ExternalDefinition definition) {
-        if (definition.getUrl() != null) {
-            return null;
-        }
-        try {
-            return new String(Files.readAllBytes(Paths.get(definition.getFile())), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.error("Failed to read content of blocker {}", definition.getId(), e);
-            return null;
-        }
-    }
-
-    private <U, V> V firstValue(Map<U, V> map) {
-        if (map == null) {
-            return null;
-        }
-
-        Iterator<V> it = map.values().iterator();
-        return it.hasNext() ? it.next() : null;
-    }
-
-    private Map<String, String> localizedMap(String value) {
-        Map<String, String> languageMap = new HashMap<>();
-        languageMap.put("en", value);
-        languageMap.put("de", value);
-        return languageMap;
-    }
-
-    private Blocker enableMalwareUrlFilter(boolean enabled) {
-        malwareFilterService.setEnabled(enabled);
-        return getMalwareUrlFilter();
-    }
-
-    private Blocker enableContentFilter(boolean enabled) {
-        contentFilterManager.setEnabled(enabled);
-        return getContentFilter();
-    }
-
-    private BlockerType mapType(Type type) {
-        switch (type) {
-            case DOMAIN:
-                return BlockerType.DOMAIN;
-            case MALWARE_URL:
-            case PATTERN:
-                return BlockerType.PATTERN;
-            default:
-                throw new IllegalArgumentException("can not map blocker " + type + " to type");
-        }
-    }
-
-    private Type mapBlockerType(BlockerType type) {
-        switch (type) {
-            case DOMAIN:
-                return Type.DOMAIN;
-            case PATTERN:
-                return Type.PATTERN;
-            default:
-                throw new IllegalArgumentException("can not map " + type + " to blocker type");
-        }
-    }
 
 }

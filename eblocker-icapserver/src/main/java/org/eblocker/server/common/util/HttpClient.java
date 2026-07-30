@@ -44,8 +44,7 @@ public class HttpClient {
             if (response.getStatusLine().getStatusCode() != 200) {
                 throw new IOException("Could not download " + url + ". Status " + response.getStatusLine().getStatusCode() + " returned");
             }
-            //return new ByteArrayInputStream(ByteStreams.toByteArray(response.getEntity().getContent()));
-            return response.getEntity().getContent();
+            return new ByteArrayInputStream(ByteStreams.toByteArray(response.getEntity().getContent()));
         }
     }
 }

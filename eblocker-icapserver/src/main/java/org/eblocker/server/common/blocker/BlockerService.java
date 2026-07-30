@@ -80,8 +80,12 @@ public class BlockerService {
     @SubSystemInit
     public void init() {
         List<ExternalDefinition> definitions = dataSource.getAll(ExternalDefinition.class);
+        List<Integer> updateDelayed = new ArrayList<>();
         for (ExternalDefinition definition : definitions) {
-            if (definition.getUpdateStatus() == UpdateStatus.INITIAL_UPDATE) {
+            if (definition.getUpdateStatus() == UpdateStatus.INITIAL_UPDATE_DELAYED) {
+                log.info("resuming update: {}", definition.getId());
+                updateDelayed.add(definition.getId());
+            } else if (definition.getUpdateStatus() == UpdateStatus.INITIAL_UPDATE) {
                 log.warn("interrupted update: {}", definition.getId());
                 definition.setUpdateStatus(UpdateStatus.INITIAL_UPDATE_FAILED);
                 definition.setUpdateError("initial update interrupted");
@@ -92,6 +96,14 @@ public class BlockerService {
                 definition.setUpdateError("update interrupted");
                 dataSource.save(definition, definition.getId());
             }
+        }
+        if (updateDelayed.size() > 0) {
+            List<UpdateTask> updateTasks = updateDelayed.stream()
+                    .map(id -> updateTaskFactory.create(id))
+                    .collect(Collectors.toList());
+            executorService.submit(() -> {
+                updateTasks.forEach(UpdateTask::run);
+            });
         }
     }
 
@@ -110,15 +122,44 @@ public class BlockerService {
         return blockers;
     }
 
+    /**
+     * Create new Blocker in asynchronous mode.
+     * Filter processing (including downloading) is done in the background
+     * via an UpdateTask.
+     */
     public Blocker createBlocker(Blocker blocker) {
+        return createBlocker(blocker, false);
+    }
+
+    /**
+     * Create new Blocker in synchronous mode.
+     * Filter processing is done immediately.
+     *
+     * If the blocker has a URL, an empty list is processed
+     * and the download is delayed until the next restart,
+     * because downloading large lists with millions of domains
+     * and creating the filters could take a few minutes.
+     */
+    public Blocker createBlockerSynchronously(Blocker blocker) {
+        return createBlocker(blocker, true);
+    }
+
+    private Blocker createBlocker(Blocker blocker, boolean synchronously) {
         int id = dataSource.nextId(ExternalDefinition.class);
 
         UpdateStatus updateStatus = UpdateStatus.NEW;
         String error = null;
         Path path = localStoragePath.resolve(id + ":" + blocker.getType());
-        if (blocker.getContent() != null) {
+        String blockerContent = blocker.getContent();
+        String blockerUrl = blocker.getUrl();
+        if (synchronously && blockerUrl != null) {
+            // Delay download until next restart. Set empty list for now.
+            blockerContent = "";
+            blockerUrl = null;
+        }
+        if (blockerContent != null) {
             try {
-                Files.write(path, blocker.getContent().getBytes(StandardCharsets.UTF_8));
+                Files.write(path, blockerContent.getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 log.error("Failed to write blocker {} content", id, e);
                 error = e.getMessage();
@@ -133,7 +174,7 @@ public class BlockerService {
                 BlockerUtils.mapBlockerType(blocker.getType()),
                 null,
                 blocker.getFormat(),
-                blocker.getUrl(),
+                blockerUrl,
                 blocker.getUpdateInterval(),
                 updateStatus,
                 error,
@@ -142,7 +183,20 @@ public class BlockerService {
                 blocker.getFilterType());
         dataSource.save(definition, id);
 
-        executorService.submit(updateTaskFactory.create(id));
+        UpdateTask updateTask = updateTaskFactory.create(id);
+        if (synchronously) {
+            updateTask.run();
+            // Prepare for download after next restart
+            if (blocker.getUrl() != null) {
+                // Reload definition to preserve the referenceId:
+                definition = dataSource.get(ExternalDefinition.class, id);
+                definition.setUrl(blocker.getUrl());
+                definition.setUpdateStatus(UpdateStatus.INITIAL_UPDATE_DELAYED);
+                dataSource.save(definition, id);
+            }
+        } else {
+            executorService.submit(updateTask);
+        }
         return BlockerUtils.mapDefinition(definition, null, true);
     }
 

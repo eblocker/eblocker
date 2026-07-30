@@ -36,6 +36,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import javax.xml.ws.Holder;
@@ -464,6 +465,35 @@ public class BlockerServiceTest {
     }
 
     @Test
+    public void testCreateBlockerSynchronouslyWithUrl() {
+        testCreateBlockerSynchronously(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
+    }
+
+    @Test
+    public void testCreateBlockerSynchronouslyWithContent() throws IOException {
+        testCreateBlockerSynchronously(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, null, "blocked.com", Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
+        Path path = localStoragePath.resolve("1100:DOMAIN");
+        Assert.assertEquals("blocked.com", new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+    }
+
+    private void testCreateBlockerSynchronously(Blocker blocker) {
+        Mockito.when(dataSource.get(ExternalDefinition.class, 1100)).thenReturn(new ExternalDefinition(1100, null, null, Category.ADS, Type.DOMAIN, null, Format.DOMAINS, blocker.getUrl(), null, null, null, null, true, null));
+        Blocker createdBlocker = blockerService.createBlockerSynchronously(blocker);
+        Assert.assertNotNull(createdBlocker);
+        Assert.assertEquals(Integer.valueOf(1100), createdBlocker.getId());
+
+        InOrder inOrder = Mockito.inOrder(dataSource);
+        inOrder.verify(dataSource).save(Mockito.any(ExternalDefinition.class), Mockito.eq(1100));
+        if (blocker.getUrl() != null) {
+            ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
+            inOrder.verify(dataSource).save(definitionCaptor.capture(), Mockito.eq(1100));
+            Assert.assertEquals(UpdateStatus.INITIAL_UPDATE_DELAYED, definitionCaptor.getValue().getUpdateStatus());
+        }
+        Mockito.verify(updateTaskFactory).create(1100);
+        Mockito.verify(updateTask).run();
+    }
+
+    @Test
     public void testUpdateBlockerMetadata() {
         blockerService.updateBlocker(new Blocker(
                 1001,
@@ -631,6 +661,17 @@ public class BlockerServiceTest {
         Assert.assertEquals(1001, definitionCaptor.getValue().getId());
         Assert.assertEquals(UpdateStatus.UPDATE_FAILED, definitionCaptor.getValue().getUpdateStatus());
         Assert.assertNotNull(definitionCaptor.getValue().getUpdateError());
+    }
+
+    @Test
+    public void delayedUpdate() {
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(Arrays.asList(
+                new ExternalDefinition(1000, "test-0", null, Category.ADS, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE_DELAYED, null, blockerFiles.get(0).toString(), true, "blacklist")
+        ));
+
+        blockerService.init();
+        Mockito.verify(updateTaskFactory).create(1000);
+        Mockito.verify(executorService).submit(Mockito.any(Runnable.class));
     }
 
     private void assertDefinitionMatchesBlocker(ExternalDefinition definition, Blocker blocker) {

@@ -221,8 +221,9 @@ public class UsersBackupProvider extends BackupProvider {
     private void importCustomParentalControlBlockers(Map<Integer, Blocker> parentalControlBlockers, Map<Integer, Integer> listIdMapping) {
         for (Integer listId: parentalControlBlockers.keySet()) {
             Blocker blocker = parentalControlBlockers.get(listId);
-            Blocker newBlocker = blockerService.createBlocker(blocker); // TODO: synchronously!
-            Integer newListId = 42; // TODO: get from Ext.Def.
+            Blocker newBlocker = blockerService.createBlockerSynchronously(blocker);
+            ExternalDefinition newDefinition = dataSource.get(ExternalDefinition.class, newBlocker.getId());
+            Integer newListId = newDefinition.getReferenceId();
             listIdMapping.put(listId, newListId);
         }
     }

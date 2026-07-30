@@ -46,7 +46,7 @@ public class DnsResolverTest {
     public void setUp() {
         workerGroup = new NioEventLoopGroup(2);
         resolver = new DnsResolver(workerGroup);
-        dnsPort = 5000 + new Random().nextInt(1000);
+        dnsPort = 15000 + new Random().nextInt(5000);
         dnsTestService = new DnsTestService(dnsServer, dnsPort);
         dnsTestService
                 .respondTo("o2.box")

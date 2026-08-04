@@ -22,6 +22,7 @@ import org.eblocker.crypto.CryptoService;
  * Creates backup providers at runtime.
  */
 public interface BackupProviderFactory {
+    GeneralSettingsBackupProvider createGeneralSettingsBackupProvider();
     AppModulesBackupProvider createAppModulesBackupProvider();
     DevicesLegacyBackupProvider createDevicesLegacyBackupProvider();
     TorConfigBackupProvider createTorConfigBackupProvider();
@@ -30,4 +31,6 @@ public interface BackupProviderFactory {
     OpenVpnClientBackupProvider createOpenVpnClientBackupProvider(CryptoService cryptoService);
     RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService);
     UsersBackupProvider createUsersBackupProvider();
+    BlockersBackupProvider createBlockersBackupProvider();
+    DnsBackupProvider createDnsBackupProvider();
 }

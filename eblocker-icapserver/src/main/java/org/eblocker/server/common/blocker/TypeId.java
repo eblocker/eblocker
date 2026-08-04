@@ -16,15 +16,28 @@
  */
 package org.eblocker.server.common.blocker;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
-class TypeId {
-    Type type;
-    int id;
+public class TypeId {
+    private Type type;
+    private int id;
 
-    TypeId(Type type, int id) {
+    @JsonCreator
+    public TypeId(@JsonProperty("type") Type type,
+                  @JsonProperty("id") int id) {
         this.type = type;
         this.id = id;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

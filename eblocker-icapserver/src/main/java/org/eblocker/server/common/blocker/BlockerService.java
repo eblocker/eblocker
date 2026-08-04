@@ -21,10 +21,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
-import org.eblocker.server.common.malware.MalwareFilterService;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
-import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -107,6 +104,13 @@ public class BlockerService {
         }
     }
 
+    /**
+     * Returns all Blockers.
+     *
+     * A side effect of this method is that the shared BlockerIdTypeIdCache is filled,
+     * so blocker IDs can be resolved back to TypeIds.
+     * @return list of blockers
+     */
     public List<Blocker> getBlockers() {
         List<ExternalDefinition> definitions = dataSource.getAll(ExternalDefinition.class);
         Map<TypeId, ExternalDefinition> definitionByTypeId = definitions.stream()
@@ -208,17 +212,17 @@ public class BlockerService {
                 return null;
             }
 
-            switch (typeId.type) {
+            switch (typeId.getType()) {
                 case DOMAIN:
-                    return domainBlockerService.enableDomainFilter(typeId.id, null, blocker.isEnabled());
+                    return domainBlockerService.enableDomainFilter(typeId.getId(), null, blocker.isEnabled());
                 case PATTERN:
-                    return patternBlockerService.enablePatternFilter(typeId.id, null, blocker.isEnabled());
+                    return patternBlockerService.enablePatternFilter(typeId.getId(), null, blocker.isEnabled());
                 case MALWARE_URL:
                     return patternBlockerService.enableMalwareUrlFilter(blocker.isEnabled());
                 case CONTENT:
                     return patternBlockerService.enableContentFilter(blocker.isEnabled());
                 default:
-                    throw new IllegalArgumentException("unknown type " + typeId.type);
+                    throw new IllegalArgumentException("unknown type " + typeId.getType());
             }
         }
 

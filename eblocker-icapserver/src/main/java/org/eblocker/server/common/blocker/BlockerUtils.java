@@ -92,7 +92,7 @@ public class BlockerUtils {
         }
     }
 
-    static Type mapBlockerType(BlockerType type) {
+    public static Type mapBlockerType(BlockerType type) {
         switch (type) {
             case DOMAIN:
                 return Type.DOMAIN;

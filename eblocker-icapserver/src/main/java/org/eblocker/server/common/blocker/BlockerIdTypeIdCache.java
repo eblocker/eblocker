@@ -27,7 +27,6 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class BlockerIdTypeIdCache {
-
     private final BiMap<TypeId, Integer> pseudoIdByTypeId = HashBiMap.create();
     private int nextPseudoId = 0;
 
@@ -41,11 +40,11 @@ public class BlockerIdTypeIdCache {
      * @param typeId
      * @return
      */
-    synchronized int getId(TypeId typeId) {
+    public synchronized int getId(TypeId typeId) {
         return pseudoIdByTypeId.computeIfAbsent(typeId, key -> nextPseudoId++);
     }
 
-    synchronized TypeId getTypeId(int id) {
+    public synchronized TypeId getTypeId(int id) {
         return pseudoIdByTypeId.inverse().get(id);
     }
 

@@ -36,7 +36,7 @@ public class Blocker {
     private final String error;
     private final UpdateInterval updateInterval;
     private final UpdateStatus updateStatus;
-    private final boolean enabled;
+    private boolean enabled;
     private final String filterType;
 
     @JsonCreator
@@ -130,5 +130,9 @@ public class Blocker {
 
     public String getFilterType() {
         return this.filterType;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -27,6 +27,7 @@ import org.eblocker.crypto.EncryptedData;
 public class HttpsKeysBackup {
     private EncryptedData encryptedCA;
     private EncryptedData encryptedRenewalCA;
+    private Boolean httpsEnabledState; // available only since version 5, will be null in version 4 backups
 
     @JsonProperty
     public EncryptedData getEncryptedCA() {
@@ -44,5 +45,14 @@ public class HttpsKeysBackup {
 
     public void setEncryptedRenewalCA(EncryptedData encryptedRenewalCA) {
         this.encryptedRenewalCA = encryptedRenewalCA;
+    }
+
+    @JsonProperty
+    public Boolean getHttpsEnabledState() {
+        return httpsEnabledState;
+    }
+
+    public void setHttpsEnabledState(Boolean httpsEnabledState) {
+        this.httpsEnabledState = httpsEnabledState;
     }
 }

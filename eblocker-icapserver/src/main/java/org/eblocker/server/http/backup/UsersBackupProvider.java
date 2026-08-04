@@ -52,6 +52,9 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 
+/**
+ * Backs up and restores users, profiles, devices and parental controls.
+ */
 public class UsersBackupProvider extends BackupProvider {
     private static final Logger LOG = LoggerFactory.getLogger(UsersBackupProvider.class);
     public static final String USERS_ENTRY = "eblocker-config/users.json";

@@ -26,6 +26,7 @@ export default function ConfigBackupExportController(logger, $scope, $window, $m
     vm.includeKeys = true;
     vm.maxLength = 50;
     vm.downloadSaved = false;
+    vm.warnings = [];
 
     vm.isStepAllowed = function(step) {
         // only earlier steps are allowed
@@ -79,8 +80,9 @@ export default function ConfigBackupExportController(logger, $scope, $window, $m
         }
 
         vm.exporting = true;
-        ConfigBackupService.exportConfig(vm.includeKeys, password).then(function(data) {
-            downloadBackup(data.fileReference);
+        ConfigBackupService.exportConfig(vm.includeKeys, password).then(function(result) {
+            vm.warnings = result.warnings;
+            downloadBackup(result.configBackupReference.fileReference);
         }, function(response) {
             NotificationService.error(response.toUpperCase());
         }).finally(function() {

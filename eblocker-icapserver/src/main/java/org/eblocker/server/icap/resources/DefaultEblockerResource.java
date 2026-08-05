@@ -26,7 +26,6 @@ public enum DefaultEblockerResource implements EblockerResource {
     ONE_PIXEL_SVG("classpath:block-artefacts/1px.svg"),
     ONE_PIXEL_PNG("classpath:block-artefacts/1px.png"),
     MAC_PREFIXES("classpath:mac-prefixes.txt"),
-    MAC_PREFIXES_DISABLED_BY_DEFAULT("classpath:mac-prefixes-disabled-by-default.txt"),
     ;
 
     private String path;

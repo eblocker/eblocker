@@ -18,17 +18,33 @@ package org.eblocker.server.common.blocker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.inject.Singleton;
 
+/**
+ * Creates an in-memory cache for mapping tuples of {Type, ID} of blockers
+ * to temporary IDs. These IDs start at 0 and are only meaningful within the
+ * process.
+ */
+@Singleton
 public class BlockerIdTypeIdCache {
-
     private final BiMap<TypeId, Integer> pseudoIdByTypeId = HashBiMap.create();
     private int nextPseudoId = 0;
 
-    synchronized int getId(TypeId typeId) {
+    /**
+     * Returns the temporary ID that was assigned to a {Type, ID} tuple for a
+     * specific blocker. These IDs are assigned to blockers that are not
+     * backed by an ExternalDefinition.
+     *
+     * Note: this requires that the IDs of ExternalDefinitions start at a higher
+     * number than the total number of built-in blockers.
+     * @param typeId
+     * @return
+     */
+    public synchronized int getId(TypeId typeId) {
         return pseudoIdByTypeId.computeIfAbsent(typeId, key -> nextPseudoId++);
     }
 
-    synchronized TypeId getTypeId(int id) {
+    public synchronized TypeId getTypeId(int id) {
         return pseudoIdByTypeId.inverse().get(id);
     }
 

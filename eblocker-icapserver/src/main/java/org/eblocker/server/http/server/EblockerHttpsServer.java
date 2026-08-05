@@ -947,14 +947,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("deleteAllProfiles", HttpMethod.POST)
                 .name("adminconsole.delete.all.profile.route");
         server
-                .uri("/api/adminconsole/userprofiles/unique", parentalControlController)
-                .action("isUnique", HttpMethod.GET)
-                .name("adminconsole.unique.profil.route");
-        server
-                .uri("/api/adminconsole/userprofiles/updates", parentalControlController)
-                .action("getProfilesBeingUpdated", HttpMethod.GET)
-                .name("adminconsole.profile.updates.route");
-        server
                 .uri("/api/adminconsole/userprofile/bonustime/{id}", parentalControlController)
                 .action("addOnlineTimeForToday", HttpMethod.POST)
                 .name("adminconsole.userprofile.set.bonustime.route");
@@ -2285,11 +2277,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/blockers/", blockerController)
                 .action("getBlockers", HttpMethod.GET)
                 .name("adminconsole.blocker.getAll");
-
-        server
-                .uri("/api/blockers/{id}", blockerController)
-                .action("getBlockerById", HttpMethod.GET)
-                .name("adminconsole.blocker.get");
 
         server
                 .uri("/api/blockers/", blockerController)

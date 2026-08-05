@@ -50,33 +50,39 @@ import java.util.Date;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * An UpdateTask can create or update a domain or pattern filter
+ * for a user-defined blocker (read from an ExternalDefinition).
+ */
 public class UpdateTask implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(UpdateTask.class);
 
-    private final Clock clock;
     private final DataSource dataSource;
-    private final FilterManager filterManager;
-    private final ParentalControlFilterListsService filterListsService;
+    private final DomainBlockerService domainBlockerService;
+    private final PatternBlockerService patternBlockerService;
     private final HttpClient httpClient;
     private final int id;
 
     @Inject
-    public UpdateTask(Clock clock,
-                      DataSource dataSource,
-                      FilterManager filterManager,
-                      ParentalControlFilterListsService filterListsService,
+    public UpdateTask(DataSource dataSource,
+                      DomainBlockerService domainBlockerService,
+                      PatternBlockerService patternBlockerService,
                       HttpClient httpClient,
                       @Assisted int id) {
-        this.clock = clock;
         this.dataSource = dataSource;
-        this.filterManager = filterManager;
-        this.filterListsService = filterListsService;
+        this.domainBlockerService = domainBlockerService;
+        this.patternBlockerService = patternBlockerService;
         this.httpClient = httpClient;
         this.id = id;
     }
 
+    /**
+     * UpdateTasks are usually scheduled to run in the background.
+     * The processing of large filter lists (e.g. lists of millions of domains)
+     * can take a few minutes.
+     */
     @Override
-    public synchronized void run() {
+    public void run() {
         log.info("updating {}", id);
         ExternalDefinition definition = dataSource.get(ExternalDefinition.class, id);
         if (definition == null) {
@@ -97,16 +103,16 @@ public class UpdateTask implements Runnable {
             if (newBlocker) {
                 int referenceId;
                 if (definition.getType() == Type.DOMAIN) {
-                    referenceId = newDomainBlocker(definition.getCategory(), definition.getName(), definition.getDescription(), definition.getFormat(), definition.getFilterType(), path);
+                    referenceId = domainBlockerService.newDomainBlocker(definition.getCategory(), definition.getName(), definition.getDescription(), definition.getFormat(), definition.getFilterType(), path);
                 } else {
-                    referenceId = newPatternBlocker(definition.getCategory(), definition.getName(), definition.getFormat(), path);
+                    referenceId = patternBlockerService.newPatternBlocker(definition.getCategory(), definition.getName(), definition.getFormat(), path);
                 }
                 definition.setReferenceId(referenceId);
             } else {
                 if (definition.getType() == Type.DOMAIN) {
-                    updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
+                    domainBlockerService.updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
                 } else {
-                    updatePatternBlocker();
+                    patternBlockerService.updatePatternBlocker();
                 }
             }
             definition.setUpdateStatus(UpdateStatus.READY);
@@ -132,142 +138,4 @@ public class UpdateTask implements Runnable {
         }
     }
 
-    private int newDomainBlocker(Category category, String name, String description, Format format, String filterType, Path path) {
-        ZonedDateTime now = ZonedDateTime.now(clock);
-        ParentalControlFilterSummaryData data = new ParentalControlFilterSummaryData(
-                null,
-                null,
-                null,
-                now.format(DateTimeFormatter.BASIC_ISO_DATE),
-                Date.from(now.toInstant()),
-                filterType,
-                false,
-                false,
-                null,
-                name,
-                description,
-                mapToDomainFilterCategory(category));
-        data.setDomainsStreamSupplier(new DomainStreamSupplier(path, format));
-        ParentalControlFilterSummaryData savedData = filterListsService.createFilterList(data, "blacklist");
-        return savedData.getId();
-    }
-
-    private org.eblocker.server.common.data.parentalcontrol.Category mapToDomainFilterCategory(Category category) {
-        switch (category) {
-            case ADS:
-                return org.eblocker.server.common.data.parentalcontrol.Category.ADS;
-            case CUSTOM:
-                return org.eblocker.server.common.data.parentalcontrol.Category.CUSTOM;
-            case MALWARE:
-                return org.eblocker.server.common.data.parentalcontrol.Category.MALWARE;
-            case PARENTAL_CONTROL:
-                return org.eblocker.server.common.data.parentalcontrol.Category.PARENTAL_CONTROL;
-            case TRACKER:
-                return org.eblocker.server.common.data.parentalcontrol.Category.TRACKERS;
-            default:
-                throw new IllegalArgumentException("no domain filter category available for " + category);
-        }
-    }
-
-    private void updateDomainBlocker(int id, Format format, Path path) {
-        ZonedDateTime now = ZonedDateTime.now(clock);
-
-        ParentalControlFilterMetaData metadata = filterListsService.getParentalControlFilterMetaData(id);
-        ParentalControlFilterSummaryData updatedData = new ParentalControlFilterSummaryData(
-                metadata.getId(),
-                metadata.getName(),
-                metadata.getDescription(),
-                now.format(DateTimeFormatter.BASIC_ISO_DATE),
-                Date.from(now.toInstant()),
-                metadata.getFilterType(),
-                metadata.isBuiltin(),
-                metadata.isDisabled(),
-                null,
-                metadata.getCustomerCreatedName(),
-                metadata.getCustomerCreatedDescription(),
-                metadata.getCategory());
-        updatedData.setDomainsStreamSupplier(new DomainStreamSupplier(path, format));
-        filterListsService.updateFilterList(updatedData, metadata.getFilterType());
-    }
-
-    private int newPatternBlocker(Category category, String name, Format format, Path path) {
-        FilterDefinitionFormat definitionFormat = selectFilterDefinitionFormat(format);
-        FilterLearningMode learningMode = category == Category.MALWARE ? FilterLearningMode.SYNCHRONOUS : FilterLearningMode.ASYNCHRONOUS;
-        FilterStoreConfiguration configuration = new FilterStoreConfiguration(
-                null,
-                name,
-                mapToPatternFilterCategory(category),
-                false,
-                System.currentTimeMillis(),
-                new String[]{ path.toString() },
-                learningMode,
-                definitionFormat,
-                true,
-                new String[0],
-                true);
-        FilterStoreConfiguration savedConfiguration = filterManager.addFilter(configuration);
-        return savedConfiguration.getId();
-    }
-
-    private org.eblocker.server.icap.filter.Category mapToPatternFilterCategory(Category category) {
-        switch (category) {
-            case ADS:
-                return org.eblocker.server.icap.filter.Category.ADS;
-            case TRACKER:
-                return org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER;
-            case MALWARE:
-                return org.eblocker.server.icap.filter.Category.MALWARE;
-            case CONTENT:
-                return org.eblocker.server.icap.filter.Category.CONTENT;
-            default:
-                throw new IllegalArgumentException("pattern filters not available for " + category);
-        }
-    }
-
-    private void updatePatternBlocker() {
-        filterManager.update();
-    }
-
-    private FilterDefinitionFormat selectFilterDefinitionFormat(Format format) {
-        switch (format) {
-            case EASYLIST:
-                return FilterDefinitionFormat.EASYLIST;
-            case URLS:
-                return FilterDefinitionFormat.URL;
-            default:
-                throw new IllegalArgumentException("format not available for pattern filters: " + format);
-        }
-    }
-
-    private class DomainStreamSupplier implements Supplier<Stream<String>> {
-        private final Path path;
-        private final Format format;
-
-        DomainStreamSupplier(Path path, Format format) {
-            this.path = path;
-            this.format = format;
-        }
-
-        @Override
-        public Stream<String> get() {
-            try {
-                DomainParser parser = createParser(format);
-                return parser.parse(Files.lines(path, StandardCharsets.ISO_8859_1));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-
-        private DomainParser createParser(Format format) {
-            switch (format) {
-                case ETC_HOSTS:
-                    return new EtcHostsParser();
-                case DOMAINS:
-                case SQUID_ACL:
-                    return new SquidAclParser();
-                default:
-                    throw new IllegalArgumentException("unsupported format: " + format);
-            }
-        }
-    }
 }

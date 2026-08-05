@@ -65,15 +65,10 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
 
             // PARENTAL CONTROL
             loadAllFilterLists();
-            startCheckUpdateStatus();
 
         } else {
             StateService.goToState(vm.backState);
         }
-    };
-
-    vm.$onDestroy = function() {
-        stopCheckUpdateStatus();
     };
 
     function isShowAddDeviceHint(user, profile) {
@@ -521,7 +516,6 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
     vm.onChangeTimeRestrictions = onChangeTimeRestrictions;
     vm.onChangeUsageRestrictions = onChangeUsageRestrictions;
 
-    vm.isProfileBeingUpdated = isProfileBeingUpdated;
     vm.getActivatedFilterlists = getActivatedFilterlists;
     vm.hasActivatedExceptionFilterLists = hasActivatedExceptionFilterLists;
     vm.getActivatedExceptionFilterlists = getActivatedExceptionFilterlists;
@@ -537,25 +531,6 @@ function Controller($filter, $q, $mdDialog, $interval, $stateParams, StateServic
     let blacklists = [];
     let whitelists = [];
     let filterlistMap = {};
-    vm.updates = [];
-
-    function startCheckUpdateStatus() {
-        checkUpdateStatus = $interval(function() {
-            UserProfileService.updates().then(function success(response) {
-                vm.updates = response.data;
-            });
-        }, 1000);
-    }
-
-    function stopCheckUpdateStatus() {
-        if (angular.isDefined(checkUpdateStatus)) {
-            $interval.cancel(checkUpdateStatus);
-        }
-    }
-
-    function isProfileBeingUpdated(profile) {
-        return vm.updates.indexOf(profile.id) !== -1;
-    }
 
     function onChangeUrlRestrictions(profile) {
 

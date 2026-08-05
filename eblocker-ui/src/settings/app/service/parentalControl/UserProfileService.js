@@ -35,7 +35,8 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         const tmp = angular.copy(profile);
         delete tmp.tmpUsageToday;
         delete tmp.tmpActivatedFilterList;
-        return $http.put(PATH, stripDownProfile(tmp)).then(function success(response){
+        return $http.put(PATH, stripDownProfile(tmp)).then(function success(response) {
+            invalidateCache();
             return normalizeProfile(response.data);
         }, function error(response){
             return response;
@@ -146,6 +147,7 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
             controlmodeUrls: profile.controlmodeUrls,
             controlmodeTime: profile.controlmodeTime,
             controlmodeMaxUsage: profile.controlmodeMaxUsage,
+            forSingleUser: profile.forSingleUser,
             internetAccessRestrictionMode: profile.internetAccessRestrictionMode,
             accessibleSitesPackages: profile.accessibleSitesPackages,
             inaccessibleSitesPackages: profile.inaccessibleSitesPackages,
@@ -244,36 +246,6 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         });
     }
 
-    function uniqueName(name, id) {
-        let def = $q.defer();
-
-        $http.get(PATH + '/unique?name='+encodeURIComponent(name)+(angular.isDefined(id) ? '&id=' + id : ''))
-            .then(function(){
-                def.resolve();
-            }, function(response) {
-                if (response.status === 409) {
-                    return def.reject(response);
-                } else {
-                    return def.resolve(response);
-                }
-            });
-        return def.promise;
-
-    }
-
-    /**
-     * Calls BE method: getProfilesBeingUpdated
-     */
-    function updates() {
-        return $http.get(PATH + '/updates').then(function success(response) {
-            return response;
-        }, function error(response) {
-            return $q.reject(response);
-        }).finally(function () {
-            invalidateCache();
-        });
-    }
-
     function isLicensed() {
         if (!angular.isDefined(registrationInfo.productInfo)) {
             return false;
@@ -291,10 +263,8 @@ export default function UserProfileService(logger, $http, $q, $translate, $filte
         deleteAllProfiles: deleteAllProfiles,
         isLicensed: isLicensed,
         normalizeMaxUsageTimeByDay: normalizeMaxUsageTimeByDay,
-        updates: updates,
         getAll: getAll,
         invalidateCache: invalidateCache,
-        uniqueName: uniqueName,
         getEmptyProfile: getEmptyProfile,
         getProfileWithParentalControlPresets: getProfileWithParentalControlPresets,
         getBonusTimeForToday: getBonusTimeForToday,

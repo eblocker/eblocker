@@ -92,7 +92,7 @@ public class ArpSpooferTest {
         tdf.commit();
         when(dataSource.getGateway()).thenReturn(GATEWAY);
 
-        tdf.getDevice("device:11f000000000").setIpAddresses(Arrays.asList(IpAddress.parse("192.168.0.200"), IpAddress.parse("192.168.0.201")));
+        tdf.getDeviceByHwAddress("11f000000000").setIpAddresses(Arrays.asList(IpAddress.parse("192.168.0.200"), IpAddress.parse("192.168.0.201")));
 
         // fill arp table for devices
         ipResponseTable.put("abcdef012345", Ip4Address.parse(GATEWAY), clock.millis());

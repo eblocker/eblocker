@@ -391,12 +391,17 @@
                 "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, OpenVPN and license keys are not restored."
             },
             "WARNING": {
+                "ITEM": {
+                    "VPN_PROFILE": "The VPN profile"
+                },
                 "LICENSE_CRYPTO_FAILURE": "License keys cannot be decrypted.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "HTTPS keys cannot be restored.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "OpenVPN keys for eBlocker Mobile cannot be restored.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "OpenVPN keys for anonymization cannot be restored.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
-                "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed."
+                "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed.",
+                "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be saved.",
+                "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be restored."
             }
         },
         "DETAILS_VIEW" : {
@@ -691,23 +696,6 @@
                 "TITLE_NEW_BLACKLIST" : "New Blacklist Category",
                 "TITLE_NEW_WHITELIST" : "New Whitelist Category"
             },
-            "ADD_PROFILE" : {
-                "ACTION" : {
-                    "CANCEL" : "Cancel",
-                    "OK" : "Save"
-                },
-                "EDIT_TITLE" : "Edit profile",
-                "ERROR" : {
-                    "DESC_TOO_LONG" : "Description is too long",
-                    "NAME_NOT_UNIQUE" : "The name is not unique",
-                    "NAME_REQUIRED" : "The name is required",
-                    "NAME_TOO_LONG" : "The name is too long"
-                },
-                "FURTHER_EDIT" : "Open Details view after Save",
-                "LABEL_DESCRIPTION" : "Description",
-                "LABEL_NAME" : "Name",
-                "TITLE" : "New protection profile"
-            },
             "ADD_USER" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
@@ -759,15 +747,6 @@
                 "TEXT" : "Are you sure to remove all selected devices?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one device that cannot be deleted.} other{You have selected {num} devices that cannot be deleted.}}",
                 "TITLE" : "Remove Devices"
-            },
-            "DELETE_ALL_PROFILE_CONFIRM" : {
-                "ACTION" : {
-                    "CANCEL" : "Cancel",
-                    "OK" : "Remove"
-                },
-                "TEXT" : "Are you sure to remove all selected profiles?",
-                "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one profile that cannot be deleted.} other{You have selected {num} profiles that cannot be deleted.}}",
-                "TITLE" : "Remove profiles"
             },
             "DELETE_ALL_RECORDINGS_CONFIRM" : {
                 "ACTION" : {
@@ -1072,14 +1051,6 @@
                     "TITLE" : "Individual Settings"
                 },
                 "TITLE" : "Edit Network Mode"
-            },
-            "EDIT_PROFILE_DESCRIPTION" : {
-                "LABEL" : "Description",
-                "TITLE" : "Edit Profile Description"
-            },
-            "EDIT_PROFILE_NAME" : {
-                "LABEL" : "Name",
-                "TITLE" : "Edit Profile Name"
             },
             "EDIT_TOR_COUNTRIES" : {
                 "ACTION" : {
@@ -2577,10 +2548,6 @@
                     "ERROR_SHUTDOWN" : "Shutdown not possible: {{msg}}"
                 }
             },
-            "USER_PROFILE" : {
-                "ERROR_SAVE_EDIT" : "Could not update profile",
-                "ERROR_SAVE_NEW" : "Could not save new profile"
-            },
             "VPN_HOME" : {
                 "NOTIFICATION" : {
                     "CERTIFICATES_DELETE" : "Error revoking the certificate",
@@ -3185,7 +3152,6 @@
                         "EDIT_USERNAME" : "Edit profile name",
                         "REMOVE_TIME_RESTRICTIONS" : "Remove time range"
                     },
-                    "UPDATE_RUNNING" : "Blockers are generated according to your selection. This may take a while.",
                     "USAGE_RESTRICTIONS_ACTIVATED" : "Restrictions on daily Internet usage:",
                     "USAGE_RESTRICTIONS_DEACTIVATED" : "No restrictions on daily Internet usage.",
                     "USAGE_RESTRICTIONS_HOURS" : "{{hours}} hours",
@@ -3218,82 +3184,6 @@
             },
             "TOOLTIP" : {
                 "REMOVE_BUTTON" : "You may only delete users that are not assigned to any devices."
-            }
-        },
-        "USER_PROFILES" : {
-            "ACTION" : {
-                "ADD" : "New profile",
-                "ADD_XS" : "New profile",
-                "ASSIGN_USER" : "0 Users",
-                "REMOVE" : "{num, select, 0{Remove profile} 1{Remove {num} profile} other{Remove {num} profiles}}"
-            },
-            "DETAILS" : {
-                "ACTION" : {
-                    "ADD_TIME_RESTRICTIONS" : "Add",
-                    "EDIT_ACCESS_RESTRICTIONS" : "Edit",
-                    "EDIT_PROFILE_NAME" : "Edit",
-                    "EDIT_USAGE_RESTRICTIONS" : "Edit"
-                },
-                "ASSIGNED_TO" : {
-                    "CAPTION" : "Users",
-                    "HEADING" : "Profile used by these users:",
-                    "POST" : " you can assign parental controls profiles to all users.",
-                    "PRE" : "Profile currently not used by any user. In section "
-                },
-                "BLACKLIST_EXCEPTIONS" : "As exception, these categories are allowed:",
-                "ERROR_DESCRIPTION" : "Description is too long.",
-                "FILTERING_MODE" : {
-                    "BLACKLISTING" : "Access to the following categories is restricted, all other websites are allowed.",
-                    "NONE" : "Access to web sites is not restricted.",
-                    "WHITELISTING" : "Access to the following categories is allowed, all other websites are restricted."
-                },
-                "HEADING" : "Details for profile",
-                "LABEL_DESCRIPTION" : "Description",
-                "LABEL_NAME" : "Name",
-                "NO_EXCEPTION_LABEL" : "No exceptions",
-                "TIME_RESTRICTIONS_ACTIVATED" : "Restrict internet access to following time slots:",
-                "TIME_RESTRICTIONS_DEACTIVATED" : "Internet access is available at all times.",
-                "TOOLTIP" : {
-                    "ADD_TIME_RESTRICTIONS" : "Add time range",
-                    "EDIT_ACCESS_RESTRICTIONS" : "Define access restrictions",
-                    "EDIT_NAME_DESCRIPTION" : "Edit profile name and description",
-                    "EDIT_TIME_RESTRICTIONS" : "Edit time range",
-                    "EDIT_USAGE_RESTRICTIONS" : "Edit daily maximal usage times",
-                    "EDIT_USERNAME" : "Edit profile name",
-                    "REMOVE_TIME_RESTRICTIONS" : "Remove time range"
-                },
-                "UPDATE_RUNNING" : "Blockers are generated according to your selection. This may take a while.",
-                "USAGE_RESTRICTIONS_ACTIVATED" : "Restrictions on daily Internet usage:",
-                "USAGE_RESTRICTIONS_DEACTIVATED" : "No restrictions on daily Internet usage.",
-                "USAGE_RESTRICTIONS_HOURS" : "{{hours}} hours",
-                "USAGE_RESTRICTIONS_HOURS_MINUTES" : "{{hours}} hours, {{minutes}} minutes",
-                "USAGE_RESTRICTIONS_MINUTES" : "{{minutes}} minutes",
-                "USAGE_RESTRICTIONS_NO_TIME" : "No Internet access",
-                "WHITELIST_EXCEPTIONS" : "As exception, these categories are restricted:"
-            },
-            "EXPLANATION_ACTIVATE_SSL_GLOBAL" : "eBlocker's HTTPS support  and DNS support are not activated. One of these options is required to block access to websites loaded through HTTPS. You may either use Plug&Play blockers (require DNS) or Pattern blockers (require HTTPS support).",
-            "LABEL" : "Parental Controls Profiles",
-            "NOTIFICATION" : {
-                "DELETE_ERROR" : "Error deleting profile(s).",
-                "DELETE_SUCCESS" : "All selected profiles have been deleted."
-            },
-            "PROFILE_NAME" : {
-                "PARENTAL_CONTROL_USER_NAME" : "{{ name }}"
-            },
-            "TABLE" : {
-                "COLUMN" : {
-                    "ASSIGNED_USERS" : "Assigned Users",
-                    "NAME" : "Name",
-                    "RESTRICTED_TIMES" : "Online Times",
-                    "RESTRICTED_TIME_RANGE" : "Time Ranges",
-                    "RESTRICTED_WEBSITES" : "Restricted Websites"
-                }
-            },
-            "TITLE" : "Parental Controls Profiles",
-            "TODAY_USAGE" : "{min, select, 0{Today: none} 1{Today: one minute} other{Today: {min} minutes}}",
-            "TOOLTIP" : {
-                "NUM_ASSIGNED" : "{num, select, 0{Not assigned to any users.} 1{Assigned to one user} other{Assigned to {num} users}}",
-                "REMOVE_BUTTON" : "You may only delete custom profiles that are not assigned to any users."
             }
         },
         "USER_SERVICE" : {
@@ -3933,20 +3823,6 @@
                     "P1" : "These categories of expressly prohibited sites may be used in the Parental Controls rules for children to prevent access to those sites.",
                     "P2" : "eBlocker provides a selection of predefined categories that are updated automatically on a regular basis. You can also create and manage your own new categories by adding domain names.",
                     "TITLE" : "Web Site Blacklists"
-                }
-            },
-            "PROFILES" : {
-                "DETAILS" : {
-                    "P1" : "To facilitate your initial setup, a few examples of protection profiles have already been created. All you have to do here is assign the appropriate users so that parental controls are activated.",
-                    "P2" : "Note: The default profile is automatically assigned to all new and existing devices. This also applies to equipment brought by other children (e.g. friends or guests). The fragFINN protection profile only allows access to the pages checked and approved by the fragFINN team with a preset daily usage time of 2 hours.",
-                    "P3_LINK" : "here.",
-                    "P3_PRE" : "Further help can be found ",
-                    "P3_URL" : "https://eblocker.org/docs/parental-controls/"
-                },
-                "OVERVIEW" : {
-                    "P1" : "A Parental Controls profile can be created for specific user groups, e.g. one for children. You use the protection profile to determine which website categories are to be blocked for this group (e.g. pornography, gambling). You can also specify when and for how long users can access the Internet. The profile is then assigned to the respective users.",
-                    "P2" : "Important: For activation, the respective protection profile must then be assigned to the users and the users to the corresponding devices to which they have access (e.g. Smartphone, Kind1, Smart TV, game console, etc.).",
-                    "TITLE" : "Parental Controls Profiles"
                 }
             },
             "USER" : {

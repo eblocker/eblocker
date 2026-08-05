@@ -19,6 +19,7 @@ package org.eblocker.server.http.controller.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.backup.BackupWarning;
+import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.eblocker.server.common.data.events.EventLogger;
@@ -81,18 +82,18 @@ public class ConfigurationBackupControllerImplTest {
     @Test
     public void exportConfiguration() throws IOException {
         Mockito.when(request.getBodyAs(ConfigBackupReference.class)).thenReturn(new ConfigBackupReference());
-        ConfigBackupReference result = controller.exportConfiguration(request, response);
-        assertNotNull(result.getFileReference());
-        Mockito.verify(service).exportConfiguration(Mockito.any(OutputStream.class), Mockito.isNull());
+        Mockito.when(service.exportConfiguration(Mockito.any(OutputStream.class), Mockito.isNull())).thenReturn(new ConfigBackupExportResult());
+        ConfigBackupExportResult result = controller.exportConfiguration(request, response);
+        assertNotNull(result.getConfigBackupReference().getFileReference());
     }
 
     @Test
     public void exportConfigurationWithPassword() throws IOException {
         String password = "top secret!";
         Mockito.when(request.getBodyAs(ConfigBackupReference.class)).thenReturn(new ConfigBackupReference(null, password, false));
-        ConfigBackupReference result = controller.exportConfiguration(request, response);
-        assertNotNull(result.getFileReference());
-        Mockito.verify(service).exportConfiguration(Mockito.any(OutputStream.class), Mockito.eq(password));
+        Mockito.when(service.exportConfiguration(Mockito.any(OutputStream.class), Mockito.eq(password))).thenReturn(new ConfigBackupExportResult());
+        ConfigBackupExportResult result = controller.exportConfiguration(request, response);
+        assertNotNull(result.getConfigBackupReference().getFileReference());
     }
 
     @Test
@@ -152,7 +153,7 @@ public class ConfigurationBackupControllerImplTest {
     @Test
     public void importConfiguration() throws IOException {
         String password = "top secret!";
-        final List<BackupWarning> warnings = List.of(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
+        final List<BackupWarning> warnings = List.of(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE));
         serviceImportResult.addWarnings(warnings);
         Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupControllerImpl.FILE_PREFIX, ConfigurationBackupControllerImpl.FILE_SUFFIX);
         byte[] backupData = "Configuration backup data".getBytes();

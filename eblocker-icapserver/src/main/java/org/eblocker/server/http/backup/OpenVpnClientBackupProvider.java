@@ -85,7 +85,7 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
         }
 
         if (!canDecrypt()) {
-            addWarning(BackupWarning.NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED));
             return;
         }
 
@@ -102,24 +102,34 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
                 .collect(Collectors.toSet());
         for (VpnProfile profile : profiles) {
             Integer profileId = profile.getId();
-            OpenVpnClientBackup backup = new OpenVpnClientBackup();
-
-            // get OpenVpnProfile with real password (not masked):
-            OpenVpnProfile openVpnProfile = openVpnService.getOpenVpnProfileById(profileId);
-            backup.setProfile(openVpnProfile);
-
-            OpenVpnConfiguration configuration = openVpnService.getProfileClientConfig(profileId);
-            backup.setConfiguration(configuration);
-
-            addExternalFiles(backup, profileId, configuration);
-
-            backup.setDeviceIds(vpnClientDevices.stream()
-                    .filter(device -> device.getUseVPNProfileID().equals(profileId))
-                    .map(Device::getId)
-                    .collect(Collectors.toList()));
-            result.add(backup);
+            try {
+                OpenVpnClientBackup backup = getOpenVpnClientBackup(profileId, vpnClientDevices);
+                result.add(backup);
+            } catch (Exception e) {
+                LOG.error("Could not export VPN profile {}", profileId, e);
+                addWarning(new BackupWarning(BackupWarning.Id.ITEM_NOT_EXPORTED, BackupWarning.ItemId.VPN_PROFILE, profile.getName()));
+            }
         }
         return result;
+    }
+
+    private OpenVpnClientBackup getOpenVpnClientBackup(Integer profileId, Set<Device> vpnClientDevices) throws IOException {
+        OpenVpnClientBackup backup = new OpenVpnClientBackup();
+
+        // get OpenVpnProfile with real password (not masked):
+        OpenVpnProfile openVpnProfile = openVpnService.getOpenVpnProfileById(profileId);
+        backup.setProfile(openVpnProfile);
+
+        OpenVpnConfiguration configuration = openVpnService.getProfileClientConfig(profileId);
+        backup.setConfiguration(configuration);
+
+        addExternalFiles(backup, profileId, configuration);
+
+        backup.setDeviceIds(vpnClientDevices.stream()
+                .filter(device -> device.getUseVPNProfileID().equals(profileId))
+                .map(Device::getId)
+                .collect(Collectors.toList()));
+        return backup;
     }
 
     private void addExternalFiles(OpenVpnClientBackup backup, Integer profileId, OpenVpnConfiguration configuration) throws IOException {
@@ -142,19 +152,29 @@ public class OpenVpnClientBackupProvider extends BackupProvider {
 
         // restore profiles
         for (OpenVpnClientBackup backup: backups) {
-            // Save a new empty profile to get a new ID:
-            OpenVpnProfile newProfile = openVpnService.saveProfile(new OpenVpnProfile());
-            Integer newId = newProfile.getId();
-
-            OpenVpnProfile profile = backup.getProfile();
-            profile.setId(newId);
-            openVpnService.saveProfile(profile);
-            openVpnService.setProfileClientConfig(newId, backup.getConfiguration().getSourceConfig());
-            for (EncryptedContainer container: backup.getExternalFiles()) {
-                openVpnService.setProfileClientConfigOptionFile(newId, container.getName(), container.getContent());
+            try {
+                restoreOpenVpnClientBackup(backup);
+            } catch (Exception e) {
+                String name = backup.getProfile() != null ? backup.getProfile().getName() : "null";
+                LOG.error("Could not import VPN profile {}", name, e);
+                addWarning(new BackupWarning(BackupWarning.Id.ITEM_NOT_IMPORTED, BackupWarning.ItemId.VPN_PROFILE, name));
             }
-            restoreClientDevices(newId, backup.getDeviceIds());
         }
+    }
+
+    private void restoreOpenVpnClientBackup(OpenVpnClientBackup backup) throws IOException {
+        // Save a new empty profile to get a new ID:
+        OpenVpnProfile newProfile = openVpnService.saveProfile(new OpenVpnProfile());
+        Integer newId = newProfile.getId();
+
+        OpenVpnProfile profile = backup.getProfile();
+        profile.setId(newId);
+        openVpnService.saveProfile(profile);
+        openVpnService.setProfileClientConfig(newId, backup.getConfiguration().getSourceConfig());
+        for (EncryptedContainer container: backup.getExternalFiles()) {
+            openVpnService.setProfileClientConfigOptionFile(newId, container.getName(), container.getContent());
+        }
+        restoreClientDevices(newId, backup.getDeviceIds());
     }
 
     private void restoreClientDevices(Integer profileId, List<String> deviceIds) {

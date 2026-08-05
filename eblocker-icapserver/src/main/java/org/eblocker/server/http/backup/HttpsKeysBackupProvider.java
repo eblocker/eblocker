@@ -75,6 +75,7 @@ public class HttpsKeysBackupProvider extends BackupProvider {
             if (renewalCaBytes != null) {
                 backup.setEncryptedRenewalCA(cryptoService.encrypt(renewalCaBytes));
             }
+            backup.setHttpsEnabledState(sslService.isSslEnabled());
         } else {
             LOG.error("cryptoService is null. Cannot encrypt HTTPS keys");
             throw new EncryptionUnavailableException("No password provided, cannot encrypt HTTPS keys");
@@ -102,7 +103,7 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         }
         if (cryptoService == null) {
             LOG.warn("No password provided, so CAs are not imported");
-            addWarning(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED));
             return;
         }
         try {
@@ -122,6 +123,15 @@ public class HttpsKeysBackupProvider extends BackupProvider {
         }
         if (!dryRun) {
             sslService.importCas(caBytes, renewalCaBytes);
+
+            Boolean httpsEnabledState = backup.getHttpsEnabledState();
+            if (httpsEnabledState != null) { // only available in backup version 5 and later
+                if (httpsEnabledState) {
+                    sslService.enableSsl();
+                } else {
+                    sslService.disableSsl();
+                }
+            }
         }
     }
 }

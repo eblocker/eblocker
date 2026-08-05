@@ -391,12 +391,17 @@
                 "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN- und Lizenz-Schlüssel nicht wiederhergestellt."
             },
             "WARNING": {
+                "ITEM": {
+                    "VPN_PROFILE": "Das VPN-Profil"
+                },
                 "LICENSE_CRYPTO_FAILURE": "Die Lizenz-Schlüssel können nicht entschlüsselt werden.",
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die OpenVPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die OpenVPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "Die Lizenz-Schlüssel können nicht wiederhergestellt werden.",
-                "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen."
+                "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen.",
+                "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht gesichert werden.",
+                "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht wiederhergestellt werden."
             }
         },
         "DETAILS_VIEW": {
@@ -691,23 +696,6 @@
                 "TITLE_NEW_BLACKLIST": "Neue Kategorie verbotener Websites",
                 "TITLE_NEW_WHITELIST": "Neue Kategorie erlaubter Websites"
             },
-            "ADD_PROFILE": {
-                "ACTION": {
-                    "CANCEL": "Abbrechen",
-                    "OK": "Speichern"
-                },
-                "EDIT_TITLE": "Schutzprofil bearbeiten",
-                "ERROR": {
-                    "DESC_TOO_LONG": "Beschreibung ist zu lang.",
-                    "NAME_NOT_UNIQUE": "Der Name ist nicht eindeutig.",
-                    "NAME_REQUIRED": "Der Name ist erforderlich.",
-                    "NAME_TOO_LONG": "Der Name ist zu lang."
-                },
-                "FURTHER_EDIT": "Details nach dem Speichern öffnen",
-                "LABEL_DESCRIPTION": "Beschreibung",
-                "LABEL_NAME": "Name",
-                "TITLE": "Neues Schutzprofil"
-            },
             "ADD_USER": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
@@ -759,15 +747,6 @@
                 "TEXT": "Bist du sicher, dass du alle markierten Geräte entfernen willst?",
                 "TEXT_UNDELETABLE": "{num, select, 1{Du hast ein Gerät ausgewählt, das nicht gelöscht werden kann.} other{Du hast {num} Geräte ausgewählt, die nicht gelöscht werden können.}}",
                 "TITLE": "Geräte entfernen"
-            },
-            "DELETE_ALL_PROFILE_CONFIRM": {
-                "ACTION": {
-                    "CANCEL": "Abbrechen",
-                    "OK": "Entfernen"
-                },
-                "TEXT": "Bist du sicher, dass du alle markierten Profile entfernen willst?",
-                "TEXT_UNDELETABLE": "{num, select, 1{Du hast ein Schutzprofil ausgewählt, die nicht gelöscht werden kann.} other{Du hast {num} Schutzprofile ausgewählt, die nicht gelöscht werden können.}}",
-                "TITLE": "Profile entfernen"
             },
             "DELETE_ALL_RECORDINGS_CONFIRM": {
                 "ACTION": {
@@ -1072,14 +1051,6 @@
                     "TITLE": "Individuelle Einstellungen"
                 },
                 "TITLE": "Netzwerkmodus ändern"
-            },
-            "EDIT_PROFILE_DESCRIPTION": {
-                "LABEL": "Beschreibung",
-                "TITLE": "Schutzprofilbeschreibung ändern"
-            },
-            "EDIT_PROFILE_NAME": {
-                "LABEL": "Name",
-                "TITLE": "Schutzprofilnamen ändern"
             },
             "EDIT_TOR_COUNTRIES": {
                 "ACTION": {
@@ -2577,10 +2548,6 @@
                     "ERROR_SHUTDOWN": "Herunterfahren nicht möglich: {{msg}}"
                 }
             },
-            "USER_PROFILE": {
-                "ERROR_SAVE_EDIT": "Fehler beim Speichern",
-                "ERROR_SAVE_NEW": "Fehler beim Speichern"
-            },
             "VPN_HOME": {
                 "NOTIFICATION": {
                     "CERTIFICATES_DELETE": "Fehler beim Zurückziehen des Zertifikats",
@@ -3185,7 +3152,6 @@
                         "EDIT_USERNAME": "Schutzprofilnamen ändern",
                         "REMOVE_TIME_RESTRICTIONS": "Zeitraum entfernen"
                     },
-                    "UPDATE_RUNNING": "Blockierliste wird nach ihrer Auswahl generiert. Dies kann etwas dauern.",
                     "USAGE_RESTRICTIONS_ACTIVATED": "Beschränkungen der täglichen Nutzungsdauer:",
                     "USAGE_RESTRICTIONS_DEACTIVATED": "Keine Beschränkung der täglichen Nutzungsdauer.",
                     "USAGE_RESTRICTIONS_HOURS": "{{hours}} Stunden",
@@ -3218,82 +3184,6 @@
             },
             "TOOLTIP": {
                 "REMOVE_BUTTON": "Es können nur Benutzer gelöscht werden, die keinem Gerät zugewiesen sind."
-            }
-        },
-        "USER_PROFILES": {
-            "ACTION": {
-                "ADD": "Neues Schutzprofil",
-                "ADD_XS": "Neues Profil",
-                "ASSIGN_USER": "0 Benutzer",
-                "REMOVE": "{num, select, 0{Schutzprofil löschen} 1{{num} Schutzprofil löschen} other{{num} Schutzprofile löschen}}"
-            },
-            "DETAILS": {
-                "ACTION": {
-                    "ADD_TIME_RESTRICTIONS": "Hinzufügen",
-                    "EDIT_ACCESS_RESTRICTIONS": "Bearbeiten",
-                    "EDIT_PROFILE_NAME": "Bearbeiten",
-                    "EDIT_USAGE_RESTRICTIONS": "Bearbeiten"
-                },
-                "ASSIGNED_TO": {
-                    "CAPTION": "Benutzer",
-                    "HEADING": "Schutzprofil ist diesen Benutzern zugewiesen:",
-                    "POST": " kannst du jedem Benutzer ein Schutzprofil zuweisen.",
-                    "PRE": "Dieses Profil ist derzeit keinem Benutzer zugewiesen. Im Bereich "
-                },
-                "BLACKLIST_EXCEPTIONS": "Als Ausnahmen sind diese Kategorien erlaubt:",
-                "ERROR_DESCRIPTION": "Beschreibung ist zu lang.",
-                "FILTERING_MODE": {
-                    "BLACKLISTING": "Websites aus folgenden Kategorien sind geblockt. Alle anderen Websites sind erlaubt.",
-                    "NONE": "Der Zugriff auf Websites ist nicht eingeschränkt.",
-                    "WHITELISTING": "Websites in folgenden Kategorien können aufgerufen werden. Alle anderen Websites sind geblockt."
-                },
-                "HEADING": "Details für Schutzprofil",
-                "LABEL_DESCRIPTION": "Beschreibung",
-                "LABEL_NAME": "Name",
-                "NO_EXCEPTION_LABEL": "Keine Ausnahmen",
-                "TIME_RESTRICTIONS_ACTIVATED": "Internetzugriff nur zu diesen Zeiten gestattet:",
-                "TIME_RESTRICTIONS_DEACTIVATED": "Keine Zeitbeschränkungen.",
-                "TOOLTIP": {
-                    "ADD_TIME_RESTRICTIONS": "Zeitraum hinzufügen",
-                    "EDIT_ACCESS_RESTRICTIONS": "Zugriffsbeschränkungen einstellen",
-                    "EDIT_NAME_DESCRIPTION": "Schutzprofilnamen und Beschreibung ändern",
-                    "EDIT_TIME_RESTRICTIONS": "Zeitraum bearbeiten",
-                    "EDIT_USAGE_RESTRICTIONS": "Beschränkungen bearbeiten",
-                    "EDIT_USERNAME": "Schutzprofilnamen ändern",
-                    "REMOVE_TIME_RESTRICTIONS": "Zeitraum entfernen"
-                },
-                "UPDATE_RUNNING": "Blockierliste wird nach ihrer Auswahl generiert. Dies kann etwas dauern.",
-                "USAGE_RESTRICTIONS_ACTIVATED": "Beschränkungen der täglichen Nutzungsdauer:",
-                "USAGE_RESTRICTIONS_DEACTIVATED": "Keine Beschränkung der täglichen Nutzungsdauer.",
-                "USAGE_RESTRICTIONS_HOURS": "{{hours}} Stunden",
-                "USAGE_RESTRICTIONS_HOURS_MINUTES": "{{hours}} Stunden, {{minutes}} Minuten",
-                "USAGE_RESTRICTIONS_MINUTES": "{{minutes}} Minuten",
-                "USAGE_RESTRICTIONS_NO_TIME": "Kein Internet-Zugang",
-                "WHITELIST_EXCEPTIONS": "Als Ausnahmen sind diese Kategorien verboten:"
-            },
-            "EXPLANATION_ACTIVATE_SSL_GLOBAL": "Die HTTPS-Unterstützung und die DNS-Funktion deines eBlockers sind nicht aktiviert. Eine dieser Funktionen wird benötigt, um per HTTPS geladene Websites zu überwachen und zu blockieren. Du kannst Domain Blocker (benötigen die DNS-Funktion) oder Pattern Blocker (benötigen HTTPS-Unterstützung) nutzen.",
-            "LABEL": "Jugendschutz-Profile",
-            "NOTIFICATION": {
-                "DELETE_ERROR": "Fehler beim löschen der Schutzprofile.",
-                "DELETE_SUCCESS": "Alle markierten Schutzprofile wurden gelöscht."
-            },
-            "PROFILE_NAME": {
-                "PARENTAL_CONTROL_USER_NAME": "{{ name }}"
-            },
-            "TABLE": {
-                "COLUMN": {
-                    "ASSIGNED_USERS": "Zugewiesene Nutzer",
-                    "NAME": "Name",
-                    "RESTRICTED_TIMES": "Nutzungsdauer",
-                    "RESTRICTED_TIME_RANGE": "Zeitbeschränkungen",
-                    "RESTRICTED_WEBSITES": "Website Beschränkungen"
-                }
-            },
-            "TITLE": "Jugendschutz-Profile",
-            "TODAY_USAGE": "{min, select, 0{Heute: keine} 1{Heute: eine Minute} other{Heute: {min} Minuten}}",
-            "TOOLTIP": {
-                "NUM_ASSIGNED": "{num, select, 0{Keinem Benutzer zugewiesen.} 1{Einem Benutzer zugewiesen.} other{{num} Benutzern zugewiesen.}}",
-                "REMOVE_BUTTON": "Es können nur Schutzprofile gelöscht werden, die selbst erzeugt wurden und die keinem Benutzer zugewiesen sind."
             }
         },
         "USER_SERVICE": {
@@ -3933,20 +3823,6 @@
                     "P1": "Diese Kategorien von ausdrücklich verbotenen Websites können in den Jugendschutz-Regeln für Kinder verwendet werden, um den Zugriff zu den entsprechenden Websites zu verhindern.",
                     "P2": "eBlocker stellt eine Auswahl an vordefinierten Kategorien zur Verfügung, die regelmäßig automatisch aktualisiert werden. Darüber hinaus kannst du eigene neue Kategorien anlegen und verwalten, indem du Domainnamen hinzufügst.",
                     "TITLE": "Verbotene Websites"
-                }
-            },
-            "PROFILES": {
-                "DETAILS": {
-                    "P1": "Um dir die erste Einrichtung zu erleichtern, sind einige Beispiele für Schutzprofile bereits angelegt. Hier musst du nur noch die entsprechenden Benutzer zuordnen, damit der Jugendschutz aktiviert ist.",
-                    "P2": "Hinweis: Das Standard-Profil wird allen neuen und bestehenden Geräten automatisch zugewiesen. Das betrifft auch Geräte, die andere Kinder mitbringen (z.B. Freunde oder Gäste). Das fragFINN Jugendschutz-Schutzprofil erlaubt nur Zugriff auf die vom fragFINN Team geprüften und zugelassenen Seiten bei einer voreingestellten täglichen Nutzungsdauer von 2 Stunden.",
-                    "P3_LINK": "hier.",
-                    "P3_PRE": "Weitere Hilfe findest du ",
-                    "P3_URL": "https://eblocker.org/docs/parental-controls/"
-                },
-                "OVERVIEW": {
-                    "P1": "Ein Jugendschutz-Profil kann für bestimmte Benutzergruppen angelegt werden, zum Beispiel für Kinder. Mit dem Schutzprofil legst du fest, welche Website-Kategorien für diese Gruppe gesperrt werden sollen (z.B. Pornographie, Glücksspiele). Zusätzlich kannst du festlegen, zu welchen Uhrzeiten und wie lange die Benutzer ins Internet dürfen. Das Profil wird anschließend den jeweiligen Benutzern zugewiesen.",
-                    "P2": "Wichtig: Zur Aktivierung muss das jeweilige Schutzprofil anschließend den Benutzern und die Benutzer den entsprechenden Geräten zugewiesen werden, auf die sie Zugriff haben (z.B. Smartphone, Kind1, Smart-TV, Spielekonsole usw.)",
-                    "TITLE": "Jugendschutz-Profile"
                 }
             },
             "USER": {

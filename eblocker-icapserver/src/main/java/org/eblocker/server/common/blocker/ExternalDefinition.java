@@ -113,12 +113,19 @@ public class ExternalDefinition {
         this.type = type;
     }
 
+    /**
+     * A reference to either a domain or pattern blocker.
+     * @return ID of ParentalControlFilterMetaData (if type is DOMAIN) or FilterStoreConfiguration
+     */
     public Integer getReferenceId() {
         return referenceId;
     }
 
     /**
-     * @param referenceId
+     * Sets a reference to either a domain or pattern blocker.
+     * @param referenceId the ID of the blocker to reference. If the type is DOMAIN, this references
+     *                    a {@link org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData} object,
+     *                   otherwise a {@link org.eblocker.server.icap.filter.FilterStoreConfiguration} object.
      */
     public void setReferenceId(Integer referenceId) {
         this.referenceId = referenceId;

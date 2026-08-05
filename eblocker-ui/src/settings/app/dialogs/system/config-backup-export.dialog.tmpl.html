@@ -68,6 +68,12 @@
                         <div layout="column" layout-margin>
                             <div ng-hide="vm.downloadSaved" translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.SAVE_BACKUP"></div>
                             <div ng-show="vm.downloadSaved" translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.BACKUP_SAVED"></div>
+                            <div ng-hide="vm.warnings.length === 0">
+                                <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WARNINGS"></div>
+                                <ul>
+                                    <li ng-repeat="w in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + w.id | translate:{itemId: w.itemId, itemName: w.itemName} }}</li>
+                                </ul>
+                            </div>
                             <div layout="row" ng-show="vm.blobUrl" layout-padding>
                                 <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.FILENAME"></div>
                                 <a id="downloadBlobAnchor" href="{{vm.blobUrl}}" download="{{vm.downloadFilename}}" ng-click="vm.setDownloadSaved()">

@@ -71,7 +71,7 @@ class RegistrationBackupProviderTest extends BackupProviderTestBase {
     public void noPasswordForImport() throws Exception {
         byte[] backup = exportBackup(provider);
         importBackup(backup, providerNoPassword);
-        assertEquals(List.of(BackupWarning.NO_PASSWORD_REGISTRATION_NOT_IMPORTED), providerNoPassword.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.NO_PASSWORD_REGISTRATION_NOT_IMPORTED)), providerNoPassword.getWarnings());
     }
 
     @Test

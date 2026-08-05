@@ -31,26 +31,47 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.when;
 
 /**
- * Factory for adding devices to a mock DataSource
+ * Factory for adding devices to a mock DataSource or DeviceService.
  */
 public class TestDeviceFactory {
     private Map<String, Device> devices = new HashMap<>();
     private DataSource dataSource;
     private DeviceService deviceService;
 
+    /**
+     * Create a test device factory from a mock DataSource.
+     */
     public TestDeviceFactory(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Create a test device factory from a mock DeviceService.
+     */
     public TestDeviceFactory(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
-    public void addDevice(String hwAddress, String ipAddress, boolean enabled) {
+    /**
+     * Creates and adds a device.
+     *
+     * NOTE: call {@link #commit()} after adding devices.
+     * @param hwAddress the device's MAC address
+     * @param ipAddress the device's IP address
+     * @param enabled whether the device should be enabled
+     */
+    public Device addDevice(String hwAddress, String ipAddress, boolean enabled) {
         Device device = createDevice(hwAddress, ipAddress, enabled);
         addDevice(device);
+        return device;
     }
 
+    /**
+     * Adds a device.
+     *
+     * NOTE: call {@link #commit()} after adding devices.
+     * @param device the device to add
+     */
     public void addDevice(Device device) {
         devices.put(device.getId(), device);
         if (dataSource != null) {
@@ -66,6 +87,13 @@ public class TestDeviceFactory {
         return devices.get(id);
     }
 
+    public Device getDeviceByHwAddress(String hwAddress) {
+        return devices.get(Device.ID_PREFIX + hwAddress);
+    }
+
+    /**
+     * Sets up the mock object to return all added devices.
+     */
     public void commit() {
         if (dataSource != null) {
             when(dataSource.getDeviceIds()).thenReturn(new TreeSet<>(devices.keySet()));
@@ -90,7 +118,7 @@ public class TestDeviceFactory {
 
     public static Device createDevice(String hwAddress, String ipAddress, String name, boolean enabled, boolean fixed) {
         Device device = new Device();
-        device.setId("device:" + hwAddress);
+        device.setId(Device.ID_PREFIX + hwAddress);
         device.setName(name);
         if (ipAddress != null) {
             device.setIpAddresses(Collections.singletonList(IpAddress.parse(ipAddress)));

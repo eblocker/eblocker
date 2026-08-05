@@ -350,7 +350,6 @@ public class UsersBackupProvider extends BackupProvider {
             if (user.isSystem()) {
                 UserModule newUser = userService.restoreDefaultSystemUser(user.getName());
                 userIdMapping.put(oldId, newUser.getId());
-                // TODO: update system user with settings from backup
             } else {
                 UserModule newUser = userService.createUser(user.getAssociatedProfileId(), user.getName(), user.getNameKey(), user.getBirthday(), user.getUserRole(), null);
                 userIdMapping.put(oldId, newUser.getId());
@@ -359,7 +358,6 @@ public class UsersBackupProvider extends BackupProvider {
                     newUser.setPin(user.getPin());
                     dataSource.save(newUser, newUser.getId());
                 }
-                // TODO: update "real" user with custom black/whitelist settings from backup
             }
         }
     }

@@ -127,7 +127,17 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
     public void noPasswordForImport() throws Exception {
         byte[] backup = exportBackup(provider);
         importBackup(backup, providerNoPassword);
-        assertEquals(List.of(BackupWarning.NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED), providerNoPassword.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED)), providerNoPassword.getWarnings());
+    }
+
+    @Test
+    public void importFailure() throws Exception {
+        byte[] backup = exportBackup(provider);
+        Mockito.doThrow(new IOException("Could not save profile")).when(openVpnService).saveProfile(Mockito.any());
+        importBackup(backup, provider);
+        List<BackupWarning> warnings = provider.getWarnings();
+        assertEquals(1, warnings.size());
+        assertEquals(BackupWarning.Id.ITEM_NOT_IMPORTED, warnings.get(0).getId());
     }
 
     @Test

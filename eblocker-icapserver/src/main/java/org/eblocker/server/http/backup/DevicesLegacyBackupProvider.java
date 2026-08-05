@@ -33,21 +33,23 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 
-public class DevicesBackupProvider extends BackupProvider {
+/**
+ * Imports devices from backups with version 4 and earlier.
+ * Users are not in the backup, so restored devices (that do not exist yet in the DB) get
+ * new default users.
+ */
+public class DevicesLegacyBackupProvider extends BackupProvider {
     public static final String DEVICES_ENTRY = "eblocker-config/devices.json";
     private final DeviceService deviceService;
     private final UserService userService;
     private final DeviceFactory deviceFactory;
-    private final OpenVpnService openVpnService;
-    private static final Logger LOG = LoggerFactory.getLogger(DevicesBackupProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DevicesLegacyBackupProvider.class);
 
     @Inject
-    public DevicesBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory,
-                                 OpenVpnService openVpnService) {
+    public DevicesLegacyBackupProvider(DeviceService deviceService, UserService userService, DeviceFactory deviceFactory) {
         this.deviceService = deviceService;
         this.userService = userService;
         this.deviceFactory = deviceFactory;
-        this.openVpnService = openVpnService;
     }
 
     @Override

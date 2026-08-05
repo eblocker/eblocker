@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.Language;
+import org.eblocker.server.common.data.MacPrefix;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,7 @@ public class SchemaMigrationVersion24Test {
     private DataSource dataSource;
     private DeviceFactory deviceFactory;
     private SchemaMigration migration;
+    private MacPrefix macPrefix;
 
     @Before
     public void setUp() throws IOException {
@@ -54,9 +56,9 @@ public class SchemaMigrationVersion24Test {
         Language lang = new Language("de", "Deutsch");
         Mockito.when(dataSource.getCurrentLanguage()).thenReturn(lang, lang, lang, lang);
 
-        deviceFactory = new DeviceFactory(dataSource);
-
-        migration = new SchemaMigrationVersion24(dataSource, deviceFactory);
+        macPrefix = new MacPrefix();
+        deviceFactory = new DeviceFactory(dataSource, macPrefix);
+        migration = new SchemaMigrationVersion24(dataSource, deviceFactory, macPrefix);
     }
 
     @Test

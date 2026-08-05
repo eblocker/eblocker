@@ -21,7 +21,6 @@ import com.google.inject.Singleton;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.exceptions.EblockerException;
-import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.transaction.TransactionIdentifier;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.UserAgentService;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,25 +39,30 @@ public class SessionStore {
     private static final Logger log = LoggerFactory.getLogger(SessionStore.class);
     private final Map<String, SessionImpl> store = new ConcurrentHashMap<>();
     private static final long MILLIS_TO_KEEP = 24 * 3600 * 1000L;
-    private final NetworkInterfaceWrapper networkInterface;
     private final DeviceService deviceService;
     private final UserAgentService userAgentService;
+    private final Clock clock;
 
     @Inject
     public SessionStore(
-            NetworkInterfaceWrapper networkInterface,
             DeviceService deviceService,
-            UserAgentService userAgentService
+            UserAgentService userAgentService,
+            Clock clock
     ) {
-        log.info("Creating a session store");
-        this.networkInterface = networkInterface;
+        log.info("Creating the session store");
         this.deviceService = deviceService;
         this.userAgentService = userAgentService;
+        this.clock = clock;
     }
 
+    /**
+     * Get the session for the given transaction ID. Creates a new session if necessary.
+     * @param transactionId
+     * @return retrieved or newly created session
+     */
     public Session getSession(TransactionIdentifier transactionId) {
         String userAgent = SessionIdUtil.normalizeUserAgent(transactionId.getUserAgent());
-        IpAddress ip = SessionIdUtil.normalizeIp(transactionId.getOriginalClientIP(), networkInterface.getFirstIPv4Address());
+        IpAddress ip = transactionId.getOriginalClientIP();
 
         Device device = deviceService.getDeviceByIp(ip);
         if (device == null) {
@@ -79,7 +84,7 @@ public class SessionStore {
      * Return the session with sessionId. If there is none, return null.
      *
      * @param sessionId
-     * @return
+     * @return retrieved session or null
      */
     public Session findSession(String sessionId) {
         Session session = store.get(sessionId);
@@ -113,22 +118,18 @@ public class SessionStore {
     }
 
     protected void purgeSessions() {
-        Date purge = new Date(new Date().getTime() - MILLIS_TO_KEEP);
+        Date purge = new Date(clock.millis() - MILLIS_TO_KEEP);
 
         synchronized (store) {
-            //List<String> purgedSessions = new LinkedList<String>();
             for (Entry<String, SessionImpl> entry : store.entrySet()) {
                 if (entry.getValue().getLastUsed().before(purge)) {
                     String oldSessionKey = MDC.get("SESSION");
                     MDC.put("SESSION", (entry.getValue() == null ? "--------" : entry.getValue().getShortId()));
                     log.info("Purging session from memory");
-                    //purgedSessions.add(entry.getKey());
                     store.remove(entry.getKey());
                     MDC.put("SESSION", oldSessionKey);
                 }
             }
-            //tell useragentspoofprocessor that sessions got purged
-            //UserAgentSpoofProcessor.purgeSessions(purgedSessions)
         }
 
     }
@@ -137,5 +138,4 @@ public class SessionStore {
         // From now on, we know the corresponding page context
         MDC.put("SESSION", (session == null ? "--------" : session.getShortId()));
     }
-
 }

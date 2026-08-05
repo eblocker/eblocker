@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import org.eblocker.crypto.CryptoService;
 import org.eblocker.crypto.CryptoServiceFactory;
 import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.http.backup.BackupAttributes;
 import org.eblocker.server.http.backup.BackupProvider;
@@ -74,30 +75,33 @@ public class ConfigurationBackupService {
             case VERSION_2_APP_MODULES_AND_DEVICES:
                 return List.of(
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider());
+                        providerFactory.createDevicesLegacyBackupProvider());
 
             case VERSION_3_APP_MODULES_DEVICES_TOR:
                 return List.of(
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createDevicesLegacyBackupProvider(),
                         providerFactory.createTorConfigBackupProvider());
 
             case VERSION_4_WITH_KEYS:
                 return List.of(
                         providerFactory.createHttpsKeysBackupProvider(cryptoService), // fail early if the password is wrong!
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createDevicesLegacyBackupProvider(),
                         providerFactory.createTorConfigBackupProvider());
 
             case VERSION_5_FULL:
                 return List.of(
                         providerFactory.createHttpsKeysBackupProvider(cryptoService),
                         providerFactory.createAppModulesBackupProvider(),
-                        providerFactory.createDevicesBackupProvider(),
+                        providerFactory.createUsersBackupProvider(),
+                        providerFactory.createBlockersBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
                         providerFactory.createOpenVpnServerBackupProvider(cryptoService),
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
-                        providerFactory.createRegistrationBackupProvider(cryptoService));
+                        providerFactory.createRegistrationBackupProvider(cryptoService),
+                        providerFactory.createDnsBackupProvider(),
+                        providerFactory.createGeneralSettingsBackupProvider());
 
             default:
                 throw new UnsupportedBackupVersionException(version);
@@ -111,7 +115,8 @@ public class ConfigurationBackupService {
      * @param password
      * @throws IOException
      */
-    public void exportConfiguration(OutputStream outputStream, String password) throws IOException {
+    public ConfigBackupExportResult exportConfiguration(OutputStream outputStream, String password) throws IOException {
+        ConfigBackupExportResult result = new ConfigBackupExportResult();
         Manifest manifest = new Manifest();
         BackupAttributes attribs = getBackupAttributes(password != null);
         attribs.addToAttributes(manifest.getMainAttributes());
@@ -121,8 +126,10 @@ public class ConfigurationBackupService {
         try (JarOutputStream jarStream = new JarOutputStream(outputStream, manifest)) {
             for (BackupProvider provider : createBackupProviders(CURRENT_VERSION, cryptoService)) {
                 provider.exportConfiguration(jarStream);
+                result.addWarnings(provider.getWarnings());
             }
         }
+        return result;
     }
 
     /**

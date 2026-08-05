@@ -34,19 +34,13 @@ public class SchemaMigrationVersion24 implements SchemaMigration {
     private final DataSource dataSource;
     private final DeviceFactory deviceFactory;
     private final MacPrefix macPrefix;
-    private static final Logger log = LoggerFactory.getLogger(SchemaMigrationVersion24.class);
 
     @Inject
     public SchemaMigrationVersion24(
-            DataSource dataSource, DeviceFactory deviceFactory) {
+            DataSource dataSource, DeviceFactory deviceFactory, MacPrefix macPrefix) {
         this.dataSource = dataSource;
         this.deviceFactory = deviceFactory;
-        this.macPrefix = new MacPrefix();
-        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
-            macPrefix.addInputStream(inputStream);
-        } catch (IOException e) {
-            log.error("Could not read MAC prefixes", e);
-        }
+        this.macPrefix = macPrefix;
     }
 
     @Override

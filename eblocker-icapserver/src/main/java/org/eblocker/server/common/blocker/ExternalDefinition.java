@@ -21,6 +21,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
+/**
+ * Stores meta-data for a user-defined filter list.
+ * The filter list is stored on disk at the path given by {@link #getFile()}.
+ * If the URL field is set, the list was downloaded, otherwise it was edited manually.
+ */
 public class ExternalDefinition {
     private int id;
     private String name;
@@ -108,10 +113,20 @@ public class ExternalDefinition {
         this.type = type;
     }
 
+    /**
+     * A reference to either a domain or pattern blocker.
+     * @return ID of ParentalControlFilterMetaData (if type is DOMAIN) or FilterStoreConfiguration
+     */
     public Integer getReferenceId() {
         return referenceId;
     }
 
+    /**
+     * Sets a reference to either a domain or pattern blocker.
+     * @param referenceId the ID of the blocker to reference. If the type is DOMAIN, this references
+     *                    a {@link org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData} object,
+     *                   otherwise a {@link org.eblocker.server.icap.filter.FilterStoreConfiguration} object.
+     */
     public void setReferenceId(Integer referenceId) {
         this.referenceId = referenceId;
     }

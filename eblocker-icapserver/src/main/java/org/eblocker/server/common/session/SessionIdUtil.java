@@ -32,10 +32,6 @@ public class SessionIdUtil {
     private static final String HASH_SALT = "1234567890";
     private static final String UNDEFINED_USER_AGENT = "<<undefined>>";
 
-    private static final IpAddress LOCALHOST_IP6 = IpAddress.parse("::1");
-    private static final IpAddress LOCALHOST_LINK_LOCAL_IP6 = IpAddress.parse("fe80::1");
-    private static final IpAddress LOCALHOST_IP4 = IpAddress.parse("127.0.0.1");
-
     public static String getSessionId(String deviceId, String userAgent, Integer userId) {
         MessageDigest hash;
         try {
@@ -64,18 +60,5 @@ public class SessionIdUtil {
             userAgent = UNDEFINED_USER_AGENT;
         }
         return userAgent;
-    }
-
-    /**
-     * Normalizes local IP addresses (to simplify testing the Icapserver locally)
-     * @param ip
-     * @param eblockerIpAddress
-     * @return
-     */
-    public static IpAddress normalizeIp(IpAddress ip, IpAddress eblockerIpAddress) {
-        if (ip.equals(LOCALHOST_IP6) || ip.equals(LOCALHOST_LINK_LOCAL_IP6) || ip.equals(eblockerIpAddress)) {
-            return LOCALHOST_IP4;
-        }
-        return ip;
     }
 }

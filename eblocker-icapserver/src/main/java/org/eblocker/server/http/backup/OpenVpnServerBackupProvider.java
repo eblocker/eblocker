@@ -86,7 +86,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
         }
 
         if (!canDecrypt()) {
-            addWarning(BackupWarning.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED);
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED));
             return;
         }
 
@@ -101,7 +101,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
         VpnServerStatus serverStatus = service.getOpenVpnServerStatus();
         backup.setServerStatus(serverStatus);
         if (serverStatus.isFirstStart()) {
-            // Server was never used or reset, so keys are not backed up
+            LOG.info("OpenVPN server was never used or reset, so keys are not backed up");
             return backup;
         }
         if (!canEncrypt()) {
@@ -114,16 +114,17 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
     }
 
     private void restoreBackup(OpenVpnServerBackup backup) throws IOException {
+        VpnServerStatus serverStatus = backup.getServerStatus();
+        if (serverStatus.isFirstStart()) {
+            LOG.info("OpenVPN server was never used or reset on backed up system, so there is nothing to import");
+            return;
+        }
         service.resetOpenVpnServer();
 
         ca.importCertificatesAndKeys(backup.getCaKeys());
         writeSharedSecret(backup.getSharedSecret());
         service.restoreOpenVpnServer();
-
-        VpnServerStatus serverStatus = backup.getServerStatus();
-        if (!serverStatus.isFirstStart()) {
-            service.setOpenVpnServerfirstRun(false); // remove firstRun flag, so no new CA is created
-        }
+        service.setOpenVpnServerfirstRun(false); // remove firstRun flag, so no new CA is created
         service.setOpenVpnServerStatus(serverStatus);
 
         try {
@@ -134,7 +135,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
             }
         } catch (Exception e) {
             LOG.warn("Could not update port forwarding during backup restore", e);
-            addWarning(BackupWarning.UPNP_PORT_FORWARDING_FAILURE);
+            addWarning(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE));
         }
     }
 

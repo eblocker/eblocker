@@ -17,6 +17,7 @@
 package org.eblocker.server.common.data;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eblocker.server.icap.resources.DefaultEblockerResource;
 import org.eblocker.server.icap.resources.ResourceHandler;
 import org.slf4j.Logger;
@@ -28,6 +29,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * The DeviceFactory is responsible for creating new devices that have been found in
+ * the local network. It sets the "enabled" flag of new devices according to the global
+ * "autoEnableNewDevices" parameter. It also sets the default names of new devices.
+ */
+@Singleton
 public class DeviceFactory {
     private static final Logger log = LoggerFactory.getLogger(DeviceFactory.class);
     private static final String DEFAULT_NAME_DEVICE_DE = "Gerät";
@@ -36,23 +43,13 @@ public class DeviceFactory {
     private static final String DEFAULT_NAME_NUMBER_PREFIX = " (No. ";
     private static final String DEFAULT_NAME_NUMBER_POSTFIX = ")";
 
-    private final MacPrefix macPrefix = new MacPrefix();
+    private final MacPrefix macPrefix;
     private final DataSource dataSource;
-    private final MacPrefix disabledByDefault;
 
     @Inject
-    public DeviceFactory(DataSource dataSource) throws IOException {
+    public DeviceFactory(DataSource dataSource, MacPrefix macPrefix) throws IOException {
         this.dataSource = dataSource;
-
-        disabledByDefault = new MacPrefix();
-        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES_DISABLED_BY_DEFAULT)) {
-            disabledByDefault.addInputStream(inputStream);
-        }
-        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
-            macPrefix.addInputStream(inputStream);
-        } catch (IOException e) {
-            log.error("Could not read MAC prefixes", e);
-        }
+        this.macPrefix = macPrefix;
     }
 
     public Device createDevice(String deviceId, List<IpAddress> ipAddresses, boolean fixed) {
@@ -60,14 +57,14 @@ public class DeviceFactory {
         device.setId(deviceId);
         device.setIpAddresses(ipAddresses);
         String hardwareAddressPrefix = device.getHardwareAddressPrefix();
-        device.setEnabled(isEnabledByDefault(hardwareAddressPrefix));
+        device.setEnabled(isEnabledByDefault());
         device.setIpAddressFixed(fixed);
         device.setName(createNameForNewDevice(hardwareAddressPrefix));
         return device;
     }
 
-    private boolean isEnabledByDefault(String hardwareAddressPrefix) {
-        return isAutoEnableNewDevices() && !isDisabledByDefaultBasedOnMac(hardwareAddressPrefix);
+    private boolean isEnabledByDefault() {
+        return isAutoEnableNewDevices();
     }
 
     public void setAutoEnableNewDevices(boolean isAutoEnableNewDevices) {
@@ -101,9 +98,5 @@ public class DeviceFactory {
             return potentialName;
         }
         return "";
-    }
-
-    private boolean isDisabledByDefaultBasedOnMac(String macAdressPrefix) {
-        return disabledByDefault.getVendor(macAdressPrefix) != null;
     }
 }

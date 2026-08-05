@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.data.MacPrefix;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserProfileModule;
 import org.eblocker.server.common.data.UserRole;
@@ -27,9 +28,8 @@ import org.eblocker.server.common.network.IpResponseTable;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
 import org.eblocker.server.http.security.PasswordUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.restexpress.exception.BadRequestException;
@@ -44,6 +44,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
 
@@ -61,8 +63,9 @@ public class UserServiceTest {
     private DeviceFactory deviceFactory;
     private IpResponseTable ipResponseTable;
     private Clock clock;
+    private MacPrefix macPrefix;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         // setup data source and mock users
         dataSource = Mockito.mock(DataSource.class);
@@ -72,8 +75,9 @@ public class UserServiceTest {
         deviceRegistrationProperties = Mockito.mock(DeviceRegistrationProperties.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
         ipResponseTable = new IpResponseTable();
+        macPrefix = new MacPrefix();
         deviceService = new DeviceService(dataSource, deviceRegistrationProperties, userAgentService,
-                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90);
+                networkInterfaceWrapper, deviceFactory, ipResponseTable, clock, 90, macPrefix);
         deviceService.init();
 
         users = new ArrayList<>();
@@ -163,8 +167,8 @@ public class UserServiceTest {
     public void testGetUserById() {
         for (UserModule user : users) {
             UserModule retrievedUser = userService.getUserById(user.getId());
-            Assert.assertNotNull(retrievedUser);
-            Assert.assertEquals(user.getId(), retrievedUser.getId());
+            assertNotNull(retrievedUser);
+            assertEquals(user.getId(), retrievedUser.getId());
         }
     }
 
@@ -180,7 +184,7 @@ public class UserServiceTest {
         for (UserModule user : userService.getUsers(false)) {
             if (user.getId() == deletedUser.getId()) {
                 // If deleted user can still be found
-                Assert.fail();
+                fail();
             }
         }
     }
@@ -191,7 +195,7 @@ public class UserServiceTest {
         // delete user
         try {
             userService.deleteUser(deletedUser.getId());
-            Assert.fail();
+            fail();
         } catch (Exception e) {
             // Exception was expected
         }
@@ -203,21 +207,21 @@ public class UserServiceTest {
         for (UserModule user : userService.getUsers(false)) {
             if (user.getId() == deletedUser.getId()) {
                 // If system user can still be found
-                Assert.assertEquals(deletedUser.getId(), user.getId());
-                Assert.assertEquals(deletedUser.getName(), user.getName());
-                Assert.assertEquals(deletedUser.getAssociatedProfileId(), user.getAssociatedProfileId());
+                assertEquals(deletedUser.getId(), user.getId());
+                assertEquals(deletedUser.getName(), user.getName());
+                assertEquals(deletedUser.getAssociatedProfileId(), user.getAssociatedProfileId());
                 systemUserFound = true;
                 break;
             }
         }
-        Assert.assertTrue(systemUserFound);
+        assertTrue(systemUserFound);
     }
 
     @Test
     public void testDeleteUserAssignedToDevice() {
         UserModule deletedUser = users.get(2);
         // delete user
-        Assert.assertFalse(userService.deleteUser(deletedUser.getId()));
+        assertFalse(userService.deleteUser(deletedUser.getId()));
         // make sure proper methods have been called
         Mockito.verify(dataSource, Mockito.times(2)).getDevices();
         Mockito.verify(dataSource, Mockito.never()).delete(UserModule.class, deletedUser.getId());
@@ -226,14 +230,14 @@ public class UserServiceTest {
         for (UserModule user : userService.getUsers(false)) {
             if (user.getId() == deletedUser.getId()) {
                 // If deleted user can still be found
-                Assert.assertEquals(deletedUser.getId(), user.getId());
-                Assert.assertEquals(deletedUser.getName(), user.getName());
-                Assert.assertEquals(deletedUser.getAssociatedProfileId(), user.getAssociatedProfileId());
+                assertEquals(deletedUser.getId(), user.getId());
+                assertEquals(deletedUser.getName(), user.getName());
+                assertEquals(deletedUser.getAssociatedProfileId(), user.getAssociatedProfileId());
                 userFound = true;
                 break;
             }
         }
-        Assert.assertTrue(userFound);
+        assertTrue(userFound);
     }
 
     @Test
@@ -251,10 +255,10 @@ public class UserServiceTest {
 
         // check it has been updated correctly
         UserModule retrievedUser = userService.getUserById(user.getId());
-        Assert.assertNotNull(retrievedUser);
-        Assert.assertEquals(user.getId(), retrievedUser.getId());
-        Assert.assertEquals(user.getName(), retrievedUser.getName());
-        Assert.assertEquals(updatedUser.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
+        assertNotNull(retrievedUser);
+        assertEquals(user.getId(), retrievedUser.getId());
+        assertEquals(user.getName(), retrievedUser.getName());
+        assertEquals(updatedUser.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
 
         // make sure proper methods have been called
         Mockito.verify(dataSource, Mockito.times(2)).get(Mockito.eq(UserProfileModule.class), Mockito.eq(updatedUser.getAssociatedProfileId()));
@@ -272,18 +276,18 @@ public class UserServiceTest {
         updateSystemUser("nameKey", user.getId(), user.getAssociatedProfileId(), user.getName(), user.getNameKey(), "1234");
 
         UserModule updatedUser = userService.updateUser(user.getId(), user.getAssociatedProfileId(), user.getName(), user.getNameKey(), null, null, null);
-        Assert.assertEquals(user.getId(), updatedUser.getId());
-        Assert.assertEquals(user.getAssociatedProfileId(), updatedUser.getAssociatedProfileId());
-        Assert.assertEquals(user.getName(), updatedUser.getName());
-        Assert.assertEquals(user.getNameKey(), updatedUser.getNameKey());
-        Assert.assertEquals(user.getPin(), updatedUser.getPin());
+        assertEquals(user.getId(), updatedUser.getId());
+        assertEquals(user.getAssociatedProfileId(), updatedUser.getAssociatedProfileId());
+        assertEquals(user.getName(), updatedUser.getName());
+        assertEquals(user.getNameKey(), updatedUser.getNameKey());
+        assertEquals(user.getPin(), updatedUser.getPin());
         Mockito.verify(dataSource).save(updatedUser, updatedUser.getId());
     }
 
     private void updateSystemUser(String error, Integer id, Integer associatedProfileId, String name, String nameKey, String newPin) {
         try {
             userService.updateUser(id, associatedProfileId, name, nameKey, null, null, newPin);
-            Assert.fail("updating " + error + " must fail with " + BadRequestException.class);
+            fail("updating " + error + " must fail with " + BadRequestException.class);
         } catch (BadRequestException e) {
             Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(UserModule.class), Mockito.anyInt());
         }
@@ -307,12 +311,12 @@ public class UserServiceTest {
 
         // check it has been updated correctly
         UserModule retrievedUser = userService.getUserById(user.getId());
-        Assert.assertNotNull(retrievedUser);
-        Assert.assertEquals(user.getId(), retrievedUser.getId());
-        Assert.assertEquals(user.getName(), retrievedUser.getName());
-        Assert.assertEquals(updatedUser.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
+        assertNotNull(retrievedUser);
+        assertEquals(user.getId(), retrievedUser.getId());
+        assertEquals(user.getName(), retrievedUser.getName());
+        assertEquals(updatedUser.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
 
-        Assert.assertTrue(PasswordUtil.verifyPassword("a", retrievedUser.getPin()));
+        assertTrue(PasswordUtil.verifyPassword("a", retrievedUser.getPin()));
 
         // make sure proper methods have been called
         Mockito.verify(dataSource, Mockito.times(2)).get(Mockito.eq(UserProfileModule.class), Mockito.eq(updatedUser.getAssociatedProfileId()));
@@ -337,17 +341,17 @@ public class UserServiceTest {
                     users.get(2).getNameKey(),
                     null, null,
                     null);
-            Assert.fail();
+            fail();
         } catch (Exception e) {
             // Exception was expected
         }
 
         // check it has not been updated
         UserModule retrievedUser = userService.getUserById(user.getId());
-        Assert.assertNotNull(retrievedUser);
-        Assert.assertEquals(user.getId(), retrievedUser.getId());
-        Assert.assertEquals(user.getName(), retrievedUser.getName());
-        Assert.assertEquals(user.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
+        assertNotNull(retrievedUser);
+        assertEquals(user.getId(), retrievedUser.getId());
+        assertEquals(user.getName(), retrievedUser.getName());
+        assertEquals(user.getAssociatedProfileId(), retrievedUser.getAssociatedProfileId());
 
         // make sure proper methods have (not) been called
         // Query could not be answered from cache
@@ -402,5 +406,4 @@ public class UserServiceTest {
         // make sure proper methods have been called
         Mockito.verify(dashboardCardService).createParentalControlCard(Mockito.eq(user.getId()), Mockito.eq("PARENTAL_CONTROL"), Mockito.eq("FAM"));
     }
-
 }

@@ -112,7 +112,6 @@ public class SSLWhitelistService implements Observer {
      * Remove a domain from the list
      *
      * @param url
-     * @return
      */
     public void removeDomain(String url) {
         appModuleService.removeDomainFromModule(url, appModuleService.getUserAppModuleId());

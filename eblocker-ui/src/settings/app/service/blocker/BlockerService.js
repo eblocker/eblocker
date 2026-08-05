@@ -34,10 +34,6 @@ export default function BlockerService(logger, $http, $q, $filter, DataCachingSe
         return blockerCache;
     }
 
-    function getBlockerById(id) {
-        return $http.get(PATH + id);
-    }
-
     function createBlocker(blocker) {
         return $http.post(PATH, blocker);
     }
@@ -50,12 +46,6 @@ export default function BlockerService(logger, $http, $q, $filter, DataCachingSe
         return $http.delete(PATH + id);
     }
 
-    function getBlockersByTypeCategory(blockerList, type, category) {
-        return $filter('filter')(blockerList, (blocker) => {
-            return blocker.type === type && blocker.category === category;
-        });
-    }
-
     function getFormatList(type) {
         return $filter('filter')(BLOCKER_FORMAT, (format) => {
             return format.availableTypeList.indexOf(type) > -1;
@@ -64,11 +54,9 @@ export default function BlockerService(logger, $http, $q, $filter, DataCachingSe
 
     return {
         getBlockers: getBlockers,
-        getBlockerById: getBlockerById,
         createBlocker: createBlocker,
         updateBlocker: updateBlocker,
         deleteBlocker: deleteBlocker,
-        getBlockersByTypeCategory: getBlockersByTypeCategory,
         getFormatList: getFormatList
     };
 }

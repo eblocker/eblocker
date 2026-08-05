@@ -63,7 +63,6 @@ import RegistrationResetDialogController from './dialogs/reset/reset-registratio
 import AddUserDialogController from './dialogs/parentalControl/user-add.dialog';
 import EditUserRoleController from './dialogs/parentalControl/user-role-edit.dialog';
 import AddDeviceToUserDialogController from './dialogs/parentalControl/user-add-device.dialog';
-import AddUserProfileDialogController from './dialogs/parentalControl/user-profile-add.dialog';
 import EditRestrictionsDialogController from './dialogs/parentalControl/access-restrictions-edit.dialog';
 import EditContingentDialogController from './dialogs/parentalControl/access-contingent-edit.dialog';
 import EditUsageDialogController from './dialogs/parentalControl/access-usage-edit.dialog';
@@ -137,8 +136,6 @@ import LegalComponent from './components/home/legal/legal.component';
 import ParentalControlComponent from './components/parentalControl/parental-control.component';
 import UsersComponent from './components/parentalControl/users/users.component';
 import UsersDetailsComponent from './components/parentalControl/users/users-details.component';
-import UserProfilesComponent from './components/parentalControl/userProfiles/userProfiles.component';
-import UserProfileDetailsComponent from './components/parentalControl/userProfiles/user-profile-details.component';
 import WhitelistsComponent from './components/parentalControl/whitelists/whitelists.component';
 import WhitelistDetailsComponent from './components/parentalControl/whitelists/whitelist-details.component';
 import BlackistsComponent from './components/parentalControl/blacklists/blacklists.component';
@@ -378,7 +375,6 @@ angular.module('eblocker.adminconsole', [
     .controller('AddUserDialogController', AddUserDialogController)
     .controller('EditUserRoleController', EditUserRoleController)
     .controller('AddDeviceToUserDialogController', AddDeviceToUserDialogController)
-    .controller('AddUserProfileDialogController', AddUserProfileDialogController)
     .controller('EditRestrictionsDialogController', EditRestrictionsDialogController)
     .controller('EditContingentDialogController', EditContingentDialogController)
     .controller('EditUsageDialogController', EditUsageDialogController)
@@ -424,8 +420,6 @@ angular.module('eblocker.adminconsole', [
     .component('parentalControlComponent', ParentalControlComponent)
     .component('usersComponent', UsersComponent)
     .component('usersDetailsComponent', UsersDetailsComponent)
-    .component('userProfilesComponent', UserProfilesComponent)
-    .component('userProfileDetailsComponent', UserProfileDetailsComponent)
     .component('whitelistsComponent', WhitelistsComponent)
     .component('blacklistsComponent', BlackistsComponent)
     .component('devicesComponent', DevicesComponent)

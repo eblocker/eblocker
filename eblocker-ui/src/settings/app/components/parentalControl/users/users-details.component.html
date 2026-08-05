@@ -217,8 +217,7 @@
                 <md-switch md-theme="eBlockerThemeSwitch"
                            ng-model="vm.assignedProfile.controlmodeUrls"
                            class="md-primary switch-word-break"
-                           ng-change="vm.onChangeUrlRestrictions(vm.assignedProfile)"
-                           ng-disabled="vm.isProfileBeingUpdated(vm.assignedProfile)">
+                           ng-change="vm.onChangeUrlRestrictions(vm.assignedProfile)">
                     {{ vm.assignedProfile.controlmodeUrls ?
                     vm.assignedProfile.internetAccessRestrictionMode === 1 ?
                     'ADMINCONSOLE.USERS.DETAILS.PROFILE.FILTERING_MODE.BLACKLISTING' :
@@ -262,19 +261,12 @@
             </div>
 
             <div ng-show="true" layout="column" layout-align="start start" style="padding-top: 8px;">
-                <md-button class="md-raised" ng-hide="vm.isProfileBeingUpdated(vm.assignedProfile)" aria-label="Edit restrictions" ng-click="vm.editAccessRestrictions(vm.assignedProfile)" >
+                <md-button class="md-raised" aria-label="Edit restrictions" ng-click="vm.editAccessRestrictions(vm.assignedProfile)" >
                     {{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.ACTION.EDIT_ACCESS_RESTRICTIONS' | translate }}
                     <md-tooltip><!--
                         -->{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.TOOLTIP.EDIT_ACCESS_RESTRICTIONS' | translate }}
                     </md-tooltip>
                 </md-button>
-            </div>
-
-            <div ng-show="vm.assignedProfile.controlmodeUrls" layout="column" layout-align="start start" layout-padding>
-                <div ng-hide="vm.dialogOpen || !vm.isProfileBeingUpdated(vm.assignedProfile)" layout="row" layout-align="start center">
-                    <md-progress-circular md-mode="indeterminate" md-diameter="24"></md-progress-circular>
-                    <span style="padding-left: 16px">{{ 'ADMINCONSOLE.USERS.DETAILS.PROFILE.UPDATE_RUNNING' | translate }}</span>
-                </div>
             </div>
         </div>
 

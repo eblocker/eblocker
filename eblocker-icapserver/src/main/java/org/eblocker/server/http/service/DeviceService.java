@@ -73,7 +73,7 @@ public class DeviceService {
     private final NetworkInterfaceWrapper networkInterfaceWrapper;
     private final DeviceFactory deviceFactory;
 
-    private final MacPrefix macPrefix = new MacPrefix();
+    private final MacPrefix macPrefix;
 
     private final IpResponseTable ipResponseTable;
     private final Clock clock;
@@ -84,7 +84,8 @@ public class DeviceService {
                          DeviceRegistrationProperties deviceRegistrationProperties, UserAgentService userAgentService,
                          NetworkInterfaceWrapper networkInterfaceWrapper, DeviceFactory deviceFactory,
                          IpResponseTable ipResponseTable, Clock clock,
-                         @Named("device.offline.after.seconds") int deviceOfflineAfterSeconds) {
+                         @Named("device.offline.after.seconds") int deviceOfflineAfterSeconds,
+                         MacPrefix macPrefix) {
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.datasource = datasource;
         this.userAgentService = userAgentService;
@@ -93,17 +94,13 @@ public class DeviceService {
         this.ipResponseTable = ipResponseTable;
         this.clock = clock;
         this.deviceOfflineAfterSeconds = deviceOfflineAfterSeconds;
+        this.macPrefix = macPrefix;
     }
 
     @SubSystemInit
     public void init() {
         networkInterfaceWrapper.addIpAddressChangeListener(this::onIpAddressChange);
         ipResponseTable.addLatestTimestampUpdateListener(this::onLatestTimestampUpdate);
-        try (InputStream inputStream = ResourceHandler.getInputStream(DefaultEblockerResource.MAC_PREFIXES)) {
-            macPrefix.addInputStream(inputStream);
-        } catch (IOException e) {
-            log.error("Could not read MAC prefixes", e);
-        }
 
         onIpAddressChange(true, false);
     }
@@ -220,19 +217,18 @@ public class DeviceService {
     }
 
     /**
-     * Delete a device from the cache and data source
+     * Delete a device from the cache and data source.
+     * A device is only deleted if it is not online.
      *
      * @param device the device to be deleted
+     * @return the deleted device or null (if the given device is online)
      */
     public Device delete(Device device) {
-        // Make sure online devices are not deleted
         Device deviceFromCache = devicesById.get(device.getId());
         if (deviceFromCache != null && deviceFromCache.isOnline()) {
             return null;
         }
         datasource.delete(device);
-        // TODO: Is it possible that the device is not in the cache?
-        //       If so, shouldn't we still execute the listeners?
         Device cachedDevice = devicesById.remove(device.getId());
         cachedDevice.getIpAddresses().forEach(devicesByIp::remove);
         listeners.forEach(listener -> listener.onDelete(cachedDevice));

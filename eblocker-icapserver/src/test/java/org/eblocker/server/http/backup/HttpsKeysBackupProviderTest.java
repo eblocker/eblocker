@@ -18,11 +18,14 @@ package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.ssl.SslService;
+import org.eblocker.server.icap.resources.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +73,7 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         assertEquals(0, provider.getWarnings().size());
 
         importBackup(backup, providerNoPassword);
-        assertEquals(List.of(BackupWarning.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED), providerNoPassword.getWarnings());
+        assertEquals(List.of(new BackupWarning(BackupWarning.Id.NO_PASSWORD_HTTPS_CA_NOT_IMPORTED)), providerNoPassword.getWarnings());
     }
 
     @Test
@@ -83,5 +86,30 @@ public class HttpsKeysBackupProviderTest extends BackupProviderTestBase {
         assertThrows(DecryptionFailedException.class, () -> {
             importBackup(backup, providerBadPassword);
         });
+    }
+
+    @Test
+    public void enableHttps() throws IOException {
+        Mockito.when(sslService.isSslEnabled()).thenReturn(true);
+        byte[] backup = exportBackup(provider);
+        importBackup(backup, provider);
+        Mockito.verify(sslService).enableSsl();
+    }
+
+    @Test
+    public void disableHttps() throws IOException {
+        Mockito.when(sslService.isSslEnabled()).thenReturn(false);
+        byte[] backup = exportBackup(provider);
+        importBackup(backup, provider);
+        Mockito.verify(sslService).disableSsl();
+    }
+
+    @Test
+    public void importVersion4() throws IOException {
+        // before version 5 the httpsEnabledState was not set
+        byte[] backup = ResourceHandler.getClassPathInputStream("test-data/backup/HttpsKeysBackupV4.zip").readAllBytes();
+        importBackup(backup, provider);
+        Mockito.verify(sslService, Mockito.never()).enableSsl();
+        Mockito.verify(sslService, Mockito.never()).disableSsl();
     }
 }

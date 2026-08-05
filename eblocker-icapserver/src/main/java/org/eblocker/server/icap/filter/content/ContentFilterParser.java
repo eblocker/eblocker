@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  *
  * Not supported:
  * <ul>
- *     <li>specific-generic filters (<tt>*##...</tt>)</li>
+ *     <li>specific-generic filters (<code>*##...</code>)</li>
  *     <li>conditionals</li>
  * </ul>
  */

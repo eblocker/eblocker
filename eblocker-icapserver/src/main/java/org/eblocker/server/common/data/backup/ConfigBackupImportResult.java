@@ -16,21 +16,6 @@
  */
 package org.eblocker.server.common.data.backup;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ConfigBackupImportResult extends ConfigBackupResult {
 
-public class ConfigBackupImportResult {
-    private final List<BackupWarning> warnings = new ArrayList<>();
-
-    public boolean hasWarnings() {
-        return !warnings.isEmpty();
-    }
-
-    public void addWarnings(List<BackupWarning> warnings) {
-        this.warnings.addAll(warnings);
-    }
-
-    public List<BackupWarning> getWarnings() {
-        return warnings;
-    }
 }

@@ -41,10 +41,6 @@ public interface ParentalControlController {
 
     void deleteAllProfiles(Request request, Response response);
 
-    void isUnique(Request request, Response response);
-
-    Set<Integer> getProfilesBeingUpdated(Request request, Response response);
-
     boolean startUsage(Request request, Response response);
 
     void stopUsage(Request request, Response response);

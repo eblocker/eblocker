@@ -30,6 +30,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for the {@link BlockerService}.
+ */
 public class BlockerControllerImpl implements BlockerController {
 
     private final BlockerService blockerService;
@@ -49,11 +52,6 @@ public class BlockerControllerImpl implements BlockerController {
                 .filter(categoryPredicate)
                 .filter(filterTypePredicate)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Blocker getBlockerById(Request request, Response response) {
-        return blockerService.getBlockerById(Integer.parseInt(request.getHeader("id")));
     }
 
     @Override

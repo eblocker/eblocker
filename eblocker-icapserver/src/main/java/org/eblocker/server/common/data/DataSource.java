@@ -59,8 +59,6 @@ public interface DataSource {
 
     /**
      * Sets id sequence to initial value. This method should only used by migrations.
-     *
-     * @return
      */
     void setIdSequence(Class<?> entityClass, int value);
 

@@ -102,33 +102,6 @@ public class ParentalControlControllerImpl extends SessionContextController impl
         ids.forEach(id -> parentalControlService.deleteProfile(id));
     }
 
-    /**
-     * REST method - GET /userprofiles/unique
-     */
-    @Override
-    public void isUnique(Request request, Response response) {
-        log.debug("GET /userprofiles/unique");
-        String idString = request.getHeader("id");
-        Integer id = null;
-        if (idString != null && !idString.isEmpty()) {
-            try {
-                id = Integer.valueOf(idString);
-            } catch (NumberFormatException e) {
-                throw new BadRequestException("Invalid numerical format");
-            }
-        }
-        String name = request.getHeader("name", "No module name provided");
-
-        if (!parentalControlService.isUniqueCustomerCreatedName(id, name)) {
-            throw new ConflictException("Name is not unique");
-        }
-    }
-
-    @Override
-    public Set<Integer> getProfilesBeingUpdated(Request request, Response response) {
-        return parentalControlService.getProfilesBeingUpdated();
-    }
-
     @Override
     public boolean startUsage(Request request, Response response) {
         Device device = deviceService.getDeviceById(getSession(request).getDeviceId());

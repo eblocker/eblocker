@@ -16,15 +16,72 @@
  */
 package org.eblocker.server.common.data.backup;
 
+import java.util.Objects;
+
 /**
  * Warnings that can occur during export or import of a backup.
  * They should be shown to the user.
  */
-public enum BackupWarning {
-    LICENSE_CRYPTO_FAILURE,
-    NO_PASSWORD_HTTPS_CA_NOT_IMPORTED,
-    NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED,
-    NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED,
-    NO_PASSWORD_REGISTRATION_NOT_IMPORTED,
-    UPNP_PORT_FORWARDING_FAILURE;
+public class BackupWarning {
+    private Id id;
+    private ItemId itemId;
+    private String itemName;
+
+    public enum Id {
+        LICENSE_CRYPTO_FAILURE,
+        NO_PASSWORD_HTTPS_CA_NOT_IMPORTED,
+        NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED,
+        NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED,
+        NO_PASSWORD_REGISTRATION_NOT_IMPORTED,
+        UPNP_PORT_FORWARDING_FAILURE,
+        ITEM_NOT_EXPORTED,
+        ITEM_NOT_IMPORTED;
+    }
+
+    public enum ItemId {
+        VPN_PROFILE;
+    }
+
+    public BackupWarning(Id id) {
+        this.id = id;
+    }
+
+    public BackupWarning(Id id, ItemId itemId, String itemName) {
+        this.id = id;
+        this.itemId = itemId;
+        this.itemName = itemName;
+    }
+
+    public Id getId() {
+        return id;
+    }
+
+    public ItemId getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(ItemId itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BackupWarning that = (BackupWarning) o;
+        return id == that.id && itemId == that.itemId && Objects.equals(itemName, that.itemName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, itemId, itemName);
+    }
 }

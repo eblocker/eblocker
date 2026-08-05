@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit;
  * See https://github.com/torproject/torspec/blob/main/control-spec.txt for the usage of the control port. It can be used to control and
  * query information of the running Tor instance.
  * <p>
- * <p>
  * NOTE: To be able to specify certain exit nodes for tor to use we need the TOR-GEOIPDB debian package!
  */
 @Singleton

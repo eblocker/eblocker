@@ -18,6 +18,7 @@ package org.eblocker.server.common.blocker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.eblocker.server.common.TestClock;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterMetaData;
 import org.eblocker.server.common.data.parentalcontrol.ParentalControlFilterSummaryData;
@@ -35,6 +36,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import javax.xml.ws.Holder;
@@ -42,6 +44,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -66,6 +69,8 @@ public class BlockerServiceTest {
     private ScheduledExecutorService executorService;
     private UpdateTaskFactory updateTaskFactory;
     private BlockerService blockerService;
+    private DomainBlockerService domainBlockerService;
+    private PatternBlockerService patternBlockerService;
 
     private Path localStoragePath;
     private List<ExternalDefinition> definitions;
@@ -191,7 +196,11 @@ public class BlockerServiceTest {
         Mockito.when(idCache.getId(Mockito.any(TypeId.class))).then(im -> idByTypeId.get(im.getArgument(0)));
         Mockito.when(idCache.getTypeId(Mockito.anyInt())).then(im -> idByTypeId.inverse().get(im.getArgument(0)));
 
-        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, filterManager, malwareFilterService, contentFilterManager, filterListsService, executorService, updateTaskFactory);
+        TestClock clock = new TestClock(LocalDateTime.of(2026, 7, 24, 14, 29, 17, 0));
+        domainBlockerService = new DomainBlockerService(clock, idCache, filterListsService);
+        patternBlockerService = new PatternBlockerService(idCache, filterManager, malwareFilterService, contentFilterManager);
+
+        blockerService = new BlockerService(localStoragePath.toString(), idCache, dataSource, domainBlockerService, patternBlockerService, executorService, updateTaskFactory);
     }
 
     @After
@@ -226,35 +235,6 @@ public class BlockerServiceTest {
         assertBlocker(18, "builtin-domain-TRACKERS", BlockerType.DOMAIN, Category.TRACKER, true, blockersByName.get("builtin-domain-TRACKERS"));
         assertBlocker(1, "builtin-pattern-ADS", BlockerType.PATTERN, Category.ADS, true, blockersByName.get("builtin-pattern-ADS"));
         assertBlocker(4, "builtin-pattern-TRACKER_BLOCKER", BlockerType.PATTERN, Category.TRACKER, true, blockersByName.get("builtin-pattern-TRACKER_BLOCKER"));
-    }
-
-    @Test
-    public void testGetBlockerById() {
-        assertDefinitionMatchesBlocker(definitions.get(0), blockerService.getBlockerById(1000));
-        assertDefinitionMatchesBlocker(definitions.get(1), blockerService.getBlockerById(1001));
-        assertDefinitionMatchesBlocker(definitions.get(2), blockerService.getBlockerById(1002));
-        assertDefinitionMatchesBlocker(definitions.get(3), blockerService.getBlockerById(1003));
-        assertDefinitionMatchesBlocker(definitions.get(4), blockerService.getBlockerById(1004));
-        assertDefinitionMatchesBlocker(definitions.get(5), blockerService.getBlockerById(1005));
-
-        assertDefinitionMatchesBlocker(definitions.get(6), blockerService.getBlockerById(1006));
-        Assert.assertEquals(BLOCKER_SOURCE_CONTENT, blockerService.getBlockerById(1006).getContent());
-
-        Assert.assertNull(blockerService.getBlockerById(1100));
-        assertBlocker(11, "builtin-domain-ADS", BlockerType.DOMAIN, Category.ADS, true, blockerService.getBlockerById(11));
-        Assert.assertNull(blockerService.getBlockerById(12));
-        assertBlocker(13, "custom-domain-CUSTOM", BlockerType.DOMAIN, Category.CUSTOM, false, blockerService.getBlockerById(13));
-        assertBlocker(14, "builtin-domain-MALWARE", BlockerType.DOMAIN, Category.MALWARE, true, blockerService.getBlockerById(14));
-        assertBlocker(15, "builtin-domain-PARENTAL_CONTROL", BlockerType.DOMAIN, Category.PARENTAL_CONTROL, true, blockerService.getBlockerById(15));
-        Assert.assertNull(blockerService.getBlockerById(16));
-        Assert.assertNull(blockerService.getBlockerById(17));
-        assertBlocker(18, "builtin-domain-TRACKERS", BlockerType.DOMAIN, Category.TRACKER, true, blockerService.getBlockerById(18));
-        Assert.assertNull(blockerService.getBlockerById(0));
-        assertBlocker(1, "builtin-pattern-ADS", BlockerType.PATTERN, Category.ADS, true, blockerService.getBlockerById(1));
-        Assert.assertNull(blockerService.getBlockerById(2));
-        Assert.assertNull(blockerService.getBlockerById(3));
-        assertBlocker(4, "builtin-pattern-TRACKER_BLOCKER", BlockerType.PATTERN, Category.TRACKER, true, blockerService.getBlockerById(4));
-        assertBlocker(19, "Malware", BlockerType.PATTERN, Category.MALWARE, true, blockerService.getBlockerById(19));
     }
 
     @Test
@@ -485,6 +465,35 @@ public class BlockerServiceTest {
     }
 
     @Test
+    public void testCreateBlockerSynchronouslyWithUrl() {
+        testCreateBlockerSynchronously(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, "https://unit.test/domains.txt", null, Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
+    }
+
+    @Test
+    public void testCreateBlockerSynchronouslyWithContent() throws IOException {
+        testCreateBlockerSynchronously(new Blocker(null, map("en", "test", "de", "test"), null, BlockerType.DOMAIN, Category.ADS, null, false, null, "blocked.com", Format.DOMAINS, null, UpdateInterval.DAILY, null, true, "blacklist"));
+        Path path = localStoragePath.resolve("1100:DOMAIN");
+        Assert.assertEquals("blocked.com", new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+    }
+
+    private void testCreateBlockerSynchronously(Blocker blocker) {
+        Mockito.when(dataSource.get(ExternalDefinition.class, 1100)).thenReturn(new ExternalDefinition(1100, null, null, Category.ADS, Type.DOMAIN, null, Format.DOMAINS, blocker.getUrl(), null, null, null, null, true, null));
+        Blocker createdBlocker = blockerService.createBlockerSynchronously(blocker);
+        Assert.assertNotNull(createdBlocker);
+        Assert.assertEquals(Integer.valueOf(1100), createdBlocker.getId());
+
+        InOrder inOrder = Mockito.inOrder(dataSource);
+        inOrder.verify(dataSource).save(Mockito.any(ExternalDefinition.class), Mockito.eq(1100));
+        if (blocker.getUrl() != null) {
+            ArgumentCaptor<ExternalDefinition> definitionCaptor = ArgumentCaptor.forClass(ExternalDefinition.class);
+            inOrder.verify(dataSource).save(definitionCaptor.capture(), Mockito.eq(1100));
+            Assert.assertEquals(UpdateStatus.INITIAL_UPDATE_DELAYED, definitionCaptor.getValue().getUpdateStatus());
+        }
+        Mockito.verify(updateTaskFactory).create(1100);
+        Mockito.verify(updateTask).run();
+    }
+
+    @Test
     public void testUpdateBlockerMetadata() {
         blockerService.updateBlocker(new Blocker(
                 1001,
@@ -652,6 +661,17 @@ public class BlockerServiceTest {
         Assert.assertEquals(1001, definitionCaptor.getValue().getId());
         Assert.assertEquals(UpdateStatus.UPDATE_FAILED, definitionCaptor.getValue().getUpdateStatus());
         Assert.assertNotNull(definitionCaptor.getValue().getUpdateError());
+    }
+
+    @Test
+    public void delayedUpdate() {
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(Arrays.asList(
+                new ExternalDefinition(1000, "test-0", null, Category.ADS, Type.DOMAIN, 100, Format.DOMAINS, "http://unit.test/domains-ads", UpdateInterval.DAILY, UpdateStatus.INITIAL_UPDATE_DELAYED, null, blockerFiles.get(0).toString(), true, "blacklist")
+        ));
+
+        blockerService.init();
+        Mockito.verify(updateTaskFactory).create(1000);
+        Mockito.verify(executorService).submit(Mockito.any(Runnable.class));
     }
 
     private void assertDefinitionMatchesBlocker(ExternalDefinition definition, Blocker blocker) {

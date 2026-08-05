@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.eblocker.server.common.data.events.EventLogger;
@@ -72,7 +73,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
      * @return
      */
     @Override
-    public ConfigBackupReference exportConfiguration(Request request, Response response) {
+    public ConfigBackupExportResult exportConfiguration(Request request, Response response) {
         ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
         if (reference == null) {
             String message = "ConfigBackupReference is missing from request";
@@ -82,10 +83,11 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
         try {
             Path tempFile = createTempFile();
             try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
-                backupService.exportConfiguration(outputStream, reference.getPassword());
+                ConfigBackupExportResult result = backupService.exportConfiguration(outputStream, reference.getPassword());
                 LOG.debug("Successfully exported configuration backup to {}", tempFile);
+                result.setConfigBackupReference(new ConfigBackupReference(tempFile.getFileName().toString(), null, reference.isPasswordRequired()));
+                return result;
             }
-            return new ConfigBackupReference(tempFile.getFileName().toString(), null, reference.isPasswordRequired());
         } catch (Exception e) {
             LOG.error("Could not export configuration to local file", e);
             throw new EblockerException("adminconsole.config_backup.error.export_failure");

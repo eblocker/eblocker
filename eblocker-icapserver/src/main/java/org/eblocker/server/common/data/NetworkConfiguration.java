@@ -101,7 +101,7 @@ public class NetworkConfiguration {
         result.append("NetworkConfiguration{");
         result.append("automatic: ");
         result.append(automatic);
-        result.append("expertMode: ");
+        result.append(", expertMode: ");
         result.append(expertMode);
         result.append(", ipAddress: ");
         result.append(ipAddress);
@@ -109,7 +109,7 @@ public class NetworkConfiguration {
         result.append(networkMask);
         result.append("), gateway: ");
         result.append(gateway);
-        result.append("), dns server: ");
+        result.append(", dns server: ");
         result.append(dnsServer);
         result.append(", name server: ");
         result.append(nameServerPrimary);

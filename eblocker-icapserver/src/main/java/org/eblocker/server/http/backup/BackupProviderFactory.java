@@ -33,4 +33,5 @@ public interface BackupProviderFactory {
     UsersBackupProvider createUsersBackupProvider();
     BlockersBackupProvider createBlockersBackupProvider();
     DnsBackupProvider createDnsBackupProvider();
+    NetworkBackupProvider createNetworkBackupProvider();
 }

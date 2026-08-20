@@ -1,0 +1,41 @@
+{
+  "blockdevices": [
+    {
+      "path": "/dev/sda",
+      "name": "sda",
+      "fstype": null,
+      "mountpoint": null,
+      "fstype": null,
+      "children": [
+        {
+          "path": "/dev/sda1",
+          "name": "sda1",
+          "fstype": "vfat",
+          "mountpoint": null,
+          "fstype": "vfat"
+        }
+      ]
+    },{
+      "path": "/dev/mmcblk0",
+      "name": "mmcblk0",
+      "fstype": null,
+      "mountpoint": null,
+      "fstype": null,
+      "children": [
+        {
+          "path": "/dev/mmcblk0p1",
+          "name": "mmcblk0p1",
+          "fstype": "vfat",
+          "mountpoint": "/boot/firmware",
+          "fstype": "vfat"
+        },{
+          "path": "/dev/mmcblk0p2",
+          "name": "mmcblk0p2",
+          "fstype": "ext4",
+          "mountpoint": "/",
+          "fstype": "ext4"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "blockdevices": [
+    {"path":"/dev/sda", "name":"sda", "fstype":null, "mountpoint":null, "fstype":null,
+      "children": [
+        {"path":"/dev/sda1", "name":"sda1", "fstype":"ext4", "mountpoint":"/", "fstype":"ext4"},
+        {"path":"/dev/sda2", "name":"sda2", "fstype":null, "mountpoint":null, "fstype":null},
+        {"path":"/dev/sda5", "name":"sda5", "fstype":"swap", "mountpoint":"[SWAP]", "fstype":"swap"}
+      ]
+    },
+    {"path":"/dev/sr0", "name":"sr0", "fstype":null, "mountpoint":null, "fstype":null}
+  ]
+}

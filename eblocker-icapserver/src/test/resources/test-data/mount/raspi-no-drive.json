@@ -1,27 +1,6 @@
 {
   "blockdevices": [
     {
-      "path": "/dev/sda",
-      "name": "sda",
-      "model": "Slim Line",
-      "label": null,
-      "mountpoint": null,
-      "fstype": null,
-      "parttype": null,
-      "hotplug": true,
-      "children": [
-        {
-          "path": "/dev/sda1",
-          "name": "sda1",
-          "model": null,
-          "label": "INTENSO",
-          "mountpoint": "/opt/eblocker-icap/mnt",
-          "fstype": "vfat",
-          "parttype": "0xb",
-          "hotplug": true
-        }
-      ]
-    },{
       "path": "/dev/mmcblk0",
       "name": "mmcblk0",
       "model": null,

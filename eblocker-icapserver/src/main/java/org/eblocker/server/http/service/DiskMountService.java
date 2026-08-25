@@ -58,22 +58,25 @@ public class DiskMountService {
                 .filter(disk -> disk.getChildren() != null)
                 // Currently this only supports two levels: disks / partitions, logical volumes are not supported.
                 .flatMap(disk -> disk.getChildren().stream())
-                .filter(partition -> FSTYPE_VFAT.equals(partition.getFstype()))
                 .filter(partition -> mountPoint.equals(partition.getMountpoint()))
                 .count() > 0;
     }
 
     /**
-     * Finds the first partition of type "vfat" that is not mounted.
+     * Finds the first FAT partition that is not mounted.
+     * It can also not be an EFI partition.
+     * The disk must be removable (hotplug).
      * @return path of the partition (e.g. "/dev/sda1") or null
      */
     public String getFirstUnmountedVfatPartition() throws IOException {
         BlockDevicesList blockDevices = getBlockDevices();
         Optional<BlockDevice> unmountedPartition = blockDevices.getBlockdevices().stream()
+                .filter(BlockDevice::isHotplug)
                 .filter(disk -> disk.getChildren() != null)
                 // Currently this only supports two levels: disks / partitions, logical volumes are not supported.
                 .flatMap(disk -> disk.getChildren().stream())
-                .filter(partition -> FSTYPE_VFAT.equals(partition.getFstype()))
+                .filter(BlockDevice::isFat)
+                .filter(partition -> !partition.isEfi())
                 .filter(partition -> partition.getMountpoint() == null)
                 .findFirst();
         if (unmountedPartition.isPresent()) {

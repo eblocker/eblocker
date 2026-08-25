@@ -3,37 +3,52 @@
     {
       "path": "/dev/sda",
       "name": "sda",
-      "fstype": null,
+      "model": "Slim Line",
+      "label": null,
       "mountpoint": null,
       "fstype": null,
+      "parttype": null,
+      "hotplug": true,
       "children": [
         {
           "path": "/dev/sda1",
           "name": "sda1",
-          "fstype": "vfat",
+          "model": null,
+          "label": "INTENSO",
           "mountpoint": null,
-          "fstype": "vfat"
+          "fstype": "vfat",
+          "parttype": "0xb",
+          "hotplug": true
         }
       ]
     },{
       "path": "/dev/mmcblk0",
       "name": "mmcblk0",
-      "fstype": null,
+      "model": null,
+      "label": null,
       "mountpoint": null,
       "fstype": null,
+      "parttype": null,
+      "hotplug": true,
       "children": [
         {
           "path": "/dev/mmcblk0p1",
           "name": "mmcblk0p1",
-          "fstype": "vfat",
+          "model": null,
+          "label": null,
           "mountpoint": "/boot/firmware",
-          "fstype": "vfat"
+          "fstype": "vfat",
+          "parttype": "0xc",
+          "hotplug": true
         },{
           "path": "/dev/mmcblk0p2",
           "name": "mmcblk0p2",
-          "fstype": "ext4",
+          "model": null,
+          "label": null,
           "mountpoint": "/",
-          "fstype": "ext4"
+          "fstype": "ext4",
+          "parttype": "0x83",
+          "hotplug": true
         }
       ]
     }

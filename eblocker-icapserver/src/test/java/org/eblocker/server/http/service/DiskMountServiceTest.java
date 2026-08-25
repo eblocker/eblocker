@@ -71,15 +71,32 @@ class DiskMountServiceTest extends BackupProviderTestBase {
     @Test
     void getFirstUnmountedVfatPartition() throws Exception {
         assertNull(createService(createScriptRunner("vm-no-drive.json")).getFirstUnmountedVfatPartition());
-        assertEquals("/dev/sda1", createService(createScriptRunner("raspi-not-mounted.json")).getFirstUnmountedVfatPartition());
+        assertNull(createService(createScriptRunner("vm-eos4-no-drive.json")).getFirstUnmountedVfatPartition());
+        assertNull(createService(createScriptRunner("pc-no-drive.json")).getFirstUnmountedVfatPartition());
+        assertNull(createService(createScriptRunner("raspi-no-drive.json")).getFirstUnmountedVfatPartition());
+
+        assertNull(createService(createScriptRunner("pc-mounted.json")).getFirstUnmountedVfatPartition());
         assertNull(createService(createScriptRunner("raspi-mounted.json")).getFirstUnmountedVfatPartition());
+        assertNull(createService(createScriptRunner("vm-mounted.json")).getFirstUnmountedVfatPartition());
+
+        assertEquals("/dev/sda1", createService(createScriptRunner("raspi-not-mounted.json")).getFirstUnmountedVfatPartition());
+        assertEquals("/dev/sde1", createService(createScriptRunner("pc-not-mounted.json")).getFirstUnmountedVfatPartition());
+        assertEquals("/dev/sdb1", createService(createScriptRunner("vm-not-mounted.json")).getFirstUnmountedVfatPartition());
     }
 
     @Test
     void isExternalDiskMounted() throws Exception {
         assertFalse(createService(createScriptRunner("vm-no-drive.json")).isExternalDiskMounted());
+        assertFalse(createService(createScriptRunner("vm-not-mounted.json")).isExternalDiskMounted());
+        assertFalse(createService(createScriptRunner("vm-eos4-no-drive.json")).isExternalDiskMounted());
+        assertFalse(createService(createScriptRunner("pc-no-drive.json")).isExternalDiskMounted());
+        assertFalse(createService(createScriptRunner("pc-not-mounted.json")).isExternalDiskMounted());
+        assertFalse(createService(createScriptRunner("raspi-no-drive.json")).isExternalDiskMounted());
         assertFalse(createService(createScriptRunner("raspi-not-mounted.json")).isExternalDiskMounted());
+
         assertTrue(createService(createScriptRunner("raspi-mounted.json")).isExternalDiskMounted());
+        assertTrue(createService(createScriptRunner("pc-mounted.json")).isExternalDiskMounted());
+        assertTrue(createService(createScriptRunner("vm-mounted.json")).isExternalDiskMounted());
     }
 
     private DiskMountService createService(ScriptRunner scriptRunner) {

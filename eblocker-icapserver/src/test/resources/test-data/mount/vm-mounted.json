@@ -7,6 +7,11 @@
         {"path":"/dev/sda5", "name":"sda5", "model":null, "label":null, "mountpoint":"[SWAP]", "fstype":"swap", "parttype":"0x82", "hotplug":false}
       ]
     },
+    {"path":"/dev/sdb", "name":"sdb", "model":"USB", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":true,
+      "children": [
+        {"path":"/dev/sdb1", "name":"sdb1", "model":null, "label":null, "mountpoint":"/opt/eblocker-icap/mnt", "fstype":"vfat", "parttype":"0xc", "hotplug":true}
+      ]
+    },
     {"path":"/dev/sr0", "name":"sr0", "model":"VBOX_CD-ROM", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":true}
   ]
 }

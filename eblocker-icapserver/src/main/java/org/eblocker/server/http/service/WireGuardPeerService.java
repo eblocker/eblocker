@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,7 @@ public class WireGuardPeerService {
         peer.setPresharedKey(presharedKey);
 
         dataSource.save(peer, id);
+        syncServerPeers(dataSource.getAll(WireGuardPeer.class));
         return peer;
     }
 
@@ -95,6 +98,12 @@ public class WireGuardPeerService {
             return false;
         }
 
+        List<WireGuardPeer> peers = dataSource.getAll(WireGuardPeer.class);
+        peers.removeIf(peer -> String.valueOf(id).equals(peer.getId()));
+
+        // Revoke the peer on the WireGuard server first. Only remove it from
+        // persistent storage after the server configuration was updated.
+        syncServerPeers(peers);
         dataSource.delete(WireGuardPeer.class, id);
         return true;
     }
@@ -212,6 +221,64 @@ public class WireGuardPeerService {
             throw new IllegalArgumentException("Peer not found: " + peerId);
         }
         return peer;
+    }
+
+    private void syncServerPeers(List<WireGuardPeer> peers) {
+        Path peerFile = null;
+
+        try {
+            peerFile = Files.createTempFile("eblocker-wireguard-peers-", ".conf");
+
+            try {
+                Files.setPosixFilePermissions(peerFile, EnumSet.of(
+                        PosixFilePermission.OWNER_READ,
+                        PosixFilePermission.OWNER_WRITE
+                ));
+            } catch (UnsupportedOperationException ignored) {
+                // Non-POSIX development platform: createTempFile still uses a private temp location.
+            }
+
+            StringBuilder cfg = new StringBuilder();
+            for (WireGuardPeer peer : peers) {
+                if (peer.getPublicKey() == null || peer.getPublicKey().trim().isEmpty()
+                        || peer.getPresharedKey() == null || peer.getPresharedKey().trim().isEmpty()
+                        || peer.getAllowedIp() == null || peer.getAllowedIp().trim().isEmpty()) {
+                    continue;
+                }
+
+                cfg.append("[Peer]\n")
+                        .append("PublicKey = ").append(peer.getPublicKey().trim()).append('\n')
+                        .append("PresharedKey = ").append(peer.getPresharedKey().trim()).append('\n')
+                        .append("AllowedIPs = ").append(peer.getAllowedIp().trim()).append('\n')
+                        .append('\n');
+            }
+
+            Files.write(peerFile, cfg.toString().getBytes(StandardCharsets.UTF_8));
+
+            int rc = scriptRunner.runScript(
+                    wireGuardServerCommand,
+                    "apply-peers",
+                    peerFile.toAbsolutePath().toString()
+            );
+
+            if (rc != 0) {
+                throw new IllegalStateException(
+                        "Could not apply WireGuard peers (script exit code " + rc + ").");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not prepare WireGuard peer configuration.", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while applying WireGuard peers.", e);
+        } finally {
+            if (peerFile != null) {
+                try {
+                    Files.deleteIfExists(peerFile);
+                } catch (IOException ignored) {
+                    // Best effort; the privileged script also removes the temporary file.
+                }
+            }
+        }
     }
 
     private String resolveServerPublicKey() {

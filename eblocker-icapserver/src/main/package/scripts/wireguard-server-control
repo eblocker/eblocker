@@ -4,6 +4,7 @@
 #
 # - init         : generate keys + base config (if missing)
 # - apply-config : apply UI config (write wg0.conf, restart if running)
+# - apply-peers  : replace [Peer] blocks from a temporary peer config
 # - start        : wg-quick up
 # - stop         : wg-quick down
 # - restart      : down + up
@@ -78,6 +79,49 @@ apply_config() {
   fi
 }
 
+apply_peers() {
+  PEER_FILE="${1:-}"
+
+  case "$PEER_FILE" in
+    /tmp/eblocker-wireguard-peers-*.conf)
+      ;;
+    *)
+      echo "Invalid peer config path" >&2
+      exit 2
+      ;;
+  esac
+
+  if [ ! -f "$PEER_FILE" ]; then
+    echo "Peer config file not found" >&2
+    exit 3
+  fi
+
+  ensure_keys
+  ensure_conf
+
+  TMP_CONF="$(mktemp "$WG_DIR/.${WG_IF}.conf.XXXXXX")"
+  trap 'rm -f "$TMP_CONF" "$PEER_FILE"' EXIT INT TERM
+
+  # Keep only the interface section from the existing configuration.
+  awk '
+    /^\[Peer\][[:space:]]*$/ { exit }
+    { print }
+  ' "$WG_CONF" > "$TMP_CONF"
+
+  # Ensure exactly one blank line before peer blocks.
+  printf "\n" >> "$TMP_CONF"
+  cat "$PEER_FILE" >> "$TMP_CONF"
+
+  chmod 600 "$TMP_CONF"
+  mv "$TMP_CONF" "$WG_CONF"
+  rm -f "$PEER_FILE"
+  trap - EXIT INT TERM
+
+  if ip link show "$WG_IF" >/dev/null 2>&1; then
+    restart
+  fi
+}
+
 public_key() {
   ensure_keys
   cat "$WG_PUB"
@@ -110,8 +154,8 @@ status_json() {
 }
 
 restart() {
-  sudo -n /usr/bin/wg-quick down "$WG_IF" >/dev/null 2>&1 || true
-  sudo -n /usr/bin/wg-quick up "$WG_IF"
+  /usr/bin/wg-quick down "$WG_IF" >/dev/null 2>&1 || true
+  /usr/bin/wg-quick up "$WG_IF"
 }
 
 case "$MODE" in
@@ -124,6 +168,10 @@ case "$MODE" in
     apply_config
     exit 0
     ;;
+  apply-peers)
+    apply_peers "${2:-}"
+    exit 0
+    ;;
   public-key)
     public_key
     exit 0
@@ -133,7 +181,7 @@ case "$MODE" in
     if ip link show "$WG_IF" >/dev/null 2>&1; then
       exit 0
     fi
-    sudo -n /usr/bin/wg-quick up "$WG_IF"
+    /usr/bin/wg-quick up "$WG_IF"
     exit 0
     ;;
   stop)
@@ -141,7 +189,7 @@ case "$MODE" in
     if ! ip link show "$WG_IF" >/dev/null 2>&1; then
       exit 0
     fi
-    sudo -n /usr/bin/wg-quick down "$WG_IF"
+    /usr/bin/wg-quick down "$WG_IF"
     exit 0
     ;;
   restart)
@@ -153,7 +201,7 @@ case "$MODE" in
     exit 0
     ;;
   *)
-    echo "Usage: $0 {init|apply-config|public-key|start|stop|restart|status-json}" >&2
+    echo "Usage: $0 {init|apply-config|apply-peers|public-key|start|stop|restart|status-json}" >&2
     exit 1
     ;;
 esac

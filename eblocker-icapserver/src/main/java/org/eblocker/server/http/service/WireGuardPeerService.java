@@ -4,16 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.data.wireguard.WireGuardPeerStore;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,17 +35,23 @@ public class WireGuardPeerService {
 
     private static final Path WG_CONFIG_FILE =
             Paths.get("/opt/eblocker-icap/conf/wireguard-config.json");
-    private static final Path WG_SERVER_PUB_FILE =
-            Paths.get("/opt/eblocker-icap/conf/wireguard-server.pub");
-
     private final DataSource dataSource;
-
     private final Provider<ObjectMapper> objectMapperProvider;
+    private final ScriptRunner scriptRunner;
+    private final String wireGuardServerCommand;
+    private final String wireGuardCommand;
 
     @Inject
-    public WireGuardPeerService(DataSource dataSource, Provider<ObjectMapper> objectMapperProvider) {
+    public WireGuardPeerService(DataSource dataSource,
+                                Provider<ObjectMapper> objectMapperProvider,
+                                ScriptRunner scriptRunner,
+                                @Named("wireguard.server.command") String wireGuardServerCommand,
+                                @Named("wireguard.command") String wireGuardCommand) {
         this.dataSource = dataSource;
         this.objectMapperProvider = objectMapperProvider;
+        this.scriptRunner = scriptRunner;
+        this.wireGuardServerCommand = wireGuardServerCommand;
+        this.wireGuardCommand = wireGuardCommand;
     }
 
     // -------------------------
@@ -208,53 +215,27 @@ public class WireGuardPeerService {
     }
 
     private String resolveServerPublicKey() {
-        String serverPublicKey = null;
-
-        // 1) bevorzugt: über sudo + wireguard-server-control (updatefest)
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "sudo", "-n",
-                    "/opt/eblocker-icap/scripts/wireguard-server-control",
-                    "public-key"
-            );
-            pb.redirectErrorStream(true);
-            Process p = pb.start();
+            LoggingProcess process = scriptRunner.startScript(wireGuardServerCommand, "public-key");
+            int rc = process.waitFor();
 
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-                String line = br.readLine();
-                if (line != null && !line.trim().isEmpty()) {
-                    serverPublicKey = line.trim();
+            if (rc == 0) {
+                String line;
+                while ((line = process.pollStdout()) != null) {
+                    if (!line.trim().isEmpty()) {
+                        return line.trim();
+                    }
                 }
             }
 
-            int rc = p.waitFor();
-            if (rc != 0) {
-                serverPublicKey = null;
-            }
-        } catch (Exception ignored) {
-            serverPublicKey = null;
+            throw new IllegalStateException(
+                    "Server public key not available (script failed with exit code " + rc + ").");
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not run WireGuard server control script.", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while reading WireGuard server public key.", e);
         }
-
-        // 2) fallback: lokale Datei (falls sudo nicht verfügbar)
-        if (serverPublicKey == null || serverPublicKey.trim().isEmpty()) {
-            try {
-                if (Files.exists(WG_SERVER_PUB_FILE)) {
-                    serverPublicKey = new String(
-                            Files.readAllBytes(WG_SERVER_PUB_FILE),
-                            StandardCharsets.UTF_8
-                    ).trim();
-                }
-            } catch (Exception ignored) {
-                // ignore
-            }
-        }
-
-        if (serverPublicKey == null || serverPublicKey.trim().isEmpty()) {
-            throw new IllegalStateException("Server public key not available (script and file fallback failed).");
-        }
-
-        return serverPublicKey;
     }
 
     private Endpoint resolveEndpointFromConfig() {
@@ -300,11 +281,11 @@ public class WireGuardPeerService {
     }
 
     private String runWg(String arg) {
-        return runCommand(new String[]{"/usr/bin/wg", arg}, null);
+        return runCommand(new String[]{wireGuardCommand, arg}, null);
     }
 
     private String runWgWithStdin(String arg, String stdin) {
-        return runCommand(new String[]{"/usr/bin/wg", arg}, stdin);
+        return runCommand(new String[]{wireGuardCommand, arg}, stdin);
     }
 
     private String runCommand(String[] cmd, String stdin) {

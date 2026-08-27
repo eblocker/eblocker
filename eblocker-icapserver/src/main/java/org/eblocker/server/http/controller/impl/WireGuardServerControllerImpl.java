@@ -3,29 +3,26 @@ package org.eblocker.server.http.controller.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 
 import org.eblocker.server.http.controller.WireGuardServerController;
 import org.eblocker.server.http.service.WireGuardPeerService;
-import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.system.LoggingProcess;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.model.WireGuardStatus;
 
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WireGuardServerControllerImpl implements WireGuardServerController {
-
-    private static final String WG_CONTROL =
-            "/opt/eblocker-icap/scripts/wireguard-server-control";
 
     // persistente UI-Config
     private static final String WG_CONFIG =
@@ -33,14 +30,17 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final WireGuardServerService wg;
     private final WireGuardPeerService wireGuardPeerService;
+    private final ScriptRunner scriptRunner;
+    private final String wireGuardServerCommand;
 
     @Inject
-    public WireGuardServerControllerImpl(WireGuardServerService wg,
-                                         WireGuardPeerService wireGuardPeerService) {
-        this.wg = wg;
+    public WireGuardServerControllerImpl(WireGuardPeerService wireGuardPeerService,
+                                         ScriptRunner scriptRunner,
+                                         @Named("wireguard.server.command") String wireGuardServerCommand) {
         this.wireGuardPeerService = wireGuardPeerService;
+        this.scriptRunner = scriptRunner;
+        this.wireGuardServerCommand = wireGuardServerCommand;
     }
 
     // =========================
@@ -373,57 +373,38 @@ public class WireGuardServerControllerImpl implements WireGuardServerController 
     // =========================
     private void runControl(String cmd) {
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "sudo", "-n", WG_CONTROL, cmd
-            );
-            pb.redirectErrorStream(true);
-            Process p = pb.start();
-
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-                while (br.readLine() != null) {
-                    // bewusst leer – wir warten nur auf sauberes Ende
-                }
-            }
-
-            p.waitFor();
-        } catch (Exception ignored) {
+            scriptRunner.runScript(wireGuardServerCommand, cmd);
+        } catch (java.io.IOException e) {
             // Fehler sieht man im Status
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
     private String runStatusJson() {
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    "sudo", "-n", WG_CONTROL, "status-json"
-            );
-            pb.redirectErrorStream(true);
-
-            Process p = pb.start();
+            LoggingProcess process = scriptRunner.startScript(wireGuardServerCommand, "status-json");
+            int exit = process.waitFor();
             String jsonLine = null;
+            String line;
 
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String t = line.trim();
-                    if (jsonLine == null && t.startsWith("{")) {
-                        jsonLine = t;
-                    }
+            while ((line = process.pollStdout()) != null) {
+                String t = line.trim();
+                if (jsonLine == null && t.startsWith("{")) {
+                    jsonLine = t;
                 }
             }
-
-            int exit = p.waitFor();
 
             if (jsonLine != null) {
                 return jsonLine;
             }
 
             return "{\"iface\":\"wg0\",\"service\":\"unknown\",\"wg\":\"down\",\"peers\":0,\"error\":\"no-json\",\"exit\":" + exit + "}";
-
-        } catch (Exception e) {
+        } catch (java.io.IOException e) {
             return "{\"iface\":\"wg0\",\"service\":\"unknown\",\"wg\":\"down\",\"peers\":0,\"error\":\"exception\"}";
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return "{\"iface\":\"wg0\",\"service\":\"unknown\",\"wg\":\"down\",\"peers\":0,\"error\":\"interrupted\"}";
         }
     }
 

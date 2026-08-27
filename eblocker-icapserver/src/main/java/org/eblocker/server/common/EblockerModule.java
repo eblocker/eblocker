@@ -167,7 +167,6 @@ import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
 import org.eblocker.server.http.service.ShutdownExecutorService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.eblocker.server.http.service.UserService;
-import org.eblocker.server.http.service.WireGuardServerService;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -278,7 +277,6 @@ public class EblockerModule extends BaseModule {
         bind(NetworkStateMachine.class);
         bind(OpenVpnAddressListener.class);
         bind(OpenVpnServerService.class);
-        bind(WireGuardServerService.class);
         bind(OpenVpnService.class);
         bind(ParentalControlAccessRestrictionsService.class);
         bind(ParentalControlEnforcerService.class);

@@ -1,0 +1,11 @@
+<div layout="column" layout-fill>
+    <div class="md-padding">
+
+        <md-tabs md-selected="vm.selectedIndex" md-border-bottom md-swipe-content>
+            <md-tab label="OpenVPN" ng-click="vm.go('mobilestatus')"></md-tab>
+            <md-tab label="WireGuard" ng-click="vm.go('mobilewireguard')"></md-tab>
+        </md-tabs>
+
+        <div ui-view></div>
+    </div>
+</div>

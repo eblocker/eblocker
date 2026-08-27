@@ -1,0 +1,207 @@
+#!/bin/sh
+#
+# WireGuard server control for eBlocker
+#
+# - init         : generate keys + base config (if missing)
+# - apply-config : apply UI config (write wg0.conf, restart if running)
+# - apply-peers  : replace [Peer] blocks from a temporary peer config
+# - start        : wg-quick up
+# - stop         : wg-quick down
+# - restart      : down + up
+# - status-json  : machine-readable status for eBlocker backend
+# - public-key   : print server public key
+#
+
+set -e
+
+WG_IF="wg0"
+WG_DIR="/etc/wireguard"
+WG_CONF="$WG_DIR/$WG_IF.conf"
+WG_PRIV="$WG_DIR/$WG_IF.key"
+WG_PUB="$WG_DIR/$WG_IF.pub"
+WG_UI_CONF="/opt/eblocker-icap/conf/wireguard-config.json"
+
+MODE="${1:-}"
+
+ensure_keys() {
+  mkdir -p "$WG_DIR"
+  chmod 700 "$WG_DIR"
+
+  if [ ! -f "$WG_PRIV" ]; then
+    umask 077
+    wg genkey | tee "$WG_PRIV" | wg pubkey > "$WG_PUB"
+    chmod 600 "$WG_PRIV" "$WG_PUB"
+  fi
+}
+
+ensure_conf() {
+  if [ ! -f "$WG_CONF" ]; then
+    umask 077
+    cat > "$WG_CONF" <<CONF
+[Interface]
+PrivateKey = $(cat "$WG_PRIV")
+Address = 10.13.13.1/24
+ListenPort = 51820
+CONF
+    chmod 600 "$WG_CONF"
+  fi
+}
+
+apply_config() {
+  ensure_keys
+  ensure_conf
+
+  # Default Port
+  PORT="51820"
+
+  # Port aus UI-Config lesen (nur wenn Datei existiert)
+  if [ -f "$WG_UI_CONF" ]; then
+    PORT="$(sed -n 's/.*"listenPort"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$WG_UI_CONF" | head -n 1 || true)"
+  fi
+
+  # Fallback falls parsing nix lieferte
+  if [ -z "$PORT" ]; then
+    PORT="51820"
+  fi
+
+  # wg0.conf ListenPort ersetzen (oder anhängen, falls fehlt)
+  if grep -q '^ListenPort[[:space:]]*=' "$WG_CONF"; then
+    sed -i "s/^ListenPort[[:space:]]*=.*/ListenPort = $PORT/" "$WG_CONF"
+  else
+    printf "\nListenPort = %s\n" "$PORT" >> "$WG_CONF"
+  fi
+
+  chmod 600 "$WG_CONF"
+
+  # Wenn Interface aktiv ist: restart, sonst nur Datei schreiben
+  if ip link show "$WG_IF" >/dev/null 2>&1; then
+    restart
+  fi
+}
+
+apply_peers() {
+  PEER_FILE="${1:-}"
+
+  case "$PEER_FILE" in
+    /tmp/eblocker-wireguard-peers-*.conf)
+      ;;
+    *)
+      echo "Invalid peer config path" >&2
+      exit 2
+      ;;
+  esac
+
+  if [ ! -f "$PEER_FILE" ]; then
+    echo "Peer config file not found" >&2
+    exit 3
+  fi
+
+  ensure_keys
+  ensure_conf
+
+  TMP_CONF="$(mktemp "$WG_DIR/.${WG_IF}.conf.XXXXXX")"
+  trap 'rm -f "$TMP_CONF" "$PEER_FILE"' EXIT INT TERM
+
+  # Keep only the interface section from the existing configuration.
+  awk '
+    /^\[Peer\][[:space:]]*$/ { exit }
+    { print }
+  ' "$WG_CONF" > "$TMP_CONF"
+
+  # Ensure exactly one blank line before peer blocks.
+  printf "\n" >> "$TMP_CONF"
+  cat "$PEER_FILE" >> "$TMP_CONF"
+
+  chmod 600 "$TMP_CONF"
+  mv "$TMP_CONF" "$WG_CONF"
+  rm -f "$PEER_FILE"
+  trap - EXIT INT TERM
+
+  if ip link show "$WG_IF" >/dev/null 2>&1; then
+    restart
+  fi
+}
+
+public_key() {
+  ensure_keys
+  cat "$WG_PUB"
+}
+
+status_json() {
+  # systemd service state (optional)
+  SERVICE="unknown"
+  if command -v systemctl >/dev/null 2>&1; then
+    if systemctl list-unit-files "wg-quick@${WG_IF}.service" >/dev/null 2>&1; then
+      SERVICE="$(systemctl is-active "wg-quick@${WG_IF}.service" 2>/dev/null || true)"
+    fi
+  fi
+
+  # wg interface state
+  WG_STATE="down"
+  if command -v wg >/dev/null 2>&1; then
+    if wg show "$WG_IF" >/dev/null 2>&1; then
+      WG_STATE="up"
+    fi
+  fi
+
+  # peer count
+  PEERS=0
+  if command -v wg >/dev/null 2>&1; then
+    PEERS="$(wg show "$WG_IF" peers 2>/dev/null | wc -w || true)"
+  fi
+
+  echo "{\"iface\":\"$WG_IF\",\"service\":\"$SERVICE\",\"wg\":\"$WG_STATE\",\"peers\":$PEERS}"
+}
+
+restart() {
+  /usr/bin/wg-quick down "$WG_IF" >/dev/null 2>&1 || true
+  /usr/bin/wg-quick up "$WG_IF"
+}
+
+case "$MODE" in
+  init)
+    ensure_keys
+    ensure_conf
+    exit 0
+    ;;
+  apply-config)
+    apply_config
+    exit 0
+    ;;
+  apply-peers)
+    apply_peers "${2:-}"
+    exit 0
+    ;;
+  public-key)
+    public_key
+    exit 0
+    ;;
+  start)
+    # wenn wg0 schon existiert: ok
+    if ip link show "$WG_IF" >/dev/null 2>&1; then
+      exit 0
+    fi
+    /usr/bin/wg-quick up "$WG_IF"
+    exit 0
+    ;;
+  stop)
+    # wenn wg0 nicht existiert: ok
+    if ! ip link show "$WG_IF" >/dev/null 2>&1; then
+      exit 0
+    fi
+    /usr/bin/wg-quick down "$WG_IF"
+    exit 0
+    ;;
+  restart)
+    restart
+    exit 0
+    ;;
+  status-json)
+    status_json
+    exit 0
+    ;;
+  *)
+    echo "Usage: $0 {init|apply-config|apply-peers|public-key|start|stop|restart|status-json}" >&2
+    exit 1
+    ;;
+esac

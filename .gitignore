@@ -20,3 +20,6 @@ eblocker-icapserver/src/htdocs/temp
 /eblocker-malware/
 
 eblocker-icapserver/src/htdocs/stylesheets/app.css
+
+# eBlocker runtime logs
+/eblocker-icapserver/eblocker-system.log*

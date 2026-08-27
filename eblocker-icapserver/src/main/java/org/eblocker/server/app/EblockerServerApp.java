@@ -92,6 +92,7 @@ import org.eblocker.server.http.controller.TransactionRecorderController;
 import org.eblocker.server.http.controller.UpdateController;
 import org.eblocker.server.http.controller.UserAgentController;
 import org.eblocker.server.http.controller.UserController;
+import org.eblocker.server.http.controller.WireGuardServerController;
 import org.eblocker.server.http.controller.impl.AnonymousControllerImpl;
 import org.eblocker.server.http.controller.impl.AppWhitelistModuleControllerImpl;
 import org.eblocker.server.http.controller.impl.AuthenticationControllerImpl;
@@ -141,6 +142,7 @@ import org.eblocker.server.http.controller.impl.TransactionRecorderControllerImp
 import org.eblocker.server.http.controller.impl.UpdateControllerImpl;
 import org.eblocker.server.http.controller.impl.UserAgentControllerImpl;
 import org.eblocker.server.http.controller.impl.UserControllerImpl;
+import org.eblocker.server.http.controller.impl.WireGuardServerControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.service.ShutdownService;
@@ -505,6 +507,7 @@ public class EblockerServerApp {
         injectController(NetworkController.class, NetworkControllerImpl.class);
         injectController(OpenVpnController.class, OpenVpnControllerImpl.class);
         injectController(OpenVpnServerController.class, OpenVpnServerControllerImpl.class);
+        injectController(WireGuardServerController.class, WireGuardServerControllerImpl.class);
         injectController(PageContextController.class, PageContextControllerImpl.class);
         injectController(ParentalControlController.class, ParentalControlControllerImpl.class);
         injectController(ParentalControlFilterListsController.class, ParentalControlFilterListsControllerImpl.class);

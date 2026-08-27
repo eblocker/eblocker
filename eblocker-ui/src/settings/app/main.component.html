@@ -30,7 +30,7 @@
                                     <md-icon md-svg-src="{{section.iconUrl}}" class="navicon"></md-icon>
                                 </div>
                                 <div style="margin-left: 15px;">
-                                    <span>{{ section.translationKey | translate }}</span>
+                                    <span>{{ section.label || (section.translationKey | translate) }}</span>                                    
                                 </div>
                             </div>
                         </md-item-content>

@@ -141,6 +141,8 @@ import org.eblocker.server.http.controller.TransactionRecorderController;
 import org.eblocker.server.http.controller.UpdateController;
 import org.eblocker.server.http.controller.UserAgentController;
 import org.eblocker.server.http.controller.UserController;
+import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.controller.impl.WireGuardServerControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapperFactory;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.server.EblockerHttpsServer;
@@ -625,6 +627,12 @@ public class EblockerModule extends BaseModule {
         return ControllerWrapperFactory.wrap(OpenVpnController.class);
     }
 
+    @Provides
+    @Singleton
+    public WireGuardServerController wireGuardServerController() {
+        return ControllerWrapperFactory.wrap(WireGuardServerController.class);
+    }
+    
     @Provides
     @Singleton
     public OpenVpnServerController openVpnServerController() {

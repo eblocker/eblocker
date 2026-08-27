@@ -151,6 +151,8 @@ import NetworkComponent from './components/network/network.component';
 import NetworkWizardComponent from './components/network/wizard/network-wizard.component';
 import TorComponent from './components/ipAnon/tor/tor.component';
 import VpnConnectComponent from './components/ipAnon/vpn/vpn-connect.component';
+import WireguardComponent from './components/wireguard/wireguard.component';
+
 
 import DnsComponent from './components/dns/dns.component';
 import DnsStatusComponent from './components/dns/status/dns-status.component';
@@ -174,6 +176,7 @@ import NetworkSettingsComponent from './components/network/settings/network-sett
 import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
+import MobileWireGuardTabsComponent from './components/mobileWireGuardTabs/mobile-wireguard-tabs.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
 import SslCertificateComponent from './components/ssl/certificate/ssl-certificate.component';
@@ -438,6 +441,7 @@ angular.module('eblocker.adminconsole', [
     .component('dnsLocalComponent', DnsLocalComponent)
     .component('torComponent', TorComponent)
     .component('vpnConnectComponent', VpnConnectComponent)
+    .component('wireguardComponent', WireguardComponent)
     .component('diagnosticsComponent', DiagnosticsComponent)
     .component('reportComponent', ReportComponent)
     .component('eventsComponent', EventsComponent)
@@ -454,6 +458,7 @@ angular.module('eblocker.adminconsole', [
     .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
+    .component('mobileWireGuardTabsComponent', MobileWireGuardTabsComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('sslStatusComponent', SslStatusComponent)
     .component('sslCertificateComponent', SslCertificateComponent)

@@ -2043,6 +2043,12 @@
                 "TITLE" : "eBlocker Settings"
             }
         },
+        "WIREGUARD": {
+            "LABEL": "WireGuard",
+            "TITLE": "WireGuard",
+            "DESCRIPTION": "Manage the WireGuard VPN server"
+        },
+
         "MANUAL_RECORDING" : {
             "ACTION" : {
                 "CLEAR_TABLE" : "Clear table",

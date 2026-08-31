@@ -11,12 +11,14 @@ import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
 import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.WireGuardAuthorizationService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
 import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
+import org.restexpress.exception.ForbiddenException;
 import org.restexpress.exception.NotFoundException;
 
 public class WireGuardDashboardControllerImpl
@@ -26,18 +28,21 @@ public class WireGuardDashboardControllerImpl
     private final DeviceService deviceService;
     private final WireGuardClientConfigurationService clientConfigurationService;
     private final WireGuardServerService serverService;
+    private final WireGuardAuthorizationService authorizationService;
 
     @Inject
     public WireGuardDashboardControllerImpl(
             WireGuardPeerService peerService,
             DeviceService deviceService,
             WireGuardClientConfigurationService clientConfigurationService,
-            WireGuardServerService serverService) {
+            WireGuardServerService serverService,
+            WireGuardAuthorizationService authorizationService) {
 
         this.peerService = peerService;
         this.deviceService = deviceService;
         this.clientConfigurationService = clientConfigurationService;
         this.serverService = serverService;
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -46,9 +51,9 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        requireDevice(deviceId);
+        Device device = requireDevice(deviceId);
 
-        return serverService.isEnabled();
+        return authorizationService.isAllowed(device);
     }
 
     @Override
@@ -57,7 +62,7 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        requireDevice(deviceId);
+        requireAuthorizedDevice(deviceId);
 
         WireGuardPeer peer =
                 peerService.getPeerByDeviceId(deviceId);
@@ -77,7 +82,7 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        Device device = requireDevice(deviceId);
+        Device device = requireAuthorizedDevice(deviceId);
 
         if (peerService.getPeerByDeviceId(deviceId) != null) {
             response.setResponseCode(
@@ -153,7 +158,7 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        requireDevice(deviceId);
+        requireAuthorizedDevice(deviceId);
 
         WireGuardPeer peer =
                 peerService.getPeerByDeviceId(deviceId);
@@ -192,7 +197,7 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        requireDevice(deviceId);
+        requireAuthorizedDevice(deviceId);
 
         WireGuardPeer peer =
                 peerService.getPeerByDeviceId(deviceId);
@@ -236,7 +241,7 @@ public class WireGuardDashboardControllerImpl
             Response response) {
 
         String deviceId = getDeviceId(request);
-        requireDevice(deviceId);
+        requireAuthorizedDevice(deviceId);
 
         WireGuardPeer peer =
                 peerService.getPeerByDeviceId(deviceId);
@@ -270,6 +275,18 @@ public class WireGuardDashboardControllerImpl
         }
 
         return deviceId.trim();
+    }
+
+    private Device requireAuthorizedDevice(String deviceId) {
+        Device device = requireDevice(deviceId);
+
+        if (!authorizationService.isAllowed(device)) {
+            throw new ForbiddenException(
+                    "WireGuard access is not authorized for this device."
+            );
+        }
+
+        return device;
     }
 
     private Device requireDevice(String deviceId) {

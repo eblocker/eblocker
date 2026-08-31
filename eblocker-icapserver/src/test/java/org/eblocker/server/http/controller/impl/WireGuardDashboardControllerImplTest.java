@@ -7,6 +7,7 @@ import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.service.DeviceService;
+import org.eblocker.server.http.service.WireGuardAuthorizationService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
 import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerService;
@@ -28,6 +29,7 @@ public class WireGuardDashboardControllerImplTest {
     private DeviceService deviceService;
     private WireGuardClientConfigurationService clientConfigurationService;
     private WireGuardServerService serverService;
+    private WireGuardAuthorizationService authorizationService;
     private Request request;
     private Response response;
     private WireGuardDashboardControllerImpl controller;
@@ -48,6 +50,9 @@ public class WireGuardDashboardControllerImplTest {
         serverService =
                 Mockito.mock(WireGuardServerService.class);
 
+        authorizationService =
+                Mockito.mock(WireGuardAuthorizationService.class);
+
         request = Mockito.mock(Request.class);
         response = Mockito.mock(Response.class);
 
@@ -56,7 +61,8 @@ public class WireGuardDashboardControllerImplTest {
                         peerService,
                         deviceService,
                         clientConfigurationService,
-                        serverService
+                        serverService,
+                        authorizationService
                 );
 
         Mockito.when(
@@ -72,12 +78,20 @@ public class WireGuardDashboardControllerImplTest {
                         "device:001122334455"
                 )
         ).thenReturn(device);
+
+        Mockito.when(
+                authorizationService.isAllowed(
+                        Mockito.any(Device.class)
+                )
+        ).thenReturn(true);
     }
 
     @Test
     public void getStatusReturnsPersistedEnabledState() {
         Mockito.when(
-                serverService.isEnabled()
+                authorizationService.isAllowed(
+                        Mockito.any(Device.class)
+                )
         ).thenReturn(true);
 
         boolean enabled =
@@ -88,8 +102,6 @@ public class WireGuardDashboardControllerImplTest {
 
         assertEquals(true, enabled);
 
-        Mockito.verify(serverService)
-                .isEnabled();
 
         Mockito.verify(deviceService)
                 .getDeviceById(
@@ -100,7 +112,9 @@ public class WireGuardDashboardControllerImplTest {
     @Test
     public void getStatusReturnsPersistedDisabledState() {
         Mockito.when(
-                serverService.isEnabled()
+                authorizationService.isAllowed(
+                        Mockito.any(Device.class)
+                )
         ).thenReturn(false);
 
         boolean enabled =
@@ -111,8 +125,6 @@ public class WireGuardDashboardControllerImplTest {
 
         assertEquals(false, enabled);
 
-        Mockito.verify(serverService)
-                .isEnabled();
 
         Mockito.verify(deviceService)
                 .getDeviceById(

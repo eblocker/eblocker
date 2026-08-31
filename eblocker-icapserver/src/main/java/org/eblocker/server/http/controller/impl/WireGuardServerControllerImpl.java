@@ -7,10 +7,12 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.model.WireGuardAuthorizationView;
 import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerCreateRequest;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.model.WireGuardServerStatusView;
+import org.eblocker.server.http.service.WireGuardAuthorizationManagementService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
 import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerControlService;
@@ -36,18 +38,39 @@ public class WireGuardServerControllerImpl
     private final WireGuardServerControlService controlService;
     private final WireGuardPeerService peerService;
     private final WireGuardClientConfigurationService clientConfigurationService;
+    private final WireGuardAuthorizationManagementService authorizationManagementService;
 
     @Inject
     public WireGuardServerControllerImpl(
             WireGuardServerService serverService,
             WireGuardServerControlService controlService,
             WireGuardPeerService peerService,
-            WireGuardClientConfigurationService clientConfigurationService) {
+            WireGuardClientConfigurationService clientConfigurationService,
+            WireGuardAuthorizationManagementService authorizationManagementService) {
 
         this.serverService = serverService;
         this.controlService = controlService;
         this.peerService = peerService;
         this.clientConfigurationService = clientConfigurationService;
+        this.authorizationManagementService =
+                authorizationManagementService;
+    }
+
+    // Kept for the pre-existing focused controller tests. Production
+    // dependency injection always uses the @Inject constructor above.
+    WireGuardServerControllerImpl(
+            WireGuardServerService serverService,
+            WireGuardServerControlService controlService,
+            WireGuardPeerService peerService,
+            WireGuardClientConfigurationService clientConfigurationService) {
+
+        this(
+                serverService,
+                controlService,
+                peerService,
+                clientConfigurationService,
+                null
+        );
     }
 
     @Override
@@ -172,6 +195,104 @@ public class WireGuardServerControllerImpl
     }
 
     @Override
+    public WireGuardAuthorizationView getDeviceAuthorization(
+            Request request,
+            Response response) {
+
+        String deviceId = parseRequiredTextHeader(
+                request,
+                "deviceId",
+                "WireGuard device id is required."
+        );
+
+        WireGuardAuthorizationView view =
+                authorizationManagementService
+                        .getDeviceAuthorization(deviceId);
+
+        if (view == null) {
+            throw new NotFoundException(
+                    "WireGuard device not found."
+            );
+        }
+
+        return view;
+    }
+
+    @Override
+    public WireGuardAuthorizationView setDeviceAuthorization(
+            Request request,
+            Response response) {
+
+        String deviceId = parseRequiredTextHeader(
+                request,
+                "deviceId",
+                "WireGuard device id is required."
+        );
+
+        Boolean enabled = request.getBodyAs(Boolean.class);
+
+        if (enabled == null) {
+            throw new BadRequestException(
+                    "WireGuard device authorization state is required."
+            );
+        }
+
+        if (!authorizationManagementService
+                .setDeviceAuthorization(deviceId, enabled)) {
+
+            throw new NotFoundException(
+                    "WireGuard device not found."
+            );
+        }
+
+        return authorizationManagementService
+                .getDeviceAuthorization(deviceId);
+    }
+
+    @Override
+    public boolean setUserAuthorization(
+            Request request,
+            Response response) {
+
+        String value = parseRequiredTextHeader(
+                request,
+                "userId",
+                "WireGuard user id is required."
+        );
+
+        int userId;
+
+        try {
+            userId = Integer.parseInt(value);
+
+            if (userId < 0) {
+                throw new NumberFormatException(
+                        "negative user id"
+                );
+            }
+        } catch (NumberFormatException e) {
+            throw new BadRequestException(
+                    "Invalid WireGuard user id."
+            );
+        }
+
+        Boolean enabled = request.getBodyAs(Boolean.class);
+
+        if (enabled == null) {
+            throw new BadRequestException(
+                    "WireGuard user authorization state is required."
+            );
+        }
+
+        try {
+            return authorizationManagementService
+                    .setUserAuthorization(userId, enabled);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
+    @Override
     public WireGuardEndpointConfig getEndpointConfig(
             Request request,
             Response response) {
@@ -278,6 +399,20 @@ public class WireGuardServerControllerImpl
                 serverService.isEnabled(),
                 controlService.getStatus()
         );
+    }
+
+    private String parseRequiredTextHeader(
+            Request request,
+            String name,
+            String missingMessage) {
+
+        String value = request.getHeader(name);
+
+        if (value == null || value.trim().isEmpty()) {
+            throw new BadRequestException(missingMessage);
+        }
+
+        return value.trim();
     }
 
     private int parsePeerId(

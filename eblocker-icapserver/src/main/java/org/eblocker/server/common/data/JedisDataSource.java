@@ -95,6 +95,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_IS_CONTROLBAR_AUTO_MODE = "isControlBarAutoMode";
     private static final String KEY_IS_MOBILE_ENABLED = "isMobileEnabled";
     private static final String KEY_MOBILE_PRIVATE_NETWORK_ACCESS = "mobilePrivateNetworkAccess";
+    private static final String KEY_WIREGUARD_ENABLED = "wireGuardEnabled";
     private static final String KEY_RESOLVED_DNS_GATEWAY = "resolved_dns_gateway";
     private static final String KEY_ROUTER_ADVERTISEMENTS_ENABLED = "router_advertisements_enabled";
     private static final String KEY_PRIVACY_EXTENSIONS_ENABLED = "privacy_extensions_enabled";
@@ -416,6 +417,7 @@ public class JedisDataSource implements DataSource {
         device.setMobileState(isMobileEnabled == null || isMobileEnabled.equals(VALUE_TRUE));
 
         device.setMobilePrivateNetworkAccess(Boolean.parseBoolean(map.get(KEY_MOBILE_PRIVATE_NETWORK_ACCESS)));
+        device.setWireGuardEnabled(Boolean.parseBoolean(map.get(KEY_WIREGUARD_ENABLED)));
 
         String pauseDialogDoNotShow = map.get(KEY_PAUSE_DIALOG_DO_NOT_SHOW_AGAIN);
         device.setShowPauseDialogDoNotShowAgain((pauseDialogDoNotShow == null || pauseDialogDoNotShow.equals(VALUE_TRUE)));
@@ -567,6 +569,7 @@ public class JedisDataSource implements DataSource {
             map.put(KEY_IS_CONTROLBAR_AUTO_MODE, device.isControlBarAutoMode() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_IS_MOBILE_ENABLED, device.isEblockerMobileEnabled() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_MOBILE_PRIVATE_NETWORK_ACCESS, Boolean.toString(device.isMobilePrivateNetworkAccess()));
+            map.put(KEY_WIREGUARD_ENABLED, Boolean.toString(device.isWireGuardEnabled()));
             map.put(KEY_USE_ANONYMIZATION_SERVICE, device.isUseAnonymizationService() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_USE_TOR, device.isRoutedThroughTor() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_MALWARE_FILTER_ENABLED, Boolean.toString(device.isMalwareFilterEnabled()));

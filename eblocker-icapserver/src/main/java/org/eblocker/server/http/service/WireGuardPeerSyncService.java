@@ -3,6 +3,7 @@ package org.eblocker.server.http.service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.system.ScriptRunner;
 
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -22,14 +24,30 @@ public class WireGuardPeerSyncService {
 
     private final ScriptRunner scriptRunner;
     private final String wireGuardServerCommand;
+    private final DeviceService deviceService;
+    private final WireGuardAuthorizationService authorizationService;
 
     @Inject
     public WireGuardPeerSyncService(
             ScriptRunner scriptRunner,
-            @Named("wireguard.server.command") String wireGuardServerCommand) {
+            @Named("wireguard.server.command") String wireGuardServerCommand,
+            DeviceService deviceService,
+            WireGuardAuthorizationService authorizationService) {
 
         this.scriptRunner = scriptRunner;
         this.wireGuardServerCommand = wireGuardServerCommand;
+        this.deviceService = deviceService;
+        this.authorizationService = authorizationService;
+    }
+
+    WireGuardPeerSyncService(
+            ScriptRunner scriptRunner,
+            String wireGuardServerCommand) {
+
+        this.scriptRunner = scriptRunner;
+        this.wireGuardServerCommand = wireGuardServerCommand;
+        this.deviceService = null;
+        this.authorizationService = null;
     }
 
     public void synchronize(List<WireGuardPeer> peers) {
@@ -54,7 +72,9 @@ public class WireGuardPeerSyncService {
                 // Production is POSIX/Linux. Keep development portability.
             }
 
-            String content = renderPeerConfiguration(peers);
+            String content = renderPeerConfiguration(
+                    filterRuntimePeers(peers)
+            );
 
             Files.write(
                     peerFile,
@@ -100,6 +120,51 @@ public class WireGuardPeerSyncService {
                 }
             }
         }
+    }
+
+    List<WireGuardPeer> filterRuntimePeers(
+            List<WireGuardPeer> peers) {
+
+        if (peers == null) {
+            return new ArrayList<>();
+        }
+
+        // The short constructor is used only by focused unit tests that
+        // exercise the rendering/apply mechanics independently.
+        if (deviceService == null || authorizationService == null) {
+            return new ArrayList<>(peers);
+        }
+
+        List<WireGuardPeer> allowedPeers = new ArrayList<>();
+
+        for (WireGuardPeer peer : peers) {
+            if (peer == null) {
+                continue;
+            }
+
+            String deviceId = peer.getDeviceId();
+
+            // Existing peers created through the admin API are intentionally
+            // unbound and remain outside the device/user authorization layer.
+            if (deviceId == null || deviceId.trim().isEmpty()) {
+                allowedPeers.add(peer);
+                continue;
+            }
+
+            Device device =
+                    deviceService.getDeviceById(deviceId.trim());
+
+            // Missing devices fail closed.
+            if (device == null) {
+                continue;
+            }
+
+            if (authorizationService.isDevicePolicyAllowed(device)) {
+                allowedPeers.add(peer);
+            }
+        }
+
+        return allowedPeers;
     }
 
     String renderPeerConfiguration(List<WireGuardPeer> peers) {

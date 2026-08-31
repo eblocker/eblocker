@@ -214,6 +214,11 @@ public class DeviceControllerImpl implements DeviceController {
     private void updateDevice(Device device) {
         Device current = deviceService.getDeviceById(device.getId());
 
+        // WireGuard authorization is security-sensitive and is changed only
+        // through the dedicated authenticated WireGuard authorization API.
+        // Generic device updates must preserve the persisted value.
+        device.setWireGuardEnabled(current.isWireGuardEnabled());
+
         /*
          * The default system user must not be changed. EB1-2220 describes an issue where possible two eBlockers
          * in the network may have caused a device of one eBlocker to be updated in Redis of another, causing the

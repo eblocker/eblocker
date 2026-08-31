@@ -1502,6 +1502,18 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getPeerQrCode", HttpMethod.GET)
                 .name("adminconsole.wireguard.peers.qrcode.get")
                 .noSerialization();
+        server
+                .uri("/api/adminconsole/wireguard/authorization/devices/{deviceId}", wireGuardServerController)
+                .action("getDeviceAuthorization", HttpMethod.GET)
+                .name("adminconsole.wireguard.authorization.device.get");
+        server
+                .uri("/api/adminconsole/wireguard/authorization/devices/{deviceId}", wireGuardServerController)
+                .action("setDeviceAuthorization", HttpMethod.PUT)
+                .name("adminconsole.wireguard.authorization.device.put");
+        server
+                .uri("/api/adminconsole/wireguard/authorization/users/{userId}", wireGuardServerController)
+                .action("setUserAuthorization", HttpMethod.PUT)
+                .name("adminconsole.wireguard.authorization.user.put");
 
         // ** New Adminconsole: eBlocker Mobile test connection
         server

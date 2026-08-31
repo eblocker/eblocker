@@ -164,12 +164,70 @@ public class UserService {
             updatedUser = updateRegularUser(id, associatedProfileId, name, nameKey, birthday, userRole, newPin, null, existingUser);
         }
 
+        // Preserve independent WireGuard authorization when the user
+        // object is reconstructed during a regular profile update.
+        updatedUser.setWireGuardEnabled(existingUser.isWireGuardEnabled());
+
         // ** First update the user, then get the dashboard:
         // We need the dashboard based on the new associatedProfileId
         DashboardColumnsView dashboardColumnsView = getDashboardForUser(updatedUser, userRole);
         updatedUser.setDashboardColumnsView(dashboardColumnsView);
 
         UserModule savedUser = dataSource.save(updatedUser, updatedUser.getId());
+        cacheUser(savedUser);
+        notifyListeners(savedUser);
+        return savedUser;
+    }
+
+    public UserModule setWireGuardEnabled(
+            Integer userId,
+            boolean wireGuardEnabled) {
+
+        if (userId == null) {
+            throw new BadRequestException(
+                    "Cannot update WireGuard authorization without user id.");
+        }
+
+        UserModule user = getUserById(userId);
+
+        if (user == null) {
+            throw new BadRequestException(
+                    "Cannot update WireGuard authorization for unknown user "
+                            + userId
+                            + ".");
+        }
+
+        if (user.isSystem()) {
+            throw new BadRequestException(
+                    "WireGuard user authorization does not apply to "
+                            + "built-in system users.");
+        }
+
+        if (user.isWireGuardEnabled() == wireGuardEnabled) {
+            return user;
+        }
+
+        boolean previousValue = user.isWireGuardEnabled();
+        user.setWireGuardEnabled(wireGuardEnabled);
+
+        UserModule savedUser;
+
+        try {
+            savedUser = dataSource.save(
+                    user,
+                    user.getId()
+            );
+        } catch (RuntimeException persistenceException) {
+            user.setWireGuardEnabled(previousValue);
+            throw persistenceException;
+        }
+
+        if (savedUser == null) {
+            user.setWireGuardEnabled(previousValue);
+            throw new IllegalStateException(
+                    "Could not persist WireGuard user authorization.");
+        }
+
         cacheUser(savedUser);
         notifyListeners(savedUser);
         return savedUser;

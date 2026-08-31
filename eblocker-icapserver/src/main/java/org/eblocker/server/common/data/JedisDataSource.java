@@ -127,6 +127,7 @@ public class JedisDataSource implements DataSource {
 
     private static final String KEY_IS_OPENVPN_CLIENT = "IsOpenVpnClient";
     private static final String KEY_OPENVPN_SERVER_ENABLED = "OpenVpnServerEnabled";
+    private static final String KEY_WIREGUARD_SERVER_ENABLED = "WireGuardServerEnabled";
     private static final String KEY_OPENVPN_FIRST_RUN = "OpenVpnFirstRun";
     private static final String KEY_OPENVPN_SERVER_HOST = "OpenVpnHost";
     private static final String KEY_OPENVPN_MAPPED_PORT = "OpenVpnMappedPort";
@@ -892,6 +893,13 @@ public class JedisDataSource implements DataSource {
     }
 
     @Override
+    public void setWireGuardServerState(boolean state) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_WIREGUARD_SERVER_ENABLED, state ? VALUE_TRUE : VALUE_FALSE);
+        }
+    }
+
+    @Override
     public void setOpenVpnServerHost(String host) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(KEY_OPENVPN_SERVER_HOST, host);
@@ -972,6 +980,20 @@ public class JedisDataSource implements DataSource {
             String value = jedis.get(KEY_OPENVPN_SERVER_ENABLED);
 
             // default if not set is OFF:
+            if (value == null) {
+                return false;
+            }
+
+            return value.equals(VALUE_TRUE);
+        }
+    }
+
+    @Override
+    public boolean getWireGuardServerState() {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(KEY_WIREGUARD_SERVER_ENABLED);
+
+            // Default if not set is OFF.
             if (value == null) {
                 return false;
             }

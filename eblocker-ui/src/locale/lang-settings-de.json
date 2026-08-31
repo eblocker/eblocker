@@ -319,9 +319,9 @@
                 "SUB_SYSTEM_STATUS_SERVICES_ERROR": "Interne Dienste angehalten: {{error}}",
                 "SUB_SYSTEM_STATUS_SERVICES_OK": "Interne Dienste gestartet.",
                 "SUB_SYSTEM_STATUS_SERVICES_STARTING": "Starte interne Dienste.",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR" : "Systemprüfung fehlgeschlagen: {{error}}",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK" : "Systemprüfung abgeschlossen.",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING" : "Starte Systemprüfung."
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR": "Systemprüfung fehlgeschlagen: {{error}}",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK": "Systemprüfung abgeschlossen.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING": "Starte Systemprüfung."
             },
             "TOOLBAR": {
                 "TITLE": "eBlocker Booting"
@@ -2729,9 +2729,9 @@
                 "REBOOT": "Neustart",
                 "SHUTDOWN": "Ausschalten"
             },
-            "ERROR" : {
-                "REBOOT" : "Der eBlocker kann momentan nicht neu gestartet werden.",
-                "SHUTDOWN" : "Der eBlocker kann momentan nicht ausgeschaltet werden."
+            "ERROR": {
+                "REBOOT": "Der eBlocker kann momentan nicht neu gestartet werden.",
+                "SHUTDOWN": "Der eBlocker kann momentan nicht ausgeschaltet werden."
             },
             "EXPLANATION": "eBlocker ausschalten oder neu starten.",
             "LABEL": "Neustart"
@@ -3485,6 +3485,80 @@
                 "NUM_ASSIGNED": "{num, select, 0{Keinem Benutzer zugewiesen.} 1{Einem Benutzer zugewiesen.} other{{num} Benutzern zugewiesen.}}",
                 "REMOVE_BUTTON": "Es dürfen nur benutzerdefinierte Kategorien gelöscht werden, die keinem Benutzer zugewiesen sind."
             }
+        },
+        "WIREGUARD": {
+            "LABEL": "WireGuard",
+            "SWITCH": {
+                "ON": "WireGuard an",
+                "OFF": "WireGuard aus"
+            },
+            "STATUS": {
+                "TITLE": "Status",
+                "INTERFACE": "Schnittstelle",
+                "SERVICE": "Dienst",
+                "WG": "WireGuard",
+                "PEERS": "Peers",
+                "PORT": "Port"
+            },
+            "ENDPOINT": {
+                "TITLE": "Externer Zugriff",
+                "TYPE": "Externer Adresstyp",
+                "HOST": "Öffentliche IP-Adresse oder DNS-Name",
+                "TYPES": {
+                    "FIXED_IP": "Statische IP-Adresse",
+                    "DYN_DNS": "Dynamic DNS Anbieter",
+                    "EBLOCKER_DYN_DNS": "eBlocker Dynamic DNS"
+                }
+            },
+            "ACTION": {
+                "SAVE": "Speichern"
+            },
+            "PEERS": {
+                "TITLE": "Konfigurierte WireGuard-Peers",
+                "EMPTY": "Es sind keine WireGuard-Peers konfiguriert.",
+                "COLUMN": {
+                    "NAME": "Peer",
+                    "DEVICE": "eBlocker-Gerät",
+                    "IP": "WireGuard-IP",
+                    "LAN": "LAN-Zugriff"
+                },
+                "UNBOUND": "Nicht zugeordnet",
+                "UNKNOWN_DEVICE": "Unbekanntes Gerät",
+                "YES": "Ja",
+                "NO": "Nein",
+                "ACTIVITY": {
+                    "LABEL": "Aktivität",
+                    "ACTIVE": "Aktiv",
+                    "RECENTLY_SEEN": "Kürzlich gesehen",
+                    "NEVER_CONNECTED": "Noch nie verbunden",
+                    "UNAVAILABLE": "Nicht verfügbar"
+                },
+                "LATEST_HANDSHAKE": "Letzter Handshake",
+                "RX": "Empfangen",
+                "TX": "Gesendet"
+            },
+            "NOTIFICATION": {
+                "DEVICES_LOAD_FAILED": "Die Gerätedaten für die WireGuard-Zuordnung konnten nicht geladen werden.",
+                "PEERS_LOAD_FAILED": "Die WireGuard-Peers konnten nicht geladen werden.",
+                "STATUS_LOAD_FAILED": "Der WireGuard-Status konnte nicht geladen werden.",
+                "STATUS_CHANGE_FAILED": "Der WireGuard-Status konnte nicht geändert werden.",
+                "ENDPOINT_LOAD_FAILED": "Die WireGuard-Endpunktkonfiguration konnte nicht geladen werden.",
+                "ENDPOINT_SAVE_FAILED": "Die WireGuard-Endpunktkonfiguration konnte nicht gespeichert werden.",
+                "ENDPOINT_SAVED": "WireGuard-Endpunktkonfiguration gespeichert."
+            }
+        },
+        "VPN_HOME_DYNDNS": {
+            "LABEL": "DynDNS",
+            "TITLE": "Externer Zugriff / DynDNS",
+            "PLACEHOLDER": "Die gemeinsame DynDNS-Konfiguration für eBlocker Mobile wird hier eingerichtet."
+        },
+        "VPN_HOME_OPENVPN": {
+            "LABEL": "OpenVPN"
+        },
+        "VPN_HOME_TESTS": {
+            "LABEL": "Tests",
+            "TITLE": "Tests und Diagnose",
+            "PLACEHOLDER": "Gemeinsame Verbindungs- und Diagnosetests für OpenVPN und WireGuard werden hier zusammengeführt."
         }
     },
     "HELP_ICON": {

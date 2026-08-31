@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network.unix.firewall;
 
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,10 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
     private final String torClientDevice = "192.168.1.45";
     private final String otherLocalDevice = "192.168.1.23";
     private final String externalHost = "4.3.2.1";
+
+    private final String wireGuardInterface = "wg0";
+    private final String wireGuardPeer = "10.13.13.2";
+    private final int wireGuardServerPort = 51820;
 
     // eBlocker Mobile settings
     private final String mobileVpnIp = "10.8.0.1";
@@ -232,6 +237,372 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         // ports 80 and 443 are redirected to Squid:
         Assert.assertEquals(Action.redirectTo(mobileVpnIp, proxyPort), natPre.tcpPacket(mobileVpnDevice, externalHost, 80));
         Assert.assertEquals(Action.redirectTo(mobileVpnIp, proxyHTTPSPort), natPre.tcpPacket(mobileVpnDevice, externalHost, 443));
+    }
+
+    @Test
+    public void testWireGuardServerEnabled() {
+        generator.setMasqueradeEnabled(false);
+        generator.setWireGuardServerEnabled(true);
+
+        createTablesAndSimulators(generator);
+
+        natPost.setOutput(standardInterface);
+        filterForward.setInput(wireGuardInterface);
+        filterInput.setInput(standardInterface);
+
+        // Full-tunnel traffic is NATed even if global eBlocker
+        // masquerading is disabled.
+        Assert.assertEquals(
+                Action.masquerade(),
+                natPost.tcpPacket(
+                        wireGuardPeer,
+                        externalHost,
+                        1234
+                )
+        );
+
+        // Internet forwarding is allowed.
+        Assert.assertEquals(
+                Action.returnFromChain(),
+                filterForward.tcpPacket(
+                        wireGuardPeer,
+                        externalHost,
+                        1234
+                )
+        );
+
+        // LAN access is denied by default.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        wireGuardPeer,
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.udpPacket(
+                        wireGuardPeer,
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // Public WireGuard endpoint is reachable while enabled.
+        Assert.assertEquals(
+                Action.accept(),
+                filterInput.udpPacket(
+                        externalHost,
+                        eBlockerIp,
+                        wireGuardServerPort,
+                        Rule.State.NEW
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardLanAccessIsGrantedPerPeerOnly() {
+        generator.setWireGuardServerEnabled(true);
+
+        WireGuardPeer denied =
+                new WireGuardPeer();
+
+        denied.setId(1);
+        denied.setAllowedIp("10.13.13.2/32");
+        denied.setAllowLanAccess(false);
+
+        WireGuardPeer allowed =
+                new WireGuardPeer();
+
+        allowed.setId(2);
+        allowed.setAllowedIp("10.13.13.3/32");
+        allowed.setAllowLanAccess(true);
+
+        generator.setWireGuardPeers(
+                List.of(denied, allowed)
+        );
+
+        createTablesAndSimulators(generator);
+
+        filterForward.setInput(wireGuardInterface);
+
+        // Peer without explicit permission remains denied.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.2",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // Explicitly permitted peer reaches the private LAN.
+        Assert.assertEquals(
+                Action.accept(),
+                filterForward.tcpPacket(
+                        "10.13.13.3",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        Assert.assertEquals(
+                Action.accept(),
+                filterForward.udpPacket(
+                        "10.13.13.3",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // The LAN policy must not change full-tunnel Internet access
+        // for either denied or explicitly LAN-enabled peers.
+        Assert.assertEquals(
+                Action.returnFromChain(),
+                filterForward.tcpPacket(
+                        "10.13.13.2",
+                        externalHost,
+                        1234
+                )
+        );
+
+        Assert.assertEquals(
+                Action.returnFromChain(),
+                filterForward.tcpPacket(
+                        "10.13.13.3",
+                        externalHost,
+                        1234
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardLanAccessRejectsInvalidPeerAddress() {
+        generator.setWireGuardServerEnabled(true);
+
+        WireGuardPeer invalid =
+                new WireGuardPeer();
+
+        invalid.setId(1);
+        invalid.setAllowedIp("192.168.1.50/32");
+        invalid.setAllowLanAccess(true);
+
+        generator.setWireGuardPeers(
+                List.of(invalid)
+        );
+
+        createTablesAndSimulators(generator);
+
+        filterForward.setInput(wireGuardInterface);
+
+        // A persisted or manipulated address outside the WireGuard
+        // peer subnet must never generate a LAN allow rule.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "192.168.1.50",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardLanAccessRequiresCanonicalPeerAddress() {
+        generator.setWireGuardServerEnabled(true);
+
+        WireGuardPeer whitespace = new WireGuardPeer();
+        whitespace.setId(1);
+        whitespace.setAllowedIp(" 10.13.13.5/32 ");
+        whitespace.setAllowLanAccess(true);
+
+        WireGuardPeer serverAddress = new WireGuardPeer();
+        serverAddress.setId(2);
+        serverAddress.setAllowedIp("10.13.13.1/32");
+        serverAddress.setAllowLanAccess(true);
+
+        WireGuardPeer outOfRange = new WireGuardPeer();
+        outOfRange.setId(3);
+        outOfRange.setAllowedIp("10.13.13.255/32");
+        outOfRange.setAllowLanAccess(true);
+
+        WireGuardPeer leadingZero = new WireGuardPeer();
+        leadingZero.setId(4);
+        leadingZero.setAllowedIp("10.13.13.02/32");
+        leadingZero.setAllowLanAccess(true);
+
+        WireGuardPeer wrongMask = new WireGuardPeer();
+        wrongMask.setId(5);
+        wrongMask.setAllowedIp("10.13.13.4/24");
+        wrongMask.setAllowLanAccess(true);
+
+        WireGuardPeer upperBoundary = new WireGuardPeer();
+        upperBoundary.setId(6);
+        upperBoundary.setAllowedIp("10.13.13.254/32");
+        upperBoundary.setAllowLanAccess(true);
+
+        generator.setWireGuardPeers(
+                List.of(
+                        whitespace,
+                        serverAddress,
+                        outOfRange,
+                        leadingZero,
+                        wrongMask,
+                        upperBoundary
+                )
+        );
+
+        createTablesAndSimulators(generator);
+        filterForward.setInput(wireGuardInterface);
+
+        // Surrounding whitespace must fail closed.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.5",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // .1 is the WireGuard server address, not a peer address.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.1",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // .255 is outside the permitted peer range.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.255",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // Leading-zero host notation is non-canonical.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.2",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // Peer addresses must use exactly /32.
+        Assert.assertEquals(
+                Action.reject(),
+                filterForward.tcpPacket(
+                        "10.13.13.4",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+
+        // .254 is the highest valid canonical peer address.
+        Assert.assertEquals(
+                Action.accept(),
+                filterForward.tcpPacket(
+                        "10.13.13.254",
+                        otherLocalDevice,
+                        1234
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardServerDisabled() {
+        generator.setWireGuardServerEnabled(false);
+
+        createTablesAndSimulators(generator);
+
+        filterInput.setInput(standardInterface);
+
+        // Without WireGuard enabled there is no public exception for
+        // UDP/51820; the normal public-address policy drops it.
+        Assert.assertEquals(
+                Action.drop(),
+                filterInput.udpPacket(
+                        externalHost,
+                        eBlockerIp,
+                        wireGuardServerPort,
+                        Rule.State.NEW
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardServerPortInServerModeEnabled() {
+        generator.setServerEnvironment(true);
+        generator.setWireGuardServerEnabled(true);
+
+        createTablesAndSimulators(generator);
+
+        filterInput.setInput(standardInterface);
+
+        // In server mode UDP/51820 must be excluded from the
+        // non-standard-port drop rule while WireGuard is enabled.
+        Assert.assertEquals(
+                Action.accept(),
+                filterInput.udpPacket(
+                        externalHost,
+                        eBlockerIp,
+                        wireGuardServerPort,
+                        Rule.State.NEW
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardTcpPortInServerModeRemainsClosed() {
+        generator.setServerEnvironment(true);
+        generator.setWireGuardServerEnabled(true);
+
+        createTablesAndSimulators(generator);
+
+        filterInput.setInput(standardInterface);
+
+        // WireGuard is UDP-only. Enabling the WireGuard server must
+        // never open TCP/51820.
+        Assert.assertEquals(
+                Action.drop(),
+                filterInput.tcpPacket(
+                        externalHost,
+                        eBlockerIp,
+                        wireGuardServerPort,
+                        Rule.State.NEW
+                )
+        );
+    }
+
+    @Test
+    public void testWireGuardServerPortInServerModeDisabled() {
+        generator.setServerEnvironment(true);
+        generator.setWireGuardServerEnabled(false);
+
+        createTablesAndSimulators(generator);
+
+        filterInput.setInput(standardInterface);
+
+        // With WireGuard disabled UDP/51820 is again a non-standard
+        // public port and must be dropped in server mode.
+        Assert.assertEquals(
+                Action.drop(),
+                filterInput.udpPacket(
+                        externalHost,
+                        eBlockerIp,
+                        wireGuardServerPort,
+                        Rule.State.NEW
+                )
+        );
     }
 
     @Test

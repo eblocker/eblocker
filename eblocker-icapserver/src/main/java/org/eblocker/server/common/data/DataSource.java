@@ -420,6 +420,10 @@ public interface DataSource {
 
     boolean getOpenVpnServerState();
 
+    void setWireGuardServerState(boolean state);
+
+    boolean getWireGuardServerState();
+
     void setOpenVpnServerFirstRun(boolean state);
 
     boolean getOpenVpnServerFirstRun();

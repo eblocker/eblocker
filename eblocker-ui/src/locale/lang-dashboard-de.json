@@ -497,6 +497,28 @@
                 "TEXT": "Möchtest du die eBlocker Mobile Konfiguration zurückziehen?",
                 "TITLE": "Konfiguration zurückziehen?"
             },
+            "OPENVPN": {
+                "TAB": "OpenVPN"
+            },
+            "WIREGUARD": {
+                "TAB": "WireGuard",
+                "AVAILABLE": "Für dieses Gerät ist eine WireGuard-Konfiguration verfügbar.",
+                "PEER": "Peer",
+                "ADDRESS": "Adresse",
+                "LAN_ACCESS": "LAN-Zugriff",
+                "YES": "Ja",
+                "NO": "Nein",
+                "NONE": "Für dieses Gerät ist keine WireGuard-Konfiguration vorhanden.",
+                "SHOW_QR": "QR-Code anzeigen",
+                "HIDE_QR": "QR-Code ausblenden",
+                "QR_ALT": "WireGuard-Konfiguration als QR-Code",
+                "CREATE": "WireGuard-Konfiguration erstellen",
+                "DELETE": "WireGuard-Konfiguration löschen",
+                "DELETE_CONFIRM_TITLE": "WireGuard-Konfiguration löschen?",
+                "DELETE_CONFIRM_TEXT": "Möchtest du die WireGuard-Konfiguration für dieses Gerät wirklich löschen?",
+                "DELETE_CONFIRM_OK": "Ja, löschen",
+                "DELETE_CONFIRM_CANCEL": "Abbrechen"
+            },
             "TITLE": "eBlocker Mobile",
             "TOOLTIP": "Hier kannst du die eBlocker Mobile Konfiguration für dieses Gerät laden oder erneuern."
         }

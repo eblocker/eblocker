@@ -24,6 +24,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.DhcpRange;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.ArpSpoofer;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
@@ -210,12 +211,31 @@ public class NetworkServicesUnix extends NetworkServicesBase {
     }
 
     @Override
-    protected synchronized void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients,
-                                               boolean masquerade, boolean enableSSL, boolean enableEblockerDns,
-                                               boolean enableEblockerMobile, boolean enableMalwareSet) {
+    protected synchronized void enableFirewall(Set<Device> allDevices,
+                                               Collection<OpenVpnClientState> vpnClients,
+                                               Collection<WireGuardPeer> wireGuardPeers,
+                                               boolean masquerade,
+                                               boolean enableSSL,
+                                               boolean enableEblockerDns,
+                                               boolean enableEblockerMobile,
+                                               boolean enableWireGuardServer,
+                                               boolean enableMalwareSet) {
         try {
-            firewallConfiguration.enable(allDevices, vpnClients, masquerade, enableSSL, enableEblockerDns,
-                    enableEblockerMobile, enableMalwareSet, () -> executeCommand(applyFirewallConfigurationCommand, "IPv4") == 0);
+            firewallConfiguration.enable(
+                    allDevices,
+                    vpnClients,
+                    wireGuardPeers,
+                    masquerade,
+                    enableSSL,
+                    enableEblockerDns,
+                    enableEblockerMobile,
+                    enableWireGuardServer,
+                    enableMalwareSet,
+                    () -> executeCommand(
+                            applyFirewallConfigurationCommand,
+                            "IPv4"
+                    ) == 0
+            );
         } catch (IOException e) {
             log.error("i/o error applying firewall rules for IPv4", e);
         }

@@ -1,0 +1,275 @@
+<div layout="column" layout-fill class="settings-child-view">
+    <div layout-padding>
+
+        <div layout="row" layout-align="start center">
+            <md-switch md-theme="eBlockerThemeSwitch"
+                       class="md-primary"
+                       ng-model="vm.status.enabled"
+                       ng-change="vm.toggleServer()"
+                       ng-disabled="vm.isLoading || vm.isToggling">
+                {{
+                    (vm.status.enabled ?
+                    'ADMINCONSOLE.WIREGUARD.SWITCH.ON' :
+                    'ADMINCONSOLE.WIREGUARD.SWITCH.OFF') | translate
+                }}
+            </md-switch>
+
+            <div style="margin-left: 12px;"
+                 ng-if="vm.isLoading || vm.isToggling">
+                <md-progress-circular md-mode="indeterminate"
+                                      md-diameter="32">
+                </md-progress-circular>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1">
+
+            <h3 style="margin-top: 0;"
+                translate="ADMINCONSOLE.WIREGUARD.STATUS.TITLE">
+            </h3>
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container
+                        label="{{ 'ADMINCONSOLE.WIREGUARD.STATUS.INTERFACE' | translate }}"
+                        config="vm.interfaceConfig">
+                    </eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container
+                        label="{{ 'ADMINCONSOLE.WIREGUARD.STATUS.SERVICE' | translate }}"
+                        config="vm.serviceConfig">
+                    </eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container
+                        label="{{ 'ADMINCONSOLE.WIREGUARD.STATUS.WG' | translate }}"
+                        config="vm.wgConfig">
+                    </eb-label-container>
+                </div>
+            </div>
+
+            <div layout="row" layout-xs="column" flex>
+                <div flex-gt-xs="33">
+                    <eb-label-container
+                        label="{{ 'ADMINCONSOLE.WIREGUARD.STATUS.PEERS' | translate }}"
+                        config="vm.peersConfig">
+                    </eb-label-container>
+                </div>
+
+                <div flex-gt-xs="33">
+                    <eb-label-container
+                        label="{{ 'ADMINCONSOLE.WIREGUARD.STATUS.PORT' | translate }}"
+                        config="vm.portConfig">
+                    </eb-label-container>
+                </div>
+            </div>
+
+            <div ng-if="vm.status.runtime.error"
+                 class="content-error"
+                 style="margin-top: 12px;">
+                {{ vm.status.runtime.error }}
+            </div>
+        </div>
+
+        <div flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1">
+
+            <h3 style="margin-top: 0;"
+                translate="ADMINCONSOLE.WIREGUARD.PEERS.TITLE">
+            </h3>
+
+            <div ng-if="vm.isLoading"
+                 layout="row"
+                 layout-align="start center">
+                <md-progress-circular md-mode="indeterminate"
+                                      md-diameter="28">
+                </md-progress-circular>
+            </div>
+
+            <div class="table-responsive-vertical shadow-z-1"
+                 style="width: 100%;"
+                 ng-if="!vm.isLoading">
+
+                <table class="table table-striped table-hover table-eb-orange"
+                       cellspacing="0"
+                       style="width: 100%; table-layout: fixed;">
+
+                    <colgroup>
+                        <col style="width: 25%;">
+                        <col style="width: 40%;">
+                        <col style="width: 20%;">
+                        <col style="width: 15%;">
+                    </colgroup>
+
+                    <thead>
+                    <tr>
+                        <th style="padding: 8px 12px; text-align: left;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.NAME' | translate }}
+                        </th>
+                        <th style="padding: 8px 12px; text-align: left;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.DEVICE' | translate }}
+                        </th>
+                        <th style="padding: 8px 12px; text-align: left;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.IP' | translate }}
+                        </th>
+                        <th style="padding: 8px 12px; text-align: left;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.LAN' | translate }}
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-if="vm.peerRows.length === 0">
+                        <td colspan="4"
+                            style="padding: 8px 12px; text-align: center;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.EMPTY' | translate }}
+                        </td>
+                    </tr>
+
+                    <tr ng-repeat="peer in vm.peerRows | orderBy:'name' track by peer.id">
+                        <td style="padding: 8px 12px; text-align: left;"
+                            data-title="{{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.NAME' | translate }}">
+                            <div>
+                                {{ peer.name }}
+                            </div>
+                            <div style="font-size: 12px; margin-top: 3px;">
+                                {{ 'ADMINCONSOLE.WIREGUARD.PEERS.ACTIVITY.LABEL' | translate }}:
+                                {{ peer.activityTranslationKey | translate }}
+                            </div>
+                        </td>
+
+                        <td style="padding: 8px 12px; text-align: left;"
+                            data-title="{{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.DEVICE' | translate }}">
+                            <span ng-if="
+                                peer.deviceDisplayName ===
+                                'ADMINCONSOLE.WIREGUARD.PEERS.UNBOUND' ||
+                                peer.deviceDisplayName ===
+                                'ADMINCONSOLE.WIREGUARD.PEERS.UNKNOWN_DEVICE'">
+                                {{ peer.deviceDisplayName | translate }}
+                            </span>
+
+                            <span ng-if="
+                                peer.deviceDisplayName !==
+                                'ADMINCONSOLE.WIREGUARD.PEERS.UNBOUND' &&
+                                peer.deviceDisplayName !==
+                                'ADMINCONSOLE.WIREGUARD.PEERS.UNKNOWN_DEVICE'">
+                                {{ peer.deviceDisplayName }}
+                            </span>
+
+                            <div style="font-size: 12px; margin-top: 3px;">
+                                {{ 'ADMINCONSOLE.WIREGUARD.PEERS.RX' | translate }}:
+                                {{ vm.formatBytes(peer.rxBytes) }}
+                                &nbsp;&middot;&nbsp;
+                                {{ 'ADMINCONSOLE.WIREGUARD.PEERS.TX' | translate }}:
+                                {{ vm.formatBytes(peer.txBytes) }}
+                            </div>
+                        </td>
+
+                        <td style="padding: 8px 12px; text-align: left;"
+                            data-title="{{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.IP' | translate }}">
+                            <div>
+                                {{ peer.allowedIp }}
+                            </div>
+
+                            <div style="font-size: 12px; margin-top: 3px;">
+                                {{ 'ADMINCONSOLE.WIREGUARD.PEERS.LATEST_HANDSHAKE' | translate }}:
+                                <span ng-if="peer.latestHandshakeMillis">
+                                    {{ peer.latestHandshakeMillis | date:'short' }}
+                                </span>
+                                <span ng-if="!peer.latestHandshakeMillis">
+                                    {{ peer.activityTranslationKey | translate }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td style="padding: 8px 12px; text-align: left;"
+                            data-title="{{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.LAN' | translate }}">
+                            {{
+                                (peer.allowLanAccess ?
+                                'ADMINCONSOLE.WIREGUARD.PEERS.YES' :
+                                'ADMINCONSOLE.WIREGUARD.PEERS.NO') | translate
+                            }}
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1">
+
+            <h3 style="margin-top: 0;"
+                translate="ADMINCONSOLE.WIREGUARD.ENDPOINT.TITLE">
+            </h3>
+
+            <form name="wireGuardEndpointForm"
+                  ng-submit="vm.saveEndpoint()"
+                  novalidate>
+
+                <div layout="row"
+                     layout-xs="column"
+                     flex>
+                    <div flex-gt-xs="33">
+                        <md-input-container style="width: 100%;">
+                            <label>
+                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPE' | translate }}
+                            </label>
+
+                            <md-select ng-model="vm.endpoint.type"
+                                       required>
+                                <md-option ng-repeat="type in vm.endpointTypes"
+                                           ng-value="type">
+                                    {{
+                                        ('ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPES.' + type)
+                                        | translate
+                                    }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div flex-gt-xs="33">
+                        <md-input-container style="width: 100%;"
+                                            ng-if="vm.endpointHostRequired()">
+                            <label>
+                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.HOST' | translate }}
+                            </label>
+
+                            <input ng-model="vm.endpoint.host"
+                                   ng-required="vm.endpointHostRequired()">
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div>
+                    <md-button type="submit"
+                               class="md-raised md-primary"
+                               ng-disabled="
+                                   vm.isSavingEndpoint ||
+                                   wireGuardEndpointForm.$invalid">
+                        {{ 'ADMINCONSOLE.WIREGUARD.ACTION.SAVE' | translate }}
+                    </md-button>
+
+                    <md-progress-circular
+                        ng-if="vm.isSavingEndpoint"
+                        md-mode="indeterminate"
+                        md-diameter="28">
+                    </md-progress-circular>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

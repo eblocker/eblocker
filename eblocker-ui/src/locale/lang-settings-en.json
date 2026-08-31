@@ -4,12 +4,12 @@
             "LABEL" : "About eBlocker",
             "TEAM" : "We have spent many years designing, developing, testing and improving eBlockerOS. Today we are proud that our idea is gaining more and more supporters. eBlockerOS is Open Source, has no backdoors, is completely free of charge and being developed together with the community.",
             "THANK_YOU" : "Thank you very much for using eBlockerOS. You have made a very good decision to protect your privacy and your entire family.",
-            "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
-            "DONATE": "<b>To ensure eBlockerOS is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
-            "DONATE_MORE": "Donate Now",
-            "DONATE_THANKS": "As a gratitude for your donation, you will receive a license key to get automatic daily updates. In addition we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
-            "COMMUNITY": "If you have any questions, new ideas or found errors, please solely use our forum at",
-            "COMMUNITY_URL": "https://eblocker.org/en/community/",
+            "NON_PROFIT" : "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
+            "DONATE" : "<b>To ensure eBlockerOS is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
+            "DONATE_MORE" : "Donate Now",
+            "DONATE_THANKS" : "As a gratitude for your donation, you will receive a license key to get automatic daily updates. In addition we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
+            "COMMUNITY" : "If you have any questions, new ideas or found errors, please solely use our forum at",
+            "COMMUNITY_URL" : "https://eblocker.org/en/community/",
             "YOURS_EBLOCKER" : "Your eBlocker Open Source Team"
         },
         "ACTIVATION" : {
@@ -75,13 +75,13 @@
                 },
                 "TOS" : {
                     "AGREE_TEXT" : "I have read and I agree to the terms of the eBlocker End User License Agreement.",
-                    "AGREE_NO_REGISTRATION": "I want to continue without activation.",
+                    "AGREE_NO_REGISTRATION" : "I want to continue without activation.",
                     "DATE_FORMAT" : "MMM Do, YYYY",
                     "ERROR_LOADING_TOS" : "Unable to load license agreement. An Internet connection is required.",
                     "HEADING" : "eBlocker End User License Agreement (EULA)",
                     "LABEL" : "License Agreement",
                     "NEW_WINDOW" : "Open in new window",
-                    "REGISTRATION_NOT_AVAILABLE": "eBlocker activation service cannot be reached. You may continue without activation.",
+                    "REGISTRATION_NOT_AVAILABLE" : "eBlocker activation service cannot be reached. You may continue without activation.",
                     "SEPARATOR" : "-",
                     "VERSION_TAG" : "Version:"
                 },
@@ -216,7 +216,7 @@
             }
         },
         "BACKUP" : {
-            "LABEL": "Backup"
+            "LABEL" : "Backup"
         },
         "BLACKLISTS" : {
             "ACTION" : {
@@ -418,9 +418,9 @@
             "SCAN_HEADER_AUTO" : "Automatic device discovery",
             "SCAN_HEADER_MAN" : "Manual device discovery",
             "AUTO_ENABLE_NEW_DEVICES" : {
-                "HEADER": "Automatic enabling of new devices",
-                "ENABLED": "eBlocker will automatically enable new devices",
-                "DISABLED": "eBlocker will not automatically enable new devices"
+                "HEADER" : "Automatic enabling of new devices",
+                "ENABLED" : "eBlocker will automatically enable new devices",
+                "DISABLED" : "eBlocker will not automatically enable new devices"
             }
         },
         "DEVICES_LIST" : {
@@ -602,8 +602,8 @@
             "LABEL" : "Diagnostics"
         },
         "DIALOG" : {
-            "EDIT_BLOCKER_FORMAT": {
-                "TITLE": "Edit Blocker Format",
+            "EDIT_BLOCKER_FORMAT" : {
+                "TITLE" : "Edit Blocker Format",
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Save"
@@ -675,15 +675,15 @@
                     "NAME_TOO_LONG" : "The name is too long",
                     "URL_REQUIRED" : "URL is required",
                     "URL_TOO_LONG" : "URL is too long",
-                    "FORMAT_REQUIRED": "Format is required"
+                    "FORMAT_REQUIRED" : "Format is required"
                 },
                 "LABEL_DESCRIPTION" : "Description",
                 "LABEL_DOMAINS" : "Domains (one entry per line)",
                 "LABEL_NAME" : "Name",
                 "LABEL_URL" : "URL",
-                "LABEL_FORMAT": "Format",
-                "OPTION_DOWNLOAD": "Provide download URL",
-                "OPTION_CUSTOM": "Maintain own domains",
+                "LABEL_FORMAT" : "Format",
+                "OPTION_DOWNLOAD" : "Provide download URL",
+                "OPTION_CUSTOM" : "Maintain own domains",
                 "TITLE" : "New blocker list",
                 "TITLE_NEW_BLACKLIST" : "New Blacklist Category",
                 "TITLE_NEW_WHITELIST" : "New Whitelist Category"
@@ -699,24 +699,24 @@
                     "NAME_TOO_LONG" : "The name is too long"
                 },
                 "LABEL_NAME" : "Name",
-                "LABEL_PARENT": "Parent",
-                "LABEL_CHILD": "Child",
-                "LABEL_OTHER": "Other",
-                "LABEL_BIRTHDAY": "Date of Birth",
-                "PLACEHOLDER_DATE": "Birthday",
+                "LABEL_PARENT" : "Parent",
+                "LABEL_CHILD" : "Child",
+                "LABEL_OTHER" : "Other",
+                "LABEL_BIRTHDAY" : "Date of Birth",
+                "PLACEHOLDER_DATE" : "Birthday",
                 "DATE_FORMAT" : "MM/DD/YYYY",
                 "TITLE" : "Add a new user"
             },
-            "ADD_DEVICE_TO_USER": {
+            "ADD_DEVICE_TO_USER" : {
                 "TITLE" : "Add device",
-                "TABLE_EMPTY": "No devices available",
+                "TABLE_EMPTY" : "No devices available",
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Ok"
                 },
-                "COLUMN": {
-                    "DEVICE": "Device",
-                    "IP": "IP Address"
+                "COLUMN" : {
+                    "DEVICE" : "Device",
+                    "IP" : "IP Address"
                 }
             },
             "CONFIRMATION" : {
@@ -861,41 +861,41 @@
                 "TEXT" : "Are you sure to remove this user?",
                 "TITLE" : "Remove user"
             },
-            "UPDATE_CUSTOM_BLOCKER_LIST": {
-                "TITLE": "New {{name | translate}} List",
-                "TITLE_EDIT": "Update {{name | translate}} List",
+            "UPDATE_CUSTOM_BLOCKER_LIST" : {
+                "TITLE" : "New {{name | translate}} List",
+                "TITLE_EDIT" : "Update {{name | translate}} List",
                 "ACTION" : {
                     "CLOSE" : "Close",
                     "CANCEL" : "Cancel",
                     "OK" : "Save"
                 },
-                "ERROR": {
-                    "NAME_REQUIRED": "Enter a name",
-                    "NAME_TOO_LONG": "The name is too long",
-                    "URL_REQUIRED": "Enter a URL",
-                    "URL_TOO_LONG": "The URL is too long",
-                    "FORMAT_REQUIRED": "Select a list format",
-                    "SERVER_ERROR": "An error occurred. The list could not be saved.",
-                    "CONTENT_REQUIRED": "Enter at least one filter",
-                    "CONTENT_TOO_LONG": "The content is too long"
+                "ERROR" : {
+                    "NAME_REQUIRED" : "Enter a name",
+                    "NAME_TOO_LONG" : "The name is too long",
+                    "URL_REQUIRED" : "Enter a URL",
+                    "URL_TOO_LONG" : "The URL is too long",
+                    "FORMAT_REQUIRED" : "Select a list format",
+                    "SERVER_ERROR" : "An error occurred. The list could not be saved.",
+                    "CONTENT_REQUIRED" : "Enter at least one filter",
+                    "CONTENT_TOO_LONG" : "The content is too long"
                 },
-                "LABEL": {
-                    "NAME": "Name",
-                    "FORMAT": "Format",
-                    "URL": "URL",
-                    "UPDATES": "daily updates",
-                    "CONTENT": "Filters (one entry per line)"
+                "LABEL" : {
+                    "NAME" : "Name",
+                    "FORMAT" : "Format",
+                    "URL" : "URL",
+                    "UPDATES" : "daily updates",
+                    "CONTENT" : "Filters (one entry per line)"
                 },
-                "INFO": {
-                    "PROCESSING": "This list is being processed and cannot be edited at the moment",
-                    "READ_ONLY": "This list has been created by the eBlocker and cannot be edited"
+                "INFO" : {
+                    "PROCESSING" : "This list is being processed and cannot be edited at the moment",
+                    "READ_ONLY" : "This list has been created by the eBlocker and cannot be edited"
                 },
-                "TYPE": {
-                    "DOWNLOAD": "Provide download URL",
-                    "CUSTOM": "Maintain own list"
+                "TYPE" : {
+                    "DOWNLOAD" : "Provide download URL",
+                    "CUSTOM" : "Maintain own list"
                 }
             },
-            "DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM": {
+            "DELETE_ALL_CUSTOM_BLOCKER_LISTS_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
@@ -948,7 +948,7 @@
                 },
                 "EVERY" : "Every",
                 "FROM" : "from",
-                "END_OF_DAY": "End of day",
+                "END_OF_DAY" : "End of day",
                 "TITLE_ARIA" : "Define Access Contingent",
                 "TITLE_EDIT" : "Edit access time slot",
                 "TITLE_NEW" : "New access time slot",
@@ -1296,7 +1296,7 @@
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Ok",
-                    "RESET": "Remove PIN"
+                    "RESET" : "Remove PIN"
                 },
                 "ERROR" : {
                     "REQUIRED" : "Please enter a pin!",
@@ -1654,19 +1654,19 @@
             "MENU_LABEL" : "Support eBlocker",
             "URL" : "https://eblocker.org/en/donate-now"
         },
-        "DOCTOR": {
+        "DOCTOR" : {
             "LABEL" : "Doctor",
             "DIAGNOSIS" : {
-                "TITLE": "The diagnoses of the eBlocker Doctor",
-                "LEVEL": {
+                "TITLE" : "The diagnoses of the eBlocker Doctor",
+                "LEVEL" : {
                     "NOVICE" : "Novice",
                     "EXPERT" : "Expert"
                 },
-                "IN_PROGRESS": "Diagnosis is created...",
-                "TABLE": {
+                "IN_PROGRESS" : "Diagnosis is created...",
+                "TABLE" : {
                     "COLUMN" : {
                         "SEVERITY" : "Prio",
-                        "MESSAGE": "Diagnosis"
+                        "MESSAGE" : "Diagnosis"
                     },
                     "SEVERITY" : {
                         "ERROR" : "Error",
@@ -1716,11 +1716,11 @@
                         "DEVICES_WITHOUT_AUTO_CONTROLBAR" : "The following devices are not using the automatic ControlBar configuration: ",
                         "DNS_TOR_NOT_DISABLED" : "The Tor network is used for DNS requests. This is not recommended for novices.",
                         "DNS_TOR_MAY_LEAD_TO_ERRORS" : "The Tor network is used for DNS requests. Please note that this may lead to sporadic errors.",
-                        "ADMIN_PASSWORD_NOT_SET": "The admin password is not set. Anyone with access to your network can change the settings of the eBlocker",
+                        "ADMIN_PASSWORD_NOT_SET" : "The admin password is not set. Anyone with access to your network can change the settings of the eBlocker",
                         "MORE_INFO" : "More information",
                         "CLICK_FOR_MORE" : "Click for details.",
-                        "DEVICES_BLOCKING_TEST_DOMAIN": "On the following devices the dashboard function test will not work correctly, because the domain 'eblocker.org' is blocked:",
-                        "TEST_DOMAIN_HTTPS_WHITELISTED": "The dashboard function test will not work correctly, because 'eblocker.org' is configured as a trusted website."
+                        "DEVICES_BLOCKING_TEST_DOMAIN" : "On the following devices the dashboard function test will not work correctly, because the domain 'eblocker.org' is blocked:",
+                        "TEST_DOMAIN_HTTPS_WHITELISTED" : "The dashboard function test will not work correctly, because 'eblocker.org' is configured as a trusted website."
                     }
                 }
             }
@@ -1875,12 +1875,12 @@
             "ACTION" : {
                 "RESET_COUNTERS" : "Reset Counters"
             },
-            "FORMAT_LIST": {
-                "EASYLIST": "easylist",
-                "URLS": "URL List",
-                "DOMAINS": "Domain List",
-                "SQUID_ACL": "squid-acl List",
-                "ETC_HOSTS": "etc.hosts List"
+            "FORMAT_LIST" : {
+                "EASYLIST" : "easylist",
+                "URLS" : "URL List",
+                "DOMAINS" : "Domain List",
+                "SQUID_ACL" : "squid-acl List",
+                "ETC_HOSTS" : "etc.hosts List"
             },
             "FILTER" : {
                 "NONE" : "No Blocker",
@@ -1895,9 +1895,9 @@
             "LABEL" : "Overview",
             "LAST_UPDATED_LABEL" : "Blockers last updated on: ",
             "TABLE" : {
-                "HEADER": {
-                    "DOMAIN": "Domain Blocker",
-                    "PATTERN": "Pattern Blocker"
+                "HEADER" : {
+                    "DOMAIN" : "Domain Blocker",
+                    "PATTERN" : "Pattern Blocker"
                 },
                 "COLUMN" : {
                     "DEVICES" : "Devices",
@@ -1905,7 +1905,7 @@
                     "NUM_BLOCKED" : "Blocked",
                     "STATUS" : "Status"
                 },
-                "LABEL_DEVICES": "{num, select, 0{0 devices} 1{1 device: } other{{num} devices: }}"
+                "LABEL_DEVICES" : "{num, select, 0{0 devices} 1{1 device: } other{{num} devices: }}"
             },
             "TOOLTIP" : {
                 "DNS_DISABLED" : "DNS service is disabled.",
@@ -1916,26 +1916,26 @@
             }
         },
         "FILTER_DETAILS" : {
-            "ACTION": {
-                "ADD": "Add",
-                "REMOVE": "Remove"
+            "ACTION" : {
+                "ADD" : "Add",
+                "REMOVE" : "Remove"
             },
-            "LABEL": {
-                "STATUS": "Status",
-                "DEVICES": "Devices",
-                "GLOBAL_NO_SSL": "HTTPS support disabled",
-                "DEVICES_NO_SSL": "HTTPS support disabled for:&nbsp;",
+            "LABEL" : {
+                "STATUS" : "Status",
+                "DEVICES" : "Devices",
+                "GLOBAL_NO_SSL" : "HTTPS support disabled",
+                "DEVICES_NO_SSL" : "HTTPS support disabled for:&nbsp;",
                 "DNS_DISABLED" : "DNS service is disabled.",
-                "BLOCKED": "Blocked",
+                "BLOCKED" : "Blocked",
                 "UPDATE_UNKNOWN" : "-",
-                "GO_TO_HTTPS": "Activate"
+                "GO_TO_HTTPS" : "Activate"
             },
             "DATE_TIME_FORMAT" : "MMM D, YYYY h:mm a",
-            "TABLE": {
-                "COLUMN": {
-                    "NAME": "Name",
-                    "URL": "Source",
-                    "LAST_UPDATED": "Updated"
+            "TABLE" : {
+                "COLUMN" : {
+                    "NAME" : "Name",
+                    "URL" : "Source",
+                    "LAST_UPDATED" : "Updated"
                 }
             }
         },
@@ -1962,8 +1962,8 @@
             "EULA_LINK" : "https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12",
             "LABEL" : "Legal Information",
             "OSS_LABEL" : "Open Source Licenses",
-            "TRADEMARK_LABEL": "Trademarks",
-            "TRADEMARK": "The brand name „eBlocker“ and the eBlocker icon are licensed trademarks of eBlocker Open Source UG (limited liability). Third parties are prohibited to use them without written permission."
+            "TRADEMARK_LABEL" : "Trademarks",
+            "TRADEMARK" : "The brand name „eBlocker“ and the eBlocker icon are licensed trademarks of eBlocker Open Source UG (limited liability). Third parties are prohibited to use them without written permission."
         },
         "LICENSE" : {
             "ACTION" : {
@@ -2003,7 +2003,7 @@
                     "INVALID" : "The activation is invalid.",
                     "NEW" : "Not activated",
                     "OK" : "Activated",
-                    "OK_UNREGISTERED": "Without activation",
+                    "OK_UNREGISTERED" : "Without activation",
                     "REVOKED" : "The license is invalid."
                 }
             },
@@ -2053,7 +2053,7 @@
             "LABEL_TESTING_RULE_SET_DISABLED" : "disabled",
             "LABEL_TESTING_RULE_SET_ENABLED" : "enabled",
             "LABEL_TIME" : "Choose max time",
-            "LABEL_TRUSTED_APP_DEFINITION": "Save temporary rules as Trusted App:",
+            "LABEL_TRUSTED_APP_DEFINITION" : "Save temporary rules as Trusted App:",
             "NOTIFICATION" : {
                 "INFO_SAVED_APP" : "App Definition '{{name}}' saved successfully."
             },
@@ -2129,9 +2129,9 @@
             "LABEL_ADDRESSES" : "IPv6 adresses of your eBlocker",
             "LABEL_GLOBAL" : "Global",
             "LABEL_LINK_LOCAL" : "Local",
-            "PRIVACY_EXTENSIONS": {
-                "DISABLED": "Privacy extensions are not active",
-                "ENABLED": "Privacy extensions are active"
+            "PRIVACY_EXTENSIONS" : {
+                "DISABLED" : "Privacy extensions are not active",
+                "ENABLED" : "Privacy extensions are active"
             },
             "ROUTER_ADVERTISEMENTS" : {
                 "DISABLED" : "Do not protect IPv6 traffic (not recommended)",
@@ -2575,9 +2575,9 @@
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1": "<strong>Fast 64-bit OS with Raspberry Pi 5 support.</strong> Minimum of <strong>2 GB RAM</strong> required.",
-                    "LI_2": "<strong>IPv6 support for the Tor network</strong>",
-                    "LI_3": "<strong>Extensive security updates and numerous bug fixes</strong>"
+                    "LI_1" : "<strong>Fast 64-bit OS with Raspberry Pi 5 support.</strong> Minimum of <strong>2 GB RAM</strong> required.",
+                    "LI_2" : "<strong>IPv6 support for the Tor network</strong>",
+                    "LI_3" : "<strong>Extensive security updates and numerous bug fixes</strong>"
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
@@ -2602,11 +2602,11 @@
                 "RENEW_CERTIFICATE" : "Renew now",
                 "TUTORIALS" : "Tutorials"
             },
-            "URL": {
-                "TUTORIAL": "http://eblocker.org/docs/https",
-                "WIZARD": "/https"
+            "URL" : {
+                "TUTORIAL" : "http://eblocker.org/docs/https",
+                "WIZARD" : "/https"
             },
-            "EXPLAIN_WIZARD": "Important: you must add the eBlocker certificate to all activated devices!",
+            "EXPLAIN_WIZARD" : "Important: you must add the eBlocker certificate to all activated devices!",
             "CURRENT_CN" : "Name",
             "CURRENT_TITLE" : "Your eBlocker Certificate",
             "CURRENT_VNA" : "Valid till",
@@ -2678,11 +2678,11 @@
                 "TUTORIALS" : "Tutorials"
             },
             "ATA_TEXT" : "<a href=\"#!/https/trustedapps/9997\">Review the trusted domains</a> added by Auto Trust App",
-            "URL": {
-                "TUTORIAL": "http://eblocker.org/docs/https",
-                "WIZARD": "/https"
+            "URL" : {
+                "TUTORIAL" : "http://eblocker.org/docs/https",
+                "WIZARD" : "/https"
             },
-            "LABEL_TEXT_OFF": "If you enable this feature, you must be familiar with advanced settings of your devices and install an encryption certificate on the devices to let eBlocker analyze the data stream. <br />Activating HTTPS support enables <a target=\"_blank\" href=\"https://eblocker.org/docs/which-functions-require-the-activation-of-https-ssl/\" class=\"orange\">advanced functions of the eBlocker</a>.",
+            "LABEL_TEXT_OFF" : "If you enable this feature, you must be familiar with advanced settings of your devices and install an encryption certificate on the devices to let eBlocker analyze the data stream. <br />Activating HTTPS support enables <a target=\"_blank\" href=\"https://eblocker.org/docs/which-functions-require-the-activation-of-https-ssl/\" class=\"orange\">advanced functions of the eBlocker</a>.",
             "DATE_FORMAT" : "MMM Do, YYYY",
             "IMPORTANT_NOTE" : "Important: you must add the eBlocker certificate to all activated devices!",
             "IMPORTANT_NOTE_RENEWAL" : "eBlocker Certificate renewed!",
@@ -3033,10 +3033,10 @@
             "TOOLTIP" : {
                 "EDIT_AUTO_TIME" : "Edit time range for the automatic updates."
             },
-            "UPDATES_FAILED": {
-                "HEADER": "Updates failed",
-                "TEXT": "The last update failed. Please complete the update to resolve the problem.",
-                "RECOVER": "Complete the update and reboot"
+            "UPDATES_FAILED" : {
+                "HEADER" : "Updates failed",
+                "TEXT" : "The last update failed. Please complete the update to resolve the problem.",
+                "RECOVER" : "Complete the update and reboot"
             },
             "UPDATES_NOT_AVAILABLE" : {
                 "EXPIRED_TEXT1" : "The update license expired.",
@@ -3065,17 +3065,17 @@
             "DETAILS" : {
                 "ACTION" : {
                     "EDIT_USER_NAME" : "Edit",
-                    "ADD_DEVICE": "Add Device",
-                    "RELEASE_DEVICE": "Release Device",
+                    "ADD_DEVICE" : "Add Device",
+                    "RELEASE_DEVICE" : "Release Device",
                     "REMOVE_DEVICE" : "{num, select, 0{Remove device} 1{Remove {num} device} other{Remove {num} devices}}"
                 },
-                "TABLE": {
-                    "EMPTY_TABLE": "No device assigned",
-                    "COLUMN": {
-                        "NAME": "Device",
-                        "ONLINE_STATUS": "Online",
-                        "VENDOR": "Vendor",
-                        "IP": "IP Address"
+                "TABLE" : {
+                    "EMPTY_TABLE" : "No device assigned",
+                    "COLUMN" : {
+                        "NAME" : "Device",
+                        "ONLINE_STATUS" : "Online",
+                        "VENDOR" : "Vendor",
+                        "IP" : "IP Address"
                     }
                 },
                 "ACTIVATE_SSL_PROFILE_MSG" : "HTTPS support is not activated for all devices.",
@@ -3087,30 +3087,30 @@
                 "LABEL_AGE" : "Age",
                 "LABEL_PIN" : "PIN",
                 "LABEL_USER_ROLE" : "Role",
-                "USER_ROLE": {
-                    "CHILD": "Child",
-                    "PARENT": "Parent",
-                    "OTHER": "Other"
+                "USER_ROLE" : {
+                    "CHILD" : "Child",
+                    "PARENT" : "Parent",
+                    "OTHER" : "Other"
                 },
                 "LABEL_SELECT_PROFILE" : "Choose a profile for this user",
-                "ADD_DEVICES_HINT": "Add devices to activate parental controls",
-                "SET_BIRTHDAY_HINT": "Please set the birthday for this user",
-                "CHECK_PC_HINT": "Age-appropriate recommendations activated. Please check!",
-                "STANDARD_USER_EXPLAIN": "These settings are valid for all devices that are not explicitly assigned to another user. Changes made here will effect all devices that are not assigned to a user.",
+                "ADD_DEVICES_HINT" : "Add devices to activate parental controls",
+                "SET_BIRTHDAY_HINT" : "Please set the birthday for this user",
+                "CHECK_PC_HINT" : "Age-appropriate recommendations activated. Please check!",
+                "STANDARD_USER_EXPLAIN" : "These settings are valid for all devices that are not explicitly assigned to another user. Changes made here will effect all devices that are not assigned to a user.",
                 "NOTIFICATION" : {
                     "ERROR_SAVE_USER" : "User could not be saved",
                     "PIN_RESET" : "PIN has been removed",
                     "PIN_SET" : "PIN has been set",
                     "PIN_ERROR" : "PIN could not be set"
                 },
-                "PROFILE": {
+                "PROFILE" : {
                     "ACTION" : {
                         "ADD_TIME_RESTRICTIONS" : "Add",
                         "EDIT_ACCESS_RESTRICTIONS" : "Edit",
                         "EDIT_PROFILE_NAME" : "Edit",
                         "EDIT_USAGE_RESTRICTIONS" : "Edit"
                     },
-                    "BONUS_TIME": "(today: + {min} min)",
+                    "BONUS_TIME" : "(today: + {min} min)",
                     "BLACKLIST_EXCEPTIONS" : "As exception, these categories are allowed:",
                     "ERROR_DESCRIPTION" : "Description is too long.",
                     "FILTERING_MODE" : {
@@ -3150,14 +3150,14 @@
             "TABLE" : {
                 "BODY" : {
                     "OPERATING_NONE" : "-",
-                    "YES": "Yes",
-                    "NO": "No",
-                    "YEAR_LABEL": "y",
-                    "NO_BIRTHDAY": "Please set the birthday for this user!"
+                    "YES" : "Yes",
+                    "NO" : "No",
+                    "YEAR_LABEL" : "y",
+                    "NO_BIRTHDAY" : "Please set the birthday for this user!"
                 },
                 "COLUMN" : {
                     "NAME" : "Username",
-                    "ONLINE_STATUS": "Online",
+                    "ONLINE_STATUS" : "Online",
                     "DEVICES" : "Devices",
                     "CONTENT_RESTRICTIONS" : "Content Restrictions",
                     "TIME_RESTRICTIONS" : "Time Restrictions"
@@ -3210,7 +3210,7 @@
                 "LABEL_NAME_SERVER_ENABLED" : "Use VPN provider name servers (if available)",
                 "LABEL_PASSWORD" : "Password",
                 "LABEL_USERNAME" : "Username",
-                "TEXT_EXISTING_CONNECTIONS": "This VPN profile is currently in use by at least on device"
+                "TEXT_EXISTING_CONNECTIONS" : "This VPN profile is currently in use by at least on device"
             },
             "LABEL" : "VPN network",
             "TABLE" : {
@@ -3485,6 +3485,80 @@
                 "NUM_ASSIGNED" : "{num, select, 0{Not assigned to any users.} 1{Assigned to one user} other{Assigned to {num} users}}",
                 "REMOVE_BUTTON" : "You may only delete a user defined whitelist that is not assigned to any users."
             }
+        },
+        "WIREGUARD" : {
+            "LABEL" : "WireGuard",
+            "SWITCH" : {
+                "ON" : "WireGuard on",
+                "OFF" : "WireGuard off"
+            },
+            "STATUS" : {
+                "TITLE" : "Status",
+                "INTERFACE" : "Interface",
+                "SERVICE" : "Service",
+                "WG" : "WireGuard",
+                "PEERS" : "Peers",
+                "PORT" : "Port"
+            },
+            "ENDPOINT" : {
+                "TITLE" : "External access",
+                "TYPE" : "External address type",
+                "HOST" : "Public IP address or DNS name",
+                "TYPES" : {
+                    "FIXED_IP" : "Static IP address",
+                    "DYN_DNS" : "Dynamic DNS provider",
+                    "EBLOCKER_DYN_DNS" : "eBlocker Dynamic DNS"
+                }
+            },
+            "ACTION" : {
+                "SAVE" : "Save"
+            },
+            "PEERS" : {
+                "TITLE" : "Configured WireGuard peers",
+                "EMPTY" : "No WireGuard peers are configured.",
+                "COLUMN" : {
+                    "NAME" : "Peer",
+                    "DEVICE" : "eBlocker device",
+                    "IP" : "WireGuard IP",
+                    "LAN" : "LAN access"
+                },
+                "UNBOUND" : "Not assigned",
+                "UNKNOWN_DEVICE" : "Unknown device",
+                "YES" : "Yes",
+                "NO" : "No",
+                "ACTIVITY" : {
+                    "LABEL" : "Activity",
+                    "ACTIVE" : "Active",
+                    "RECENTLY_SEEN" : "Recently seen",
+                    "NEVER_CONNECTED" : "Never connected",
+                    "UNAVAILABLE" : "Unavailable"
+                },
+                "LATEST_HANDSHAKE" : "Latest handshake",
+                "RX" : "Received",
+                "TX" : "Sent"
+            },
+            "NOTIFICATION" : {
+                "DEVICES_LOAD_FAILED" : "Could not load device data for WireGuard assignment.",
+                "PEERS_LOAD_FAILED" : "Could not load WireGuard peers.",
+                "STATUS_LOAD_FAILED" : "Could not load WireGuard status.",
+                "STATUS_CHANGE_FAILED" : "Could not change WireGuard status.",
+                "ENDPOINT_LOAD_FAILED" : "Could not load WireGuard endpoint configuration.",
+                "ENDPOINT_SAVE_FAILED" : "Could not save WireGuard endpoint configuration.",
+                "ENDPOINT_SAVED" : "WireGuard endpoint configuration saved."
+            }
+        },
+        "VPN_HOME_DYNDNS" : {
+            "LABEL" : "DynDNS",
+            "TITLE" : "External access / DynDNS",
+            "PLACEHOLDER" : "The shared DynDNS configuration for eBlocker Mobile will be configured here."
+        },
+        "VPN_HOME_OPENVPN" : {
+            "LABEL" : "OpenVPN"
+        },
+        "VPN_HOME_TESTS" : {
+            "LABEL" : "Tests",
+            "TITLE" : "Tests and diagnostics",
+            "PLACEHOLDER" : "Shared connection and diagnostic tests for OpenVPN and WireGuard will be consolidated here."
         }
     },
     "HELP_ICON" : {
@@ -3785,17 +3859,17 @@
         },
         "NETWORK_IPV6" : {
             "DETAILS" : {
-				"P1": "In IPv6 networks, all data packets are sent to the router with the highest priority.",
-                "P2": "As soon as IPv6 support has been activated, the eBlocker announces itself as a router with priority \"high\".",
-                "P3": "This routes all IPv6 data packets to the eBlocker, allowing it to analyze and protect them.",
-                "P4": "If IPv6 support is deactivated in the eBlocker, it can only protect IPv4 data packets.",
-                "P5": "All data packets based on IPv6 are then ignored and cannot be protected.",
-                "P6": "We recommend to always activate IPv6 routing to eBlocker for complete protection."
+                "P1" : "In IPv6 networks, all data packets are sent to the router with the highest priority.",
+                "P2" : "As soon as IPv6 support has been activated, the eBlocker announces itself as a router with priority \"high\".",
+                "P3" : "This routes all IPv6 data packets to the eBlocker, allowing it to analyze and protect them.",
+                "P4" : "If IPv6 support is deactivated in the eBlocker, it can only protect IPv4 data packets.",
+                "P5" : "All data packets based on IPv6 are then ignored and cannot be protected.",
+                "P6" : "We recommend to always activate IPv6 routing to eBlocker for complete protection."
             },
-            "OVERVIEW": {
-                "P1": "The new Internet protocol IPv6 is also supported by eBlocker.",
-                "P2": "To protect IPv6 traffic, the traffic must be routed to the eBlocker.",
-                "TITLE": "IPv6"
+            "OVERVIEW" : {
+                "P1" : "The new Internet protocol IPv6 is also supported by eBlocker.",
+                "P2" : "To protect IPv6 traffic, the traffic must be routed to the eBlocker.",
+                "TITLE" : "IPv6"
             }
         },
         "PARENTAL_CONTROL" : {
@@ -3905,4 +3979,3 @@
     "PARENTAL_CONTROL_USER_NAME" : "{{ name }}",
     "PARENTAL_CONTROL_USER_LIMBO_NAME" : "Locked"
 }
-

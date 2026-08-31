@@ -497,6 +497,28 @@
                 "TEXT" : "Are you sure you want to revoke the eBlocker Mobile configuration?",
                 "TITLE" : "Revoke configuration"
             },
+            "OPENVPN" : {
+                "TAB" : "OpenVPN"
+            },
+            "WIREGUARD" : {
+                "TAB" : "WireGuard",
+                "AVAILABLE" : "A WireGuard configuration is available for this device.",
+                "PEER" : "Peer",
+                "ADDRESS" : "Address",
+                "LAN_ACCESS" : "LAN access",
+                "YES" : "Yes",
+                "NO" : "No",
+                "NONE" : "No WireGuard configuration exists for this device.",
+                "SHOW_QR" : "Show QR code",
+                "HIDE_QR" : "Hide QR code",
+                "QR_ALT" : "WireGuard configuration as QR code",
+                "CREATE" : "Create WireGuard configuration",
+                "DELETE" : "Delete WireGuard configuration",
+                "DELETE_CONFIRM_TITLE" : "Delete WireGuard configuration?",
+                "DELETE_CONFIRM_TEXT" : "Do you really want to delete the WireGuard configuration for this device?",
+                "DELETE_CONFIRM_OK" : "Yes, delete",
+                "DELETE_CONFIRM_CANCEL" : "Cancel"
+            },
             "TITLE" : "eBlocker Mobile",
             "TOOLTIP" : "Here you can download the eBlocker Mobile configuration for this device."
         }

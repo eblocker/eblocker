@@ -82,6 +82,45 @@ public class JedisDataSourceTest {
     }
 
     @Test
+    public void testWireGuardServerState() {
+        String key = "WireGuardServerEnabled";
+
+        // Default if the key does not exist is OFF.
+        Mockito.when(jedis.get(key)).thenReturn(null);
+        assertFalse(dataSource.getWireGuardServerState());
+
+        dataSource.setWireGuardServerState(true);
+        dataSource.setWireGuardServerState(false);
+
+        ArgumentCaptor<String> valueCaptor =
+                ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(
+                jedis,
+                Mockito.times(2)
+        ).set(
+                Mockito.eq(key),
+                valueCaptor.capture()
+        );
+
+        String enabledValue =
+                valueCaptor.getAllValues().get(0);
+
+        String disabledValue =
+                valueCaptor.getAllValues().get(1);
+
+        assertNotEquals(enabledValue, disabledValue);
+
+        Mockito.when(jedis.get(key))
+                .thenReturn(enabledValue);
+        assertTrue(dataSource.getWireGuardServerState());
+
+        Mockito.when(jedis.get(key))
+                .thenReturn(disabledValue);
+        assertFalse(dataSource.getWireGuardServerState());
+    }
+
+    @Test
     public void testDeviceWithoutPauseFlagNotPaused() {
         String deviceId = "device:112233445566";
 

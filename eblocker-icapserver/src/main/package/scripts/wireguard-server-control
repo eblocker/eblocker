@@ -1,0 +1,340 @@
+#!/bin/bash
+
+set -euo pipefail
+
+WG_IF="wg0"
+WG_DIR="/etc/wireguard"
+WG_CONF="${WG_DIR}/${WG_IF}.conf"
+WG_PRIV="${WG_DIR}/${WG_IF}.key"
+WG_PUB="${WG_DIR}/${WG_IF}.pub"
+
+WG_COMMAND="/usr/bin/wg"
+WG_QUICK_COMMAND="/usr/bin/wg-quick"
+SYSTEMCTL_COMMAND="/bin/systemctl"
+
+WG_SERVICE="wg-quick@${WG_IF}.service"
+
+ensure_wireguard_tools() {
+    if [ ! -x "$WG_COMMAND" ]; then
+        echo "WireGuard command not found: $WG_COMMAND" >&2
+        return 1
+    fi
+
+    if [ ! -x "$WG_QUICK_COMMAND" ]; then
+        echo "WireGuard wg-quick command not found: $WG_QUICK_COMMAND" >&2
+        return 1
+    fi
+}
+
+ensure_keys() {
+    ensure_wireguard_tools
+
+    install -d -m 700 "$WG_DIR"
+
+    if [ ! -s "$WG_PRIV" ]; then
+        umask 077
+
+        PRIVATE_KEY="$("$WG_COMMAND" genkey)"
+
+        printf '%s\n' "$PRIVATE_KEY" > "$WG_PRIV"
+        printf '%s\n' "$PRIVATE_KEY" \
+            | "$WG_COMMAND" pubkey > "$WG_PUB"
+
+        chmod 600 "$WG_PRIV"
+        chmod 600 "$WG_PUB"
+
+    elif [ ! -s "$WG_PUB" ]; then
+        umask 077
+
+        "$WG_COMMAND" pubkey \
+            < "$WG_PRIV" \
+            > "$WG_PUB"
+
+        chmod 600 "$WG_PUB"
+    fi
+}
+
+ensure_conf() {
+    ensure_keys
+
+    if [ ! -s "$WG_CONF" ]; then
+        umask 077
+
+        cat > "$WG_CONF" <<CONF
+[Interface]
+PrivateKey = $(cat "$WG_PRIV")
+Address = 10.13.13.1/24
+ListenPort = 51820
+CONF
+
+        chmod 600 "$WG_CONF"
+    fi
+}
+
+start_server() {
+    ensure_conf
+
+    "$SYSTEMCTL_COMMAND" start "$WG_SERVICE"
+}
+
+stop_server() {
+    if "$SYSTEMCTL_COMMAND" is-active \
+        --quiet "$WG_SERVICE" 2>/dev/null
+    then
+        "$SYSTEMCTL_COMMAND" stop "$WG_SERVICE"
+    fi
+}
+
+restart_server() {
+    ensure_conf
+
+    if "$SYSTEMCTL_COMMAND" is-active \
+        --quiet "$WG_SERVICE" 2>/dev/null
+    then
+        "$SYSTEMCTL_COMMAND" restart "$WG_SERVICE"
+    else
+        "$SYSTEMCTL_COMMAND" start "$WG_SERVICE"
+    fi
+}
+
+apply_peers() {
+    PEER_FILE="${1:-}"
+
+    case "$PEER_FILE" in
+        /tmp/eblocker-wireguard-peers-*.conf)
+            PEER_NAME="${PEER_FILE#/tmp/}"
+
+            case "$PEER_NAME" in
+                */*)
+                    echo "Invalid peer config path" >&2
+                    return 2
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Invalid peer config path" >&2
+            return 2
+            ;;
+    esac
+
+    if [ ! -e "$PEER_FILE" ]; then
+        echo "Peer config file not found" >&2
+        return 3
+    fi
+
+    if [ -L "$PEER_FILE" ] || [ ! -f "$PEER_FILE" ]; then
+        echo "Peer config must be a regular file" >&2
+        return 4
+    fi
+
+    ensure_conf
+
+    TMP_CONF="$(mktemp "$WG_DIR/.${WG_IF}.conf.XXXXXX")"
+
+    trap 'rm -f "${TMP_CONF:-}" "${PEER_FILE:-}"' EXIT INT TERM
+
+    # Preserve only the interface section from the current configuration.
+    awk '
+        /^\[Peer\][[:space:]]*$/ { exit }
+        { print }
+    ' "$WG_CONF" > "$TMP_CONF"
+
+    # Add the complete peer set supplied by the backend.
+    printf "\n" >> "$TMP_CONF"
+    cat "$PEER_FILE" >> "$TMP_CONF"
+
+    chmod 600 "$TMP_CONF"
+
+    # TMP_CONF and WG_CONF are in the same directory, so the replacement
+    # stays on the same filesystem.
+    mv "$TMP_CONF" "$WG_CONF"
+
+    rm -f "$PEER_FILE"
+    trap - EXIT INT TERM
+
+    # Keep the WG-03 systemd lifecycle as the single runtime authority.
+    if "$SYSTEMCTL_COMMAND" is-active \
+        --quiet "$WG_SERVICE" 2>/dev/null
+    then
+        restart_server
+    fi
+}
+
+public_key() {
+    ensure_keys
+    cat "$WG_PUB"
+}
+
+status_json() {
+    SERVICE_STATE="unknown"
+    WG_STATE="down"
+    PEERS=0
+    ERROR=""
+    PEER_TELEMETRY_JSON="[]"
+
+    if [ -x "$SYSTEMCTL_COMMAND" ]; then
+        SERVICE_STATE="$(
+            "$SYSTEMCTL_COMMAND" is-active "$WG_SERVICE" 2>/dev/null \
+            || true
+        )"
+
+        if [ -z "$SERVICE_STATE" ]; then
+            SERVICE_STATE="unknown"
+        fi
+    else
+        ERROR="systemctl-missing"
+    fi
+
+    if [ -x "$WG_COMMAND" ]; then
+        if "$WG_COMMAND" show "$WG_IF" >/dev/null 2>&1; then
+            WG_STATE="up"
+
+            PEER_KEYS="$(
+                "$WG_COMMAND" show "$WG_IF" peers 2>/dev/null \
+                || true
+            )"
+
+            PEERS="$(
+                printf '%s\n' "$PEER_KEYS" \
+                    | awk 'NF { count++ } END { print count + 0 }'
+            )"
+
+            LATEST_HANDSHAKES="$(
+                "$WG_COMMAND" show "$WG_IF" latest-handshakes \
+                    2>/dev/null \
+                    || true
+            )"
+
+            TRANSFER="$(
+                "$WG_COMMAND" show "$WG_IF" transfer \
+                    2>/dev/null \
+                    || true
+            )"
+
+            PEER_TELEMETRY_JSON="["
+            FIRST_TELEMETRY=1
+
+            while IFS= read -r PEER_KEY; do
+                [ -n "$PEER_KEY" ] || continue
+
+                if [[ ! "$PEER_KEY" =~ ^[A-Za-z0-9+/]{43}=$ ]]; then
+                    continue
+                fi
+
+                LATEST_HANDSHAKE="$(
+                    printf '%s\n' "$LATEST_HANDSHAKES" \
+                        | awk -v key="$PEER_KEY" \
+                            '$1 == key { print $2; exit }'
+                )"
+
+                RX_BYTES="$(
+                    printf '%s\n' "$TRANSFER" \
+                        | awk -v key="$PEER_KEY" \
+                            '$1 == key { print $2; exit }'
+                )"
+
+                TX_BYTES="$(
+                    printf '%s\n' "$TRANSFER" \
+                        | awk -v key="$PEER_KEY" \
+                            '$1 == key { print $3; exit }'
+                )"
+
+                case "$LATEST_HANDSHAKE" in
+                    ''|*[!0-9]*)
+                        LATEST_HANDSHAKE=0
+                        ;;
+                esac
+
+                case "$RX_BYTES" in
+                    ''|*[!0-9]*)
+                        RX_BYTES=0
+                        ;;
+                esac
+
+                case "$TX_BYTES" in
+                    ''|*[!0-9]*)
+                        TX_BYTES=0
+                        ;;
+                esac
+
+                if [ "$FIRST_TELEMETRY" -eq 0 ]; then
+                    PEER_TELEMETRY_JSON="${PEER_TELEMETRY_JSON},"
+                fi
+
+                PEER_TELEMETRY_JSON="${PEER_TELEMETRY_JSON}"\
+"{\"publicKey\":\"${PEER_KEY}\","\
+"\"latestHandshakeEpochSeconds\":${LATEST_HANDSHAKE},"\
+"\"rxBytes\":${RX_BYTES},"\
+"\"txBytes\":${TX_BYTES}}"
+
+                FIRST_TELEMETRY=0
+
+            done <<< "$PEER_KEYS"
+
+            PEER_TELEMETRY_JSON="${PEER_TELEMETRY_JSON}]"
+        fi
+    else
+        if [ -n "$ERROR" ]; then
+            ERROR="${ERROR},wg-command-missing"
+        else
+            ERROR="wg-command-missing"
+        fi
+    fi
+
+    if [ ! -x "$WG_QUICK_COMMAND" ]; then
+        if [ -n "$ERROR" ]; then
+            ERROR="${ERROR},wg-quick-missing"
+        else
+            ERROR="wg-quick-missing"
+        fi
+    fi
+
+    printf \
+        '{"iface":"%s","service":"%s","wg":"%s","peers":%s,"error":"%s","peerTelemetry":%s}\n' \
+        "$WG_IF" \
+        "$SERVICE_STATE" \
+        "$WG_STATE" \
+        "$PEERS" \
+        "$ERROR" \
+        "$PEER_TELEMETRY_JSON"
+}
+
+MODE="${1:-}"
+
+case "$MODE" in
+
+    init)
+        ensure_conf
+        ;;
+
+    start)
+        start_server
+        ;;
+
+    stop)
+        stop_server
+        ;;
+
+    restart)
+        restart_server
+        ;;
+
+    apply-peers)
+        apply_peers "${2:-}"
+        ;;
+
+    public-key)
+        public_key
+        ;;
+
+    status-json)
+        status_json
+        ;;
+
+    *)
+        echo \
+            "Usage: $0 {init|start|stop|restart|apply-peers|public-key|status-json}" \
+            >&2
+        exit 1
+        ;;
+esac

@@ -171,8 +171,12 @@ import TimeLangComponent from './components/system/timeLang/time-language.compon
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
 import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
+import VpnHomeComponent from './components/vpnHome/vpn-home.component';
 import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.component';
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
+import VpnHomeDynDnsComponent from './components/vpnHome/dyndns/vpn-home-dyndns.component';
+import VpnHomeTestsComponent from './components/vpnHome/tests/vpn-home-tests.component';
+import WireGuardStatusComponent from './components/wireguard/wireguard-status.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
 import SslCertificateComponent from './components/ssl/certificate/ssl-certificate.component';
@@ -270,6 +274,7 @@ import TrustedDomainsService from './service/ssl/TrustedDomainsService';
 import ManualRecordingService from './service/recording/ManualRecordingService';
 import UpsellService from './service/upsell/UpsellService';
 import VpnHomeService from './service/vpn/VpnHomeService';
+import WireGuardService from './service/vpn/WireGuardService';
 import CustomerInfoService from './service/customerInfo/CustomerInfoService';
 import UrlService from './service/routing/UrlService';
 import TableService from './service/table/TableService';
@@ -449,8 +454,12 @@ angular.module('eblocker.adminconsole', [
     .component('configBackupComponent', ConfigBackupComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)
     .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
+    .component('vpnHomeComponent', VpnHomeComponent)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
+    .component('vpnHomeDynDnsComponent', VpnHomeDynDnsComponent)
+    .component('vpnHomeTestsComponent', VpnHomeTestsComponent)
+    .component('wireGuardStatusComponent', WireGuardStatusComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('sslStatusComponent', SslStatusComponent)
     .component('sslCertificateComponent', SslCertificateComponent)
@@ -556,6 +565,7 @@ angular.module('eblocker.adminconsole', [
     .factory('DataCachingService', DataCachingService)
     .factory('UpsellService', UpsellService)
     .factory('VpnHomeService', VpnHomeService)
+    .factory('WireGuardService', WireGuardService)
     .factory('CustomerInfoService', CustomerInfoService)
     .factory('UrlService', UrlService)
     .factory('TableService', TableService)

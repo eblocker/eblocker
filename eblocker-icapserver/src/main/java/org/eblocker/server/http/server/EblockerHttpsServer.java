@@ -64,6 +64,8 @@ import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.controller.WireGuardDashboardController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -147,6 +149,8 @@ public class EblockerHttpsServer implements Preprocessor {
     private final AuthenticationController authenticationController;
     private final OpenVpnController openVpnController;
     private final OpenVpnServerController openVpnServerController;
+    private final WireGuardServerController wireGuardServerController;
+    private final WireGuardDashboardController wireGuardDashboardController;
     private final ControlBarController controlBarController;
     private final SplashController splashController;
     private StartupStatusReporter startupStatusReporter;
@@ -215,6 +219,8 @@ public class EblockerHttpsServer implements Preprocessor {
                                NetworkController networkController,
                                OpenVpnController openVpnController,
                                OpenVpnServerController openVpnServerController,
+                               WireGuardServerController wireGuardServerController,
+                               WireGuardDashboardController wireGuardDashboardController,
                                PageContextController pageContextController,
                                ParentalControlController parentalControlController,
                                ParentalControlFilterListsController filterListsController,
@@ -307,6 +313,8 @@ public class EblockerHttpsServer implements Preprocessor {
 
         this.openVpnController = openVpnController;
         this.openVpnServerController = openVpnServerController;
+        this.wireGuardServerController = wireGuardServerController;
+        this.wireGuardDashboardController = wireGuardDashboardController;
 
         this.controlBarController = controlBarController;
 
@@ -1446,6 +1454,55 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("setPortForwarding", HttpMethod.PUT)
                 .name("adminconsole.vpn.upnp.portForwarding");
 
+        // ** Adminconsole: WireGuard
+        // All route names intentionally use adminconsole.* so that the
+        // SecurityProcessor requires an authenticated ADMINCONSOLE token.
+        server
+                .uri("/api/adminconsole/wireguard/status", wireGuardServerController)
+                .action("getStatus", HttpMethod.GET)
+                .name("adminconsole.wireguard.status.get");
+        server
+                .uri("/api/adminconsole/wireguard/enable", wireGuardServerController)
+                .action("enable", HttpMethod.POST)
+                .name("adminconsole.wireguard.enable.post");
+        server
+                .uri("/api/adminconsole/wireguard/disable", wireGuardServerController)
+                .action("disable", HttpMethod.POST)
+                .name("adminconsole.wireguard.disable.post");
+        server
+                .uri("/api/adminconsole/wireguard/peers", wireGuardServerController)
+                .action("getPeers", HttpMethod.GET)
+                .name("adminconsole.wireguard.peers.get");
+        server
+                .uri("/api/adminconsole/wireguard/peers", wireGuardServerController)
+                .action("createPeer", HttpMethod.POST)
+                .name("adminconsole.wireguard.peers.create");
+        server
+                .uri("/api/adminconsole/wireguard/peers/{id}", wireGuardServerController)
+                .action("deletePeer", HttpMethod.DELETE)
+                .name("adminconsole.wireguard.peers.delete");
+        server
+                .uri("/api/adminconsole/wireguard/peers/{id}/lanAccess", wireGuardServerController)
+                .action("setLanAccess", HttpMethod.PUT)
+                .name("adminconsole.wireguard.peers.lanAccess.put");
+        server
+                .uri("/api/adminconsole/wireguard/endpoint", wireGuardServerController)
+                .action("getEndpointConfig", HttpMethod.GET)
+                .name("adminconsole.wireguard.endpoint.get");
+        server
+                .uri("/api/adminconsole/wireguard/endpoint", wireGuardServerController)
+                .action("setEndpointConfig", HttpMethod.PUT)
+                .name("adminconsole.wireguard.endpoint.put");
+        server
+                .uri("/api/adminconsole/wireguard/peers/{id}/clientConfig", wireGuardServerController)
+                .action("getClientConfig", HttpMethod.GET)
+                .name("adminconsole.wireguard.peers.clientConfig.get");
+        server
+                .uri("/api/adminconsole/wireguard/peers/{id}/qrcode", wireGuardServerController)
+                .action("getPeerQrCode", HttpMethod.GET)
+                .name("adminconsole.wireguard.peers.qrcode.get")
+                .noSerialization();
+
         // ** New Adminconsole: eBlocker Mobile test connection
         server
                 .uri("/api/adminconsole/openvpn/test", mobileConnectionCheckController)
@@ -2030,6 +2087,45 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/users/{id}/changepin", userController)
                 .action("changePin", HttpMethod.POST)
                 .name("dashboard.users.changePin.route");
+
+        // WireGuard device dashboard.
+        // Device authorization is enforced before the controller runs.
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/status", wireGuardDashboardController)
+                .action("getStatus", HttpMethod.GET)
+                .name("dashboard.wireguard.status.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer", wireGuardDashboardController)
+                .action("getPeer", HttpMethod.GET)
+                .name("dashboard.wireguard.peer.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer", wireGuardDashboardController)
+                .action("createPeer", HttpMethod.POST)
+                .name("dashboard.wireguard.peer.create")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer", wireGuardDashboardController)
+                .action("deletePeer", HttpMethod.DELETE)
+                .name("dashboard.wireguard.peer.delete")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer/lanAccess", wireGuardDashboardController)
+                .action("setLanAccess", HttpMethod.PUT)
+                .name("dashboard.wireguard.peer.lanAccess.put")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer/clientConfig", wireGuardDashboardController)
+                .action("getClientConfig", HttpMethod.GET)
+                .name("dashboard.wireguard.peer.clientConfig.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID);
+        server
+                .uri("/api/dashboard/wireguard/{deviceId}/peer/qrcode", wireGuardDashboardController)
+                .action("getPeerQrCode", HttpMethod.GET)
+                .name("dashboard.wireguard.peer.qrcode.get")
+                .flag(DashboardAuthorizationProcessor.VERIFY_DEVICE_ID)
+                .noSerialization();
 
         // eBlocker mobile
         server

@@ -76,9 +76,9 @@ public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceU
     public void testEnableFirewallSuccess() throws IOException, InterruptedException {
         Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv4")).thenReturn(0);
         Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv6")).thenReturn(0);
-        networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), false, false, false, false, false);
+        networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), new HashSet<>(), false, false, false, false, false, false);
         ArgumentCaptor<Supplier<Boolean>> captor = ArgumentCaptor.forClass(Supplier.class);
-        Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
+        Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyCollection(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertTrue(captor.getValue().get());
         Mockito.verify(firewallConfigurationIp6).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertTrue(captor.getValue().get());
@@ -88,9 +88,9 @@ public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceU
     public void testEnableFirewallFailure() throws IOException, InterruptedException {
         Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv4")).thenReturn(1);
         Mockito.when(scriptRunner.runScript(APPLY_FIREWALL_COMMAND, "IPv6")).thenReturn(1);
-        networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), false, false, false, false, false);
+        networkServices.enableFirewall(new HashSet<>(), new HashSet<>(), new HashSet<>(), false, false, false, false, false, false);
         ArgumentCaptor<Supplier<Boolean>> captor = ArgumentCaptor.forClass(Supplier.class);
-        Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
+        Mockito.verify(firewallConfiguration).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyCollection(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertFalse(captor.getValue().get());
         Mockito.verify(firewallConfigurationIp6).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertFalse(captor.getValue().get());

@@ -122,6 +122,8 @@ import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.controller.WireGuardDashboardController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -154,6 +156,7 @@ import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.MessageCenterService;
 import org.eblocker.server.http.service.OpenVpnServerService;
+import org.eblocker.server.http.service.WireGuardServerService;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.eblocker.server.http.service.ParentalControlEnforcerService;
 import org.eblocker.server.http.service.ParentalControlSearchEngineConfigService;
@@ -273,6 +276,7 @@ public class EblockerModule extends BaseModule {
         bind(NetworkStateMachine.class);
         bind(OpenVpnAddressListener.class);
         bind(OpenVpnServerService.class);
+        bind(WireGuardServerService.class);
         bind(OpenVpnService.class);
         bind(ParentalControlAccessRestrictionsService.class);
         bind(ParentalControlEnforcerService.class);
@@ -630,6 +634,18 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public OpenVpnServerController openVpnServerController() {
         return ControllerWrapperFactory.wrap(OpenVpnServerController.class);
+    }
+
+    @Provides
+    @Singleton
+    public WireGuardServerController wireGuardServerController() {
+        return ControllerWrapperFactory.wrap(WireGuardServerController.class);
+    }
+
+    @Provides
+    @Singleton
+    public WireGuardDashboardController wireGuardDashboardController() {
+        return ControllerWrapperFactory.wrap(WireGuardDashboardController.class);
     }
 
     @Provides

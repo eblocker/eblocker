@@ -25,6 +25,7 @@ import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.NetworkIp6Configuration;
 import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
@@ -202,13 +203,40 @@ public abstract class NetworkServicesBase implements NetworkServices {
         arpSpooferFuture = null;
     }
 
-    protected abstract void enableFirewall(Set<Device> allDevices, Collection<OpenVpnClientState> vpnClients, boolean masquerade, boolean enableSSL, boolean enableEblockerDns, boolean enableEblockerMobile, boolean enableMalwareSet);
+    protected abstract void enableFirewall(Set<Device> allDevices,
+                                           Collection<OpenVpnClientState> vpnClients,
+                                           Collection<WireGuardPeer> wireGuardPeers,
+                                           boolean masquerade,
+                                           boolean enableSSL,
+                                           boolean enableEblockerDns,
+                                           boolean enableEblockerMobile,
+                                           boolean enableWireGuardServer,
+                                           boolean enableMalwareSet);
 
     @Override
-    public void enableFirewall(boolean masquerade, boolean enableSSL, boolean enableEblockerMobile, boolean enableMalwareSet) {
+    public void enableFirewall(boolean masquerade,
+                               boolean enableSSL,
+                               boolean enableEblockerMobile,
+                               boolean enableWireGuardServer,
+                               boolean enableMalwareSet) {
         Set<Device> allDevices = getDevices();
-        Collection<OpenVpnClientState> vpnClients = dataSource.getAll(OpenVpnClientState.class);
-        enableFirewall(allDevices, vpnClients, masquerade, enableSSL, eblockerDnsServer.isEnabled(), enableEblockerMobile, enableMalwareSet);
+        Collection<OpenVpnClientState> vpnClients =
+                dataSource.getAll(OpenVpnClientState.class);
+
+        Collection<WireGuardPeer> wireGuardPeers =
+                dataSource.getAll(WireGuardPeer.class);
+
+        enableFirewall(
+                allDevices,
+                vpnClients,
+                wireGuardPeers,
+                masquerade,
+                enableSSL,
+                eblockerDnsServer.isEnabled(),
+                enableEblockerMobile,
+                enableWireGuardServer,
+                enableMalwareSet
+        );
     }
 
     public boolean healDevice(Device device) {

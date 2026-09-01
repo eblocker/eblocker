@@ -69,6 +69,30 @@ public class JedisDataSourceTest {
         assertEquals(5L, dataSource.nextId(Entity.class));
     }
 
+    @Test
+    public void testGetIdSequence() {
+        Mockito.when(jedis.get("Entity:sequence")).thenReturn("5");
+        assertEquals(
+                Integer.valueOf(5),
+                dataSource.getIdSequence(Entity.class)
+        );
+    }
+
+    @Test
+    public void testGetIdSequenceMissing() {
+        Mockito.when(jedis.get("Entity:sequence")).thenReturn(null);
+        assertNull(dataSource.getIdSequence(Entity.class));
+    }
+
+    @Test
+    public void testGetIdSequenceRejectsCorruptedValue() {
+        Mockito.when(jedis.get("Entity:sequence")).thenReturn("not-an-integer");
+        assertThrows(
+                NumberFormatException.class,
+                () -> dataSource.getIdSequence(Entity.class)
+        );
+    }
+
     public static class Entity {
         private int id;
 

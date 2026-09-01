@@ -88,7 +88,32 @@ public class WireGuardBackupProvider extends BackupProvider {
                     )
             );
 
+            int maxPeerId =
+                    peers.stream()
+                            .mapToInt(WireGuardPeer::getId)
+                            .max()
+                            .orElse(0);
+
+            Integer peerIdSequence =
+                    dataSource.getIdSequence(
+                            WireGuardPeer.class
+                    );
+
+            // A missing sequence is a safe legacy state. Initialize it to the
+            // highest persisted peer ID so the next INCR cannot collide.
+            if (peerIdSequence == null) {
+                peerIdSequence = maxPeerId;
+            }
+
+            if (peerIdSequence < maxPeerId) {
+                throw new IOException(
+                        "WireGuard peer ID sequence is behind "
+                                + "the highest persisted peer ID."
+                );
+            }
+
             backup.setPeers(peers);
+            backup.setPeerIdSequence(peerIdSequence);
             backup.setServerPrivateKey(
                     controlService.exportPrivateKeyForBackup()
             );
@@ -97,6 +122,7 @@ public class WireGuardBackupProvider extends BackupProvider {
             // Never serialize peer private/preshared keys without Boris'
             // password-derived JsonEncryptionModule.
             backup.setPeers(new ArrayList<>());
+            backup.setPeerIdSequence(null);
             backup.setServerPrivateKey(null);
             backup.setSecretsIncluded(false);
         }
@@ -273,6 +299,29 @@ public class WireGuardBackupProvider extends BackupProvider {
                 )
         );
 
+        int maxPeerId =
+                normalizedPeers.stream()
+                        .mapToInt(WireGuardPeer::getId)
+                        .max()
+                        .orElse(0);
+
+        Integer peerIdSequence =
+                backup.getPeerIdSequence();
+
+        // Compatibility for early local V6 backups created before allocator
+        // preservation was added.
+        if (peerIdSequence == null) {
+            peerIdSequence = maxPeerId;
+        }
+
+        if (peerIdSequence < maxPeerId) {
+            throw corrupted(
+                    "WireGuard peer ID sequence is behind "
+                            + "the highest restored peer ID"
+            );
+        }
+
+        normalized.setPeerIdSequence(peerIdSequence);
         normalized.setPeers(normalizedPeers);
 
         return normalized;
@@ -409,8 +458,6 @@ public class WireGuardBackupProvider extends BackupProvider {
                     WireGuardPeer.class
             );
 
-            int maxId = 0;
-
             for (WireGuardPeer peer :
                     backup.getPeers()) {
 
@@ -425,18 +472,23 @@ public class WireGuardBackupProvider extends BackupProvider {
                             "Could not persist restored WireGuard peer."
                     );
                 }
+            }
 
-                maxId = Math.max(
-                        maxId,
-                        peer.getId()
+            Integer peerIdSequence =
+                    backup.getPeerIdSequence();
+
+            if (peerIdSequence == null) {
+                throw new IllegalStateException(
+                        "Validated WireGuard backup has no peer ID sequence."
                 );
             }
 
-            // Jedis nextId() increments first, so sequence == max restored id
-            // guarantees the next peer gets max+1.
+            // Preserve allocator history exactly. Redis nextId() increments
+            // first: sequence 5 must still yield peer ID 6 after restore even
+            // if active peers only have IDs 1 and 3.
             dataSource.setIdSequence(
                     WireGuardPeer.class,
-                    maxId
+                    peerIdSequence
             );
 
             WireGuardEndpointConfig endpoint =

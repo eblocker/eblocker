@@ -1,5 +1,7 @@
 package org.eblocker.server.http.backup;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Charsets;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.backup.BackupWarning;
@@ -16,10 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,6 +122,12 @@ class WireGuardBackupProviderTest extends BackupProviderTestBase {
                 Arrays.asList(peer7, peer1)
         );
 
+        // Deliberately ahead of max active peer ID 7. Deleted peer IDs must
+        // not be made reusable by backup/restore.
+        Mockito.when(
+                dataSource.getIdSequence(WireGuardPeer.class)
+        ).thenReturn(9);
+
         Mockito.when(
                 dataSource.get(WireGuardEndpointConfig.class)
         ).thenReturn(endpoint);
@@ -168,6 +179,7 @@ class WireGuardBackupProviderTest extends BackupProviderTestBase {
             assertFalse(rawJson.contains(PSK_1));
             assertFalse(rawJson.contains(SERVER_KEY));
             assertTrue(rawJson.contains("\"secretsIncluded\":true"));
+            assertTrue(rawJson.contains("\"peerIdSequence\":9"));
         }
     }
 
@@ -277,7 +289,7 @@ class WireGuardBackupProviderTest extends BackupProviderTestBase {
                 dataSource
         ).setIdSequence(
                 WireGuardPeer.class,
-                7
+                9
         );
 
         Mockito.verify(
@@ -301,6 +313,89 @@ class WireGuardBackupProviderTest extends BackupProviderTestBase {
         provider.finishImport();
 
         Mockito.verify(serverService).enable();
+    }
+
+    @Test
+    void exportRejectsSequenceBehindPersistedPeers()
+            throws IOException {
+
+        Mockito.when(
+                dataSource.getIdSequence(WireGuardPeer.class)
+        ).thenReturn(6);
+
+        IOException exception =
+                assertThrows(
+                        IOException.class,
+                        () -> exportBackup(provider)
+                );
+
+        assertTrue(
+                exception.getMessage().contains(
+                        "sequence is behind"
+                )
+        );
+
+        Mockito.verify(
+                controlService,
+                Mockito.never()
+        ).exportPrivateKeyForBackup();
+    }
+
+    @Test
+    void earlyV6BackupWithoutSequenceFallsBackToMaxPeerId()
+            throws IOException {
+
+        byte[] backup = rewritePeerIdSequence(
+                exportBackup(provider),
+                null
+        );
+
+        Mockito.clearInvocations(
+                dataSource,
+                serverService,
+                controlService,
+                clientService
+        );
+
+        provider.prepareImport();
+        importBackup(backup, provider);
+
+        Mockito.verify(
+                dataSource
+        ).setIdSequence(
+                WireGuardPeer.class,
+                7
+        );
+    }
+
+    @Test
+    void importedSequenceBehindPeerIdsIsRejectedBeforeMutation()
+            throws IOException {
+
+        byte[] backup = rewritePeerIdSequence(
+                exportBackup(provider),
+                6
+        );
+
+        Mockito.clearInvocations(
+                dataSource,
+                controlService
+        );
+
+        assertThrows(
+                CorruptedBackupException.class,
+                () -> verifyBackup(backup, provider)
+        );
+
+        Mockito.verify(
+                dataSource,
+                Mockito.never()
+        ).deleteAll(WireGuardPeer.class);
+
+        Mockito.verify(
+                controlService,
+                Mockito.never()
+        ).restorePrivateKeyForBackup(Mockito.any());
     }
 
     @Test
@@ -401,6 +496,47 @@ class WireGuardBackupProviderTest extends BackupProviderTestBase {
         ).restorePrivateKeyForBackup(
                 Mockito.any()
         );
+    }
+
+    private byte[] rewritePeerIdSequence(
+            byte[] backup,
+            Integer sequence) throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try (JarInputStream input =
+                     new JarInputStream(
+                             new ByteArrayInputStream(backup))) {
+
+            JarEntry sourceEntry = input.getNextJarEntry();
+            assertNotNull(sourceEntry);
+
+            ObjectNode root =
+                    (ObjectNode) mapper.readTree(
+                            input.readAllBytes()
+                    );
+
+            if (sequence == null) {
+                root.remove("peerIdSequence");
+            } else {
+                root.put("peerIdSequence", sequence);
+            }
+
+            ByteArrayOutputStream bytes =
+                    new ByteArrayOutputStream();
+
+            try (JarOutputStream output =
+                         new JarOutputStream(bytes)) {
+
+                output.putNextEntry(
+                        new JarEntry(sourceEntry.getName())
+                );
+                output.write(mapper.writeValueAsBytes(root));
+                output.closeEntry();
+            }
+
+            return bytes.toByteArray();
+        }
     }
 
     private static WireGuardPeer peer(

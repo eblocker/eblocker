@@ -81,11 +81,17 @@ WireGuard uses these hooks to:
 If a provider fails after preparation, finish hooks are not called and
 WireGuard stays fail-closed.
 
-## Peer IDs
+## Peer IDs and allocator state
 
-Peer IDs are restored exactly. After restore the Redis ID sequence is set to
-the highest restored peer ID. Since `nextId()` performs Redis `INCR`, the next
-created peer receives `maxId + 1`.
+Peer IDs are restored exactly. The persisted peer ID allocator sequence is
+also semantic backup state and is restored exactly. This matters after peer
+deletion: active peers can be IDs 1 and 3 while the allocator has already
+advanced to 5. In that state the next peer must remain ID 6 after restore, not
+reuse retired IDs 4 or 5.
+
+An early local version-6 backup without `peerIdSequence` remains readable: the
+import falls back to the highest restored peer ID. A present sequence lower
+than the highest restored peer ID is rejected as inconsistent.
 
 ## Endpoint verification
 

@@ -19,6 +19,7 @@ public class WireGuardBackup {
     private boolean secretsIncluded;
     private String serverPrivateKey;
     private WireGuardEndpointConfig endpointConfig;
+    private Integer peerIdSequence;
     private List<WireGuardPeer> peers = new ArrayList<>();
 
     public boolean isEnabled() {
@@ -53,6 +54,14 @@ public class WireGuardBackup {
 
     public void setEndpointConfig(WireGuardEndpointConfig endpointConfig) {
         this.endpointConfig = endpointConfig;
+    }
+
+    public Integer getPeerIdSequence() {
+        return peerIdSequence;
+    }
+
+    public void setPeerIdSequence(Integer peerIdSequence) {
+        this.peerIdSequence = peerIdSequence;
     }
 
     public List<WireGuardPeer> getPeers() {

@@ -299,6 +299,14 @@ public class JedisDataSource implements DataSource {
     }
 
     @Override
+    public Integer getIdSequence(Class<?> entityClass) {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(getIdSequenceKey(entityClass));
+            return value == null ? null : Integer.valueOf(value);
+        }
+    }
+
+    @Override
     public void setIdSequence(Class<?> entityClass, int value) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(getIdSequenceKey(entityClass), String.valueOf(value));

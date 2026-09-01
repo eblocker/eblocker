@@ -80,7 +80,27 @@ public class WireGuardAuthorizationService {
             return denied(Reason.DEVICE_NOT_FOUND, null, false);
         }
 
-        if (!dataSource.getWireGuardServerState()) {
+        return evaluate(
+                device,
+                dataSource.getWireGuardServerState()
+        );
+    }
+
+    /**
+     * Evaluates against an already captured global state.
+     *
+     * Aggregate authorization reads use one global-state snapshot so all
+     * returned device decisions describe the same control-plane instant.
+     */
+    public Decision evaluate(
+            Device device,
+            boolean globalEnabled) {
+
+        if (device == null) {
+            return denied(Reason.DEVICE_NOT_FOUND, null, false);
+        }
+
+        if (!globalEnabled) {
             return denied(
                     Reason.GLOBAL_DISABLED,
                     device.getAssignedUser(),

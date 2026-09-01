@@ -37,33 +37,48 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
         return $q.all([
             DeviceService.getAll(true),
             UserService.getAll(),
-            VpnHomeService.loadStatus()
+            VpnHomeService.loadStatus(),
+            WireGuardService.getDeviceAuthorizations()
         ]).then(function(result) {
             const devices = angular.isArray(result[0].data) ? result[0].data : [];
             const users = angular.isArray(result[1].data) ? result[1].data : [];
             const userMap = buildRealUserMap(users);
             const status = result[2].data || {};
+            const overview = result[3].data || {};
+            const authorizations = angular.isArray(overview.devices) ?
+                overview.devices : [];
+            const authorizationMap =
+                buildAuthorizationMap(authorizations);
 
             vm.openVpnGlobalEnabled = readOpenVpnGlobalState(status);
+            vm.wireGuardGlobalEnabled =
+                overview.globalEnabled === true;
 
-            const loads = devices
+            return devices
                 .filter(isRealDevice)
                 .map(function(device) {
                     if (angular.isFunction(DeviceService.setDisplayValues)) {
                         DeviceService.setDisplayValues(device);
                     }
 
-                    return WireGuardService.getDeviceAuthorization(device.id)
-                        .then(function(response) {
-                            return buildRow(device, response.data, userMap);
-                        });
-                });
+                    const authorization =
+                        authorizationMap[device.id];
 
-            return $q.all(loads);
+                    if (!authorization) {
+                        throw new Error(
+                            'Missing WireGuard authorization for device ' +
+                            device.id
+                        );
+                    }
+
+                    return buildRow(
+                        device,
+                        authorization,
+                        userMap
+                    );
+                });
         }).then(function(rows) {
             vm.rows = rows;
-            vm.wireGuardGlobalEnabled = rows.length > 0 ?
-                rows[0].authorization.globalEnabled === true : undefined;
             return rows;
         }, function(response) {
             NotificationService.error(
@@ -83,6 +98,20 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
                 map[user.id] = user;
             }
         });
+        return map;
+    }
+
+    function buildAuthorizationMap(authorizations) {
+        const map = {};
+
+        authorizations.forEach(function(authorization) {
+            if (authorization &&
+                angular.isDefined(authorization.deviceId)) {
+
+                map[authorization.deviceId] = authorization;
+            }
+        });
+
         return map;
     }
 

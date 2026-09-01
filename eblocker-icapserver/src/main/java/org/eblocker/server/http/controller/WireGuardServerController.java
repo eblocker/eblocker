@@ -2,6 +2,7 @@ package org.eblocker.server.http.controller;
 
 import io.netty.buffer.ByteBuf;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
+import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.eblocker.server.http.model.WireGuardAuthorizationView;
 import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerView;
@@ -38,6 +39,10 @@ public interface WireGuardServerController {
             Response response);
 
     WireGuardPeerView setLanAccess(
+            Request request,
+            Response response);
+
+    WireGuardAuthorizationOverviewView getDeviceAuthorizations(
             Request request,
             Response response);
 

@@ -5,10 +5,13 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.data.UserRole;
 import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -156,6 +159,95 @@ public class WireGuardAuthorizationManagementServiceTest {
         );
 
         Mockito.verify(controlService).stop();
+    }
+
+    @Test
+    public void aggregateReadUsesOneGlobalSnapshotAndAllDevices() {
+        DataSource aggregateDataSource =
+                Mockito.mock(DataSource.class);
+        DeviceService aggregateDeviceService =
+                Mockito.mock(DeviceService.class);
+        UserService aggregateUserService =
+                Mockito.mock(UserService.class);
+
+        Device noUserDevice =
+                device("device:a", true);
+        noUserDevice.setDefaultSystemUser(10);
+        noUserDevice.setAssignedUser(10);
+
+        Device userDevice =
+                device("device:b", true);
+        userDevice.setDefaultSystemUser(11);
+        userDevice.setAssignedUser(20);
+
+        Mockito.when(
+                aggregateDataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
+        Mockito.when(
+                aggregateDeviceService.getDevices(true)
+        ).thenReturn(Arrays.asList(
+                userDevice,
+                noUserDevice
+        ));
+
+        Mockito.when(
+                aggregateUserService.getUserById(10)
+        ).thenReturn(user(10, true, false));
+
+        Mockito.when(
+                aggregateUserService.getUserById(20)
+        ).thenReturn(user(20, false, true));
+
+        WireGuardAuthorizationService aggregateAuthorizationService =
+                new WireGuardAuthorizationService(
+                        aggregateDataSource,
+                        aggregateUserService
+                );
+
+        WireGuardAuthorizationManagementService aggregateService =
+                new WireGuardAuthorizationManagementService(
+                        aggregateDataSource,
+                        aggregateDeviceService,
+                        aggregateUserService,
+                        aggregateAuthorizationService,
+                        Mockito.mock(WireGuardPeerService.class),
+                        Mockito.mock(WireGuardServerControlService.class),
+                        Mockito.mock(NetworkStateMachine.class)
+                );
+
+        WireGuardAuthorizationOverviewView overview =
+                aggregateService.getDeviceAuthorizations();
+
+        assertTrue(overview.isGlobalEnabled());
+        assertEquals(2, overview.getDevices().size());
+
+        assertEquals(
+                "device:a",
+                overview.getDevices().get(0).getDeviceId()
+        );
+        assertEquals(
+                "ALLOWED_NO_ASSIGNED_USER",
+                overview.getDevices().get(0).getReason()
+        );
+
+        assertEquals(
+                "device:b",
+                overview.getDevices().get(1).getDeviceId()
+        );
+        assertEquals(
+                "ALLOWED",
+                overview.getDevices().get(1).getReason()
+        );
+
+        Mockito.verify(
+                aggregateDataSource,
+                Mockito.times(1)
+        ).getWireGuardServerState();
+
+        Mockito.verify(
+                aggregateDeviceService
+        ).getDevices(true);
     }
 
     @Test

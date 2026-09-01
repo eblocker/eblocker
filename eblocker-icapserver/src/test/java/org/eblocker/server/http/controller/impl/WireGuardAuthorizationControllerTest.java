@@ -1,5 +1,6 @@
 package org.eblocker.server.http.controller.impl;
 
+import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.eblocker.server.http.model.WireGuardAuthorizationView;
 import org.eblocker.server.http.service.WireGuardAuthorizationManagementService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
@@ -12,6 +13,8 @@ import org.mockito.Mockito;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.NotFoundException;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +42,27 @@ public class WireGuardAuthorizationControllerTest {
 
         request = Mockito.mock(Request.class);
         response = new Response();
+    }
+
+    @Test
+    public void aggregateDeviceAuthorizationsCanBeLoaded() {
+        WireGuardAuthorizationOverviewView overview =
+                new WireGuardAuthorizationOverviewView(
+                        true,
+                        Collections.emptyList()
+                );
+
+        Mockito.when(
+                managementService.getDeviceAuthorizations()
+        ).thenReturn(overview);
+
+        assertSame(
+                overview,
+                controller.getDeviceAuthorizations(
+                        request,
+                        response
+                )
+        );
     }
 
     @Test

@@ -159,6 +159,26 @@ public class WireGuardAuthorizationServiceTest {
     }
 
     @Test
+    public void explicitGlobalSnapshotDoesNotReadDataSource() {
+        Mockito.when(userService.getUserById(10))
+                .thenReturn(user(10, true, false));
+
+        WireGuardAuthorizationService.Decision decision =
+                service.evaluate(device, true);
+
+        assertTrue(decision.isAllowed());
+        assertEquals(
+                WireGuardAuthorizationService.Reason.ALLOWED_NO_ASSIGNED_USER,
+                decision.getReason()
+        );
+
+        Mockito.verify(
+                dataSource,
+                Mockito.never()
+        ).getWireGuardServerState();
+    }
+
+    @Test
     public void genericEnabledPausedStateIsOrthogonalToWireGuardPolicy() {
         Mockito.when(dataSource.getWireGuardServerState()).thenReturn(true);
         device.setEnabled(false);

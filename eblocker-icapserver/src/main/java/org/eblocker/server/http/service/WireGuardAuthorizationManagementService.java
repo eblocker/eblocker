@@ -6,7 +6,12 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.UserModule;
 import org.eblocker.server.common.network.NetworkStateMachine;
+import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.eblocker.server.http.model.WireGuardAuthorizationView;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Persists WireGuard authorization changes and immediately reconciles runtime.
@@ -69,6 +74,26 @@ public class WireGuardAuthorizationManagementService {
         );
     }
 
+    public WireGuardAuthorizationOverviewView getDeviceAuthorizations() {
+        boolean globalEnabled =
+                dataSource.getWireGuardServerState();
+
+        List<WireGuardAuthorizationView> devices =
+                deviceService.getDevices(true)
+                        .stream()
+                        .sorted(Comparator.comparing(Device::getId))
+                        .map(device -> toAuthorizationView(
+                                device,
+                                globalEnabled
+                        ))
+                        .collect(Collectors.toList());
+
+        return new WireGuardAuthorizationOverviewView(
+                globalEnabled,
+                devices
+        );
+    }
+
     public WireGuardAuthorizationView getDeviceAuthorization(
             String deviceId) {
 
@@ -78,8 +103,21 @@ public class WireGuardAuthorizationManagementService {
             return null;
         }
 
+        return toAuthorizationView(
+                device,
+                dataSource.getWireGuardServerState()
+        );
+    }
+
+    private WireGuardAuthorizationView toAuthorizationView(
+            Device device,
+            boolean globalEnabled) {
+
         WireGuardAuthorizationService.Decision decision =
-                authorizationService.evaluate(device);
+                authorizationService.evaluate(
+                        device,
+                        globalEnabled
+                );
 
         UserModule assignedUser =
                 userService.getUserById(device.getAssignedUser());
@@ -87,7 +125,7 @@ public class WireGuardAuthorizationManagementService {
         return WireGuardAuthorizationView.from(
                 device,
                 assignedUser,
-                dataSource.getWireGuardServerState(),
+                globalEnabled,
                 decision
         );
     }

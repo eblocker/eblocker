@@ -156,6 +156,23 @@ describe('App settings; WireGuardService', function() {
         $httpBackend.flush();
     });
 
+    it('loads all WireGuard device authorizations', function() {
+        $httpBackend.expectGET(
+            PATH + '/authorization/devices'
+        ).respond(200, {
+            globalEnabled: true,
+            devices: []
+        });
+
+        service.getDeviceAuthorizations()
+            .then(function(response) {
+                expect(response.data.globalEnabled).toBe(true);
+                expect(response.data.devices.length).toBe(0);
+            });
+
+        $httpBackend.flush();
+    });
+
     it('loads WireGuard authorization for a device', function() {
         $httpBackend.expectGET(
             PATH + '/authorization/devices/device:1'

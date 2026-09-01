@@ -119,35 +119,41 @@ describe('App settings; VPN access component controller', function() {
         WireGuardService = {
             getDeviceAuthorization: jasmine
                 .createSpy('getDeviceAuthorization')
-                .and.callFake(function(deviceId) {
-                if (deviceId === 'device:1') {
+                .and.callFake(function() {
+                    throw new Error('N+1 authorization read is forbidden.');
+                }),
+            getDeviceAuthorizations: jasmine
+                .createSpy('getDeviceAuthorizations')
+                .and.callFake(function() {
                     return $q.when({
                         data: {
-                            deviceId: deviceId,
                             globalEnabled: true,
-                            deviceEnabled: true,
-                            assignedUserId: 7,
-                            userPermissionRequired: true,
-                            userEnabled: userPermissionEnabled,
-                            allowed: userPermissionEnabled,
-                            reason: userPermissionEnabled ? 'ALLOWED' : 'USER_DISABLED'
+                            devices: [
+                                {
+                                    deviceId: 'device:1',
+                                    globalEnabled: true,
+                                    deviceEnabled: true,
+                                    assignedUserId: 7,
+                                    userPermissionRequired: true,
+                                    userEnabled: userPermissionEnabled,
+                                    allowed: userPermissionEnabled,
+                                    reason: userPermissionEnabled ?
+                                        'ALLOWED' : 'USER_DISABLED'
+                                },
+                                {
+                                    deviceId: 'device:2',
+                                    globalEnabled: true,
+                                    deviceEnabled: true,
+                                    assignedUserId: null,
+                                    userPermissionRequired: false,
+                                    userEnabled: null,
+                                    allowed: true,
+                                    reason: 'ALLOWED_NO_ASSIGNED_USER'
+                                }
+                            ]
                         }
                     });
-                }
-
-                return $q.when({
-                    data: {
-                        deviceId: deviceId,
-                        globalEnabled: true,
-                        deviceEnabled: true,
-                        assignedUserId: null,
-                        userPermissionRequired: false,
-                        userEnabled: null,
-                        allowed: true,
-                        reason: 'ALLOWED_NO_ASSIGNED_USER'
-                    }
-                });
-            }),
+                }),
             setDeviceAuthorization: jasmine
                 .createSpy('setDeviceAuthorization')
                 .and.callFake(function(deviceId, enabled) {
@@ -209,6 +215,8 @@ describe('App settings; VPN access component controller', function() {
 
         expect(ctrl.rows.length).toBe(2);
         expect(DeviceService.setDisplayValues.calls.count()).toBe(2);
+        expect(WireGuardService.getDeviceAuthorizations.calls.count()).toBe(1);
+        expect(WireGuardService.getDeviceAuthorization).not.toHaveBeenCalled();
 
         expect(ctrl.openVpnGlobalEnabled).toBe(true);
         expect(ctrl.wireGuardGlobalEnabled).toBe(true);
@@ -264,7 +272,8 @@ describe('App settings; VPN access component controller', function() {
             .toHaveBeenCalledWith(7, false);
 
         expect(DeviceService.getAll.calls.count()).toBe(2);
-        expect(WireGuardService.getDeviceAuthorization.calls.count()).toBe(4);
+        expect(WireGuardService.getDeviceAuthorizations.calls.count()).toBe(2);
+        expect(WireGuardService.getDeviceAuthorization).not.toHaveBeenCalled();
 
         expect(ctrl.rows[0].authorization.userEnabled).toBe(false);
         expect(ctrl.rows[0].authorization.allowed).toBe(false);
@@ -292,6 +301,30 @@ describe('App settings; VPN access component controller', function() {
             'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.OPENVPN_ERROR',
             jasmine.any(Object)
         );
+    });
+
+    it('keeps global WireGuard state when no devices exist', function() {
+        DeviceService.getAll.and.callFake(function() {
+            return $q.when({
+                data: []
+            });
+        });
+
+        WireGuardService.getDeviceAuthorizations.and.callFake(function() {
+            return $q.when({
+                data: {
+                    globalEnabled: false,
+                    devices: []
+                }
+            });
+        });
+
+        const ctrl = loadController();
+
+        expect(ctrl.rows.length).toBe(0);
+        expect(ctrl.wireGuardGlobalEnabled).toBe(false);
+        expect(WireGuardService.getDeviceAuthorizations.calls.count()).toBe(1);
+        expect(WireGuardService.getDeviceAuthorization).not.toHaveBeenCalled();
     });
 
     it('maps effective authorization reasons without using an operating user', function() {

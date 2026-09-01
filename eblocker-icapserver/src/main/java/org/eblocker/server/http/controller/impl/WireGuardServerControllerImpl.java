@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.eblocker.server.http.model.WireGuardAuthorizationView;
 import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerCreateRequest;
@@ -192,6 +193,15 @@ public class WireGuardServerControllerImpl
         }
 
         return WireGuardPeerView.fromPeer(peer);
+    }
+
+    @Override
+    public WireGuardAuthorizationOverviewView getDeviceAuthorizations(
+            Request request,
+            Response response) {
+
+        return authorizationManagementService
+                .getDeviceAuthorizations();
     }
 
     @Override

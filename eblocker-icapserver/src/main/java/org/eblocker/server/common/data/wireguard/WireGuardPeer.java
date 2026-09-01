@@ -3,6 +3,9 @@ package org.eblocker.server.common.data.wireguard;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eblocker.crypto.json.JsonEncrypt;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WireGuardPeer {
 
     private int id;
@@ -25,6 +28,12 @@ public class WireGuardPeer {
     private String deviceId;
 
     private boolean allowLanAccess;
+
+    private WireGuardTunnelMode tunnelMode =
+            WireGuardTunnelMode.FULL_TUNNEL;
+
+    private List<String> customAllowedIps =
+            new ArrayList<>();
 
     public WireGuardPeer() {
         // For JSON / Jackson
@@ -96,5 +105,40 @@ public class WireGuardPeer {
 
     public void setAllowLanAccess(boolean allowLanAccess) {
         this.allowLanAccess = allowLanAccess;
+    }
+
+    public WireGuardTunnelMode getTunnelMode() {
+        return tunnelMode == null
+                ? WireGuardTunnelMode.FULL_TUNNEL
+                : tunnelMode;
+    }
+
+    public void setTunnelMode(
+            WireGuardTunnelMode tunnelMode) {
+
+        this.tunnelMode = tunnelMode == null
+                ? WireGuardTunnelMode.FULL_TUNNEL
+                : tunnelMode;
+    }
+
+    public List<String> getCustomAllowedIps() {
+        if (customAllowedIps == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(
+                customAllowedIps
+        );
+    }
+
+    public void setCustomAllowedIps(
+            List<String> customAllowedIps) {
+
+        this.customAllowedIps =
+                customAllowedIps == null
+                        ? new ArrayList<>()
+                        : new ArrayList<>(
+                                customAllowedIps
+                        );
     }
 }

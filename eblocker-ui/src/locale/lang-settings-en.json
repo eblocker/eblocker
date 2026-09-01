@@ -3573,6 +3573,25 @@
                 "RX" : "Received",
                 "TX" : "Sent"
             },
+            "ROUTING" : {
+                "TITLE" : "Tunnel routing",
+                "DESCRIPTION" : "Defines which IPv4 networks the WireGuard client routes through the tunnel.",
+                "PEER" : "Peer",
+                "MODE" : "Tunnel mode",
+                "MODES" : {
+                    "FULL_TUNNEL" : "Full tunnel",
+                    "LAN_ONLY" : "LAN/private networks only",
+                    "CUSTOM" : "Custom / split tunnel"
+                },
+                "CUSTOM_ALLOWED_IPS" : "Custom IPv4 networks (CIDR, one route per line)",
+                "CUSTOM_HELP" : "Example: 192.168.178.0/24",
+                "LAN_DENIED_WARNING" : "This peer is currently not allowed to access local/private networks. LAN-only does not change that permission.",
+                "SAVE" : "Save routing",
+                "NOTIFICATION" : {
+                    "SAVED" : "WireGuard tunnel routing saved.",
+                    "SAVE_FAILED" : "Could not save WireGuard tunnel routing."
+                }
+            },
             "NOTIFICATION" : {
                 "DEVICES_LOAD_FAILED" : "Could not load device data for WireGuard assignment.",
                 "PEERS_LOAD_FAILED" : "Could not load WireGuard peers.",

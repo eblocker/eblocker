@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  * Creates WireGuard client configuration from persisted peer data and
  * an explicitly configured external endpoint.
  *
- * Security/product contract for the initial implementation:
+ * Security/product contract:
  *
- * - IPv4 full tunnel only
+ * - IPv4 routing profiles are resolved centrally
  * - no IPv6 AllowedIPs
  * - no DNS directive until DNS on wg0 has been verified end-to-end
  * - no placeholder endpoint
@@ -47,16 +47,39 @@ public class WireGuardClientConfigurationService {
     private final DataSource dataSource;
     private final DynDnsService dynDnsService;
     private final WireGuardServerControlService controlService;
+    private final WireGuardClientRouteResolver routeResolver;
 
     @Inject
     public WireGuardClientConfigurationService(
             DataSource dataSource,
             DynDnsService dynDnsService,
-            WireGuardServerControlService controlService) {
+            WireGuardServerControlService controlService,
+            WireGuardClientRouteResolver routeResolver) {
 
         this.dataSource = dataSource;
         this.dynDnsService = dynDnsService;
         this.controlService = controlService;
+        this.routeResolver = routeResolver;
+    }
+
+    /**
+     * Backward/source-compatible constructor for focused callers that do not
+     * use dependency injection. Production Guice uses the @Inject constructor.
+     */
+    public WireGuardClientConfigurationService(
+            DataSource dataSource,
+            DynDnsService dynDnsService,
+            WireGuardServerControlService controlService) {
+
+        this(
+                dataSource,
+                dynDnsService,
+                controlService,
+                new WireGuardClientRouteResolver(
+                        new WireGuardFirewallContractLanRouteProvider(),
+                        new WireGuardCustomRouteValidator()
+                )
+        );
     }
 
     public String renderClientConfig(int peerId) {
@@ -86,6 +109,21 @@ public class WireGuardClientConfigurationService {
         String endpointHost =
                 resolveEndpointHost();
 
+        final String clientAllowedIps;
+
+        try {
+            clientAllowedIps =
+                    String.join(
+                            ", ",
+                            routeResolver.resolve(peer)
+                    );
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(
+                    "WireGuard peer routing profile is invalid.",
+                    e
+            );
+        }
+
         return "[Interface]\n"
                 + "PrivateKey = "
                 + peer.getPrivateKey()
@@ -106,7 +144,9 @@ public class WireGuardClientConfigurationService {
                 + ":"
                 + WIREGUARD_ENDPOINT_PORT
                 + "\n"
-                + "AllowedIPs = 0.0.0.0/0\n"
+                + "AllowedIPs = "
+                + clientAllowedIps
+                + "\n"
                 + "PersistentKeepalive = 25\n";
     }
 

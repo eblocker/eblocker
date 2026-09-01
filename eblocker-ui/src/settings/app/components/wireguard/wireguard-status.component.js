@@ -67,9 +67,34 @@ function Controller(WireGuardService, DeviceService,
     vm.endpointHostRequired = endpointHostRequired;
     vm.formatBytes = formatBytes;
 
+    initializeRoutingUi();
+
     vm.$onInit = function() {
         load();
     };
+
+    function initializeRoutingUi() {
+        vm.isSavingRouting = false;
+
+        vm.tunnelModes = [
+            'FULL_TUNNEL',
+            'LAN_ONLY',
+            'CUSTOM'
+        ];
+
+        vm.routingEditor = {
+            selectedPeerId: null,
+            tunnelMode: 'FULL_TUNNEL',
+            customAllowedIpsText: '',
+            allowLanAccess: false
+        };
+
+        vm.selectRoutingPeer = selectRoutingPeer;
+        vm.saveRouting = saveRouting;
+        vm.customRoutingInputRequired =
+            customRoutingInputRequired;
+        vm.showLanOnlyWarning = showLanOnlyWarning;
+    }
 
     function load() {
         vm.isLoading = true;
@@ -178,6 +203,7 @@ function Controller(WireGuardService, DeviceService,
                     undefined;
 
             applyPeerTelemetry(row, peerTelemetry);
+            normalizePeerRouting(row);
 
             if (!angular.isString(peer.deviceId) ||
                     peer.deviceId.length === 0) {
@@ -198,6 +224,166 @@ function Controller(WireGuardService, DeviceService,
 
             return row;
         });
+
+        synchronizeRoutingSelection();
+    }
+
+    function normalizePeerRouting(peer) {
+        if (vm.tunnelModes.indexOf(peer.tunnelMode) === -1) {
+            peer.tunnelMode = 'FULL_TUNNEL';
+        }
+
+        if (!angular.isArray(peer.customAllowedIps)) {
+            peer.customAllowedIps = [];
+        } else {
+            peer.customAllowedIps = peer.customAllowedIps.slice();
+        }
+    }
+
+    function synchronizeRoutingSelection() {
+        if (vm.peerRows.length === 0) {
+            vm.routingEditor.selectedPeerId = null;
+            vm.routingEditor.tunnelMode = 'FULL_TUNNEL';
+            vm.routingEditor.customAllowedIpsText = '';
+            vm.routingEditor.allowLanAccess = false;
+            return;
+        }
+
+        if (!findPeerRowById(vm.routingEditor.selectedPeerId)) {
+            vm.routingEditor.selectedPeerId = vm.peerRows[0].id;
+        }
+
+        selectRoutingPeer();
+    }
+
+    function findPeerRowById(peerId) {
+        let found;
+
+        vm.peerRows.some(function(peer) {
+            if (peer.id === peerId) {
+                found = peer;
+                return true;
+            }
+            return false;
+        });
+
+        return found;
+    }
+
+    function selectRoutingPeer() {
+        const peer = findPeerRowById(vm.routingEditor.selectedPeerId);
+
+        if (!angular.isObject(peer)) {
+            return;
+        }
+
+        vm.routingEditor.tunnelMode = peer.tunnelMode;
+        vm.routingEditor.customAllowedIpsText =
+            peer.customAllowedIps.join('\n');
+        vm.routingEditor.allowLanAccess =
+            peer.allowLanAccess === true;
+    }
+
+    function parseCustomAllowedIps(text) {
+        if (!angular.isString(text)) {
+            return [];
+        }
+
+        return text
+            .split(/\r?\n/)
+            .map(function(value) {
+                return value.trim();
+            })
+            .filter(function(value) {
+                return value.length > 0;
+            });
+    }
+
+    function customRoutingInputRequired() {
+        return vm.routingEditor.tunnelMode === 'CUSTOM' &&
+            parseCustomAllowedIps(
+                vm.routingEditor.customAllowedIpsText
+            ).length === 0;
+    }
+
+    function showLanOnlyWarning() {
+        return vm.routingEditor.tunnelMode === 'LAN_ONLY' &&
+            vm.routingEditor.allowLanAccess !== true;
+    }
+
+    function saveRouting() {
+        const peer = findPeerRowById(
+            vm.routingEditor.selectedPeerId
+        );
+
+        if (!angular.isObject(peer)) {
+            return $q.reject('WireGuard peer is required.');
+        }
+
+        if (customRoutingInputRequired()) {
+            return $q.reject(
+                'At least one CUSTOM route is required.'
+            );
+        }
+
+        const previous = {
+            tunnelMode: peer.tunnelMode,
+            customAllowedIps: peer.customAllowedIps.slice()
+        };
+
+        const config = {
+            tunnelMode: vm.routingEditor.tunnelMode,
+            customAllowedIps:
+                vm.routingEditor.tunnelMode === 'CUSTOM' ?
+                    parseCustomAllowedIps(
+                        vm.routingEditor.customAllowedIpsText
+                    ) :
+                    []
+        };
+
+        vm.isSavingRouting = true;
+
+        return WireGuardService
+            .setRouting(peer.id, config)
+            .then(function(response) {
+                const updated = response.data || {};
+                const source = vm.peers.filter(function(candidate) {
+                    return candidate.id === peer.id;
+                })[0];
+
+                if (angular.isObject(source)) {
+                    source.tunnelMode =
+                        updated.tunnelMode || config.tunnelMode;
+                    source.customAllowedIps =
+                        angular.isArray(updated.customAllowedIps) ?
+                            updated.customAllowedIps.slice() :
+                            config.customAllowedIps.slice();
+                }
+
+                buildPeerRows();
+
+                NotificationService.info(
+                    'ADMINCONSOLE.WIREGUARD.ROUTING.NOTIFICATION.SAVED'
+                );
+
+                return updated;
+            })
+            .catch(function(response) {
+                vm.routingEditor.tunnelMode =
+                    previous.tunnelMode;
+                vm.routingEditor.customAllowedIpsText =
+                    previous.customAllowedIps.join('\n');
+
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.ROUTING.NOTIFICATION.SAVE_FAILED',
+                    response
+                );
+
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.isSavingRouting = false;
+            });
     }
 
     function applyPeerTelemetry(row, telemetry) {

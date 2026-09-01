@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardTunnelMode;
 import org.eblocker.server.common.network.NetworkStateMachine;
 
 import java.io.ByteArrayOutputStream;
@@ -27,18 +28,40 @@ public class WireGuardPeerService {
     private final WireGuardPeerSyncService peerSyncService;
     private final NetworkStateMachine networkStateMachine;
     private final String wireGuardCommand;
+    private final WireGuardCustomRouteValidator customRouteValidator;
 
     @Inject
     public WireGuardPeerService(
             DataSource dataSource,
             WireGuardPeerSyncService peerSyncService,
             NetworkStateMachine networkStateMachine,
-            @Named("wireguard.command") String wireGuardCommand) {
+            @Named("wireguard.command") String wireGuardCommand,
+            WireGuardCustomRouteValidator customRouteValidator) {
 
         this.dataSource = dataSource;
         this.peerSyncService = peerSyncService;
         this.networkStateMachine = networkStateMachine;
         this.wireGuardCommand = wireGuardCommand;
+        this.customRouteValidator = customRouteValidator;
+    }
+
+    /**
+     * Source-compatible constructor for focused callers/tests.
+     * Production Guice uses the @Inject constructor above.
+     */
+    public WireGuardPeerService(
+            DataSource dataSource,
+            WireGuardPeerSyncService peerSyncService,
+            NetworkStateMachine networkStateMachine,
+            String wireGuardCommand) {
+
+        this(
+                dataSource,
+                peerSyncService,
+                networkStateMachine,
+                wireGuardCommand,
+                new WireGuardCustomRouteValidator()
+        );
     }
 
     /**
@@ -286,6 +309,98 @@ public class WireGuardPeerService {
         refreshFirewallAfterPersistentChange(
                 "WireGuard LAN access policy"
         );
+
+        return true;
+    }
+
+    /**
+     * Persists client-routing intent only.
+     *
+     * This does not reconfigure wg0 and does not refresh the firewall:
+     * server-side peer identity/address and allowLanAccess are unchanged.
+     */
+    public synchronized boolean setRouting(
+            int id,
+            WireGuardTunnelMode tunnelMode,
+            List<String> customAllowedIps) {
+
+        if (tunnelMode == null) {
+            throw new IllegalArgumentException(
+                    "WireGuard tunnel mode is required."
+            );
+        }
+
+        WireGuardPeer peer =
+                dataSource.get(
+                        WireGuardPeer.class,
+                        id
+                );
+
+        if (peer == null) {
+            return false;
+        }
+
+        List<String> normalizedCustomAllowedIps;
+
+        if (tunnelMode == WireGuardTunnelMode.CUSTOM) {
+            normalizedCustomAllowedIps =
+                    customRouteValidator.normalize(
+                            customAllowedIps
+                    );
+        } else {
+            normalizedCustomAllowedIps =
+                    new ArrayList<>();
+        }
+
+        WireGuardTunnelMode previousMode =
+                peer.getTunnelMode();
+
+        List<String> previousCustomAllowedIps =
+                peer.getCustomAllowedIps();
+
+        if (previousMode == tunnelMode
+                && previousCustomAllowedIps.equals(
+                        normalizedCustomAllowedIps
+                )) {
+
+            return true;
+        }
+
+        peer.setTunnelMode(tunnelMode);
+        peer.setCustomAllowedIps(
+                normalizedCustomAllowedIps
+        );
+
+        WireGuardPeer saved;
+
+        try {
+            saved = dataSource.save(
+                    peer,
+                    peer.getId()
+            );
+
+        } catch (RuntimeException persistenceException) {
+            peer.setTunnelMode(previousMode);
+            peer.setCustomAllowedIps(
+                    previousCustomAllowedIps
+            );
+
+            throw new IllegalStateException(
+                    "Could not persist WireGuard routing policy.",
+                    persistenceException
+            );
+        }
+
+        if (saved == null) {
+            peer.setTunnelMode(previousMode);
+            peer.setCustomAllowedIps(
+                    previousCustomAllowedIps
+            );
+
+            throw new IllegalStateException(
+                    "Could not persist WireGuard routing policy."
+            );
+        }
 
         return true;
     }

@@ -6,11 +6,13 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardTunnelMode;
 import org.eblocker.server.http.controller.WireGuardServerController;
 import org.eblocker.server.http.model.WireGuardAuthorizationOverviewView;
 import org.eblocker.server.http.model.WireGuardAuthorizationView;
 import org.eblocker.server.http.model.WireGuardClientConfigurationView;
 import org.eblocker.server.http.model.WireGuardPeerCreateRequest;
+import org.eblocker.server.http.model.WireGuardPeerRoutingRequest;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.model.WireGuardServerStatusView;
 import org.eblocker.server.http.service.WireGuardAuthorizationManagementService;
@@ -24,6 +26,7 @@ import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.NotFoundException;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -300,6 +303,69 @@ public class WireGuardServerControllerImpl
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+    @Override
+    public WireGuardPeerView setRouting(
+            Request request,
+            Response response) {
+
+        int id = parsePeerId(request);
+
+        WireGuardPeerRoutingRequest body =
+                request.getBodyAs(
+                        WireGuardPeerRoutingRequest.class
+                );
+
+        if (body == null
+                || body.getTunnelMode() == null
+                || body.getTunnelMode().trim().isEmpty()) {
+
+            throw new BadRequestException(
+                    "WireGuard tunnel mode is required."
+            );
+        }
+
+        final WireGuardTunnelMode tunnelMode;
+
+        try {
+            tunnelMode = WireGuardTunnelMode.valueOf(
+                    body.getTunnelMode()
+                            .trim()
+                            .toUpperCase(Locale.ROOT)
+            );
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
+                    "Invalid WireGuard tunnel mode."
+            );
+        }
+
+        try {
+            if (!peerService.setRouting(
+                    id,
+                    tunnelMode,
+                    body.getCustomAllowedIps())) {
+
+                throw new NotFoundException(
+                        "WireGuard peer not found."
+                );
+            }
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
+                    e.getMessage()
+            );
+        }
+
+        WireGuardPeer peer =
+                peerService.getPeer(id);
+
+        if (peer == null) {
+            throw new NotFoundException(
+                    "WireGuard peer not found."
+            );
+        }
+
+        return WireGuardPeerView.fromPeer(peer);
     }
 
     @Override

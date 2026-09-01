@@ -1,6 +1,10 @@
 package org.eblocker.server.http.model;
 
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardTunnelMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Secret-free representation of a WireGuard peer for normal admin API use.
@@ -15,6 +19,9 @@ public class WireGuardPeerView {
     private String allowedIp;
     private String deviceId;
     private boolean allowLanAccess;
+    private WireGuardTunnelMode tunnelMode;
+    private List<String> customAllowedIps =
+            new ArrayList<>();
 
     public WireGuardPeerView() {
     }
@@ -27,12 +34,38 @@ public class WireGuardPeerView {
             String deviceId,
             boolean allowLanAccess) {
 
+        this(
+                id,
+                name,
+                publicKey,
+                allowedIp,
+                deviceId,
+                allowLanAccess,
+                WireGuardTunnelMode.FULL_TUNNEL,
+                new ArrayList<>()
+        );
+    }
+
+    public WireGuardPeerView(
+            int id,
+            String name,
+            String publicKey,
+            String allowedIp,
+            String deviceId,
+            boolean allowLanAccess,
+            WireGuardTunnelMode tunnelMode,
+            List<String> customAllowedIps) {
+
         this.id = id;
         this.name = name;
         this.publicKey = publicKey;
         this.allowedIp = allowedIp;
         this.deviceId = deviceId;
         this.allowLanAccess = allowLanAccess;
+        this.tunnelMode = tunnelMode == null
+                ? WireGuardTunnelMode.FULL_TUNNEL
+                : tunnelMode;
+        setCustomAllowedIps(customAllowedIps);
     }
 
     public static WireGuardPeerView fromPeer(
@@ -44,7 +77,9 @@ public class WireGuardPeerView {
                 peer.getPublicKey(),
                 peer.getAllowedIp(),
                 peer.getDeviceId(),
-                peer.isAllowLanAccess()
+                peer.isAllowLanAccess(),
+                peer.getTunnelMode(),
+                peer.getCustomAllowedIps()
         );
     }
 
@@ -96,5 +131,36 @@ public class WireGuardPeerView {
             boolean allowLanAccess) {
 
         this.allowLanAccess = allowLanAccess;
+    }
+
+    public WireGuardTunnelMode getTunnelMode() {
+        return tunnelMode == null
+                ? WireGuardTunnelMode.FULL_TUNNEL
+                : tunnelMode;
+    }
+
+    public void setTunnelMode(
+            WireGuardTunnelMode tunnelMode) {
+
+        this.tunnelMode = tunnelMode == null
+                ? WireGuardTunnelMode.FULL_TUNNEL
+                : tunnelMode;
+    }
+
+    public List<String> getCustomAllowedIps() {
+        return new ArrayList<>(
+                customAllowedIps
+        );
+    }
+
+    public void setCustomAllowedIps(
+            List<String> customAllowedIps) {
+
+        this.customAllowedIps =
+                customAllowedIps == null
+                        ? new ArrayList<>()
+                        : new ArrayList<>(
+                                customAllowedIps
+                        );
     }
 }

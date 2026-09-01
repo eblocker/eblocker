@@ -69,7 +69,8 @@ describe('App settings; WireGuard status component controller', function() {
             disable: jasmine.createSpy('disable'),
             getPeers: jasmine.createSpy('getPeers'),
             getEndpoint: jasmine.createSpy('getEndpoint'),
-            setEndpoint: jasmine.createSpy('setEndpoint')
+            setEndpoint: jasmine.createSpy('setEndpoint'),
+            setRouting: jasmine.createSpy('setRouting')
         };
 
         DeviceService = {
@@ -545,4 +546,186 @@ describe('App settings; WireGuard status component controller', function() {
         expect(WireGuardService.setEndpoint)
             .toHaveBeenCalledWith(expected);
     });
+    it('defaults legacy peers to full tunnel routing', function() {
+        WireGuardService.getPeers.and.returnValue(
+            $q.when({
+                data: [{
+                    id: 20,
+                    name: 'Legacy peer',
+                    publicKey: 'legacy-public',
+                    allowedIp: '10.13.13.20/32',
+                    deviceId: null,
+                    allowLanAccess: false
+                }]
+            })
+        );
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        expect(ctrl.peerRows[0].tunnelMode)
+            .toBe('FULL_TUNNEL');
+        expect(ctrl.peerRows[0].customAllowedIps)
+            .toEqual([]);
+        expect(ctrl.routingEditor.selectedPeerId)
+            .toBe(20);
+    });
+
+    it('selects custom routing without changing LAN authorization', function() {
+        WireGuardService.getPeers.and.returnValue(
+            $q.when({
+                data: [{
+                    id: 21,
+                    name: 'Custom peer',
+                    publicKey: 'custom-public',
+                    allowedIp: '10.13.13.21/32',
+                    deviceId: null,
+                    allowLanAccess: false,
+                    tunnelMode: 'CUSTOM',
+                    customAllowedIps: [
+                        '192.168.50.0/24',
+                        '10.0.0.0/8'
+                    ]
+                }]
+            })
+        );
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        expect(ctrl.routingEditor.tunnelMode)
+            .toBe('CUSTOM');
+        expect(ctrl.routingEditor.customAllowedIpsText)
+            .toBe('192.168.50.0/24\n10.0.0.0/8');
+        expect(ctrl.routingEditor.allowLanAccess)
+            .toBe(false);
+    });
+
+    it('saves custom routes through the routing API', function() {
+        WireGuardService.getPeers.and.returnValue(
+            $q.when({
+                data: [{
+                    id: 22,
+                    name: 'Editable peer',
+                    publicKey: 'editable-public',
+                    allowedIp: '10.13.13.22/32',
+                    deviceId: null,
+                    allowLanAccess: true,
+                    tunnelMode: 'FULL_TUNNEL',
+                    customAllowedIps: []
+                }]
+            })
+        );
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        ctrl.routingEditor.tunnelMode = 'CUSTOM';
+        ctrl.routingEditor.customAllowedIpsText =
+            '192.168.77.99/24\n10.23.45.67/8';
+
+        WireGuardService.setRouting.and.returnValue(
+            $q.when({
+                data: {
+                    id: 22,
+                    tunnelMode: 'CUSTOM',
+                    customAllowedIps: [
+                        '192.168.77.0/24',
+                        '10.0.0.0/8'
+                    ]
+                }
+            })
+        );
+
+        ctrl.saveRouting();
+        $rootScope.$digest();
+
+        expect(WireGuardService.setRouting)
+            .toHaveBeenCalledWith(
+                22,
+                {
+                    tunnelMode: 'CUSTOM',
+                    customAllowedIps: [
+                        '192.168.77.99/24',
+                        '10.23.45.67/8'
+                    ]
+                }
+            );
+
+        expect(ctrl.peerRows[0].customAllowedIps)
+            .toEqual([
+                '192.168.77.0/24',
+                '10.0.0.0/8'
+            ]);
+        expect(NotificationService.info)
+            .toHaveBeenCalledWith(
+                'ADMINCONSOLE.WIREGUARD.ROUTING.NOTIFICATION.SAVED'
+            );
+    });
+
+    it('shows LAN-only warning without granting LAN access', function() {
+        WireGuardService.getPeers.and.returnValue(
+            $q.when({
+                data: [{
+                    id: 23,
+                    name: 'LAN peer',
+                    publicKey: 'lan-public',
+                    allowedIp: '10.13.13.23/32',
+                    deviceId: null,
+                    allowLanAccess: false,
+                    tunnelMode: 'LAN_ONLY',
+                    customAllowedIps: []
+                }]
+            })
+        );
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        expect(ctrl.showLanOnlyWarning()).toBe(true);
+        expect(ctrl.peerRows[0].allowLanAccess).toBe(false);
+    });
+
+    it('restores persisted routing values when save fails', function() {
+        WireGuardService.getPeers.and.returnValue(
+            $q.when({
+                data: [{
+                    id: 24,
+                    name: 'Rollback peer',
+                    publicKey: 'rollback-public',
+                    allowedIp: '10.13.13.24/32',
+                    deviceId: null,
+                    allowLanAccess: false,
+                    tunnelMode: 'FULL_TUNNEL',
+                    customAllowedIps: []
+                }]
+            })
+        );
+
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        ctrl.routingEditor.tunnelMode = 'CUSTOM';
+        ctrl.routingEditor.customAllowedIpsText =
+            '192.168.88.0/24';
+
+        WireGuardService.setRouting.and.returnValue(
+            $q.reject({status: 400})
+        );
+
+        ctrl.saveRouting().catch(angular.noop);
+        $rootScope.$digest();
+
+        expect(ctrl.routingEditor.tunnelMode)
+            .toBe('FULL_TUNNEL');
+        expect(ctrl.routingEditor.customAllowedIpsText)
+            .toBe('');
+        expect(NotificationService.error)
+            .toHaveBeenCalledWith(
+                'ADMINCONSOLE.WIREGUARD.ROUTING.NOTIFICATION.SAVE_FAILED',
+                jasmine.any(Object)
+            );
+    });
+
+
 });

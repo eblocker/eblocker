@@ -9,6 +9,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointType;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardTunnelMode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -233,6 +234,128 @@ public class WireGuardClientConfigurationServiceTest {
 
         assertFalse(
                 decoded.getText().contains("::/0")
+        );
+    }
+
+    @Test
+    public void rendersLanOnlyFromFirewallContractProvider() {
+        WireGuardPeer peer =
+                peer(
+                        12,
+                        "10.13.13.12/32"
+                );
+
+        peer.setTunnelMode(
+                WireGuardTunnelMode.LAN_ONLY
+        );
+
+        Mockito.when(
+                dataSource.get(
+                        WireGuardPeer.class,
+                        12
+                )
+        ).thenReturn(peer);
+
+        Mockito.when(
+                dataSource.get(
+                        WireGuardEndpointConfig.class
+                )
+        ).thenReturn(
+                new WireGuardEndpointConfig(
+                        WireGuardEndpointType.FIXED_IP,
+                        "203.0.113.42"
+                )
+        );
+
+        String config =
+                service.renderClientConfig(12);
+
+        assertTrue(
+                config.contains(
+                        "AllowedIPs = "
+                                + "192.168.0.0/16, "
+                                + "172.16.0.0/12, "
+                                + "10.0.0.0/8, "
+                                + "169.254.0.0/16"
+                )
+        );
+
+        assertTrue(
+                config.contains(
+                        "Address = 10.13.13.12/32"
+                )
+        );
+
+        assertFalse(
+                config.contains("::/0")
+        );
+
+        assertFalse(
+                config.contains("DNS =")
+        );
+    }
+
+    @Test
+    public void rendersCanonicalCustomRoutes() {
+        WireGuardPeer peer =
+                peer(
+                        13,
+                        "10.13.13.13/32"
+                );
+
+        peer.setTunnelMode(
+                WireGuardTunnelMode.CUSTOM
+        );
+
+        peer.setCustomAllowedIps(
+                java.util.Arrays.asList(
+                        "192.168.50.77/24",
+                        "10.23.45.67/8",
+                        "192.168.50.0/24"
+                )
+        );
+
+        Mockito.when(
+                dataSource.get(
+                        WireGuardPeer.class,
+                        13
+                )
+        ).thenReturn(peer);
+
+        Mockito.when(
+                dataSource.get(
+                        WireGuardEndpointConfig.class
+                )
+        ).thenReturn(
+                new WireGuardEndpointConfig(
+                        WireGuardEndpointType.FIXED_IP,
+                        "203.0.113.42"
+                )
+        );
+
+        String config =
+                service.renderClientConfig(13);
+
+        assertTrue(
+                config.contains(
+                        "AllowedIPs = "
+                                + "192.168.50.0/24, "
+                                + "10.0.0.0/8"
+                )
+        );
+
+        assertTrue(
+                config.contains(
+                        "Address = 10.13.13.13/32"
+                )
+        );
+
+        assertFalse(
+                config.contains("::/0")
+        );
+
+        assertFalse(
+                config.contains("DNS =")
         );
     }
 

@@ -214,4 +214,27 @@ describe('App settings; WireGuardService', function() {
         $httpBackend.flush();
     });
 
+    it('saves WireGuard peer routing with dedicated PUT', function() {
+        const config = {
+            tunnelMode: 'CUSTOM',
+            customAllowedIps: [
+                '192.168.50.0/24',
+                '10.0.0.0/8'
+            ]
+        };
+
+        $httpBackend.expectPUT(
+            PATH + '/peers/7/routing',
+            config
+        ).respond(200, {
+            id: 7,
+            tunnelMode: 'CUSTOM',
+            customAllowedIps: config.customAllowedIps
+        });
+
+        service.setRouting(7, config);
+        $httpBackend.flush();
+    });
+
+
 });

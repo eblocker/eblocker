@@ -42,6 +42,10 @@ public interface WireGuardServerController {
             Request request,
             Response response);
 
+    WireGuardPeerView setRouting(
+            Request request,
+            Response response);
+
     WireGuardAuthorizationOverviewView getDeviceAuthorizations(
             Request request,
             Response response);

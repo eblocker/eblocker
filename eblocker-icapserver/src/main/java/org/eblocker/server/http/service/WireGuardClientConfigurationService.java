@@ -222,6 +222,21 @@ public class WireGuardClientConfigurationService {
     public WireGuardEndpointConfig setEndpointConfig(
             WireGuardEndpointConfig config) {
 
+        WireGuardEndpointConfig normalized =
+                normalizeEndpointConfig(config);
+
+        dataSource.save(normalized);
+
+        return normalized;
+    }
+
+    /**
+     * Validates and normalizes endpoint intent without persistence or runtime
+     * side effects. Backup verification reuses this method.
+     */
+    public WireGuardEndpointConfig normalizeEndpointConfig(
+            WireGuardEndpointConfig config) {
+
         if (config == null
                 || config.getType() == null) {
 
@@ -230,33 +245,24 @@ public class WireGuardClientConfigurationService {
             );
         }
 
-        WireGuardEndpointConfig normalized;
-
         if (config.getType()
                 == WireGuardEndpointType.EBLOCKER_DYN_DNS) {
 
-            normalized =
-                    new WireGuardEndpointConfig(
-                            WireGuardEndpointType.EBLOCKER_DYN_DNS,
-                            null
-                    );
-
-        } else {
-            String host =
-                    requireValidEndpointHost(
-                            config.getHost()
-                    );
-
-            normalized =
-                    new WireGuardEndpointConfig(
-                            config.getType(),
-                            host
-                    );
+            return new WireGuardEndpointConfig(
+                    WireGuardEndpointType.EBLOCKER_DYN_DNS,
+                    null
+            );
         }
 
-        dataSource.save(normalized);
+        String host =
+                requireValidEndpointHost(
+                        config.getHost()
+                );
 
-        return normalized;
+        return new WireGuardEndpointConfig(
+                config.getType(),
+                host
+        );
     }
 
     String resolveEndpointHost() {

@@ -110,6 +110,22 @@ public abstract class BackupProvider {
     public abstract void verifyConfiguration(JarInputStream inputStream, int schemaVersion) throws IOException;
 
     /**
+     * Optional lifecycle hook invoked before any provider mutates state during
+     * an import. Existing providers intentionally inherit the no-op default.
+     */
+    public void prepareImport() throws IOException {
+        // no-op
+    }
+
+    /**
+     * Optional lifecycle hook invoked only after all providers imported
+     * successfully. Existing providers intentionally inherit the no-op default.
+     */
+    public void finishImport() throws IOException {
+        // no-op
+    }
+
+    /**
      * Write the next entry into the given JarOutputStream.
      * @param outputStream JarOutputStream
      * @param name name of the next entry

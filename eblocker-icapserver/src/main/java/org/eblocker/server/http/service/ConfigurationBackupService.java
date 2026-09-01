@@ -53,7 +53,8 @@ public class ConfigurationBackupService {
     private static final int VERSION_3_APP_MODULES_DEVICES_TOR = 3;
     private static final int VERSION_4_WITH_KEYS = 4;
     private static final int VERSION_5_FULL = 5;
-    private static final int CURRENT_VERSION = VERSION_5_FULL;
+    private static final int VERSION_6_WITH_WIREGUARD = 6;
+    private static final int CURRENT_VERSION = VERSION_6_WITH_WIREGUARD;
     private static final int MIN_VERSION = VERSION_1_ONLY_APP_MODULES;
     private static final int MAX_VERSION = CURRENT_VERSION;
     private static final byte[] salt = {-58, -73, 41, -28, 37, 23, -61, 93, 47, -57, -45, 23, -77, 97, 102, 49};
@@ -95,6 +96,20 @@ public class ConfigurationBackupService {
                         providerFactory.createHttpsKeysBackupProvider(cryptoService),
                         providerFactory.createAppModulesBackupProvider(),
                         providerFactory.createUsersBackupProvider(),
+                        providerFactory.createBlockersBackupProvider(),
+                        providerFactory.createTorConfigBackupProvider(),
+                        providerFactory.createOpenVpnServerBackupProvider(cryptoService),
+                        providerFactory.createOpenVpnClientBackupProvider(cryptoService),
+                        providerFactory.createRegistrationBackupProvider(cryptoService),
+                        providerFactory.createDnsBackupProvider(),
+                        providerFactory.createGeneralSettingsBackupProvider());
+
+            case VERSION_6_WITH_WIREGUARD:
+                return List.of(
+                        providerFactory.createHttpsKeysBackupProvider(cryptoService),
+                        providerFactory.createAppModulesBackupProvider(),
+                        providerFactory.createUsersBackupProvider(),
+                        providerFactory.createWireGuardBackupProvider(cryptoService),
                         providerFactory.createBlockersBackupProvider(),
                         providerFactory.createTorConfigBackupProvider(),
                         providerFactory.createOpenVpnServerBackupProvider(cryptoService),
@@ -183,7 +198,19 @@ public class ConfigurationBackupService {
             BackupAttributes attribs = getVerifiedAttributes(manifest);
             CryptoService cryptoService = createCryptoService(password);
 
-            for (BackupProvider provider : createBackupProviders(attribs.getVersion(), cryptoService)) {
+            List<BackupProvider> providers =
+                    createBackupProviders(
+                            attribs.getVersion(),
+                            cryptoService
+                    );
+
+            // All preparation hooks run before the first provider mutates
+            // state. WireGuard v6 uses this to quiesce runtime fail-closed.
+            for (BackupProvider provider : providers) {
+                provider.prepareImport();
+            }
+
+            for (BackupProvider provider : providers) {
                 long start = System.currentTimeMillis();
                 provider.importConfiguration(jarStream, attribs.getSchemaVersion());
                 long elapsed = System.currentTimeMillis() - start;
@@ -191,6 +218,12 @@ public class ConfigurationBackupService {
                 result.addWarnings(provider.getWarnings());
 
                 STATUS.info("Configuration backup imported by {} in {}ms", provider.getClass().getSimpleName(), elapsed);
+            }
+
+            // Finish hooks run only when every provider completed. Thus an
+            // import failure can never reactivate WireGuard midway.
+            for (BackupProvider provider : providers) {
+                provider.finishImport();
             }
         }
         return result;

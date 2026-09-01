@@ -9,7 +9,13 @@ import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.http.model.WireGuardStatus;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -18,6 +24,12 @@ public class WireGuardServerControlService {
 
     private static final Pattern WIREGUARD_PUBLIC_KEY =
             Pattern.compile("^[A-Za-z0-9+/]{43}=$");
+
+    private static final Pattern WIREGUARD_PRIVATE_KEY =
+            Pattern.compile("^[A-Za-z0-9+/]{43}=$");
+
+    private static final Path TEMP_DIRECTORY =
+            Paths.get("/tmp");
 
     private final ScriptRunner scriptRunner;
     private final ObjectMapper objectMapper;
@@ -106,6 +118,174 @@ public class WireGuardServerControlService {
         throw new IllegalStateException(
                 "WireGuard server public key is not available."
         );
+    }
+
+    /**
+     * Returns the persistent server private key for encrypted backup only.
+     * The privileged script copies it to an owner-only temporary file.
+     */
+    public String exportPrivateKeyForBackup() {
+        Path keyFile = createSecureKeyTransferFile();
+
+        try {
+            runControlCommand(
+                    "export-private-key",
+                    keyFile.toAbsolutePath().toString()
+            );
+
+            String value =
+                    Files.readString(
+                            keyFile,
+                            StandardCharsets.US_ASCII
+                    ).trim();
+
+            if (value.isEmpty()) {
+                return null;
+            }
+
+            if (!WIREGUARD_PRIVATE_KEY.matcher(value).matches()) {
+                throw new IllegalStateException(
+                        "WireGuard server private key has invalid format."
+                );
+            }
+
+            return value;
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not read WireGuard server key backup transfer.",
+                    e
+            );
+
+        } finally {
+            deleteKeyTransferFile(keyFile);
+        }
+    }
+
+    /**
+     * Restores server identity from encrypted backup.
+     * A null value represents a server that had no generated identity yet.
+     */
+    public void restorePrivateKeyForBackup(
+            String privateKey) {
+
+        if (privateKey == null) {
+            runControlCommand(
+                    "clear-private-key"
+            );
+            return;
+        }
+
+        String normalized =
+                privateKey.trim();
+
+        if (!WIREGUARD_PRIVATE_KEY.matcher(normalized).matches()) {
+            throw new IllegalArgumentException(
+                    "WireGuard server private key has invalid format."
+            );
+        }
+
+        Path keyFile = createSecureKeyTransferFile();
+
+        try {
+            Files.writeString(
+                    keyFile,
+                    normalized + "\n",
+                    StandardCharsets.US_ASCII
+            );
+
+            runControlCommand(
+                    "import-private-key",
+                    keyFile.toAbsolutePath().toString()
+            );
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not prepare WireGuard server key restore transfer.",
+                    e
+            );
+
+        } finally {
+            deleteKeyTransferFile(keyFile);
+        }
+    }
+
+    private Path createSecureKeyTransferFile() {
+        try {
+            Path path =
+                    Files.createTempFile(
+                            TEMP_DIRECTORY,
+                            "eblocker-wireguard-server-key-",
+                            ".key"
+                    );
+
+            try {
+                Files.setPosixFilePermissions(
+                        path,
+                        EnumSet.of(
+                                PosixFilePermission.OWNER_READ,
+                                PosixFilePermission.OWNER_WRITE
+                        )
+                );
+            } catch (UnsupportedOperationException ignored) {
+                // Production is POSIX/Linux.
+            }
+
+            return path;
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not create WireGuard server key transfer file.",
+                    e
+            );
+        }
+    }
+
+    private void deleteKeyTransferFile(
+            Path path) {
+
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException ignored) {
+            // Best effort; privileged script removes import files too.
+        }
+    }
+
+    private void runControlCommand(
+            String action,
+            String argument) {
+
+        try {
+            int exitCode = scriptRunner.runScript(
+                    wireGuardServerCommand,
+                    action,
+                    argument
+            );
+
+            if (exitCode != 0) {
+                throw new IllegalStateException(
+                        "WireGuard command "
+                                + action
+                                + " failed with exit code "
+                                + exitCode + "."
+                );
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not run WireGuard command " + action + ".",
+                    e
+            );
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new IllegalStateException(
+                    "Interrupted while running WireGuard command "
+                            + action + ".",
+                    e
+            );
+        }
     }
 
     private void runControlCommand(String action) {

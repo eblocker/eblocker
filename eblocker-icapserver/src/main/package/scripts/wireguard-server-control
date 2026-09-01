@@ -160,6 +160,104 @@ apply_peers() {
     fi
 }
 
+validate_key_transfer_file() {
+    KEY_FILE="${1:-}"
+
+    case "$KEY_FILE" in
+        /tmp/eblocker-wireguard-server-key-*.key)
+            ;;
+        *)
+            echo "Invalid WireGuard key transfer path" >&2
+            return 2
+            ;;
+    esac
+
+    if [ ! -e "$KEY_FILE" ]; then
+        echo "WireGuard key transfer file not found" >&2
+        return 3
+    fi
+
+    if [ -L "$KEY_FILE" ] || [ ! -f "$KEY_FILE" ]; then
+        echo "WireGuard key transfer must be a regular file" >&2
+        return 4
+    fi
+
+    LINK_COUNT="$(stat -c '%h' "$KEY_FILE" 2>/dev/null || echo 0)"
+    if [ "$LINK_COUNT" != "1" ]; then
+        echo "WireGuard key transfer file has invalid link count" >&2
+        return 5
+    fi
+}
+
+export_private_key() {
+    KEY_FILE="${1:-}"
+    validate_key_transfer_file "$KEY_FILE"
+
+    : > "$KEY_FILE"
+
+    if [ -s "$WG_PRIV" ]; then
+        cat "$WG_PRIV" > "$KEY_FILE"
+    fi
+
+    chmod 600 "$KEY_FILE"
+}
+
+import_private_key() {
+    KEY_FILE="${1:-}"
+    validate_key_transfer_file "$KEY_FILE"
+    ensure_wireguard_tools
+
+    PRIVATE_KEY="$(
+        tr -d '\r\n' < "$KEY_FILE"
+    )"
+
+    if [[ ! "$PRIVATE_KEY" =~ ^[A-Za-z0-9+/]{43}=$ ]]; then
+        echo "Invalid WireGuard private key format" >&2
+        return 6
+    fi
+
+    PUBLIC_KEY="$(
+        printf '%s\n' "$PRIVATE_KEY" \
+            | "$WG_COMMAND" pubkey
+    )"
+
+    if [[ ! "$PUBLIC_KEY" =~ ^[A-Za-z0-9+/]{43}=$ ]]; then
+        echo "Could not derive WireGuard public key" >&2
+        return 7
+    fi
+
+    stop_server
+    install -d -m 700 "$WG_DIR"
+
+    TMP_PRIV="$(
+        mktemp "$WG_DIR/.${WG_IF}.key.XXXXXX"
+    )"
+    TMP_PUB="$(
+        mktemp "$WG_DIR/.${WG_IF}.pub.XXXXXX"
+    )"
+
+    trap 'rm -f "${TMP_PRIV:-}" "${TMP_PUB:-}" "${KEY_FILE:-}"' EXIT INT TERM
+
+    umask 077
+    printf '%s\n' "$PRIVATE_KEY" > "$TMP_PRIV"
+    printf '%s\n' "$PUBLIC_KEY" > "$TMP_PUB"
+    chmod 600 "$TMP_PRIV" "$TMP_PUB"
+
+    mv "$TMP_PRIV" "$WG_PRIV"
+    mv "$TMP_PUB" "$WG_PUB"
+
+    # Regenerate interface config from restored identity before activation.
+    rm -f "$WG_CONF"
+
+    rm -f "$KEY_FILE"
+    trap - EXIT INT TERM
+}
+
+clear_private_key() {
+    stop_server
+    rm -f "$WG_CONF" "$WG_PRIV" "$WG_PUB"
+}
+
 public_key() {
     ensure_keys
     cat "$WG_PUB"
@@ -323,6 +421,18 @@ case "$MODE" in
         apply_peers "${2:-}"
         ;;
 
+    export-private-key)
+        export_private_key "${2:-}"
+        ;;
+
+    import-private-key)
+        import_private_key "${2:-}"
+        ;;
+
+    clear-private-key)
+        clear_private_key
+        ;;
+
     public-key)
         public_key
         ;;
@@ -333,7 +443,7 @@ case "$MODE" in
 
     *)
         echo \
-            "Usage: $0 {init|start|stop|restart|apply-peers|public-key|status-json}" \
+            "Usage: $0 {init|start|stop|restart|apply-peers|export-private-key|import-private-key|clear-private-key|public-key|status-json}" \
             >&2
         exit 1
         ;;

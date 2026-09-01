@@ -26,6 +26,7 @@ import org.eblocker.server.common.data.NetworkIp6Configuration;
 import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip6Utils;
 import org.eblocker.server.http.service.DeviceService;
@@ -60,6 +61,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
     private ScheduledFuture<?> arpSpooferFuture;
     private final EblockerDnsServer eblockerDnsServer;
     private final DeviceService deviceService;
+    private final WireGuardRuntimePeerSelector wireGuardRuntimePeerSelector;
 
     private List<NetworkChangeListener> listeners = new ArrayList<>();
 
@@ -70,7 +72,8 @@ public abstract class NetworkServicesBase implements NetworkServices {
                                long arpSpooferStartupDelay,
                                long arpSpooferFixedDelay,
                                EblockerDnsServer eblockerDnsServer,
-                               DeviceService deviceService) {
+                               DeviceService deviceService,
+                               WireGuardRuntimePeerSelector wireGuardRuntimePeerSelector) {
         this.dataSource = dataSource;
         this.executorService = executorService;
         this.networkInterface = networkInterface;
@@ -79,6 +82,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
         this.arpSpooferFixedDelay = arpSpooferFixedDelay;
         this.eblockerDnsServer = eblockerDnsServer;
         this.deviceService = deviceService;
+        this.wireGuardRuntimePeerSelector = wireGuardRuntimePeerSelector;
     }
 
     protected Set<Device> getDevices() {
@@ -224,7 +228,9 @@ public abstract class NetworkServicesBase implements NetworkServices {
                 dataSource.getAll(OpenVpnClientState.class);
 
         Collection<WireGuardPeer> wireGuardPeers =
-                dataSource.getAll(WireGuardPeer.class);
+                wireGuardRuntimePeerSelector.select(
+                        dataSource.getAll(WireGuardPeer.class)
+                );
 
         enableFirewall(
                 allDevices,

@@ -25,6 +25,7 @@ import org.eblocker.server.common.data.DhcpRange;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.ArpSpoofer;
 import org.eblocker.server.common.network.DhcpServerConfiguration;
@@ -81,9 +82,20 @@ public class NetworkServicesUnix extends NetworkServicesBase {
             @Named("network.unix.apply.firewall.configuration.command") String applyFirewallConfigurationCommand,
             @Named("network.unix.enable.ip6") String enableIp6Command,
             EblockerDnsServer eblockerDnsServer,
-            DeviceService deviceService
+            DeviceService deviceService,
+            WireGuardRuntimePeerSelector wireGuardRuntimePeerSelector
     ) {
-        super(dataSource, executorService, networkInterface, arpSpoofer, arpSpoofer_startupDelay, arpSpoofer_fixedDelay, eblockerDnsServer, deviceService);
+        super(
+                dataSource,
+                executorService,
+                networkInterface,
+                arpSpoofer,
+                arpSpoofer_startupDelay,
+                arpSpoofer_fixedDelay,
+                eblockerDnsServer,
+                deviceService,
+                wireGuardRuntimePeerSelector
+        );
         this.dnsConfiguration = dnsConfiguration;
         this.interfaceConfiguration = interfaceConfiguration;
         this.dhcpServer = dhcpServer;

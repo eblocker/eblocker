@@ -66,6 +66,7 @@ import org.eblocker.server.common.network.unix.IpSetConfig;
 import org.eblocker.server.common.network.unix.IpSets;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.openvpn.OpenVpnChannelFactory;
 import org.eblocker.server.common.openvpn.OpenVpnClientFactory;
 import org.eblocker.server.common.openvpn.OpenVpnService;
@@ -167,6 +168,7 @@ import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
 import org.eblocker.server.http.service.ShutdownExecutorService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.eblocker.server.http.service.UserService;
+import org.eblocker.server.http.service.WireGuardAuthorizedRuntimePeerSelector;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -241,6 +243,8 @@ public class EblockerModule extends BaseModule {
         bind(EventLogger.class).to(DataSourceEventLogger.class);
         bind(FilterStatisticsDataSource.class).to(JedisFilterStatisticsDataSource.class);
         bind(NetworkServices.class).to(NetworkServicesUnix.class);
+        bind(WireGuardRuntimePeerSelector.class)
+                .to(WireGuardAuthorizedRuntimePeerSelector.class);
         bind(PubSubService.class).to(JedisPubSubService.class);
         bind(ScriptRunner.class).to(ScriptRunnerUnix.class);
         bind(SystemUpdater.class).to(DebianUpdater.class);

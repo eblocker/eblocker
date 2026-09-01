@@ -18,6 +18,8 @@ package org.eblocker.server.common.network.unix;
 
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.NetworkConfiguration;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.system.ScriptRunner;
@@ -29,7 +31,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceUnixTest testing the same class!
@@ -38,24 +44,49 @@ public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceU
     private static final String APPLY_FIREWALL_COMMAND = "apply_firewall";
     private static final String ENABLE_IP6_COMMAND = "enable_ip6";
 
+    private DataSource dataSource;
     private FirewallConfigurationIp4 firewallConfiguration;
     private FirewallConfigurationIp6 firewallConfigurationIp6;
     private ScriptRunner scriptRunner;
     private NetworkServicesUnix networkServices;
     private DeviceService deviceService;
     private FeatureToggleRouter featureToggleRouter;
+    private EblockerDnsServer eblockerDnsServer;
+    private WireGuardRuntimePeerSelector wireGuardRuntimePeerSelector;
 
     @Before
     public void setUp() {
-        DataSource dataSource = Mockito.mock(DataSource.class);
+        dataSource = Mockito.mock(DataSource.class);
         firewallConfiguration = Mockito.mock(FirewallConfigurationIp4.class);
         firewallConfigurationIp6 = Mockito.mock(FirewallConfigurationIp6.class);
         scriptRunner = Mockito.mock(ScriptRunner.class);
         deviceService = Mockito.mock(DeviceService.class);
         featureToggleRouter = Mockito.mock(FeatureToggleRouter.class);
-        networkServices = new NetworkServicesUnix(dataSource, null, null, null, firewallConfiguration, firewallConfigurationIp6,
-                null, null, null, scriptRunner, featureToggleRouter, 0, 0,
-                APPLY_NETWORK_CONFIG_COMMAND, APPLY_FIREWALL_COMMAND, ENABLE_IP6_COMMAND, null, deviceService);
+        eblockerDnsServer = Mockito.mock(EblockerDnsServer.class);
+        wireGuardRuntimePeerSelector =
+                Mockito.mock(WireGuardRuntimePeerSelector.class);
+
+        networkServices = new NetworkServicesUnix(
+                dataSource,
+                null,
+                null,
+                null,
+                firewallConfiguration,
+                firewallConfigurationIp6,
+                null,
+                null,
+                null,
+                scriptRunner,
+                featureToggleRouter,
+                0,
+                0,
+                APPLY_NETWORK_CONFIG_COMMAND,
+                APPLY_FIREWALL_COMMAND,
+                ENABLE_IP6_COMMAND,
+                eblockerDnsServer,
+                deviceService,
+                wireGuardRuntimePeerSelector
+        );
     }
 
     @Test
@@ -94,6 +125,69 @@ public class NetworkServicesUnixTest { // FIXME: there is also a NetworkServiceU
         Assert.assertFalse(captor.getValue().get());
         Mockito.verify(firewallConfigurationIp6).enable(Mockito.anySet(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), captor.capture());
         Assert.assertFalse(captor.getValue().get());
+    }
+
+
+    @Test
+    public void testPublicEnableFirewallUsesProjectedWireGuardPeers()
+            throws IOException, InterruptedException {
+
+        WireGuardPeer allowed = new WireGuardPeer();
+        allowed.setId(1);
+
+        WireGuardPeer denied = new WireGuardPeer();
+        denied.setId(2);
+
+        List<WireGuardPeer> persisted =
+                Arrays.asList(allowed, denied);
+
+        List<WireGuardPeer> runtime =
+                Collections.singletonList(allowed);
+
+        Mockito.when(
+                dataSource.getAll(WireGuardPeer.class)
+        ).thenReturn(persisted);
+
+        Mockito.when(
+                deviceService.getDevices(true)
+        ).thenReturn(Collections.emptyList());
+
+        Mockito.when(
+                wireGuardRuntimePeerSelector.select(persisted)
+        ).thenReturn(runtime);
+
+        networkServices.enableFirewall(
+                false,
+                false,
+                false,
+                true,
+                false
+        );
+
+        Mockito.verify(
+                wireGuardRuntimePeerSelector
+        ).select(persisted);
+
+        ArgumentCaptor<Collection> peerCaptor =
+                ArgumentCaptor.forClass(Collection.class);
+
+        Mockito.verify(firewallConfiguration).enable(
+                Mockito.anySet(),
+                Mockito.any(),
+                peerCaptor.capture(),
+                Mockito.anyBoolean(),
+                Mockito.anyBoolean(),
+                Mockito.anyBoolean(),
+                Mockito.anyBoolean(),
+                Mockito.anyBoolean(),
+                Mockito.anyBoolean(),
+                Mockito.any()
+        );
+
+        Assert.assertEquals(
+                runtime,
+                peerCaptor.getValue()
+        );
     }
 
     @Test

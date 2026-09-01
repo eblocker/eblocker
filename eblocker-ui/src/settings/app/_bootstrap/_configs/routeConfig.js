@@ -377,6 +377,15 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'devicesDiscoveryComponent'
     };
 
+    const devicesVpnAccess = {
+        name: 'devicesvpnaccess',
+        url: slashOptionSubState + 'vpn-access',
+        parent: devicesState.name,
+        requiredLicense: devices.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_ACCESS.LABEL',
+        component: 'vpnAccessComponent'
+    };
+
     // details for devices: uses ui-view of main-state, but is
     // actually ancestor of devices (for navbar selection)
     const devicesDetails = {
@@ -1128,7 +1137,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         events, backup, reset, diagnostics, usersDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
-        vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
+        vpnHomeWizard, devicesList, devicesDiscovery, devicesVpnAccess, dnsStatus, dnsLocal,
         dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
         doctor];
 

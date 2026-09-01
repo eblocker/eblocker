@@ -3486,6 +3486,42 @@
                 "REMOVE_BUTTON": "Es dürfen nur benutzerdefinierte Kategorien gelöscht werden, die keinem Benutzer zugewiesen sind."
             }
         },
+        "VPN_ACCESS": {
+            "LABEL": "VPN-Zugriff",
+            "TITLE": "VPN-Zugriff für Geräte",
+            "DESCRIPTION": "Hier können die VPN-Berechtigungen aller Geräte zentral verwaltet werden.",
+            "SEARCH": "Gerät oder Benutzer suchen",
+            "GLOBAL_OPENVPN": "OpenVPN / eBlocker Mobile global",
+            "GLOBAL_WIREGUARD": "WireGuard global",
+            "DEVICE": "Gerät",
+            "USER": "Benutzer",
+            "OPENVPN": "OpenVPN / eBlocker Mobile",
+            "WIREGUARD_DEVICE": "WireGuard Gerät",
+            "WIREGUARD_USER": "WireGuard Benutzer",
+            "EFFECTIVE": "Effektiver WireGuard-Zugriff",
+            "ALLOWED": "Erlaubt",
+            "DENIED": "Gesperrt",
+            "ON": "Aktiv",
+            "OFF": "Aus",
+            "UNKNOWN": "Unbekannt",
+            "UNASSIGNED": "Nicht zugewiesen",
+            "NOT_APPLICABLE": "Nicht erforderlich",
+            "REASON": {
+                "GLOBAL_DISABLED": "WireGuard ist global ausgeschaltet.",
+                "DEVICE_DISABLED": "WireGuard ist für dieses Gerät nicht freigegeben.",
+                "USER_NOT_FOUND": "Der zugewiesene Benutzer wurde nicht gefunden.",
+                "USER_INCONSISTENT": "Die Benutzerzuordnung ist inkonsistent.",
+                "USER_DISABLED": "WireGuard ist für den zugewiesenen Benutzer nicht freigegeben.",
+                "ALLOWED_NO_ASSIGNED_USER": "Freigegeben, da kein echter Benutzer zugewiesen ist.",
+                "ALLOWED": "WireGuard-Zugriff ist freigegeben."
+            },
+            "NOTIFICATION": {
+                "LOAD_ERROR": "Die VPN-Berechtigungen konnten nicht geladen werden.",
+                "OPENVPN_ERROR": "Die OpenVPN-Berechtigung konnte nicht geändert werden.",
+                "WIREGUARD_DEVICE_ERROR": "Die WireGuard-Geräteberechtigung konnte nicht geändert werden.",
+                "WIREGUARD_USER_ERROR": "Die WireGuard-Benutzerberechtigung konnte nicht geändert werden."
+            }
+        },
         "WIREGUARD": {
             "LABEL": "WireGuard",
             "SWITCH": {

@@ -155,4 +155,46 @@ describe('App settings; WireGuardService', function() {
 
         $httpBackend.flush();
     });
+
+    it('loads WireGuard authorization for a device', function() {
+        $httpBackend.expectGET(
+            PATH + '/authorization/devices/device:1'
+        ).respond(200, {allowed: true});
+
+        service.getDeviceAuthorization('device:1')
+            .then(function(response) {
+                expect(response.data.allowed).toBe(true);
+            });
+
+        $httpBackend.flush();
+    });
+
+    it('sets WireGuard authorization for a device', function() {
+        $httpBackend.expectPUT(
+            PATH + '/authorization/devices/device:1',
+            true
+        ).respond(200, {deviceEnabled: true});
+
+        service.setDeviceAuthorization('device:1', true)
+            .then(function(response) {
+                expect(response.data.deviceEnabled).toBe(true);
+            });
+
+        $httpBackend.flush();
+    });
+
+    it('sets WireGuard authorization for a user', function() {
+        $httpBackend.expectPUT(
+            PATH + '/authorization/users/7',
+            false
+        ).respond(200, false);
+
+        service.setUserAuthorization(7, false)
+            .then(function(response) {
+                expect(response.data).toBe(false);
+            });
+
+        $httpBackend.flush();
+    });
+
 });

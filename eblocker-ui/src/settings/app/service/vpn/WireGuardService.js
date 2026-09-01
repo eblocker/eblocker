@@ -51,7 +51,23 @@ export default function WireGuardService($http, $q) {
         return $q.reject(response);
     }
 
+
+    function getDeviceAuthorization(deviceId) {
+        return $http.get(PATH + '/authorization/devices/' + deviceId);
+    }
+
+    function setDeviceAuthorization(deviceId, enabled) {
+        return $http.put(PATH + '/authorization/devices/' + deviceId, enabled);
+    }
+
+    function setUserAuthorization(userId, enabled) {
+        return $http.put(PATH + '/authorization/users/' + userId, enabled);
+    }
+
     return {
+        getDeviceAuthorization: getDeviceAuthorization,
+        setDeviceAuthorization: setDeviceAuthorization,
+        setUserAuthorization: setUserAuthorization,
         getStatus: getStatus,
         enable: enable,
         disable: disable,

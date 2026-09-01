@@ -176,6 +176,7 @@ import VpnHomeStatusComponent from './components/vpnHome/status/vpn-home-status.
 import VpnHomeWizardComponent from './components/vpnHome/wizard/vpn-home-wizard.component';
 import VpnHomeDynDnsComponent from './components/vpnHome/dyndns/vpn-home-dyndns.component';
 import VpnHomeTestsComponent from './components/vpnHome/tests/vpn-home-tests.component';
+import VpnAccessComponent from './components/devices/vpnAccess/vpn-access.component';
 import WireGuardStatusComponent from './components/wireguard/wireguard-status.component';
 
 import SslStatusComponent from './components/ssl/status/ssl-status.component';
@@ -459,6 +460,7 @@ angular.module('eblocker.adminconsole', [
     .component('vpnHomeWizardComponent', VpnHomeWizardComponent)
     .component('vpnHomeDynDnsComponent', VpnHomeDynDnsComponent)
     .component('vpnHomeTestsComponent', VpnHomeTestsComponent)
+    .component('vpnAccessComponent', VpnAccessComponent)
     .component('wireGuardStatusComponent', WireGuardStatusComponent)
     .component('doctorDiagnosisComponent', DoctorDiagnosisComponent)
     .component('sslStatusComponent', SslStatusComponent)

@@ -1,0 +1,104 @@
+<div layout="column" layout-fill class="settings-child-view eb-devices">
+    <h3>{{ 'ADMINCONSOLE.VPN_ACCESS.TITLE' | translate }}</h3>
+    <p>{{ 'ADMINCONSOLE.VPN_ACCESS.DESCRIPTION' | translate }}</p>
+
+    <div layout="row" layout-wrap layout-padding>
+        <div flex-gt-sm="50" flex="100">
+            <strong>{{ 'ADMINCONSOLE.VPN_ACCESS.GLOBAL_OPENVPN' | translate }}:</strong>
+            <span ng-if="vm.openVpnGlobalEnabled === true">{{ 'ADMINCONSOLE.VPN_ACCESS.ON' | translate }}</span>
+            <span ng-if="vm.openVpnGlobalEnabled === false">{{ 'ADMINCONSOLE.VPN_ACCESS.OFF' | translate }}</span>
+            <span ng-if="vm.openVpnGlobalEnabled !== true && vm.openVpnGlobalEnabled !== false">
+                {{ 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN' | translate }}
+            </span>
+        </div>
+        <div flex-gt-sm="50" flex="100">
+            <strong>{{ 'ADMINCONSOLE.VPN_ACCESS.GLOBAL_WIREGUARD' | translate }}:</strong>
+            <span ng-if="vm.wireGuardGlobalEnabled === true">{{ 'ADMINCONSOLE.VPN_ACCESS.ON' | translate }}</span>
+            <span ng-if="vm.wireGuardGlobalEnabled === false">{{ 'ADMINCONSOLE.VPN_ACCESS.OFF' | translate }}</span>
+            <span ng-if="vm.wireGuardGlobalEnabled !== true && vm.wireGuardGlobalEnabled !== false">
+                {{ 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN' | translate }}
+            </span>
+        </div>
+    </div>
+
+    <md-input-container>
+        <label>{{ 'ADMINCONSOLE.VPN_ACCESS.SEARCH' | translate }}</label>
+        <input ng-model="vm.searchText">
+    </md-input-container>
+
+    <md-progress-linear md-mode="indeterminate" ng-if="vm.loading"></md-progress-linear>
+
+    <div ng-if="!vm.loading">
+        <div layout="row" layout-padding hide-xs hide-sm>
+            <div flex="20"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.DEVICE' | translate }}</strong></div>
+            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.USER' | translate }}</strong></div>
+            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.OPENVPN' | translate }}</strong></div>
+            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_DEVICE' | translate }}</strong></div>
+            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_USER' | translate }}</strong></div>
+            <div flex="20"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.EFFECTIVE' | translate }}</strong></div>
+        </div>
+
+        <md-divider></md-divider>
+
+        <div ng-repeat="row in vm.rows | filter:vm.searchText | orderBy:'displayName'"
+             layout="row" layout-wrap layout-padding layout-align="start center">
+
+            <div flex-gt-sm="20" flex="100">
+                <strong>{{ row.displayName }}</strong>
+                <div>{{ row.device.ipAddress || row.device.id }}</div>
+            </div>
+
+            <div flex-gt-sm="15" flex="50">
+                <span ng-if="row.authorization.userPermissionRequired === true && row.assignedUser">
+                    {{ row.assignedUserName }}
+                </span>
+                <span ng-if="row.authorization.userPermissionRequired === true && !row.assignedUser">
+                    #{{ row.authorization.assignedUserId }}
+                </span>
+                <span ng-if="row.authorization.userPermissionRequired !== true">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.UNASSIGNED' | translate }}
+                </span>
+            </div>
+
+            <div flex-gt-sm="15" flex="50">
+                <md-switch ng-model="row.openVpnEnabled"
+                           ng-change="vm.setOpenVpnAccess(row)"
+                           ng-disabled="row.busyOpenVpn"
+                           aria-label="{{ 'ADMINCONSOLE.VPN_ACCESS.OPENVPN' | translate }}">
+                </md-switch>
+            </div>
+
+            <div flex-gt-sm="15" flex="50">
+                <md-switch ng-model="row.authorization.deviceEnabled"
+                           ng-change="vm.setWireGuardDeviceAccess(row)"
+                           ng-disabled="row.busyWireGuardDevice"
+                           aria-label="{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_DEVICE' | translate }}">
+                </md-switch>
+            </div>
+
+            <div flex-gt-sm="15" flex="50">
+                <md-switch ng-if="vm.canToggleWireGuardUser(row)"
+                           ng-model="row.authorization.userEnabled"
+                           ng-change="vm.setWireGuardUserAccess(row)"
+                           ng-disabled="row.busyWireGuardUser"
+                           aria-label="{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_USER' | translate }}">
+                </md-switch>
+                <span ng-if="!vm.canToggleWireGuardUser(row)">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.NOT_APPLICABLE' | translate }}
+                </span>
+            </div>
+
+            <div flex-gt-sm="20" flex="100">
+                <strong ng-if="row.authorization.allowed === true">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.ALLOWED' | translate }}
+                </strong>
+                <strong ng-if="row.authorization.allowed !== true">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.DENIED' | translate }}
+                </strong>
+                <div>{{ vm.reasonKey(row) | translate }}</div>
+            </div>
+
+            <md-divider flex="100"></md-divider>
+        </div>
+    </div>
+</div>

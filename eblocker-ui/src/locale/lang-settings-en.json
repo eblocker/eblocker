@@ -3486,6 +3486,42 @@
                 "REMOVE_BUTTON" : "You may only delete a user defined whitelist that is not assigned to any users."
             }
         },
+        "VPN_ACCESS": {
+            "LABEL": "VPN access",
+            "TITLE": "VPN access for devices",
+            "DESCRIPTION": "Manage VPN permissions for all devices in one place.",
+            "SEARCH": "Search device or user",
+            "GLOBAL_OPENVPN": "OpenVPN / eBlocker Mobile global",
+            "GLOBAL_WIREGUARD": "WireGuard global",
+            "DEVICE": "Device",
+            "USER": "User",
+            "OPENVPN": "OpenVPN / eBlocker Mobile",
+            "WIREGUARD_DEVICE": "WireGuard device",
+            "WIREGUARD_USER": "WireGuard user",
+            "EFFECTIVE": "Effective WireGuard access",
+            "ALLOWED": "Allowed",
+            "DENIED": "Denied",
+            "ON": "On",
+            "OFF": "Off",
+            "UNKNOWN": "Unknown",
+            "UNASSIGNED": "Unassigned",
+            "NOT_APPLICABLE": "Not required",
+            "REASON": {
+                "GLOBAL_DISABLED": "WireGuard is disabled globally.",
+                "DEVICE_DISABLED": "WireGuard is not allowed for this device.",
+                "USER_NOT_FOUND": "The assigned user could not be found.",
+                "USER_INCONSISTENT": "The user assignment is inconsistent.",
+                "USER_DISABLED": "WireGuard is not allowed for the assigned user.",
+                "ALLOWED_NO_ASSIGNED_USER": "Allowed because no real user is assigned.",
+                "ALLOWED": "WireGuard access is allowed."
+            },
+            "NOTIFICATION": {
+                "LOAD_ERROR": "VPN permissions could not be loaded.",
+                "OPENVPN_ERROR": "The OpenVPN permission could not be changed.",
+                "WIREGUARD_DEVICE_ERROR": "The WireGuard device permission could not be changed.",
+                "WIREGUARD_USER_ERROR": "The WireGuard user permission could not be changed."
+            }
+        },
         "WIREGUARD" : {
             "LABEL" : "WireGuard",
             "SWITCH" : {

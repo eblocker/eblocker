@@ -134,13 +134,24 @@ apply_peers() {
 
     trap 'rm -f "${TMP_CONF:-}" "${PEER_FILE:-}"' EXIT INT TERM
 
-    # Preserve only the interface section from the current configuration.
+    # Preserve only the interface section, but remove trailing blank lines
+    # before the first peer. This prevents whitespace growth across repeated
+    # reconciles and allows byte-identical idempotence to work.
     awk '
         /^\[Peer\][[:space:]]*$/ { exit }
-        { print }
+        { lines[++count] = $0 }
+        END {
+            while (count > 0 && lines[count] ~ /^[[:space:]]*$/) {
+                count--
+            }
+
+            for (i = 1; i <= count; i++) {
+                print lines[i]
+            }
+        }
     ' "$WG_CONF" > "$TMP_CONF"
 
-    # Add the complete peer set supplied by the backend.
+    # Canonical separator: exactly one blank line before peer blocks.
     printf "\n" >> "$TMP_CONF"
     cat "$PEER_FILE" >> "$TMP_CONF"
 

@@ -36,7 +36,7 @@
             "TITLE_REDIRECT" : "Website blocked"
         },
         "PAUSED" : {
-            "LABEL_BOTTOM" : "STOPPED",
+            "LABEL_BOTTOM" : "PAUSED",
             "LABEL_TOP" : "DASHBOARD"
         },
         "REMOTE_WARNING" : {
@@ -64,7 +64,7 @@
     "CONSOLE" : {
         "CARD" : {
             "BUTTON" : {
-                "OK" : "Go to settings"
+                "OK" : "Open settings"
             },
             "NETWORK" : {
                 "DEVICE_IP" : "This device:",
@@ -158,33 +158,6 @@
             "TOOLTIP" : "Test your connection"
         }
     },
-    "DEVICE" : {
-        "CARD" : {
-            "BUTTON" : {
-                "ACTIVATE" : "Activate eBlocker",
-                "DEACTIVATE" : "Deactivate eBlocker",
-                "TEST" : "Test"
-            },
-            "ENABLED" : {
-                "NO" : "eBlocker is deactivated for this device.",
-                "YES" : "eBlocker is activated for this device."
-            },
-            "IP_ADDRESS" : {
-                "LABEL" : "IP Address"
-            },
-            "MAC_ADDRESS" : {
-                "LABEL" : "Hardware ID"
-            },
-            "NAME" : {
-                "LABEL" : "Name (editable)"
-            },
-            "TITLE" : "This Device",
-            "TOOLTIP" : "Activate or deactivate eBlocker for this device.",
-            "VENDOR" : {
-                "LABEL" : "Vendor"
-            }
-        }
-    },
     "DEVICE_FIREWALL" : {
         "CARD" : {
             "ACTION" : {
@@ -241,7 +214,7 @@
                 "CANCEL" : "Cancel",
                 "LOCK" : "Lock",
                 "LOGIN" : "Change user",
-                "OK" : "Ok"
+                "OK" : "OK"
             },
             "ERROR" : {
                 "INVALID" : "PIN is invalid.",
@@ -251,8 +224,8 @@
             "PIN_CHANGE" : {
                 "ERROR" : {
                     "INVALID" : "Invalid PIN",
-                    "MISMATCH" : "PINs do not match",
-                    "REQUIRED" : "Please enter a pin!",
+                    "MISMATCH" : "PINs do not match.",
+                    "REQUIRED" : "Please enter a PIN.",
                     "TOO_LONG" : "PIN is too long.",
                     "TOO_SHORT" : "PIN must have at least 4 characters."
                 },
@@ -266,15 +239,15 @@
             },
             "PIN_LOCK" : {
                 "BODY" : "Do you really want to lock Internet access for this device?",
-                "HEADER" : "Lock Internet Access"
+                "HEADER" : "Lock internet access"
             },
             "PIN_SELECT_USER" : {
                 "LABEL": "Select user",
                 "BODY_LOCK" : "Alternatively, you can lock Internet access for this device.",
                 "BODY_POST" : ".",
-                "BODY_PRE" : "The user PIN is required for the switchover to user ",
+                "BODY_PRE" : "You need the user PIN to switch to user ",
                 "USER_NAME": "{{ name | translate }}",
-                "HEADER" : "PIN Required"
+                "HEADER" : "PIN entry required"
             }
         },
         "WELCOME" : {
@@ -298,10 +271,10 @@
             "MAC_OS" : "+ D",
             "NEVER_AGAIN" : "Never show again on this device",
             "OTHER" : "Create a Bookmark for the eBlocker Dashboard now!",
-            "PAR_1" : "The eBlocker Dashboard gives you a quick overview how the eBlocker is protecting you while using this device.",
-            "PAR_2" : "You can also use the Dashboard to fine tune how the eBlocker should protect this device.",
+            "PAR_1" : "The eBlocker Dashboard gives you a quick overview of how the eBlocker is protecting you while you use this device.",
+            "PAR_2" : "You can also use the dashboard to adapt the protection settings to your needs.",
             "PRESS" : "Press: ",
-            "TITLE" : "Welcome to eBlocker Dashboard",
+            "TITLE" : "Welcome to the eBlocker dashboard",
             "TITLE_XS" : "Bookmark the Dashboard",
             "WIN" : "CTRL + D"
         }
@@ -344,7 +317,7 @@
                 "GO_TO_HTTPS" : "Go to Settings/HTTPS"
             },
             "MALWARE" : {
-                "LABEL" : "Malware Blockers",
+                "LABEL" : "Malware & Phishing Blocker",
                 "OFF" : "Off",
                 "ON" : "Standard"
             },
@@ -358,11 +331,11 @@
             },
             "TITLE" : "Blocker",
             "TOOLTIP" : "Blocker settings.",
-            "WARN_DNS_1" : "DNS server is deactivated.",
-            "WARN_DNS_2" : "Domain blocker will not function!",
-            "WARN_MALWARE" : "Activate malware blocker to protect the device!",
-            "WARN_NO_FILTER" : "Activate tracker and ad blocker to protect the device!",
-            "WARN_SSL" : "Pattern blocker will not function on HTTPS pages.",
+            "WARN_DNS_1" : "The DNS server is deactivated.",
+            "WARN_DNS_2" : "Domain Blockers are not functional!",
+            "WARN_MALWARE" : "Activate the malware blockers to protect this device!",
+            "WARN_NO_FILTER" : "Activate the tracker and ad blockers to protect this device!",
+            "WARN_SSL" : "Pattern Blockers are not active on HTTPS websites.",
             "WARN_SSL_DEVICE" : "HTTPS support is disabled for this device.",
             "WARN_SSL_GLOABL" : "HTTPS support is disabled."
         }
@@ -390,11 +363,11 @@
                 },
                 "SERIES" : {
                     "ADS" : "Ads",
-                    "CUSTOM" : "User Blacklist",
-                    "NOT_BLOCKED" : "Not Blocked",
-                    "PARENTAL_CONTROL" : "Parental",
+                    "CUSTOM" : "Custom blacklist",
+                    "NOT_BLOCKED" : "Allowed",
+                    "PARENTAL_CONTROL" : "Parental controls",
                     "TRACKERS" : "Trackers",
-                    "UNKNOWN" : "unknown/deleted list"
+                    "UNKNOWN" : "Unknown/deleted list"
                 }
             },
             "TITLE" : "Blocker Statistics",
@@ -419,7 +392,7 @@
                 "TOTAL_BLOCKED" : "Total blocked",
                 "TOTAL_REQUESTS" : "Total requests"
             },
-            "TITLE" : "Blocked Statistics (total)",
+            "TITLE" : "Blocker Statistics (total)",
             "TOOLTIP" : "Statistics for blocked domains across all devices"
         }
     },
@@ -459,8 +432,8 @@
             "FORMAT_DATE" : "MMM D, YYYY",
             "MESSAGES_NOTIFY_CLOSE_TOOLTIP" : "Close this message",
             "TEXT" : {
-                "HAS_ALERT" : "You've got {count} alert {count, select, 1{message} other{messages} }.",
-                "HAS_INFO" : "You've got {count} info {count, select, 1{message} other{messages} }.",
+                "HAS_ALERT" : "You have {count} alert {count, select, 1{message} other{messages} }.",
+                "HAS_INFO" : "You have {count} info {count, select, 1{message} other{messages} }.",
                 "NO_MESSAGES" : "No system messages"
             },
             "TITLE" : "Messages",
@@ -480,7 +453,7 @@
             },
             "LABEL_STEP_1" : "Step 1: Install VPN App",
             "LABEL_STEP_2" : "Step 2: Install eBlocker Mobile configuration",
-            "LABEL_STEP_3" : "Step 3: Open connection to eBlocker Mobile",
+            "LABEL_STEP_3" : "Step 3: Connect to eBlocker Mobile",
             "LINK" : {
                 "HOW_TO_START" : "https://eBlocker.org/startvpn_en/",
                 "RECOMMENDED_APPS" : "https://eBlocker.org/en/openvpn-clients/"
@@ -521,7 +494,7 @@
                 "INTERNET_BLOCKED": "Internet access blocked"
             },
             "TITLE" : "Online Time",
-            "TOOLTIP" : "Overview over today's Internet usage"
+            "TOOLTIP" : "Overview of the current internet usage"
         }
     },
     "PARENTAL_CONTROL_FRAG_FINN_PROFILE_NAME" : "fragFINN protection profile (GERMAN SITES ONLY)",
@@ -538,7 +511,7 @@
                 "ALLOW_INTERNET_XS": "Unlock",
                 "ADD_TIME": "+ 10&#8239;min",
                 "SUB_TIME": "- 10&#8239;min",
-                "RESET": "Reset Statistic",
+                "RESET": "Reset statistics",
                 "RESET_BONUS": "Reset online time"
             },
             "LABEL": {
@@ -572,11 +545,11 @@
             },
             "TEXT" : {
                 "NOT_PAUSED" : "Pause eBlocker for this device.",
-                "PAUSED" : "eBlocker is pausing for:"
+                "PAUSED" : "eBlocker paused for:"
             },
             "TITLE" : "Pause",
             "TITLE_COLLAPSED_PAUSED" : "Paused for {{sec}}",
-            "TOOLTIP" : "Lets eBlocker pause temporarily for this device.",
+            "TOOLTIP" : "Pause the eBlocker for this device for a short time.",
             "TOOLTIP_MENU" : "This card is unavailable due to parental controls settings."
         }
     },
@@ -584,7 +557,7 @@
         "CARD" : {
             "TITLE" : "Search with FragFINN",
             "TOOLTIP" : "Safely search the web with FragFINN (German sites only)",
-            "OFFLINE_TEXT": "Your are currently offline."
+            "OFFLINE_TEXT": "You are currently offline."
         }
     },
     "REDIRECT" : {
@@ -592,25 +565,25 @@
             "ACTION" : {
                 "BACK" : "Back to previous page",
                 "BACK_XS" : "Back",
-                "CONTINUE" : "Continue and Approve Tracking",
+                "CONTINUE" : "Continue and allow data collection",
                 "CONTINUE_XS" : "Continue anyway"
             },
-            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
-            "TEXT_2A" : "This link belongs to ",
+            "TEXT_1" : "eBlocker has detected a tracking link that is trying to track your page view.",
+            "TEXT_2A" : "This link leads to the known data collector ",
             "TEXT_2B" : ".",
-            "TEXT_3" : "Unfortunately eBlocker cannot determine the desired target website.",
+            "TEXT_3" : "Unfortunately, eBlocker could not determine the target website of the link.",
             "TITLE" : "Tracking Link Detected"
         },
         "REDIRECT_OPTIONS" : {
             "ACTION" : {
-                "CONTINUE" : "Get Tracked",
-                "SHORTCUT" : "Go Straight to "
+                "CONTINUE" : "Allow data collection",
+                "SHORTCUT" : "Skip tracking and go to "
             },
             "REMEMBER_LABEL" : "Remember my decision for similar tracking links.",
-            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
-            "TEXT_2A" : " This link belongs to ",
+            "TEXT_1" : "eBlocker has detected a tracking link that is trying to track your page view.",
+            "TEXT_2A" : "This link leads to the known data collector ",
             "TEXT_2B" : ",",
-            "TEXT_3A" : "but you probably want to go straight to ",
+            "TEXT_3A" : "but your actual destination is probably ",
             "TEXT_3B" : ".",
             "TITLE" : "Tracking Link Detected"
         }
@@ -634,7 +607,7 @@
             "USER_1" : " are active for this device.",
             "REASON" : "The restriction has been triggered by the following settings:",
             "TEXT" : "The eBlocker Parental Controls have denied access to the requested URL: ",
-            "TIME_RESTRICTION" : "The Internet access is denied at this time.",
+            "TIME_RESTRICTION" : "Internet access is not allowed at this time.",
             "TITLE" : "Access has been denied",
             "USAGE_DISABLED" : "Internet access is disabled",
             "USAGE_ENABLED" : "Internet access is enabled",
@@ -649,21 +622,21 @@
                 "RETRY" : "Retry",
                 "WHITELIST_DOMAIN" : "Whitelist Domain"
             },
-            "BLOCKED_ADS_MESSAGE" : "If you need to access this page you can whitelist the following domain but this might not take effect immediately due to dns caching on your client.",
-            "BLOCKED_ADS_TARGET" : "eBlocker Ad-Blocker has blocked access to the requested URL:",
-            "BLOCKED_ADS_TITLE" : "Ads blocked!",
-            "BLOCKED_ADS_TRACKERS_ALREADY_WHITELISTED" : "Domain is already whitelisted, you probably arrived here due to dns caching on your client. Try closing your browser and flushing your dns cache.",
-            "BLOCKED_TRACKERS_MESSAGE" : "If you need to access this page you can pause the eBlocker and continue to the target domain. The pause might not take effect immediately due to DNS caching on your client.",
-            "BLOCKED_TRACKERS_TARGET" : "The eBlocker tracker blocker has blocked access to the requested URL:",
-            "BLOCKED_TRACKERS_TITLE" : "Trackers blocked!",
-            "BLOCKED_CUSTOM_MESSAGE" : "If you need to access this page you can remove the following domain from your blacklist but this might not take effect immediately due to dns caching on your client.",
-            "BLOCKED_CUSTOM_TARGET" : "Your blacklist has blocked access to the requested URL:",
-            "BLOCKED_CUSTOM_TITLE" : "Blacklisted domain blocked!",
+            "BLOCKED_ADS_MESSAGE" : "This domain is known as an ad server:",
+            "BLOCKED_ADS_TARGET" : "The eBlocker has blocked access to the following URL:",
+            "BLOCKED_ADS_TITLE" : "Ad detected!",
+            "BLOCKED_ADS_TRACKERS_ALREADY_WHITELISTED" : "The domain has already been added to the exception list, but access is still blocked. Please clear your DNS cache and restart your browser.",
+            "BLOCKED_TRACKERS_MESSAGE" : "If you need to access this page, you can pause the eBlocker for 5 minutes and then continue. Please note that the pause may not take effect immediately. This depends on the cache in your browser/operating system.",
+            "BLOCKED_TRACKERS_TARGET" : "The eBlocker has blocked access to the following URL:",
+            "BLOCKED_TRACKERS_TITLE" : "Tracker detected!",
+            "BLOCKED_CUSTOM_MESSAGE" : "If you need to access it, you can remove the domain from the blacklist. Depending on your browser/operating system, this may not take effect immediately.",
+            "BLOCKED_CUSTOM_TARGET" : "Your list of blocked domains has blocked access to the following URL:",
+            "BLOCKED_CUSTOM_TITLE" : "Blocked domain!",
             "ERROR_DEVICE_PAUSE_CANNOT_EXECUTE" : "Unable to pause the eBlocker for this device.",
             "PAUSE_AND_CONTINUE" : {
                 "BUTTON_CANCEL" : "Cancel",
                 "BUTTON_OK" : "Pause and continue",
-                "TEXT" : "Please note that it might take a few minutes, before the blocked page is available, due to local caches on your device or in the browser.",
+                "TEXT" : "Please note that, due to local caches on your device and in your browser, it can take a few minutes before the website is available.",
                 "TITLE" : "Pause eBlocker for this device for 5 minutes?"
             },
             "PAUSE_WAIT_FOR_REDIRECT" : "You will be redirected shortly ..."
@@ -681,7 +654,7 @@
                 "BACK" : "Back",
                 "RETRY" : "Retry"
             },
-            "MESSAGE" : "This can happen in case your device still has cached DNS responses for this domain. If you whitelisted a domain shortly please wait a moment and try again. If this error persists try restarting your browser or operating system.",
+            "MESSAGE" : "This can happen if your device still has cached DNS responses for the domain. Please wait a few minutes and try again. If this error persists, try restarting your browser and/or operating system.",
             "TARGET" : "Your device opened the eBlocker blocking page instead of going directly to the following URL:",
             "TITLE" : "Blocked access"
         },
@@ -691,50 +664,50 @@
                 "DISABLE_VPN_TRY_AGAIN" : "Disable VPN and try again",
                 "TRY_AGAIN" : "Try again"
             },
-            "DETAILS" : "Error details",
+            "DETAILS" : "Details",
             "MESSAGE" : "Encountered error",
             "MESSAGES" : {
-                "ERR_ACCESS_DENIED" : "Access Denied.",
-                "ERR_CANNOT_FORWARD" : "The request could not be forwarded at this time.",
+                "ERR_ACCESS_DENIED" : "Access denied.",
+                "ERR_CANNOT_FORWARD" : "Cannot forward the request at this time.",
                 "ERR_CONNECT_FAIL" : "Connection failed.",
-                "ERR_DNS_FAIL" : "The IP address could not be determined from the domain.",
-                "ERR_GATEWAY_FAILURE" : "Gateway Proxy Failure",
-                "ERR_INVALID_REQ" : "Invalid Request error was encountered while trying to process the request.",
-                "ERR_INVALID_RESP" : "Invalid Response error was encountered while trying to process the request.",
+                "ERR_DNS_FAIL" : "The domain could not be resolved to an IP address.",
+                "ERR_GATEWAY_FAILURE" : "Gateway proxy error",
+                "ERR_INVALID_REQ" : "Invalid request",
+                "ERR_INVALID_RESP" : "Invalid response",
                 "ERR_INVALID_URL" : "Invalid URL.",
-                "ERR_LIFETIME_EXP" : "Connection Lifetime Expired.",
-                "ERR_PRECONDITION_FAILED" : "Precondition Failed.",
-                "ERR_PROTOCOL_UNKNOWN" : "Unsupported Protocol",
-                "ERR_READ_ERROR" : "Read Error",
-                "ERR_READ_TIMEOUT" : "Read Timeout",
-                "ERR_SOCKET_FAILURE" : "Socket Failure",
+                "ERR_LIFETIME_EXP" : "Connection lifetime limit reached",
+                "ERR_PRECONDITION_FAILED" : "Precondition failed.",
+                "ERR_PROTOCOL_UNKNOWN" : "Unsupported protocol",
+                "ERR_READ_ERROR" : "Read error",
+                "ERR_READ_TIMEOUT" : "Read timeout",
+                "ERR_SOCKET_FAILURE" : "Socket failure",
                 "ERR_UNSUP_HTTPVERSION" : "Unsupported HTTP version",
-                "ERR_UNSUP_REQ" : "Unsupported Request Method and Protocol",
-                "ERR_WRITE_ERROR" : "Write Error",
-                "ERR_ZERO_SIZE_OBJECT" : "Zero Sized Reply"
+                "ERR_UNSUP_REQ" : "Request method and protocol not supported",
+                "ERR_WRITE_ERROR" : "Write error",
+                "ERR_ZERO_SIZE_OBJECT" : "Empty response"
             },
             "POSSIBLE_REASONS" : "Possible reasons:",
             "REASON" : {
-                "ERR_ACCESS_DENIED" : "Access control configuration prevents your request from being allowed at this time. Please contact your service provider if you feel this is incorrect.",
-                "ERR_CANNOT_FORWARD" : "This request could not be forwarded to the origin server or to any parent caches.",
-                "ERR_CONNECT_FAIL" : "The server or network is not available at the moment.",
-                "ERR_DNS_FAIL" : "This means that the eBlocker was not able to resolve the domain presented in the URL.",
-                "ERR_GATEWAY_FAILURE" : "A non-recoverable internal failure or configuration problem prevents this request from being completed.",
-                "ERR_INVALID_REQ" : "Request may be too large.\nContent-Length missing for POST or PUT.\nDomain name contains illegal character(s).\nRequesting HTTP-feature unsupported by server.",
-                "ERR_INVALID_RESP" : "The HTTP(S) Response message received from the server could not be understood or was otherwise malformed.",
-                "ERR_INVALID_URL" : "Missing or incorrect access protocol (missing \"http://\").\nMissing domain name.\nIllegal double-escape.\nIllegal character(s) in domain name.",
-                "ERR_LIFETIME_EXP" : "The eBlocker has terminated the request because it has exceeded the maximum connection lifetime.",
-                "ERR_PRECONDITION_FAILED" : "At least one precondition specified by the HTTP(S) client in the request header has failed.",
-                "ERR_PROTOCOL_UNKNOWN" : "The eBlocker does not support some access protocols. For example, the SSH protocol is currently not supported.",
-                "ERR_READ_ERROR" : "An error condition occurred while reading data from the network.",
-                "ERR_READ_TIMEOUT" : "A Timeout occurred while waiting to read data from the network. The network or server may be down or congested.",
-                "ERR_SOCKET_FAILURE" : "The eBlocker is unable to create a TCP socket, presumably due to excessive load.",
-                "ERR_UNSUP_HTTPVERSION" : "The eBlocker does not accept the HTTP version you are attempting to use.",
-                "ERR_UNSUP_REQ" : "eBlocker does not support all request methods for all access protocols.",
-                "ERR_WRITE_ERROR" : "An error condition occurred while writing to the network.",
-                "ERR_ZERO_SIZE_OBJECT" : "The eBlocker did not receive any data for this request."
+                "ERR_ACCESS_DENIED" : "The request was denied due to insufficient permissions.",
+                "ERR_CANNOT_FORWARD" : "The request could not be forwarded to the server.",
+                "ERR_CONNECT_FAIL" : "The server or the target network is currently unavailable.",
+                "ERR_DNS_FAIL" : "This means the eBlocker was unable to resolve the domain name found in the URL.",
+                "ERR_GATEWAY_FAILURE" : "A non-recoverable internal error or configuration prevents the request from being completed successfully.",
+                "ERR_INVALID_REQ" : "Request is too long.\nMissing Content-Length for POST or PUT requests.\nInvalid character in the domain name.\nHTTP version not supported by the server.",
+                "ERR_INVALID_RESP" : "The HTTP(S) response message received from the server was not understood or is invalid.",
+                "ERR_INVALID_URL" : "Missing or invalid protocol\nMissing domain name\nInvalid double-escape in the URL path.\nInvalid character in the domain name.",
+                "ERR_LIFETIME_EXP" : "The eBlocker terminated the request because the maximum connection time was exceeded.",
+                "ERR_PRECONDITION_FAILED" : "At least one precondition set by the HTTP(S) client was not met.",
+                "ERR_PROTOCOL_UNKNOWN" : "The eBlocker does not support the protocol used.",
+                "ERR_READ_ERROR" : "An error occurred while reading from the network.",
+                "ERR_READ_TIMEOUT" : "Timeout while waiting for data from the network. The network or server may be unavailable or overloaded.",
+                "ERR_SOCKET_FAILURE" : "The eBlocker cannot create a TCP socket - most likely due to excessive system load.",
+                "ERR_UNSUP_HTTPVERSION" : "The eBlocker does not support the requested HTTP version.",
+                "ERR_UNSUP_REQ" : "The eBlocker does not support all request methods for all protocols.",
+                "ERR_WRITE_ERROR" : "An error occurred while writing to the network.",
+                "ERR_ZERO_SIZE_OBJECT" : "The eBlocker received an empty response to its request to the server."
             },
-            "TARGET" : "The eBlocker has failed to established a connection to",
+            "TARGET" : "The eBlocker has failed to establish a connection to",
             "TITLE" : "Connection error on current website",
             "TOR" : "IP anonymization might be interrupted.",
             "VPN" : "VPN connection might be interrupted."
@@ -789,7 +762,7 @@
                     "TOOLTIP" : "HTTPS support is deactivated for this device.",
                     "TOOLTIP_GLOBAL" : "HTTPS support is globally deactivated. Go to Settings/HTTPS to activate HTTPS support."
                 },
-                "LABEL" : "HTTPS support of this device:",
+                "LABEL" : "HTTPS support:",
                 "RESTRICTED" : {
                     "BUTTON_LABEL" : "Settings"
                 }
@@ -803,7 +776,7 @@
             "ACTION" : {
                 "CHANGE_PIN" : "Change PIN",
                 "SET_PIN" : "Set PIN",
-                "CHANGE_USER" : "Change User",
+                "CHANGE_USER" : "Change user",
                 "LOCK_ACCESS" : "Lock device",
                 "UNLOCK_ACCESS" : "Unlock device"
             },
@@ -1077,12 +1050,12 @@
             "INSTALL_WINDOWS" : {
                 "CONFIRM_INSTALL" : "Please confirm that you have installed OpenVPN",
                 "STEP_1" : "Find the downloaded OpenVPN installer in your download folder",
-                "STEP_2" : "Execute the OpenVPN installer and follow the instructions on your screen",
+                "STEP_2" : "Start the OpenVPN installer and follow the instructions on your screen",
                 "TITLE" : "Install OpenVPN app (Windows)"
             },
             "INTRO" : {
                 "EXPLAIN" : "eBlocker Mobile is based on OpenVPN. It connects this device with your eBlocker at home.",
-                "EXPLAIN_STEPS" : "Only two step are required:",
+                "EXPLAIN_STEPS" : "Only two steps are required:",
                 "EXPLAIN_STEP_1" : "Installation of the OpenVPN app",
                 "EXPLAIN_STEP_2" : "Download and installation of the configuration to your OpenVPN app"
             },

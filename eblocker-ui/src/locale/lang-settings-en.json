@@ -6,8 +6,8 @@
             "THANK_YOU" : "Thank you very much for using eBlockerOS. You have made a very good decision to protect your privacy and your entire family.",
             "NON_PROFIT": "eBlocker is a <b>non-profit project</b>, financed by donations and supported by a community of volunteers. eBlocker is <b>not a large company</b>, but the commitment of an interdisciplinary team of privacy specialists, data protection experts and IT security experts around the initiators Christian Bennefeld and Boris Prinz.",
             "DONATE": "<b>To ensure eBlockerOS is secure in the long term, gets regular updates and new features, we need your help. Please support us with your contribution in the community or a donation:</b>",
-            "DONATE_MORE": "Donate Now",
-            "DONATE_THANKS": "As a gratitude for your donation, you will receive a license key to get automatic daily updates. In addition we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
+            "DONATE_MORE": "Donate Now or Get Involved",
+            "DONATE_THANKS": "In return for your donation, you will receive a license key to get automatic daily updates. In addition we are able to realize our idea of a free internet without mass surveillance in the long run. Thank you so much!",
             "COMMUNITY": "If you have any questions, new ideas or found errors, please solely use our forum at",
             "COMMUNITY_URL": "https://eblocker.org/en/community/",
             "YOURS_EBLOCKER" : "Your eBlocker Open Source Team"
@@ -27,7 +27,7 @@
             },
             "TAB" : {
                 "DEVICE" : {
-                    "EBLOCKER_DEVICE_NAME_LABEL" : "Optional device name (i.e. \"John's eBlocker\")",
+                    "EBLOCKER_DEVICE_NAME_LABEL" : "Optional device name (e.g. \"John's eBlocker\")",
                     "INTRO" : "Please enter an optional name for your eBlocker. This is useful, if you are using several eBlockers.",
                     "LABEL" : "Device"
                 },
@@ -87,7 +87,7 @@
                 },
                 "WELCOME" : {
                     "GREETING" : "Welcome to eBlocker!",
-                    "INTRO_PART1" : "In just a few steps your eBlocker will be setup and activated.",
+                    "INTRO_PART1" : "In just a few steps your eBlocker will be set up and activated.",
                     "LABEL" : "Welcome",
                     "PLEASE_SELECT_LANGUAGE" : "Select language / Sprache wählen"
                 }
@@ -119,7 +119,7 @@
             "FINISH" : {
                 "HEADER" : "Finished!",
                 "TEXT1" : "Congratulations! Your eBlocker has been successfully activated.",
-                "TEXT2" : "As last step of the setup process, eBlocker will now check if there are already any updates available."
+                "TEXT2" : "As the last step of the setup process, eBlocker will now check if there are already any updates available."
             },
             "FOUND_UPDATES" : {
                 "FAIL" : "Unable to start updates.",
@@ -256,7 +256,6 @@
                     "NAME" : "Name"
                 }
             },
-            "TITLE" : "Restricted Websites (Blacklists)",
             "TOOLTIP" : {
                 "NUM_ASSIGNED" : "{num, select, 0{Not assigned to any users.} 1{Assigned to one user} other{Assigned to {num} users}}",
                 "REMOVE_BUTTON" : "You may only delete a user defined blacklist that is not assigned to any users."
@@ -357,7 +356,7 @@
                 "BACKUP_SAVED" : "The backup file was saved to your Downloads folder.",
                 "EXPORT" : "A new password is required to protect the HTTPS and OpenVPN keys in the backup file.",
                 "IMPORTED" : "The settings have been restored",
-                "REBOOT" : "To apply the settings eBlocker is now rebooted.",
+                "REBOOT" : "To apply the settings, eBlocker will now be rebooted.",
                 "WARNINGS" : "There were warnings:",
                 "VERIFIED" : "The settings from the backup file were verified and can now be imported."
             },
@@ -411,7 +410,7 @@
                 "INTERVAL_0" : "Never",
                 "INTERVAL_FAST" : "Frequently (recommended) - every 10 seconds",
                 "INTERVAL_MIDDLE" : "Regularly - every 5 minutes",
-                "INTERVAL_SLOW" : "Eventually - every hour",
+                "INTERVAL_SLOW" : "Occasionally - every hour",
                 "LABEL" : "How often should eBlocker search for new devices?"
             },
             "LABEL" : "Device Discovery",
@@ -437,7 +436,7 @@
                     "LABEL_ANONYMIZATION_ENABLED" : "IP-anonymization enabled",
                     "LABEL_ANONYMIZATION_SERVICE" : "used IP-anonymization service",
                     "LABEL_CLOAKING_AGENT" : "Cloak device as",
-                    "LABEL_CLOAKING_NAME" : "Enter a customized user agent",
+                    "LABEL_CLOAKING_NAME" : "Enter a user agent",
                     "LABEL_CLOAKING_NAME_INVALID" : "Please enter a valid user agent",
                     "LABEL_CLOAKING_OFF" : "Disable",
                     "LABEL_CLOAKING_OFF_LABEL" : "No cloaking",
@@ -445,13 +444,13 @@
                 },
                 "DEVICE" : {
                     "TAB_LABEL" : "Device",
-                    "HEADING" : "Details for device"
+                    "HEADING" : "Device details"
                 },
                 "FILTERS" : {
                     "MALWARE" : {
-                        "LABEL" : "Malware Blocker",
+                        "LABEL" : "Malware & Phishing Blocker",
                         "OFF" : "Off",
-                        "ON" : "Standard"
+                        "ON" : "On"
                     },
                     "RADIO" : {
                         "AUTOMATIC" : "Automatic",
@@ -467,8 +466,7 @@
                 "GENERAL" : {
                     "ACTION" : {
                         "EDIT_DEVICE" : "Edit",
-                        "LOGOUT_OP_USER" : "Return device",
-                        "RESET_MESSAGE_OPTIONS" : "RESET ALL WARNING FOR THIS DEVICE"
+                        "LOGOUT_OP_USER" : "Return device"
                     },
                     "LABEL_DEVICE_UPDATING" : "Updating device ...",
                     "LABEL_DISABLED_EBLOCKER" : "eBlocker disabled for this device",
@@ -493,12 +491,12 @@
                         "EDIT_DEVICE" : "Edit device name."
                     }
                 },
-                "HEADING" : "Details for device",
+                "HEADING" : "Device details",
                 "HTTPS" : {
                     "LABEL_DISABLED_SSL" : "eBlocker disabled for encrypted connections (HTTPS)",
-                    "LABEL_DISABLED_SSL_RECORD_ERRORS" : "HTTPS error recording disabled",
-                    "LABEL_ENABLED_SSL" : "eBlocker supports encrypted connections (HTTPS)",
-                    "LABEL_ENABLED_SSL_RECORD_ERRORS" : "HTTPS error recording enabled",
+                    "LABEL_DISABLED_SSL_RECORD_ERRORS" : "HTTPS error analysis disabled",
+                    "LABEL_ENABLED_SSL" : "eBlocker enabled for encrypted connections (HTTPS)",
+                    "LABEL_ENABLED_SSL_RECORD_ERRORS" : "HTTPS error analysis enabled",
                     "TAB_LABEL" : "HTTPS"
                 },
                 "ICON" : {
@@ -509,23 +507,23 @@
                     "LABEL_ICON_HEADING" : "Position of eBlocker Icon:",
                     "LABEL_ICON_LEFT" : "Left",
                     "LABEL_ICON_RIGHT" : "Right",
-                    "LABEL_ICON_WARNING_CACHE" : "Please clear your browser cache, if changes have no effect.",
+                    "LABEL_ICON_WARNING_CACHE" : "If changes are not immediately visible, please clear your browser cache.",
                     "LABEL_NO_GLOBAL_HTTPS_IN_AUTO" : "eBlocker Icon and ControlBar are deactivated, because HTTPS support is disabled.",
                     "LABEL_NO_HTTPS_IN_AUTO" : "eBlocker Icon and ControlBar are deactivated, because HTTPS support is disabled for this device.",
-                    "LABEL_NO_HTTPS_IN_MANUAL" : "Without HTTPS support, the ControlBar cannot be inserted into HTTPS websites.",
+                    "LABEL_NO_HTTPS_IN_MANUAL" : "Without HTTPS support, the eBlocker Icon and ControlBar cannot be displayed on HTTPS websites.",
                     "TAB_LABEL" : "ControlBar"
                 },
                 "MESSAGES" : {
-                    "LABEL_CONFIRM_DIALOG" : "Confirmation and notification dialog:",
+                    "LABEL_CONFIRM_DIALOG" : "Confirmation and notification dialogs:",
                     "LABEL_MESSAGE" : "Show system messages:",
                     "LABEL_MESSAGE_ALERT" : "Only important messages",
                     "LABEL_MESSAGE_ALL" : "All",
                     "LABEL_MESSAGE_NONE" : "None",
                     "LABEL_SHOW_BOOKMAKR_DIALOG" : "Show bookmark dialog on dashboard",
-                    "LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG" : "Notify user of delay before DNS blocker updates take effect",
+                    "LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG" : "Show notice that changes to Domain Blockers take effect with a delay",
                     "LABEL_SHOW_PAUSE_DIALOG" : "Show Pause confirmation",
                     "LABEL_SHOW_TOR_DIALOG" : "Show Tor confirmation",
-                    "LABEL_SHOW_WELCOME_PAGE" : "Show welcome page",
+                    "LABEL_SHOW_WELCOME_PAGE" : "Show welcome page on next website",
                     "TAB_LABEL" : "Notifications"
                 },
                 "MOBILE" : {
@@ -539,7 +537,7 @@
                     "HINT_POST" : "on the mobile device to install the configuration directly into your VPN app!",
                     "HINT_PRE" : "Hint: Use the",
                     "LABEL_ENABLED" : "eBlocker Mobile Remote Access enabled",
-                    "LABEL_PRIVATE_NETWORK_ACCESS" : "Remote device may access resources in local network",
+                    "LABEL_PRIVATE_NETWORK_ACCESS" : "Remote device may access resources in the local network",
                     "TAB_LABEL" : "Mobile"
                 },
                 "USERS" : {
@@ -556,13 +554,6 @@
             "EBLOCKER_DISABLED" : "eBlocker disabled",
             "LABEL" : "Device list",
             "LABEL_CURRENT_DEVICE" : "(Your current device)",
-            "SELECT_MULTIPLE" : {
-                "LABEL" : "Select devices",
-                "OPTION_ALL" : "All",
-                "OPTION_NONE" : "None",
-                "OPTION_NO_IP" : "Devices without IP address",
-                "OPTION_OFFLINE" : "All offline devices"
-            },
             "TABLE" : {
                 "COLUMN" : {
                     "IP" : "IP Address",
@@ -611,7 +602,7 @@
             },
             "ADD_CERTIFICATE" : {
                 "ACTION" : {
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TEXT" : "Please remember to download and install the configuration for this device!",
                 "TITLE" : "Configuration Reminder"
@@ -712,7 +703,7 @@
                 "TABLE_EMPTY": "No devices available",
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "COLUMN": {
                     "DEVICE": "Device",
@@ -727,8 +718,8 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected categories?",
-                "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one filter list that cannot be deleted.} other{You have selected {num} filter lists that cannot be deleted.}}",
+                "TEXT" : "Are you sure you want to remove all selected categories?",
+                "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one category that cannot be deleted.} other{You have selected {num} categories that cannot be deleted.}}",
                 "TITLE" : "Remove Blacklists"
             },
             "DELETE_ALL_DEVICES_CONFIRM" : {
@@ -736,7 +727,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected devices?",
+                "TEXT" : "Are you sure you want to remove all selected devices?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one device that cannot be deleted.} other{You have selected {num} devices that cannot be deleted.}}",
                 "TITLE" : "Remove Devices"
             },
@@ -745,7 +736,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected recordings?",
+                "TEXT" : "Are you sure you want to remove all selected recordings?",
                 "TITLE" : "Remove Recordings"
             },
             "DELETE_ALL_TOR_COUNTRIES_CONFIRM" : {
@@ -753,7 +744,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected countries?",
+                "TEXT" : "Are you sure you want to remove all selected countries?",
                 "TITLE" : "Remove Tor Countries"
             },
             "DELETE_ALL_TRUSTED_APPS_CONFIRM" : {
@@ -761,7 +752,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove or reset"
                 },
-                "TEXT" : "Are you sure to remove or reset all selected app definitions?",
+                "TEXT" : "Are you sure you want to remove or reset all selected apps?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one app that cannot be deleted or reset.} other{You have selected {num} apps that cannot be deleted or reset.}}",
                 "TITLE" : "Remove or Reset Trusted Apps"
             },
@@ -770,7 +761,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected domains?",
+                "TEXT" : "Are you sure you want to remove all selected domains?",
                 "TITLE" : "Remove Domains"
             },
             "DELETE_ALL_TRUSTED_DOMAINS_CONFIRM" : {
@@ -778,7 +769,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected websites definitions?",
+                "TEXT" : "Are you sure you want to remove all selected websites?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one website that cannot be deleted.} other{You have selected {num} websites that cannot be deleted.}}",
                 "TITLE" : "Remove Trusted Websites"
             },
@@ -787,16 +778,16 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected users?",
+                "TEXT" : "Are you sure you want to remove all selected users?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one user that cannot be deleted.} other{You have selected {num} users that cannot be deleted.}}",
-                "TITLE" : "Remove user"
+                "TITLE" : "Remove Users"
             },
             "DELETE_ALL_DEVICES_FROM_USER_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected devices?",
+                "TEXT" : "Are you sure you want to remove all selected devices?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one device that cannot be deleted.} other{You have selected {num} devices that cannot be deleted.}}",
                 "TITLE" : "Remove Devices"
             },
@@ -805,7 +796,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected VPN profiles?",
+                "TEXT" : "Are you sure you want to remove all selected VPN profiles?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one profile that cannot be deleted.} other{You have selected {num} profiles that cannot be deleted.}}",
                 "TITLE" : "Remove VPN Profiles"
             },
@@ -814,8 +805,8 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected categories?",
-                "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one filter list that cannot be deleted.} other{You have selected {num} filter lists that cannot be deleted.}}",
+                "TEXT" : "Are you sure you want to remove all selected categories?",
+                "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one category that cannot be deleted.} other{You have selected {num} categories that cannot be deleted.}}",
                 "TITLE" : "Remove Whitelists"
             },
             "DELETE_CONFIRM" : {
@@ -829,7 +820,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected DNS servers?",
+                "TEXT" : "Are you sure you want to remove all selected DNS servers?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one server that cannot be deleted.} other{You have selected {num} servers that cannot be deleted.}}",
                 "TITLE" : "Remove DNS Servers"
             },
@@ -849,7 +840,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected DNS entries?",
+                "TEXT" : "Are you sure you want to remove all selected DNS entries?",
                 "TEXT_UNDELETABLE" : "{num, select, 1{You have selected one entry that cannot be deleted.} other{You have selected {num} entries that cannot be deleted.}}",
                 "TITLE" : "Remove Local DNS Entries"
             },
@@ -858,8 +849,8 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove this user?",
-                "TITLE" : "Remove user"
+                "TEXT" : "Are you sure you want to remove this user?",
+                "TITLE" : "Remove Users"
             },
             "UPDATE_CUSTOM_BLOCKER_LIST": {
                 "TITLE": "New {{name | translate}} List",
@@ -900,7 +891,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Remove"
                 },
-                "TEXT" : "Are you sure to remove all selected lists?",
+                "TEXT" : "Are you sure you want to remove all selected lists?",
                 "TITLE" : "Remove blocker list"
             },
             "DIRTY_CONFIRM" : {
@@ -914,9 +905,9 @@
             "DOMAIN_IP_RANGE" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
-                "LABEL_DOMAIN" : "Apply to (sub) domain",
+                "LABEL_DOMAIN" : "Apply to (sub) domains",
                 "LABEL_IP" : "Apply to IP address / Netmask",
                 "LABEL_IP_RESULT" : "IP range:",
                 "LABEL_NO_DOMAINS" : "No domains",
@@ -925,7 +916,7 @@
             "EDIT" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "INVALID_FORMAT" : "Invalid format.",
@@ -944,12 +935,12 @@
                 },
                 "ERROR" : {
                     "RANGE_INVALID" : "Invalid timeslot.",
-                    "REQUIRED" : "Please enter valid time range."
+                    "REQUIRED" : "Please enter a valid time range."
                 },
                 "EVERY" : "Every",
                 "FROM" : "from",
                 "END_OF_DAY": "End of day",
-                "TITLE_ARIA" : "Define Access Contingent",
+                "TITLE_ARIA" : "Define access time slot",
                 "TITLE_EDIT" : "Edit access time slot",
                 "TITLE_NEW" : "New access time slot",
                 "TO" : "to"
@@ -959,7 +950,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Save"
                 },
-                "BLACKLISTED_EXCEPTION_LABEL" : "As exception, these categories are allowed:",
+                "BLACKLISTED_EXCEPTION_LABEL" : "As exceptions, these categories are allowed:",
                 "MAIN_1" : "Following categories are restricted, everything else is allowed",
                 "MAIN_2" : "Following categories are allowed, everything else is restricted",
                 "MAIN_LABEL" : "Main Policy:",
@@ -979,7 +970,7 @@
             "EDIT_DEVICE_NAME" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "NAME_NOT_UNIQUE" : "Name is already used.",
@@ -991,7 +982,7 @@
             "EDIT_DOMAIN" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "DOMAINS_INVALID" : "Invalid domain.",
@@ -1030,17 +1021,17 @@
                     "OK" : "Continue"
                 },
                 "AUTO" : {
-                    "TEXT" : "In this mode the router assigns the IP addresses.",
+                    "TEXT" : "In this mode the router assigns the IP addresses on the network using its DHCP service.",
                     "TITLE" : "Automatic Network Mode",
                     "URL" : "https://eBlocker.org/en/compatibility-hardware/",
                     "WARNING" : "Some routers are not compatible with this mode."
                 },
                 "EXPERT" : {
-                    "TEXT" : "This mode is for experienced users. The eBlocker has a static IP address and you can manually set up a DHCP service.",
+                    "TEXT" : "This mode is for experienced users. The eBlocker has a fixed IP address and you can manually set up a DHCP service.",
                     "TITLE" : "Expert Mode"
                 },
                 "INDIVIDUAL" : {
-                    "TEXT" : "In this mode the eBlocker assigns the IP addresses. The DHCP service of your router must be disabled.",
+                    "TEXT" : "In this mode the eBlocker assigns the IP addresses on the network. The DHCP service of your router must be disabled. The eBlocker takes over this service.",
                     "TITLE" : "Individual Settings"
                 },
                 "TITLE" : "Edit Network Mode"
@@ -1061,7 +1052,7 @@
             "EDIT_USERNAME" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "NAME_NOT_UNIQUE" : "Name is already used.",
@@ -1075,7 +1066,7 @@
             "EDIT_USER_ROLE" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "LABEL" : "Role",
                 "TITLE" : "Change Role"
@@ -1083,7 +1074,7 @@
             "EDIT_BIRTHDAY" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "LABEL" : "Birthday",
                 "TITLE" : "Edit Birthday"
@@ -1109,7 +1100,7 @@
             },
             "FILTER_ANALYSIS" : {
                 "ACTION" : {
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TITLE" : "Request Details"
             },
@@ -1118,7 +1109,7 @@
                     "CANCEL" : "Stay",
                     "OK" : "Close"
                 },
-                "TEXT" : "Are sure you want to close the wizard? You may repeat this setup at any time.",
+                "TEXT" : "Are you sure you want to close the wizard? You can repeat the setup at any time.",
                 "TITLE" : "Close Wizard?"
             },
             "MOBILE_SAVE_CONFIRM" : {
@@ -1127,7 +1118,7 @@
                     "NO" : "Close without saving",
                     "YES" : "Save"
                 },
-                "ERROR_TEXT" : "Cannot save VPN status:",
+                "ERROR_TEXT" : "Saving is not possible:",
                 "TEXT" : "Would you like to save the settings before closing the wizard?",
                 "TITLE" : "Apply settings?"
             },
@@ -1142,8 +1133,8 @@
                     "SELECT_SERVICE" : "Select VPN provider",
                     "SELECT_SERVICE_TEXT_1" : "This configuration wizard will help you to set up a VPN connection to an external OpenVPN provider.",
                     "SELECT_SERVICE_TEXT_2" : "To proceed, you need an OpenVPN configuration file from a VPN provider.",
-                    "SELECT_SERVICE_TEXT_3_LABEL" : "tested and compiled a list of compatible VPN providers",
-                    "SELECT_SERVICE_TEXT_3_POST" : " for your convenience.",
+                    "SELECT_SERVICE_TEXT_3_LABEL" : "compiled a list of compatible VPN providers",
+                    "SELECT_SERVICE_TEXT_3_POST" : " for you.",
                     "SELECT_SERVICE_TEXT_3_PRE" : "We have already ",
                     "SELECT_SERVICE_TEXT_3_TARGET" : "eBlocker.org/en/vpn_provider"
                 },
@@ -1154,13 +1145,13 @@
                         "MAXSIZE" : "File size exceeds maximum size: ",
                         "PATTERN" : "Please select a file with one of the following extensions: "
                     },
-                    "REQUIRED_FILES_HEADER" : "Additional Files",
+                    "REQUIRED_FILES_HEADER" : "Additional configuration files",
                     "REQUIRED_FILES_TABLE_FILE_NAME" : "File Name",
                     "REQUIRED_FILES_TABLE_OPTION" : "Option",
                     "REQUIRED_FILES_TABLE_STATUS" : "Status",
                     "REQUIRED_FILES_TEXT" : "The uploaded configuration file contains options which reference external files. Please upload those missing before proceeding.",
                     "REQUIRED_FILE_STATUS_MISSING" : "missing",
-                    "REQUIRED_FILE_STATUS_OK" : "ok",
+                    "REQUIRED_FILE_STATUS_OK" : "OK",
                     "REQUIRED_FILE_UPLOAD" : "Upload {{name}}",
                     "TOOLTIP" : {
                         "FILE_STATUS_ERROR" : "Uploaded file contains no suitable information for this option. Please make sure the correct file is uploaded."
@@ -1176,7 +1167,7 @@
                     "DETAILS_CONFIG" : "Configuration Details",
                     "DETAILS_TEXT_1" : "The uploaded configuration has been adapted to your eBlocker. You can review details here. In case of problems, please contact us: ",
                     "IGNORED_OPTIONS_HEADER" : "Ignored Settings",
-                    "IGNORED_OPTIONS_TEXT" : "The uploaded configuration file contains settings which will be ignored by eBlocker. Usually, this will cause no connection problems.",
+                    "IGNORED_OPTIONS_TEXT" : "The uploaded configuration file contains settings which will be ignored by eBlocker for technical reasons. Usually, this will cause no functional limitation.",
                     "OPTIONS_DETAILS_HIDE" : "Hide",
                     "OPTIONS_DETAILS_SHOW" : "Details",
                     "OPTION_EBLOCKER" : "Standard option added by eBlocker.",
@@ -1238,7 +1229,7 @@
                     "CANCEL" : "Cancel",
                     "OK" : "Reset"
                 },
-                "TEXT" : "Are you sure to reset this device?",
+                "TEXT" : "Are you sure you want to reset this device?",
                 "TITLE" : "Reset device"
             },
             "RESET_OPEN_VPN_CONFIRM" : {
@@ -1252,7 +1243,7 @@
             "RESET_PIN_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TEXT" : "Do you want to remove the PIN?",
                 "TITLE" : "Remove PIN"
@@ -1270,7 +1261,7 @@
                     "CANCEL" : "No, stay here",
                     "OK" : "Yes, cancel setup"
                 },
-                "TEXT" : "Are you sure to cancel the setup wizard? Your eBlocker won't be operational.",
+                "TEXT" : "Are you sure you want to cancel the setup wizard? Your eBlocker won't be operational.",
                 "TITLE" : "Cancel Setup Wizard"
             },
             "DELETE_ASSIGNED_USER_CONFIRM" : {
@@ -1295,7 +1286,7 @@
             "SET_PIN" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok",
+                    "OK" : "OK",
                     "RESET": "Remove PIN"
                 },
                 "ERROR" : {
@@ -1311,17 +1302,17 @@
             "SHUTDOWN_REBOOT_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
-                "REBOOT_TEXT" : "Are you sure to reboot the eBlocker?",
+                "REBOOT_TEXT" : "Are you sure you want to reboot the eBlocker?",
                 "REBOOT_TITLE" : "Reboot",
-                "SHUTDOWN_TEXT" : "Are you sure to shutdown the eBlocker?",
+                "SHUTDOWN_TEXT" : "Are you sure you want to shutdown the eBlocker?",
                 "SHUTDOWN_TITLE" : "Shutdown"
             },
             "REASSIGN_DEVICES_CONFIRM" : {
                 "ACTION" : {
                     "CANCEL" : "Cancel",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TEXT" : "The devices {{deviceString}} are already assigned to other users. Assigned devices to user {{username}}?",
                 "TEXT_SINGULAR" : "The device {{deviceString}} is already assigned to user {{oldUsername}}. Assigned devices to user {{username}}?",
@@ -1330,7 +1321,7 @@
             },
             "SSL_DEVICE_DISABLE_WARNING" : {
                 "ACTION" : {
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TEXT_CLOAKING_ON" : "The device cloaking is turned off for this device and has to be reset when HTTPS support is enabled.",
                 "TEXT_CONTROLBAR_AUTO" : "eBlocker Icon and ControlBar will be switched off for this device. Please use the dashboard to manage individual settings.",
@@ -1341,7 +1332,7 @@
             },
             "SSL_DISABLE_WARNING" : {
                 "ACTION" : {
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "TEXT_BOTH" : "The ControlBar and the pattern blocker are enabled for one or more devices. Without HTTPS support neither can the ControlBar be inserted into HTTPS pages nor are the pattern blocker 100% effective. We recommend to set both settings to automatic for optimal protection and for best user experience.",
                 "TEXT_CLOAKING_ON" : "The device cloaking is turned off for all devices and has to be reset when HTTPS support is enabled.",
@@ -1952,18 +1943,18 @@
         "LEGAL" : {
             "ADDRESS_CITY" : "22299 Hamburg",
             "ADDRESS_COUNTRY" : "Deutschland",
-            "ADDRESS_NAME" : "eBlocker Open Source UG (haftungsbeschränkt)",
+            "ADDRESS_NAME" : "eBlocker Open Source GmbH",
             "ADDRESS_STREET" : "Hudtwalckertwiete 10",
             "AGB_LABEL" : "eBlocker.org",
             "AGB_LINK" : "https://eblocker.org/",
             "COPYRIGHT_GMBH" : "Copyright (c) 2015-2019 eBlocker GmbH",
-            "COPYRIGHT" : "Copyright (c) 2020-2025 eBlocker Open Source UG (limited liability)",
+            "COPYRIGHT" : "Copyright (c) 2020-2026 eBlocker Open Source GmbH",
             "EULA_LABEL" : "Licensed under the EUPL",
             "EULA_LINK" : "https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12",
             "LABEL" : "Legal Information",
             "OSS_LABEL" : "Open Source Licenses",
             "TRADEMARK_LABEL": "Trademarks",
-            "TRADEMARK": "The brand name „eBlocker“ and the eBlocker icon are licensed trademarks of eBlocker Open Source UG (limited liability). Third parties are prohibited to use them without written permission."
+            "TRADEMARK": "The brand name „eBlocker“ and the eBlocker icon are licensed trademarks of eBlocker Open Source GmbH. Third parties are prohibited to use them without written permission."
         },
         "LICENSE" : {
             "ACTION" : {
@@ -2125,7 +2116,7 @@
             }
         },
         "NETWORK_SETTINGS_IP6" : {
-            "LABEL" : "IPv6 (beta)",
+            "LABEL" : "IPv6",
             "LABEL_ADDRESSES" : "IPv6 adresses of your eBlocker",
             "LABEL_GLOBAL" : "Global",
             "LABEL_LINK_LOCAL" : "Local",
@@ -2145,7 +2136,7 @@
                 "CANCEL" : "Cancel",
                 "CONTINUE" : "Continue",
                 "EXECUTE" : "Execute",
-                "OK" : "Ok",
+                "OK" : "OK",
                 "PRINT_SETTINGS" : "Print preview",
                 "REBOOT" : "Reboot",
                 "RETRY_DHCP" : "Check again"
@@ -2431,7 +2422,7 @@
             },
             "FAILURE" : {
                 "ACTION" : {
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "ERROR_PASSWORD_RESET_INVALID_TOKEN" : "Invalid password reset token.",
@@ -2563,7 +2554,7 @@
             "CARD" : {
                 "ACTION" : {
                     "NOT_AGAIN" : "Do not show again",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "BLOG_LINK_PRE" : "",
                 "BLOG_LINK_TEXT" : "",
@@ -2571,24 +2562,24 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Don't show this again."
                 },
-                "INTRO" : "eBlockerOS 4.0: Raspberry Pi 5 and 64-bit support",
+                "INTRO" : "eBlockerOS 4.1: Complete backup, Raspberry Pi 5 and 64-bit support",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1": "<strong>Fast 64-bit OS with Raspberry Pi 5 support.</strong> Minimum of <strong>2 GB RAM</strong> required.",
-                    "LI_2": "<strong>IPv6 support for the Tor network</strong>",
-                    "LI_3": "<strong>Extensive security updates and numerous bug fixes</strong>"
+                    "LI_1": "<strong>Fast 64-bit OS</strong> with Raspberry Pi 5 support. Minimum <strong>4 GB RAM</strong> required. Raspberry Pi 2/3 and the White Cube are no longer supported.",
+                    "LI_2": "<strong>Complete backup and restore</strong>. Your backup now contains all settings – including eBlocker Mobile, VPN and network settings. Migration from eBlockerOS 3 via backup or USB stick.",
+                    "LI_3": "<strong>IPv6 in the Tor network</strong>. Plus extensive security updates and numerous bug fixes."
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-4-0/",
-                "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-4-1/",
+                "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a thank-you for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 4.0"
+                "TITLE" : "eBlockerOS Release 4.1"
             },
-            "MENU_LABEL" : "New in eBlockerOS 4.0",
+            "MENU_LABEL" : "New in eBlockerOS 4.1",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 4.0"
+                "TITLE" : "eBlockerOS Release 4.1"
             }
         },
         "SSL" : {
@@ -2771,7 +2762,7 @@
             },
             "DIALOG" : {
                 "CANCEL" : "Cancel",
-                "OK" : "Ok",
+                "OK" : "OK",
                 "TITLE" : "Show/Hide Columns"
             },
             "LABEL" : "Tasks",

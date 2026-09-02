@@ -3,15 +3,15 @@
         "DIALOGS": {
             "CLOAKING": {
                 "CUSTOM": {
-                    "BODY": "Um beispielsweise dynamische Preisdiskriminierung auf Basis der Geräteidentifikation in Shops zu vermeiden, kannst du die Geräteidentifikation anpassen. Die Geräteidentifikation (der sog. UserAgent) wird während des Surfens an den Web-Server gesendet.",
+                    "BODY": "Um beispielsweise dynamische Preisdiskriminierung auf Basis der Geräteidentifikation in Shops zu vermeiden, kannst du die Geräteidentifikation anpassen. Die Geräteidentifikation (der sog. User-Agent) wird während des Surfens an den Web-Server gesendet.",
                     "BUTTON": {
                         "CANCEL": "Abbrechen",
-                        "OK": "User Agent Einstellen"
+                        "OK": "User-Agent einstellen"
                     },
                     "ERROR": {
-                        "REQUIRED": "Bitte gib einen UserAgent ein."
+                        "REQUIRED": "Bitte gib einen User-Agent ein."
                     },
-                    "INPUT": "User Agent String",
+                    "INPUT": "User-Agent-String",
                     "TITLE": "Benutzerdefinierte Geräteidentifikation"
                 }
             },
@@ -29,13 +29,13 @@
             "PAUSE": {
                 "CONFIRMATION": {
                     "BODY_PART_1": "Wenn der eBlocker für dieses Gerät pausiert, steht auch die ControlBar nicht mehr zur Verfügung. In einem parallelen Browser-Tab wird das eBlocker Dashboard geöffnet.",
-                    "BODY_PART_2": "Über das Dashboard kannst du die Pause-Zeit jederzeit verlängern oder beenden, sowie andere eBlocker-Funktionen steuern.",
+                    "BODY_PART_2": "Über das Dashboard kannst du die Pause-Zeit jederzeit verlängern oder beenden sowie andere eBlocker-Funktionen steuern.",
                     "BUTTON": {
                         "CANCEL": "Abbrechen",
                         "OK": "Pause aktivieren"
                     },
                     "DO_NOT_SHOW_AGAIN": "Nicht mehr anzeigen",
-                    "TITLE": "Pause Funktion für dieses Gerät"
+                    "TITLE": "Pause-Funktion für dieses Gerät"
                 }
             },
             "PIN": {
@@ -43,7 +43,7 @@
                     "CANCEL": "Abbrechen",
                     "LOCK": "Sperren",
                     "LOGIN": "Benutzer wechseln",
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "ERROR": {
                     "INVALID": "PIN ist falsch.",
@@ -55,7 +55,7 @@
                         "INVALID": "Falsche PIN",
                         "MISMATCH": "PINs stimmen nicht überein.",
                         "REQUIRED": "Gib eine PIN ein.",
-                        "TOO_LONG": "PIN ist zu lang",
+                        "TOO_LONG": "PIN ist zu lang.",
                         "TOO_SHORT": "PIN muss mindestens 4 Zeichen haben."
                     },
                     "HEADER": "PIN ändern",
@@ -96,7 +96,7 @@
                         "LIST_ERRORS": "Verbindungsfehler:"
                     },
                     "SUCCESS": "Verbindung erfolgreich hergestellt.",
-                    "SUCCESS_TEXT": "Der Verbleib auf der aktuellen Website kann durch eine bestehende Sitzung deine neue IP-Adresse offenbaren.",
+                    "SUCCESS_TEXT": "Bleibst du auf der aktuellen Website, kann eine bestehende Sitzung deine neue IP-Adresse offenbaren.",
                     "TITLE": "Verbindung herstellen mit VPN: {{name}}"
                 }
             }
@@ -126,7 +126,7 @@
                 },
                 "TOOLTIP_ALLOW_GLOBAL": "Werbung ist global erlaubt",
                 "TOOLTIP_ALLOW_LOCAL": "Werbung ist auf dieser Seite erlaubt",
-                "TOOLTIP_BLOCK": "{param, select, 0{Keine Werbung gefunden} 1{Es wird eine Werbung geblockt} other{Es werden {param} Werbungen geblockt}}",
+                "TOOLTIP_BLOCK": "{param, select, 0{Keine Werbung gefunden} 1{Es wird Werbung blockiert} other{Es werden {param} Werbeanzeigen blockiert}}",
                 "TOOLTIP_BLOCK_DNS": "Der Domain-Blocker ist aktiv",
                 "TOOLTIP_NO_FILTER": "Blocker sind nicht aktiv. Aktiviere die Blocker, um dieses Gerät zu schützen."
             },
@@ -151,11 +151,11 @@
                     "TOR_DISCONNECT": "Verbindung zum Tor-Netzwerk wurde getrennt.",
                     "TOR_ID_RENEW_ERROR": "Fehler beim Beziehen einer neuen Tor-Identität.",
                     "TOR_ID_RENEW_SUCCESS": "Die Tor-Identität wurde erneuert.",
-                    "VPN_CONNECT": "VPN Verbindung wurde aufgebaut.",
-                    "VPN_DISCONNECT": "VPN Verbindung wurde getrennt."
+                    "VPN_CONNECT": "VPN-Verbindung wurde aufgebaut.",
+                    "VPN_DISCONNECT": "VPN-Verbindung wurde getrennt."
                 },
-                "TOOLTIP_ACTIVATE": "Aktiviere IP Anonymisierung",
-                "TOOLTIP_DEACTIVATE": "Ändere oder deaktiviere IP Anonymisierung"
+                "TOOLTIP_ACTIVATE": "Aktiviere IP-Anonymisierung",
+                "TOOLTIP_DEACTIVATE": "Ändere oder deaktiviere IP-Anonymisierung"
             },
             "CLOAKING": {
                 "ALERT_NO_HTTPS": "HTTPS deaktiviert",
@@ -169,7 +169,7 @@
                 },
                 "TOOLTIP": "Tarne dein Gerät",
                 "TOOLTIP_ACTIVATE": "Tarnen als",
-                "TOOLTIP_ALERT_NO_HTTPS": "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht 100% wirksam.",
+                "TOOLTIP_ALERT_NO_HTTPS": "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht 100 % wirksam.",
                 "TOOLTIP_CLOAKED": "Getarnt als {param}",
                 "TOOLTIP_DEACTIVATE": "Nicht mehr tarnen als"
             },
@@ -225,7 +225,7 @@
                 },
                 "TOOLTIP_ALLOW_GLOBAL": "Tracker sind global erlaubt",
                 "TOOLTIP_ALLOW_LOCAL": "Tracker sind auf dieser Seite erlaubt",
-                "TOOLTIP_BLOCK": "{param, select, 0{Keine Tracker gefunden} 1{Es wird ein Tracker geblockt} other{Es werden {param} Tracker geblockt}}",
+                "TOOLTIP_BLOCK": "{param, select, 0{Keine Tracker gefunden} 1{Es wird ein Tracker blockiert} other{Es werden {param} Tracker blockiert}}",
                 "TOOLTIP_BLOCK_DNS": "Der Domain-Blocker ist aktiv",
                 "TOOLTIP_NO_FILTER": "Blocker sind nicht aktiv. Aktiviere die Blocker, um dieses Gerät zu schützen."
             },

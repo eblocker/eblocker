@@ -3,7 +3,7 @@
         "DIALOGS" : {
             "CLOAKING" : {
                 "CUSTOM" : {
-                    "BODY" : "To avoid dynamic pricing based on the device identification in shops, you can adjust your device identification here. This information (UserAgent) is sent to every webserver while you are surfing the web.",
+                    "BODY" : "To avoid, for example, dynamic price discrimination in shops based on the device identification, you can adjust the device identification here. This information (the so-called User-Agent) is sent to the web server while you are surfing the web.",
                     "BUTTON" : {
                         "CANCEL" : "Cancel",
                         "OK" : "Set User Agent"
@@ -11,8 +11,8 @@
                     "ERROR" : {
                         "REQUIRED" : "Please enter a user agent string"
                     },
-                    "INPUT" : "User Agent String",
-                    "TITLE" : "Custom device profile"
+                    "INPUT" : "User-Agent String",
+                    "TITLE" : "Custom device identification"
                 }
             },
             "MESSAGE" : {
@@ -28,8 +28,8 @@
             },
             "PAUSE" : {
                 "CONFIRMATION" : {
-                    "BODY_PART_1" : "This will pause the eBlocker for this device and close the ControlBar. The Dashboard will be opened in another tab.",
-                    "BODY_PART_2" : "You may disable the pause at anytime from the dashboard.",
+                    "BODY_PART_1" : "This will pause the eBlocker for this device and close the ControlBar. The eBlocker dashboard will be opened in another tab.",
+                    "BODY_PART_2" : "From the dashboard, you can extend or end the pause at any time, as well as control other eBlocker functions.",
                     "BUTTON" : {
                         "CANCEL" : "Cancel",
                         "OK" : "Activate pause"
@@ -43,7 +43,7 @@
                     "CANCEL" : "Cancel",
                     "LOCK" : "Lock",
                     "LOGIN" : "Change user",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
                 "ERROR" : {
                     "INVALID" : "PIN is invalid.",
@@ -53,8 +53,8 @@
                 "PIN_CHANGE" : {
                     "ERROR" : {
                         "INVALID" : "Invalid PIN",
-                        "MISMATCH" : "PINs do not match",
-                        "REQUIRED" : "Please enter a pin!",
+                        "MISMATCH" : "PINs do not match.",
+                        "REQUIRED" : "Please enter a PIN.",
                         "TOO_LONG" : "PIN is too long.",
                         "TOO_SHORT" : "PIN must have at least 4 characters."
                     },
@@ -65,18 +65,18 @@
                 },
                 "PIN_LOCK" : {
                     "BODY" : "Do you really want to lock Internet access for this device?",
-                    "HEADER" : "Lock Internet Access"
+                    "HEADER" : "Lock internet access"
                 },
                 "PIN_SELECT_USER" : {
                     "BODY_LOCK" : "Alternatively, you can lock Internet access for this device.",
                     "BODY_POST" : ".",
-                    "BODY_PRE" : "The user PIN is required for the switchover to user ",
+                    "BODY_PRE" : "You need the user PIN to switch to user ",
                     "HEADER" : "PIN Required"
                 }
             },
             "TOR" : {
                 "VERIFY" : {
-                    "BODY" : "You can use one of the following services to check whether a connection can be established via Tor. Please note that eBlocker cannot guarantee the availability or correct functioning of these services.",
+                    "BODY" : "You can use one of the following services to check whether you can establish a connection through an anonymizing network, and which data is visible from the outside. Please note that eBlocker cannot guarantee the availability or correct functioning of these services.",
                     "BUTTON" : {
                         "CANCEL" : "Cancel"
                     },
@@ -88,15 +88,15 @@
                     "BUTTON" : {
                         "BLANK_PAGE" : "Go to blank page",
                         "CANCEL" : "Cancel",
-                        "CONTINUE" : "Stay on current page"
+                        "CONTINUE" : "Stay on this page"
                     },
                     "ERROR" : {
-                        "CONNECTION_FAILURE" : "Connection failed",
-                        "CONNECTION_TIMEOUT" : "Connection timeout",
+                        "CONNECTION_FAILURE" : "Connection failed.",
+                        "CONNECTION_TIMEOUT" : "Connection timed out.",
                         "LIST_ERRORS" : "Connection errors:"
                     },
                     "SUCCESS" : "Connection successfully established.",
-                    "SUCCESS_TEXT" : "Staying on the same website may reveal your new IP address due to existing sessions.",
+                    "SUCCESS_TEXT" : "If you stay on the current website, an existing session may reveal your new IP address.",
                     "TITLE" : "Establishing connection with VPN: {{name}}"
                 }
             }
@@ -114,7 +114,7 @@
             "ACTIVATION" : {
                 "LABEL_REGISTER" : "Register",
                 "LABEL_RENEW" : "Renew License",
-                "TOOLTIP_REGISTER" : "Register your eBlocker to profit from all features",
+                "TOOLTIP_REGISTER" : "Register your eBlocker to unlock all features",
                 "TOOLTIP_RENEW" : "Renew your license, so that you can continue to use all features."
             },
             "ADS" : {
@@ -136,23 +136,23 @@
                     "ACTIONS" : {
                         "CHECK_CONNECTION" : "Verify connection",
                         "CONFIGURE_CONNECTION" : "Configure",
-                        "GET_NEW_TOR_ID" : "Get new Tor identity",
+                        "GET_NEW_TOR_ID" : "Get a new Tor identity",
                         "START_TOR" : "Tor Network"
                     },
-                    "LABEL" : "Anonymous by...",
-                    "LABEL_TOR" : "Tor network",
+                    "LABEL" : "Anonymize via...",
+                    "LABEL_TOR" : "Tor Network",
                     "LABEL_VPN_PREFIX" : "VPN: ",
                     "TOOLTIP_ACTIVATE" : "Activate",
                     "TOOLTIP_DEACTIVATE" : "Deactivate"
                 },
                 "NOTIFICATION" : {
-                    "CONNECTION_DOWN" : "VPN {{name}} has been disconnected.",
+                    "CONNECTION_DOWN" : "VPN {{name}} is no longer in use.",
                     "TOR_CONNECT" : "Connection to Tor network established.",
                     "TOR_DISCONNECT" : "Tor network disconnected.",
-                    "TOR_ID_RENEW_ERROR" : "Error getting new Tor identity",
+                    "TOR_ID_RENEW_ERROR" : "Error while getting a new Tor identity.",
                     "TOR_ID_RENEW_SUCCESS" : "Tor identity renewed.",
-                    "VPN_CONNECT" : "VPN is connected.",
-                    "VPN_DISCONNECT" : "VPN is disconnected."
+                    "VPN_CONNECT" : "VPN connection established.",
+                    "VPN_DISCONNECT" : "VPN disconnected."
                 },
                 "TOOLTIP_ACTIVATE" : "Activate IP anonymization",
                 "TOOLTIP_DEACTIVATE" : "Change or deactivate IP anonymization"
@@ -169,9 +169,9 @@
                 },
                 "TOOLTIP" : "Cloak your device",
                 "TOOLTIP_ACTIVATE" : "Cloak as",
-                "TOOLTIP_ALERT_NO_HTTPS" : "Without HTTPS support cloaking is not 100% effective.",
+                "TOOLTIP_ALERT_NO_HTTPS" : "Without HTTPS support, device cloaking is not 100% effective.",
                 "TOOLTIP_CLOAKED" : "Cloaked as {param}",
-                "TOOLTIP_DEACTIVATE" : "Disable cloaking as"
+                "TOOLTIP_DEACTIVATE" : "Stop cloaking as"
             },
             "DASHBOARD" : {
                 "LABEL" : "Dashboard",
@@ -179,14 +179,14 @@
             },
             "HELP" : {
                 "LABEL" : "Help",
-                "TOOLTIP" : "Get help online"
+                "TOOLTIP" : "Go to online help"
             },
             "MESSAGES" : {
                 "LABEL" : "Messages",
                 "NOTIFICATION" : {
-                    "HAS_ALERT" : "You've got important new messages!"
+                    "HAS_ALERT" : "You have important messages!"
                 },
-                "TOOLTIP" : "There {param, select, 1{is} other{are}} {param, select, 0{no} other{{param}}} {param, select, 1{message} other{messages}}"
+                "TOOLTIP" : "You have {param, select, 0{no} other{{param}}} {param, select, 1{message} other{messages}}"
             },
             "ONLINE_TIME" : {
                 "LABEL" : "Online Time",
@@ -214,7 +214,7 @@
             },
             "SETTINGS" : {
                 "LABEL" : "Settings",
-                "TOOLTIP" : "Open settings"
+                "TOOLTIP" : "Opens the eBlocker settings"
             },
             "TRACKERS" : {
                 "LABEL" : "Trackers",
@@ -227,7 +227,7 @@
                 "TOOLTIP_ALLOW_LOCAL" : "Trackers are allowed on this page",
                 "TOOLTIP_BLOCK" : "{param, select, 0{No trackers found on this page} 1{One tracker is blocked} other{{param} trackers are blocked}}",
                 "TOOLTIP_BLOCK_DNS" : "Domain blocker is active",
-                "TOOLTIP_NO_FILTER" : "Filters are disabled. Enable filters to protect this device."
+                "TOOLTIP_NO_FILTER" : "Blockers are disabled. Enable the blockers to protect this device."
             },
             "USER" : {
                 "ACTIONS" : {

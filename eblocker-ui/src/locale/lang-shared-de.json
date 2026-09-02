@@ -7,10 +7,10 @@
                     "DISABLE_CLOAKING": "Ausschalten"
                 },
                 "LABEL_CLOAKED": "getarnt",
-                "LABEL_CLOAKED_NO_HTTPS": "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht zu 100% wirksam.",
+                "LABEL_CLOAKED_NO_HTTPS": "Ohne HTTPS-Unterstützung ist die Gerätetarnung nicht zu 100 % wirksam.",
                 "LABEL_CLOAKING_AGENT": "Gerät tarnen als",
-                "LABEL_CLOAKING_NAME": "Gib bitte einen UserAgent ein",
-                "LABEL_CLOAKING_NAME_INVALID": "Bitte gib einen gültigen UserAgent ein",
+                "LABEL_CLOAKING_NAME": "Gib bitte einen User-Agent ein.",
+                "LABEL_CLOAKING_NAME_INVALID": "Bitte gib einen gültigen User-Agent ein.",
                 "LABEL_CLOAKING_OFF": "Deaktivieren",
                 "TITLE": "Gerätetarnung"
             },
@@ -19,12 +19,12 @@
                     "CANCEL_CONNECT": "Abbrechen",
                     "CONNECT": "Verbinden",
                     "DISCONNECT": "Trennen",
-                    "RENEW_ID": "Tor ID erneuern",
+                    "RENEW_ID": "Tor-ID erneuern",
                     "TEST_CONNECTION": "Privatsphäre-Status prüfen"
                 },
                 "DROPDOWN_LABEL": "Wähle ein Netzwerk",
                 "LABEL_CONNECTED": "verbunden",
-                "LABEL_TOR": "Tor Netzwerk",
+                "LABEL_TOR": "Tor-Netzwerk",
                 "TITLE": "IP-Anonymisierung",
                 "TOR_CHECK_URL": "https://eBlocker.org/de/privacy-check/"
             },
@@ -34,16 +34,16 @@
                 "TOR_DISCONNECT": "Verbindung zum Tor-Netzwerk wurde getrennt.",
                 "TOR_ID_RENEW_ERROR": "Fehler beim Beziehen einer neuen Tor-Identität.",
                 "TOR_ID_RENEW_SUCCESS": "Die Tor-Identität wurde erneuert.",
-                "VPN_CONNECT": "VPN Verbindung wurde aufgebaut.",
+                "VPN_CONNECT": "VPN-Verbindung wurde aufgebaut.",
                 "VPN_CONNECT_ERROR": "Die Verbindung konnte nicht aufgebaut werden.",
                 "VPN_CONNECT_TIMEOUT": "Zeitüberschreitung beim Verbindungsaufbau.",
-                "VPN_DISCONNECT": "VPN Verbindung wurde getrennt."
+                "VPN_DISCONNECT": "VPN-Verbindung wurde getrennt."
             },
             "TOOLTIP": {
                 "ACTION": {
                     "TEST_CONNECTION": "Dieser Link öffnet eine Seite, auf der du deine Einstellungen zur Privatsphäre, wie z.B. Tor, überprüfen kannst."
                 },
-                "SELECT_DISABLED": "Trenne die Verbindung zu '{{name | translate }}', bevor du dich erneut verbindest."
+                "SELECT_DISABLED": "Trenne die Verbindung zu '{{name | translate }}' bevor du dich erneut verbindest."
             }
         },
         "DIALOG": {
@@ -58,7 +58,7 @@
             "TOR": {
                 "ACTIVATION": {
                     "BODY_TEXT1": "Bitte beachte, dass die effektive Geschwindigkeit deines Internet-Zugangs bei Verwendung von Tor deutlich reduziert sein kann.",
-                    "BODY_TEXT2": "Wir empfehlen die IP-Anonymisierung über Tor nur einzuschalten, wenn du Websites mit sensitiven Inhalten besuchst.",
+                    "BODY_TEXT2": "Wir empfehlen, die IP-Anonymisierung über Tor nur einzuschalten, wenn du Websites mit sensiblen Inhalten besuchst.",
                     "BUTTON": {
                         "CANCEL": "Abbrechen",
                         "OK": "Tor aktivieren"
@@ -91,7 +91,7 @@
         },
         "USER": {
             "NAME": {
-                "SYSTEM_DEFAULT": "Device {{name}} not assigned to a user",
+                "SYSTEM_DEFAULT": "Gerät {{name}} ist keinem Benutzer zugewiesen",
                 "STANDARD_USER": "(andere Geräte)",
                 "DEFAULT_PARENT": "Eltern"
             },
@@ -143,7 +143,7 @@
             "LABEL": "Abmelden"
         },
         "MESSAGES": {
-            "MESSAGE_ALERT_EVENT_CONTENT": "Es sind Systemereignisse aufgetreten",
+            "MESSAGE_ALERT_EVENT_CONTENT": "Es sind Systemereignisse aufgetreten.",
             "MESSAGE_ALERT_EVENT_LABEL": "Ereignisse ansehen",
             "MESSAGE_ALERT_EVENT_TITLE": "Systemereignisse",
             "MESSAGE_ALERT_EVENT_URL": "/settings/#!/system/events",
@@ -159,12 +159,12 @@
             "MESSAGE_CERTIFICATE_UNTRUSTED_LABEL": "Zertifikat installieren",
             "MESSAGE_CERTIFICATE_UNTRUSTED_TITLE": "eBlocker Zertifikat noch nicht installiert",
             "MESSAGE_CERTIFICATE_UNTRUSTED_URL": "/api/ssl/caCertificate.crt",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT": "Ein weiterer DNS Server wurde in deinem lokalen Netzwerk gefunden, der nicht dein Router ist. Dieses beeinträchtigt möglicherweise den eBlocker, DNS-Anfragen zu beantworten und dich zu schützen. Bitte schalte diesen Server ab oder entferne ihn aus der DHCP Konfiguration.",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL": "DNS Konfiguration",
+            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT": "Ein weiterer DNS Server wurde in deinem lokalen Netzwerk gefunden, der nicht dein Router ist. Dieses beeinträchtigt möglicherweise den eBlocker, DNS-Anfragen zu beantworten und dich zu schützen. Bitte schalte diesen Server ab oder entferne ihn aus der DHCP-Konfiguration.",
+            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL": "DNS-Konfiguration",
             "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE": "weiterer DNS Server im lokalen Netzwerk gefunden",
             "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL": "/settings/#!/dns",
-            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT": "Der/die folgende/n Server antworten langsam oder unzuverlässig: {{nameServers}}. Dieses kann den Internet-Zugriff stören.",
-            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_LABEL": "DNS Konfiguration",
+            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT": "Der/die folgende/n Server antworten langsam oder unzuverlässig: {{nameServers}}. Das kann den Internet-Zugriff stören.",
+            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_LABEL": "DNS-Konfiguration",
             "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_TITLE": "Unzuverlässige DNS-Server",
             "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_URL": "/settings/#!/dns",
             "MESSAGE_FILTER_LISTS_OUTDATED_CONTENT": "Die Blockierlisten wurden seit mehr als {{outdatedDays}} Tagen nicht aktualisiert.",
@@ -172,11 +172,11 @@
             "MESSAGE_FILTER_LISTS_OUTDATED_TITLE": "Blockierlisten nicht aktuell",
             "MESSAGE_FILTER_LISTS_OUTDATED_URL": "/settings/#!/home/update",
             "MESSAGE_LICENSE_EXPIRED_CONTENT": "Die Lizenz deines eBlockers ist am {{licenseNotValidAfter| date}} abgelaufen.\n\nBitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch wieder tägliche Schutz-Updates.",
-            "MESSAGE_LICENSE_EXPIRED_LABEL": "Für neue Lizenz spenden",
+            "MESSAGE_LICENSE_EXPIRED_LABEL": "Für eine neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRED_TITLE": "Lizenz abgelaufen",
             "MESSAGE_LICENSE_EXPIRED_URL": "https://eBlocker.org/ebl/de/shop",
             "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT": "Die Lizenz deines eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch tägliche Schutz-Updates.\n\nBitte beachte, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
-            "MESSAGE_LICENSE_EXPIRING_LABEL": "Für neue Lizenz spenden",
+            "MESSAGE_LICENSE_EXPIRING_LABEL": "Für eine neue Lizenz spenden",
             "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT": "Die Lizenz deines eBlockers läuft am {{licenseNotValidAfter| date}} ab.\n\nBitte verlängere deine Lizenz, um dauerhaft geschützt zu sein. Du erhältst dann automatisch wieder tägliche Schutz-Updates.\n\nBitte beachte, dass die verbleibende Laufzeit der bisherigen Update-Lizenz nicht verloren geht, sondern zur neuen Lizenzdauer hinzugefügt wird.",
             "MESSAGE_LICENSE_EXPIRING_TITLE": "Lizenz läuft bald ab",
             "MESSAGE_LICENSE_EXPIRING_URL": "https://eBlocker.org/ebl/de/shop",
@@ -184,16 +184,16 @@
             "MESSAGE_PATCH_RELEASE_NOTES_CONTENT": "Wichtige Fehlerbehebung.",
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
-            "MESSAGE_PATCH_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-0/",
-            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 4.0: Raspberry Pi 5 und 64-Bit Unterstützung",
+            "MESSAGE_PATCH_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-1/",
+            "MESSAGE_RELEASE_NOTES_CONTENT": "Neu in eBlockerOS 4.1: Vollständiges Backup, Raspberry Pi 5 und 64-Bit-Unterstützung",
             "MESSAGE_RELEASE_NOTES_LABEL": "Mehr...",
             "MESSAGE_RELEASE_NOTES_TITLE": "Neues Update installiert: eBlockerOS v{{version}}",
-            "MESSAGE_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-0/",
-            "MESSAGE_ROUTER_PROBLEMATIC_CONTENT": "Du verwendest eine FritzBox, die mit dem Plug-and-Play-Modus des eBlockers nicht kompatibel ist.\n\nDaher empfehlen wir, individuelle Netzwerkeinstellungen vorzunehmen, um Netzwerk-Probleme zu vermeiden.",
+            "MESSAGE_RELEASE_NOTES_URL": "https://eblocker.org/docs/release-notes-4-1/",
+            "MESSAGE_ROUTER_PROBLEMATIC_CONTENT": "Du verwendest eine FritzBox, die mit dem Plug-and-Play-Modus des eBlockers nicht kompatibel ist.\n\nDaher empfehlen wir, individuelle Netzwerkeinstellungen vorzunehmen, um Netzwerkprobleme zu vermeiden.",
             "MESSAGE_ROUTER_PROBLEMATIC_LABEL": "Netzwerkeinstellungen öffnen",
             "MESSAGE_ROUTER_PROBLEMATIC_TITLE": "FritzBox 7490, 7360 oder 3490 erkannt",
             "MESSAGE_ROUTER_PROBLEMATIC_URL": "/settings/#!/network",
-            "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT": "Wusstest du schon, dass du den eBlocker auch für HTTPS-verschlüsselte Websites verwenden kannst?\n\nHierfür musst du nur das eBlocker Zertifikat in deinen Geräten und Browsern installieren.",
+            "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT": "Wusstest du schon, dass du den eBlocker auch für HTTPS-verschlüsselte Websites verwenden kannst?\n\nHierfür musst du nur das eBlocker-Zertifikat auf deinen Geräten und Browsern installieren.",
             "MESSAGE_SSL_SUPPORT_INSTALL_LABEL": "HTTPS-Einstellungen öffnen",
             "MESSAGE_SSL_SUPPORT_INSTALL_TITLE": "HTTPS-Unterstützung aktivieren",
             "MESSAGE_SSL_SUPPORT_INSTALL_URL": "/settings/#!/ssl",

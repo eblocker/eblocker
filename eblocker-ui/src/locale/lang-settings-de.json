@@ -2,10 +2,10 @@
     "ADMINCONSOLE": {
         "ABOUT": {
             "LABEL": "Über eBlocker",
-            "TEAM": "Wir haben viele Jahre an eBlockerOS konzipiert, entwickelt, getestet und verbessert. Heute sind wir stolz, dass unsere Idee immer mehr Anhänger findet. eBlockerOS ist Open Source, frei von Hintertüren, völlig kostenlos und wird gemeinsam mit der Community weiterentwickelt.",
+            "TEAM": "Wir haben viele Jahre eBlockerOS konzipiert, entwickelt, getestet und verbessert. Heute sind wir stolz, dass unsere Idee immer mehr Anhänger findet. eBlockerOS ist Open Source, frei von Hintertüren, völlig kostenlos und wird gemeinsam mit der Community weiterentwickelt.",
             "THANK_YOU": "Wir freuen uns sehr, dass du eBlockerOS einsetzt. Du hast damit eine sehr gute Entscheidung für den Schutz deiner Privatsphäre und deiner gesamten Familie getroffen.",
-            "NON_PROFIT": "eBlocker ist ein <b>non-profit Projekt</b>, das über Spenden finanziert und von einer Community aus Ehrenamtlichen getragen wird. Dahinter steht <b>kein großes Unternehmen</b>, sondern das Engagement eines interdisziplinären Teams aus Privatsphäre-Spezialisten, Datenschützern und IT-Sicherheitsexperten rund um die Initiatoren Christian Bennefeld und Boris Prinz.",
-            "DONATE": "<b>Damit eBlockerOS langfristig sicher ist, regelmäßig Updates bekommt und neue Funktionen erhält benötigen wir deine Hilfe. Unterstütze uns bitte mit deinem Engagement in der Community oder einer Spende:</b>",
+            "NON_PROFIT": "eBlocker ist ein <b>Non-Profit-Projekt</b>, das über Spenden finanziert und von einer Community aus Ehrenamtlichen getragen wird. Dahinter steht <b>kein großes Unternehmen</b>, sondern das Engagement eines interdisziplinären Teams aus Privatsphäre-Spezialisten, Datenschützern und IT-Sicherheitsexperten rund um die Initiatoren Christian Bennefeld und Boris Prinz.",
+            "DONATE": "<b>Damit eBlockerOS langfristig sicher ist, regelmäßig Updates bekommt und neue Funktionen erhält, benötigen wir deine Hilfe. Unterstütze uns bitte mit deinem Engagement in der Community oder einer Spende:</b>",
             "DONATE_MORE": "Jetzt spenden oder engagieren",
             "DONATE_THANKS": "Als Dank erhältst du einen Lizenzschlüssel, mit dem du automatisch tägliche Updates bekommst. Gleichzeitig sind wir damit in der Lage, unsere Idee von einem freien Internet ohne Massenüberwachung langfristig in die Realität umzusetzen. Vielen herzlichen Dank dafür!",
             "COMMUNITY": "Bei Fragen, neuen Ideen oder wenn du Fehler gefunden hast, nutze bitte ausschließlich unser Forum unter",
@@ -99,12 +99,12 @@
         "ACTIVATION_FINISH": {
             "ACTION": {
                 "CONTINUE": "Weiter",
-                "MORE_INFO": "Mehr Info",
-                "NO_THANKS": "Nein Danke",
+                "MORE_INFO": "Mehr Informationen",
+                "NO_THANKS": "Nein, danke",
                 "REMIND_ME_LATER": "Später erinnern",
                 "START_USING": "eBlocker jetzt nutzen!",
                 "UPDATE_LATER": "Später aktualisieren",
-                "UPDATE_NOW": "Jetzt aktualisieren (Empfohlen)"
+                "UPDATE_NOW": "Jetzt aktualisieren (empfohlen)"
             },
             "CARD": {
                 "TITLE": "Setup fertigstellen"
@@ -113,7 +113,7 @@
                 "LABEL": "Prüfe auf Aktualisierungen. Bitte warten."
             },
             "DONE": {
-                "HEADER": "Dein eBlocker ist auf dem neusten Stand!",
+                "HEADER": "Dein eBlocker ist auf dem neuesten Stand!",
                 "TEXT1": "Es gibt zur Zeit keine Aktualisierungen."
             },
             "FINISH": {
@@ -187,7 +187,7 @@
                     "MODE": {
                         "ALWAYS": "Immer",
                         "OFF": "Nie",
-                        "VPN_CLIENTS_ONLY": "Nur für eBlocker Mobile Geräte, wenn diese nicht im lokalen Netzwerk sind (empfohlen)"
+                        "VPN_CLIENTS_ONLY": "Nur für Geräte mit eBlocker Mobile, wenn diese nicht im lokalen Netzwerk sind (empfohlen)"
                     },
                     "TOOLTIP_NO_SSL_FILTER": "Diese Einstellung ist nur für HTTP Verbindungen aktiv",
                     "TOOLTIP_NO_SSL_NO_FILTER": "Diese Einstellung ist nicht aktiv.",
@@ -354,7 +354,7 @@
                 "SELECT_FILE" : "Bitte wähle eine eBlocker-Sicherungsdatei mit der Endung .eblcfg aus, um die Einstellungen wiederherzustellen.",
                 "SAVE_BACKUP" : "Sichere die Datei unten.",
                 "FILENAME" : "Dateiname:",
-                "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Downloads-Verzeichnis gespeichert.",
+                "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Download-Verzeichnis gespeichert.",
                 "EXPORT": "Ein neues Passwort wird benötigt, um die HTTPS- und OpenVPN-Schlüssel in der Sicherungsdatei zu schützen.",
                 "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
                 "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
@@ -374,7 +374,7 @@
             "PASSWORD": {
                 "ERROR": {
                     "REQUIRED": "Passwort wird zur Wiederherstellung der Schlüssel benötigt",
-                    "RETRY": "Die Schlüssel konnten mit dem eingebenen Passwort nicht wiederhergestellt werden. Bitte versuche es erneut."
+                    "RETRY": "Die Schlüssel konnten mit dem eingegebenen Passwort nicht wiederhergestellt werden. Bitte versuche es erneut."
                 },
                 "LABEL": "Passwort eingeben",
                 "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht.",
@@ -437,8 +437,8 @@
                     "LABEL_ANONYMIZATION_ENABLED": "IP-Anonymisierung aktiviert",
                     "LABEL_ANONYMIZATION_SERVICE": "Verwendeter IP-Anonymisierungsdienst",
                     "LABEL_CLOAKING_AGENT": "Gerät tarnen als",
-                    "LABEL_CLOAKING_NAME": "Gib einen UserAgent ein",
-                    "LABEL_CLOAKING_NAME_INVALID": "Bitte gib einen gültigen UserAgent ein",
+                    "LABEL_CLOAKING_NAME": "Gib einen User-Agent ein",
+                    "LABEL_CLOAKING_NAME_INVALID": "Bitte gib einen gültigen User-Agent ein",
                     "LABEL_CLOAKING_OFF": "Deaktivieren",
                     "LABEL_CLOAKING_OFF_LABEL": "Nicht tarnen",
                     "TAB_LABEL": "Anonymisierung"
@@ -462,13 +462,12 @@
                         "RECOMMENDED": "(Empfohlen)"
                     },
                     "TAB_LABEL": "Blocker",
-                    "WARN_SSL": "HTTPS-Unterstützung ist deaktiviert! Pattern Blocker sind somit nicht 100% wirksam!"
+                    "WARN_SSL": "HTTPS-Unterstützung ist deaktiviert! Pattern Blocker sind somit nicht 100 % wirksam!"
                 },
                 "GENERAL": {
                     "ACTION": {
                         "EDIT_DEVICE": "Bearbeiten",
-                        "LOGOUT_OP_USER": "Gerät zurückgeben",
-                        "RESET_MESSAGE_OPTIONS": "Alle Warnungen für dieses Gerät zurücksetzen."
+                        "LOGOUT_OP_USER": "Gerät zurückgeben"
                     },
                     "LABEL_DEVICE_UPDATING": "Gerät wird aktualisiert ... ",
                     "LABEL_DISABLED_EBLOCKER": "eBlocker für dieses Gerät deaktiviert",
@@ -485,7 +484,7 @@
                     "LABEL_NOT_PAUSE_EBLOCKER": "eBlocker pausiert nicht für dieses Gerät",
                     "LABEL_PAUSE_EBLOCKER": "eBlocker pausiert für dieses Gerät",
                     "LABEL_PAUSE_EBLOCKER_COUNTDOWN": "eBlocker pausiert für dieses Gerät ({{min}}:{{sec}})",
-                    "LABEL_PAUSE_NOT_ALLOWED": "Aufgrund von Jugendschutzeinstellungen kann der eBlocker für dieses Gerät nicht pausiert werden.",
+                    "LABEL_PAUSE_NOT_ALLOWED": "Aufgrund von Jugendschutz-Einstellungen kann der eBlocker für dieses Gerät nicht pausiert werden.",
                     "LABEL_RESET_DEVICE": "Gerät zurücksetzen",
                     "LABEL_VENDOR": "Hersteller",
                     "LABEL_VENDOR_PRIVATE_MAC": "Unbekannt (private MAC-Adresse)",
@@ -522,7 +521,7 @@
                     "LABEL_MESSAGE_ALL": "Alle",
                     "LABEL_MESSAGE_NONE": "Keine",
                     "LABEL_SHOW_BOOKMAKR_DIALOG": "Lesezeichen-Dialog auf Dashboard anzeigen",
-                    "LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG": "Hinweis anzeigen, dass Domain Blocker Änderungen mit Verzögerung aktiv werden",
+                    "LABEL_SHOW_DNS_FILTER_CHANGE_DIALOG": "Hinweis anzeigen, dass Änderungen an Domain-Blockern mit Verzögerung wirksam werden",
                     "LABEL_SHOW_PAUSE_DIALOG": "Bestätigung für Pause anzeigen",
                     "LABEL_SHOW_TOR_DIALOG": "Bestätigung für Tor anzeigen",
                     "LABEL_SHOW_WELCOME_PAGE": "Willkommensseite auf nächster Website anzeigen",
@@ -587,7 +586,7 @@
                 "MOBILE_ON": "eBlocker Mobile ist nicht verbunden",
                 "OFFLINE": "Gerät ist offline",
                 "ONLINE": "Gerät ist online",
-                "REMOVE_BUTTON": "Gateways und der eBlocker können nicht zurück gesetzt werden",
+                "REMOVE_BUTTON": "Gateways und der eBlocker können nicht zurückgesetzt werden",
                 "SSL_DISABLED": "HTTPS-Unterstützung ist für dieses Gerät deaktiviert",
                 "SSL_DISABLED_GLOBAL": "HTTPS-Unterstützung ist global deaktiviert",
                 "SSL_ENABLED": "HTTPS-Unterstützung ist für dieses Gerät aktiviert",
@@ -611,7 +610,7 @@
             },
             "ADD_CERTIFICATE": {
                 "ACTION": {
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "TEXT": "Bitte beachte, dass du die Konfiguration für dieses Gerät herunterladen und installieren musst!",
                 "TITLE": "Hinweis zur Konfiguration"
@@ -658,7 +657,7 @@
                 "IP6_ADDRESS_LABEL": "IPv6-Adresse",
                 "NAME_LABEL": "Servername",
                 "TITLE_EDIT": "DNS Eintrag bearbeiten: {{name}}",
-                "TITLE_NEW": "Neuen DNS Eintrag"
+                "TITLE_NEW": "Neuer DNS Eintrag"
             },
             "ADD_FILTERLIST": {
                 "ACTION": {
@@ -788,7 +787,7 @@
                     "OK": "Entfernen"
                 },
                 "TEXT": "Bist du sicher, dass du alle markierten Benutzer entfernen willst?",
-                "TEXT_UNDELETABLE": "{num, select, 1{Du hast einen Benutzer ausgewählt, die nicht gelöscht werden kann.} other{Du hast {num} Benutzer ausgewählt, die nicht gelöscht werden können.}}",
+                "TEXT_UNDELETABLE": "{num, select, 1{Du hast einen Benutzer ausgewählt, der nicht gelöscht werden kann.} other{Du hast {num} Benutzer ausgewählt, die nicht gelöscht werden können.}}",
                 "TITLE": "Benutzer entfernen"
             },
             "DELETE_ALL_DEVICES_FROM_USER_CONFIRM": {
@@ -850,7 +849,7 @@
                     "OK": "Entfernen"
                 },
                 "TEXT": "Bist du sicher, dass du alle markierten DNS Einträge entfernen willst?",
-                "TEXT_UNDELETABLE": "{num, select, 1{Du hast ein Eintrag ausgewählt, der nicht gelöscht werden kann.} other{Du hast {num} Einträge ausgewählt, die nicht gelöscht werden können.}}",
+                "TEXT_UNDELETABLE": "{num, select, 1{Du hast einen Eintrag ausgewählt, der nicht gelöscht werden kann.} other{Du hast {num} Einträge ausgewählt, die nicht gelöscht werden können.}}",
                 "TITLE": "DNS Einträge entfernen"
             },
             "DELETE_USER_CONFIRM": {
@@ -960,7 +959,7 @@
                     "OK": "Speichern"
                 },
                 "BLACKLISTED_EXCEPTION_LABEL": "Als Ausnahmen sind diese Kategorien erlaubt:",
-                "MAIN_1": "Folgende Kategorien sind verboten. Alle  anderen Websites sind erlaubt.",
+                "MAIN_1": "Folgende Kategorien sind verboten. Alle anderen Websites sind erlaubt.",
                 "MAIN_2": "Folgende Kategorien sind erlaubt, alle anderen Websites sind verboten.",
                 "MAIN_LABEL": "Grundsatz:",
                 "NO_EXCEPTION_LABEL": "Keine Ausnahmen",
@@ -979,7 +978,7 @@
             "EDIT_DEVICE_NAME": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "ERROR": {
                     "NAME_NOT_UNIQUE": "Der Name ist nicht eindeutig.",
@@ -1006,7 +1005,7 @@
                 "ACTION": {
                     "APPLY": "Übernehmen",
                     "CANCEL": "Abbrechen",
-                    "REBOOT": "Neu Starten"
+                    "REBOOT": "Neustart"
                 },
                 "TAB": {
                     "EDIT": {
@@ -1040,7 +1039,7 @@
                     "TITLE": "Expertenmodus"
                 },
                 "INDIVIDUAL": {
-                    "TEXT": "In diesem Modus vergibt der eBlocker die IP-Adressen im Netzwerk. Dazu muss der DHCP-Dienst des Routers abgeschaltet werden. Der eBlocker übernimmt diesen Dienst",
+                    "TEXT": "In diesem Modus vergibt der eBlocker die IP-Adressen im Netzwerk. Dazu muss der DHCP-Dienst des Routers abgeschaltet werden. Der eBlocker übernimmt diesen Dienst.",
                     "TITLE": "Individuelle Einstellungen"
                 },
                 "TITLE": "Netzwerkmodus ändern"
@@ -1091,7 +1090,7 @@
             "EXPERT_NETWORK_CONFIRM": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
-                    "OK": "Neu Starten"
+                    "OK": "Neustart"
                 },
                 "TEXT": "Der eBlocker übernimmt die neuen Einstellungen und startet sich neu.",
                 "TITLE": "Änderungen übernehmen und neu starten?",
@@ -1119,7 +1118,7 @@
                     "OK": "Schließen"
                 },
                 "TEXT": "Bist du sicher, dass du den Assistenten schließen möchtest? Du kannst den Assistenten jederzeit wiederholen.",
-                "TITLE": "Assistenten Schließen?"
+                "TITLE": "Assistenten schließen?"
             },
             "MOBILE_SAVE_CONFIRM": {
                 "ACTION": {
@@ -1190,7 +1189,7 @@
                     "CREDENTIALS_USERNAME": "Benutzername"
                 },
                 "TAB_5": {
-                    "FINALIZE": "Abschliessen",
+                    "FINALIZE": "Abschließen",
                     "VPN_DESCRIPTION": "Beschreibung",
                     "VPN_DISABLED": "VPN ist im Dashboard oder in der ControlBar nicht verfügbar",
                     "VPN_ENABLED": "VPN ist im Dashboard und in der ControlBar verfügbar",
@@ -1244,7 +1243,7 @@
             "RESET_OPEN_VPN_CONFIRM": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
-                    "OK": "zurücksetzen"
+                    "OK": "Zurücksetzen"
                 },
                 "TEXT": "Beim Zurücksetzen werden alle Zertifikate zurückgezogen und müssen später neu verteilt werden.",
                 "TITLE": "OpenVPN Server zurücksetzen"
@@ -1252,7 +1251,7 @@
             "RESET_PIN_CONFIRM": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "TEXT": "Möchtest du die PIN entfernen?",
                 "TITLE": "PIN entfernen"
@@ -1270,8 +1269,8 @@
                     "CANCEL": "Nein, hier bleiben",
                     "OK": "Ja, Abbrechen"
                 },
-                "TEXT": "Bist du sicher, dass du den Setup Assistent abbrechen willst? Dein eBlocker wird dann nicht funktionieren.",
-                "TITLE": "Setup Assistent Abbrechen"
+                "TEXT": "Bist du sicher, dass du den Setup-Assistenten abbrechen willst? Dein eBlocker wird dann nicht funktionieren.",
+                "TITLE": "Setup-Assistenten abbrechen"
             },
             "DELETE_ASSIGNED_USER_CONFIRM": {
                 "ACTION": {
@@ -1295,7 +1294,7 @@
             "SET_PIN": {
                 "ACTION": {
                     "CANCEL": "Abbrechen",
-                    "OK": "Ok",
+                    "OK": "OK",
                     "RESET": "PIN entfernen"
                 },
                 "ERROR": {
@@ -1330,23 +1329,23 @@
             },
             "SSL_DEVICE_DISABLE_WARNING": {
                 "ACTION": {
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "TEXT_CLOAKING_ON": "Die Gerätetarnung wird für dieses Gerät zurückgesetzt und muss neu eingestellt werden, sobald HTTPS-Unterstützung wieder aktiviert wird.",
                 "TEXT_CONTROLBAR_AUTO": "Das eBlocker Symbol und die ControlBar werden für dieses Gerät deaktiviert. Nutze das eBlocker Dashboard, um individuelle Einstellungen vorzunehmen.",
                 "TEXT_CONTROLBAR_ON": "Das eBlocker Symbol und die ControlBar werden auf einigen Websites nicht verfügbar sein. Nutze das eBlocker Dashboard, um individuelle Einstellungen vorzunehmen. Wir empfehlen, die ControlBar-Einstellungen auf automatisch zu stellen.",
                 "TEXT_IS_AUTO": "Die Blocker-Einstellungen werden für optimalen Schutz angepasst.",
-                "TEXT_IS_PATTERN": "Pattern Blocker sind ohne HTTPS-Unterstützung nicht zu 100% wirksam. Wir empfehlen die Blocker-Einstellung auf automatisch zu stellen.",
+                "TEXT_IS_PATTERN": "Pattern Blocker sind ohne HTTPS-Unterstützung nicht zu 100 % wirksam. Wir empfehlen die Blocker-Einstellung auf automatisch zu stellen.",
                 "TITLE": "Bitte beachte"
             },
             "SSL_DISABLE_WARNING": {
                 "ACTION": {
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
-                "TEXT_BOTH": "Das eBlocker Symbol und die Pattern Blocker sind jeweils für mindestens ein Gerät aktiv. Ohne HTTPS-Unterstützung kann weder das eBlocker Symbol auf HTTPS Websites eingeblendet werden, noch sind die Pattern Blocker zu 100% wirksam. Daher empfehlen wir, für jedes Gerät die eBlocker-Symbol-Einstellung und die Blocker-Einstellung auf automatisch zu stellen.",
+                "TEXT_BOTH": "Das eBlocker Symbol und die Pattern Blocker sind jeweils für mindestens ein Gerät aktiv. Ohne HTTPS-Unterstützung kann weder das eBlocker Symbol auf HTTPS Websites eingeblendet werden, noch sind die Pattern Blocker zu 100 % wirksam. Daher empfehlen wir, für jedes Gerät die eBlocker-Symbol-Einstellung und die Blocker-Einstellung auf automatisch zu stellen.",
                 "TEXT_CLOAKING_ON": "Die Gerätetarnungen werden für alle Geräte zurückgesetzt und müssen neu eingestellt werden, sobald HTTPS-Unterstützung wieder aktiviert wird.",
                 "TEXT_HAS_ICON": "Das eBlocker Symbol ist für mindestens ein Gerät aktiv. Ohne HTTPS-Unterstützung kann das eBlocker Symbol nicht auf HTTPS Websites eingeblendet werden. Daher empfehlen wir, für jedes Gerät die eBlocker-Symbol-Einstellung auf automatisch zu stellen.",
-                "TEXT_IS_PATTERN": "Pattern Blocker werden von mindestens einem Gerät genutzt. Pattern Blocker sind ohne HTTPS-Unterstützung nicht zu 100% wirksam. Daher empfehlen wir, für jedes Gerät die Blocker-Einstellung auf automatisch zu stellen.",
+                "TEXT_IS_PATTERN": "Pattern Blocker werden von mindestens einem Gerät genutzt. Pattern Blocker sind ohne HTTPS-Unterstützung nicht zu 100 % wirksam. Daher empfehlen wir, für jedes Gerät die Blocker-Einstellung auf automatisch zu stellen.",
                 "TITLE": "Bitte beachte"
             },
             "SSL_STATUS_WIZARD": {
@@ -1380,7 +1379,7 @@
                     "LABEL_SSL_COMMON_NAME": "Name",
                     "MONTHS_VALID": "Monate gültig",
                     "OPTIONS_TEXT": "Dein eBlocker Zertifikat wird mit folgenden Parametern erstellt.",
-                    "PLEASE_BE_PATIENT": "Dies kann mehrere Minuten dauern. Bitte warten bis \"Zertifikat installieren\" erscheint."
+                    "PLEASE_BE_PATIENT": "Dies kann mehrere Minuten dauern. Bitte warte, bis \"Zertifikat installieren\" erscheint."
                 },
                 "TAB_3": {
                     "FINGERPRINT_SHA256": "Fingerprint (SHA-256)",
@@ -1397,19 +1396,19 @@
                     "CANCEL": "Abbrechen",
                     "OK": "Speichern"
                 },
-                "ARIA": "Add or edit Trusted App Definition",
+                "ARIA": "Vertrauenswürdige App hinzufügen oder bearbeiten",
                 "ERROR": {
                     "DESCRIPTION_TOO_LONG": "Die Beschreibung ist zu lang.",
                     "DOMAINS_INVALID": "Ungültige Eingaben.",
                     "DOMAINS_REQUIRED": "Mindestens einen Domainnamen oder IP-Adresse eingeben.",
                     "DOMAINS_TOO_LONG": "Zu viele Eingaben.",
-                    "NAME_NOT_UNIQUE": "App Name wird bereits verwendet.",
-                    "NAME_REQUIRED": "App Name ist erforderlich.",
-                    "NAME_TOO_LONG": "App Name ist zu lang."
+                    "NAME_NOT_UNIQUE": "App-Name wird bereits verwendet.",
+                    "NAME_REQUIRED": "App-Name ist erforderlich.",
+                    "NAME_TOO_LONG": "App-Name ist zu lang."
                 },
                 "LABEL_DESCRIPTION": "Beschreibung eingeben (optional)",
                 "LABEL_DOMAINSIPS": "eBlocker deaktivieren bei HTTPS-Verbindungen zu folgenden Domains/IP-Adressen (je Zeile nur eine)",
-                "LABEL_NAME": "App Name eingeben",
+                "LABEL_NAME": "App-Name eingeben",
                 "TITLE_EDIT": "App Definition Bearbeiten",
                 "TITLE_NEW": "Neue App Definition"
             },
@@ -1418,7 +1417,7 @@
                     "CANCEL": "Abbrechen",
                     "OK": "Speichern"
                 },
-                "ARIA": "Vertrauenswürdige website hinzufügen",
+                "ARIA": "Vertrauenswürdige Website hinzufügen",
                 "ERROR": {
                     "DOMAINS_INVALID": "Ungültige Domain/IP.",
                     "DOMAINS_REQUIRED": "Domain/IP ist erforderlich.",
@@ -1611,7 +1610,7 @@
                 "ADD_BUTTON": "Du kannst DNS-Server nur hinzufügen, wenn du eine benutzerdefinierte DNS-Weiterleitung eingestellt hast.",
                 "EDIT": "Diesen Server bearbeiten",
                 "NOT_ACTIVE": "Es stehen keine Daten für diesen Server zur Verfügung.",
-                "RATING_BAD": "Antwortzeiten und Zuverlässigkeit  schlecht, bitte diesen DNS entfernen.",
+                "RATING_BAD": "Antwortzeiten und Zuverlässigkeit sind schlecht. Bitte entferne diesen DNS-Server.",
                 "RATING_GOOD": "Antwortzeiten und Zuverlässigkeit sind gut.",
                 "RATING_MEDIUM": "Antwortzeiten und Zuverlässigkeit sind mittelmäßig.",
                 "REMOVE_BUTTON": "Du kannst DNS-Server nur löschen, wenn du eine benutzerdefinierte DNS-Weiterleitung eingestellt hast."
@@ -1628,15 +1627,15 @@
             "EDIT_DNS_MODE": {
                 "MODE_CUSTOM_LIST": "Externe DNS-Server",
                 "MODE_STANDARD": "Internet Provider",
-                "MODE_STANDARD_DISCLAIMER": "Hiervon sind Geräte ausgenommen, die Tor oder VPN nutzen, es sei denn DNS ist im VPN-Profil deaktiviert worden.",
+                "MODE_STANDARD_DISCLAIMER": "Hiervon sind Geräte ausgenommen, die Tor oder VPN nutzen, es sei denn, DNS ist im VPN-Profil deaktiviert worden.",
                 "MODE_STANDARD_FORWARD": "Alle DNS Anfragen werden weitergeleitet an {{name}}",
-                "MODE_STANDARD_LIST": "Standard Liste von externen DNS-Servern. (empfohlen)",
+                "MODE_STANDARD_LIST": "Standardliste externer DNS-Server (empfohlen)",
                 "MODE_STANDARD_NOT_AVAILABLE": "Die DNS Einstellung „{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD' | translate }}“ ist nur bei entsprechender Netzwerk Einstellung möglich. Bei individuellen Netzwerkeinstellungen oder im Expertenmodus müssen DNS Server manuell eingegeben werden. Für die DNS Einstellung „{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_STANDARD' | translate }}“ aktiviere bitte, wenn möglich, die automatischen Netzwerkeinstellungen.",
                 "MODE_STANDARD_NO_GATEWAY": "Der Domain Name Service (DNS) deines Providers löst aufgerufene Domains in IP-Adressen auf. Alle Domains werden protokolliert. Derzeit stehen keine Informationen zum Standard-DNS-Server zur Verfügung.",
                 "MODE_TOR": "Tor-Netzwerk. DNS Auflösung erfolgt anonym.",
                 "MODE_TOR_DISCLAIMER": "Dies gilt auch für Geräte, die sonst nicht Tor nutzen.",
-                "MODE_TOR_FORWARD": "Zur Auflösung von Domain Namen wird die Anfrage über das Tor-Netzwerk anonym aufgelöst. Niemand kann so protokollieren, welche Domain sie aufrufen. Diese Funktion kann den Internetzugriff leicht verlangsamen.",
-                "TITLE": "Domain Namen auflösen über:"
+                "MODE_TOR_FORWARD": "Zur Auflösung von Domainnamen wird die Anfrage anonym über das Tor-Netzwerk geleitet. Niemand kann so protokollieren, welche Domains du aufrufst. Diese Funktion kann den Internetzugriff leicht verlangsamen.",
+                "TITLE": "Domainnamen auflösen über:"
             },
             "LABEL": "Status",
             "LABEL_EMPTY_CACHE": "Der eBlocker verwendet einen internen Zwischenspeicher (Cache) für DNS-Anfragen. In seltenen Fällen kann das Leeren des Caches Probleme beseitigen, wenn Änderungen an den Einstellungen vorgenommen wurden.",
@@ -1672,7 +1671,7 @@
                         "ERROR": "Fehler",
                         "WARNING": "Warnung",
                         "INFO": "Information",
-                        "OKAY": "Ok"
+                        "OKAY": "OK"
                     },
                     "MESSAGE": {
                         "NON_GOOD_DNS_SERVER": "Ein oder mehrere DNS-Server haben keine hohe Zuverlässigkeit.",
@@ -1687,18 +1686,18 @@
                         "SYSTEM_UPDATE_NEVER_RAN": "Die System-Updates sind noch nie gelaufen!",
                         "SYSTEM_UPDATE_RAN": "Die System-Updates sind zuletzt gelaufen.",
                         "HTTPS_ENABLED": "Du hast die HTTPS-Unterstützung aktiviert",
-                        "LAST_SYSTEM_UPDATE_OLDER_2_DAYS": "Das letzte Aktualisierung ist länger als zwei Tage her: ",
+                        "LAST_SYSTEM_UPDATE_OLDER_2_DAYS": "Die letzte Aktualisierung ist länger als zwei Tage her: ",
                         "ATA_ENABLED": "Du hast die Auto-Trust-App aktiviert.",
-                        "ATA_HAS_WWW_DOMAINS": "Die Auto-Trust-App hat Domains, die mit 'www.' beginnen erkannt. Dies führt möglicherweise dazu, dass das eBlocker-Icon auf folgenden Seiten nicht angezeigt wird:",
+                        "ATA_HAS_WWW_DOMAINS": "Die Auto-Trust-App hat Domains, die mit 'www.' beginnen, erkannt. Dies führt möglicherweise dazu, dass das eBlocker-Icon auf folgenden Seiten nicht angezeigt wird:",
                         "ATA_NOT_ENABLED": "Aktiviere die Auto-Trust-App für eine reibungslosere HTTPS-Unterstützung.",
                         "HTTPS_NOT_ENABLED": "Aktiviere die HTTPS-Unterstützung für einen verbesserten Tracking-Schutz und gegen Werbung in Videos.",
-                        "STANDARD_PATTERN_FILTER_ENABLED": "Der folgende Standard-Pattern blocker ist wie empfohlen aktiviert:",
+                        "STANDARD_PATTERN_FILTER_ENABLED": "Der folgende Standard-Pattern-Blocker ist wie empfohlen aktiviert:",
                         "STANDARD_PATTERN_FILTER_DISABLED": "Der folgende Standard-Pattern-Blocker ist nicht wie empfohlen aktiviert:",
                         "DDG_FILTER_ENABLED_OVERBLOCKING": "Der DuckDuckGo-Tracker-Radar-Filter ist aktiv. Beachte bitte, dass er zum Overblocking neigt.",
                         "DDG_FILTER_DISABLED": "Aktiviere den DuckDuckGo-Tracker-Radar-Filter für besonders starken Tracking-Schutz.",
                         "COOKIE_CONSENT_FILTER_ENABLED_OVERBLOCKING": "Der Cookie & Consent-Banner-Filter ist aktiv. Bitte beachte, dass er zum Overblocking neigt.",
                         "COOKIE_CONSENT_FILTER_DISABLED": "Aktiviere den Cookie & Consent-Banner-Filter für besonders starken Schutz gegen Cookies und Consent-Banner.",
-                        "EBLOCKER_ENABLED_FOR_NEW_DEVICES": "Der eBlocker wird für neue Geräte automatisch aktiviert. Dies führt zu Problemen, wenn das Gerät nicht mit dem eBlocker kompatibel ist.",
+                        "EBLOCKER_ENABLED_FOR_NEW_DEVICES": "Der eBlocker wird für neue Geräte automatisch aktiviert. Das führt zu Problemen, wenn das Gerät nicht mit dem eBlocker kompatibel ist.",
                         "EBLOCKER_DISABLED_FOR_NEW_DEVICES": "Der eBlocker wird für neue Geräte nicht automatisch aktiviert. Vergiss nicht, ihn jeweils nach erfolgreicher Installation neuer Geräte zu aktivieren.",
                         "EBLOCKER_DNS_RESOLVE_BROKEN": "Der eBlocker selbst kann keine DNS-Anfragen auflösen.",
                         "EBLOCKER_DNS_RESOLVE_WORKING": "Der eBlocker selbst kann DNS-Anfragen auflösen.",
@@ -1717,7 +1716,7 @@
                         "DNS_TOR_NOT_DISABLED": "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Dies wird für Anfänger nicht empfohlen.",
                         "DNS_TOR_MAY_LEAD_TO_ERRORS": "Das Tor-Netzwerk wird für die DNS-Auflösung verwendet. Bitte beachte, dass dies zu Aussetzern führen kann.",
                         "ADMIN_PASSWORD_NOT_SET": "Es ist kein Administrator-Passwort gesetzt. Jeder mit Zugang zu deinem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
-                        "MORE_INFO": "Mehr Information",
+                        "MORE_INFO": "Mehr Informationen",
                         "CLICK_FOR_MORE": "Klicke für Details.",
                         "DEVICES_BLOCKING_TEST_DOMAIN": "Auf folgenden Geräten wird der Funktionstest im Dashboard falsche Ergebnisse liefern, da die Domain 'eblocker.org' geblockt wird:",
                         "TEST_DOMAIN_HTTPS_WHITELISTED": "Der Funktionstest im Dashboard wird falsche Ergebnisse liefern, da 'eblocker.org' als vertrauenswürdige Website konfiguriert ist."
@@ -1771,7 +1770,7 @@
             },
             "OPTION": {
                 "ALL": "Alle Ereignisse",
-                "ERROR_DELETE": "Fehler beim löschen.",
+                "ERROR_DELETE": "Fehler beim Löschen.",
                 "WEEK": "Alle Ereignisse älter als eine Woche"
             },
             "TABLE": {
@@ -1791,9 +1790,9 @@
         "EXPIRED": {
             "CARD": {
                 "ACTION": {
-                    "RESUME": "Weiter Arbeiten"
+                    "RESUME": "Weiter"
                 },
-                "TEXT": "Klicke bitte hier, um weiter zu arbeiten.",
+                "TEXT": "Klicke bitte hier, um weiterzuarbeiten.",
                 "TITLE": "Deine Sitzung ist abgelaufen"
             },
             "TOOLBAR": {
@@ -1808,14 +1807,14 @@
             "EXPLAIN_PART2": "Bitte beachte, dass dabei alle Einstellungen und die Aktivierung gelöscht werden.",
             "EXPLAIN_PART3_LABEL": "eBlocker Lizenz-Server",
             "EXPLAIN_PART3_LINK": "https://eBlocker.org/ebl/de/license-transfer",
-            "EXPLAIN_PART3_POST": " zurücksetzen und Deinen eBlocker dann neu aktivieren.",
+            "EXPLAIN_PART3_POST": " zurücksetzen und deinen eBlocker dann neu aktivieren.",
             "EXPLAIN_PART3_PRE": "Du kannst die Lizenz über den ",
             "LABEL": "Werkseinstellungen"
         },
         "FACTORY_RESET_SCREEN": {
             "CARD": {
                 "TITLE": "Bitte warten ...",
-                "WAIT": "Dein eBlocker wird auf Werkeinstellungen zurückgesetzt."
+                "WAIT": "Dein eBlocker wird auf Werkseinstellungen zurückgesetzt."
             },
             "TOOLBAR": {
                 "TITLE": "eBlocker System-Status"
@@ -1837,7 +1836,7 @@
             "ARIA_TEMP_RULE": "Wähle eine temporäre Regel aus.",
             "DATE_TIME_FORMAT": "d. MMM y HH:mm",
             "DETAILS": {
-                "HEADING": "Recording Details"
+                "HEADING": "Aufzeichnungsdetails"
             },
             "LABEL": "Analyse Werkzeug",
             "LABEL_CURRENT_DEVICE": " (dieses Gerät)",
@@ -1877,10 +1876,10 @@
             },
             "FORMAT_LIST": {
                 "EASYLIST": "easylist",
-                "URLS": "URL Liste",
-                "DOMAINS": "Domain Liste",
-                "SQUID_ACL": "squid-acl Liste",
-                "ETC_HOSTS": "etc.hosts Liste"
+                "URLS": "URL-Liste",
+                "DOMAINS": "Domain-Liste",
+                "SQUID_ACL": "squid-acl-Liste",
+                "ETC_HOSTS": "etc.hosts-Liste"
             },
             "FILTER": {
                 "NONE": "Keine Blocker",
@@ -1910,7 +1909,7 @@
             "TOOLTIP": {
                 "DNS_DISABLED": "Der DNS Dienst ist nicht aktiviert.",
                 "FILTER_ACTIVE": "Dieser Blocker ist aktiv{num, select, 0{, wird aber von keinem Gerät} 1{ und wird von einem Gerät} other{ und wird von {num} Geräten}} genutzt.",
-                "FILTER_UNLICENSED": "Dieser Blocker steht Ihnen mit der aktuellen Lizenz nicht zur Verfügung.",
+                "FILTER_UNLICENSED": "Dieser Blocker steht dir mit der aktuellen Lizenz nicht zur Verfügung.",
                 "SSL_DISABLED_DEVICE": "HTTPS-Unterstützung ist nicht für alle Geräte aktiviert",
                 "SSL_DISABLED_GLOBALLY": "HTTPS-Unterstützung ist global deaktiviert."
             }
@@ -1952,18 +1951,18 @@
         "LEGAL": {
             "ADDRESS_CITY": "22299 Hamburg",
             "ADDRESS_COUNTRY": "Deutschland",
-            "ADDRESS_NAME": "eBlocker Open Source UG (haftungsbeschränkt)",
+            "ADDRESS_NAME": "eBlocker Open Source GmbH",
             "ADDRESS_STREET": "Hudtwalckertwiete 10",
             "AGB_LABEL": "eBlocker.org",
             "AGB_LINK": "https://eblocker.org/",
             "COPYRIGHT_GMBH": "Copyright (c) 2015-2019 eBlocker GmbH",
-            "COPYRIGHT": "Copyright (c) 2020-2025 eBlocker Open Source UG (haftungsbeschränkt)",
+            "COPYRIGHT": "Copyright (c) 2020-2026 eBlocker Open Source GmbH",
             "EULA_LABEL": "Lizensiert unter der EUPL",
             "EULA_LINK": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12",
             "LABEL": "Rechtliche Hinweise",
             "OSS_LABEL": "Verwendete Open-Source Lizenzen",
             "TRADEMARK_LABEL": "Markenrechte",
-            "TRADEMARK": "Der Markenname „eBlocker“ sowie das eBlocker Icon sind lizenzierte Schutzmarken der eBlocker Open Source UG (haftungsbeschränkt). Dritten ist die Nutzung und Verwendung ohne schriftliche Genehmigung untersagt."
+            "TRADEMARK": "Der Markenname „eBlocker“ sowie das eBlocker Icon sind lizenzierte Schutzmarken der eBlocker Open Source GmbH. Dritten ist die Nutzung und Verwendung ohne schriftliche Genehmigung untersagt."
         },
         "LICENSE": {
             "ACTION": {
@@ -2125,7 +2124,7 @@
             }
         },
         "NETWORK_SETTINGS_IP6": {
-            "LABEL": "IPv6 (beta)",
+            "LABEL": "IPv6",
             "LABEL_ADDRESSES": "IPv6-Adressen des eBlockers",
             "LABEL_GLOBAL": "Global",
             "LABEL_LINK_LOCAL": "Lokal",
@@ -2160,7 +2159,7 @@
                         "STEP1_HEADER_DHCP_ON": "Nach einem DHCP-Dienst suchen",
                         "STEP1_LABEL_WAIT_DHCP": "Es wird nach einem DHCP-Dienst in deinem Netzwerk gesucht...",
                         "STEP1_TEXT2_LINK": " Wissensdatenbank.",
-                        "STEP1_TEXT_1_PRE": "Bitte aktiviere jetzt den DHCP-Dienst auf deinem Router. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
+                        "STEP1_TEXT_1_PRE": "Bitte aktiviere jetzt den DHCP-Dienst auf deinem Router. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Hersteller auch in unserer",
                         "STEP1_TEXT_DHCP_FAIL": "Der DHCP-Dienst konnte nicht gefunden werden. Prüfe erneut oder bestätige, dass du den DHCP-Dienst aktiviert hast.",
                         "STEP1_TEXT_DHCP_FOUND": "Ein aktiver DHCP-Dienst wurde im Netzwerk gefunden. Klicke auf '{{'ADMINCONSOLE.NETWORK_WIZARD.ACTION.CONTINUE' | translate}}'",
                         "STEP1_TEXT_DHCP_ON": "Nach deinen aktuellen Einstellungen wird der DHCP-Dienst von einem anderen Gerät bereitgestellt. Wenn dieses immer noch in deinem Netzwerk ist, musst du nicht viel ändern.",
@@ -2176,7 +2175,7 @@
                         "LABEL": "Vorbereitung",
                         "TEXT1": "Der eBlocker wird in den automatischen Netzwerkmodus versetzt.",
                         "TEXT2_LINK": " Wissensdatenbank.",
-                        "TEXT2_PRE": "Mache dich bereits jetzt damit vertraut, wie du den DHCP-Service deines Internet-Routers/WLAN-Routers aktivierst. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
+                        "TEXT2_PRE": "Mache dich bereits jetzt damit vertraut, wie du den DHCP-Service deines Internet-Routers/WLAN-Routers aktivierst. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Hersteller auch in unserer",
                         "WARN": "Führe die Aktivierung jetzt noch nicht aus!"
                     },
                     "PROCESS": {
@@ -2202,14 +2201,14 @@
                         "STEP1_WARN_PRE": "Achtung:",
                         "STEP1_WARN_TEXT": "Bitte beachte, dass du den DHCP-Server in deinem Router wieder aktivieren musst, wenn du den eBlocker aus deinem Netzwerk entfernst.",
                         "STEP2_ADDRESS_LABEL": "Adresse des Routers: ",
-                        "STEP2_CHECKBOX_LABEL": "Ich habe den DHCP-Dienst meines Router deaktiviert",
+                        "STEP2_CHECKBOX_LABEL": "Ich habe den DHCP-Dienst meines Routers deaktiviert",
                         "STEP2_CONFIRM_LABEL": "Bitte bestätige:",
                         "STEP2_HEADER": "2. {{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PROCESS.STEP2' | translate}}",
-                        "STEP2_LABEL_FAIL_DHCP": "Der DHCP-Dienst wurde nachwievor gefunden. Prüfe erneut oder bestätige, dass du den DHCP-Dienst deaktiviert hast.",
+                        "STEP2_LABEL_FAIL_DHCP": "Der DHCP-Dienst wurde nach wie vor gefunden. Prüfe erneut oder bestätige, dass du den DHCP-Dienst deaktiviert hast.",
                         "STEP2_LABEL_WAIT_DHCP": "Der DHCP-Dienst deines Routers ist noch aktiv...",
                         "STEP2_TEXT1": "Der eBlocker wurde neu gestartet.",
                         "STEP2_TEXT2_LINK": " Wissensdatenbank.",
-                        "STEP2_TEXT2_PRE": "Bitte deaktiviere jetzt den DHCP-Dienst auf deinem Router. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
+                        "STEP2_TEXT2_PRE": "Bitte deaktiviere jetzt den DHCP-Dienst auf deinem Router. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Hersteller auch in unserer",
                         "STEP3_HEADER": "3. {{'ADMINCONSOLE.NETWORK_WIZARD.INDIVIDUAL.TAB.PROCESS.STEP3' | translate}}",
                         "STEP3_TEXT1": "Der DHCP-Dienst deines Routers ist nun deaktiviert.",
                         "STEP3_TEXT2": "Bitte starte nun alle Netzwerkgeräte bis auf den eBlocker und den Router neu oder unterbreche kurz deren Netzwerkverbindungen, indem du z.B. den Flugmodus kurz aktivierst.",
@@ -2220,7 +2219,7 @@
                         "LABEL": "Vorbereitung",
                         "TEXT1": "Falls der Plug-and-Play-Modus des eBlockers in deinem Netzwerk nicht zufriedenstellend funktioniert, kannst du den eBlocker als DHCP-Server in deinem Netzwerk verwenden, um alle Probleme zu beheben.",
                         "TEXT2_LINK": " Wissensdatenbank.",
-                        "TEXT2_PRE": "Mache dich bereits jetzt damit vertraut, wie du den DHCP-Service deines Internet-Routers/WLAN-Routers deaktivierst. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Fabrikate auch in unserer",
+                        "TEXT2_PRE": "Mache dich bereits jetzt damit vertraut, wie du den DHCP-Service deines Internet-Routers/WLAN-Routers deaktivierst. Details dazu findest du in der Anleitung deines Routers oder für einzelne Gerätetypen und Hersteller auch in unserer",
                         "WARN": "Führe bitte die Deaktivierung jetzt noch nicht aus!"
                     },
                     "PROCESS": {
@@ -2366,7 +2365,7 @@
                 "PARENTAL_CONTROL_FULL_2_PROFILE_NAME": "Bsp.: Kinder-Profil mit 1. Std. Nutzungsdauer",
                 "PARENTAL_CONTROL_FULL_PROFILE_DESCRIPTION": "Voller Schutz - ohne zeitliche Beschränkung. Das Gerät sollte sich nicht im freien Zugriff befinden.",
                 "PARENTAL_CONTROL_FULL_PROFILE_NAME": "Bsp.: Kinder-Profil",
-                "PARENTAL_CONTROL_MED_2_PROFILE_DESCRIPTION": "Dieses Profil dient als Beispiel für Jugendliche mit Zugriff auf ein eigenes Gerät (z.B. Smartphone-Kind1). Websites nicht geeigneter Kategorien (z.B. Pornographie, Gewalt, Glücksspiel usw.) werden dauerhaft gesperrt. Ansonsten darf auf das Internet bis zu 2 Std. pro Tag unterhalb der Woche und 3 Std. am Wochenende zugegriffen werden. Dazu gehören auch Soziale Netzwerke, Online-Spiel-Portale und Video-Portale. Für die Nutzung wurden Zeitfenster angelegt. Am Wochenende ist eine längere Internetnutzung erlaubt.",
+                "PARENTAL_CONTROL_MED_2_PROFILE_DESCRIPTION": "Dieses Profil dient als Beispiel für Jugendliche mit Zugriff auf ein eigenes Gerät (z.B. Smartphone-Kind1). Websites nicht geeigneter Kategorien (z.B. Pornographie, Gewalt, Glücksspiel usw.) werden dauerhaft gesperrt. Ansonsten darf auf das Internet bis zu 2 Std. pro Tag unter der Woche und 3 Std. am Wochenende zugegriffen werden. Dazu gehören auch Soziale Netzwerke, Online-Spiel-Portale und Video-Portale. Für die Nutzung wurden Zeitfenster angelegt. Am Wochenende ist eine längere Internetnutzung erlaubt.",
                 "PARENTAL_CONTROL_MED_2_PROFILE_NAME": "Bsp. Jugendliche-Profil mit maximaler Nutzungsdauer",
                 "PARENTAL_CONTROL_MED_PROFILE_DESCRIPTION": "Starker Schutz mit einer Stunde Zugriff pro Tag auf Soziale Netzwerke, Video- und Online-Spielportale.",
                 "PARENTAL_CONTROL_MED_PROFILE_NAME": "Bsp.: Jugendliche mit eigenem Gerät",
@@ -2374,14 +2373,14 @@
                 "PARENTAL_CONTROL_USERPROFILE_LIMBO_NAME": "Internet-Sperre"
             },
             "LABEL": "Jugendschutz",
-            "SET_ADMIN_PASSWORD_TEXT": "Es ist kein Administratorpasswort gesetzt. Wenn du die Jugendschutz-Funktionen nutzen möchtest, musst du ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht ohne Berechtigung geändert werden können."
+            "SET_ADMIN_PASSWORD_TEXT": "Es ist kein Administratorpasswort gesetzt. Wenn du die Jugendschutz-Funktionen nutzen möchtest, musst du ein Passwort setzen, damit die Jugendschutz-Einstellungen nicht unbefugt geändert werden können."
         },
         "PASSWORD_SERVICE": {
             "NOTIFICATION": {
                 "ERROR_SERVICE_PASSWORD_CANCEL_RESET": "Das Zurücksetzen des Administratorpassworts konnte nicht unterbrochen werden.",
                 "ERROR_SERVICE_PASSWORD_DISABLE": "Administratorpasswort kann nicht entfernt werden.",
-                "ERROR_SERVICE_PASSWORD_ENABLE": " Administratorpasswort kann nicht eingerichtet werden.",
-                "ERROR_SERVICE_PASSWORD_EXECUTE_RESET": "Das  Zurücksetzen des Administratorpassworts wurde nicht bestätigt.",
+                "ERROR_SERVICE_PASSWORD_ENABLE": "Administratorpasswort kann nicht eingerichtet werden.",
+                "ERROR_SERVICE_PASSWORD_EXECUTE_RESET": "Das Zurücksetzen des Administratorpassworts wurde nicht bestätigt.",
                 "ERROR_SERVICE_PASSWORD_INITIATE_RESET": "Das Zurücksetzen des Administratorpassworts konnte nicht initiiert werden."
             }
         },
@@ -2412,7 +2411,7 @@
                 "RESET": "Aktivierung zurücksetzen"
             },
             "EXPLAIN_PART1": "Aktivierung und Lizenzbindung des Gerätes zurücksetzen",
-            "LABEL": "Aktivierung Zurücksetzen",
+            "LABEL": "Aktivierung zurücksetzen",
             "NOTIFICATION": {
                 "SUCCESS": "Lizenz erfolgreich entfernt."
             }
@@ -2427,7 +2426,7 @@
                 "TEXT2_HIGHLIGHT": "Allgemein / Passwort",
                 "TEXT2_POST": "einrichten.",
                 "TEXT2_PRE": "Du kannst ein neues Passwort in den Einstellungen über",
-                "TITLE": "Administratorpassword zurücksetzen"
+                "TITLE": "Administratorpasswort zurücksetzen"
             },
             "FAILURE": {
                 "ACTION": {
@@ -2454,7 +2453,7 @@
                 "STEP2": "eBlocker herunterfahren und neu starten",
                 "STEP3": "Rücksetzen bestätigen",
                 "TEXT1": "Mit folgenden Schritten setzt du das Administratorpasswort zurück:",
-                "TEXT2": "Dieser Assistent wird sie durch den Prozess begleiten."
+                "TEXT2": "Dieser Assistent wird dich durch den Prozess begleiten."
             },
             "SHUTDOWN": {
                 "ACTION": {
@@ -2563,7 +2562,7 @@
             "CARD": {
                 "ACTION": {
                     "NOT_AGAIN": "Nicht wieder anzeigen",
-                    "OK": "Ok"
+                    "OK": "OK"
                 },
                 "BLOG_LINK_PRE": "",
                 "BLOG_LINK_TEXT": "",
@@ -2571,24 +2570,24 @@
                 "ENABLE": {
                     "NOT_AGAIN": "Diesen Hinweis nicht wieder anzeigen."
                 },
-                "INTRO": "eBlockerOS 4.0: Raspberry Pi 5 und 64-Bit Unterstützung",
+                "INTRO": "eBlockerOS 4.1: Vollständiges Backup, Raspberry Pi 5 und 64-Bit-Unterstützung",
                 "GREETINGS": "Nur dank deiner Unterstützung können wir eBlockerOS weiter entwickeln und betreiben,",
                 "HIGHLIGHTS": {
                     "HEAD": "Die Highlights:",
-                    "LI_1": "<strong>Schnelles 64-Bit OS mit Raspberry Pi 5 Unterstützung</strong>. Mind. <strong>2 GB RAM</strong> werden benötigt.",
-                    "LI_2": "<strong>IPv6 Unterstützung im Tor-Netzwerk</strong>",
-                    "LI_3": "<strong>Umfangreiche Security Updates und zahlreiche Bugfixes</strong>"
+                    "LI_1": "<strong>Schnelles 64-Bit-OS</strong> mit Raspberry Pi 5 Unterstützung. Mind. <strong>4 GB RAM</strong> werden benötigt. Raspberry Pi 2/3 und der Weiße Würfel werden nicht mehr unterstützt.",
+                    "LI_2": "<strong>Vollständiges Backup und Wiederherstellung</strong>. Dein Backup enthält jetzt alle Einstellungen – inklusive eBlocker Mobile, VPN und Netzwerkeinstellungen. Migration von eBlockerOS 3 per Backup oder USB-Stick.",
+                    "LI_3": "<strong>IPv6 im Tor-Netzwerk</strong>. Dazu umfassende Security-Updates und zahlreiche Bugfixes."
                 },
                 "LINK_PRE": "Alle technischen Änderungen findest du in den englischen ",
                 "LINK_TEXT": "Release Notes",
-                "LINK_URL": "https://eblocker.org/docs/release-notes-4-0/",
+                "LINK_URL": "https://eblocker.org/docs/release-notes-4-1/",
                 "OUTRO": "eBlocker wird ehrenamtlich entwickelt und betrieben. Die Betriebskosten decken wir ausschließlich über Spenden. Als Dank für <a href=\"https://eblocker.org/de/spenden-fuer-updates/\" target=\"_blank\" class=\"orange\">deine Spende</a>, bekommst du einen Lizenzschlüssel für automatische tägliche Updates.",
                 "SIGN": "Dein eBlocker Team",
-                "TITLE": "eBlockerOS Release 4.0"
+                "TITLE": "eBlockerOS Release 4.1"
             },
-            "MENU_LABEL": "Neu in eBlockerOS 4.0",
+            "MENU_LABEL": "Neu in eBlockerOS 4.1",
             "TOOLBAR": {
-                "TITLE": "Neues eBlockerOS Release 4.0"
+                "TITLE": "Neues eBlockerOS Release 4.1"
             }
         },
         "SSL": {
@@ -2682,7 +2681,7 @@
                 "TUTORIAL": "https://eBlocker.org/docs/https",
                 "WIZARD": "/https"
             },
-            "LABEL_TEXT_OFF": "Wenn du diese Funktion aktivierst, musst du mit erweiterten Einstellungen deiner Geräte vertraut sein und ein Verschlüsselungszertifikat auf den Geräten hinterlegen, um den Datenstrom durch den eBlocker analysieren zu lassen. <br />Das Aktivieren der HTTPS Unterstützung schaltet <a target=\"_blank\" href=\"https://support.eblocker.org/hc/de/articles/360006025593-Welche-Funktionen-benötigen-die-Aktivierung-von-HTTPS-SSL-\" class=\"orange\"> weitere Funktionen des eBlockers </a>frei.",
+            "LABEL_TEXT_OFF": "Wenn du diese Funktion aktivierst, musst du mit erweiterten Einstellungen deiner Geräte vertraut sein und ein Verschlüsselungszertifikat auf den Geräten hinterlegen, um den Datenstrom durch den eBlocker analysieren zu lassen. <br />Das Aktivieren der HTTPS-Unterstützung schaltet <a target=\"_blank\" href=\"https://support.eblocker.org/hc/de/articles/360006025593-Welche-Funktionen-benötigen-die-Aktivierung-von-HTTPS-SSL-\" class=\"orange\"> weitere Funktionen des eBlockers </a>frei.",
             "DATE_FORMAT": "D. MMM YYYY",
             "IMPORTANT_NOTE": "Wichtig: Du musst das eBlocker-Zertifikat auf allen aktivierten Geräten installieren!",
             "IMPORTANT_NOTE_RENEWAL": "eBlocker-Zertifikat erneuert!",
@@ -2747,7 +2746,7 @@
                 "SELECT_ENTRY": "Markieren"
             },
             "ARIA": {
-                "CUSTOM_ICON": "Benutzerdefiniertes symbol",
+                "CUSTOM_ICON": "Benutzerdefiniertes Symbol",
                 "SORT_DOWN": "Umgedrehte Sortierung",
                 "SORT_UP": "Normale Sortierung"
             },
@@ -2771,7 +2770,7 @@
             },
             "DIALOG": {
                 "CANCEL": "Abbrechen",
-                "OK": "Ok",
+                "OK": "OK",
                 "TITLE": "Spaltenanzeige"
             },
             "LABEL": "Tasks",
@@ -2807,7 +2806,7 @@
                     },
                     "STATUS": {
                         "ERROR": "Fehler",
-                        "OK": "Ok",
+                        "OK": "OK",
                         "RUNNING": "wird ausgeführt ({{n}})"
                     },
                     "TIME_FORMAT": "HH:mm:ss:SSS",
@@ -2871,8 +2870,8 @@
                 "ADVANTAGES": "Hinweis: Wenn du die IP-Anonymisierung verwendest, erhältst du eine beliebige IP-Adresse aus den ausgewählten Ländern. So kannst du Zensur umgehen oder auf Inhalte zugreifen, die nur in bestimmten Regionen der Welt verfügbar sind.",
                 "AND_THEIR": "und deren",
                 "BY_DONATING": "durch Spenden.",
-                "FOR_MORE_TOR_INFORMATION_CHECKOUT_THE": "Für weitere Information lies bitte",
-                "IF_YOU_LIKE_TOR": "Wenn Ihnen Tor gefällt, ",
+                "FOR_MORE_TOR_INFORMATION_CHECKOUT_THE": "Für weitere Informationen lies bitte",
+                "IF_YOU_LIKE_TOR": "Wenn dir Tor gefällt, ",
                 "KEEP_TOR_COMMUNITY_ALIVE_AND_RUNNING": "Dank deiner Spende wird das Anonymisierungs-Netzwerk von Freiwilligen aufrecht gehalten.",
                 "SUPPORT_TOR_PROJECT": "unterstütze das Tor-Projekt bitte",
                 "WEBSITE_OF_TOR_PROJECT": "die Webseite des Tor-Projektes"
@@ -2903,10 +2902,10 @@
                 "FEEDBACK": {
                     "BUTTON": "App per E-Mail teilen...",
                     "MISSING_DESCRIPTION": "Bitte füge oben eine kurze Beschreibung der App hinzu.",
-                    "TEXT": "Um eBlocker stetig zu verbessern, benötigen wir Rückmeldungen zu selbst definierten vertrauenswürdigen Apps. Diese werden dann in einer zukünftigen eBlockerOS Version integriert, damit alle Nutzer davon profitieren. Bitte teile deine App Ausnahmeliste per E-Mail, die vor Versand editiert werden kann.",
+                    "TEXT": "Um eBlocker stetig zu verbessern, benötigen wir Rückmeldungen zu selbst definierten vertrauenswürdigen Apps. Diese werden dann in einer zukünftigen eBlockerOS-Version integriert, damit alle Nutzer davon profitieren. Bitte teile deine App-Ausnahmeliste per E-Mail mit. Sie kann vor dem Versand noch bearbeitet werden.",
                     "TITLE": "Ausnahmeliste mit eBlocker teilen"
                 },
-                "HEADING": "Details zu Ausnahmeliste für App",
+                "HEADING": "Details zur Ausnahmeliste für die App",
                 "HEADING_DOMAINS": "Domains/IPs hinzufügen",
                 "LABEL_DESCRIPTION": "Beschreibung",
                 "LABEL_DOMAINS": "eBlocker deaktivieren bei HTTPS-Verbindungen zu folgenden Domains/IPs",
@@ -3031,11 +3030,11 @@
             },
             "TIME_FORMAT": "HH:mm",
             "TOOLTIP": {
-                "EDIT_AUTO_TIME": "Bearbeite hier den zeitlichen Bereich für die automatische Aktualisierungen."
+                "EDIT_AUTO_TIME": "Bearbeite hier den zeitlichen Bereich für die automatische Aktualisierung."
             },
             "UPDATES_FAILED": {
                 "HEADER": "Aktualisierung fehlgeschlagen",
-                "TEXT": "Die letzte Aktualisierung ist fehlgeschlagen. Bitte schließen Sie die Aktualisierung ab, um das Problem zu beheben.",
+                "TEXT": "Die letzte Aktualisierung ist fehlgeschlagen. Bitte schließe die Aktualisierung ab, um das Problem zu beheben.",
                 "RECOVER": "Aktualisierung abschließen und neu starten"
             },
             "UPDATES_NOT_AVAILABLE": {
@@ -3096,7 +3095,7 @@
                 "ADD_DEVICES_HINT": "Füge Geräte hinzu, um den Jugendschutz zu nutzen",
                 "SET_BIRTHDAY_HINT": "Bitte setze den Geburtstag für diesen Benutzer",
                 "CHECK_PC_HINT": "Altersgemäße Empfehlungen aktiviert. Bitte überprüfen!",
-                "STANDARD_USER_EXPLAIN": "Diese Einstellungen gelten für alle Geräte, denen kein anderer Benutzer zugewiesen wurde. Änderungen an diesen Einstellungen wirken sich also für alle Geräte ohne Benutzer aus.",
+                "STANDARD_USER_EXPLAIN": "Diese Einstellungen gelten für alle Geräte, denen kein anderer Benutzer zugewiesen wurde. Änderungen an diesen Einstellungen wirken sich also auf alle Geräte ohne Benutzer aus.",
                 "NOTIFICATION": {
                     "ERROR_SAVE_USER": "Benutzer konnte nicht gespeichert werden",
                     "PIN_RESET": "PIN wurde entfernt",
@@ -3282,8 +3281,8 @@
             },
             "LABEL": "Status",
             "LABEL_CONNECTION_TEST": "Verbindungstest",
-            "LABEL_EXTERNAL_HOST_IP": "Externe IP-Adresse oder DNS name",
-            "LABEL_EXTERNAL_TYPE": "Externer Adress Typ",
+            "LABEL_EXTERNAL_HOST_IP": "Externe IP-Adresse oder DNS-Name",
+            "LABEL_EXTERNAL_TYPE": "Externer Adresstyp",
             "LABEL_MOBILE_PORT": "eBlocker Mobile Port",
             "LABEL_PORT_FORWARDING": "Portweiterleitung",
             "LABEL_ROUTER_PORT": "Diesem Port im Router zugewiesen",
@@ -3310,7 +3309,7 @@
                 "MORE": "Mehr...",
                 "NEXT": "Weiter",
                 "PREV": "Zurück",
-                "SAVE_AND_CONTINUE": "Einstellungen Übernehmen",
+                "SAVE_AND_CONTINUE": "Einstellungen übernehmen",
                 "START_MOBILE": "Server Starten",
                 "TEST_CONNECTION": "Verbindungstest",
                 "TEST_HOSTNAME": "Teste Hostnamen"
@@ -3321,7 +3320,7 @@
             "STEP_ACCESS": {
                 "HEADER": "Zugriff auf deinen eBlocker von außerhalb",
                 "MORE1": "Um eBlocker Mobile schnell und einfach in Betrieb nehmen zu können, stellen wir dir unseren eigenen Dynamic DNS Service zur Verfügung. Bitte beachte, dass wir die Verfügbarkeit dieses Dienstes nicht garantieren und dass dieser Dienst nicht für den Dauerbetrieb gedacht ist!",
-                "MORE2": "Für den Dauerbetrieb empfehlen wir Ihnen, einen Account bei einem Anbieter für dynamische IP-Adressen, auch \"Dynamic DNS\" oder DDNS genannt, anzulegen",
+                "MORE2": "Für den Dauerbetrieb empfehlen wir dir, einen Account bei einem Anbieter für dynamische IP-Adressen, auch \"Dynamic DNS\" oder DDNS genannt, anzulegen.",
                 "MORE3": "Wenn du eine statische IP-Adresse besitzt, kannst du sie direkt verwenden.",
                 "MORE_LINK_DYN_LABEL": "Liste von Dynamic DNS (DDNS) Anbietern",
                 "MORE_LINK_DYN_URL": "https://eBlocker.org/de/ddns",
@@ -3331,7 +3330,7 @@
                     "FIXED_IP": "Ich verwende eine statische IP-Adresse.",
                     "RECOMMENDED": "(empfohlen)"
                 },
-                "TEXT1": "Wie kann ihr eBlocker im Heim-Netzwerk von außerhalb erreicht werden?"
+                "TEXT1": "Wie kann dein eBlocker im Heimnetzwerk von außerhalb erreicht werden?"
             },
             "STEP_CHOOSE_PORT_MAPPING": {
                 "HEADER": "Externer Zugriff auf deinen eBlocker",
@@ -3419,7 +3418,7 @@
                     "TEXT1": "<b>eBlocker Dynamic DNS kann zum Testen und als Demo für die Funktionsweise verwendet werden.</b>",
                     "TEXT2": "Für eBlocker DNS ist es notwendig, dass dein eBlocker sich regelmäßig mit dem eBlocker DNS Server verbindet.",
                     "TEXT3": "Bitte bestätige, dass dein eBlocker regelmäßige Verbindungsaktualisierungen durch einen \"Ping\" zum zentralen eBlocker Dynamic DNS Server durchführen darf. Hierbei wird deine IP-Adresse übertragen. Du kannst dies jederzeit durch Abschalten von eBlocker Mobile beenden.",
-                    "TEXT_CONFIRM": "Ich willige ein, dass mein IP-Adresse an eBlocker übertragen wird."
+                    "TEXT_CONFIRM": "Ich willige ein, dass meine IP-Adresse an eBlocker übertragen wird."
                 },
                 "ERROR": {
                     "HOST_REQUIRED": "Hostname wird benötigt."
@@ -3434,7 +3433,7 @@
                 }
             },
             "STEP_WELCOME": {
-                "HEADER": "Willkommen zu eBlocker Mobile",
+                "HEADER": "Willkommen bei eBlocker Mobile",
                 "TEXT1": "Dieser Assistent hilft dir bei der Einrichtung von eBlocker Mobile. Hierdurch kannst du deine mobilen Geräte ganz einfach mit deinem eBlocker zuhause verbinden, auch von unterwegs.",
                 "TEXT2": "In wenigen Schritten ist der Assistent abgeschlossen. Du kannst ihn jederzeit unterbrechen und später weitermachen!"
             },
@@ -3494,7 +3493,7 @@
                     "P1": "Das Tor-Netzwerk ist ein nicht-kommerzieller, weltweiter Zusammenschluss von Menschen, die kostenlos Netzwerk-Infrastruktur bereitstellen, damit Nutzer ihre IP-Adresse beim Surfen im Internet anonymisieren können. Das Tor-Netzwerk garantiert jedoch keine Verfügbarkeit oder Mindestbandbreite. (Quelle: Wikipedia)",
                     "P2": "https://eblocker.org/docs/the-eblocker-tor-network-feature/",
                     "P3_MIDDLE": " und deren ",
-                    "P3_PRE": "Für weitere Information lies bitte die ",
+                    "P3_PRE": "Für weitere Informationen lies bitte die ",
                     "P3_TOR_FAQ_TEXT": "FAQ.",
                     "P3_TOR_FAQ_URL": "https://www.torproject.org/docs/faq.html.en",
                     "P3_TOR_LINK_TEXT": "Webseite des Tor-Projektes",
@@ -3505,7 +3504,7 @@
                     "P4_PRE": "Wenn dir Tor gefällt, unterstütze bitte das Tor-Projekt durch "
                 },
                 "DETAILS": {
-                    "P1": "Der eBlocker wählt automatisch die beste Route und die besten Tor Exit-Knoten. Solltest du dennoch den Wunsch haben, die Tor Exit Knoten auf bestimmte Länder zu beschränken, kannst du den entsprechenden Menüpunkt auf der Seite Tor-Netzwerk auswählen und die Länder angeben, die du als Ausgangspunkt deiner Anfrage an die Webserver verwenden willst. Du kannst bestimmte Länder über die Suchmaske aufrufen, direkt in der Liste suchen und per Mausklick an- und abwählen."
+                    "P1": "Der eBlocker wählt automatisch die beste Route und die besten Tor-Exit-Knoten. Wenn du die Tor-Exit-Knoten auf bestimmte Länder beschränken möchtest, wähle den entsprechenden Menüpunkt auf der Seite Tor-Netzwerk und gib die Länder an, die du als Ausgangspunkt deiner Anfrage an die Webserver verwenden willst. Du kannst bestimmte Länder über die Suchmaske aufrufen, direkt in der Liste suchen und per Mausklick an- und abwählen."
                 },
                 "OVERVIEW": {
                     "P1": "Wenn du die IP-Anonymisierung verwendest, erhältst du eine beliebige IP-Adresse aus anderen Ländern. So kannst du Zensur umgehen oder auf Inhalte zugreifen, die nur in bestimmten Regionen der Welt verfügbar sind.",
@@ -3516,7 +3515,7 @@
             },
             "VPN": {
                 "DETAILS": {
-                    "P1": "Wähle \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\" und es öffnet sich der Assistent für neue VPN Verbindungen. Dort musst du die OpenVPN Konfigurationsdatei(en) deines VPN Providers hochladen. Der eBlocker prüft alle Einstellungen des Skriptes und verwirft gegebenenfalls einige nicht unterstützte Einträge. Nach Eingabe von Name und Passwort, die du von deinem VPN Provider erhalten hast, und einem Namen für das eben angelegte Profil kannst du VPN nutzen, indem du die Symbolleiste verwendest, um das VPN zu aktivieren."
+                    "P1": "Wähle \"{{ 'ADMINCONSOLE.VPN_CONNECT.ACTION.ADD_BUTTON' | translate }}\" und es öffnet sich der Assistent für neue VPN-Verbindungen. Dort musst du die OpenVPN-Konfigurationsdatei(en) deines VPN-Providers hochladen. Der eBlocker prüft alle Einstellungen des Skripts und verwirft gegebenenfalls einige nicht unterstützte Einträge. Nach Eingabe des Namens und des Passworts, die du von deinem VPN-Provider erhalten hast, sowie eines Namens für das eben angelegte Profil kannst du das VPN nutzen, indem du die Symbolleiste verwendest, um das VPN zu aktivieren."
                 },
                 "OVERVIEW": {
                     "P1": "Du kannst anstelle des Tor-Netzwerks auch andere VPN-Anbieter zur IP-Anonymisierung nutzen, die das OpenVPN Protokoll unterstützen. Bitte beachte, dass dir in der Regel durch alternative VPN-Anbieter zusätzliche Kosten entstehen.",
@@ -3555,7 +3554,7 @@
                 },
                 "DETAILS": {
                     "P1": "Die Geräte werden zunächst durch ihre IP-Adresse und durch den Hersteller beziehungsweise die MAC-Adresse identifiziert. Am Anfang jeder Zeile befindet sich eine Schaltfläche, mit der der eBlocker für das jeweilige Gerät geschaltet werden kann. Ein Klick auf eine Zeile öffnet die Detail-Ansicht des Gerätes. Du kannst den Geräten in der Detailansicht jeweils einen eigenen Namen zuweisen und den eBlocker individuell abstimmen.",
-                    "P2": "In der Detailansicht kannst du erweiterte Informationen zur Hardware einsehen, z. B. die MAC Adresse. Der eBlocker kann für jedes Standardgerät aktiviert und deaktiviert oder pausiert werden. Befindet sich der eBlocker in den individuellen Netzwerkeinstellungen, so kann dem Gerät immer die gleiche IP Adresse zugeordnet werden. Nahezu alle Funktionen des eBlocker können für die Standardgeräte an und abgeschaltet werden."
+                    "P2": "In der Detailansicht kannst du erweiterte Informationen zur Hardware einsehen, z. B. die MAC Adresse. Der eBlocker kann für jedes Standardgerät aktiviert und deaktiviert oder pausiert werden. Befindet sich der eBlocker in den individuellen Netzwerkeinstellungen, so kann dem Gerät immer die gleiche IP-Adresse zugeordnet werden. Nahezu alle Funktionen des eBlocker können für die Standardgeräte an und abgeschaltet werden."
                 },
                 "OVERVIEW": {
                     "P1": "Die Liste aller Geräte, die der eBlocker im lokalen Netzwerk bisher erkannt hat. Am Anfang jeder Tabellenzeile kannst du den eBlocker für das jeweilige Gerät aktivieren beziehungsweise deaktivieren. Du kannst per Klick auf eine Zeile die Details zum jeweiligen Gerät abrufen und die Einstellungen des eBlocker für das Gerät individuell anpassen.",
@@ -3612,13 +3611,13 @@
             },
             "COMPRESSION": {
                 "OVERVIEW": {
-                    "P1": "Der eBlocker muß Web-Seiten und Javascript-Dateien dekomprimieren um sein Icon einzufügen oder WebRTC zu blockieren. Das Wiederkomprimieren des Inhaltes kann zu einer leichten Verzögerung führen. Da in lokalen NetzwerkeN kein Geschwindigkeitsvorteil von der Kompression zu erwarten ist kann dort darauf auch verzichtet werden. eBlocker Mobile Benutzer können hingegen davon profitieren, da die Daten wieder über das Internet gesendet werden.",
+                    "P1": "Der eBlocker muss Web-Seiten und JavaScript-Dateien dekomprimieren, um sein Icon einzufügen oder WebRTC zu blockieren. Das Wiederkomprimieren des Inhaltes kann zu einer leichten Verzögerung führen. Da in lokalen Netzwerken kein Geschwindigkeitsvorteil von der Kompression zu erwarten ist, kann dort darauf verzichtet werden. eBlocker Mobile Benutzer profitieren hingegen davon, da die Daten wieder über das Internet gesendet werden.",
                     "TITLE": "Kompression"
                 }
             },
             "CONTENT": {
                 "OVERVIEW": {
-                    "P1": "Manche Werbung wird nicht vom Werbeblocker geblockt, kann aber im Browser ausgeblendet werden. Dies verbessert nicht den Privatsphäreschutz.",
+                    "P1": "Manche Werbung wird nicht vom Werbeblocker geblockt, kann aber im Browser ausgeblendet werden. Der Schutz deiner Privatsphäre wird dadurch nicht verbessert.",
                     "P2": "Scriptlets können verhindern, dass im Browser Fingerprinting stattfindet, Werbeblocker erkannt werden und in Videos Werbung gezeigt wird.",
                     "TITLE": "Video Ads & Content Blocker"
                 }
@@ -3634,12 +3633,12 @@
             "MALWARE": {
                 "OVERVIEW": {
                     "P1": "Malware und Betrugsversuche werden mittels einer täglich aktualisierten Liste geblockt.",
-                    "TITLE": "Malware & Pishing Blocker"
+                    "TITLE": "Malware & Phishing Blocker"
                 }
             },
             "PATTERN": {
                 "OVERVIEW": {
-                    "P1": "Tracker und Werbung wird durch Mustererkennung in den Web-Anfragen mit Hilfe von täglich aktualisierten Listen erkannt und geblockt. Wir empfehlen, dass du die automatischen Updates deines eBlocker aktivierst.",
+                    "P1": "Tracker und Werbung werden durch Mustererkennung in den Web-Anfragen mit Hilfe von täglich aktualisierten Listen erkannt und geblockt. Wir empfehlen, dass du die automatischen Updates deines eBlocker aktivierst.",
                     "TITLE": "Pattern Blocker für Tracker und Werbung"
                 }
             },
@@ -3658,16 +3657,16 @@
             "STATUS": {
                 "OVERVIEW": {
                     "P1": "Diese Seite zeigt die Filter-Gruppen (Werbe, Tracker, Malware) an und für welche Geräte sie aktiv sind. In jeder Gruppe können weitere Blockier-Listen hinzugefügt werden.",
-                    "P2": "Die Domain Werbe- und Tracker-Blocker wirken nur auf Geräten, für die eBlocker HTTPS nicht aktiv ist. Sie blocken stets alle URLs einer geblockten Domain.",
-                    "P3": "Die Pattern Werbe und Tracker Blocker funktionieren nur auf Geräten, für die eBlocker HTTTPS aktiviert wurde. Sie filtern URL-genau, Domain unabhängig und auf Basis von Mustern im Easylist Format (z.B. */boesertracker.php). Das genaue Muster-Format findet sich <a href=\"https://eBlocker.org/docs/easylist-format\" target=\"_blank\">hier</a>.",
-                    "P4": "Blocker, deren Status-Anzeige rot ist, sind auf einem deiner Geräte aktiv. In der Spalte „{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}“ kannst du mit der Maus über dem ersten angezeigten Gerät stehen und in einer automatisch geöffneten Infoblase siehst du die Geräte, auf denen der jeweilige Blocker aktiviert ist. Die Spalte „{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}“ gibt Auskunft über die insgesamt geblockten Anzeigen beziehungsweise Tracker.",
+                    "P2": "Die Domain-Werbe- und Tracker-Blocker wirken nur auf Geräten, auf denen die HTTPS-Unterstützung des eBlockers nicht aktiv ist. Sie blockieren stets alle URLs einer geblockten Domain.",
+                    "P3": "Die Pattern-Werbe- und Tracker-Blocker funktionieren nur auf Geräten, auf denen die HTTPS-Unterstützung des eBlockers aktiviert wurde. Sie filtern URL-genau, domainunabhängig und auf Basis von Mustern im Easylist-Format (z.B. */boesertracker.php). Das genaue Muster-Format findet sich <a href=\"https://eBlocker.org/docs/easylist-format\" target=\"_blank\">hier</a>.",
+                    "P4": "Blocker, deren Status-Anzeige rot ist, sind auf einem deiner Geräte aktiv. In der Spalte „{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.DEVICES' | translate }}“ kannst du mit der Maus über dem ersten angezeigten Gerät verweilen; in einer automatisch geöffneten Infoblase siehst du die Geräte, auf denen der jeweilige Blocker aktiviert ist. Die Spalte „{{'ADMINCONSOLE.FILTER_OVERVIEW.TABLE.COLUMN.NUM_BLOCKED' | translate }}“ gibt Auskunft über die insgesamt geblockten Anzeigen beziehungsweise Tracker.",
                     "TITLE": "Blocker Übersicht"
                 }
             },
             "WEB_RTC": {
                 "OVERVIEW": {
                     "P1": "WebRTC ist eine Browser-Technologie, mit der Kommunikation zwischen zwei Parteien in Echtzeit ermöglicht wird. Sie wird beispielsweise für Internet-Telefonie und Chat verwendet.",
-                    "P2": "Leider offenbart WebRTC deine echte IP-Adresse (und sogar deine lokale LAN-IP), um die Verbindungen herzustellen. Selbst bei der Verwendung von Tor oder einem VPN (IP-Anonymisierung), kannst du so über deine echte IP-Adresse identifiziert werden, wenn WebRTC nicht blockiert wird.",
+                    "P2": "Leider offenbart WebRTC deine echte IP-Adresse (und sogar deine lokale LAN-IP), um die Verbindungen herzustellen. Selbst bei der Verwendung von Tor oder einem VPN (IP-Anonymisierung) kannst du so über deine echte IP-Adresse identifiziert werden, wenn WebRTC nicht blockiert wird.",
                     "TITLE": "WebRTC"
                 }
             }
@@ -3739,7 +3738,7 @@
                 "OVERVIEW": {
                     "P1": "Falls einzelne Webseiten nicht mit dem eBlocker kompatibel sind, kannst du diese Webseiten vom Schutz durch den eBlocker ausnehmen.",
                     "P2": "Bitte beachte, dass aktivierte Ausnahmelisten bedeuten, dass die entsprechenden Apps und Websites nicht durch den eBlocker geschützt werden.",
-                    "P3": "Die aufgezeichneten HTTPS Verbindungsfehler helfen Ihnen dabei festzustellen, welche Apps betroffen sind, bzw. welche Domains-/IP-Adressen als Ausnahmen für die jeweilige App definiert werden sollten.",
+                    "P3": "Die aufgezeichneten HTTPS-Verbindungsfehler helfen dir dabei, festzustellen, welche Apps betroffen sind und welche Domains/IP-Adressen als Ausnahmen für die jeweilige App definiert werden sollten.",
                     "TITLE": "Vertrauenswürdige Websites"
                 }
             }
@@ -3758,7 +3757,7 @@
             },
             "OVERVIEW": {
                 "P1": "Mit der eBlocker Mobile Funktion schützt du deine mobilen Geräte, wie Handys, Tablets und Notebooks, auch von unterwegs mit deinem eigenen eBlocker. Um dies zu ermöglichen, musst du den eBlocker mit wenigen Einstellungen am Router und dem jeweiligen Mobilgerät erreichbar machen.",
-                "P2": "eBlocker Mobile ist z.Zt. nur mit IPv4 Netzwerken kompatibel. Im oberen Bereich der Seite kannst du die eBlocker Mobile Funktion ein- und ausschalten und du siehst eine Übersicht der derzeit gewählten <b>Einstellungen</b>. Diese können nur getestet und geändert werden, so lange eBlocker Mobile noch nicht eingeschaltet wurde.",
+                "P2": "eBlocker Mobile ist derzeit nur mit IPv4-Netzwerken kompatibel. Im oberen Bereich der Seite kannst du die eBlocker Mobile Funktion ein- und ausschalten und du siehst eine Übersicht der derzeit gewählten <b>Einstellungen</b>. Diese können nur getestet und geändert werden, so lange eBlocker Mobile noch nicht eingeschaltet wurde.",
                 "P3": "Unter <b>Verbindungstest</b> kannst du nach der Konfiguration der eBlocker Mobile Funktion die aktuell gewählten Einstellungen überprüfen.",
                 "P4": "Bevor du die eBlocker Mobile Funktion verwenden kannst, hilft dir der Assistent, den du unter <b>Konfiguration</b> aufrufen kannst, bei der Wahl der richtigen Einstellungen. Klicke dazu einfach auf Einstellungen ändern, um den Assistenten für die Einrichtung zu starten.",
                 "P5": "Unsere schrittweise Anleitung findest du auf dem Reiter „Details“.",
@@ -3775,7 +3774,7 @@
                 "P6": "Befindet sich der eBlocker im Expertenmodus, kannst du neben den IP-Adressen des eBlockers und des Gateway auch die Netzwerkmaske und den Adressbereich des DHCP-Dienstes einstellen. Wenn neue Geräte in deinem Heimnetzwerk generell eine feste IP-Adresse erhalten sollen, kannst du das hier ebenfalls aktivieren. Dies hat zum Beispiel Vorteile, wenn auf den Geräten Datei- oder Ordnerfreigaben bestehen oder es sich um einen Netzwerkdrucker handelt, der immer unter der gleichen Adresse erreichbar sein soll."
             },
             "OVERVIEW": {
-                "P1": "Die hier zugänglichen Einstellungen kannst Du im Normalfall beibehalten.",
+                "P1": "Die hier zugänglichen Einstellungen kannst du im Normalfall beibehalten.",
                 "P2_LINK_TEXT": "Kompatibilitäts-Informationen Hardware",
                 "P2_LINK_URL": "https://eBlocker.org/de/kompatibilitaetsinformationen-hardware/",
                 "P2_POST": " entnehmen kannst, kannst du die Einstellungen ändern. Beachte bitte, dass du zeitgleich auch den Zugang zu den Einstellungen deines Internet-Routers benötigst, um die Konfiguration dort jeweils zu vervollständigen.",
@@ -3841,19 +3840,19 @@
         "SYSTEM": {
             "ADMIN_PW": {
                 "OVERVIEW": {
-                    "P1": "Ohne Vergabe eines Admin Passwortes kann jeder mit Zugriff auf dein Netzwerk die Einstellungen des eBlocker verändern. Die Aktivierung der Jugendschutz Funktionalitäten erfordert immer das Anlegen eines Passwortes. Zur Vergabe eines Passwortes muss dieses zweimal eingegeben werden. Die Sicherheit des Passwortes wird bewertet.",
+                    "P1": "Ohne ein Admin-Passwort kann jeder mit Zugriff auf dein Netzwerk die Einstellungen des eBlockers verändern. Die Aktivierung der Jugendschutz-Funktionen erfordert immer das Anlegen eines Passworts. Zur Vergabe des Passworts muss dieses zweimal eingegeben werden. Die Sicherheit des Passworts wird bewertet.",
                     "TITLE": "Admin-Passwort"
                 }
             },
             "BACKUP": {
                 "OVERVIEW": {
-                    "P1": "Du kannst hier deine in den HTTPS Einstellungen erstellten, persönlichen, vertrauenswürdigen Apps und Websites sichern und bei Bedarf wieder einspielen.",
+                    "P1": "Du kannst hier deine in den HTTPS-Einstellungen erstellten, persönlichen, vertrauenswürdigen Apps und Websites sichern und bei Bedarf wiederherstellen.",
                     "TITLE": "Einstellungen Sichern"
                 }
             },
             "DIAGNOSTICS": {
                 "OVERVIEW": {
-                    "P1": "Wenn in deinem Netzwerk oder mit dem eBlocker Probleme auftreten, nutze bitte unser Community Forum. Dort wirst du eventuell gebeten, den Diagnose Bericht zu erstellen. Nach Start der Berichtserstellung kann es eine Weile dauern, bis sich das Dialogfeld mit der Frage nach dem Speicherort öffnet. Wenn du einen festen Dateispeicherort angegeben hast, könnte es sein, dass sich das Dialogfeld nicht öffnet. Du findest die Datei dann im Standard-Download-Ordner mit der Endung .zip. Bitte lade die gesamte Datei erst hoch, wenn du darum gebeten wirst.",
+                    "P1": "Wenn in deinem Netzwerk oder mit dem eBlocker Probleme auftreten, nutze bitte unser Community Forum. Dort wirst du eventuell gebeten, den Diagnosebericht zu erstellen. Nach Start der Berichtserstellung kann es eine Weile dauern, bis sich das Dialogfeld mit der Frage nach dem Speicherort öffnet. Wenn du einen festen Dateispeicherort angegeben hast, könnte es sein, dass sich das Dialogfeld nicht öffnet. Du findest die Datei dann im Standard-Download-Ordner mit der Endung .zip. Bitte lade die gesamte Datei erst hoch, wenn du darum gebeten wirst.",
                     "TITLE": "Diagnose"
                 }
             },
@@ -3868,13 +3867,13 @@
                     "P1_LINK_TEXT": "Lizenzserver",
                     "P1_LINK_URL": "https://eBlocker.org/ebl/de/license-transfer",
                     "P1_POST": " im Rahmen ihrer Gültigkeitsdauer wieder verwendet werden.",
-                    "P1_PRE": "Sollte es notwendig sein, den eBlocker zurückzusetzen, so kann dies hier erfolgen. Der eBlocker muss dann neu aktiviert werden. Dafür muss die Lizenz vorher noch auf unserem Lizenzserver freigegeben werden. Die Lizenz kann nach lösen auf unserem ",
+                    "P1_PRE": "Sollte es notwendig sein, den eBlocker zurückzusetzen, so kann dies hier erfolgen. Der eBlocker muss dann neu aktiviert werden. Dafür muss die Lizenz vorher noch auf unserem Lizenzserver freigegeben werden. Die Lizenz kann nach Lösen auf unserem ",
                     "TITLE": "Werkseinstellungen"
                 }
             },
             "STATUS": {
                 "OVERVIEW": {
-                    "P1": "Die beiden Funktionen können über die Schaltflächen aufgerufen werden. Wir empfehlen den eBlocker vor Trennung von der Stromversorgung immer herunterzufahren.",
+                    "P1": "Die beiden Funktionen können über die Schaltflächen aufgerufen werden. Wir empfehlen, den eBlocker vor der Trennung von der Stromversorgung immer herunterzufahren.",
                     "TITLE": "Neustart und Ausschalten"
                 }
             },

@@ -124,6 +124,8 @@ public class DeviceService {
                     + device.getAssignedUser());
         }
 
+        normalizeEnabledPausedState(device);
+
         // handle icon visibility (if in auto mode) depending on device and global SSL status
         device = updateIconStatus(device);
 
@@ -249,7 +251,21 @@ public class DeviceService {
     }
 
     private void updateCacheEntries(Set<Device> devices) {
-        devices.forEach(this::cacheDevice);
+        devices.forEach(device -> {
+            if (normalizeEnabledPausedState(device)) {
+                datasource.save(device);
+            }
+            cacheDevice(device);
+        });
+    }
+
+    private boolean normalizeEnabledPausedState(Device device) {
+        if (device.isEnabled() && device.isPaused()) {
+            log.warn("Device {} has illegal enabled+paused state; clearing paused flag", device.getId());
+            device.setPaused(false);
+            return true;
+        }
+        return false;
     }
 
     /**

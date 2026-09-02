@@ -156,7 +156,32 @@ public class DeviceService {
     }
 
     public Device getDeviceByIp(IpAddress ip) {
-        return getDevice(devicesByIp, ip);
+        if (ip == null) {
+            return null;
+        }
+
+        Device device = devicesByIp.get(ip);
+        if (device != null) {
+            return device;
+        }
+
+        // A device-bound WireGuard peer has a stable cryptographic source-IP
+        // identity, but unlike OpenVPN there is no learn-address callback that
+        // adds the tunnel IP to Device.ipAddresses. Resolve that identity
+        // read-only from the persisted peer mapping before falling back to the
+        // legacy refresh path. Unbound or ambiguous peers fail closed.
+        String wireGuardDeviceId =
+                WireGuardDeviceIpResolver.resolveDeviceId(
+                        datasource,
+                        ip
+                );
+
+        if (wireGuardDeviceId != null) {
+            return getDeviceById(wireGuardDeviceId);
+        }
+
+        refresh();
+        return devicesByIp.get(ip);
     }
 
     public boolean showWelcomePageForDevice(Device device) {

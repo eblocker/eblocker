@@ -869,7 +869,7 @@ describe('Component: dashboardMobile', function() { // jshint ignore: line
             '[Interface]\nPrivateKey = secret\n'
         );
         expect(createdBlob.options.type).toBe(
-            'text/plain;charset=utf-8'
+            'application/octet-stream'
         );
 
         expect(

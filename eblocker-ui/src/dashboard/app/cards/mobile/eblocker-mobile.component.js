@@ -406,7 +406,7 @@ function Controller(logger, $timeout, $window, $q, CardService, VpnHomeService, 
             const blob = new $window.Blob(
                 [configuration],
                 {
-                    type: 'text/plain;charset=utf-8'
+                    type: 'application/octet-stream'
                 }
             );
 

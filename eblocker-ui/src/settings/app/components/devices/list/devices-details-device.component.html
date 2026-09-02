@@ -102,6 +102,18 @@
             <md-switch md-theme="eBlockerThemeSwitch" layout-padding layout="row" layout-align="start center" ng-model="vm.device.ipAddressFixed" class="md-primary switch-word-break" ng-change="vm.onChange(vm.device)">
                 {{ vm.device.ipAddressFixed ? 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP_ADDRESS_FIXED' : 'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP_ADDRESS_NOT_FIXED' | translate }}
             </md-switch>
+            <div ng-if="vm.showFixedIpMultipleAddressesWarning()"
+                 class="alert-box"
+                 layout="row"
+                 layout-align="start center"
+                 style="max-width: 650px; margin-left: 16px; margin-bottom: 12px; padding: 8px;">
+                <div style="margin-right: 16px;">
+                    <md-icon class="content-warn" md-svg-src="/img/icons/ic_warning.svg"></md-icon>
+                </div>
+                <div layout="column">
+                    <p translate="ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.WARNING_FIXED_IP_MULTIPLE_IPV4"></p>
+                </div>
+            </div>
         </div>
         <!-- Reset button -->
         <md-divider style="width: 100%; margin-top: 12px;"></md-divider>

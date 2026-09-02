@@ -35,6 +35,7 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
     const vm = this;
 
     vm.isTouchDevice = isTouchDevice;
+    vm.hasDashboardError = hasDashboardError;
 
     // Allows for smoother resizing:
     // only resize every n milliseconds (see timeout wrapper)
@@ -76,11 +77,18 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
     }
 
     vm.$onInit = function() {
+        vm.initFinished = false;
+
+        if (hasDashboardError()) {
+            logger.error('Cannot initialize dashboard: local device could not be resolved.');
+            vm.initFinished = true;
+            return;
+        }
+
         // Callback to execute when CardService makes a change from another component (dashboard.component.js has
         // dropdown list and updates the visibility. We want to react by re-rendering the dashboard).
         CardService.registerUpdateListener(updateVisibility);
 
-        vm.initFinished = false;
         angular.element($window).on('resize', resizeWrapper);
 
         addIdleTimeoutEventListeners();
@@ -152,6 +160,10 @@ function MainController(logger, $document, $window, $timeout, $interval, $filter
                 vm.columns = CardService.getCardsByColumns();
             }
         });
+    }
+
+    function hasDashboardError() {
+        return !angular.isObject(vm.device);
     }
 
     function isTouchDevice() {

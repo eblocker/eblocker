@@ -31,6 +31,7 @@ import org.eblocker.server.http.security.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.restexpress.exception.BadRequestException;
 
@@ -148,6 +149,13 @@ public class UserServiceTest {
     }
 
     private UserModule createMockUser(int userId, String userName,
+                                      int associatedProfileId, Integer customBlacklistId,
+                                      Integer customWhitelistId) {
+        return new UserModule(userId, associatedProfileId, userName, userName, null, null,
+                false, null, Collections.emptyMap(), null, customBlacklistId, customWhitelistId);
+    }
+
+    private UserModule createMockUser(int userId, String userName,
                                       int associatedProfileId, boolean hasPin, byte[] pin) {
         return new UserModule(userId, associatedProfileId, userName, userName, null, null,
                 false, pin, Collections.emptyMap(), null, null, null);
@@ -160,7 +168,7 @@ public class UserServiceTest {
     private UserModule copyUser(UserModule user) {
         return new UserModule(user.getId(), user.getAssociatedProfileId(),
                 user.getName(), user.getNameKey(), null, user.getUserRole(), user.isSystem(), user.getPin(),
-                new HashMap<>(user.getWhiteListConfigByDomains()), null, null, null);
+                new HashMap<>(user.getWhiteListConfigByDomains()), null, user.getCustomBlacklistId(), user.getCustomWhitelistId());
     }
 
     @Test
@@ -187,6 +195,21 @@ public class UserServiceTest {
                 fail();
             }
         }
+    }
+
+    @Test
+    public void testDeleteUserNotifiesListenersWithCustomFilterIds() {
+        UserModule deletedUser = createMockUser(100, "alice", 100, 1000, 1001);
+        users.set(1, deletedUser);
+        userService.refresh();
+
+        Assert.assertTrue(userService.deleteUser(deletedUser.getId()));
+
+        ArgumentCaptor<UserModule> deletedUserCaptor = ArgumentCaptor.forClass(UserModule.class);
+        Mockito.verify(listener).onDelete(deletedUserCaptor.capture());
+        Assert.assertEquals(deletedUser.getId(), deletedUserCaptor.getValue().getId());
+        Assert.assertEquals(deletedUser.getCustomBlacklistId(), deletedUserCaptor.getValue().getCustomBlacklistId());
+        Assert.assertEquals(deletedUser.getCustomWhitelistId(), deletedUserCaptor.getValue().getCustomWhitelistId());
     }
 
     @Test

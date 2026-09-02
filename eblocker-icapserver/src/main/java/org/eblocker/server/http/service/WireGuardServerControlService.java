@@ -28,22 +28,59 @@ public class WireGuardServerControlService {
     private static final Pattern WIREGUARD_PRIVATE_KEY =
             Pattern.compile("^[A-Za-z0-9+/]{43}=$");
 
-    private static final Path TEMP_DIRECTORY =
-            Paths.get("/tmp");
+    private static final Path DEFAULT_KEY_TRANSFER_DIRECTORY =
+            Paths.get("/opt/eblocker-icap/tmp");
 
     private final ScriptRunner scriptRunner;
     private final ObjectMapper objectMapper;
     private final String wireGuardServerCommand;
+    private final Path keyTransferDirectory;
 
     @Inject
     public WireGuardServerControlService(
             ScriptRunner scriptRunner,
             ObjectMapper objectMapper,
-            @Named("wireguard.server.command") String wireGuardServerCommand) {
+            @Named("wireguard.server.command") String wireGuardServerCommand,
+            @Named("tmpDir") String tmpDir) {
+
+        this(
+                scriptRunner,
+                objectMapper,
+                wireGuardServerCommand,
+                Paths.get(tmpDir)
+        );
+    }
+
+    /**
+     * Source-compatible convenience constructor for focused callers.
+     * Production Guice uses the configured application tmpDir above.
+     */
+    public WireGuardServerControlService(
+            ScriptRunner scriptRunner,
+            ObjectMapper objectMapper,
+            String wireGuardServerCommand) {
+
+        this(
+                scriptRunner,
+                objectMapper,
+                wireGuardServerCommand,
+                DEFAULT_KEY_TRANSFER_DIRECTORY
+        );
+    }
+
+    WireGuardServerControlService(
+            ScriptRunner scriptRunner,
+            ObjectMapper objectMapper,
+            String wireGuardServerCommand,
+            Path keyTransferDirectory) {
 
         this.scriptRunner = scriptRunner;
         this.objectMapper = objectMapper;
         this.wireGuardServerCommand = wireGuardServerCommand;
+        this.keyTransferDirectory =
+                keyTransferDirectory
+                        .toAbsolutePath()
+                        .normalize();
     }
 
     public void start() {
@@ -214,7 +251,7 @@ public class WireGuardServerControlService {
         try {
             Path path =
                     Files.createTempFile(
-                            TEMP_DIRECTORY,
+                            keyTransferDirectory,
                             "eblocker-wireguard-server-key-",
                             ".key"
                     );

@@ -11,6 +11,8 @@ import org.eblocker.server.http.model.WireGuardAuthorizationView;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +33,14 @@ public class WireGuardAuthorizationManagementService {
     private final WireGuardServerControlService controlService;
     private final NetworkStateMachine networkStateMachine;
 
+    /**
+     * Last observed facts that can change effective WireGuard device policy.
+     * DeviceService.onChange() is broader and also reports operational
+     * changes such as newly learned IP addresses.
+     */
+    private final Map<String, DevicePolicyState> devicePolicyStates =
+            new ConcurrentHashMap<>();
+
     @Inject
     public WireGuardAuthorizationManagementService(
             DataSource dataSource,
@@ -49,25 +59,27 @@ public class WireGuardAuthorizationManagementService {
         this.controlService = controlService;
         this.networkStateMachine = networkStateMachine;
 
-        // Effective WireGuard authorization depends on the assigned user and
-        // on the continued existence of the device. DeviceService publishes
-        // synchronous lifecycle callbacks after persistence/cache updates.
-        // Reconcile runtime on all such changes so an already active peer can
-        // never retain access after reassignment, deletion or reset.
+        // Effective WireGuard authorization depends on the device permission,
+        // assigned user and continued existence/reset of the device.
+        // DeviceService.onChange() itself is broader than these facts.
         this.deviceService.addListener(
                 new DeviceService.DeviceChangeListener() {
                     @Override
                     public void onChange(Device device) {
-                        reconcileRuntimeIfEnabled();
+                        if (devicePolicyChanged(device)) {
+                            reconcileRuntimeIfEnabled();
+                        }
                     }
 
                     @Override
                     public void onDelete(Device device) {
+                        forgetDevicePolicyState(device);
                         reconcileRuntimeIfEnabled();
                     }
 
                     @Override
                     public void onReset(Device device) {
+                        rememberDevicePolicyState(device);
                         reconcileRuntimeIfEnabled();
                     }
                 }
@@ -177,6 +189,91 @@ public class WireGuardAuthorizationManagementService {
         userService.setWireGuardEnabled(userId, enabled);
         reconcileRuntimeIfEnabled();
         return enabled;
+    }
+
+    private boolean devicePolicyChanged(
+            Device device) {
+
+        if (device == null
+                || device.getId() == null) {
+
+            return true;
+        }
+
+        DevicePolicyState current =
+                DevicePolicyState.from(device);
+
+        DevicePolicyState previous =
+                devicePolicyStates.put(
+                        device.getId(),
+                        current
+                );
+
+        // The first observation is intentionally relevant once. This keeps
+        // authorization fail-closed without introducing constructor-time
+        // persistence reads. Subsequent ARP/IP-only updates are ignored.
+        return previous == null
+                || !previous.samePolicyAs(current);
+    }
+
+    private void rememberDevicePolicyState(
+            Device device) {
+
+        if (device == null
+                || device.getId() == null) {
+
+            return;
+        }
+
+        devicePolicyStates.put(
+                device.getId(),
+                DevicePolicyState.from(device)
+        );
+    }
+
+    private void forgetDevicePolicyState(
+            Device device) {
+
+        if (device == null
+                || device.getId() == null) {
+
+            return;
+        }
+
+        devicePolicyStates.remove(
+                device.getId()
+        );
+    }
+
+    private static final class DevicePolicyState {
+
+        private final boolean wireGuardEnabled;
+        private final int assignedUser;
+
+        private DevicePolicyState(
+                boolean wireGuardEnabled,
+                int assignedUser) {
+
+            this.wireGuardEnabled = wireGuardEnabled;
+            this.assignedUser = assignedUser;
+        }
+
+        private static DevicePolicyState from(
+                Device device) {
+
+            return new DevicePolicyState(
+                    device.isWireGuardEnabled(),
+                    device.getAssignedUser()
+            );
+        }
+
+        private boolean samePolicyAs(
+                DevicePolicyState other) {
+
+            return other != null
+                    && wireGuardEnabled == other.wireGuardEnabled
+                    && assignedUser == other.assignedUser;
+        }
     }
 
     private void reconcileRuntimeIfEnabled() {

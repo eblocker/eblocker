@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,9 @@ class WireGuardServerIdentityBackupTest {
     private static final String KEY =
             String.valueOf('K').repeat(43) + "=";
 
+    @TempDir
+    Path tempDir;
+
     private ScriptRunner scriptRunner;
     private WireGuardServerControlService service;
 
@@ -32,7 +36,8 @@ class WireGuardServerIdentityBackupTest {
                 new WireGuardServerControlService(
                         scriptRunner,
                         new ObjectMapper(),
-                        COMMAND
+                        COMMAND,
+                        tempDir
                 );
     }
 
@@ -74,7 +79,9 @@ class WireGuardServerIdentityBackupTest {
                 Mockito.argThat(
                         value ->
                                 value.startsWith(
-                                        "/tmp/eblocker-wireguard-server-key-"
+                                        tempDir.resolve(
+                                                "eblocker-wireguard-server-key-"
+                                        ).toString()
                                 )
                                 && !value.contains(KEY)
                 )
@@ -96,6 +103,12 @@ class WireGuardServerIdentityBackupTest {
                     Path.of(
                             (String) invocation.getArgument(2)
                     );
+
+            assertTrue(
+                    path.startsWith(
+                            tempDir
+                    )
+            );
 
             String transferred =
                     Files.readString(

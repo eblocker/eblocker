@@ -403,4 +403,85 @@ public class WireGuardAuthorizationManagementServiceTest {
         user.setWireGuardEnabled(wireGuardEnabled);
         return user;
     }
+    @Test
+    public void nonPolicyDeviceChangeAfterInitialObservationDoesNotReconcileRuntime() {
+        Device device =
+                device(
+                        "device:001122334455",
+                        false
+                );
+
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(false);
+
+        deviceChangeListener.onChange(device);
+
+        Mockito.clearInvocations(
+                peerService,
+                networkStateMachine
+        );
+
+        device.setVendor(
+                "ARP/IP-like non-policy update"
+        );
+
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
+        deviceChangeListener.onChange(device);
+
+        Mockito.verify(
+                peerService,
+                Mockito.never()
+        ).reconcilePeers();
+
+        Mockito.verify(
+                networkStateMachine,
+                Mockito.never()
+        ).updateFirewall();
+    }
+
+    @Test
+    public void assignedUserChangeReconcilesExactlyOnce() {
+        Device device =
+                device(
+                        "device:001122334455",
+                        false
+                );
+
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(false);
+
+        deviceChangeListener.onChange(device);
+
+        Mockito.clearInvocations(
+                peerService,
+                networkStateMachine
+        );
+
+        device.setAssignedUser(
+                device.getAssignedUser() + 1
+        );
+
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
+        deviceChangeListener.onChange(device);
+
+        Mockito.verify(
+                peerService,
+                Mockito.times(1)
+        ).reconcilePeers();
+
+        Mockito.verify(
+                networkStateMachine,
+                Mockito.times(1)
+        ).updateFirewall();
+    }
+
+
 }

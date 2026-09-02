@@ -7,6 +7,7 @@ WG_DIR="/etc/wireguard"
 WG_CONF="${WG_DIR}/${WG_IF}.conf"
 WG_PRIV="${WG_DIR}/${WG_IF}.key"
 WG_PUB="${WG_DIR}/${WG_IF}.pub"
+WG_TRANSFER_DIR="/opt/eblocker-icap/tmp"
 
 WG_COMMAND="/usr/bin/wg"
 WG_QUICK_COMMAND="/usr/bin/wg-quick"
@@ -145,6 +146,17 @@ apply_peers() {
 
     chmod 600 "$TMP_CONF"
 
+    # Idempotence is a second safety boundary. Even if a broad technical
+    # event accidentally reaches reconciliation again, an unchanged peer
+    # projection must not restart an already healthy WireGuard interface.
+    # A down/failed interface deliberately follows the normal path.
+    if cmp -s "$TMP_CONF" "$WG_CONF"         && "$SYSTEMCTL_COMMAND" is-active             --quiet "$WG_SERVICE" 2>/dev/null         && "$WG_COMMAND" show "$WG_IF" >/dev/null 2>&1
+    then
+        rm -f "$TMP_CONF" "$PEER_FILE"
+        trap - EXIT INT TERM
+        return 0
+    fi
+
     # TMP_CONF and WG_CONF are in the same directory, so the replacement
     # stays on the same filesystem.
     mv "$TMP_CONF" "$WG_CONF"
@@ -164,7 +176,7 @@ validate_key_transfer_file() {
     KEY_FILE="${1:-}"
 
     case "$KEY_FILE" in
-        /tmp/eblocker-wireguard-server-key-*.key)
+        "$WG_TRANSFER_DIR"/eblocker-wireguard-server-key-*.key)
             ;;
         *)
             echo "Invalid WireGuard key transfer path" >&2
@@ -186,6 +198,12 @@ validate_key_transfer_file() {
     if [ "$LINK_COUNT" != "1" ]; then
         echo "WireGuard key transfer file has invalid link count" >&2
         return 5
+    fi
+
+    KEY_OWNER="$(stat -c '%U' "$KEY_FILE" 2>/dev/null || true)"
+    if [ "$KEY_OWNER" != "icapd" ]; then
+        echo "WireGuard key transfer file has invalid owner" >&2
+        return 6
     fi
 }
 

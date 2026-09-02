@@ -136,17 +136,23 @@
         },
         "ADMIN_PASSWORD" : {
             "ACTION" : {
-                "CHANGE_PASSWORD" : "Change password"
+                "CHANGE_PASSWORD" : "Change password",
+                "SAVE" : "Save"
             },
             "LABEL" : "Admin Password",
             "LABEL_PASSWORD_DISABLED" : "Administrator password is disabled",
             "LABEL_PASSWORD_ENABLED" : "Administrator password is enabled",
+            "LABEL_SESSION_TIMEOUT" : "Session timeout",
             "NOTIFICATION" : {
                 "INFO_PASSWORD_CHANGED" : "Successfully changed password",
                 "INFO_PASSWORD_DISABLED" : "Successfully disabled password",
-                "INFO_PASSWORD_ENABLED" : "Successfully enabled password"
+                "INFO_PASSWORD_ENABLED" : "Successfully enabled password",
+                "INFO_SESSION_TIMEOUT_CHANGED" : "Successfully changed session timeout",
+                "ERROR_SESSION_TIMEOUT_CHANGED" : "The session timeout could not be changed."
             },
-            "NO_PASSWORD_TEXT" : "Anyone with access to your local network can see and modify eBlocker settings!"
+            "NO_PASSWORD_TEXT" : "Anyone with access to your local network can see and modify eBlocker settings!",
+            "SESSION_TIMEOUT_MINUTES" : "Minutes",
+            "SESSION_TIMEOUT_TEXT" : "The admin console logs out automatically after this many minutes without user interaction. Enter 0 to disable automatic logout."
         },
         "ADVANCED" : {
             "LABEL" : "Advanced"

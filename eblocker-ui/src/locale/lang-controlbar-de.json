@@ -74,15 +74,6 @@
                     "HEADER": "PIN-Eingabe erforderlich"
                 }
             },
-            "TOR": {
-                "VERIFY": {
-                    "BODY": "Du kannst einen der folgenden Dienste verwenden, um zu überprüfen, ob eine Verbindung über ein Anonymisierungsnetzwerk besteht, bzw. welche Daten von außen sichtbar sind. Bitte beachte, dass eBlocker keine Gewähr für die Verfügbarkeit oder die korrekte Funktion der Dienste übernehmen kann.",
-                    "BUTTON": {
-                        "CANCEL": "Abbrechen"
-                    },
-                    "TITLE": "Verbindung prüfen"
-                }
-            },
             "VPN": {
                 "ACTIVATION": {
                     "BUTTON": {

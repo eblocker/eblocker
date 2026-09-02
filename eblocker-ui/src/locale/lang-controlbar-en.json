@@ -74,15 +74,6 @@
                     "HEADER" : "PIN Required"
                 }
             },
-            "TOR" : {
-                "VERIFY" : {
-                    "BODY" : "You can use one of the following services to check whether you can establish a connection through an anonymizing network, and which data is visible from the outside. Please note that eBlocker cannot guarantee the availability or correct functioning of these services.",
-                    "BUTTON" : {
-                        "CANCEL" : "Cancel"
-                    },
-                    "TITLE" : "Verify connection"
-                }
-            },
             "VPN" : {
                 "ACTIVATION" : {
                     "BUTTON" : {

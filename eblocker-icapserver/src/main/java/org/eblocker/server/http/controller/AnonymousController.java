@@ -36,8 +36,6 @@ public interface AnonymousController {
 
     Object getCurrentTorExitNodeCountries(Request req, Response resp);
 
-    Object getTorCheckServices(Request request, Response response);
-
     void setWebRTCBlockingState(Request request, Response response);
 
     boolean isWebRTCBlockingEnabled(Request request, Response response);

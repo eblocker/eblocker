@@ -43,7 +43,6 @@ import ProvidePinDialogController from './dialogs/pin/provide-pin.dialog';
 import ChangePinDialogController from './dialogs/pin/change-pin.dialog';
 import TorActivationDialogController from '../../shared/dialogs/tor/tor-activation.dialog';
 import VpnActivationDialogController from './dialogs/anon/vpn-activation.dialog';
-import TorVerifyConnectionDialogController from './dialogs/anon/tor-verify-connection.dialog';
 import CustomUserAgentDialogController from './dialogs/cloaking/custom-userAgent.dialog';
 import PauseConfirmationDialogController from './dialogs/pause/pause-confirmation.dialog';
 import MessageDialogController from './dialogs/messages/message.dialog';
@@ -162,7 +161,6 @@ angular.module('eblocker.controlbar', [
     .controller('ChangePinDialogController', ChangePinDialogController)
     .controller('TorActivationDialogController', TorActivationDialogController)
     .controller('VpnActivationDialogController', VpnActivationDialogController)
-    .controller('TorVerifyConnectionDialogController', TorVerifyConnectionDialogController)
     .controller('CustomUserAgentDialogController', CustomUserAgentDialogController)
     .controller('PauseConfirmationDialogController', PauseConfirmationDialogController)
     .controller('MessageDialogController', MessageDialogController)

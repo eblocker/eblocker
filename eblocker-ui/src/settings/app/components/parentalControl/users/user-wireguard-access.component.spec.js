@@ -14,6 +14,7 @@ describe('App settings; user WireGuard access component controller', function() 
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
     let $componentController;
+    let $compile;
     let $q;
     let $rootScope;
     let $httpBackend;
@@ -47,11 +48,13 @@ describe('App settings; user WireGuard access component controller', function() 
 
     beforeEach(inject(function(
         _$componentController_,
+        _$compile_,
         _$q_,
         _$rootScope_,
         _$httpBackend_) {
 
         $componentController = _$componentController_;
+        $compile = _$compile_;
         $q = _$q_;
         $rootScope = _$rootScope_;
         $httpBackend = _$httpBackend_;
@@ -112,6 +115,36 @@ describe('App settings; user WireGuard access component controller', function() 
         expect(ctrl.enabled).toBe(true);
         expect(user.wireGuardEnabled).toBe(true);
         expect(ctrl.isLoading).toBe(false);
+    });
+
+    it('instantiates through the DOM element used by the user details template', function() {
+        const user = realUser(true);
+        const scope = $rootScope.$new();
+
+        scope.user = user;
+
+        UserService.getAll.and.returnValue(
+            $q.when({
+                data: [user]
+            })
+        );
+
+        const element = $compile(
+            '<user-wire-guard-access-component ' +
+            'user="user"></user-wire-guard-access-component>'
+        )(scope);
+
+        $rootScope.$digest();
+
+        const component = element.controller(
+            'userWireGuardAccessComponent'
+        );
+
+        expect(element.html().trim().length).toBeGreaterThan(0);
+        expect(component).toBeDefined();
+        expect(component.isApplicable).toBe(true);
+        expect(component.enabled).toBe(true);
+        expect(element[0].querySelector('md-switch')).not.toBeNull();
     });
 
     it('handles a fresh user read failure without rejecting from the UI lifecycle', function() {

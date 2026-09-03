@@ -12,7 +12,7 @@ import org.eblocker.server.common.data.UserModule;
  * Authorization is deliberately independent from the generic Device
  * enabled/paused state. WireGuard has its own three-level policy:
  *
- * global WireGuard state -> device permission -> assigned-user permission.
+ * global WireGuard state -> (device permission OR assigned-user permission).
  *
  * The device's transient operating user is intentionally not used.
  */
@@ -97,17 +97,23 @@ public class WireGuardAuthorizationService {
             boolean globalEnabled) {
 
         if (device == null) {
-            return denied(Reason.DEVICE_NOT_FOUND, null, false);
+            return denied(
+                    Reason.DEVICE_NOT_FOUND,
+                    null,
+                    false);
         }
+
+        Decision devicePolicy =
+                evaluateDevicePolicy(device);
 
         if (!globalEnabled) {
             return denied(
                     Reason.GLOBAL_DISABLED,
-                    device.getAssignedUser(),
-                    false);
+                    devicePolicy.getAssignedUserId(),
+                    devicePolicy.isUserPermissionRequired());
         }
 
-        return evaluateDevicePolicy(device);
+        return devicePolicy;
     }
 
     public boolean isAllowed(Device device) {
@@ -125,18 +131,15 @@ public class WireGuardAuthorizationService {
      */
     public Decision evaluateDevicePolicy(Device device) {
         if (device == null) {
-            return denied(Reason.DEVICE_NOT_FOUND, null, false);
-        }
-
-        if (!device.isWireGuardEnabled()) {
             return denied(
-                    Reason.DEVICE_DISABLED,
-                    device.getAssignedUser(),
+                    Reason.DEVICE_NOT_FOUND,
+                    null,
                     false);
         }
 
         int assignedUserId = device.getAssignedUser();
-        UserModule assignedUser = userService.getUserById(assignedUserId);
+        UserModule assignedUser =
+                userService.getUserById(assignedUserId);
 
         if (assignedUser == null) {
             return denied(
@@ -153,23 +156,34 @@ public class WireGuardAuthorizationService {
                         true);
             }
 
-            // The device-specific system user represents "no real user assigned".
-            // In that case the user authorization layer does not apply.
-            return allowed(
-                    Reason.ALLOWED_NO_ASSIGNED_USER,
+            // The device-specific system user represents no real user.
+            // Only the device-specific WireGuard grant applies.
+            if (device.isWireGuardEnabled()) {
+                return allowed(
+                        Reason.ALLOWED_NO_ASSIGNED_USER,
+                        assignedUserId,
+                        false);
+            }
+
+            return denied(
+                    Reason.DEVICE_DISABLED,
                     assignedUserId,
                     false);
         }
 
-        if (!assignedUser.isWireGuardEnabled()) {
-            return denied(
-                    Reason.USER_DISABLED,
+        // A real assigned user and the individual device are independent
+        // grants. Either grant is sufficient; both off means denied.
+        if (device.isWireGuardEnabled()
+                || assignedUser.isWireGuardEnabled()) {
+
+            return allowed(
+                    Reason.ALLOWED,
                     assignedUserId,
                     true);
         }
 
-        return allowed(
-                Reason.ALLOWED,
+        return denied(
+                Reason.DEVICE_DISABLED,
                 assignedUserId,
                 true);
     }

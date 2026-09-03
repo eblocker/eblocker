@@ -21,7 +21,7 @@ import org.eblocker.server.common.data.UserModuleTransport;
 
 public class UserModuleConverter {
     public static UserModuleTransport getUserModuleTransport(UserModule user) {
-        return new UserModuleTransport(
+        UserModuleTransport transport = new UserModuleTransport(
                 user.getId(),
                 user.getAssociatedProfileId(),
                 user.getName(),
@@ -34,5 +34,9 @@ public class UserModuleConverter {
                 // be given to the UI!
                 null,
                 null);
+
+        transport.setWireGuardEnabled(
+                user.isWireGuardEnabled());
+        return transport;
     }
 }

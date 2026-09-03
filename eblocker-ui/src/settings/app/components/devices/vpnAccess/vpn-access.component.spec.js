@@ -136,9 +136,8 @@ describe('App settings; VPN access component controller', function() {
                                     assignedUserId: 7,
                                     userPermissionRequired: true,
                                     userEnabled: userPermissionEnabled,
-                                    allowed: userPermissionEnabled,
-                                    reason: userPermissionEnabled ?
-                                        'ALLOWED' : 'USER_DISABLED'
+                                    allowed: true,
+                                    reason: 'ALLOWED'
                                 },
                                 {
                                     deviceId: 'device:2',
@@ -165,8 +164,9 @@ describe('App settings; VPN access component controller', function() {
                         assignedUserId: 7,
                         userPermissionRequired: true,
                         userEnabled: userPermissionEnabled,
-                        allowed: enabled && userPermissionEnabled,
-                        reason: enabled ? 'ALLOWED' : 'DEVICE_DISABLED'
+                        allowed: enabled || userPermissionEnabled,
+                        reason: enabled || userPermissionEnabled ?
+                            'ALLOWED' : 'DEVICE_DISABLED'
                     }
                 });
             }),
@@ -255,8 +255,8 @@ describe('App settings; VPN access component controller', function() {
             .toHaveBeenCalledWith('device:1', false);
 
         expect(row.authorization.deviceEnabled).toBe(false);
-        expect(row.authorization.allowed).toBe(false);
-        expect(row.authorization.reason).toBe('DEVICE_DISABLED');
+        expect(row.authorization.allowed).toBe(true);
+        expect(row.authorization.reason).toBe('ALLOWED');
         expect(row.busyWireGuardDevice).toBe(false);
     });
 
@@ -276,8 +276,8 @@ describe('App settings; VPN access component controller', function() {
         expect(WireGuardService.getDeviceAuthorization).not.toHaveBeenCalled();
 
         expect(ctrl.rows[0].authorization.userEnabled).toBe(false);
-        expect(ctrl.rows[0].authorization.allowed).toBe(false);
-        expect(ctrl.rows[0].authorization.reason).toBe('USER_DISABLED');
+        expect(ctrl.rows[0].authorization.allowed).toBe(true);
+        expect(ctrl.rows[0].authorization.reason).toBe('ALLOWED');
     });
 
     it('rolls back a failed OpenVPN toggle and reports the error', function() {

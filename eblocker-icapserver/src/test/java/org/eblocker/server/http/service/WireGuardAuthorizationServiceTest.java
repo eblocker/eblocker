@@ -45,14 +45,22 @@ public class WireGuardAuthorizationServiceTest {
     }
 
     @Test
-    public void devicePermissionIsRequired() {
-        Mockito.when(dataSource.getWireGuardServerState()).thenReturn(true);
+    public void deviceGrantIsRequiredWhenNoRealUserIsAssigned() {
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
         device.setWireGuardEnabled(false);
+
+        Mockito.when(
+                userService.getUserById(10)
+        ).thenReturn(user(10, true, false));
 
         WireGuardAuthorizationService.Decision decision =
                 service.evaluate(device);
 
         assertFalse(decision.isAllowed());
+        assertFalse(decision.isUserPermissionRequired());
         assertEquals(
                 WireGuardAuthorizationService.Reason.DEVICE_DISABLED,
                 decision.getReason());
@@ -107,28 +115,17 @@ public class WireGuardAuthorizationServiceTest {
     }
 
     @Test
-    public void realAssignedUserPermissionIsRequired() {
-        Mockito.when(dataSource.getWireGuardServerState()).thenReturn(true);
+    public void realAssignedDeviceGrantWorksWhenUserGrantIsOff() {
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
         device.setAssignedUser(20);
-        Mockito.when(userService.getUserById(20))
-                .thenReturn(user(20, false, false));
+        device.setWireGuardEnabled(true);
 
-        WireGuardAuthorizationService.Decision decision =
-                service.evaluate(device);
-
-        assertFalse(decision.isAllowed());
-        assertTrue(decision.isUserPermissionRequired());
-        assertEquals(
-                WireGuardAuthorizationService.Reason.USER_DISABLED,
-                decision.getReason());
-    }
-
-    @Test
-    public void realAssignedUserCanGrantAccess() {
-        Mockito.when(dataSource.getWireGuardServerState()).thenReturn(true);
-        device.setAssignedUser(20);
-        Mockito.when(userService.getUserById(20))
-                .thenReturn(user(20, false, true));
+        Mockito.when(
+                userService.getUserById(20)
+        ).thenReturn(user(20, false, false));
 
         WireGuardAuthorizationService.Decision decision =
                 service.evaluate(device);
@@ -137,6 +134,72 @@ public class WireGuardAuthorizationServiceTest {
         assertTrue(decision.isUserPermissionRequired());
         assertEquals(
                 WireGuardAuthorizationService.Reason.ALLOWED,
+                decision.getReason());
+    }
+
+    @Test
+    public void realAssignedUserGrantWorksWhenDeviceGrantIsOff() {
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
+        device.setAssignedUser(20);
+        device.setWireGuardEnabled(false);
+
+        Mockito.when(
+                userService.getUserById(20)
+        ).thenReturn(user(20, false, true));
+
+        WireGuardAuthorizationService.Decision decision =
+                service.evaluate(device);
+
+        assertTrue(decision.isAllowed());
+        assertTrue(decision.isUserPermissionRequired());
+        assertEquals(
+                WireGuardAuthorizationService.Reason.ALLOWED,
+                decision.getReason());
+    }
+
+    @Test
+    public void realAssignedDeviceAndUserBothOffAreDenied() {
+        Mockito.when(
+                dataSource.getWireGuardServerState()
+        ).thenReturn(true);
+
+        device.setAssignedUser(20);
+        device.setWireGuardEnabled(false);
+
+        Mockito.when(
+                userService.getUserById(20)
+        ).thenReturn(user(20, false, false));
+
+        WireGuardAuthorizationService.Decision decision =
+                service.evaluate(device);
+
+        assertFalse(decision.isAllowed());
+        assertTrue(decision.isUserPermissionRequired());
+        assertEquals(
+                WireGuardAuthorizationService.Reason.DEVICE_DISABLED,
+                decision.getReason());
+    }
+
+    @Test
+    public void globalDisableKeepsRealUserAuthorizationMetadata() {
+        device.setAssignedUser(20);
+        device.setWireGuardEnabled(false);
+
+        Mockito.when(
+                userService.getUserById(20)
+        ).thenReturn(user(20, false, true));
+
+        WireGuardAuthorizationService.Decision decision =
+                service.evaluate(device, false);
+
+        assertFalse(decision.isAllowed());
+        assertTrue(decision.isUserPermissionRequired());
+        assertEquals(Integer.valueOf(20), decision.getAssignedUserId());
+        assertEquals(
+                WireGuardAuthorizationService.Reason.GLOBAL_DISABLED,
                 decision.getReason());
     }
 

@@ -79,6 +79,10 @@
         </div>
 
 
+        <!-- WireGuard permission for real users. The security-sensitive
+             flag is changed only through the dedicated WireGuard API. -->
+        <user-wireguard-access user="vm.user"></user-wireguard-access>
+
         <!-- SSL WARNING: Show if SSL is not activated on at least one assigned device -->
         <div ng-if="vm.showSSLWarning"
              flex-gt-lg="65" flex-md="75" flex-lg="75"

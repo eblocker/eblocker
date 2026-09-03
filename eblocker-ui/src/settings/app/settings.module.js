@@ -136,6 +136,7 @@ import LegalComponent from './components/home/legal/legal.component';
 import ParentalControlComponent from './components/parentalControl/parental-control.component';
 import UsersComponent from './components/parentalControl/users/users.component';
 import UsersDetailsComponent from './components/parentalControl/users/users-details.component';
+import UserWireGuardAccessComponent from './components/parentalControl/users/user-wireguard-access.component';
 import WhitelistsComponent from './components/parentalControl/whitelists/whitelists.component';
 import WhitelistDetailsComponent from './components/parentalControl/whitelists/whitelist-details.component';
 import BlackistsComponent from './components/parentalControl/blacklists/blacklists.component';
@@ -426,6 +427,7 @@ angular.module('eblocker.adminconsole', [
     .component('parentalControlComponent', ParentalControlComponent)
     .component('usersComponent', UsersComponent)
     .component('usersDetailsComponent', UsersDetailsComponent)
+    .component('userWireGuardAccessComponent', UserWireGuardAccessComponent)
     .component('whitelistsComponent', WhitelistsComponent)
     .component('blacklistsComponent', BlackistsComponent)
     .component('devicesComponent', DevicesComponent)

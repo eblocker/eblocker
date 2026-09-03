@@ -69,8 +69,8 @@ function Controller(WireGuardService, DeviceService,
 
     initializeRoutingUi();
 
-    vm.$onInit = function() {
-        load();
+    vm.$onInit = vm.reload = function() {
+        return load();
     };
 
     function initializeRoutingUi() {
@@ -155,7 +155,7 @@ function Controller(WireGuardService, DeviceService,
                 );
             });
 
-        $q.all([
+        return $q.all([
             statusPromise,
             peersPromise,
             devicesPromise,

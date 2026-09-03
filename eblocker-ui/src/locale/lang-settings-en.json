@@ -1,5 +1,15 @@
 {
     "ADMINCONSOLE" : {
+            "WIREGUARD_USER_ACCESS": {
+      "TITLE": "WireGuard access",
+      "DESCRIPTION": "This user permission applies to all devices assigned to this user.",
+      "ENABLED": "WireGuard access allowed",
+      "DISABLED": "WireGuard access blocked",
+      "NOTIFICATION": {
+      "LOAD_ERROR": "The WireGuard user permission could not be loaded.",
+      "SAVE_ERROR": "The WireGuard user permission could not be changed."
+      }
+      },
         "ABOUT" : {
             "LABEL" : "About eBlocker",
             "TEAM" : "We have spent many years designing, developing, testing and improving eBlockerOS. Today we are proud that our idea is gaining more and more supporters. eBlockerOS is Open Source, has no backdoors, is completely free of charge and being developed together with the community.",

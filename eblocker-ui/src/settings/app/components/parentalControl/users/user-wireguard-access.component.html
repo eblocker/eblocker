@@ -1,0 +1,33 @@
+<div ng-if="vm.isApplicable"
+     flex-gt-lg="65"
+     flex-md="75"
+     flex-lg="75"
+     class="config-frame md-whiteframe-z1">
+
+    <h3 style="margin-top: 0;"
+        translate="ADMINCONSOLE.WIREGUARD_USER_ACCESS.TITLE">
+    </h3>
+
+    <p translate="ADMINCONSOLE.WIREGUARD_USER_ACCESS.DESCRIPTION"></p>
+
+    <div layout="row" layout-align="start center">
+        <md-switch md-theme="eBlockerThemeSwitch"
+                   class="md-primary switch-word-break"
+                   ng-model="vm.enabled"
+                   ng-change="vm.setAccess()"
+                   ng-disabled="vm.isLoading || vm.isUpdating">
+            {{
+                (vm.enabled ?
+                'ADMINCONSOLE.WIREGUARD_USER_ACCESS.ENABLED' :
+                'ADMINCONSOLE.WIREGUARD_USER_ACCESS.DISABLED') | translate
+            }}
+        </md-switch>
+
+        <md-progress-circular
+            ng-if="vm.isLoading || vm.isUpdating"
+            style="margin-left: 12px;"
+            md-mode="indeterminate"
+            md-diameter="28">
+        </md-progress-circular>
+    </div>
+</div>

@@ -14,6 +14,13 @@
                 }}
             </md-switch>
 
+            <md-button class="md-raised md-secondary"
+                       style="margin-left: 12px;"
+                       ng-click="vm.reload()"
+                       ng-disabled="vm.isLoading || vm.isToggling">
+                {{ 'ADMINCONSOLE.DEVICES_LIST.ACTION.REFRESH' | translate }}
+            </md-button>
+
             <div style="margin-left: 12px;"
                  ng-if="vm.isLoading || vm.isToggling">
                 <md-progress-circular md-mode="indeterminate"

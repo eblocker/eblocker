@@ -3523,7 +3523,18 @@
                 "WIREGUARD_USER_ERROR": "Die WireGuard-Benutzerberechtigung konnte nicht geändert werden."
             }
         },
-        "WIREGUARD": {
+
+    "WIREGUARD_USER_ACCESS": {
+      "TITLE": "WireGuard-Zugriff",
+      "DESCRIPTION": "Diese Benutzerfreigabe gilt für alle Geräte, die diesem Benutzer zugeordnet sind.",
+      "ENABLED": "WireGuard-Zugriff erlaubt",
+      "DISABLED": "WireGuard-Zugriff gesperrt",
+      "NOTIFICATION": {
+        "LOAD_ERROR": "Die WireGuard-Benutzerfreigabe konnte nicht geladen werden.",
+        "SAVE_ERROR": "Die WireGuard-Benutzerfreigabe konnte nicht geändert werden."
+      }
+    },
+    "WIREGUARD": {
             "LABEL": "WireGuard",
             "SWITCH": {
                 "ON": "WireGuard an",

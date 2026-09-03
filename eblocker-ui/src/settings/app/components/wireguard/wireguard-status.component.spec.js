@@ -215,6 +215,30 @@ describe('App settings; WireGuard status component controller', function() {
             .toBe(120);
     });
 
+    it('refreshes WireGuard data internally without changing server state', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.getStatus.calls.reset();
+        WireGuardService.getPeers.calls.reset();
+        WireGuardService.getEndpoint.calls.reset();
+        DeviceService.getAll.calls.reset();
+
+        ctrl.reload();
+        $rootScope.$digest();
+
+        expect(WireGuardService.getStatus.calls.count()).toBe(1);
+        expect(WireGuardService.getPeers.calls.count()).toBe(1);
+        expect(WireGuardService.getEndpoint.calls.count()).toBe(1);
+        expect(DeviceService.getAll.calls.count()).toBe(1);
+
+        expect(WireGuardService.enable).not.toHaveBeenCalled();
+        expect(WireGuardService.disable).not.toHaveBeenCalled();
+        expect(WireGuardService.setEndpoint).not.toHaveBeenCalled();
+        expect(WireGuardService.setRouting).not.toHaveBeenCalled();
+        expect(ctrl.isLoading).toBe(false);
+    });
+
     it('classifies an older non-zero handshake as recently seen', function() {
         WireGuardService.getStatus.and.returnValue(
             $q.when({

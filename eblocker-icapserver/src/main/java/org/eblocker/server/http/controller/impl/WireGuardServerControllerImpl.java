@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.data.wireguard.WireGuardTunnelMode;
@@ -15,6 +16,7 @@ import org.eblocker.server.http.model.WireGuardPeerCreateRequest;
 import org.eblocker.server.http.model.WireGuardPeerRoutingRequest;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.model.WireGuardServerStatusView;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.WireGuardAuthorizationManagementService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
 import org.eblocker.server.http.service.WireGuardPeerService;
@@ -32,8 +34,9 @@ import java.util.stream.Collectors;
 /**
  * Authenticated admin API facade for the WireGuard core services.
  *
- * This controller deliberately exposes no client configuration, QR code,
- * private key or preshared key.
+ * Client configuration and QR material are available only through explicit
+ * authenticated admin actions. Normal status and peer metadata responses stay
+ * secret-free and never expose private keys or preshared keys.
  */
 public class WireGuardServerControllerImpl
         implements WireGuardServerController {
@@ -42,6 +45,7 @@ public class WireGuardServerControllerImpl
     private final WireGuardServerControlService controlService;
     private final WireGuardPeerService peerService;
     private final WireGuardClientConfigurationService clientConfigurationService;
+    private final DeviceService deviceService;
     private final WireGuardAuthorizationManagementService authorizationManagementService;
 
     @Inject
@@ -50,18 +54,19 @@ public class WireGuardServerControllerImpl
             WireGuardServerControlService controlService,
             WireGuardPeerService peerService,
             WireGuardClientConfigurationService clientConfigurationService,
+            DeviceService deviceService,
             WireGuardAuthorizationManagementService authorizationManagementService) {
 
         this.serverService = serverService;
         this.controlService = controlService;
         this.peerService = peerService;
         this.clientConfigurationService = clientConfigurationService;
+        this.deviceService = deviceService;
         this.authorizationManagementService =
                 authorizationManagementService;
     }
 
-    // Kept for the pre-existing focused controller tests. Production
-    // dependency injection always uses the @Inject constructor above.
+    // Kept for the pre-existing focused controller tests.
     WireGuardServerControllerImpl(
             WireGuardServerService serverService,
             WireGuardServerControlService controlService,
@@ -73,6 +78,43 @@ public class WireGuardServerControllerImpl
                 controlService,
                 peerService,
                 clientConfigurationService,
+                null,
+                null
+        );
+    }
+
+    // Kept for authorization controller tests.
+    WireGuardServerControllerImpl(
+            WireGuardServerService serverService,
+            WireGuardServerControlService controlService,
+            WireGuardPeerService peerService,
+            WireGuardClientConfigurationService clientConfigurationService,
+            WireGuardAuthorizationManagementService authorizationManagementService) {
+
+        this(
+                serverService,
+                controlService,
+                peerService,
+                clientConfigurationService,
+                null,
+                authorizationManagementService
+        );
+    }
+
+    // Focused WG-13 provisioning tests.
+    WireGuardServerControllerImpl(
+            WireGuardServerService serverService,
+            WireGuardServerControlService controlService,
+            WireGuardPeerService peerService,
+            WireGuardClientConfigurationService clientConfigurationService,
+            DeviceService deviceService) {
+
+        this(
+                serverService,
+                controlService,
+                peerService,
+                clientConfigurationService,
+                deviceService,
                 null
         );
     }
@@ -136,6 +178,55 @@ public class WireGuardServerControllerImpl
         WireGuardPeer peer =
                 peerService.createPeer(
                         body.getName().trim()
+                );
+
+        response.setResponseCode(
+                HttpResponseStatus.CREATED.code()
+        );
+
+        return WireGuardPeerView.fromPeer(peer);
+    }
+
+    @Override
+    public WireGuardPeerView createPeerForDevice(
+            Request request,
+            Response response) {
+
+        String deviceId = parseRequiredTextHeader(
+                request,
+                "deviceId",
+                "WireGuard device id is required."
+        );
+
+        Device device = deviceService.getDeviceById(deviceId);
+
+        if (device == null) {
+            throw new NotFoundException(
+                    "WireGuard target device not found."
+            );
+        }
+
+        WireGuardPeer existing =
+                peerService.getPeerByDeviceId(deviceId);
+
+        if (existing != null) {
+            response.setResponseCode(
+                    HttpResponseStatus.CONFLICT.code()
+            );
+
+            return WireGuardPeerView.fromPeer(existing);
+        }
+
+        String peerName = device.getUserFriendlyName();
+
+        if (peerName == null || peerName.trim().isEmpty()) {
+            peerName = deviceId;
+        }
+
+        WireGuardPeer peer =
+                peerService.createPeerForDevice(
+                        peerName.trim(),
+                        deviceId
                 );
 
         response.setResponseCode(

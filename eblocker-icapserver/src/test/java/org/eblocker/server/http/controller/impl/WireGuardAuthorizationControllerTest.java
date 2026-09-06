@@ -37,6 +37,7 @@ public class WireGuardAuthorizationControllerTest {
                 Mockito.mock(WireGuardServerControlService.class),
                 Mockito.mock(WireGuardPeerService.class),
                 Mockito.mock(WireGuardClientConfigurationService.class),
+                null,
                 managementService
         );
 

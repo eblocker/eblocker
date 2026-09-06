@@ -34,6 +34,10 @@ public interface WireGuardServerController {
             Request request,
             Response response);
 
+    WireGuardPeerView createPeerForDevice(
+            Request request,
+            Response response);
+
     boolean deletePeer(
             Request request,
             Response response);

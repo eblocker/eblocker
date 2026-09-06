@@ -2,6 +2,7 @@ package org.eblocker.server.http.controller.impl;
 
 import io.netty.buffer.ByteBuf;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointConfig;
 import org.eblocker.server.common.data.wireguard.WireGuardEndpointType;
 import org.eblocker.server.common.data.wireguard.WireGuardPeer;
@@ -10,6 +11,7 @@ import org.eblocker.server.http.model.WireGuardPeerCreateRequest;
 import org.eblocker.server.http.model.WireGuardPeerView;
 import org.eblocker.server.http.model.WireGuardServerStatusView;
 import org.eblocker.server.http.model.WireGuardStatus;
+import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.WireGuardClientConfigurationService;
 import org.eblocker.server.http.service.WireGuardPeerService;
 import org.eblocker.server.http.service.WireGuardServerControlService;
@@ -37,6 +39,7 @@ public class WireGuardServerControllerImplTest {
     private WireGuardServerControlService controlService;
     private WireGuardPeerService peerService;
     private WireGuardClientConfigurationService clientConfigurationService;
+    private DeviceService deviceService;
     private WireGuardServerControllerImpl controller;
     private Request request;
     private Response response;
@@ -63,12 +66,18 @@ public class WireGuardServerControllerImplTest {
                         WireGuardClientConfigurationService.class
                 );
 
+        deviceService =
+                Mockito.mock(
+                        DeviceService.class
+                );
+
         controller =
                 new WireGuardServerControllerImpl(
                         serverService,
                         controlService,
                         peerService,
-                        clientConfigurationService
+                        clientConfigurationService,
+                        deviceService
                 );
 
         request = Mockito.mock(Request.class);
@@ -240,6 +249,135 @@ public class WireGuardServerControllerImplTest {
         );
 
         controller.createPeer(
+                request,
+                response
+        );
+    }
+
+    @Test
+    public void createPeerForDeviceUsesServerResolvedIdentity() {
+        String deviceId = "device:001122334455";
+
+        Mockito.when(
+                request.getHeader("deviceId")
+        ).thenReturn(deviceId);
+
+        Device device = Mockito.mock(Device.class);
+
+        Mockito.when(
+                device.getUserFriendlyName()
+        ).thenReturn("Svens Phone");
+
+        Mockito.when(
+                deviceService.getDeviceById(deviceId)
+        ).thenReturn(device);
+
+        Mockito.when(
+                peerService.getPeerByDeviceId(deviceId)
+        ).thenReturn(null);
+
+        WireGuardPeer peer =
+                peer(
+                        8,
+                        "Svens Phone",
+                        "10.13.13.8/32",
+                        false
+                );
+
+        peer.setDeviceId(deviceId);
+
+        Mockito.when(
+                peerService.createPeerForDevice(
+                        "Svens Phone",
+                        deviceId
+                )
+        ).thenReturn(peer);
+
+        WireGuardPeerView result =
+                controller.createPeerForDevice(
+                        request,
+                        response
+                );
+
+        assertEquals(8, result.getId());
+        assertEquals(deviceId, result.getDeviceId());
+        assertEquals("Svens Phone", result.getName());
+        assertEquals(
+                201,
+                response.getResponseStatus().code()
+        );
+
+        Mockito.verify(
+                peerService
+        ).createPeerForDevice(
+                "Svens Phone",
+                deviceId
+        );
+    }
+
+    @Test
+    public void createPeerForDeviceReturnsConflictForExistingBinding() {
+        String deviceId = "device:001122334455";
+
+        Mockito.when(
+                request.getHeader("deviceId")
+        ).thenReturn(deviceId);
+
+        Device device = Mockito.mock(Device.class);
+
+        Mockito.when(
+                deviceService.getDeviceById(deviceId)
+        ).thenReturn(device);
+
+        WireGuardPeer existing =
+                peer(
+                        4,
+                        "phone",
+                        "10.13.13.4/32",
+                        false
+                );
+
+        existing.setDeviceId(deviceId);
+
+        Mockito.when(
+                peerService.getPeerByDeviceId(deviceId)
+        ).thenReturn(existing);
+
+        WireGuardPeerView result =
+                controller.createPeerForDevice(
+                        request,
+                        response
+                );
+
+        assertEquals(4, result.getId());
+        assertEquals(deviceId, result.getDeviceId());
+        assertEquals(
+                409,
+                response.getResponseStatus().code()
+        );
+
+        Mockito.verify(
+                peerService,
+                Mockito.never()
+        ).createPeerForDevice(
+                Mockito.anyString(),
+                Mockito.anyString()
+        );
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void createPeerForDeviceRejectsUnknownDevice() {
+        String deviceId = "device:missing";
+
+        Mockito.when(
+                request.getHeader("deviceId")
+        ).thenReturn(deviceId);
+
+        Mockito.when(
+                deviceService.getDeviceById(deviceId)
+        ).thenReturn(null);
+
+        controller.createPeerForDevice(
                 request,
                 response
         );

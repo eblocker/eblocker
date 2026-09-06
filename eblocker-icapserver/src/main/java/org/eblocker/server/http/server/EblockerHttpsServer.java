@@ -1478,6 +1478,10 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("createPeer", HttpMethod.POST)
                 .name("adminconsole.wireguard.peers.create");
         server
+                .uri("/api/adminconsole/wireguard/devices/{deviceId}/peer", wireGuardServerController)
+                .action("createPeerForDevice", HttpMethod.POST)
+                .name("adminconsole.wireguard.device.peer.create");
+        server
                 .uri("/api/adminconsole/wireguard/peers/{id}", wireGuardServerController)
                 .action("deletePeer", HttpMethod.DELETE)
                 .name("adminconsole.wireguard.peers.delete");

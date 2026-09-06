@@ -20,6 +20,7 @@ describe('App settings; WireGuard status component controller', function() {
     let $httpBackend;
     let WireGuardService;
     let DeviceService;
+    let DialogService;
     let NotificationService;
 
     beforeEach(angular.mock.module(function(
@@ -31,9 +32,19 @@ describe('App settings; WireGuard status component controller', function() {
             error: jasmine.createSpy('error')
         };
 
+        DialogService = {
+            confirmationDialog:
+                jasmine.createSpy('confirmationDialog')
+        };
+
         $provide.value(
             'NotificationService',
             NotificationService
+        );
+
+        $provide.value(
+            'DialogService',
+            DialogService
         );
 
         $translateProvider.translations('en', {});
@@ -70,6 +81,10 @@ describe('App settings; WireGuard status component controller', function() {
             getPeers: jasmine.createSpy('getPeers'),
             createPeerForDevice:
                 jasmine.createSpy('createPeerForDevice'),
+            deletePeer:
+                jasmine.createSpy('deletePeer'),
+            setLanAccess:
+                jasmine.createSpy('setLanAccess'),
             getClientConfig:
                 jasmine.createSpy('getClientConfig'),
             getQrCode:
@@ -162,6 +177,7 @@ describe('App settings; WireGuard status component controller', function() {
             {
                 WireGuardService: WireGuardService,
                 DeviceService: DeviceService,
+                DialogService: DialogService,
                 NotificationService: NotificationService
             },
             {}
@@ -270,6 +286,187 @@ describe('App settings; WireGuard status component controller', function() {
 
         expect(NotificationService.error).toHaveBeenCalled();
         expect(ctrl.provisioning.isCreating).toBe(false);
+    });
+
+    it('updates LAN access for the selected provisioned peer', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.setLanAccess.and.returnValue(
+            $q.when({
+                data: {
+                    id: 2,
+                    name: 'Phone peer',
+                    publicKey: 'peer-public-one',
+                    allowedIp: '10.13.13.2/32',
+                    deviceId: 'device:test-phone',
+                    allowLanAccess: true
+                }
+            })
+        );
+
+        ctrl.provisioning.selectedPeer.allowLanAccess = true;
+        ctrl.updateProvisioningLanAccess();
+        $rootScope.$digest();
+
+        expect(WireGuardService.setLanAccess)
+            .toHaveBeenCalledWith(2, true);
+        expect(ctrl.provisioning.selectedPeer.allowLanAccess)
+            .toBe(true);
+        expect(ctrl.provisioning.isSavingLanAccess)
+            .toBe(false);
+        expect(NotificationService.info)
+            .toHaveBeenCalled();
+    });
+
+    it('rolls back LAN access in the UI when the admin write fails', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.setLanAccess.and.returnValue(
+            $q.reject({status: 500})
+        );
+
+        ctrl.provisioning.selectedPeer.allowLanAccess = true;
+        ctrl.updateProvisioningLanAccess().catch(angular.noop);
+        $rootScope.$digest();
+
+        expect(ctrl.provisioning.selectedPeer.allowLanAccess)
+            .toBe(false);
+        expect(ctrl.provisioning.isSavingLanAccess)
+            .toBe(false);
+        expect(NotificationService.error)
+            .toHaveBeenCalled();
+    });
+
+    it('does not delete a provisioned peer when confirmation is cancelled', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        DialogService.confirmationDialog.and.callFake(
+            function(event, title, textKey, ok, cancel, name,
+                     confirmAction, cancelAction) {
+                cancelAction();
+                return $q.resolve();
+            }
+        );
+
+        ctrl.confirmDeleteProvisionedPeer({});
+        $rootScope.$digest();
+
+        expect(DialogService.confirmationDialog)
+            .toHaveBeenCalled();
+        expect(WireGuardService.deletePeer)
+            .not.toHaveBeenCalled();
+        expect(ctrl.provisioning.selectedPeer.id)
+            .toBe(2);
+    });
+
+    it('deletes a provisioned peer only after explicit confirmation', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.deletePeer.and.returnValue(
+            $q.when({data: true})
+        );
+
+        DialogService.confirmationDialog.and.callFake(
+            function(event, title, textKey, ok, cancel, name,
+                     confirmAction) {
+                return confirmAction();
+            }
+        );
+
+        ctrl.confirmDeleteProvisionedPeer({});
+        $rootScope.$digest();
+
+        expect(WireGuardService.deletePeer)
+            .toHaveBeenCalledWith(2);
+        expect(ctrl.provisioning.selectedPeer)
+            .toBe(null);
+        expect(ctrl.provisioning.isDeleting)
+            .toBe(false);
+        expect(NotificationService.info)
+            .toHaveBeenCalled();
+    });
+
+    it('regenerates a provisioned peer only after explicit confirmation', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.deletePeer.and.returnValue(
+            $q.when({data: true})
+        );
+        WireGuardService.createPeerForDevice.and.returnValue(
+            $q.when({
+                data: {
+                    id: 9,
+                    name: 'Phone peer',
+                    publicKey: 'peer-public-new',
+                    allowedIp: '10.13.13.2/32',
+                    deviceId: 'device:test-phone',
+                    allowLanAccess: false
+                }
+            })
+        );
+
+        DialogService.confirmationDialog.and.callFake(
+            function(event, title, textKey, ok, cancel, name,
+                     confirmAction) {
+                return confirmAction();
+            }
+        );
+
+        ctrl.confirmRegenerateProvisionedPeer({});
+        $rootScope.$digest();
+
+        expect(WireGuardService.deletePeer)
+            .toHaveBeenCalledWith(2);
+        expect(WireGuardService.createPeerForDevice)
+            .toHaveBeenCalledWith('device:test-phone');
+        expect(ctrl.provisioning.selectedPeer.id)
+            .toBe(9);
+        expect(ctrl.provisioning.isRegenerating)
+            .toBe(false);
+        expect(NotificationService.info)
+            .toHaveBeenCalled();
+    });
+
+    it('shows an empty profile state if recreation fails after revocation', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        WireGuardService.deletePeer.and.returnValue(
+            $q.when({data: true})
+        );
+        WireGuardService.createPeerForDevice.and.returnValue(
+            $q.reject({status: 500})
+        );
+
+        DialogService.confirmationDialog.and.callFake(
+            function(event, title, textKey, ok, cancel, name,
+                     confirmAction) {
+                return confirmAction();
+            }
+        );
+
+        ctrl.confirmRegenerateProvisionedPeer({})
+            .catch(angular.noop);
+        $rootScope.$digest();
+
+        expect(WireGuardService.deletePeer)
+            .toHaveBeenCalledWith(2);
+        expect(WireGuardService.createPeerForDevice)
+            .toHaveBeenCalledWith('device:test-phone');
+        expect(ctrl.provisioning.selectedPeer)
+            .toBe(null);
+        expect(ctrl.provisioning.isRegenerating)
+            .toBe(false);
+        expect(NotificationService.error)
+            .toHaveBeenCalledWith(
+                'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.REGENERATE_CREATE_FAILED',
+                {status: 500}
+            );
     });
 
     it('refreshes WireGuard data internally without changing server state', function() {

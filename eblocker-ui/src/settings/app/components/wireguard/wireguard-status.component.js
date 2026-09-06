@@ -13,7 +13,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(WireGuardService, DeviceService,
+function Controller(WireGuardService, DeviceService, DialogService,
                     NotificationService, $q, $window) {
     'ngInject';
     'use strict';
@@ -84,13 +84,25 @@ function Controller(WireGuardService, DeviceService,
             qrUrl: null,
             isCreating: false,
             isLoadingQr: false,
-            isDownloading: false
+            isDownloading: false,
+            isSavingLanAccess: false,
+            isDeleting: false,
+            isRegenerating: false
         };
 
         vm.selectProvisioningDevice = selectProvisioningDevice;
         vm.createProvisionedPeer = createProvisionedPeer;
+        vm.updateProvisioningLanAccess =
+            updateProvisioningLanAccess;
+        vm.confirmDeleteProvisionedPeer =
+            confirmDeleteProvisionedPeer;
+        vm.confirmRegenerateProvisionedPeer =
+            confirmRegenerateProvisionedPeer;
         vm.showProvisioningQr = showProvisioningQr;
         vm.downloadProvisioningConfig = downloadProvisioningConfig;
+        vm.isProvisioningBusy = function() {
+            return provisioningBusy(vm.provisioning);
+        };
 
         vm.$onDestroy = function() {
             revokeProvisioningQrUrl();
@@ -322,6 +334,210 @@ function Controller(WireGuardService, DeviceService,
             })
             .finally(function() {
                 vm.provisioning.isCreating = false;
+            });
+    }
+
+    function updateProvisioningLanAccess() {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer) ||
+                vm.provisioning.isSavingLanAccess ||
+                vm.provisioning.isDeleting ||
+                vm.provisioning.isRegenerating) {
+            return $q.resolve();
+        }
+
+        const requested = peer.allowLanAccess === true;
+        const previous = !requested;
+
+        vm.provisioning.isSavingLanAccess = true;
+
+        return WireGuardService
+            .setLanAccess(peer.id, requested)
+            .then(function(response) {
+                const updated = response.data;
+
+                if (!angular.isObject(updated) ||
+                        typeof updated.allowLanAccess !== 'boolean') {
+                    return $q.reject(
+                        'WireGuard LAN access response is invalid.'
+                    );
+                }
+
+                vm.peers = replaceProvisionedPeer(
+                    vm.peers,
+                    updated
+                );
+                buildPeerRows();
+
+                NotificationService.info(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.LAN_SAVED'
+                );
+
+                return updated;
+            })
+            .catch(function(response) {
+                if (angular.isObject(
+                    vm.provisioning.selectedPeer
+                )) {
+                    vm.provisioning.selectedPeer.allowLanAccess =
+                        previous;
+                }
+
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.LAN_FAILED',
+                    response
+                );
+
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isSavingLanAccess = false;
+            });
+    }
+
+    function confirmDeleteProvisionedPeer(event) {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer) ||
+                provisioningBusy(vm.provisioning)) {
+            return;
+        }
+
+        return DialogService.confirmationDialog(
+            event,
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.DELETE_CONFIRM_TITLE',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.DELETE_CONFIRM_TEXT',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.DELETE_CONFIRM_OK',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.DELETE_CONFIRM_CANCEL',
+            peer.name,
+            deleteProvisionedPeer,
+            function cancel() {}
+        );
+    }
+
+    function deleteProvisionedPeer() {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer) ||
+                vm.provisioning.isDeleting ||
+                vm.provisioning.isRegenerating) {
+            return $q.resolve();
+        }
+
+        vm.provisioning.isDeleting = true;
+        revokeProvisioningQrUrl();
+
+        return WireGuardService.deletePeer(peer.id)
+            .then(function(response) {
+                vm.peers = removeProvisionedPeer(
+                    vm.peers,
+                    peer
+                );
+                buildPeerRows();
+
+                NotificationService.info(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.DELETED'
+                );
+
+                return response;
+            })
+            .catch(function(response) {
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.DELETE_FAILED',
+                    response
+                );
+
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isDeleting = false;
+            });
+    }
+
+    function confirmRegenerateProvisionedPeer(event) {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer) ||
+                provisioningBusy(vm.provisioning)) {
+            return;
+        }
+
+        return DialogService.confirmationDialog(
+            event,
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.REGENERATE_CONFIRM_TITLE',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.REGENERATE_CONFIRM_TEXT',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.REGENERATE_CONFIRM_OK',
+            'ADMINCONSOLE.WIREGUARD.PROVISIONING.REGENERATE_CONFIRM_CANCEL',
+            peer.name,
+            regenerateProvisionedPeer,
+            function cancel() {}
+        );
+    }
+
+    function regenerateProvisionedPeer() {
+        const peer = vm.provisioning.selectedPeer;
+        const deviceId = vm.provisioning.selectedDeviceId;
+        let deleted = false;
+
+        if (!angular.isObject(peer) ||
+                !angular.isString(deviceId) ||
+                deviceId.length === 0 ||
+                vm.provisioning.isDeleting ||
+                vm.provisioning.isRegenerating) {
+            return $q.resolve();
+        }
+
+        vm.provisioning.isRegenerating = true;
+        revokeProvisioningQrUrl();
+
+        return WireGuardService.deletePeer(peer.id)
+            .then(function() {
+                deleted = true;
+                vm.peers = removeProvisionedPeer(
+                    vm.peers,
+                    peer
+                );
+                buildPeerRows();
+
+                return WireGuardService
+                    .createPeerForDevice(deviceId);
+            })
+            .then(function(response) {
+                const created = response.data;
+
+                if (!angular.isObject(created)) {
+                    return $q.reject(
+                        'WireGuard regenerated peer response is invalid.'
+                    );
+                }
+
+                vm.peers = replaceProvisionedPeer(
+                    vm.peers,
+                    created
+                );
+                buildPeerRows();
+
+                NotificationService.info(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.REGENERATED'
+                );
+
+                return created;
+            })
+            .catch(function(response) {
+                const key = deleted ?
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.REGENERATE_CREATE_FAILED' :
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.REGENERATE_FAILED';
+
+                NotificationService.error(
+                    key,
+                    response
+                );
+
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isRegenerating = false;
             });
     }
 
@@ -791,4 +1007,41 @@ function Controller(WireGuardService, DeviceService,
                 vm.isSavingEndpoint = false;
             });
     }
+}
+
+function provisioningBusy(provisioning) {
+    return provisioning.isCreating ||
+        provisioning.isLoadingQr ||
+        provisioning.isDownloading ||
+        provisioning.isSavingLanAccess ||
+        provisioning.isDeleting ||
+        provisioning.isRegenerating;
+}
+
+function replaceProvisionedPeer(peers, peer) {
+    if (!angular.isObject(peer)) {
+        return peers;
+    }
+
+    const updatedPeers = peers.filter(function(candidate) {
+        const sameId = candidate.id === peer.id;
+        const sameDevice =
+            angular.isString(peer.deviceId) &&
+            candidate.deviceId === peer.deviceId;
+
+        return !sameId && !sameDevice;
+    });
+
+    updatedPeers.push(peer);
+    return updatedPeers;
+}
+
+function removeProvisionedPeer(peers, peer) {
+    if (!angular.isObject(peer)) {
+        return peers;
+    }
+
+    return peers.filter(function(candidate) {
+        return candidate.id !== peer.id;
+    });
 }

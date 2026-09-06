@@ -141,6 +141,41 @@ describe('App settings; WireGuardService', function() {
         $httpBackend.flush();
     });
 
+    it('deletes a WireGuard peer through the admin API', function() {
+        $httpBackend.expectDELETE(
+            PATH + '/peers/8'
+        ).respond(200, true);
+
+        service.deletePeer(8)
+            .then(function(response) {
+                expect(response.data).toBe(true);
+            });
+
+        $httpBackend.flush();
+    });
+
+    it('updates WireGuard LAN access with a naked boolean', function() {
+        const peer = {
+            id: 8,
+            name: 'Phone',
+            allowedIp: '10.13.13.8/32',
+            deviceId: 'device:test-phone',
+            allowLanAccess: true
+        };
+
+        $httpBackend.expectPUT(
+            PATH + '/peers/8/lanAccess',
+            true
+        ).respond(200, peer);
+
+        service.setLanAccess(8, true)
+            .then(function(response) {
+                expect(response.data).toEqual(peer);
+            });
+
+        $httpBackend.flush();
+    });
+
     it('loads explicit WireGuard client configuration', function() {
         const config = {
             peerId: 8,

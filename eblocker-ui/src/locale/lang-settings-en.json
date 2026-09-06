@@ -3596,11 +3596,30 @@
                 "SHOW_QR" : "Show QR code",
                 "DOWNLOAD_CONFIG" : "Download .conf",
                 "QR_HINT" : "Open the WireGuard app on the target device and scan this QR code. The QR code contains the private client configuration and must not be shared.",
+                "LAN_ACCESS" : "Allow access to the local network",
+                "LAN_HINT" : "Controls whether this WireGuard client may reach devices and services on the local network.",
+                "REGENERATE" : "Regenerate profile",
+                "DELETE" : "Delete profile",
+                "DELETE_CONFIRM_TITLE" : "Delete WireGuard client profile?",
+                "DELETE_CONFIRM_TEXT" : "The existing WireGuard client profile will be revoked. Previously imported configurations will stop working.",
+                "DELETE_CONFIRM_OK" : "Delete profile",
+                "DELETE_CONFIRM_CANCEL" : "Cancel",
+                "REGENERATE_CONFIRM_TITLE" : "Regenerate WireGuard client profile?",
+                "REGENERATE_CONFIRM_TEXT" : "The existing profile will be revoked and recreated with new keys. The previous configuration will stop working and must be imported again by QR code or .conf file.",
+                "REGENERATE_CONFIRM_OK" : "Regenerate",
+                "REGENERATE_CONFIRM_CANCEL" : "Cancel",
                 "NOTIFICATION" : {
                     "CREATED" : "WireGuard client profile created.",
                     "CREATE_FAILED" : "The WireGuard client profile could not be created.",
                     "QR_FAILED" : "The WireGuard QR code could not be loaded.",
-                    "CONFIG_FAILED" : "The WireGuard client configuration could not be downloaded."
+                    "CONFIG_FAILED" : "The WireGuard client configuration could not be downloaded.",
+                    "LAN_SAVED" : "LAN access for the WireGuard client profile was saved.",
+                    "LAN_FAILED" : "LAN access could not be changed.",
+                    "DELETED" : "WireGuard client profile deleted.",
+                    "DELETE_FAILED" : "The WireGuard client profile could not be deleted.",
+                    "REGENERATED" : "WireGuard client profile regenerated with new keys.",
+                    "REGENERATE_FAILED" : "The WireGuard client profile could not be regenerated.",
+                    "REGENERATE_CREATE_FAILED" : "The old WireGuard client profile was revoked, but the new profile could not be created. Create the client profile again."
                 }
             },
             "ROUTING" : {

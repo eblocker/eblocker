@@ -39,6 +39,21 @@ export default function WireGuardService($http, $q) {
         ).then(standardSuccess, standardError);
     }
 
+    function deletePeer(peerId) {
+        return $http.delete(
+            PATH + '/peers/' + encodeURIComponent(peerId)
+        ).then(standardSuccess, standardError);
+    }
+
+    function setLanAccess(peerId, allowLanAccess) {
+        return $http.put(
+            PATH + '/peers/' +
+                encodeURIComponent(peerId) +
+                '/lanAccess',
+            allowLanAccess
+        ).then(standardSuccess, standardError);
+    }
+
     function getClientConfig(peerId) {
         return $http.get(
             PATH + '/peers/' + encodeURIComponent(peerId) + '/clientConfig'
@@ -106,6 +121,8 @@ export default function WireGuardService($http, $q) {
         disable: disable,
         getPeers: getPeers,
         createPeerForDevice: createPeerForDevice,
+        deletePeer: deletePeer,
+        setLanAccess: setLanAccess,
         getClientConfig: getClientConfig,
         getQrCode: getQrCode,
         getEndpoint: getEndpoint,

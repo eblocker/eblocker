@@ -3597,11 +3597,30 @@
                 "SHOW_QR": "QR-Code anzeigen",
                 "DOWNLOAD_CONFIG": ".conf herunterladen",
                 "QR_HINT": "Öffne auf dem Zielgerät die WireGuard-App und scanne diesen QR-Code. Der QR-Code enthält die private Client-Konfiguration und sollte nicht weitergegeben werden.",
+                "LAN_ACCESS": "Zugriff auf das lokale Netzwerk erlauben",
+                "LAN_HINT": "Steuert, ob dieser WireGuard-Client Geräte und Dienste im lokalen Netzwerk erreichen darf.",
+                "REGENERATE": "Profil neu erzeugen",
+                "DELETE": "Profil löschen",
+                "DELETE_CONFIRM_TITLE": "WireGuard-Clientprofil löschen?",
+                "DELETE_CONFIRM_TEXT": "Das vorhandene WireGuard-Clientprofil wird widerrufen. Bereits importierte Konfigurationen funktionieren danach nicht mehr.",
+                "DELETE_CONFIRM_OK": "Profil löschen",
+                "DELETE_CONFIRM_CANCEL": "Abbrechen",
+                "REGENERATE_CONFIRM_TITLE": "WireGuard-Clientprofil neu erzeugen?",
+                "REGENERATE_CONFIRM_TEXT": "Das vorhandene Profil wird widerrufen und mit neuen Schlüsseln neu erstellt. Die bisherige Konfiguration funktioniert danach nicht mehr und muss per QR-Code oder .conf neu importiert werden.",
+                "REGENERATE_CONFIRM_OK": "Neu erzeugen",
+                "REGENERATE_CONFIRM_CANCEL": "Abbrechen",
                 "NOTIFICATION": {
                     "CREATED": "WireGuard-Clientprofil wurde erstellt.",
                     "CREATE_FAILED": "Das WireGuard-Clientprofil konnte nicht erstellt werden.",
                     "QR_FAILED": "Der WireGuard-QR-Code konnte nicht geladen werden.",
-                    "CONFIG_FAILED": "Die WireGuard-Clientkonfiguration konnte nicht heruntergeladen werden."
+                    "CONFIG_FAILED": "Die WireGuard-Clientkonfiguration konnte nicht heruntergeladen werden.",
+                    "LAN_SAVED": "LAN-Zugriff für das WireGuard-Clientprofil gespeichert.",
+                    "LAN_FAILED": "Der LAN-Zugriff konnte nicht geändert werden.",
+                    "DELETED": "WireGuard-Clientprofil wurde gelöscht.",
+                    "DELETE_FAILED": "Das WireGuard-Clientprofil konnte nicht gelöscht werden.",
+                    "REGENERATED": "WireGuard-Clientprofil wurde mit neuen Schlüsseln neu erzeugt.",
+                    "REGENERATE_FAILED": "Das WireGuard-Clientprofil konnte nicht neu erzeugt werden.",
+                    "REGENERATE_CREATE_FAILED": "Das alte WireGuard-Clientprofil wurde widerrufen, aber das neue Profil konnte nicht erstellt werden. Erstelle das Clientprofil erneut."
                 }
             },
             "ROUTING": {

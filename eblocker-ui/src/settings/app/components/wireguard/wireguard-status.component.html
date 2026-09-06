@@ -102,7 +102,7 @@
                 </label>
                 <md-select ng-model="vm.provisioning.selectedDeviceId"
                            ng-change="vm.selectProvisioningDevice()"
-                           ng-disabled="vm.isLoading || vm.provisioning.isCreating"
+                           ng-disabled="vm.isLoading || vm.isProvisioningBusy()"
                            required>
                     <md-option ng-repeat="device in vm.devices | orderBy:'displayName'"
                                ng-value="device.id">
@@ -121,7 +121,7 @@
                 <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.NO_PROFILE"></p>
                 <md-button class="md-raised md-primary"
                            ng-click="vm.createProvisionedPeer()"
-                           ng-disabled="vm.provisioning.isCreating">
+                           ng-disabled="vm.isProvisioningBusy()">
                     {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.CREATE' | translate }}
                 </md-button>
                 <md-progress-circular ng-if="vm.provisioning.isCreating"
@@ -146,21 +146,47 @@
                 </div>
 
                 <div style="margin-top: 12px;">
+                    <md-switch
+                        ng-model="vm.provisioning.selectedPeer.allowLanAccess"
+                        ng-change="vm.updateProvisioningLanAccess()"
+                        ng-disabled="vm.isProvisioningBusy()">
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.LAN_ACCESS' | translate }}
+                    </md-switch>
+                    <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.LAN_HINT"></p>
+                </div>
+
+                <div style="margin-top: 12px;">
                     <md-button class="md-raised md-primary"
                                ng-click="vm.showProvisioningQr()"
-                               ng-disabled="vm.provisioning.isLoadingQr">
+                               ng-disabled="vm.isProvisioningBusy()">
                         {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.SHOW_QR' | translate }}
                     </md-button>
                     <md-button class="md-raised md-secondary"
                                ng-click="vm.downloadProvisioningConfig()"
-                               ng-disabled="vm.provisioning.isDownloading">
+                               ng-disabled="vm.isProvisioningBusy()">
                         {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.DOWNLOAD_CONFIG' | translate }}
+                    </md-button>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <md-button class="md-raised"
+                               ng-click="vm.confirmRegenerateProvisionedPeer($event)"
+                               ng-disabled="vm.isProvisioningBusy()">
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.REGENERATE' | translate }}
+                    </md-button>
+                    <md-button class="md-raised md-warn"
+                               ng-click="vm.confirmDeleteProvisionedPeer($event)"
+                               ng-disabled="vm.isProvisioningBusy()">
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.DELETE' | translate }}
                     </md-button>
                 </div>
 
                 <md-progress-circular
                     ng-if="vm.provisioning.isLoadingQr ||
-                           vm.provisioning.isDownloading"
+                           vm.provisioning.isDownloading ||
+                           vm.provisioning.isSavingLanAccess ||
+                           vm.provisioning.isDeleting ||
+                           vm.provisioning.isRegenerating"
                     md-mode="indeterminate"
                     md-diameter="28">
                 </md-progress-circular>

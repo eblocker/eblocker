@@ -90,6 +90,97 @@
              class="config-frame md-whiteframe-z1">
 
             <h3 style="margin-top: 0;"
+                translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.TITLE">
+            </h3>
+
+            <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.DESCRIPTION"></p>
+
+            <md-input-container md-theme="eBlockerThemeInput"
+                                style="width: 100%; max-width: 520px;">
+                <label>
+                    {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.DEVICE' | translate }}
+                </label>
+                <md-select ng-model="vm.provisioning.selectedDeviceId"
+                           ng-change="vm.selectProvisioningDevice()"
+                           ng-disabled="vm.isLoading || vm.provisioning.isCreating"
+                           required>
+                    <md-option ng-repeat="device in vm.devices | orderBy:'displayName'"
+                               ng-value="device.id">
+                        {{ device.displayName || device.name }}
+                    </md-option>
+                </md-select>
+            </md-input-container>
+
+            <div ng-if="vm.devices.length === 0">
+                {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.NO_DEVICES' | translate }}
+            </div>
+
+            <div ng-if="vm.provisioning.selectedDeviceId &&
+                        !vm.provisioning.selectedPeer"
+                 style="margin-top: 8px;">
+                <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.NO_PROFILE"></p>
+                <md-button class="md-raised md-primary"
+                           ng-click="vm.createProvisionedPeer()"
+                           ng-disabled="vm.provisioning.isCreating">
+                    {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.CREATE' | translate }}
+                </md-button>
+                <md-progress-circular ng-if="vm.provisioning.isCreating"
+                                      md-mode="indeterminate"
+                                      md-diameter="28">
+                </md-progress-circular>
+            </div>
+
+            <div ng-if="vm.provisioning.selectedPeer"
+                 style="margin-top: 8px;">
+                <div>
+                    <strong>
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.PROFILE' | translate }}:
+                    </strong>
+                    {{ vm.provisioning.selectedPeer.name }}
+                </div>
+                <div style="margin-top: 4px;">
+                    <strong>
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.ADDRESS' | translate }}:
+                    </strong>
+                    {{ vm.provisioning.selectedPeer.allowedIp }}
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <md-button class="md-raised md-primary"
+                               ng-click="vm.showProvisioningQr()"
+                               ng-disabled="vm.provisioning.isLoadingQr">
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.SHOW_QR' | translate }}
+                    </md-button>
+                    <md-button class="md-raised md-secondary"
+                               ng-click="vm.downloadProvisioningConfig()"
+                               ng-disabled="vm.provisioning.isDownloading">
+                        {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.DOWNLOAD_CONFIG' | translate }}
+                    </md-button>
+                </div>
+
+                <md-progress-circular
+                    ng-if="vm.provisioning.isLoadingQr ||
+                           vm.provisioning.isDownloading"
+                    md-mode="indeterminate"
+                    md-diameter="28">
+                </md-progress-circular>
+
+                <div ng-if="vm.provisioning.qrUrl"
+                     style="margin-top: 16px;">
+                    <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.QR_HINT"></p>
+                    <img ng-src="{{ vm.provisioning.qrUrl }}"
+                         alt="WireGuard QR Code"
+                         style="display:block; max-width:320px; width:100%; height:auto;">
+                </div>
+            </div>
+        </div>
+
+        <div flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1">
+
+            <h3 style="margin-top: 0;"
                 translate="ADMINCONSOLE.WIREGUARD.PEERS.TITLE">
             </h3>
 

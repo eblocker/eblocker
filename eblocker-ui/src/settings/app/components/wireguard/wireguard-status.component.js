@@ -14,7 +14,7 @@ export default {
 };
 
 function Controller(WireGuardService, DeviceService,
-                    NotificationService, $q) {
+                    NotificationService, $q, $window) {
     'ngInject';
     'use strict';
 
@@ -25,53 +25,77 @@ function Controller(WireGuardService, DeviceService,
     // Older non-zero handshakes mean the peer has been seen before.
     const ACTIVE_HANDSHAKE_WINDOW_SECONDS = 180;
 
-    vm.status = {
-        enabled: false,
-        runtime: {
-            iface: null,
-            service: null,
-            wg: null,
-            peers: 0,
-            error: null,
-            peerTelemetry: []
-        }
-    };
-
-    vm.endpoint = {
-        type: null,
-        host: null
-    };
-
-    vm.endpointTypes = [
-        'FIXED_IP',
-        'DYN_DNS',
-        'EBLOCKER_DYN_DNS'
-    ];
-
-    vm.peers = [];
-    vm.devices = [];
-    vm.peerRows = [];
-
-    vm.isLoading = false;
-    vm.isToggling = false;
-    vm.isSavingEndpoint = false;
-
-    vm.interfaceConfig = {value: '-'};
-    vm.serviceConfig = {value: '-'};
-    vm.wgConfig = {value: '-'};
-    vm.peersConfig = {value: 0};
-    vm.portConfig = {value: 'UDP 51820'};
-
-    vm.toggleServer = toggleServer;
-    vm.saveEndpoint = saveEndpoint;
-    vm.endpointHostRequired = endpointHostRequired;
-    vm.formatBytes = formatBytes;
-
+    initializeBaseUi();
     initializeRoutingUi();
+    initializeProvisioningUi();
 
     vm.$onInit = vm.reload = function() {
         return load();
     };
+
+    function initializeBaseUi() {
+        vm.status = {
+            enabled: false,
+            runtime: {
+                iface: null,
+                service: null,
+                wg: null,
+                peers: 0,
+                error: null,
+                peerTelemetry: []
+            }
+        };
+
+        vm.endpoint = {
+            type: null,
+            host: null
+        };
+
+        vm.endpointTypes = [
+            'FIXED_IP',
+            'DYN_DNS',
+            'EBLOCKER_DYN_DNS'
+        ];
+
+        vm.peers = [];
+        vm.devices = [];
+        vm.peerRows = [];
+
+        vm.isLoading = false;
+        vm.isToggling = false;
+        vm.isSavingEndpoint = false;
+
+        vm.interfaceConfig = {value: '-'};
+        vm.serviceConfig = {value: '-'};
+        vm.wgConfig = {value: '-'};
+        vm.peersConfig = {value: 0};
+        vm.portConfig = {value: 'UDP 51820'};
+
+        vm.toggleServer = toggleServer;
+        vm.saveEndpoint = saveEndpoint;
+        vm.endpointHostRequired = endpointHostRequired;
+        vm.formatBytes = formatBytes;
+    }
+
+    function initializeProvisioningUi() {
+        vm.provisioning = {
+            selectedDeviceId: null,
+            selectedPeer: null,
+            qrUrl: null,
+            isCreating: false,
+            isLoadingQr: false,
+            isDownloading: false
+        };
+
+        vm.selectProvisioningDevice = selectProvisioningDevice;
+        vm.createProvisionedPeer = createProvisionedPeer;
+        vm.showProvisioningQr = showProvisioningQr;
+        vm.downloadProvisioningConfig = downloadProvisioningConfig;
+
+        vm.$onDestroy = function() {
+            revokeProvisioningQrUrl();
+        };
+    }
 
     function initializeRoutingUi() {
         vm.isSavingRouting = false;
@@ -226,6 +250,200 @@ function Controller(WireGuardService, DeviceService,
         });
 
         synchronizeRoutingSelection();
+        synchronizeProvisioningSelection();
+    }
+
+    function findPeerRowByDeviceId(deviceId) {
+        let found;
+
+        vm.peerRows.some(function(peer) {
+            if (peer.deviceId === deviceId) {
+                found = peer;
+                return true;
+            }
+            return false;
+        });
+
+        return found;
+    }
+
+    function synchronizeProvisioningSelection() {
+        if (!vm.provisioning.selectedDeviceId &&
+                vm.devices.length > 0) {
+            vm.provisioning.selectedDeviceId = vm.devices[0].id;
+        }
+
+        vm.provisioning.selectedPeer =
+            findPeerRowByDeviceId(vm.provisioning.selectedDeviceId) || null;
+
+        if (!vm.provisioning.selectedPeer) {
+            revokeProvisioningQrUrl();
+        }
+    }
+
+    function selectProvisioningDevice() {
+        revokeProvisioningQrUrl();
+        synchronizeProvisioningSelection();
+    }
+
+    function createProvisionedPeer() {
+        const deviceId = vm.provisioning.selectedDeviceId;
+
+        if (!angular.isString(deviceId) || deviceId.length === 0) {
+            return $q.reject('WireGuard target device is required.');
+        }
+
+        vm.provisioning.isCreating = true;
+        revokeProvisioningQrUrl();
+
+        return WireGuardService.createPeerForDevice(deviceId)
+            .then(function(response) {
+                const peer = response.data;
+
+                if (angular.isObject(peer)) {
+                    vm.peers = vm.peers.filter(function(candidate) {
+                        return candidate.deviceId !== deviceId;
+                    });
+                    vm.peers.push(peer);
+                    buildPeerRows();
+                }
+
+                NotificationService.info(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.CREATED'
+                );
+                return peer;
+            })
+            .catch(function(response) {
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.CREATE_FAILED',
+                    response
+                );
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isCreating = false;
+            });
+    }
+
+    function showProvisioningQr() {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer)) {
+            return $q.reject('WireGuard peer is required.');
+        }
+
+        vm.provisioning.isLoadingQr = true;
+
+        return WireGuardService.getQrCode(peer.id)
+            .then(function(response) {
+                revokeProvisioningQrUrl();
+
+                const blob = new $window.Blob(
+                    [response.data],
+                    {type: 'image/png'}
+                );
+
+                vm.provisioning.qrUrl =
+                    $window.URL.createObjectURL(blob);
+
+                return vm.provisioning.qrUrl;
+            })
+            .catch(function(response) {
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.QR_FAILED',
+                    response
+                );
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isLoadingQr = false;
+            });
+    }
+
+    function downloadProvisioningConfig() {
+        const peer = vm.provisioning.selectedPeer;
+
+        if (!angular.isObject(peer)) {
+            return $q.reject('WireGuard peer is required.');
+        }
+
+        vm.provisioning.isDownloading = true;
+
+        return WireGuardService.getClientConfig(peer.id)
+            .then(function(response) {
+                const config = response.data &&
+                    response.data.configuration;
+
+                if (!angular.isString(config) || config.length === 0) {
+                    return $q.reject(
+                        'WireGuard client configuration is empty.'
+                    );
+                }
+
+                const blob = new $window.Blob(
+                    [config],
+                    {type: 'text/plain;charset=utf-8'}
+                );
+                const url = $window.URL.createObjectURL(blob);
+                const link = $window.document.createElement('a');
+
+                link.href = url;
+                link.download = buildProvisioningFileName(peer);
+                link.style.display = 'none';
+                $window.document.body.appendChild(link);
+
+                try {
+                    link.click();
+                } finally {
+                    $window.document.body.removeChild(link);
+                    $window.URL.revokeObjectURL(url);
+                }
+
+                return true;
+            })
+            .catch(function(response) {
+                NotificationService.error(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.CONFIG_FAILED',
+                    response
+                );
+                return $q.reject(response);
+            })
+            .finally(function() {
+                vm.provisioning.isDownloading = false;
+            });
+    }
+
+    function buildProvisioningFileName(peer) {
+        const device = vm.devices.filter(function(candidate) {
+            return candidate.id === peer.deviceId;
+        })[0];
+
+        let name = angular.isObject(device) ?
+            (device.displayName || device.name) :
+            peer.name;
+
+        if (!angular.isString(name) || name.length === 0) {
+            name = 'client';
+        }
+
+        name = name
+            .replace(/[^A-Za-z0-9._-]+/g, '_')
+            .replace(/^_+|_+$/g, '');
+
+        if (name.length === 0) {
+            name = 'client';
+        }
+
+        return 'WireGuard-' + name + '.conf';
+    }
+
+    function revokeProvisioningQrUrl() {
+        if (angular.isString(vm.provisioning.qrUrl) &&
+                vm.provisioning.qrUrl.length > 0) {
+            $window.URL.revokeObjectURL(vm.provisioning.qrUrl);
+        }
+
+        vm.provisioning.qrUrl = null;
     }
 
     function normalizePeerRouting(peer) {

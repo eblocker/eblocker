@@ -3585,6 +3585,25 @@
                 "RX": "Empfangen",
                 "TX": "Gesendet"
             },
+            "PROVISIONING": {
+                "TITLE": "WireGuard-Clientprofile",
+                "DESCRIPTION": "Hier kann ein WireGuard-Profil für ein bestimmtes eBlocker-Gerät erstellt und auf einem zweiten Bildschirm als QR-Code angezeigt werden. Das Zielgerät scannt den QR-Code anschließend direkt mit der WireGuard-App.",
+                "DEVICE": "Zielgerät",
+                "NO_DEVICES": "Es sind keine Geräte für die WireGuard-Einrichtung verfügbar.",
+                "NO_PROFILE": "Für dieses Gerät ist noch kein WireGuard-Clientprofil vorhanden.",
+                "CREATE": "Clientprofil erstellen",
+                "PROFILE": "Clientprofil",
+                "ADDRESS": "WireGuard-IP",
+                "SHOW_QR": "QR-Code anzeigen",
+                "DOWNLOAD_CONFIG": ".conf herunterladen",
+                "QR_HINT": "Öffne auf dem Zielgerät die WireGuard-App und scanne diesen QR-Code. Der QR-Code enthält die private Client-Konfiguration und sollte nicht weitergegeben werden.",
+                "NOTIFICATION": {
+                    "CREATED": "WireGuard-Clientprofil wurde erstellt.",
+                    "CREATE_FAILED": "Das WireGuard-Clientprofil konnte nicht erstellt werden.",
+                    "QR_FAILED": "Der WireGuard-QR-Code konnte nicht geladen werden.",
+                    "CONFIG_FAILED": "Die WireGuard-Clientkonfiguration konnte nicht heruntergeladen werden."
+                }
+            },
             "ROUTING": {
                 "TITLE": "Tunnel-Routing",
                 "DESCRIPTION": "Legt fest, welche IPv4-Netze der WireGuard-Client durch den Tunnel routet.",

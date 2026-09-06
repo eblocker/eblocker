@@ -3584,6 +3584,25 @@
                 "RX" : "Received",
                 "TX" : "Sent"
             },
+            "PROVISIONING" : {
+                "TITLE" : "WireGuard client profiles",
+                "DESCRIPTION" : "Create a WireGuard profile for a specific eBlocker device and display its QR code on a second screen. The target device can then scan the QR code directly with the WireGuard app.",
+                "DEVICE" : "Target device",
+                "NO_DEVICES" : "No devices are available for WireGuard setup.",
+                "NO_PROFILE" : "This device does not have a WireGuard client profile yet.",
+                "CREATE" : "Create client profile",
+                "PROFILE" : "Client profile",
+                "ADDRESS" : "WireGuard IP",
+                "SHOW_QR" : "Show QR code",
+                "DOWNLOAD_CONFIG" : "Download .conf",
+                "QR_HINT" : "Open the WireGuard app on the target device and scan this QR code. The QR code contains the private client configuration and must not be shared.",
+                "NOTIFICATION" : {
+                    "CREATED" : "WireGuard client profile created.",
+                    "CREATE_FAILED" : "The WireGuard client profile could not be created.",
+                    "QR_FAILED" : "The WireGuard QR code could not be loaded.",
+                    "CONFIG_FAILED" : "The WireGuard client configuration could not be downloaded."
+                }
+            },
             "ROUTING" : {
                 "TITLE" : "Tunnel routing",
                 "DESCRIPTION" : "Defines which IPv4 networks the WireGuard client routes through the tunnel.",

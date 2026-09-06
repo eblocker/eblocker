@@ -68,6 +68,12 @@ describe('App settings; WireGuard status component controller', function() {
             enable: jasmine.createSpy('enable'),
             disable: jasmine.createSpy('disable'),
             getPeers: jasmine.createSpy('getPeers'),
+            createPeerForDevice:
+                jasmine.createSpy('createPeerForDevice'),
+            getClientConfig:
+                jasmine.createSpy('getClientConfig'),
+            getQrCode:
+                jasmine.createSpy('getQrCode'),
             getEndpoint: jasmine.createSpy('getEndpoint'),
             setEndpoint: jasmine.createSpy('setEndpoint'),
             setRouting: jasmine.createSpy('setRouting')
@@ -213,6 +219,57 @@ describe('App settings; WireGuard status component controller', function() {
             .toBe(90);
         expect(ctrl.peerRows[1].txBytes)
             .toBe(120);
+
+        expect(ctrl.provisioning.selectedDeviceId)
+            .toBe('device:test-phone');
+        expect(ctrl.provisioning.selectedPeer.id)
+            .toBe(2);
+    });
+
+    it('creates a device-bound peer for the selected device', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+
+        ctrl.provisioning.selectedDeviceId = 'device:new-phone';
+        ctrl.selectProvisioningDevice();
+
+        WireGuardService.createPeerForDevice.and.returnValue(
+            $q.when({
+                data: {
+                    id: 8,
+                    name: 'New phone',
+                    publicKey: 'peer-public-new',
+                    allowedIp: '10.13.13.8/32',
+                    deviceId: 'device:new-phone',
+                    allowLanAccess: false
+                }
+            })
+        );
+
+        ctrl.createProvisionedPeer();
+        $rootScope.$digest();
+
+        expect(WireGuardService.createPeerForDevice)
+            .toHaveBeenCalledWith('device:new-phone');
+        expect(ctrl.provisioning.selectedPeer.id).toBe(8);
+        expect(ctrl.provisioning.selectedPeer.deviceId)
+            .toBe('device:new-phone');
+        expect(ctrl.provisioning.isCreating).toBe(false);
+        expect(NotificationService.info).toHaveBeenCalled();
+    });
+
+    it('reports device provisioning failures', function() {
+        ctrl.provisioning.selectedDeviceId = 'device:new-phone';
+
+        WireGuardService.createPeerForDevice.and.returnValue(
+            $q.reject({status: 500})
+        );
+
+        ctrl.createProvisionedPeer().catch(angular.noop);
+        $rootScope.$digest();
+
+        expect(NotificationService.error).toHaveBeenCalled();
+        expect(ctrl.provisioning.isCreating).toBe(false);
     });
 
     it('refreshes WireGuard data internally without changing server state', function() {

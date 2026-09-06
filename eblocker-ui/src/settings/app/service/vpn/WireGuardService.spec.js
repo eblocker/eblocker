@@ -121,6 +121,59 @@ describe('App settings; WireGuardService', function() {
         $httpBackend.flush();
     });
 
+    it('creates a device-bound peer through the admin API', function() {
+        const peer = {
+            id: 8,
+            name: 'Phone',
+            allowedIp: '10.13.13.8/32',
+            deviceId: 'device:test-phone'
+        };
+
+        $httpBackend.expectPOST(
+            PATH + '/devices/device%3Atest-phone/peer'
+        ).respond(201, peer);
+
+        service.createPeerForDevice('device:test-phone')
+            .then(function(response) {
+                expect(response.data).toEqual(peer);
+            });
+
+        $httpBackend.flush();
+    });
+
+    it('loads explicit WireGuard client configuration', function() {
+        const config = {
+            peerId: 8,
+            configuration: '[Interface]\nPrivateKey = secret\n'
+        };
+
+        $httpBackend.expectGET(
+            PATH + '/peers/8/clientConfig'
+        ).respond(200, config);
+
+        service.getClientConfig(8)
+            .then(function(response) {
+                expect(response.data).toEqual(config);
+            });
+
+        $httpBackend.flush();
+    });
+
+    it('loads WireGuard QR code as binary data', function() {
+        const png = new ArrayBuffer(4);
+
+        $httpBackend.expectGET(
+            PATH + '/peers/8/qrcode'
+        ).respond(200, png);
+
+        service.getQrCode(8)
+            .then(function(response) {
+                expect(response.data.byteLength).toBe(4);
+            });
+
+        $httpBackend.flush();
+    });
+
     it('loads endpoint configuration', function() {
         const endpoint = {
             type: 'DYN_DNS',

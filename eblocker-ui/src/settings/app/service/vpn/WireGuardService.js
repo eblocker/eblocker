@@ -33,6 +33,25 @@ export default function WireGuardService($http, $q) {
             .then(standardSuccess, standardError);
     }
 
+    function createPeerForDevice(deviceId) {
+        return $http.post(
+            PATH + '/devices/' + encodeURIComponent(deviceId) + '/peer'
+        ).then(standardSuccess, standardError);
+    }
+
+    function getClientConfig(peerId) {
+        return $http.get(
+            PATH + '/peers/' + encodeURIComponent(peerId) + '/clientConfig'
+        ).then(standardSuccess, standardError);
+    }
+
+    function getQrCode(peerId) {
+        return $http.get(
+            PATH + '/peers/' + encodeURIComponent(peerId) + '/qrcode',
+            {responseType: 'arraybuffer'}
+        ).then(standardSuccess, standardError);
+    }
+
     function getEndpoint() {
         return $http.get(PATH + '/endpoint')
             .then(standardSuccess, standardError);
@@ -86,6 +105,9 @@ export default function WireGuardService($http, $q) {
         enable: enable,
         disable: disable,
         getPeers: getPeers,
+        createPeerForDevice: createPeerForDevice,
+        getClientConfig: getClientConfig,
+        getQrCode: getQrCode,
         getEndpoint: getEndpoint,
         setEndpoint: setEndpoint,
         setRouting: setRouting

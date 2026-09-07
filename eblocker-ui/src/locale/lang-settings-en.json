@@ -3539,12 +3539,16 @@
                 "ON" : "WireGuard on",
                 "OFF" : "WireGuard off"
             },
+            "DISABLED_STATE" : {
+                "TITLE" : "WireGuard is off",
+                "TEXT" : "Saved client profiles and settings are retained. Connections are currently inactive."
+            },
             "STATUS" : {
                 "TITLE" : "Status",
                 "INTERFACE" : "Interface",
                 "SERVICE" : "Service",
                 "WG" : "WireGuard",
-                "PEERS" : "Peers",
+                "PEERS" : "Active peers",
                 "PORT" : "Port"
             },
             "ENDPOINT" : {
@@ -3579,7 +3583,8 @@
                     "ACTIVE" : "Active",
                     "RECENTLY_SEEN" : "Recently seen",
                     "NEVER_CONNECTED" : "Never connected",
-                    "UNAVAILABLE" : "Unavailable"
+                    "UNAVAILABLE" : "Unavailable",
+                    "GLOBAL_DISABLED" : "Inactive – WireGuard is off"
                 },
                 "LATEST_HANDSHAKE" : "Latest handshake",
                 "RX" : "Received",

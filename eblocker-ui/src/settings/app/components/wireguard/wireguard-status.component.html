@@ -150,10 +150,22 @@
             </div>
         </div>
 
-        <div id="wireguard-client-profiles" flex-gt-lg="65"
+        <div ng-if="!vm.status.enabled"
+             flex-gt-lg="65"
              flex-md="75"
              flex-lg="75"
              class="config-frame md-whiteframe-z1">
+            <strong translate="ADMINCONSOLE.WIREGUARD.DISABLED_STATE.TITLE"></strong>
+            <div style="margin-top: 4px;"
+                 translate="ADMINCONSOLE.WIREGUARD.DISABLED_STATE.TEXT">
+            </div>
+        </div>
+
+        <div id="wireguard-client-profiles" flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1"
+             ng-style="{'opacity': vm.status.enabled ? '1' : '0.55'}">
 
             <h3 style="margin-top: 0;"
                 translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.TITLE">
@@ -277,7 +289,8 @@
         <div flex-gt-lg="65"
              flex-md="75"
              flex-lg="75"
-             class="config-frame md-whiteframe-z1">
+             class="config-frame md-whiteframe-z1"
+             ng-style="{'opacity': vm.status.enabled ? '1' : '0.55'}">
 
             <h3 style="margin-top: 0;"
                 translate="ADMINCONSOLE.WIREGUARD.PEERS.TITLE">
@@ -347,7 +360,12 @@
                             </div>
                             <div style="font-size: 12px; margin-top: 3px;">
                                 {{ 'ADMINCONSOLE.WIREGUARD.PEERS.ACTIVITY.LABEL' | translate }}:
-                                {{ peer.activityTranslationKey | translate }}
+                                {{
+                                    (vm.status.enabled ?
+                                    peer.activityTranslationKey :
+                                    'ADMINCONSOLE.WIREGUARD.PEERS.ACTIVITY.GLOBAL_DISABLED') |
+                                    translate
+                                }}
                             </div>
                         </td>
 
@@ -390,7 +408,12 @@
                                     {{ peer.latestHandshakeMillis | date:'short' }}
                                 </span>
                                 <span ng-if="!peer.latestHandshakeMillis">
-                                    {{ peer.activityTranslationKey | translate }}
+                                    {{
+                                        (vm.status.enabled ?
+                                        peer.activityTranslationKey :
+                                        'ADMINCONSOLE.WIREGUARD.PEERS.ACTIVITY.GLOBAL_DISABLED') |
+                                        translate
+                                    }}
                                 </span>
                             </div>
                         </td>
@@ -431,7 +454,8 @@
         <div flex-gt-lg="65"
              flex-md="75"
              flex-lg="75"
-             class="config-frame md-whiteframe-z1">
+             class="config-frame md-whiteframe-z1"
+             ng-style="{'opacity': vm.status.enabled ? '1' : '0.55'}">
 
             <h3 style="margin-top: 0;"
                 translate="ADMINCONSOLE.WIREGUARD.ROUTING.TITLE">

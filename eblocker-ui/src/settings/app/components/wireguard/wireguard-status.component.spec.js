@@ -205,6 +205,7 @@ describe('App settings; WireGuard status component controller', function() {
         expect(ctrl.endpoint.type).toBe('DYN_DNS');
         expect(ctrl.endpoint.host)
             .toBe('vpn.example.test');
+        expect(ctrl.isEndpointConfigured()).toBe(true);
 
         expect(ctrl.interfaceConfig.value).toBe('up');
         expect(ctrl.serviceConfig.value).toBe('active');
@@ -274,18 +275,70 @@ describe('App settings; WireGuard status component controller', function() {
         expect(NotificationService.info).toHaveBeenCalled();
     });
 
-    it('reports device provisioning failures', function() {
-        ctrl.provisioning.selectedDeviceId = 'device:new-phone';
+    describe('WG-13F provisioning UX', function() {
+        it('reports device provisioning failures', function() {
+            ctrl.provisioning.selectedDeviceId = 'device:new-phone';
 
-        WireGuardService.createPeerForDevice.and.returnValue(
-            $q.reject({status: 500})
-        );
+            WireGuardService.createPeerForDevice.and.returnValue(
+                $q.reject({status: 500})
+            );
 
-        ctrl.createProvisionedPeer().catch(angular.noop);
-        $rootScope.$digest();
+            ctrl.createProvisionedPeer().catch(angular.noop);
+            $rootScope.$digest();
 
-        expect(NotificationService.error).toHaveBeenCalled();
-        expect(ctrl.provisioning.isCreating).toBe(false);
+            expect(NotificationService.error).toHaveBeenCalled();
+            expect(ctrl.provisioning.isCreating).toBe(false);
+        });
+
+        it('manages a device-bound peer directly from the peer table', function() {
+            ctrl.$onInit();
+            $rootScope.$digest();
+
+            ctrl.provisioning.selectedDeviceId = null;
+            ctrl.provisioning.selectedPeer = null;
+
+            expect(ctrl.canManageProvisionedPeer(ctrl.peerRows[0]))
+                .toBe(true);
+            expect(ctrl.canManageProvisionedPeer(ctrl.peerRows[1]))
+                .toBe(false);
+
+            ctrl.manageProvisionedPeer(ctrl.peerRows[0]);
+
+            expect(ctrl.provisioning.selectedDeviceId)
+                .toBe('device:test-phone');
+            expect(ctrl.provisioning.selectedPeer.id)
+                .toBe(2);
+        });
+
+        it('blocks QR and config export until an endpoint is persisted', function() {
+            WireGuardService.getEndpoint.and.returnValue(
+                $q.when({
+                    data: {
+                        type: null,
+                        host: null
+                    }
+                })
+            );
+
+            ctrl.$onInit();
+            $rootScope.$digest();
+
+            expect(ctrl.isEndpointConfigured()).toBe(false);
+
+            ctrl.showProvisioningQr().catch(angular.noop);
+            ctrl.downloadProvisioningConfig().catch(angular.noop);
+            $rootScope.$digest();
+
+            expect(WireGuardService.getQrCode)
+                .not.toHaveBeenCalled();
+            expect(WireGuardService.getClientConfig)
+                .not.toHaveBeenCalled();
+            expect(NotificationService.error)
+                .toHaveBeenCalledWith(
+                    'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.ENDPOINT_REQUIRED'
+                );
+        });
+
     });
 
     it('updates LAN access for the selected provisioned peer', function() {
@@ -799,6 +852,7 @@ describe('App settings; WireGuard status component controller', function() {
         expect(WireGuardService.setEndpoint)
             .toHaveBeenCalledWith(saved);
         expect(ctrl.endpoint).toEqual(saved);
+        expect(ctrl.isEndpointConfigured()).toBe(true);
         expect(NotificationService.info)
             .toHaveBeenCalled();
     });

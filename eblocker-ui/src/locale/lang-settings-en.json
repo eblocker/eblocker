@@ -3567,7 +3567,8 @@
                     "NAME" : "Peer",
                     "DEVICE" : "eBlocker device",
                     "IP" : "WireGuard IP",
-                    "LAN" : "LAN access"
+                    "LAN" : "LAN access",
+                    "ACTIONS" : "Actions"
                 },
                 "UNBOUND" : "Not assigned",
                 "UNKNOWN_DEVICE" : "Unknown device",
@@ -3595,6 +3596,8 @@
                 "ADDRESS" : "WireGuard IP",
                 "SHOW_QR" : "Show QR code",
                 "DOWNLOAD_CONFIG" : "Download .conf",
+                "MANAGE" : "Manage",
+                "ENDPOINT_REQUIRED" : "Configure external WireGuard access above first. QR code and .conf export will then become available.",
                 "QR_HINT" : "Open the WireGuard app on the target device and scan this QR code. The QR code contains the private client configuration and must not be shared.",
                 "LAN_ACCESS" : "Allow access to the local network",
                 "LAN_HINT" : "Controls whether this WireGuard client may reach devices and services on the local network.",
@@ -3613,6 +3616,7 @@
                     "CREATE_FAILED" : "The WireGuard client profile could not be created.",
                     "QR_FAILED" : "The WireGuard QR code could not be loaded.",
                     "CONFIG_FAILED" : "The WireGuard client configuration could not be downloaded.",
+                    "ENDPOINT_REQUIRED" : "Configure external WireGuard access first.",
                     "LAN_SAVED" : "LAN access for the WireGuard client profile was saved.",
                     "LAN_FAILED" : "LAN access could not be changed.",
                     "DELETED" : "WireGuard client profile deleted.",

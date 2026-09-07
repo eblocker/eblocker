@@ -35,6 +35,72 @@
              class="config-frame md-whiteframe-z1">
 
             <h3 style="margin-top: 0;"
+                translate="ADMINCONSOLE.WIREGUARD.ENDPOINT.TITLE">
+            </h3>
+
+            <form name="wireGuardEndpointForm"
+                  ng-submit="vm.saveEndpoint()"
+                  novalidate>
+
+                <div layout="row"
+                     layout-xs="column"
+                     flex>
+                    <div flex-gt-xs="33">
+                        <md-input-container style="width: 100%;">
+                            <label>
+                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPE' | translate }}
+                            </label>
+
+                            <md-select ng-model="vm.endpoint.type"
+                                       required>
+                                <md-option ng-repeat="type in vm.endpointTypes"
+                                           ng-value="type">
+                                    {{
+                                        ('ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPES.' + type)
+                                        | translate
+                                    }}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+
+                    <div flex-gt-xs="33">
+                        <md-input-container style="width: 100%;"
+                                            ng-if="vm.endpointHostRequired()">
+                            <label>
+                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.HOST' | translate }}
+                            </label>
+
+                            <input ng-model="vm.endpoint.host"
+                                   ng-required="vm.endpointHostRequired()">
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div>
+                    <md-button type="submit"
+                               class="md-raised md-primary"
+                               ng-disabled="
+                                   vm.isSavingEndpoint ||
+                                   wireGuardEndpointForm.$invalid">
+                        {{ 'ADMINCONSOLE.WIREGUARD.ACTION.SAVE' | translate }}
+                    </md-button>
+
+                    <md-progress-circular
+                        ng-if="vm.isSavingEndpoint"
+                        md-mode="indeterminate"
+                        md-diameter="28">
+                    </md-progress-circular>
+                </div>
+            </form>
+        </div>
+
+        <div flex-gt-lg="65"
+             flex-md="75"
+             flex-lg="75"
+             class="config-frame md-whiteframe-z1">
+
+            <h3 style="margin-top: 0;"
                 translate="ADMINCONSOLE.WIREGUARD.STATUS.TITLE">
             </h3>
 
@@ -84,7 +150,7 @@
             </div>
         </div>
 
-        <div flex-gt-lg="65"
+        <div id="wireguard-client-profiles" flex-gt-lg="65"
              flex-md="75"
              flex-lg="75"
              class="config-frame md-whiteframe-z1">
@@ -94,6 +160,11 @@
             </h3>
 
             <p translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.DESCRIPTION"></p>
+
+            <p ng-if="!vm.isEndpointConfigured()"
+               class="content-error"
+               translate="ADMINCONSOLE.WIREGUARD.PROVISIONING.ENDPOINT_REQUIRED">
+            </p>
 
             <md-input-container md-theme="eBlockerThemeInput"
                                 style="width: 100%; max-width: 520px;">
@@ -158,12 +229,14 @@
                 <div style="margin-top: 12px;">
                     <md-button class="md-raised md-primary"
                                ng-click="vm.showProvisioningQr()"
-                               ng-disabled="vm.isProvisioningBusy()">
+                               ng-disabled="vm.isProvisioningBusy() ||
+                                            !vm.isEndpointConfigured()">
                         {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.SHOW_QR' | translate }}
                     </md-button>
                     <md-button class="md-raised md-secondary"
                                ng-click="vm.downloadProvisioningConfig()"
-                               ng-disabled="vm.isProvisioningBusy()">
+                               ng-disabled="vm.isProvisioningBusy() ||
+                                            !vm.isEndpointConfigured()">
                         {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.DOWNLOAD_CONFIG' | translate }}
                     </md-button>
                 </div>
@@ -227,11 +300,12 @@
                        style="width: 100%; table-layout: fixed;">
 
                     <colgroup>
-                        <col style="width: 22%;">
-                        <col style="width: 31%;">
                         <col style="width: 18%;">
-                        <col style="width: 12%;">
-                        <col style="width: 17%;">
+                        <col style="width: 27%;">
+                        <col style="width: 16%;">
+                        <col style="width: 10%;">
+                        <col style="width: 14%;">
+                        <col style="width: 15%;">
                     </colgroup>
 
                     <thead>
@@ -251,12 +325,15 @@
                         <th style="padding: 8px 12px; text-align: left;">
                             {{ 'ADMINCONSOLE.WIREGUARD.ROUTING.MODE' | translate }}
                         </th>
+                        <th style="padding: 8px 12px; text-align: left;">
+                            {{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.ACTIONS' | translate }}
+                        </th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr ng-if="vm.peerRows.length === 0">
-                        <td colspan="5"
+                        <td colspan="6"
                             style="padding: 8px 12px; text-align: center;">
                             {{ 'ADMINCONSOLE.WIREGUARD.PEERS.EMPTY' | translate }}
                         </td>
@@ -333,6 +410,16 @@
                                 ('ADMINCONSOLE.WIREGUARD.ROUTING.MODES.' +
                                 peer.tunnelMode) | translate
                             }}
+                        </td>
+
+                        <td style="padding: 8px 12px; text-align: left;"
+                            data-title="{{ 'ADMINCONSOLE.WIREGUARD.PEERS.COLUMN.ACTIONS' | translate }}">
+                            <md-button class="md-raised md-secondary"
+                                       ng-click="vm.manageProvisionedPeer(peer)"
+                                       ng-disabled="!vm.canManageProvisionedPeer(peer) ||
+                                                    vm.isProvisioningBusy()">
+                                {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.MANAGE' | translate }}
+                            </md-button>
                         </td>
                     </tr>
                     </tbody>
@@ -437,71 +524,6 @@
             </form>
         </div>
 
-        <div flex-gt-lg="65"
-             flex-md="75"
-             flex-lg="75"
-             class="config-frame md-whiteframe-z1">
-
-            <h3 style="margin-top: 0;"
-                translate="ADMINCONSOLE.WIREGUARD.ENDPOINT.TITLE">
-            </h3>
-
-            <form name="wireGuardEndpointForm"
-                  ng-submit="vm.saveEndpoint()"
-                  novalidate>
-
-                <div layout="row"
-                     layout-xs="column"
-                     flex>
-                    <div flex-gt-xs="33">
-                        <md-input-container style="width: 100%;">
-                            <label>
-                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPE' | translate }}
-                            </label>
-
-                            <md-select ng-model="vm.endpoint.type"
-                                       required>
-                                <md-option ng-repeat="type in vm.endpointTypes"
-                                           ng-value="type">
-                                    {{
-                                        ('ADMINCONSOLE.WIREGUARD.ENDPOINT.TYPES.' + type)
-                                        | translate
-                                    }}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                    </div>
-
-                    <div flex-gt-xs="33">
-                        <md-input-container style="width: 100%;"
-                                            ng-if="vm.endpointHostRequired()">
-                            <label>
-                                {{ 'ADMINCONSOLE.WIREGUARD.ENDPOINT.HOST' | translate }}
-                            </label>
-
-                            <input ng-model="vm.endpoint.host"
-                                   ng-required="vm.endpointHostRequired()">
-                        </md-input-container>
-                    </div>
-                </div>
-
-                <div>
-                    <md-button type="submit"
-                               class="md-raised md-primary"
-                               ng-disabled="
-                                   vm.isSavingEndpoint ||
-                                   wireGuardEndpointForm.$invalid">
-                        {{ 'ADMINCONSOLE.WIREGUARD.ACTION.SAVE' | translate }}
-                    </md-button>
-
-                    <md-progress-circular
-                        ng-if="vm.isSavingEndpoint"
-                        md-mode="indeterminate"
-                        md-diameter="28">
-                    </md-progress-circular>
-                </div>
-            </form>
-        </div>
 
     </div>
 </div>

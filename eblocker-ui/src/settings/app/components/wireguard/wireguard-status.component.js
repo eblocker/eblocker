@@ -50,6 +50,7 @@ function Controller(WireGuardService, DeviceService, DialogService,
             type: null,
             host: null
         };
+        vm.endpointPersisted = false;
 
         vm.endpointTypes = [
             'FIXED_IP',
@@ -74,6 +75,9 @@ function Controller(WireGuardService, DeviceService, DialogService,
         vm.toggleServer = toggleServer;
         vm.saveEndpoint = saveEndpoint;
         vm.endpointHostRequired = endpointHostRequired;
+        vm.isEndpointConfigured = function() {
+            return vm.endpointPersisted === true;
+        };
         vm.formatBytes = formatBytes;
     }
 
@@ -91,6 +95,37 @@ function Controller(WireGuardService, DeviceService, DialogService,
         };
 
         vm.selectProvisioningDevice = selectProvisioningDevice;
+        vm.canManageProvisionedPeer = function(peer) {
+            if (!angular.isObject(peer) ||
+                    !angular.isString(peer.deviceId) ||
+                    peer.deviceId.length === 0) {
+                return false;
+            }
+
+            return vm.devices.some(function(device) {
+                return angular.isObject(device) &&
+                    device.id === peer.deviceId;
+            });
+        };
+        vm.manageProvisionedPeer = function(peer) {
+            if (!vm.canManageProvisionedPeer(peer) ||
+                    provisioningBusy(vm.provisioning)) {
+                return;
+            }
+
+            revokeProvisioningQrUrl();
+            vm.provisioning.selectedDeviceId = peer.deviceId;
+            synchronizeProvisioningSelection();
+
+            const panel = $window.document.getElementById(
+                'wireguard-client-profiles'
+            );
+
+            if (angular.isObject(panel) &&
+                    angular.isFunction(panel.scrollIntoView)) {
+                panel.scrollIntoView();
+            }
+        };
         vm.createProvisionedPeer = createProvisionedPeer;
         vm.updateProvisioningLanAccess =
             updateProvisioningLanAccess;
@@ -183,8 +218,11 @@ function Controller(WireGuardService, DeviceService, DialogService,
                     type: null,
                     host: null
                 };
+                vm.endpointPersisted =
+                    endpointConfigValid(vm.endpoint);
             })
             .catch(function(response) {
+                vm.endpointPersisted = false;
                 NotificationService.error(
                     'ADMINCONSOLE.WIREGUARD.NOTIFICATION.ENDPOINT_LOAD_FAILED',
                     response
@@ -548,6 +586,13 @@ function Controller(WireGuardService, DeviceService, DialogService,
             return $q.reject('WireGuard peer is required.');
         }
 
+        if (!vm.isEndpointConfigured()) {
+            NotificationService.error(
+                'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.ENDPOINT_REQUIRED'
+            );
+            return $q.reject('WireGuard endpoint is required.');
+        }
+
         vm.provisioning.isLoadingQr = true;
 
         return WireGuardService.getQrCode(peer.id)
@@ -581,6 +626,13 @@ function Controller(WireGuardService, DeviceService, DialogService,
 
         if (!angular.isObject(peer)) {
             return $q.reject('WireGuard peer is required.');
+        }
+
+        if (!vm.isEndpointConfigured()) {
+            NotificationService.error(
+                'ADMINCONSOLE.WIREGUARD.PROVISIONING.NOTIFICATION.ENDPOINT_REQUIRED'
+            );
+            return $q.reject('WireGuard endpoint is required.');
         }
 
         vm.provisioning.isDownloading = true;
@@ -979,6 +1031,25 @@ function Controller(WireGuardService, DeviceService, DialogService,
             vm.endpoint.type === 'DYN_DNS';
     }
 
+    function endpointConfigValid(endpoint) {
+        if (!angular.isObject(endpoint) ||
+                !angular.isString(endpoint.type)) {
+            return false;
+        }
+
+        if (endpoint.type === 'EBLOCKER_DYN_DNS') {
+            return true;
+        }
+
+        if (endpoint.type !== 'FIXED_IP' &&
+                endpoint.type !== 'DYN_DNS') {
+            return false;
+        }
+
+        return angular.isString(endpoint.host) &&
+            endpoint.host.trim().length > 0;
+    }
+
     function saveEndpoint() {
         vm.isSavingEndpoint = true;
 
@@ -992,6 +1063,8 @@ function Controller(WireGuardService, DeviceService, DialogService,
         WireGuardService.setEndpoint(config)
             .then(function(response) {
                 vm.endpoint = response.data;
+                vm.endpointPersisted =
+                    endpointConfigValid(vm.endpoint);
 
                 NotificationService.info(
                     'ADMINCONSOLE.WIREGUARD.NOTIFICATION.ENDPOINT_SAVED'

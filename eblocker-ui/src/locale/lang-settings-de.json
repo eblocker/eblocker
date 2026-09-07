@@ -3547,7 +3547,12 @@
             },
             "SETUP": {
                 "TITLE": "WireGuard einrichten",
-                "STEPS": "1. WireGuard einschalten. 2. Externen Zugriff mit öffentlicher IP-Adresse oder DNS-Namen konfigurieren. 3. Unter Geräte → VPN-Zugriff das Zielgerät oder seinen Benutzer freigeben. 4. Clientprofil erstellen. 5. Tunnelmodus wählen. 6. QR-Code scannen oder .conf in der WireGuard-App importieren.",
+                "STEP_1": "WireGuard einschalten.",
+                "STEP_2": "Externen Zugriff mit öffentlicher IP-Adresse oder DNS-Namen konfigurieren.",
+                "STEP_3": "Unter Geräte → VPN-Zugriff das Zielgerät oder seinen Benutzer freigeben.",
+                "STEP_4": "Clientprofil erstellen.",
+                "STEP_5": "Tunnelmodus wählen.",
+                "STEP_6": "QR-Code scannen oder .conf in der WireGuard-App importieren.",
                 "WAN_HINT": "Für Verbindungen aus dem Internet muss UDP 51820 im Router an den eBlocker weitergeleitet werden."
             },
             "STATUS": {

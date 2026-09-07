@@ -3546,7 +3546,12 @@
             },
             "SETUP" : {
                 "TITLE" : "Set up WireGuard",
-                "STEPS" : "1. Enable WireGuard. 2. Configure external access with a public IP address or DNS name. 3. Under Devices → VPN access, allow the target device or its user. 4. Create a client profile. 5. Choose the tunnel mode. 6. Scan the QR code or import the .conf file into the WireGuard app.",
+                "STEP_1" : "Enable WireGuard.",
+                "STEP_2" : "Configure external access with a public IP address or DNS name.",
+                "STEP_3" : "Under Devices → VPN access, allow the target device or its user.",
+                "STEP_4" : "Create a client profile.",
+                "STEP_5" : "Choose the tunnel mode.",
+                "STEP_6" : "Scan the QR code or import the .conf file into the WireGuard app.",
                 "WAN_HINT" : "For connections from the Internet, UDP 51820 must be forwarded by the router to the eBlocker."
             },
             "STATUS" : {

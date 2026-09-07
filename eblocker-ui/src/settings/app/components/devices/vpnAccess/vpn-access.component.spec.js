@@ -339,4 +339,26 @@ describe('App settings; VPN access component controller', function() {
         expect(ctrl.reasonKey({authorization: {}}))
             .toBe('ADMINCONSOLE.VPN_ACCESS.UNKNOWN');
     });
+    it('sorts VPN access by device and permission columns', function() {
+        const ctrl = loadController();
+
+        expect(ctrl.sortField).toBe('displayName');
+        expect(ctrl.sortReverse).toBe(false);
+        expect(ctrl.sortIndicator('displayName')).toBe('▲');
+
+        ctrl.setSort('openVpnEnabled');
+        expect(ctrl.sortField).toBe('openVpnEnabled');
+        expect(ctrl.sortReverse).toBe(true);
+        expect(ctrl.sortIndicator('openVpnEnabled')).toBe('▼');
+
+        ctrl.setSort('openVpnEnabled');
+        expect(ctrl.sortReverse).toBe(false);
+        expect(ctrl.sortIndicator('openVpnEnabled')).toBe('▲');
+
+        ctrl.setSort('authorization.deviceEnabled');
+        expect(ctrl.sortField).toBe('authorization.deviceEnabled');
+        expect(ctrl.sortReverse).toBe(true);
+        expect(ctrl.sortIndicator('displayName')).toBe('');
+    });
+
 });

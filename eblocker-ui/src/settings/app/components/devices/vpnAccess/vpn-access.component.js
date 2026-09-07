@@ -21,6 +21,8 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
     vm.searchText = '';
     vm.openVpnGlobalEnabled = undefined;
     vm.wireGuardGlobalEnabled = undefined;
+    vm.sortField = 'displayName';
+    vm.sortReverse = false;
 
     vm.reload = reload;
     vm.setOpenVpnAccess = setOpenVpnAccess;
@@ -28,8 +30,27 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
     vm.setWireGuardUserAccess = setWireGuardUserAccess;
     vm.canToggleWireGuardUser = canToggleWireGuardUser;
     vm.reasonKey = reasonKey;
+    vm.setSort = setSort;
+    vm.sortIndicator = sortIndicator;
 
     vm.$onInit = reload;
+
+    function setSort(field) {
+        if (vm.sortField === field) {
+            vm.sortReverse = !vm.sortReverse;
+            return;
+        }
+
+        vm.sortField = field;
+        vm.sortReverse = field !== 'displayName';
+    }
+
+    function sortIndicator(field) {
+        if (vm.sortField !== field) {
+            return '';
+        }
+        return vm.sortReverse ? '▼' : '▲';
+    }
 
     function reload() {
         vm.loading = true;

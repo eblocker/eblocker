@@ -3491,6 +3491,7 @@
             "LABEL": "VPN-Zugriff",
             "TITLE": "VPN-Zugriff für Geräte",
             "DESCRIPTION": "Hier können die VPN-Berechtigungen aller Geräte zentral verwaltet werden.",
+            "WIREGUARD_HELP": "WireGuard muss global aktiv sein. Danach kann der Zugriff für ein einzelnes Gerät oder über einen zugewiesenen Benutzer freigegeben werden. Eine Benutzerfreigabe gilt für alle Geräte dieses Benutzers.",
             "SEARCH": "Gerät oder Benutzer suchen",
             "GLOBAL_OPENVPN": "OpenVPN / eBlocker Mobile global",
             "GLOBAL_WIREGUARD": "WireGuard global",
@@ -3543,6 +3544,11 @@
             "DISABLED_STATE": {
                 "TITLE": "WireGuard ist ausgeschaltet",
                 "TEXT": "Gespeicherte Clientprofile und Einstellungen bleiben erhalten. Verbindungen sind derzeit inaktiv."
+            },
+            "SETUP": {
+                "TITLE": "WireGuard einrichten",
+                "STEPS": "1. WireGuard einschalten. 2. Externen Zugriff mit öffentlicher IP-Adresse oder DNS-Namen konfigurieren. 3. Unter Geräte → VPN-Zugriff das Zielgerät oder seinen Benutzer freigeben. 4. Clientprofil erstellen. 5. Tunnelmodus wählen. 6. QR-Code scannen oder .conf in der WireGuard-App importieren.",
+                "WAN_HINT": "Für Verbindungen aus dem Internet muss UDP 51820 im Router an den eBlocker weitergeleitet werden."
             },
             "STATUS": {
                 "TITLE": "Status",
@@ -3639,12 +3645,12 @@
                 "MODE": "Tunnelmodus",
                 "MODES": {
                     "FULL_TUNNEL": "Vollständiger Tunnel",
-                    "LAN_ONLY": "Nur LAN/private Netzwerke",
-                    "CUSTOM": "Benutzerdefiniert / Split Tunnel"
+                    "LAN_ONLY": "Split Tunnel – nur LAN/private Netzwerke",
+                    "CUSTOM": "Split Tunnel – benutzerdefinierte Netzwerke"
                 },
                 "CUSTOM_ALLOWED_IPS": "Benutzerdefinierte IPv4-Netze (CIDR, eine Route pro Zeile)",
                 "CUSTOM_HELP": "Beispiel: 192.168.178.0/24",
-                "LAN_DENIED_WARNING": "Dieser Peer darf aktuell nicht auf lokale/private Netze zugreifen. LAN-only ändert diese Berechtigung nicht.",
+                "LAN_DENIED_WARNING": "Dieser Peer darf aktuell nicht auf lokale/private Netze zugreifen. Der Split-Tunnel-Modus ändert diese Berechtigung nicht.",
                 "SAVE": "Routing speichern",
                 "NOTIFICATION": {
                     "SAVED": "WireGuard-Tunnelrouting gespeichert.",

@@ -3501,6 +3501,7 @@
             "LABEL": "VPN access",
             "TITLE": "VPN access for devices",
             "DESCRIPTION": "Manage VPN permissions for all devices in one place.",
+            "WIREGUARD_HELP": "WireGuard must be enabled globally. Access can then be granted for an individual device or through an assigned user. A user permission applies to all devices assigned to that user.",
             "SEARCH": "Search device or user",
             "GLOBAL_OPENVPN": "OpenVPN / eBlocker Mobile global",
             "GLOBAL_WIREGUARD": "WireGuard global",
@@ -3542,6 +3543,11 @@
             "DISABLED_STATE" : {
                 "TITLE" : "WireGuard is off",
                 "TEXT" : "Saved client profiles and settings are retained. Connections are currently inactive."
+            },
+            "SETUP" : {
+                "TITLE" : "Set up WireGuard",
+                "STEPS" : "1. Enable WireGuard. 2. Configure external access with a public IP address or DNS name. 3. Under Devices → VPN access, allow the target device or its user. 4. Create a client profile. 5. Choose the tunnel mode. 6. Scan the QR code or import the .conf file into the WireGuard app.",
+                "WAN_HINT" : "For connections from the Internet, UDP 51820 must be forwarded by the router to the eBlocker."
             },
             "STATUS" : {
                 "TITLE" : "Status",
@@ -3638,12 +3644,12 @@
                 "MODE" : "Tunnel mode",
                 "MODES" : {
                     "FULL_TUNNEL" : "Full tunnel",
-                    "LAN_ONLY" : "LAN/private networks only",
-                    "CUSTOM" : "Custom / split tunnel"
+                    "LAN_ONLY" : "Split tunnel – LAN/private networks only",
+                    "CUSTOM" : "Split tunnel – custom networks"
                 },
                 "CUSTOM_ALLOWED_IPS" : "Custom IPv4 networks (CIDR, one route per line)",
                 "CUSTOM_HELP" : "Example: 192.168.178.0/24",
-                "LAN_DENIED_WARNING" : "This peer is currently not allowed to access local/private networks. LAN-only does not change that permission.",
+                "LAN_DENIED_WARNING" : "This peer is currently not allowed to access local/private networks. This split-tunnel mode does not change that permission.",
                 "SAVE" : "Save routing",
                 "NOTIFICATION" : {
                     "SAVED" : "WireGuard tunnel routing saved.",

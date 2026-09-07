@@ -1,6 +1,7 @@
 <div layout="column" layout-fill class="settings-child-view eb-devices">
     <h3>{{ 'ADMINCONSOLE.VPN_ACCESS.TITLE' | translate }}</h3>
     <p>{{ 'ADMINCONSOLE.VPN_ACCESS.DESCRIPTION' | translate }}</p>
+    <p translate="ADMINCONSOLE.VPN_ACCESS.WIREGUARD_HELP"></p>
 
     <div layout="row" layout-wrap layout-padding>
         <div flex-gt-sm="50" flex="100">
@@ -30,17 +31,29 @@
 
     <div ng-if="!vm.loading">
         <div layout="row" layout-padding hide-xs hide-sm>
-            <div flex="20"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.DEVICE' | translate }}</strong></div>
+            <div flex="20">
+                <strong style="cursor: pointer;" ng-click="vm.setSort('displayName')">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.DEVICE' | translate }} {{ vm.sortIndicator('displayName') }}
+                </strong>
+            </div>
             <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.USER' | translate }}</strong></div>
-            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.OPENVPN' | translate }}</strong></div>
-            <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_DEVICE' | translate }}</strong></div>
+            <div flex="15">
+                <strong style="cursor: pointer;" ng-click="vm.setSort('openVpnEnabled')">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.OPENVPN' | translate }} {{ vm.sortIndicator('openVpnEnabled') }}
+                </strong>
+            </div>
+            <div flex="15">
+                <strong style="cursor: pointer;" ng-click="vm.setSort('authorization.deviceEnabled')">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_DEVICE' | translate }} {{ vm.sortIndicator('authorization.deviceEnabled') }}
+                </strong>
+            </div>
             <div flex="15"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.WIREGUARD_USER' | translate }}</strong></div>
             <div flex="20"><strong>{{ 'ADMINCONSOLE.VPN_ACCESS.EFFECTIVE' | translate }}</strong></div>
         </div>
 
         <md-divider></md-divider>
 
-        <div ng-repeat="row in vm.rows | filter:vm.searchText | orderBy:'displayName'"
+        <div ng-repeat="row in vm.rows | filter:vm.searchText | orderBy:vm.sortField:vm.sortReverse"
              layout="row" layout-wrap layout-padding layout-align="start center">
 
             <div flex-gt-sm="20" flex="100">

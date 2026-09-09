@@ -30,6 +30,9 @@ if [ "$1" = configure ] ; then
     systemctl enable eblocker-reset
     systemctl enable icapserver
 
+    # Install network configuration import service
+    systemctl enable eblocker-network-config-import
+
     # Show newest release message in all sessions (again)
     redis-cli del MessageContainer:42
 

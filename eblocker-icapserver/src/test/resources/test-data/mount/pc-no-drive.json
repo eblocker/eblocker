@@ -1,0 +1,31 @@
+{
+  "blockdevices": [
+    {"path":"/dev/sda", "name":"sda", "model":"Samsung_SSD_840_EVO_500GB", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":false,
+      "children": [
+        {"path":"/dev/sda1", "name":"sda1", "model":null, "label":null, "mountpoint":null, "fstype":"ntfs", "parttype":"0x7", "hotplug":false},
+        {"path":"/dev/sda2", "name":"sda2", "model":null, "label":null, "mountpoint":null, "fstype":"ntfs", "parttype":"0x27", "hotplug":false}
+      ]
+    },
+    {"path":"/dev/sdb", "name":"sdb", "model":"Samsung_SSD_840_EVO_500GB", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":false,
+      "children": [
+        {"path":"/dev/sdb1", "name":"sdb1", "model":null, "label":null, "mountpoint":null, "fstype":"vfat", "parttype":"0xb", "hotplug":false},
+        {"path":"/dev/sdb2", "name":"sdb2", "model":null, "label":null, "mountpoint":null, "fstype":"ext4", "parttype":"0fc63daf-8483-4772-8e79-3d69d8477de4", "hotplug":false},
+        {"path":"/dev/sdb3", "name":"sdb3", "model":null, "label":null, "mountpoint":null, "fstype":"btrfs", "parttype":"0fc63daf-8483-4772-8e79-3d69d8477de4", "hotplug":false}
+      ]
+    },
+    {"path":"/dev/sdc", "name":"sdc", "model":"Samsung_SSD_850_EVO_500GB", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":false,
+      "children": [
+        {"path":"/dev/sdc1", "name":"sdc1", "model":null, "label":null, "mountpoint":null, "fstype":"vfat", "parttype":"c12a7328-f81f-11d2-ba4b-00a0c93ec93b", "hotplug":false},
+        {"path":"/dev/sdc2", "name":"sdc2", "model":null, "label":null, "mountpoint":null, "fstype":"ext4", "parttype":"0fc63daf-8483-4772-8e79-3d69d8477de4", "hotplug":false},
+        {"path":"/dev/sdc3", "name":"sdc3", "model":null, "label":null, "mountpoint":null, "fstype":"LVM2_member", "parttype":"0fc63daf-8483-4772-8e79-3d69d8477de4", "hotplug":false}
+      ]
+    },
+    {"path":"/dev/sdd", "name":"sdd", "model":"SanDisk_3.2Gen1", "label":null, "mountpoint":null, "fstype":null, "parttype":null, "hotplug":true,
+      "children": [
+        {"path":"/dev/sdd1", "name":"sdd1", "model":null, "label":null, "mountpoint":"/", "fstype":"ext4", "parttype":"0x83", "hotplug":true},
+        {"path":"/dev/sdd2", "name":"sdd2", "model":null, "label":null, "mountpoint":null, "fstype":null, "parttype":"0x5", "hotplug":true},
+        {"path":"/dev/sdd5", "name":"sdd5", "model":null, "label":null, "mountpoint":"[SWAP]", "fstype":"swap", "parttype":"0x82", "hotplug":true}
+      ]
+    }
+  ]
+}

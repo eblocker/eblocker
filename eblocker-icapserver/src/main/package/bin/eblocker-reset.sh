@@ -96,22 +96,17 @@ EOF
     sync
 }
 
-if [ ! -e $THUMBDRIVE_DEVICE ]; then
-    echo "eBlocker reset functions unavailable: $THUMBDRIVE_DEVICE does not exist."
+echo "eBlocker waiting for up to 3 seconds for USB drives"
+if ! /opt/eblocker-icap/scripts/mountpoint_wait $MOUNT_DIR 3000; then
+    echo "eBlocker reset functions unavailable: $MOUNT_DIR is not mounted."
     exit 0
 fi
+echo "eBlocker waiting for USB drives: done"
 
-if findmnt -rno SOURCE $THUMBDRIVE_DEVICE; then
-    echo "eBlocker reset functions unavailable: $THUMBDRIVE_DEVICE is already mounted."
-    exit 0
-fi
-
-if mount $THUMBDRIVE_DEVICE $MOUNT_DIR; then
-    if [ -e $EBLOCKER_RESET_FILE ]; then
-        perform_factory_reset
-    elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
-        perform_update_recovery
-    else
-        perform_status_report
-    fi
+if [ -e $EBLOCKER_RESET_FILE ]; then
+	  perform_factory_reset
+elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
+    perform_update_recovery
+else
+    perform_status_report
 fi

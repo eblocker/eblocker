@@ -1,0 +1,10 @@
+[Unit]
+Description=Automatically mount USB partition /dev/%I
+BindsTo=dev-%i.device
+After=dev-%i.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/eblocker-icap/bin/usb-automount.sh /dev/%I
+ExecStop=/opt/eblocker-icap/bin/usb-autounmount.sh /dev/%I

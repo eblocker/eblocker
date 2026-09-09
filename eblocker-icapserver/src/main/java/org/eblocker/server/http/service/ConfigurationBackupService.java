@@ -101,7 +101,8 @@ public class ConfigurationBackupService {
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
                         providerFactory.createRegistrationBackupProvider(cryptoService),
                         providerFactory.createDnsBackupProvider(),
-                        providerFactory.createGeneralSettingsBackupProvider());
+                        providerFactory.createGeneralSettingsBackupProvider(),
+                        providerFactory.createNetworkBackupProvider());
 
             default:
                 throw new UnsupportedBackupVersionException(version);

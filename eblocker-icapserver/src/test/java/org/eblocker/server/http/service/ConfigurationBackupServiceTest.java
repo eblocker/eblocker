@@ -30,6 +30,7 @@ import org.eblocker.server.http.backup.DnsBackupProvider;
 import org.eblocker.server.http.backup.GeneralSettingsBackup;
 import org.eblocker.server.http.backup.GeneralSettingsBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
+import org.eblocker.server.http.backup.NetworkBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnClientBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
 import org.eblocker.server.http.backup.RegistrationBackupProvider;
@@ -63,6 +64,8 @@ public class ConfigurationBackupServiceTest {
     private UsersBackupProvider usersBP;
     private BlockersBackupProvider blockersBP;
     private DnsBackupProvider dnsBP;
+    private NetworkBackupProvider networkBP;
+
     private static final String password = "top secret!";
 
     @BeforeEach
@@ -79,6 +82,7 @@ public class ConfigurationBackupServiceTest {
         usersBP = Mockito.mock(UsersBackupProvider.class);
         blockersBP = Mockito.mock(BlockersBackupProvider.class);
         dnsBP = Mockito.mock(DnsBackupProvider.class);
+        networkBP = Mockito.mock(NetworkBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
@@ -134,6 +138,11 @@ public class ConfigurationBackupServiceTest {
             @Override
             public DnsBackupProvider createDnsBackupProvider() {
                 return dnsBP;
+            }
+
+            @Override
+            public NetworkBackupProvider createNetworkBackupProvider() {
+                return networkBP;
             }
         };
         service = new ConfigurationBackupService(dataSource, providerFactory);

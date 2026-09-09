@@ -72,6 +72,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     'use strict';
 
     // Sets the default State when root URL is called: 'https://domain:3000/settings' / 'https://domain:3000'
+    $urlRouterProvider.when('/devices/vpn-access', '/mobile/vpn-access');
     $urlRouterProvider.otherwise('/' + STATES.AUTH);
 
     const slashOptionUrl = '';
@@ -375,15 +376,6 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         requiredLicense: devices.requiredLicense,
         translationKey: 'ADMINCONSOLE.DEVICES_DISCOVERY.LABEL',
         component: 'devicesDiscoveryComponent'
-    };
-
-    const devicesVpnAccess = {
-        name: 'devicesvpnaccess',
-        url: slashOptionSubState + 'vpn-access',
-        parent: devicesState.name,
-        requiredLicense: devices.requiredLicense,
-        translationKey: 'ADMINCONSOLE.VPN_ACCESS.LABEL',
-        component: 'vpnAccessComponent'
     };
 
     // details for devices: uses ui-view of main-state, but is
@@ -1077,11 +1069,21 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'wireGuardStatusComponent'
     };
 
+    const devicesVpnAccess = {
+        name: 'devicesvpnaccess',
+        url: slashOptionSubState + 'vpn-access',
+        parent: vpnHomeState.name,
+        tabOrder: 4,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_ACCESS.LABEL',
+        component: 'vpnAccessComponent'
+    };
+
     const vpnHomeTests = {
         name: 'mobiletests',
         url: slashOptionSubState + 'tests',
         parent: vpnHomeState.name,
-        tabOrder: 4,
+        tabOrder: 5,
         requiredLicense: vpnHomeState.requiredLicense,
         translationKey: 'ADMINCONSOLE.VPN_HOME_TESTS.LABEL',
         component: 'vpnHomeTestsComponent'

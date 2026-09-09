@@ -216,6 +216,24 @@
                 </md-select>
             </md-input-container>
 
+            <div ng-if="vm.provisioning.selectedDeviceId" style="margin: 0 0 12px 0;">
+                <strong>{{ 'ADMINCONSOLE.VPN_ACCESS.EFFECTIVE' | translate }}:</strong>
+                <span ng-if="vm.authorizationLoading">{{ 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN' | translate }}</span>
+                <span ng-if="!vm.authorizationLoading">{{ vm.authorizationStateKey(vm.selectedDeviceAuthorization()) | translate }}</span>
+                <div ng-if="!vm.authorizationLoading && vm.selectedDeviceAuthorization() && vm.selectedDeviceAuthorization().allowed === true"
+                     style="font-size: 12px; margin-top: 3px;">
+                    {{ vm.authorizationDetailKey(vm.selectedDeviceAuthorization()) | translate }}
+                </div>
+                <div ng-if="!vm.authorizationLoading && vm.selectedDeviceAuthorization() && vm.selectedDeviceAuthorization().allowed === false"
+                     style="font-size: 12px; margin-top: 3px;">
+                    {{ vm.authorizationDetailKey(vm.selectedDeviceAuthorization()) | translate }}
+                </div>
+                <div ng-if="!vm.authorizationLoading && !vm.selectedDeviceAuthorization()"
+                     style="font-size: 12px; margin-top: 3px;">
+                    {{ 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN' | translate }}
+                </div>
+            </div>
+
             <div ng-if="vm.devices.length === 0">
                 {{ 'ADMINCONSOLE.WIREGUARD.PROVISIONING.NO_DEVICES' | translate }}
             </div>
@@ -484,6 +502,8 @@
             </h3>
 
             <p translate="ADMINCONSOLE.WIREGUARD.ROUTING.DESCRIPTION"></p>
+            <p style="font-size: 12px;"
+               translate="ADMINCONSOLE.WIREGUARD.ROUTING.PROFILE_REFRESH_HINT"></p>
 
             <div ng-if="vm.peerRows.length === 0">
                 {{ 'ADMINCONSOLE.WIREGUARD.PEERS.EMPTY' | translate }}

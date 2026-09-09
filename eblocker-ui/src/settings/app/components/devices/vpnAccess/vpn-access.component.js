@@ -30,6 +30,7 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
     vm.setWireGuardUserAccess = setWireGuardUserAccess;
     vm.canToggleWireGuardUser = canToggleWireGuardUser;
     vm.reasonKey = reasonKey;
+    vm.accessSourceKey = accessSourceKey;
     vm.setSort = setSort;
     vm.sortIndicator = sortIndicator;
 
@@ -102,6 +103,9 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
             vm.rows = rows;
             return rows;
         }, function(response) {
+            vm.rows = [];
+            vm.openVpnGlobalEnabled = undefined;
+            vm.wireGuardGlobalEnabled = undefined;
             NotificationService.error(
                 'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.LOAD_ERROR',
                 response
@@ -154,7 +158,8 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
             assignedUserName: assignedUser ?
                 (assignedUser.name || ('#' + assignedUser.id)) : '',
             openVpnEnabled: readOpenVpnDeviceState(device),
-            authorization: authorization,
+            authorization: angular.copy(authorization),
+            confirmedAuthorization: angular.copy(authorization),
             busyOpenVpn: false,
             busyWireGuardDevice: false,
             busyWireGuardUser: false
@@ -213,12 +218,13 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
         return WireGuardService
             .setDeviceAuthorization(row.device.id, desired)
             .then(function(response) {
-                row.authorization = response.data;
+                row.authorization = angular.copy(response.data);
+                row.confirmedAuthorization = angular.copy(response.data);
                 vm.wireGuardGlobalEnabled =
                     response.data.globalEnabled === true;
                 return response.data;
             }, function(response) {
-                row.authorization.deviceEnabled = !desired;
+                row.authorization = angular.copy(row.confirmedAuthorization);
                 NotificationService.error(
                     'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.WIREGUARD_DEVICE_ERROR',
                     response
@@ -243,7 +249,7 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
                 // One user may own multiple devices: refresh all decisions.
                 return reload();
             }, function(response) {
-                row.authorization.userEnabled = !desired;
+                row.authorization = angular.copy(row.confirmedAuthorization);
                 NotificationService.error(
                     'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.WIREGUARD_USER_ERROR',
                     response
@@ -261,11 +267,49 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
             angular.isNumber(row.authorization.assignedUserId);
     }
 
+    function accessSourceKey(row) {
+        const authorization = confirmedAuthorization(row);
+
+        if (!authorization || authorization.allowed !== true) {
+            return reasonKey(row);
+        }
+
+        const deviceEnabled = authorization.deviceEnabled === true;
+        const userEnabled = authorization.userEnabled === true;
+
+        if (deviceEnabled && userEnabled) {
+            return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER';
+        }
+        if (deviceEnabled) {
+            return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE';
+        }
+        if (userEnabled) {
+            return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.USER';
+        }
+        return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
+    }
+
+    function confirmedAuthorization(row) {
+        if (!angular.isObject(row)) {
+            return null;
+        }
+        if (angular.isObject(row.confirmedAuthorization)) {
+            return row.confirmedAuthorization;
+        }
+        return angular.isObject(row.authorization) ? row.authorization : null;
+    }
+
     function reasonKey(row) {
-        if (!row || !row.authorization || !row.authorization.reason) {
+        const authorization = confirmedAuthorization(row);
+        const knownReasons = [
+            'GLOBAL_DISABLED', 'DEVICE_DISABLED', 'DEVICE_NOT_FOUND',
+            'USER_NOT_FOUND', 'USER_INCONSISTENT', 'USER_DISABLED',
+            'ALLOWED_NO_ASSIGNED_USER', 'ALLOWED'
+        ];
+        if (!authorization || !angular.isString(authorization.reason) ||
+                knownReasons.indexOf(authorization.reason) === -1) {
             return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
         }
-        return 'ADMINCONSOLE.VPN_ACCESS.REASON.' +
-            row.authorization.reason;
+        return 'ADMINCONSOLE.VPN_ACCESS.REASON.' + authorization.reason;
     }
 }

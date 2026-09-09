@@ -3503,6 +3503,11 @@
             "EFFECTIVE": "Effektiver WireGuard-Zugriff",
             "ALLOWED": "Erlaubt",
             "DENIED": "Gesperrt",
+            "ACCESS_SOURCE": {
+                "DEVICE": "Freigegeben über Gerät",
+                "USER": "Freigegeben über Benutzer",
+                "DEVICE_AND_USER": "Freigegeben über Gerät und Benutzer"
+            },
             "ON": "Aktiv",
             "OFF": "Aus",
             "UNKNOWN": "Unbekannt",
@@ -3511,6 +3516,7 @@
             "REASON": {
                 "GLOBAL_DISABLED": "WireGuard ist global ausgeschaltet.",
                 "DEVICE_DISABLED": "WireGuard ist für dieses Gerät nicht freigegeben.",
+                "DEVICE_NOT_FOUND": "Das Gerät wurde nicht gefunden.",
                 "USER_NOT_FOUND": "Der zugewiesene Benutzer wurde nicht gefunden.",
                 "USER_INCONSISTENT": "Die Benutzerzuordnung ist inkonsistent.",
                 "USER_DISABLED": "WireGuard ist für den zugewiesenen Benutzer nicht freigegeben.",
@@ -3646,6 +3652,7 @@
             "ROUTING": {
                 "TITLE": "Tunnel-Routing",
                 "DESCRIPTION": "Legt fest, welche IPv4-Netze der WireGuard-Client durch den Tunnel routet.",
+                "PROFILE_REFRESH_HINT": "Nach Änderungen am externen Endpunkt oder Tunnel-Routing muss die aktualisierte Clientkonfiguration erneut per QR-Code oder .conf in die WireGuard-App übernommen werden; bereits importierte Profile werden nicht automatisch aktualisiert.",
                 "PEER": "Peer",
                 "MODE": "Tunnelmodus",
                 "MODES": {

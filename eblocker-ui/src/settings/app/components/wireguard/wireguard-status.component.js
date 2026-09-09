@@ -13,7 +13,7 @@ export default {
     controllerAs: 'vm'
 };
 
-function Controller(WireGuardService, DeviceService, DialogService,
+function Controller(WireGuardService, DeviceService, DialogService, // jshint ignore: line
                     NotificationService, $q, $window) {
     'ngInject';
     'use strict';
@@ -61,6 +61,9 @@ function Controller(WireGuardService, DeviceService, DialogService,
         vm.peers = [];
         vm.devices = [];
         vm.peerRows = [];
+        vm.deviceAuthorizationMap = {};
+        vm.authorizationRequestVersion = 0;
+        vm.authorizationLoading = false;
 
         vm.isLoading = false;
         vm.isToggling = false;
@@ -79,6 +82,9 @@ function Controller(WireGuardService, DeviceService, DialogService,
             return vm.endpointPersisted === true;
         };
         vm.formatBytes = formatBytes;
+        vm.selectedDeviceAuthorization = selectedDeviceAuthorization;
+        vm.authorizationStateKey = authorizationStateKey;
+        vm.authorizationDetailKey = authorizationDetailKey;
     }
 
     function initializeProvisioningUi() {
@@ -229,11 +235,14 @@ function Controller(WireGuardService, DeviceService, DialogService,
                 );
             });
 
+        const authorizationsPromise = loadDeviceAuthorizations();
+
         return $q.all([
             statusPromise,
             peersPromise,
             devicesPromise,
-            endpointPromise
+            endpointPromise,
+            authorizationsPromise
         ]).finally(function() {
             buildPeerRows();
             vm.isLoading = false;
@@ -301,6 +310,84 @@ function Controller(WireGuardService, DeviceService, DialogService,
 
         synchronizeRoutingSelection();
         synchronizeProvisioningSelection();
+    }
+
+    function loadDeviceAuthorizations() {
+        const requestVersion = ++vm.authorizationRequestVersion;
+        vm.authorizationLoading = true;
+
+        return WireGuardService.getDeviceAuthorizations()
+            .then(function(response) {
+                if (requestVersion !== vm.authorizationRequestVersion) {
+                    return;
+                }
+                const overview = response.data || {};
+                const authorizations = angular.isArray(overview.devices) ? overview.devices : [];
+                const authorizationMap = {};
+                authorizations.forEach(function(authorization) {
+                    if (angular.isObject(authorization) && angular.isString(authorization.deviceId) &&
+                            authorization.deviceId.length > 0) {
+                        authorizationMap[authorization.deviceId] = angular.copy(authorization);
+                    }
+                });
+                vm.deviceAuthorizationMap = authorizationMap;
+            })
+            .catch(function(response) {
+                if (requestVersion !== vm.authorizationRequestVersion) {
+                    return;
+                }
+                vm.deviceAuthorizationMap = {};
+                NotificationService.error('ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.LOAD_ERROR', response);
+            })
+            .finally(function() {
+                if (requestVersion === vm.authorizationRequestVersion) {
+                    vm.authorizationLoading = false;
+                }
+            });
+    }
+
+    function selectedDeviceAuthorization() {
+        const deviceId = vm.provisioning.selectedDeviceId;
+        if (!angular.isString(deviceId) || deviceId.length === 0) {
+            return null;
+        }
+        return vm.deviceAuthorizationMap[deviceId] || null;
+    }
+
+    function authorizationStateKey(authorization) {
+        if (!angular.isObject(authorization) || typeof authorization.allowed !== 'boolean') {
+            return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
+        }
+        return authorization.allowed === true ?
+            'ADMINCONSOLE.VPN_ACCESS.ALLOWED' : 'ADMINCONSOLE.VPN_ACCESS.DENIED';
+    }
+
+    function authorizationDetailKey(authorization) {
+        if (!angular.isObject(authorization) || typeof authorization.allowed !== 'boolean') {
+            return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
+        }
+        if (authorization.allowed === true) {
+            if (authorization.deviceEnabled === true && authorization.userEnabled === true) {
+                return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER';
+            }
+            if (authorization.deviceEnabled === true) {
+                return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE';
+            }
+            if (authorization.userEnabled === true) {
+                return 'ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.USER';
+            }
+            return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
+        }
+        const knownReasons = [
+            'GLOBAL_DISABLED', 'DEVICE_DISABLED', 'DEVICE_NOT_FOUND',
+            'USER_NOT_FOUND', 'USER_INCONSISTENT', 'USER_DISABLED',
+            'ALLOWED_NO_ASSIGNED_USER', 'ALLOWED'
+        ];
+        if (angular.isString(authorization.reason) &&
+                knownReasons.indexOf(authorization.reason) !== -1) {
+            return 'ADMINCONSOLE.VPN_ACCESS.REASON.' + authorization.reason;
+        }
+        return 'ADMINCONSOLE.VPN_ACCESS.UNKNOWN';
     }
 
     function findPeerRowByDeviceId(deviceId) {
@@ -997,10 +1084,11 @@ function Controller(WireGuardService, DeviceService, DialogService,
             WireGuardService.enable :
             WireGuardService.disable;
 
-        action()
+        return action()
             .then(function(response) {
                 vm.status = response.data;
                 updateStatusDisplay();
+                return loadDeviceAuthorizations();
             })
             .catch(function(response) {
                 vm.status.enabled = !vm.status.enabled;

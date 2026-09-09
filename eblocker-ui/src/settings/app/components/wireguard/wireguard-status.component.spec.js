@@ -9,7 +9,7 @@
 /* global jasmine */
 import 'angular-mocks';
 
-describe('App settings; WireGuard status component controller', function() {
+describe('App settings; WireGuard status component controller', function() { // jshint ignore: line
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
@@ -91,7 +91,8 @@ describe('App settings; WireGuard status component controller', function() {
                 jasmine.createSpy('getQrCode'),
             getEndpoint: jasmine.createSpy('getEndpoint'),
             setEndpoint: jasmine.createSpy('setEndpoint'),
-            setRouting: jasmine.createSpy('setRouting')
+            setRouting: jasmine.createSpy('setRouting'),
+            getDeviceAuthorizations: jasmine.createSpy('getDeviceAuthorizations')
         };
 
         DeviceService = {
@@ -172,6 +173,24 @@ describe('App settings; WireGuard status component controller', function() {
             })
         );
 
+        WireGuardService.getDeviceAuthorizations.and.returnValue(
+            $q.when({
+                data: {
+                    globalEnabled: true,
+                    devices: [{
+                        deviceId: 'device:test-phone',
+                        globalEnabled: true,
+                        deviceEnabled: false,
+                        assignedUserId: 7,
+                        userPermissionRequired: true,
+                        userEnabled: true,
+                        allowed: true,
+                        reason: 'ALLOWED'
+                    }]
+                }
+            })
+        );
+
         ctrl = $componentController(
             'wireGuardStatusComponent',
             {
@@ -199,6 +218,8 @@ describe('App settings; WireGuard status component controller', function() {
         expect(DeviceService.getAll)
             .toHaveBeenCalled();
         expect(WireGuardService.getEndpoint)
+            .toHaveBeenCalled();
+        expect(WireGuardService.getDeviceAuthorizations)
             .toHaveBeenCalled();
 
         expect(ctrl.status.enabled).toBe(true);
@@ -529,6 +550,7 @@ describe('App settings; WireGuard status component controller', function() {
         WireGuardService.getStatus.calls.reset();
         WireGuardService.getPeers.calls.reset();
         WireGuardService.getEndpoint.calls.reset();
+        WireGuardService.getDeviceAuthorizations.calls.reset();
         DeviceService.getAll.calls.reset();
 
         ctrl.reload();
@@ -537,6 +559,7 @@ describe('App settings; WireGuard status component controller', function() {
         expect(WireGuardService.getStatus.calls.count()).toBe(1);
         expect(WireGuardService.getPeers.calls.count()).toBe(1);
         expect(WireGuardService.getEndpoint.calls.count()).toBe(1);
+        expect(WireGuardService.getDeviceAuthorizations.calls.count()).toBe(1);
         expect(DeviceService.getAll.calls.count()).toBe(1);
 
         expect(WireGuardService.enable).not.toHaveBeenCalled();
@@ -700,6 +723,7 @@ describe('App settings; WireGuard status component controller', function() {
         const peersDeferred = $q.defer();
         const devicesDeferred = $q.defer();
         const endpointDeferred = $q.defer();
+        const authorizationDeferred = $q.defer();
 
         WireGuardService.getStatus.and.returnValue(
             statusDeferred.promise
@@ -715,6 +739,9 @@ describe('App settings; WireGuard status component controller', function() {
 
         WireGuardService.getEndpoint.and.returnValue(
             endpointDeferred.promise
+        );
+        WireGuardService.getDeviceAuthorizations.and.returnValue(
+            authorizationDeferred.promise
         );
 
         ctrl.$onInit();
@@ -748,7 +775,10 @@ describe('App settings; WireGuard status component controller', function() {
             }
         });
         $rootScope.$digest();
+        expect(ctrl.isLoading).toBe(true);
 
+        authorizationDeferred.resolve({data: {globalEnabled: true, devices: []}});
+        $rootScope.$digest();
         expect(ctrl.isLoading).toBe(false);
     });
 
@@ -1057,6 +1087,111 @@ describe('App settings; WireGuard status component controller', function() {
                 'ADMINCONSOLE.WIREGUARD.ROUTING.NOTIFICATION.SAVE_FAILED',
                 jasmine.any(Object)
             );
+    });
+
+
+    it('shows backend authorization for the currently selected device', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+        ctrl.provisioning.selectedDeviceId = 'device:test-phone';
+        expect(ctrl.selectedDeviceAuthorization().allowed).toBe(true);
+        expect(ctrl.authorizationStateKey(
+            ctrl.selectedDeviceAuthorization()
+        )).toBe('ADMINCONSOLE.VPN_ACCESS.ALLOWED');
+        expect(ctrl.authorizationDetailKey(
+            ctrl.selectedDeviceAuthorization()
+        )).toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.USER');
+        ctrl.provisioning.selectedDeviceId = 'device:missing';
+        expect(ctrl.selectedDeviceAuthorization()).toBeNull();
+    });
+
+    it('clears stale authorization when refresh fails', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+        expect(ctrl.selectedDeviceAuthorization()).not.toBeNull();
+        WireGuardService.getDeviceAuthorizations.and.returnValue(
+            $q.reject({status: 500})
+        );
+        ctrl.reload();
+        $rootScope.$digest();
+        expect(ctrl.selectedDeviceAuthorization()).toBeNull();
+        expect(ctrl.authorizationLoading).toBe(false);
+    });
+
+    it('refreshes backend authorization after a successful global toggle', function() {
+        ctrl.$onInit();
+        $rootScope.$digest();
+        WireGuardService.getDeviceAuthorizations.calls.reset();
+        WireGuardService.enable.and.returnValue(
+            $q.when({
+                data: {
+                    enabled: true,
+                    runtime: {
+                        iface: 'up',
+                        service: 'active',
+                        wg: 'ready',
+                        peers: 2,
+                        error: null
+                    }
+                }
+            })
+        );
+        ctrl.status.enabled = true;
+        ctrl.toggleServer();
+        $rootScope.$digest();
+        expect(WireGuardService.enable).toHaveBeenCalled();
+        expect(WireGuardService.getDeviceAuthorizations.calls.count()).toBe(1);
+    });
+
+    it('ignores an older authorization response after a newer refresh', function() {
+        const first = $q.defer();
+        const second = $q.defer();
+        WireGuardService.getDeviceAuthorizations.and.returnValues(
+            first.promise,
+            second.promise
+        );
+        ctrl.$onInit();
+        ctrl.reload();
+        second.resolve({
+            data: {
+                devices: [{
+                    deviceId: 'device:test-phone',
+                    allowed: true,
+                    deviceEnabled: true,
+                    userEnabled: false,
+                    reason: 'ALLOWED'
+                }]
+            }
+        });
+        $rootScope.$digest();
+        first.resolve({
+            data: {
+                devices: [{
+                    deviceId: 'device:test-phone',
+                    allowed: false,
+                    deviceEnabled: false,
+                    userEnabled: false,
+                    reason: 'DEVICE_DISABLED'
+                }]
+            }
+        });
+        $rootScope.$digest();
+        ctrl.provisioning.selectedDeviceId = 'device:test-phone';
+        expect(ctrl.selectedDeviceAuthorization().allowed).toBe(true);
+        expect(ctrl.authorizationDetailKey(
+            ctrl.selectedDeviceAuthorization()
+        )).toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE');
+    });
+
+    it('falls back to Unknown for unsupported denial reasons', function() {
+        expect(ctrl.authorizationDetailKey({
+            allowed: false,
+            reason: 'FUTURE_REASON'
+        })).toBe('ADMINCONSOLE.VPN_ACCESS.UNKNOWN');
+        expect(ctrl.authorizationDetailKey({
+            allowed: false,
+            reason: 'DEVICE_NOT_FOUND'
+        })).toBe('ADMINCONSOLE.VPN_ACCESS.REASON.DEVICE_NOT_FOUND');
     });
 
 

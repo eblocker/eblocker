@@ -336,9 +336,63 @@ describe('App settings; VPN access component controller', function() {
         expect(ctrl.reasonKey(ctrl.rows[1]))
             .toBe('ADMINCONSOLE.VPN_ACCESS.REASON.ALLOWED_NO_ASSIGNED_USER');
 
+        expect(ctrl.accessSourceKey(ctrl.rows[0]))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER');
+
+        ctrl.rows[0].authorization.deviceEnabled = false;
+        expect(ctrl.accessSourceKey(ctrl.rows[0]))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER');
+        ctrl.rows[0].authorization.deviceEnabled = true;
+
+        expect(ctrl.accessSourceKey(ctrl.rows[1]))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE');
+
+        expect(ctrl.accessSourceKey({
+            authorization: {
+                allowed: false,
+                reason: 'GLOBAL_DISABLED'
+            }
+        })).toBe('ADMINCONSOLE.VPN_ACCESS.REASON.GLOBAL_DISABLED');
+
         expect(ctrl.reasonKey({authorization: {}}))
             .toBe('ADMINCONSOLE.VPN_ACCESS.UNKNOWN');
     });
+    it('changes effective source only after backend confirms device permission', function() {
+        const ctrl = loadController();
+        const row = ctrl.rows[0];
+        const deferred = $q.defer();
+
+        WireGuardService.setDeviceAuthorization.and.returnValue(
+            deferred.promise
+        );
+
+        row.authorization.deviceEnabled = false;
+        ctrl.setWireGuardDeviceAccess(row);
+
+        expect(ctrl.accessSourceKey(row))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER');
+
+        deferred.resolve({
+            data: {
+                deviceId: 'device:1',
+                globalEnabled: true,
+                deviceEnabled: false,
+                assignedUserId: 7,
+                userPermissionRequired: true,
+                userEnabled: true,
+                allowed: true,
+                reason: 'ALLOWED'
+            }
+        });
+        $rootScope.$digest();
+
+        expect(ctrl.accessSourceKey(row))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.USER');
+        expect(row.authorization.deviceEnabled).toBe(false);
+        expect(row.confirmedAuthorization.deviceEnabled).toBe(false);
+        expect(row.busyWireGuardDevice).toBe(false);
+    });
+
     it('sorts VPN access by device and permission columns', function() {
         const ctrl = loadController();
 
@@ -360,5 +414,40 @@ describe('App settings; VPN access component controller', function() {
         expect(ctrl.sortReverse).toBe(true);
         expect(ctrl.sortIndicator('displayName')).toBe('');
     });
+
+    it('uses only confirmed backend authorization for effective source display', function() {
+        const ctrl = loadController();
+        const row = ctrl.rows[0];
+        row.confirmedAuthorization = {allowed: true, deviceEnabled: false, userEnabled: true, reason: 'ALLOWED'};
+        row.authorization.deviceEnabled = true;
+        row.authorization.userEnabled = true;
+        expect(ctrl.accessSourceKey(row)).toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.USER');
+        row.confirmedAuthorization = {allowed: true, deviceEnabled: true, userEnabled: false, reason: 'ALLOWED'};
+        expect(ctrl.accessSourceKey(row)).toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE');
+        row.confirmedAuthorization = {allowed: true, deviceEnabled: true, userEnabled: true, reason: 'ALLOWED'};
+        expect(ctrl.accessSourceKey(row)).toBe('ADMINCONSOLE.VPN_ACCESS.ACCESS_SOURCE.DEVICE_AND_USER');
+    });
+
+    it('maps denied and unsupported backend reasons safely', function() {
+        const ctrl = loadController();
+        expect(ctrl.accessSourceKey({confirmedAuthorization: {allowed: false, reason: 'GLOBAL_DISABLED'}}))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.REASON.GLOBAL_DISABLED');
+        expect(ctrl.accessSourceKey({confirmedAuthorization: {allowed: false, reason: 'DEVICE_NOT_FOUND'}}))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.REASON.DEVICE_NOT_FOUND');
+        expect(ctrl.accessSourceKey({confirmedAuthorization: {allowed: false, reason: 'FUTURE_REASON'}}))
+            .toBe('ADMINCONSOLE.VPN_ACCESS.UNKNOWN');
+    });
+
+    it('clears stale VPN access decisions when refresh fails', function() {
+        const ctrl = loadController();
+        expect(ctrl.rows.length).toBeGreaterThan(0);
+        WireGuardService.getDeviceAuthorizations.and.returnValue($q.reject({status: 500}));
+        ctrl.reload().catch(angular.noop);
+        $rootScope.$digest();
+        expect(ctrl.rows).toEqual([]);
+        expect(ctrl.wireGuardGlobalEnabled).toBeUndefined();
+        expect(ctrl.openVpnGlobalEnabled).toBeUndefined();
+    });
+
 
 });

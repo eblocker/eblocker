@@ -108,7 +108,12 @@
                 <strong ng-if="row.authorization.allowed !== true">
                     {{ 'ADMINCONSOLE.VPN_ACCESS.DENIED' | translate }}
                 </strong>
-                <div>{{ vm.reasonKey(row) | translate }}</div>
+                <div ng-if="row.authorization.allowed === true">
+                    {{ vm.accessSourceKey(row) | translate }}
+                </div>
+                <div ng-if="row.authorization.allowed !== true">
+                    {{ vm.reasonKey(row) | translate }}
+                </div>
             </div>
 
             <md-divider flex="100"></md-divider>

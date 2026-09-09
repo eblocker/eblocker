@@ -50,6 +50,9 @@ if [ "$1" = configure ] ; then
     update-rc.d eblocker-reset defaults
     update-rc.d icapserver defaults
 
+    # Install network configuration import service
+    systemctl enable eblocker-network-config-import
+
     # Show newest release message in all sessions (again)
     redis-cli del MessageContainer:42
 

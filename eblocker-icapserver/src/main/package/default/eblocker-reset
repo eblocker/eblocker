@@ -1,7 +1,6 @@
 # Default configuration for eblocker-reset
 
-THUMBDRIVE_DEVICE="/dev/sda1"
-MOUNT_DIR="/mnt"
+MOUNT_DIR="/opt/eblocker-icap/mnt"
 EBLOCKER_RESET_FILE="$MOUNT_DIR/eblocker-factory-reset.txt"
 EBLOCKER_SELFCHECK_FILE="$MOUNT_DIR/eblocker-self-check.txt"
 EBLOCKER_UPDATERECOVERY_FILE="$MOUNT_DIR/eblocker-update-recovery.txt"

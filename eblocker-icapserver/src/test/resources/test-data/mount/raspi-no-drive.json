@@ -1,0 +1,35 @@
+{
+  "blockdevices": [
+    {
+      "path": "/dev/mmcblk0",
+      "name": "mmcblk0",
+      "model": null,
+      "label": null,
+      "mountpoint": null,
+      "fstype": null,
+      "parttype": null,
+      "hotplug": true,
+      "children": [
+        {
+          "path": "/dev/mmcblk0p1",
+          "name": "mmcblk0p1",
+          "model": null,
+          "label": null,
+          "mountpoint": "/boot/firmware",
+          "fstype": "vfat",
+          "parttype": "0xc",
+          "hotplug": true
+        },{
+          "path": "/dev/mmcblk0p2",
+          "name": "mmcblk0p2",
+          "model": null,
+          "label": null,
+          "mountpoint": "/",
+          "fstype": "ext4",
+          "parttype": "0x83",
+          "hotplug": true
+        }
+      ]
+    }
+  ]
+}

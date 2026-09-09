@@ -16,12 +16,4 @@
 # permissions and limitations under the License.
 #
 
-if [ $# -ne 2 ]; then
-    echo "usage: $0 <device> <mountpoint>" >&2
-    exit 1
-fi
-
-DEVICE=$1
-MOUNTPOINT=$2
-
-mount $DEVICE $MOUNTPOINT
+umount "$1"

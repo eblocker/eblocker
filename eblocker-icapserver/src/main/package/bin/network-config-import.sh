@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Copyright 2026 eBlocker Open Source GmbH
 #
@@ -16,11 +16,6 @@
 # permissions and limitations under the License.
 #
 
-if [ $# -ne 1 ]; then
-    echo "usage: $0 <mountpoint>" >&2
-    exit 1
-fi
+BASEDIR=/opt/eblocker-icap
 
-MOUNTPOINT=$1
-
-umount $MOUNTPOINT
+exec java -cp $BASEDIR/lib/${project.build.finalName}.jar org.eblocker.server.app.NetworkConfigImportApp

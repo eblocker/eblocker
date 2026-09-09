@@ -470,36 +470,11 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <type>template</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                    </mapper>
-                                    <paths>
-                                        <path>/etc/systemd/system/icapserver.service.d</path>
-                                    </paths>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/restart.conf</src>
-                                    <type>file</type>
+                                    <src>${project.build.directory}/package/systemd/</src>
+                                    <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
                                         <prefix>/lib/systemd/system</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-usb-automount@.service</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/usr/lib/systemd/system</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-network-config-import.service</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/usr/lib/systemd/system</prefix>
                                     </mapper>
                                 </data>
                                 <data>

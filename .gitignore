@@ -3,6 +3,7 @@
 
 .settings
 .idea
+.vscode
 target
 *.iml
 .DS_Store

@@ -16,6 +16,7 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
 
     const vm = this;
 
+    vm.authorizationUnknown = false;
     vm.rows = [];
     vm.loading = false;
     vm.searchText = '';
@@ -100,9 +101,11 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
                     );
                 });
         }).then(function(rows) {
+            vm.authorizationUnknown = false;
             vm.rows = rows;
             return rows;
         }, function(response) {
+            vm.authorizationUnknown = true;
             vm.rows = [];
             vm.openVpnGlobalEnabled = undefined;
             vm.wireGuardGlobalEnabled = undefined;
@@ -224,12 +227,17 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
                     response.data.globalEnabled === true;
                 return response.data;
             }, function(response) {
-                row.authorization = angular.copy(row.confirmedAuthorization);
+                // The write may have persisted before runtime reconciliation failed.
+                // Discard every displayed decision until the backend confirms it.
+                vm.authorizationUnknown = true;
+                vm.rows = [];
+                vm.openVpnGlobalEnabled = undefined;
+                vm.wireGuardGlobalEnabled = undefined;
                 NotificationService.error(
                     'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.WIREGUARD_DEVICE_ERROR',
                     response
                 );
-                return $q.reject(response);
+                return reload();
             }).finally(function() {
                 row.busyWireGuardDevice = false;
             });
@@ -249,12 +257,17 @@ function Controller($q, DeviceService, UserService, VpnHomeService,
                 // One user may own multiple devices: refresh all decisions.
                 return reload();
             }, function(response) {
-                row.authorization = angular.copy(row.confirmedAuthorization);
+                // The write may have persisted before runtime reconciliation failed.
+                // Discard every displayed decision until the backend confirms it.
+                vm.authorizationUnknown = true;
+                vm.rows = [];
+                vm.openVpnGlobalEnabled = undefined;
+                vm.wireGuardGlobalEnabled = undefined;
                 NotificationService.error(
                     'ADMINCONSOLE.VPN_ACCESS.NOTIFICATION.WIREGUARD_USER_ERROR',
                     response
                 );
-                return $q.reject(response);
+                return reload();
             }).finally(function() {
                 row.busyWireGuardUser = false;
             });

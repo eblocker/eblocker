@@ -51,50 +51,56 @@ public class WireGuardServerService {
         executorService.execute(this::restoreEnabledServer);
     }
 
+    // Share the peer lifecycle monitor with authorization writes until activation
+    // and persistence complete; revocations cannot skip a half-enabled server.
     public synchronized void enable() {
-        peerService.reconcilePeers();
-        controlService.start();
+        synchronized (peerService) {
+            peerService.reconcilePeers();
+            controlService.start();
 
-        try {
-            dataSource.setWireGuardServerState(true);
-
-        } catch (RuntimeException persistenceException) {
             try {
-                controlService.stop();
+                dataSource.setWireGuardServerState(true);
 
-            } catch (RuntimeException rollbackException) {
-                persistenceException.addSuppressed(
-                        rollbackException
+            } catch (RuntimeException persistenceException) {
+                try {
+                    controlService.stop();
+
+                } catch (RuntimeException rollbackException) {
+                    persistenceException.addSuppressed(
+                            rollbackException
+                    );
+                }
+
+                throw new IllegalStateException(
+                        "Could not persist enabled WireGuard state; "
+                                + "runtime rollback was attempted.",
+                        persistenceException
                 );
             }
 
-            throw new IllegalStateException(
-                    "Could not persist enabled WireGuard state; "
-                            + "runtime rollback was attempted.",
-                    persistenceException
-            );
+            networkStateMachine.updateFirewall();
         }
-
-        networkStateMachine.updateFirewall();
     }
 
     public synchronized void disable() {
-        controlService.stop();
+        synchronized (peerService) {
+            controlService.stop();
 
-        try {
-            dataSource.setWireGuardServerState(false);
+            try {
+                dataSource.setWireGuardServerState(false);
 
-        } catch (RuntimeException persistenceException) {
-            rollbackFailedDisable(persistenceException);
+            } catch (RuntimeException persistenceException) {
+                rollbackFailedDisable(persistenceException);
 
-            throw new IllegalStateException(
-                    "Could not persist disabled WireGuard state; "
-                            + "runtime rollback was attempted.",
-                    persistenceException
-            );
+                throw new IllegalStateException(
+                        "Could not persist disabled WireGuard state; "
+                                + "runtime rollback was attempted.",
+                        persistenceException
+                );
+            }
+
+            networkStateMachine.updateFirewall();
         }
-
-        networkStateMachine.updateFirewall();
     }
 
     public boolean isEnabled() {
@@ -102,16 +108,18 @@ public class WireGuardServerService {
     }
 
     private void restoreEnabledServer() {
-        try {
-            peerService.reconcilePeers();
-            controlService.start();
+        synchronized (peerService) {
+            try {
+                peerService.reconcilePeers();
+                controlService.start();
 
-        } catch (RuntimeException e) {
-            LOG.error(
-                    "Could not restore enabled WireGuard server "
-                            + "during eBlocker startup.",
-                    e
-            );
+            } catch (RuntimeException e) {
+                LOG.error(
+                        "Could not restore enabled WireGuard server "
+                                + "during eBlocker startup.",
+                        e
+                );
+            }
         }
     }
 

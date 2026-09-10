@@ -66,10 +66,11 @@ public class WireGuardAuthorizationManagementServiceTest {
         // setter tests also detect accidental duplicate reconciliation.
         Mockito.doAnswer(invocation -> {
             Device changedDevice = invocation.getArgument(0);
+            changedDevice.setWireGuardEnabled(invocation.getArgument(1));
             deviceChangeListener.onChange(changedDevice);
             return null;
-        }).when(deviceService).updateDevice(
-                Mockito.any(Device.class)
+        }).when(deviceService).updateWireGuardAuthorization(
+                Mockito.any(Device.class), Mockito.anyBoolean()
         );
     }
 
@@ -270,7 +271,7 @@ public class WireGuardAuthorizationManagementServiceTest {
         );
 
         assertFalse(device.isWireGuardEnabled());
-        Mockito.verify(deviceService).updateDevice(device);
+        Mockito.verify(deviceService).updateWireGuardAuthorization(device, device.isWireGuardEnabled());
         Mockito.verify(peerService).reconcilePeers();
         Mockito.verify(networkStateMachine).updateFirewall();
     }
@@ -295,7 +296,7 @@ public class WireGuardAuthorizationManagementServiceTest {
         );
 
         assertTrue(device.isWireGuardEnabled());
-        Mockito.verify(deviceService).updateDevice(device);
+        Mockito.verify(deviceService).updateWireGuardAuthorization(device, device.isWireGuardEnabled());
         Mockito.verify(peerService, Mockito.never()).reconcilePeers();
         Mockito.verify(
                 networkStateMachine,

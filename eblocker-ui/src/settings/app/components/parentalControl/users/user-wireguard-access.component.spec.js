@@ -164,9 +164,9 @@ describe('App settings; user WireGuard access component controller', function() 
         });
         $rootScope.$digest();
 
-        expect(resolved).toBe(true);
-        expect(ctrl.enabled).toBe(true);
-        expect(user.wireGuardEnabled).toBe(true);
+        expect(resolved).toBeUndefined();
+        expect(ctrl.enabled).toBeUndefined();
+        expect(user.wireGuardEnabled).toBeUndefined();
         expect(NotificationService.error).toHaveBeenCalled();
         expect(ctrl.isLoading).toBe(false);
     });
@@ -204,7 +204,7 @@ describe('App settings; user WireGuard access component controller', function() 
         expect(ctrl.isUpdating).toBe(false);
     });
 
-    it('rolls the switch back when authorization update fails', function() {
+    it('re-reads the unchanged backend permission when authorization update fails', function() {
         const user = realUser(true);
 
         UserService.getAll.and.returnValue(
@@ -237,7 +237,8 @@ describe('App settings; user WireGuard access component controller', function() 
         expect(ctrl.enabled).toBe(true);
         expect(user.wireGuardEnabled).toBe(true);
         expect(NotificationService.error).toHaveBeenCalled();
-        expect(UserService.invalidateCache).not.toHaveBeenCalled();
+        expect(UserService.invalidateCache).toHaveBeenCalled();
+        expect(UserService.getAll.calls.count()).toBe(2);
         expect(ctrl.isUpdating).toBe(false);
     });
 
@@ -258,4 +259,47 @@ describe('App settings; user WireGuard access component controller', function() 
         expect(WireGuardService.setUserAuthorization)
             .not.toHaveBeenCalled();
     });
+    it('shows unknown after a persisted write errors until the fresh read confirms revocation', function() {
+        const user = realUser(true);
+        UserService.getAll.and.returnValue($q.when({data: [realUser(true)]}));
+        const ctrl = create(user);
+        ctrl.$onInit();
+        $rootScope.$digest();
+        const refresh = $q.defer();
+        UserService.getAll.and.returnValue(refresh.promise);
+        WireGuardService.setUserAuthorization.and.returnValue(
+            $q.reject({status: 500, data: 'Persisted, but runtime reconciliation failed'})
+        );
+        ctrl.enabled = false;
+        ctrl.setAccess();
+        $rootScope.$digest();
+        expect(ctrl.enabled).toBeUndefined();
+        expect(user.wireGuardEnabled).toBeUndefined();
+        expect(ctrl.isLoading).toBe(true);
+        expect(ctrl.isUpdating).toBe(true);
+        refresh.resolve({data: [realUser(false)]});
+        $rootScope.$digest();
+        expect(ctrl.enabled).toBe(false);
+        expect(user.wireGuardEnabled).toBe(false);
+        expect(ctrl.isLoading).toBe(false);
+        expect(ctrl.isUpdating).toBe(false);
+    });
+
+    it('does not resurrect the old user grant when the recovery read also fails', function() {
+        const user = realUser(true);
+        UserService.getAll.and.returnValue($q.when({data: [realUser(true)]}));
+        const ctrl = create(user);
+        ctrl.$onInit();
+        $rootScope.$digest();
+        UserService.getAll.and.returnValue($q.reject({status: 503}));
+        WireGuardService.setUserAuthorization.and.returnValue($q.reject({status: 500}));
+        ctrl.enabled = false;
+        ctrl.setAccess();
+        $rootScope.$digest();
+        expect(ctrl.enabled).toBeUndefined();
+        expect(user.wireGuardEnabled).toBeUndefined();
+        expect(ctrl.isUpdating).toBe(false);
+        expect(NotificationService.error.calls.count()).toBe(2);
+    });
+
 });

@@ -450,4 +450,56 @@ describe('App settings; VPN access component controller', function() {
     });
 
 
+    ['Device', 'User'].forEach(function(kind) {
+        it('refreshes ambiguous ' + kind + ' writes without displaying the obsolete grant', function() {
+            const ctrl = loadController();
+            const row = ctrl.rows[0];
+            const otherFlag = kind === 'Device' ? 'userEnabled' : 'deviceEnabled';
+            row.authorization[otherFlag] = false;
+            row.confirmedAuthorization[otherFlag] = false;
+            const overview = ctrl.rows.map(function(entry) {
+                return angular.copy(entry.confirmedAuthorization);
+            });
+            const refresh = $q.defer();
+            WireGuardService.getDeviceAuthorizations.and.returnValue(refresh.promise);
+            WireGuardService['set' + kind + 'Authorization'].and.returnValue(
+                $q.reject({status: 500, data: 'Persisted, but runtime reconciliation failed'})
+            );
+            row.authorization[kind === 'Device' ? 'deviceEnabled' : 'userEnabled'] = false;
+            ctrl['setWireGuard' + kind + 'Access'](row);
+            $rootScope.$digest();
+
+            expect(ctrl.authorizationUnknown).toBe(true);
+            expect(ctrl.rows).toEqual([]);
+            expect(ctrl.wireGuardGlobalEnabled).toBeUndefined();
+            expect(ctrl.loading).toBe(true);
+            overview[0].deviceEnabled = false;
+            overview[0].userEnabled = false;
+            overview[0].allowed = false;
+            overview[0].reason = 'DEVICE_DISABLED';
+            refresh.resolve({data: {globalEnabled: true, devices: overview}});
+            $rootScope.$digest();
+
+            expect(ctrl.authorizationUnknown).toBe(false);
+            expect(ctrl.rows[0].confirmedAuthorization.allowed).toBe(false);
+            expect(ctrl.reasonKey(ctrl.rows[0]))
+                .toBe('ADMINCONSOLE.VPN_ACCESS.REASON.DEVICE_DISABLED');
+            expect(ctrl.loading).toBe(false);
+        });
+    });
+
+    it('keeps decisions unknown when an ambiguous write cannot be refreshed', function() {
+        const ctrl = loadController();
+        const row = ctrl.rows[0];
+        WireGuardService.setDeviceAuthorization.and.returnValue($q.reject({status: 500}));
+        WireGuardService.getDeviceAuthorizations.and.returnValue($q.reject({status: 503}));
+        row.authorization.deviceEnabled = false;
+        ctrl.setWireGuardDeviceAccess(row).catch(angular.noop);
+        $rootScope.$digest();
+        expect(ctrl.authorizationUnknown).toBe(true);
+        expect(ctrl.rows).toEqual([]);
+        expect(ctrl.wireGuardGlobalEnabled).toBeUndefined();
+        expect(ctrl.loading).toBe(false);
+    });
+
 });

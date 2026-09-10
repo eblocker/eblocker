@@ -29,6 +29,7 @@ public class WireGuardAuthorizationManagementService {
     private final DeviceService deviceService;
     private final UserService userService;
     private final WireGuardAuthorizationService authorizationService;
+    // Also the coordination monitor used by WireGuardServerService during activation.
     private final WireGuardPeerService peerService;
     private final WireGuardServerControlService controlService;
     private final NetworkStateMachine networkStateMachine;
@@ -79,7 +80,9 @@ public class WireGuardAuthorizationManagementService {
 
                     @Override
                     public void onReset(Device device) {
-                        rememberDevicePolicyState(device);
+                        // onReset precedes replacement persistence/cache publication.
+                        // Force the following onChange to project the saved replacement.
+                        forgetDevicePolicyState(device);
                         reconcileRuntimeIfEnabled();
                     }
                 }
@@ -145,50 +148,52 @@ public class WireGuardAuthorizationManagementService {
     public synchronized boolean setDeviceAuthorization(
             String deviceId,
             boolean enabled) {
+        synchronized (peerService) {
 
-        Device device = deviceService.getDeviceById(deviceId);
+            Device device = deviceService.getDeviceById(deviceId);
 
-        if (device == null) {
-            return false;
-        }
+            if (device == null) {
+                return false;
+            }
 
-        if (device.isWireGuardEnabled() == enabled) {
-            reconcileRuntimeIfEnabled();
+            if (device.isWireGuardEnabled() == enabled) {
+                reconcileRuntimeIfEnabled();
+                return true;
+            }
+
+            // DeviceService synchronously publishes onChange() after persistence.
+            // The listener registered in this service performs the single runtime
+            // reconciliation. Do not reconcile a second time here.
+            deviceService.updateWireGuardAuthorization(device, enabled);
+
             return true;
         }
-
-        device.setWireGuardEnabled(enabled);
-
-        // DeviceService synchronously publishes onChange() after persistence.
-        // The listener registered in this service performs the single runtime
-        // reconciliation. Do not reconcile a second time here.
-        deviceService.updateDevice(device);
-
-        return true;
     }
 
     public synchronized boolean setUserAuthorization(
             int userId,
             boolean enabled) {
+        synchronized (peerService) {
 
-        UserModule user = userService.getUserById(userId);
+            UserModule user = userService.getUserById(userId);
 
-        if (user == null) {
-            throw new IllegalArgumentException(
-                    "WireGuard user not found."
-            );
+            if (user == null) {
+                throw new IllegalArgumentException(
+                        "WireGuard user not found."
+                );
+            }
+
+            if (user.isSystem()) {
+                throw new IllegalArgumentException(
+                        "WireGuard user authorization does not apply to "
+                                + "built-in system users."
+                );
+            }
+
+            userService.setWireGuardEnabled(userId, enabled);
+            reconcileRuntimeIfEnabled();
+            return enabled;
         }
-
-        if (user.isSystem()) {
-            throw new IllegalArgumentException(
-                    "WireGuard user authorization does not apply to "
-                            + "built-in system users."
-            );
-        }
-
-        userService.setWireGuardEnabled(userId, enabled);
-        reconcileRuntimeIfEnabled();
-        return enabled;
     }
 
     private boolean devicePolicyChanged(
@@ -214,21 +219,6 @@ public class WireGuardAuthorizationManagementService {
         // persistence reads. Subsequent ARP/IP-only updates are ignored.
         return previous == null
                 || !previous.samePolicyAs(current);
-    }
-
-    private void rememberDevicePolicyState(
-            Device device) {
-
-        if (device == null
-                || device.getId() == null) {
-
-            return;
-        }
-
-        devicePolicyStates.put(
-                device.getId(),
-                DevicePolicyState.from(device)
-        );
     }
 
     private void forgetDevicePolicyState(
@@ -277,27 +267,29 @@ public class WireGuardAuthorizationManagementService {
     }
 
     private void reconcileRuntimeIfEnabled() {
-        if (!dataSource.getWireGuardServerState()) {
-            return;
-        }
-
-        try {
-            peerService.reconcilePeers();
-            networkStateMachine.updateFirewall();
-
-        } catch (RuntimeException reconcileException) {
-            try {
-                controlService.stop();
-            } catch (RuntimeException stopException) {
-                reconcileException.addSuppressed(stopException);
+        synchronized (peerService) {
+            if (!dataSource.getWireGuardServerState()) {
+                return;
             }
 
-            throw new IllegalStateException(
-                    "WireGuard authorization was persisted, but runtime "
-                            + "reconciliation failed. WireGuard runtime was "
-                            + "stopped fail-closed.",
-                    reconcileException
-            );
+            try {
+                peerService.reconcilePeers();
+                networkStateMachine.updateFirewall();
+
+            } catch (RuntimeException reconcileException) {
+                try {
+                    controlService.stop();
+                } catch (RuntimeException stopException) {
+                    reconcileException.addSuppressed(stopException);
+                }
+
+                throw new IllegalStateException(
+                        "WireGuard authorization was persisted, but runtime "
+                                + "reconciliation failed. WireGuard runtime was "
+                                + "stopped fail-closed.",
+                        reconcileException
+                );
+            }
         }
     }
 }

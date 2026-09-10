@@ -11,7 +11,9 @@
     <p translate="ADMINCONSOLE.WIREGUARD_USER_ACCESS.DESCRIPTION"></p>
 
     <div layout="row" layout-align="start center">
-        <md-switch md-theme="eBlockerThemeSwitch"
+        <span ng-if="vm.enabled === undefined"
+              translate="ADMINCONSOLE.VPN_ACCESS.UNKNOWN"></span>
+        <md-switch ng-if="vm.enabled !== undefined" md-theme="eBlockerThemeSwitch"
                    class="md-primary switch-word-break"
                    ng-model="vm.enabled"
                    ng-change="vm.setAccess()"

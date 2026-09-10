@@ -68,6 +68,8 @@ function Controller(
             return $q.when(false);
         }
 
+        // A failed write/read cannot establish either permission value.
+        vm.enabled = undefined;
         vm.isLoading = true;
 
         return UserService.getAll(true)
@@ -97,6 +99,8 @@ function Controller(
                 return vm.enabled;
             })
             .catch(function(response) {
+                vm.enabled = undefined;
+                vm.user.wireGuardEnabled = undefined;
                 NotificationService.error(
                     'ADMINCONSOLE.WIREGUARD_USER_ACCESS.NOTIFICATION.LOAD_ERROR',
                     response
@@ -114,7 +118,6 @@ function Controller(
         }
 
         const desired = vm.enabled === true;
-        const previous = !desired;
 
         vm.isUpdating = true;
 
@@ -130,15 +133,16 @@ function Controller(
                 return persisted;
             })
             .catch(function(response) {
-                vm.enabled = previous;
-                vm.user.wireGuardEnabled = previous;
+                vm.enabled = undefined;
+                vm.user.wireGuardEnabled = undefined;
+                UserService.invalidateCache();
 
                 NotificationService.error(
                     'ADMINCONSOLE.WIREGUARD_USER_ACCESS.NOTIFICATION.SAVE_ERROR',
                     response
                 );
 
-                return previous;
+                return reload();
             })
             .finally(function() {
                 vm.isUpdating = false;

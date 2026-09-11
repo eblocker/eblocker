@@ -47,6 +47,12 @@ public interface DataSource {
 
     int nextId(Class<?> entityClass);
 
+    /**
+     * Returns the current persisted ID allocator sequence, or null if no
+     * sequence has been initialized yet.
+     */
+    Integer getIdSequence(Class<?> entityClass);
+
     <T> T get(Class<T> entityClass);
 
     <T> T save(T entity);
@@ -419,6 +425,10 @@ public interface DataSource {
     void setOpenVpnServerState(boolean state);
 
     boolean getOpenVpnServerState();
+
+    void setWireGuardServerState(boolean state);
+
+    boolean getWireGuardServerState();
 
     void setOpenVpnServerFirstRun(boolean state);
 

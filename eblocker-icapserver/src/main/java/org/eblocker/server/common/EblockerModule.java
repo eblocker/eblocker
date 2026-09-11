@@ -66,6 +66,7 @@ import org.eblocker.server.common.network.unix.IpSetConfig;
 import org.eblocker.server.common.network.unix.IpSets;
 import org.eblocker.server.common.network.unix.IscDhcpServer;
 import org.eblocker.server.common.network.unix.NetworkServicesUnix;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.openvpn.OpenVpnChannelFactory;
 import org.eblocker.server.common.openvpn.OpenVpnClientFactory;
 import org.eblocker.server.common.openvpn.OpenVpnService;
@@ -122,6 +123,8 @@ import org.eblocker.server.http.controller.MobileDnsCheckController;
 import org.eblocker.server.http.controller.NetworkController;
 import org.eblocker.server.http.controller.OpenVpnController;
 import org.eblocker.server.http.controller.OpenVpnServerController;
+import org.eblocker.server.http.controller.WireGuardServerController;
+import org.eblocker.server.http.controller.WireGuardDashboardController;
 import org.eblocker.server.http.controller.PageContextController;
 import org.eblocker.server.http.controller.ParentalControlController;
 import org.eblocker.server.http.controller.ParentalControlFilterListsController;
@@ -154,6 +157,7 @@ import org.eblocker.server.http.service.DashboardCardService;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.http.service.MessageCenterService;
 import org.eblocker.server.http.service.OpenVpnServerService;
+import org.eblocker.server.http.service.WireGuardServerService;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 import org.eblocker.server.http.service.ParentalControlEnforcerService;
 import org.eblocker.server.http.service.ParentalControlSearchEngineConfigService;
@@ -164,6 +168,7 @@ import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
 import org.eblocker.server.http.service.ShutdownExecutorService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.eblocker.server.http.service.UserService;
+import org.eblocker.server.http.service.WireGuardAuthorizedRuntimePeerSelector;
 import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.bpjm.BpjmFilterService;
 import org.eblocker.server.icap.resources.ResourceHandler;
@@ -238,6 +243,8 @@ public class EblockerModule extends BaseModule {
         bind(EventLogger.class).to(DataSourceEventLogger.class);
         bind(FilterStatisticsDataSource.class).to(JedisFilterStatisticsDataSource.class);
         bind(NetworkServices.class).to(NetworkServicesUnix.class);
+        bind(WireGuardRuntimePeerSelector.class)
+                .to(WireGuardAuthorizedRuntimePeerSelector.class);
         bind(PubSubService.class).to(JedisPubSubService.class);
         bind(ScriptRunner.class).to(ScriptRunnerUnix.class);
         bind(SystemUpdater.class).to(DebianUpdater.class);
@@ -273,6 +280,7 @@ public class EblockerModule extends BaseModule {
         bind(NetworkStateMachine.class);
         bind(OpenVpnAddressListener.class);
         bind(OpenVpnServerService.class);
+        bind(WireGuardServerService.class);
         bind(OpenVpnService.class);
         bind(ParentalControlAccessRestrictionsService.class);
         bind(ParentalControlEnforcerService.class);
@@ -630,6 +638,18 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public OpenVpnServerController openVpnServerController() {
         return ControllerWrapperFactory.wrap(OpenVpnServerController.class);
+    }
+
+    @Provides
+    @Singleton
+    public WireGuardServerController wireGuardServerController() {
+        return ControllerWrapperFactory.wrap(WireGuardServerController.class);
+    }
+
+    @Provides
+    @Singleton
+    public WireGuardDashboardController wireGuardDashboardController() {
+        return ControllerWrapperFactory.wrap(WireGuardDashboardController.class);
     }
 
     @Provides

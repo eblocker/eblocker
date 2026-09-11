@@ -88,6 +88,12 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         UserModule child = exp.addUser("Billy the kid", UserRole.CHILD);
         exp.assignUser(child, device22);
 
+        device21.setWireGuardEnabled(true);
+        exp.deviceService.updateDevice(device21);
+
+        child.setWireGuardEnabled(true);
+        exp.dataSource.save(child, child.getId());
+
         // edit dashboard: hide pause card in all layouts
         exp.setCardVisibility("PAUSE", false, parent);
 
@@ -122,6 +128,8 @@ class UsersBackupProviderTest extends BackupProviderTestBase {
         UserModule childOut = imp.userService.getUserById(out22.getAssignedUser());
         assertNotNull(childOut);
         assertEquals(child.getName(), childOut.getName());
+        assertTrue(out21.isWireGuardEnabled());
+        assertTrue(childOut.isWireGuardEnabled());
         parent = imp.getUserByName("Mom");
         imp.checkCardVisibility("PAUSE", false, parent);
         imp.checkUsersExist();

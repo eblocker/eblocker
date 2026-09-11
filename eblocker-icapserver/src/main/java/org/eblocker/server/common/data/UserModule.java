@@ -36,6 +36,8 @@ public class UserModule {
     private LocalDate birthday;
     private UserRole userRole;
     private boolean system;
+    @JsonProperty
+    private boolean wireGuardEnabled;
     private byte[] pin;
     private Map<String, WhiteListConfig> whiteListConfigByDomains;
 
@@ -112,6 +114,14 @@ public class UserModule {
 
     public void setSystem(boolean system) {
         this.system = system;
+    }
+
+    public boolean isWireGuardEnabled() {
+        return wireGuardEnabled;
+    }
+
+    public void setWireGuardEnabled(boolean wireGuardEnabled) {
+        this.wireGuardEnabled = wireGuardEnabled;
     }
 
     public byte[] getPin() {

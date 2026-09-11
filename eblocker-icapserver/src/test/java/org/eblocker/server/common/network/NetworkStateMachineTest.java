@@ -209,7 +209,7 @@ public class NetworkStateMachineTest {
         // When a device is put on/removed from the whitelist
         initializeToLocalDhcpState();
         machine.deviceStateChanged();
-        verify(services).enableFirewall(true, enableSSL, false, false);
+        verify(services).enableFirewall(true, enableSSL, false, false, false);
         NetworkConfiguration cfg = defaultLocalDhcpConfiguration();
         verify(services).configureDhcpServer(cfg);
     }
@@ -219,7 +219,7 @@ public class NetworkStateMachineTest {
         // When a device is put on/removed from the whitelist
         initializeToExternalDhcpState();
         machine.deviceStateChanged();
-        verify(services).enableFirewall(true, enableSSL, false, false);
+        verify(services).enableFirewall(true, enableSSL, false, false, false);
         NetworkConfiguration cfg = defaultExternalDhcpConfiguration();
         verify(services, never()).configureDhcpServer(cfg);
         verify(dnsServer, never()).setDnsCustomResolver();

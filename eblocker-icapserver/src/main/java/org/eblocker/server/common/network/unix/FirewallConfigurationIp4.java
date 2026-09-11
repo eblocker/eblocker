@@ -22,6 +22,8 @@ import org.eblocker.server.common.Environment;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
+import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.firewall.IpAddressFilter;
 import org.eblocker.server.common.network.unix.firewall.TableGeneratorIp4;
@@ -30,8 +32,11 @@ import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Writes configuration files for "iptables-restore".
@@ -56,6 +61,38 @@ public class FirewallConfigurationIp4 extends FirewallConfigurationBase {
         this.tableGenerator = tableGenerator;
         this.networkServices = networkServices;
         this.restrictionsService = restrictionsService;
+    }
+
+    public synchronized void enable(
+            Set<Device> allDevices,
+            Collection<OpenVpnClientState> anonVpnClients,
+            Collection<WireGuardPeer> wireGuardPeers,
+            boolean masquerade,
+            boolean enableSSL,
+            boolean enableEblockerDns,
+            boolean enableOpenVpnServer,
+            boolean enableWireGuardServer,
+            boolean enableMalwareSet,
+            Supplier<Boolean> applyFirewallRules) throws IOException {
+
+        tableGenerator.setWireGuardServerEnabled(
+                enableWireGuardServer
+        );
+
+        tableGenerator.setWireGuardPeers(
+                wireGuardPeers
+        );
+
+        super.enable(
+                allDevices,
+                anonVpnClients,
+                masquerade,
+                enableSSL,
+                enableEblockerDns,
+                enableOpenVpnServer,
+                enableMalwareSet,
+                applyFirewallRules
+        );
     }
 
     @Override

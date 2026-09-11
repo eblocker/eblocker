@@ -319,9 +319,9 @@
                 "SUB_SYSTEM_STATUS_SERVICES_ERROR": "Interne Dienste angehalten: {{error}}",
                 "SUB_SYSTEM_STATUS_SERVICES_OK": "Interne Dienste gestartet.",
                 "SUB_SYSTEM_STATUS_SERVICES_STARTING": "Starte interne Dienste.",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR" : "Systemprüfung fehlgeschlagen: {{error}}",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK" : "Systemprüfung abgeschlossen.",
-                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING" : "Starte Systemprüfung."
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_ERROR": "Systemprüfung fehlgeschlagen: {{error}}",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_OK": "Systemprüfung abgeschlossen.",
+                "SUB_SYSTEM_STATUS_SYSTEM_CHECK_STARTING": "Starte Systemprüfung."
             },
             "TOOLBAR": {
                 "TITLE": "eBlocker Booting"
@@ -378,7 +378,7 @@
                 },
                 "LABEL": "Passwort eingeben",
                 "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht.",
-                "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN- und Lizenz-Schlüssel nicht wiederhergestellt."
+                "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN-, WireGuard- und Lizenz-Schlüssel nicht wiederhergestellt."
             },
             "WARNING": {
                 "ITEM": {
@@ -388,6 +388,7 @@
                 "NO_PASSWORD_HTTPS_CA_NOT_IMPORTED": "Die HTTPS-Schlüssel können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "Die OpenVPN-Schlüssel für eBlocker Mobile können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "Die OpenVPN-Schlüssel für Anonymisierung können nicht wiederhergestellt werden.",
+                "NO_PASSWORD_WIREGUARD_NOT_IMPORTED": "Die WireGuard-Schlüssel und -Konfiguration können nicht wiederhergestellt werden.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "Die Lizenz-Schlüssel können nicht wiederhergestellt werden.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen.",
                 "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht gesichert werden.",
@@ -2728,9 +2729,9 @@
                 "REBOOT": "Neustart",
                 "SHUTDOWN": "Ausschalten"
             },
-            "ERROR" : {
-                "REBOOT" : "Der eBlocker kann momentan nicht neu gestartet werden.",
-                "SHUTDOWN" : "Der eBlocker kann momentan nicht ausgeschaltet werden."
+            "ERROR": {
+                "REBOOT": "Der eBlocker kann momentan nicht neu gestartet werden.",
+                "SHUTDOWN": "Der eBlocker kann momentan nicht ausgeschaltet werden."
             },
             "EXPLANATION": "eBlocker ausschalten oder neu starten.",
             "LABEL": "Neustart"
@@ -3484,6 +3485,211 @@
                 "NUM_ASSIGNED": "{num, select, 0{Keinem Benutzer zugewiesen.} 1{Einem Benutzer zugewiesen.} other{{num} Benutzern zugewiesen.}}",
                 "REMOVE_BUTTON": "Es dürfen nur benutzerdefinierte Kategorien gelöscht werden, die keinem Benutzer zugewiesen sind."
             }
+        },
+        "VPN_ACCESS": {
+            "LABEL": "VPN-Zugriff",
+            "TITLE": "VPN-Zugriff für Geräte",
+            "DESCRIPTION": "Hier können die VPN-Berechtigungen aller Geräte zentral verwaltet werden.",
+            "WIREGUARD_HELP": "WireGuard muss global aktiv sein. Danach kann der Zugriff für ein einzelnes Gerät oder über einen zugewiesenen Benutzer freigegeben werden. Eine Benutzerfreigabe gilt für alle Geräte dieses Benutzers.",
+            "SEARCH": "Gerät oder Benutzer suchen",
+            "GLOBAL_OPENVPN": "OpenVPN / eBlocker Mobile global",
+            "GLOBAL_WIREGUARD": "WireGuard global",
+            "DEVICE": "Gerät",
+            "USER": "Benutzer",
+            "OPENVPN": "OpenVPN / eBlocker Mobile",
+            "WIREGUARD_DEVICE": "WireGuard Gerät",
+            "WIREGUARD_USER": "WireGuard Benutzer",
+            "EFFECTIVE": "Effektiver WireGuard-Zugriff",
+            "ALLOWED": "Erlaubt",
+            "DENIED": "Gesperrt",
+            "ACCESS_SOURCE": {
+                "DEVICE": "Freigegeben über Gerät",
+                "USER": "Freigegeben über Benutzer",
+                "DEVICE_AND_USER": "Freigegeben über Gerät und Benutzer"
+            },
+            "ON": "Aktiv",
+            "OFF": "Aus",
+            "UNKNOWN": "Unbekannt",
+            "UNASSIGNED": "Nicht zugewiesen",
+            "NOT_APPLICABLE": "Nicht erforderlich",
+            "REASON": {
+                "GLOBAL_DISABLED": "WireGuard ist global ausgeschaltet.",
+                "DEVICE_DISABLED": "WireGuard ist für dieses Gerät nicht freigegeben.",
+                "DEVICE_NOT_FOUND": "Das Gerät wurde nicht gefunden.",
+                "USER_NOT_FOUND": "Der zugewiesene Benutzer wurde nicht gefunden.",
+                "USER_INCONSISTENT": "Die Benutzerzuordnung ist inkonsistent.",
+                "USER_DISABLED": "WireGuard ist für den zugewiesenen Benutzer nicht freigegeben.",
+                "ALLOWED_NO_ASSIGNED_USER": "Freigegeben, da kein echter Benutzer zugewiesen ist.",
+                "ALLOWED": "WireGuard-Zugriff ist freigegeben."
+            },
+            "NOTIFICATION": {
+                "LOAD_ERROR": "Die VPN-Berechtigungen konnten nicht geladen werden.",
+                "OPENVPN_ERROR": "Die OpenVPN-Berechtigung konnte nicht geändert werden.",
+                "WIREGUARD_DEVICE_ERROR": "Die WireGuard-Geräteberechtigung konnte nicht geändert werden.",
+                "WIREGUARD_USER_ERROR": "Die WireGuard-Benutzerberechtigung konnte nicht geändert werden."
+            }
+        },
+
+    "WIREGUARD_USER_ACCESS": {
+      "TITLE": "WireGuard-Zugriff",
+      "DESCRIPTION": "Diese Benutzerfreigabe gilt für alle Geräte, die diesem Benutzer zugeordnet sind.",
+      "ENABLED": "WireGuard-Zugriff erlaubt",
+      "DISABLED": "WireGuard-Zugriff gesperrt",
+      "NOTIFICATION": {
+        "LOAD_ERROR": "Die WireGuard-Benutzerfreigabe konnte nicht geladen werden.",
+        "SAVE_ERROR": "Die WireGuard-Benutzerfreigabe konnte nicht geändert werden."
+      }
+    },
+    "WIREGUARD": {
+            "LABEL": "WireGuard",
+            "SWITCH": {
+                "ON": "WireGuard an",
+                "OFF": "WireGuard aus"
+            },
+            "DISABLED_STATE": {
+                "TITLE": "WireGuard ist ausgeschaltet",
+                "TEXT": "Gespeicherte Clientprofile und Einstellungen bleiben erhalten. Verbindungen sind derzeit inaktiv."
+            },
+            "SETUP": {
+                "TITLE": "WireGuard einrichten",
+                "STEP_1": "WireGuard einschalten.",
+                "STEP_2": "Externen Zugriff mit öffentlicher IP-Adresse oder DNS-Namen konfigurieren.",
+                "STEP_3": "Unter Geräte → VPN-Zugriff das Zielgerät oder seinen Benutzer freigeben.",
+                "STEP_4": "Clientprofil erstellen.",
+                "STEP_5": "Tunnelmodus wählen.",
+                "STEP_6": "QR-Code scannen oder .conf in der WireGuard-App importieren.",
+                "WAN_HINT": "Für Verbindungen aus dem Internet muss UDP 51820 im Router an den eBlocker weitergeleitet werden."
+            },
+            "STATUS": {
+                "TITLE": "Status",
+                "INTERFACE": "Schnittstelle",
+                "SERVICE": "Dienst",
+                "WG": "WireGuard",
+                "PEERS": "Aktive Peers",
+                "PORT": "Port"
+            },
+            "ENDPOINT": {
+                "TITLE": "Externer Zugriff",
+                "TYPE": "Externer Adresstyp",
+                "HOST": "Öffentliche IP-Adresse oder DNS-Name",
+                "TYPES": {
+                    "FIXED_IP": "Statische IP-Adresse",
+                    "DYN_DNS": "Dynamic DNS Anbieter",
+                    "EBLOCKER_DYN_DNS": "eBlocker Dynamic DNS"
+                }
+            },
+            "ACTION": {
+                "SAVE": "Speichern"
+            },
+            "PEERS": {
+                "TITLE": "Konfigurierte WireGuard-Peers",
+                "EMPTY": "Es sind keine WireGuard-Peers konfiguriert.",
+                "COLUMN": {
+                    "NAME": "Peer",
+                    "DEVICE": "eBlocker-Gerät",
+                    "IP": "WireGuard-IP",
+                    "LAN": "LAN-Zugriff",
+                    "ACTIONS": "Aktionen"
+                },
+                "UNBOUND": "Nicht zugeordnet",
+                "UNKNOWN_DEVICE": "Unbekanntes Gerät",
+                "YES": "Ja",
+                "NO": "Nein",
+                "ACTIVITY": {
+                    "LABEL": "Aktivität",
+                    "ACTIVE": "Aktiv",
+                    "RECENTLY_SEEN": "Kürzlich gesehen",
+                    "NEVER_CONNECTED": "Noch nie verbunden",
+                    "UNAVAILABLE": "Nicht verfügbar",
+                    "GLOBAL_DISABLED": "Inaktiv – WireGuard ist ausgeschaltet"
+                },
+                "LATEST_HANDSHAKE": "Letzter Handshake",
+                "RX": "Empfangen",
+                "TX": "Gesendet"
+            },
+            "PROVISIONING": {
+                "TITLE": "WireGuard-Clientprofile",
+                "DESCRIPTION": "Hier kann ein WireGuard-Profil für ein bestimmtes eBlocker-Gerät erstellt und auf einem zweiten Bildschirm als QR-Code angezeigt werden. Das Zielgerät scannt den QR-Code anschließend direkt mit der WireGuard-App.",
+                "DEVICE": "Zielgerät",
+                "NO_DEVICES": "Es sind keine Geräte für die WireGuard-Einrichtung verfügbar.",
+                "NO_PROFILE": "Für dieses Gerät ist noch kein WireGuard-Clientprofil vorhanden.",
+                "CREATE": "Clientprofil erstellen",
+                "PROFILE": "Clientprofil",
+                "ADDRESS": "WireGuard-IP",
+                "SHOW_QR": "QR-Code anzeigen",
+                "DOWNLOAD_CONFIG": ".conf herunterladen",
+                "MANAGE": "Verwalten",
+                "ENDPOINT_REQUIRED": "Richte zuerst oben den externen WireGuard-Zugriff ein. QR-Code und .conf stehen danach zur Verfügung.",
+                "QR_HINT": "Öffne auf dem Zielgerät die WireGuard-App und scanne diesen QR-Code. Der QR-Code enthält die private Client-Konfiguration und sollte nicht weitergegeben werden.",
+                "LAN_ACCESS": "Zugriff auf das lokale Netzwerk erlauben",
+                "LAN_HINT": "Steuert, ob dieser WireGuard-Client Geräte und Dienste im lokalen Netzwerk erreichen darf.",
+                "REGENERATE": "Profil neu erzeugen",
+                "DELETE": "Profil löschen",
+                "DELETE_CONFIRM_TITLE": "WireGuard-Clientprofil löschen?",
+                "DELETE_CONFIRM_TEXT": "Das vorhandene WireGuard-Clientprofil wird widerrufen. Bereits importierte Konfigurationen funktionieren danach nicht mehr.",
+                "DELETE_CONFIRM_OK": "Profil löschen",
+                "DELETE_CONFIRM_CANCEL": "Abbrechen",
+                "REGENERATE_CONFIRM_TITLE": "WireGuard-Clientprofil neu erzeugen?",
+                "REGENERATE_CONFIRM_TEXT": "Das vorhandene Profil wird widerrufen und mit neuen Schlüsseln neu erstellt. Die bisherige Konfiguration funktioniert danach nicht mehr und muss per QR-Code oder .conf neu importiert werden.",
+                "REGENERATE_CONFIRM_OK": "Neu erzeugen",
+                "REGENERATE_CONFIRM_CANCEL": "Abbrechen",
+                "NOTIFICATION": {
+                    "CREATED": "WireGuard-Clientprofil wurde erstellt.",
+                    "CREATE_FAILED": "Das WireGuard-Clientprofil konnte nicht erstellt werden.",
+                    "QR_FAILED": "Der WireGuard-QR-Code konnte nicht geladen werden.",
+                    "CONFIG_FAILED": "Die WireGuard-Clientkonfiguration konnte nicht heruntergeladen werden.",
+                    "ENDPOINT_REQUIRED": "Bitte zuerst den externen WireGuard-Zugriff konfigurieren.",
+                    "LAN_SAVED": "LAN-Zugriff für das WireGuard-Clientprofil gespeichert.",
+                    "LAN_FAILED": "Der LAN-Zugriff konnte nicht geändert werden.",
+                    "DELETED": "WireGuard-Clientprofil wurde gelöscht.",
+                    "DELETE_FAILED": "Das WireGuard-Clientprofil konnte nicht gelöscht werden.",
+                    "REGENERATED": "WireGuard-Clientprofil wurde mit neuen Schlüsseln neu erzeugt.",
+                    "REGENERATE_FAILED": "Das WireGuard-Clientprofil konnte nicht neu erzeugt werden.",
+                    "REGENERATE_CREATE_FAILED": "Das alte WireGuard-Clientprofil wurde widerrufen, aber das neue Profil konnte nicht erstellt werden. Erstelle das Clientprofil erneut."
+                }
+            },
+            "ROUTING": {
+                "TITLE": "Tunnel-Routing",
+                "DESCRIPTION": "Legt fest, welche IPv4-Netze der WireGuard-Client durch den Tunnel routet.",
+                "PROFILE_REFRESH_HINT": "Nach Änderungen am externen Endpunkt oder Tunnel-Routing muss die aktualisierte Clientkonfiguration erneut per QR-Code oder .conf in die WireGuard-App übernommen werden; bereits importierte Profile werden nicht automatisch aktualisiert.",
+                "PEER": "Peer",
+                "MODE": "Tunnelmodus",
+                "MODES": {
+                    "FULL_TUNNEL": "Vollständiger Tunnel",
+                    "LAN_ONLY": "Split Tunnel – nur LAN/private Netzwerke",
+                    "CUSTOM": "Split Tunnel – benutzerdefinierte Netzwerke"
+                },
+                "CUSTOM_ALLOWED_IPS": "Benutzerdefinierte IPv4-Netze (CIDR, eine Route pro Zeile)",
+                "CUSTOM_HELP": "Beispiel: 192.168.178.0/24",
+                "LAN_DENIED_WARNING": "Dieser Peer darf aktuell nicht auf lokale/private Netze zugreifen. Der Split-Tunnel-Modus ändert diese Berechtigung nicht.",
+                "SAVE": "Routing speichern",
+                "NOTIFICATION": {
+                    "SAVED": "WireGuard-Tunnelrouting gespeichert.",
+                    "SAVE_FAILED": "Das WireGuard-Tunnelrouting konnte nicht gespeichert werden."
+                }
+            },
+            "NOTIFICATION": {
+                "DEVICES_LOAD_FAILED": "Die Gerätedaten für die WireGuard-Zuordnung konnten nicht geladen werden.",
+                "PEERS_LOAD_FAILED": "Die WireGuard-Peers konnten nicht geladen werden.",
+                "STATUS_LOAD_FAILED": "Der WireGuard-Status konnte nicht geladen werden.",
+                "STATUS_CHANGE_FAILED": "Der WireGuard-Status konnte nicht geändert werden.",
+                "ENDPOINT_LOAD_FAILED": "Die WireGuard-Endpunktkonfiguration konnte nicht geladen werden.",
+                "ENDPOINT_SAVE_FAILED": "Die WireGuard-Endpunktkonfiguration konnte nicht gespeichert werden.",
+                "ENDPOINT_SAVED": "WireGuard-Endpunktkonfiguration gespeichert."
+            }
+        },
+        "VPN_HOME_DYNDNS": {
+            "LABEL": "DynDNS",
+            "TITLE": "Externer Zugriff / DynDNS",
+            "PLACEHOLDER": "Die gemeinsame DynDNS-Konfiguration für eBlocker Mobile wird hier eingerichtet."
+        },
+        "VPN_HOME_OPENVPN": {
+            "LABEL": "OpenVPN"
+        },
+        "VPN_HOME_TESTS": {
+            "LABEL": "Tests",
+            "TITLE": "Tests und Diagnose",
+            "PLACEHOLDER": "Gemeinsame Verbindungs- und Diagnosetests für OpenVPN und WireGuard werden hier zusammengeführt."
         }
     },
     "HELP_ICON": {

@@ -19,6 +19,7 @@ package org.eblocker.server.common.network.unix.firewall;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
+import org.eblocker.server.common.data.wireguard.WireGuardPeer;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.NetworkUtils;
 import org.eblocker.server.common.util.Ip4Utils;
@@ -26,10 +27,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class TableGeneratorIp4 extends TableGeneratorBase {
     private static final Logger LOG = LoggerFactory.getLogger(TableGeneratorIp4.class);
+
+    // Must stay aligned with wireguard-server-control until the
+    // WireGuard network configuration is centralized.
+    private static final String WIREGUARD_INTERFACE = "wg0";
+    private static final String WIREGUARD_SUBNET = "10.13.13.0/24";
+    private static final int WIREGUARD_SERVER_PORT = 51820;
 
     // fixed configuration parameters
     private final int mobileVpnSubnet;
@@ -45,6 +54,14 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     private String mobileVpnIpAddress;
     private String gatewayIpAddress;
     private String networkMask;
+
+    private boolean wireGuardServerEnabled;
+
+    private final Set<String> wireGuardLanAccessIps =
+            new TreeSet<>();
+
+    private final Rule wireGuardInput =
+            new Rule().input(WIREGUARD_INTERFACE);
 
     @Inject
     public TableGeneratorIp4(@Named("network.interface.name") String standardInterface,
@@ -200,6 +217,18 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
             postRouting.rule(new Rule(standardOutput).masquerade());
         }
 
+        // WireGuard full-tunnel clients always need source NAT on the
+        // standard interface. This is intentionally independent of
+        // masqueradeEnabled because that flag is disabled in
+        // PLUG_AND_PLAY mode.
+        if (wireGuardServerEnabled) {
+            postRouting.rule(
+                    new Rule(standardOutput)
+                            .sourceIp(WIREGUARD_SUBNET)
+                            .masquerade()
+            );
+        }
+
         // Enable masquerading for mobile VPN clients
         if (mobileVpnServerActive()) {
             ipAddressFilter.getMobileVpnDevicesIps()
@@ -230,6 +259,18 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         Chain forward = filterTable.chain("FORWARD").accept();
         filterTable.chain("OUTPUT").accept();
 
+        // WireGuard uses UDP only. Put the explicit allow rule before
+        // the generic server-mode restrictions so TCP/51820 remains
+        // closed while UDP/51820 is reachable.
+        if (wireGuardServerEnabled) {
+            input.rule(
+                    new Rule(standardInput)
+                            .udp()
+                            .destinationPort(WIREGUARD_SERVER_PORT)
+                            .accept()
+            );
+        }
+
         LOG.info("Firewall eBlocker mode: {}", serverEnvironment);
         if (serverEnvironment) {
             LOG.info("Server mode: Setting firewall resctrictions");
@@ -241,6 +282,44 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
             input.rule(new Rule(dropNonStdPorts).udp());
             input.rule(new Rule(mobileVpnInput).tcp().destinationPort(httpPort).returnFromChain());
             input.rule(new Rule(mobileVpnInput).tcp().destinationPort(proxyHTTPSPort).returnFromChain());
+        }
+
+        // Explicit per-peer LAN permissions must precede the
+        // blanket WireGuard private-network deny rules.
+        if (wireGuardServerEnabled) {
+            wireGuardLanAccessIps.forEach(ip -> forward
+                    .rule(new Rule(wireGuardInput)
+                            .sourceIp(ip)
+                            .destinationIp(NetworkUtils.privateClassC)
+                            .accept())
+                    .rule(new Rule(wireGuardInput)
+                            .sourceIp(ip)
+                            .destinationIp(NetworkUtils.privateClassB)
+                            .accept())
+                    .rule(new Rule(wireGuardInput)
+                            .sourceIp(ip)
+                            .destinationIp(NetworkUtils.privateClassA)
+                            .accept())
+                    .rule(new Rule(wireGuardInput)
+                            .sourceIp(ip)
+                            .destinationIp(NetworkUtils.linkLocal)
+                            .accept()));
+
+            // Safe default: every other WireGuard peer is denied access
+            // to private and link-local networks.
+            forward
+                    .rule(new Rule(wireGuardInput)
+                            .destinationIp(NetworkUtils.privateClassC)
+                            .reject())
+                    .rule(new Rule(wireGuardInput)
+                            .destinationIp(NetworkUtils.privateClassB)
+                            .reject())
+                    .rule(new Rule(wireGuardInput)
+                            .destinationIp(NetworkUtils.privateClassA)
+                            .reject())
+                    .rule(new Rule(wireGuardInput)
+                            .destinationIp(NetworkUtils.linkLocal)
+                            .reject());
         }
 
         // allow some mobile clients access to local networks
@@ -413,6 +492,77 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
 
     private String selectTargetIp(String ip) {
         return isMobileClient(ip) ? mobileVpnIpAddress : ownIpAddress;
+    }
+
+    public void setWireGuardPeers(
+            Collection<WireGuardPeer> peers) {
+
+        wireGuardLanAccessIps.clear();
+
+        if (peers == null) {
+            return;
+        }
+
+        for (WireGuardPeer peer : peers) {
+            if (peer == null
+                    || !peer.isAllowLanAccess()
+                    || !isValidWireGuardPeerAddress(
+                            peer.getAllowedIp()
+                    )) {
+                continue;
+            }
+
+            wireGuardLanAccessIps.add(
+                    peer.getAllowedIp()
+            );
+        }
+    }
+
+    private boolean isValidWireGuardPeerAddress(
+            String allowedIp) {
+
+        if (allowedIp == null) {
+            return false;
+        }
+
+        // Firewall exceptions are security-sensitive. Accept only the
+        // exact canonical representation persisted for a WireGuard peer;
+        // surrounding whitespace must fail closed rather than be repaired.
+        if (!allowedIp.equals(allowedIp.trim())) {
+            return false;
+        }
+
+        String value = allowedIp;
+        String prefix = "10.13.13.";
+        String suffix = "/32";
+
+        if (!value.startsWith(prefix)
+                || !value.endsWith(suffix)) {
+            return false;
+        }
+
+        String hostPart = value.substring(
+                prefix.length(),
+                value.length() - suffix.length()
+        );
+
+        try {
+            int host = Integer.parseInt(hostPart);
+
+            // .1 is the server; .2-.254 are valid peer addresses.
+            return host >= 2
+                    && host <= 254
+                    && Integer.toString(host)
+                            .equals(hostPart);
+
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public void setWireGuardServerEnabled(
+            boolean wireGuardServerEnabled) {
+        this.wireGuardServerEnabled = wireGuardServerEnabled;
     }
 
     public void setMobileVpnIpAddress(String mobileVpnIpAddress) {

@@ -16,10 +16,10 @@
  */
 export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, DeviceService, SslService,
                                                 UserProfileService, PauseService, VpnHomeService,
-                                                DeviceSelectorService) {
+                                                WireGuardDashboardService, DeviceSelectorService) {
     'ngInject';
 
-    let device, globalSslState, profile, pause, vpnHomeStatus;
+    let device, globalSslState, profile, pause, vpnHomeStatus, wireGuardPeer, wireGuardEnabled;
 
     function getDevice() {
         return DeviceService.getDevice().then(function success(response) {
@@ -52,6 +52,65 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
         });
     }
 
+    /*
+     * WireGuard peer association is independent of OpenVPN mobileState.
+     *
+     * Absence of a device-bound peer is a normal state. Likewise, a
+     * temporary WireGuard metadata read failure must not make the whole
+     * dashboard unavailable. In either case the existing OpenVPN
+     * availability decision remains usable.
+     */
+    function getWireGuardPeer() {
+        wireGuardPeer = undefined;
+
+        if (!DeviceSelectorService.isLocalDevice() ||
+                !angular.isObject(device) ||
+                !angular.isString(device.id) ||
+                device.id.length === 0) {
+            return $q.resolve();
+        }
+
+        return WireGuardDashboardService.getPeer(device.id).then(
+            function success(response) {
+                wireGuardPeer = response.data;
+            },
+            function error() {
+                wireGuardPeer = undefined;
+                return $q.resolve();
+            }
+        );
+    }
+
+    /*
+     * Persisted WireGuard enabled state is the readiness signal for
+     * first-peer onboarding. A temporary status read failure is treated
+     * as unknown/disabled here and must not reject dashboard updateData().
+     *
+     * Existing peer metadata remains a fallback so an established
+     * configuration does not disappear from the dashboard merely
+     * because this independent status read failed.
+     */
+    function getWireGuardStatus() {
+        wireGuardEnabled = false;
+
+        if (!DeviceSelectorService.isLocalDevice() ||
+                !angular.isObject(device) ||
+                !angular.isString(device.id) ||
+                device.id.length === 0) {
+            return $q.resolve();
+        }
+
+        return WireGuardDashboardService.getStatus(device.id).then(
+            function success(response) {
+                wireGuardEnabled = response.data === true;
+            },
+            function error() {
+                wireGuardEnabled = false;
+                return $q.resolve();
+            }
+        );
+    }
+
     /**
      * Load all data that is required to check all cards for unavailability.
      * This function is called before isCardUnavailable(..), so that isCardUnavailable() uses
@@ -59,11 +118,17 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
      * keep the data up to date (by some $interval).
      */
     function updateData() {
-        return $q.all([getDevice(),
+        const devicePromise = getDevice();
+
+        return $q.all([
+            devicePromise,
             getSslState(),
             getUserProfile(),
             getPause(),
-            getVpnHomeStatus()]);
+            getVpnHomeStatus(),
+            devicePromise.then(getWireGuardStatus),
+            devicePromise.then(getWireGuardPeer)
+        ]);
     }
 
     function isInternetAccessLocked(device) {
@@ -145,7 +210,15 @@ export default function CardAvailabilityService($q, FILTER_TYPE, CARD_HTML, Devi
     }
 
     function isMobileCardAvailable(card, vpnHomeStatus, device) {
-        return vpnHomeStatus.isRunning && device.mobileState && DeviceSelectorService.isLocalDevice();
+        const openVpnAvailable =
+            vpnHomeStatus.isRunning && device.mobileState;
+
+        const wireGuardAvailable =
+            wireGuardEnabled === true ||
+            angular.isObject(wireGuardPeer);
+
+        return (openVpnAvailable || wireGuardAvailable) &&
+            DeviceSelectorService.isLocalDevice();
     }
 
     function isUserCardAvailable(device) {

@@ -150,6 +150,7 @@ import FilterService from './service/filter/FilterService';
 import CustomDomainFilterService from './service/filter/CustomDomainFilterService';
 import UserService from './service/users/UserService';
 import VpnHomeService from './service/vpn/VpnHomeService';
+import WireGuardDashboardService from './service/vpn/WireGuardDashboardService';
 import NotificationService from '../../shared/services/notification/NotificationService';
 import DialogService from './service/dialog/DialogService';
 import DeviceService from './service/devices/device.service';
@@ -304,6 +305,7 @@ angular.module('eblocker.dashboard', [
     .factory('UserService', UserService)
     .factory('userProfile', UserProfile)
     .factory('VpnHomeService', VpnHomeService)
+    .factory('WireGuardDashboardService', WireGuardDashboardService)
     .factory('NotificationService', NotificationService)
     .factory('DialogService', DialogService)
     .factory('DeviceService', DeviceService)

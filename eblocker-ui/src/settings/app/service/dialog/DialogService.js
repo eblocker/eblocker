@@ -17,6 +17,33 @@
 export default function DialogService($mdDialog, $q, $translate) {// jshint ignore: line
     'ngInject';
 
+    function confirmationDialog(event, msgKeyTitle, msgKeyText, msgKeyOkButton, msgKeyCancelButton,
+                                subject, okCallback, cancelCallback) {
+        return $mdDialog.show({
+            controller: 'ConfirmationDialogController',
+            controllerAs: 'vm',
+            templateUrl: 'dialogs/confirmation/confirmation.dialog.tmpl.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:false,
+            targetEvent: event,
+            locals: {
+                msgKeys: {
+                    title: msgKeyTitle,
+                    text: msgKeyText,
+                    okButton: msgKeyOkButton,
+                    cancelButton: msgKeyCancelButton
+                },
+                subject: subject,
+                okAction: okCallback,
+                cancelAction: cancelCallback || function() {}
+            }
+        }).then(function success(response) {
+            return response;
+        }, function error(response) {
+            return response;
+        });
+    }
+
     function openDirtyConfirmDialog() {
         return $mdDialog.show({
             controller: 'ConfirmationDialogController',
@@ -862,6 +889,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
     }
 
     return {
+        confirmationDialog: confirmationDialog,
         confirmDirtyDialog: openDirtyConfirmDialog,
         updateSetTimeDialog: updateSetTimeDialog,
         updateStartConfirmDialog: updateStartConfirmDialog,

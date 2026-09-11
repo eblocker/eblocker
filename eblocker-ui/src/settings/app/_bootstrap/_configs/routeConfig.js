@@ -72,6 +72,7 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     'use strict';
 
     // Sets the default State when root URL is called: 'https://domain:3000/settings' / 'https://domain:3000'
+    $urlRouterProvider.when('/devices/vpn-access', '/mobile/vpn-access');
     $urlRouterProvider.otherwise('/' + STATES.AUTH);
 
     const slashOptionUrl = '';
@@ -1015,18 +1016,79 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
 
     // ** MAIN STATE: VPN HOME (eBlocker Mobile)
     const vpnHome = {
-        name: 'mobile',
+        name: STATES.VPN_HOME,
         url: slashOptionUrl + 'mobile',
         parent: STATES.MAIN,
+        redirectTo: STATES.VPN_HOME_STATE,
         showInNavbar: true,
         iconUrl: '/img/icons/ic_smartphone_black.svg',
         navbarOrder: 5,
         requiredLicense: function() {
             return 'BAS';
         },
-        translationKey: 'ADMINCONSOLE.VPN_HOME.LABEL',
+        translationKey: 'ADMINCONSOLE.VPN_HOME.LABEL'
+    };
+
+    // ** Tab container for eBlocker Mobile.
+    const vpnHomeState = {
+        name: STATES.VPN_HOME_STATE,
+        parent: vpnHome.name,
+        redirectTo: 'mobiledyndns',
+        requiredLicense: vpnHome.requiredLicense,
+        component: 'vpnHomeComponent'
+    };
+
+    const vpnHomeDynDns = {
+        name: 'mobiledyndns',
+        url: slashOptionSubState + 'dyndns',
+        parent: vpnHomeState.name,
+        tabOrder: 1,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_HOME_DYNDNS.LABEL',
+        component: 'vpnHomeDynDnsComponent'
+    };
+
+    const vpnHomeOpenVpn = {
+        name: 'mobileopenvpn',
+        url: slashOptionSubState + 'openvpn',
+        parent: vpnHomeState.name,
+        tabOrder: 2,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_HOME_OPENVPN.LABEL',
         component: 'vpnHomeStatusComponent'
     };
+
+
+    const vpnHomeWireGuard = {
+        name: 'mobilewireguard',
+        url: slashOptionSubState + 'wireguard',
+        parent: vpnHomeState.name,
+        tabOrder: 3,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.WIREGUARD.LABEL',
+        component: 'wireGuardStatusComponent'
+    };
+
+    const devicesVpnAccess = {
+        name: 'devicesvpnaccess',
+        url: slashOptionSubState + 'vpn-access',
+        parent: vpnHomeState.name,
+        tabOrder: 4,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_ACCESS.LABEL',
+        component: 'vpnAccessComponent'
+    };
+
+    const vpnHomeTests = {
+        name: 'mobiletests',
+        url: slashOptionSubState + 'tests',
+        parent: vpnHomeState.name,
+        tabOrder: 5,
+        requiredLicense: vpnHomeState.requiredLicense,
+        translationKey: 'ADMINCONSOLE.VPN_HOME_TESTS.LABEL',
+        component: 'vpnHomeTestsComponent'
+    };
+
 
     const vpnHomeWizard = {
         name: STATES.VPN_HOME_WIZARD,
@@ -1071,12 +1133,13 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     const allStates = [home, homeLicense, homeUpdate, adminPassword, homeAbout,
         homeLegal, parentalControl, parentalControlState, devices, ssl, sslStatus,
         sslCertificate, sslFails, trustedApps, trustedDomains, ipAnon, ipAnonState,
-        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, manualRecording, users,
+        system, network, networkSettings, networkSettingsIp6, networkWizard, vpnHome, vpnHomeState,
+        vpnHomeDynDns, vpnHomeOpenVpn, vpnHomeWireGuard, vpnHomeTests, manualRecording, users,
         blacklists, whitelists, tor, vpnconnect, dns, status, timeAndLanguage,
         events, backup, reset, diagnostics, usersDetails,
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
-        vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
+        vpnHomeWizard, devicesList, devicesDiscovery, devicesVpnAccess, dnsStatus, dnsLocal,
         dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
         doctor];
 

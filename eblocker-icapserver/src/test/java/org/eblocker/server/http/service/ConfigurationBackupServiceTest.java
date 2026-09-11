@@ -37,6 +37,7 @@ import org.eblocker.server.http.backup.RegistrationBackupProvider;
 import org.eblocker.server.http.backup.TorConfigBackupProvider;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.eblocker.server.http.backup.UsersBackupProvider;
+import org.eblocker.server.http.backup.WireGuardBackupProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -60,6 +61,7 @@ public class ConfigurationBackupServiceTest {
     private HttpsKeysBackupProvider httpsKeysBP;
     private OpenVpnServerBackupProvider openVpnServerBP;
     private OpenVpnClientBackupProvider openVpnClientBP;
+    private WireGuardBackupProvider wireGuardBP;
     private RegistrationBackupProvider registrationBP;
     private UsersBackupProvider usersBP;
     private BlockersBackupProvider blockersBP;
@@ -78,6 +80,7 @@ public class ConfigurationBackupServiceTest {
         httpsKeysBP = Mockito.mock(HttpsKeysBackupProvider.class);
         openVpnServerBP = Mockito.mock(OpenVpnServerBackupProvider.class);
         openVpnClientBP = Mockito.mock(OpenVpnClientBackupProvider.class);
+        wireGuardBP = Mockito.mock(WireGuardBackupProvider.class);
         registrationBP = Mockito.mock(RegistrationBackupProvider.class);
         usersBP = Mockito.mock(UsersBackupProvider.class);
         blockersBP = Mockito.mock(BlockersBackupProvider.class);
@@ -121,6 +124,11 @@ public class ConfigurationBackupServiceTest {
             }
 
             @Override
+            public WireGuardBackupProvider createWireGuardBackupProvider(CryptoService cryptoService) {
+                return wireGuardBP;
+            }
+
+            @Override
             public RegistrationBackupProvider createRegistrationBackupProvider(CryptoService cryptoService) {
                 return registrationBP;
             }
@@ -152,6 +160,46 @@ public class ConfigurationBackupServiceTest {
     @Test
     public void testExportImport() throws IOException {
         exportImport(service);
+
+        Mockito.verify(wireGuardBP).prepareImport();
+        Mockito.verify(wireGuardBP).importConfiguration(
+                Mockito.any(),
+                Mockito.eq(42)
+        );
+        Mockito.verify(wireGuardBP).finishImport();
+    }
+
+    @Test
+    public void testVersion6IncludesNetworkBackup() throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        service.exportConfiguration(output, password);
+        assertEquals(6, service.getBackupAttributes(true).getVersion());
+        service.verifyConfiguration(new ByteArrayInputStream(output.toByteArray()), password);
+        service.importConfiguration(new ByteArrayInputStream(output.toByteArray()), password);
+
+        Mockito.verify(networkBP).exportConfiguration(Mockito.any());
+        Mockito.verify(networkBP).verifyConfiguration(Mockito.any(), Mockito.eq(42));
+        org.mockito.InOrder order = Mockito.inOrder(wireGuardBP, appModulesBP, networkBP);
+        order.verify(wireGuardBP).prepareImport();
+        order.verify(appModulesBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(wireGuardBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(networkBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(wireGuardBP).finishImport();
+    }
+
+    @Test
+    public void testNetworkImportFailureDoesNotFinishWireGuard() throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        service.exportConfiguration(output, password);
+        Mockito.doThrow(new IOException("Network import failed")).when(networkBP)
+                .importConfiguration(Mockito.any(), Mockito.eq(42));
+
+        assertThrows(IOException.class, () -> service.importConfiguration(
+                new ByteArrayInputStream(output.toByteArray()), password));
+
+        Mockito.verify(wireGuardBP).prepareImport();
+        Mockito.verify(wireGuardBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        Mockito.verify(wireGuardBP, Mockito.never()).finishImport();
     }
 
     @Test

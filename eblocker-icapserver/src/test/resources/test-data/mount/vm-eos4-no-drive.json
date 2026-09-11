@@ -1,0 +1,26 @@
+{
+  "blockdevices": [
+    {
+      "path": "/dev/sda",
+      "name": "sda",
+      "model": "QEMU HARDDISK",
+      "label": null,
+      "mountpoint": null,
+      "fstype": null,
+      "parttype": null,
+      "hotplug": false,
+      "children": [
+        {
+          "path": "/dev/sda1",
+          "name": "sda1",
+          "model": null,
+          "label": null,
+          "mountpoint": "/",
+          "fstype": "ext4",
+          "parttype": "0x83",
+          "hotplug": false
+        }
+      ]
+    }
+  ]
+}

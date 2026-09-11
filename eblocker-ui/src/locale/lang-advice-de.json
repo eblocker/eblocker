@@ -16,15 +16,15 @@
         "LABEL_NOT_AGAIN_XS": "Nicht mehr anzeigen",
         "NOTIFICATION": {
             "UDDATE_ERROR": "Es ist ein Fehler aufgetreten.",
-            "UPDATE_HINT": "Hinweis wird für dieses Gerät jedes mal angezeigt",
+            "UPDATE_HINT": "Hinweis wird für dieses Gerät jedes Mal angezeigt",
             "UPDATE_NO_HINT": "Hinweis wird für dieses Gerät nicht mehr angezeigt"
         },
-        "PROTECTION_BAS": "Du kannst jetzt dieses Gerät mit dem eBlocker anonymisieren!",
+        "PROTECTION_BAS": "Ab jetzt kannst du die Verbindungen dieses Geräts mit dem eBlocker anonymisieren!",
         "PROTECTION_BAS_XS": "Bleibe anonym mit dem eBlocker!",
         "PROTECTION_FAM_PRO": "Der eBlocker schützt deine Privatsphäre nun auch auf diesem Gerät!",
         "PROTECTION_FAM_PRO_XS": "Der eBlocker schützt jetzt deine Privatsphäre!",
         "REGISTER": "Bitte registriere deinen eBlocker",
-        "TIP": "Unser Tipp: Öffne jetzt das Dashboard und lege ein Lesezeichen an, damit du jederzeit schnell das eBlocker Dashboard für dieses Gerät aufrufen kannst!",
+        "TIP": "Unser Tipp: Öffne jetzt das Dashboard und lege ein Lesezeichen an, damit du das eBlocker Dashboard für dieses Gerät jederzeit schnell aufrufen kannst!",
         "TIP_XS": "Tipp: Lege dir jetzt ein Lesezeichen des Dashboards an!",
         "TITLE": " - Willkommen"
     },
@@ -41,7 +41,7 @@
         },
         "OVERLAY": {
             "BUTTON": {
-                "CLOSE": "Ok",
+                "CLOSE": "OK",
                 "ENTER": "Lizenzschlüssel eingeben",
                 "PURCHASE": "Für neue Lizenz spenden"
             },

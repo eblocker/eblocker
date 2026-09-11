@@ -43,15 +43,6 @@ export default function TorService($http, logger, $q) {
         });
     }
 
-    function getTorCheckServices() {
-        return $http.get('/api/tor/checkservices').then(function success(response) {
-            return response;
-        }, function success(response) {
-            logger.error('Unable to get Tor check service URLs', response);
-            return $q.reject(response);
-        });
-    }
-
     function getNewTorIdentity() {
         return $http.put('/api/tor/newidentity').then(function success(response) {
             return response;
@@ -66,7 +57,6 @@ export default function TorService($http, logger, $q) {
         'setDeviceConfig': setDeviceConfig,
         'getShowWarnings': getShowWarnings,
         'setShowWarnings': setShowWarnings,
-        'getTorCheckServices': getTorCheckServices,
         'getNewTorIdentity': getNewTorIdentity
     };
 }

@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Copyright 2026 eBlocker Open Source GmbH
+#
+# Licensed under the EUPL, Version 1.2 or - as soon they will be
+# approved by the European Commission - subsequent versions of the EUPL
+# (the "License"); You may not use this work except in compliance with
+# the License. You may obtain a copy of the License at:
+#
+#   https://joinup.ec.europa.eu/page/eupl-text-11-12
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License.
+#
+
+# Waits the given number of milliseconds for a directory to be mounted.
+# Returns 0 if the directory is/was mounted, 1 otherwise.
+
+if [ $# -ne 2 ]; then
+    echo "usage: $0 <mountpoint> <timeout in ms>" >&2
+    exit 1
+fi
+
+MOUNTPOINT=$1
+TIMEOUT=$2
+
+# Already mounted?
+if findmnt -rno SOURCE,TARGET --mountpoint $MOUNTPOINT; then
+    exit 0
+fi
+
+# Wait up to $TIMEOUT milliseconds for automatic mounting:
+findmnt --poll=mount --timeout $TIMEOUT --first-only --mountpoint $MOUNTPOINT
+
+# The above findmnt command returns 0 even if it times out, so we have to find the mountpoint again:
+if ! findmnt -rno SOURCE,TARGET --mountpoint $MOUNTPOINT; then
+    exit 1
+fi

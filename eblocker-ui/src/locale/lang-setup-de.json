@@ -30,7 +30,7 @@
     "EXPIRED" : {
         "CARD" : {
             "BUTTON" : {
-                "RESUME" : "Weiter arbeiten"
+                "RESUME" : "Weiterarbeiten"
             },
             "TITLE" : "Setup angehalten"
         }
@@ -44,13 +44,13 @@
         "VALID_TILL" : "gültig bis"
     },
     "NETWORK_STATUS" : {
-        "EBLOCKER_IP" : "eBlocker Adresse:",
-        "GATEWAY_IP" : "Gateway Adresse:",
+        "EBLOCKER_IP" : "eBlocker-Adresse:",
+        "GATEWAY_IP" : "Gateway-Adresse:",
         "MODE" : {
             "AUTO" : "Plug-and-Play (automatisch)",
             "LABEL" : "Netzwerkmodus:",
             "MAN" : "Individuelle Einstellungen"
         },
-        "USER_IP" : "Adresse dieses Gerätes:"
+        "USER_IP" : "Adresse dieses Geräts:"
     }
 }

@@ -30,6 +30,7 @@ import org.eblocker.server.http.backup.DnsBackupProvider;
 import org.eblocker.server.http.backup.GeneralSettingsBackup;
 import org.eblocker.server.http.backup.GeneralSettingsBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
+import org.eblocker.server.http.backup.NetworkBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnClientBackupProvider;
 import org.eblocker.server.http.backup.OpenVpnServerBackupProvider;
 import org.eblocker.server.http.backup.RegistrationBackupProvider;
@@ -65,6 +66,8 @@ public class ConfigurationBackupServiceTest {
     private UsersBackupProvider usersBP;
     private BlockersBackupProvider blockersBP;
     private DnsBackupProvider dnsBP;
+    private NetworkBackupProvider networkBP;
+
     private static final String password = "top secret!";
 
     @BeforeEach
@@ -82,6 +85,7 @@ public class ConfigurationBackupServiceTest {
         usersBP = Mockito.mock(UsersBackupProvider.class);
         blockersBP = Mockito.mock(BlockersBackupProvider.class);
         dnsBP = Mockito.mock(DnsBackupProvider.class);
+        networkBP = Mockito.mock(NetworkBackupProvider.class);
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
@@ -143,6 +147,11 @@ public class ConfigurationBackupServiceTest {
             public DnsBackupProvider createDnsBackupProvider() {
                 return dnsBP;
             }
+
+            @Override
+            public NetworkBackupProvider createNetworkBackupProvider() {
+                return networkBP;
+            }
         };
         service = new ConfigurationBackupService(dataSource, providerFactory);
         Mockito.when(dataSource.getVersion()).thenReturn("42");
@@ -158,6 +167,39 @@ public class ConfigurationBackupServiceTest {
                 Mockito.eq(42)
         );
         Mockito.verify(wireGuardBP).finishImport();
+    }
+
+    @Test
+    public void testVersion6IncludesNetworkBackup() throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        service.exportConfiguration(output, password);
+        assertEquals(6, service.getBackupAttributes(true).getVersion());
+        service.verifyConfiguration(new ByteArrayInputStream(output.toByteArray()), password);
+        service.importConfiguration(new ByteArrayInputStream(output.toByteArray()), password);
+
+        Mockito.verify(networkBP).exportConfiguration(Mockito.any());
+        Mockito.verify(networkBP).verifyConfiguration(Mockito.any(), Mockito.eq(42));
+        org.mockito.InOrder order = Mockito.inOrder(wireGuardBP, appModulesBP, networkBP);
+        order.verify(wireGuardBP).prepareImport();
+        order.verify(appModulesBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(wireGuardBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(networkBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        order.verify(wireGuardBP).finishImport();
+    }
+
+    @Test
+    public void testNetworkImportFailureDoesNotFinishWireGuard() throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        service.exportConfiguration(output, password);
+        Mockito.doThrow(new IOException("Network import failed")).when(networkBP)
+                .importConfiguration(Mockito.any(), Mockito.eq(42));
+
+        assertThrows(IOException.class, () -> service.importConfiguration(
+                new ByteArrayInputStream(output.toByteArray()), password));
+
+        Mockito.verify(wireGuardBP).prepareImport();
+        Mockito.verify(wireGuardBP).importConfiguration(Mockito.any(), Mockito.eq(42));
+        Mockito.verify(wireGuardBP, Mockito.never()).finishImport();
     }
 
     @Test

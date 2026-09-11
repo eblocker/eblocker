@@ -102,7 +102,8 @@ public class ConfigurationBackupService {
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
                         providerFactory.createRegistrationBackupProvider(cryptoService),
                         providerFactory.createDnsBackupProvider(),
-                        providerFactory.createGeneralSettingsBackupProvider());
+                        providerFactory.createGeneralSettingsBackupProvider(),
+                        providerFactory.createNetworkBackupProvider());
 
             case VERSION_6_WITH_WIREGUARD:
                 return List.of(
@@ -116,7 +117,8 @@ public class ConfigurationBackupService {
                         providerFactory.createOpenVpnClientBackupProvider(cryptoService),
                         providerFactory.createRegistrationBackupProvider(cryptoService),
                         providerFactory.createDnsBackupProvider(),
-                        providerFactory.createGeneralSettingsBackupProvider());
+                        providerFactory.createGeneralSettingsBackupProvider(),
+                        providerFactory.createNetworkBackupProvider());
 
             default:
                 throw new UnsupportedBackupVersionException(version);

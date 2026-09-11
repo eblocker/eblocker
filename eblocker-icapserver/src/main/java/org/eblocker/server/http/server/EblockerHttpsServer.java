@@ -1782,10 +1782,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("postShowWarnings", HttpMethod.POST)
                 .name("controlbar.tor.device.postShowWarnings.route");
         server
-                .uri("/api/tor/checkservices", anonymousController)
-                .action("getTorCheckServices", HttpMethod.GET)
-                .name("controlbar.tor.checkservices.route");
-        server
                 .uri("/api/tor/newidentity", anonymousController)
                 .action("getNewTorIdentity", HttpMethod.PUT)
                 .name("controlbar.tor.getNewTorIdentity.route");
@@ -2251,10 +2247,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/tor/device/showwarnings", deviceController)
                 .action("postShowWarnings", HttpMethod.POST)
                 .name("dashboard.tor.device.postShowWarnings.route");
-        server
-                .uri("/api/dashboard/tor/checkservices", anonymousController)
-                .action("getTorCheckServices", HttpMethod.GET)
-                .name("dashboard.tor.checkservices.route");
         server
                 .uri("/api/dashboard/tor/newidentity", anonymousController)
                 .action("getNewTorIdentity", HttpMethod.PUT)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2026 eBlocker Open Source GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -16,35 +16,19 @@
  */
 package org.eblocker.server.common.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Map;
+import java.util.List;
 
 /**
- * Websites that provide a Tor check
+ * Represents a list of block devices as produced by the Linux utility "lsblk" with option "--json".
  */
-public class TorCheckSite {
-    // main URL
-    private String url;
+public class BlockDevicesList {
+    List<BlockDevice> blockdevices;
 
-    // some sites support multiple languages:
-    private Map<String, String> multiLingual;
-
-    @JsonProperty
-    public String getUrl() {
-        return url;
+    public List<BlockDevice> getBlockdevices() {
+        return blockdevices;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @JsonProperty
-    public Map<String, String> getMultiLingual() {
-        return multiLingual;
-    }
-
-    public void setMultiLingual(Map<String, String> multiLingual) {
-        this.multiLingual = multiLingual;
+    public void setBlockdevices(List<BlockDevice> blockdevices) {
+        this.blockdevices = blockdevices;
     }
 }

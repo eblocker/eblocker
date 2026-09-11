@@ -363,6 +363,22 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>copy-resources-udev-rules</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/package/udev-rules</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/package/udev-rules</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-configuration</id>
                     </execution>
                     <execution>
@@ -472,6 +488,14 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>${project.build.directory}/package/udev-rules/90-eblocker-usb-automount.rules</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/lib/udev/rules.d</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <type>template</type>
                                     <mapper>
                                         <type>perm</type>
@@ -499,6 +523,7 @@
                                         <path>/opt/eblocker-icap/keys/ssl</path>
                                         <path>/opt/eblocker-icap/registration</path>
                                         <path>/opt/eblocker-icap/tmp</path>
+                                        <path>/opt/eblocker-icap/mnt</path>
                                     </paths>
                                 </data>
 

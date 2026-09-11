@@ -29,15 +29,15 @@
                 "TOR_CHECK_URL" : "https://eBlocker.org/en/privacy-check/"
             },
             "NOTIFICATION" : {
-                "CONNECTION_DOWN" : "VPN {{name}} has been disconnected.",
+                "CONNECTION_DOWN" : "VPN {{name}} is no longer in use.",
                 "TOR_CONNECT" : "Connection to Tor network established.",
-                "TOR_DISCONNECT" : "Tor network disconnected.",
-                "TOR_ID_RENEW_ERROR" : "Error getting new Tor identity",
+                "TOR_DISCONNECT" : "Connection to the Tor network has been disconnected.",
+                "TOR_ID_RENEW_ERROR" : "Error while getting a new Tor identity.",
                 "TOR_ID_RENEW_SUCCESS" : "Tor identity renewed.",
-                "VPN_CONNECT" : "VPN is connected.",
+                "VPN_CONNECT" : "VPN connection established.",
                 "VPN_CONNECT_ERROR" : "Unable to connect to VPN",
                 "VPN_CONNECT_TIMEOUT" : "The connection timed out.",
-                "VPN_DISCONNECT" : "VPN is disconnected."
+                "VPN_DISCONNECT" : "VPN connection disconnected."
             },
             "TOOLTIP" : {
                 "ACTION" : {
@@ -50,22 +50,22 @@
             "DNS_FILTER_CHANGE" : {
                 "ACTION" : {
                     "DO_NOT_SHOW_AGAIN" : "Never show again for this device",
-                    "OK" : "Ok"
+                    "OK" : "OK"
                 },
-                "TEXT" : "It may take a few minutes before the new settings take effect.",
-                "TITLE" : "DNS blocker settings"
+                "TEXT" : "It may take a few minutes for the settings to take effect.",
+                "TITLE" : "DNS Blocker Settings"
             },
             "TOR" : {
                 "ACTIVATION" : {
-                    "BODY_TEXT1" : "Please note that the effective speed of your Internet connection can be reduced significantly by activating Tor.",
-                    "BODY_TEXT2" : "We recommend to enable IP-anonymization with Tor only, when visiting websites with sensitive contents.",
+                    "BODY_TEXT1" : "Please note that the effective speed of your internet access can be significantly reduced when using the Tor network.",
+                    "BODY_TEXT2" : "We recommend enabling IP anonymization via Tor only when visiting websites with sensitive content.",
                     "BUTTON" : {
                         "CANCEL" : "Cancel",
                         "OK" : "Activate Tor"
                     },
                     "MORE_INFO_URL" : "https://eBlocker.org/en/tor_info",
                     "MORE_INFO_URL_TEXT" : "Additional Information",
-                    "SHOW_WARNINGS_CAPTION" : "Do not show this warning again",
+                    "SHOW_WARNINGS_CAPTION" : "Do not show this warning again.",
                     "TITLE" : "Activate Tor for this device"
                 }
             }
@@ -125,10 +125,10 @@
             "CARD" : {
                 "ACTION" : {
                     "RESET" : "Forgot password",
-                    "SUBMIT_COUNTDOWN" : "{sec, select, 0{Login} 1{Please wait {sec} second} other{Please wait {sec} seconds}}"
+                    "SUBMIT_COUNTDOWN" : "{sec, select, 0{Log in} 1{Please wait {sec} second} other{Please wait {sec} seconds}}"
                 },
                 "ERROR" : {
-                    "PASSWORD_INVALID" : "Wrong password",
+                    "PASSWORD_INVALID" : "Password is incorrect.",
                     "PASSWORD_REQUIRED" : "Please enter your password.",
                     "PASSWORD_TOO_FREQ" : "Please wait before retyping your password.",
                     "UNKNOWN" : "Unknown error, please try again later."
@@ -140,64 +140,64 @@
             }
         },
         "LOGOUT" : {
-            "LABEL" : "Logout"
+            "LABEL" : "Log out"
         },
         "MESSAGES" : {
-            "MESSAGE_ALERT_EVENT_CONTENT" : "System events are available",
+            "MESSAGE_ALERT_EVENT_CONTENT" : "System events have occurred.",
             "MESSAGE_ALERT_EVENT_LABEL" : "Show events",
             "MESSAGE_ALERT_EVENT_TITLE" : "System Events",
             "MESSAGE_ALERT_EVENT_URL" : "/settings/#!/system/events",
-            "MESSAGE_APP_MODULE_REMOVAL_CONTENT" : "Support for the exception list for {{ appNames }} has been withdrawn. The exception list is still available for your convenience, however, we recommend not to use this exception list anymore.",
+            "MESSAGE_APP_MODULE_REMOVAL_CONTENT" : "Support for the exception list for {{ appNames }} has been withdrawn. The list is still available for you, but we recommend that you no longer use it.",
             "MESSAGE_APP_MODULE_REMOVAL_LABEL" : "Please find more details here",
             "MESSAGE_APP_MODULE_REMOVAL_TITLE" : "Support for exception list withdrawn",
             "MESSAGE_APP_MODULE_REMOVAL_URL" : "https://eBlocker.org/en/appremoval_en",
-            "MESSAGE_CERTIFICATE_EXPIRATION_CONTENT" : "The eBlocker certificate is about to expire. Please add the new certificate to your operating system or browser.",
+            "MESSAGE_CERTIFICATE_EXPIRATION_CONTENT" : "The eBlocker certificate is about to expire. Please install the new certificate on your device and in your browser.",
             "MESSAGE_CERTIFICATE_EXPIRATION_LABEL" : "Add new certificate",
-            "MESSAGE_CERTIFICATE_EXPIRATION_TITLE" : "eBlocker certificate renewal",
+            "MESSAGE_CERTIFICATE_EXPIRATION_TITLE" : "Renewal of the eBlocker Certificate",
             "MESSAGE_CERTIFICATE_EXPIRATION_URL" : "/api/ssl/renewalCertificate.crt",
-            "MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT" : "The eBlocker certificate has not yet been added. Please add the certificate to your operating system or browser.",
+            "MESSAGE_CERTIFICATE_UNTRUSTED_CONTENT" : "The eBlocker certificate has not been installed yet. Please install the certificate on your device and in your browser.",
             "MESSAGE_CERTIFICATE_UNTRUSTED_LABEL" : "Add certificate",
-            "MESSAGE_CERTIFICATE_UNTRUSTED_TITLE" : "eBlocker Certificate not yet added",
+            "MESSAGE_CERTIFICATE_UNTRUSTED_TITLE" : "eBlocker Certificate Not Yet Installed",
             "MESSAGE_CERTIFICATE_UNTRUSTED_URL" : "/api/ssl/caCertificate.crt",
-            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT" : "Another DNS (domain name server) in your local network has been found which is not your gateway or router. This will cause problems resolving DNS requests by eBlocker and disable protection. Please turn off this DNS or remove it from your DHCP configuration.",
+            "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_CONTENT" : "Another DNS server that is not your router has been found in your local network. This could interfere with the eBlocker answering DNS requests and protecting you. Please turn this server off or remove it from the DHCP configuration.",
             "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_LABEL" : "DNS Configuration",
             "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_TITLE" : "DNS in local network detected",
             "MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY_URL" : "/settings/#!/dns",
-            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT" : "The following name servers are answering slowly or unreliably: {{nameServers}}. Domain names might not resolve properly and your Internet access might seem faulty.",
+            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_CONTENT" : "The following server(s) are responding slowly or unreliable: {{nameServers}}. This can interfere with your internet access.",
             "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_LABEL" : "DNS Configuration",
-            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_TITLE" : "Unreliable DNS server(s) detected",
+            "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_TITLE" : "Unreliable DNS Servers",
             "MESSAGE_DNS_UNRELIABLE_NAME_SERVERS_URL" : "/settings/#!/dns",
-            "MESSAGE_FILTER_LISTS_OUTDATED_CONTENT" : "The blocker lists have not been updated for {{outdatedDays}} days.",
-            "MESSAGE_FILTER_LISTS_OUTDATED_LABEL" : "Update blocker lists",
-            "MESSAGE_FILTER_LISTS_OUTDATED_TITLE" : "Blocker lists outdated",
+            "MESSAGE_FILTER_LISTS_OUTDATED_CONTENT" : "The blocker lists have not been updated for more than {{outdatedDays}} days.",
+            "MESSAGE_FILTER_LISTS_OUTDATED_LABEL" : "Update Blocker Lists",
+            "MESSAGE_FILTER_LISTS_OUTDATED_TITLE" : "Blocker Lists Are Not Up to Date",
             "MESSAGE_FILTER_LISTS_OUTDATED_URL" : "/settings/#!/home/update",
-            "MESSAGE_LICENSE_EXPIRED_CONTENT" : "Your current eBlocker license expired on {{licenseNotValidAfter | date}}.\n\nPlease donate for a new license to keep your eBlocker activated and protected permanently.",
-            "MESSAGE_LICENSE_EXPIRED_LABEL" : "Donate for new license",
-            "MESSAGE_LICENSE_EXPIRED_TITLE" : "License expired",
+            "MESSAGE_LICENSE_EXPIRED_CONTENT" : "Your eBlocker license expired on {{licenseNotValidAfter | date}}.\n\nPlease extend your license to remain protected. You will automatically receive daily security updates again.",
+            "MESSAGE_LICENSE_EXPIRED_LABEL" : "Donate for a new license",
+            "MESSAGE_LICENSE_EXPIRED_TITLE" : "License Expired",
             "MESSAGE_LICENSE_EXPIRED_URL" : "https://eBlocker.org/ebl/en/shop",
-            "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease donate for a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
-            "MESSAGE_LICENSE_EXPIRING_LABEL" : "Donate for new license",
-            "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease donate for a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
-            "MESSAGE_LICENSE_EXPIRING_TITLE" : "License expiring soon",
+            "MESSAGE_LICENSE_EXPIRING_DAY_CONTENT" : "Your eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease extend your license to remain protected. You will automatically receive daily security updates again.\n\nPlease note that the remaining validity period of your previous update license will not be lost, but added to the new license period.",
+            "MESSAGE_LICENSE_EXPIRING_LABEL" : "Donate for a new license",
+            "MESSAGE_LICENSE_EXPIRING_MONTH_CONTENT" : "Your eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease extend your license to remain protected. You will automatically receive daily security updates again.\n\nPlease note that the remaining validity period of your previous update license will not be lost, but added to the new license period.",
+            "MESSAGE_LICENSE_EXPIRING_TITLE" : "License Expires Soon",
             "MESSAGE_LICENSE_EXPIRING_URL" : "https://eBlocker.org/ebl/en/shop",
-            "MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT" : "Your current eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease donate for a new license to keep your eBlocker activated and protected permanently.\n\nPlease note that the remaining validity period will automatically be added to your total license time.",
-            "MESSAGE_PATCH_RELEASE_NOTES_CONTENT" : "Important bug fix.",
+            "MESSAGE_LICENSE_EXPIRING_WEEK_CONTENT" : "Your eBlocker license expires on {{licenseNotValidAfter | date}}.\n\nPlease extend your license to remain protected. You will automatically receive daily security updates again.\n\nPlease note that the remaining validity period of your previous update license will not be lost, but added to the new license period.",
+            "MESSAGE_PATCH_RELEASE_NOTES_CONTENT" : "Important bug fixes.",
             "MESSAGE_PATCH_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_PATCH_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
-            "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-4-0/",
-            "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 4.0: Raspberry Pi 5 and 64-bit support",
+            "MESSAGE_PATCH_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-4-1/",
+            "MESSAGE_RELEASE_NOTES_CONTENT" : "New in eBlockerOS 4.1: Complete backup, Raspberry Pi 5 and 64-bit support",
             "MESSAGE_RELEASE_NOTES_LABEL" : "More...",
             "MESSAGE_RELEASE_NOTES_TITLE" : "New update installed: eBlockerOS v{{version}}",
-            "MESSAGE_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-4-0/",
-            "MESSAGE_ROUTER_PROBLEMATIC_CONTENT" : "Your router seems to be a FritzBox 7490 (or a similar model) that is not compatible with the Plug-and-Play mode. n\nTherefore we recommend to use eBlocker's individual setup to avoid these problems.",
-            "MESSAGE_ROUTER_PROBLEMATIC_LABEL" : "Go to network settings",
-            "MESSAGE_ROUTER_PROBLEMATIC_TITLE" : "Detected a FritzBox 7490, 7360 oder 3490",
+            "MESSAGE_RELEASE_NOTES_URL" : "https://eblocker.org/docs/release-notes-4-1/",
+            "MESSAGE_ROUTER_PROBLEMATIC_CONTENT" : "You are using a FritzBox that is not compatible with the eBlocker Plug-and-Play mode.\n\nWe therefore recommend using individual network settings to avoid network problems.",
+            "MESSAGE_ROUTER_PROBLEMATIC_LABEL" : "Open Network Settings",
+            "MESSAGE_ROUTER_PROBLEMATIC_TITLE" : "FritzBox 7490, 7360 or 3490 Detected",
             "MESSAGE_ROUTER_PROBLEMATIC_URL" : "/settings/#!/network",
-            "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT" : "Did you know, that you can use the eBlocker with HTTPS encrypted websites now?\n\nYou only need to install eBlocker's security certificate in your client device and browsers.",
-            "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "Open HTTPS settings",
+            "MESSAGE_SSL_SUPPORT_INSTALL_CONTENT" : "Did you know that you can also use the eBlocker for HTTPS-encrypted websites?\n\nYou only need to install the eBlocker certificate on your devices and in your browsers.",
+            "MESSAGE_SSL_SUPPORT_INSTALL_LABEL" : "Open HTTPS Settings",
             "MESSAGE_SSL_SUPPORT_INSTALL_TITLE" : "Activate HTTPS support",
             "MESSAGE_SSL_SUPPORT_INSTALL_URL" : "/settings/#!/ssl",
-            "MESSAGE_DONATE_LABEL" : "Support eBlocker",
+            "MESSAGE_DONATE_LABEL" : "Support the eBlocker",
             "MESSAGE_DONATE_URL" : "https://eblocker.org/en/donate-now"
         }
     }

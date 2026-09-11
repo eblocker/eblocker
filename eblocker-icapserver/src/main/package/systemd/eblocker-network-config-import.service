@@ -1,0 +1,13 @@
+[Unit]
+Description=Import eBlocker network configuration from backup on USB drive
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+User=icapd
+RemainAfterExit=yes
+ExecStart=/opt/eblocker-icap/bin/network-config-import.sh
+
+[Install]
+WantedBy=multi-user.target

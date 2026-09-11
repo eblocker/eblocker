@@ -29,7 +29,7 @@ import org.eblocker.server.common.network.unix.IscDhcpServerConfiguration;
 @ObjectValidation(NetworkConfigurationValidator.class)
 public class NetworkConfiguration {
     private boolean automatic; // if true, ARP spoofing is performed
-    private boolean isExpertMode;
+    private boolean expertMode;
     private boolean dhcp; // if true, eBlocker runs a DHCP server
     private boolean dnsServer; // if true eblocker uses it's own dns server
     private boolean globalIp6AddressAvailable; // if true eBlocker has a global IPv6 address
@@ -101,15 +101,15 @@ public class NetworkConfiguration {
         result.append("NetworkConfiguration{");
         result.append("automatic: ");
         result.append(automatic);
-        result.append("expertMode: ");
-        result.append(isExpertMode);
+        result.append(", expertMode: ");
+        result.append(expertMode);
         result.append(", ipAddress: ");
         result.append(ipAddress);
         result.append(" (");
         result.append(networkMask);
         result.append("), gateway: ");
         result.append(gateway);
-        result.append("), dns server: ");
+        result.append(", dns server: ");
         result.append(dnsServer);
         result.append(", name server: ");
         result.append(nameServerPrimary);
@@ -143,11 +143,11 @@ public class NetworkConfiguration {
 
     @JsonProperty
     public boolean isExpertMode() {
-        return isExpertMode;
+        return expertMode;
     }
 
-    public void setExpertMode(boolean isExpertMode) {
-        this.isExpertMode = isExpertMode;
+    public void setExpertMode(boolean expertMode) {
+        this.expertMode = expertMode;
     }
 
     @JsonProperty

@@ -6,7 +6,16 @@
     <md-progress-circular md-diameter="36"></md-progress-circular>
 </div>
 
-<div ng-if="vm.initFinished"
+<div ng-if="vm.initFinished && vm.hasDashboardError()"
+     layout="row" layout-align="center start"
+     class="dashboard-main-screen">
+    <md-content class="md-whiteframe-1dp" layout-padding>
+        <h2 translate="APP.DASHBOARD_ERROR.TITLE"></h2>
+        <p translate="APP.DASHBOARD_ERROR.MESSAGE"></p>
+    </md-content>
+</div>
+
+<div ng-if="vm.initFinished && !vm.hasDashboardError()"
      layout="row" layout-align="center start"
      class="dashboard-main-screen"
      ng-class="vm.getScreenClass()">

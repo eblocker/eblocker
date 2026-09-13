@@ -68,6 +68,7 @@ export default function DeviceSelectorService($rootScope, $state, $stateParams, 
             return ArrayUtilsService.sortByProperty(devices, 'name');
         }, function(reason) {
             logger.error('Failed: ' + JSON.stringify(reason));
+            return [];
         });
     }
 

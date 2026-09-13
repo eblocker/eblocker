@@ -125,7 +125,7 @@ function AppController($scope, $state, $stateParams, $location, $window, $docume
     }
 
     function isDashboardPaused() {
-        return !DataService.isRunning() && isMainState();
+        return angular.isObject(DeviceSelectorService.getSelectedDevice()) && !DataService.isRunning() && isMainState();
     }
 
     function isServerNotRunning() {

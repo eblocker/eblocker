@@ -27,6 +27,10 @@
             "SELECT_LOCAL": "Dieses Gerät",
             "SELECT_OTHER": "Andere Geräte..."
         },
+        "DASHBOARD_ERROR": {
+            "MESSAGE": "Der eBlocker konnte dieses Gerät nicht identifizieren. Bitte überprüfe die Netzwerkverbindung und versuche es erneut.",
+            "TITLE": "Dashboard ist nicht verfügbar"
+        },
         "DRAG_DROP": {
             "TOOLTIP": "Ziehe hier, um die Karte umzusortieren."
         },

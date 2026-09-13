@@ -53,15 +53,17 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
                 // 'token' needed only indirectly for the REST call
                 return DeviceService.getDevice().then(function success(response) {
                     return response.data;
+                }, function error() {
+                    return null;
                 });
             }],
             operatingUser: ['token', 'device', 'UserService', function(token, device, UserService) {
                 // 'token' needed only indirectly for the REST call
-                return UserService.getUsers(true).then(function success(response) {
-                    if (angular.isObject(device)) {
-                        return UserService.getUserById(device.operatingUser);
-                    }
+                if (!angular.isObject(device)) {
                     return null;
+                }
+                return UserService.getUsers(true).then(function success(response) {
+                    return UserService.getUserById(device.operatingUser);
                 });
             }],
             initSelectedDevice: ['device', 'DeviceSelectorService', function(device, DeviceSelectorService) {

@@ -14,10 +14,11 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+/* global spyOn */
 describe('Dashboard Main controller', function() { // jshint ignore: line
     beforeEach(angular.mock.module('eblocker.dashboard'));
 
-    let ctrl, $componentController, mockPauseCard, mockSslCard, mockOnlineCard, mockDeviceCard, $httpBackend;
+    let ctrl, $componentController, mockPauseCard, mockSslCard, mockOnlineCard, mockDeviceCard, $q;
 
     const mockLocale = {
         language: 'en'
@@ -25,7 +26,10 @@ describe('Dashboard Main controller', function() { // jshint ignore: line
 
     const mockDataService = {
         on: angular.noop,
-        off: angular.noop
+        off: angular.noop,
+        isRunning: function() {
+            return false;
+        }
     };
 
     const mockCardAvailabilityService = {
@@ -50,8 +54,22 @@ describe('Dashboard Main controller', function() { // jshint ignore: line
     };
 
     const mockCardService = {
+        registerUpdateListener: angular.noop,
+        getDashboardData: angular.noop,
         getFilterCards: function () {
             return [mockPauseCard, mockSslCard, mockOnlineCard, mockDeviceCard];
+        },
+        getCardsByColumns: function() {
+            return [];
+        },
+        scheduleDashboardReload: function() {
+            return false;
+        }
+    };
+
+    const mockResolutionService = {
+        getScreenSize: function() {
+            return 'lg';
         }
     };
 
@@ -63,9 +81,11 @@ describe('Dashboard Main controller', function() { // jshint ignore: line
         $provide.value('CardAvailabilityService', mockCardAvailabilityService);
         $provide.value('$window', mockWindow);
         $provide.value('CardService', mockCardService);
+        $provide.value('ResolutionService', mockResolutionService);
     }));
 
-    beforeEach(inject(function($rootScope, $controller, _$componentController_, _$httpBackend_) {
+    beforeEach(inject(function(_$q_, _$componentController_) {
+        $q = _$q_;
         mockPauseCard = {
             id: 1,
             input: '<dashboard-pause></dashboard-pause>',
@@ -142,7 +162,6 @@ describe('Dashboard Main controller', function() { // jshint ignore: line
             }
         };
 
-        // $httpBackend = _$httpBackend_;
         //
         // const cards = [mockPauseCard, mockSslCard, mockOnlineCard, mockDeviceCard];
         // $httpBackend.when('GET', '/api/dashboardcard').respond(200, cards);
@@ -151,13 +170,42 @@ describe('Dashboard Main controller', function() { // jshint ignore: line
 
 
         $componentController = _$componentController_;
-        ctrl = $componentController('mainComponent', {}, {});
+        mockCardService.getDashboardData = function() {
+            return $q.resolve(false);
+        };
+        ctrl = $componentController('mainComponent', {}, {
+            device: {
+                showBookmarkDialog: false
+            },
+            productInfo: mockProductInfo
+        });
         // $httpBackend.flush();
     }));
 
     describe('initially', function() {
         it('should create a controller instance', function() {
             expect(angular.isDefined(ctrl)).toBe(true);
+        });
+    });
+
+    describe('unknown local device', function() {
+        it('shows a dashboard error without starting dashboard services', function() {
+            spyOn(mockDataService, 'on').and.callThrough();
+            spyOn(mockCardService, 'getDashboardData').and.callThrough();
+
+            ctrl = $componentController('mainComponent', {}, {
+                device: null,
+                productInfo: mockProductInfo
+            });
+
+            expect(function() {
+                ctrl.$onInit();
+            }).not.toThrow();
+
+            expect(ctrl.hasDashboardError()).toBe(true);
+            expect(ctrl.initFinished).toBe(true);
+            expect(mockDataService.on).not.toHaveBeenCalled();
+            expect(mockCardService.getDashboardData).not.toHaveBeenCalled();
         });
     });
 

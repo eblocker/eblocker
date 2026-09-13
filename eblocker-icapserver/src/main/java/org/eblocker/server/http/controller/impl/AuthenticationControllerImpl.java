@@ -19,6 +19,7 @@ package org.eblocker.server.http.controller.impl;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.eblocker.server.common.data.AdminConsoleSettings;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.page.PageContextStore;
 import org.eblocker.server.common.session.SessionStore;
@@ -114,6 +115,16 @@ public class AuthenticationControllerImpl extends SessionContextController imple
     public void executeReset(Request request, Response response) {
         IpAddress ipAddress = getSession(request).getIp();
         securityService.executeReset(request.getBodyAs(PasswordResetToken.class), ipAddress);
+    }
+
+    @Override
+    public AdminConsoleSettings getAdminConsoleSettings(Request request, Response response) {
+        return securityService.getAdminConsoleSettings();
+    }
+
+    @Override
+    public AdminConsoleSettings setAdminConsoleSettings(Request request, Response response) {
+        return securityService.setAdminConsoleSettings(request.getBodyAs(AdminConsoleSettings.class));
     }
 
     @Override

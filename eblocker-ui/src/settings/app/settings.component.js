@@ -25,12 +25,13 @@ export default {
 };
 
 function Controller($scope, $mdSidenav, STATES, StateService, SplashService, ConsoleService, $mdDialog, // jshint ignore: line
-                     logger, security, Idle, Title) {
+                     logger, security, Idle, Title, IDLE_TIMES) {
     'ngInject';
     'use strict';
 
     const vm = this;
     let idleDialog;
+    let sessionTimeoutSeconds = IDLE_TIMES.IDLE;
 
     vm.showSpinner = function() {
         return ConsoleService.isGlobalSpinner();
@@ -75,6 +76,7 @@ function Controller($scope, $mdSidenav, STATES, StateService, SplashService, Con
         vm.isLoading = true;
         document.addEventListener('visibilitychange', visibilityChanged);
         vm.navBarName = 'left';
+        loadAdminConsoleSettings();
 
         logger.info('Setting language to \'' + vm.locale.language + '\'');
 
@@ -99,6 +101,10 @@ function Controller($scope, $mdSidenav, STATES, StateService, SplashService, Con
 
     $scope.$on('IdleStart', function () {
         logger.info('No user interaction for a while. Idle started...');
+        if (isSessionTimeoutDisabled()) {
+            Idle.interrupt();
+            return;
+        }
         if (security.isPasswordRequired()) {
             idleDialog = $mdDialog.show({
                 controller: 'IdleDialogController',
@@ -129,8 +135,7 @@ function Controller($scope, $mdSidenav, STATES, StateService, SplashService, Con
         if (security.isPasswordRequired()) {
             logger.info('... idle timed out. Logging out...');
             security.logout();
-            StateService.goToState(STATES.EXPIRED);
-            // StateService.goToState(STATES.AUTH);
+            StateService.goToState(STATES.AUTH);
         } else {
             logger.info('... idle timed out. Restarting idle...');
             // ** No password needed, just start again
@@ -197,6 +202,33 @@ function Controller($scope, $mdSidenav, STATES, StateService, SplashService, Con
 
     function hideLogoutInMenu() {
         return !showLogout();
+    }
+
+    function loadAdminConsoleSettings() {
+        if (!angular.isFunction(security.getSettings)) {
+            applySessionTimeout(sessionTimeoutSeconds);
+            return;
+        }
+        security.getSettings().then(function success(response) {
+            applySessionTimeout(response.data.sessionTimeoutSeconds);
+        }, function error() {
+            applySessionTimeout(sessionTimeoutSeconds);
+        });
+    }
+
+    function applySessionTimeout(seconds) {
+        sessionTimeoutSeconds = angular.isNumber(seconds) && seconds >= 0 ? seconds : IDLE_TIMES.IDLE;
+        if (isSessionTimeoutDisabled()) {
+            Idle.setIdle(IDLE_TIMES.IDLE);
+            Idle.setTimeout(false);
+        } else {
+            Idle.setIdle(sessionTimeoutSeconds);
+            Idle.setTimeout(IDLE_TIMES.TIMEOUT);
+        }
+    }
+
+    function isSessionTimeoutDisabled() {
+        return sessionTimeoutSeconds === 0;
     }
 
     function handleSystemStatus(systemStatus) {

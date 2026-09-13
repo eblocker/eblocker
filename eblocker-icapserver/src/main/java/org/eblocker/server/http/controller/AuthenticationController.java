@@ -18,6 +18,7 @@ package org.eblocker.server.http.controller;
 
 import org.eblocker.server.http.security.JsonWebToken;
 import org.eblocker.server.http.security.PasswordResetToken;
+import org.eblocker.server.common.data.AdminConsoleSettings;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
@@ -39,6 +40,10 @@ public interface AuthenticationController {
     PasswordResetToken initiateReset(Request request, Response response);
 
     void executeReset(Request request, Response response);
+
+    AdminConsoleSettings getAdminConsoleSettings(Request request, Response response);
+
+    AdminConsoleSettings setAdminConsoleSettings(Request request, Response response);
 
     void cancelReset(Request request, Response response);
 

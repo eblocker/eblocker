@@ -775,6 +775,17 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.authentication.renew.route");
 
         server
+                .uri("/api/adminconsole/authentication/settings", authenticationController)
+                .action("getAdminConsoleSettings", HttpMethod.GET)
+                .name("public.adminconsole.authentication.settings.get.route")
+                .flag(SecurityProcessor.NO_AUTHENTICATION_REQUIRED);
+
+        server
+                .uri("/api/adminconsole/authentication/settings", authenticationController)
+                .action("setAdminConsoleSettings", HttpMethod.PUT)
+                .name("adminconsole.authentication.settings.put.route");
+
+        server
                 .uri("/api/adminconsole/authentication/enable", authenticationController)
                 .action("enable", HttpMethod.POST)
                 .name("adminconsole.authentication.enable.route");

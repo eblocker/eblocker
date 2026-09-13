@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.security;
 
+import org.eblocker.server.common.data.AdminConsoleSettings;
 import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.EventType;
@@ -34,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.restexpress.exception.BadRequestException;
 import org.restexpress.exception.UnauthorizedException;
 
 import java.io.IOException;
@@ -327,6 +329,31 @@ public class SecurityServiceTest extends EmbeddedRedisServiceTestBase {
             // Any exception is not accepted
             fail("Expected no UnauthorizedException");
         }
+    }
+
+    @Test
+    public void testAdminConsoleSettingsDefaultSessionTimeout() {
+        SecurityService securityService = createSecurityService();
+
+        AdminConsoleSettings settings = securityService.getAdminConsoleSettings();
+
+        assertEquals(AdminConsoleSettings.DEFAULT_SESSION_TIMEOUT_SECONDS, settings.getSessionTimeoutSeconds());
+    }
+
+    @Test
+    public void testAdminConsoleSettingsCanDisableSessionTimeout() {
+        SecurityService securityService = createSecurityService();
+
+        securityService.setAdminConsoleSettings(new AdminConsoleSettings(0));
+
+        assertEquals(0, securityService.getAdminConsoleSettings().getSessionTimeoutSeconds());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testAdminConsoleSettingsRejectsNegativeSessionTimeout() {
+        SecurityService securityService = createSecurityService();
+
+        securityService.setAdminConsoleSettings(new AdminConsoleSettings(-1));
     }
 
     @Test

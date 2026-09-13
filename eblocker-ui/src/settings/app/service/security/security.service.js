@@ -23,6 +23,7 @@ export default function SecurityService(logger, $http, $q, $localStorage, APP_CO
     const PATH_RENEW_TOKEN = PATH +  '/renew/';
     const PATH_LOGIN = PATH + '/login/';
     const PATH_LOGIN_COUNTDOWN = PATH + '/wait';
+    const PATH_SETTINGS = PATH + '/settings';
 
     const securityContext = {};
 
@@ -87,6 +88,24 @@ export default function SecurityService(logger, $http, $q, $localStorage, APP_CO
         });
     }
 
+    function getSettings() {
+        return $http.get(PATH_SETTINGS, {timeout: 3000}).then(function success(response) {
+            return response;
+        }, function error(response) {
+            logger.error('Getting admin console settings failed with status ' + response.status, response);
+            return $q.reject(response);
+        });
+    }
+
+    function setSettings(settings) {
+        return $http.put(PATH_SETTINGS, settings, {timeout: 3000}).then(function success(response) {
+            return response;
+        }, function error(response) {
+            logger.error('Saving admin console settings failed with status ' + response.status, response);
+            return $q.reject(response);
+        });
+    }
+
     function storeSecurityContext(data) {
         securityContext.token = data.token;
         securityContext.appContext = data.appContext;
@@ -140,6 +159,8 @@ export default function SecurityService(logger, $http, $q, $localStorage, APP_CO
         isPasswordRequired: isPasswordRequired,
         login: login,
         logout: logout,
-        isLoginAvailable: isLoginAvailable
+        isLoginAvailable: isLoginAvailable,
+        getSettings: getSettings,
+        setSettings: setSettings
     };
 }

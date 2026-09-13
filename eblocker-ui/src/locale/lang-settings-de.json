@@ -136,17 +136,23 @@
         },
         "ADMIN_PASSWORD": {
             "ACTION": {
-                "CHANGE_PASSWORD": "Passwort ändern"
+                "CHANGE_PASSWORD": "Passwort ändern",
+                "SAVE": "Speichern"
             },
             "LABEL": "Admin-Passwort",
             "LABEL_PASSWORD_DISABLED": "Administratorpasswort ist deaktiviert",
             "LABEL_PASSWORD_ENABLED": "Administratorpasswort ist aktiviert",
+            "LABEL_SESSION_TIMEOUT": "Sitzungs-Timeout",
             "NOTIFICATION": {
                 "INFO_PASSWORD_CHANGED": "Passwort erfolgreich geändert.",
                 "INFO_PASSWORD_DISABLED": "Passwort erfolgreich entfernt.",
-                "INFO_PASSWORD_ENABLED": "Passwort erfolgreich eingerichtet."
+                "INFO_PASSWORD_ENABLED": "Passwort erfolgreich eingerichtet.",
+                "INFO_SESSION_TIMEOUT_CHANGED": "Sitzungs-Timeout erfolgreich geändert.",
+                "ERROR_SESSION_TIMEOUT_CHANGED": "Der Sitzungs-Timeout konnte nicht geändert werden."
             },
-            "NO_PASSWORD_TEXT": "Jeder mit Zugang zu deinem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern."
+            "NO_PASSWORD_TEXT": "Jeder mit Zugang zu deinem lokalen Netzwerk kann die eBlocker Einstellungen einsehen und ändern.",
+            "SESSION_TIMEOUT_MINUTES": "Minuten",
+            "SESSION_TIMEOUT_TEXT": "Die Admin-Konsole meldet dich nach dieser Anzahl Minuten ohne Benutzerinteraktion automatisch ab. Gib 0 ein, um die automatische Abmeldung zu deaktivieren."
         },
         "ADVANCED": {
             "LABEL": "Fortgeschritten"

@@ -21,7 +21,11 @@ LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j2.xml
 
 SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')
 
-if [ "$SYSTEM_MEMORY_IN_MB" -gt 1500 ]; then
+if [ "$SYSTEM_MEMORY_IN_MB" -gt 2048 ]; then
+    MAX_JVM_HEAP_SIZE_IN_MB=$((SYSTEM_MEMORY_IN_MB / 2))
+    MAX_DIRECT_MEMORY_IN_MB=200
+    NUM_ARENAS=8
+elif [ "$SYSTEM_MEMORY_IN_MB" -gt 1500 ]; then
     MAX_JVM_HEAP_SIZE_IN_MB=768
     MAX_DIRECT_MEMORY_IN_MB=200
     NUM_ARENAS=8

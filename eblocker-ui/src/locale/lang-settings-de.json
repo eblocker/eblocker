@@ -488,6 +488,7 @@
                     "LABEL_RESET_DEVICE": "Gerät zurücksetzen",
                     "LABEL_VENDOR": "Hersteller",
                     "LABEL_VENDOR_PRIVATE_MAC": "Unbekannt (private MAC-Adresse)",
+                    "WARNING_FIXED_IP_MULTIPLE_IPV4": "Dieses Gerät hat aktuell mehrere IPv4-Adressen. Bei aktivierter fester IP-Zuweisung vergibt der DHCP-Server des eBlockers eine Adresse an die gemeinsame Hardware-Adresse (MAC). Wenn mehrere Geräte diese MAC-Adresse verwenden, können sie um dieselbe IP-Adresse konkurrieren. Deaktiviere die feste IP-Zuweisung für dieses Gerät, falls IP-Adresskonflikte auftreten.",
                     "TOOLTIP": {
                         "EDIT_DEVICE": "Gerätenamen ändern"
                     }

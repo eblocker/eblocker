@@ -487,6 +487,7 @@
                     "LABEL_RESET_DEVICE" : "Reset device",
                     "LABEL_VENDOR" : "Vendor",
                     "LABEL_VENDOR_PRIVATE_MAC" : "Unknown (private MAC address)",
+                    "WARNING_FIXED_IP_MULTIPLE_IPV4" : "This device currently has multiple IPv4 addresses. With fixed IP assignment enabled, eBlocker's DHCP server assigns one address to the shared hardware address (MAC). If several devices use this MAC address, they may compete for the same IP address. Disable fixed IP assignment for this device if you notice IP address conflicts.",
                     "TOOLTIP" : {
                         "EDIT_DEVICE" : "Edit device name."
                     }

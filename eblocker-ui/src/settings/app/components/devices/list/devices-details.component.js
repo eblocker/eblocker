@@ -59,6 +59,7 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
     vm.updateCustomUserAgent = updateCustomUserAgent;
     vm.updateMessageSeverity = updateMessageSeverity;
     vm.onChangeHttps = onChangeHttps;
+    vm.showFixedIpMultipleAddressesWarning = showFixedIpMultipleAddressesWarning;
 
     vm.backState = STATES.DEVICES;
     vm.stateParams = $stateParams;
@@ -312,6 +313,22 @@ function Controller(logger, $stateParams, $window, $interval, $timeout, $q, $tra
         }, function error(response) {
             logger.error('unable to get dhcp state ', response);
         });
+    }
+
+    function showFixedIpMultipleAddressesWarning() {
+        return vm.dhcpActive === true &&
+            angular.isObject(vm.device) &&
+            vm.device.ipAddressFixed === true &&
+            hasMultipleIpv4Addresses(vm.device.ipAddresses);
+    }
+
+    function hasMultipleIpv4Addresses(ipAddresses) {
+        if (!angular.isArray(ipAddresses)) {
+            return false;
+        }
+        return ipAddresses.filter(function(ipAddress) {
+            return IpUtilsService.isIpv4Address(ipAddress);
+        }).length > 1;
     }
 
     function logoutOperatingUser(device) {

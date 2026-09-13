@@ -20,7 +20,7 @@ describe('App settings; Table component controller', function() {
     beforeEach(angular.mock.module('template.settings.app'));
     beforeEach(angular.mock.module('eblocker.adminconsole'));
 
-    let ctrl, $componentController;
+    let ctrl, $componentController, TableService;
 
     beforeEach(angular.mock.module(function($provide, $translateProvider) {
         // Workaround angular-translate issue:
@@ -28,10 +28,40 @@ describe('App settings; Table component controller', function() {
         $translateProvider.translations('en', {});
     }));
 
-    beforeEach(inject(function(_$componentController_) {
+    beforeEach(inject(function(_$componentController_, _TableService_) {
         $componentController = _$componentController_;
+        TableService = _TableService_;
         ctrl = $componentController('ebTable', {}, {});
     }));
+
+    function createTable(tableId) {
+        const table = $componentController('ebTable', {}, {
+            tableId: tableId,
+            tableHeader: [
+                {
+                    label: 'Default',
+                    sortingKey: 'name',
+                    defaultSorting: true
+                },
+                {
+                    label: 'Last online',
+                    sortingKey: 'lastSeen'
+                }
+            ],
+            tableData: [
+                {
+                    name: 'Alpha',
+                    lastSeen: 2
+                },
+                {
+                    name: 'Beta',
+                    lastSeen: 1
+                }
+            ]
+        });
+        table.$onInit();
+        return table;
+    }
 
     describe('function isReducedWidth', function() {
         it('return false if edit mode is not set and details view is not defined', function() {
@@ -50,6 +80,21 @@ describe('App settings; Table component controller', function() {
             // this state shows the checkmark, but hides the details view icon, so it does not matter whether
             // the second param is true or false, once the first is true.
             expect(ctrl.isReducedWidth(true, true)).toBe(true);
+        });
+    });
+
+    describe('table sorting', function() {
+        it('restores changed sort column and order for the same table', function() {
+            const tableId = TableService.getUniqueTableId('devices-table');
+            const firstTable = createTable(tableId);
+
+            firstTable.changeOrder('lastSeen');
+            firstTable.changeOrder('lastSeen');
+
+            const secondTable = createTable(tableId);
+
+            expect(secondTable.orderKey).toBe('lastSeen');
+            expect(secondTable.reverseOrder).toBe(true);
         });
     });
 });

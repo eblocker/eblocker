@@ -166,6 +166,7 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
             vm.oldOrderKey = vm.orderKey;
             vm.orderKey = key;
         }
+        TableService.setTableSortState(vm.tableId, vm.orderKey, vm.reverseOrder, vm.oldOrderKey);
         vm.tableData = updateTable(doReverse, vm.oldOrderKey, vm.tableData);
     }
 
@@ -357,21 +358,28 @@ function Controller(logger, $scope, $window, $translate, StateService, TableServ
             vm.isEntrySelectable = function() { return true; };
         }
 
-        // ** Find default sorting
-        vm.tableHeader.forEach((header, index) => {
-            if (index === 1 && angular.isUndefined(vm.orderKey)) {
-                // defaults to second header, which is usually the one after the icon.
-                vm.orderKey = header.sortingKey;
-                vm.reverseOrder = angular.isDefined(header.isReversed) ? header.isReversed : false;
-            }
-            if (header.defaultSorting) {
-                vm.orderKey = header.sortingKey;
-                vm.reverseOrder = angular.isDefined(header.isReversed) ? header.isReversed : false;
-            }
-            if (header.secondSorting) {
-                vm.oldOrderKey = header.sortingKey;
-            }
-        });
+        const storedSortState = TableService.getTableSortState(vm.tableId);
+        if (angular.isObject(storedSortState) && angular.isString(storedSortState.orderKey)) {
+            vm.orderKey = storedSortState.orderKey;
+            vm.reverseOrder = storedSortState.reverseOrder === true;
+            vm.oldOrderKey = storedSortState.oldOrderKey;
+        } else {
+            // ** Find default sorting
+            vm.tableHeader.forEach((header, index) => {
+                if (index === 1 && angular.isUndefined(vm.orderKey)) {
+                    // defaults to second header, which is usually the one after the icon.
+                    vm.orderKey = header.sortingKey;
+                    vm.reverseOrder = angular.isDefined(header.isReversed) ? header.isReversed : false;
+                }
+                if (header.defaultSorting) {
+                    vm.orderKey = header.sortingKey;
+                    vm.reverseOrder = angular.isDefined(header.isReversed) ? header.isReversed : false;
+                }
+                if (header.secondSorting) {
+                    vm.oldOrderKey = header.sortingKey;
+                }
+            });
+        }
 
         // ** Set table's initial sorting.
         // We need to do sorting manually, so that we can reset the striped flags.

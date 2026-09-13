@@ -94,6 +94,17 @@ public class CustomDomainFilterConfigServiceTest {
     }
 
     @Test
+    public void deleteUserDeletesCustomDomainFilters() {
+        ArgumentCaptor<UserService.UserChangeListener> listenerCaptor = ArgumentCaptor.forClass(UserService.UserChangeListener.class);
+        Mockito.verify(userService).addListener(listenerCaptor.capture());
+
+        listenerCaptor.getValue().onDelete(mockUser(3, 2, 1));
+
+        Mockito.verify(filterListsService).deleteFilterList(2);
+        Mockito.verify(filterListsService).deleteFilterList(1);
+    }
+
+    @Test
     public void setCustomDomainFilterUpdate() {
         CustomDomainFilterConfig savedFilter = customDomainFilterConfigService
                 .setCustomDomainFilterConfig(3, new CustomDomainFilterConfig(Sets.newHashSet("etracker.com", "google.com"), Sets.newHashSet("eblocker.com", "xkcd.com")));

@@ -31,7 +31,7 @@ public interface NetworkServices {
 
     void disableArpSpoofer();
 
-    void enableDhcpServer(boolean start);
+    void enableDhcpServer();
 
     void configureDhcpServer(NetworkConfiguration configuration);
 

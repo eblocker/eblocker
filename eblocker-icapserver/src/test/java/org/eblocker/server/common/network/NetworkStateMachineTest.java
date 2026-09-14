@@ -103,7 +103,7 @@ public class NetworkStateMachineTest {
         initializeToExternalDhcpState();
         NetworkConfiguration cfg = defaultLocalDhcpConfiguration();
         assertTrue(machine.updateConfiguration(cfg));
-        verify(services).enableDhcpServer(false);
+        verify(services).enableDhcpServer();
         verify(services).enableStaticIp(cfg);
         verify(dnsServer).setDnsCustomResolver();
         ArgumentCaptor<Event> argCaptor = ArgumentCaptor.forClass(Event.class);
@@ -132,7 +132,7 @@ public class NetworkStateMachineTest {
         NetworkConfiguration cfg = defaultLocalDhcpConfiguration();
         assertTrue(machine.updateConfiguration(cfg));
         verify(services).disableArpSpoofer();
-        verify(services).enableDhcpServer(false);
+        verify(services).enableDhcpServer();
         verify(services).enableStaticIp(cfg);
         verify(dnsServer).setDnsCustomResolver();
         ArgumentCaptor<Event> argCaptor = ArgumentCaptor.forClass(Event.class);
@@ -180,7 +180,7 @@ public class NetworkStateMachineTest {
         verify(services).enableStaticIp(cfg);
 
         verify(services, never()).disableDhcpServer();
-        verify(services, never()).enableDhcpServer(Mockito.anyBoolean());
+        verify(services, never()).enableDhcpServer();
         verify(services).configureDhcpServer(cfg);
         verify(dnsServer).setDnsCustomResolver();
     }

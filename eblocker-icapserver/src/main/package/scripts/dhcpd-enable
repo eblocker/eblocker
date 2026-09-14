@@ -26,9 +26,5 @@ update-rc.d isc-dhcp-server enable
 # Sync file systems (before user pulls the plug)
 sync
 
-# and start it if an argument is supplied:
-if [ $# -gt 0]
-  then
-    service isc-dhcp-server start
-fi
-
+# and start it:
+service isc-dhcp-server start

@@ -95,7 +95,7 @@ public class NetworkStateMachine {
     public void initialize() {
         NetworkStateId currentState = dataSource.getCurrentNetworkState();
         services.updateGateway();
-        if (currentState == NetworkStateId.PLUG_AND_PLAY) {
+        if (currentState == NetworkStateId.PLUG_AND_PLAY) { // FIXME: why is this not handled simply by entering the current state?
             services.enableArpSpoofer();
         }
 
@@ -106,7 +106,7 @@ public class NetworkStateMachine {
         ip6PrefixMonitor.addPrefixChangeListener(this::updateFirewall);
     }
 
-    public boolean isSSLEnabled() {
+    private boolean isSSLEnabled() {
         log.debug("SSL state is :{}", dataSource.getSSLEnabledState());
         return dataSource.getSSLEnabledState();
     }
@@ -145,9 +145,6 @@ public class NetworkStateMachine {
         NetworkConfiguration currentNetworkConfiguration = services.getCurrentNetworkConfiguration();
         boolean rebootNeeded = false;
 
-        //To avoid that somebody enters e.g. another static IP for the eBlocker but forgets to reboot (to really apply the change),
-        // the DHCP-config is written anyway and contains the new configured static IP for the eBlocker, which is not bound to the networkinterface yet....
-
         log.info("Current network configuration:  {}", currentNetworkConfiguration);
         log.info("Selected network configuration: {}", networkConfiguration);
 
@@ -155,28 +152,19 @@ public class NetworkStateMachine {
         NetworkState selected = getSelectedNetworkState(networkConfiguration);
 
         if (current.getId() == selected.getId()) {
-            switch (current.getId()) {
-                case PLUG_AND_PLAY:
-                    break;//no need to reboot
-                case EXTERNAL_DHCP:
-                case LOCAL_DHCP:
-                    rebootNeeded = evaluateReboot(networkConfiguration, currentNetworkConfiguration);
-                    break;
+            if (current.getId() != NetworkStateId.PLUG_AND_PLAY) {
+                rebootNeeded = evaluateReboot(networkConfiguration, currentNetworkConfiguration);
             }
-            selected.onConfigurationUpdate(services, networkConfiguration, rebootNeeded);
+            selected.onConfigurationUpdate(services, networkConfiguration);
 
-        } else { //FIXME if only dhcp server is en/disabled reboot MIGHT not be neccessary (still neccessary if the conditions above are true)
+        } else {
             log.info("Network state transition from {} to {}", current.getId(), selected.getId());
-            // Log event
             eventLogger.log(Events.networkModeChange(selected.getId()));
 
-            rebootNeeded = true;//networkstate change -> a reboot is probably a good idea
+            rebootNeeded = true;
             current.onExit(services);
-            selected.onEntry(services, networkConfiguration, rebootNeeded);
-            // If DHCP server is enabled on the eBlocker, all devices are given a static flag
-            dataSource.setIpAddressesFixed(true);
-            // The DHCP configuration must be written down
-            services.configureDhcpServer(networkConfiguration);
+            selected.onEntry(services, networkConfiguration);
+            dataSource.setIpAddressesFixed(true); // FIXME: why set this flag on all devices? That means that the flag ipAddressFixedByDefault (set by the user) is effectively ignored
         }
 
         if (selected.getId() == NetworkStateId.LOCAL_DHCP) {

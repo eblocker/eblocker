@@ -33,16 +33,15 @@ public class NetworkStateLocalDhcp extends NetworkState {
     }
 
     @Override
-    public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+    public void onEntry(NetworkServices services, NetworkConfiguration configuration) {
         services.enableStaticIp(configuration);
         services.setNameserverAddresses(configuration);
         services.configureDhcpServer(configuration);
-        boolean startDhcpServer = willReboot ? false : true;
-        services.enableDhcpServer(startDhcpServer);
+        services.enableDhcpServer();
     }
 
     @Override
-    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration) {
         services.enableStaticIp(configuration);
         services.configureDhcpServer(configuration);
     }

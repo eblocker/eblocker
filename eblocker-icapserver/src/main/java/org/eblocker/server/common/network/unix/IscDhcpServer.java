@@ -61,14 +61,10 @@ public class IscDhcpServer implements DhcpServer {
     }
 
     @Override
-    public void enable(boolean start) {
+    public void enable() {
         int result;
         try {
-            if (start) {
-                result = scriptRunner.runScript(enableCommand, startParam);
-            } else {
-                result = scriptRunner.runScript(enableCommand);
-            }
+            result = scriptRunner.runScript(enableCommand);
         } catch (Exception e) {
             throw new EblockerException("Could not enable DHCP server", e);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2026 eBlocker Open Source GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -16,16 +16,12 @@
  */
 package org.eblocker.server.http.controller;
 
-import org.eblocker.server.common.data.Language;
+import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.restexpress.Request;
 import org.restexpress.Response;
 
-import java.util.Set;
-
-public interface LanguageController {
-    Set<Language> getAllAvailableLanguages(Request request, Response response);
-
-    Language getCurrentLanguage(Request request, Response response);
-
-    void setLanguage(Request request, Response response);
+public interface RestoreFromBackupController {
+    boolean isBackupAvailable(Request request, Response response);
+    ConfigBackupImportResult importConfiguration(Request request, Response response);
+    ConfigBackupImportResult verifyConfiguration(Request request, Response response);
 }

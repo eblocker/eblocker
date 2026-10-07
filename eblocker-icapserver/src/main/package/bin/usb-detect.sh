@@ -16,4 +16,37 @@
 # permissions and limitations under the License.
 #
 
-umount "$1"
+ACTION="$1"
+DEVICE="$2"
+
+function usage() {
+    echo "usage: $0 start|stop <device>" >&2
+    exit 1
+}
+
+function start_detect() {
+    echo "eblocker-usb-detect service is started for device $DEVICE"
+}
+
+function stop_detect() {
+    if findmnt "$DEVICE"; then
+        echo "Device $DEVICE is mounted. Stopping eblocker-usb-mount.service"
+        systemctl stop eblocker-usb-mount.service
+    fi
+}
+
+if [ $# -ne 2 ]; then
+    usage
+fi
+
+case "$ACTION" in
+    start)
+        start_detect
+        ;;
+    stop)
+        stop_detect
+        ;;
+    *)
+        usage
+        ;;
+esac

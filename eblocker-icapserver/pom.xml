@@ -512,7 +512,15 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-usb-automount@.service</src>
+                                    <src>${project.build.directory}/package/systemd/eblocker-usb-detect@.service</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/lib/systemd/system</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.build.directory}/package/systemd/eblocker-usb-mount.service</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -563,6 +571,18 @@
                                         <path>/opt/eblocker-icap/keys/ssl</path>
                                         <path>/opt/eblocker-icap/registration</path>
                                         <path>/opt/eblocker-icap/tmp</path>
+                                    </paths>
+                                </data>
+                                <data>
+                                    <type>template</type>
+                                    <mapper>
+                                        <!-- Mount directory should only be writable for user icapd if a drive is mounted -->
+                                        <type>perm</type>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <dirmode>755</dirmode>
+                                    </mapper>
+                                    <paths>
                                         <path>/opt/eblocker-icap/mnt</path>
                                     </paths>
                                 </data>

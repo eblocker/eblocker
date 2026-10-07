@@ -29,4 +29,6 @@ public interface ConfigurationBackupController {
     ConfigBackupReference uploadConfiguration(Request request, Response response);
     ConfigBackupImportResult importConfiguration(Request request, Response response);
     ConfigBackupImportResult verifyConfiguration(Request request, Response response);
+    String getMountedPartitionName(Request request, Response response);
+    void writeToDisk(Request request, Response response);
 }

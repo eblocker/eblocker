@@ -17,8 +17,10 @@
 package org.eblocker.server.http.backup;
 
 import org.eblocker.server.common.data.DeviceFactory;
+import org.eblocker.server.common.data.LocaleSettings;
 import org.eblocker.server.common.squid.SquidWarningService;
 import org.eblocker.server.http.service.DeviceScanningService;
+import org.eblocker.server.http.service.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,16 +32,20 @@ class GeneralSettingsBackupProviderTest extends BackupProviderTestBase {
     private DeviceScanningService deviceScanningService;
     private DeviceFactory deviceFactory;
     private SquidWarningService squidWarningService;
+    private SettingsService settingsService;
+    private final LocaleSettings LOCALE = new LocaleSettings("English (United States)", "US", "en", "America/New_York", false);
 
     @BeforeEach
     void setUp() {
         deviceScanningService = Mockito.mock(DeviceScanningService.class);
         deviceFactory = Mockito.mock(DeviceFactory.class);
         squidWarningService = Mockito.mock(SquidWarningService.class);
-        provider = new GeneralSettingsBackupProvider(deviceScanningService, deviceFactory, squidWarningService);
+        settingsService = Mockito.mock(SettingsService.class);
+        provider = new GeneralSettingsBackupProvider(deviceScanningService, deviceFactory, squidWarningService, settingsService);
         Mockito.when(deviceScanningService.getScanningInterval()).thenReturn(600L);
         Mockito.when(deviceFactory.isAutoEnableNewDevices()).thenReturn(true);
         Mockito.when(squidWarningService.isEnabled()).thenReturn(true);
+        Mockito.when(settingsService.getLocaleSettings()).thenReturn(LOCALE);
     }
 
     @Test
@@ -48,5 +54,6 @@ class GeneralSettingsBackupProviderTest extends BackupProviderTestBase {
         Mockito.verify(deviceScanningService).setScanningInterval(600L);
         Mockito.verify(deviceFactory).setAutoEnableNewDevices(true);
         Mockito.verify(squidWarningService).setRecordingFailedConnectionsEnabled(true);
+        Mockito.verify(settingsService).setLocaleSettings(LOCALE);
     }
 }

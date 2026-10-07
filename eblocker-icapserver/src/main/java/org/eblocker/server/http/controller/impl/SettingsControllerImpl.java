@@ -34,27 +34,11 @@ import java.io.IOException;
 import java.time.ZoneId;
 
 public class SettingsControllerImpl implements SettingsController {
-    private static final Logger log = LoggerFactory.getLogger(SettingsControllerImpl.class);
-
     private final SettingsService settingsService;
-    private final DataSource dataSource;
-    private final TorExitNodeCountries torExitNodeCountries;
-    private final ScriptRunner scriptRunner;
-    private final String setTimezoneCommand;
 
     @Inject
-    public SettingsControllerImpl(SettingsService settingsService,
-                                  DataSource dataSource,
-                                  TorExitNodeCountries torExitNodeCountries,
-                                  ScriptRunner scriptRunner,
-                                  @Named("set.timezone.command") String setTimezoneCommand) throws IOException {
-        this.dataSource = dataSource;
-        this.torExitNodeCountries = torExitNodeCountries;
+    public SettingsControllerImpl(SettingsService settingsService) {
         this.settingsService = settingsService;
-        this.scriptRunner = scriptRunner;
-        this.setTimezoneCommand = setTimezoneCommand;
-
-        setTimeZone(dataSource.getTimezone());
     }
 
     @Override
@@ -62,34 +46,9 @@ public class SettingsControllerImpl implements SettingsController {
         return settingsService.getLocaleSettings();
     }
 
-    @Override
-    public LocaleSettings setTimeZone(Request request, Response response) throws IOException {
-        LocaleSettings localeSettings = request.getBodyAs(LocaleSettings.class);
-        return setTimeZone(localeSettings.getTimezone());
-    }
-
-    private LocaleSettings setTimeZone(String posixTimezone) throws IOException {
-        ZoneId timezone = ZoneId.of(posixTimezone);
-        settingsService.setTimeZone(timezone);
-        scriptRunner.startScript(setTimezoneCommand, posixTimezone);
-        return settingsService.getLocaleSettings();
-    }
-
     public LocaleSettings setLocale(Request request, Response response) throws IOException {
         LocaleSettings localeSettings = request.getBodyAs(LocaleSettings.class);
-        ZoneId timezone = ZoneId.of(localeSettings.getTimezone());
 
-        String langID = localeSettings.getLanguage();
-        String langName = localeSettings.getName();
-
-        if (langID != null && !langID.equals("") && langName != null && !langName.equals("")) {
-            Language lang = new Language(langID, langName);
-            log.info("Setting language id: {} name: {}", lang.getId(), lang.getName());
-            dataSource.setCurrentLanguage(lang);
-            // Language has changed, tell TorExitNodeCountries to update its list
-            torExitNodeCountries.createListOfTorCountryCodes();
-        }
-        return setTimeZone(localeSettings.getTimezone());
+        return settingsService.setLocaleSettings(localeSettings);
     }
-
 }

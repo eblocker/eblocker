@@ -44,7 +44,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Random;
 
 import static org.mockito.Mockito.when;
@@ -115,7 +114,6 @@ public abstract class DeviceRegistrationTestBase {
         trustStorePassword = TRUSTSTORE_PASSWORD;
 
         settingsService = Mockito.mock(SettingsService.class);
-        when(settingsService.getLocale()).thenReturn(Locale.US);
         when(settingsService.getLocaleSettings()).thenReturn(new LocaleSettings(null, null, null, null, null));
 
         if (doStartMockServer()) {

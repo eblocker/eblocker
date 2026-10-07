@@ -46,6 +46,16 @@ function Controller(logger, $mdDialog) {
         });
     }
 
+    function configBackupExportToDriveDialog() {
+        return $mdDialog.show({
+            controller: 'ConfigBackupExportToDriveController',
+            controllerAs: 'vm',
+            templateUrl: 'app/dialogs/system/config-backup-export-to-drive.dialog.tmpl.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:false
+        });
+    }
+
     function showExportDialog() {
         configBackupExportDialog().then(function(result) {
             logger.info('Export complete');
@@ -62,11 +72,23 @@ function Controller(logger, $mdDialog) {
         });
     }
 
+    function showExportToDriveDialog() {
+        configBackupExportToDriveDialog().then(function(result) {
+            logger.info('Export complete');
+        }, function(reason) {
+            logger.error('Export dialog failed/cancelled');
+        });
+    }
+
     vm.startExportDialog = function() {
         showExportDialog();
     };
 
     vm.startImportDialog = function() {
         showImportDialog();
+    };
+
+    vm.startExportToDriveDialog = function() {
+        showExportToDriveDialog();
     };
 }

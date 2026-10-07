@@ -24,11 +24,12 @@ import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.EventType;
-import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
+import org.eblocker.server.http.service.ConfigurationBackupFileService;
 import org.eblocker.server.http.service.ConfigurationBackupService;
+import org.eblocker.server.http.service.DiskInfoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,19 +51,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ConfigurationBackupControllerImplTest {
     private ConfigurationBackupController controller;
     private ConfigurationBackupService service;
+    private ConfigurationBackupFileService fileService;
+    private DiskInfoService diskInfoService;
     private EventLogger eventLogger;
     private ConfigBackupImportResult serviceImportResult;
     private Request request;
     private Response response;
     private Path tmpDir;
+    private String externalDiskBackupFilename = "eblocker-config.eblcfg";
+    private String externalDiskMountpoint = "/opt/eblocker-icap/mnt";
 
     @BeforeEach
     public void setUp() throws Exception {
         serviceImportResult = new ConfigBackupImportResult();
         tmpDir = Files.createTempDirectory(null);
         service = Mockito.mock(ConfigurationBackupService.class);
+        fileService = new ConfigurationBackupFileService(tmpDir.toString());
+        diskInfoService = Mockito.mock(DiskInfoService.class);
         eventLogger = Mockito.mock(EventLogger.class);
-        controller = new ConfigurationBackupControllerImpl(service, eventLogger, tmpDir.toString());
+        controller = new ConfigurationBackupControllerImpl(service, fileService, diskInfoService, eventLogger, externalDiskBackupFilename, externalDiskMountpoint);
         request = Mockito.mock(Request.class);
         response = Mockito.mock(Response.class);
         Mockito.when(service.importConfiguration(Mockito.any(), Mockito.any())).thenReturn(serviceImportResult);
@@ -121,7 +128,7 @@ public class ConfigurationBackupControllerImplTest {
 
     @Test
     public void downloadConfiguration() throws IOException {
-        Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupControllerImpl.FILE_PREFIX, ConfigurationBackupControllerImpl.FILE_SUFFIX);
+        Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupFileService.FILE_PREFIX, ConfigurationBackupFileService.FILE_SUFFIX);
         byte[] backupData = "Configuration backup data".getBytes();
         Files.write(tmpFile, backupData);
         Mockito.when(request.getHeader("configBackupFileReference")).thenReturn(tmpFile.getFileName().toString());
@@ -140,8 +147,8 @@ public class ConfigurationBackupControllerImplTest {
         assertTrue(result.isPasswordRequired());
         byte[] resultData = Files.readAllBytes(tmpDir.resolve(result.getFileReference()));
         assertArrayEquals(backupData, resultData);
-        assertTrue(result.getFileReference().startsWith(ConfigurationBackupControllerImpl.FILE_PREFIX));
-        assertTrue(result.getFileReference().endsWith(ConfigurationBackupControllerImpl.FILE_SUFFIX));
+        assertTrue(result.getFileReference().startsWith(ConfigurationBackupFileService.FILE_PREFIX));
+        assertTrue(result.getFileReference().endsWith(ConfigurationBackupFileService.FILE_SUFFIX));
     }
 
     @Test
@@ -155,7 +162,7 @@ public class ConfigurationBackupControllerImplTest {
         String password = "top secret!";
         final List<BackupWarning> warnings = List.of(new BackupWarning(BackupWarning.Id.UPNP_PORT_FORWARDING_FAILURE));
         serviceImportResult.addWarnings(warnings);
-        Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupControllerImpl.FILE_PREFIX, ConfigurationBackupControllerImpl.FILE_SUFFIX);
+        Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupFileService.FILE_PREFIX, ConfigurationBackupFileService.FILE_SUFFIX);
         byte[] backupData = "Configuration backup data".getBytes();
         Files.write(tmpFile, backupData);
         ConfigBackupReference reference = new ConfigBackupReference(tmpFile.getFileName().toString(), password, false);

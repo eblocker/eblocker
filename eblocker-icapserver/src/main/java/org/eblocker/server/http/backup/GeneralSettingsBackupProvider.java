@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.DeviceFactory;
 import org.eblocker.server.common.squid.SquidWarningService;
 import org.eblocker.server.http.service.DeviceScanningService;
 import org.eblocker.server.http.service.DnsService;
+import org.eblocker.server.http.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +39,17 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
     private final DeviceScanningService deviceScanningService;
     private final DeviceFactory deviceFactory;
     private final SquidWarningService squidWarningService;
+    private final SettingsService settingsService;
 
     @Inject
     public GeneralSettingsBackupProvider(DeviceScanningService deviceScanningService,
                                          DeviceFactory deviceFactory,
-                                         SquidWarningService squidWarningService) {
+                                         SquidWarningService squidWarningService,
+                                         SettingsService settingsService) {
         this.deviceScanningService = deviceScanningService;
         this.deviceFactory = deviceFactory;
         this.squidWarningService = squidWarningService;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -60,6 +64,7 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
         backup.setDeviceScanningInterval(deviceScanningService.getScanningInterval());
         backup.setAutoEnableNewDevices(deviceFactory.isAutoEnableNewDevices());
         backup.setSquidWarningServiceEnabled(squidWarningService.isEnabled());
+        backup.setLocaleSettings(settingsService.getLocaleSettings());
         return backup;
     }
 
@@ -90,5 +95,6 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
         deviceScanningService.setScanningInterval(backup.getDeviceScanningInterval());
         deviceFactory.setAutoEnableNewDevices(backup.isAutoEnableNewDevices());
         squidWarningService.setRecordingFailedConnectionsEnabled(backup.isSquidWarningServiceEnabled());
+        settingsService.setLocaleSettings(backup.getLocaleSettings());
     }
 }

@@ -24,6 +24,8 @@ import org.eblocker.server.common.data.messagecenter.MessageSeverity;
 import org.eblocker.server.common.network.NetworkServices;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.util.Ip4Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,7 @@ import java.util.Set;
 
 @Singleton
 public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider {
+    private static final Logger log = LoggerFactory.getLogger(LocalDnsIsNotGatewayMessageProvider.class);
 
     private final EblockerDnsServer dnsServer;
     private final NetworkServices networkServices;
@@ -50,6 +53,10 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
     @Override
     protected void doUpdate(Map<Integer, MessageContainer> messageContainers) {
         NetworkConfiguration configuration = networkServices.getCurrentNetworkConfiguration();
+        if (configuration.getIpAddress() == null || configuration.getGateway() == null || configuration.getNetworkMask() == null) {
+            log.warn("Cannot check whether local DNS is not gateway due to incomplete network configuration: {}", configuration);
+            return;
+        }
         if (dnsServer.isEnabled()
                 && configuration.isAutomatic()
                 && !configuration.isDhcp()

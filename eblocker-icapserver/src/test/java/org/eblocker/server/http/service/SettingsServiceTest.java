@@ -17,61 +17,76 @@
 package org.eblocker.server.http.service;
 
 import org.eblocker.server.common.data.DataSource;
-import org.junit.Test;
+import org.eblocker.server.common.data.Language;
+import org.eblocker.server.common.data.LocaleSettings;
+import org.eblocker.server.common.network.TorExitNodeCountries;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.time.ZoneId;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SettingsServiceTest {
+    private static final String TIMEZONE_ID = "America/New_York";
 
-    private static final String TIMEZONE_ID = "Europe/Berlin";
+    private SettingsService settingsService;
+    private DataSource dataSource;
+    private ScriptRunner scriptRunner;
+    private String setTimezoneCommand;
+    private TorExitNodeCountries torExitNodeCountries;
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        dataSource = Mockito.mock(DataSource.class);
+        scriptRunner = Mockito.mock(ScriptRunner.class);
+        torExitNodeCountries = Mockito.mock(TorExitNodeCountries.class);
+        setTimezoneCommand = "set_timezone";
+        settingsService = new SettingsService(dataSource, scriptRunner, setTimezoneCommand, torExitNodeCountries);
+    }
 
     @Test
     public void testTimeZone_getUninitialized() {
-        DataSource dataSource = Mockito.mock(DataSource.class);
-        when(dataSource.getTimezone()).thenReturn(null);
+        Mockito.when(dataSource.getTimezone()).thenReturn(null);
 
-        SettingsService settingsService = new SettingsService(dataSource);
         ZoneId timezone = settingsService.getTimeZone();
 
         assertNotNull(timezone);
-        assertEquals(ZoneId.of(TIMEZONE_ID), timezone);
-
-        verify(dataSource).getTimezone();
-        verify(dataSource).setTimezone(TIMEZONE_ID);
-        verifyNoMoreInteractions(dataSource);
+        assertEquals(ZoneId.of(LocaleSettings.DEFAULT_TIMEZONE), timezone);
     }
 
     @Test
     public void testTimeZone_get() {
-        DataSource dataSource = Mockito.mock(DataSource.class);
-        when(dataSource.getTimezone()).thenReturn(TIMEZONE_ID);
+        Mockito.when(dataSource.getTimezone()).thenReturn(TIMEZONE_ID);
 
-        SettingsService settingsService = new SettingsService(dataSource);
         ZoneId timezone = settingsService.getTimeZone();
 
         assertNotNull(timezone);
         assertEquals(ZoneId.of(TIMEZONE_ID), timezone);
-
-        verify(dataSource).getTimezone();
-        verifyNoMoreInteractions(dataSource);
     }
 
     @Test
-    public void testTimeZone_set() {
-        DataSource dataSource = Mockito.mock(DataSource.class);
+    public void testLocaleSettings_get() {
+        Mockito.when(dataSource.getCurrentLanguage()).thenReturn(new Language("en", "English"));
+        Mockito.when(dataSource.getTimezone()).thenReturn(TIMEZONE_ID);
 
-        SettingsService settingsService = new SettingsService(dataSource);
-        settingsService.setTimeZone(ZoneId.of(TIMEZONE_ID));
-
-        verify(dataSource).setTimezone(TIMEZONE_ID);
-        verifyNoMoreInteractions(dataSource);
+        LocaleSettings result = settingsService.getLocaleSettings();
+        assertEquals("en", result.getLanguage());
+        assertEquals("US", result.getCountry());
+        assertFalse(result.isClock24());
+        assertEquals("English (United States)", result.getName());
+        assertEquals(TIMEZONE_ID, result.getTimezone());
     }
 
+    @Test
+    public void testLocaleSettings_set() throws IOException {
+        LocaleSettings localeSettings = new LocaleSettings("English (United States)", "US", "en", TIMEZONE_ID, true);
+        settingsService.setLocaleSettings(localeSettings);
+
+        Mockito.verify(dataSource).setCurrentLanguage(new Language("en", "English (United States)"));
+        Mockito.verify(dataSource).setTimezone(TIMEZONE_ID);
+    }
 }

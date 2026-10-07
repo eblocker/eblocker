@@ -26,8 +26,8 @@ export default {
 };
 
 // jshint ignore: line
-function MainController($window, $mdSidenav, logger, RegistrationService, SetupService, StateService, STATES, // jshint ignore: line
-                        SystemService, SplashService, ConsoleService, security, $translate) {
+function MainController($window, $mdSidenav, logger, RegistrationService, SetupService, RestoreFromBackupService, StateService, STATES, // jshint ignore: line
+                        SystemService, SplashService, ConsoleService, security, $q, $translate) {
     'ngInject';
     const vm = this;
 
@@ -38,18 +38,26 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
     // we need to update setup info after setup wizard or license reset, so binding is not sufficient, because
     // it is not reloaded when controller is reloaded due to state changes.
     function updateSetupInfo() {
-        SetupService.getInfo(true).then(function success(response) {
-            vm.setupRequired = response.data.setupRequired;
-            if (vm.setupRequired && !SetupService.hasSetupBeenExecuted()) {
+        const actions = [SetupService.getInfo(true), RestoreFromBackupService.backupAvailable()];
+        $q.all(actions).then(function success(responses) {
+            vm.setupRequired = responses[0].data.setupRequired;
+            const isBackupAvailable = responses[1].data;
+            if (isBackupAvailable) {
+                vm.openRestoreFromBackupWizard();
+            } else if (vm.setupRequired && !SetupService.hasSetupBeenExecuted()) {
                 vm.openSetupWizard();
                 SetupService.hasSetupBeenExecuted(true);
             }
+        }, function error(response) {
+            logger.error('Unable to load setup info', response);
         });
     }
 
     vm.$onInit = function() {
+        console.warn('MainController.onInit()');
         vm.navBarName = 'left';
         if(SystemService.reloadAfterBoot()) {
+            console.warn('Reloading after boot');
             SystemService.reloadAfterBoot(false);
             $window.location.reload();
         }
@@ -96,6 +104,7 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
     vm.goToSplashScreen = goToSplashScreen;
     vm.goToDonations = goToDonations;
     vm.openSetupWizard = openSetupWizard;
+    vm.openRestoreFromBackupWizard = openRestoreFromBackupWizard;
     vm.isSideNavOpen = isSideNavOpen;
     vm.isLicensed = isLicensed;
     vm.hideNavEntry = hideNavEntry;
@@ -143,6 +152,10 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
 
     function openSetupWizard() {
         StateService.goToState(STATES.ACTIVATION);
+    }
+
+    function openRestoreFromBackupWizard() {
+        StateService.goToState(STATES.RESTORE_FROM_BACKUP);
     }
 
     function goToSplashScreen() {

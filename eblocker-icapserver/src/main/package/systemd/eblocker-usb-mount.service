@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount the first USB FAT32 partition
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/eblocker-icap/bin/usb-mount.sh start
+ExecStop=/opt/eblocker-icap/bin/usb-mount.sh stop

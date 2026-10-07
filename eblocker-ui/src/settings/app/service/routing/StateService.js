@@ -40,6 +40,7 @@ export default function StateService($state, logger, $window, ArrayUtilsService,
      * @param param optional param to pass to the workflow state
      */
     function setWorkflowState(state, param) {
+        logger.warn('setWorkflowState("' + state + '", ' + JSON.stringify(param) + ')');
         if (workflowStateValid(state)) {
             logger.debug('Setting workflow state to ', state);
             initState = state;

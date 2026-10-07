@@ -46,8 +46,19 @@ export default function TimezoneService(logger, $http, $q) {
         });
     }
 
+    // Splits a timezone string into a region and a city part (if available)
+    function splitTimezone(timezoneStr) {
+        const parts = timezoneStr.split('/');
+        if (parts.length === 1) {
+            return [parts[0]];
+        }
+        const region = parts.shift();
+        return [region, parts.join('/')];
+    }
+
     return {
         getRegions: getRegions,
-        setRegionAndGetCities: setRegionAndGetCities
+        setRegionAndGetCities: setRegionAndGetCities,
+        splitTimezone: splitTimezone
     };
 }

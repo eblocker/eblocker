@@ -19,6 +19,8 @@ package org.eblocker.server.common.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class LocaleSettings {
 
     public static final String DEFAULT_NAME = "Deutsch";
@@ -69,5 +71,18 @@ public class LocaleSettings {
 
     public boolean isClock24() {
         return clock24;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        LocaleSettings that = (LocaleSettings) o;
+        return clock24 == that.clock24 && Objects.equals(name, that.name) && Objects.equals(country, that.country) && Objects.equals(language, that.language) && Objects.equals(timezone, that.timezone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, country, language, timezone, clock24);
     }
 }

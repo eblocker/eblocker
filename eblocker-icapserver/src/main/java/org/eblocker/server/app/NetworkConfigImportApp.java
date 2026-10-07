@@ -16,13 +16,6 @@
  */
 package org.eblocker.server.app;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -35,31 +28,35 @@ import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.unix.NetworkInterfaceConfiguration;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
-import org.eblocker.server.http.backup.NetworkBackupProvider;
+import org.eblocker.server.http.backup.NetworkBackupReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 /**
  * This app runs as a Systemd service before network interfaces are set up.
  *
  * It looks for a USB drive with a FAT partition and an eBlocker backup file on it.
  * If it exists the network configuration (e.g. a fixed IPv4 address) is restored.
+ *
+ * This server should only ensure that eBlocker itself has an IP address (or can get
+ * one via DHCP), so the network can be started up.
+ *
+ * Starting services like DHCP on the eBlocker itself must happen later in the
+ * ICAP server (when the network is available).
  */
 public class NetworkConfigImportApp {
     private static final Logger LOG = LoggerFactory.getLogger(NetworkConfigImportApp.class);
 
     private final NetworkInterfaceConfiguration interfaceConfiguration;
+    private final NetworkBackupReader networkBackupReader;
     private final ScriptRunner scriptRunner;
     private final String mountpoint;
     private final int mountpointWaitTimeout;
@@ -79,6 +76,7 @@ public class NetworkConfigImportApp {
 
     @Inject
     public NetworkConfigImportApp(NetworkInterfaceConfiguration interfaceConfiguration,
+                                  NetworkBackupReader networkBackupReader,
                                   ScriptRunner scriptRunner,
                                   @Named("external.disk.mountpoint") String mountpoint,
                                   @Named("external.disk.backup.filename") String backupFilename,
@@ -86,6 +84,7 @@ public class NetworkConfigImportApp {
                                   @Named("external.disk.mountpoint_wait.command") String mountpointWaitCommand,
                                   @Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand) {
         this.interfaceConfiguration = interfaceConfiguration;
+        this.networkBackupReader = networkBackupReader;
         this.scriptRunner = scriptRunner;
         this.mountpoint = mountpoint;
         this.backupFilename = backupFilename;
@@ -139,34 +138,20 @@ public class NetworkConfigImportApp {
 
     private void importNetworkConfig(Path configFile) throws IOException, InterruptedException {
         LOG.info("Trying to import network configuration from {}", configFile);
-        try (InputStream inputStream = Files.newInputStream(configFile)) {
-            try (JarInputStream jarStream = new JarInputStream(inputStream)) {
-                JarEntry entry;
-                while ((entry = jarStream.getNextJarEntry()) != null) {
-                    if (NetworkBackupProvider.NETWORK_ENTRY.equals(entry.getName())) {
-                        JsonFactory jsonFactory = new MappingJsonFactory();
-                        jsonFactory.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-                        ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-                        objectMapper
-                                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-                                .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
-                                .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE)
-                                .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
-                        NetworkConfiguration networkConfiguration = objectMapper.readValue(jarStream, NetworkConfiguration.class);
-                        LOG.info("Importing network configuration: {}", networkConfiguration);
-                        if (networkConfiguration.isAutomatic()) {
-                            interfaceConfiguration.enableDhcp();
-                        } else {
-                            interfaceConfiguration.enableStatic(networkConfiguration.getIpAddress(), networkConfiguration.getNetworkMask(), networkConfiguration.getGateway());
-                        }
-                        int status = scriptRunner.runScript(applyNetworkConfigurationCommand);
-                        if (status != 0) {
-                            throw new EblockerException("Command '" + applyNetworkConfigurationCommand + "' terminated with exit status: " + status);
-                        }
-                    }
-                }
-            }
+        NetworkConfiguration networkConfiguration = networkBackupReader.readNetworkConfiguration(configFile);
+        if (networkConfiguration == null) {
+            LOG.info("Could not read network configuration from {}", configFile);
+            return;
+        }
+        LOG.info("Importing network configuration: {}", networkConfiguration);
+        if (networkConfiguration.isAutomatic()) {
+            interfaceConfiguration.enableDhcp();
+        } else {
+            interfaceConfiguration.enableStatic(networkConfiguration.getIpAddress(), networkConfiguration.getNetworkMask(), networkConfiguration.getGateway());
+        }
+        int status = scriptRunner.runScript(applyNetworkConfigurationCommand);
+        if (status != 0) {
+            throw new EblockerException("Command '" + applyNetworkConfigurationCommand + "' terminated with exit status: " + status);
         }
     }
 }

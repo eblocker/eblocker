@@ -346,7 +346,8 @@
                 "IMPORT" : "Importieren",
                 "SAVE_SETTINGS" : "Einstellungen sichern...",
                 "RESTORE_SETTINGS" : "Einstellungen wiederherstellen...",
-                "REBOOT" : "Neustart"
+                "REBOOT" : "Neustart",
+                "SAVE_TO_DRIVE" : "Einstellungen auf USB-Stick sichern..."
             },
             "ERROR": {
                 "CORRUPTED": "Die Sicherungsdatei ist beschädigt und konnte nicht importiert werden",
@@ -357,7 +358,8 @@
                 "UNSUPPORTED_VERSION": "Die Version der Sicherungsdatei wird nicht mehr unterstützt",
                 "UPLOAD_FAILURE": "Die Sicherungsdatei konnte nicht hochgeladen werden",
                 "UPLOAD_TOO_LARGE": "Die Sicherungsdatei ist zu groß",
-                "VERIFICATION_FAILURE": "Die Prüfung der Sicherungsdatei ist fehlgeschlagen."
+                "VERIFICATION_FAILURE": "Die Prüfung der Sicherungsdatei ist fehlgeschlagen.",
+                "DISK_ERROR": "Beim Suchen nach einem USB-Stick ist ein Fehler aufgetreten."
             },
             "EXPLAIN": {
                 "TRANSFERRING_FILE" : "Übertrage Sicherungsdatei...",
@@ -369,7 +371,10 @@
                 "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
                 "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
                 "WARNINGS" : "Es sind Warnungen aufgetreten:",
-                "VERIFIED": "Die Einstellungen aus der Sicherungsdatei wurden überprüft und können nun wiederhergestellt werden."
+                "VERIFIED": "Die Einstellungen aus der Sicherungsdatei wurden überprüft und können nun wiederhergestellt werden.",
+                "SAVE_TO_DRIVE" : "Mit dieser Funktion kannst du alle Einstellungen auf einem USB-Stick sichern und auf ein neues eBlockerOS-Image übertragen.",
+                "ATTACH_DRIVE" : "Stecke einen USB-Stick an den eBlocker an. Dieser muss mit FAT32 formatiert sein (erfüllen alle handelsüblichen Sticks).",
+                "WROTE_TO_DRIVE" : "Die Sicherungsdatei wurde auf dem USB-Stick gespeichert.<p>Zum Übertragen der Einstellungen auf ein neues eBlockerOS-Image:<ol><li>Beschreibe eine neue SD-Karte am PC mit dem Raspberry Pi Imager.</li><li>Fahre den eBlocker herunter.</li><li>Stecke die neue SD-Karte und den USB-Stick an den Raspberry Pi.</li><li>Verbinde den Raspberry Pi mit dem Router und der Stromversorgung.</li><li>Öffne die eBlocker-Einstellungen auf eblocker.box und gib das Passwort der Sicherungsdatei ein.</li></ol></p>"
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {
@@ -379,14 +384,16 @@
                 "CREATE_BACKUP" : "Sicherungsdatei erstellen",
                 "DOWNLOAD_BACKUP" : "Herunterladen",
                 "SAVE_SETTINGS" : "Einstellungen sichern",
-                "RESTORE_SETTINGS" : "Einstellungen wiederherstellen"
+                "RESTORE_SETTINGS" : "Einstellungen wiederherstellen",
+                "SAVE_TO_DRIVE" : "Einstellungen auf USB-Stick sichern",
+                "WRITE_TO_DRIVE" : "Sicherungsdatei schreiben"
             },
             "PASSWORD": {
                 "ERROR": {
                     "REQUIRED": "Passwort wird zur Wiederherstellung der Schlüssel benötigt",
                     "RETRY": "Die Schlüssel konnten mit dem eingebenen Passwort nicht wiederhergestellt werden. Bitte versuche es erneut."
                 },
-                "LABEL": "Passwort eingeben",
+                "LABEL": "Passwort der Sicherungsdatei eingeben",
                 "WARNING": "<b>Achtung:</b> das Passwort wird zur Wiederherstellung der Schlüssel benötigt. Es kann nicht zurückgesetzt werden, wenn es verloren geht.",
                 "WARNING_NO_PASSWORD": "<b>Achtung:</b> ohne das Passwort werden die HTTPS-, OpenVPN- und Lizenz-Schlüssel nicht wiederhergestellt."
             },
@@ -402,6 +409,13 @@
                 "UPNP_PORT_FORWARDING_FAILURE": "Das Einrichten der Port-Weiterleitung für eBlocker Mobile ist fehlgeschlagen.",
                 "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht gesichert werden.",
                 "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht wiederhergestellt werden."
+            },
+            "DRIVE_STATE": {
+                "CANCELLED": "Vorgang wurde abgebrochen. Entferne ggf. den USB-Stick.",
+                "SEARCHING": "USB-Stick wird gesucht...",
+                "FOUND": "USB-Stick wurde erkannt:",
+                "WRITING": "Sicherungsdatei wird geschrieben:",
+                "WROTE": "Sicherungsdatei wurde geschrieben:"
             }
         },
         "DETAILS_VIEW": {
@@ -2487,6 +2501,12 @@
             "TITLE_ARIA": "Administratorpasswort zurücksetzen",
             "TOOLBAR": {
                 "TITLE": "Administratorpasswort zurücksetzen"
+            }
+        },
+        "RESTORE_FROM_BACKUP" : {
+            "TEXT" : "Auf dem USB-Stick wurde eine Sicherungsdatei gefunden. Gib das Passwort der Sicherungsdatei ein, um die Einstellungen wiederherzustellen.",
+            "TOOLBAR" : {
+                "TITLE" : "Einstellungen wiederherstellen"
             }
         },
         "SERVICE": {

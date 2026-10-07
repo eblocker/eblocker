@@ -346,7 +346,8 @@
                 "IMPORT" : "Import",
                 "SAVE_SETTINGS" : "Save Settings...",
                 "RESTORE_SETTINGS" : "Restore Settings...",
-                "REBOOT" : "Reboot"
+                "REBOOT" : "Reboot",
+                "SAVE_TO_DRIVE" : "Save settings to USB flash drive..."
             },
             "ERROR" : {
                 "CORRUPTED" : "The settings file is corrupted and could not be read",
@@ -357,7 +358,8 @@
                 "UNSUPPORTED_VERSION" : "This settings file's version is not supported any more",
                 "UPLOAD_FAILURE" : "The settings file could not be uploaded",
                 "UPLOAD_TOO_LARGE" : "The settings file is too large",
-                "VERIFICATION_FAILURE" : "The backup file could not be verified. It seems to be corrupted."
+                "VERIFICATION_FAILURE" : "The backup file could not be verified. It seems to be corrupted.",
+                "DISK_ERROR" : "An error occurred searching for a USB flash drive."
             },
             "EXPLAIN" : {
                 "TRANSFERRING_FILE" : "Transferring backup file...",
@@ -369,7 +371,10 @@
                 "IMPORTED" : "The settings have been restored",
                 "REBOOT" : "To apply the settings eBlocker is now rebooted.",
                 "WARNINGS" : "There were warnings:",
-                "VERIFIED" : "The settings from the backup file were verified and can now be imported."
+                "VERIFIED" : "The settings from the backup file were verified and can now be imported.",
+                "SAVE_TO_DRIVE" : "With this function you can save all settings to a USB flash drive and transfer them to a new eBlockerOS image.",
+                "ATTACH_DRIVE" : "Attach a USB flash drive to the eBlocker. It must be formatted with FAT32 (like almost all commercially available drives).",
+                "WROTE_TO_DRIVE" : "The backup file was saved to the USB flash drive.<p>In order to transfer the settings to a new eBlockerOS image:<ol><li>Write a new SD card on your PC using the Raspberry Pi Imager.</li><li>Shut down the eBlocker.</li><li>Attach the new SD card and the USB flash drive to the Raspberry Pi.</li><li>Connect the Raspberry Pi to your router and the power supply.</li><li>Open the eBlocker settings on eblocker.box and enter the password of the backup file.</li></ol></p>"
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {
@@ -379,14 +384,16 @@
                 "CREATE_BACKUP" : "Create Backup",
                 "DOWNLOAD_BACKUP" : "Download",
                 "SAVE_SETTINGS" : "Save Settings",
-                "RESTORE_SETTINGS" : "Restore Settings"
+                "RESTORE_SETTINGS" : "Restore Settings",
+                "SAVE_TO_DRIVE" : "Save Settings to USB Flash Drive",
+                "WRITE_TO_DRIVE" : "Save settings file"
             },
             "PASSWORD" : {
                 "ERROR" : {
                     "REQUIRED" : "Password is needed to restore the keys",
                     "RETRY" : "The keys could not be restored with the entered password. Please try again."
                 },
-                "LABEL" : "Enter password",
+                "LABEL" : "Enter backup file password",
                 "WARNING" : "<b>Please note:</b> this password is needed to restore the keys later. It cannot be recovered if it is lost.",
                 "WARNING_NO_PASSWORD": "<b>Please note:</b> without the password the HTTPS, OpenVPN and license keys are not restored."
             },
@@ -402,6 +409,13 @@
                 "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed.",
                 "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be saved.",
                 "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be restored."
+            },
+            "DRIVE_STATE": {
+                "CANCELLED": "The action was cancelled. Remove the USB flash drive.",
+                "SEARCHING": "USB flash drive is searched...",
+                "FOUND": "USB flash drive was detected:",
+                "WRITING": "Backup file is being written:",
+                "WROTE": "Backup file was written:"
             }
         },
         "DETAILS_VIEW" : {
@@ -2487,6 +2501,12 @@
             "TITLE_ARIA" : "Reset Administrator Password",
             "TOOLBAR" : {
                 "TITLE" : "Reset Administrator Password"
+            }
+        },
+        "RESTORE_FROM_BACKUP" : {
+            "TEXT" : "A backup file was found on the USB flash drive. Enter the password of the backup file to restore the settings.",
+            "TOOLBAR" : {
+                "TITLE" : "Restore Settings"
             }
         },
         "SERVICE" : {

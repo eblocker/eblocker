@@ -60,7 +60,7 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
         if (dnsServer.isEnabled()
                 && configuration.isAutomatic()
                 && !configuration.isDhcp()
-                && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), gateway, configuration.getNetworkMask())) {
+                && isLocalDnsServerPresentWhichIsNotGateway(dnsServer.getDhcpNameServers(), configuration.getIpAddress(), configuration.getGateway(), configuration.getNetworkMask())) {
             if (!messageContainers.containsKey(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId())) {
                 messageContainers.put(MessageProviderMessageId.MESSAGE_DNS_LOCAL_DNS_IS_NOT_GATEWAY.getId(), createMessage());
             }

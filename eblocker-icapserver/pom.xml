@@ -513,6 +513,18 @@
                                         <path>/opt/eblocker-icap/keys/ssl</path>
                                         <path>/opt/eblocker-icap/registration</path>
                                         <path>/opt/eblocker-icap/tmp</path>
+                                    </paths>
+                                </data>
+                                <data>
+                                    <type>template</type>
+                                    <mapper>
+                                        <!-- Mount directory should only be writable for user icapd if a drive is mounted -->
+                                        <type>perm</type>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <dirmode>755</dirmode>
+                                    </mapper>
+                                    <paths>
                                         <path>/opt/eblocker-icap/mnt</path>
                                     </paths>
                                 </data>

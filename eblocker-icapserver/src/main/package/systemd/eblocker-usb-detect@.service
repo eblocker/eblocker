@@ -1,0 +1,15 @@
+# This service is started by udev rule
+# /lib/udev/rules.d/90-eblocker-usb-automount.rules
+
+[Unit]
+Description=Detect USB FAT32 partition /dev/%I
+BindsTo=dev-%i.device
+After=dev-%i.device
+Wants=eblocker-usb-mount.service
+Before=eblocker-usb-mount.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/eblocker-icap/bin/usb-detect.sh start /dev/%I
+ExecStop=/opt/eblocker-icap/bin/usb-detect.sh stop /dev/%I

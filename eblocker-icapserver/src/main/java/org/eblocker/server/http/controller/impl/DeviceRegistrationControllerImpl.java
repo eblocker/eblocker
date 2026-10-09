@@ -128,15 +128,6 @@ public class DeviceRegistrationControllerImpl implements DeviceRegistrationContr
     }
 
     @Override
-    public String licenseNotValidAfter(Request request, Response response) {
-        Date validUntil = deviceRegistrationProperties.getLicenseNotValidAfter();
-        if (validUntil == null)
-            return null;
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(validUntil);
-        return formattedDate;
-    }
-
-    @Override
     public DeviceRegistrationInfo register(Request request, Response response) { //FIXME test preprocessing of email address and license key here!!!
         // Check the current activation is not invalid
         if (deviceRegistrationProperties.getRegistrationState() == RegistrationState.INVALID) {

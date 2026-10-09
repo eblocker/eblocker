@@ -18,23 +18,42 @@ package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Language;
 import org.eblocker.server.common.data.LocaleSettings;
+import org.eblocker.server.common.network.TorExitNodeCountries;
+import org.eblocker.server.common.system.ScriptRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Locale;
 
 @Singleton
 public class SettingsService {
-
+    private static final Logger log = LoggerFactory.getLogger(SettingsService.class);
     private static final ZoneId DEFAULT_TIMEZONE = ZoneId.of(LocaleSettings.DEFAULT_TIMEZONE);
     private static final Locale DEFAULT_LOCALE = new Locale(LocaleSettings.DEFAULT_COUNTRY, LocaleSettings.DEFAULT_LANGUAGE);
+
     private final DataSource dataSource;
+    private final ScriptRunner scriptRunner;
+    private final String setTimezoneCommand;
+    private final TorExitNodeCountries torExitNodeCountries;
 
     @Inject
-    public SettingsService(DataSource dataSource) {
+    public SettingsService(DataSource dataSource,
+                           ScriptRunner scriptRunner,
+                           @Named("set.timezone.command") String setTimezoneCommand,
+                           TorExitNodeCountries torExitNodeCountries) throws IOException {
+
         this.dataSource = dataSource;
+        this.scriptRunner = scriptRunner;
+        this.setTimezoneCommand = setTimezoneCommand;
+        this.torExitNodeCountries = torExitNodeCountries;
+
+        setTimeZone(getTimeZone().getId());
     }
 
     public ZoneId getTimeZone() {
@@ -42,16 +61,17 @@ public class SettingsService {
         if (timezone != null) {
             return ZoneId.of(timezone);
         }
-        dataSource.setTimezone(DEFAULT_TIMEZONE.getId());
         return DEFAULT_TIMEZONE;
     }
 
-    public void setTimeZone(ZoneId timeZone) {
-        dataSource.setTimezone(timeZone.getId());
+    private LocaleSettings setTimeZone(String posixTimezone) throws IOException {
+        ZoneId timezone = ZoneId.of(posixTimezone);
+        dataSource.setTimezone(timezone.getId());
+        scriptRunner.startScript(setTimezoneCommand, posixTimezone);
+        return getLocaleSettings();
     }
 
-    //TODO: This is very preliminary and must be improved - but sufficient for now.
-    public Locale getLocale() {
+    private Locale getLocale() {
         Language language = dataSource.getCurrentLanguage();
         if (language == null) {
             return DEFAULT_LOCALE;
@@ -69,8 +89,7 @@ public class SettingsService {
         }
     }
 
-    //TODO: This is very preliminary and must be improved - but sufficient for now.
-    public boolean getClock24() {
+    private boolean getClock24() {
         Language language = dataSource.getCurrentLanguage();
         if (language == null) {
             return LocaleSettings.DEFAULT_CLOCK;
@@ -98,4 +117,17 @@ public class SettingsService {
         );
     }
 
+    public LocaleSettings setLocaleSettings(LocaleSettings localeSettings) throws IOException {
+        String langID = localeSettings.getLanguage();
+        String langName = localeSettings.getName();
+
+        if (langID != null && !langID.equals("") && langName != null && !langName.equals("")) {
+            Language lang = new Language(langID, langName);
+            log.info("Setting language id: {} name: {}", lang.getId(), lang.getName());
+            dataSource.setCurrentLanguage(lang);
+            // Language has changed, tell TorExitNodeCountries to update its list
+            torExitNodeCountries.createListOfTorCountryCodes();
+        }
+        return setTimeZone(localeSettings.getTimezone());
+    }
 }

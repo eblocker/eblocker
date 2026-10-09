@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class BlockDevice {
     public final static String PARTTYPE_EFI = "c12a7328-f81f-11d2-ba4b-00a0c93ec93b";
+    public final static String PARTTYPE_EFI_SHORT = "0xef";
     public final static String FSTYPE_VFAT = "vfat";
     public final static String FSTYPE_EXFAT = "exfat";
 
@@ -124,6 +125,27 @@ public class BlockDevice {
      * Always returns false for disk devices.
      */
     public boolean isEfi() {
-        return PARTTYPE_EFI.equals(parttype);
+        return PARTTYPE_EFI.equals(parttype) || PARTTYPE_EFI_SHORT.equals(parttype);
+    }
+
+    /**
+     * Returns a user-friendly name (combination of model and label)
+     */
+    public String getFriendlyName() {
+        String result = "";
+        if (model != null) {
+            result += model;
+        }
+        if (label != null) {
+            if (!result.isEmpty()) {
+                result += " / ";
+            }
+            result += label;
+        }
+        // still nothing?
+        if (result.isEmpty()) {
+            result = isFat() ? "FAT disk" : "non-FAT disk";
+        }
+        return result;
     }
 }

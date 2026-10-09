@@ -53,9 +53,8 @@ public class LocalDnsIsNotGatewayMessageProvider extends AbstractMessageProvider
     @Override
     protected void doUpdate(Map<Integer, MessageContainer> messageContainers) {
         NetworkConfiguration configuration = networkServices.getCurrentNetworkConfiguration();
-        String gateway = configuration.getGateway();
-        if (gateway == null) {
-            log.warn("Gateway is not known (yet). Cannot update messages.");
+        if (configuration.getIpAddress() == null || configuration.getGateway() == null || configuration.getNetworkMask() == null) {
+            log.warn("Cannot check whether local DNS is not gateway due to incomplete network configuration: {}", configuration);
             return;
         }
         if (dnsServer.isEnabled()

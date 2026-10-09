@@ -121,8 +121,8 @@ public class NetworkServicesUnix extends NetworkServicesBase {
     }
 
     @Override
-    public void enableDhcpServer(boolean start) {
-        dhcpServer.enable(start);
+    public void enableDhcpServer() {
+        dhcpServer.enable();
     }
 
     @Override

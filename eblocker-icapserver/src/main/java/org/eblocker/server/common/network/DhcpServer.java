@@ -24,7 +24,7 @@ public interface DhcpServer {
      * Starts the DHCP server and ensures that it is automatically restarted
      * after a reboot.
      */
-    void enable(boolean start);
+    void enable();
 
     /**
      * Stops the DHCP server and ensures that it is not started after a reboot.

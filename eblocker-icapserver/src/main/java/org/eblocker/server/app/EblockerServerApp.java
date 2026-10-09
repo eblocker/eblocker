@@ -66,7 +66,6 @@ import org.eblocker.server.http.controller.FeatureController;
 import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
-import org.eblocker.server.http.controller.LanguageController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -80,6 +79,7 @@ import org.eblocker.server.http.controller.ProductMigrationController;
 import org.eblocker.server.http.controller.RecordingController;
 import org.eblocker.server.http.controller.RedirectController;
 import org.eblocker.server.http.controller.ReminderController;
+import org.eblocker.server.http.controller.RestoreFromBackupController;
 import org.eblocker.server.http.controller.SSLController;
 import org.eblocker.server.http.controller.SettingsController;
 import org.eblocker.server.http.controller.SetupWizardController;
@@ -114,7 +114,6 @@ import org.eblocker.server.http.controller.impl.FeatureControllerImpl;
 import org.eblocker.server.http.controller.impl.FeatureToggleControllerImpl;
 import org.eblocker.server.http.controller.impl.FilterControllerImpl;
 import org.eblocker.server.http.controller.impl.FilterStatisticsControllerImpl;
-import org.eblocker.server.http.controller.impl.LanguageControllerImpl;
 import org.eblocker.server.http.controller.impl.MessageCenterControllerImpl;
 import org.eblocker.server.http.controller.impl.MobileConnectionCheckControllerImpl;
 import org.eblocker.server.http.controller.impl.MobileDnsCheckControllerImpl;
@@ -128,6 +127,7 @@ import org.eblocker.server.http.controller.impl.ProductMigrationControllerImpl;
 import org.eblocker.server.http.controller.impl.RecordingControllerImpl;
 import org.eblocker.server.http.controller.impl.RedirectControllerImpl;
 import org.eblocker.server.http.controller.impl.ReminderControllerImpl;
+import org.eblocker.server.http.controller.impl.RestoreFromBackupControllerImpl;
 import org.eblocker.server.http.controller.impl.SSLControllerImpl;
 import org.eblocker.server.http.controller.impl.SettingsControllerImpl;
 import org.eblocker.server.http.controller.impl.SetupWizardControllerImpl;
@@ -142,6 +142,7 @@ import org.eblocker.server.http.controller.impl.UserAgentControllerImpl;
 import org.eblocker.server.http.controller.impl.UserControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
+import org.eblocker.server.http.service.RestoreFromBackupService;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.slf4j.Logger;
@@ -233,6 +234,7 @@ public class EblockerServerApp {
             startBackgroundTasks();
             startIcapServer();
             startNetworkStateMachine();
+            restoreFromBackup();
             startHttpsServer();
             startServices();
             injectRESTController();
@@ -272,6 +274,7 @@ public class EblockerServerApp {
                 .starting(SubSystem.EVENT_LISTENER)
                 .starting(SubSystem.BACKGROUND_TASKS)
                 .starting(SubSystem.NETWORK_STATE_MACHINE)
+                .starting(SubSystem.RESTORE_FROM_BACKUP)
                 .starting(SubSystem.ICAP_SERVER)
                 .starting(SubSystem.EBLOCKER_CORE);
     }
@@ -326,6 +329,20 @@ public class EblockerServerApp {
         }
     }
 
+    private void restoreFromBackup() {
+        STATUS.info("Restoring from backup...");
+        try {
+            boolean activated = doRestoreFromBackup();
+            if (activated) {
+                systemStatusService.ok(SubSystem.RESTORE_FROM_BACKUP);
+            } else {
+                systemStatusService.off(SubSystem.RESTORE_FROM_BACKUP);
+            }
+        } catch (Exception e) {
+            processSubSystemWarning("Cannot restore from backup", SubSystem.RESTORE_FROM_BACKUP, e);
+        }
+    }
+
     private void wireEventListeners() {
         STATUS.info("Wiring event listeners...");
         try {
@@ -335,7 +352,6 @@ public class EblockerServerApp {
 
         } catch (Exception e) {
             processSubSystemWarning("Cannot wire event listeners", SubSystem.EVENT_LISTENER, e);
-
         }
     }
 
@@ -347,7 +363,6 @@ public class EblockerServerApp {
 
         } catch (Exception e) {
             processSubSystemWarning("Cannot start background tasks", SubSystem.BACKGROUND_TASKS, e);
-
         }
     }
 
@@ -359,7 +374,6 @@ public class EblockerServerApp {
 
         } catch (Exception e) {
             processSubSystemWarning("Cannot start ICAP server", SubSystem.ICAP_SERVER, e);
-
         }
     }
 
@@ -371,7 +385,6 @@ public class EblockerServerApp {
 
         } catch (Exception e) {
             processSubSystemWarning("Cannot start network state machine", SubSystem.NETWORK_STATE_MACHINE, e);
-
         }
     }
 
@@ -387,7 +400,6 @@ public class EblockerServerApp {
             }
         } catch (Exception e) {
             processSubSystemWarning("Cannot start HTTPS server", SubSystem.HTTPS_SERVER, e);
-
         }
     }
 
@@ -399,7 +411,6 @@ public class EblockerServerApp {
 
         } catch (Exception e) {
             processSubSystemWarning("Cannot create REST controller", SubSystem.REST_SERVER, e);
-
         }
     }
 
@@ -490,6 +501,13 @@ public class EblockerServerApp {
         initSubSystemServices(SubSystem.NETWORK_STATE_MACHINE);
     }
 
+    private boolean doRestoreFromBackup() {
+        initSubSystemServices(SubSystem.RESTORE_FROM_BACKUP);
+
+        RestoreFromBackupService restoreFromBackupService = injector.getInstance(RestoreFromBackupService.class);
+        return restoreFromBackupService.isBackupAvailable();
+    }
+
     private boolean doStartSslService() throws PkiException {
         initSubSystemServices(SubSystem.HTTPS_SERVER);
 
@@ -514,7 +532,6 @@ public class EblockerServerApp {
         injectController(EventController.class, EventControllerImpl.class);
         injectController(FactoryResetController.class, FactoryResetControllerImpl.class);
         injectController(FilterController.class, FilterControllerImpl.class);
-        injectController(LanguageController.class, LanguageControllerImpl.class);
         injectController(MessageCenterController.class, MessageCenterControllerImpl.class);
         injectController(NetworkController.class, NetworkControllerImpl.class);
         injectController(OpenVpnController.class, OpenVpnControllerImpl.class);
@@ -525,6 +542,7 @@ public class EblockerServerApp {
         injectController(RecordingController.class, RecordingControllerImpl.class);
         injectController(RedirectController.class, RedirectControllerImpl.class);
         injectController(ReminderController.class, ReminderControllerImpl.class);
+        injectController(RestoreFromBackupController.class, RestoreFromBackupControllerImpl.class);
         injectController(SplashController.class, SplashControllerImpl.class);
         injectController(SSLController.class, SSLControllerImpl.class);
         injectController(SettingsController.class, SettingsControllerImpl.class);

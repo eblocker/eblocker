@@ -51,6 +51,7 @@ export default {
     PARENT: 'app',
     PRINT: 'print',
     RESET_PASSWORD: 'resetpassword',
+    RESTORE_FROM_BACKUP: 'restoreFromBackup',
     SET_PASSWORD: 'adminpassword',
     SHUTDOWN: 'shutdown',
     SPLASH: 'splashscreen',

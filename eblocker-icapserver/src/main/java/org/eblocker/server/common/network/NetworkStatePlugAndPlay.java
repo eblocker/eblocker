@@ -31,7 +31,7 @@ public class NetworkStatePlugAndPlay extends NetworkState {
     }
 
     @Override
-    public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+    public void onEntry(NetworkServices services, NetworkConfiguration configuration) {
         services.enableDhcpClient();
         services.enableArpSpoofer();
     }

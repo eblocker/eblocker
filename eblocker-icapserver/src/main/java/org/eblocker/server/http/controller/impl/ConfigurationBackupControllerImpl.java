@@ -17,9 +17,9 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.eblocker.server.common.data.BlockDevice;
 import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
@@ -30,7 +30,9 @@ import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DecryptionFailedException;
 import org.eblocker.server.http.backup.UnsupportedBackupVersionException;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
+import org.eblocker.server.http.service.ConfigurationBackupFileService;
 import org.eblocker.server.http.service.ConfigurationBackupService;
+import org.eblocker.server.http.service.DiskInfoService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.restexpress.exception.BadRequestException;
@@ -42,27 +44,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import java.nio.file.StandardCopyOption;
 
 public class ConfigurationBackupControllerImpl implements ConfigurationBackupController {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupControllerImpl.class);
-    public static final String FILE_PREFIX = "eblocker-config-";
-    public static final String FILE_SUFFIX = ".eblcfg";
     private final ConfigurationBackupService backupService;
+    private final ConfigurationBackupFileService backupFileService;
+    private final DiskInfoService diskInfoService;
     private final EventLogger eventLogger;
-    private final Path tmpDir;
 
     @Inject
     public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService,
-                                             EventLogger eventLogger,
-                                             @Named("tmpDir") String tmpDir) {
+                                             ConfigurationBackupFileService backupFileService,
+                                             DiskInfoService diskInfoService,
+                                             EventLogger eventLogger
+                                             ) {
         this.backupService = backupService;
+        this.backupFileService = backupFileService;
+        this.diskInfoService = diskInfoService;
         this.eventLogger = eventLogger;
-        this.tmpDir = Paths.get(tmpDir);
     }
 
     /**
@@ -81,7 +82,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             throw new BadRequestException(message);
         }
         try {
-            Path tempFile = createTempFile();
+            Path tempFile = backupFileService.createTempFile();
             try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
                 ConfigBackupExportResult result = backupService.exportConfiguration(outputStream, reference.getPassword());
                 LOG.debug("Successfully exported configuration backup to {}", tempFile);
@@ -103,9 +104,9 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     @Override
     public ByteBuf downloadConfiguration(Request request, Response response) {
         String fileReference = request.getHeader("configBackupFileReference");
-        Path localFile = getVerifiedLocalPath(fileReference);
-        String timestamp = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
-        response.addHeader("Content-Disposition", "attachment; filename=\"" + FILE_PREFIX + timestamp + FILE_SUFFIX + "\"");
+        Path localFile = backupFileService.getVerifiedLocalPath(fileReference);
+        String timestampedFilename = backupFileService.getTimestampedFilename(null);
+        response.addHeader("Content-Disposition", "attachment; filename=\"" + timestampedFilename + "\"");
         response.setContentType("application/octet-stream");
         try {
             byte[] bytes = Files.readAllBytes(localFile);
@@ -126,7 +127,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     @Override
     public ConfigBackupReference uploadConfiguration(Request request, Response response) {
         try (InputStream inputStream = request.getBodyAsStream()) {
-            Path tempFile = createTempFile();
+            Path tempFile = backupFileService.createTempFile();
             Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
             LOG.debug("Wrote uploaded backup file to: {}", tempFile);
             try (InputStream localInputStream = Files.newInputStream(tempFile)) {
@@ -152,7 +153,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             LOG.error(message);
             throw new BadRequestException(message);
         }
-        Path localFile = getVerifiedLocalPath(reference.getFileReference());
+        Path localFile = backupFileService.getVerifiedLocalPath(reference.getFileReference());
         try (InputStream inputStream = Files.newInputStream(localFile)) {
             ConfigBackupImportResult result = backupService.verifyConfiguration(inputStream, reference.getPassword());
             if (result.hasWarnings()) {
@@ -189,7 +190,7 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             LOG.error(message);
             throw new BadRequestException(message);
         }
-        Path localFile = getVerifiedLocalPath(reference.getFileReference());
+        Path localFile = backupFileService.getVerifiedLocalPath(reference.getFileReference());
         try (InputStream inputStream = Files.newInputStream(localFile)) {
             ConfigBackupImportResult result = backupService.importConfiguration(inputStream, reference.getPassword());
             if (result.hasWarnings()) {
@@ -215,25 +216,41 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
         }
     }
 
-    private Path createTempFile() throws IOException {
-        Path tempFile = Files.createTempFile(tmpDir, FILE_PREFIX, FILE_SUFFIX);
-        tempFile.toFile().deleteOnExit();
-        return tempFile;
+    @Override
+    public String getMountedPartitionName(Request request, Response response) {
+        try {
+            BlockDevice mountedPartition = diskInfoService.getMountedPartition();
+            if (mountedPartition != null) {
+                return mountedPartition.getFriendlyName();
+            }
+        } catch (IOException e) {
+            LOG.error("Could not search mounted partition", e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
+        }
+        return null;
     }
 
-    private Path getVerifiedLocalPath(String fileReference) {
-        if (fileReference == null || fileReference.isEmpty()) {
-            String message = "Config backup file reference is missing from request";
+    @Override
+    public void moveToExternalDisk(Request request, Response response) {
+        ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
+        if (reference == null) {
+            String message = "ConfigBackupReference is missing from request";
             LOG.error(message);
             throw new BadRequestException(message);
         }
-        Path filename = Paths.get(fileReference).getFileName(); // protect against relative paths with '..' components
-        if (!filename.toString().startsWith(FILE_PREFIX) || !filename.toString().endsWith(FILE_SUFFIX)) {
-            String message = "Invalid backup file name: " + filename;
-            LOG.error(message);
-            throw new BadRequestException(message);
+
+        try {
+            backupFileService.moveToExternalDisk(reference.getFileReference());
+        } catch (IOException e) {
+            LOG.error("Could not move backup {} to external disk", reference.getFileReference(), e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
         }
-        Path localFile = tmpDir.resolve(filename);
-        return localFile;
+
+        try {
+            backupFileService.unmountExternalDisk();
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Could not unmount external disk", e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
+        }
     }
 }

@@ -93,11 +93,6 @@ public class ControlBarControllerImpl extends SessionContextController implement
     }
 
     @Override
-    public String getConsoleUrl(Request request, Response response) {
-        return baseURLs.selectURLForPage(getScheme(request));
-    }
-
-    @Override
     public String getConsoleIp(Request request, Response response) {
         IpAddress remoteIp = ControllerUtils.getRequestIPAddress(request);
         if (remoteIp.isIpv4() && Ip4Utils.isInSubnet(remoteIp.toString(), vpnSubnet, vpnNetmask)) {

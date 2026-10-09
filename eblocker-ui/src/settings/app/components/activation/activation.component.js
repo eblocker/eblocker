@@ -63,7 +63,7 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     vm.setCurrentTimeZone = setCurrentTimeZone;
 
     function setCurrentTimeZone() {
-        const timezoneSplit = vm.locale.timezone.split('/');
+        const timezoneSplit = TimezoneService.splitTimezone(vm.locale.timezone);
 
         if (timezoneSplit.length === 2) {
             vm.region = timezoneSplit[0];

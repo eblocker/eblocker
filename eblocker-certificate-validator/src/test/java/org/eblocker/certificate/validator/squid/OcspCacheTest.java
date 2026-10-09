@@ -60,7 +60,7 @@ class OcspCacheTest {
         CERTIFICATES[0] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/revoked.badssl.com.cert");
         ISSUER_CERTIFICATES[0] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/DigiCertSHA2SecureServerCA.cert");
         CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/www.microsoft.com.cert");
-        ISSUER_CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/MicrosoftAzureTLSIssuingCA04.cert");
+        ISSUER_CERTIFICATES[1] = CertificateValidatorTestUtil.loadCertificateResource("sample-certs/Microsoft_TLS_G2_RSA_CA_OCSP_04.cert");
         OCSP_RESPONSE_SUCCESS_GOOD = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-good.der");
         OCSP_RESPONSE_SUCCESS_REVOKED = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-revoked.der");
         OCSP_RESPONSE_FAIL = CertificateValidatorTestUtil.loadResource("sample-certs/ocsp-response-fail.der");

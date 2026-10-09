@@ -115,7 +115,6 @@ import org.eblocker.server.http.controller.FeatureController;
 import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
-import org.eblocker.server.http.controller.LanguageController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -129,6 +128,7 @@ import org.eblocker.server.http.controller.ProductMigrationController;
 import org.eblocker.server.http.controller.RecordingController;
 import org.eblocker.server.http.controller.RedirectController;
 import org.eblocker.server.http.controller.ReminderController;
+import org.eblocker.server.http.controller.RestoreFromBackupController;
 import org.eblocker.server.http.controller.SSLController;
 import org.eblocker.server.http.controller.SettingsController;
 import org.eblocker.server.http.controller.SetupWizardController;
@@ -161,6 +161,7 @@ import org.eblocker.server.http.service.ParentalControlService;
 import org.eblocker.server.http.service.ParentalControlUsageService;
 import org.eblocker.server.http.service.ProductInfoService;
 import org.eblocker.server.http.service.RegistrationServiceAvailabilityCheck;
+import org.eblocker.server.http.service.RestoreFromBackupService;
 import org.eblocker.server.http.service.ShutdownExecutorService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.eblocker.server.http.service.UserService;
@@ -281,6 +282,7 @@ public class EblockerModule extends BaseModule {
         bind(ParentalControlUsageService.class);
         bind(ProductInfoService.class);
         bind(RegistrationServiceAvailabilityCheck.class);
+        bind(RestoreFromBackupService.class);
         bind(SSLContextHandler.class);
         bind(SquidConfigController.class);
         bind(SquidWarningService.class);
@@ -604,12 +606,6 @@ public class EblockerModule extends BaseModule {
 
     @Provides
     @Singleton
-    public LanguageController languageController() {
-        return ControllerWrapperFactory.wrap(LanguageController.class);
-    }
-
-    @Provides
-    @Singleton
     public MessageCenterController messageCenterController() {
         return ControllerWrapperFactory.wrap(MessageCenterController.class);
     }
@@ -690,6 +686,12 @@ public class EblockerModule extends BaseModule {
     @Singleton
     public SettingsController settingsController() {
         return ControllerWrapperFactory.wrap(SettingsController.class);
+    }
+
+    @Provides
+    @Singleton
+    public RestoreFromBackupController restoreFromBackupController() {
+        return ControllerWrapperFactory.wrap(RestoreFromBackupController.class);
     }
 
     @Provides

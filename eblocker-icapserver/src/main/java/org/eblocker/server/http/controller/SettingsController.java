@@ -25,7 +25,5 @@ import java.io.IOException;
 public interface SettingsController {
     LocaleSettings getLocaleSettings(Request request, Response response);
 
-    LocaleSettings setTimeZone(Request request, Response response) throws IOException;
-
     LocaleSettings setLocale(Request request, Response response) throws IOException;
 }

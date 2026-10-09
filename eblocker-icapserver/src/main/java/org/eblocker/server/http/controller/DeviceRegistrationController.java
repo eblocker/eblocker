@@ -29,8 +29,6 @@ public interface DeviceRegistrationController {
 
     DeviceRegistrationInfo registrationStatus(Request request, Response response);
 
-    String licenseNotValidAfter(Request request, Response response);
-
     DeviceRegistrationInfo register(Request request, Response response);
 
     void resetRegistration(Request request, Response response) throws IOException, InterruptedException;

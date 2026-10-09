@@ -36,7 +36,7 @@ function Controller(logger, $translate, TimezoneService, settings, NotificationS
     vm.locale = settings.locale();
     vm.languages = settings.getSupportedLanguageList();
 
-    const timezoneSplit = vm.locale.timezone.split('/');
+    const timezoneSplit = TimezoneService.splitTimezone(vm.locale.timezone);
 
     if (timezoneSplit.length === 2) {
         vm.region = timezoneSplit[0];

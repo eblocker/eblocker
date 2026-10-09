@@ -25,6 +25,8 @@ export default function ConfigBackupService(logger, $http, $q) {
     const PATH_UPLOAD = PATH + 'upload';
     const PATH_IMPORT = PATH + 'import';
     const PATH_VERIFY = PATH + 'verify';
+    const PATH_MOUNTED_PARTITION = PATH + 'mountedPartition';
+    const PATH_WRITE_TO_DISK     = PATH + 'writeToDisk';
     const RE_CONTENT_DISPOSITION = /attachment; filename="(.*?)"/;
 
     function exportConfig(passwordRequired, password) {
@@ -113,11 +115,39 @@ export default function ConfigBackupService(logger, $http, $q) {
             });
     }
 
+    function mountedPartition() {
+        return $http.get(PATH_MOUNTED_PARTITION).then(
+            function success(response){
+                if (angular.isDefined(response) && angular.isString(response.data) && response.data.length > 0) {
+                    return response.data;
+                } else {
+                    return null;
+                }
+            }, function error(response) {
+                logger.error('Error getting mounted partition name', response);
+                return $q.reject(response.data);
+            });
+    }
+
+    function writeConfigToDisk(fileReference) {
+        const data = {fileReference: fileReference};
+        const config = {timeout: BACKUP_TIMEOUT};
+        return $http.post(PATH_WRITE_TO_DISK, data, config).then(
+            function success(response){
+                return response.data;
+            }, function error(response) {
+                logger.error('Error writing configuration backup to disk', response);
+                return $q.reject(response.data);
+            });
+    }
+
     return {
         exportConfig: exportConfig,
         downloadConfig: downloadConfig,
         uploadConfig: uploadConfig,
         importConfig: importConfig,
-        verifyConfig: verifyConfig
+        verifyConfig: verifyConfig,
+        mountedPartition: mountedPartition,
+        writeConfigToDisk: writeConfigToDisk
     };
 }

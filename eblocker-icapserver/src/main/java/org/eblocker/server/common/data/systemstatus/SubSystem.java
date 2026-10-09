@@ -32,6 +32,8 @@ public enum SubSystem {
 
     NETWORK_STATE_MACHINE(3500),
 
+    RESTORE_FROM_BACKUP(3700),
+
     HTTPS_SERVER(4000),
 
     SERVICES(4500),

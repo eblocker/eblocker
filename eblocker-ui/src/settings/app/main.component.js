@@ -54,10 +54,8 @@ function MainController($window, $mdSidenav, logger, RegistrationService, SetupS
     }
 
     vm.$onInit = function() {
-        console.warn('MainController.onInit()');
         vm.navBarName = 'left';
         if(SystemService.reloadAfterBoot()) {
-            console.warn('Reloading after boot');
             SystemService.reloadAfterBoot(false);
             $window.location.reload();
         }

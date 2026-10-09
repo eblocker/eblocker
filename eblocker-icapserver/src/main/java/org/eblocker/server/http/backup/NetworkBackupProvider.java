@@ -73,6 +73,6 @@ public class NetworkBackupProvider extends BackupProvider {
     }
 
     private void restoreBackup(NetworkConfiguration backup) {
-        LOG.info("Network settings are ignored during normal imports. They are only read by the NetworkBackupReader");
+        LOG.info("Network settings are ignored during normal imports. They are only read by the RestoreBackupReader");
     }
 }

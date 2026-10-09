@@ -21,11 +21,20 @@ export default function RestoreFromBackupService(logger, $http, $q) {
 
     const PATH = '/api/adminconsole/restore/';
     const PATH_AVAILABLE = PATH + 'isBackupAvailable';
+    const PATH_CANCEL = PATH + 'cancel';
     const PATH_IMPORT = PATH + 'import';
     const PATH_VERIFY = PATH + 'verify';
 
     function backupAvailable() {
         return $http.get(PATH_AVAILABLE).then(function success(response) {
+            return response;
+        }, function error(response) {
+            return $q.reject(response);
+        });
+    }
+
+    function cancelImport() {
+        return $http.post(PATH_CANCEL, {}).then(function success(response) {
             return response;
         }, function error(response) {
             return $q.reject(response);
@@ -58,6 +67,7 @@ export default function RestoreFromBackupService(logger, $http, $q) {
 
     return {
         backupAvailable: backupAvailable,
+        cancelImport: cancelImport,
         importConfig: importConfig,
         verifyConfig: verifyConfig
     };

@@ -17,7 +17,6 @@
 package org.eblocker.server.http.controller.impl;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.BlockDevice;
@@ -45,9 +44,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import java.nio.file.StandardCopyOption;
 
@@ -57,21 +53,17 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     private final ConfigurationBackupFileService backupFileService;
     private final DiskInfoService diskInfoService;
     private final EventLogger eventLogger;
-    private final Path externalDiskTarget;
 
     @Inject
     public ConfigurationBackupControllerImpl(ConfigurationBackupService backupService,
                                              ConfigurationBackupFileService backupFileService,
                                              DiskInfoService diskInfoService,
-                                             EventLogger eventLogger,
-                                             @Named("external.disk.backup.filename") String externalDiskBackupFilename,
-                                             @Named("external.disk.mountpoint") String externalDiskMountpoint
+                                             EventLogger eventLogger
                                              ) {
         this.backupService = backupService;
         this.backupFileService = backupFileService;
         this.diskInfoService = diskInfoService;
         this.eventLogger = eventLogger;
-        externalDiskTarget = Path.of(externalDiskMountpoint, externalDiskBackupFilename);
     }
 
     /**
@@ -239,27 +231,26 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     }
 
     @Override
-    public void writeToDisk(Request request, Response response) {
+    public void moveToExternalDisk(Request request, Response response) {
         ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
         if (reference == null) {
             String message = "ConfigBackupReference is missing from request";
             LOG.error(message);
             throw new BadRequestException(message);
         }
-        Path source = backupFileService.getVerifiedLocalPath(reference.getFileReference());
 
         try {
-            Files.copy(source, externalDiskTarget, StandardCopyOption.REPLACE_EXISTING);
+            backupFileService.moveToExternalDisk(reference.getFileReference());
         } catch (IOException e) {
-            LOG.error("Could not copy backup {} to {}", source, externalDiskTarget, e);
+            LOG.error("Could not move backup {} to external disk", reference.getFileReference(), e);
             throw new EblockerException("adminconsole.config_backup.error.disk_error");
         }
 
         try {
-            Files.delete(source);
-        } catch (IOException e) {
-            LOG.error("Could not delete backup {} after copying it to external disk", source, e);
+            backupFileService.unmountExternalDisk();
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Could not unmount external disk", e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
         }
     }
-
 }

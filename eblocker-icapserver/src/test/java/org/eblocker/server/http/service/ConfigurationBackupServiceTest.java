@@ -27,7 +27,6 @@ import org.eblocker.server.http.backup.BlockersBackupProvider;
 import org.eblocker.server.http.backup.CorruptedBackupException;
 import org.eblocker.server.http.backup.DevicesLegacyBackupProvider;
 import org.eblocker.server.http.backup.DnsBackupProvider;
-import org.eblocker.server.http.backup.GeneralSettingsBackup;
 import org.eblocker.server.http.backup.GeneralSettingsBackupProvider;
 import org.eblocker.server.http.backup.HttpsKeysBackupProvider;
 import org.eblocker.server.http.backup.NetworkBackupProvider;

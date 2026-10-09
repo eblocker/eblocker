@@ -30,5 +30,5 @@ public interface ConfigurationBackupController {
     ConfigBackupImportResult importConfiguration(Request request, Response response);
     ConfigBackupImportResult verifyConfiguration(Request request, Response response);
     String getMountedPartitionName(Request request, Response response);
-    void writeToDisk(Request request, Response response);
+    void moveToExternalDisk(Request request, Response response);
 }

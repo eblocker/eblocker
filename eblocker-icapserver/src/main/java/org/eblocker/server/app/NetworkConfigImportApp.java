@@ -28,7 +28,7 @@ import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.unix.NetworkInterfaceConfiguration;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.system.unix.ScriptRunnerUnix;
-import org.eblocker.server.http.backup.NetworkBackupReader;
+import org.eblocker.server.http.backup.RestoreBackupReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class NetworkConfigImportApp {
     private static final Logger LOG = LoggerFactory.getLogger(NetworkConfigImportApp.class);
 
     private final NetworkInterfaceConfiguration interfaceConfiguration;
-    private final NetworkBackupReader networkBackupReader;
+    private final RestoreBackupReader restoreBackupReader;
     private final ScriptRunner scriptRunner;
     private final String mountpoint;
     private final int mountpointWaitTimeout;
@@ -76,7 +76,7 @@ public class NetworkConfigImportApp {
 
     @Inject
     public NetworkConfigImportApp(NetworkInterfaceConfiguration interfaceConfiguration,
-                                  NetworkBackupReader networkBackupReader,
+                                  RestoreBackupReader restoreBackupReader,
                                   ScriptRunner scriptRunner,
                                   @Named("external.disk.mountpoint") String mountpoint,
                                   @Named("external.disk.backup.filename") String backupFilename,
@@ -84,7 +84,7 @@ public class NetworkConfigImportApp {
                                   @Named("external.disk.mountpoint_wait.command") String mountpointWaitCommand,
                                   @Named("network.unix.apply.configuration.command") String applyNetworkConfigurationCommand) {
         this.interfaceConfiguration = interfaceConfiguration;
-        this.networkBackupReader = networkBackupReader;
+        this.restoreBackupReader = restoreBackupReader;
         this.scriptRunner = scriptRunner;
         this.mountpoint = mountpoint;
         this.backupFilename = backupFilename;
@@ -138,7 +138,7 @@ public class NetworkConfigImportApp {
 
     private void importNetworkConfig(Path configFile) throws IOException, InterruptedException {
         LOG.info("Trying to import network configuration from {}", configFile);
-        NetworkConfiguration networkConfiguration = networkBackupReader.readNetworkConfiguration(configFile);
+        NetworkConfiguration networkConfiguration = restoreBackupReader.readNetworkConfiguration(configFile);
         if (networkConfiguration == null) {
             LOG.info("Could not read network configuration from {}", configFile);
             return;

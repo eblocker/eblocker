@@ -854,6 +854,11 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.restore.verify");
 
         server
+                .uri("/api/adminconsole/restore/cancel", restoreFromBackupController)
+                .action("cancelImport", HttpMethod.POST)
+                .name("adminconsole.restore.cancel");
+
+        server
                 .uri("/api/adminconsole/restore/import", restoreFromBackupController)
                 .action("importConfiguration", HttpMethod.POST)
                 .name("adminconsole.restore.import");
@@ -2275,7 +2280,7 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
                 .uri("/api/configbackup/writeToDisk", configBackupController)
-                .action("writeToDisk", HttpMethod.POST)
+                .action("moveToExternalDisk", HttpMethod.POST)
                 .name("adminconsole.configbackup.writeToDisk");
     }
 

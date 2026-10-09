@@ -26,11 +26,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 /**
- * Reads network settings from a backup during migration via USB drive.
+ * Reads network and locale settings from a backup during migration via USB drive.
  * That means: there might not be Redis access yet. This class can not have
  * any dependencies that use DataSource classes.
  */
-public class NetworkBackupReader extends BackupSerializer {
+public class RestoreBackupReader extends BackupSerializer {
     /**
      * Skips entries in a backup file until it finds the entry "eblocker-config/network.json".
      * @param backupFile backup file to read entries from.
@@ -44,6 +44,26 @@ public class NetworkBackupReader extends BackupSerializer {
                 while ((entry = jarStream.getNextJarEntry()) != null) {
                     if (NetworkBackupProvider.NETWORK_ENTRY.equals(entry.getName())) {
                         return objectMapper.readValue(jarStream, NetworkConfiguration.class);
+                    }
+                }
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Skips entries in a backup file until it finds the entry "eblocker-config/general.json".
+     * @param backupFile backup file to read entries from.
+     * @return GeneralSettingsBackup object
+     * @throws IOException is thrown if the backup file cannot be read or the JSON object cannot be parsed.
+     */
+    public GeneralSettingsBackup readGeneralSettings(Path backupFile) throws IOException {
+        JarEntry entry;
+        try (InputStream inputStream = Files.newInputStream(backupFile)) {
+            try (JarInputStream jarStream = new JarInputStream(inputStream)) {
+                while ((entry = jarStream.getNextJarEntry()) != null) {
+                    if (GeneralSettingsBackupProvider.GENERAL_ENTRY.equals(entry.getName())) {
+                        return objectMapper.readValue(jarStream, GeneralSettingsBackup.class);
                     }
                 }
                 return null;

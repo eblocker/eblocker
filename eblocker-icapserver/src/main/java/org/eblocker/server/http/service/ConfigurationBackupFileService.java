@@ -17,7 +17,10 @@
 package org.eblocker.server.http.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.restexpress.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,22 +30,34 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Provides utility functions for handling backup files.
  */
+@Singleton
 public class ConfigurationBackupFileService {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationBackupFileService.class);
     public static final String FILE_PREFIX = "eblocker-config";
     public static final String FILE_SUFFIX = ".eblcfg";
 
+    private final ScriptRunner scriptRunner;
+    private final String externalDiskUnmountCommand;
     private final Path tmpDir;
+    private final Path externalDiskTarget;
 
     @Inject
-    public ConfigurationBackupFileService(@Named("tmpDir") String tmpDir) {
+    public ConfigurationBackupFileService(ScriptRunner scriptRunner,
+                                          @Named("external.disk.unmount.command") String externalDiskUnmountCommand,
+                                          @Named("external.disk.backup.filename") String externalDiskBackupFilename,
+                                          @Named("external.disk.mountpoint") String externalDiskMountpoint,
+                                          @Named("tmpDir") String tmpDir) {
+        this.scriptRunner = scriptRunner;
+        this.externalDiskUnmountCommand = externalDiskUnmountCommand;
         this.tmpDir = Paths.get(tmpDir);
+        this.externalDiskTarget = Path.of(externalDiskMountpoint, externalDiskBackupFilename);
     }
 
     public Path createTempFile() throws IOException {
@@ -74,5 +89,27 @@ public class ConfigurationBackupFileService {
         }
         String timestamp = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
         return FILE_PREFIX + beforeTimestamp + timestamp + FILE_SUFFIX;
+    }
+
+    public void unmountExternalDisk() throws IOException, InterruptedException {
+        scriptRunner.runScript(externalDiskUnmountCommand);
+    }
+
+    public void moveToExternalDisk(String fileReference) throws IOException {
+        Path source = getVerifiedLocalPath(fileReference);
+
+        try {
+            Files.copy(source, externalDiskTarget, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            LOG.error("Could not copy backup {} to external disk at {}", source, externalDiskTarget, e);
+            throw e;
+        }
+
+        try {
+            Files.delete(source);
+        } catch (IOException e) {
+            LOG.error("Could not delete backup {} after copying it to external disk", source, e);
+            throw e;
+        }
     }
 }

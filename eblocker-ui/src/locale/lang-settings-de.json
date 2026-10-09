@@ -332,9 +332,10 @@
                 "SUB_SYSTEM_STATUS_SERVICES_ERROR": "Interne Dienste angehalten: {{error}}",
                 "SUB_SYSTEM_STATUS_SERVICES_OK": "Interne Dienste gestartet.",
                 "SUB_SYSTEM_STATUS_SERVICES_STARTING": "Starte interne Dienste.",
-                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_ERROR" : "Opt. Wiederherstellung von Einstellungen angehalten: {{error}}",
-                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_OK" : "Opt. Wiederherstellung von Einstellungen gestartet.",
-                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_STARTING" : "Starte opt. Wiederherstellung von Einstellungen."
+                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_ERROR" : "Wiederherstellung von Einstellungen angehalten: {{error}}",
+                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_OFF" : "Wiederherstellung von Einstellungen nicht gestartet.",
+                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_OK" : "Wiederherstellung von Einstellungen gestartet.",
+                "SUB_SYSTEM_STATUS_RESTORE_FROM_BACKUP_STARTING" : "Starte Wiederherstellung von Einstellungen."
             },
             "TOOLBAR": {
                 "TITLE": "eBlocker Booting"

@@ -93,7 +93,10 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
     };
 
     vm.cancel = function() {
-        // TODO tell the user to remove the stick?
+        RestoreFromBackupService.cancelImport().then(function(result) {
+            StateService.goToState(STATES.HOME);
+        }, function(response) {
+            NotificationService.error(response.toUpperCase());
+        });
     };
-
 }

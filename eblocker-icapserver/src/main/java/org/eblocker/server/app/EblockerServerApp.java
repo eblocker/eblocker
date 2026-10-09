@@ -143,6 +143,7 @@ import org.eblocker.server.http.controller.impl.UserAgentControllerImpl;
 import org.eblocker.server.http.controller.impl.UserControllerImpl;
 import org.eblocker.server.http.controller.wrapper.ControllerWrapper;
 import org.eblocker.server.http.security.DashboardAuthorizationProcessor;
+import org.eblocker.server.http.service.RestoreFromBackupService;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.slf4j.Logger;
@@ -317,8 +318,12 @@ public class EblockerServerApp {
     private void restoreFromBackup() {
         STATUS.info("Restoring from backup...");
         try {
-            doRestoreFromBackup();
-            systemStatusService.ok(SubSystem.RESTORE_FROM_BACKUP);
+            boolean activated = doRestoreFromBackup();
+            if (activated) {
+                systemStatusService.ok(SubSystem.RESTORE_FROM_BACKUP);
+            } else {
+                systemStatusService.off(SubSystem.RESTORE_FROM_BACKUP);
+            }
         } catch (Exception e) {
             processSubSystemWarning("Cannot restore from backup", SubSystem.RESTORE_FROM_BACKUP, e);
         }
@@ -482,8 +487,11 @@ public class EblockerServerApp {
         initSubSystemServices(SubSystem.NETWORK_STATE_MACHINE);
     }
 
-    private void doRestoreFromBackup() {
+    private boolean doRestoreFromBackup() {
         initSubSystemServices(SubSystem.RESTORE_FROM_BACKUP);
+
+        RestoreFromBackupService restoreFromBackupService = injector.getInstance(RestoreFromBackupService.class);
+        return restoreFromBackupService.isBackupAvailable();
     }
 
     private boolean doStartSslService() throws PkiException {

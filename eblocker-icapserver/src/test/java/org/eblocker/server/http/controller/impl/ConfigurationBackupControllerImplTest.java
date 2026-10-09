@@ -25,6 +25,7 @@ import org.eblocker.server.common.data.backup.ConfigBackupReference;
 import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.EventType;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.controller.ConfigurationBackupController;
 import org.eblocker.server.http.service.ConfigurationBackupFileService;
@@ -58,18 +59,22 @@ public class ConfigurationBackupControllerImplTest {
     private Request request;
     private Response response;
     private Path tmpDir;
+    private ScriptRunner scriptRunner;
+    private String externalDiskUnmountCommand = "mountpoint_unmount";
     private String externalDiskBackupFilename = "eblocker-config.eblcfg";
-    private String externalDiskMountpoint = "/opt/eblocker-icap/mnt";
+    private Path externalDiskMountpoint;
 
     @BeforeEach
     public void setUp() throws Exception {
         serviceImportResult = new ConfigBackupImportResult();
+        scriptRunner = Mockito.mock(ScriptRunner.class);
         tmpDir = Files.createTempDirectory(null);
+        externalDiskMountpoint = Files.createDirectory(tmpDir.resolve("mnt"));
         service = Mockito.mock(ConfigurationBackupService.class);
-        fileService = new ConfigurationBackupFileService(tmpDir.toString());
+        fileService = new ConfigurationBackupFileService(scriptRunner, externalDiskUnmountCommand, externalDiskBackupFilename, externalDiskMountpoint.toString(), tmpDir.toString());
         diskInfoService = Mockito.mock(DiskInfoService.class);
         eventLogger = Mockito.mock(EventLogger.class);
-        controller = new ConfigurationBackupControllerImpl(service, fileService, diskInfoService, eventLogger, externalDiskBackupFilename, externalDiskMountpoint);
+        controller = new ConfigurationBackupControllerImpl(service, fileService, diskInfoService, eventLogger);
         request = Mockito.mock(Request.class);
         response = Mockito.mock(Response.class);
         Mockito.when(service.importConfiguration(Mockito.any(), Mockito.any())).thenReturn(serviceImportResult);
@@ -170,5 +175,21 @@ public class ConfigurationBackupControllerImplTest {
         ConfigBackupImportResult result = controller.importConfiguration(request, response);
         assertEquals(warnings, result.getWarnings());
         Mockito.verify(eventLogger).log(Mockito.argThat(event -> event.getType() == EventType.CONFIGURATION_BACKUP_RESTORED));
+    }
+
+    @Test
+    public void moveToExternalDisk() throws Exception {
+        // Prepare a previously created backup file:
+        Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupFileService.FILE_PREFIX, ConfigurationBackupFileService.FILE_SUFFIX);
+        byte[] backupData = "Configuration backup data".getBytes();
+        Files.write(tmpFile, backupData);
+        String fileReference = tmpFile.getFileName().toString();
+
+        Mockito.when(request.getBodyAs(ConfigBackupReference.class)).thenReturn(new ConfigBackupReference(fileReference, null, false));
+        controller.moveToExternalDisk(request, response);
+
+        byte[] written = Files.readAllBytes(externalDiskMountpoint.resolve("eblocker-config.eblcfg"));
+        assertArrayEquals(backupData, written);
+        Mockito.verify(scriptRunner).runScript(externalDiskUnmountCommand);
     }
 }

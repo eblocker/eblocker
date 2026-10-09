@@ -22,6 +22,7 @@ import org.restexpress.Response;
 
 public interface RestoreFromBackupController {
     boolean isBackupAvailable(Request request, Response response);
+    boolean cancelImport(Request request, Response response);
     ConfigBackupImportResult importConfiguration(Request request, Response response);
     ConfigBackupImportResult verifyConfiguration(Request request, Response response);
 }

@@ -25,8 +25,7 @@ import org.eblocker.server.common.network.NetworkStateMachine;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.http.backup.GeneralSettingsBackup;
-import org.eblocker.server.http.backup.GeneralSettingsBackupReader;
-import org.eblocker.server.http.backup.NetworkBackupReader;
+import org.eblocker.server.http.backup.RestoreBackupReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +48,8 @@ public class RestoreFromBackupService {
     private static final Logger LOG = LoggerFactory.getLogger(RestoreFromBackupService.class);
     private boolean backupAvailable = false;
     private final ConfigurationBackupFileService backupFileService;
-    private final NetworkBackupReader networkBackupReader;
+    private final RestoreBackupReader restoreBackupReader;
     private final NetworkStateMachine networkStateMachine;
-    private final GeneralSettingsBackupReader settingsBackupReader;
     private final SettingsService settingsService;
     private final Path mountpoint;
     private final Path backupPath;
@@ -59,17 +57,15 @@ public class RestoreFromBackupService {
     @Inject
     public RestoreFromBackupService(
             ConfigurationBackupFileService backupFileService,
-            NetworkBackupReader networkBackupReader,
+            RestoreBackupReader restoreBackupReader,
             NetworkStateMachine networkStateMachine,
-            GeneralSettingsBackupReader settingsBackupReader,
             SettingsService settingsService,
             @Named("external.disk.mountpoint") String mountpoint,
             @Named("external.disk.backup.filename") String backupFilename
             ) {
         this.backupFileService = backupFileService;
-        this.networkBackupReader = networkBackupReader;
+        this.restoreBackupReader = restoreBackupReader;
         this.networkStateMachine = networkStateMachine;
-        this.settingsBackupReader = settingsBackupReader;
         this.settingsService = settingsService;
         this.mountpoint = Paths.get(mountpoint);
         this.backupPath = this.mountpoint.resolve(backupFilename);
@@ -86,7 +82,7 @@ public class RestoreFromBackupService {
         if (backupAvailable) {
             try {
                 // Restore network configuration
-                NetworkConfiguration networkConfiguration = networkBackupReader.readNetworkConfiguration(backupPath);
+                NetworkConfiguration networkConfiguration = restoreBackupReader.readNetworkConfiguration(backupPath);
                 if (networkConfiguration != null) {
                     networkStateMachine.updateConfiguration(networkConfiguration);
                 } else {
@@ -98,7 +94,7 @@ public class RestoreFromBackupService {
 
             try {
                 // Restore language / timezone
-                GeneralSettingsBackup generalSettings = settingsBackupReader.readGeneralSettings(backupPath);
+                GeneralSettingsBackup generalSettings = restoreBackupReader.readGeneralSettings(backupPath);
                 if (generalSettings != null) {
                     settingsService.setLocaleSettings(generalSettings.getLocaleSettings());
                 } else {
@@ -116,6 +112,18 @@ public class RestoreFromBackupService {
 
     public boolean isBackupAvailable() {
         return backupAvailable;
+    }
+
+    public boolean cancelImport() {
+        LOG.warn("Backup import from external disk was cancelled by admin!");
+        backupAvailable = false;
+        try {
+            backupFileService.unmountExternalDisk();
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Could not unmount external disk while cancelling import.");
+            return false;
+        }
+        return true;
     }
 
     /**

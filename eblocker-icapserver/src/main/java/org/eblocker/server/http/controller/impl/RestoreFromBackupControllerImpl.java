@@ -118,6 +118,12 @@ public class RestoreFromBackupControllerImpl implements RestoreFromBackupControl
         }
     }
 
+    @Override
+    public boolean cancelImport(Request request, Response response) {
+        restoreFromBackupService.cancelImport();
+        return true;
+    }
+
     private String getPassword(Request request) {
         RestoreBackupCredentials credentials = request.getBodyAs(RestoreBackupCredentials.class);
         if (credentials == null) {

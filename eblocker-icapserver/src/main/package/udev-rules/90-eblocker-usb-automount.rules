@@ -9,8 +9,8 @@ ENV{ID_FS_TYPE}!="vfat", ENV{ID_FS_TYPE}!="exfat", GOTO="automount_end"
 ENV{ID_PART_ENTRY_TYPE}=="c12a7328-f81f-11d2-ba4b-00a0c93ec93b", GOTO="automount_end"
 ENV{ID_PART_ENTRY_TYPE}=="0xef", GOTO="automount_end"
 
-# Mount partition via Systemd
+# Start Systemd service instance for partition:
 TAG+="systemd"
-ENV{SYSTEMD_WANTS}+="eblocker-usb-automount@%k.service"
+ENV{SYSTEMD_WANTS}+="eblocker-usb-detect@%k.service"
 
 LABEL="automount_end"

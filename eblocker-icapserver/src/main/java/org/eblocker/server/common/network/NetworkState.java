@@ -32,18 +32,16 @@ public abstract class NetworkState {
     /**
      * Perform all steps that are necessary to enter this state,
      * e.g. services must be configured and started.
-     *
-     * @param willReboot true if the system will be rebooted afterwards
      */
-    public abstract void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot);
+    public abstract void onEntry(NetworkServices services, NetworkConfiguration configuration);
 
     /**
      * Performs all steps that are necessary to update the configuration.
      * The default is to call onExit() and onEntry().
      */
-    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+    public void onConfigurationUpdate(NetworkServices services, NetworkConfiguration configuration) {
         onExit(services);
-        onEntry(services, configuration, willReboot);
+        onEntry(services, configuration);
     }
 
     public abstract NetworkStateId getId();

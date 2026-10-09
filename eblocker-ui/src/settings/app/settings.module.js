@@ -90,6 +90,7 @@ import TorActivationDialogController from '../../shared/dialogs/tor/tor-activati
 import EditTasksViewConfigController from './dialogs/system/tasks-view-config-edit.dialog';
 import ConfigBackupImportController from './dialogs/system/config-backup-import.dialog';
 import ConfigBackupExportController from './dialogs/system/config-backup-export.dialog';
+import ConfigBackupExportToDriveController from './dialogs/system/config-backup-export-to-drive.dialog';
 import AddCustomListController from './dialogs/blocker/update-custom-list.dialog';
 
 
@@ -209,6 +210,7 @@ import LibsJavascriptComponent from './components/openSourceLicenses/libs-javasc
 import LibsRubyComponent from './components/openSourceLicenses/libs-ruby.component';
 import LibsDebianComponent from './components/openSourceLicenses/libs-debian.component';
 import DoctorDiagnosisComponent from './components/doctor/diagnosis/doctor-diagnosis.component';
+import RestoreFromBackupComponent from './components/restoreFromBackup/restore-from-backup.component';
 
 // ** Components for code reuse (instead of directives)
 import RemoveTableEntriesComponent from './components/table/remove-entries.component';
@@ -256,6 +258,7 @@ import EventService from './service/system/EventService';
 import DiagnosticsService from './service/system/DiagnosticsService';
 import FactoryResetService from './service/system/FactoryResetService';
 import ConfigBackupService from './service/system/ConfigBackupService';
+import RestoreFromBackupService from './service/system/RestoreFromBackupService';
 import LedSettingsService from './service/system/LedSettingsService';
 import FilterService from './service/parentalControl/FilterService';
 import BlockerService from './service/blocker/BlockerService';
@@ -403,6 +406,7 @@ angular.module('eblocker.adminconsole', [
     .controller('EditTasksViewConfigController', EditTasksViewConfigController)
     .controller('ConfigBackupImportController', ConfigBackupImportController)
     .controller('ConfigBackupExportController', ConfigBackupExportController)
+    .controller('ConfigBackupExportToDriveController', ConfigBackupExportToDriveController)
     .controller('addCustomListController', AddCustomListController)
     .component('settingsComponent', SettingsComponent)
     .component('mainComponent', MainComponent)
@@ -503,6 +507,7 @@ angular.module('eblocker.adminconsole', [
     .component('ebHelpIcon', HelpIconComponent)
     .component('ebDropdown', DropdownComponent)
     .component('ebDatePicker', DateComponent)
+    .component('restoreFromBackupComponent', RestoreFromBackupComponent)
     .directive('ebLabelContainer', EbLabelContainer)
     .directive('ebTextContainer', EbTextContainer)
     .directive('passwordQuality', PasswordQualityDirective)
@@ -541,6 +546,7 @@ angular.module('eblocker.adminconsole', [
     .factory('DiagnosticsService', DiagnosticsService)
     .factory('FactoryResetService', FactoryResetService)
     .factory('ConfigBackupService', ConfigBackupService)
+    .factory('RestoreFromBackupService', RestoreFromBackupService)
     .factory('LedSettingsService', LedSettingsService)
     .factory('FilterService', FilterService)
     .factory('BlockerService', BlockerService)

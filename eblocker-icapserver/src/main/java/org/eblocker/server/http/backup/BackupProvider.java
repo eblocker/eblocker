@@ -16,17 +16,7 @@
  */
 package org.eblocker.server.http.backup;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.eblocker.crypto.CryptoService;
-import org.eblocker.crypto.json.JsonEncryptionModule;
-import org.eblocker.server.common.data.IpAddressModule;
 import org.eblocker.server.common.data.backup.BackupWarning;
 
 import javax.annotation.Nullable;
@@ -48,20 +38,11 @@ import java.util.jar.JarOutputStream;
  * all providers that restore encrypted data should add a warning that they could
  * not restore it.
  */
-public abstract class BackupProvider {
-    final ObjectMapper objectMapper; // provide a non-closing ObjectMapper for derived classes
+public abstract class BackupProvider extends BackupSerializer {
     final private List<BackupWarning> warnings = new ArrayList<>();
-    protected boolean encryptionEnabled;
 
     public BackupProvider() {
-        // It is important that the ObjectMapper does not close the stream,
-        // because that would close the JAR file.
-        JsonFactory jsonFactory = new MappingJsonFactory();
-        jsonFactory.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-        objectMapper = new ObjectMapper(jsonFactory);
-        initializeMapper(objectMapper);
-        objectMapper.registerModule(new IpAddressModule());
-        objectMapper.registerModule(new JavaTimeModule());
+        super();
     }
 
     /**
@@ -69,29 +50,7 @@ public abstract class BackupProvider {
      * @param cryptoService if not null, a JsonEncryptionModule is registered in the ObjectMapper
      */
     public BackupProvider(@Nullable CryptoService cryptoService) {
-        this();
-        if (cryptoService != null) {
-            encryptionEnabled = true;
-            objectMapper.registerModule(new JsonEncryptionModule(objectMapper, cryptoService));
-        }
-    }
-
-    /**
-     * Use settings similar to those of RestExpress's JacksonJsonProcessor
-     *
-     */
-    private void initializeMapper(ObjectMapper objectMapper) {
-        objectMapper
-                // Ignore additional/unknown properties in a payload.
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
-                // Use fields directly.
-                .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-
-                // Ignore accessor and mutator methods (use fields per above).
-                .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
-                .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE)
-                .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
+        super(cryptoService);
     }
 
     /**
@@ -151,10 +110,10 @@ public abstract class BackupProvider {
     }
 
     public boolean canEncrypt() {
-        return encryptionEnabled;
+        return isEncryptionEnabled();
     }
 
     public boolean canDecrypt() {
-        return encryptionEnabled;
+        return isEncryptionEnabled();
     }
 }

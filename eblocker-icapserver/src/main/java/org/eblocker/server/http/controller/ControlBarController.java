@@ -26,8 +26,6 @@ import org.restexpress.Response;
 import java.util.Map;
 
 public interface ControlBarController {
-    String getConsoleUrl(Request request, Response response);
-
     String getConsoleIp(Request request, Response response);
 
     UserProfileModule getUserProfile(Request request, Response response);

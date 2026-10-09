@@ -66,28 +66,28 @@ public class IscDhcpServerTest extends ConfigurationTestBase {
 
     @Test
     public void enableServerStart() throws Exception {
-        when(scriptRunner.runScript("dhcpd-enable", "start")).thenReturn(0);
-        server.enable(true);
-        verify(scriptRunner).runScript("dhcpd-enable", "start");
+        when(scriptRunner.runScript("dhcpd-enable")).thenReturn(0);
+        server.enable();
+        verify(scriptRunner).runScript("dhcpd-enable");
     }
 
     @Test
     public void enableServer() throws Exception {
         when(scriptRunner.runScript("dhcpd-enable")).thenReturn(0);
-        server.enable(false);
+        server.enable();
         verify(scriptRunner).runScript("dhcpd-enable");
     }
 
     @Test(expected = EblockerException.class)
     public void enableFailureStart() throws Exception {
-        when(scriptRunner.runScript("dhcpd-enable", "start")).thenReturn(1);
-        server.enable(true);
+        when(scriptRunner.runScript("dhcpd-enable")).thenReturn(1);
+        server.enable();
     }
 
     @Test(expected = EblockerException.class)
     public void enableFailure() throws Exception {
         when(scriptRunner.runScript("dhcpd-enable")).thenReturn(1);
-        server.enable(false);
+        server.enable();
     }
 
     @Test

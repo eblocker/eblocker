@@ -21,12 +21,15 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.restexpress.Request;
 
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TimezoneControllerImplTest {
@@ -71,5 +74,22 @@ public class TimezoneControllerImplTest {
         Mockito.when(request.getBodyAs(Map.class)).thenReturn(params);
 
         assertEquals(0, controller.getTimeZoneStringsForCategory(request, null).size());
+    }
+
+    /**
+     * This test ensures that all time zones in the JSON file are known by ZoneId.of().
+     */
+    @Test
+    public void testAllZoneIds() {
+        for (String category: controller.getTimezoneCategories(null, null)) {
+            Map<String, String> params = new HashMap<>();
+            params.put("timezoneContinent", category);
+            Request request = Mockito.mock(Request.class);
+            Mockito.when(request.getBodyAs(Map.class)).thenReturn(params);
+            List<String> locations = controller.getTimeZoneStringsForCategory(request, null);
+            for (String location: locations) {
+                assertNotNull(ZoneId.of(category + "/" + location));
+            }
+        }
     }
 }

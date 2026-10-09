@@ -57,7 +57,6 @@ import org.eblocker.server.http.controller.FeatureController;
 import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
-import org.eblocker.server.http.controller.LanguageController;
 import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
@@ -72,6 +71,7 @@ import org.eblocker.server.http.controller.ProductMigrationController;
 import org.eblocker.server.http.controller.RecordingController;
 import org.eblocker.server.http.controller.RedirectController;
 import org.eblocker.server.http.controller.ReminderController;
+import org.eblocker.server.http.controller.RestoreFromBackupController;
 import org.eblocker.server.http.controller.SSLController;
 import org.eblocker.server.http.controller.SettingsController;
 import org.eblocker.server.http.controller.SetupWizardController;
@@ -140,7 +140,7 @@ public class EblockerHttpsServer implements Preprocessor {
     private final SSLController sslController;
     private SSLContextHandler sslContextHandler;
     private final RecordingController recordingController;
-    private final LanguageController languageController;
+    private final RestoreFromBackupController restoreFromBackupController;
     private final SetupWizardController setupWizardController;
     private final TimezoneController timezoneController;
     private final MessageCenterController messageCenterController;
@@ -212,7 +212,6 @@ public class EblockerHttpsServer implements Preprocessor {
                                FactoryResetController factoryResetController,
                                FeatureToggleController featureToggleController,
                                FilterController filterController,
-                               LanguageController languageController,
                                MessageCenterController messageCenterController,
                                NetworkController networkController,
                                OpenVpnController openVpnController,
@@ -223,6 +222,7 @@ public class EblockerHttpsServer implements Preprocessor {
                                RecordingController recordingController,
                                RedirectController redirectController,
                                ReminderController reminderController,
+                               RestoreFromBackupController restoreFromBackupController,
                                SSLController sslController,
                                SettingsController settingsController,
                                SetupWizardController setupWizardController,
@@ -300,7 +300,7 @@ public class EblockerHttpsServer implements Preprocessor {
         this.recordingController = recordingController;
         this.featureToggleController = featureToggleController;
 
-        this.languageController = languageController;
+        this.restoreFromBackupController = restoreFromBackupController;
         this.setupWizardController = setupWizardController;
         this.timezoneController = timezoneController;
         this.timestampController = timestampController;
@@ -843,6 +843,26 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("getUpsellInfo", HttpMethod.GET)
                 .name("adminconsole.productmigration.getUpsellInfo");
 
+        server
+                .uri("/api/adminconsole/restore/isBackupAvailable", restoreFromBackupController)
+                .action("isBackupAvailable", HttpMethod.GET)
+                .name("adminconsole.restore.isBackupAvailable.route");
+
+        server
+                .uri("/api/adminconsole/restore/verify", restoreFromBackupController)
+                .action("verifyConfiguration", HttpMethod.POST)
+                .name("adminconsole.restore.verify");
+
+        server
+                .uri("/api/adminconsole/restore/cancel", restoreFromBackupController)
+                .action("cancelImport", HttpMethod.POST)
+                .name("adminconsole.restore.cancel");
+
+        server
+                .uri("/api/adminconsole/restore/import", restoreFromBackupController)
+                .action("importConfiguration", HttpMethod.POST)
+                .name("adminconsole.restore.import");
+
         // ** New Adminconsole: license setup wizard
         server
                 .uri("/api/adminconsole/setup/info", setupWizardController)
@@ -1193,12 +1213,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/compressionmode", featureController)
                 .action("setCompressionMode", HttpMethod.PUT)
                 .name("adminconsole.features.compressionmode");
-
-        // ** New Adminconsole: System Language
-        server
-                .uri("/api/adminconsole/language", languageController)
-                .action("setLanguage", HttpMethod.POST)
-                .name("adminconsole.language.set.route");
 
         // ** New Adminconsole: System Timezone
         server
@@ -1878,11 +1892,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("public.dashboard.settings.get.route");
 
         server
-                .uri("/api/settings/timezone", settingsController)
-                .action("setTimeZone", HttpMethod.PUT)
-                .name("dashboard.locale.put.timezone.route");
-
-        server
                 .uri("/api/token/{appContext}", authenticationController)
                 .action("generateToken", HttpMethod.GET)
                 .name("public.token.get.route");
@@ -2263,6 +2272,16 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/configbackup/import", configBackupController)
                 .action("importConfiguration", HttpMethod.POST)
                 .name("adminconsole.configbackup.import");
+
+        server
+                .uri("/api/configbackup/mountedPartition", configBackupController)
+                .action("getMountedPartitionName", HttpMethod.GET)
+                .name("adminconsole.configbackup.mountedPartition");
+
+        server
+                .uri("/api/configbackup/writeToDisk", configBackupController)
+                .action("moveToExternalDisk", HttpMethod.POST)
+                .name("adminconsole.configbackup.writeToDisk");
     }
 
     private void addFeatureToggleRoutes() {

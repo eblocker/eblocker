@@ -1288,6 +1288,16 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'splashScreenComponent'
     };
 
+    const restoreFromBackup = {
+        name: STATES.RESTORE_FROM_BACKUP,
+        parent: STATES.PARENT,
+        url: 'restoreFromBackup',
+        ignoreHook: true,
+        allowActive: true,
+        translationKey: 'ADMINCONSOLE.RESTORE_FROM_BACKUP.TOOLBAR.TITLE',
+        component: 'restoreFromBackupComponent'
+    };
+
     /*
      * Main screen with resolved bootstrap dependencies
      */
@@ -1476,6 +1486,8 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
     allStates.push(openSourceLicensesJavascript);
     allStates.push(openSourceLicensesRuby);
     allStates.push(openSourceLicensesDebian);
+
+    allStates.push(restoreFromBackup);
 
     /*
      * Reason that states 'main' and 'app' are excluded from setting state.params

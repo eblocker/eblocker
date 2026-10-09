@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+ * Copyright 2026 eBlocker Open Source GmbH
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be
  * approved by the European Commission - subsequent versions of the EUPL
@@ -14,24 +14,16 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-export default function LanguageService(logger, $http, $q) {
-    'ngInject';
+package org.eblocker.server.common.data.backup;
 
-    const PATH = '/api/adminconsole/language';
+public class RestoreBackupCredentials {
+    private String password;
 
-    function setLanguage(langId) {
-        const config = {
-            id: langId
-        };
-        return $http.post(PATH, config).then(function success(response){
-            return response;
-        }, function error(response) {
-            logger.error('Error setting language ', response);
-            return $q.reject(response);
-        });
+    public String getPassword() {
+        return password;
     }
 
-    return {
-        setLanguage: setLanguage
-    };
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

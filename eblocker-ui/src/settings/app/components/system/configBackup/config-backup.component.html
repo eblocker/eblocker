@@ -15,4 +15,18 @@
             </md-button>
         </div>
     </div>
+    <div class="config-frame md-whiteframe-z1">
+        <h3>{{ 'ADMINCONSOLE.CONFIG_BACKUP.LABEL.SAVE_TO_DRIVE' | translate }}</h3>
+
+        <div layout="column">
+            <div>
+                {{'ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.SAVE_TO_DRIVE' | translate}}
+            </div>
+            <div layout="row" layout-align="start center">
+                <md-button ng-click="vm.startExportToDriveDialog()" class="md-raised md-accent" aria-label="{{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.SAVE_TO_DRIVE' | translate}}">
+                    <span translate="ADMINCONSOLE.CONFIG_BACKUP.ACTION.SAVE_TO_DRIVE"></span>
+                </md-button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -16,4 +16,5 @@
 # permissions and limitations under the License.
 #
 
-mount "$1" "/opt/eblocker-icap/mnt"
+# Unmounts the external disk
+systemctl stop eblocker-usb-mount.service

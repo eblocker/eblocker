@@ -32,7 +32,7 @@ public class NetworkStateExternalDhcp extends NetworkState {
     }
 
     @Override
-    public void onEntry(NetworkServices services, NetworkConfiguration configuration, boolean willReboot) {
+    public void onEntry(NetworkServices services, NetworkConfiguration configuration) {
         services.enableStaticIp(configuration);
         services.setNameserverAddresses(configuration);
     }

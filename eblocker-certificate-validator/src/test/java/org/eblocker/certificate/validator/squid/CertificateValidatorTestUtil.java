@@ -30,7 +30,7 @@ public class CertificateValidatorTestUtil {
     private static AtomicLong nextRequestId = new AtomicLong();
 
     public static CertificateValidationRequest createValidRequest(boolean useConcurrency) throws IOException, CryptoException {
-        return createRequest(useConcurrency, "www.microsoft.com", "www.microsoft.com.cert", "MicrosoftAzureTLSIssuingCA04.cert");
+        return createRequest(useConcurrency, "www.microsoft.com", "www.microsoft.com.cert", "Microsoft_TLS_G2_RSA_CA_OCSP_04.cert", "Microsoft_TLS_RSA_Root_G2.cert");
     }
 
     public static CertificateValidationRequest createInvalidRequest(boolean useConcurrency) throws IOException, CryptoException {

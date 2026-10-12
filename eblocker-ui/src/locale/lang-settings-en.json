@@ -2614,24 +2614,24 @@
                 "ENABLE" : {
                     "NOT_AGAIN" : "Don't show this again."
                 },
-                "INTRO" : "eBlockerOS 3.2 is a maintenance release with various improvements.",
+                "INTRO" : "eBlockerOS 3.3 is a maintenance release with various improvements.",
                 "GREETINGS" : "Thank you for your support - we'll continue to keep you protected,",
                 "HIGHLIGHTS" : {
                     "HEAD" : "Highlights:",
-                    "LI_1" : "<strong>Bugfix Captive portal checks:</strong> WLAN connection errors with Apple devices have been fixed.",
-                    "LI_2" : "<strong>Ads and trackers via IPv6</strong> are correctly displayed in Dashbord Blocker Statistics tile.",
-                    "LI_3" : "<strong>Device cloaking improved</strong> so that eBlockerOS can imitate the latest browser versions."
+                    "LI_1" : "<strong>Complete backup and restore</strong>. Your backup now contains all settings – including eBlocker Mobile, VPN and network settings.",
+                    "LI_2" : "<strong>Migration to eBlockerOS 4.1</strong> via backup or USB stick.",
+                    "LI_3" : "<strong>Bug fixes</strong>"
                 },
                 "LINK_PRE" : "All technical changes can be found in the ",
                 "LINK_TEXT" : "release notes",
-                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-2/",
+                "LINK_URL" : "https://eblocker.org/docs/release-notes-3-3/",
                 "OUTRO" : "eBlocker is developed and operated by volunteers. To cover the operating costs, we rely exclusively on donations. As a gratitude for <a href=\"https://eblocker.org/en/donate-for-updates/\" target=\"_blank\" class=\"orange\">your donation</a>, you will receive a license key for automatic daily updates.",
                 "SIGN" : "Your eBlocker Team",
-                "TITLE" : "eBlockerOS Release 3.2"
+                "TITLE" : "eBlockerOS Release 3.3"
             },
-            "MENU_LABEL" : "New in eBlockerOS 3.2",
+            "MENU_LABEL" : "New in eBlockerOS 3.3",
             "TOOLBAR" : {
-                "TITLE" : "eBlockerOS Release 3.2"
+                "TITLE" : "eBlockerOS Release 3.3"
             }
         },
         "SSL" : {

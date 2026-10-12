@@ -458,7 +458,7 @@
                                         <path>/opt/eblocker-icap/conf/eblocker</path>
                                         <path>/opt/eblocker-icap/conf/filter</path>
                                         <path>/opt/eblocker-icap/conf/customercreated</path>
-										<path>/opt/eblocker-icap/conf/scriptlets</path>
+                                        <path>/opt/eblocker-icap/conf/scriptlets</path>
                                     </paths>
                                 </data>
                                 <data>
@@ -482,7 +482,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/lib/udev/rules.d</prefix>
+                                        <prefix>/lib/udev/rules.d</prefix>
                                     </mapper>
                                 </data>
                                 <data>

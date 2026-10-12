@@ -516,7 +516,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/lib/systemd/system</prefix>
+                                        <prefix>/lib/systemd/system</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -524,7 +524,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/lib/systemd/system</prefix>
+                                        <prefix>/lib/systemd/system</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -532,7 +532,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/lib/systemd/system</prefix>
+                                        <prefix>/lib/systemd/system</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -540,7 +540,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/lib/udev/rules.d</prefix>
+                                        <prefix>/lib/udev/rules.d</prefix>
                                     </mapper>
                                 </data>
                                 <data>

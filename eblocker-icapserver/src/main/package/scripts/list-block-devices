@@ -21,6 +21,12 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-OUTFILE=$1
+TEMPFILE=$1
 
-lsblk --output PATH,NAME,MODEL,LABEL,MOUNTPOINT,FSTYPE,PARTTYPE,HOTPLUG --json > $OUTFILE
+lsblk --output PATH,NAME,MODEL,LABEL,MOUNTPOINT,FSTYPE,PARTTYPE,HOTPLUG --json | dd of="$TEMPFILE" conv=nocreat status=none
+
+# Why not simply redirect stdout with '>'?
+# The redirection operator uses flag O_CREAT.
+# The /tmp dir is sticky.
+# By default "sysctl fs.protected_regular=2" is set in Debian Bookworm.
+# As a result, root is not allowed to open the file that belongs to icapd with O_CREAT.

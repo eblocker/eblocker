@@ -405,9 +405,9 @@
             },
             "DRIVE_STATE": {
                 "CANCELLED": "The action was cancelled. Remove the USB flash drive.",
-                "SEARCHING": "USB flash drive is searched...",
+                "SEARCHING": "Searching for USB flash drive...",
                 "FOUND": "USB flash drive was detected:",
-                "WRITING": "Backup file is being written:",
+                "WRITING": "Writing backup file:",
                 "WROTE": "Backup file was written:"
             }
         },

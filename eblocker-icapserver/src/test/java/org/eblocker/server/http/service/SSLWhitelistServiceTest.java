@@ -34,8 +34,6 @@ public class SSLWhitelistServiceTest {
 
     private Path domainsPath;
     private Path ipsPath;
-    private Path usersDomainPath;
-    private Path usersIpPath;
 
     private SquidReloadingService squidReloadingService;
     private AppModuleService appModuleService;
@@ -46,20 +44,16 @@ public class SSLWhitelistServiceTest {
     public void setUp() throws IOException {
         domainsPath = Files.createTempFile("domains", ".acl");
         ipsPath = Files.createTempFile("ips", ".acl");
-        usersDomainPath = Files.createTempFile("user-domains", ".acl");
-        usersIpPath = Files.createTempFile("user-ips", ".acl");
 
         squidReloadingService = Mockito.mock(SquidReloadingService.class);
         appModuleService = Mockito.mock(AppModuleService.class);
-        sslWhitelistService = new SSLWhitelistService(domainsPath.toString(), ipsPath.toString(), usersDomainPath.toString(), usersIpPath.toString(), squidReloadingService, appModuleService);
+        sslWhitelistService = new SSLWhitelistService(domainsPath.toString(), ipsPath.toString(), squidReloadingService, appModuleService);
     }
 
     @After
     public void tearDown() throws IOException {
         Files.deleteIfExists(domainsPath);
         Files.deleteIfExists(ipsPath);
-        Files.deleteIfExists(usersDomainPath);
-        Files.deleteIfExists(usersIpPath);
     }
 
     @Test

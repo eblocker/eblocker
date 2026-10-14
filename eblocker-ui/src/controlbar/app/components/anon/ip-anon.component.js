@@ -280,7 +280,6 @@ function AnonController($scope, $interval, $mdDialog, $translate, $window, logge
     }
 
     function checkConnection() {
-        // showTorVerifyConnectionDialog();
         const link = $translate.instant('SHARED.ANONYMIZATION.IP_ANON.TOR_CHECK_URL');
         $window.open(link, '_blank');
         vm.closeDropdown.now();
@@ -312,15 +311,6 @@ function AnonController($scope, $interval, $mdDialog, $translate, $window, logge
             }
         });
     }
-
-    // function showTorVerifyConnectionDialog() {
-    //     return $mdDialog.show({
-    //         controller: 'TorVerifyConnectionDialogController',
-    //         controllerAs: 'ctrl',
-    //         templateUrl: 'app/dialogs/anon/tor-verify-connection.dialog.html',
-    //         clickOutsideToClose: true
-    //     });
-    // }
 
     function showVpnActivationDialog(profile) {
         return $mdDialog.show({

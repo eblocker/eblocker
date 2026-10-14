@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2020 eBlocker Open Source UG (haftungsbeschraenkt)
+# Copyright 2025 eBlocker Open Source UG (haftungsbeschraenkt)
 #
 # Licensed under the EUPL, Version 1.2 or - as soon they will be
 # approved by the European Commission - subsequent versions of the EUPL
@@ -18,19 +18,6 @@
 
 BASEDIR=/opt/eblocker-icap
 LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j2.xml
-ARGS=""
-
-SELF_CHECK=0
-
-# Load defaults for eblocker-reset script (defines $EBLOCKER_SELFCHECK_FILE)
-EBLOCKER_RESET_CONFIG=/etc/default/eblocker-reset
-if [ -r $EBLOCKER_RESET_CONFIG ]; then
-    . $EBLOCKER_RESET_CONFIG
-
-    if [ -e "$EBLOCKER_SELFCHECK_FILE" ]; then
-	SELF_CHECK=1
-    fi
-fi
 
 SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')
 
@@ -50,10 +37,5 @@ MEMORY_SETTINGS="\
 -Dio.netty.allocator.numDirectArenas=${NUM_ARENAS} \
 -Dio.netty.allocator.numHeapArenas=${NUM_ARENAS}"
 
-if [ $SELF_CHECK -eq 1 ]; then
-    # Run the self-check:
-    exec java -cp $BASEDIR/lib/${project.build.finalName}.jar org.eblocker.server.app.SelfCheckApp
-else
-    # Run the ICAP server:
-    exec java $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
-fi
+# Run the ICAP server:
+exec java $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar

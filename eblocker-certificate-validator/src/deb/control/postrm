@@ -18,5 +18,5 @@
 
 if [ "$1" = remove ] ; then
 # Remove services
-    update-rc.d certvalidator remove
+    systemctl disable certvalidator
 fi

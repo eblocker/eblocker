@@ -16,6 +16,6 @@
 # permissions and limitations under the License.
 #
 
-service arpread restart
-service arpwrite restart
-service eblocker-dns restart
+systemctl restart arpread
+systemctl restart arpwrite
+systemctl restart eblocker-coredns

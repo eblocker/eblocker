@@ -22,13 +22,30 @@
                 </div>
             </div>    
         </div>
-        <!-- **** Edit -->
-        <div layout="row" layout-align="start center" style="width: 100%;">
-            <!-- <div flex-gt-xs="33" flex-lg="25" flex-gt-lg="25" style="width: 100%;"> -->
-            <div>
-                <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}" config="vm.deviceIp"
+        <!-- **** IP-Adressen (aktuell, read-only) + statische IPv4/IPv6 (bearbeitbar wenn DHCP aktiv) -->
+        <div layout="row" layout-xs="column" layout-align="start start" style="width: 100%; padding-top: 8px;">
+            <!-- Aktuelle IP-Adressen (immer sichtbar, read-only) -->
+            <div flex-gt-xs="50" style="width: 100%;">
+                <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_IP' | translate}}"
+                                    config="vm.deviceIp"
                                     style="white-space: pre;"></eb-label-container>
             </div>
+            <!-- Statische IPv4 (nur wenn DHCP aktiv) -->
+            <div ng-if="vm.dhcpActive && !vm.device.isGateway && !vm.device.isEblocker"
+                 flex-gt-xs="25" style="width: 100%;">
+                <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_STATIC_IPV4' | translate}}"
+                                    config="vm.deviceStaticIpV4"
+                                    is-edit="true"
+                                    edit-callback="vm.editIpV4($event, vm.device)"></eb-label-container>
+            </div>
+            <!-- Statische IPv6: eBlocker weist Geräten noch keine IPv6-Adressen zu, daher ausgeblendet -->
+            <!-- <div ng-if="vm.dhcpActive && !vm.device.isGateway && !vm.device.isEblocker"
+                 flex-gt-xs="25" style="width: 100%;">
+                <eb-label-container label="{{'ADMINCONSOLE.DEVICES_LIST.DETAILS.GENERAL.LABEL_STATIC_IPV6' | translate}}"
+                                    config="vm.deviceStaticIpV6"
+                                    is-edit="true"
+                                    edit-callback="vm.editIpV6($event, vm.device)"></eb-label-container>
+            </div> -->
         </div>
     </div>
 

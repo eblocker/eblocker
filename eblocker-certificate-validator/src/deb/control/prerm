@@ -18,7 +18,7 @@
 
 if [ "$1" = remove ] ; then
 # Stop services:
-    invoke-rc.d certvalidator stop
+    systemctl stop certvalidator
 fi
 
 exit 0

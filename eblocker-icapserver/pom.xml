@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.eblocker</groupId>
         <artifactId>eblocker-parent</artifactId>
-        <version>3.3-SNAPSHOT</version>
+        <version>4.0.3</version>
         <relativePath>../eblocker-parent</relativePath>
     </parent>
     <artifactId>eblocker-icapserver</artifactId>
@@ -321,22 +321,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-resources-init</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/package/init</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/package/init</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-resources-default</id>
                         <phase>package</phase>
                         <goals>
@@ -474,17 +458,8 @@
                                         <path>/opt/eblocker-icap/conf/eblocker</path>
                                         <path>/opt/eblocker-icap/conf/filter</path>
                                         <path>/opt/eblocker-icap/conf/customercreated</path>
-										<path>/opt/eblocker-icap/conf/scriptlets</path>
+                                        <path>/opt/eblocker-icap/conf/scriptlets</path>
                                     </paths>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/init/</src>
-                                    <type>directory</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/etc/init.d</prefix>
-                                        <filemode>755</filemode>
-                                    </mapper>
                                 </data>
                                 <data>
                                     <src>${project.build.directory}/package/default/</src>
@@ -495,41 +470,8 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <type>template</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                    </mapper>
-                                    <paths>
-                                        <path>/etc/systemd/system/icapserver.service.d</path>
-                                    </paths>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/restart.conf</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/etc/systemd/system/icapserver.service.d</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-usb-detect@.service</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/lib/systemd/system</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-usb-mount.service</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/lib/systemd/system</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${project.build.directory}/package/systemd/eblocker-network-config-import.service</src>
-                                    <type>file</type>
+                                    <src>${project.build.directory}/package/systemd/</src>
+                                    <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
                                         <prefix>/lib/systemd/system</prefix>

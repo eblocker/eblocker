@@ -22,6 +22,8 @@ import org.eblocker.server.common.network.icmpv6.EchoRequest;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
@@ -34,6 +36,7 @@ import java.util.Random;
  * @see NeighborDiscoveryListener
  */
 public class Ip6MulticastPing {
+    private static final Logger log = LoggerFactory.getLogger(Ip6MulticastPing.class);
 
     private static final byte[] MULTICAST_ALL_NODES_HW_ADDRESS = new byte[]{ 51, 51, 0, 0, 0, 1 };
 
@@ -61,9 +64,15 @@ public class Ip6MulticastPing {
             return;
         }
 
+        Ip6Address ip6LinkLocalAddress = networkInterface.getIp6LinkLocalAddress();
+        if (ip6LinkLocalAddress == null) {
+            log.warn("IPv6 link-local address not (yet) available. Cannot multicast-ping local devices.");
+            return;
+        }
+
         byte[] data = new byte[32];
         random.nextBytes(data);
-        EchoRequest echoRequest = new EchoRequest(networkInterface.getHardwareAddress(), networkInterface.getIp6LinkLocalAddress(), MULTICAST_ALL_NODES_HW_ADDRESS, Ip6Address.MULTICAST_ALL_NODES_ADDRESS, identifier, sequence, data);
+        EchoRequest echoRequest = new EchoRequest(networkInterface.getHardwareAddress(), ip6LinkLocalAddress, MULTICAST_ALL_NODES_HW_ADDRESS, Ip6Address.MULTICAST_ALL_NODES_ADDRESS, identifier, sequence, data);
         String message = echoRequest.toString();
         pubSubService.publish(Channels.IP6_OUT, message);
         sequence = (sequence + 1) & 0xffff;

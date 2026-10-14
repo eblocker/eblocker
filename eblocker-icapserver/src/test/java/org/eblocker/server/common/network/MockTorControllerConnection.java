@@ -25,11 +25,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class MockTorControllerConnection implements TelnetConnection {
     private boolean connected = false;
     private boolean authenticated = false;
-    private boolean hasCircuit = true;
-    private boolean enoughDirInfo = true;
     private boolean hasReceivedReloadSignal = false;
     private boolean hasReceivedNewnymSignal = false;
-    private int bootstrapPhasePercentage = 100;
     private Queue<String> responses = new ArrayBlockingQueue<String>(16);
 
     @Override
@@ -60,25 +57,6 @@ public class MockTorControllerConnection implements TelnetConnection {
         // process command:
         if (line.startsWith("authenticate ")) {
             authenticated = true;
-            responses.add(TorController.RESPONSE_OK);
-
-        } else if (line.equals("getinfo " + TorController.STATUS_CIRCUIT_ESTABLISHED)) {
-            assert (authenticated);
-            responses.add("250-" + TorController.STATUS_CIRCUIT_ESTABLISHED + "=" + (hasCircuit ? "1" : "0"));
-            responses.add(TorController.RESPONSE_OK);
-
-        } else if (line.equals("getinfo " + TorController.STATUS_ENOUGH_DIR_INFO)) {
-            assert (authenticated);
-            responses.add("250-" + TorController.STATUS_ENOUGH_DIR_INFO + "=" + (enoughDirInfo ? "1" : "0"));
-            responses.add(TorController.RESPONSE_OK);
-
-        } else if (line.equals("getinfo " + TorController.STATUS_BOOTSTRAP_PHASE)) {
-            assert (authenticated);
-            responses.add("250-status/bootstrap-phase=NOTICE BOOTSTRAP PROGRESS=" + bootstrapPhasePercentage + " Testsuffix");
-            responses.add(TorController.RESPONSE_OK);
-
-        } else if (line.equals(TorController.SUBSCRIBE_STATUS_CLIENT_EVENTS)) {
-            assert (authenticated);
             responses.add(TorController.RESPONSE_OK);
 
         } else if (line.equals(TorController.RECONFIGURE_COMMAND)) {
@@ -118,14 +96,6 @@ public class MockTorControllerConnection implements TelnetConnection {
         return lines;
     }
 
-    public void setHasCircuit(boolean hasCircuit) {
-        this.hasCircuit = hasCircuit;
-    }
-
-    public void setBootstrapPhasePercentage(int percentage) {
-        this.bootstrapPhasePercentage = percentage;
-    }
-
     /**
      * Useful for simulating that Tor has been stopped or restarted
      */
@@ -149,15 +119,4 @@ public class MockTorControllerConnection implements TelnetConnection {
     public boolean hasReceivedNewnymSignal() {
         return hasReceivedNewnymSignal;
     }
-
-    public void resetHasReceivedNewnymSignal() {
-        hasReceivedNewnymSignal = false;
-    }
-
-    public void sendEvent(String eventString) {
-        if (eventString != null) {
-            responses.add(eventString);
-        }
-    }
-
 }

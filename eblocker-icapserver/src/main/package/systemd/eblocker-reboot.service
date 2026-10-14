@@ -1,0 +1,7 @@
+[Unit]
+Description=Reboot eBlocker if updates requested it
+ConditionPathExists=/run/reboot-required
+
+[Service]
+Type=oneshot
+ExecStart=systemctl reboot

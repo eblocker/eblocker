@@ -28,6 +28,9 @@ public abstract class TableGeneratorBase {
     protected final int proxyPort;
     protected final int proxyHTTPSPort;
     protected final int localDnsPort;
+    protected final int torPort;
+    protected final int torDnsPort;
+    protected final int torMark;
 
     // rule templates
     protected final Rule standardInput, mobileVpnInput, standardOutput;
@@ -47,7 +50,8 @@ public abstract class TableGeneratorBase {
             String mobileVpnInterface,
             int httpPort, int httpsPort,
             int proxyPort, int proxyHTTPSPort,
-            int localDnsPort) {
+            int localDnsPort,
+            int torPort, int torDnsPort, int torMark) {
 
         this.standardInterface = standardInterface;
         this.mobileVpnInterface = mobileVpnInterface;
@@ -56,6 +60,9 @@ public abstract class TableGeneratorBase {
         this.proxyPort = proxyPort;
         this.proxyHTTPSPort = proxyHTTPSPort;
         this.localDnsPort = localDnsPort;
+        this.torPort = torPort;
+        this.torDnsPort = torDnsPort;
+        this.torMark = torMark;
 
         // prepare rule templates
         standardInput = new Rule().input(standardInterface);

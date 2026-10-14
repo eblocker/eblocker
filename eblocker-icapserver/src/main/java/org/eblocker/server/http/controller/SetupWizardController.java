@@ -24,10 +24,4 @@ public interface SetupWizardController {
     SetupWizardInfo getInfo(Request request, Response response);
 
     boolean didUserFinishSetupWizard(Request request, Response response);
-
-    Object askForSerialNumber(Request request, Response response);
-
-    Object getSerialNumberExample(Request request, Response response);
-
-    Object checkSerialNumber(Request request, Response response);
 }

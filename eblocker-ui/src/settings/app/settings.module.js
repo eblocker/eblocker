@@ -169,7 +169,6 @@ import ResetActivationComponent from './components/home/license/resetActivation/
 import StatusComponent from './components/system/status/status.component';
 import TasksComponent from './components/system/tasks/tasks.component';
 import TimeLangComponent from './components/system/timeLang/time-language.component';
-import LedSettingsComponent from './components/system/ledSettings/led-settings.component';
 
 import NetworkSettingsComponent from './components/network/settings/network-settings.component';
 import NetworkSettingsIp6Component from './components/network/settingsIp6/network-settings-ip6.component';
@@ -259,7 +258,6 @@ import DiagnosticsService from './service/system/DiagnosticsService';
 import FactoryResetService from './service/system/FactoryResetService';
 import ConfigBackupService from './service/system/ConfigBackupService';
 import RestoreFromBackupService from './service/system/RestoreFromBackupService';
-import LedSettingsService from './service/system/LedSettingsService';
 import FilterService from './service/parentalControl/FilterService';
 import BlockerService from './service/blocker/BlockerService';
 import DialogService from './service/dialog/DialogService';
@@ -453,7 +451,6 @@ angular.module('eblocker.adminconsole', [
     .component('timeLanguageComponent', TimeLangComponent)
     .component('backupComponent', BackupComponent)
     .component('configBackupComponent', ConfigBackupComponent)
-    .component('ledSettingsComponent', LedSettingsComponent)
     .component('networkSettingsComponent', NetworkSettingsComponent)
     .component('networkSettingsIp6Component', NetworkSettingsIp6Component)
     .component('vpnHomeStatusComponent', VpnHomeStatusComponent)
@@ -547,7 +544,6 @@ angular.module('eblocker.adminconsole', [
     .factory('FactoryResetService', FactoryResetService)
     .factory('ConfigBackupService', ConfigBackupService)
     .factory('RestoreFromBackupService', RestoreFromBackupService)
-    .factory('LedSettingsService', LedSettingsService)
     .factory('FilterService', FilterService)
     .factory('BlockerService', BlockerService)
     .factory('AccessContingentService', AccessContingentService)

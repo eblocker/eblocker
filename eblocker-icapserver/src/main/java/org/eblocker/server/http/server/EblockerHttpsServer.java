@@ -57,7 +57,6 @@ import org.eblocker.server.http.controller.FeatureController;
 import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
-import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -171,7 +170,6 @@ public class EblockerHttpsServer implements Preprocessor {
     private final FilterStatisticsController filterStatisticsController;
     private final ConfigurationBackupController configBackupController;
     private final CustomDomainFilterConfigController customDomainFilterConfigController;
-    private final LedSettingsController ledSettingsController;
     private final TasksController tasksController;
     private final FeatureToggleController featureToggleController;
     private final ConnectionCheckController connectionCheckController;
@@ -242,7 +240,6 @@ public class EblockerHttpsServer implements Preprocessor {
                                FilterStatisticsController filterStatisticsController,
                                ConfigurationBackupController configBackupController,
                                CustomDomainFilterConfigController customDomainFilterConfigController,
-                               LedSettingsController ledSettingsController,
                                TasksController tasksController,
                                ConnectionCheckController connectionCheckController,
                                BlockerController blockerController,
@@ -341,7 +338,6 @@ public class EblockerHttpsServer implements Preprocessor {
         this.configBackupController = configBackupController;
         this.customDomainFilterConfigController = customDomainFilterConfigController;
 
-        this.ledSettingsController = ledSettingsController;
         this.tasksController = tasksController;
         this.connectionCheckController = connectionCheckController;
         this.blockerController = blockerController;
@@ -868,10 +864,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/adminconsole/setup/info", setupWizardController)
                 .action("getInfo", HttpMethod.GET)
                 .name("adminconsole.setup.info.route");
-        server
-                .uri("/api/adminconsole/setup/serial/checkformat", setupWizardController)
-                .action("checkSerialNumber", HttpMethod.PUT)
-                .name("adminconsole.setup.serial.check.route");
 
         // ** New Adminconsole: update
         server
@@ -1557,16 +1549,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .action("setPauseByDeviceId", HttpMethod.PUT)
                 .name("adminconsole.device.put.pause");
 
-        // ** New Adminconsole: LED settings:
-        server
-                .uri("/api/adminconsole/led", ledSettingsController)
-                .action("getSettings", HttpMethod.GET)
-                .name("adminconsole.led.settings.get");
-        server
-                .uri("/api/adminconsole/led", ledSettingsController)
-                .action("updateSettings", HttpMethod.POST)
-                .name("adminconsole.led.settings.update");
-
         server
                 .uri("/api/adminconsole/console/ip", controlBarController)
                 .action("getConsoleIp", HttpMethod.GET)
@@ -1731,10 +1713,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/tor/device/showwarnings", deviceController)
                 .action("postShowWarnings", HttpMethod.POST)
                 .name("controlbar.tor.device.postShowWarnings.route");
-        server
-                .uri("/api/tor/checkservices", anonymousController)
-                .action("getTorCheckServices", HttpMethod.GET)
-                .name("controlbar.tor.checkservices.route");
         server
                 .uri("/api/tor/newidentity", anonymousController)
                 .action("getNewTorIdentity", HttpMethod.PUT)
@@ -2157,10 +2135,6 @@ public class EblockerHttpsServer implements Preprocessor {
                 .uri("/api/dashboard/tor/device/showwarnings", deviceController)
                 .action("postShowWarnings", HttpMethod.POST)
                 .name("dashboard.tor.device.postShowWarnings.route");
-        server
-                .uri("/api/dashboard/tor/checkservices", anonymousController)
-                .action("getTorCheckServices", HttpMethod.GET)
-                .name("dashboard.tor.checkservices.route");
         server
                 .uri("/api/dashboard/tor/newidentity", anonymousController)
                 .action("getNewTorIdentity", HttpMethod.PUT)

@@ -136,8 +136,8 @@ public class AutoTrustAppServiceTest {
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("api.somewhere.com")).thenReturn(notBlocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("api.bad.com")).thenReturn(blocked());
 
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "api.somewhere.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "api.bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "api.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "api.bad.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("api.somewhere.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("api.bad.com"), autoTrustAppModuleId);
@@ -151,20 +151,20 @@ public class AutoTrustAppServiceTest {
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("www.somewhere.com")).thenReturn(notBlocked());
         when(domainBlockingService.isDomainBlockedByMalwareAdsTrackersFilters("www.bad.com")).thenReturn(blocked());
 
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.bad.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
 
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.bad.com")));
 
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
 
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.somewhere.com")));
-        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.BROKEN_PIPE, "www.bad.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.somewhere.com")));
+        autoTrustAppService.onChange(newArrayList(getFailedConnectionWithError(now(), KnownError.CONNECTION_RESET, "www.bad.com")));
 
         verify(appModuleService).addDomainsToModule(whitelistUrls("www.somewhere.com"), autoTrustAppModuleId);
         verify(appModuleService, never()).addDomainsToModule(whitelistUrls("www.bad.com"), autoTrustAppModuleId);
@@ -351,7 +351,7 @@ public class AutoTrustAppServiceTest {
     }
 
     private FailedConnection failedConnection(Instant lastOccurrence, String... domains) {
-        return getFailedConnectionWithError(lastOccurrence, KnownError.BROKEN_PIPE, domains);
+        return getFailedConnectionWithError(lastOccurrence, KnownError.CONNECTION_RESET, domains);
     }
 
     private FailedConnection getFailedConnectionWithError(Instant lastOccurrence, KnownError error, String... domains) {

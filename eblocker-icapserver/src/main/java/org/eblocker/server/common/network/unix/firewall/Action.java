@@ -61,7 +61,7 @@ public class Action {
         return new ActionRedirect(targetPort);
     }
 
-    public static Action mark(int value) {
+    public static Action setMark(int value) {
         return new ActionMark(value);
     }
 

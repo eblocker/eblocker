@@ -1,57 +1,57 @@
 {
-    "EXPIRED" : {
-        "CARD" : {
-            "BUTTON" : {
-                "RESUME" : "Continue"
+    "EXPIRED": {
+        "CARD": {
+            "BUTTON": {
+                "RESUME": "Continue"
             },
-            "TEXT" : "Your session expired.",
-            "TITLE" : "Session expired"
+            "TEXT": "Your session expired.",
+            "TITLE": "Session expired"
         }
     },
-    "IDLE" : {
-        "DIALOG" : {
-            "BUTTON" : {
-                "RESUME" : "Continue"
+    "IDLE": {
+        "DIALOG": {
+            "BUTTON": {
+                "RESUME": "Continue"
             },
-            "TEXT" : "Your session expires in {{countdown}} seconds.",
-            "TITLE" : "Session expires"
+            "TEXT": "Your session expires in {{countdown}} seconds.",
+            "TITLE": "Session expiration warning"
         }
     },
-    "MAIN" : {
-        "I18N_TEST" : {
-            "NAME_TEMPLATE" : "You entered the name '{{name}}'."
+    "MAIN": {
+        "I18N_TEST": {
+            "NAME_TEMPLATE": "You entered the name <b>'{{name}}'</b>."
         }
     },
-    "REDIRECT" : {
-        "NO_TARGET" : {
-            "BUTTON" : {
-                "BACK" : "Back to previous page",
-                "CONTINUE" : "Continue and Approve Tracking"
+    "REDIRECT": {
+        "NO_TARGET": {
+            "BUTTON": {
+                "BACK": "Back to previous page",
+                "CONTINUE": "Continue and allow data collection"
             },
-            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
-            "TEXT_2" : {
-                "POST" : ".",
-                "PRE" : "This link belongs to the data collector "
+            "TEXT_1": "eBlocker has detected a tracking link that is trying to track your page view.",
+            "TEXT_2": {
+                "POST": ".",
+                "PRE": "This link leads to the known data collector "
             },
-            "TEXT_3" : "Unfortunately we cannot determine the desired target website.",
-            "TITLE" : "Tracking Link Detected"
+            "TEXT_3": "Unfortunately, we could not determine the target website of the link.",
+            "TITLE": "Tracking Link Detected"
         },
-        "TARGET" : {
-            "BUTTON" : {
-                "CONTINUE" : "Get Tracked",
-                "SHORTCUT" : "Go Straight to "
+        "TARGET": {
+            "BUTTON": {
+                "CONTINUE": "Allow data collection",
+                "SHORTCUT": "Skip tracking and go to "
             },
-            "REMEMBER" : "Remember my decision for similar tracking links.",
-            "TEXT_1" : "eBlocker has detected a tracking link that will track your click.",
-            "TEXT_2" : {
-                "POST" : ".",
-                "PRE" : "This link belongs to the data collector "
+            "REMEMBER": "Remember my decision for similar tracking links.",
+            "TEXT_1": "eBlocker has detected a tracking link that is trying to track your page view.",
+            "TEXT_2": {
+                "POST": ".",
+                "PRE": "This link leads to the known data collector "
             },
-            "TEXT_3" : {
-                "POST" : ".",
-                "PRE" : "but you probably want to go straight to "
+            "TEXT_3": {
+                "POST": ".",
+                "PRE": "but your actual destination is probably "
             },
-            "TITLE" : "Tracking Link Detected"
+            "TITLE": "Tracking Link Detected"
         }
     }
 }

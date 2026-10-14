@@ -18,32 +18,15 @@
 
 if [ "$1" = remove ] ; then
 
- ###  R E D S O C K S  ###
- 
-# Stop service:
-    update-rc.d redsocks remove
-    
-# Remove diversion of redsocks start/stop script
-    REDSOCKS=/etc/init.d/redsocks
+    ###  Tor ###
 
-    [ -L $REDSOCKS ] && rm $REDSOCKS
-    dpkg-divert --remove --package eblocker-baseconfig --rename --divert $REDSOCKS.distrib $REDSOCKS
+    echo '>>> Stopping and disabling tor eblocker instance via systemd..'
+    systemctl stop tor@eblocker
+    systemctl disable tor@eblocker
 
-    update-rc.d redsocks defaults    
-
-
- ###  Tor ###
- 
-# Stop service:
-    update-rc.d tor remove
-    
-# Remove diversion of tor start/stop script
-    TOR=/etc/init.d/tor
-
-    [ -L $TOR ] && rm $TOR
-    dpkg-divert --remove --package eblocker-baseconfig --rename --divert $TOR.distrib $TOR
-
-    update-rc.d tor defaults
+    echo '>>> Start and enable tor default instance'
+    systemctl enable tor
+    systemctl start tor
 
 fi
 

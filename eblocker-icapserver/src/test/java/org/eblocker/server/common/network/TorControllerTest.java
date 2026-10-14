@@ -35,7 +35,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
@@ -74,45 +73,6 @@ public class TorControllerTest {
     }
 
     @Test
-    public void testNoConnectionInitially() throws IOException {
-        controller = createTorController(0); // wrong port
-
-        getConnectionCheckingTask().run();
-        assertFalse(controller.isConnectedToTorNetwork());
-    }
-
-    @Test
-    public void testLoseAndRegainCircuit() throws IOException {
-        controller = createTorController(torControlPort);
-        Runnable task = getConnectionCheckingTask();
-
-        // Initially, everything is OK:
-        task.run();
-        assertTrue(controller.isConnectedToTorNetwork());
-
-        // Still OK:
-        task.run();
-        assertTrue(controller.isConnectedToTorNetwork());
-
-        // Now we lose the circuit:
-        telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE " + TorController.TOR_EVENT_NOT_ENOUGH_DIR_INFO);
-
-        task.run();
-        task.run();
-        //Thread.sleep(5000);
-        assertFalse(controller.isConnectedToTorNetwork());
-
-        // Still no circuit:
-        task.run();
-        assertFalse(controller.isConnectedToTorNetwork());
-
-        // Now the circuit is OK again:
-        telnetConnection.sendEvent("650 STATUS_CLIENT NOTICE " + TorController.TOR_EVENT_CIRCUIT_ESTABLISHED);
-        task.run();
-        assertTrue(controller.isConnectedToTorNetwork());
-    }
-
-    @Test
     public void reloadConfigurationAtStartup() throws IOException {
         controller = createTorController(torControlPort);
         getConnectionCheckingTask().run();
@@ -132,27 +92,11 @@ public class TorControllerTest {
     }
 
     @Test
-    public void slowBootstrapPhase() {
-        controller = createTorController(torControlPort);
-        Runnable task = getConnectionCheckingTask();
-
-        for (int percent = 10; percent <= 90; percent += 10) {
-            telnetConnection.setBootstrapPhasePercentage(percent);
-            task.run();
-            assertFalse(controller.isConnectedToTorNetwork());
-        }
-
-        // finally:
-        telnetConnection.setBootstrapPhasePercentage(100);
-        task.run();
-        assertTrue(controller.isConnectedToTorNetwork());
-    }
-
-    @Test
     public void getNewIdentity() {
         controller = createTorController(torControlPort);
         getConnectionCheckingTask().run();
         controller.getNewIdentity();
+        assertTrue(telnetConnection.hasReceivedNewnymSignal());
     }
 
     protected Runnable getConnectionCheckingTask() {

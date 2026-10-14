@@ -18,9 +18,9 @@
 
 if [ "$1" = configure ] ; then
 # Install services:
-    update-rc.d certvalidator defaults
+    systemctl enable certvalidator
 fi
 
-invoke-rc.d certvalidator restart
+systemctl restart certvalidator
 
 exit 0

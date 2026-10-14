@@ -67,7 +67,6 @@ public class AppModuleService extends Observable {
     public static final String AUTO_TRUST_APP_DESCR_EN = "Automatically collects all domains for which the eBlocker recorded an HTTPS communication failure, such that the eBlocker does no longer monitor encrypted communications to these domains and the failures should disappear. Beta version, please see user manual for details.";
 
     private final int tempAppModuleId;
-    private final int standardAppModuleId;
     private final int userAppModuleId;
     private final int autoTrustAppModuleId;
 
@@ -85,7 +84,6 @@ public class AppModuleService extends Observable {
             AppModuleRemovalMessageProvider appModuleRemovalMessageProvider,
             @Named("appmodules.file.path") String appModulesFilePath,
             @Named("appmodules.id.temp") int tempAppModuleId,
-            @Named("appmodules.id.standard") int standardAppModuleId,
             @Named("appmodules.id.user") int userAppModuleId,
             @Named("appmodules.id.autotrust") int autoTrustAppModuleId) {
         this.dataSource = dataSource;
@@ -93,7 +91,6 @@ public class AppModuleService extends Observable {
         this.appModuleRemovalMessageProvider = appModuleRemovalMessageProvider;
         this.builtinAppModulesResource = new SimpleResource(appModulesFilePath);
         this.tempAppModuleId = tempAppModuleId;
-        this.standardAppModuleId = standardAppModuleId;
         this.userAppModuleId = userAppModuleId;
         this.autoTrustAppModuleId = autoTrustAppModuleId;
     }
@@ -192,10 +189,6 @@ public class AppModuleService extends Observable {
         return tempAppModuleId;
     }
 
-    public int getStandardAppModuleId() {
-        return standardAppModuleId;
-    }
-
     public int getUserAppModuleId() {
         return userAppModuleId;
     }
@@ -224,26 +217,6 @@ public class AppModuleService extends Observable {
                     true
             );
             dataSource.save(module, tempAppModuleId);
-        }
-        module = get(standardAppModuleId);
-        if (module == null) {
-            module = new AppWhitelistModule(
-                    standardAppModuleId,
-                    "INTERNAL_USE_ONLY_SINGLE_ENTRIES_PREDEFINED",
-                    Collections.emptyMap(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyMap(),
-                    true,
-                    true,
-                    true,
-                    false,
-                    null,
-                    false,
-                    true
-            );
-            dataSource.save(module, standardAppModuleId);
         }
         module = get(userAppModuleId);
         if (module == null) {

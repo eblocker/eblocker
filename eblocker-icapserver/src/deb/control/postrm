@@ -19,7 +19,7 @@
 if [ "$1" = remove ] ; then
 
 # Remove services
-    update-rc.d icapserver remove
+    systemctl disable icapserver
 
 fi
 

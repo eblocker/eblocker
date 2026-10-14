@@ -27,7 +27,6 @@ import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.server.SessionContextController;
 import org.eblocker.server.http.service.AnonymousService;
 import org.eblocker.server.http.service.DeviceService;
-import org.eblocker.server.http.service.TorCheckService;
 import org.restexpress.Request;
 import org.restexpress.Response;
 import org.slf4j.Logger;
@@ -47,20 +46,17 @@ public class AnonymousControllerImpl extends SessionContextController implements
     private final TorController torControl;
     private final DeviceService deviceService;
     private final FeatureServicePublisher featureService;
-    private final TorCheckService torCheckService;
     private final AnonymousService anonymousService;
 
     @Inject
     public AnonymousControllerImpl(SessionStore sessionStore, PageContextStore pageContextStore,
                                    DeviceService deviceService,
                                    TorController torControl,
-                                   TorCheckService torCheckService,
                                    FeatureServicePublisher featureService,
                                    AnonymousService anonymousService) {
         super(sessionStore, pageContextStore);
         this.torControl = torControl;
         this.deviceService = deviceService;
-        this.torCheckService = torCheckService;
         this.featureService = featureService;
         this.anonymousService = anonymousService;
     }
@@ -129,11 +125,6 @@ public class AnonymousControllerImpl extends SessionContextController implements
     }
 
     @Override
-    public boolean isTorConnected(Request req, Response resp) {
-        return torControl.isConnectedToTorNetwork();//uses buffer here
-    }
-
-    @Override
     public void getNewTorIdentity(Request req, Response resp) {
         log.info("Tor is getting a new identity...");
         torControl.getNewIdentity();
@@ -158,11 +149,6 @@ public class AnonymousControllerImpl extends SessionContextController implements
     @Override
     public Object getCurrentTorExitNodeCountries(Request req, Response resp) {
         return torControl.getCurrentExitNodeCountries();
-    }
-
-    @Override
-    public Object getTorCheckServices(Request request, Response response) {
-        return torCheckService.getSites(true);
     }
 
     @Override

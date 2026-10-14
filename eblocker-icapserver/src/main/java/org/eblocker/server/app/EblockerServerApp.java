@@ -42,6 +42,7 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemServiceIndex;
 import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
@@ -65,7 +66,6 @@ import org.eblocker.server.http.controller.FeatureController;
 import org.eblocker.server.http.controller.FeatureToggleController;
 import org.eblocker.server.http.controller.FilterController;
 import org.eblocker.server.http.controller.FilterStatisticsController;
-import org.eblocker.server.http.controller.LedSettingsController;
 import org.eblocker.server.http.controller.MessageCenterController;
 import org.eblocker.server.http.controller.MobileConnectionCheckController;
 import org.eblocker.server.http.controller.MobileDnsCheckController;
@@ -114,7 +114,6 @@ import org.eblocker.server.http.controller.impl.FeatureControllerImpl;
 import org.eblocker.server.http.controller.impl.FeatureToggleControllerImpl;
 import org.eblocker.server.http.controller.impl.FilterControllerImpl;
 import org.eblocker.server.http.controller.impl.FilterStatisticsControllerImpl;
-import org.eblocker.server.http.controller.impl.LedSettingsControllerImpl;
 import org.eblocker.server.http.controller.impl.MessageCenterControllerImpl;
 import org.eblocker.server.http.controller.impl.MobileConnectionCheckControllerImpl;
 import org.eblocker.server.http.controller.impl.MobileDnsCheckControllerImpl;
@@ -229,6 +228,7 @@ public class EblockerServerApp {
     void runtimePhase() {
         try {
             initRuntimePhase();
+            checkSystemRequirements();
             openDatabaseConnection();
             wireEventListeners();
             startBackgroundTasks();
@@ -267,6 +267,7 @@ public class EblockerServerApp {
         systemStatusService
                 .starting(SubSystem.HTTP_SERVER)
                 .starting(SubSystem.HTTPS_SERVER)
+                .starting(SubSystem.SYSTEM_CHECK)
                 .starting(SubSystem.SERVICES)
                 .starting(SubSystem.REST_SERVER)
                 .starting(SubSystem.DATABASE_CLIENT)
@@ -292,6 +293,19 @@ public class EblockerServerApp {
         STATUS.info("Initiating eBlocker Core runtime...");
         eventLogger = injector.getInstance(EventLogger.class);
         shutdownService.setEventLogger(eventLogger);
+    }
+
+    private void checkSystemRequirements() {
+        STATUS.info("Checking system requirements...");
+        try {
+            initSubSystemServices(SubSystem.SYSTEM_CHECK);
+            SystemRequirements systemRequirements = injector.getInstance(SystemRequirements.class);
+            systemRequirements.check();
+            systemStatusService.ok(SubSystem.SYSTEM_CHECK);
+        } catch (Exception e) {
+            systemStatusService.error(SubSystem.SYSTEM_CHECK, e.getMessage());
+            throw e;
+        }
     }
 
     private void openDatabaseConnection() throws RedisBackupService.RedisServiceException {
@@ -385,7 +399,7 @@ public class EblockerServerApp {
                 systemStatusService.off(SubSystem.HTTPS_SERVER);
             }
         } catch (Exception e) {
-            processSubSystemWarning("Cannot HTTPS server", SubSystem.HTTPS_SERVER, e);
+            processSubSystemWarning("Cannot start HTTPS server", SubSystem.HTTPS_SERVER, e);
         }
     }
 
@@ -549,7 +563,6 @@ public class EblockerServerApp {
         injectController(FilterStatisticsController.class, FilterStatisticsControllerImpl.class);
         injectController(CustomDomainFilterConfigController.class, CustomDomainFilterConfigControllerImpl.class);
         injectController(ConfigurationBackupController.class, ConfigurationBackupControllerImpl.class);
-        injectController(LedSettingsController.class, LedSettingsControllerImpl.class);
         injectController(TasksController.class, TasksControllerImpl.class);
         injectController(FeatureToggleController.class, FeatureToggleControllerImpl.class);
         injectController(ConnectionCheckController.class, ConnectionCheckControllerImpl.class);

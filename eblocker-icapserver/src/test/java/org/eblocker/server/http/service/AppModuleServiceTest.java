@@ -72,7 +72,6 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         assertTrue(map.containsKey(3));
         assertTrue(map.containsKey(4));
         assertTrue(map.containsKey(appModuleService.getTempAppModuleId()));
-        assertTrue(map.containsKey(appModuleService.getStandardAppModuleId()));
         assertTrue(map.containsKey(appModuleService.getUserAppModuleId()));
         assertTrue(map.containsKey(appModuleService.getAutoSslAppModule().getId()));
         assertEquals("OSX Softwareupdates", map.get(1).getName());
@@ -550,7 +549,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         AppModuleService appModuleService = createService(resourcePath);
 
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        assertEquals(4, modules.size()); // TEMP, STANDARD, USER, and auto-SSL modules are always there!
+        assertEquals(3, modules.size()); // TEMP, USER, and auto-SSL modules are always there!
     }
 
     @Test
@@ -561,7 +560,7 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
         AppModuleService appModuleService = createService(resourcePath);
 
         List<AppWhitelistModule> modules = appModuleService.getAll();
-        assertEquals(4, modules.size()); // TEMP, STANDARD, USER, and auto-SSL modules are always there!
+        assertEquals(3, modules.size()); // TEMP, USER, and auto-SSL modules are always there!
     }
 
     @Test
@@ -735,7 +734,6 @@ public class AppModuleServiceTest extends EmbeddedRedisServiceTestBase {
                 appModuleRemovalMessageProvider,
                 builtinAppModulesPath == null ? null : builtinAppModulesPath.toString(),
                 0,
-                9999,
                 9998,
                 9997
         );

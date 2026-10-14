@@ -34,8 +34,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     // fixed configuration parameters
     private final int mobileVpnSubnet;
     private final int mobileVpnNetmask;
-    private final int anonSocksPort;
-    private final String anonSourceIp;
     private final Integer squidUid;
     private final String dnsAccessDeniedIp;
     private final int parentalControlRedirectHttpPort;
@@ -43,12 +41,10 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
     private final String fallbackIp;
     private final String malwareIpSetName;
     private final int mobileVpnServerPort;
-    private final int torDnsPort;
 
     private String mobileVpnIpAddress;
     private String gatewayIpAddress;
     private String networkMask;
-
 
     @Inject
     public TableGeneratorIp4(@Named("network.interface.name") String standardInterface,
@@ -57,8 +53,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                              @Named("network.vpn.subnet.netmask") String mobileVpnNetmask,
                              @Named("proxyPort") int proxyPort,
                              @Named("proxyHTTPSPort") int proxyHTTPSPort,
-                             @Named("anonSocksPort") int anonSocksPort,
-                             @Named("network.unix.anon.source.ip") String anonSourceIp,
                              @Named("squid.uid") Integer squidUid,
                              @Named("httpPort") int httpPort,
                              @Named("httpsPort") int httpsPort,
@@ -69,13 +63,13 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                              @Named("malware.filter.ipset.name") String malwareIpSetName,
                              @Named("openvpn.server.port") int mobileVpnServerPort,
                              @Named("dns.server.port") int localDnsPort,
-                             @Named("tor.dns.port") int torDnsPort
+                             @Named("tor.port") int torPort,
+                             @Named("tor.dns.port") int torDnsPort,
+                             @Named("tor.mark") int torMark
                           ) {
-        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
+        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort, torPort, torDnsPort, torMark);
         this.mobileVpnSubnet = Ip4Utils.convertIpStringToInt(mobileVpnSubnet);
         this.mobileVpnNetmask = Ip4Utils.convertIpStringToInt(mobileVpnNetmask);
-        this.anonSocksPort = anonSocksPort;
-        this.anonSourceIp = anonSourceIp;
         this.squidUid = squidUid;
         this.dnsAccessDeniedIp = parentalControlRedirectIp;
         this.parentalControlRedirectHttpPort = parentalControlRedirectHttpPort;
@@ -83,8 +77,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         this.malwareIpSetName = malwareIpSetName;
         this.fallbackIp = fallbackIp;
         this.mobileVpnServerPort = mobileVpnServerPort;
-        this.torDnsPort = torDnsPort;
-
     }
 
     public Table generateNatTable(IpAddressFilter ipAddressFilter, Set<OpenVpnClientState> anonVpnClients) {
@@ -171,15 +163,6 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                     .forEach(ip -> preRouting.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
         }
 
-        // Redirect all traffic from tor-clients
-        ipAddressFilter.getTorDevicesIps()
-                .forEach(ip -> {
-                    if (!dnsEnabled) {
-                        preRouting.rule(autoInputForSource(ip).dns().redirectTo(selectTargetIp(ip), torDnsPort));
-                    }
-                    preRouting.rule(autoInputForSource(ip).tcp().redirectTo(selectTargetIp(ip), anonSocksPort));
-                });
-
         // Redirect any ip / non-standard-ports known to host malware to squid for filtering
         if (malwareSetEnabled) {
             ipAddressFilter.getMalwareDevicesIps().stream()
@@ -191,6 +174,15 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
                                     .redirectTo(selectTargetIp(ip), proxyPort)));
         }
 
+        // Redirect all traffic from tor-clients
+        ipAddressFilter.getTorDevicesIps()
+                .forEach(ip -> {
+                    if (!dnsEnabled) {
+                        preRouting.rule(autoInputForSource(ip).dns().redirectTo(selectTargetIp(ip), torDnsPort));
+                    }
+                    preRouting.rule(autoInputForSource(ip).tcp().redirectTo(selectTargetIp(ip), torPort));
+                });
+
         // nat local traffic to dns-server
         Rule loopback = new Rule().output("lo");
         String localhost = "127.0.0.1";
@@ -200,8 +192,8 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         output.rule(new Rule(loopback).http().redirectTo(localhost, httpPort));
         output.rule(new Rule(loopback).https().redirectTo(localhost, httpsPort));
 
-        // use redsocks for all outgoing traffic from special source ip
-        output.rule(new Rule(standardOutput).sourceIp(anonSourceIp).tcp().redirectTo(ownIpAddress, anonSocksPort));
+        // Send traffic from Squid marked with 0x100 to Tor
+        output.rule(new Rule(standardOutput).matchMark(torMark).tcp().redirectTo(ownIpAddress, torPort));
 
         // masquerading
         if (masqueradeEnabled) {
@@ -385,7 +377,7 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
             List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 // mark VPN traffic
-                Rule markClientRoute = new Rule().mark(client.getRoute());
+                Rule markClientRoute = new Rule().setMark(client.getRoute());
                 clientIps.forEach(ip -> vpnRouter.rule(new Rule(markClientRoute).sourceIp(ip)));
 
                 // mark locally generated packets (e.g. by eblocker-dns)

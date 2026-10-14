@@ -22,11 +22,15 @@ import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.openvpn.OpenVpnClientState;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
 
 public class TableGeneratorIp6 extends TableGeneratorBase {
+    private static final Logger LOG = LoggerFactory.getLogger(TableGeneratorIp6.class);
+
     final static Ip6Address publicNetwork = Ip6Address.parse("2000::");
     final static int publicNetworkPrefixLength = 3;
 
@@ -41,9 +45,12 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                              @Named("proxyPort") int proxyPort,
                              @Named("proxyHTTPSPort") int proxyHTTPSPort,
                              @Named("dns.server.port") int localDnsPort,
-                             @Named("malware.filter.ip6set.name") String malwareIp6SetName
+                             @Named("malware.filter.ip6set.name") String malwareIp6SetName,
+                             @Named("tor.port") int torPort,
+                             @Named("tor.dns.port") int torDnsPort,
+                             @Named("tor.mark") int torMark
                              ) {
-        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort);
+        super(standardInterface, mobileVpnInterface, httpPort, httpsPort, proxyPort, proxyHTTPSPort, localDnsPort, torPort, torDnsPort, torMark);
         this.malwareIp6SetName = malwareIp6SetName;
     }
 
@@ -57,6 +64,10 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Chain localRedirects = natTable.chain("local-redirects");
         Chain outputMasquerading = natTable.chain("masquerading");
 
+        if (ownIpAddress == null) {
+            LOG.warn("IPv6 link-local address not (yet) available. Unable to set up NAT table.");
+            return natTable;
+        }
         // always answer dns queries directed at eblocker
         preRouting.rule(new Rule(standardInput).dns().destinationIp(ownIpAddress).redirectTo(ownIpAddress, localDnsPort));
 
@@ -108,6 +119,18 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                                     .redirectTo(selectTargetIp(ip), proxyPort)));
         }
 
+        // Redirect all traffic from tor-clients
+        ipAddressFilter.getTorDevicesIps()
+                .forEach(ip -> {
+                    if (!dnsEnabled) {
+                        preRouting.rule(autoInputForSource(ip).dns().redirectTo(selectTargetIp(ip), torDnsPort));
+                    }
+                    preRouting.rule(autoInputForSource(ip).tcp().redirectTo(selectTargetIp(ip), torPort));
+                });
+
+        // Send traffic from Squid marked with 0x100 to Tor
+        output.rule(new Rule(standardOutput).matchMark(torMark).tcp().redirectTo(ownIpAddress, torPort));
+
         for (OpenVpnClientState client : anonVpnClients) {
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 if (client.getVirtualInterfaceName() == null) {
@@ -138,6 +161,10 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         Chain output = filterTable.chain("OUTPUT").accept();
         output.rule(new Rule().icmpv6().icmpType(Rule.Icmp6Type.REDIRECT).drop());
 
+        // Drop all traffic which has not been diverted to tor here
+        ipAddressFilter.getTorDevicesIps()
+                .forEach(ip -> forward.rule(new Rule(standardInput).sourceIp(ip).reject()));
+
         // block HTTP/3 for all SSL enabled devices
         ipAddressFilter.getSslEnabledDevicesIps().forEach(ip ->
                 forward.rule(new Rule().sourceIp(ip).http3().reject()));
@@ -151,9 +178,6 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                 }
             }
         }
-
-        // block IPv6 for clients using Tor
-        ipAddressFilter.getTorDevicesIps().forEach(ip -> blockFromPublicIp(ip, input, forward));
 
         return filterTable;
     }
@@ -188,7 +212,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             if (client.getState() == OpenVpnClientState.State.ACTIVE) {
                 // mark VPN traffic
                 List<String> clientIps = ipAddressFilter.getDevicesIps(client.getDevices());
-                Rule markClientRoute = new Rule().mark(client.getRoute());
+                Rule markClientRoute = new Rule().setMark(client.getRoute());
                 clientIps.forEach(ip -> vpnRoutingChain.rule(new Rule(markClientRoute).sourceIp(ip)));
             }
         }

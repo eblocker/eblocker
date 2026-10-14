@@ -11,6 +11,7 @@ import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemServiceIndex;
 import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.http.service.ShutdownService;
 import org.eblocker.server.http.service.SystemStatusService;
 import org.junit.jupiter.api.BeforeEach;
@@ -152,6 +153,7 @@ class EblockerServerAppTest {
             bind(DataSource.class).toInstance(mock(DataSource.class));
             bind(RedisBackupService.class).toInstance(mock(RedisBackupService.class));
             bind(JedisConsistencyCheck.class).toInstance(mock(JedisConsistencyCheck.class));
+            bind(SystemRequirements.class).toInstance(mock(SystemRequirements.class));
         }
     }
 }

@@ -47,14 +47,12 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     vm.locale = settings.locale();
 
     vm.$onInit = function() {
-        vm.askForSerialNumber = vm.setupWizardInfo.needSerialNumber;
-        vm.serialSample = vm.setupWizardInfo.serialNumberExample;
-        // configuredSettings.serial = !vm.setupWizardInfo.needSerialNumber;
         vm.registrationAvailable = vm.setupWizardInfo.registrationAvailable;
 
         vm.registrationUserData = {
             licenseKey: 'FAMLFT-OPENSOURCE'
         };
+        vm.registrationUserData.emailAddress = ''; // removed since eOS 4
         setTosContent();
     };
 
@@ -176,40 +174,11 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
     // TAB DEVICE
     vm.submitDeviceForm = submitDeviceForm;
     function submitDeviceForm() {
-        if (vm.askForSerialNumber) {
-            checkSerialNumber(vm.registrationUserData.serialNumber);
-        } else if (vm.isTosValid() || vm.registrationAvailable) {
+        if (vm.isTosValid() || vm.registrationAvailable) {
             vm.nextStep();
         } else {
             vm.registrationUserData.fallback = true;
             registerWithInformation();
-        }
-    }
-
-    function checkSerialNumber(serialNumber) {
-        vm.deviceForm.serialNumber.$setValidity('wrongFormat', true);
-        if(serialNumber !== undefined) {
-            SetupService.checkSerialNumber(serialNumber).then(function success(response) {
-                const result = response.data;
-                if(!result){
-                    vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
-                }
-                else{
-                    vm.deviceForm.serialNumber.$setValidity('wrongFormat', true);
-                    if (vm.isTosValid() || vm.registrationAvailable) {
-                        vm.nextStep();
-                    } else {
-                        vm.registrationUserData.fallback = true;
-                        registerWithInformation();
-                    }
-                }
-                return result;
-            }, function error() {
-                vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
-            });
-        }
-        else{
-            vm.deviceForm.serialNumber.$setValidity('wrongFormat', false);
         }
     }
     // END TAB DEVICE
@@ -238,26 +207,9 @@ function Controller(logger, StateService, STATES, $translate, settings, Timezone
         return string !== undefined && string !== '';
     }
 
-    function validateEmailAddresses(emailAddress) {
-        if(!isStringNotEmpty(emailAddress)){
-            $translate('ADMINCONSOLE.ACTIVATION.TAB.LICENSE.ERROR_REGISTER_EMAIL_MISSING').then(function(translation) {
-                vm.errorString = translation;
-            });
-            return false;
-        }
-
-        return true;
-    }
-
     function registerWithInformation() {
         vm.registering = true;
         vm.licenseForm.licenseKey.$setValidity('invalidKey', true);
-
-        //check the emailAddress
-        if (!vm.registrationUserData.fallback && !validateEmailAddresses(vm.registrationUserData.emailAddress)) {
-            vm.registering = false;
-            return;
-        }
 
         if (angular.isObject(vm.tos)) {
             vm.registrationUserData.tosVersion = vm.tos.licenseVersion;

@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DeviceControllerImpl implements DeviceController {
@@ -238,7 +239,9 @@ public class DeviceControllerImpl implements DeviceController {
         if ((current.isEnabled() != device.isEnabled())
                 || (current.isSslEnabled() != device.isSslEnabled())
                 // If the DHCP config needs rewriting:
-                || (current.isIpAddressFixed() != device.isIpAddressFixed())) {
+                || (current.isIpAddressFixed() != device.isIpAddressFixed())
+                || !Objects.equals(current.getStaticIpAddress(), device.getStaticIpAddress())
+                || !Objects.equals(current.getStaticIpV6Address(), device.getStaticIpV6Address())) {
             networkStateMachine.deviceStateChanged(device); //adapt firewall and also heal device if in automode
         }
 

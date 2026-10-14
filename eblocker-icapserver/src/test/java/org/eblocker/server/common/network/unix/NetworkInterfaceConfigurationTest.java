@@ -25,8 +25,7 @@ public class NetworkInterfaceConfigurationTest extends ConfigurationTestBase {
 
     @Before
     public void setUp() {
-        configuration = new NetworkInterfaceConfiguration(getOutFilePath(), "eth0", "169.254.94.109", "255.255.0.0",
-                "169.254.7.53/32", "255.255.0.0");
+        configuration = new NetworkInterfaceConfiguration(getOutFilePath(), "eth0", "169.254.94.109", "255.255.0.0");
     }
 
     @Test

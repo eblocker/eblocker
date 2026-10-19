@@ -18,6 +18,9 @@
 
 ERROR_TAG="eBlocker_Update_Error"
 
+# For diagnostics report:
+echo "Starting eBlocker updates at: $(date)"
+
 # Minimal path needed for apt-get
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 

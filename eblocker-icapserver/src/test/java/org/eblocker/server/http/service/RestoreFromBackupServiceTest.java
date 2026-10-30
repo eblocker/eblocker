@@ -67,9 +67,7 @@ class RestoreFromBackupServiceTest extends BackupProviderTestBase {
 
     @Test
     void testInitializeWithBackup() throws IOException {
-        byte[] backupData = "Backup data".getBytes(StandardCharsets.UTF_8);
-        Path backupFile = tmpDir.resolve(backupFilename);
-        Files.write(backupFile, backupData);
+        Path backupFile = writeBackup("Backup data");
 
         NetworkConfiguration networkConfiguration = new NetworkConfiguration();
         networkConfiguration.setIpAddress("192.168.0.2");
@@ -88,6 +86,15 @@ class RestoreFromBackupServiceTest extends BackupProviderTestBase {
     }
 
     @Test
+    void testBackupWithoutNetworkConfiguration() throws IOException {
+        Path backupFile = writeBackup("Backup data");
+        Mockito.when(restoreBackupReader.readNetworkConfiguration(backupFile)).thenReturn(null);
+        service.initialize();
+        // Backup without network configuration is ignored:
+        assertFalse(service.isBackupAvailable());
+    }
+
+    @Test
     void testCancelImport() throws IOException, InterruptedException {
         service.cancelImport();
         assertFalse(service.isBackupAvailable());
@@ -96,7 +103,6 @@ class RestoreFromBackupServiceTest extends BackupProviderTestBase {
 
     @Test
     void testRenameBackup() throws IOException {
-        Path sourceFile = tmpDir.resolve(backupFilename);
         String targetFilename = "eblocker-config-imported-2026-10-08.eblcfg";
         Path targetFile = tmpDir.resolve(targetFilename);
         Mockito.when(backupFileService.getTimestampedFilename("imported")).thenReturn(targetFilename);
@@ -105,9 +111,16 @@ class RestoreFromBackupServiceTest extends BackupProviderTestBase {
         assertFalse(service.renameBackup(true));
 
         // now with source file:
-        Files.write(sourceFile, "backup data".getBytes(StandardCharsets.UTF_8));
+        writeBackup("backup data");
         assertFalse(Files.exists(targetFile));
         assertTrue(service.renameBackup(true));
         assertTrue(Files.exists(targetFile));
+    }
+
+    private Path writeBackup(String backupData) throws IOException {
+        byte[] data = backupData.getBytes(StandardCharsets.UTF_8);
+        Path backupFile = tmpDir.resolve(backupFilename);
+        Files.write(backupFile, data);
+        return backupFile;
     }
 }

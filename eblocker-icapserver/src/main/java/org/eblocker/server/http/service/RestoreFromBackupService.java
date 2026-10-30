@@ -80,16 +80,24 @@ public class RestoreFromBackupService {
         }
 
         if (backupAvailable) {
+            boolean networkRestoreSuccess = false;
             try {
                 // Restore network configuration
                 NetworkConfiguration networkConfiguration = restoreBackupReader.readNetworkConfiguration(backupPath);
                 if (networkConfiguration != null) {
                     networkStateMachine.updateConfiguration(networkConfiguration);
+                    networkRestoreSuccess = true;
                 } else {
                     LOG.error("Could not read network configuration from backup file {}", backupPath);
                 }
             } catch (IOException e) {
                 LOG.error("Could not import network configuration from backup file {}", backupPath, e);
+            }
+
+            if (! networkRestoreSuccess) {
+                LOG.warn("Network configuration could not be imported (older version?). Ignoring backup.");
+                backupAvailable = false;
+                return;
             }
 
             try {

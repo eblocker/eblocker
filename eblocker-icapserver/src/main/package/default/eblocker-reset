@@ -1,7 +1,10 @@
 # Default configuration for eblocker-reset
 
 MOUNT_DIR="/opt/eblocker-icap/mnt"
+EBLOCKER_BACKUP_FILE="$MOUNT_DIR/eblocker-config.eblcfg"
 EBLOCKER_RESET_FILE="$MOUNT_DIR/eblocker-factory-reset.txt"
+EBLOCKER_RESET_LOG="$MOUNT_DIR/eblocker-factory-reset-log.txt"
 EBLOCKER_UPDATERECOVERY_FILE="$MOUNT_DIR/eblocker-update-recovery.txt"
+EBLOCKER_UPDATERECOVERY_LOG="$MOUNT_DIR/eblocker-update-recovery-log.txt"
 EBLOCKER_STATUS_FILE="$MOUNT_DIR/eblocker-status.html"
 LOGGING_CONSOLE="/dev/tty0"

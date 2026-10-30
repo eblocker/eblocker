@@ -26,24 +26,27 @@ console_log() {
 }
 
 perform_factory_reset() {
-    /opt/eblocker-icap/scripts/factory_reset
+    console_log "*** PERFORMING FACTORY RESET ***"
+    mv "$EBLOCKER_RESET_FILE" "$EBLOCKER_RESET_LOG"
+    date >> $EBLOCKER_RESET_LOG
+    echo "Starting eBlocker factory reset." >> $EBLOCKER_RESET_LOG
 
-    date >> $EBLOCKER_RESET_FILE
-    echo "eBlocker factory reset done." >> $EBLOCKER_RESET_FILE
+    /opt/eblocker-icap/scripts/factory_reset
 }
 
 perform_update_recovery() {
     console_log "*** PERFORMING UPDATE RECOVERY ***"
+    mv "$EBLOCKER_UPDATERECOVERY_FILE" "$EBLOCKER_UPDATERECOVERY_LOG"
+    date >> $EBLOCKER_UPDATERECOVERY_LOG
 
-    date >> $EBLOCKER_UPDATERECOVERY_FILE
-    dpkg --force-confold --force-confdef --configure -a &>> $EBLOCKER_UPDATERECOVERY_FILE
+    dpkg --force-confold --force-confdef --configure -a &>> $EBLOCKER_UPDATERECOVERY_LOG
     RETVAL=$?
 
     if [ $RETVAL -eq 0 ]
     then
-        echo "Update recovery - Finished without error." >> $EBLOCKER_UPDATERECOVERY_FILE
+        echo "Update recovery - Finished without error." >> $EBLOCKER_UPDATERECOVERY_LOG
     else
-        echo "Update recovery - Finished with error ($RETVAL)." >> $EBLOCKER_UPDATERECOVERY_FILE
+        echo "Update recovery - Finished with error ($RETVAL)." >> $EBLOCKER_UPDATERECOVERY_LOG
     fi
     poweroff
 }
@@ -103,7 +106,9 @@ if ! /opt/eblocker-icap/scripts/mountpoint_wait $MOUNT_DIR 3000; then
 fi
 echo "eBlocker waiting for USB drives: done"
 
-if [ -e $EBLOCKER_RESET_FILE ]; then
+if [ -e $EBLOCKER_BACKUP_FILE ]; then
+    echo "Backup file found. Skipping other eblocker-reset functions."
+elif [ -e $EBLOCKER_RESET_FILE ]; then
 	  perform_factory_reset
 elif [ -e $EBLOCKER_UPDATERECOVERY_FILE ]; then
     perform_update_recovery

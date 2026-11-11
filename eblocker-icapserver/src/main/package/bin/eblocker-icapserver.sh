@@ -21,17 +21,17 @@ LOG4JCONF=file://$BASEDIR/conf/icapserver-log4j2.xml
 
 SYSTEM_MEMORY_IN_MB=$(free -m | grep 'Mem:'  | awk '{print $2}')
 
-if [ "$SYSTEM_MEMORY_IN_MB" -gt 1500 ]; then
-    MAX_JVM_HEAP_SIZE_IN_MB=768
-    MAX_DIRECT_MEMORY_IN_MB=200
-    NUM_ARENAS=8
-else
-    MAX_JVM_HEAP_SIZE_IN_MB=384
-    MAX_DIRECT_MEMORY_IN_MB=100
-    NUM_ARENAS=4
+MAX_JVM_HEAP_SIZE_IN_MB=500
+MAX_DIRECT_MEMORY_IN_MB=200
+NUM_ARENAS=8
+
+# On large RAM systems, give the ICAP server an additional quarter of the RAM that exceeds 2 GB:
+if [ "$SYSTEM_MEMORY_IN_MB" -gt 2500 ]; then
+    MAX_JVM_HEAP_SIZE_IN_MB="$(( (SYSTEM_MEMORY_IN_MB - 2000) / 4 + 500))"
 fi
 
 MEMORY_SETTINGS="\
+-XX:+ExitOnOutOfMemoryError \
 -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m \
 -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m \
 -Dio.netty.allocator.numDirectArenas=${NUM_ARENAS} \

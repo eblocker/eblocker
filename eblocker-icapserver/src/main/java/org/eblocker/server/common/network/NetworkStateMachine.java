@@ -180,7 +180,7 @@ public class NetworkStateMachine {
 
         dataSource.setIsExpertMode(networkConfiguration.isExpertMode());
 
-        log.error("dhcp lease time: {}", networkConfiguration.getDhcpLeaseTime());
+        log.debug("dhcp lease time: {}", networkConfiguration.getDhcpLeaseTime());
         if (networkConfiguration.isExpertMode()) {
             dataSource.setDhcpLeaseTime(networkConfiguration.getDhcpLeaseTime());
         } else {

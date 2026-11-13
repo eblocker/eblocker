@@ -301,7 +301,7 @@ public class UsersBackupProvider extends BackupProvider {
     }
 
     private void deleteOrResetDevices(List<Device> devices) {
-        LOG.warn("Delete or reset: {}", devices);
+        LOG.debug("Delete or reset: {}", devices);
         for (Device device : devices) {
             deviceService.delete(device);
         }

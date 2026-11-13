@@ -16,9 +16,14 @@
  */
 package org.eblocker.server.common.blocker.parser;
 
+import com.google.common.base.Charsets;
+import org.eblocker.server.common.blacklist.SingleFileFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,5 +50,29 @@ public class SquidAclParserTest {
                 .parse(lines.stream())
                 .collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList("is-ok.com", "häagen-dazs.com", "www.eblocker.com", "google.com", "etracker.com"), parsedDomains);
+    }
+
+    @Test
+    public void publicSuffixIsNotAUsableBlockEntry() {
+        List<String> lines = Arrays.asList("com", "co.uk", ".com", "example.com", ".sub.example.co.uk");
+        List<String> parsedDomains = new SquidAclParser().parse(lines.stream()).collect(Collectors.toList());
+        Assert.assertEquals(Arrays.asList("example.com", "sub.example.co.uk"), parsedDomains);
+    }
+
+    @Test
+    public void parsedDomainsCanBeCompiledAndQueried() throws IOException {
+        Path output = Files.createTempFile("domains-filter", ".bin");
+        Files.delete(output);
+        try {
+            SingleFileFilter filter = new SingleFileFilter(Charsets.UTF_8, output, 1, "domains-test",
+                    () -> new SquidAclParser().parse(Arrays.asList(
+                            "com", ".ads.example.com", "tracker.example.com", "||unrelated.example.com^").stream()));
+            Assert.assertTrue(filter.isBlocked("ads.example.com").isBlocked());
+            Assert.assertTrue(filter.isBlocked("tracker.example.com").isBlocked());
+            Assert.assertFalse(filter.isBlocked("unrelated.example.com").isBlocked());
+            Assert.assertFalse(filter.isBlocked("example.com").isBlocked());
+        } finally {
+            Files.deleteIfExists(output);
+        }
     }
 }

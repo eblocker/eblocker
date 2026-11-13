@@ -24,6 +24,7 @@ import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
 import org.eblocker.server.icap.filter.content.ContentFilterManager;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
@@ -145,8 +146,8 @@ public class PatternBlockerService {
         }
     }
 
-    void updatePatternBlocker() {
-        filterManager.update();
+    void updatePatternBlocker(int id) throws IOException {
+        filterManager.refreshCustomFilter(id);
     }
 
     void deleteFilter(Integer filterId) {

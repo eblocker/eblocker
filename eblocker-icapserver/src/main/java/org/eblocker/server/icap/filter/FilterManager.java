@@ -146,7 +146,12 @@ public class FilterManager {
                 configuration.getRuleFilters(),
                 configuration.isEnabled());
 
-        FilterStore store = createFilterStore(addedConfiguration);
+        FilterStore store;
+        try {
+            store = createFilterStoreStrict(addedConfiguration);
+        } catch (IOException e) {
+            throw new UncheckedIOException("failed to load custom filter " + addedConfiguration.getName(), e);
+        }
 
         List<FilterStoreConfiguration> newConfigurations = new ArrayList<>(configurations);
         newConfigurations.add(addedConfiguration);
@@ -260,6 +265,23 @@ public class FilterManager {
         }
     }
 
+    /** Refresh exactly one custom list, reporting load and cache errors to its update task. */
+    public synchronized void refreshCustomFilter(int id) throws IOException {
+        FilterStoreConfiguration configuration = getFilterStoreConfigurationById(id);
+        if (configuration == null || configuration.isBuiltin()) {
+            throw new IOException("custom filter " + id + " does not exist");
+        }
+        if (cache.storeById.get(id) == null) {
+            throw new IOException("filter store " + id + " is unavailable");
+        }
+        List<EblockerResource> resources = requireResources(configuration);
+        List<Filter> filters = filterRules(parseFilterDefinitions(getParser(configuration.getFormat()), resources), configuration.getRuleFilters());
+        FilterStore replacement = new FilterStore(createContainer(configuration));
+        replacement.update(filters);
+        saveStrict(replacement, configuration);
+        updateCache(configurations, c -> c.getId() == id ? replacement : cache.storeById.get(c.getId()));
+    }
+
     private synchronized void save() {
         for (FilterStoreConfiguration configuration : configurations) {
             FilterStore filterStore = cache.storeById.get(configuration.getId());
@@ -338,16 +360,25 @@ public class FilterManager {
     }
 
     private void save(FilterStore filterStore, FilterStoreConfiguration configuration) {
-        Path path = getPath(configuration);
         try {
-            Path tempFile = Files.createTempFile(tmpDir, "eblocker-", ".tmp");
+            saveStrict(filterStore, configuration);
+        } catch (Exception e) {
+            log.error("Failed to save id: {} name: {}", configuration.getId(), configuration.getName(), e);
+        }
+    }
+
+    private void saveStrict(FilterStore filterStore, FilterStoreConfiguration configuration) throws IOException {
+        Path tempFile = Files.createTempFile(tmpDir, "eblocker-", ".tmp");
+        try {
             try (OutputStream out = Files.newOutputStream(tempFile)) {
                 CryptoService cryptoService = CryptoServiceFactory.getInstance().setKey(systemKey.get()).build();
                 JSONCryptoHandler.encrypt(filterStore, cryptoService, out);
             }
-            Files.move(tempFile, path, StandardCopyOption.ATOMIC_MOVE);
-        } catch (Exception e) {
-            log.error("Failed to save id: {} name: {}", configuration.getId(), configuration.getName(), e);
+            Files.move(tempFile, getPath(configuration), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (CryptoException e) {
+            throw new IOException("failed to encrypt filter cache " + configuration.getId(), e);
+        } finally {
+            Files.deleteIfExists(tempFile);
         }
     }
 
@@ -362,6 +393,34 @@ public class FilterManager {
     }
 
     private FilterStore createFilterStore(FilterStoreConfiguration configuration) {
+        FilterStore filterStore = new FilterStore(createContainer(configuration));
+        update(filterStore, configuration);
+        save(filterStore, configuration);
+        return filterStore;
+    }
+
+    private FilterStore createFilterStoreStrict(FilterStoreConfiguration configuration) throws IOException {
+        FilterStore filterStore = new FilterStore(createContainer(configuration));
+        List<EblockerResource> resources = requireResources(configuration);
+        List<Filter> filters = filterRules(parseFilterDefinitions(getParser(configuration.getFormat()), resources), configuration.getRuleFilters());
+        filterStore.update(filters);
+        saveStrict(filterStore, configuration);
+        return filterStore;
+    }
+
+    private List<EblockerResource> requireResources(FilterStoreConfiguration configuration) throws IOException {
+        String[] names = configuration.getResources();
+        if (names == null || names.length == 0) {
+            throw new IOException("filter " + configuration.getId() + " has no resources");
+        }
+        List<EblockerResource> resources = filterResources(names);
+        if (resources.size() != names.length) {
+            throw new IOException("filter " + configuration.getId() + " has missing resources");
+        }
+        return resources;
+    }
+
+    private FilterDomainContainer createContainer(FilterStoreConfiguration configuration) {
         FilterDomainContainer container;
         switch (configuration.getLearningMode()) {
             case ASYNCHRONOUS:
@@ -373,10 +432,7 @@ public class FilterManager {
             default:
                 container = new NotLearningFilter();
         }
-        FilterStore filterStore = new FilterStore(container);
-        update(filterStore, configuration);
-        save(filterStore, configuration);
-        return filterStore;
+        return container;
     }
 
     private void update(FilterStore filterStore, FilterStoreConfiguration configuration) {

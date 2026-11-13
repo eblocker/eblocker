@@ -62,6 +62,7 @@ public class UpdateTask implements Runnable {
     private final PatternBlockerService patternBlockerService;
     private final HttpClient httpClient;
     private final int id;
+    private final BlockerListValidator listValidator = new BlockerListValidator();
 
     @Inject
     public UpdateTask(DataSource dataSource,
@@ -83,6 +84,12 @@ public class UpdateTask implements Runnable {
      */
     @Override
     public void run() {
+        synchronized (UpdateTask.class) {
+            runSingleUpdate();
+        }
+    }
+
+    private void runSingleUpdate() {
         log.info("updating {}", id);
         ExternalDefinition definition = dataSource.get(ExternalDefinition.class, id);
         if (definition == null) {
@@ -96,9 +103,26 @@ public class UpdateTask implements Runnable {
         dataSource.save(definition, definition.getId());
 
         Path path = Paths.get(definition.getFile());
+        Path previousFile = null;
+        boolean downloadedFileInstalled = false;
+        boolean rollbackFailed = false;
         try {
             if (definition.getUrl() != null) {
-                download(definition.getUrl(), path);
+                Path staged = Files.createTempFile(path.getParent(), BlockerService.class.getSimpleName(), ".tmp");
+                try {
+                    download(definition, staged);
+                    listValidator.validate(definition, staged);
+                    if (Files.exists(path)) {
+                        previousFile = Files.createTempFile(path.getParent(), "eblocker-previous-list-", ".tmp");
+                        Files.copy(path, previousFile, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    Files.move(staged, path, StandardCopyOption.REPLACE_EXISTING);
+                    downloadedFileInstalled = true;
+                } finally {
+                    Files.deleteIfExists(staged);
+                }
+            } else {
+                listValidator.validate(definition, path);
             }
             if (newBlocker) {
                 int referenceId;
@@ -112,29 +136,56 @@ public class UpdateTask implements Runnable {
                 if (definition.getType() == Type.DOMAIN) {
                     domainBlockerService.updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
                 } else {
-                    patternBlockerService.updatePatternBlocker();
+                    patternBlockerService.updatePatternBlocker(definition.getReferenceId());
                 }
             }
             definition.setUpdateStatus(UpdateStatus.READY);
             definition.setUpdateError(null);
             dataSource.save(definition, definition.getId());
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
+            if (downloadedFileInstalled) {
+                try {
+                    if (previousFile != null) {
+                        Files.move(previousFile, path, StandardCopyOption.REPLACE_EXISTING);
+                        previousFile = null;
+                    } else {
+                        Files.deleteIfExists(path);
+                    }
+                    if (!newBlocker) {
+                        if (definition.getType() == Type.PATTERN) {
+                            patternBlockerService.updatePatternBlocker(definition.getReferenceId());
+                        } else {
+                            domainBlockerService.updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
+                        }
+                    }
+                } catch (IOException | RuntimeException rollbackError) {
+                    rollbackFailed = true;
+                    e.addSuppressed(rollbackError);
+                    log.error("rollback of list {} failed; list path={}, temporary backup={}", id, path, previousFile, rollbackError);
+                }
+            }
             log.error("failed to update {}", id, e);
             definition.setUpdateStatus(newBlocker ? UpdateStatus.INITIAL_UPDATE_FAILED : UpdateStatus.UPDATE_FAILED);
             definition.setUpdateError(e.getMessage());
             dataSource.save(definition, definition.getId());
+        } finally {
+            if (previousFile != null && !rollbackFailed) {
+                try {
+                    Files.deleteIfExists(previousFile);
+                } catch (IOException e) {
+                    log.warn("Could not remove temporary backup for list {}", id, e);
+                }
+            }
         }
     }
 
-    private void download(String url, Path path) throws IOException {
-        Path tempPath = Files.createTempFile(BlockerService.class.getSimpleName(), ".tmp");
-        try (InputStream in = httpClient.download(url)) {
-            try (OutputStream out = Files.newOutputStream(tempPath)) {
-                ByteStreams.copy(in, out);
+    private void download(ExternalDefinition definition, Path path) throws IOException {
+        try (InputStream in = httpClient.download(definition.getUrl())) {
+            try (OutputStream out = Files.newOutputStream(path)) {
+                long limit = (definition.getType() == Type.PATTERN
+                        ? BlockerListValidator.MAX_PATTERN_BYTES : BlockerListValidator.MAX_DOMAIN_BYTES) + 1;
+                ByteStreams.copy(ByteStreams.limit(in, limit), out);
             }
-            Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING);
-        } finally {
-            Files.deleteIfExists(tempPath);
         }
     }
 

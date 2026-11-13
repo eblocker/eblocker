@@ -43,6 +43,11 @@ public class EasyListLineParser implements FilterLineParser {
                     String.join("|", BooleanOption.allOptions()) +
                     ").*"
     );
+    // uBlock and AdGuard lists may use options that this parser does not implement.
+    // Treat an option-looking suffix as options even if its first token is unknown.
+    private static final Pattern OPTION_LIST_PATTERN = Pattern.compile(
+            "~?[a-zA-Z0-9][a-zA-Z0-9_-]*(?:=[^,]*)?(?:,~?[a-zA-Z0-9][a-zA-Z0-9_-]*(?:=[^,]*)?)*"
+    );
 
     private static final List<BooleanOption> UNSUPPORTED_OPTIONS = List.of(
             BooleanOption.WEBRTC,
@@ -87,7 +92,7 @@ public class EasyListLineParser implements FilterLineParser {
     }
 
     private Filter doParse() {
-        if (definition == null) {
+        if (definition == null || definition.isBlank()) {
             return null;
         }
 
@@ -99,8 +104,14 @@ public class EasyListLineParser implements FilterLineParser {
         if (definition.contains("$")) {
             int dollar = definition.lastIndexOf('$');
             String potentialOptions = definition.substring(dollar + 1);
-            if (OPTIONS_PATTERN.matcher(potentialOptions).matches()) {
+            if (OPTIONS_PATTERN.matcher(potentialOptions).matches() || OPTION_LIST_PATTERN.matcher(potentialOptions).matches()) {
                 options = potentialOptions.split(",");
+                for (String option : options) {
+                    if (!isSupportedOption(option)) {
+                        log.info("EASYLIST option {} unsupported, dropping rule: {}", option, definition);
+                        return null;
+                    }
+                }
                 parseOptions();
                 definitionWithoutOptions = definition.substring(0, dollar);
             }
@@ -140,6 +151,12 @@ public class EasyListLineParser implements FilterLineParser {
         type = ruleType.getType();
 
         normalizeMatchString();
+        // An empty match string would match every URL (String.contains("")),
+        // including rules such as "*" and "*$document" after normalization.
+        if (!domainOnly && (matchString == null || matchString.isEmpty())) {
+            log.warn("Ignoring EASYLIST rule with empty match string: [{}]", definition);
+            return null;
+        }
         for (BooleanOption unsupportedOption: UNSUPPORTED_OPTIONS) {
             if (Boolean.TRUE.equals(booleanOptions.get(unsupportedOption))) {
                 log.info("filtering option {} unsupported, dropping rule: {}", unsupportedOption, definition);
@@ -280,6 +297,18 @@ public class EasyListLineParser implements FilterLineParser {
                 matchString = matchString.replaceAll("\\^", "([^a-zA-Z0-9_.%-]|\\$)");
             }
         }
+    }
+
+    private boolean isSupportedOption(String option) {
+        if (option.startsWith("domain=") || option.startsWith("csp=")) {
+            return option.indexOf('=') < option.length() - 1;
+        }
+        for (BooleanOption booleanOption : BooleanOption.values()) {
+            if (option.equals(booleanOption.option()) || option.equals("~" + booleanOption.option())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void parseOptions() {

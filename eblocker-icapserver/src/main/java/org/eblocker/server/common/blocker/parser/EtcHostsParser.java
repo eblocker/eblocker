@@ -16,13 +16,13 @@
  */
 package org.eblocker.server.common.blocker.parser;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.net.InetAddresses;
+import com.google.common.net.InternetDomainName;
+
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class EtcHostsParser implements DomainParser {
-
-    private static final Pattern PATTERN = Pattern.compile("^\\d+.\\d+.\\d+.\\d+\\s+(.*)$");
 
     @Override
     public Stream<String> parse(Stream<String> lines) {
@@ -30,10 +30,12 @@ public class EtcHostsParser implements DomainParser {
                 .map(line -> line.replaceAll("#.*", ""))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
-                .map(PATTERN::matcher)
-                .filter(Matcher::matches)
-                .map(m -> m.group(1))
-                .filter(domain -> !"localhost".equalsIgnoreCase(domain));
+                .map(line -> line.split("\\s+"))
+                .filter(tokens -> tokens.length > 1 && InetAddresses.isInetAddress(tokens[0]))
+                .flatMap(tokens -> Arrays.stream(tokens).skip(1))
+                .filter(domain -> !"localhost".equalsIgnoreCase(domain))
+                .filter(InternetDomainName::isValid)
+                .filter(domain -> !InternetDomainName.from(domain).isPublicSuffix());
     }
 
 }

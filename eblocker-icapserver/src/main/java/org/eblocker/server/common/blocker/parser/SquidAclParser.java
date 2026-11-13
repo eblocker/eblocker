@@ -30,6 +30,8 @@ public class SquidAclParser implements DomainParser {
                 .filter(line -> !line.isEmpty())
                 .filter(line -> !line.startsWith("#"))
                 .map(line -> line.startsWith(".") ? line.substring(1) : line)
-                .filter(InternetDomainName::isValid);
+                .filter(InternetDomainName::isValid)
+                // A public suffix such as "com" would block an entire TLD.
+                .filter(domain -> !InternetDomainName.from(domain).isPublicSuffix());
     }
 }

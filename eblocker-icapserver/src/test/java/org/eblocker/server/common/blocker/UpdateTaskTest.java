@@ -270,6 +270,54 @@ public class UpdateTaskTest {
     }
 
     @Test
+    public void testChangePatternFormatUpdatesStoredParser() throws IOException {
+        Files.writeString(sourceFile, "||old.example^\n");
+        Mockito.when(httpClient.download("http://filter.org/urls.txt"))
+                .thenReturn(new ByteArrayInputStream("new.example/path\n".getBytes(StandardCharsets.UTF_8)));
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS,
+                Type.PATTERN, 235, Format.URLS, "http://filter.org/urls.txt", UpdateInterval.DAILY,
+                UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+        Mockito.when(filterManager.getFilterStoreConfigurationById(235)).thenReturn(new FilterStoreConfiguration(
+                235, "test", org.eblocker.server.icap.filter.Category.ADS, false, 0,
+                new String[]{sourceFile.toString()}, FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST,
+                false, new String[0], true));
+        Mockito.when(filterManager.changeCustomFilterFormat(235, FilterDefinitionFormat.URL)).thenReturn(true);
+
+        updateTask.run();
+
+        Mockito.verify(filterManager).changeCustomFilterFormat(235, FilterDefinitionFormat.URL);
+        Mockito.verify(filterManager, Mockito.never()).update();
+        Assert.assertEquals("new.example/path\n", Files.readString(sourceFile));
+        Assert.assertEquals(UpdateStatus.READY, savedDefinitions.get(1).getUpdateStatus());
+        Assert.assertEquals(Format.URLS, savedDefinitions.get(1).getFormat());
+    }
+
+    @Test
+    public void testFailedFormatChangeRestoresSourceAndVisibleFormat() throws IOException {
+        Files.writeString(sourceFile, "||old.example^\n");
+        Mockito.when(httpClient.download("http://filter.org/urls.txt"))
+                .thenReturn(new ByteArrayInputStream("new.example/path\n".getBytes(StandardCharsets.UTF_8)));
+        ExternalDefinition definition = new ExternalDefinition(0, "test", "description", Category.ADS,
+                Type.PATTERN, 235, Format.URLS, "http://filter.org/urls.txt", UpdateInterval.DAILY,
+                UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+        Mockito.when(filterManager.getFilterStoreConfigurationById(235)).thenReturn(new FilterStoreConfiguration(
+                235, "test", org.eblocker.server.icap.filter.Category.ADS, false, 0,
+                new String[]{sourceFile.toString()}, FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST,
+                false, new String[0], true));
+        Mockito.when(filterManager.changeCustomFilterFormat(235, FilterDefinitionFormat.URL))
+                .thenThrow(new IOException("format rejected"));
+
+        updateTask.run();
+
+        Assert.assertEquals("||old.example^\n", Files.readString(sourceFile));
+        Assert.assertEquals(UpdateStatus.UPDATE_FAILED, savedDefinitions.get(1).getUpdateStatus());
+        Assert.assertEquals(Format.EASYLIST, savedDefinitions.get(1).getFormat());
+        Assert.assertEquals("format rejected", savedDefinitions.get(1).getUpdateError());
+    }
+
+    @Test
     public void testUpdateFailedBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/easylist.txt")).thenThrow(new IOException("download failed"));
 

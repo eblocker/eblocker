@@ -187,6 +187,101 @@ public class FilterManagerTest {
     }
 
     @Test
+    public void testChangeCustomFilterFormatInBothDirections() throws IOException {
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterManager manager = createManager();
+        FilterStoreConfiguration custom = new FilterStoreConfiguration(null, "format test", Category.ADS, false,
+                0, new String[]{resourceFile.toString()}, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(custom).getId();
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+
+        Files.writeString(resourceFile, "new.example/path\n");
+        Assert.assertTrue(manager.changeCustomFilterFormat(id, FilterDefinitionFormat.URL));
+        assertEquals(FilterDefinitionFormat.URL, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.NO_DECISION, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://new.example/path"));
+
+        Mockito.when(dataSource.getAll(FilterStoreConfiguration.class)).thenReturn(new ArrayList<>(List.of(
+                defaultConfigurations.get(0), manager.getFilterStoreConfigurationById(id))));
+        FilterManager restarted = new FilterManager(defaultConfigurationsPath.toString(), cacheDirectory.toString(),
+                FILE_SUFFIX, dataSource, objectMapper, systemKey, tempDirectory.toString());
+        restarted.init();
+        assertEquals(FilterDefinitionFormat.URL, restarted.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.BLOCK, decisionForURL(restarted.getFilter(Category.ADS), "http://new.example/path"));
+
+        Files.writeString(resourceFile, "||third.example^\n");
+        Assert.assertTrue(manager.changeCustomFilterFormat(id, FilterDefinitionFormat.EASYLIST));
+        assertEquals(FilterDefinitionFormat.EASYLIST, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.NO_DECISION, decisionForURL(manager.getFilter(Category.ADS), "http://new.example/path"));
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://third.example/"));
+        Mockito.verify(dataSource).save(Mockito.argThat((FilterStoreConfiguration c) -> c.getFormat() == FilterDefinitionFormat.URL), Mockito.eq(id));
+    }
+
+    @Test
+    public void testChangeCustomFilterFormatKeepsOldRulesWhenSourceIsMissing() throws IOException {
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterManager manager = createManager();
+        FilterStoreConfiguration custom = new FilterStoreConfiguration(null, "format test", Category.ADS, false,
+                0, new String[]{resourceFile.toString()}, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(custom).getId();
+        Files.delete(resourceFile);
+
+        try {
+            manager.changeCustomFilterFormat(id, FilterDefinitionFormat.URL);
+            Assert.fail("missing source must reject the format change");
+        } catch (IOException expected) {
+            Assert.assertTrue(expected.getMessage().contains("missing source"));
+        }
+        assertEquals(FilterDefinitionFormat.EASYLIST, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+    }
+
+    @Test
+    public void testChangeCustomFilterFormatRejectsEasyListSyntaxAsUrlList() throws IOException {
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterManager manager = createManager();
+        FilterStoreConfiguration custom = new FilterStoreConfiguration(null, "format test", Category.ADS, false,
+                0, new String[]{resourceFile.toString()}, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(custom).getId();
+
+        try {
+            manager.changeCustomFilterFormat(id, FilterDefinitionFormat.URL);
+            Assert.fail("EasyList syntax must not become a URL list");
+        } catch (IOException expected) {
+            Assert.assertTrue(expected.getMessage().contains("URL"));
+        }
+        assertEquals(FilterDefinitionFormat.EASYLIST, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+    }
+
+    @Test
+    public void testChangeCustomFilterFormatRollsBackFailedMetadataSave() throws IOException {
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterManager manager = createManager();
+        FilterStoreConfiguration custom = new FilterStoreConfiguration(null, "format test", Category.ADS, false,
+                0, new String[]{resourceFile.toString()}, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(custom).getId();
+        byte[] previousCache = Files.readAllBytes(cacheDirectory.resolve(id + FILE_SUFFIX));
+        Files.writeString(resourceFile, "new.example/path\n");
+        Mockito.when(dataSource.save(Mockito.argThat((FilterStoreConfiguration c) -> c.getFormat() == FilterDefinitionFormat.URL), Mockito.eq(id)))
+                .thenThrow(new IllegalStateException("metadata unavailable"));
+
+        try {
+            manager.changeCustomFilterFormat(id, FilterDefinitionFormat.URL);
+            Assert.fail("failed metadata write must reject the format change");
+        } catch (IOException expected) {
+            Assert.assertTrue(expected.getMessage().contains("failed to change"));
+        }
+        assertEquals(FilterDefinitionFormat.EASYLIST, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+        Assert.assertArrayEquals(previousCache, Files.readAllBytes(cacheDirectory.resolve(id + FILE_SUFFIX)));
+    }
+
+    @Test
     public void testRemoveFilter() throws IOException, CryptoException {
         // create single non-default config
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());

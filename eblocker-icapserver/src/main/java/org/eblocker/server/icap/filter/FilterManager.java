@@ -45,9 +45,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -192,6 +197,105 @@ public class FilterManager {
         configurations = updatedConfigurations;
         dataSource.save(updatedConfiguration, updatedConfiguration.getId());
         return updatedConfiguration;
+    }
+
+    /** Reparse a custom pattern list before changing its persisted format or active rules. */
+    public synchronized boolean changeCustomFilterFormat(int id, FilterDefinitionFormat format) throws IOException {
+        int index = indexOfConfiguration(id);
+        if (index < 0 || configurations.get(index).isBuiltin()) {
+            throw new IOException("custom filter " + id + " does not exist");
+        }
+        FilterStoreConfiguration previous = configurations.get(index);
+        if (previous.getFormat() == format) {
+            return false;
+        }
+        String[] names = previous.getResources();
+        List<EblockerResource> resources = filterResources(names);
+        if (names == null || names.length == 0 || resources.size() != names.length) {
+            throw new IOException("missing source for custom filter " + id);
+        }
+        if (format == FilterDefinitionFormat.URL) {
+            try {
+                validateUrlListSyntax(resources);
+            } catch (IOException e) {
+                throw new IOException("custom filter " + id + " (" + previous.getName() + "): " + e.getMessage(), e);
+            }
+        }
+
+        List<Filter> filters;
+        try {
+            filters = filterRules(parseFilterDefinitions(getParser(format), resources), previous.getRuleFilters());
+        } catch (RuntimeException e) {
+            throw new IOException("cannot parse custom filter " + id + " as " + format, e);
+        }
+        if (filters.isEmpty()) {
+            throw new IOException("custom filter " + id + " has no usable " + format + " rules");
+        }
+
+        FilterStore replacement = new FilterStore(createContainer(previous));
+        try {
+            replacement.update(filters);
+        } catch (RuntimeException e) {
+            throw new IOException("cannot build custom filter " + id + " as " + format, e);
+        }
+        FilterStoreConfiguration updated = new FilterStoreConfiguration(id, previous.getName(), previous.getCategory(),
+                false, previous.getVersion(), previous.getResources(), previous.getLearningMode(), format,
+                previous.isLearnForAllDomains(), previous.getRuleFilters(), previous.isEnabled());
+        Path cachePath = getPath(previous);
+        Path staged = Files.createTempFile(cacheDirectory, "eblocker-format-", ".tmp");
+        Path backup = null;
+        boolean replaced = false;
+        boolean configurationWriteAttempted = false;
+        try {
+            try (OutputStream out = Files.newOutputStream(staged)) {
+                CryptoService cryptoService = CryptoServiceFactory.getInstance().setKey(systemKey.get()).build();
+                JSONCryptoHandler.encrypt(replacement, cryptoService, out);
+            }
+            if (Files.exists(cachePath)) {
+                backup = Files.createTempFile(cacheDirectory, "eblocker-previous-format-", ".tmp");
+                Files.copy(cachePath, backup, StandardCopyOption.REPLACE_EXISTING);
+            }
+            Files.move(staged, cachePath, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            replaced = true;
+            List<FilterStoreConfiguration> next = new ArrayList<>(configurations);
+            next.set(index, updated);
+            configurationWriteAttempted = true;
+            dataSource.save(updated, id);
+            Map<Integer, FilterStore> stores = new HashMap<>(cache.storeById);
+            stores.put(id, replacement);
+            updateCache(next, c -> stores.get(c.getId()));
+            configurations = next;
+            return true;
+        } catch (IOException | CryptoException | RuntimeException failure) {
+            IOException reported = new IOException("failed to change custom filter " + id + " to " + format, failure);
+            if (replaced) {
+                try {
+                    if (backup != null) {
+                        Files.move(backup, cachePath, StandardCopyOption.REPLACE_EXISTING);
+                        backup = null;
+                    } else {
+                        Files.deleteIfExists(cachePath);
+                    }
+                } catch (IOException rollbackFailure) {
+                    reported.addSuppressed(rollbackFailure);
+                }
+            }
+            if (configurationWriteAttempted) {
+                try {
+                    dataSource.save(previous, id);
+                } catch (RuntimeException rollbackFailure) {
+                    reported.addSuppressed(rollbackFailure);
+                }
+            }
+            throw reported;
+        } finally {
+            try {
+                Files.deleteIfExists(staged);
+                if (backup != null) Files.deleteIfExists(backup);
+            } catch (IOException cleanupFailure) {
+                log.warn("could not remove temporary format-change file for filter {}", id, cleanupFailure);
+            }
+        }
     }
 
     public synchronized void removeFilter(int id) {
@@ -362,6 +466,13 @@ public class FilterManager {
     }
 
     private FilterStore createFilterStore(FilterStoreConfiguration configuration) {
+        FilterStore filterStore = new FilterStore(createContainer(configuration));
+        update(filterStore, configuration);
+        save(filterStore, configuration);
+        return filterStore;
+    }
+
+    private FilterDomainContainer createContainer(FilterStoreConfiguration configuration) {
         FilterDomainContainer container;
         switch (configuration.getLearningMode()) {
             case ASYNCHRONOUS:
@@ -373,10 +484,7 @@ public class FilterManager {
             default:
                 container = new NotLearningFilter();
         }
-        FilterStore filterStore = new FilterStore(container);
-        update(filterStore, configuration);
-        save(filterStore, configuration);
-        return filterStore;
+        return container;
     }
 
     private void update(FilterStore filterStore, FilterStoreConfiguration configuration) {
@@ -415,6 +523,35 @@ public class FilterManager {
                 .collect(Collectors.partitioningBy(ResourceHandler::exists));
         resourceExists.get(false).forEach(resource -> log.error("missing filter resource: {}", resource));
         return resourceExists.get(true);
+    }
+
+    private void validateUrlListSyntax(List<EblockerResource> resources) throws IOException {
+        for (EblockerResource resource : resources) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    ResourceHandler.getInputStream(resource), StandardCharsets.UTF_8))) {
+                String line;
+                long lineNumber = 0;
+                while ((line = reader.readLine()) != null) {
+                    lineNumber++;
+                    String value = line.trim();
+                    if (value.isEmpty() || value.startsWith("#")) {
+                        continue;
+                    }
+                    if (value.contains("://") && !value.startsWith("http://") && !value.startsWith("https://")) {
+                        throw new IOException("URL list contains a non-HTTP URL at line " + lineNumber);
+                    }
+                    try {
+                        URI uri = new URI(value.startsWith("http://") || value.startsWith("https://")
+                                ? value : "http://" + value);
+                        if (uri.getHost() == null || uri.getUserInfo() != null || uri.getFragment() != null) {
+                            throw new IOException("URL list contains a non-URL rule at line " + lineNumber);
+                        }
+                    } catch (URISyntaxException e) {
+                        throw new IOException("URL list contains a non-URL rule at line " + lineNumber, e);
+                    }
+                }
+            }
+        }
     }
 
     private List<Filter> filterRules(List<Filter> filters, String[] ruleFilters) {

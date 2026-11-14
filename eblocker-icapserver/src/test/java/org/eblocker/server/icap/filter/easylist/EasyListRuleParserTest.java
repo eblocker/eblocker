@@ -19,6 +19,7 @@ package org.eblocker.server.icap.filter.easylist;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.icap.filter.Filter;
+import org.eblocker.server.icap.filter.FilterParser;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.eblocker.server.icap.filter.TestContext;
 import org.junit.Assert;
@@ -26,8 +27,23 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 public class EasyListRuleParserTest {
     private final static Logger log = LoggerFactory.getLogger(EasyListRuleParserTest.class);
+
+    @Test
+    public void emptyOrWildcardOnlyRulesCannotBlockEveryUrl() {
+        EasyListLineParser parser = new EasyListLineParser();
+        Assert.assertNull(parser.parseLine(""));
+        Assert.assertNull(parser.parseLine("  "));
+        Assert.assertNull(parser.parseLine("*"));
+        Assert.assertNull(parser.parseLine("*$document"));
+        Assert.assertNotNull(parser.parseLine("||example.com^"));
+    }
 
     @Test
     public void test() {
@@ -289,6 +305,29 @@ public class EasyListRuleParserTest {
         Assert.assertTrue(new EasyListLineParser().parseLine("||example.org^$third-party").toString().contains("DOMAIN"));
         Assert.assertTrue(new EasyListLineParser().parseLine("@@||example.org^$third-party").toString().contains("DOMAIN"));
         Assert.assertTrue(new EasyListLineParser().parseLine("||example.org/path^").toString().contains("REGEX"));
+    }
+
+    @Test
+    public void unsupportedModernOptionsDoNotTurnIntoBroadBlockingRules() {
+        assertIgnore("||example.org^$doc");
+        assertIgnore("||example.org^$script,to=example.com");
+        assertIgnore("||example.org^$script,match-case");
+        assertIgnore("||example.org^$removeparam=utm_source");
+        assertIgnore("||example.org^$redirect=noopjs");
+        assertIgnore("||example.org^$3p");
+        Assert.assertNotNull(new EasyListLineParser().parseLine("||example.org^$script"));
+    }
+
+    @Test
+    public void importedListOnlyProducesUsableSupportedRules() throws IOException {
+        String source = "! list title\n||example.org^$doc\n||ads.example.org^\n";
+        List<Filter> filters = new FilterParser(EasyListLineParser::new)
+                .parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
+        Assert.assertEquals(1, filters.size());
+        Assert.assertEquals(Decision.BLOCK,
+                filters.get(0).filter(new TestContext("https://ads.example.org/banner", null, null)).getDecision());
+        Assert.assertEquals(Decision.NO_DECISION,
+                filters.get(0).filter(new TestContext("https://example.org/", null, null)).getDecision());
     }
 
     private void assertIgnore(String definition) {

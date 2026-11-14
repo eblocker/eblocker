@@ -38,4 +38,5 @@ MEMORY_SETTINGS="\
 -Dio.netty.allocator.numHeapArenas=${NUM_ARENAS}"
 
 # Run the ICAP server:
-exec java $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
+# Keep child process creation working when a JDK update replaces jspawnhelper.
+exec java -Djdk.lang.Process.launchMechanism=vfork $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar

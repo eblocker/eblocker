@@ -300,8 +300,9 @@ public class SquidConfigController {
 
     private synchronized void updateAcl(ConfigurableDeviceFilterAcl acl, Set<Device> devices) {
         acl.setDevices(devices);
-        acl.update();
-        reloadingService.tellSquidToReloadConfig();
+        if (acl.update()) {
+            reloadingService.tellSquidToReloadConfig();
+        }
     }
 
     /**

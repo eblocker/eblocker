@@ -17,6 +17,13 @@
 package org.eblocker.server.http.service;
 
 import org.eblocker.server.common.data.events.Events;
+import org.eblocker.server.common.data.DataSource;
+import org.eblocker.server.common.blocker.Category;
+import org.eblocker.server.common.blocker.ExternalDefinition;
+import org.eblocker.server.common.blocker.Format;
+import org.eblocker.server.common.blocker.Type;
+import org.eblocker.server.common.blocker.UpdateInterval;
+import org.eblocker.server.common.blocker.UpdateStatus;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.util.FileUtils;
 import org.eblocker.server.http.security.AppContext;
@@ -55,6 +62,7 @@ public class DiagnosticsReportServiceTest {
     private DiagnosticsReportService reportService;
     private Path tmpDir;
     private EventService eventService;
+    private DataSource dataSource;
 
     @Before
     public void setUp() throws IOException {
@@ -73,7 +81,88 @@ public class DiagnosticsReportServiceTest {
         eventService = Mockito.mock(EventService.class);
         Mockito.when(eventService.getEvents()).thenReturn(List.of(Events.serverIcapServerStarted()));
 
-        reportService = new DiagnosticsReportService(REPORT_FILE, REPORT_CREATE_SCRIPT, executorService, scriptRunner, tokenHandler, tmpDir.toString(), systemLogPath.toString(), eventService);
+        dataSource = Mockito.mock(DataSource.class);
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(List.of());
+        reportService = new DiagnosticsReportService(REPORT_FILE, REPORT_CREATE_SCRIPT, executorService, scriptRunner, tokenHandler, tmpDir.toString(), systemLogPath.toString(), eventService, dataSource);
+    }
+
+    @Test
+    public void customListDiagnosticsIdentifyUnsafeLinesWithoutExportingListContent() throws IOException {
+        Path listFile = tmpDir.resolve("test-list.txt");
+        Files.writeString(listFile, "! title\n\n*\n*$document\n||example.com^\n");
+        ExternalDefinition definition = new ExternalDefinition(1013, "Test list", "", Category.ADS,
+                Type.PATTERN, 1002, Format.EASYLIST, "https://example.com/private/list.txt",
+                UpdateInterval.DAILY, UpdateStatus.READY, null, listFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(List.of(definition));
+
+        reportService.startGeneration("10.11.12.13");
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        Mockito.verify(executorService).execute(runnableCaptor.capture());
+        runnableCaptor.getValue().run();
+
+        String diagnostic = readZipFile(reportService.getReport()).get(DiagnosticsReportService.CUSTOM_LISTS_ENTRY);
+        Assert.assertTrue(diagnostic.contains("1013\tTest list\tPATTERN\tADS\tEASYLIST\ttrue\tREADY"));
+        Assert.assertTrue(diagnostic.contains("\texample.com\t"));
+        Assert.assertTrue(diagnostic.contains("\t5\t1\t3\t0\t0\t2\tUNIVERSAL_RULE\t\n"));
+        Assert.assertFalse(diagnostic.contains("private/list.txt"));
+        Assert.assertFalse(diagnostic.contains("||example.com^"));
+    }
+
+    @Test
+    public void missingCustomListDoesNotBreakWholeReport() throws IOException {
+        ExternalDefinition definition = new ExternalDefinition(1013, "Missing list", "", Category.ADS,
+                Type.PATTERN, 1002, Format.EASYLIST, "https://example.com/private/list.txt",
+                UpdateInterval.DAILY, UpdateStatus.READY, null, tmpDir.resolve("missing.txt").toString(), true, "blacklist");
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(List.of(definition));
+
+        reportService.startGeneration("10.11.12.13");
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        Mockito.verify(executorService).execute(runnableCaptor.capture());
+        runnableCaptor.getValue().run();
+
+        Assert.assertEquals(DiagnosticsReportService.State.FINISHED, reportService.getStatus());
+        String diagnostic = readZipFile(reportService.getReport()).get(DiagnosticsReportService.CUSTOM_LISTS_ENTRY);
+        Assert.assertTrue(diagnostic.contains("INSPECTION_FAILED\tNoSuchFileException"));
+    }
+
+    @Test
+    public void commentOnlyListIsReportedAsHavingNoRules() throws IOException {
+        Path listFile = tmpDir.resolve("comments-only.txt");
+        Files.writeString(listFile, "! title\n# metadata\n\n");
+        ExternalDefinition definition = new ExternalDefinition(1013, "uBlock Annoyances", "", Category.TRACKER,
+                Type.PATTERN, 1002, Format.EASYLIST, "https://example.com/list.txt",
+                UpdateInterval.DAILY, UpdateStatus.READY, null, listFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(List.of(definition));
+
+        reportService.startGeneration("10.11.12.13");
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        Mockito.verify(executorService).execute(runnableCaptor.capture());
+        runnableCaptor.getValue().run();
+
+        String diagnostic = readZipFile(reportService.getReport()).get(DiagnosticsReportService.CUSTOM_LISTS_ENTRY);
+        Assert.assertTrue(diagnostic.contains("1013\tuBlock Annoyances"));
+        Assert.assertTrue(diagnostic.contains("\t3\t1\t0\t0\t0\t0\tNO_RULES\t"));
+    }
+
+    @Test
+    public void adblockFileInDomainModeIsReportedAsFormatMismatch() throws IOException {
+        Path listFile = tmpDir.resolve("adblock-as-domains.txt");
+        StringBuilder content = new StringBuilder("[Adblock Plus]\n! Syntax: AdBlock\n");
+        for (int i = 0; i < 12; i++) content.append("||example").append(i).append(".com^\n");
+        Files.writeString(listFile, content.toString());
+        ExternalDefinition definition = new ExternalDefinition(1001, "Wrong format", "", Category.MALWARE,
+                Type.DOMAIN, 1002, Format.DOMAINS, "https://example.com/adblock.txt",
+                UpdateInterval.DAILY, UpdateStatus.READY, null, listFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.getAll(ExternalDefinition.class)).thenReturn(List.of(definition));
+
+        reportService.startGeneration("10.11.12.13");
+        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+        Mockito.verify(executorService).execute(runnableCaptor.capture());
+        runnableCaptor.getValue().run();
+
+        String diagnostic = readZipFile(reportService.getReport()).get(DiagnosticsReportService.CUSTOM_LISTS_ENTRY);
+        Assert.assertTrue(diagnostic.contains("1001\tWrong format\tDOMAIN\tMALWARE\tDOMAINS"));
+        Assert.assertTrue(diagnostic.contains("\t12\t12\t0\t0\tFORMAT_MISMATCH\t"));
     }
 
     @After
@@ -111,7 +200,8 @@ public class DiagnosticsReportServiceTest {
         Assert.assertEquals(DiagnosticsReportService.State.FINISHED, reportService.getStatus());
 
         Map<String, String> entries = readZipFile(reportService.getReport());
-        Assert.assertEquals(7, entries.size());
+        Assert.assertEquals(8, entries.size());
+        Assert.assertTrue(entries.get(DiagnosticsReportService.CUSTOM_LISTS_ENTRY).contains("blank_lines"));
         Assert.assertEquals("", entries.get(DiagnosticsReportService.PREFIX));
         Assert.assertEquals(LOG_CONTENT, entries.get(DiagnosticsReportService.SYSTEM_LOG_ENTRY));
         Assert.assertEquals(statusLogContent, entries.get(DiagnosticsReportService.PREFIX + "eblocker-status.log"));

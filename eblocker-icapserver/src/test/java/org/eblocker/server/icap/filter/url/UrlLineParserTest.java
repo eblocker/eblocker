@@ -19,11 +19,17 @@ package org.eblocker.server.icap.filter.url;
 import org.eblocker.server.common.transaction.Decision;
 import org.eblocker.server.common.transaction.TransactionContext;
 import org.eblocker.server.icap.filter.Filter;
+import org.eblocker.server.icap.filter.FilterParser;
 import org.eblocker.server.icap.filter.FilterResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class UrlLineParserTest {
 
@@ -99,6 +105,34 @@ public class UrlLineParserTest {
         Assert.assertEquals(Decision.BLOCK, filterUrl(filter, "https://www.eblocker.com"));
         Assert.assertEquals(Decision.NO_DECISION, filterUrl(filter, "https://www.eblocker2.com"));
         Assert.assertEquals(Decision.NO_DECISION, filterUrl(filter, "https://www.eblocker.com.ru"));
+    }
+
+    @Test
+    public void testLiteralUrlDoesNotBecomeRegex() {
+        Filter filter = parser.parseLine("example.com/a.b?x=1");
+        Assert.assertEquals(Decision.BLOCK, filterUrl(filter, "https://example.com/a.b?x=1"));
+        Assert.assertEquals(Decision.NO_DECISION, filterUrl(filter, "https://example.com/axb?x=1"));
+        Assert.assertEquals(Decision.NO_DECISION, filterUrl(filter, "https://example.com/a.b?x=1-extra"));
+    }
+
+    @Test
+    public void testRejectOtherListFormats() {
+        Assert.assertNull(parser.parseLine("||example.com^"));
+        Assert.assertNull(parser.parseLine("@@||example.com^"));
+        Assert.assertNull(parser.parseLine("!#include other.txt"));
+        Assert.assertNull(parser.parseLine("<html>"));
+        Assert.assertNull(parser.parseLine("com"));
+        Assert.assertNotNull(parser.parseLine("  example.com/path  "));
+    }
+
+    @Test
+    public void importedListProducesLiteralUsableUrlFilter() throws IOException {
+        String source = "# comment\n||wrong-format.example^\nhttps://example.com/a.b?x=1\n";
+        List<Filter> filters = new FilterParser(UrlLineParser::new)
+                .parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
+        Assert.assertEquals(1, filters.size());
+        Assert.assertEquals(Decision.BLOCK, filterUrl(filters.get(0), "https://example.com/a.b?x=1"));
+        Assert.assertEquals(Decision.NO_DECISION, filterUrl(filters.get(0), "https://example.com/axb?x=1"));
     }
 
     private Decision filterUrl(Filter filter, String url) {

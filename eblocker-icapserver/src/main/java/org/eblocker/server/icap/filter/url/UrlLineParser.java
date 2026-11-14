@@ -16,6 +16,8 @@
  */
 package org.eblocker.server.icap.filter.url;
 
+import com.google.common.net.InetAddresses;
+import com.google.common.net.InternetDomainName;
 import org.eblocker.server.common.util.UrlUtils;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterLineParser;
@@ -31,7 +33,12 @@ public class UrlLineParser implements FilterLineParser {
 
     @Override
     public Filter parseLine(String line) {
-        if (line == null || line.isEmpty() || line.startsWith("#")) {
+        if (line == null) {
+            return null;
+        }
+        line = line.trim();
+        if (line.isEmpty() || line.startsWith("#") || line.startsWith("!") || line.startsWith("||")
+                || line.startsWith("@@") || line.contains("*")) {
             return null;
         }
 
@@ -41,13 +48,20 @@ public class UrlLineParser implements FilterLineParser {
         }
 
         String hostname = matcher.group(1);
-        String domain = UrlUtils.getDomain(hostname);
+        if (!InternetDomainName.isValid(hostname) && !InetAddresses.isInetAddress(hostname)) {
+            return null;
+        }
+        if (InternetDomainName.isValid(hostname) && InternetDomainName.from(hostname).isPublicSuffix()) {
+            return null;
+        }
+        String domain = InetAddresses.isInetAddress(hostname) ? null : UrlUtils.getDomain(hostname);
 
-        String matchString = "https?://(?:[a-zA-Z0-9\\-]+\\.)*" + hostname;
+        // List entries are literal URLs, not regular expressions or EasyList rules.
+        String matchString = "^https?://(?:[a-zA-Z0-9\\-]+\\.)*" + Pattern.quote(hostname) + "(?::[0-9]{1,5})?";
         if (matcher.group(2) != null) {
-            matchString += matcher.group(2);
+            matchString += Pattern.quote(matcher.group(2)) + "$";
         } else {
-            matchString += "(:?/|$)";
+            matchString += "(?:/|$)";
         }
 
         return UrlFilterFactory.getInstance()

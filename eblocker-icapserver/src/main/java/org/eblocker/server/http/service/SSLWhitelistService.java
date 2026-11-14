@@ -32,6 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -123,7 +126,7 @@ public class SSLWhitelistService implements Observer {
      *
      * @param file file to write in (replace the content)
      */
-    private void writeOnlyURLsToFile(SimpleResource file) {
+    private boolean writeOnlyURLsToFile(SimpleResource file) {
         //FIXME This might be a naive,unperformant solution with Sets -> we should use a tree datastructure here to find the subdomains we can remove
         if (!ResourceHandler.exists(file)) {
             ResourceHandler.create(file);
@@ -166,10 +169,10 @@ public class SSLWhitelistService implements Observer {
         //sort the list before writing
         Collections.sort(results);
         //write list to file
-        ResourceHandler.replaceContent(file, results);
+        return replaceContentIfChanged(file, results);
     }
 
-    private void writeOnlyIPsToFile(SimpleResource file) {
+    private boolean writeOnlyIPsToFile(SimpleResource file) {
         if (!ResourceHandler.exists(file)) {
             ResourceHandler.create(file);
         }
@@ -192,7 +195,20 @@ public class SSLWhitelistService implements Observer {
         // sort the list before writing
         Collections.sort(results);
         // write list to file
-        ResourceHandler.replaceContent(file, results);
+        return replaceContentIfChanged(file, results);
+    }
+
+    private boolean replaceContentIfChanged(SimpleResource file, List<String> lines) {
+        try {
+            if (Files.readAllLines(Paths.get(file.getPath()), file.getCharset()).equals(lines)) {
+                return false;
+            }
+        } catch (IOException e) {
+            // The normal write path below reports a persistent file error.
+            log.warn("Could not read Squid ACL before update: {}", file.getPath(), e);
+        }
+        ResourceHandler.replaceContent(file, lines);
+        return true;
     }
 
     private boolean isSubdomainOf(String otherUrl, String url) {
@@ -224,9 +240,11 @@ public class SSLWhitelistService implements Observer {
             //
             // rewrite acl file
             //
-            writeOnlyURLsToFile(squidDomainWhitelistAclFile);
-            writeOnlyIPsToFile(squidIpWhitelistAclFile);
-            squidReloadingService.tellSquidToReloadConfig();
+            boolean domainsChanged = writeOnlyURLsToFile(squidDomainWhitelistAclFile);
+            boolean ipsChanged = writeOnlyIPsToFile(squidIpWhitelistAclFile);
+            if (domainsChanged || ipsChanged) {
+                squidReloadingService.tellSquidToReloadConfig();
+            }
         }
     }
 }

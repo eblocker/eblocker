@@ -33,7 +33,6 @@ final class BlockerListValidator {
     // The current pattern parser loads the complete list into heap before creating its filters.
     static final long MAX_PATTERN_BYTES = 8L * 1024 * 1024;
     static final long MAX_DOMAIN_BYTES = 16L * 1024 * 1024;
-    static final long MAX_PATTERN_ENTRIES = 50000;
 
     void validate(ExternalDefinition definition, Path path) throws IOException {
         long size = Files.size(path);
@@ -61,9 +60,6 @@ final class BlockerListValidator {
                     continue;
                 }
                 entries++;
-                if (definition.getType() == Type.PATTERN && entries > MAX_PATTERN_ENTRIES) {
-                    throw invalid(definition, "pattern list exceeds 50,000 rules; the current parser cannot safely load it");
-                }
                 if (value.equals("*") || value.equals("*$document") || value.equals("$document")) {
                     suspicious++;
                 }

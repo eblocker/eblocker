@@ -261,7 +261,7 @@ public class UpdateTaskTest {
 
         updateTask.run();
 
-        Mockito.verify(filterManager).update();
+        Mockito.verify(filterManager).refreshCustomFilter(235);
 
         Assert.assertEquals(2, savedDefinitions.size());
         Assert.assertEquals(UpdateStatus.UPDATE, savedDefinitions.get(0).getUpdateStatus());
@@ -404,5 +404,71 @@ public class UpdateTaskTest {
         Assert.assertEquals(UpdateStatus.READY, savedDefinitions.get(1).getUpdateStatus());
         Assert.assertEquals(Integer.valueOf(123), savedDefinitions.get(1).getReferenceId());
 
+    }
+    @Test
+    public void wrongDomainFormatLeavesInstalledListUntouched() throws IOException {
+        Files.writeString(sourceFile, "old.example\n");
+        Mockito.when(httpClient.download("http://filter.org/adblock.txt"))
+                .thenReturn(new ByteArrayInputStream("||bad.example^\n||other.example^\n".getBytes(StandardCharsets.UTF_8)));
+        ExternalDefinition definition = new ExternalDefinition(0, "Wrong format", "", Category.ADS,
+                Type.DOMAIN, 123, Format.DOMAINS, "http://filter.org/adblock.txt", UpdateInterval.DAILY,
+                UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+
+        updateTask.run();
+
+        Assert.assertEquals("old.example\n", Files.readString(sourceFile));
+        Assert.assertEquals(UpdateStatus.UPDATE_FAILED, savedDefinitions.get(1).getUpdateStatus());
+        Assert.assertTrue(savedDefinitions.get(1).getUpdateError().contains("no usable rules"));
+        Mockito.verify(filterManager, Mockito.never()).update();
+    }
+
+    @Test
+    public void processingFailureRestoresPreviousPatternFile() throws IOException {
+        Files.writeString(sourceFile, "||old.example^\n");
+        Mockito.when(httpClient.download("http://filter.org/easylist.txt"))
+                .thenReturn(new ByteArrayInputStream("||new.example^\n".getBytes(StandardCharsets.UTF_8)));
+        ExternalDefinition definition = new ExternalDefinition(0, "Pattern", "", Category.ADS,
+                Type.PATTERN, 235, Format.EASYLIST, "http://filter.org/easylist.txt", UpdateInterval.DAILY,
+                UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+        Mockito.doThrow(new IOException("processing failed")).doNothing().when(filterManager).refreshCustomFilter(235);
+
+        updateTask.run();
+
+        Assert.assertEquals("||old.example^\n", Files.readString(sourceFile));
+        Assert.assertEquals(UpdateStatus.UPDATE_FAILED, savedDefinitions.get(1).getUpdateStatus());
+        Assert.assertEquals("processing failed", savedDefinitions.get(1).getUpdateError());
+        Mockito.verify(filterManager, Mockito.times(2)).refreshCustomFilter(235);
+    }
+
+    @Test
+    public void processingFailureRestoresPreviousDomainFileAndRules() throws IOException {
+        Files.writeString(sourceFile, "old.example\n");
+        Mockito.when(httpClient.download("http://filter.org/domains.txt"))
+                .thenReturn(new ByteArrayInputStream("new.example\n".getBytes(StandardCharsets.UTF_8)));
+        ExternalDefinition definition = new ExternalDefinition(0, "Domain", "", Category.ADS,
+                Type.DOMAIN, 123, Format.DOMAINS, "http://filter.org/domains.txt", UpdateInterval.DAILY,
+                UpdateStatus.READY, null, sourceFile.toString(), true, "blacklist");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+        Mockito.when(filterListsService.getParentalControlFilterMetaData(123)).thenReturn(new ParentalControlFilterMetaData(
+                123, Collections.singletonMap("en", "Domain"), null,
+                org.eblocker.server.common.data.parentalcontrol.Category.ADS,
+                Collections.singletonList(sourceFile.toString()), null, Date.from(clock.instant()),
+                "domainblacklist/string", "blacklist", false, false, Collections.emptyList(), "Domain", null));
+        Mockito.when(filterListsService.updateFilterList(Mockito.any(ParentalControlFilterSummaryData.class), Mockito.eq("blacklist")))
+                .thenThrow(new IllegalStateException("processing failed"))
+                .thenReturn(new ParentalControlFilterSummaryData(123, null, null, null, null, null,
+                        false, false, null, null, null, null));
+
+        updateTask.run();
+
+        Assert.assertEquals("old.example\n", Files.readString(sourceFile));
+        Assert.assertEquals(UpdateStatus.UPDATE_FAILED, savedDefinitions.get(1).getUpdateStatus());
+        Assert.assertEquals("processing failed", savedDefinitions.get(1).getUpdateError());
+        ArgumentCaptor<ParentalControlFilterSummaryData> captor = ArgumentCaptor.forClass(ParentalControlFilterSummaryData.class);
+        Mockito.verify(filterListsService, Mockito.times(2)).updateFilterList(captor.capture(), Mockito.eq("blacklist"));
+        Assert.assertEquals(Arrays.asList("old.example"),
+                captor.getAllValues().get(1).getDomainsStreamSupplier().get().collect(Collectors.toList()));
     }
 }

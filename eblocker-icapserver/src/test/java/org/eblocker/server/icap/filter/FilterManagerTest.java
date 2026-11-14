@@ -187,6 +187,63 @@ public class FilterManagerTest {
     }
 
     @Test
+    public void testRefreshCustomFilterUpdatesOnlyRequestedList() throws IOException {
+        FilterManager manager = createManager();
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterStoreConfiguration configuration = new FilterStoreConfiguration(null, "custom", Category.ADS,
+                false, 0, new String[]{ resourceFile.toString() }, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(configuration).getId();
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+
+        Files.writeString(resourceFile, "||new.example^\n");
+        manager.refreshCustomFilter(id);
+
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://new.example/"));
+        assertEquals(Decision.NO_DECISION, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+    }
+
+    @Test
+    public void testRefreshCustomFilterReportsMissingSourceAndKeepsOldDecision() throws IOException {
+        FilterManager manager = createManager();
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterStoreConfiguration configuration = new FilterStoreConfiguration(null, "custom", Category.ADS,
+                false, 0, new String[]{ resourceFile.toString() }, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(configuration).getId();
+        Files.delete(resourceFile);
+
+        try {
+            manager.refreshCustomFilter(id);
+            Assert.fail("missing source must fail the update");
+        } catch (IOException expected) {
+            Assert.assertTrue(expected.getMessage().contains("missing resources"));
+        }
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+    }
+
+    @Test
+    public void testRefreshCustomFilterReportsCacheWriteFailureAndKeepsOldDecision() throws IOException {
+        FilterManager manager = createManager();
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterStoreConfiguration configuration = new FilterStoreConfiguration(null, "custom", Category.ADS,
+                false, 0, new String[]{ resourceFile.toString() }, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(configuration).getId();
+        Files.writeString(resourceFile, "||new.example^\n");
+        FileUtils.deleteDirectory(tempDirectory);
+
+        try {
+            manager.refreshCustomFilter(id);
+            Assert.fail("failed cache write must fail the update");
+        } catch (IOException expected) {
+            Assert.assertNotNull(expected.getMessage());
+        }
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+        assertEquals(Decision.NO_DECISION, decisionForURL(manager.getFilter(Category.ADS), "http://new.example/"));
+    }
+
+    @Test
     public void testRemoveFilter() throws IOException, CryptoException {
         // create single non-default config
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());

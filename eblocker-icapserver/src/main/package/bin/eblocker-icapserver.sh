@@ -30,14 +30,13 @@ if [ "$SYSTEM_MEMORY_IN_MB" -gt 2500 ]; then
     MAX_JVM_HEAP_SIZE_IN_MB="$(( (SYSTEM_MEMORY_IN_MB - 2000) / 4 + 500))"
 fi
 
-# Keep child process creation working when a JDK update replaces jspawnhelper.
 MEMORY_SETTINGS="\
 -XX:+ExitOnOutOfMemoryError \
--Djdk.lang.Process.launchMechanism=vfork \
 -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m \
 -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m \
 -Dio.netty.allocator.numDirectArenas=${NUM_ARENAS} \
 -Dio.netty.allocator.numHeapArenas=${NUM_ARENAS}"
 
 # Run the ICAP server:
-exec java $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar
+# Keep child process creation working when a JDK update replaces jspawnhelper.
+exec java -Djdk.lang.Process.launchMechanism=vfork $MEMORY_SETTINGS -Dlog4j2.configurationFile=$LOG4JCONF -jar $BASEDIR/lib/${project.build.finalName}.jar

@@ -72,7 +72,6 @@ FILE=$OUT_DIR/eblocker-status.log
     DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
     GATEWAY=$(redis-cli get gateway)
     DNS_SERVER=$(cat /etc/resolv.conf)
-    TRACEROUTE_EB=$(traceroute my.eblocker.com)
 
     echo "ifconfig eth0:" >> $FILE
     ifconfig eth0 >> $FILE
@@ -187,6 +186,37 @@ FILE=$OUT_DIR/eblocker-status.log
     echo "Squid status:" >> $FILE
     systemctl status squid >> $FILE
 
+### Targeted evidence for list-update, heap and proxy failures ###
+    {
+        echo "UTC: $(date -u -Is)"
+        echo "Device detection Redis subscribers:"
+        redis-cli PUBSUB NUMSUB arp:in ip6:in
+        echo "Java and proxy memory (KiB):"
+        ps -eo pid,rss,comm | grep -E '(^ *PID|java|squid)' || true
+        ICAP_PID=$(systemctl show icapserver -p MainPID --value 2>/dev/null)
+        if [[ "$ICAP_PID" =~ ^[1-9][0-9]*$ ]]; then
+            echo "ICAP JVM flags (including configured heap limit):"
+            timeout 8 jcmd "$ICAP_PID" VM.flags 2>&1 || true
+            echo "ICAP JVM heap and GC counters:"
+            timeout 8 jstat -gc "$ICAP_PID" 1 1 2>&1 || true
+        fi
+        echo "Service state:"
+        systemctl show icapserver squid -p Id -p ActiveState -p SubState -p NRestarts -p ExecMainStatus 2>/dev/null
+        echo "Squid config reloads in last hour:"
+        journalctl -u squid --since '1 hour ago' --no-pager -o cat 2>/dev/null | grep -c 'Reloading squid.service' || true
+        echo "Squid config reloads in last 24 hours:"
+        journalctl -u squid --since '24 hours ago' --no-pager -o cat 2>/dev/null | grep -c 'Reloading squid.service' || true
+    } > "$OUT_DIR/filter-runtime-status.txt" 2>&1
+    journalctl -u icapserver -u squid -p warning --since '48 hours ago' --no-pager -o short-iso 2>/dev/null \
+        | tail -n 2000 > "$OUT_DIR/filter-service-warnings.log"
+    journalctl -u eblocker-coredns --since '48 hours ago' --no-pager -o short-iso 2>/dev/null \
+        | grep -Ei 'timeout|refused|failed|error' | tail -n 1000 > "$OUT_DIR/dns-service-errors.log" || true
+    journalctl -u icapserver -u squid --since '7 days ago' --no-pager -o short-iso 2>/dev/null \
+        | grep -Ei 'OutOfMemoryError|Java heap space|Could not reserve enough space|Invalid regular expression|regex.*(error|invalid)|shared.memory|shmget|connection refused|failed to update|Cannot update current filter' \
+        | tail -n 1000 > "$OUT_DIR/known-filter-failures.log" || true
+    zgrep -hEi 'OutOfMemoryError|Java heap space|Invalid regular expression|regex.*(error|invalid)|failed to update|Cannot update current filter' \
+        /var/log/eblocker/eblocker-system.log* 2>/dev/null | tail -n 1000 > "$OUT_DIR/known-application-failures.log" || true
+
 ### Certvalidator status ###
     echo $SEP >> $FILE
     echo "Certvalidator status:" >> $FILE
@@ -199,7 +229,7 @@ FILE=$OUT_DIR/eblocker-status.log
 
 ### Include systemd-journal if applicable (the last 10000 lines) ###
     JOURNAL_CATALOG=journal_catalog.log
-    journalctl | tail -n 10000 > $OUT_DIR/$JOURNAL_CATALOG
+    journalctl --no-pager -n 10000 > $OUT_DIR/$JOURNAL_CATALOG
 
 ### System Monitoring ###
     SYSSTATINTERMED=$OUT_DIR/sysstat

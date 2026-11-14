@@ -16,9 +16,14 @@
  */
 package org.eblocker.server.common.blocker.parser;
 
+import com.google.common.base.Charsets;
+import org.eblocker.server.common.blacklist.SingleFileFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,5 +45,38 @@ public class EtcHostsParserTest {
                 .parse(lines.stream())
                 .collect(Collectors.toList());
         Assert.assertEquals(Arrays.asList("www.eblocker.com", "google.com", "etracker.com"), parsedDomains);
+    }
+
+    @Test
+    public void parseMultipleAliasesAndRejectInvalidAddressOrDomain() {
+        List<String> lines = Arrays.asList(
+                "0.0.0.0 ads.example.com tracker.example.com # two hosts",
+                "999.999.999.999 ignored.example.com",
+                "127x0x0x1 ignored-too.example.com",
+                "::1 ipv6.example.com",
+                "127.0.0.1 localhost com invalid/host"
+        );
+
+        List<String> parsedDomains = new EtcHostsParser().parse(lines.stream()).collect(Collectors.toList());
+        Assert.assertEquals(Arrays.asList("ads.example.com", "tracker.example.com", "ipv6.example.com"), parsedDomains);
+    }
+
+    @Test
+    public void parsedHostsCanBeCompiledAndQueried() throws IOException {
+        Path output = Files.createTempFile("hosts-filter", ".bin");
+        Files.delete(output);
+        try {
+            SingleFileFilter filter = new SingleFileFilter(Charsets.UTF_8, output, 1, "hosts-test",
+                    () -> new EtcHostsParser().parse(Arrays.asList(
+                            "0.0.0.0 ads.example.com tracker.example.com",
+                            "0.0.0.0 localhost",
+                            "invalid unrelated.example.com").stream()));
+            Assert.assertTrue(filter.isBlocked("ads.example.com").isBlocked());
+            Assert.assertTrue(filter.isBlocked("tracker.example.com").isBlocked());
+            Assert.assertFalse(filter.isBlocked("unrelated.example.com").isBlocked());
+            Assert.assertFalse(filter.isBlocked("example.com").isBlocked());
+        } finally {
+            Files.deleteIfExists(output);
+        }
     }
 }

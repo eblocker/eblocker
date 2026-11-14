@@ -280,6 +280,9 @@ public class SquidConfigControllerTest {
     public void testVpnAclUpdates() throws IOException, InterruptedException {
         Set<Device> devices = Collections.singleton(new Device());
         controller.updateVpnDevicesAcl(1, devices);
+        Mockito.when(squidAclMocks.get("vpn/vpn-1.acl").update()).thenReturn(true);
+        Mockito.clearInvocations(squidAclMocks.get("vpn/vpn-1.acl"));
+        controller.updateVpnDevicesAcl(1, devices);
 
         Assert.assertNotNull(squidAclMocks.get("vpn/vpn-1.acl"));
         Mockito.verify(squidAclMocks.get("vpn/vpn-1.acl")).setDevices(devices);
@@ -303,12 +306,20 @@ public class SquidConfigControllerTest {
     @Test
     public void testFilteredClientsAclUpdates() {
         Set<Device> devices = Collections.singleton(new Device());
+        Mockito.when(filteredClientsAcl.update()).thenReturn(true);
         controller.updateDomainFilteredDevices(devices);
 
         Mockito.verify(filteredClientsAcl).setDevices(devices);
         Mockito.verify(filteredClientsAcl).update();
 
         verify(reloadingService).tellSquidToReloadConfig();
+    }
+
+    @Test
+    public void testFilteredClientsAclUnchangedDoesNotReload() {
+        controller.updateDomainFilteredDevices(Collections.emptySet());
+        Mockito.verify(filteredClientsAcl).update();
+        Mockito.verifyNoInteractions(reloadingService);
     }
 
     @Test

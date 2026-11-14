@@ -73,5 +73,22 @@ public class SSLWhitelistServiceTest {
         Assert.assertTrue(ips.contains("1.2.3.4"));
         Assert.assertTrue(ips.contains("2.3.4.5"));
         Assert.assertTrue(ips.contains("7.7.7.7"));
+        Mockito.verify(squidReloadingService, Mockito.times(2)).tellSquidToReloadConfig();
+
+        sslWhitelistService.update(appModuleService, Collections.emptyList());
+        Mockito.verify(squidReloadingService, Mockito.times(2)).tellSquidToReloadConfig();
+
+        Mockito.when(appModuleService.getAllIPsFromEnabledModules()).thenReturn(Arrays.asList("1.2.3.4", "9.9.9.9"));
+        sslWhitelistService.update(appModuleService, Collections.emptyList());
+        Mockito.verify(squidReloadingService, Mockito.times(3)).tellSquidToReloadConfig();
+
+        Files.delete(domainsPath);
+        Files.delete(ipsPath);
+        Mockito.when(appModuleService.getAllUrlsFromEnabledModules()).thenReturn(Collections.emptyList());
+        Mockito.when(appModuleService.getAllIPsFromEnabledModules()).thenReturn(Collections.emptyList());
+        sslWhitelistService.update(appModuleService, Collections.emptyList());
+        Assert.assertTrue(Files.exists(domainsPath));
+        Assert.assertTrue(Files.exists(ipsPath));
+        Mockito.verify(squidReloadingService, Mockito.times(4)).tellSquidToReloadConfig();
     }
 }

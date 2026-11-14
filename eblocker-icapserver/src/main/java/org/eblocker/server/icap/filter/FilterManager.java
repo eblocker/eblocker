@@ -246,6 +246,7 @@ public class FilterManager {
         Path backup = null;
         boolean replaced = false;
         boolean configurationWriteAttempted = false;
+        boolean cacheRollbackFailed = false;
         try {
             try (OutputStream out = Files.newOutputStream(staged)) {
                 CryptoService cryptoService = CryptoServiceFactory.getInstance().setKey(systemKey.get()).build();
@@ -277,7 +278,9 @@ public class FilterManager {
                         Files.deleteIfExists(cachePath);
                     }
                 } catch (IOException rollbackFailure) {
+                    cacheRollbackFailed = true;
                     reported.addSuppressed(rollbackFailure);
+                    log.error("failed to restore cache for custom filter {}; recovery copy at {}", id, backup, rollbackFailure);
                 }
             }
             if (configurationWriteAttempted) {
@@ -291,7 +294,7 @@ public class FilterManager {
         } finally {
             try {
                 Files.deleteIfExists(staged);
-                if (backup != null) Files.deleteIfExists(backup);
+                if (backup != null && !cacheRollbackFailed) Files.deleteIfExists(backup);
             } catch (IOException cleanupFailure) {
                 log.warn("could not remove temporary format-change file for filter {}", id, cleanupFailure);
             }

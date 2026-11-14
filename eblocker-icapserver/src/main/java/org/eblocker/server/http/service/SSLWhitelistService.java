@@ -128,7 +128,8 @@ public class SSLWhitelistService implements Observer {
      */
     private boolean writeOnlyURLsToFile(SimpleResource file) {
         //FIXME This might be a naive,unperformant solution with Sets -> we should use a tree datastructure here to find the subdomains we can remove
-        if (!ResourceHandler.exists(file)) {
+        boolean created = !ResourceHandler.exists(file);
+        if (created) {
             ResourceHandler.create(file);
         }
 
@@ -169,11 +170,13 @@ public class SSLWhitelistService implements Observer {
         //sort the list before writing
         Collections.sort(results);
         //write list to file
-        return replaceContentIfChanged(file, results);
+        boolean changed = replaceContentIfChanged(file, results);
+        return created || changed;
     }
 
     private boolean writeOnlyIPsToFile(SimpleResource file) {
-        if (!ResourceHandler.exists(file)) {
+        boolean created = !ResourceHandler.exists(file);
+        if (created) {
             ResourceHandler.create(file);
         }
 
@@ -195,7 +198,8 @@ public class SSLWhitelistService implements Observer {
         // sort the list before writing
         Collections.sort(results);
         // write list to file
-        return replaceContentIfChanged(file, results);
+        boolean changed = replaceContentIfChanged(file, results);
+        return created || changed;
     }
 
     private boolean replaceContentIfChanged(SimpleResource file, List<String> lines) {

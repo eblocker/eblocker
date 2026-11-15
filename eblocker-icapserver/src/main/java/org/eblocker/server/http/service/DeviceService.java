@@ -112,26 +112,46 @@ public class DeviceService {
         return new HashSet<>(devicesById.values());
     }
 
+    // Keep rollback confined to validation/persistence, before listeners run.
+    public void updateWireGuardAuthorization(Device device, boolean enabled) {
+        boolean previous = device.isWireGuardEnabled();
+        device.setWireGuardEnabled(enabled);
+        updateDevice(device, previous);
+    }
+
     public void updateDevice(Device device) {
-        // Check ID of operating user actually references an existing user
-        if (datasource.get(UserModule.class, device.getOperatingUser()) == null
-                || datasource.get(UserModule.class, device.getAssignedUser()) == null) {
-            throw new BadRequestException("Device "
-                    + device.getUserFriendlyName()
-                    + " references non-existing operating user "
-                    + device.getOperatingUser()
-                    + " or non-existing assigned user "
-                    + device.getAssignedUser());
+        updateDevice(device, null);
+    }
+
+    private void updateDevice(Device device, Boolean previousWireGuardEnabled) {
+        try {
+            // Check ID of operating user actually references an existing user
+            if (datasource.get(UserModule.class, device.getOperatingUser()) == null
+                    || datasource.get(UserModule.class, device.getAssignedUser()) == null) {
+                throw new BadRequestException("Device "
+                        + device.getUserFriendlyName()
+                        + " references non-existing operating user "
+                        + device.getOperatingUser()
+                        + " or non-existing assigned user "
+                        + device.getAssignedUser());
+            }
+
+            // handle icon visibility (if in auto mode) depending on device and global SSL status
+            device = updateIconStatus(device);
+
+            if (!device.isSslEnabled()) {
+                userAgentService.turnOffCloakingForDevice(device.getAssignedUser(), device.getId());
+            }
+
+            datasource.save(device);
+        } catch (RuntimeException persistenceException) {
+            if (previousWireGuardEnabled != null) {
+                device.setWireGuardEnabled(previousWireGuardEnabled);
+            }
+            throw persistenceException;
         }
-
-        // handle icon visibility (if in auto mode) depending on device and global SSL status
-        device = updateIconStatus(device);
-
-        if (!device.isSslEnabled()) {
-            userAgentService.turnOffCloakingForDevice(device.getAssignedUser(), device.getId());
-        }
-
-        datasource.save(device);
+        // Listener failures happen after persistence: never undo a saved grant
+        // or revocation merely because runtime reconciliation failed.
 
         resolveIpAddressConflicts(device);
         cacheDevice(device);
@@ -156,7 +176,32 @@ public class DeviceService {
     }
 
     public Device getDeviceByIp(IpAddress ip) {
-        return getDevice(devicesByIp, ip);
+        if (ip == null) {
+            return null;
+        }
+
+        Device device = devicesByIp.get(ip);
+        if (device != null) {
+            return device;
+        }
+
+        // A device-bound WireGuard peer has a stable cryptographic source-IP
+        // identity, but unlike OpenVPN there is no learn-address callback that
+        // adds the tunnel IP to Device.ipAddresses. Resolve that identity
+        // read-only from the persisted peer mapping before falling back to the
+        // legacy refresh path. Unbound or ambiguous peers fail closed.
+        String wireGuardDeviceId =
+                WireGuardDeviceIpResolver.resolveDeviceId(
+                        datasource,
+                        ip
+                );
+
+        if (wireGuardDeviceId != null) {
+            return getDeviceById(wireGuardDeviceId);
+        }
+
+        refresh();
+        return devicesByIp.get(ip);
     }
 
     public boolean showWelcomePageForDevice(Device device) {

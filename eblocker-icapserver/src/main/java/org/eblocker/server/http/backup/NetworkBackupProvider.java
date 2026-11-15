@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
@@ -62,7 +63,15 @@ public class NetworkBackupProvider extends BackupProvider {
     }
 
     private void importConfiguration(JarInputStream inputStream, int schemaVersion, boolean dryRun) throws IOException {
-        getNextEntry(inputStream, NETWORK_ENTRY);
+        // This trailing entry is absent in backups created before network backup
+        // support, including WireGuard v6 backups from before the base merge.
+        JarEntry entry = inputStream.getNextJarEntry();
+        if (entry == null) {
+            return;
+        }
+        if (!NETWORK_ENTRY.equals(entry.getName()) || entry.isDirectory()) {
+            throw new CorruptedBackupException("Expected entry " + NETWORK_ENTRY + ", got " + entry.getName());
+        }
         NetworkConfiguration backup = objectMapper.readValue(inputStream, NetworkConfiguration.class);
         if (backup == null) {
             throw new CorruptedBackupException("Deserialized backup object is null");

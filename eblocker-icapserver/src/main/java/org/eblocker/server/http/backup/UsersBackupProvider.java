@@ -347,18 +347,39 @@ public class UsersBackupProvider extends BackupProvider {
     private void importUsers(List<UserModule> users, Map<Integer, Integer> userIdMapping) {
         for (UserModule user : users) {
             Integer oldId = user.getId();
+            UserModule newUser;
+
             if (user.isSystem()) {
-                UserModule newUser = userService.restoreDefaultSystemUser(user.getName());
-                userIdMapping.put(oldId, newUser.getId());
+                newUser = userService.restoreDefaultSystemUser(user.getName());
             } else {
-                UserModule newUser = userService.createUser(user.getAssociatedProfileId(), user.getName(), user.getNameKey(), user.getBirthday(), user.getUserRole(), null);
-                userIdMapping.put(oldId, newUser.getId());
-                // to avoid hashing the already hashed PIN again, re-save the new user:
+                newUser = userService.createUser(
+                        user.getAssociatedProfileId(),
+                        user.getName(),
+                        user.getNameKey(),
+                        user.getBirthday(),
+                        user.getUserRole(),
+                        null
+                );
+
+                // Avoid hashing an already hashed PIN again.
                 if (user.getPin() != null) {
                     newUser.setPin(user.getPin());
-                    dataSource.save(newUser, newUser.getId());
                 }
             }
+
+            newUser.setWireGuardEnabled(
+                    user.isWireGuardEnabled()
+            );
+
+            dataSource.save(
+                    newUser,
+                    newUser.getId()
+            );
+
+            userIdMapping.put(
+                    oldId,
+                    newUser.getId()
+            );
         }
     }
 

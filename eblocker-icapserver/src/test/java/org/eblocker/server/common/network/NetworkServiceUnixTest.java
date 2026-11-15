@@ -23,6 +23,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.common.data.NetworkConfiguration;
 import org.eblocker.server.common.data.NetworkStateId;
 import org.eblocker.server.common.data.TestDeviceFactory;
+import org.eblocker.server.common.data.wireguard.WireGuardRuntimePeerSelector;
 import org.eblocker.server.common.network.unix.DnsConfiguration;
 import org.eblocker.server.common.network.unix.EblockerDnsServer;
 import org.eblocker.server.common.network.unix.FirewallConfigurationIp4;
@@ -59,6 +60,7 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
     private EblockerDnsServer eblockerDnsServer;
     private DeviceService deviceService;
     private FeatureToggleRouter featureToggleRouter;
+    private WireGuardRuntimePeerSelector wireGuardRuntimePeerSelector;
 
     @Before
     public void setUp() {
@@ -74,6 +76,8 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
         scriptRunner = Mockito.mock(ScriptRunner.class);
         eblockerDnsServer = Mockito.mock(EblockerDnsServer.class);
         deviceService = Mockito.mock(DeviceService.class);
+        wireGuardRuntimePeerSelector =
+                Mockito.mock(WireGuardRuntimePeerSelector.class);
 
         apply();
     }
@@ -96,7 +100,8 @@ public class NetworkServiceUnixTest { // FIXME: there is also a NetworkServicesU
                 "applyFirewallConfigurationCommand",
                 "enable_ip6",
                 eblockerDnsServer,
-                deviceService);
+                deviceService,
+                wireGuardRuntimePeerSelector);
     }
 
     @Test

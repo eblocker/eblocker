@@ -5,7 +5,14 @@
     tooltip="MOBILE.CARD.TOOLTIP">
     <eb-card-content class="whitelist-dns-card">
 
-        <div layout="column">
+        <md-tabs md-border-bottom md-dynamic-height
+                 md-selected="vm.mobileModeTabIndex"
+                 style="width: 100%;">
+
+            <md-tab>
+                <md-tab-label>{{ 'MOBILE.CARD.OPENVPN.TAB' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <div layout="column">
 
             <div layout="row" layout-align="center center">
                 <md-button class="md-primary"
@@ -68,7 +75,158 @@
                     </md-button>
                 </div>
             </div>
-        </div>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab>
+                <md-tab-label>{{ 'MOBILE.CARD.WIREGUARD.TAB' | translate }}</md-tab-label>
+                <md-tab-body>
+                    <div layout="column" style="padding-top: 12px;">
+
+                        <div ng-if="vm.wireGuardPeerLoading"
+                             layout="row"
+                             layout-align="center center">
+                            <md-progress-circular
+                                md-mode="indeterminate"
+                                md-diameter="32">
+                            </md-progress-circular>
+                        </div>
+
+                        <div ng-if="!vm.wireGuardPeerLoading && vm.wireGuardPeer"
+                             layout="column">
+
+                            <p style="margin-top: 0;">
+                                {{ 'MOBILE.CARD.WIREGUARD.AVAILABLE' | translate }}
+                            </p>
+
+                            <div layout="row"
+                                 layout-align="space-between center">
+                                <span>{{ 'MOBILE.CARD.WIREGUARD.PEER' | translate }}</span>
+                                <strong>{{ vm.wireGuardPeer.name }}</strong>
+                            </div>
+
+                            <div layout="row"
+                                 layout-align="space-between center"
+                                 style="margin-top: 8px;">
+                                <span>{{ 'MOBILE.CARD.WIREGUARD.ADDRESS' | translate }}</span>
+                                <strong>{{ vm.wireGuardPeer.allowedIp }}</strong>
+                            </div>
+
+                            <div layout="row"
+                                 layout-align="space-between center"
+                                 style="margin-top: 8px;">
+                                <span>{{ 'MOBILE.CARD.WIREGUARD.LAN_ACCESS' | translate }}</span>
+
+                                <md-switch
+                                    class="md-primary switch-word-break"
+                                    md-theme="eBlockerThemeSwitch"
+                                    style="margin: 0;"
+                                    ng-model="vm.wireGuardPeer.allowLanAccess"
+                                    ng-change="vm.updateWireGuardLanAccess()"
+                                    ng-disabled="vm.wireGuardLanAccessUpdating || vm.wireGuardPeerDeleting"
+                                    aria-label="{{ 'MOBILE.CARD.WIREGUARD.LAN_ACCESS' | translate }}">
+                                    {{ (vm.wireGuardPeer.allowLanAccess ? 'MOBILE.CARD.WIREGUARD.YES' : 'MOBILE.CARD.WIREGUARD.NO') | translate }}
+                                </md-switch>
+                            </div>
+
+                            <div layout="row"
+                                 layout-xs="column"
+                                 layout-align="center center"
+                                 style="margin-top: 16px;">
+                                <md-button
+                                    class="md-raised md-primary md-accent"
+                                    ng-disabled="vm.isDownloadingWireGuardConfig || vm.wireGuardPeerDeleting"
+                                    ng-click="vm.downloadWireGuardConfig()"
+                                    aria-label="{{ 'MOBILE.CARD.ACTION.DOWNLOAD' | translate }}">
+                                    {{ 'MOBILE.CARD.ACTION.DOWNLOAD' | translate }}
+                                </md-button>
+
+                                <md-button
+                                    class="md-raised md-primary"
+                                    ng-if="!vm.wireGuardQrCodeUrl"
+                                    ng-disabled="vm.isLoadingWireGuardQrCode || vm.wireGuardPeerDeleting"
+                                    ng-click="vm.showWireGuardQrCode()"
+                                    aria-label="{{ 'MOBILE.CARD.WIREGUARD.SHOW_QR' | translate }}">
+                                    {{ 'MOBILE.CARD.WIREGUARD.SHOW_QR' | translate }}
+                                </md-button>
+
+                                <md-button
+                                    class="md-primary"
+                                    ng-if="vm.wireGuardQrCodeUrl"
+                                    ng-disabled="vm.wireGuardPeerDeleting"
+                                    ng-click="vm.hideWireGuardQrCode()"
+                                    aria-label="{{ 'MOBILE.CARD.WIREGUARD.HIDE_QR' | translate }}">
+                                    {{ 'MOBILE.CARD.WIREGUARD.HIDE_QR' | translate }}
+                                </md-button>
+
+                                <md-button
+                                    class="md-warn"
+                                    ng-disabled="vm.wireGuardPeerDeleting"
+                                    ng-click="vm.confirmDeleteWireGuardPeer($event)"
+                                    aria-label="{{ 'MOBILE.CARD.WIREGUARD.DELETE' | translate }}">
+                                    {{ 'MOBILE.CARD.WIREGUARD.DELETE' | translate }}
+                                </md-button>
+                            </div>
+
+                            <div ng-if="vm.wireGuardPeerDeleting"
+                                 layout="row"
+                                 layout-align="center center"
+                                 style="margin-top: 8px;">
+                                <md-progress-circular
+                                    md-mode="indeterminate"
+                                    md-diameter="32">
+                                </md-progress-circular>
+                            </div>
+
+                            <div ng-if="vm.isLoadingWireGuardQrCode"
+                                 layout="row"
+                                 layout-align="center center"
+                                 style="margin-top: 16px;">
+                                <md-progress-circular
+                                    md-mode="indeterminate"
+                                    md-diameter="32">
+                                </md-progress-circular>
+                            </div>
+
+                            <div ng-if="vm.wireGuardQrCodeUrl"
+                                 layout="column"
+                                 layout-align="center center"
+                                 style="margin-top: 16px;">
+                                <img ng-src="{{ vm.wireGuardQrCodeUrl }}"
+                                     alt="{{ 'MOBILE.CARD.WIREGUARD.QR_ALT' | translate }}"
+                                     style="max-width: 360px; width: 100%; height: auto;">
+                            </div>
+                        </div>
+
+                        <div ng-if="!vm.wireGuardPeerLoading && !vm.wireGuardPeer"
+                             layout="column"
+                             layout-align="center center">
+                            <p style="margin-bottom: 12px;">
+                                {{ 'MOBILE.CARD.WIREGUARD.NONE' | translate }}
+                            </p>
+
+                            <md-button
+                                class="md-raised md-primary md-accent"
+                                ng-disabled="vm.wireGuardPeerCreating"
+                                ng-click="vm.createWireGuardPeer()"
+                                aria-label="{{ 'MOBILE.CARD.WIREGUARD.CREATE' | translate }}">
+                                {{ 'MOBILE.CARD.WIREGUARD.CREATE' | translate }}
+                            </md-button>
+
+                            <md-progress-circular
+                                ng-if="vm.wireGuardPeerCreating"
+                                md-mode="indeterminate"
+                                md-diameter="32"
+                                style="margin-top: 8px;">
+                            </md-progress-circular>
+                        </div>
+
+                    </div>
+                </md-tab-body>
+            </md-tab>
+
+        </md-tabs>
 
     </eb-card-content>
 </eb-card>

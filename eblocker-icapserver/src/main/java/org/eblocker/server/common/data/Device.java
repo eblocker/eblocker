@@ -85,6 +85,7 @@ public class Device extends ModelObject {
     private boolean controlBarAutoMode = true;
     private boolean mobileState = true;
     private boolean mobilePrivateNetworkAccess;
+    private boolean wireGuardEnabled;
     private Instant lastSeen;
 
     public Device() {
@@ -488,6 +489,14 @@ public class Device extends ModelObject {
 
     public void setMobilePrivateNetworkAccess(boolean mobilePrivateNetworkAccess) {
         this.mobilePrivateNetworkAccess = mobilePrivateNetworkAccess;
+    }
+
+    public boolean isWireGuardEnabled() {
+        return wireGuardEnabled;
+    }
+
+    public void setWireGuardEnabled(boolean wireGuardEnabled) {
+        this.wireGuardEnabled = wireGuardEnabled;
     }
 
     public boolean isDomainRecordingEnabled() {

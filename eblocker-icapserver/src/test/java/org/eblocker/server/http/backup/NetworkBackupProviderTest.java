@@ -23,6 +23,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NetworkBackupProviderTest extends BackupProviderTestBase {
     private NetworkBackupProvider provider;
@@ -40,5 +47,38 @@ class NetworkBackupProviderTest extends BackupProviderTestBase {
     void roundTrip() throws IOException {
         // Although the import does not do anything in eOS 3, the backup must be importable:
         exportVerifyImport(provider);
+    }
+    @Test
+    void acceptsOlderBackupWithoutTrailingNetworkEntry() throws IOException {
+        byte[] archive = archive(null, null);
+        provider.verifyConfiguration(new JarInputStream(new ByteArrayInputStream(archive)), 42);
+        provider.importConfiguration(new JarInputStream(new ByteArrayInputStream(archive)), 42);
+        Mockito.verifyNoInteractions(networkServices);
+    }
+
+    @Test
+    void rejectsUnexpectedOrMalformedNetworkEntry() throws IOException {
+        for (byte[] archive : new byte[][] {
+                archive("unexpected.json", "{}"),
+                archive(NetworkBackupProvider.NETWORK_ENTRY + "/", ""),
+                archive(NetworkBackupProvider.NETWORK_ENTRY, "null")
+        }) {
+            assertThrows(CorruptedBackupException.class, () -> provider.verifyConfiguration(
+                    new JarInputStream(new ByteArrayInputStream(archive)), 42));
+            assertThrows(CorruptedBackupException.class, () -> provider.importConfiguration(
+                    new JarInputStream(new ByteArrayInputStream(archive)), 42));
+        }
+    }
+
+    private byte[] archive(String name, String content) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (JarOutputStream output = new JarOutputStream(bytes)) {
+            if (name != null) {
+                output.putNextEntry(new JarEntry(name));
+                output.write(content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                output.closeEntry();
+            }
+        }
+        return bytes.toByteArray();
     }
 }

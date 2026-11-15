@@ -95,6 +95,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_IS_CONTROLBAR_AUTO_MODE = "isControlBarAutoMode";
     private static final String KEY_IS_MOBILE_ENABLED = "isMobileEnabled";
     private static final String KEY_MOBILE_PRIVATE_NETWORK_ACCESS = "mobilePrivateNetworkAccess";
+    private static final String KEY_WIREGUARD_ENABLED = "wireGuardEnabled";
     private static final String KEY_RESOLVED_DNS_GATEWAY = "resolved_dns_gateway";
     private static final String KEY_ROUTER_ADVERTISEMENTS_ENABLED = "router_advertisements_enabled";
     private static final String KEY_PRIVACY_EXTENSIONS_ENABLED = "privacy_extensions_enabled";
@@ -127,6 +128,7 @@ public class JedisDataSource implements DataSource {
 
     private static final String KEY_IS_OPENVPN_CLIENT = "IsOpenVpnClient";
     private static final String KEY_OPENVPN_SERVER_ENABLED = "OpenVpnServerEnabled";
+    private static final String KEY_WIREGUARD_SERVER_ENABLED = "WireGuardServerEnabled";
     private static final String KEY_OPENVPN_FIRST_RUN = "OpenVpnFirstRun";
     private static final String KEY_OPENVPN_SERVER_HOST = "OpenVpnHost";
     private static final String KEY_OPENVPN_MAPPED_PORT = "OpenVpnMappedPort";
@@ -297,6 +299,14 @@ public class JedisDataSource implements DataSource {
     }
 
     @Override
+    public Integer getIdSequence(Class<?> entityClass) {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(getIdSequenceKey(entityClass));
+            return value == null ? null : Integer.valueOf(value);
+        }
+    }
+
+    @Override
     public void setIdSequence(Class<?> entityClass, int value) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(getIdSequenceKey(entityClass), String.valueOf(value));
@@ -415,6 +425,7 @@ public class JedisDataSource implements DataSource {
         device.setMobileState(isMobileEnabled == null || isMobileEnabled.equals(VALUE_TRUE));
 
         device.setMobilePrivateNetworkAccess(Boolean.parseBoolean(map.get(KEY_MOBILE_PRIVATE_NETWORK_ACCESS)));
+        device.setWireGuardEnabled(Boolean.parseBoolean(map.get(KEY_WIREGUARD_ENABLED)));
 
         String pauseDialogDoNotShow = map.get(KEY_PAUSE_DIALOG_DO_NOT_SHOW_AGAIN);
         device.setShowPauseDialogDoNotShowAgain((pauseDialogDoNotShow == null || pauseDialogDoNotShow.equals(VALUE_TRUE)));
@@ -566,6 +577,7 @@ public class JedisDataSource implements DataSource {
             map.put(KEY_IS_CONTROLBAR_AUTO_MODE, device.isControlBarAutoMode() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_IS_MOBILE_ENABLED, device.isEblockerMobileEnabled() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_MOBILE_PRIVATE_NETWORK_ACCESS, Boolean.toString(device.isMobilePrivateNetworkAccess()));
+            map.put(KEY_WIREGUARD_ENABLED, Boolean.toString(device.isWireGuardEnabled()));
             map.put(KEY_USE_ANONYMIZATION_SERVICE, device.isUseAnonymizationService() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_USE_TOR, device.isRoutedThroughTor() ? VALUE_TRUE : VALUE_FALSE);
             map.put(KEY_MALWARE_FILTER_ENABLED, Boolean.toString(device.isMalwareFilterEnabled()));
@@ -892,6 +904,13 @@ public class JedisDataSource implements DataSource {
     }
 
     @Override
+    public void setWireGuardServerState(boolean state) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_WIREGUARD_SERVER_ENABLED, state ? VALUE_TRUE : VALUE_FALSE);
+        }
+    }
+
+    @Override
     public void setOpenVpnServerHost(String host) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(KEY_OPENVPN_SERVER_HOST, host);
@@ -972,6 +991,20 @@ public class JedisDataSource implements DataSource {
             String value = jedis.get(KEY_OPENVPN_SERVER_ENABLED);
 
             // default if not set is OFF:
+            if (value == null) {
+                return false;
+            }
+
+            return value.equals(VALUE_TRUE);
+        }
+    }
+
+    @Override
+    public boolean getWireGuardServerState() {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(KEY_WIREGUARD_SERVER_ENABLED);
+
+            // Default if not set is OFF.
             if (value == null) {
                 return false;
             }

@@ -43,13 +43,19 @@ public class UserModuleConverterTest {
                 null
         );
 
-        UserModuleTransport userDto = UserModuleConverter.getUserModuleTransport(user);
+        user.setWireGuardEnabled(true);
+
+        UserModuleTransport userDto =
+                UserModuleConverter.getUserModuleTransport(user);
 
         assertEquals(user.getId(), userDto.getId());
-        assertEquals(user.getAssociatedProfileId(), userDto.getAssociatedProfileId());
+        assertEquals(
+                user.getAssociatedProfileId(),
+                userDto.getAssociatedProfileId());
         assertEquals(user.getName(), userDto.getName());
         assertEquals(user.getNameKey(), userDto.getNameKey());
         assertEquals(user.isSystem(), userDto.isSystem());
+        assertTrue(userDto.isWireGuardEnabled());
         assertFalse(userDto.containsPin());
         assertNull(userDto.getNewPin());
         assertNull(userDto.getOldPin());

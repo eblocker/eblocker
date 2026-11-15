@@ -31,6 +31,8 @@ public class UserModuleTransport {
     private LocalDate birthday;
     private UserRole userRole;
     private boolean system;
+    @JsonProperty
+    private boolean wireGuardEnabled;
     private boolean containsPin;
     private String oldPin;
     private String newPin;
@@ -97,6 +99,14 @@ public class UserModuleTransport {
 
     public void setSystem(boolean system) {
         this.system = system;
+    }
+
+    public boolean isWireGuardEnabled() {
+        return wireGuardEnabled;
+    }
+
+    public void setWireGuardEnabled(boolean wireGuardEnabled) {
+        this.wireGuardEnabled = wireGuardEnabled;
     }
 
     public boolean containsPin() {

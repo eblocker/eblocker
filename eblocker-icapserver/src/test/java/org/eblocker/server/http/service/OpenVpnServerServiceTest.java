@@ -192,6 +192,30 @@ public class OpenVpnServerServiceTest {
     }
 
     @Test
+    public void restoreWithEblockerDynDnsBeforeRegistrationKeepsBackedUpHost() {
+        VpnServerStatus statusIn = startServerRequest();
+        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        statusIn.setHost("backed-up.home.eblocker.com");
+        createAndInitService();
+
+        service.setOpenVpnServerStatus(statusIn);
+
+        Mockito.verify(dataSource).setOpenVpnServerHost("backed-up.home.eblocker.com");
+    }
+
+    @Test
+    public void restoreWithEblockerDynDnsBeforeRegistrationWithoutHostUsesEmptyValue() {
+        VpnServerStatus statusIn = startServerRequest();
+        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        statusIn.setHost(null);
+        createAndInitService();
+
+        service.setOpenVpnServerStatus(statusIn);
+
+        Mockito.verify(dataSource).setOpenVpnServerHost("");
+    }
+
+    @Test
     public void testSetAndMapManualMode() {
         createAndInitService();
 

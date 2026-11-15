@@ -219,7 +219,11 @@ public class OpenVpnServerService extends VpnServerService {
                 dynDnsService.enable();
                 dynDnsService.update();
             }
-            setOpenVpnServerHost(dynDnsService.getHostname());
+            String host = dynDnsService.getHostname();
+            if (host == null) {
+                host = requestedStatus.getHost() != null ? requestedStatus.getHost() : "";
+            }
+            setOpenVpnServerHost(host);
         } else {
             if (dynDnsService.isEnabled()) {
                 dynDnsService.disable();

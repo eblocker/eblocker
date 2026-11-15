@@ -55,6 +55,17 @@ public class RuleTest {
     }
 
     @Test
+    public void testSourceMac() {
+        Rule rule = new Rule().input("eth0").sourceMac("02:25:60:00:00:10").tcp().returnFromChain();
+        Assert.assertEquals("-i eth0 -m mac --mac-source 02:25:60:00:00:10 -p tcp -j RETURN", rule.toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidSourceMac() {
+        new Rule().sourceMac("02:25:60:00:00:10 -j ACCEPT");
+    }
+
+    @Test
     public void testMark() {
         Rule rule = new Rule()
                 .sourceIp("192.168.0.22")

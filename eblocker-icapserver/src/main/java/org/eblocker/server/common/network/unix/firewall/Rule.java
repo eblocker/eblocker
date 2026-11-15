@@ -29,7 +29,7 @@ public class Rule {
     private Action action;
 
     private String inputInterface, outputInterface;
-    private String sourceIp, destinationIp;
+    private String sourceIp, destinationIp, sourceMac;
     private Integer destinationPort;
     private Protocol protocol;
 
@@ -53,6 +53,7 @@ public class Rule {
             outputInterface = template.outputInterface;
             sourceIp = template.sourceIp;
             destinationIp = template.destinationIp;
+            sourceMac = template.sourceMac;
             destinationPort = template.destinationPort;
             protocol = template.protocol;
             matchSet = template.matchSet;
@@ -79,6 +80,14 @@ public class Rule {
 
     public Rule sourceIp(String ip) {
         this.sourceIp = ip;
+        return this;
+    }
+
+    public Rule sourceMac(String mac) {
+        if (mac == null || !mac.matches("(?i)[0-9a-f]{2}(:[0-9a-f]{2}){5}")) {
+            throw new IllegalArgumentException("Invalid source MAC address");
+        }
+        this.sourceMac = mac;
         return this;
     }
 
@@ -219,6 +228,10 @@ public class Rule {
         return sourceIp;
     }
 
+    public String getSourceMac() {
+        return sourceMac;
+    }
+
     public String getDestinationIp() {
         return destinationIp;
     }
@@ -257,6 +270,9 @@ public class Rule {
         }
         if (sourceIp != null) {
             appendOption(result, "-s", sourceIp);
+        }
+        if (sourceMac != null) {
+            appendOption(result, "-m mac --mac-source", sourceMac);
         }
         if (destinationIp != null) {
             appendOption(result, "-d", destinationIp);

@@ -98,6 +98,11 @@ public class Simulator {
         if (rule.getProtocol() != null && rule.getProtocol() != packet.protocol) {
             return false;
         }
+        // The basic simulator has no Ethernet source address. MAC-only rules
+        // are checked separately in the table generator tests.
+        if (rule.getSourceMac() != null) {
+            return false;
+        }
         if (!matchIp(rule.getSourceIp(), packet.sourceIp)) {
             return false;
         }

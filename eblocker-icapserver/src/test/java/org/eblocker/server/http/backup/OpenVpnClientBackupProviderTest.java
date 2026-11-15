@@ -21,6 +21,7 @@ import com.google.common.base.Charsets;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.TestDeviceFactory;
 import org.eblocker.server.common.data.backup.BackupWarning;
+import org.eblocker.server.common.data.openvpn.KeepAliveMode;
 import org.eblocker.server.common.data.openvpn.OpenVpnProfile;
 import org.eblocker.server.common.data.openvpn.VpnLoginCredentials;
 import org.eblocker.server.common.openvpn.OpenVpnProfileFiles;
@@ -32,6 +33,7 @@ import org.eblocker.server.http.service.DeviceService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
@@ -145,6 +147,20 @@ class OpenVpnClientBackupProviderTest extends BackupProviderTestBase {
         byte[] backup = exportBackup(provider);
         importBackup(backup, provider);
         Mockito.verify(deviceService).updateDevice(Mockito.argThat((device) -> device.getUseVPNProfileID() == nextProfileId && device.getId().equals(deviceId)));
+    }
+
+    @Test
+    public void remotePingProfileRestoresConfigurationBeforeProfile() throws Exception {
+        openVpnProfile.setKeepAliveMode(KeepAliveMode.OPENVPN_REMOTE);
+        byte[] backup = exportBackup(provider);
+
+        importBackup(backup, provider);
+
+        InOrder restoreOrder = Mockito.inOrder(openVpnService);
+        restoreOrder.verify(openVpnService).setProfileClientConfig(nextProfileId, openVpnConfiguration.getSourceConfig());
+        restoreOrder.verify(openVpnService).saveProfile(Mockito.argThat(profile ->
+                profile.getId() == nextProfileId && profile.getKeepAliveMode() == KeepAliveMode.OPENVPN_REMOTE));
+        assertTrue(provider.getWarnings().isEmpty());
     }
 
     @Test

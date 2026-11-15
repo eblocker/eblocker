@@ -58,6 +58,7 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
         deviceIpFilter = Mockito.mock(IpAddressFilter.class);
         Mockito.when(deviceIpFilter.getEnabledDevicesIps()).thenReturn(List.of(enabledDevice, sslEnabledDevice, torClientDevice));
         Mockito.when(deviceIpFilter.getDisabledDevicesIps()).thenReturn(List.of(disabledDevice));
+        Mockito.when(deviceIpFilter.getDisabledDevicesMacs()).thenReturn(List.of("02:25:60:00:00:10"));
         Mockito.when(deviceIpFilter.getSslEnabledDevicesIps()).thenReturn(List.of(sslEnabledDevice, torClientDevice));
         Mockito.when(deviceIpFilter.getDevicesIps(Set.of(anonVpnWithIp6DeviceId))).thenReturn(List.of(anonVpnWithIp6Device, anonVpnWithIp6DeviceLocal));
         Mockito.when(deviceIpFilter.getDevicesIps(Set.of(anonVpnOnlyIp4DeviceId))).thenReturn(List.of(anonVpnOnlyIp4Device, anonVpnOnlyIp4DeviceLocal));
@@ -141,6 +142,14 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
 
         // disabled device: no masquerading
         Assert.assertEquals(Action.returnFromChain(), natPost.tcpPacket(disabledDevice, externalHost, 1234));
+    }
+
+    @Test
+    public void testDisabledMacBypassPrecedesProxyRedirect() {
+        List<Rule> rules = natTable.chain("local-redirects").getRules();
+        Assert.assertEquals("-i eth0 -m mac --mac-source 02:25:60:00:00:10 -p tcp -j RETURN", rules.get(0).toString());
+        Assert.assertTrue(rules.stream().anyMatch(rule ->
+                rule.toString().contains("--dport 80") && rule.toString().contains("-j DNAT")));
     }
 
     @Test

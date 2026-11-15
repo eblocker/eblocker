@@ -84,6 +84,11 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                 preRouting.rule(new Rule(standardInput).sourceIp(prefix).jumpToChain(localRedirects.getName()));
         });
 
+        // Privacy addresses can be used before neighbor discovery has associated
+        // them with a device. Keep disabled clients out of the proxy by ingress MAC.
+        ipAddressFilter.getDisabledDevicesMacs().forEach(mac -> localRedirects
+                .rule(new Rule(standardInput).sourceMac(mac).tcp().returnFromChain()));
+
         ipAddressFilter.getDisabledDevicesIps().stream()
                 .filter(ip -> isPublicIp(ip))
                 .forEach(ip -> localRedirects

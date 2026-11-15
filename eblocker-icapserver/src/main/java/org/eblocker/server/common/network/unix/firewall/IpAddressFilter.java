@@ -64,6 +64,16 @@ public class IpAddressFilter {
                 .filter(Device::isActive));
     }
 
+    public List<String> getDisabledDevicesMacs() {
+        return devices.stream()
+                .filter(device -> !device.isEnabled())
+                .filter(Device::isActive)
+                .map(Device::getHardwareAddress)
+                .filter(mac -> mac != null)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     public List<String> getSslEnabledDevicesIps() {
         return collectIpAddresses(devices.stream()
                 .filter(Device::isActive)

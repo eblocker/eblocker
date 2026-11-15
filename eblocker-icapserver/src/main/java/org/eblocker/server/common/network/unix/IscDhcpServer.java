@@ -89,7 +89,7 @@ public class IscDhcpServer implements DhcpServer {
     }
 
     @Override
-    public void setConfiguration(DhcpServerConfiguration configuration) {
+    public synchronized void setConfiguration(DhcpServerConfiguration configuration) {
         try {
             writeConfig(configuration);
         } catch (Exception e) {

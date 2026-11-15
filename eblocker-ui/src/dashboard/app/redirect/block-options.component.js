@@ -28,6 +28,7 @@ function Controller(logger, $stateParams, $window) {
     vm.$onInit = function() {
         vm.txid = $stateParams.txid;
         vm.originalDomain = $stateParams.originalDomain;
+        vm.sourceList = $stateParams.listName;
     };
 
     vm.redirect = function(decision) {

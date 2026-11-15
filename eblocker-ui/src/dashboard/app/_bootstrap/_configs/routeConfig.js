@@ -85,7 +85,7 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         component: 'redirectOptionsComponent',
         name: 'redirectOptions',
         parent: redirectState.name,
-        url: '/redirect/:txid/:originalDomain/:targetDomain'
+        url: '/redirect/:txid/:originalDomain/:targetDomain?listName'
         // url: '/redirect'
     };
 
@@ -93,7 +93,7 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         component: 'blockOptionsComponent',
         name: 'blockOptions',
         parent: redirectState.name,
-        url: '/redirect/:txid/:originalDomain'
+        url: '/redirect/:txid/:originalDomain?listName'
         // url: '/blocked'
     };
 
@@ -123,6 +123,7 @@ export default function AppRouter($stateProvider, $urlRouterProvider) {
         'errorDetails&' +
         'externalAclMessage&' +
         'listId&' +
+        'listName&' +
         'malware&' +
         'profileId&' +
         'restrictions&' +

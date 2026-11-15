@@ -589,6 +589,7 @@
         }
     },
     "SQUID_BLOCKER" : {
+        "SOURCE_LIST" : "Blocking list",
         "ACCESS_DENIED" : {
             "ACTION" : {
                 "BACK" : "Back",

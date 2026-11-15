@@ -116,8 +116,10 @@ public class EBlockerFilterProcessor implements TransactionProcessor {
                     UUID uuid = transactionCache.add(transaction);
                     String orginalDomain = UrlUtils.getDomain(UrlUtils.getHostname(transaction.getUrl()));
                     String baseURL = transaction.getBaseUrl();
+                    String listName = filterManager.getSourceName(result.getDecider());
                     FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-NO-TARGET>>");
-                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain);
+                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain
+                            + (listName == null ? "" : "?listName=" + UrlUtils.urlEncode(listName)));
                 }
                 return false;
 
@@ -144,13 +146,15 @@ public class EBlockerFilterProcessor implements TransactionProcessor {
                 UUID uuid = transactionCache.add(transaction);
                 String orginalDomain = UrlUtils.getDomain(UrlUtils.getHostname(transaction.getUrl()));
                 String baseURL = transaction.getBaseUrl();
+                String listName = filterManager.getSourceName(result.getDecider());
+                String listQuery = listName == null ? "" : "?listName=" + UrlUtils.urlEncode(listName);
                 if (result.getValue() == null) {
                     FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-NO-TARGET>>");
-                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain);
+                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + listQuery);
                 } else {
                     FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-WITH-TARGET>>");
                     String targetDomain = UrlUtils.getDomain(UrlUtils.getHostname(result.getValue()));
-                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + "/" + targetDomain);
+                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + "/" + targetDomain + listQuery);
                 }
                 return false;
 

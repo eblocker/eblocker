@@ -178,12 +178,35 @@ public class FilterManagerTest {
 
         Assert.assertSame(savedConfiguration, manager.getFilterStoreConfigurationById(savedConfiguration.getId()));
         assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), TRACKER_URL)); // Now the list has been updated with easyprivacy.txt
+        Assert.assertEquals("test", manager.getSourceName(
+                manager.getFilter(Category.ADS).filter(new TestContext(TRACKER_URL)).getDecider()));
 
         // check for issue with "null.json.enc" file
         Assert.assertTrue(Files.exists(cacheDirectory.resolve(savedConfiguration.getId() + FILE_SUFFIX)));
 
         Mockito.verify(dataSource).nextId(FilterStoreConfiguration.class);
         Mockito.verify(dataSource).save(Mockito.any(FilterStoreConfiguration.class), Mockito.eq(savedConfiguration.getId()));
+    }
+
+    @Test
+    public void testSourceNameWithTwoListsInSameCategory() throws IOException {
+        FilterManager manager = createManager();
+        writeEasyListToCache();
+        manager.addFilter(new FilterStoreConfiguration(null, "first list", Category.ADS, false,
+                System.currentTimeMillis(), new String[]{resourceFile.toString()},
+                FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST, true, new String[0], true));
+
+        Path secondResource = Files.createTempFile(tempDirectory, "second-list", ".txt");
+        Files.write(secondResource, "||second.example^".getBytes(Charset.forName("UTF-8")));
+        manager.addFilter(new FilterStoreConfiguration(null, "second list", Category.ADS, false,
+                System.currentTimeMillis(), new String[]{secondResource.toString()},
+                FilterLearningMode.NONE, FilterDefinitionFormat.EASYLIST, true, new String[0], true));
+
+        Filter filter = manager.getFilter(Category.ADS);
+        assertEquals("first list", manager.getSourceName(
+                filter.filter(new TestContext(TRACKER_URL)).getDecider()));
+        assertEquals("second list", manager.getSourceName(
+                filter.filter(new TestContext("http://second.example/path")).getDecider()));
     }
 
     @Test

@@ -16,11 +16,13 @@
  */
 package org.eblocker.server.icap.transaction.processor;
 
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.transaction.Decision;
+import org.eblocker.server.common.transaction.TransactionCache;
 import org.eblocker.server.http.service.DeviceService;
 import org.eblocker.server.icap.filter.Filter;
 import org.eblocker.server.icap.filter.FilterManager;
@@ -31,6 +33,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.UUID;
 
 public class TrackingBlockerProcessorTest {
 
@@ -98,6 +102,34 @@ public class TrackingBlockerProcessorTest {
         Assert.assertFalse(processor.process(transaction));
         Mockito.verify(transaction).block();
         Mockito.verify(patternBlockerUtils).countBlockedDomain(Mockito.eq(Category.TRACKERS), Mockito.any(FilterResult.class), Mockito.eq(session), Mockito.eq(transaction));
+    }
+
+    @Test
+    public void testWarningNamesBlockingListRatherThanRedirectRule() {
+        FilterManager manager = Mockito.mock(FilterManager.class);
+        Filter redirectFilter = Mockito.mock(Filter.class);
+        Mockito.when(manager.getFilter(org.eblocker.server.icap.filter.Category.TRACKER_BLOCKER)).thenReturn(filter);
+        Mockito.when(manager.getFilter(org.eblocker.server.icap.filter.Category.TRACKER_REDIRECT)).thenReturn(redirectFilter);
+        Mockito.when(redirectFilter.filter(transaction)).thenReturn(
+                FilterResult.ask(redirectFilter, "https://target.example/path"));
+        Mockito.when(manager.getSourceName(filter)).thenReturn("Tracker & Ads");
+
+        DataSource dataSource = Mockito.mock(DataSource.class);
+        Mockito.when(session.getSessionId()).thenReturn("session");
+        Mockito.when(transaction.getDomain()).thenReturn("evil.org");
+        Mockito.when(transaction.getBaseUrl()).thenReturn("http://eblocker.box");
+        Mockito.when(dataSource.getRedirectDecision("session", "evil.org")).thenReturn(Decision.NO_DECISION);
+
+        TransactionCache transactionCache = Mockito.mock(TransactionCache.class);
+        UUID transactionId = UUID.randomUUID();
+        Mockito.when(transactionCache.add(transaction)).thenReturn(transactionId);
+
+        TrackingBlockerProcessor namedProcessor = new TrackingBlockerProcessor(
+                dataSource, manager, patternBlockerUtils, transactionCache, deviceService);
+        Assert.assertFalse(namedProcessor.process(transaction));
+        Mockito.verify(transaction).redirect("http://eblocker.box/dashboard/#!/redirect/"
+                + transactionId + "/evil.org/target.example?listName=Tracker+%26+Ads");
+        Mockito.verify(manager).getSourceName(filter);
     }
 
     @Test

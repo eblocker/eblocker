@@ -1,6 +1,7 @@
 <eb-wizard-component wizard-title="{{ 'REDIRECT.BLOCK_OPTIONS.TITLE' | translate }}">
 
     <eb-wizard-content>
+        <p ng-if="vm.sourceList">{{'SQUID_BLOCKER.SOURCE_LIST' | translate}}: <strong>{{vm.sourceList}}</strong></p>
 
         <div layout="column" layout-padding>
 

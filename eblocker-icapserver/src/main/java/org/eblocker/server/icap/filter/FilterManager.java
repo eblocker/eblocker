@@ -132,6 +132,21 @@ public class FilterManager {
                 .orElse(null);
     }
 
+    /** Returns the enabled list whose rule made the decision, if known. */
+    public String getSourceName(Filter decider) {
+        if (decider == null || cache == null || decider.getDefinition() == null) {
+            return null;
+        }
+        for (FilterStoreConfiguration configuration : configurations) {
+            FilterStore store = cache.storeById.get(configuration.getId());
+            if (configuration.isEnabled() && store != null
+                    && store.get(decider.getDefinition()) == decider) {
+                return configuration.getName();
+            }
+        }
+        return null;
+    }
+
     public synchronized FilterStoreConfiguration addFilter(FilterStoreConfiguration configuration) {
         int id = dataSource.nextId(FilterStoreConfiguration.class);
         FilterStoreConfiguration addedConfiguration = new FilterStoreConfiguration(id,

@@ -118,6 +118,10 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
                 UUID uuid = transactionCache.add(transaction);
                 String orginalDomain = UrlUtils.getDomain(UrlUtils.getHostname(transaction.getUrl()));
                 String baseURL = transaction.getBaseUrl();
+                // The redirect rule only chooses the warning page. The original
+                // tracking decision identifies the list that blocked this URL.
+                String listName = filterManager.getSourceName(transaction.getFilterResult().getDecider());
+                String listQuery = listName == null ? "" : "?listName=" + UrlUtils.urlEncode(listName);
                 if (result.getValue() == null) {
                     if (isBlockingWithoutRedirectTarget()) {
                         session.incrementBlockedTrackings(transaction);
@@ -126,12 +130,12 @@ public class TrackingBlockerProcessor implements TransactionProcessor {
                         patternBlockerUtils.countBlockedDomain(Category.TRACKERS, transaction.getFilterResult(), session, transaction);
                     } else {
                         FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-NO-TARGET>>");
-                        transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain);
+                        transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + listQuery);
                     }
                 } else {
                     FILTER_LOG.info("{}\tUS\t{}\t{}\t{}", session.getShortId(), Decision.ASK, transaction.getUrl(), "<<USER-WITH-TARGET>>");
                     String targetDomain = UrlUtils.getDomain(UrlUtils.getHostname(result.getValue()));
-                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + "/" + targetDomain);
+                    transaction.redirect(baseURL + "/dashboard/#!/redirect/" + uuid + "/" + orginalDomain + "/" + targetDomain + listQuery);
                 }
                 return false;
 

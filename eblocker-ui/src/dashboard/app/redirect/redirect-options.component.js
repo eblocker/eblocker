@@ -30,6 +30,7 @@ function Controller(logger, $stateParams, $http, $window) {
         vm.txid = $stateParams.txid;
         vm.originalDomain = $stateParams.originalDomain;
         vm.targetDomain = $stateParams.targetDomain;
+        vm.sourceList = $stateParams.listName;
     };
 
     vm.redirect = function(decision) {

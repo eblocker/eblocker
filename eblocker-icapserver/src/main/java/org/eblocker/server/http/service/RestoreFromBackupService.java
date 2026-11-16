@@ -133,21 +133,4 @@ public class RestoreFromBackupService {
         }
         return true;
     }
-
-    /**
-     * Moves the backup out of the way, so it is not imported again
-     * @param imported true if the import was successful, false if an error occurred.
-     * @return true if the file was moved, false if there was an error
-     */
-    public boolean renameBackup(boolean imported) {
-        String targetFilename = backupFileService.getTimestampedFilename(imported ? "imported" : "failed");
-        Path target = mountpoint.resolve(targetFilename);
-        try {
-            Files.move(backupPath, target, StandardCopyOption.REPLACE_EXISTING);
-            return true;
-        } catch (IOException e) {
-            LOG.error("Could not rename {} to {}", backupPath, target, e);
-            return false;
-        }
-    }
 }

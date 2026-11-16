@@ -101,22 +101,6 @@ class RestoreFromBackupServiceTest extends BackupProviderTestBase {
         Mockito.verify(backupFileService).unmountExternalDisk();
     }
 
-    @Test
-    void testRenameBackup() throws IOException {
-        String targetFilename = "eblocker-config-imported-2026-10-08.eblcfg";
-        Path targetFile = tmpDir.resolve(targetFilename);
-        Mockito.when(backupFileService.getTimestampedFilename("imported")).thenReturn(targetFilename);
-
-        // no source file yet:
-        assertFalse(service.renameBackup(true));
-
-        // now with source file:
-        writeBackup("backup data");
-        assertFalse(Files.exists(targetFile));
-        assertTrue(service.renameBackup(true));
-        assertTrue(Files.exists(targetFile));
-    }
-
     private Path writeBackup(String backupData) throws IOException {
         byte[] data = backupData.getBytes(StandardCharsets.UTF_8);
         Path backupFile = tmpDir.resolve(backupFilename);

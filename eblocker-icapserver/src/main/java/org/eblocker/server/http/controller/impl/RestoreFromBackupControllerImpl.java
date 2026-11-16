@@ -87,8 +87,6 @@ public class RestoreFromBackupControllerImpl implements RestoreFromBackupControl
         } catch (Exception e) {
             LOG.error("Could not import backup", e);
             throw new EblockerException("adminconsole.config_backup.error.import_failure");
-        } finally {
-            restoreFromBackupService.renameBackup(imported);
         }
     }
 

@@ -72,7 +72,6 @@ FILE=$OUT_DIR/eblocker-status.log
     DHCP_IP=$(cat /var/log/eblocker/lastreceived_dhcp_ip.log)
     GATEWAY=$(redis-cli get gateway)
     DNS_SERVER=$(cat /etc/resolv.conf)
-    TRACEROUTE_EB=$(traceroute my.eblocker.com)
 
     echo "ifconfig eth0:" >> $FILE
     ifconfig eth0 >> $FILE
@@ -93,7 +92,7 @@ FILE=$OUT_DIR/eblocker-status.log
     echo "DNS-Server: $DNS_SERVER" >> $FILE
     echo $SEP >> $FILE
     echo "Traceroute to my.eblocker.org:" >> $FILE
-    traceroute -n -w 1 -m 20 my.eblocker.org >> $FILE
+    traceroute -n -w 1 -m 16 my.eblocker.org >> $FILE
     echo $SEP >> $FILE
     echo "Network configuration:" >> $FILE
     echo $NETWORK_CONFIG >> $FILE
@@ -199,7 +198,7 @@ FILE=$OUT_DIR/eblocker-status.log
 
 ### Include systemd-journal if applicable (the last 10000 lines) ###
     JOURNAL_CATALOG=journal_catalog.log
-    journalctl | tail -n 10000 > $OUT_DIR/$JOURNAL_CATALOG
+    journalctl -n 10000 > $OUT_DIR/$JOURNAL_CATALOG
 
 ### System Monitoring ###
     SYSSTATINTERMED=$OUT_DIR/sysstat

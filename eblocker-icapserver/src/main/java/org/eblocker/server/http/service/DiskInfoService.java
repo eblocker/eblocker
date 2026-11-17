@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 import java.util.List;
 
 @Singleton
@@ -58,13 +59,28 @@ public class DiskInfoService {
      * @throws IOException
      */
     public BlockDevice getMountedPartition() throws IOException {
+        return findPartition((BlockDevice partition) -> mountPoint.equals(partition.getMountpoint()));
+    }
+
+    /**
+     * Returns the partition at the given device path.
+     *
+     * @param path device path, e.g. "/dev/sda1"
+     * @return BlockDevice object representing the partition or null
+     * @throws IOException
+     */
+    public BlockDevice getPartitionByPath(String path) throws IOException {
+        return findPartition((BlockDevice partition) -> partition.getPath().equals(path));
+    }
+
+    private BlockDevice findPartition(Predicate<BlockDevice> predicate) throws IOException {
         BlockDevicesList blockDevices = getBlockDevices();
         List<BlockDevice> disks = blockDevices.getBlockdevices();
         for (BlockDevice disk : disks) {
             List<BlockDevice> partitions = disk.getChildren();
             if (partitions != null) {
                 for (BlockDevice partition : partitions) {
-                    if (mountPoint.equals(partition.getMountpoint())) {
+                    if (predicate.test(partition)) {
                         // Copy model from disk to partition (for user feedback):
                         partition.setModel(disk.getModel());
                         return partition;

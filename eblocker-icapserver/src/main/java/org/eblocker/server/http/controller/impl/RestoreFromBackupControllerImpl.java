@@ -64,7 +64,6 @@ public class RestoreFromBackupControllerImpl implements RestoreFromBackupControl
     @Override
     public ConfigBackupImportResult importConfiguration(Request request, Response response) {
         String password = getPassword(request);
-        boolean imported = false;
         try (InputStream inputStream = Files.newInputStream(restoreFromBackupService.getBackupPath())) {
             ConfigBackupImportResult result = configurationBackupService.importConfiguration(inputStream, password);
             if (result.hasWarnings()) {
@@ -72,7 +71,6 @@ public class RestoreFromBackupControllerImpl implements RestoreFromBackupControl
             } else {
                 LOG.info("Successfully imported configuration backup");
             }
-            imported = true;
             eventLogger.log(Events.configurationBackupRestored("RESTORE-FILE"));
             return result;
         } catch (CorruptedBackupException e) {

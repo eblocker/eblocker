@@ -72,19 +72,18 @@
                                     <li ng-repeat="w in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + w.id | translate:{itemId: w.itemId, itemName: w.itemName} }}</li>
                                 </ul>
                             </div>
-                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.ATTACH_DRIVE" ng-show="vm.showAttachMessage()"></div>
-                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.WROTE_TO_DRIVE" ng-show="vm.showSuccessMessage()"></div>
-                            <div layout="row" layout-align="start center" layout-padding>
+                            <div translate="{{ 'ADMINCONSOLE.CONFIG_BACKUP.INSTRUCT.' + vm.driveState }}"></div>
+                            <div layout="row" layout-align="start center" ng-show="vm.showDrive()" layout-padding>
                                 <md-progress-circular md-diameter="24" md-mode="indeterminate" ng-show="vm.showProgress()"></md-progress-circular>
-                                <div>{{'ADMINCONSOLE.CONFIG_BACKUP.DRIVE_STATE.' + vm.driveState | translate}}</div>
+                                <div translate="{{ 'ADMINCONSOLE.CONFIG_BACKUP.DRIVE_STATE.' + vm.driveState }}"></div>
                                 <div style="font-weight:bold;">{{vm.partitionName}}</div>
                             </div>
                         </div>
                         <div layout="row" layout-xs="column" layout-align="end center" style="padding: 0;">
-                            <md-button type="button" ng-click="vm.cancel()" ng-hide="vm.isComplete()" class="md-raised md-secondary">
+                            <md-button type="button" ng-click="vm.cancel()" ng-hide="vm.isWritten()" class="md-raised md-secondary">
                                 {{ 'ADMINCONSOLE.TASKS.DIALOG.CANCEL' | translate }}
                             </md-button>
-                            <md-button type="button" ng-hide="vm.isComplete()" ng-click="vm.writeBackup()" class="md-raised md-accent" ng-disabled="!vm.mayStartWriting()">
+                            <md-button type="button" ng-hide="vm.isWritten()" ng-click="vm.writeBackup()" class="md-raised md-accent" ng-disabled="!vm.mayStartWriting()">
                                 {{ 'ADMINCONSOLE.CONFIG_BACKUP.ACTION.SAVE_BACKUP' | translate }}
                             </md-button>
                             <md-button type="button" ng-show="vm.isComplete()" ng-click="vm.closeDialog()" class="md-raised">

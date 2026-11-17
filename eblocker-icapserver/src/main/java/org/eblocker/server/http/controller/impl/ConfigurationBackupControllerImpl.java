@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.eblocker.server.common.data.BlockDevice;
+import org.eblocker.server.common.data.BlockDevicePartition;
 import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
@@ -217,26 +218,48 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
     }
 
     @Override
-    public String getMountedPartitionName(Request request, Response response) {
+    public BlockDevicePartition getMountedPartition(Request request, Response response) {
         try {
-            BlockDevice mountedPartition = diskInfoService.getMountedPartition();
-            if (mountedPartition != null) {
-                return mountedPartition.getFriendlyName();
-            }
+            return getPartition();
         } catch (IOException e) {
             LOG.error("Could not search mounted partition", e);
             throw new EblockerException("adminconsole.config_backup.error.disk_error");
+        }
+    }
+
+    private BlockDevicePartition getPartition() throws IOException {
+        BlockDevice mountedPartition = diskInfoService.getMountedPartition();
+        if (mountedPartition != null) {
+            BlockDevicePartition result = new BlockDevicePartition();
+            result.setPath(mountedPartition.getPath());
+            result.setFriendlyName(mountedPartition.getFriendlyName());
+            result.setAttached(true);
+            return result;
         }
         return null;
     }
 
     @Override
-    public void moveToExternalDisk(Request request, Response response) {
+    public BlockDevicePartition moveToExternalDisk(Request request, Response response) {
         ConfigBackupReference reference = request.getBodyAs(ConfigBackupReference.class);
         if (reference == null) {
             String message = "ConfigBackupReference is missing from request";
             LOG.error(message);
             throw new BadRequestException(message);
+        }
+
+        BlockDevicePartition partition;
+        // partition still mounted?
+        try {
+            partition = getPartition();
+        } catch(IOException e) {
+            LOG.error("Could not move backup {} to external disk. Could not get mounted partition.", reference.getFileReference(), e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
+        }
+
+        if (partition == null) {
+            LOG.error("Could not move backup {} to external disk. Partition is not mounted any more.", reference.getFileReference());
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
         }
 
         try {
@@ -250,6 +273,29 @@ public class ConfigurationBackupControllerImpl implements ConfigurationBackupCon
             backupFileService.unmountExternalDisk();
         } catch (IOException | InterruptedException e) {
             LOG.error("Could not unmount external disk", e);
+            throw new EblockerException("adminconsole.config_backup.error.disk_error");
+        }
+        return partition;
+    }
+
+    @Override
+    public BlockDevicePartition getPartitionStatus(Request request, Response response) {
+        BlockDevicePartition givenPartition = request.getBodyAs(BlockDevicePartition.class);
+        if (givenPartition == null) {
+            String message = "BlockDevicePartition is missing from request";
+            LOG.error(message);
+            throw new BadRequestException(message);
+        }
+        try {
+            BlockDevicePartition attachedPartition = getPartition();
+            if (attachedPartition != null) {
+                return attachedPartition;
+            } else {
+                givenPartition.setAttached(false);
+                return givenPartition;
+            }
+        } catch (IOException e) {
+            LOG.error("Could not get partition status of {}", givenPartition.getPath(), e);
             throw new EblockerException("adminconsole.config_backup.error.disk_error");
         }
     }

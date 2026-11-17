@@ -17,7 +17,7 @@
 export default function RestoreFromBackupService(logger, $http, $q) {
     'ngInject';
 
-    const BACKUP_TIMEOUT = 60000; // importing/exporting backups could take longer than 10s.
+    const BACKUP_TIMEOUT = 300000; // importing/exporting backups could take longer than 10s.
 
     const PATH = '/api/adminconsole/restore/';
     const PATH_AVAILABLE = PATH + 'isBackupAvailable';

@@ -18,6 +18,8 @@ package org.eblocker.server.http.controller.impl;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.eblocker.server.common.data.BlockDevice;
+import org.eblocker.server.common.data.BlockDevicePartition;
 import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
@@ -179,6 +181,10 @@ public class ConfigurationBackupControllerImplTest {
 
     @Test
     public void moveToExternalDisk() throws Exception {
+        BlockDevice mounted = new BlockDevice();
+        mounted.setPath("/dev/sda1");
+        Mockito.when(diskInfoService.getMountedPartition()).thenReturn(mounted);
+
         // Prepare a previously created backup file:
         Path tmpFile = Files.createTempFile(tmpDir, ConfigurationBackupFileService.FILE_PREFIX, ConfigurationBackupFileService.FILE_SUFFIX);
         byte[] backupData = "Configuration backup data".getBytes();
@@ -186,10 +192,34 @@ public class ConfigurationBackupControllerImplTest {
         String fileReference = tmpFile.getFileName().toString();
 
         Mockito.when(request.getBodyAs(ConfigBackupReference.class)).thenReturn(new ConfigBackupReference(fileReference, null, false));
-        controller.moveToExternalDisk(request, response);
+        BlockDevicePartition result = controller.moveToExternalDisk(request, response);
+        assertEquals("/dev/sda1", result.getPath());
 
         byte[] written = Files.readAllBytes(externalDiskMountpoint.resolve("eblocker-config.eblcfg"));
         assertArrayEquals(backupData, written);
         Mockito.verify(scriptRunner).runScript(externalDiskUnmountCommand);
+    }
+
+    @Test
+    public void getPartitionStatus() throws Exception {
+        BlockDevice mounted = new BlockDevice();
+        mounted.setPath("/dev/sda1");
+        Mockito.when(diskInfoService.getMountedPartition()).thenReturn(mounted);
+
+        BlockDevicePartition partition = new BlockDevicePartition();
+        partition.setPath("/dev/sda1");
+
+        // disk still attached:
+        partition.setAttached(true);
+        Mockito.when(request.getBodyAs(BlockDevicePartition.class)).thenReturn(partition);
+        BlockDevicePartition result = controller.getPartitionStatus(request, response);
+        assertEquals("/dev/sda1", result.getPath());
+        assertTrue(result.isAttached());
+
+        // disk removed:
+        Mockito.when(diskInfoService.getMountedPartition()).thenReturn(null);
+        BlockDevicePartition result2 = controller.getPartitionStatus(request, response);
+        assertEquals("/dev/sda1", result2.getPath());
+        assertFalse(result2.isAttached());
     }
 }

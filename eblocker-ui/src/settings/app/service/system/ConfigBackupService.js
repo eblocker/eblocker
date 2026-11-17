@@ -17,7 +17,7 @@
 export default function ConfigBackupService(logger, $http, $q) {
     'ngInject';
 
-    const BACKUP_TIMEOUT = 60000; // importing/exporting backups could take longer than 10s.
+    const BACKUP_TIMEOUT = 300000; // importing/exporting backups could take longer than 10s.
 
     const PATH = '/api/configbackup/';
     const PATH_EXPORT = PATH + 'export';
@@ -26,6 +26,7 @@ export default function ConfigBackupService(logger, $http, $q) {
     const PATH_IMPORT = PATH + 'import';
     const PATH_VERIFY = PATH + 'verify';
     const PATH_MOUNTED_PARTITION = PATH + 'mountedPartition';
+    const PATH_PARTITION_STATUS  = PATH + 'partitionStatus';
     const PATH_WRITE_TO_DISK     = PATH + 'writeToDisk';
     const RE_CONTENT_DISPOSITION = /attachment; filename="(.*?)"/;
 
@@ -118,13 +119,23 @@ export default function ConfigBackupService(logger, $http, $q) {
     function mountedPartition() {
         return $http.get(PATH_MOUNTED_PARTITION).then(
             function success(response){
-                if (angular.isDefined(response) && angular.isString(response.data) && response.data.length > 0) {
+                if (angular.isDefined(response) && angular.isObject(response.data)) {
                     return response.data;
                 } else {
                     return null;
                 }
             }, function error(response) {
                 logger.error('Error getting mounted partition name', response);
+                return $q.reject(response.data);
+            });
+    }
+
+    function partitionStatus(partition) {
+        return $http.post(PATH_PARTITION_STATUS, partition).then(
+            function success(response){
+                return response.data;
+            }, function error(response) {
+                logger.error('Error getting partition status', response);
                 return $q.reject(response.data);
             });
     }
@@ -148,6 +159,7 @@ export default function ConfigBackupService(logger, $http, $q) {
         importConfig: importConfig,
         verifyConfig: verifyConfig,
         mountedPartition: mountedPartition,
+        partitionStatus: partitionStatus,
         writeConfigToDisk: writeConfigToDisk
     };
 }

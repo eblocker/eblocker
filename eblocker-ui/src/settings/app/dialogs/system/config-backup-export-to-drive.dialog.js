@@ -24,6 +24,7 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
         FOUND: 'FOUND',
         WRITING: 'WRITING',
         WROTE: 'WROTE',
+        REMOVED: 'REMOVED',
         FAILED: 'FAILED'
     };
     const DRIVE_SEARCHING_INTERVAL = 3000;
@@ -34,6 +35,7 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
     vm.currentStep = 0;
     vm.maxLength = 50;
     vm.driveSearch = null;
+    vm.waitRemoval = null;
 
     vm.isStepAllowed = function(step) {
         // only earlier steps are allowed
@@ -47,6 +49,7 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
 
         // User might have gone back to first tab, probably to change the password
         stopSearchingForDrive();
+        stopWaitingForRemoval();
     };
 
     vm.createConfigBackup = function() {
@@ -85,6 +88,7 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
         ConfigBackupService.writeConfigToDisk(vm.fileReference).then(function(result) {
             logger.warn('Wrote to drive: ' + JSON.stringify(result));
             vm.driveState = DriveState.WROTE;
+            startWaitingForRemoval(result);
         }, function(response) {
             NotificationService.error(response.toUpperCase());
             vm.driveState = DriveState.FAILED;
@@ -93,9 +97,8 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
 
     function getMountedPartition() {
         ConfigBackupService.mountedPartition().then(function(result) {
-            logger.warn('mountedPartition: ' + JSON.stringify(result));
             if (result != null) {
-                vm.partitionName = result;
+                vm.partitionName = result.friendlyName;
                 vm.driveState = DriveState.FOUND;
             } else {
                 vm.partitionName = null;
@@ -120,20 +123,45 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
         vm.driveSearch = null;
     }
 
+    function getPartitionStatus(partition) {
+        ConfigBackupService.partitionStatus(partition).then(function(result) {
+            if (!result.attached) {
+                vm.driveState = DriveState.REMOVED;
+                stopWaitingForRemoval();
+            }
+        }, function(response) {
+            logger.error(response);
+        });
+    }
+
+    function startWaitingForRemoval(partition) {
+        if (vm.waitRemoval == null) {
+            getPartitionStatus(partition);
+            vm.waitRemoval = $interval(getPartitionStatus, DRIVE_SEARCHING_INTERVAL, 0, true, partition);
+        }
+    }
+
+    function stopWaitingForRemoval() {
+        if (vm.waitRemoval != null) {
+            $interval.cancel(vm.waitRemoval);
+        }
+        vm.waitRemoval = null;
+    }
+
+    vm.showDrive = function() {
+        return vm.driveState !== DriveState.REMOVED && vm.driveState !== DriveState.FAILED;
+    };
+
     vm.showProgress = function() {
-        return vm.driveState === DriveState.SEARCHING || vm.driveState === DriveState.WRITING;
+        return vm.driveState === DriveState.SEARCHING || vm.driveState === DriveState.WRITING || vm.driveState === DriveState.WROTE;
     };
 
-    vm.showAttachMessage = function() {
-        return vm.driveState === DriveState.SEARCHING;
-    };
-
-    vm.showSuccessMessage = function() {
-        return vm.driveState === DriveState.WROTE;
+    vm.isWritten = function() {
+        return vm.driveState === DriveState.REMOVED || vm.driveState === DriveState.WROTE;
     };
 
     vm.isComplete = function() {
-        return vm.driveState === DriveState.WROTE || vm.driveState === DriveState.FAILED;
+        return vm.driveState === DriveState.REMOVED;
     };
 
     vm.mayStartWriting = function() {
@@ -142,11 +170,13 @@ export default function ConfigBackupExportToDriveController(logger, $scope, $mdD
 
     vm.closeDialog = function() {
         stopSearchingForDrive();
+        stopWaitingForRemoval();
         $mdDialog.hide();
     };
 
     vm.cancel = function() {
         stopSearchingForDrive();
+        stopWaitingForRemoval();
         $mdDialog.cancel();
     };
 }

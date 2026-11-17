@@ -366,9 +366,7 @@
                 "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
                 "WARNINGS" : "Es sind Warnungen aufgetreten:",
                 "VERIFIED": "Die Einstellungen aus der Sicherungsdatei wurden überprüft und können nun wiederhergestellt werden.",
-                "SAVE_TO_DRIVE" : "Mit dieser Funktion kannst du alle Einstellungen auf einem USB-Stick sichern und auf ein neues eBlockerOS-Image übertragen.",
-                "ATTACH_DRIVE" : "Stecke einen USB-Stick an den eBlocker an. Dieser muss mit FAT32 formatiert sein (erfüllen alle handelsüblichen Sticks).",
-                "WROTE_TO_DRIVE" : "Die Sicherungsdatei wurde auf dem USB-Stick gespeichert.<p>Zum Übertragen der Einstellungen auf ein neues eBlockerOS-Image:<ol><li>Beschreibe eine neue SD-Karte am PC mit dem Raspberry Pi Imager.</li><li>Fahre den eBlocker herunter.</li><li>Stecke die neue SD-Karte und den USB-Stick an den Raspberry Pi.</li><li>Verbinde den Raspberry Pi mit dem Router und der Stromversorgung.</li><li>Öffne die eBlocker-Einstellungen auf eblocker.box und gib das Passwort der Sicherungsdatei ein.</li></ol></p>"
+                "SAVE_TO_DRIVE" : "Mit dieser Funktion kannst du alle Einstellungen auf einem USB-Stick sichern und auf ein neues eBlockerOS-Image übertragen."
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {
@@ -404,12 +402,18 @@
                 "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht gesichert werden.",
                 "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' konnte nicht wiederhergestellt werden."
             },
+            "INSTRUCT": {
+                "SEARCHING": "Stecke einen USB-Stick an den eBlocker an. Dieser muss mit FAT32 formatiert sein (erfüllen alle handelsüblichen Sticks).",
+                "FOUND": "Ein USB-Stick wurde erkannt. Du kannst jetzt die Einstellungen darauf sichern.",
+                "WROTE": "Die Sicherungsdatei wurde auf dem USB-Stick gespeichert. Bitte entferne diesen jetzt.",
+                "REMOVED": "<p>Zum Übertragen der Einstellungen auf ein neues eBlockerOS-Image:<ol><li>Beschreibe eine neue SD-Karte am PC mit dem Raspberry Pi Imager.</li><li>Fahre den eBlocker herunter.</li><li>Stecke die neue SD-Karte und den USB-Stick an den Raspberry Pi.</li><li>Verbinde den Raspberry Pi mit dem Router und der Stromversorgung.</li><li>Öffne die eBlocker-Einstellungen auf eblocker.box und gib das Passwort der Sicherungsdatei ein.</li></ol></p>",
+                "FAILED": "Beim Sichern der Einstellungen auf dem USB-Stick ist ein Fehler aufgetreten. Bitte entferne den USB-Stick und versuche es erneut."
+            },
             "DRIVE_STATE": {
-                "CANCELLED": "Vorgang wurde abgebrochen. Entferne ggf. den USB-Stick.",
                 "SEARCHING": "USB-Stick wird gesucht...",
-                "FOUND": "USB-Stick wurde erkannt:",
+                "FOUND": "USB-Stick:",
                 "WRITING": "Sicherungsdatei wird geschrieben:",
-                "WROTE": "Sicherungsdatei wurde geschrieben:"
+                "WROTE": "Bitte entferne den USB-Stick:"
             }
         },
         "DETAILS_VIEW": {

@@ -2249,8 +2249,13 @@ public class EblockerHttpsServer implements Preprocessor {
 
         server
                 .uri("/api/configbackup/mountedPartition", configBackupController)
-                .action("getMountedPartitionName", HttpMethod.GET)
+                .action("getMountedPartition", HttpMethod.GET)
                 .name("adminconsole.configbackup.mountedPartition");
+
+        server
+                .uri("/api/configbackup/partitionStatus", configBackupController)
+                .action("getPartitionStatus", HttpMethod.POST)
+                .name("adminconsole.configbackup.partitionStatus");
 
         server
                 .uri("/api/configbackup/writeToDisk", configBackupController)

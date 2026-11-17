@@ -17,6 +17,7 @@
 package org.eblocker.server.http.controller;
 
 import io.netty.buffer.ByteBuf;
+import org.eblocker.server.common.data.BlockDevicePartition;
 import org.eblocker.server.common.data.backup.ConfigBackupExportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupImportResult;
 import org.eblocker.server.common.data.backup.ConfigBackupReference;
@@ -29,6 +30,7 @@ public interface ConfigurationBackupController {
     ConfigBackupReference uploadConfiguration(Request request, Response response);
     ConfigBackupImportResult importConfiguration(Request request, Response response);
     ConfigBackupImportResult verifyConfiguration(Request request, Response response);
-    String getMountedPartitionName(Request request, Response response);
-    void moveToExternalDisk(Request request, Response response);
+    BlockDevicePartition getMountedPartition(Request request, Response response);
+    BlockDevicePartition moveToExternalDisk(Request request, Response response);
+    BlockDevicePartition getPartitionStatus(Request request, Response response);
 }

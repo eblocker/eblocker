@@ -362,10 +362,11 @@
                 "BACKUP_SAVED" : "The backup file was saved to your Downloads folder.",
                 "EXPORT" : "A new password is required to protect the HTTPS and OpenVPN keys in the backup file.",
                 "IMPORTED" : "The settings have been restored",
-                "REBOOT" : "To apply the settings, eBlocker will now be rebooted.",
+                "REBOOT" : "To apply the settings, eBlocker must be rebooted.",
                 "WARNINGS" : "There were warnings:",
                 "VERIFIED" : "The settings from the backup file were verified and can now be imported.",
-                "SAVE_TO_DRIVE" : "With this function you can save all settings to a USB flash drive and transfer them to a new eBlockerOS image."
+                "SAVE_TO_DRIVE" : "With this function you can save all settings to a USB flash drive and transfer them to a new eBlockerOS image.",
+                "REMOVE_DRIVE" : "Please remove the USB flash drive first:"
             },
             "FILE_LABEL" : "Selected File",
             "INCLUDE_KEYS" : {

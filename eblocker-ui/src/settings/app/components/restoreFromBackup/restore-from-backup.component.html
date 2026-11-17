@@ -81,9 +81,14 @@
                                 <li ng-repeat="w in vm.warnings">{{'ADMINCONSOLE.CONFIG_BACKUP.WARNING.' + w.id | translate:{itemId: w.itemId, itemName: w.itemName} }}</li>
                             </ul>
                         </div>
+                        <div layout="row" layout-align="start center" ng-show="vm.showDrive()" layout-padding>
+                            <md-progress-circular md-diameter="24" md-mode="indeterminate"></md-progress-circular>
+                            <div translate="ADMINCONSOLE.CONFIG_BACKUP.EXPLAIN.REMOVE_DRIVE"></div>
+                            <div style="font-weight:bold;">{{vm.partition.friendlyName}}</div>
+                        </div>
                     </div>
                     <div layout="row" layout-align="end center" style="padding: 0;">
-                        <md-button type="button" ng-click="vm.reboot()" class="md-raised md-primary md-accent">
+                        <md-button type="button" ng-click="vm.reboot()" class="md-raised md-primary md-accent" ng-disabled="vm.showDrive()">
                             {{'ADMINCONSOLE.CONFIG_BACKUP.ACTION.REBOOT' | translate}}
                         </md-button>
                     </div>

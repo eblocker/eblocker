@@ -23,8 +23,10 @@ export default {
 };
 
 function Controller(logger, RestoreFromBackupService, NotificationService, SystemService,
-                    StateService, STATES) {
+                    ConfigBackupService, $interval, StateService, STATES) {
     'ngInject';
+
+    const DRIVE_SEARCHING_INTERVAL = 3000;
 
     const vm = this;
     vm.includeKeys = true;
@@ -32,6 +34,8 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
     vm.verifying = false;
     vm.importing = false;
     vm.warnings = [];
+    vm.waitRemoval = null;
+    vm.partition = null;
 
     vm.isStepAllowed = function(step) {
         // reboot? No turning back...
@@ -49,7 +53,6 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
     };
 
     vm.verifyConfigBackup = function() {
-        logger.warn('Verifying backup');
         if (!vm.configBackupImportForm.$valid) {
             return;
         }
@@ -75,6 +78,7 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
         RestoreFromBackupService.importConfig(vm.password).then(function(result) {
             vm.warnings = result.warnings;
             vm.currentStep = 2;
+            waitForDriveRemoval();
         }, function(response) {
             NotificationService.error(response.toUpperCase());
         }).finally(function() {
@@ -98,5 +102,47 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
         }, function(response) {
             NotificationService.error(response.toUpperCase());
         });
+    };
+
+    function getPartitionStatus() {
+        ConfigBackupService.partitionStatus(vm.partition).then(function(result) {
+            vm.partition = result;
+            if (!vm.partition.attached) {
+                stopWaitingForRemoval();
+            }
+        }, function(response) {
+            logger.error(response);
+        });
+    }
+
+    function waitForDriveRemoval() {
+        ConfigBackupService.mountedPartition().then(function(result) {
+            if (result != null) {
+                vm.partition = result;
+                startWaitingForRemoval();
+            } else {
+                logger.error('Partition is not mounted any more!');
+            }
+        }, function(response) {
+            logger.error(response);
+        });
+    }
+
+    function startWaitingForRemoval() {
+        if (vm.waitRemoval == null) {
+            getPartitionStatus();
+            vm.waitRemoval = $interval(getPartitionStatus, DRIVE_SEARCHING_INTERVAL);
+        }
+    }
+
+    function stopWaitingForRemoval() {
+        if (vm.waitRemoval != null) {
+            $interval.cancel(vm.waitRemoval);
+        }
+        vm.waitRemoval = null;
+    }
+
+    vm.showDrive = function() {
+        return vm.partition != null && vm.partition.attached;
     };
 }

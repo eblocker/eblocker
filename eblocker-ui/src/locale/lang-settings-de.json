@@ -363,10 +363,11 @@
                 "BACKUP_SAVED" : "Die Sicherungsdatei wurde in deinem Download-Verzeichnis gespeichert.",
                 "EXPORT": "Ein neues Passwort wird benötigt, um die HTTPS- und OpenVPN-Schlüssel in der Sicherungsdatei zu schützen.",
                 "IMPORTED": "Die Einstellungen wurden wiederhergestellt.",
-                "REBOOT": "Um die Einstellungen anzuwenden, wird eBlocker jetzt neu gestartet.",
+                "REBOOT": "Um die Einstellungen anzuwenden, muss der eBlocker neu gestartet werden.",
                 "WARNINGS" : "Es sind Warnungen aufgetreten:",
                 "VERIFIED": "Die Einstellungen aus der Sicherungsdatei wurden überprüft und können nun wiederhergestellt werden.",
-                "SAVE_TO_DRIVE" : "Mit dieser Funktion kannst du alle Einstellungen auf einem USB-Stick sichern und auf ein neues eBlockerOS-Image übertragen."
+                "SAVE_TO_DRIVE" : "Mit dieser Funktion kannst du alle Einstellungen auf einem USB-Stick sichern und auf ein neues eBlockerOS-Image übertragen.",
+                "REMOVE_DRIVE": "Bitte entferne erst den USB-Stick:"
             },
             "FILE_LABEL": "Ausgewählte Datei",
             "INCLUDE_KEYS": {

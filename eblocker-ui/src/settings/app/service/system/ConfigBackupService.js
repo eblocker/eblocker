@@ -37,8 +37,7 @@ export default function ConfigBackupService(logger, $http, $q) {
             function(response) {
                 return response.data;
             }, function(response) {
-                logger.error('Error exporting configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error exporting configuration backup', response);
             });
     }
 
@@ -73,8 +72,7 @@ export default function ConfigBackupService(logger, $http, $q) {
                     return $q.reject('bad content-type');
                 }
             }, function error(response) {
-                logger.error('Error downloading configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error downloading configuration backup', response);
             });
     }
 
@@ -87,8 +85,7 @@ export default function ConfigBackupService(logger, $http, $q) {
                 if (response.status === 413) { // request entity too large?
                     response.data = 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.UPLOAD_TOO_LARGE';
                 }
-                logger.error('Error uploading configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error uploading configuration backup', response);
             });
     }
 
@@ -99,8 +96,7 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error verifying configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error verifying configuration backup', response);
             });
     }
 
@@ -111,8 +107,7 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error importing configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error importing configuration backup', response);
             });
     }
 
@@ -125,8 +120,7 @@ export default function ConfigBackupService(logger, $http, $q) {
                     return null;
                 }
             }, function error(response) {
-                logger.error('Error getting mounted partition name', response);
-                return $q.reject(response.data);
+                return handleError('Error getting mounted partition name', response);
             });
     }
 
@@ -135,8 +129,7 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error getting partition status', response);
-                return $q.reject(response.data);
+                return handleError('Error getting partition status', response);
             });
     }
 
@@ -147,9 +140,21 @@ export default function ConfigBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error writing configuration backup to disk', response);
-                return $q.reject(response.data);
+                return handleError('Error writing configuration backup to disk', response);
             });
+    }
+
+    function handleError(msg, response) {
+        logger.error(msg, response);
+        if (angular.isString(response.data)) {
+            return $q.reject(response.data.toUpperCase());
+        } else {
+            if (response.xhrStatus === 'timeout') {
+                return $q.reject('ADMINCONSOLE.CONFIG_BACKUP.ERROR.TIMEOUT');
+            } else {
+                return $q.reject(msg);
+            }
+        }
     }
 
     return {

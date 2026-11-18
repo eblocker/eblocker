@@ -29,7 +29,7 @@ export default function RestoreFromBackupService(logger, $http, $q) {
         return $http.get(PATH_AVAILABLE).then(function success(response) {
             return response;
         }, function error(response) {
-            return $q.reject(response);
+            return handleError('Could not find out whether backup is available', response);
         });
     }
 
@@ -37,7 +37,7 @@ export default function RestoreFromBackupService(logger, $http, $q) {
         return $http.post(PATH_CANCEL, {}).then(function success(response) {
             return response;
         }, function error(response) {
-            return $q.reject(response);
+            return handleError('Could not cancel import', response);
         });
     }
 
@@ -48,8 +48,7 @@ export default function RestoreFromBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error verifying configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error verifying configuration backup', response);
             });
     }
 
@@ -60,9 +59,21 @@ export default function RestoreFromBackupService(logger, $http, $q) {
             function success(response){
                 return response.data;
             }, function error(response) {
-                logger.error('Error importing configuration backup', response);
-                return $q.reject(response.data);
+                return handleError('Error importing configuration backup', response);
             });
+    }
+
+    function handleError(msg, response) {
+        logger.error(msg, response);
+        if (angular.isString(response.data)) {
+            return $q.reject(response.data.toUpperCase());
+        } else {
+            if (response.xhrStatus === 'timeout') {
+                return $q.reject('ADMINCONSOLE.CONFIG_BACKUP.ERROR.TIMEOUT');
+            } else {
+                return $q.reject(msg);
+            }
+        }
     }
 
     return {

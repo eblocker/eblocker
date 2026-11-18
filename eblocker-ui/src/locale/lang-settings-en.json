@@ -352,7 +352,8 @@
                 "UPLOAD_FAILURE" : "The settings file could not be uploaded",
                 "UPLOAD_TOO_LARGE" : "The settings file is too large",
                 "VERIFICATION_FAILURE" : "The backup file could not be verified. It seems to be corrupted.",
-                "DISK_ERROR" : "An error occurred searching for a USB flash drive."
+                "DISK_ERROR" : "An error occurred searching for a USB flash drive.",
+                "TIMEOUT" : "A timeout occurred. Please try again."
             },
             "EXPLAIN" : {
                 "TRANSFERRING_FILE" : "Transferring backup file...",

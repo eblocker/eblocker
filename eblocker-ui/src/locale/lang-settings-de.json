@@ -353,7 +353,8 @@
                 "UPLOAD_FAILURE": "Die Sicherungsdatei konnte nicht hochgeladen werden",
                 "UPLOAD_TOO_LARGE": "Die Sicherungsdatei ist zu groß",
                 "VERIFICATION_FAILURE": "Die Prüfung der Sicherungsdatei ist fehlgeschlagen.",
-                "DISK_ERROR": "Beim Suchen nach einem USB-Stick ist ein Fehler aufgetreten."
+                "DISK_ERROR": "Beim Suchen nach einem USB-Stick ist ein Fehler aufgetreten.",
+                "TIMEOUT": "Zeitüberschreitung. Bitte versuche es noch einmal."
             },
             "EXPLAIN": {
                 "TRANSFERRING_FILE" : "Übertrage Sicherungsdatei...",

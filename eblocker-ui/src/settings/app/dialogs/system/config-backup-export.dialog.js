@@ -49,7 +49,7 @@ export default function ConfigBackupExportController(logger, $scope, $window, $m
             vm.blobUrl = $window.URL.createObjectURL(blob);
             vm.downloadFilename = angular.isDefined(result.filename) ? result.filename : 'eblocker-config.eblcfg';
         }, function (response) {
-            NotificationService.error(response.toUpperCase());
+            NotificationService.error(response);
         });
     }
 
@@ -84,7 +84,7 @@ export default function ConfigBackupExportController(logger, $scope, $window, $m
             vm.warnings = result.warnings;
             downloadBackup(result.configBackupReference.fileReference);
         }, function(response) {
-            NotificationService.error(response.toUpperCase());
+            NotificationService.error(response);
         }).finally(function() {
             vm.exporting = false;
         });

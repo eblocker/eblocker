@@ -62,7 +62,7 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
             vm.warnings = result.warnings;
             vm.currentStep = 1;
         }, function(response) {
-            const errCode = response.toUpperCase();
+            const errCode = response;
             if (errCode === 'ADMINCONSOLE.CONFIG_BACKUP.ERROR.INVALID_PASSWORD') {
                 vm.passwordRetry = true;
             } else {
@@ -80,7 +80,7 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
             vm.currentStep = 2;
             waitForDriveRemoval();
         }, function(response) {
-            NotificationService.error(response.toUpperCase());
+            NotificationService.error(response);
         }).finally(function() {
             vm.importing = false;
         });
@@ -100,7 +100,7 @@ function Controller(logger, RestoreFromBackupService, NotificationService, Syste
         RestoreFromBackupService.cancelImport().then(function(result) {
             StateService.goToState(STATES.HOME);
         }, function(response) {
-            NotificationService.error(response.toUpperCase());
+            NotificationService.error(response);
         });
     };
 

@@ -96,7 +96,17 @@ public class UpdateTask implements Runnable {
         dataSource.save(definition, definition.getId());
 
         Path path = Paths.get(definition.getFile());
+        Format previousFormat = null;
+        Path previousSource = null;
+        boolean sourceRollbackFailed = false;
         try {
+            if (!newBlocker && definition.getType() == Type.PATTERN) {
+                previousFormat = patternBlockerService.getPatternBlockerFormat(definition.getReferenceId());
+                if (previousFormat != definition.getFormat() && Files.exists(path)) {
+                    previousSource = Files.createTempFile(path.toAbsolutePath().getParent(), "eblocker-previous-format-", ".tmp");
+                    Files.copy(path, previousSource, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
             if (definition.getUrl() != null) {
                 download(definition.getUrl(), path);
             }
@@ -112,7 +122,7 @@ public class UpdateTask implements Runnable {
                 if (definition.getType() == Type.DOMAIN) {
                     domainBlockerService.updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
                 } else {
-                    patternBlockerService.updatePatternBlocker();
+                    patternBlockerService.updatePatternBlocker(definition.getReferenceId(), definition.getFormat());
                 }
             }
             definition.setUpdateStatus(UpdateStatus.READY);
@@ -120,9 +130,30 @@ public class UpdateTask implements Runnable {
             dataSource.save(definition, definition.getId());
         } catch (IOException e) {
             log.error("failed to update {}", id, e);
+            if (previousSource != null) {
+                try {
+                    Files.move(previousSource, path, StandardCopyOption.REPLACE_EXISTING);
+                    previousSource = null;
+                } catch (IOException rollbackFailure) {
+                    sourceRollbackFailed = true;
+                    e.addSuppressed(rollbackFailure);
+                    log.error("failed to restore source for pattern filter {}; recovery copy at {}", id, previousSource, rollbackFailure);
+                }
+            }
+            if (previousFormat != null) {
+                definition.setFormat(previousFormat);
+            }
             definition.setUpdateStatus(newBlocker ? UpdateStatus.INITIAL_UPDATE_FAILED : UpdateStatus.UPDATE_FAILED);
-            definition.setUpdateError(e.getMessage());
+            definition.setUpdateError(sourceRollbackFailed ? e.getMessage() + "; source rollback failed" : e.getMessage());
             dataSource.save(definition, definition.getId());
+        } finally {
+            if (previousSource != null && !sourceRollbackFailed) {
+                try {
+                    Files.deleteIfExists(previousSource);
+                } catch (IOException cleanupFailure) {
+                    log.warn("could not remove previous source copy for pattern filter {}", id, cleanupFailure);
+                }
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import org.eblocker.server.icap.filter.FilterManager;
 import org.eblocker.server.icap.filter.FilterStoreConfiguration;
 import org.eblocker.server.icap.filter.content.ContentFilterManager;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
@@ -145,8 +146,25 @@ public class PatternBlockerService {
         }
     }
 
-    void updatePatternBlocker() {
-        filterManager.update();
+    Format getPatternBlockerFormat(int id) throws IOException {
+        FilterStoreConfiguration configuration = filterManager.getFilterStoreConfigurationById(id);
+        if (configuration == null) {
+            return null;
+        }
+        switch (configuration.getFormat()) {
+            case EASYLIST:
+                return Format.EASYLIST;
+            case URL:
+                return Format.URLS;
+            default:
+                throw new IOException("unsupported existing pattern format " + configuration.getFormat());
+        }
+    }
+
+    void updatePatternBlocker(int id, Format format) throws IOException {
+        if (!filterManager.changeCustomFilterFormat(id, selectFilterDefinitionFormat(format))) {
+            filterManager.update();
+        }
     }
 
     void deleteFilter(Integer filterId) {

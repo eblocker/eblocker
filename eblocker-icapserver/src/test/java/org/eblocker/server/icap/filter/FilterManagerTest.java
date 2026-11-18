@@ -282,6 +282,41 @@ public class FilterManagerTest {
     }
 
     @Test
+    public void testChangeCustomFilterFormatKeepsRecoveryCopyWhenCacheRollbackFails() throws IOException {
+        Files.writeString(resourceFile, "||old.example^\n");
+        FilterManager manager = createManager();
+        FilterStoreConfiguration custom = new FilterStoreConfiguration(null, "format test", Category.ADS, false,
+                0, new String[]{resourceFile.toString()}, FilterLearningMode.NONE,
+                FilterDefinitionFormat.EASYLIST, false, new String[0], true);
+        int id = manager.addFilter(custom).getId();
+        Path cachePath = cacheDirectory.resolve(id + FILE_SUFFIX);
+        byte[] previousCache = Files.readAllBytes(cachePath);
+        Files.writeString(resourceFile, "new.example/path\n");
+        Mockito.when(dataSource.save(Mockito.argThat((FilterStoreConfiguration c) -> c.getFormat() == FilterDefinitionFormat.URL), Mockito.eq(id)))
+                .thenAnswer(invocation -> {
+                    Files.delete(cachePath);
+                    Files.createDirectory(cachePath);
+                    Files.writeString(cachePath.resolve("block-restore"), "occupied");
+                    throw new IllegalStateException("metadata unavailable");
+                });
+
+        try {
+            manager.changeCustomFilterFormat(id, FilterDefinitionFormat.URL);
+            Assert.fail("failed metadata write must reject the format change");
+        } catch (IOException expected) {
+            Assert.assertTrue(expected.getMessage().contains("failed to change"));
+            Assert.assertTrue("cache rollback failure must be reported", expected.getSuppressed().length > 0);
+        }
+        assertEquals(FilterDefinitionFormat.EASYLIST, manager.getFilterStoreConfigurationById(id).getFormat());
+        assertEquals(Decision.BLOCK, decisionForURL(manager.getFilter(Category.ADS), "http://old.example/"));
+        try (java.util.stream.Stream<Path> files = Files.list(cacheDirectory)) {
+            Path backup = files.filter(path -> path.getFileName().toString().startsWith("eblocker-previous-format-"))
+                    .findFirst().orElseThrow();
+            Assert.assertArrayEquals("the old encrypted cache must survive", previousCache, Files.readAllBytes(backup));
+        }
+    }
+
+    @Test
     public void testRemoveFilter() throws IOException, CryptoException {
         // create single non-default config
         objectMapper.writeValue(defaultConfigurationsPath.toFile(), Collections.emptyList());

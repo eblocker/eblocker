@@ -80,6 +80,14 @@ export default function  MainController(logger, $translate, $sce, $window, $time
         maxWidth: 88
     };
 
+    const elementPicker = {
+        name: 'Element Picker',
+        html: $sce.trustAsHtml('<element-picker layout-fill></element-picker>'),
+        hide: restrictUser,
+        licensed: RegistrationService.hasProductKey('PRO'),
+        maxWidth: 100
+    };
+
     const ipAnon = {
         name: 'IP-Anon',
         html: $sce.trustAsHtml('<ip-anon layout-fill></ip-anon>'),
@@ -196,7 +204,7 @@ export default function  MainController(logger, $translate, $sce, $window, $time
 
     vm.$onInit = function() {
         const allEntries = [
-            dashboardLink, user, trackers, ads,
+            dashboardLink, user, trackers, ads, elementPicker,
             ipAnon, cloaking, onlineTime, pause, messages,
             settings, help, activation, renew
         ];

@@ -38,6 +38,7 @@ import moment from 'moment';
 
 // ** Controllers
 import MainController from './main.controller.js';
+import PickerSaveController from './picker-save.controller.js';
 import ControlbarController from './controlbar.controller.js';
 import ProvidePinDialogController from './dialogs/pin/provide-pin.dialog';
 import ChangePinDialogController from './dialogs/pin/change-pin.dialog';
@@ -74,6 +75,7 @@ import PauseComponent from './components/pause/pause.component';
 import MessagesComponent from './components/messages/messages.component';
 import SettingsComponent from './components/settings/settings.component';
 import HelpComponent from './components/help/help.component';
+import PickerComponent from './components/picker/picker.component';
 import ActivationComponent from './components/activation/activation.component';
 import RenewComponent from './components/renew/renew.component';
 import OnlineTimeComponent from './components/onlineTime/online-time.component';
@@ -157,6 +159,7 @@ angular.module('eblocker.controlbar', [
     .constant('IDLE_TIMES', IDLE_TIMES)
     .controller('ControlbarController', ControlbarController)
     .controller('MainController', MainController)
+    .controller('PickerSaveController', PickerSaveController)
     .controller('ProvidePinDialogController', ProvidePinDialogController)
     .controller('ChangePinDialogController', ChangePinDialogController)
     .controller('TorActivationDialogController', TorActivationDialogController)
@@ -175,6 +178,7 @@ angular.module('eblocker.controlbar', [
     .component('messages', MessagesComponent)
     .component('settings', SettingsComponent)
     .component('help', HelpComponent)
+    .component('elementPicker', PickerComponent)
     .component('activation', ActivationComponent)
     .component('renewLicense', RenewComponent)
     .component('onlineTime', OnlineTimeComponent)

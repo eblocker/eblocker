@@ -55,6 +55,23 @@ public class ScriptletServiceTest {
         service.resolve("");
     }
 
+    @Test
+    public void testVersion2ArgumentsAreJsonAndHtmlSafe() throws IOException {
+        Files.writeString(scriptletDirectory.resolve("set-constant.js"),
+                "/* eBlocker scriptlet v2; test */\nconst args = __EBLOCKER_SCRIPTLET_ARGS__;\n");
+
+        String code = service.resolve("set-constant, window.name, '</script>, text'");
+
+        Assert.assertTrue(code.contains("[\"window.name\",\"\\u003c/script\\u003e, text\"]"));
+        Assert.assertFalse(code.contains("</script>"));
+        Assert.assertFalse(code.contains("__EBLOCKER_SCRIPTLET_ARGS__"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testScriptletNameCannotTraverseDirectories() throws IOException {
+        service.resolve("../secret");
+    }
+
     @Test(expected = NoSuchFileException.class)
     public void testUnknownScriptlet() throws IOException {
         service.resolve("foo, bar, baz");

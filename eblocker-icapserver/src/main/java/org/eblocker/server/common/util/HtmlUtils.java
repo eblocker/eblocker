@@ -19,10 +19,14 @@ package org.eblocker.server.common.util;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HtmlUtils {
     private static final String BODY_END_TAG = "</body>";
     private static final String HTML_END_TAG = "</html>";
+    private static final Pattern HEAD_START = Pattern.compile("<head(?:\\s[^>]*)?>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTML_START = Pattern.compile("<html(?:\\s[^>]*)?>", Pattern.CASE_INSENSITIVE);
     private static final StringReplacer REPLACER;
 
     static {
@@ -32,6 +36,22 @@ public class HtmlUtils {
     }
 
     private HtmlUtils() {
+    }
+
+    /** Insert page-world scriptlets before ordinary page scripts run. */
+    public static void insertAfterHeadStart(StringBuilder html, String inlay) {
+        if (inlay.isEmpty()) return;
+        Matcher head = HEAD_START.matcher(html);
+        if (head.find()) {
+            html.insert(head.end(), inlay);
+            return;
+        }
+        Matcher root = HTML_START.matcher(html);
+        if (root.find()) {
+            html.insert(root.end(), "<head>" + inlay + "</head>");
+            return;
+        }
+        html.insert(0, "<head>" + inlay + "</head>");
     }
 
     /**

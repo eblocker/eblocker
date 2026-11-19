@@ -1933,6 +1933,7 @@
             }
         },
         "FILTER_DETAILS": {
+            "ELEMENT_HIDING": {"STATUS_ERROR": "Status konnte nicht gespeichert werden.", "EDIT": "Bearbeiten", "TITLE": "Eigene Element-Hiding-Regeln", "DESCRIPTION": "Eine Regel pro Zeile im Format domain##CSS-Selektor. Mit dem Element-Picker kannst du eine Regel auf der Website auswählen und hier einfügen.", "SAVE": "Regeln speichern", "SAVED": "Gespeichert", "ERROR": "Regeln konnten nicht geladen oder gespeichert werden. Format und Verbindung prüfen."},
             "ACTION": {
                 "ADD": "Hinzufügen",
                 "REMOVE": "Löschen"

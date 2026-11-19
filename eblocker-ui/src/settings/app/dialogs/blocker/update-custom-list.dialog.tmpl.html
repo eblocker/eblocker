@@ -28,7 +28,11 @@
                     </md-input-container>
                 </div>
 
-                <div>
+                <div ng-if="vm.isContentList" style="padding:8px 0 16px">
+                    <div style="font-size:12px;color:#666">{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.FORMAT' | translate }}</div>
+                    <strong>{{'ADMINCONSOLE.FILTER_OVERVIEW.FORMAT_LIST.EASYLIST' | translate}}</strong>
+                </div>
+                <div ng-if="!vm.isContentList">
                     <md-input-container md-theme="eBlockerThemeInput" class="fill-width">
                         <label>{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.FORMAT' | translate }}</label>
                         <md-select aria-label="{{ 'ADMINCONSOLE.DIALOG.UPDATE_CUSTOM_BLOCKER_LIST.LABEL.FORMAT' | translate }}"

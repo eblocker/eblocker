@@ -60,6 +60,24 @@ public class ContentFilterServiceTest {
     }
 
     @Test
+    public void testVersion2ScriptletIsRoutedToEarlyInjection() throws IOException {
+        Mockito.when(scriptletService.resolve("say, hello")).thenReturn("try {\n/* eBlocker scriptlet v2; test */\n}");
+        Mockito.when(scriptletService.isVersion2(Mockito.anyString())).thenReturn(true);
+        service.setFilterList(getFilterList(Stream.of("google.*##+js(say, hello)")));
+
+        Assert.assertEquals("", service.getHtmlToInject("www.google.com"));
+        Assert.assertTrue(service.getEarlyHtmlToInject("www.google.com").contains("eBlocker scriptlet v2"));
+    }
+
+    @Test
+    public void testInvalidScriptletDoesNotSuppressElementHiding() throws IOException {
+        Mockito.when(scriptletService.resolve("../bad")).thenThrow(new IllegalArgumentException("Invalid scriptlet name"));
+        service.setFilterList(getFilterList(Stream.of("example.com##.ads", "example.com##+js(../bad)")));
+
+        Assert.assertTrue(service.getHtmlToInject("example.com").contains(".ads {display: none;}"));
+    }
+
+    @Test
     public void testResultIsCached() throws IOException {
         service.getHtmlToInject("www.google.com");
         service.getHtmlToInject("www.google.com");

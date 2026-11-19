@@ -51,6 +51,7 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
         }
 
         inject(content, transaction.getInjections().getInjections());
+        injectEarly(content, transaction.getInjections().getEarlyInjections());
         return true;
     }
 
@@ -68,6 +69,14 @@ public class HtmlInjectionProcessor implements TransactionProcessor {
 
         //find last body tag and inject everything there
         HtmlUtils.insertBeforeBodyEnd(content, injectionTotal.toString());
+    }
+
+    private void injectEarly(StringBuilder content, List<String> injections) {
+        StringBuilder injectionTotal = new StringBuilder();
+        for (String injection : injections) {
+            injectionTotal.append(injection);
+        }
+        HtmlUtils.insertAfterHeadStart(content, injectionTotal.toString());
     }
 
     /**

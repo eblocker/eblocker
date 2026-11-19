@@ -92,6 +92,11 @@ public class ContentSecurityPolicy {
             addDirective("img-src", defaultSrc, controlBarUrl);
         }
 
+        allowScriptNonce(nonce);
+    }
+
+    /** Allow an injected inline script without changing unrelated CSP directives. */
+    public void allowScriptNonce(String nonce) {
         String nonceValue = "'nonce-" + nonce + "'";
         if (scriptSrcElem != null && (!scriptSrcElem.hasUnsafeInline() || scriptSrcElem.hasNonce())) {
             scriptSrcElem.appendValue(nonceValue);

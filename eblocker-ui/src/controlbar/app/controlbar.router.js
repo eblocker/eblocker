@@ -89,6 +89,14 @@ export default function AppRouter($stateProvider) {
         }
     };
 
+    $stateProvider.state({
+        name: 'pickerSave',
+        url: '/picker-save',
+        templateUrl: 'app/picker-save.html',
+        controller: 'PickerSaveController',
+        controllerAs: 'ctrl'
+    });
+
     $stateProvider.state(mainState);
     $stateProvider.state(appState);
 }

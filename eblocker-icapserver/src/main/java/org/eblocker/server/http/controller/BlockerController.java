@@ -30,4 +30,16 @@ public interface BlockerController {
     Blocker updateBlocker(Request request, Response response);
 
     void removeBlocker(Request request, Response response);
+
+    List<String> getElementHidingRules(Request request, Response response);
+
+    List<String> updateElementHidingRules(Request request, Response response);
+
+    java.util.Map<String, Boolean> appendElementHidingRule(Request request, Response response);
+
+    java.util.Map<String, Object> validateElementHidingRule(Request request, Response response);
+
+    java.util.Map<String, Boolean> getElementHidingStatus(Request request, Response response);
+
+    java.util.Map<String, Boolean> updateElementHidingStatus(Request request, Response response);
 }

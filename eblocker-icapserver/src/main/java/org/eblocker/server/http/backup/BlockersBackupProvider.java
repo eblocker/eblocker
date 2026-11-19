@@ -23,6 +23,7 @@ import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.TypeId;
 import org.eblocker.server.common.service.FeatureServicePublisher;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +45,18 @@ public class BlockersBackupProvider extends BackupProvider {
     private final BlockerIdTypeIdCache idCache;
     private final BlockerService blockerService;
     private final FeatureServicePublisher featureService;
+    private final ContentFilterManager contentFilterManager;
 
     @Inject
     public BlockersBackupProvider(BlockerService blockerService,
                                   BlockerIdTypeIdCache idCache,
-                                  FeatureServicePublisher featureService
+                                  FeatureServicePublisher featureService,
+                                  ContentFilterManager contentFilterManager
     ) {
         this.blockerService = blockerService;
         this.idCache = idCache;
         this.featureService = featureService;
+        this.contentFilterManager = contentFilterManager;
     }
 
     @Override
@@ -62,11 +66,13 @@ public class BlockersBackupProvider extends BackupProvider {
         writeNextEntry(outputStream, BLOCKERS_ENTRY, backupBytes);
     }
 
-    private BlockersBackup createBackup() {
+    private BlockersBackup createBackup() throws IOException {
         BlockersBackup backup = new BlockersBackup();
         List<Blocker> blockers = getCurrentBlockers();
 
         backup.setBlockers(blockers);
+        backup.setElementHidingRules(contentFilterManager.getCustomRules());
+        backup.setElementHidingEnabled(contentFilterManager.isCustomElementHidingEnabled());
 
         // IDs of blockers are only temporary. So we need to map them to (Type, ID) tuples.
         Map<Integer, TypeId> typeIds = blockers.stream()
@@ -111,6 +117,9 @@ public class BlockersBackupProvider extends BackupProvider {
             throw new CorruptedBackupException("Deserialized backup object is null");
         }
 
+        if (backup.getElementHidingRules() != null) {
+            contentFilterManager.validateCustomRules(backup.getElementHidingRules());
+        }
         if (!dryRun) {
             restoreBackup(backup);
         }
@@ -120,6 +129,12 @@ public class BlockersBackupProvider extends BackupProvider {
         enableBuiltinBlockers(backup);
         deleteUserDefinedBlockers();
         createUserDefinedBlockers(backup);
+        if (backup.getElementHidingRules() != null) {
+            contentFilterManager.setCustomRules(backup.getElementHidingRules());
+        }
+        if (backup.getElementHidingEnabled() != null) {
+            contentFilterManager.setCustomElementHidingEnabled(backup.getElementHidingEnabled());
+        }
         featureService.setGoogleCaptivePortalRedirectorState(backup.getCaptivePortalRedirectorState());
         featureService.setCompressionMode(backup.getCompressionMode());
         featureService.setDntHeaderState(backup.getDntHeaderState());

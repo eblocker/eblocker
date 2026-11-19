@@ -25,6 +25,8 @@ import java.util.Map;
 
 public class BlockersBackup {
     private List<Blocker> blockers;
+    private List<String> elementHidingRules;
+    private Boolean elementHidingEnabled;
     private Map<Integer, TypeId> typeIds; // IDs of blockers are only temporary. So we need to map them to (Type, ID) tuples.
 
     private boolean captivePortalRedirectorState;
@@ -32,6 +34,22 @@ public class BlockersBackup {
     private boolean httpReferrerRemovingState;
     private boolean webRtcBlockingState;
     private CompressionMode compressionMode;
+
+    public List<String> getElementHidingRules() {
+        return elementHidingRules;
+    }
+
+    public void setElementHidingRules(List<String> elementHidingRules) {
+        this.elementHidingRules = elementHidingRules;
+    }
+
+    public Boolean getElementHidingEnabled() {
+        return elementHidingEnabled;
+    }
+
+    public void setElementHidingEnabled(Boolean elementHidingEnabled) {
+        this.elementHidingEnabled = elementHidingEnabled;
+    }
 
     public List<Blocker> getBlockers() {
         return blockers;

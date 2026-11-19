@@ -32,11 +32,16 @@ public class CspControlBarProcessor implements TransactionProcessor {
 
     @Override
     public boolean process(Transaction transaction) {
-        if (transaction.getControlBarUrl() != null && transaction.getCspNonce() != null) {
+        if (transaction.getCspNonce() != null &&
+                (transaction.getControlBarUrl() != null || !transaction.getInjections().getEarlyInjections().isEmpty())) {
             String cspHeader = transaction.getResponse().headers().get("Content-Security-Policy");
             if (cspHeader != null) {
                 ContentSecurityPolicy csp = ContentSecurityPolicy.from(cspHeader);
-                csp.allowControlBar(transaction.getControlBarUrl(), transaction.getCspNonce());
+                if (transaction.getControlBarUrl() != null) {
+                    csp.allowControlBar(transaction.getControlBarUrl(), transaction.getCspNonce());
+                } else {
+                    csp.allowScriptNonce(transaction.getCspNonce());
+                }
                 String newCspHeader = csp.toString();
                 log.debug("Replacing CSP for {} \n    Old CSP: {}\n    New CSP: {}", transaction.getUrl(), cspHeader, newCspHeader);
                 transaction.getResponse().headers().set("Content-Security-Policy", newCspHeader);

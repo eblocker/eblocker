@@ -109,4 +109,17 @@ public class HtmlInjectionProcessorTest {
         Assert.assertEquals("<html><div>hello</div>templatefunkyscript</html>", transaction.getContent().toString());
     }
 
+    @Test
+    public void scriptletRunsAtStartOfHead() {
+        injections.injectEarly("<script>window.testFlag = true;</script>");
+        StringBuilder content = new StringBuilder("<html><head><script>window.pageLoaded = true;</script></head><body></body></html>");
+        PageContext pageContext = new PageContext(null, "http://foo.bar", IP_ADDRESS);
+        Transaction transaction = makeTransaction(content, null, session, pageContext, injections);
+
+        processor.process(transaction);
+
+        Assert.assertEquals("<html><head><script>window.testFlag = true;</script><script>window.pageLoaded = true;</script></head><body>templatefunkyscript</body></html>",
+                transaction.getContent().toString());
+    }
+
 }

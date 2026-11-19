@@ -197,6 +197,10 @@ public class PatternBlockerService {
         return getMalwareUrlFilter();
     }
 
+    void refreshContentFilter() {
+        contentFilterManager.refresh();
+    }
+
     Blocker enableContentFilter(boolean enabled) {
         contentFilterManager.setEnabled(enabled);
         return getContentFilter();

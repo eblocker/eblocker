@@ -99,6 +99,23 @@ public class UpdateTaskTest {
     }
 
     @Test
+    public void testCreateContentListDoesNotCreatePatternBlocker() throws IOException {
+        Files.writeString(sourceFile, "example.org##.ad-slot\n");
+        ExternalDefinition definition = new ExternalDefinition(0, "content", "", Category.CONTENT,
+                Type.CONTENT, null, Format.EASYLIST, null, UpdateInterval.NEVER, UpdateStatus.NEW,
+                null, sourceFile.toString(), true, "content");
+        Mockito.when(dataSource.get(ExternalDefinition.class, 0)).thenReturn(definition);
+
+        updateTask.run();
+
+        Assert.assertEquals(2, savedDefinitions.size());
+        Assert.assertEquals(Integer.valueOf(0), savedDefinitions.get(1).getReferenceId());
+        Assert.assertEquals(UpdateStatus.READY, savedDefinitions.get(1).getUpdateStatus());
+        Mockito.verify(contentFilterManager).refresh();
+        Mockito.verify(filterManager, Mockito.never()).addFilter(Mockito.any(FilterStoreConfiguration.class));
+    }
+
+    @Test
     public void testCreateDomainBlocker() throws IOException {
         Mockito.when(httpClient.download("http://filter.org/domains.txt")).thenReturn(new ByteArrayInputStream("eblocker.com\netracker.com\n".getBytes()));
 

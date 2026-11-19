@@ -30,6 +30,7 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
     vm.isEdit = edit;
     vm.isProcessing = isProcessing;
     vm.formatList = formatList;
+    vm.isContentList = formatList.length === 1 && formatList[0].key === 'EASYLIST';
 
     if (angular.isObject(blockerList)) {
         // actual values set if 'edit' is true, otherwise we create a new list with no predefined values.
@@ -43,10 +44,10 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
             vm.content = blockerList.content;
             vm.isDownload = false;
         }
-        vm.format = blockerList.format || formatList[0];
+        vm.format = vm.isContentList ? 'EASYLIST' : (blockerList.format || formatList[0].key);
         vm.updates = blockerList.updateInterval === 'DAILY';
     } else {
-        vm.format = formatList[0];
+        vm.format = vm.isContentList ? 'EASYLIST' : formatList[0].key;
         vm.isDownload = true;
     }
 
@@ -90,6 +91,6 @@ export default function AddCustomListController(logger, $mdDialog, $translate, b
         return vm.customListForm.name.$valid &&
             ((vm.isDownload && vm.customListForm.url.$valid) ||
              (!vm.isDownload && vm.customListForm.content.$valid)) &&
-            vm.customListForm.format.$valid;
+            (vm.isContentList ? vm.format === 'EASYLIST' : vm.customListForm.format.$valid);
     }
 }

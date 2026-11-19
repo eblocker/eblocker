@@ -85,6 +85,7 @@ public class BlockerUtils {
             case DOMAIN:
                 return BlockerType.DOMAIN;
             case MALWARE_URL:
+            case CONTENT:
             case PATTERN:
                 return BlockerType.PATTERN;
             default:

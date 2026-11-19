@@ -27,6 +27,8 @@ import org.eblocker.server.icap.filter.content.ContentFilterService;
 import org.eblocker.server.icap.transaction.Transaction;
 import org.eblocker.server.icap.transaction.TransactionProcessor;
 
+import java.util.UUID;
+
 @RequireFeature(ProductFeature.PRO)
 @Singleton
 public class ContentFilterProcessor implements TransactionProcessor {
@@ -59,8 +61,18 @@ public class ContentFilterProcessor implements TransactionProcessor {
         if (session.isPatternFiltersEnabled()) {
             String hostname = UrlUtils.getHostname(transaction.getUrl());
             String html = contentFilterService.getHtmlToInject(hostname);
-            if (!html.isEmpty()) {
-                transaction.getInjections().inject(html);
+            String earlyHtml = contentFilterService.getEarlyHtmlToInject(hostname);
+            if (!html.isEmpty() || !earlyHtml.isEmpty()) {
+                if (!html.isEmpty()) transaction.getInjections().inject(html);
+                if (!earlyHtml.isEmpty()) {
+                    String nonce = transaction.getCspNonce();
+                    if (nonce == null) {
+                        nonce = UUID.randomUUID().toString().replace("-", "");
+                        transaction.setCspNonce(nonce);
+                    }
+                    transaction.getInjections().injectEarly(earlyHtml.replace("<script type=\"text/javascript\">",
+                            "<script type=\"text/javascript\" nonce=\"" + nonce + "\">"));
+                }
                 filterStatisticsService.countBlocked("pattern", transaction.getOriginalClientIP(), "CONTENT");
             }
         }

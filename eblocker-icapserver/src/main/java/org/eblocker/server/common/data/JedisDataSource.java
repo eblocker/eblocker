@@ -138,6 +138,7 @@ public class JedisDataSource implements DataSource {
     private static final String KEY_FILTER_PLUG_AND_PLAY_TRACKERS_ENABLED = "filter_plug_and_play_trackers_enabled";
 
     private static final String KEY_CONTENT_FILTER_ENABLED = "content_filter_enabled";
+    private static final String KEY_CUSTOM_ELEMENT_HIDING_ENABLED = "custom_element_hiding_enabled";
 
     private static final String KEY_DHCP_LEASE_TIME = "dhcpLeaseTime";
 
@@ -1405,6 +1406,21 @@ public class JedisDataSource implements DataSource {
     public void setContentFilterEnabled(boolean enabled) {
         try (Jedis jedis = pool.getResource()) {
             jedis.set(KEY_CONTENT_FILTER_ENABLED, Boolean.toString(enabled));
+        }
+    }
+
+    @Override
+    public boolean isCustomElementHidingEnabled() {
+        try (Jedis jedis = pool.getResource()) {
+            String value = jedis.get(KEY_CUSTOM_ELEMENT_HIDING_ENABLED);
+            return value == null || Boolean.parseBoolean(value);
+        }
+    }
+
+    @Override
+    public void setCustomElementHidingEnabled(boolean enabled) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(KEY_CUSTOM_ELEMENT_HIDING_ENABLED, Boolean.toString(enabled));
         }
     }
 

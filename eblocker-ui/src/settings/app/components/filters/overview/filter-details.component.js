@@ -22,7 +22,7 @@ export default {
 
 // jshint ignore: line
 function Controller(logger, $stateParams, $interval, $translate, STATES, BlockerService, StateService, // jshint ignore: line
-                    DialogService, TableService, LanguageService, ArrayUtilsService) {
+                    DialogService, TableService, LanguageService, ArrayUtilsService, $mdDialog) {
     'ngInject';
     'use strict';
 
@@ -40,6 +40,46 @@ function Controller(logger, $stateParams, $interval, $translate, STATES, Blocker
     vm.onDeleteDone = onDeleteDone;
     vm.goToDevice = goToDevice;
     vm.goToHttps = goToHttps;
+    vm.editElementHidingRules = editElementHidingRules;
+    vm.onElementHidingEnabledChanged = onElementHidingEnabledChanged;
+
+    function editElementHidingRules() {
+        $mdDialog.show({
+            controller: ElementHidingDialogController,
+            controllerAs: 'vm',
+            templateUrl: 'app/components/filters/overview/element-hiding-rules.dialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: false
+        });
+    }
+
+    function loadElementHidingStatus() {
+        vm.elementHidingLoading = true;
+        vm.elementHidingError = false;
+        BlockerService.getElementHidingStatus().then(function success(response) {
+            vm.elementHidingEnabled = response.data.enabled;
+        }, function error(response) {
+            logger.error('Could not load element hiding status', response);
+            vm.elementHidingError = true;
+        }).finally(function() {
+            vm.elementHidingLoading = false;
+        });
+    }
+
+    function onElementHidingEnabledChanged() {
+        const enabled = vm.elementHidingEnabled;
+        vm.elementHidingLoading = true;
+        vm.elementHidingError = false;
+        BlockerService.updateElementHidingStatus(enabled).then(function success(response) {
+            vm.elementHidingEnabled = response.data.enabled;
+        }, function error(response) {
+            logger.error('Could not update element hiding status', response);
+            vm.elementHidingEnabled = !enabled;
+            vm.elementHidingError = true;
+        }).finally(function() {
+            vm.elementHidingLoading = false;
+        });
+    }
 
     function deleteEntry(value) {
         BlockerService.deleteBlocker(value.id);
@@ -226,7 +266,8 @@ function Controller(logger, $stateParams, $interval, $translate, STATES, Blocker
     }
 
     function getFormatList(blocker) {
-        return BlockerService.getFormatList(blocker.type);
+        const formats = BlockerService.getFormatList(blocker.type);
+        return blocker.category === 'CONTENT' ? formats.filter(format => format.key === 'EASYLIST') : formats;
     }
 
     function setStatusImageClass(blockerList) {
@@ -239,7 +280,9 @@ function Controller(logger, $stateParams, $interval, $translate, STATES, Blocker
     function updateDisplayData(blocker, reload) {
         vm.blocker = blocker;
         vm.formatList = getFormatList(vm.blocker);
-
+        if (blocker.category === 'CONTENT') {
+            loadElementHidingStatus();
+        }
         setBlockerListsTableData(blocker, reload).finally(function success() {
             vm.status = {
                 imagePath: '/img/icons/eblocker-blocked-24px-2.svg',
@@ -274,4 +317,37 @@ function Controller(logger, $stateParams, $interval, $translate, STATES, Blocker
         StateService.goToState(STATES.HTTPS);
     }
 
+}
+
+function ElementHidingDialogController($mdDialog, BlockerService, logger) {
+    'ngInject';
+    'use strict';
+
+    const vm = this;
+    vm.loading = true;
+    vm.error = false;
+    vm.cancel = function() {
+        $mdDialog.cancel();
+    };
+    vm.save = function() {
+        const rules = (vm.rules || '').split(/\r?\n/).map(rule => rule.trim()).filter(Boolean);
+        vm.saving = true;
+        vm.error = false;
+        BlockerService.updateElementHidingRules(rules).then(function success() {
+            $mdDialog.hide();
+        }, function error(response) {
+            logger.error('Could not save element hiding rules', response);
+            vm.error = true;
+        }).finally(function() {
+            vm.saving = false;
+        });
+    };
+    BlockerService.getElementHidingRules().then(function success(response) {
+        vm.rules = response.data.join('\n');
+    }, function error(response) {
+        logger.error('Could not load element hiding rules', response);
+        vm.error = true;
+    }).finally(function() {
+        vm.loading = false;
+    });
 }

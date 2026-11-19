@@ -1925,6 +1925,7 @@
             }
         },
         "FILTER_DETAILS" : {
+            "ELEMENT_HIDING": {"STATUS_ERROR": "Could not save the status.", "EDIT": "Edit", "TITLE": "Custom element hiding rules", "DESCRIPTION": "One rule per line in domain##CSS-selector format. Use the element picker to select a rule on a website, then paste it here.", "SAVE": "Save rules", "SAVED": "Saved", "ERROR": "Could not load or save rules. Check the format and connection."},
             "ACTION": {
                 "ADD": "Add",
                 "REMOVE": "Remove"

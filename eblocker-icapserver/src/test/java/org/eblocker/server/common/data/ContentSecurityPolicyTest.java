@@ -82,6 +82,13 @@ public class ContentSecurityPolicyTest {
     }
 
     @Test
+    public void testScriptletNonceWithoutControlBar() {
+        ContentSecurityPolicy csp = ContentSecurityPolicy.from("default-src 'self'; img-src data:");
+        csp.allowScriptNonce(NONCE);
+        Assert.assertEquals("default-src 'self'; img-src data:; script-src-elem 'self' 'nonce-" + NONCE + "'", csp.toString());
+    }
+
+    @Test
     public void testEmpty() {
         insertControlBar("", "");
         insertControlBar(";", "");

@@ -121,6 +121,7 @@
                 "TOOLTIP_BLOCK_DNS" : "Domain blocker is active",
                 "TOOLTIP_NO_FILTER" : "Blockers are disabled. Enable blockers to protect this device."
             },
+            "PICKER" : {"LABEL" : "Pick element", "TOOLTIP" : "Select an element on this website"},
             "ANON" : {
                 "LABEL" : "IP-Anon",
                 "MENU" : {

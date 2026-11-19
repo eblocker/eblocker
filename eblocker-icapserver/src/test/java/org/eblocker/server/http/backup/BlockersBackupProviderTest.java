@@ -24,6 +24,7 @@ import org.eblocker.server.common.blocker.BlockerUtils;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.common.blocker.TypeId;
 import org.eblocker.server.common.service.FeatureServicePublisher;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,18 +37,21 @@ public class BlockersBackupProviderTest extends BackupProviderTestBase {
     private BlockersBackupProvider exportProvider, importProvider;
     private BlockerService exportBlockerService, importBlockerService;
     private FeatureServicePublisher exportFeatureService, importFeatureService;
+    private ContentFilterManager exportContentFilterManager, importContentFilterManager;
     private Blocker builtinBlocker, userDefinedBlocker, otherBlocker;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         exportBlockerService = Mockito.mock(BlockerService.class);
         importBlockerService = Mockito.mock(BlockerService.class);
         exportFeatureService = Mockito.mock(FeatureServicePublisher.class);
         importFeatureService = Mockito.mock(FeatureServicePublisher.class);
+        exportContentFilterManager = Mockito.mock(ContentFilterManager.class);
+        importContentFilterManager = Mockito.mock(ContentFilterManager.class);
         BlockerIdTypeIdCache exportIdCache = new BlockerIdTypeIdCache();
         BlockerIdTypeIdCache importIdCache = new BlockerIdTypeIdCache();
-        exportProvider = new BlockersBackupProvider(exportBlockerService, exportIdCache, exportFeatureService);
-        importProvider = new BlockersBackupProvider(importBlockerService, importIdCache, importFeatureService);
+        exportProvider = new BlockersBackupProvider(exportBlockerService, exportIdCache, exportFeatureService, exportContentFilterManager);
+        importProvider = new BlockersBackupProvider(importBlockerService, importIdCache, importFeatureService, importContentFilterManager);
 
         builtinBlocker = new Blocker(0, Map.of("en", "Builtin blocker"), null, BlockerType.DOMAIN, Category.ADS, null, true, null, null, null, null, null, null, true, null);
         userDefinedBlocker = new Blocker(1000, Map.of("en", "User-defined blocker"), null, BlockerType.DOMAIN, Category.ADS, null, false, null, "ads.com", null, null, null, null, true, null);
@@ -62,6 +66,8 @@ public class BlockersBackupProviderTest extends BackupProviderTestBase {
         Mockito.when(importBlockerService.getBlockers()).thenReturn(importBlockers);
 
         Mockito.when(exportFeatureService.getDntHeaderState()).thenReturn(true);
+        Mockito.when(exportContentFilterManager.getCustomRules()).thenReturn(List.of("example.org##.advertisement"));
+        Mockito.when(exportContentFilterManager.isCustomElementHidingEnabled()).thenReturn(true);
     }
 
     // In production code, BlockerService.getBlockers() fills the cache. Here we must do it "manually":
@@ -79,6 +85,9 @@ public class BlockersBackupProviderTest extends BackupProviderTestBase {
         Mockito.verify(importBlockerService).updateBlocker(blockerWithNameOf(builtinBlocker));
         Mockito.verify(importBlockerService).deleteBlocker(1007);
         Mockito.verify(importFeatureService).setDntHeaderState(true);
+        Mockito.verify(importContentFilterManager, Mockito.times(2)).validateCustomRules(List.of("example.org##.advertisement"));
+        Mockito.verify(importContentFilterManager).setCustomRules(List.of("example.org##.advertisement"));
+        Mockito.verify(importContentFilterManager).setCustomElementHidingEnabled(true);
     }
 
     private Blocker blockerWithNameOf(Blocker blocker) {

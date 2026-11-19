@@ -1,0 +1,19 @@
+<div style="box-sizing:border-box;background:#fff;color:#222;border:2px solid #e9540d;border-radius:8px;padding:12px;font:14px Arial,sans-serif;height:100%;overflow:auto">
+    <div style="font-weight:bold;margin-bottom:7px">{{ctrl.t.title}}</div>
+    <div style="font:12px monospace;white-space:normal;overflow-wrap:anywhere;margin-bottom:8px" aria-label="{{ctrl.t.selectedRule}}">{{ctrl.rule}}</div>
+    <div style="margin-bottom:6px">{{ctrl.t.matches}} {{ctrl.matches >= 0 ? ctrl.matches : '–'}}</div>
+    <label ng-if="ctrl.passwordRequired &amp;&amp; !ctrl.authenticated" style="display:block;margin-bottom:6px">
+        {{ctrl.t.password}}
+        <input type="password" ng-model="ctrl.password" autocomplete="current-password" style="width:100%;box-sizing:border-box">
+    </label>
+    <div role="status" ng-style="{color: ctrl.error ? '#b00020' : '#222'}" style="margin-bottom:8px">{{ctrl.status}}</div>
+    <label ng-if="ctrl.checked &amp;&amp; ctrl.coverage > 50" style="display:block;margin-bottom:6px">
+        <input type="checkbox" ng-model="ctrl.confirmWide"> {{ctrl.t.confirmWide}} ({{ctrl.coverage}} %)
+    </label>
+    <button type="button" ng-click="ctrl.check()" ng-disabled="!ctrl.rule || !ctrl.authReady || ctrl.checking || (ctrl.passwordRequired &amp;&amp; !ctrl.authenticated &amp;&amp; !ctrl.password)"
+            style="border:0;border-radius:4px;padding:7px 12px;background:#eee;color:#222;cursor:pointer">{{ctrl.t.check}}</button>
+    <button type="button" ng-click="ctrl.apply()" ng-disabled="!ctrl.canApply()"
+            ng-style="{opacity: ctrl.canApply() ? 1 : 0.45}"
+            style="border:0;border-radius:4px;padding:7px 12px;background:#e9540d;color:#fff;cursor:pointer">{{ctrl.t.apply}}</button>
+    <button type="button" ng-click="ctrl.cancel()" style="border:0;border-radius:4px;padding:7px 12px;background:#eee;color:#222;cursor:pointer">{{ctrl.t.cancel}}</button>
+</div>

@@ -46,6 +46,22 @@ export default function BlockerService(logger, $http, $q, $filter, DataCachingSe
         return $http.delete(PATH + id);
     }
 
+    function getElementHidingRules() {
+        return $http.get(PATH + 'element-hiding/');
+    }
+
+    function updateElementHidingRules(rules) {
+        return $http.put(PATH + 'element-hiding/', rules);
+    }
+
+    function getElementHidingStatus() {
+        return $http.get(PATH + 'element-hiding/status');
+    }
+
+    function updateElementHidingStatus(enabled) {
+        return $http.put(PATH + 'element-hiding/status', enabled);
+    }
+
     function getFormatList(type) {
         return $filter('filter')(BLOCKER_FORMAT, (format) => {
             return format.availableTypeList.indexOf(type) > -1;
@@ -57,6 +73,10 @@ export default function BlockerService(logger, $http, $q, $filter, DataCachingSe
         createBlocker: createBlocker,
         updateBlocker: updateBlocker,
         deleteBlocker: deleteBlocker,
+        getElementHidingRules: getElementHidingRules,
+        updateElementHidingRules: updateElementHidingRules,
+        getElementHidingStatus: getElementHidingStatus,
+        updateElementHidingStatus: updateElementHidingStatus,
         getFormatList: getFormatList
     };
 }

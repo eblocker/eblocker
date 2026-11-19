@@ -456,6 +456,10 @@ public interface DataSource {
 
     void setContentFilterEnabled(boolean enabled);
 
+    boolean isCustomElementHidingEnabled();
+
+    void setCustomElementHidingEnabled(boolean enabled);
+
     boolean areRouterAdvertisementsEnabled();
 
     void setRouterAdvertisementsEnabled(boolean enabled);

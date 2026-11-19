@@ -121,6 +121,7 @@
                 "TOOLTIP_BLOCK_DNS": "Der Domain-Blocker ist aktiv",
                 "TOOLTIP_NO_FILTER": "Blocker sind nicht aktiv. Aktiviere die Blocker, um dieses Gerät zu schützen."
             },
+            "PICKER": {"LABEL": "Element", "TOOLTIP": "Element auf dieser Website auswählen"},
             "ANON": {
                 "LABEL": "IP-Anon",
                 "MENU": {

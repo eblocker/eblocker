@@ -22,9 +22,13 @@ import org.eblocker.server.common.blocker.BlockerService;
 import org.eblocker.server.common.blocker.BlockerType;
 import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.http.controller.BlockerController;
+import org.eblocker.server.icap.filter.content.ContentFilterManager;
 import org.restexpress.Request;
 import org.restexpress.Response;
+import org.restexpress.exception.BadRequestException;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -36,10 +40,12 @@ import java.util.stream.Collectors;
 public class BlockerControllerImpl implements BlockerController {
 
     private final BlockerService blockerService;
+    private final ContentFilterManager contentFilterManager;
 
     @Inject
-    public BlockerControllerImpl(BlockerService blockerService) {
+    public BlockerControllerImpl(BlockerService blockerService, ContentFilterManager contentFilterManager) {
         this.blockerService = blockerService;
+        this.contentFilterManager = contentFilterManager;
     }
 
     @Override
@@ -69,6 +75,76 @@ public class BlockerControllerImpl implements BlockerController {
     @Override
     public void removeBlocker(Request request, Response response) {
         blockerService.deleteBlocker(Integer.parseInt(request.getHeader("id")));
+    }
+
+    @Override
+    public List<String> getElementHidingRules(Request request, Response response) {
+        try {
+            return contentFilterManager.getCustomRules();
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not read element hiding rules", e);
+        }
+    }
+
+    @Override
+    public List<String> updateElementHidingRules(Request request, Response response) {
+        try {
+            String[] rules = request.getBodyAs(String[].class);
+            if (rules == null) {
+                throw new BadRequestException("Missing element hiding rules");
+            }
+            return contentFilterManager.setCustomRules(Arrays.asList(rules));
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not save element hiding rules", e);
+        }
+    }
+
+    @Override
+    public java.util.Map<String, Boolean> appendElementHidingRule(Request request, Response response) {
+        java.util.Map<?, ?> body = request.getBodyAs(java.util.Map.class);
+        Object rule = body == null ? null : body.get("rule");
+        if (!(rule instanceof String)) throw new BadRequestException("Missing element hiding rule");
+        try {
+            boolean added = contentFilterManager.appendCustomRule((String) rule);
+            return java.util.Map.of("added", added, "enabled", contentFilterManager.isCustomElementHidingEnabled());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not append element hiding rule", e);
+        }
+    }
+
+    @Override
+    public java.util.Map<String, Object> validateElementHidingRule(Request request, Response response) {
+        java.util.Map<?, ?> body = request.getBodyAs(java.util.Map.class);
+        Object rule = body == null ? null : body.get("rule");
+        if (!(rule instanceof String)) throw new BadRequestException("Missing element hiding rule");
+        try {
+            String normalized = contentFilterManager.validateCustomRules(List.of((String) rule)).get(0);
+            boolean duplicate = contentFilterManager.getCustomRules().contains(normalized);
+            return java.util.Map.of("rule", normalized, "duplicate", duplicate);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not check element hiding rule", e);
+        }
+    }
+
+    @Override
+    public java.util.Map<String, Boolean> getElementHidingStatus(Request request, Response response) {
+        return java.util.Map.of("enabled", contentFilterManager.isCustomElementHidingEnabled());
+    }
+
+    @Override
+    public java.util.Map<String, Boolean> updateElementHidingStatus(Request request, Response response) {
+        Boolean enabled = request.getBodyAs(Boolean.class);
+        if (enabled == null) {
+            throw new BadRequestException("Missing enabled state");
+        }
+        contentFilterManager.setCustomElementHidingEnabled(enabled);
+        return java.util.Map.of("enabled", contentFilterManager.isCustomElementHidingEnabled());
     }
 
     private <T> Predicate<Blocker> createPredicate(String parameter, Function<String, T> paramFn, Function<Blocker, T> attributeFn) {

@@ -18,11 +18,14 @@ package org.eblocker.server.icap.service;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Responsible for:
@@ -33,6 +36,9 @@ import java.nio.file.Path;
  * </ul>
  */
 public class ScriptletService {
+    private static final String V2_MARKER = "/* eBlocker scriptlet v2;";
+    private static final String V2_ARGUMENTS = "__EBLOCKER_SCRIPTLET_ARGS__";
+    private static final ObjectMapper JSON = new ObjectMapper();
     private final Path scriptletDirectory;
 
     @Inject
@@ -41,21 +47,70 @@ public class ScriptletService {
     }
 
     public String resolve(String parameterList) throws IOException {
-        // Split parameter list by comma + whitespace, except when preceded by a backslash
-        String[] parameters = parameterList.split("(?<!\\\\),\\s*");
-        if (parameters[0].isEmpty()) {
+        List<String> parameters = splitParameters(parameterList);
+        if (parameters.get(0).isEmpty()) {
             throw new IllegalArgumentException("Expected at least a scriptlet name in parameter list");
         }
-        String scriptletFilename = parameters[0] + ".js";
+        String name = parameters.get(0);
+        if (!name.matches("[A-Za-z0-9_.-]+") || name.contains("..")) {
+            throw new IllegalArgumentException("Invalid scriptlet name");
+        }
+        String scriptletFilename = name + ".js";
         String scriptlet = Files.readString(scriptletDirectory.resolve(scriptletFilename));
-        for (int i = 1; i < parameters.length; i++) {
-            String value = parameters[i].replace("\\,", ",");
+        if (scriptlet.startsWith(V2_MARKER)) {
+            if (!scriptlet.contains(V2_ARGUMENTS)) {
+                throw new IllegalArgumentException("Scriptlet v2 has no argument placeholder");
+            }
+            String json = JSON.writeValueAsString(parameters.subList(1, parameters.size()))
+                    .replace("<", "\\u003c")
+                    .replace(">", "\\u003e")
+                    .replace("&", "\\u0026")
+                    .replace("\u2028", "\\u2028")
+                    .replace("\u2029", "\\u2029");
+            return wrapExceptionHandler(scriptlet.replace(V2_ARGUMENTS, json));
+        }
+        for (int i = 1; i < parameters.size(); i++) {
+            String value = parameters.get(i);
             scriptlet = StringUtils.replaceOnce(scriptlet, "{{" + i + "}}", value);
         }
         return wrapExceptionHandler(scriptlet);
     }
 
+    private List<String> splitParameters(String input) {
+        List<String> parameters = new ArrayList<>();
+        StringBuilder value = new StringBuilder();
+        char quote = 0;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c == '\\' && i + 1 < input.length()) {
+                char next = input.charAt(i + 1);
+                if (next == ',' || next == '\\' || next == quote) {
+                    value.append(next);
+                    i++;
+                    continue;
+                }
+            }
+            if (c == '\'' || c == '"') {
+                if (quote == 0) { quote = c; continue; }
+                if (quote == c) { quote = 0; continue; }
+            }
+            if (c == ',' && quote == 0) {
+                parameters.add(value.toString().trim());
+                value.setLength(0);
+                continue;
+            }
+            value.append(c);
+        }
+        if (quote != 0) throw new IllegalArgumentException("Unclosed scriptlet argument quote");
+        parameters.add(value.toString().trim());
+        return parameters;
+    }
+
     private String wrapExceptionHandler(String scriptlet) {
         return "try {\n" + scriptlet + "\n} catch ( e ) { }\n";
+    }
+
+    public boolean isVersion2(String resolvedCode) {
+        return resolvedCode.startsWith("try {\n" + V2_MARKER);
     }
 }

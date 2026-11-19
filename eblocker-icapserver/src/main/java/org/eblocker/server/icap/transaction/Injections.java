@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class collects Strings which shall be injected into HTTP Responses before the last body tag
+ * This class collects HTML fragments for injection near the start or end of a response.
  */
 public class Injections {
 
     private List<String> injections = new ArrayList<String>();
+    private List<String> earlyInjections = new ArrayList<String>();
 
     public Injections() {
 
@@ -36,5 +37,13 @@ public class Injections {
 
     public List<String> getInjections() {
         return injections;
+    }
+
+    public void injectEarly(String injection) {
+        earlyInjections.add(injection);
+    }
+
+    public List<String> getEarlyInjections() {
+        return earlyInjections;
     }
 }

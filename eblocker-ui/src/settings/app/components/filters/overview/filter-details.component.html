@@ -97,7 +97,7 @@
             <!-- Table: blocker lists -->
             <div>
                 <!-- Action bar of table -->
-                <div layout="row" layout-xs="column" layout-align="start center" ng-hide="vm.blocker.category === 'CONTENT'">
+                <div layout="row" layout-xs="column" layout-align="start center">
 
                     <div layout="row" style="width: 100%;">
                         <div flex-xs="50" flex="33" layout="row" layout-align="start center" style="padding-left: 8px;">
@@ -162,6 +162,22 @@
                           is-entry-selectable="vm.isSelectable(value)"
                           small-table-header-limit="4">
                 </eb-table>
+
+                <div ng-if="vm.blocker.category === 'CONTENT'"
+                     layout="row" layout-align="space-between center"
+                     style="border: 1px solid #d9dfe3; border-radius: 0 0 5px 5px; margin-top: -1px; min-height: 56px; padding: 0 16px 0 7px;">
+                    <div layout="row" layout-align="start center">
+                        <md-switch md-theme="eBlockerThemeSwitch" class="md-primary no-margin"
+                                   ng-model="vm.elementHidingEnabled" ng-change="vm.onElementHidingEnabledChanged()"
+                                   ng-disabled="vm.elementHidingLoading"
+                                   aria-label="{{ 'ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.TITLE' | translate }}"></md-switch>
+                        <span style="margin-left: 18px;" translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.TITLE"></span>
+                        <span ng-if="vm.elementHidingError" class="content-error" style="margin-left: 16px;"
+                              translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.STATUS_ERROR"></span>
+                    </div>
+                    <md-button ng-click="vm.editElementHidingRules()"
+                               translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.EDIT"></md-button>
+                </div>
 
                 <div layout="row" layout-align="start center" ng-show="vm.tableEditMode" layout-margin>
                     <eb-scroll-paginator table-id="vm.tableId"

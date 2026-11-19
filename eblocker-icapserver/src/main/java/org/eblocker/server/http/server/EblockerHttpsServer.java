@@ -2277,6 +2277,36 @@ public class EblockerHttpsServer implements Preprocessor {
                 .name("adminconsole.blocker.post");
 
         server
+                .uri("/api/blockers/element-hiding/", blockerController)
+                .action("getElementHidingRules", HttpMethod.GET)
+                .name("adminconsole.blocker.elementHiding.get");
+
+        server
+                .uri("/api/blockers/element-hiding/", blockerController)
+                .action("updateElementHidingRules", HttpMethod.PUT)
+                .name("adminconsole.blocker.elementHiding.put");
+
+        server
+                .uri("/api/blockers/element-hiding/append", blockerController)
+                .action("appendElementHidingRule", HttpMethod.POST)
+                .name("adminconsole.blocker.elementHiding.append");
+
+        server
+                .uri("/api/blockers/element-hiding/validate", blockerController)
+                .action("validateElementHidingRule", HttpMethod.POST)
+                .name("adminconsole.blocker.elementHiding.validate");
+
+        server
+                .uri("/api/blockers/element-hiding/status", blockerController)
+                .action("getElementHidingStatus", HttpMethod.GET)
+                .name("adminconsole.blocker.elementHiding.status.get");
+
+        server
+                .uri("/api/blockers/element-hiding/status", blockerController)
+                .action("updateElementHidingStatus", HttpMethod.PUT)
+                .name("adminconsole.blocker.elementHiding.status.put");
+
+        server
                 .uri("/api/blockers/{id}", blockerController)
                 .action("updateBlocker", HttpMethod.PUT)
                 .name("adminconsole.blocker.put");

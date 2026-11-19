@@ -102,14 +102,18 @@ public class UpdateTask implements Runnable {
             }
             if (newBlocker) {
                 int referenceId;
-                if (definition.getType() == Type.DOMAIN) {
+                if (definition.getType() == Type.CONTENT) {
+                    referenceId = definition.getId();
+                } else if (definition.getType() == Type.DOMAIN) {
                     referenceId = domainBlockerService.newDomainBlocker(definition.getCategory(), definition.getName(), definition.getDescription(), definition.getFormat(), definition.getFilterType(), path);
                 } else {
                     referenceId = patternBlockerService.newPatternBlocker(definition.getCategory(), definition.getName(), definition.getFormat(), path);
                 }
                 definition.setReferenceId(referenceId);
             } else {
-                if (definition.getType() == Type.DOMAIN) {
+                if (definition.getType() == Type.CONTENT) {
+                    // The source file is consumed directly by ContentFilterManager.
+                } else if (definition.getType() == Type.DOMAIN) {
                     domainBlockerService.updateDomainBlocker(definition.getReferenceId(), definition.getFormat(), path);
                 } else {
                     patternBlockerService.updatePatternBlocker();
@@ -118,6 +122,9 @@ public class UpdateTask implements Runnable {
             definition.setUpdateStatus(UpdateStatus.READY);
             definition.setUpdateError(null);
             dataSource.save(definition, definition.getId());
+            if (definition.getType() == Type.CONTENT) {
+                patternBlockerService.refreshContentFilter();
+            }
         } catch (IOException e) {
             log.error("failed to update {}", id, e);
             definition.setUpdateStatus(newBlocker ? UpdateStatus.INITIAL_UPDATE_FAILED : UpdateStatus.UPDATE_FAILED);

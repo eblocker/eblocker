@@ -139,6 +139,15 @@
     }
 
     function receiveEblockerMessage(event) {
+        if (!event.data || typeof event.data !== 'object') return;
+        var frame = document.getElementById('eblocker-overlay-iframe');
+        if (event.data['type'] === 'start-eblocker-element-picker' &&
+                frame && event.source === frame.contentWindow &&
+                event.origin === new URL('@EBLOCKER_CONTROL_BAR_URL@').origin) {
+            closeOverlay(currentIconPosition);
+            startEblockerElementPicker();
+            return;
+        }
         if (event.data.type === 'close-eblocker-overlay') {
             closeOverlay(currentIconPosition);
         } else if (event.data.type === 'close-eblocker-overlay-right') {
@@ -146,6 +155,256 @@
         } else if (event.data.type === 'close-eblocker-overlay-left') {
             closeOverlay('eblocker-icon-left');
         }
+    }
+
+    function startEblockerElementPicker() {
+        var languages = navigator['languages'];
+        var browserLanguage = ((languages && languages.length ? languages[0] : navigator['language']) || 'en').toLowerCase();
+        var german = /^de(?:-|$)/.test(browserLanguage);
+        function tr(deText, enText) { return german ? deText : enText; }
+        var previous = window['__eblockerElementPicker'];
+        if (previous) {
+            previous.stop();
+            return;
+        }
+        var host = document.createElement('div');
+        host.setAttribute('data-eblocker-element-picker', '');
+        var shadow = host['attachShadow']({mode: 'open'});
+        var style = document.createElement('style');
+        style.textContent = ':host{all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;font:14px Arial,sans-serif}' +
+            '.capture{position:fixed;inset:0;pointer-events:auto;cursor:crosshair}' +
+            '.box{position:fixed;border:2px solid #e9540d;background:#e9540d33;pointer-events:none;box-sizing:border-box}' +
+            '.panel{position:fixed;left:16px;bottom:16px;max-width:min(580px,calc(100vw - 32px));padding:12px;border-radius:8px;background:#fff;color:#222;box-shadow:0 4px 24px #0005;pointer-events:auto}' +
+            '.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}' +
+            '.rule{display:block;width:100%;box-sizing:border-box;margin-top:8px;padding:8px;font:12px monospace}' +
+            'button{border:0;border-radius:4px;padding:7px 10px;cursor:pointer;background:#e9540d;color:#fff}' +
+            'button.secondary{background:#e9e9e9;color:#222}[hidden]{display:none!important}';
+        var capture = document.createElement('div');
+        capture.className = 'capture';
+        var box = document.createElement('div');
+        box.className = 'box';
+        box.hidden = true;
+        var panel = document.createElement('div');
+        panel.className = 'panel';
+        var hint = document.createElement('div');
+        hint.textContent = tr('Element ausw' + String['fromCharCode'](228) + 'hlen. Esc beendet den Picker.', 'Click an element. Esc exits the picker.');
+        var rule = document.createElement('input');
+        rule.className = 'rule';
+        rule.readOnly = true;
+        rule.hidden = true;
+        var actions = document.createElement('div');
+        actions.className = 'row';
+        function makeButton(label, secondary) {
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            if (secondary) button.className = 'secondary';
+            actions.appendChild(button);
+            return button;
+        }
+        var preview = makeButton(tr('Vorschau', 'Preview'), false);
+        var copy = makeButton(tr('Regel kopieren', 'Copy rule'), false);
+        var below = makeButton(tr('Darunter', 'Underneath'), true);
+        var parent = makeButton(tr('Elternelement', 'Parent element'), true);
+        var again = makeButton(tr('Erneut ausw' + String['fromCharCode'](228) + 'hlen', 'Select again'), true);
+        var close = makeButton(tr('Schlie' + String['fromCharCode'](223) + 'en', 'Close'), true);
+        panel.appendChild(hint);
+        panel.appendChild(rule);
+        panel.appendChild(actions);
+        shadow.appendChild(style);
+        shadow.appendChild(capture);
+        shadow.appendChild(box);
+        shadow.appendChild(panel);
+        var saveFrame = document.createElement('iframe');
+        saveFrame.setAttribute('title', tr('eBlocker Regel speichern', 'Save eBlocker rule'));
+        saveFrame.setAttribute('src', '@EBLOCKER_CONTROL_BAR_URL@/controlbar/index.html#!/picker-save');
+        saveFrame.setAttribute('style', 'position:fixed;left:16px;bottom:150px;width:min(580px,calc(100vw - 32px));height:180px;border:0;border-radius:8px;background:#fff;pointer-events:auto');
+        saveFrame.hidden = true;
+        shadow.appendChild(saveFrame);
+        document.documentElement.appendChild(host);
+
+        var selected = null;
+        var candidates = [];
+        var candidateIndex = 0;
+        var previewStyle = null;
+        var active = true;
+        var saveReady = false;
+        var ruleMatches = -1;
+        var ruleCoverage = 0;
+        preview.hidden = copy.hidden = below.hidden = parent.hidden = again.hidden = true;
+
+        function unique(selector) {
+            try { return document.querySelectorAll(selector).length === 1; }
+            catch (error) { return false; }
+        }
+        function segment(element) {
+            var tag = element.localName.toLowerCase();
+            var classes = Array.prototype.slice.call(element.classList)
+                .filter(function(value) { return value.length < 60 && /^[A-Za-z_][A-Za-z0-9_-]*$/.test(value); })
+                .slice(0, 2);
+            var withClass = tag + classes.map(function(value) { return '.' + value; }).join('');
+            if (classes.length && unique(withClass)) return withClass;
+            var index = 1;
+            for (var sibling = element.previousElementSibling; sibling; sibling = sibling.previousElementSibling) {
+                if (sibling.localName === element.localName) index++;
+            }
+            return withClass + ':nth-of-type(' + index + ')';
+        }
+        function selectorFor(element) {
+            if (element.id && /^[A-Za-z_][A-Za-z0-9_-]*$/.test(element.id)) {
+                var byId = '#' + element.id;
+                if (unique(byId)) return byId;
+            }
+            var selector = '';
+            for (var current = element; current && current !== document.documentElement; current = current.parentElement) {
+                selector = segment(current) + (selector ? ' > ' + selector : '');
+                if (unique(selector)) return selector;
+                if (current === document.body) break;
+            }
+            return selector;
+        }
+        function elementsAt(x, y) {
+            capture.style.pointerEvents = 'none';
+            try {
+                return document['elementsFromPoint'](x, y).filter(function(element) {
+                    return element !== host && !host.contains(element) &&
+                        element !== document.body && element !== document.documentElement;
+                });
+            } finally {
+                capture.style.pointerEvents = 'auto';
+            }
+        }
+        function mark(element) {
+            if (!element) { box.hidden = true; return; }
+            var rect = element.getBoundingClientRect();
+            box.hidden = false;
+            box.style.left = rect.left + 'px';
+            box.style.top = rect.top + 'px';
+            box.style.width = rect.width + 'px';
+            box.style.height = rect.height + 'px';
+        }
+        function removePreview() {
+            if (previewStyle) { previewStyle.remove(); previewStyle = null; }
+            preview.hidden = !selected;
+        }
+        function select(element) {
+            removePreview();
+            selected = element;
+            var selector = selectorFor(element);
+            if (!selector) return;
+            rule.value = location.hostname + '##' + selector;
+            ruleMatches = document.querySelectorAll(selector).length;
+            var rect = element.getBoundingClientRect();
+            ruleCoverage = Math.round(Math.min(100, rect.width * rect.height /
+                Math.max(1, window.innerWidth * window.innerHeight) * 100));
+            rule.hidden = false;
+            preview.hidden = copy.hidden = false;
+            below.hidden = candidates.length < 2;
+            parent.hidden = !element.parentElement || element.parentElement === document.body;
+            again.hidden = false;
+            saveFrame.hidden = false;
+            if (saveReady) saveFrame.contentWindow.postMessage({'type': 'eblocker-picker-rule', 'rule': rule.value,
+                'matches': ruleMatches, 'coverage': ruleCoverage}, new URL('@EBLOCKER_CONTROL_BAR_URL@').origin);
+            hint.textContent = tr('Regel pr' + String['fromCharCode'](252) + 'fen. ' + String['fromCharCode'](8222) + 'Darunter' + String['fromCharCode'](8220) + ' w' + String['fromCharCode'](228) + 'hlt ein verdecktes Element.', 'Check the rule. Underneath selects an obscured element.');
+            mark(element);
+        }
+        function onMove(event) {
+            if (active) mark(elementsAt(event.clientX, event.clientY)[0]);
+        }
+        function onClick(event) {
+            if (!active) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            var stack = elementsAt(event.clientX, event.clientY);
+            candidates = stack.filter(function(element, index) {
+                return !stack.slice(0, index).some(function(above) { return element.contains(above); });
+            });
+            if (!candidates.length) return;
+            candidateIndex = 0;
+            active = false;
+            select(candidates[0]);
+        }
+        function onSaveMessage(event) {
+            if (event.source !== saveFrame.contentWindow ||
+                    event.origin !== new URL('@EBLOCKER_CONTROL_BAR_URL@').origin || !event.data) return;
+            if (event.data['type'] === 'eblocker-picker-save-ready') {
+                saveReady = true;
+                if (rule.value) saveFrame.contentWindow.postMessage({'type': 'eblocker-picker-rule', 'rule': rule.value,
+                    'matches': ruleMatches, 'coverage': ruleCoverage}, event.origin);
+            } else if (event.data['type'] === 'eblocker-picker-save-result') {
+                var result = event.data['added'] ? tr('Regel in eBlocker gespeichert.', 'Rule saved in eBlocker.') : tr('Regel ist bereits vorhanden.', 'This rule already exists.');
+                if (!event.data['enabled']) result += tr(' Eigene Regeln sind deaktiviert.', ' Custom rules are disabled.');
+                if (event.data['added']) {
+                    resetSelection(result + tr(' N' + String['fromCharCode'](228) + 'chstes Element ausw' + String['fromCharCode'](228) + 'hlen.', ' Select the next element.'));
+                } else {
+                    hint.textContent = result;
+                }
+            } else if (event.data['type'] === 'eblocker-picker-save-cancel') {
+                saveFrame.hidden = true;
+            }
+        }
+        function stop() {
+            removePreview();
+            window.removeEventListener('message', onSaveMessage);
+            capture.removeEventListener('pointermove', onMove);
+            capture.removeEventListener('click', onClick);
+            document.removeEventListener('keydown', onKey, true);
+            host.remove();
+            delete window['__eblockerElementPicker'];
+        }
+        function onKey(event) { if (event.key === 'Escape') stop(); }
+        preview.addEventListener('click', function() {
+            if (!selected || previewStyle) return;
+            previewStyle = document.createElement('style');
+            previewStyle.textContent = rule.value.split('##').slice(1).join('##') + ' {display:none!important;}';
+            document.documentElement.appendChild(previewStyle);
+            preview.hidden = true;
+            hint.textContent = tr('Vorschau aktiv. ' + String['fromCharCode'](8222) + 'Erneut ausw' + String['fromCharCode'](228) + 'hlen' + String['fromCharCode'](8220) + ' entfernt sie.', 'Preview active. Select again removes it.');
+        });
+        copy.addEventListener('click', function() {
+            if (navigator['clipboard'] && navigator['clipboard']['writeText']) {
+                navigator['clipboard']['writeText'](rule.value).then(function() {
+                    hint.textContent = tr('Regel kopiert. Unter Blocker ' + String['fromCharCode'](8594) + ' Video Ads & Content Blocker einf' + String['fromCharCode'](252) + 'gen.', 'Rule copied. Paste it under Blocker > Video Ads & Content Blocker.');
+                }, function() {
+                    rule.focus(); rule.select();
+                    hint.textContent = tr('Regel markiert. Mit Strg+C kopieren.', 'Rule selected. Press Ctrl+C to copy.');
+                });
+            } else {
+                rule.focus(); rule.select();
+                hint.textContent = tr('Regel markiert. Mit Strg+C kopieren.', 'Rule selected. Press Ctrl+C to copy.');
+            }
+        });
+        below.addEventListener('click', function() {
+            if (!candidates.length) return;
+            candidateIndex = (candidateIndex + 1) % candidates.length;
+            select(candidates[candidateIndex]);
+        });
+        parent.addEventListener('click', function() {
+            if (selected && selected.parentElement && selected.parentElement !== document.body) {
+                select(selected.parentElement);
+            }
+        });
+        function resetSelection(message) {
+            removePreview();
+            selected = null;
+            candidates = [];
+            candidateIndex = 0;
+            ruleMatches = -1;
+            ruleCoverage = 0;
+            active = true;
+            rule.hidden = preview.hidden = copy.hidden = below.hidden = parent.hidden = again.hidden = true;
+            box.hidden = true;
+            saveFrame.hidden = true;
+            rule.value = '';
+            hint.textContent = message || tr('Element ausw' + String['fromCharCode'](228) + 'hlen. Esc beendet den Picker.', 'Click an element. Esc exits the picker.');
+        }
+        again.addEventListener('click', function() { resetSelection(); });
+        close.addEventListener('click', stop);
+        capture.addEventListener('pointermove', onMove);
+        capture.addEventListener('click', onClick);
+        document.addEventListener('keydown', onKey, true);
+        window.addEventListener('message', onSaveMessage);
+        window['__eblockerElementPicker'] = {stop: stop};
     }
 
     function closeOverlay(iconId) {

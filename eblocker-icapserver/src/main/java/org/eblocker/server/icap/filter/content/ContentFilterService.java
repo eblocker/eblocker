@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 @Singleton
 public class ContentFilterService {
     private static final Logger log = LoggerFactory.getLogger(ContentFilterService.class);
-    private Cache<String, String> cache; // Map hostname to injected HTML
+    private Cache<String, HtmlFragments> cache; // Map hostname to injected HTML
     private ContentFilterList filterList = ContentFilterList.emptyList();
     private final ScriptletService scriptletService;
     private final String elementHidingCss;
@@ -56,24 +56,33 @@ public class ContentFilterService {
     }
 
     public String getHtmlToInject(String hostname) {
+        return getFragments(hostname).late;
+    }
+
+    public String getEarlyHtmlToInject(String hostname) {
+        return getFragments(hostname).early;
+    }
+
+    private HtmlFragments getFragments(String hostname) {
         if (filterList.size() == 0) {
             // don't fill the cache if filter lists are disabled
-            return "";
+            return new HtmlFragments("", "");
         }
         try {
             return cache.get(hostname, () -> generateHtmlToInject(hostname));
         } catch (ExecutionException e) {
             log.error("Could not generate HTML to inject", e);
-            return "";
+            return new HtmlFragments("", "");
         }
     }
 
-    private String generateHtmlToInject(String hostname) {
-        StringBuilder result = new StringBuilder();
+    private HtmlFragments generateHtmlToInject(String hostname) {
+        StringBuilder late = new StringBuilder();
+        StringBuilder early = new StringBuilder();
         List<ContentFilter> matchingFilters = filterList.getMatchingFilters(hostname);
-        generateElementHidingStylesheet(matchingFilters, result);
-        generateScriptlets(matchingFilters, result);
-        return result.toString();
+        generateElementHidingStylesheet(matchingFilters, late);
+        generateScriptlets(matchingFilters, late, early);
+        return new HtmlFragments(late.toString(), early.toString());
     }
 
     private void generateElementHidingStylesheet(List<ContentFilter> matchingFilters, StringBuilder result) {
@@ -93,12 +102,15 @@ public class ContentFilterService {
         }
     }
 
-    private void generateScriptlets(List<ContentFilter> matchingFilters, StringBuilder result) {
+    private void generateScriptlets(List<ContentFilter> matchingFilters, StringBuilder late, StringBuilder early) {
         matchingFilters.stream()
                 .filter(f -> f instanceof ScriptletFilter)
                 .forEach(f -> {
+                    String code = getScriptletCode(((ScriptletFilter)f).getScriptlet());
+                    if (code.isEmpty()) return;
+                    StringBuilder result = scriptletService.isVersion2(code) ? early : late;
                     result.append("<script type=\"text/javascript\">\n");
-                    result.append(getScriptletCode(((ScriptletFilter)f).getScriptlet()));
+                    result.append(code);
                     result.append("</script>\n");
                 });
     }
@@ -106,6 +118,9 @@ public class ContentFilterService {
     private String getScriptletCode(String scriptlet) {
         try {
             return scriptletService.resolve(scriptlet);
+        } catch (IllegalArgumentException e) {
+            log.warn("Ignoring invalid scriptlet: {}", scriptlet);
+            return "";
         } catch (IOException e) {
             log.error("Could not resolve scriptlet: {}", scriptlet, e);
             return "";
@@ -116,5 +131,15 @@ public class ContentFilterService {
     public void setFilterList(ContentFilterList filterList) {
         clearCache();
         this.filterList = filterList;
+    }
+
+    private static class HtmlFragments {
+        final String late;
+        final String early;
+
+        HtmlFragments(String late, String early) {
+            this.late = late;
+            this.early = early;
+        }
     }
 }

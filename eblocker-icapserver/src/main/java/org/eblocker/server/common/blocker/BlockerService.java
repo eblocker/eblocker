@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -119,6 +120,10 @@ public class BlockerService {
 
         List<Blocker> blockers = new ArrayList<>();
         blockers.addAll(getPendingFilters(definitions));
+        definitions.stream()
+                .filter(definition -> definition.getType() == Type.CONTENT && definition.getReferenceId() != null)
+                .map(definition -> BlockerUtils.mapDefinition(definition, null, definition.isEnabled()))
+                .forEach(blockers::add);
         blockers.addAll(domainBlockerService.getDomainFilters(definitionByTypeId));
         blockers.addAll(patternBlockerService.getPatternFilters(definitionByTypeId));
         blockers.add(patternBlockerService.getMalwareUrlFilter());
@@ -175,7 +180,7 @@ public class BlockerService {
                 BlockerUtils.firstValue(blocker.getName()),
                 BlockerUtils.firstValue(blocker.getDescription()),
                 blocker.getCategory(),
-                BlockerUtils.mapBlockerType(blocker.getType()),
+                blocker.getCategory() == Category.CONTENT ? Type.CONTENT : BlockerUtils.mapBlockerType(blocker.getType()),
                 null,
                 blocker.getFormat(),
                 blockerUrl,
@@ -226,7 +231,8 @@ public class BlockerService {
             }
         }
 
-        if (BlockerUtils.mapBlockerType(blocker.getType()) != definition.getType()) {
+        Type expectedType = blocker.getCategory() == Category.CONTENT ? Type.CONTENT : BlockerUtils.mapBlockerType(blocker.getType());
+        if (expectedType != definition.getType()) {
             throw new UnsupportedOperationException("can not change blocker type");
         }
 
@@ -234,7 +240,7 @@ public class BlockerService {
             throw new UnsupportedOperationException("can not change blocker category");
         }
 
-        boolean needsUpdate = blocker.getFormat() != definition.getFormat() || blocker.getContent() != null || !blocker.getUrl().equals(definition.getUrl());
+        boolean needsUpdate = blocker.getFormat() != definition.getFormat() || blocker.getContent() != null || !Objects.equals(blocker.getUrl(), definition.getUrl());
         definition.setName(BlockerUtils.firstValue(blocker.getName()));
         definition.setDescription(BlockerUtils.firstValue(blocker.getDescription()));
         definition.setFormat(blocker.getFormat());
@@ -270,6 +276,10 @@ public class BlockerService {
         if (definition.getType() == Type.DOMAIN) {
             return domainBlockerService.enableDomainFilter(definition.getReferenceId(), definition, definition.isEnabled());
         }
+        if (definition.getType() == Type.CONTENT) {
+            if (!needsUpdate) patternBlockerService.refreshContentFilter();
+            return BlockerUtils.mapDefinition(definition, null, definition.isEnabled());
+        }
 
         return patternBlockerService.enablePatternFilter(definition.getReferenceId(), definition, definition.isEnabled());
     }
@@ -286,12 +296,13 @@ public class BlockerService {
         if (definition.getReferenceId() != null) {
             if (definition.getType() == Type.DOMAIN) {
                 domainBlockerService.deleteFilter(definition.getReferenceId());
-            } else {
+            } else if (definition.getType() != Type.CONTENT) {
                 patternBlockerService.deleteFilter(definition.getReferenceId());
             }
         }
 
         dataSource.delete(ExternalDefinition.class, id);
+        if (definition.getType() == Type.CONTENT) patternBlockerService.refreshContentFilter();
         try {
             Files.deleteIfExists(Paths.get(definition.getFile()));
         } catch (IOException e) {

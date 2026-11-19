@@ -1,0 +1,20 @@
+<md-dialog aria-label="{{ 'ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.TITLE' | translate }}"
+           style="width: 650px; max-width: 95vw;" layout-padding>
+    <md-dialog-content layout="column" layout-padding>
+        <h2 translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.TITLE"></h2>
+        <p translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.DESCRIPTION"></p>
+        <md-progress-circular ng-if="vm.loading" md-mode="indeterminate" md-diameter="28"></md-progress-circular>
+        <textarea ng-if="!vm.loading" ng-model="vm.rules" rows="9"
+                  style="width: 100%; font-family: monospace; box-sizing: border-box;"
+                  aria-label="{{ 'ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.TITLE' | translate }}"
+                  placeholder="example.org##.advertisement"></textarea>
+        <span ng-if="vm.error" class="content-error"
+              translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.ERROR"></span>
+    </md-dialog-content>
+    <md-dialog-actions layout="row" layout-align="end center">
+        <md-button ng-click="vm.cancel()" translate="ADMINCONSOLE.TASKS.DIALOG.CANCEL"></md-button>
+        <md-button class="md-raised md-accent" ng-click="vm.save()"
+                   ng-disabled="vm.loading || vm.saving"
+                   translate="ADMINCONSOLE.FILTER_DETAILS.ELEMENT_HIDING.SAVE"></md-button>
+    </md-dialog-actions>
+</md-dialog>

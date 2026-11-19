@@ -1,6 +1,10 @@
 package org.eblocker.server.http.backup;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.eblocker.crypto.json.JsonEncrypt;
 import org.eblocker.server.common.data.LocaleSettings;
+
+import javax.annotation.Nullable;
 
 /**
  * Class for storing global settings in the backup.
@@ -10,6 +14,7 @@ public class GeneralSettingsBackup {
     private boolean autoEnableNewDevices;
     private boolean squidWarningServiceEnabled;
     private LocaleSettings localeSettings;
+    private byte[] consolePasswordHash;
 
     public long getDeviceScanningInterval() {
         return deviceScanningInterval;
@@ -41,5 +46,16 @@ public class GeneralSettingsBackup {
 
     public void setLocaleSettings(LocaleSettings localeSettings) {
         this.localeSettings = localeSettings;
+    }
+
+    @JsonProperty
+    @JsonEncrypt
+    @Nullable
+    public byte[] getConsolePasswordHash() {
+        return consolePasswordHash;
+    }
+
+    public void setConsolePasswordHash(@Nullable byte[] consolePasswordHash) {
+        this.consolePasswordHash = consolePasswordHash;
     }
 }

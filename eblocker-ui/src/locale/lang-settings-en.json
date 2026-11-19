@@ -399,6 +399,7 @@
                 "NO_PASSWORD_OPENVPN_SERVER_NOT_IMPORTED": "OpenVPN keys for eBlocker Mobile cannot be restored.",
                 "NO_PASSWORD_OPENVPN_CLIENTS_NOT_IMPORTED": "OpenVPN keys for anonymization cannot be restored.",
                 "NO_PASSWORD_REGISTRATION_NOT_IMPORTED": "License keys cannot be restored.",
+                "NO_PASSWORD_CONSOLE_PASSWORD_NOT_IMPORTED": "Administrator password cannot be restored.",
                 "UPNP_PORT_FORWARDING_FAILURE": "Establishing the port forwarding for eBlocker Mobile failed.",
                 "ITEM_NOT_EXPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be saved.",
                 "ITEM_NOT_IMPORTED": "{{ 'ADMINCONSOLE.CONFIG_BACKUP.WARNING.ITEM.' + itemId | translate }} '{{itemName}}' could not be restored."

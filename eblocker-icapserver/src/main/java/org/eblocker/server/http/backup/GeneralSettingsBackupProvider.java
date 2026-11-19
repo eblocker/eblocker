@@ -17,7 +17,11 @@
 package org.eblocker.server.http.backup;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import org.eblocker.crypto.CryptoService;
+import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.DeviceFactory;
+import org.eblocker.server.common.data.backup.BackupWarning;
 import org.eblocker.server.common.squid.SquidWarningService;
 import org.eblocker.server.http.service.DeviceScanningService;
 import org.eblocker.server.http.service.DnsService;
@@ -25,6 +29,7 @@ import org.eblocker.server.http.service.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
@@ -40,16 +45,21 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
     private final DeviceFactory deviceFactory;
     private final SquidWarningService squidWarningService;
     private final SettingsService settingsService;
+    private final DataSource dataSource;
 
     @Inject
     public GeneralSettingsBackupProvider(DeviceScanningService deviceScanningService,
                                          DeviceFactory deviceFactory,
                                          SquidWarningService squidWarningService,
-                                         SettingsService settingsService) {
+                                         SettingsService settingsService,
+                                         DataSource dataSource,
+                                         @Assisted @Nullable CryptoService cryptoService) {
+        super(cryptoService);
         this.deviceScanningService = deviceScanningService;
         this.deviceFactory = deviceFactory;
         this.squidWarningService = squidWarningService;
         this.settingsService = settingsService;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -65,6 +75,7 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
         backup.setAutoEnableNewDevices(deviceFactory.isAutoEnableNewDevices());
         backup.setSquidWarningServiceEnabled(squidWarningService.isEnabled());
         backup.setLocaleSettings(settingsService.getLocaleSettings());
+        backup.setConsolePasswordHash(dataSource.getPasswordHash());
         return backup;
     }
 
@@ -86,6 +97,11 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
             throw new CorruptedBackupException("Deserialized backup object is null");
         }
 
+        // warn if backup contains password hash, but we cannot decrypt it:
+        if (!canDecrypt() && backup.getConsolePasswordHash() != null) {
+            addWarning(new BackupWarning(BackupWarning.Id.NO_PASSWORD_CONSOLE_PASSWORD_NOT_IMPORTED));
+        }
+
         if (!dryRun) {
             restoreBackup(backup);
         }
@@ -96,5 +112,12 @@ public class GeneralSettingsBackupProvider extends BackupProvider {
         deviceFactory.setAutoEnableNewDevices(backup.isAutoEnableNewDevices());
         squidWarningService.setRecordingFailedConnectionsEnabled(backup.isSquidWarningServiceEnabled());
         settingsService.setLocaleSettings(backup.getLocaleSettings());
+
+        byte[] pwHash = backup.getConsolePasswordHash();
+        if (pwHash != null) {
+            dataSource.setPasswordHash(pwHash);
+        } else {
+            LOG.warn("Backup does not contain a console password hash.");
+        }
     }
 }

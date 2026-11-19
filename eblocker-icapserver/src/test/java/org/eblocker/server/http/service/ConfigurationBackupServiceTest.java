@@ -85,7 +85,7 @@ public class ConfigurationBackupServiceTest {
 
         BackupProviderFactory providerFactory = new BackupProviderFactory() {
             @Override
-            public GeneralSettingsBackupProvider createGeneralSettingsBackupProvider() {
+            public GeneralSettingsBackupProvider createGeneralSettingsBackupProvider(CryptoService cryptoService) {
                 return generalSettingsBP;
             }
 

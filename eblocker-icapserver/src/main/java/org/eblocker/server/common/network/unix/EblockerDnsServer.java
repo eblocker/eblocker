@@ -33,6 +33,7 @@ import org.eblocker.server.common.data.dns.EblockerDnsServerState;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
 import org.eblocker.server.common.data.dns.NameServer;
 import org.eblocker.server.common.data.dns.ResolverConfig;
+import org.eblocker.server.common.data.dns.SecureDnsConfig;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.network.DhcpBindListener;
@@ -51,6 +52,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,6 +76,9 @@ public class EblockerDnsServer {
 
     static final String RESOLVER_DHCP = "dhcp";
     static final String RESOLVER_CUSTOM = "custom";
+    static final String RESOLVER_SECURE = "secure";
+    static final String RESOLVER_DOT = "dot";
+    static final String RESOLVER_DOH = "doh";
     static final String RESOLVER_TOR = "tor";
     private static final String RESOLVER_VPN_PREFIX = "vpn-";
 
@@ -299,11 +305,13 @@ public class EblockerDnsServer {
             dnsResolvers.setDhcpNameServers(mapNameServers(config.getResolverConfigs().get(RESOLVER_DHCP)));
             dnsResolvers.setDefaultResolver(config.getDefaultResolver());
             dnsResolvers.setCustomResolverMode(mapOrderOption(config.getResolverConfigs().get(RESOLVER_CUSTOM)));
+            dnsResolvers.setSecureDns(config.getSecureDns());
         }
         return dnsResolvers;
     }
 
     public synchronized DnsResolvers setDnsResolvers(DnsResolvers dnsResolvers) {
+        validateSecureDns(dnsResolvers);
         ResolverConfig customResolverConfig = new ResolverConfig();
         List<NameServer> customNameServers = dnsResolvers.getCustomNameServers().stream()
                 .map(NameServer::parse)
@@ -317,6 +325,7 @@ public class EblockerDnsServer {
 
         DnsServerConfig config = getConfig();
         config.getResolverConfigs().put(RESOLVER_CUSTOM, customResolverConfig);
+        config.setSecureDns(dnsResolvers.getSecureDns());
         config.setDefaultResolver(dnsResolvers.getDefaultResolver());
 
         if (RESOLVER_CUSTOM.equals(config.getDefaultResolver())) {
@@ -328,6 +337,98 @@ public class EblockerDnsServer {
         saveConfig(config);
 
         return getDnsResolvers();
+    }
+
+    private void validateSecureDns(DnsResolvers dnsResolvers) {
+        SecureDnsConfig secureDns = dnsResolvers.getSecureDns();
+        if (RESOLVER_SECURE.equals(dnsResolvers.getDefaultResolver()) && secureDns == null) {
+            throw new IllegalArgumentException("Secure DNS configuration is missing");
+        }
+        if (RESOLVER_DOT.equals(dnsResolvers.getDefaultResolver()) || RESOLVER_DOH.equals(dnsResolvers.getDefaultResolver())) {
+            if (secureDns == null) {
+                throw new IllegalArgumentException("Encrypted DNS configuration is missing");
+            }
+        }
+        if (secureDns == null) {
+            return;
+        }
+        // The legacy single-provider mode remains readable for existing installations.
+        if (RESOLVER_SECURE.equals(dnsResolvers.getDefaultResolver()) &&
+                (!Set.of("plain", "dot", "doh").contains(secureDns.getTransport()) ||
+                        !Set.of("cloudflare", "quad9").contains(secureDns.getProvider()))) {
+            throw new IllegalArgumentException("Unsupported legacy secure DNS transport or provider");
+        }
+        validatePlainServers(secureDns.getPlainServers());
+        validateEncryptedServers(secureDns.getDotServers(), "dot");
+        validateEncryptedServers(secureDns.getDohServers(), "doh");
+        if (!Set.of("default", "round_robin", "random").contains(secureDns.getPlainMode()) ||
+                !Set.of("default", "round_robin", "random").contains(secureDns.getDotMode()) ||
+                !Set.of("default", "round_robin", "random").contains(secureDns.getDohMode())) {
+            throw new IllegalArgumentException("Unsupported encrypted DNS list strategy");
+        }
+        if (RESOLVER_DOT.equals(dnsResolvers.getDefaultResolver()) && secureDns.getDotServers().isEmpty() ||
+                RESOLVER_DOH.equals(dnsResolvers.getDefaultResolver()) && secureDns.getDohServers().isEmpty()) {
+            throw new IllegalArgumentException("Selected encrypted DNS list is empty");
+        }
+    }
+
+    private void validatePlainServers(List<String> servers) {
+        if (servers == null || servers.size() > 15 || servers.size() != servers.stream().distinct().count()) {
+            throw new IllegalArgumentException("Invalid DNSSEC server list");
+        }
+        for (String server : servers) {
+            if (!validIp(server)) {
+                throw new IllegalArgumentException("Invalid DNSSEC server IP");
+            }
+        }
+    }
+
+    private boolean validIp(String value) {
+        try {
+            IpAddress.parse(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean validUriIp(String host) {
+        if (host == null) {
+            return false;
+        }
+        if (host.startsWith("[") && host.endsWith("]")) {
+            return validIp(host.substring(1, host.length() - 1));
+        }
+        return validIp(host);
+    }
+
+    private void validateEncryptedServers(List<String> servers, String transport) {
+        if (servers == null || servers.size() > 15 || servers.size() != servers.stream().distinct().count()) {
+            throw new IllegalArgumentException("Invalid encrypted DNS server list");
+        }
+        for (String server : servers) {
+            String[] parts = server.split("\\|", -1);
+            if (parts.length != 2 || !parts[1].matches("(?i)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*")) {
+                throw new IllegalArgumentException("Invalid TLS server name");
+            }
+            try {
+                if ("dot".equals(transport)) {
+                    if (!validIp(parts[0])) {
+                        throw new IllegalArgumentException("Invalid DoT server IP");
+                    }
+                } else {
+                    URI uri = new URI(parts[0]);
+                    if (!"https".equals(uri.getScheme()) || uri.getHost() == null ||
+                            !validUriIp(uri.getHost()) || uri.getUserInfo() != null ||
+                            uri.getQuery() != null || uri.getFragment() != null ||
+                            !"/dns-query".equals(uri.getPath()) || uri.getPort() != -1) {
+                        throw new IllegalArgumentException("Invalid DoH URL");
+                    }
+                }
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Invalid encrypted DNS server", e);
+            }
+        }
     }
 
     public List<LocalDnsRecord> getLocalDnsRecords() {

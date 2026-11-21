@@ -22,6 +22,7 @@ import java.util.List;
 public class DnsResolvers {
     private String defaultResolver;
     private String customResolverMode;
+    private SecureDnsConfig secureDns;
     private List<String> dhcpNameServers = new ArrayList<>();
     private List<String> customNameServers = new ArrayList<>();
 
@@ -47,6 +48,14 @@ public class DnsResolvers {
 
     public void setCustomResolverMode(String customResolverMode) {
         this.customResolverMode = customResolverMode;
+    }
+
+    public SecureDnsConfig getSecureDns() {
+        return secureDns;
+    }
+
+    public void setSecureDns(SecureDnsConfig secureDns) {
+        this.secureDns = secureDns;
     }
 
     public List<String> getCustomNameServers() {

@@ -164,9 +164,19 @@ export default function DnsService($http, $translate, $q, DataCachingService) {
             defaultResolver:configuration.selectedDnsMode,
             customResolverMode:configuration.dnsModeListStrategy,
             customNameServers: configuration.customNameServers,
-            localDnsRecords: configuration.localDnsRecords
+            localDnsRecords: configuration.localDnsRecords,
+            secureDns: configuration.secureDns
         };
 
+    }
+
+    function addDefaultIpv6Servers(current, provider, quad4, quad6, cloud4, cloud6) {
+        const ipv4 = provider === 'cloudflare' ? cloud4 : quad4;
+        const ipv6 = provider === 'cloudflare' ? cloud6 : quad6;
+        if (!angular.isArray(current) || current.length === 0 || angular.equals(current, ipv4)) {
+            return ipv4.concat(ipv6);
+        }
+        return current;
     }
 
     function normalizeConfiguration(configuration) { // jshint ignore: line
@@ -174,7 +184,38 @@ export default function DnsService($http, $translate, $q, DataCachingService) {
             return configuration;
         }
         const normConf = {};
-        normConf.selectedDnsMode = configuration.defaultResolver;// tor/dhcp/custom
+        normConf.selectedDnsMode = configuration.defaultResolver;// tor/dhcp/custom/dot/doh/legacy secure
+        normConf.secureDns = configuration.secureDns || {};
+        normConf.secureDns.provider = normConf.secureDns.provider || 'quad9';
+        normConf.secureDns.transport = normConf.secureDns.transport || 'plain';
+        normConf.secureDns.plainServers = addDefaultIpv6Servers(normConf.secureDns.plainServers,
+            normConf.secureDns.provider,
+            ['9.9.9.9', '149.112.112.112'], ['2620:fe::fe', '2620:fe::9'],
+            ['1.1.1.1', '1.0.0.1'], ['2606:4700:4700::1111', '2606:4700:4700::1001']);
+        normConf.secureDns.plainMode = normConf.secureDns.plainMode || 'default';
+        normConf.secureDns.dotServers = addDefaultIpv6Servers(normConf.secureDns.dotServers,
+            normConf.secureDns.provider,
+            ['9.9.9.9|dns.quad9.net', '149.112.112.112|dns.quad9.net'],
+            ['2620:fe::fe|dns.quad9.net', '2620:fe::9|dns.quad9.net'],
+            ['1.1.1.1|cloudflare-dns.com', '1.0.0.1|cloudflare-dns.com'],
+            ['2606:4700:4700::1111|cloudflare-dns.com',
+             '2606:4700:4700::1001|cloudflare-dns.com']);
+        normConf.secureDns.dohServers = addDefaultIpv6Servers(normConf.secureDns.dohServers,
+            normConf.secureDns.provider,
+            ['https://9.9.9.9/dns-query|dns.quad9.net',
+             'https://149.112.112.112/dns-query|dns.quad9.net'],
+            ['https://[2620:fe::fe]/dns-query|dns.quad9.net',
+             'https://[2620:fe::9]/dns-query|dns.quad9.net'],
+            ['https://1.1.1.1/dns-query|cloudflare-dns.com',
+             'https://1.0.0.1/dns-query|cloudflare-dns.com'],
+            ['https://[2606:4700:4700::1111]/dns-query|cloudflare-dns.com',
+             'https://[2606:4700:4700::1001]/dns-query|cloudflare-dns.com']);
+        normConf.secureDns.dotMode = normConf.secureDns.dotMode || 'default';
+        normConf.secureDns.dohMode = normConf.secureDns.dohMode || 'default';
+        if (configuration.defaultResolver === 'secure' &&
+            (normConf.secureDns.transport === 'dot' || normConf.secureDns.transport === 'doh')) {
+            normConf.selectedDnsMode = normConf.secureDns.transport;
+        }
         if (angular.isDefined(configuration.customResolverMode)) {
             normConf.dnsModeListStrategy = configuration.customResolverMode;// default/round_robin/random
         } else {
@@ -191,6 +232,14 @@ export default function DnsService($http, $translate, $q, DataCachingService) {
         } else if (configuration.defaultResolver === 'tor') {
             normConf.modeDisplay = $translate.instant('TOR');
             normConf.nameServers = ['127.0.0.1'];
+        } else if (configuration.defaultResolver === 'secure' ||
+                   configuration.defaultResolver === 'dot' ||
+                   configuration.defaultResolver === 'doh') {
+            const mode = normConf.selectedDnsMode;
+            normConf.modeDisplay = mode.toUpperCase();
+            normConf.nameServers = mode === 'dot' ? normConf.secureDns.dotServers :
+                mode === 'doh' ? normConf.secureDns.dohServers :
+                normConf.secureDns.plainServers;
         } else if (configuration.defaultResolver === 'custom') {
             normConf.nameServers = configuration.customNameServers;
             if (configuration.customResolverMode === 'default') {

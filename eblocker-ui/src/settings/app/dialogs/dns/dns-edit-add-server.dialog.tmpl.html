@@ -11,8 +11,11 @@
 
             <div layout="column" style="margin-top: 20px;">
                 <md-input-container md-theme="eBlockerThemeInput">
-                    <label>{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.LABEL_ADD_DNS_IPS' | translate }}</label>
-                    <input eb-ip-address name="ip" ng-model="vm.entry.server" type="text" md-maxlength="vm.maxLength" required />
+                    <label>{{ vm.transport === 'custom' ? ('ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.LABEL_ADD_DNS_IPS' | translate) : ('ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.LABEL_ENCRYPTED' | translate) }}</label>
+                    <input ng-if="vm.transport === 'custom'" eb-ip-address name="ip" ng-model="vm.entry.server" type="text" md-maxlength="vm.maxLength" required />
+                    <input ng-if="vm.transport !== 'custom'" name="ip" ng-model="vm.entry.server" type="text" md-maxlength="vm.maxLength" required />
+                    <p ng-if="vm.transport !== 'custom'">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.EXAMPLE' | translate }}: {{vm.example}}</p>
+                    <p ng-if="vm.transport !== 'custom' && vm.entry.server && !vm.validServer(vm.entry.server)" class="content-error">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.ERROR.INVALID_ENCRYPTED' | translate }}</p>
                     <div ng-messages="vm.dnsServerForm.ip.$error" ng-if="vm.dnsServerForm.$submitted || vm.dnsServerForm.ip.$touched">
                         <div ng-message="required">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.ERROR.REQUIRED' | translate }}</div>
                         <div ng-message="ipRange">{{ 'ADMINCONSOLE.DIALOG.ADD_DNS_SERVER.ERROR.IPS_INVALID' | translate }}</div>

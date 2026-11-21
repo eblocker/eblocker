@@ -29,7 +29,9 @@ function Controller(logger, DnsService, StateService, STATES, $q, NotificationSe
     vm.dnsSwitch = false;
     vm.dnsStatusFlagChanged = dnsStatusFlagChanged;
     vm.saveDnsConfiguration = saveDnsConfiguration;
+    vm.dnsModeChanged = dnsModeChanged;
     vm.goToCustomList = goToCustomList;
+    vm.goToServerList = goToServerList;
     vm.flushCache = flushCache;
     vm.isDefaultGatewayDefined = isDefaultGatewayDefined;
     vm.hasBeenFlushed = false;
@@ -77,11 +79,27 @@ function Controller(logger, DnsService, StateService, STATES, $q, NotificationSe
         });
     }
 
+    function dnsModeChanged() {
+        if (vm.configuration.selectedDnsMode === 'secure') {
+            vm.configuration.secureDns.transport = 'plain';
+            vm.configuration.secureDns.provider = vm.configuration.secureDns.provider || 'quad9';
+            vm.configuration.secureDns.validateDnssec = true;
+        }
+        saveDnsConfiguration();
+    }
+
     function saveDnsConfiguration() {
-        DnsService.saveDnsConfiguration(vm.configuration).then(function success(configuration) {
+        vm.savingDns = true;
+        return DnsService.saveDnsConfiguration(vm.configuration).then(function success(configuration) {
             vm.configuration = configuration;
             setGatewayIp(configuration);
             NotificationService.info('ADMINCONSOLE.DNS_STATUS.NOTIFICATION.INFO_SAVED_DNS_CONFIGURATION');
+        }, function error(response) {
+            logger.error('Could not save DNS configuration', response);
+            NotificationService.error('ADMINCONSOLE.DNS_STATUS.NOTIFICATION.ERROR_SAVED_DNS_CONFIGURATION');
+            loadConfiguration();
+        }).finally(function() {
+            vm.savingDns = false;
         });
     }
 
@@ -115,6 +133,10 @@ function Controller(logger, DnsService, StateService, STATES, $q, NotificationSe
             vm.flushingCache = false;
             vm.hasBeenFlushed = true;
         });
+    }
+
+    function goToServerList(state) {
+        StateService.goToState(state);
     }
 
     function goToCustomList() {

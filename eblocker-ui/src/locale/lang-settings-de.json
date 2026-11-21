@@ -640,10 +640,13 @@
                 },
                 "ERROR": {
                     "IPS_INVALID": "Ungültige IP-Adresse",
+                    "INVALID_ENCRYPTED": "IP-Adresse und gültigen TLS-Zertifikatsnamen eingeben.",
                     "IPS_TOO_LONG": "Der Eintrag ist zu lang",
                     "ORDER_REQUIRED": "Eine Nummer wird benötigt.",
                     "REQUIRED": "Eine IP-Adresse wird benötigt."
                 },
+                "LABEL_ENCRYPTED": "Server-IP oder HTTPS-URL | TLS-Zertifikatsname",
+                "EXAMPLE": "Beispiel",
                 "LABEL_ADD_DNS_IPS": "IP-Adresse",
                 "LABEL_ORDER_NUMBER": "Reihenfolge",
                 "TITLE_ADD": "DNS-Server hinzufügen",
@@ -1584,11 +1587,15 @@
             },
             "EDIT_DNS_MODE": {
                 "LABEL": "Externe DNS-Server verwenden",
+                "LABEL_SECURE": "DNS-Server auswählen nach",
                 "MODE_LIST_DEFAULT": "nach Verfügbarkeit",
                 "MODE_LIST_RANDOM": "in zufälliger Reihenfolge",
                 "MODE_LIST_ROUND_ROBIN": "der Reihe nach"
             },
             "LABEL": "Externe DNS-Server",
+            "LABEL_DNSSEC": "DNSSEC-Server",
+            "LABEL_DOT": "DoT-Server",
+            "LABEL_DOH": "DoH-Server",
             "LABEL_IPS_DISPLAYED_TOR": "Tor DNS-Server",
             "LABEL_NO_EDIT": "DNS-Server Liste",
             "NOTIFICATION": {
@@ -1636,13 +1643,25 @@
         },
         "DNS_STATUS": {
             "ACTION": {
+                "APPLY_SECURE": "DNS-Einstellung übernehmen",
                 "EMPTY_CACHE": "DNS-Cache leeren",
                 "GO_CUSTOM": "Konfigurieren",
+                "GO_DNSSEC": "DNSSEC-Serverliste öffnen",
+                "GO_DOT": "DoT-Serverliste öffnen",
+                "GO_DOH": "DoH-Serverliste öffnen",
                 "GO_STANDARD": "Zur Standardliste",
                 "LESS": "Weniger",
                 "MORE": "Mehr"
             },
             "EDIT_DNS_MODE": {
+                "MODE_SECURE": "DNS mit optionaler Verschlüsselung und DNSSEC",
+"MODE_LEGACY_SECURE": "Bisheriger Anbieter-Modus",
+"MODE_DNSSEC_PLAIN": "DNSSEC-Prüfung (unverschlüsseltes DNS)",
+                "SECURE_TRANSPORT": "Übertragung zum DNS-Anbieter",
+                "TRANSPORT_PLAIN": "Unverschlüsselt (DNS)",
+                "SECURE_PROVIDER": "DNS-Anbieter",
+                "VALIDATE_DNSSEC": "DNSSEC lokal prüfen",
+                "SECURE_NOTE": "Die DNSSEC-Prüfung bestätigt signierte Antworten. DoT und DoH verschlüsseln zusätzlich die Verbindung zum Anbieter. Geräte müssen den eBlocker als DNS-Server verwenden.",
                 "MODE_CUSTOM_LIST": "Externe DNS-Server",
                 "MODE_STANDARD": "Internet Provider",
                 "MODE_STANDARD_DISCLAIMER": "Hiervon sind Geräte ausgenommen, die Tor oder VPN nutzen, es sei denn, DNS ist im VPN-Profil deaktiviert worden.",
@@ -1658,6 +1677,7 @@
             "LABEL": "Status",
             "LABEL_EMPTY_CACHE": "Der eBlocker verwendet einen internen Zwischenspeicher (Cache) für DNS-Anfragen. In seltenen Fällen kann das Leeren des Caches Probleme beseitigen, wenn Änderungen an den Einstellungen vorgenommen wurden.",
             "NOTIFICATION": {
+                "ERROR_SAVED_DNS_CONFIGURATION": "DNS-Einstellung konnte nicht gespeichert werden.",
                 "ERROR_CACHE_FLUSHED": "Der DNS-Cache konnte nicht geleert werden.",
                 "INFO_CACHE_FLUSHED": "DNS-Cache wurde erfolgreich geleert.",
                 "INFO_SAVED_DNS_CONFIGURATION": "Konfiguration gespeichert"
@@ -3610,6 +3630,8 @@
                     "P3_TEXT": "&ndash; Weiterleitung an den Router beziehungsweise den Standard DNS Server des Internet Anbieters.",
                     "P4_LABEL": "{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_TOR' | translate }}",
                     "P4_TEXT": "&ndash; alle Anfragen werden über das Tor Netzwerk geleitet, auch wenn Tor für das Gerät selbst nicht aktiv ist. Die Auflösung von DNS-Anfragen über das Tor-Netzwerk kann langsamer sein. ",
+                    "P_SECURE_TEXT": "DNSSEC prüft signierte DNS-Antworten lokal; DoT und DoH verschlüsseln die Verbindung zum DNS-Anbieter. Die bisherige DNS-Auswahl bleibt bestehen.",
+"P_ENCRYPTED": "DoT und DoH haben getrennte Serverlisten. Trage eine Server-IP mit | und dem passenden TLS-Zertifikatsnamen ein; DoH verwendet eine HTTPS-URL mit /dns-query. Reihenfolge, Auswahlstrategie, Bearbeiten und Entfernen funktionieren wie bei der unverschlüsselten DNS-Liste.",
                     "P5_LABEL": "{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_CUSTOM_LIST' | translate }}",
                     "P5_TEXT": "&ndash; trage hier DNS Server deiner Wahl ein. Es gibt Anbieter, die die Privatheit deiner DNS Anfragen garantieren.",
                     "P6": "Mithilfe des Buttons „{{ 'ADMINCONSOLE.DNS_STATUS.ACTION.EMPTY_CACHE' | translate }}“ kannst du zwischengespeicherte Einträge löschen, die sonst gegebenenfalls noch länger vorgehalten werden, nachdem du die Einstellungen geändert hast.",

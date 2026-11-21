@@ -21,11 +21,18 @@ export default {
 };
 
 function Controller(logger, DnsService, $q, $timeout, DialogService, NotificationService,
-                    TableService, ArrayUtilsService) { // jshint ignore: line
+                    TableService, ArrayUtilsService, $state) { // jshint ignore: line
     'ngInject';
     'use strict';
 
     const vm = this;
+    vm.transport = $state.current.name === 'dnssecserver' ? 'plain' :
+        $state.current.name === 'dnsdotserver' ? 'dot' :
+        $state.current.name === 'dnsdohserver' ? 'doh' : 'custom';
+    function servers() {
+        return vm.transport === 'custom' ? vm.configuration.nameServers :
+            vm.configuration.secureDns[vm.transport + 'Servers'];
+    }
 
     vm.newDnsEntry = newDnsEntry;
     vm.saveDnsSettings = saveDnsSettings;
@@ -86,7 +93,7 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
     ];
 
     function isCustomMode() {
-        return vm.configuration.selectedDnsMode === 'custom';
+        return vm.transport !== 'custom' || vm.configuration.selectedDnsMode === 'custom';
     }
 
     function atLeastOneNotSelected() {
@@ -109,20 +116,20 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
 
     function bulkDelete(values) {
         values.forEach((server) => {
-            const index = vm.configuration.nameServers.indexOf(server.server);
+            const index = servers().indexOf(server.server);
             if (index !== -1) {
-                vm.configuration.nameServers.splice(index, 1);
+                servers().splice(index, 1);
             } else {
                 logger.error('Could not find selected DNS server in config list ', server);
             }
         });
 
-        vm.configuration.ips = vm.configuration.nameServers.join('\n');
+        if (vm.transport === 'custom') { vm.configuration.ips = servers().join('\n'); }
 
         return DnsService.saveDnsConfiguration(vm.configuration).then(function success(configuration) {
             vm.configuration = configuration;
             loadDnsStats().then(function success() {
-                updateTableData(vm.configuration.nameServers);
+                updateTableData(servers());
             });
             return {data: values.length};
         }, function error(response) {
@@ -135,10 +142,12 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
     vm.$onInit = function() {
         vm.loading = true;
         vm.configuration = DnsService.getDnsConfig();
+        vm.listStrategy = vm.transport === 'custom' ? vm.configuration.dnsModeListStrategy :
+            vm.configuration.secureDns[vm.transport + 'Mode'];
         $q.all([
             loadDnsStats()
         ]).then(function() {
-            updateTableData(vm.configuration.nameServers);
+            updateTableData(servers());
             vm.templateCallback = {
                 configuration: vm.configuration,
                 isCustom: isCustomMode,
@@ -166,7 +175,7 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
             orderNumber: orderNumber,
             server: ''
         };
-        DialogService.dnsAddEditServer(event, entry, false).then(function success(newEntry) {
+        DialogService.dnsAddEditServer(event, entry, false, vm.transport).then(function success(newEntry) {
             let newTableData = angular.copy(vm.tableData);
             newTableData.push(newEntry);
             newTableData = DnsService.updateOrderNumbers(newTableData, newEntry.id, newEntry.orderNumber, orderNumber);
@@ -175,7 +184,7 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
     }
 
     function edit(event, entry) {
-        DialogService.dnsAddEditServer(event, entry, true).then(function success(newEntry) {
+        DialogService.dnsAddEditServer(event, entry, true, vm.transport).then(function success(newEntry) {
             const oldOrderNumber = DnsService.getOrderNumber(vm.tableData, newEntry.id);
             let newTableData = DnsService.updateDnsServer(vm.tableData, newEntry);
             newTableData = DnsService.
@@ -185,17 +194,27 @@ function Controller(logger, DnsService, $q, $timeout, DialogService, Notificatio
     }
 
     function saveDnsSettings(newTableData) {
+        if (vm.transport === 'custom') {
+            vm.configuration.dnsModeListStrategy = vm.listStrategy;
+        } else {
+            vm.configuration.secureDns[vm.transport + 'Mode'] = vm.listStrategy;
+        }
         const serverList = [];
         // sort by orderNumber, so that new order of entries is saved.
         const data = ArrayUtilsService.sortByProperty(newTableData, 'orderNumber');
         data.forEach((entry) => {
             serverList.push(entry.server);
         });
-        vm.configuration.customNameServers = serverList;
-        vm.configuration.nameServers = serverList;
+        if (vm.transport === 'custom') {
+            vm.configuration.customNameServers = serverList;
+            vm.configuration.nameServers = serverList;
+        } else {
+            vm.configuration.secureDns[vm.transport + 'Servers'] = serverList;
+        }
         return DnsService.saveDnsConfiguration(vm.configuration).then(function success(configuration) {
             loadDnsStats().then(function success() {
-                updateTableData(configuration.nameServers);
+                updateTableData(vm.transport === 'custom' ? configuration.nameServers :
+                    configuration.secureDns[vm.transport + 'Servers']);
             });
             NotificationService.info('ADMINCONSOLE.DNS_SERVER.NOTIFICATION.INFO_SAVED_DNS_CONFIGURATION');
         });

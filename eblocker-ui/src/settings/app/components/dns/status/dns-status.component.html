@@ -26,7 +26,7 @@
             </div>
 
             <div>
-                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.configuration.selectedDnsMode" ng-change="vm.saveDnsConfiguration()">
+                <md-radio-group md-theme="eBlockerThemeRadio" class="md-primary" ng-model="vm.configuration.selectedDnsMode" ng-change="vm.dnsModeChanged()">
 
                     <!-- DHCP Use standard settings from local network -->
                     <md-radio-button class="md-secondary" value="dhcp" ng-disabled="!vm.isAutoMode">
@@ -80,6 +80,38 @@
                     <!--<div>-->
                         <!--<md-button class="md-primary" style="margin: -25px 0 0 25px;">{{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_STANDARD' | translate}}</md-button>-->
                     <!--</div>-->
+
+                    <md-radio-button class="md-secondary" value="secure">
+                        <span>{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_DNSSEC_PLAIN' | translate }}</span>
+                    </md-radio-button>
+                    <div md-theme="eBlockerTheme">
+                        <md-button class="md-primary" style="margin: -25px 0 0 25px;"
+                                   ng-disabled="vm.configuration.selectedDnsMode !== 'secure'"
+                                   ng-click="vm.goToServerList('dnssecserver')">
+                            {{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_CUSTOM' | translate}}
+                        </md-button>
+                    </div>
+                    <md-radio-button class="md-secondary" value="dot">DNS-over-TLS (DoT)</md-radio-button>
+                    <div md-theme="eBlockerTheme">
+                        <md-button class="md-primary" style="margin: -25px 0 0 25px;"
+                                   ng-disabled="vm.configuration.selectedDnsMode !== 'dot'"
+                                   ng-click="vm.goToServerList('dnsdotserver')">
+                            {{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_CUSTOM' | translate}}
+                        </md-button>
+                    </div>
+                    <md-radio-button class="md-secondary" value="doh">DNS-over-HTTPS (DoH)</md-radio-button>
+                    <div md-theme="eBlockerTheme">
+                        <md-button class="md-primary" style="margin: -25px 0 0 25px;"
+                                   ng-disabled="vm.configuration.selectedDnsMode !== 'doh'"
+                                   ng-click="vm.goToServerList('dnsdohserver')">
+                            {{'ADMINCONSOLE.DNS_STATUS.ACTION.GO_CUSTOM' | translate}}
+                        </md-button>
+                    </div>
+                    <div style="margin: 0 0 20px 33px;" ng-if="vm.configuration.selectedDnsMode === 'dot' || vm.configuration.selectedDnsMode === 'doh'">
+                        <md-checkbox ng-model="vm.configuration.secureDns.validateDnssec" ng-change="vm.saveDnsConfiguration()">
+                            {{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.VALIDATE_DNSSEC' | translate }}
+                        </md-checkbox>
+                    </div>
 
                     <!-- Use custom list -->
                     <md-radio-button class="md-secondary" value="custom">

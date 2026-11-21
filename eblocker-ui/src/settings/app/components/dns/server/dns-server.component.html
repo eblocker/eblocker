@@ -9,8 +9,8 @@
 
         <div ng-show="vm.isCustomMode()">
             <div layout="row" layout-xs="column" layout-align="start center" style="margin-bottom: 12px; margin-left: 16px;">
-                <label style="margin-right: 20px;">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.LABEL' | translate }}</label>
-                <md-select ng-model="vm.configuration.dnsModeListStrategy" ng-change="vm.saveDnsSettings(vm.tableData)" aria-label="Set order of DNS servers">
+                <label style="margin-right: 20px;">{{ (vm.transport === 'custom' ? 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.LABEL' : 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.LABEL_SECURE') | translate }}</label>
+                <md-select ng-model="vm.listStrategy" ng-change="vm.saveDnsSettings(vm.tableData)" aria-label="Set order of DNS servers">
                     <md-option value="default">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_DEFAULT' | translate }}</md-option>
                     <md-option value="round_robin">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_ROUND_ROBIN' | translate }}</md-option>
                     <md-option value="random">{{ 'ADMINCONSOLE.DNS_SERVER.EDIT_DNS_MODE.MODE_LIST_RANDOM' | translate }}</md-option>

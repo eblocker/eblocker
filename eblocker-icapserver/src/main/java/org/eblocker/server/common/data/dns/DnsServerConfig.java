@@ -22,6 +22,7 @@ import java.util.Set;
 
 public class DnsServerConfig {
     private String defaultResolver;
+    private SecureDnsConfig secureDns;
     private Map<String, ResolverConfig> resolverConfigs;
     private Map<String, String> resolverConfigNameByIp;
     private List<LocalDnsRecord> localDnsRecords;
@@ -37,6 +38,14 @@ public class DnsServerConfig {
 
     public void setDefaultResolver(String defaultResolver) {
         this.defaultResolver = defaultResolver;
+    }
+
+    public SecureDnsConfig getSecureDns() {
+        return secureDns;
+    }
+
+    public void setSecureDns(SecureDnsConfig secureDns) {
+        this.secureDns = secureDns;
     }
 
     public Map<String, ResolverConfig> getResolverConfigs() {

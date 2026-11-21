@@ -30,6 +30,7 @@ import org.eblocker.server.common.data.dns.EblockerDnsServerState;
 import org.eblocker.server.common.data.dns.LocalDnsRecord;
 import org.eblocker.server.common.data.dns.NameServer;
 import org.eblocker.server.common.data.dns.ResolverConfig;
+import org.eblocker.server.common.data.dns.SecureDnsConfig;
 import org.eblocker.server.common.network.DhcpBindListener;
 import org.eblocker.server.common.network.NetworkInterfaceWrapper;
 import org.eblocker.server.common.network.RouterAdvertisementCache;
@@ -498,6 +499,121 @@ public class EblockerDnsServerTest {
                 config.getResolverConfigs().get("custom").getNameServers());
 
         Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
+    }
+
+    @Test
+    public void testSaveSecureDnsConfig() {
+        setupDnsServer();
+        Mockito.reset(dataSource, pubSubService);
+        DnsServerConfig storedConfig = new DnsServerConfig();
+        storedConfig.setResolverConfigs(new HashMap<>());
+        Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
+
+        DnsResolvers resolvers = getDhcpResolver();
+        resolvers.setDefaultResolver(EblockerDnsServer.RESOLVER_SECURE);
+        SecureDnsConfig secure = new SecureDnsConfig();
+        secure.setTransport("doh");
+        secure.setProvider("quad9");
+        secure.setValidateDnssec(true);
+        resolvers.setSecureDns(secure);
+
+        DnsResolvers saved = eblockerDnsServer.setDnsResolvers(resolvers);
+        Assert.assertEquals(EblockerDnsServer.RESOLVER_SECURE, saved.getDefaultResolver());
+        Assert.assertEquals("doh", saved.getSecureDns().getTransport());
+        Assert.assertEquals("quad9", saved.getSecureDns().getProvider());
+        Assert.assertTrue(saved.getSecureDns().isValidateDnssec());
+        ArgumentCaptor<DnsServerConfig> configCaptor = ArgumentCaptor.forClass(DnsServerConfig.class);
+        Mockito.verify(dataSource).save(configCaptor.capture());
+        Assert.assertEquals(EblockerDnsServer.RESOLVER_SECURE, configCaptor.getValue().getDefaultResolver());
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
+    }
+
+    @Test
+    public void testRejectInvalidSecureDnsBeforeSaving() {
+        setupDnsServer();
+        Mockito.reset(dataSource);
+        DnsResolvers resolvers = getDhcpResolver();
+        resolvers.setDefaultResolver(EblockerDnsServer.RESOLVER_SECURE);
+        SecureDnsConfig secure = new SecureDnsConfig();
+        secure.setTransport("unknown");
+        secure.setProvider("quad9");
+        resolvers.setSecureDns(secure);
+
+        try {
+            eblockerDnsServer.setDnsResolvers(resolvers);
+            Assert.fail("Invalid transport should be rejected");
+        } catch (IllegalArgumentException expected) {
+            Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(DnsServerConfig.class));
+        }
+    }
+
+    @Test
+    public void testSaveIndependentDotAndDohLists() {
+        setupDnsServer();
+        Mockito.reset(dataSource, pubSubService);
+        DnsServerConfig storedConfig = new DnsServerConfig();
+        storedConfig.setResolverConfigs(new HashMap<>());
+        Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
+
+        DnsResolvers resolvers = getDhcpResolver();
+        resolvers.setDefaultResolver(EblockerDnsServer.RESOLVER_DOT);
+        SecureDnsConfig secure = new SecureDnsConfig();
+        secure.setDotServers(Arrays.asList("9.9.9.9|dns.quad9.net", "1.1.1.1|cloudflare-dns.com",
+                "2620:fe::fe|dns.quad9.net"));
+        secure.setDohServers(Arrays.asList("https://9.9.9.9/dns-query|dns.quad9.net",
+                "https://1.1.1.1/dns-query|cloudflare-dns.com",
+                "https://[2620:fe::fe]/dns-query|dns.quad9.net"));
+        secure.setDotMode("round_robin");
+        secure.setDohMode("random");
+        resolvers.setSecureDns(secure);
+
+        DnsResolvers saved = eblockerDnsServer.setDnsResolvers(resolvers);
+        Assert.assertEquals(EblockerDnsServer.RESOLVER_DOT, saved.getDefaultResolver());
+        Assert.assertEquals(3, saved.getSecureDns().getDotServers().size());
+        Assert.assertEquals(3, saved.getSecureDns().getDohServers().size());
+        Assert.assertEquals("round_robin", saved.getSecureDns().getDotMode());
+        Assert.assertEquals("random", saved.getSecureDns().getDohMode());
+        Mockito.verify(dataSource).save(Mockito.any(DnsServerConfig.class));
+        Mockito.verify(pubSubService).publish(Channels.DNS_CONFIG, UPDATE_COMMAND);
+    }
+
+    @Test
+    public void testSaveIndependentPlainDnssecList() {
+        setupDnsServer();
+        Mockito.reset(dataSource, pubSubService);
+        DnsServerConfig storedConfig = new DnsServerConfig();
+        storedConfig.setResolverConfigs(new HashMap<>());
+        Mockito.when(dataSource.get(DnsServerConfig.class)).thenReturn(storedConfig);
+        DnsResolvers resolvers = getDhcpResolver();
+        resolvers.setDefaultResolver(EblockerDnsServer.RESOLVER_SECURE);
+        SecureDnsConfig secure = new SecureDnsConfig();
+        secure.setTransport("plain");
+        secure.setProvider("quad9");
+        secure.setValidateDnssec(true);
+        secure.setPlainServers(Arrays.asList("9.9.9.9", "2620:fe::fe"));
+        secure.setPlainMode("round_robin");
+        resolvers.setSecureDns(secure);
+        DnsResolvers saved = eblockerDnsServer.setDnsResolvers(resolvers);
+        Assert.assertEquals(2, saved.getSecureDns().getPlainServers().size());
+        Assert.assertEquals("round_robin", saved.getSecureDns().getPlainMode());
+        Mockito.verify(dataSource).save(Mockito.any(DnsServerConfig.class));
+    }
+
+    @Test
+    public void testRejectInvalidEncryptedEndpointBeforeSaving() {
+        setupDnsServer();
+        Mockito.reset(dataSource);
+        DnsResolvers resolvers = getDhcpResolver();
+        resolvers.setDefaultResolver(EblockerDnsServer.RESOLVER_DOH);
+        SecureDnsConfig secure = new SecureDnsConfig();
+        secure.setDohServers(Arrays.asList("https://127.0.0.1/dns-query|bad name"));
+        resolvers.setSecureDns(secure);
+        try {
+            eblockerDnsServer.setDnsResolvers(resolvers);
+            Assert.fail("Invalid DoH endpoint should be rejected");
+        } catch (IllegalArgumentException expected) {
+            Mockito.verify(dataSource, Mockito.never()).save(Mockito.any(DnsServerConfig.class));
+        }
     }
 
     private DnsResolvers getDhcpResolver() {

@@ -632,10 +632,13 @@
                 },
                 "ERROR" : {
                     "IPS_INVALID" : "Invalid IP address.",
+                    "INVALID_ENCRYPTED" : "Enter an IP address and a valid TLS certificate name.",
                     "IPS_TOO_LONG" : "Entry is too long.",
                     "ORDER_REQUIRED" : "An order number is required.",
                     "REQUIRED" : "An IP address is required."
                 },
+                "LABEL_ENCRYPTED" : "Server IP or HTTPS URL | TLS certificate name",
+                "EXAMPLE" : "Example",
                 "LABEL_ADD_DNS_IPS" : "IP address",
                 "LABEL_ORDER_NUMBER" : "Order",
                 "TITLE_ADD" : "Add DNS Server",
@@ -1576,11 +1579,15 @@
             },
             "EDIT_DNS_MODE" : {
                 "LABEL" : "Use DNS server in table ",
+                "LABEL_SECURE" : "Select DNS servers by",
                 "MODE_LIST_DEFAULT" : "by availability",
                 "MODE_LIST_RANDOM" : "in random order",
                 "MODE_LIST_ROUND_ROBIN" : "in round robin mode"
             },
             "LABEL" : "DNS Server Custom List",
+            "LABEL_DNSSEC": "DNSSEC servers",
+            "LABEL_DOT" : "DoT servers",
+            "LABEL_DOH" : "DoH servers",
             "LABEL_IPS_DISPLAYED_TOR" : "Tor DNS Server",
             "LABEL_NO_EDIT" : "DNS Server List",
             "NOTIFICATION" : {
@@ -1628,13 +1635,25 @@
         },
         "DNS_STATUS" : {
             "ACTION" : {
+                "APPLY_SECURE": "Apply DNS settings",
                 "EMPTY_CACHE" : "Empty DNS Cache",
                 "GO_CUSTOM" : "Go to custom list",
+                "GO_DNSSEC": "Open DNSSEC server list",
+                "GO_DOT" : "Open DoT server list",
+                "GO_DOH" : "Open DoH server list",
                 "GO_STANDARD" : "Go to standard list",
                 "LESS" : "Less",
                 "MORE" : "More"
             },
             "EDIT_DNS_MODE" : {
+                "MODE_SECURE": "DNS with optional encryption and DNSSEC",
+"MODE_LEGACY_SECURE": "Previous provider mode",
+"MODE_DNSSEC_PLAIN": "DNSSEC validation (unencrypted DNS)",
+                "SECURE_TRANSPORT": "Connection to DNS provider",
+                "TRANSPORT_PLAIN": "Unencrypted (DNS)",
+                "SECURE_PROVIDER": "DNS provider",
+                "VALIDATE_DNSSEC": "Validate DNSSEC locally",
+                "SECURE_NOTE": "DNSSEC checks signed answers. DoT and DoH also encrypt the connection to the provider. Devices must use eBlocker as their DNS server.",
                 "MODE_CUSTOM_LIST" : "Custom list of external DNS servers",
                 "MODE_STANDARD" : "Default",
                 "MODE_STANDARD_DISCLAIMER" : "Except for devices that use Tor or VPN, unless DNS is deactivated in the VPN profile.",
@@ -1650,6 +1669,7 @@
             "LABEL" : "Status",
             "LABEL_EMPTY_CACHE" : "Empty the DNS cache, if you encounter problems after updating the DNS settings",
             "NOTIFICATION" : {
+                "ERROR_SAVED_DNS_CONFIGURATION": "Could not save DNS settings.",
                 "ERROR_CACHE_FLUSHED" : "Unable to flush DNS Cache.",
                 "INFO_CACHE_FLUSHED" : "Successfully flushed the DNS cache",
                 "INFO_SAVED_DNS_CONFIGURATION" : "Successfully saved configuration"
@@ -3602,6 +3622,8 @@
                     "P3_TEXT" : "&ndash; Forwarding to the router or the standard DNS server of the Internet provider.",
                     "P4_LABEL" : "{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_TOR' | translate }}",
                     "P4_TEXT" : "&ndash; all requests are routed over the Tor network, even if Tor is not active for the device itself. The resolution of DNS queries over the Tor network may be slower. ",
+                    "P_SECURE_TEXT": "DNSSEC validates signed DNS answers locally; DoT and DoH encrypt the connection to the DNS provider. Existing DNS modes remain available.",
+"P_ENCRYPTED": "DoT and DoH have separate server lists. Add a server IP followed by | and the matching TLS certificate name; DoH uses an HTTPS URL ending in /dns-query. Order, selection strategy, editing and removal work like the plain DNS list.",
                     "P5_LABEL" : "{{ 'ADMINCONSOLE.DNS_STATUS.EDIT_DNS_MODE.MODE_CUSTOM_LIST' | translate }}",
                     "P5_TEXT" : "&ndash; enter the DNS server of your choice here. There are providers that guarantee the privacy of your DNS requests.",
                     "P6" : "Using the button \"{{ 'ADMINCONSOLE.DNS_STATUS.ACTION.EMPTY_CACHE' | translate }}\" you can delete cached entries that may otherwise be kept for longer after you have changed the settings.",

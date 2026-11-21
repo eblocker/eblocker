@@ -660,12 +660,45 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         component: 'dnsServerComponent'
     };
 
+    const dnsSecServer = {
+        name: 'dnssecserver',
+        url: slashOptionSubState + 'dnssecserver',
+        parent: dnsState.name,
+        disabledWhenNoDns: true,
+        tabOrder: 3,
+        requiredLicense: dns.requiredLicense,
+        translationKey: 'ADMINCONSOLE.DNS_SERVER.LABEL_DNSSEC',
+        component: 'dnsServerComponent'
+    };
+
+    const dnsDotServer = {
+        name: 'dnsdotserver',
+        url: slashOptionSubState + 'dotserver',
+        parent: dnsState.name,
+        disabledWhenNoDns: true,
+        tabOrder: 4,
+        requiredLicense: dns.requiredLicense,
+        translationKey: 'ADMINCONSOLE.DNS_SERVER.LABEL_DOT',
+        component: 'dnsServerComponent'
+    };
+
+    const dnsDohServer = {
+        name: 'dnsdohserver',
+        url: slashOptionSubState + 'dohserver',
+        parent: dnsState.name,
+        disabledWhenNoDns: true,
+        tabOrder: 5,
+        requiredLicense: dns.requiredLicense,
+        translationKey: 'ADMINCONSOLE.DNS_SERVER.LABEL_DOH',
+        component: 'dnsServerComponent'
+    };
+
     const dnsLocal = {
         name: 'dnslocal',
         url: slashOptionSubState + 'local',
         parent: dnsState.name,
         disabledWhenNoDns: true,
-        tabOrder: 3,
+        tabOrder: 6,
         requiredLicense: dns.requiredLicense,
         translationKey: 'ADMINCONSOLE.DNS_LOCAL.LABEL',
         component: 'dnsLocalComponent'
@@ -1077,7 +1110,8 @@ export default function RoutesConfig($urlRouterProvider, $stateProvider, STATES)
         blacklistDetails, whitelistDetails, devicesState, devicesDetails, vpnconnectDetails, tasks,
         trustedAppsDetails, sslstate, filter, filterState, advancedFilterSettings,
         vpnHomeWizard, devicesList, devicesDiscovery, dnsStatus, dnsLocal,
-        dnsServer, dnsState, filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
+        dnsServer, dnsSecServer, dnsDotServer, dnsDohServer, dnsState,
+        filterOverview, filterAnalysis, analysisDetails, defaultState, filterDetails,
         doctor];
 
     // ** MAIN STATE ERROR: NOT LICENSED

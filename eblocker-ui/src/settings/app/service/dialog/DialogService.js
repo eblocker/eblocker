@@ -300,7 +300,7 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
         });
     }
 
-    function dnsAddEditServer(event, entry, update) {
+    function dnsAddEditServer(event, entry, update, transport) {
         return $mdDialog.show({
             controller: 'DnsAddEditServerController',
             controllerAs: 'vm',
@@ -310,7 +310,8 @@ export default function DialogService($mdDialog, $q, $translate) {// jshint igno
             targetEvent: event,
             locals: {
                 entry: entry,
-                update: update
+                update: update,
+                transport: transport
             }
         });
     }

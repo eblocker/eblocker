@@ -113,8 +113,8 @@ acl html_response rep_mime_type "/etc/squid/mimetypes"
 
 icap_enable on
 icap_206_enable on
-icap_service eblocker_reqmod  reqmod_precache  0 icap://127.0.0.1:1344/request
-icap_service eblocker_respmod respmod_precache 0 icap://127.0.0.1:1344/response
+icap_service eblocker_reqmod  reqmod_precache  bypass=on icap://127.0.0.1:1344/request
+icap_service eblocker_respmod respmod_precache bypass=on icap://127.0.0.1:1344/response
 
 adaptation_access eblocker_reqmod deny !allowed_method
 adaptation_access eblocker_reqmod deny localnetDst
@@ -135,6 +135,8 @@ icap_preview_enable on
 icap_preview_size 0
 icap_send_client_ip on
 
+icap_connect_timeout 3 seconds
+icap_io_timeout 5 seconds
 icap_service_revival_delay 30 # earlier reconnect after icap connection broken temporarily
 icap_service_failure_limit -1
 

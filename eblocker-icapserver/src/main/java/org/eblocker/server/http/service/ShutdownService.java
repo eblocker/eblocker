@@ -24,6 +24,7 @@ import org.eblocker.server.common.data.events.EventLogger;
 import org.eblocker.server.common.data.events.Events;
 import org.eblocker.server.common.data.systemstatus.ExecutionState;
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +41,20 @@ public class ShutdownService {
     private final String shutdownScript;
     private final String rebootScript;
     private final ShutdownExecutorService shutdownExecutorService;
+    private final FatalErrorHandler fatalErrorHandler;
 
     private EventLogger eventLogger;
     private DataSource dataSource;
+
+    public ShutdownService(
+            SystemStatusService systemStatusService,
+            ScriptRunner scriptRunner,
+            String shutdownScript,
+            String rebootScript,
+            ShutdownExecutorService shutdownExecutorService
+    ) {
+        this(systemStatusService, scriptRunner, shutdownScript, rebootScript, shutdownExecutorService, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public ShutdownService(
@@ -50,13 +62,15 @@ public class ShutdownService {
             ScriptRunner scriptRunner,
             @Named("shutdown.command") String shutdownScript,
             @Named("reboot.command") String rebootScript,
-            ShutdownExecutorService shutdownExecutorService
+            ShutdownExecutorService shutdownExecutorService,
+            FatalErrorHandler fatalErrorHandler
     ) {
         this.systemStatusService = systemStatusService;
         this.scriptRunner = scriptRunner;
         this.rebootScript = rebootScript;
         this.shutdownScript = shutdownScript;
         this.shutdownExecutorService = shutdownExecutorService;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     /**
@@ -116,7 +130,7 @@ public class ShutdownService {
         // Use extra thread for the actual shutdown command, so that the caller
         // of this method gets an immediate, valid response.
         //
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 Thread.sleep(10000L);//sleep for a while so that the frontend gets HTTP response
                 scriptRunner.runScript(script);
@@ -130,8 +144,19 @@ public class ShutdownService {
                 String msg = "Cannot execute " + (reboot ? "reboot" : "shutdown") + " command " + script;
                 LOG.error(msg, e);
                 throw new EblockerException(msg, e);
+            } catch (Error e) {
+                LOG.error("Fatal error while executing {} command {}", reboot ? "reboot" : "shutdown", script, e);
+                fatalErrorHandler.onFatalError("shutdown thread (" + script + ")", e);
+                throw e;
             }
-        }).start();
+        }, "eblocker-shutdown");
+        thread.setUncaughtExceptionHandler((t, e) -> {
+            LOG.error("Uncaught exception in shutdown thread {}", t.getName(), e);
+            if (e instanceof Error) {
+                fatalErrorHandler.onFatalError("shutdown thread (" + script + ")", e);
+            }
+        });
+        thread.start();
     }
 
 }

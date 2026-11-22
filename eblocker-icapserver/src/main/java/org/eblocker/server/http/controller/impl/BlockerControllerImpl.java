@@ -24,6 +24,7 @@ import org.eblocker.server.common.blocker.Category;
 import org.eblocker.server.http.controller.BlockerController;
 import org.restexpress.Request;
 import org.restexpress.Response;
+import org.restexpress.exception.BadRequestException;
 
 import java.util.List;
 import java.util.function.Function;
@@ -57,25 +58,46 @@ public class BlockerControllerImpl implements BlockerController {
     @Override
     public Blocker createBlocker(Request request, Response response) {
         Blocker blocker = request.getBodyAs(Blocker.class);
+        if (blocker == null) {
+            throw new BadRequestException("Blocker payload is missing in request.");
+        }
         return blockerService.createBlocker(blocker);
     }
 
     @Override
     public Blocker updateBlocker(Request request, Response response) {
         Blocker blocker = request.getBodyAs(Blocker.class);
+        if (blocker == null) {
+            throw new BadRequestException("Blocker payload is missing in request.");
+        }
         return blockerService.updateBlocker(blocker);
     }
 
     @Override
     public void removeBlocker(Request request, Response response) {
-        blockerService.deleteBlocker(Integer.parseInt(request.getHeader("id")));
+        String id = request.getHeader("id");
+        if (id == null) {
+            throw new BadRequestException("Required parameter id is missing in request.");
+        }
+        int blockerId;
+        try {
+            blockerId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Invalid blocker id: " + id, e);
+        }
+        blockerService.deleteBlocker(blockerId);
     }
 
     private <T> Predicate<Blocker> createPredicate(String parameter, Function<String, T> paramFn, Function<Blocker, T> attributeFn) {
         if (parameter == null) {
             return b -> true;
         }
-        T expected = paramFn.apply(parameter);
+        T expected;
+        try {
+            expected = paramFn.apply(parameter);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid query filter parameter: " + parameter, e);
+        }
         return b -> expected.equals(attributeFn.apply(b));
     }
 }

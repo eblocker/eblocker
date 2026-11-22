@@ -115,7 +115,13 @@ public class ControlBarControllerImpl extends SessionContextController implement
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
         Device device = deviceService.getDeviceById(deviceId);
+        if (device == null) {
+            throw new ServiceException("Cannot find current device " + deviceId);
+        }
         UserModule user = userService.getUserById(device.getOperatingUser());
+        if (user == null) {
+            throw new ServiceException("Cannot find current operating user " + device.getOperatingUser() + " of device " + deviceId);
+        }
         return parentalControlService.getProfile(user.getAssociatedProfileId());
     }
 
@@ -124,7 +130,13 @@ public class ControlBarControllerImpl extends SessionContextController implement
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
         Device device = deviceService.getDeviceById(deviceId);
+        if (device == null) {
+            throw new ServiceException("Cannot find current device " + deviceId);
+        }
         UserModule user = userService.getUserById(device.getOperatingUser());
+        if (user == null) {
+            throw new ServiceException("Cannot find current operating user " + device.getOperatingUser() + " of device " + deviceId);
+        }
         return UserModuleConverter.getUserModuleTransport(user);
     }
 
@@ -176,6 +188,9 @@ public class ControlBarControllerImpl extends SessionContextController implement
             throw new ServiceException("Cannot find current operating user " + device.getOperatingUser() + " of device " + deviceId);
         }
         UserProfileModule profile = parentalControlService.getProfile(operatingUser.getAssociatedProfileId());
+        if (profile == null) {
+            throw new ServiceException("Cannot find profile " + operatingUser.getAssociatedProfileId() + " of device " + deviceId);
+        }
         return profile.isControlmodeMaxUsage() || profile.isControlmodeTime() || profile.isControlmodeUrls();
     }
 
@@ -184,6 +199,9 @@ public class ControlBarControllerImpl extends SessionContextController implement
         Session session = getSession(request);
         String deviceId = session.getDeviceId();
         Device device = deviceService.getDeviceById(deviceId);
+        if (device == null) {
+            throw new NotFoundException("Cannot find current device " + deviceId);
+        }
         CredentialsDTO credentials = request.getBodyAs(CredentialsDTO.class);
 
         // Do we have credentials?

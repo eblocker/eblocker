@@ -80,14 +80,24 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                     .rule(new Rule().https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort));
         }
 
+        ipAddressFilter.getDisabledDevicesIps().stream()
+                .filter(this::isPublicOrUniqueLocalIp)
+                .forEach(ip -> preRouting
+                        .rule(autoInputForSource(ip).returnFromChain()));
+        ipAddressFilter.getDisabledDevicesMacs().forEach(mac -> preRouting
+                .rule(new Rule(standardInput).macSource(mac).returnFromChain()));
+
         prefixes.forEach(prefix -> {
-                preRouting.rule(new Rule(standardInput).sourceIp(prefix).jumpToChain(localRedirects.getName()));
+            preRouting.rule(new Rule(standardInput).sourceIp(prefix).jumpToChain(localRedirects.getName()));
         });
+        preRouting.rule(new Rule(standardInput).sourceIp("fc00::/7").jumpToChain(localRedirects.getName()));
 
         ipAddressFilter.getDisabledDevicesIps().stream()
-                .filter(ip -> isPublicIp(ip))
+                .filter(this::isPublicOrUniqueLocalIp)
                 .forEach(ip -> localRedirects
-                .rule(autoInputForSource(ip).tcp().returnFromChain()));
+                        .rule(autoInputForSource(ip).returnFromChain()));
+        ipAddressFilter.getDisabledDevicesMacs().forEach(mac -> localRedirects
+                .rule(new Rule(standardInput).macSource(mac).returnFromChain()));
 
         if (dnsEnabled) {
             preRouting
@@ -103,7 +113,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             //Redirect only devices, which are enabled and SSL is enabled
             ipAddressFilter.getSslEnabledDevicesIps().stream()
                     .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
-                    .filter(ip -> isPublicIp(ip))
+                    .filter(this::isPublicOrUniqueLocalIp)
                     .forEach(ip -> localRedirects.rule(autoInputForSource(ip).https().redirectTo(selectTargetIp(ip), proxyHTTPSPort)));
         }
 
@@ -111,7 +121,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         if (malwareSetEnabled) {
             ipAddressFilter.getMalwareDevicesIps().stream()
                     .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
-                    .filter(ip -> isPublicIp(ip))
+                    .filter(this::isPublicOrUniqueLocalIp)
                     .forEach(ip ->
                             localRedirects.rule(autoInputForSource(ip)
                                     .tcp()
@@ -145,7 +155,7 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         // Masquerading is used only for enabled devices
         postRouting.rule(new Rule(standardOutput).jumpToChain(outputMasquerading.getName()));
         ipAddressFilter.getDisabledDevicesIps().stream()
-                .filter(ip -> isPublicIp(ip))
+                .filter(this::isPublicOrUniqueLocalIp)
                 .forEach(ip -> outputMasquerading.rule(new Rule().sourceIp(ip).returnFromChain()));
         outputMasquerading.rule(new Rule().masquerade());
 
@@ -180,6 +190,11 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         }
 
         return filterTable;
+    }
+
+    private boolean isPublicOrUniqueLocalIp(String ip) {
+        Ip6Address address = Ip6Address.parse(ip);
+        return Ip6Utils.isInNetwork(address, publicNetwork, publicNetworkPrefixLength) || Ip6Utils.isUniqueLocal(address);
     }
 
     private boolean isPublicIp(String ip) {

@@ -80,6 +80,14 @@ public class SessionStore {
         return session;
     }
 
+    public boolean isDeviceDisabled(TransactionIdentifier transactionId) {
+        if (transactionId == null) {
+            return false;
+        }
+        Device device = deviceService.getDeviceByIp(transactionId.getOriginalClientIP());
+        return device != null && !device.isEnabled();
+    }
+
     /**
      * Return the session with sessionId. If there is none, return null.
      *

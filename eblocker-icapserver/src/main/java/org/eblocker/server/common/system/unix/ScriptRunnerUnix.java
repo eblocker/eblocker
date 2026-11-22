@@ -18,6 +18,7 @@ package org.eblocker.server.common.system.unix;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
 
@@ -34,15 +35,25 @@ public class ScriptRunnerUnix implements ScriptRunner {
     private final String scriptWrapperPath;
     private final String killProcessCommand;
     private final Executor executor;
+    private final FatalErrorHandler fatalErrorHandler;
+
+    public ScriptRunnerUnix(String scriptWrapperPath,
+                            String killProcessCommand,
+                            Executor executor
+    ) {
+        this(scriptWrapperPath, killProcessCommand, executor, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public ScriptRunnerUnix(@Named("script.wrapper.path") String scriptWrapperPath,
                             @Named("kill.process.command") String killProcessCommand,
-                            @Named("unlimitedCachePoolExecutor") Executor executor
+                            @Named("unlimitedCachePoolExecutor") Executor executor,
+                            FatalErrorHandler fatalErrorHandler
     ) {
         this.scriptWrapperPath = scriptWrapperPath;
         this.killProcessCommand = killProcessCommand;
         this.executor = executor;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @Override
@@ -53,7 +64,7 @@ public class ScriptRunnerUnix implements ScriptRunner {
 
     @Override
     public LoggingProcess startScript(String scriptName, String... arguments) throws IOException {
-        LoggingProcess p = new LoggingProcessUnix(scriptName, executor);
+        LoggingProcess p = new LoggingProcessUnix(scriptName, executor, fatalErrorHandler);
         p.start(createScriptWrapperArguments(scriptName, arguments));
         return p;
     }
@@ -62,7 +73,7 @@ public class ScriptRunnerUnix implements ScriptRunner {
     public void stopScript(LoggingProcess loggingProcess) throws IOException, InterruptedException {
         int pid = loggingProcess.getPid();
         String[] args = { scriptWrapperPath, killProcessCommand, Integer.toString(pid) };
-        LoggingProcess p = new LoggingProcessUnix(killProcessCommand, executor);
+        LoggingProcess p = new LoggingProcessUnix(killProcessCommand, executor, fatalErrorHandler);
         p.start(args);
         p.waitFor();
     }

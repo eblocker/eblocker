@@ -26,6 +26,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.icap.ch.mimo.icap.IcapRequestHandler;
 import org.eblocker.server.icap.ch.mimo.icap.IcapResponseHandler;
 import org.eblocker.server.icap.logging.EblockerLoggingHandler;
@@ -55,17 +56,24 @@ public class EblockerIcapServerChannelPipelineFactory extends ChannelInitializer
     int maxChunkSize;
 
     private ChannelHandler logger = new EblockerLoggingHandler();
-    private ChannelHandler icapRequestor = new IcapRequestHandler();
     private ChannelHandler icapResponder = new IcapResponseHandler();
-    private ChannelHandler transactor;
     private IcapResponseEncoder icapResponseEncoder = new IcapResponseEncoder();
+    private ChannelHandler transactor;
+    private ChannelHandler icapRequestor;
     private IcapChunkSeparator icapChunkSeparator;
 
+    public EblockerIcapServerChannelPipelineFactory(TransactionHandler transactor, int separationSize) {
+        this(transactor, separationSize, FatalErrorHandler.noOp());
+    }
+
     @Inject
-    public EblockerIcapServerChannelPipelineFactory(TransactionHandler transactor, @Named("separationSize") int separationSize) {
+    public EblockerIcapServerChannelPipelineFactory(TransactionHandler transactor,
+                                                    @Named("separationSize") int separationSize,
+                                                    FatalErrorHandler fatalErrorHandler) {
         super();
         this.transactor = transactor;
-        icapChunkSeparator = new IcapChunkSeparator(separationSize);
+        this.icapRequestor = new IcapRequestHandler(fatalErrorHandler);
+        this.icapChunkSeparator = new IcapChunkSeparator(separationSize);
     }
 
     @Override

@@ -16,14 +16,14 @@
  */
 package org.eblocker.server.icap.filter;
 
-import org.apache.commons.io.IOUtils;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class FilterParser {
 
@@ -34,10 +34,16 @@ public class FilterParser {
     }
 
     public List<Filter> parse(InputStream in) throws IOException {
-        return IOUtils.readLines(in).stream()
-                .map(line -> lineParserSupplier.get().parseLine(line))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Filter> filters = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Filter filter = lineParserSupplier.get().parseLine(line);
+            if (filter != null) {
+                filters.add(filter);
+            }
+        }
+        return filters;
     }
 
 }

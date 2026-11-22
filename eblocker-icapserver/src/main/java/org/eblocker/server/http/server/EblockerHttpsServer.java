@@ -27,6 +27,8 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.eblocker.server.common.data.IpAddressModule;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.ServiceNotAvailableException;
@@ -35,6 +37,7 @@ import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.http.controller.AnonymousController;
 import org.eblocker.server.http.controller.AppWhitelistModuleController;
 import org.eblocker.server.http.controller.AuthenticationController;
@@ -99,6 +102,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This RestExpress server provides a REST JSON API for the toolbar
@@ -176,8 +184,142 @@ public class EblockerHttpsServer implements Preprocessor {
     private final BlockerController blockerController;
     private final DomainRecorderController domainRecorderController;
     private final DoctorController doctorController;
+    private final FatalErrorHandler fatalErrorHandler;
+    private final Set<EventExecutorGroup> watchedExecutorGroups = Collections.newSetFromMap(new IdentityHashMap<>());
 
+    private Channel httpChannel;
     private Channel httpsChannel;
+    private volatile boolean stopping = false;
+    private volatile Channel expectedUnbindingChannel;
+
+    public EblockerHttpsServer(int httpPort,
+                               int httpsPort,
+                               boolean useSystemOut,
+                               int maxContentSize,
+
+                               SecurityProcessor securityProcessor,
+                               DashboardAuthorizationProcessor dashboardAuthorizationProcessor,
+                               StartupStatusReporter startupStatusReporter,
+                               BaseURLs baseUrls,
+
+                               // Controllers that are available during boot phase
+                               StaticFileController staticFileController,
+                               DiagnosticsReportController diagnosticsReportController,
+                               SystemStatusController systemStatusController,
+                               SSLContextHandler sslContextHandler,
+
+                               // Controllers that are NOT available during boot phase
+                               AnonymousController anonymousController,
+                               AppWhitelistModuleController appModulesController,
+                               AuthenticationController authenticationController,
+                               ControlBarController controlBarController,
+                               SplashController splashController,
+                               DeviceController deviceController,
+                               DeviceRegistrationController deviceRegistrationController,
+                               DnsController dnsController,
+                               DomainWhiteListController domainWhiteListController,
+                               EventController eventController,
+                               FactoryResetController factoryResetController,
+                               FeatureToggleController featureToggleController,
+                               FilterController filterController,
+                               MessageCenterController messageCenterController,
+                               NetworkController networkController,
+                               OpenVpnController openVpnController,
+                               OpenVpnServerController openVpnServerController,
+                               PageContextController pageContextController,
+                               ParentalControlController parentalControlController,
+                               ParentalControlFilterListsController filterListsController,
+                               RecordingController recordingController,
+                               RedirectController redirectController,
+                               ReminderController reminderController,
+                               RestoreFromBackupController restoreFromBackupController,
+                               SSLController sslController,
+                               SettingsController settingsController,
+                               SetupWizardController setupWizardController,
+                               TimestampController timestampController,
+                               TimezoneController timezoneController,
+                               TransactionRecorderController transactionRecorderController,
+                               UpdateController updateController,
+                               UserAgentController userAgentController,
+                               UserController userController,
+                               ProductMigrationController productMigrationController,
+                               DashboardCardController dashboardCardController,
+                               CustomerInfoController customerInfoController,
+                               FeatureController featureController,
+                               MobileConnectionCheckController mobileConnectionCheckController,
+                               MobileDnsCheckController mobileDnsCheckController,
+                               TosController tosController,
+                               FilterStatisticsController filterStatisticsController,
+                               ConfigurationBackupController configBackupController,
+                               CustomDomainFilterConfigController customDomainFilterConfigController,
+                               TasksController tasksController,
+                               ConnectionCheckController connectionCheckController,
+                               BlockerController blockerController,
+                               DomainRecorderController domainRecorderController,
+                               DoctorController doctorController
+    ) {
+        this(httpPort,
+                httpsPort,
+                useSystemOut,
+                maxContentSize,
+                securityProcessor,
+                dashboardAuthorizationProcessor,
+                startupStatusReporter,
+                baseUrls,
+                staticFileController,
+                diagnosticsReportController,
+                systemStatusController,
+                sslContextHandler,
+                anonymousController,
+                appModulesController,
+                authenticationController,
+                controlBarController,
+                splashController,
+                deviceController,
+                deviceRegistrationController,
+                dnsController,
+                domainWhiteListController,
+                eventController,
+                factoryResetController,
+                featureToggleController,
+                filterController,
+                messageCenterController,
+                networkController,
+                openVpnController,
+                openVpnServerController,
+                pageContextController,
+                parentalControlController,
+                filterListsController,
+                recordingController,
+                redirectController,
+                reminderController,
+                restoreFromBackupController,
+                sslController,
+                settingsController,
+                setupWizardController,
+                timestampController,
+                timezoneController,
+                transactionRecorderController,
+                updateController,
+                userAgentController,
+                userController,
+                productMigrationController,
+                dashboardCardController,
+                customerInfoController,
+                featureController,
+                mobileConnectionCheckController,
+                mobileDnsCheckController,
+                tosController,
+                filterStatisticsController,
+                configBackupController,
+                customDomainFilterConfigController,
+                tasksController,
+                connectionCheckController,
+                blockerController,
+                domainRecorderController,
+                doctorController,
+                FatalErrorHandler.noOp());
+    }
 
     @Inject
     public EblockerHttpsServer(@Named("httpPort") int httpPort,
@@ -244,8 +386,10 @@ public class EblockerHttpsServer implements Preprocessor {
                                ConnectionCheckController connectionCheckController,
                                BlockerController blockerController,
                                DomainRecorderController domainRecorderController,
-                               DoctorController doctorController
+                               DoctorController doctorController,
+                               FatalErrorHandler fatalErrorHandler
     ) {
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         // Set up SerializationProvider to make sure special characters like "&"
         // are transported to the frontend without encoding
         // Adding processors mimicks the functionality of DefaultSerializationProvider
@@ -267,7 +411,7 @@ public class EblockerHttpsServer implements Preprocessor {
                 .addPreprocessor(securityProcessor)
                 .addPreprocessor(dashboardAuthorizationProcessor)
                 .addPostprocessor(new CacheControlPostProcessor())
-                .addFinallyProcessor(new ExceptionLogger())
+                .addFinallyProcessor(new ExceptionLogger(this.fatalErrorHandler))
                 .setExecutorThreadCount(2 * Runtime.getRuntime().availableProcessors())
                 .setMaxContentSize(maxContentSize)
                 .noCompression()
@@ -367,12 +511,14 @@ public class EblockerHttpsServer implements Preprocessor {
     @SubSystemInit
     public void run() throws Throwable {
         log.info("Binding on http port {}", httpPort);
-        server.bind(httpPort);
+        httpChannel = server.bind(httpPort);
+        attachServerWatchdogs("HTTP server", httpChannel);
         startupStatusReporter.portConnected("HTTP", baseUrls.getHttpURL());
     }
 
     @SubSystemShutdown
     public void stop() {
+        stopping = true;
         server.shutdown();
         STATUS.info("HTTP server stopped");
     }
@@ -394,8 +540,12 @@ public class EblockerHttpsServer implements Preprocessor {
             log.info("Binding on https port {}", httpsPort);
             try {
                 httpsChannel = server.bind(httpsPort);
+                attachServerWatchdogs("HTTPS server", httpsChannel);
             } catch (Throwable t) {
                 log.error("failed to bind to {}", httpsPort, t);
+                if (t instanceof Error) {
+                    fatalErrorHandler.onFatalError("HTTPS server bind", t);
+                }
                 return;
             }
             if (!httpsUpdate) {
@@ -405,10 +555,89 @@ public class EblockerHttpsServer implements Preprocessor {
     }
 
     private void unbindHttpsChannel() {
-        if (httpsChannel != null) {
+        Channel channel = this.httpsChannel;
+        if (channel != null) {
             log.info("Unbinding open HTTPS port");
-            httpsChannel.close().awaitUninterruptibly();
+            expectedUnbindingChannel = channel;
+            try {
+                channel.close().awaitUninterruptibly();
+            } finally {
+                if (expectedUnbindingChannel == channel) {
+                    expectedUnbindingChannel = null;
+                }
+            }
         }
+    }
+
+    private void attachServerWatchdogs(String serverName, Channel channel) {
+        if (channel == null) {
+            return;
+        }
+        channel.closeFuture().addListener(future -> {
+            if (!stopping && channel != expectedUnbindingChannel) {
+                fatalErrorHandler.onFatalError(serverName + " channel closed unexpectedly", future.cause());
+            }
+        });
+        if (channel.eventLoop() != null) {
+            watchExecutorGroup(serverName + " boss", channel.eventLoop().parent());
+        }
+        Object bootstrapFactory = readField(server, "bootstrapFactory");
+        if (bootstrapFactory != null) {
+            watchExecutorGroup(serverName + " boss", readField(bootstrapFactory, "bossGroup", io.netty.channel.EventLoopGroup.class));
+            watchExecutorGroup(serverName + " worker", readField(bootstrapFactory, "workerGroup", io.netty.channel.EventLoopGroup.class));
+        }
+        if (channel.pipeline() != null) {
+            for (Map.Entry<String, io.netty.channel.ChannelHandler> entry : channel.pipeline()) {
+                Object childHandler = readField(entry.getValue(), "childHandler");
+                if (childHandler != null) {
+                    EventExecutorGroup group = readField(childHandler, "eventExecutorGroup", EventExecutorGroup.class);
+                    watchExecutorGroup(serverName + " request executor", group);
+                }
+            }
+        }
+    }
+
+    private void watchExecutorGroup(String name, EventExecutorGroup group) {
+        if (group == null || !watchedExecutorGroups.add(group)) {
+            return;
+        }
+        group.terminationFuture().addListener(future -> {
+            if (!stopping) {
+                fatalErrorHandler.onFatalError(name + " group terminated unexpectedly", future.cause());
+            }
+        });
+        for (EventExecutor executor : group) {
+            executor.terminationFuture().addListener(future -> {
+                if (!stopping) {
+                    fatalErrorHandler.onFatalError(name + " executor terminated unexpectedly", future.cause());
+                }
+            });
+        }
+    }
+
+    private Object readField(Object target, String fieldName) {
+        return readField(target, fieldName, Object.class);
+    }
+
+    private <T> T readField(Object target, String fieldName, Class<T> fieldType) {
+        if (target == null) {
+            return null;
+        }
+        Class<?> current = target.getClass();
+        while (current != null) {
+            try {
+                Field field = current.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                Object value = field.get(target);
+                return fieldType.isInstance(value) ? fieldType.cast(value) : null;
+            } catch (NoSuchFieldException ignored) {
+                current = current.getSuperclass();
+            } catch (Exception e) {
+                log.debug("Unable to inspect field {} on {}", fieldName, target.getClass().getName(), e);
+                return null;
+            }
+        }
+        return null;
     }
 
     private void setUpRoutes() {

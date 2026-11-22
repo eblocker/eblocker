@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.server;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.http.exceptions.restexpress.ServiceNotAvailableServiceException;
 import org.restexpress.Request;
 import org.restexpress.Response;
@@ -26,6 +27,15 @@ import org.slf4j.LoggerFactory;
 
 public class ExceptionLogger implements Postprocessor {
     private static final Logger log = LoggerFactory.getLogger(ExceptionLogger.class);
+    private final FatalErrorHandler fatalErrorHandler;
+
+    public ExceptionLogger() {
+        this(FatalErrorHandler.noOp());
+    }
+
+    public ExceptionLogger(FatalErrorHandler fatalErrorHandler) {
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
+    }
 
     @Override
     public void process(Request request, Response response) {
@@ -34,6 +44,12 @@ public class ExceptionLogger implements Postprocessor {
         }
 
         Throwable e = response.getException();
+        if (e instanceof Error) {
+            String url = request != null ? request.getUrl() : "<unknown>";
+            log.error("Fatal error during HTTP request {}", url, e);
+            fatalErrorHandler.onFatalError("HTTP pipeline " + url, e);
+            return;
+        }
         if (isExpectedException(request, response, e)) {
             return;
         }

@@ -19,6 +19,7 @@ package org.eblocker.server.common.data.events;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +40,15 @@ public class DataSourceEventLogger implements EventLogger {
 
     private BlockingQueue<Event> queue;
 
+    public DataSourceEventLogger(EventDataSource dataSource, Executor executor) {
+        this(dataSource, executor, FatalErrorHandler.noOp());
+    }
+
     @Inject
-    public DataSourceEventLogger(EventDataSource dataSource, @Named("unlimitedCachePoolExecutor") Executor executor) {
+    public DataSourceEventLogger(EventDataSource dataSource,
+                                 @Named("unlimitedCachePoolExecutor") Executor executor,
+                                 FatalErrorHandler fatalErrorHandler) {
+        FatalErrorHandler errorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         queue = new LinkedBlockingQueue<>();
         executor.execute(() -> {
             for (; ; ) {
@@ -51,6 +59,11 @@ public class DataSourceEventLogger implements EventLogger {
                     log.info("Interrupted while waiting for next event", e);
                     Thread.currentThread().interrupt();
                     return;
+                } catch (Exception e) {
+                    log.error("Failed to write event to data source; continuing event logger loop", e);
+                } catch (Error e) {
+                    errorHandler.onFatalError("DataSourceEventLogger", e);
+                    throw e;
                 }
             }
         });

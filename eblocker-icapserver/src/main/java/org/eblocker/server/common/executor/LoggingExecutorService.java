@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.executor;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +46,17 @@ public class LoggingExecutorService implements ScheduledExecutorService {
     private final String name;
     private final ExecutorService executorService;
     private final ConcurrentMap<String, LogEntry> lastLogEntriesByName;
+    private final FatalErrorHandler fatalErrorHandler;
 
     public LoggingExecutorService(String name, ExecutorService executorService) {
+        this(name, executorService, FatalErrorHandler.noOp());
+    }
+
+    public LoggingExecutorService(String name, ExecutorService executorService, FatalErrorHandler fatalErrorHandler) {
         this.name = name;
         this.executorService = executorService;
         lastLogEntriesByName = new ConcurrentHashMap<>(16, 0.75f, 4);
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     public void shutdown() {
@@ -211,10 +218,17 @@ public class LoggingExecutorService implements ScheduledExecutorService {
             log.debug("executor {}-{}: starting: {}", name, threadId, taskName);
             try {
                 return callable.call();
-            } catch (Exception e) {
-                exception = getStackTrace(e);
-                log.error("executor {}-{}: exception in {}", name, threadId, taskName, e);
-                throw e;
+            } catch (Throwable t) {
+                exception = getStackTrace(t);
+                log.error("executor {}-{}: throwable in {}", name, threadId, taskName, t);
+                if (t instanceof Error) {
+                    fatalErrorHandler.onFatalError("executor " + name + " task " + taskName, t);
+                    throw (Error) t;
+                }
+                if (t instanceof RuntimeException) {
+                    throw (RuntimeException) t;
+                }
+                throw (Exception) t;
             } finally {
                 long stop = System.currentTimeMillis();
                 long elapsed = stop - start;
@@ -227,7 +241,7 @@ public class LoggingExecutorService implements ScheduledExecutorService {
             return lastLogEntriesByName.computeIfAbsent(taskName, k -> new LogEntry(taskName));
         }
 
-        private String getStackTrace(Exception e) {
+        private String getStackTrace(Throwable e) {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             e.printStackTrace(printWriter);
@@ -248,7 +262,7 @@ public class LoggingExecutorService implements ScheduledExecutorService {
         public void run() {
             try {
                 callable.call();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | Error e) {
                 throw e;
             } catch (Exception e) {
                 throw new IllegalStateException("runnable wrapper for callable is unable to throw checked exception", e);

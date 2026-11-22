@@ -23,6 +23,9 @@ import org.eblocker.server.common.data.parentalcontrol.BlockedDomainLogEntry;
 import org.eblocker.server.common.data.parentalcontrol.Category;
 import org.eblocker.server.common.data.statistic.BlockedDomainsStatisticService;
 import org.eblocker.server.common.executor.NamedRunnable;
+import org.eblocker.server.common.system.FatalErrorHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -30,19 +33,33 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 @Singleton
 public class BlockedDomainLog {
+    private static final Logger log = LoggerFactory.getLogger(BlockedDomainLog.class);
 
     private final BlockingQueue<BlockedDomainLogEntry> entries = new LinkedBlockingDeque<>();
 
+    public BlockedDomainLog(BlockedDomainsStatisticService statisticService,
+                            Executor executor) {
+        this(statisticService, executor, FatalErrorHandler.noOp());
+    }
+
     @Inject
     public BlockedDomainLog(BlockedDomainsStatisticService statisticService,
-                            @Named("unlimitedCachePoolExecutor") Executor executor) {
+                            @Named("unlimitedCachePoolExecutor") Executor executor,
+                            FatalErrorHandler fatalErrorHandler) {
+        FatalErrorHandler errorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         executor.execute(new NamedRunnable("BlockedDomainLog", () -> {
-            try {
-                while (true) {
+            while (true) {
+                try {
                     statisticService.countBlockedDomain(entries.take());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (Exception e) {
+                    log.error("Failed to record blocked domain statistic; continuing", e);
+                } catch (Error e) {
+                    errorHandler.onFatalError("BlockedDomainLog", e);
+                    throw e;
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         }));
     }

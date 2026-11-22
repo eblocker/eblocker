@@ -22,6 +22,9 @@ import com.google.inject.name.Named;
 import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.executor.NamedRunnable;
 import org.eblocker.server.common.recorder.DomainRequestRecorder;
+import org.eblocker.server.common.system.FatalErrorHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
@@ -33,26 +36,41 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 @Singleton
 public class DomainRecordingService {
+    private static final Logger log = LoggerFactory.getLogger(DomainRecordingService.class);
+
     private final DomainRequestRecorder recorder;
     private final BlockingQueue<DomainRequestLogEntry> queue;
+    private final FatalErrorHandler fatalErrorHandler;
+
+    public DomainRecordingService(DomainRequestRecorder recorder, Executor executor) {
+        this(recorder, executor, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public DomainRecordingService(DomainRequestRecorder recorder,
-                                  @Named("unlimitedCachePoolExecutor") Executor executor) {
+                                  @Named("unlimitedCachePoolExecutor") Executor executor,
+                                  FatalErrorHandler fatalErrorHandler) {
         this.recorder = recorder;
         queue = new LinkedBlockingDeque<>();
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         runRecorderInBackground(executor);
     }
 
     private void runRecorderInBackground(Executor executor) {
         executor.execute(new NamedRunnable("DomainRecordingService", () -> {
-            try {
-                while (true) {
+            while (true) {
+                try {
                     DomainRequestLogEntry entry = queue.take();
                     recorder.recordRequest(entry.deviceId, entry.hostname, entry.blocked, entry.patternRequest);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (Exception e) {
+                    log.error("Failed to record domain request; continuing", e);
+                } catch (Error e) {
+                    fatalErrorHandler.onFatalError("DomainRecordingService", e);
+                    throw e;
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         }));
     }

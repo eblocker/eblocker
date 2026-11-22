@@ -118,7 +118,7 @@ public class UpdateTask implements Runnable {
             definition.setUpdateStatus(UpdateStatus.READY);
             definition.setUpdateError(null);
             dataSource.save(definition, definition.getId());
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             log.error("failed to update {}", id, e);
             definition.setUpdateStatus(newBlocker ? UpdateStatus.INITIAL_UPDATE_FAILED : UpdateStatus.UPDATE_FAILED);
             definition.setUpdateError(e.getMessage());

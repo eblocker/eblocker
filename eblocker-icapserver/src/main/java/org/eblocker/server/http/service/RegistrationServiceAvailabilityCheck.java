@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -197,8 +198,7 @@ public class RegistrationServiceAvailabilityCheck {
 
     private Callable<Boolean> httpTask(String url) {
         return () -> {
-            try {
-                httpClient.download(url);
+            try (InputStream ignored = httpClient.download(url)) {
                 return true;
             } catch (Exception e) {
                 log.info("retrieving {} failed", url, e);

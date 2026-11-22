@@ -93,6 +93,10 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
         if (!featureToggleRouter.isIp6Enabled()) {
             return;
         }
+        if (message == null || message.trim().isEmpty()) {
+            log.warn("Ignoring null or empty NDP message");
+            return;
+        }
 
         try {
             log.debug("got message: {}", message);
@@ -128,7 +132,7 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
             deviceIpUpdater.refresh(deviceId, advertisedAddress);
 
             ipResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
-        } catch (MessageException e) {
+        } catch (MessageException | RuntimeException e) {
             log.error("invalid message:", e);
         }
     }

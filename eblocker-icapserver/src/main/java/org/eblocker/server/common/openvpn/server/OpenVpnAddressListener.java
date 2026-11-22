@@ -120,6 +120,10 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
      */
     @Override
     public void process(String message) {
+        if (message == null || message.trim().isEmpty()) {
+            log.warn("Ignoring null or empty message from channel '{}'", CHANNEL);
+            return;
+        }
         log.debug("OpenVpnAddressListener - process: {}", message);
         Matcher deviceAddressMatcher = MESSAGE_PATTERN_DEVICE_ADDRESS.matcher(message);
         if (deviceAddressMatcher.matches()) {
@@ -155,7 +159,7 @@ public class OpenVpnAddressListener implements Runnable, Subscriber {
         } else if ("delete".equals(command)) {
             removeIpAddress(ipAddress);
         } else {
-            throw new RuntimeException("Unexpected command '" + command + "'. Why did the message pattern match?");
+            log.error("Unexpected command '{}' in message '{}' on channel '{}'", command, message, CHANNEL);
         }
     }
 

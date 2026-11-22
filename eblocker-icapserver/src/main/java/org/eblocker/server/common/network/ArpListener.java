@@ -42,13 +42,17 @@ public class ArpListener implements Runnable {
     private class ArpListenerSubscriber implements Subscriber {
         @Override
         public void process(String messageString) {
+            if (messageString == null || messageString.trim().isEmpty()) {
+                log.warn("Ignoring null or empty ARP message");
+                return;
+            }
             try {
                 ArpMessage message = ArpMessage.parse(messageString);
                 log.debug("Got ARP message: {}", message);
                 processARPMessage(message);
 
-            } catch (ArpMessageParsingException e) {
-                log.error("Could not parse ARP message {}", messageString, e);
+            } catch (ArpMessageParsingException | RuntimeException e) {
+                log.error("Could not parse or process ARP message {}", messageString, e);
             }
         }
     }
@@ -74,6 +78,9 @@ public class ArpListener implements Runnable {
      * @param message
      */
     public void processARPMessage(ArpMessage message) {
+        if (message == null) {
+            return;
+        }
         // ignore local packages
         String hardwareAddress = networkInterface.getHardwareAddressHex();
         if (hardwareAddress != null && !hardwareAddress.equals(message.sourceHardwareAddress)) {
@@ -102,6 +109,9 @@ public class ArpListener implements Runnable {
 
     private boolean isInEblockerNet(Ip4Address sourceIPAddress) {
         Ip4Address eblockerIp = networkInterface.getFirstIPv4Address();
+        if (eblockerIp == null || sourceIPAddress == null) {
+            return false;
+        }
         int eblockerIpInt = Ip4Utils.convertIpStringToInt(eblockerIp.toString());
         int cidr = networkInterface.getNetworkPrefixLength(eblockerIp);
         int netMask = Ip4Utils.convertCidrToNetMask(cidr);

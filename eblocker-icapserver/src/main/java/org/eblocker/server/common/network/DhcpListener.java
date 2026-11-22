@@ -40,8 +40,12 @@ public class DhcpListener {
 
     public void run() {
         pubSubService.subscribeAndLoop(Channels.DHCP_IN, message -> {
+            if (message == null || message.trim().isEmpty()) {
+                log.warn("Ignoring null or empty DHCP message");
+                return;
+            }
             String[] tokens = message.split("/");
-            if (tokens.length != 2 || !"1".equals(tokens[0])) {
+            if (tokens.length != 2 || !"1".equals(tokens[0]) || tokens[1].trim().isEmpty()) {
                 log.warn("unexpected message: {}", message);
                 return;
             }

@@ -113,14 +113,20 @@ public class DhcpBindListener implements Subscriber, Runnable {
     }
 
     private void updateGateway(String routers) {
+        if (routers == null || routers.trim().isEmpty()) {
+            return;
+        }
         Splitter splitter = Splitter.on(",").trimResults().omitEmptyStrings();
         List<String> newRouters = splitter.splitToList(routers);
-        if (NetworkConfigurationValidator.isValidIPv4Address(newRouters.get(0))) {
+        if (!newRouters.isEmpty() && NetworkConfigurationValidator.isValidIPv4Address(newRouters.get(0))) {
             dataSource.setGateway(newRouters.get(0));
         }
     }
 
     private void updateDnsServers(String dnsServersOption) {
+        if (dnsServersOption == null) {
+            return;
+        }
         List<String> nameServers = DhcpUtils.parseDnsServersOption(dnsServersOption);
         synchronized (listeners) {
             listeners.forEach(l -> l.updateDhcpNameServers(nameServers));

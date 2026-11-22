@@ -23,6 +23,8 @@ import org.eblocker.server.common.data.CompressionMode;
 import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.pubsub.Channels;
 import org.eblocker.server.common.pubsub.PubSubService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.concurrent.Executor;
  */
 @Singleton
 public class FeatureServiceSubscriber implements FeatureService {
+    private static final Logger log = LoggerFactory.getLogger(FeatureServiceSubscriber.class);
 
     private final DataSource dataSource;
 
@@ -51,7 +54,17 @@ public class FeatureServiceSubscriber implements FeatureService {
     private class FeatureServiceSubscriberRunner implements Runnable {
         @Override
         public void run() {
-            pubSubService.subscribeAndLoop(Channels.FEATURES_IN, message -> execute(FeatureServiceMessage.parse(message)));
+            pubSubService.subscribeAndLoop(Channels.FEATURES_IN, message -> {
+                if (message == null || message.trim().isEmpty()) {
+                    log.warn("Ignoring null or empty feature message");
+                    return;
+                }
+                try {
+                    execute(FeatureServiceMessage.parse(message));
+                } catch (RuntimeException e) {
+                    log.warn("Ignoring invalid feature message: {}", message, e);
+                }
+            });
         }
     }
 
@@ -73,6 +86,9 @@ public class FeatureServiceSubscriber implements FeatureService {
     }
 
     private void execute(FeatureServiceMessage message) {
+        if (message == null) {
+            return;
+        }
         switch (message) {
             case RELOAD:
             default:

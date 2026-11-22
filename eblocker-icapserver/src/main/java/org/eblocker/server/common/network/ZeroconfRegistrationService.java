@@ -18,7 +18,9 @@ package org.eblocker.server.common.network;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.registration.DeviceRegistrationProperties;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,17 +41,27 @@ public class ZeroconfRegistrationService {
     private final String serviceDefaultName;
     private final DeviceRegistrationProperties deviceRegistrationProperties;
     private final NetworkInterfaceWrapper networkInterface;
+    private final FatalErrorHandler fatalErrorHandler;
     private JmDNS jmdns = null;
+
+    public ZeroconfRegistrationService(int httpPort,
+                                       String serviceName,
+                                       DeviceRegistrationProperties deviceRegistrationProperties,
+                                       NetworkInterfaceWrapper networkInterface) {
+        this(httpPort, serviceName, deviceRegistrationProperties, networkInterface, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public ZeroconfRegistrationService(@Named("httpPort") int httpPort,
                                        @Named("zeroconf.service.default.name") String serviceName,
                                        DeviceRegistrationProperties deviceRegistrationProperties,
-                                       NetworkInterfaceWrapper networkInterface) {
+                                       NetworkInterfaceWrapper networkInterface,
+                                       FatalErrorHandler fatalErrorHandler) {
         this.httpPort = httpPort;
         this.serviceDefaultName = serviceName;
         this.deviceRegistrationProperties = deviceRegistrationProperties;
         this.networkInterface = networkInterface;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     /**
@@ -57,15 +69,23 @@ public class ZeroconfRegistrationService {
      */
     public void registerConsoleService() {
         try {
-            InetAddress address = InetAddress.getByName(networkInterface.getFirstIPv4Address().toString());
+            Ip4Address ip4Address = networkInterface.getFirstIPv4Address();
+            if (ip4Address == null) {
+                log.error("Could not register Zeroconf/Bonjour HTTP service: no IPv4 address available");
+                return;
+            }
+            InetAddress address = InetAddress.getByName(ip4Address.toString());
             jmdns = JmDNS.create(address, "eblocker");
             String name = getServiceName();
             ServiceInfo info = ServiceInfo.create(SERVICE_TYPE, name, httpPort, "");
             log.info("Registering service '{}' at port {} ...", name, httpPort);
             jmdns.registerService(info);
             log.info("Registered Zeroconf/Bonjour service of type {} at port {}", SERVICE_TYPE, httpPort);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             log.error("Could not register Zeroconf/Bonjour HTTP service", e);
+        } catch (Error e) {
+            fatalErrorHandler.onFatalError("ZeroconfRegistrationService.registerConsoleService", e);
+            throw e;
         }
     }
 
@@ -77,8 +97,12 @@ public class ZeroconfRegistrationService {
             log.error("Could not unregister Zeroconf/Bonjour HTTP service. Registration seems to have failed.");
             return;
         }
-        jmdns.unregisterAllServices();
-        log.info("Unregistered all Zeroconf/Bonjour services.");
+        try {
+            jmdns.unregisterAllServices();
+            log.info("Unregistered all Zeroconf/Bonjour services.");
+        } catch (RuntimeException e) {
+            log.error("Failed to unregister Zeroconf/Bonjour services", e);
+        }
     }
 
     public String getServiceName() {

@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.LoggingProcess;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.slf4j.Logger;
@@ -43,18 +44,28 @@ public class Ip6AddressMonitor implements Runnable {
     private final String monitorCommand;
     private final String killCommand;
     private final NetworkInterfaceWrapper networkInterface;
+    private final FatalErrorHandler fatalErrorHandler;
 
     private LoggingProcess process;
+
+    public Ip6AddressMonitor(String monitorCommand,
+                             String killCommand,
+                             ScriptRunner scriptRunner,
+                             NetworkInterfaceWrapper networkInterface) {
+        this(monitorCommand, killCommand, scriptRunner, networkInterface, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public Ip6AddressMonitor(@Named("network.ip.monitor.command") String monitorCommand,
                              @Named("kill.process.command") String killCommand,
                              ScriptRunner scriptRunner,
-                             NetworkInterfaceWrapper networkInterface) {
+                             NetworkInterfaceWrapper networkInterface,
+                             FatalErrorHandler fatalErrorHandler) {
         this.scriptRunner = scriptRunner;
         this.monitorCommand = monitorCommand;
         this.killCommand = killCommand;
         this.networkInterface = networkInterface;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @Override
@@ -63,13 +74,22 @@ public class Ip6AddressMonitor implements Runnable {
             process = scriptRunner.startScript(monitorCommand, networkInterface.getInterfaceName());
             String line;
             while ((line = process.takeStdout()) != null) {
-                handleLogLine(line);
+                try {
+                    handleLogLine(line);
+                } catch (RuntimeException e) {
+                    log.error("Failed to process IPv6 address update '{}'", line, e);
+                }
             }
         } catch (IOException e) {
             log.error("Could not start IP address monitor", e);
         } catch (InterruptedException e) {
             log.info("Interrupted. Stopping IP address monitor.", e);
             Thread.currentThread().interrupt();
+        } catch (RuntimeException e) {
+            log.error("Unexpected runtime error in IP address monitor", e);
+        } catch (Error e) {
+            fatalErrorHandler.onFatalError("Ip6AddressMonitor", e);
+            throw e;
         }
     }
 

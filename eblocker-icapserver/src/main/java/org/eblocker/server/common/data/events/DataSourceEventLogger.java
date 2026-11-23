@@ -54,14 +54,16 @@ public class DataSourceEventLogger implements EventLogger {
             for (; ; ) {
                 try {
                     Event event = queue.take(); // blocks until the next event becomes available
-                    dataSource.addEvent(event);
+                    try {
+                        dataSource.addEvent(event);
+                    } catch (Exception e) {
+                        log.error("Failed to write event to data source; continuing event logger loop", e);
+                    }
                 } catch (InterruptedException e) {
                     log.info("Interrupted while waiting for next event", e);
                     Thread.currentThread().interrupt();
                     return;
-                } catch (Exception e) {
-                    log.error("Failed to write event to data source; continuing event logger loop", e);
-                } catch (Error e) {
+                } catch (RuntimeException | Error e) {
                     errorHandler.onFatalError("DataSourceEventLogger", e);
                     throw e;
                 }

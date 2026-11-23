@@ -50,13 +50,16 @@ public class BlockedDomainLog {
         executor.execute(new NamedRunnable("BlockedDomainLog", () -> {
             while (true) {
                 try {
-                    statisticService.countBlockedDomain(entries.take());
+                    BlockedDomainLogEntry entry = entries.take();
+                    try {
+                        statisticService.countBlockedDomain(entry);
+                    } catch (Exception e) {
+                        log.error("Failed to record blocked domain statistic; continuing", e);
+                    }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     return;
-                } catch (Exception e) {
-                    log.error("Failed to record blocked domain statistic; continuing", e);
-                } catch (Error e) {
+                } catch (RuntimeException | Error e) {
                     errorHandler.onFatalError("BlockedDomainLog", e);
                     throw e;
                 }

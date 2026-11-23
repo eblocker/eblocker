@@ -82,6 +82,22 @@ public class RouterAdvertisementFactory {
                                       Ip6Address sourceAddress,
                                       byte[] targetHardwareAddress,
                                       Ip6Address targetAddress) {
+        return create(sourceHardwareAddress, sourceAddress, targetHardwareAddress, targetAddress, routerLifetime, dnsLifetime);
+    }
+
+    public RouterAdvertisement createDeprecation(byte[] sourceHardwareAddress,
+                                                 Ip6Address sourceAddress,
+                                                 byte[] targetHardwareAddress,
+                                                 Ip6Address targetAddress) {
+        return create(sourceHardwareAddress, sourceAddress, targetHardwareAddress, targetAddress, 0, 0);
+    }
+
+    private RouterAdvertisement create(byte[] sourceHardwareAddress,
+                                       Ip6Address sourceAddress,
+                                       byte[] targetHardwareAddress,
+                                       Ip6Address targetAddress,
+                                       int routerLifetime,
+                                       int dnsLifetime) {
         List<Option> options = List.of(
                 new SourceLinkLayerAddressOption(networkInterface.getHardwareAddress()),
                 new RecursiveDnsServerOption(dnsLifetime, Collections.singletonList(networkInterface.getIp6LinkLocalAddress())),

@@ -80,6 +80,9 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
                     .rule(new Rule().https().destinationIp(ownIpAddress).redirectTo(ownIpAddress, httpsPort));
         }
 
+        ipAddressFilter.getDisabledDevicesIps()
+                .forEach(ip -> preRouting.rule(autoInputForSource(ip).returnFromChain()));
+
         prefixes.forEach(prefix -> {
                 preRouting.rule(new Rule(standardInput).sourceIp(prefix).jumpToChain(localRedirects.getName()));
         });
@@ -87,17 +90,21 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
         ipAddressFilter.getDisabledDevicesIps().stream()
                 .filter(ip -> isPublicIp(ip))
                 .forEach(ip -> localRedirects
-                .rule(autoInputForSource(ip).tcp().returnFromChain()));
+                .rule(autoInputForSource(ip).returnFromChain()));
 
         if (dnsEnabled) {
-            preRouting
-                    // redirect all dns traffic to dns-server
-                    //.rule(new Rule(standardInput).dns().redirectTo(ownIpAddress, localDnsPort)); // connection tracking does not work via link-local address for UDP
-                    .rule(new Rule(standardInput).dns().redirectTo(localDnsPort));
+            // Redirect external DNS only for enabled devices (prevents untracked temporary IPv6 privacy addresses on disabled devices from hitting eblocker-dns;
+            // explicit DNS queries directly to ownIpAddress are still handled above):
+            ipAddressFilter.getEnabledDevicesIps().stream()
+                    .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
+                    .forEach(ip -> preRouting.rule(autoInputForSource(ip).dns().redirectTo(localDnsPort)));
         }
 
-        // Redirect port 80 to the proxy:
-        localRedirects.rule(new Rule(standardInput).http().redirectTo(ownIpAddress, proxyPort));
+        // Redirect port 80 to the proxy only for enabled devices (prevents untracked temporary IPv6 privacy addresses on disabled devices from hitting Squid):
+        ipAddressFilter.getEnabledDevicesIps().stream()
+                .filter(ip -> !isMobileClient(ip) || mobileVpnServerActive())
+                .filter(ip -> isPublicIp(ip))
+                .forEach(ip -> localRedirects.rule(autoInputForSource(ip).http().redirectTo(selectTargetIp(ip), proxyPort)));
 
         if (sslEnabled) {
             //Redirect only devices, which are enabled and SSL is enabled
@@ -142,12 +149,11 @@ public class TableGeneratorIp6 extends TableGeneratorBase {
             }
         }
 
-        // Masquerading is used only for enabled devices
+        // Masquerading is used only for enabled devices (prevents untracked temporary IPv6 privacy addresses on disabled devices from being masqueraded)
         postRouting.rule(new Rule(standardOutput).jumpToChain(outputMasquerading.getName()));
-        ipAddressFilter.getDisabledDevicesIps().stream()
+        ipAddressFilter.getEnabledDevicesIps().stream()
                 .filter(ip -> isPublicIp(ip))
-                .forEach(ip -> outputMasquerading.rule(new Rule().sourceIp(ip).returnFromChain()));
-        outputMasquerading.rule(new Rule().masquerade());
+                .forEach(ip -> outputMasquerading.rule(new Rule().sourceIp(ip).masquerade()));
 
         return natTable;
     }

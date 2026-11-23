@@ -141,6 +141,29 @@ public class TableGeneratorIp6Test extends TableGeneratorTestBase {
 
         // disabled device: no masquerading
         Assert.assertEquals(Action.returnFromChain(), natPost.tcpPacket(disabledDevice, externalHost, 1234));
+
+        // untracked temporary privacy IPv6 address: no masquerading
+        Assert.assertEquals(Action.returnFromChain(), natPost.tcpPacket("2a00:1111::dead:beef", externalHost, 1234));
+    }
+
+    @Test
+    public void testDisabledAndUnknownDevicesNat() {
+        generator.setDnsEnabled(true);
+        createTablesAndSimulators(generator);
+        natPre.setInput(standardInterface);
+
+        // Enabled device DNS and HTTP are redirected
+        Assert.assertEquals(Action.redirectTo(localDnsPort), natPre.udpPacket(enabledDevice, externalHost, 53));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, proxyPort), natPre.tcpPacket(enabledDevice, externalHost, 80));
+
+        // Disabled device external DNS and HTTP pass through, while explicit DNS to eBlocker works
+        Assert.assertEquals(Action.returnFromChain(), natPre.udpPacket(disabledDevice, externalHost, 53));
+        Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), natPre.udpPacket(disabledDevice, eBlockerIp, 53));
+        Assert.assertEquals(Action.returnFromChain(), natPre.tcpPacket(disabledDevice, externalHost, 80));
+
+        // Untracked temporary privacy IPv6 address is not redirected to eblocker-dns or Squid on port 80
+        Assert.assertEquals(Action.returnFromChain(), natPre.udpPacket("2a00:1111::dead:beef", externalHost, 53));
+        Assert.assertEquals(Action.returnFromChain(), natPre.tcpPacket("2a00:1111::dead:beef", externalHost, 80));
     }
 
     @Test

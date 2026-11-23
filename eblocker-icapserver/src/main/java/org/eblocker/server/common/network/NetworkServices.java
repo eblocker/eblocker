@@ -65,6 +65,14 @@ public interface NetworkServices {
     boolean healDevice(Device device);
 
     /**
+     * Deprecate eBlocker as IPv6 router/RDNSS for a disabled device.
+     *
+     * @param device the disabled device
+     */
+    default void deprecateIp6(Device device) {
+    }
+
+    /**
      * Retrieve the OS's current gateway and store it
      */
     void updateGateway();

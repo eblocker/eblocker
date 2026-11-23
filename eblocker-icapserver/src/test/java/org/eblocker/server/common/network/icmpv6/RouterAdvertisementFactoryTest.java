@@ -72,6 +72,23 @@ public class RouterAdvertisementFactoryTest {
         Assert.assertEquals(1492L, getMtu(result));
     }
 
+    @Test
+    public void testCreateDeprecation() {
+        byte[] targetHwAddr = new byte[] {9, 8, 7, 6, 5, 4};
+        Ip6Address targetIpAddr = Ip6Address.parse("fe80::9:8:7:6");
+
+        RouterAdvertisement result = factory.createDeprecation(localHwAddr, localIpAddr, targetHwAddr, targetIpAddr);
+
+        Assert.assertEquals(0, result.getRouterLifetime());
+        long dnsLifetime = result.getOptions().stream()
+                .filter(opt -> opt instanceof RecursiveDnsServerOption)
+                .map(opt -> (RecursiveDnsServerOption) opt)
+                .findFirst()
+                .map(RecursiveDnsServerOption::getLifetime)
+                .get();
+        Assert.assertEquals(0L, dnsLifetime);
+    }
+
     private long getMtu(RouterAdvertisement advertisement) {
         return advertisement.getOptions().stream()
                 .filter(opt -> opt instanceof MtuOption)

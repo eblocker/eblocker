@@ -225,6 +225,62 @@ public class NetworkStateMachineTest {
         verify(dnsServer, never()).setDnsCustomResolver();
     }
 
+    @Test
+    public void disableDeviceInPlugAndPlayHealsArpAndDeprecatesIp6ViaHealDevice() {
+        initializeToPlugAndPlayState();
+        org.eblocker.server.common.data.Device disabledDevice = new org.eblocker.server.common.data.Device();
+        disabledDevice.setId("device:001122334455");
+        disabledDevice.setEnabled(false);
+
+        machine.deviceStateChanged(disabledDevice);
+
+        verify(services).enableFirewall(false, enableSSL, false, false);
+        verify(services).healDevice(disabledDevice);
+        verify(services, never()).deprecateIp6(disabledDevice);
+    }
+
+    @Test
+    public void disableDeviceInLocalDhcpDeprecatesIp6() {
+        initializeToLocalDhcpState();
+        org.eblocker.server.common.data.Device disabledDevice = new org.eblocker.server.common.data.Device();
+        disabledDevice.setId("device:001122334455");
+        disabledDevice.setEnabled(false);
+
+        machine.deviceStateChanged(disabledDevice);
+
+        verify(services).enableFirewall(true, enableSSL, false, false);
+        verify(services).configureDhcpServer(defaultLocalDhcpConfiguration());
+        verify(services).deprecateIp6(disabledDevice);
+        verify(services, never()).healDevice(disabledDevice);
+    }
+
+    @Test
+    public void disableDeviceInExternalDhcpDeprecatesIp6() {
+        initializeToExternalDhcpState();
+        org.eblocker.server.common.data.Device disabledDevice = new org.eblocker.server.common.data.Device();
+        disabledDevice.setId("device:001122334455");
+        disabledDevice.setEnabled(false);
+
+        machine.deviceStateChanged(disabledDevice);
+
+        verify(services).enableFirewall(true, enableSSL, false, false);
+        verify(services).deprecateIp6(disabledDevice);
+        verify(services, never()).healDevice(disabledDevice);
+    }
+
+    @Test
+    public void enableDeviceInPlugAndPlayDoesNotHealOrDeprecate() {
+        initializeToPlugAndPlayState();
+        org.eblocker.server.common.data.Device enabledDevice = new org.eblocker.server.common.data.Device();
+        enabledDevice.setId("device:001122334455");
+        enabledDevice.setEnabled(true);
+
+        machine.deviceStateChanged(enabledDevice);
+
+        verify(services, never()).healDevice(enabledDevice);
+        verify(services, never()).deprecateIp6(enabledDevice);
+    }
+
     private NetworkConfiguration defaultExternalDhcpConfiguration() {
         NetworkConfiguration cfg = defaultConfiguration();
         cfg.setAutomatic(false);

@@ -38,6 +38,7 @@ import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.common.util.Ip6Utils;
+import org.eblocker.server.http.service.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
     private final RouterAdvertisementCache routerAdvertisementCache;
     private final Ip6AddressDelayedValidator delayedValidator;
     private final RouterAdvertisementFactory routerAdvertisementFactory;
+    private final DeviceService deviceService;
 
     @Inject
     public NeighborDiscoveryListener(IpResponseTable ipResponseTable,
@@ -72,7 +74,8 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
                                      PubSubService pubSubService,
                                      RouterAdvertisementCache routerAdvertisementCache,
                                      Ip6AddressDelayedValidator delayedValidator,
-                                     RouterAdvertisementFactory routerAdvertisementFactory) {
+                                     RouterAdvertisementFactory routerAdvertisementFactory,
+                                     DeviceService deviceService) {
         this.ipResponseTable = ipResponseTable;
         this.clock = clock;
         this.deviceIpUpdater = deviceIpUpdater;
@@ -82,6 +85,7 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
         this.routerAdvertisementCache = routerAdvertisementCache;
         this.delayedValidator = delayedValidator;
         this.routerAdvertisementFactory = routerAdvertisementFactory;
+        this.deviceService = deviceService;
     }
 
     public void run() {
@@ -107,10 +111,6 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
                 return;
             }
 
-            if (parsedMessage.getIcmpType() == RouterSolicitation.ICMP_TYPE) {
-                replyToRouterSolicitation((RouterSolicitation) parsedMessage);
-            }
-
             if (parsedMessage.getIcmpType() == RouterAdvertisement.ICMP_TYPE) {
                 routerAdvertisementCache.addEntry((RouterAdvertisement) parsedMessage);
             }
@@ -128,13 +128,22 @@ public class NeighborDiscoveryListener implements Runnable, Subscriber {
             deviceIpUpdater.refresh(deviceId, advertisedAddress);
 
             ipResponseTable.put(hardwareAddress, advertisedAddress, clock.millis());
+
+            if (parsedMessage.getIcmpType() == RouterSolicitation.ICMP_TYPE) {
+                replyToRouterSolicitation((RouterSolicitation) parsedMessage, deviceId);
+            }
         } catch (MessageException e) {
             log.error("invalid message:", e);
         }
     }
 
-    private void replyToRouterSolicitation(RouterSolicitation solicitation) {
+    private void replyToRouterSolicitation(RouterSolicitation solicitation, String deviceId) {
         if (!featureToggleRouter.shouldSendRouterAdvertisements()) {
+            return;
+        }
+
+        Device device = deviceService.getDeviceById(deviceId);
+        if (device == null || !device.isEnabled()) {
             return;
         }
 

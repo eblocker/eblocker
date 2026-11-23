@@ -182,6 +182,18 @@ public class IpAddressValidatorTest {
         Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
     }
 
+    @Test
+    public void testNullHardwareAddressDeviceIsSkippedWithoutNpe() {
+        Device noMacDevice = new Device();
+        noMacDevice.setId("vpn:client-without-mac");
+        noMacDevice.setIpAddresses(Arrays.asList(IpAddress.parse("192.168.7.99"), IpAddress.parse("fe80::99")));
+        Mockito.when(deviceService.getDevices(Mockito.anyBoolean())).thenReturn(Arrays.asList(devices.get(0), noMacDevice));
+
+        validator.run();
+
+        Mockito.verify(pubSubService).publish("arp:out", "1/001122334455/192.168.7.1/00aabbccddee/192.168.7.20");
+    }
+
     private Device createDevice(String hwAddress, List<IpAddress> ipAddresses, boolean vpnClient) {
         Device device = new Device();
         device.setId("device:" + hwAddress);

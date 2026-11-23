@@ -187,9 +187,13 @@ public class IpAddressValidator {
 
         void sendMessages(Device device) {
             boolean isIpv6Available = featureToggleRouter.isIp6Enabled() && eblockerIp6LinkLocalAddress != null;
+            String hardwareAddressHex = device.getHardwareAddress(false);
+            if (hardwareAddressHex == null || hardwareAddressHex.isEmpty()) {
+                return;
+            }
+            byte[] hardwareAddress = DatatypeConverter.parseHexBinary(hardwareAddressHex);
 
             for (IpAddress ipAddress : device.getIpAddresses()) {
-                byte[] hardwareAddress = DatatypeConverter.parseHexBinary(device.getHardwareAddress(false));
                 if (ipAddress.isIpv4()) {
                     sendArpMessage(hardwareAddress, (Ip4Address) ipAddress);
                 } else if (isIpv6Available && ipAddress.isIpv6()) {

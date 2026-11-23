@@ -83,9 +83,12 @@ public abstract class FirewallConfigurationBase {
         tableGenerator.setServerEnvironment(environment.isServer());
 
         // ensure stable order to prevent deltas due to rule order changes
-        Set<Device> devicesByMac = new TreeSet<>(Comparator.comparing(Device::getHardwareAddress));
+        Set<Device> devicesByMac = new TreeSet<>(
+                Comparator.comparing((Device d) -> d.getHardwareAddress(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                        .thenComparing(d -> d.getId(), Comparator.nullsFirst(Comparator.naturalOrder())));
         devicesByMac.addAll(allDevices);
-        Set<OpenVpnClientState> anonVpnClientsById = new TreeSet<>(Comparator.comparing(OpenVpnClientState::getId));
+        Set<OpenVpnClientState> anonVpnClientsById = new TreeSet<>(
+                Comparator.comparing(OpenVpnClientState::getId, Comparator.nullsFirst(Comparator.naturalOrder())));
         anonVpnClientsById.addAll(anonVpnClients);
 
         IpAddressFilter ipAddressFilter = getIpAddressFilter(devicesByMac);

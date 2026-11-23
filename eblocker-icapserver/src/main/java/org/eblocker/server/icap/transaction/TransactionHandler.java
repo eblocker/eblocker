@@ -22,6 +22,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.eblocker.server.common.recorder.TransactionRecorder;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,15 +37,25 @@ public class TransactionHandler extends ChannelInboundHandlerAdapter {
     private final TransactionProcessorsConfiguration configuration;
 
     private final TransactionRecorder transactionRecorder;
+    private final FatalErrorHandler fatalErrorHandler;
 
-    @Inject
     public TransactionHandler(
             TransactionProcessorsConfiguration configuration,
             TransactionRecorder transactionRecorder
     ) {
+        this(configuration, transactionRecorder, FatalErrorHandler.noOp());
+    }
+
+    @Inject
+    public TransactionHandler(
+            TransactionProcessorsConfiguration configuration,
+            TransactionRecorder transactionRecorder,
+            FatalErrorHandler fatalErrorHandler
+    ) {
         log.info("Creating new TransactionHandler");
         this.configuration = configuration;
         this.transactionRecorder = transactionRecorder;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @Override
@@ -58,22 +69,42 @@ public class TransactionHandler extends ChannelInboundHandlerAdapter {
 
         log.debug("Received transaction:\n>>>>---------------------------{}>>>>---------------------------\n", transaction);
 
-        boolean outbound;
-        if (transaction.isRequest()) {
-            log.debug("Handling REQMOD Transaction for {}", transaction.getUrl());
-            outbound = true;
-            processRequest(transaction);
-        } else {//isResponse
-            log.debug("Handling RESPMOD Transaction for {}, ContentType={}{}", transaction.getUrl(), transaction.getContentType(), (transaction.isPreview() ? " [PREVIEW]" : ""));
-            outbound = false;
-            processResponse(transaction);
-        }
+        try {
+            boolean outbound;
+            if (transaction.isRequest()) {
+                log.debug("Handling REQMOD Transaction for {}", transaction.getUrl());
+                outbound = true;
+                processRequest(transaction);
+            } else {//isResponse
+                log.debug("Handling RESPMOD Transaction for {}, ContentType={}{}", transaction.getUrl(), transaction.getContentType(), (transaction.isPreview() ? " [PREVIEW]" : ""));
+                outbound = false;
+                processResponse(transaction);
+            }
 
-        transactionRecorder.addTransaction(transaction, outbound);
+            transactionRecorder.addTransaction(transaction, outbound);
+        } catch (Error e) {
+            log.error("Fatal error processing ICAP transaction for {}", transaction.getUrl(), e);
+            transaction.setComplete(true);
+            ctx.channel().writeAndFlush(transaction);
+            fatalErrorHandler.onFatalError("ICAP TransactionHandler channelRead", e);
+            throw e;
+        } catch (RuntimeException e) {
+            log.error("Failed to process ICAP transaction for {}, failing open", transaction.getUrl(), e);
+            transaction.setComplete(true);
+        }
 
         ctx.channel().writeAndFlush(transaction);
         log.debug("Processed transaction:\n>>>>---------------------------{}>>>>---------------------------\n", transaction);
 
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.error("Unhandled ICAP TransactionHandler exception", cause);
+        if (cause instanceof Error) {
+            fatalErrorHandler.onFatalError("ICAP TransactionHandler exceptionCaught", cause);
+        }
+        ctx.close();
     }
 
     private void processRequest(Transaction transaction) {

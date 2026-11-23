@@ -26,6 +26,7 @@ import ch.mimo.netty.handler.codec.icap.IcapVersion;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.util.DateUtil;
 import org.eblocker.server.icap.server.EblockerIcapServerConstants;
 import org.eblocker.server.icap.transaction.Transaction;
@@ -55,6 +56,16 @@ public class IcapRequestHandler extends ChannelInboundHandlerAdapter {
      */
     protected static final int MAX_CONNECTIONS = 1000;
 
+    private final FatalErrorHandler fatalErrorHandler;
+
+    public IcapRequestHandler() {
+        this(FatalErrorHandler.noOp());
+    }
+
+    public IcapRequestHandler(FatalErrorHandler fatalErrorHandler) {
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (!(msg instanceof IcapRequest)) {
@@ -64,21 +75,36 @@ public class IcapRequestHandler extends ChannelInboundHandlerAdapter {
         }
 
         IcapRequest icapRequest = (IcapRequest) msg;
-        if (icapRequest.getMethod().equals(IcapMethod.OPTIONS)) {
-            IcapResponse icapResponse = generateOptionsReponse(icapRequest);
-            icapRequest.release();
-            log.debug("Responding with direct IcapResponse without processing payload: {}", icapResponse);
-            ctx.channel().writeAndFlush(icapResponse);
-            return;
-        }
+        try {
+            if (icapRequest.getMethod().equals(IcapMethod.OPTIONS)) {
+                IcapResponse icapResponse = generateOptionsReponse(icapRequest);
+                icapRequest.release();
+                log.debug("Responding with direct IcapResponse without processing payload: {}", icapResponse);
+                ctx.channel().writeAndFlush(icapResponse);
+                return;
+            }
 
-        Transaction transaction = new IcapTransaction(icapRequest);
-        ctx.fireChannelRead(transaction);
+            Transaction transaction = new IcapTransaction(icapRequest);
+            ctx.fireChannelRead(transaction);
+        } catch (Error e) {
+            log.error("Fatal error in ICAP request handler", e);
+            fatalErrorHandler.onFatalError("IcapRequestHandler channelRead", e);
+            throw e;
+        } catch (RuntimeException e) {
+            log.warn("Failed to decode or dispatch ICAP request; closing channel", e);
+            if (icapRequest.refCnt() > 0) {
+                icapRequest.release();
+            }
+            ctx.channel().close();
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof IOException && "Connection reset by peer".equals(cause.getMessage())) {
+        if (cause instanceof Error) {
+            log.error("Fatal error in ICAP request handler pipeline", cause);
+            fatalErrorHandler.onFatalError("ICAP request handler", cause);
+        } else if (cause instanceof IOException && "Connection reset by peer".equals(cause.getMessage())) {
             log.debug("Connection already closed", cause);
         } else {
             log.warn("Unexpected error in ICAP request handler: ", cause);

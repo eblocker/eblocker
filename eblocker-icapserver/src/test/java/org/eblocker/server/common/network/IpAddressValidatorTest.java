@@ -20,6 +20,7 @@ import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.service.FeatureToggleRouter;
 import org.eblocker.server.http.service.DeviceService;
@@ -180,6 +181,22 @@ public class IpAddressValidatorTest {
         validator.run();
         // device is not updated, because the last run was too long ago:
         Mockito.verify(deviceService, Mockito.never()).updateDevice(device);
+    }
+
+    @Test
+    public void catchesRuntimeExceptions() {
+        long now = System.currentTimeMillis();
+        long lastActivity = ZonedDateTime.now().minusHours(4).toInstant().toEpochMilli();
+
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.21"), now);
+        ipResponseTable.put("00ff00112233", Ip4Address.parse("192.168.7.22"), lastActivity);
+
+        validator.run();
+
+        Mockito.doThrow(new EblockerException("Some error handling the device update"))
+                .when(networkStateMachine).deviceStateChanged(devices.get(1));
+
+        validator.run(); // responses are checked in the second run
     }
 
     private Device createDevice(String hwAddress, List<IpAddress> ipAddresses, boolean vpnClient) {

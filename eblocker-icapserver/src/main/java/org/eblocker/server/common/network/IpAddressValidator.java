@@ -83,14 +83,19 @@ public class IpAddressValidator {
     }
 
     public void run() {
-        long now = clock.millis();
-        if (now - lastSendMillis < lastSendMaxDeltaMillis) {
-            checkResponses();
-        } else {
-            log.debug("Not checking responses to avoid removing addresses that are still in use but have not been pinged yet");
-        }
+        try {
+            long now = clock.millis();
+            if (now - lastSendMillis < lastSendMaxDeltaMillis) {
+                checkResponses();
+            } else {
+                log.debug("Not checking responses to avoid removing addresses that are still in use but have not been pinged yet");
+            }
 
-        sendRequests();
+            sendRequests();
+
+        } catch (Exception e) {
+            log.error("Could not validate active IP addresses. Will try again...", e);
+        }
     }
 
     private void sendRequests() {

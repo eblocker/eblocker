@@ -191,6 +191,7 @@ public class TrafficAccounter {
     private void updateTotals(List<TrafficAccount> counters) {
         // update totals
         Map<String, TrafficAccount> countersByMac = counters.stream()
+                .filter(c -> c.getMac() != null)
                 .collect(Collectors.groupingBy(TrafficAccount::getMac, counterCollector()));
         countersByMac.values().forEach(this::updateCounter);
 

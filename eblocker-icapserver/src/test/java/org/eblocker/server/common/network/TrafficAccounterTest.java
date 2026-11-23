@@ -115,6 +115,23 @@ public class TrafficAccounterTest {
         assertAccount(accounter.getTrafficAccount(a), 2, 4, 8, 16);
     }
 
+    @Test
+    public void testAccountingIgnoresNullMacCounters() throws IOException, InterruptedException {
+        accounter.init();
+        Mockito.when(scriptRunner.runScript(Mockito.eq(DUMP_IP_TABLES_RULES_SCRIPT), Mockito.anyString())).then(ipTablesMock::writeDump);
+
+        Device normal = createDevice("device:1866da46397c", "10.10.10.99");
+        Device noMac = createDevice("vpn:client-without-mac", "10.10.10.250");
+        Mockito.when(deviceService.getDeviceByIp(normal.getIpAddresses().get(0))).thenReturn(normal);
+        Mockito.when(deviceService.getDeviceByIp(noMac.getIpAddresses().get(0))).thenReturn(noMac);
+
+        ipTablesMock.setDevice(normal, 3, 6, 9, 12);
+        ipTablesMock.setDevice(noMac, 5, 10, 15, 20);
+        accounter.update();
+
+        assertAccount(accounter.getTrafficAccount(normal), 3, 6, 9, 12);
+    }
+
     private void assertAccount(TrafficAccount account, long packetsIn, long bytesIn, long packetsOut, long bytesOut) {
         Assert.assertEquals(packetsIn, account.getPacketsIn());
         Assert.assertEquals(bytesIn, account.getBytesIn());

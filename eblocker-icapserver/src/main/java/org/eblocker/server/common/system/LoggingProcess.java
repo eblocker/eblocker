@@ -63,6 +63,11 @@ public abstract class LoggingProcess {
                 }
             } catch (IOException e) {
                 log.error("{}: Could not read next line from stream", scriptName, e);
+            } catch (RuntimeException e) {
+                log.error("{}: Unexpected runtime exception in stream logger", scriptName, e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("LoggingProcess-" + scriptName, e);
+                throw e;
             } finally {
                 // only add quit marker if all stream loggers have added their lines to stdout
                 if (loggerExited.incrementAndGet() == 2) {
@@ -99,6 +104,7 @@ public abstract class LoggingProcess {
 
     protected final String name; // a name that appears in the log
     private final Executor executor;
+    private final FatalErrorHandler fatalErrorHandler;
     protected Process process;
 
     /**
@@ -107,8 +113,13 @@ public abstract class LoggingProcess {
      * @param name name to be shown at the start of each log line
      */
     public LoggingProcess(String name, Executor executor) {
+        this(name, executor, FatalErrorHandler.noOp());
+    }
+
+    protected LoggingProcess(String name, Executor executor, FatalErrorHandler fatalErrorHandler) {
         this.name = name;
         this.executor = executor;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     /**

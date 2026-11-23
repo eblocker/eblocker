@@ -17,6 +17,7 @@
 package org.eblocker.server.common.system.unix;
 
 import org.eblocker.server.common.exceptions.EblockerException;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.LoggingProcess;
 
 import java.util.concurrent.Executor;
@@ -24,7 +25,11 @@ import java.util.concurrent.Executor;
 public class LoggingProcessUnix extends LoggingProcess {
 
     public LoggingProcessUnix(String name, Executor executor) {
-        super(name, executor);
+        this(name, executor, FatalErrorHandler.noOp());
+    }
+
+    public LoggingProcessUnix(String name, Executor executor, FatalErrorHandler fatalErrorHandler) {
+        super(name, executor, fatalErrorHandler);
     }
 
     @Override

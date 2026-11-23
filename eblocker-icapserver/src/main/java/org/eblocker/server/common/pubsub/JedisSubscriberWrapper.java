@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.pubsub;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPubSub;
@@ -24,14 +25,24 @@ public class JedisSubscriberWrapper extends JedisPubSub {
     private final static Logger logger = LoggerFactory.getLogger(JedisSubscriberWrapper.class);
     final static String UNSUBSCRIBE_REQUEST = "UNSUBSCRIBE-" + Math.random();
 
-    private Subscriber subscriber;
+    private final Subscriber subscriber;
+    private final FatalErrorHandler fatalErrorHandler;
 
     public JedisSubscriberWrapper(Subscriber subscriber) {
+        this(subscriber, FatalErrorHandler.noOp());
+    }
+
+    public JedisSubscriberWrapper(Subscriber subscriber, FatalErrorHandler fatalErrorHandler) {
         this.subscriber = subscriber;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @Override
     public void onMessage(String channel, String message) {
+        if (message == null) {
+            logger.warn("Ignoring null pubsub message on channel {}", channel);
+            return;
+        }
         if (UNSUBSCRIBE_REQUEST.equals(message)) {
             unsubscribe();
             return;
@@ -39,6 +50,10 @@ public class JedisSubscriberWrapper extends JedisPubSub {
 
         try {
             subscriber.process(message);
+        } catch (Error e) {
+            logger.error("Fatal error in pubsub subscriber on channel {}:", channel, e);
+            fatalErrorHandler.onFatalError("Redis pubsub message on channel " + channel, e);
+            throw e;
         } catch (Exception e) {
             logger.error("Caught unchecked exception in channel {}:", channel, e);
         }

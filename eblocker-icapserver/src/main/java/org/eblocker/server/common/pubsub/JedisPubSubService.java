@@ -18,11 +18,11 @@ package org.eblocker.server.common.pubsub;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,13 +32,21 @@ public class JedisPubSubService implements PubSubService {
 
     private final JedisPool pool;
     private final int retryDelay;
+    private final FatalErrorHandler fatalErrorHandler;
 
     private ConcurrentMap<Subscriber, String> channelBySubscriber = new ConcurrentHashMap<>(32, .75f, 2);
 
+    public JedisPubSubService(JedisPool pool, int retryDelay) {
+        this(pool, retryDelay, FatalErrorHandler.noOp());
+    }
+
     @Inject
-    public JedisPubSubService(JedisPool pool, @Named("jedis.pubsub.retry.delay") int retryDelay) {
+    public JedisPubSubService(JedisPool pool,
+                              @Named("jedis.pubsub.retry.delay") int retryDelay,
+                              FatalErrorHandler fatalErrorHandler) {
         this.pool = pool;
         this.retryDelay = retryDelay;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @Override
@@ -52,15 +60,45 @@ public class JedisPubSubService implements PubSubService {
     public void subscribeAndLoop(String channel, Subscriber subscriber) {
         channelBySubscriber.put(subscriber, channel);
         while (channelBySubscriber.containsKey(subscriber)) {
-            try (Jedis jedis = pool.getResource()) {
-                jedis.subscribe(new JedisSubscriberWrapper(subscriber), channel);
-            } catch (JedisConnectionException e) {
-                logger.warn("connection failed, attempting to reconnect in {}ms", retryDelay, e);
+            Jedis jedis = null;
+            boolean disconnectBeforeClose = false;
+            try {
+                jedis = pool.getResource();
+                JedisSubscriberWrapper wrapper = new JedisSubscriberWrapper(subscriber, fatalErrorHandler);
+                jedis.subscribe(wrapper, channel);
+                if (channelBySubscriber.containsKey(subscriber) || wrapper.isSubscribed()) {
+                    disconnectBeforeClose = true;
+                }
+            } catch (Error e) {
+                disconnectBeforeClose = true;
+                logger.error("Fatal error in pubsub loop for channel {}", channel, e);
+                channelBySubscriber.remove(subscriber);
+                fatalErrorHandler.onFatalError("Redis pubsub loop on channel " + channel, e);
+                throw e;
+            } catch (RuntimeException e) {
+                disconnectBeforeClose = true;
+                logger.warn("Pubsub loop on channel {} failed, attempting to reconnect in {}ms", channel, retryDelay, e);
                 try {
                     Thread.sleep(retryDelay);
                 } catch (InterruptedException ie) {
                     logger.warn("interrupted while sleeping", ie);
                     Thread.currentThread().interrupt();
+                    break;
+                }
+            } finally {
+                if (jedis != null) {
+                    if (disconnectBeforeClose) {
+                        try {
+                            jedis.disconnect();
+                        } catch (RuntimeException ignored) {
+                            // Ensure a still-subscribed connection is never returned live to the pool.
+                        }
+                    }
+                    try {
+                        jedis.close();
+                    } catch (RuntimeException ignored) {
+                        // Ignore pool return errors after disconnecting.
+                    }
                 }
             }
         }
@@ -68,8 +106,14 @@ public class JedisPubSubService implements PubSubService {
 
     @Override
     public void unsubscribe(Subscriber subscriber) {
+        if (subscriber == null) {
+            return;
+        }
         // unsubscribe must happen from the same thread as the subscribe so there's no other way than using
         // a marker message for shutdown
-        publish(channelBySubscriber.remove(subscriber), JedisSubscriberWrapper.UNSUBSCRIBE_REQUEST);
+        String channel = channelBySubscriber.remove(subscriber);
+        if (channel != null) {
+            publish(channel, JedisSubscriberWrapper.UNSUBSCRIBE_REQUEST);
+        }
     }
 }

@@ -177,7 +177,13 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public Object updateDevice(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
+        if (deviceId == null) {
+            throw new BadRequestException("Required parameter deviceId is missing in request.");
+        }
         Device device = request.getBodyAs(Device.class);
+        if (device == null) {
+            throw new BadRequestException("Device payload is missing in request.");
+        }
         device.setId(deviceId);
 
         updateDevice(device);
@@ -203,6 +209,9 @@ public class DeviceControllerImpl implements DeviceController {
         }
 
         Device device = request.getBodyAs(Device.class);
+        if (device == null) {
+            throw new BadRequestException("Device payload is missing in request.");
+        }
         device.setId(deviceId);
 
         updateDevice(device);
@@ -213,6 +222,9 @@ public class DeviceControllerImpl implements DeviceController {
     // FIXME - Most of this method should be moved to the DeviceService
     private void updateDevice(Device device) {
         Device current = deviceService.getDeviceById(device.getId());
+        if (current == null) {
+            throw new NotFoundException("Device " + device.getId() + " not found in datastore.");
+        }
 
         /*
          * The default system user must not be changed. EB1-2220 describes an issue where possible two eBlockers
@@ -287,6 +299,9 @@ public class DeviceControllerImpl implements DeviceController {
         }
 
         ShowWelcomeFlags flags = request.getBodyAs(ShowWelcomeFlags.class);
+        if (flags == null) {
+            throw new BadRequestException("ShowWelcomeFlags payload is missing in request.");
+        }
         currentDevice.setShowWelcomePage(flags.isShowWelcomePage());
         currentDevice.setShowBookmarkDialog(flags.isShowBookmarkDialog());
         deviceService.updateDevice(currentDevice);
@@ -312,6 +327,9 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public void setScanningInterval(Request request, Response response) {
         Long interval = request.getBodyAs(Long.class);
+        if (interval == null) {
+            throw new BadRequestException("Scanning interval payload is missing in request.");
+        }
         if (interval >= 0) {
             deviceScanningService.setScanningInterval(interval);
         }
@@ -325,12 +343,18 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public void setAutoEnableNewDevices(Request request, Response response) {
         Boolean isAutoEnableNewDevices = request.getBodyAs(Boolean.class);
+        if (isAutoEnableNewDevices == null) {
+            throw new BadRequestException("autoEnableNewDevices flag is missing in request.");
+        }
         deviceFactory.setAutoEnableNewDevices(isAutoEnableNewDevices);
     }
 
     @Override
     public void setAutoEnableNewDevicesAndResetExisting(Request request, Response response) {
         Boolean isAutoEnableNewDevices = request.getBodyAs(Boolean.class);
+        if (isAutoEnableNewDevices == null) {
+            throw new BadRequestException("autoEnableNewDevices flag is missing in request.");
+        }
         deviceFactory.setAutoEnableNewDevices(isAutoEnableNewDevices);
         deviceService.setEnabledForAllButCurrentDevice(isAutoEnableNewDevices, getCurrentDevice(request));
     }
@@ -426,6 +450,9 @@ public class DeviceControllerImpl implements DeviceController {
         Device device = getCurrentDevice(request);
         if (device != null) {
             Map<String, Boolean> map = request.getBodyAs(Map.class);
+            if (map == null || map.get("showWarnings") == null) {
+                throw new BadRequestException("showWarnings flag is missing in request.");
+            }
             device.setAreDeviceMessagesSettingsDefault(map.get("showWarnings"));
             deviceService.updateDevice(device);
             return device;
@@ -465,6 +492,9 @@ public class DeviceControllerImpl implements DeviceController {
         Device device = getCurrentDevice(request);
         if (device != null) {
             Map<String, Boolean> map = request.getBodyAs(Map.class);
+            if (map == null || map.get("doNotShowPauseDialogAgain") == null) {
+                throw new BadRequestException("doNotShowPauseDialogAgain flag is missing in request.");
+            }
             device.setShowPauseDialogDoNotShowAgain(map.get("doNotShowPauseDialogAgain"));
             deviceService.updateDevice(device);
         }
@@ -475,6 +505,9 @@ public class DeviceControllerImpl implements DeviceController {
         Device device = getCurrentDevice(request);
         if (device != null) {
             Map<String, Boolean> map = request.getBodyAs(Map.class);
+            if (map == null || map.get("showPauseDialog") == null) {
+                throw new BadRequestException("showPauseDialog flag is missing in request.");
+            }
             device.setShowPauseDialog(map.get("showPauseDialog"));
             deviceService.updateDevice(device);
         }
@@ -483,13 +516,22 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public IconSettings getIconSettings(Request request, Response response) {
         Device device = getCurrentDevice(request);
+        if (device == null) {
+            throw new NotFoundException("Current device not found in datastore.");
+        }
         return new IconSettings(device);
     }
 
     @Override
     public IconSettings setIconSettings(Request request, Response response) {
         Device device = getCurrentDevice(request);
+        if (device == null) {
+            throw new NotFoundException("Current device not found in datastore.");
+        }
         IconSettings iconSettings = request.getBodyAs(IconSettings.class);
+        if (iconSettings == null) {
+            throw new BadRequestException("IconSettings payload is missing in request.");
+        }
         Device changedDevice = deviceService.setIconSettings(device, iconSettings);
         return new IconSettings(changedDevice);
     }
@@ -498,7 +540,19 @@ public class DeviceControllerImpl implements DeviceController {
     public Device.DisplayIconPosition setIconPosition(Request request, Response response) {
         response.addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*"); // called by controlbar-inlay.js from any domain
         Device device = getCurrentDevice(request);
-        Device.DisplayIconPosition iconPosition = Device.DisplayIconPosition.valueOf(request.getHeader("iconPos"));
+        if (device == null) {
+            throw new NotFoundException("Current device not found in datastore.");
+        }
+        String iconPos = request.getHeader("iconPos");
+        if (iconPos == null) {
+            throw new BadRequestException("Required parameter iconPos is missing in request.");
+        }
+        Device.DisplayIconPosition iconPosition;
+        try {
+            iconPosition = Device.DisplayIconPosition.valueOf(iconPos);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid iconPos value: " + iconPos, e);
+        }
         return deviceService.setIconPosition(device, iconPosition);
     }
 
@@ -506,7 +560,13 @@ public class DeviceControllerImpl implements DeviceController {
     public void updateDeviceDnsAdsEnabledStatus(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
         Device device = deviceService.getDeviceById(deviceId);
+        if (device == null) {
+            throw new NotFoundException("Device " + deviceId + " not found in datastore.");
+        }
         Boolean value = request.getBodyAs(Boolean.class);
+        if (value == null) {
+            throw new BadRequestException("DNS ads filter flag is missing in request.");
+        }
         device.setFilterAdsEnabled(value);
         deviceService.updateDevice(device);
     }
@@ -515,7 +575,13 @@ public class DeviceControllerImpl implements DeviceController {
     public void updateDeviceDnsTrackersEnabledStatus(Request request, Response response) {
         String deviceId = request.getHeader("deviceId");
         Device device = deviceService.getDeviceById(deviceId);
+        if (device == null) {
+            throw new NotFoundException("Device " + deviceId + " not found in datastore.");
+        }
         Boolean value = request.getBodyAs(Boolean.class);
+        if (value == null) {
+            throw new BadRequestException("DNS trackers filter flag is missing in request.");
+        }
         device.setFilterTrackersEnabled(value);
         deviceService.updateDevice(device);
     }
@@ -523,6 +589,9 @@ public class DeviceControllerImpl implements DeviceController {
     @Override
     public IconSettings resetIconSettings(Request request, Response response) {
         Device device = getCurrentDevice(request);
+        if (device == null) {
+            throw new NotFoundException("Current device not found in datastore.");
+        }
         Device resettedDevice = deviceService.resetIconSettings(device);
         return new IconSettings(resettedDevice);
     }

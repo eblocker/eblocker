@@ -23,6 +23,7 @@ import org.eblocker.server.common.data.DataSource;
 import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -56,6 +58,24 @@ public class BlockerService {
     private final PatternBlockerService patternBlockerService;
     private final ScheduledExecutorService executorService;
     private final UpdateTaskFactory updateTaskFactory;
+    private final FatalErrorHandler fatalErrorHandler;
+
+    public BlockerService(String localStoragePath,
+                          BlockerIdTypeIdCache idCache,
+                          DataSource dataSource,
+                          DomainBlockerService domainBlockerService,
+                          PatternBlockerService patternBlockerService,
+                          ScheduledExecutorService executorService,
+                          UpdateTaskFactory updateTaskFactory) {
+        this(localStoragePath,
+                idCache,
+                dataSource,
+                domainBlockerService,
+                patternBlockerService,
+                executorService,
+                updateTaskFactory,
+                FatalErrorHandler.noOp());
+    }
 
     @Inject
     public BlockerService(@Named("blocker.localStorage.path") String localStoragePath,
@@ -64,7 +84,8 @@ public class BlockerService {
                           DomainBlockerService domainBlockerService,
                           PatternBlockerService patternBlockerService,
                           @Named("lowPrioScheduledExecutor") ScheduledExecutorService executorService,
-                          UpdateTaskFactory updateTaskFactory) {
+                          UpdateTaskFactory updateTaskFactory,
+                          FatalErrorHandler fatalErrorHandler) {
         this.localStoragePath = Paths.get(localStoragePath);
         this.idCache = idCache;
         this.dataSource = dataSource;
@@ -72,6 +93,7 @@ public class BlockerService {
         this.patternBlockerService = patternBlockerService;
         this.executorService = executorService;
         this.updateTaskFactory = updateTaskFactory;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @SubSystemInit
@@ -234,7 +256,7 @@ public class BlockerService {
             throw new UnsupportedOperationException("can not change blocker category");
         }
 
-        boolean needsUpdate = blocker.getFormat() != definition.getFormat() || blocker.getContent() != null || !blocker.getUrl().equals(definition.getUrl());
+        boolean needsUpdate = blocker.getFormat() != definition.getFormat() || blocker.getContent() != null || !Objects.equals(blocker.getUrl(), definition.getUrl());
         definition.setName(BlockerUtils.firstValue(blocker.getName()));
         definition.setDescription(BlockerUtils.firstValue(blocker.getDescription()));
         definition.setFormat(blocker.getFormat());
@@ -312,7 +334,16 @@ public class BlockerService {
 
         long start = System.currentTimeMillis();
         log.info("Updating {} custom blockers", tasks.size());
-        tasks.forEach(Runnable::run);
+        for (UpdateTask task : tasks) {
+            try {
+                task.run();
+            } catch (RuntimeException e) {
+                log.error("Scheduled blocker update task failed", e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("BlockerService.update", e);
+                throw e;
+            }
+        }
         long elapsed = System.currentTimeMillis() - start;
         log.info("Updating {} blockers finished in {}ms", tasks.size(), elapsed);
     }

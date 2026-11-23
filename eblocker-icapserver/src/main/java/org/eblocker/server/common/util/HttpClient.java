@@ -16,35 +16,90 @@
  */
 package org.eblocker.server.common.util;
 
-import com.google.common.io.ByteStreams;
-import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO: should be shared with eblocker-lists
 public class HttpClient {
 
     private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
+    private static final int CONNECT_TIMEOUT_MS = 30000;
+    private static final int SOCKET_TIMEOUT_MS = 60000;
+
+    protected CloseableHttpClient createHttpClient() {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(CONNECT_TIMEOUT_MS)
+                .setConnectionRequestTimeout(CONNECT_TIMEOUT_MS)
+                .setSocketTimeout(SOCKET_TIMEOUT_MS)
+                .build();
+        return HttpClients.custom()
+                .setDefaultRequestConfig(requestConfig)
+                .build();
+    }
 
     public InputStream download(String url) throws IOException {
         log.debug("downloading {}", url);
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        CloseableHttpClient client = createHttpClient();
+        CloseableHttpResponse response = null;
+        try {
             HttpGet request = new HttpGet(url);
             request.addHeader("Accept", "*/*");
             request.addHeader("Accept-Encoding", "gzip");
-            HttpResponse response = client.execute(request);
-            log.debug("downloaded {}: {} {}", url, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new IOException("Could not download " + url + ". Status " + response.getStatusLine().getStatusCode() + " returned");
+            response = client.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            log.debug("downloaded {}: {} {}", url, statusCode, response.getStatusLine().getReasonPhrase());
+            if (statusCode != 200) {
+                throw new IOException("Could not download " + url + ". Status " + statusCode + " returned");
             }
-            return new ByteArrayInputStream(ByteStreams.toByteArray(response.getEntity().getContent()));
+            HttpEntity entity = response.getEntity();
+            if (entity == null || entity.getContent() == null) {
+                throw new IOException("Empty response body when downloading " + url);
+            }
+            final CloseableHttpResponse finalResponse = response;
+            final AtomicBoolean closed = new AtomicBoolean(false);
+            return new FilterInputStream(entity.getContent()) {
+                @Override
+                public void close() throws IOException {
+                    if (!closed.compareAndSet(false, true)) {
+                        return;
+                    }
+                    try {
+                        super.close();
+                    } finally {
+                        try {
+                            finalResponse.close();
+                        } finally {
+                            client.close();
+                        }
+                    }
+                }
+            };
+        } catch (IOException | RuntimeException e) {
+            closeQuietly(response);
+            closeQuietly(client);
+            throw e;
+        }
+    }
+
+    private static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                log.debug("Ignoring close error", e);
+            }
         }
     }
 }

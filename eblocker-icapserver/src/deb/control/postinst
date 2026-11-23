@@ -53,6 +53,15 @@ if [ "$1" = configure ] ; then
 
     divert_dhcp_defaults
 
+    # Invalidate pre-4.0.3 compiled FilterStore caches so PR #471 parser rules take effect cleanly.
+    if [ ! -f /opt/eblocker-icap/conf/filter/.filter-cache-v403 ] || dpkg --compare-versions "${2:-0}" lt-nl "4.0.3"; then
+        rm -f /opt/eblocker-icap/conf/filter/*.json.enc
+        mkdir -p /opt/eblocker-icap/conf/filter
+        chown icapd:icapd /opt/eblocker-icap/conf/filter
+        touch /opt/eblocker-icap/conf/filter/.filter-cache-v403
+        chown icapd:icapd /opt/eblocker-icap/conf/filter/.filter-cache-v403
+    fi
+
     # Reboot or restart?
     systemctl status eblocker-updater >/dev/null 2>&1
     if [ $? -eq 0 ]; then

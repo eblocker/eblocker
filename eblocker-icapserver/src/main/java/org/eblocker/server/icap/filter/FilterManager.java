@@ -31,6 +31,7 @@ import org.eblocker.server.common.data.systemstatus.SubSystem;
 import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.startup.SubSystemInit;
 import org.eblocker.server.common.startup.SubSystemService;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.icap.filter.csv.CSVLineParser;
 import org.eblocker.server.icap.filter.easylist.EasyListLineParser;
 import org.eblocker.server.icap.filter.learning.AsynchronousLearningFilter;
@@ -79,9 +80,21 @@ public class FilterManager {
     private final ObjectMapper objectMapper;
     private final KeyWrapper systemKey;
     private final Path tmpDir;
+    private final FatalErrorHandler fatalErrorHandler;
 
-    private List<FilterStoreConfiguration> configurations;
-    private volatile Cache cache; //NOSONAR: copy-on-write
+    private volatile List<FilterStoreConfiguration> configurations = new ArrayList<>();
+    private volatile Cache cache = new Cache(); //NOSONAR: copy-on-write
+    private volatile boolean initializedFromDisk = false;
+
+    public FilterManager(@Named("filterStore.default.config") String defaultFilterStoreConfigurations,
+                         @Named("filterStore.cache.directory") String cacheDirectory,
+                         @Named("filterStore.cache.file.suffix") String fileSuffix,
+                         DataSource dataSource,
+                         ObjectMapper objectMapper,
+                         @Named("systemKey") KeyWrapper systemKey,
+                         @Named("tmpDir") String tmpDir) {
+        this(defaultFilterStoreConfigurations, cacheDirectory, fileSuffix, dataSource, objectMapper, systemKey, tmpDir, FatalErrorHandler.noOp());
+    }
 
     @Inject
     public FilterManager(@Named("filterStore.default.config") String defaultFilterStoreConfigurations,
@@ -90,7 +103,8 @@ public class FilterManager {
                          DataSource dataSource,
                          ObjectMapper objectMapper,
                          @Named("systemKey") KeyWrapper systemKey,
-                         @Named("tmpDir") String tmpDir) {
+                         @Named("tmpDir") String tmpDir,
+                         FatalErrorHandler fatalErrorHandler) {
         this.defaultFilterStoreConfigurations = defaultFilterStoreConfigurations;
         this.cacheDirectory = Paths.get(cacheDirectory);
         this.fileSuffix = fileSuffix;
@@ -98,27 +112,31 @@ public class FilterManager {
         this.objectMapper = objectMapper;
         this.systemKey = systemKey;
         this.tmpDir = Paths.get(tmpDir);
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
     }
 
     @SubSystemInit
     public void init() {
-        configurations = dataSource.getAll(FilterStoreConfiguration.class);
+        List<FilterStoreConfiguration> loaded = dataSource.getAll(FilterStoreConfiguration.class);
+        configurations = loaded != null ? loaded : new ArrayList<>();
         checkAndApplyDefaultConfigurationUpdates();
         load();
     }
 
     public Filter getFilter(Category category) {
-        if (cache == null) {
+        Cache current = this.cache;
+        if (current == null || category == null) {
             return NULL_FILTER;
         }
-        return cache.filterByCategory.getOrDefault(category, NULL_FILTER);
+        return current.filterByCategory.getOrDefault(category, NULL_FILTER);
     }
 
     public FilterStore getFilterStore(int id) {
-        if (cache == null) {
+        Cache current = this.cache;
+        if (current == null) {
             return null;
         }
-        return cache.storeById.get(id);
+        return current.storeById.get(id);
     }
 
     public List<FilterStoreConfiguration> getFilterConfigurations() {
@@ -127,7 +145,7 @@ public class FilterManager {
 
     public FilterStoreConfiguration getFilterStoreConfigurationById(int id) {
         return configurations.stream()
-                .filter(c -> id == c.getId())
+                .filter(c -> c.getId() != null && id == c.getId())
                 .findAny()
                 .orElse(null);
     }
@@ -216,7 +234,8 @@ public class FilterManager {
 
     private int indexOfConfiguration(int id) {
         for (int i = 0; i < configurations.size(); ++i) {
-            if (configurations.get(i).getId() == id) {
+            Integer existingId = configurations.get(i).getId();
+            if (existingId != null && existingId == id) {
                 return i;
             }
         }
@@ -225,6 +244,7 @@ public class FilterManager {
 
     private synchronized void load() {
         updateCache(configurations, this::loadOrCreate);
+        this.initializedFromDisk = true;
     }
 
     private synchronized void updateCache(List<FilterStoreConfiguration> configurations, Function<FilterStoreConfiguration, FilterStore> storeLoader) {
@@ -232,8 +252,11 @@ public class FilterManager {
         Map<Category, List<Filter>> filtersByCategory = new EnumMap<>(Category.class);
         for (FilterStoreConfiguration configuration : configurations) {
             FilterStore filterStore = storeLoader.apply(configuration);
+            if (filterStore == null) {
+                filterStore = createFilterStore(configuration);
+            }
             cache.storeById.put(configuration.getId(), filterStore);
-            if (configuration.isEnabled()) {
+            if (configuration.isEnabled() && filterStore.getFilter() != null) {
                 filtersByCategory.computeIfAbsent(configuration.getCategory(), k -> new ArrayList<>()).add(filterStore.getFilter());
             }
         }
@@ -252,10 +275,17 @@ public class FilterManager {
     public synchronized void update() {
         for (FilterStoreConfiguration configuration : configurations) {
             FilterStore filterStore = cache.storeById.get(configuration.getId());
+            if (filterStore == null) {
+                filterStore = loadOrCreate(configuration);
+                cache.storeById.put(configuration.getId(), filterStore);
+            }
             try {
                 update(filterStore, configuration);
             } catch (Exception e) {
                 log.error("Cannot update current filter configuration: {} ({})", configuration.getId(), configuration.getName(), e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("FilterManager.update-" + configuration.getId(), e);
+                throw e;
             }
         }
     }
@@ -263,10 +293,16 @@ public class FilterManager {
     private synchronized void save() {
         for (FilterStoreConfiguration configuration : configurations) {
             FilterStore filterStore = cache.storeById.get(configuration.getId());
+            if (filterStore == null) {
+                continue;
+            }
             try {
                 save(filterStore, configuration);
             } catch (Exception e) {
                 log.error("Cannot save current filter configuration: {} ({})", configuration.getId(), configuration.getName(), e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("FilterManager.save-" + configuration.getId(), e);
+                throw e;
             }
         }
     }
@@ -401,8 +437,11 @@ public class FilterManager {
             filterStore.update(filters);
             long stop = System.currentTimeMillis();
             log.debug("updated filter {} in {}ms (parsing: {}ms, filtering: {}, store: {}ms)", configuration.getId(), stop - start, splitParse - start, splitFilter - splitParse, stop - splitFilter);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             log.error("failed to update filter {}", configuration.getId(), e);
+        } catch (Error e) {
+            fatalErrorHandler.onFatalError("FilterManager.updateStore-" + configuration.getId(), e);
+            throw e;
         }
     }
 
@@ -418,6 +457,9 @@ public class FilterManager {
     }
 
     private List<Filter> filterRules(List<Filter> filters, String[] ruleFilters) {
+        if (ruleFilters == null || ruleFilters.length == 0) {
+            return filters;
+        }
         Predicate<Filter> cspPredicate = fad -> fad instanceof UrlFilter && ((UrlFilter) fad).getContentSecurityPolicies() != null;
         List<Predicate<Filter>> predicates = new ArrayList<>();
         for (String rule : ruleFilters) {
@@ -464,29 +506,55 @@ public class FilterManager {
 
     public Runnable getFilterStoreUpdater() {
         return () -> {
-            if (cache == null) {
-                log.info("Loading filter stores from disk...");
-                load();
-            } else {
-                log.info("Saving current filter configuration to disk ...");
-                save();
-                log.info("... saving done.");
+            try {
+                if (!initializedFromDisk) {
+                    log.info("Loading filter stores from disk...");
+                    load();
+                } else {
+                    log.info("Saving current filter configuration to disk ...");
+                    save();
+                    log.info("... saving done.");
+                }
+                log.info("Updating current filter configuration from provided filter lists ...");
+                update();
+                log.info("... updating done.");
+            } catch (RuntimeException e) {
+                log.error("Filter store updater failed", e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("FilterManager.filterStoreUpdater", e);
+                throw e;
             }
-            log.info("Updating current filter configuration from provided filter lists ...");
-            update();
-            log.info("... updating done.");
         };
     }
 
     public Runnable getAsynchronousLearnersUpdater() {
         return () -> {
-            if (cache == null) {
+            Cache currentCache = this.cache;
+            List<FilterStoreConfiguration> currentConfigs = this.configurations;
+            if (currentCache == null || currentConfigs == null) {
                 return;
             }
-            configurations.stream()
-                    .filter(configuration -> FilterLearningMode.ASYNCHRONOUS == configuration.getLearningMode())
-                    .map(configuration -> ((Runnable) cache.storeById.get(configuration.getId()).getFilter()))
-                    .forEach(Runnable::run);
+            for (FilterStoreConfiguration configuration : currentConfigs) {
+                if (FilterLearningMode.ASYNCHRONOUS != configuration.getLearningMode()) {
+                    continue;
+                }
+                FilterStore store = currentCache.storeById.get(configuration.getId());
+                if (store == null) {
+                    continue;
+                }
+                FilterDomainContainer filter = store.getFilter();
+                if (!(filter instanceof Runnable)) {
+                    continue;
+                }
+                try {
+                    ((Runnable) filter).run();
+                } catch (RuntimeException e) {
+                    log.error("Asynchronous learner update failed for filter {} ({})", configuration.getId(), configuration.getName(), e);
+                } catch (Error e) {
+                    fatalErrorHandler.onFatalError("FilterManager.asyncLearner-" + configuration.getId(), e);
+                    throw e;
+                }
+            }
         };
     }
 

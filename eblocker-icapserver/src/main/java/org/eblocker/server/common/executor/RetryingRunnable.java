@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.common.executor;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,17 @@ public class RetryingRunnable implements Runnable {
 
     private final Runnable runnable;
     private final long maxRetries;
+    private final FatalErrorHandler fatalErrorHandler;
     private int failures;
 
     public RetryingRunnable(Runnable runnable, long maxRetries) {
+        this(runnable, maxRetries, FatalErrorHandler.noOp());
+    }
+
+    public RetryingRunnable(Runnable runnable, long maxRetries, FatalErrorHandler fatalErrorHandler) {
         this.runnable = runnable;
         this.maxRetries = maxRetries;
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         this.failures = 0;
     }
 
@@ -46,6 +53,10 @@ public class RetryingRunnable implements Runnable {
                 log.info("Runnable {} recovered after {} failures.", runnable.getClass(), failures);
                 failures = 0;
             }
+        } catch (Error e) {
+            log.error("Runnable {} encountered fatal Error; escalating immediately.", runnable.getClass(), e);
+            fatalErrorHandler.onFatalError("retrying runnable " + runnable.getClass().getSimpleName(), e);
+            throw e;
         } catch (Exception e) {
             if (failures >= maxRetries) {
                 log.error("Runnable failed permanently after {} retries. Re-throwing exception.", maxRetries, e);

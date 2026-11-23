@@ -16,6 +16,7 @@
  */
 package org.eblocker.server.http.service;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +42,19 @@ public class FileSystemWatchService {
 
     private static final Logger log = LoggerFactory.getLogger(FileSystemWatchService.class);
 
+    private final FatalErrorHandler fatalErrorHandler;
     private WatchService watchService;
     private Set<Path> watchedDirectories = new HashSet<>();
     private Map<WatchKey, Path> watchKeys = new HashMap<>();
     private Map<Path, Consumer<Path>> callbacksByPath = new HashMap<>();
 
+    public FileSystemWatchService(Executor executor) throws IOException {
+        this(executor, FatalErrorHandler.noOp());
+    }
+
     @Inject
-    public FileSystemWatchService(@Named("unlimitedCachePoolExecutor") Executor executor) throws IOException {
+    public FileSystemWatchService(@Named("unlimitedCachePoolExecutor") Executor executor, FatalErrorHandler fatalErrorHandler) throws IOException {
+        this.fatalErrorHandler = fatalErrorHandler != null ? fatalErrorHandler : FatalErrorHandler.noOp();
         watchService = FileSystems.getDefault().newWatchService();
         executor.execute(this::watch);
     }
@@ -67,20 +74,36 @@ public class FileSystemWatchService {
     @SuppressWarnings("unchecked")
     private void watch() {
         try {
-            WatchKey watchKey;
-            while ((watchKey = watchService.take()) != null) {
-                Path directory = watchKeys.get(watchKey);
-                watchKey.pollEvents().forEach(e -> handleEvent(directory, (WatchEvent<Path>) e));
-                watchKey.reset();
+            while (true) {
+                try {
+                    WatchKey watchKey = watchService.take();
+                    if (watchKey == null) {
+                        return;
+                    }
+                    Path directory = watchKeys.get(watchKey);
+                    if (directory != null) {
+                        watchKey.pollEvents().forEach(e -> handleEvent(directory, (WatchEvent<Path>) e));
+                    }
+                    watchKey.reset();
+                } catch (InterruptedException e) {
+                    log.info("thread interrupted, exiting", e);
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (Exception e) {
+                    log.error("error in file system watch loop; continuing", e);
+                }
             }
-        } catch (InterruptedException e) {
-            log.info("thread interrupted, exiting", e);
-            Thread.currentThread().interrupt();
+        } catch (Error e) {
+            fatalErrorHandler.onFatalError("FileSystemWatchService", e);
+            throw e;
         }
     }
 
     private void handleEvent(Path directory, WatchEvent<Path> event) {
         Path file = event.context();
+        if (file == null) {
+            return;
+        }
         Path fullPath = directory.resolve(file);
         Consumer<Path> callback = callbacksByPath.get(fullPath);
         if (callback != null) {
@@ -89,6 +112,9 @@ public class FileSystemWatchService {
                 callback.accept(fullPath);
             } catch (Exception e) {
                 log.error("exception in callback for {}", fullPath, e);
+            } catch (Error e) {
+                fatalErrorHandler.onFatalError("FileSystemWatchService callback " + fullPath, e);
+                throw e;
             }
         } else {
             log.debug("no callback registered for {}", fullPath);

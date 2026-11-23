@@ -85,6 +85,7 @@ import org.eblocker.server.common.ssl.SslTestRequestHandlerFactory;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemUsageInterceptor;
 import org.eblocker.server.common.system.CommandRunner;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.system.unix.CommandRunnerUnix;
@@ -344,10 +345,10 @@ public class EblockerModule extends BaseModule {
     @Provides
     @Named("lowPrioScheduledExecutor")
     @Singleton
-    public ScheduledExecutorService provideLowPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService) {
+    public ScheduledExecutorService provideLowPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService, FatalErrorHandler fatalErrorHandler) {
         ScheduledExecutorService result = Executors.newScheduledThreadPool(2);
         shutdownExecutorService.addExecutorService(result);
-        return new LoggingExecutorService("lowPrioScheduledExecutor", result);
+        return new LoggingExecutorService("lowPrioScheduledExecutor", result, fatalErrorHandler);
     }
 
     /**
@@ -359,10 +360,10 @@ public class EblockerModule extends BaseModule {
     @Provides
     @Named("highPrioScheduledExecutor")
     @Singleton
-    public ScheduledExecutorService provideHighPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService) {
+    public ScheduledExecutorService provideHighPrioScheduledExecutor(ShutdownExecutorService shutdownExecutorService, FatalErrorHandler fatalErrorHandler) {
         ScheduledExecutorService result = Executors.newScheduledThreadPool(3);
         shutdownExecutorService.addExecutorService(result);
-        return new LoggingExecutorService("highPrioScheduledExecutor", result);
+        return new LoggingExecutorService("highPrioScheduledExecutor", result, fatalErrorHandler);
     }
 
     @Provides
@@ -375,10 +376,10 @@ public class EblockerModule extends BaseModule {
     @Provides
     @Named("unlimitedCachePoolExecutorService")
     @Singleton
-    public ExecutorService provideUnlimitedCachePoolExecutorService(ShutdownExecutorService shutdownExecutorService) {
+    public ExecutorService provideUnlimitedCachePoolExecutorService(ShutdownExecutorService shutdownExecutorService, FatalErrorHandler fatalErrorHandler) {
         ExecutorService result = Executors.newCachedThreadPool();
         shutdownExecutorService.addExecutorService(result);
-        return new LoggingExecutorService("unlimitedCachePoolExecutor", result);
+        return new LoggingExecutorService("unlimitedCachePoolExecutor", result, fatalErrorHandler);
     }
 
     @Provides

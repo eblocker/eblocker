@@ -187,12 +187,13 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
         JedisPool mockPool = Mockito.mock(JedisPool.class);
         Jedis firstJedis = Mockito.mock(Jedis.class);
         Jedis secondJedis = Mockito.mock(Jedis.class);
+        Jedis publishJedis = Mockito.mock(Jedis.class);
         FatalErrorHandler fatalHandler = Mockito.mock(FatalErrorHandler.class);
 
         JedisPubSubService service = new JedisPubSubService(mockPool, 10, fatalHandler);
         Subscriber subscriber = Mockito.mock(Subscriber.class);
 
-        Mockito.when(mockPool.getResource()).thenReturn(firstJedis, secondJedis);
+        Mockito.when(mockPool.getResource()).thenReturn(firstJedis, secondJedis, publishJedis);
         Mockito.doThrow(new IllegalStateException("unexpected runtime failure"))
                 .when(firstJedis).subscribe(Mockito.any(JedisPubSub.class), Mockito.eq(CHANNEL));
         Mockito.doAnswer(invocation -> {

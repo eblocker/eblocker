@@ -19,6 +19,7 @@ package org.eblocker.server.icap.transaction.processor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.netty.handler.codec.http.HttpRequest;
+import org.eblocker.server.common.exceptions.EblockerException;
 import org.eblocker.server.common.session.Session;
 import org.eblocker.server.common.session.SessionStore;
 import org.eblocker.server.icap.transaction.Transaction;
@@ -41,19 +42,38 @@ public class SessionProcessor implements TransactionProcessor {
 
     @Override
     public boolean process(Transaction transaction) {
+        if (sessionStore.isDeviceDisabled(transaction)) {
+            log.debug("Bypassing ICAP processing for disabled device transaction: {}", transaction.getUrl());
+            transaction.setComplete(true);
+            return false;
+        }
+
         HttpRequest request = transaction.getRequest();
         Session session = null;
 
-        if (transaction.isRequest()) {
-            session = sessionStore.getSession(transaction);
-        } else {
-            String sessionId = request.headers().get(HEADER);
-            if (sessionId != null) {
-                session = sessionStore.findSession(sessionId);
-            }
-            if (session == null) {
+        try {
+            if (transaction.isRequest()) {
                 session = sessionStore.getSession(transaction);
+            } else {
+                String sessionId = (request != null && request.headers() != null)
+                        ? request.headers().get(HEADER)
+                        : null;
+                if (sessionId != null) {
+                    session = sessionStore.findSession(sessionId);
+                }
+                if (session == null) {
+                    session = sessionStore.getSession(transaction);
+                }
             }
+        } catch (EblockerException e) {
+            log.debug("Bypassing ICAP processing for unknown device/session ({}): {}", transaction.getUrl(), e.getMessage());
+            transaction.setComplete(true);
+            return false;
+        }
+
+        if (session == null) {
+            transaction.setComplete(true);
+            return false;
         }
 
         transaction.setSession(session);

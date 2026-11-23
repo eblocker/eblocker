@@ -16,15 +16,20 @@
  */
 package org.eblocker.server.common.pubsub;
 
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.http.service.EmbeddedRedisServiceTestBase;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPubSub;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
 
@@ -175,5 +180,61 @@ public class JedisPubSubServiceTest extends EmbeddedRedisServiceTestBase {
         Assert.assertEquals(2, messages.size());
         Assert.assertEquals("beforeConnectionLost", messages.get(0));
         Assert.assertEquals("afterConnectionLost", messages.get(1));
+    }
+
+    @Test(timeout = 5000)
+    public void testDisconnectsSubscribedJedisOnRuntimeExceptionBeforePoolReturn() {
+        JedisPool mockPool = Mockito.mock(JedisPool.class);
+        Jedis firstJedis = Mockito.mock(Jedis.class);
+        Jedis secondJedis = Mockito.mock(Jedis.class);
+        FatalErrorHandler fatalHandler = Mockito.mock(FatalErrorHandler.class);
+
+        JedisPubSubService service = new JedisPubSubService(mockPool, 10, fatalHandler);
+        Subscriber subscriber = Mockito.mock(Subscriber.class);
+
+        Mockito.when(mockPool.getResource()).thenReturn(firstJedis, secondJedis);
+        Mockito.doThrow(new IllegalStateException("unexpected runtime failure"))
+                .when(firstJedis).subscribe(Mockito.any(JedisPubSub.class), Mockito.eq(CHANNEL));
+        Mockito.doAnswer(invocation -> {
+            service.unsubscribe(subscriber);
+            return null;
+        }).when(secondJedis).subscribe(Mockito.any(JedisPubSub.class), Mockito.eq(CHANNEL));
+
+        service.subscribeAndLoop(CHANNEL, subscriber);
+
+        InOrder firstOrder = Mockito.inOrder(firstJedis);
+        firstOrder.verify(firstJedis).disconnect();
+        firstOrder.verify(firstJedis).close();
+
+        Mockito.verify(secondJedis, Mockito.never()).disconnect();
+        Mockito.verify(secondJedis).close();
+        Mockito.verifyNoInteractions(fatalHandler);
+    }
+
+    @Test(timeout = 5000)
+    public void testDisconnectsSubscribedJedisAndEscalatesOnFatalError() {
+        JedisPool mockPool = Mockito.mock(JedisPool.class);
+        Jedis mockJedis = Mockito.mock(Jedis.class);
+        AtomicReference<Throwable> recordedError = new AtomicReference<>();
+        FatalErrorHandler fatalHandler = (source, error) -> recordedError.set(error);
+
+        JedisPubSubService service = new JedisPubSubService(mockPool, 10, fatalHandler);
+        Subscriber subscriber = Mockito.mock(Subscriber.class);
+
+        Mockito.when(mockPool.getResource()).thenReturn(mockJedis);
+        OutOfMemoryError oom = new OutOfMemoryError("simulated OOM");
+        Mockito.doThrow(oom).when(mockJedis).subscribe(Mockito.any(JedisPubSub.class), Mockito.eq(CHANNEL));
+
+        try {
+            service.subscribeAndLoop(CHANNEL, subscriber);
+            Assert.fail("Expected OutOfMemoryError to be rethrown");
+        } catch (OutOfMemoryError expected) {
+            Assert.assertSame(oom, expected);
+        }
+
+        Assert.assertSame(oom, recordedError.get());
+        InOrder inOrder = Mockito.inOrder(mockJedis);
+        inOrder.verify(mockJedis).disconnect();
+        inOrder.verify(mockJedis).close();
     }
 }

@@ -42,6 +42,7 @@ import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemServiceIndex;
 import org.eblocker.server.common.startup.SubSystemShutdown;
 import org.eblocker.server.common.status.StartupStatusReporter;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.update.SystemUpdater;
 import org.eblocker.server.http.controller.AnonymousController;
@@ -178,6 +179,7 @@ public class EblockerServerApp {
 
     private EventLogger eventLogger;
     private ShutdownService shutdownService;
+    private FatalErrorHandler fatalErrorHandler;
 
     // For the final overall system state
     private boolean haveWarnings = false;
@@ -243,8 +245,14 @@ public class EblockerServerApp {
             // Start-up complete
             //
             startupCompleted();
-        } catch (Exception e) {
+        } catch (Error e) {
             startupFailed(e);
+            if (fatalErrorHandler != null) {
+                fatalErrorHandler.onFatalError("runtimePhase", e);
+            }
+            exitSystem();
+        } catch (Throwable t) {
+            startupFailed(t);
         }
     }
 
@@ -253,6 +261,11 @@ public class EblockerServerApp {
     void initBootPhase(@Nonnull Module baseModule) {
         LOG.info("Initiating eBlocker Core start-up...");
         injector = Guice.createInjector(baseModule);
+
+        fatalErrorHandler = injector.getExistingBinding(Key.get(FatalErrorHandler.class)) != null
+                ? injector.getInstance(FatalErrorHandler.class)
+                : FatalErrorHandler.noOp();
+        installDefaultUncaughtExceptionHandler(fatalErrorHandler);
 
         subSystemServicesIndex = injector.getInstance(SubSystemServiceIndex.class);
         subSystemServicesIndex.scan(injector.getBindings());
@@ -623,6 +636,12 @@ public class EblockerServerApp {
                     Thread.currentThread().interrupt();
                 } catch (ExecutionException e) {
                     LOG.error("Initializing subsystem {} failed!", subSystem, e);
+                    if (e.getCause() instanceof Error) {
+                        if (fatalErrorHandler != null) {
+                            fatalErrorHandler.onFatalError("subsystem " + subSystem + " init", e.getCause());
+                        }
+                        throw (Error) e.getCause();
+                    }
                 }
             });
         });
@@ -645,6 +664,21 @@ public class EblockerServerApp {
             method.invoke(instance);
         } catch (ReflectiveOperationException e) {
             LOG.error("{}/{}/{} failed", subSystem, instance.getClass().getSuperclass().getSimpleName(), method.getName(), e);
+            if (e.getCause() instanceof Error) {
+                if (fatalErrorHandler != null) {
+                    fatalErrorHandler.onFatalError(subSystem + "/" + method.getName(), e.getCause());
+                }
+                throw (Error) e.getCause();
+            }
         }
+    }
+
+    static void installDefaultUncaughtExceptionHandler(FatalErrorHandler fatalErrorHandler) {
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            LOG.error("Uncaught exception on thread {}", thread.getName(), throwable);
+            if (throwable instanceof Error) {
+                fatalErrorHandler.onFatalError("thread " + thread.getName(), throwable);
+            }
+        });
     }
 }

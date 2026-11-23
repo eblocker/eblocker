@@ -34,6 +34,7 @@ fi
 MEMORY_SETTINGS="\
 -Xmx${MAX_JVM_HEAP_SIZE_IN_MB}m \
 -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY_IN_MB}m \
+-XX:+ExitOnOutOfMemoryError \
 -Dio.netty.allocator.numDirectArenas=${NUM_ARENAS} \
 -Dio.netty.allocator.numHeapArenas=${NUM_ARENAS}"
 

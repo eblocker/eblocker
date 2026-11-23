@@ -85,6 +85,8 @@ import org.eblocker.server.common.ssl.SslTestRequestHandlerFactory;
 import org.eblocker.server.common.startup.SubSystemService;
 import org.eblocker.server.common.startup.SubSystemUsageInterceptor;
 import org.eblocker.server.common.system.CommandRunner;
+import org.eblocker.server.common.system.DefaultFatalErrorHandler;
+import org.eblocker.server.common.system.FatalErrorHandler;
 import org.eblocker.server.common.system.ScriptRunner;
 import org.eblocker.server.common.system.SystemRequirements;
 import org.eblocker.server.common.system.unix.CommandRunnerUnix;
@@ -231,6 +233,7 @@ public class EblockerModule extends BaseModule {
         bind(ChannelHandler.class).annotatedWith(Names.named("AccessDeniedRequestHandler")).to(AccessDeniedRequestHandler.class);
         bind(ChannelHandler.class).annotatedWith(Names.named("DomainBlockingRequestHandler")).to(RequestHandler.class);
         bind(CommandRunner.class).to(CommandRunnerUnix.class);
+        bind(FatalErrorHandler.class).to(DefaultFatalErrorHandler.class);
         bind(DeviceRegistrationLicenseState.class).to(DeviceRegistrationLicenseStateImpl.class);
         bind(DhcpServer.class).to(IscDhcpServer.class);
         bind(DnsDataSource.class).to(JedisDnsDataSource.class);

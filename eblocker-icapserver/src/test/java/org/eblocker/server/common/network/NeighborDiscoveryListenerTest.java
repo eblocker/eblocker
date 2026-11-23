@@ -17,6 +17,7 @@
 package org.eblocker.server.common.network;
 
 import org.eblocker.server.common.TestClock;
+import org.eblocker.server.common.data.Device;
 import org.eblocker.server.common.data.Ip4Address;
 import org.eblocker.server.common.data.Ip6Address;
 import org.eblocker.server.common.data.IpAddress;
@@ -28,6 +29,7 @@ import org.eblocker.server.common.network.icmpv6.SourceLinkLayerAddressOption;
 import org.eblocker.server.common.pubsub.PubSubService;
 import org.eblocker.server.common.pubsub.Subscriber;
 import org.eblocker.server.common.service.FeatureToggleRouter;
+import org.eblocker.server.http.service.DeviceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +51,7 @@ public class NeighborDiscoveryListenerTest {
     private NetworkInterfaceWrapper networkInterface;
     private RouterAdvertisementCache routerAdvertisementCache;
     private Ip6AddressDelayedValidator addressCache;
+    private DeviceService deviceService;
     private NeighborDiscoveryListener listener;
 
     private TestPubSubService pubSubService;
@@ -74,9 +77,10 @@ public class NeighborDiscoveryListenerTest {
         addressCache = Mockito.mock(Ip6AddressDelayedValidator.class);
 
         deviceIpUpdater = Mockito.mock(DeviceIpUpdater.class);
+        deviceService = Mockito.mock(DeviceService.class);
 
         RouterAdvertisementFactory routerAdvertisementFactory = new RouterAdvertisementFactory(RouterAdvertisement.RouterPreference.HIGH, 120, 120, routerAdvertisementCache, networkInterface);
-        listener = new NeighborDiscoveryListener(ipResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache, routerAdvertisementFactory);
+        listener = new NeighborDiscoveryListener(ipResponseTable, clock, deviceIpUpdater, featureToggleRouter, networkInterface, pubSubService, routerAdvertisementCache, addressCache, routerAdvertisementFactory, deviceService);
     }
 
     @Test
@@ -133,6 +137,10 @@ public class NeighborDiscoveryListenerTest {
 
     @Test
     public void testRouterSolicitation() {
+        Device enabledDevice = new Device();
+        enabledDevice.setId("device:000010101010");
+        enabledDevice.setEnabled(true);
+        Mockito.when(deviceService.getDeviceById("device:000010101010")).thenReturn(enabledDevice);
         Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"), Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
         listener.run();
         subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/133");
@@ -142,6 +150,20 @@ public class NeighborDiscoveryListenerTest {
         Assert.assertEquals("ip6:out", pubSubService.getPublishedMessages().get(0)[0]);
         Assert.assertEquals("000001020304/fe800000000000000001000200030004/000010101010/fe800000000000000010001000100010/icmp6/134/255/0/0/0/1/120/0/0/1/000001020304/25/120/1/fe800000000000000001000200030004/5/1500",
                 pubSubService.getPublishedMessages().get(0)[1]);
+    }
+
+    @Test
+    public void testRouterSolicitationDisabledDevice() {
+        Device disabledDevice = new Device();
+        disabledDevice.setId("device:000010101010");
+        disabledDevice.setEnabled(false);
+        Mockito.when(deviceService.getDeviceById("device:000010101010")).thenReturn(disabledDevice);
+        Mockito.when(networkInterface.getAddresses()).thenReturn(Arrays.asList(Ip6Address.parse("fe80::1:2:3:4:5"), Ip4Address.parse("10.12.34.5"), Ip6Address.parse("2000::1:2:3:4:5")));
+        listener.run();
+        subscriber.process("000010101010/fe800000000000000010001000100010/000010101000/fe800000000000000010001000100000/icmp6/133");
+        Mockito.verify(deviceIpUpdater).refresh("device:000010101010", Ip6Address.parse("fe80::10:10:10:10"));
+        Assert.assertEquals((Long) clock.millis(), ipResponseTable.get("000010101010", IpAddress.parse("fe80::10:10:10:10")));
+        Assert.assertEquals(0, pubSubService.getPublishedMessages().size());
     }
 
     @Test

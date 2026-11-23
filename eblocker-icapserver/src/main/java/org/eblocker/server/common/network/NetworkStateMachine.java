@@ -221,9 +221,13 @@ public class NetworkStateMachine {
     public void deviceStateChanged(Device justChangedDevice) {
         deviceStateChanged(); // do the same as normal method
 
-        NetworkStateId currentState = getCurrentNetworkState().getId();
-        if (currentState == NetworkStateId.PLUG_AND_PLAY && !justChangedDevice.isEnabled()) {
-            services.healDevice(justChangedDevice);
+        if (!justChangedDevice.isEnabled()) {
+            NetworkStateId currentState = getCurrentNetworkState().getId();
+            if (currentState == NetworkStateId.PLUG_AND_PLAY) {
+                services.healDevice(justChangedDevice);
+            } else {
+                services.deprecateIp6(justChangedDevice);
+            }
         }
     }
 

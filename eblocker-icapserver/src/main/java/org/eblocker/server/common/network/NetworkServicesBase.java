@@ -61,6 +61,7 @@ public abstract class NetworkServicesBase implements NetworkServices {
     private final DeviceService deviceService;
 
     private List<NetworkChangeListener> listeners = new ArrayList<>();
+    private Ip6RouterAdvertiser ip6RouterAdvertiser;
 
     public NetworkServicesBase(DataSource dataSource,
                                ScheduledExecutorService executorService,
@@ -78,6 +79,11 @@ public abstract class NetworkServicesBase implements NetworkServices {
         this.arpSpooferFixedDelay = arpSpooferFixedDelay;
         this.eblockerDnsServer = eblockerDnsServer;
         this.deviceService = deviceService;
+    }
+
+    @com.google.inject.Inject(optional = true)
+    public void setIp6RouterAdvertiser(Ip6RouterAdvertiser ip6RouterAdvertiser) {
+        this.ip6RouterAdvertiser = ip6RouterAdvertiser;
     }
 
     protected Set<Device> getDevices() {
@@ -212,8 +218,16 @@ public abstract class NetworkServicesBase implements NetworkServices {
     }
 
     public boolean healDevice(Device device) {
-        log.info("Healing ARP cache of just disabled device {}", device.getHardwareAddress());
+        log.info("Healing ARP cache and IPv6 RA state of just disabled device {}", device.getHardwareAddress());
+        deprecateIp6(device);
         return arpSpoofer.heal(device);//if in auto mode and device was just disabled, heal the ARP cache of the device
+    }
+
+    @Override
+    public void deprecateIp6(Device device) {
+        if (ip6RouterAdvertiser != null) {
+            ip6RouterAdvertiser.deprecate(device);
+        }
     }
 
     @Override

@@ -112,7 +112,9 @@ public class TableGeneratorIp4 extends TableGeneratorBase {
         }
 
         ipAddressFilter.getDisabledDevicesIps().forEach(ip -> preRouting
-                .rule(autoInputForSource(ip).tcp().returnFromChain()));
+                .rule(autoInputForSource(ip).returnFromChain()));
+        ipAddressFilter.getDisabledDevicesMacs().forEach(mac -> preRouting
+                .rule(new Rule(standardInput).macSource(mac).returnFromChain()));
 
         if (dnsEnabled) {
             preRouting

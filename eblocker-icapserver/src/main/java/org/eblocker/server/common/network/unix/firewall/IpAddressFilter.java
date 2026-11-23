@@ -21,6 +21,7 @@ import org.eblocker.server.common.data.IpAddress;
 import org.eblocker.server.http.service.ParentalControlAccessRestrictionsService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -64,8 +65,18 @@ public class IpAddressFilter {
                 .filter(Device::isActive));
     }
 
+    public List<String> getDisabledDevicesMacs() {
+        return devices.stream()
+                .filter(device -> !device.isEnabled())
+                .map(Device::getHardwareAddress)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     public List<String> getSslEnabledDevicesIps() {
         return collectIpAddresses(devices.stream()
+                .filter(Device::isEnabled)
                 .filter(Device::isActive)
                 .filter(Device::isSslEnabled));
     }

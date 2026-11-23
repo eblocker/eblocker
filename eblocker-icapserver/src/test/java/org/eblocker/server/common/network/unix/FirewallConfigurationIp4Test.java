@@ -234,7 +234,7 @@ public class FirewallConfigurationIp4Test {
         allDevices.addAll(Arrays.asList(a, b, c, d));
         configuration.enable(allDevices, new HashSet<>(), false, true, false, false, true, () -> true);
 
-        assertEqualContent("test-data/firewall/firewall.conf", configFullFile);
+        assertEqualContent("test-data/firewall/firewall-disabled-mac.conf", configFullFile);
     }
 
     @Test

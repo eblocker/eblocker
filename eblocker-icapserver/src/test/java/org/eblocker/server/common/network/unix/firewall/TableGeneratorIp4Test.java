@@ -121,10 +121,8 @@ public class TableGeneratorIp4Test extends TableGeneratorTestBase {
         // DNS from enabled devices to external servers is redirected to eblocker-dns
         Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), sim.udpPacket(enabledDevice, externalHost, 53));
 
-        // DNS from disabled devices to external servers is also redirected to eblocker-dns
-        // FIXME: shouldn't this pass through?
-        // (In case traffic is routed to the eBlocker anyway, e.g. if the device is disabled, but still has a DHCP lease from eBlocker)
-        Assert.assertEquals(Action.redirectTo(eBlockerIp, localDnsPort), sim.udpPacket(disabledDevice, externalHost, 53));
+        // DNS from disabled devices also passes through
+        Assert.assertEquals(Action.returnFromChain(), sim.udpPacket(disabledDevice, externalHost, 53));
 
         // Local network traffic to other devices passes through
         Assert.assertEquals(Action.returnFromChain(), sim.tcpPacket(enabledDevice, otherLocalDevice, 80));

@@ -29,7 +29,7 @@ public class Rule {
     private Action action;
 
     private String inputInterface, outputInterface;
-    private String sourceIp, destinationIp;
+    private String sourceIp, destinationIp, macSource;
     private Integer destinationPort;
     private Protocol protocol;
 
@@ -53,6 +53,7 @@ public class Rule {
             outputInterface = template.outputInterface;
             sourceIp = template.sourceIp;
             destinationIp = template.destinationIp;
+            macSource = template.macSource;
             destinationPort = template.destinationPort;
             protocol = template.protocol;
             matchSet = template.matchSet;
@@ -84,6 +85,11 @@ public class Rule {
 
     public Rule destinationIp(String ip) {
         this.destinationIp = ip;
+        return this;
+    }
+
+    public Rule macSource(String macSource) {
+        this.macSource = macSource;
         return this;
     }
 
@@ -223,6 +229,10 @@ public class Rule {
         return destinationIp;
     }
 
+    public String getMacSource() {
+        return macSource;
+    }
+
     public Integer getDestinationPort() {
         return destinationPort;
     }
@@ -260,6 +270,9 @@ public class Rule {
         }
         if (destinationIp != null) {
             appendOption(result, "-d", destinationIp);
+        }
+        if (macSource != null) {
+            appendOption(result, "-m mac --mac-source", macSource);
         }
         if (protocol != null) {
             appendOption(result, "-p", protocol.getLabel());

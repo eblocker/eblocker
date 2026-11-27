@@ -78,17 +78,17 @@ public class OpenVpnServerControllerImpl implements OpenVpnServerController {
         VpnServerStatus newStatus = request.getBodyAs(VpnServerStatus.class);
         log.info("setStatus {}", newStatus.isRunning());
 
-        VpnServerStatus result = openVpnServerService.setOpenVpnServerStatus(newStatus);
         try {
+            VpnServerStatus result = openVpnServerService.setOpenVpnServerStatus(newStatus);
             if (result.isRunning()) {
                 openVpnServerService.enablePortForwarding();
             } else {
                 openVpnServerService.disablePortForwarding();
             }
-        } catch (UpnpPortForwardingException e) {
+            return result;
+        } catch (Exception e) {
             throw new InternalServerErrorException(e);
         }
-        return result;
     }
 
     @Override

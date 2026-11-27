@@ -125,7 +125,7 @@ public class OpenVpnServerBackupProvider extends BackupProvider {
         writeSharedSecret(backup.getSharedSecret());
         service.restoreOpenVpnServer();
         service.setOpenVpnServerfirstRun(false); // remove firstRun flag, so no new CA is created
-        service.setOpenVpnServerStatus(serverStatus);
+        service.setOpenVpnServerStatus(serverStatus, true);
 
         try {
             if (serverStatus.isRunning()) {

@@ -188,6 +188,33 @@ public class OpenVpnServerServiceTest {
         assertEquals(PortForwardingMode.AUTO, statusOut.getPortForwardingMode());
         assertEquals(mappedPort, statusOut.getMappedPort());
 
+        Mockito.verify(dynDnsService).enable();
+        Mockito.verify(dynDnsService).update();
+        Mockito.verify(dataSource).setOpenVpnServerHost(dynDnsHost);
+    }
+
+    @Test
+    public void startWithEblockerDynDnsImportingBackup() {
+        VpnServerStatus statusIn = startServerRequest();
+        final String dynDnsHost = "abcdefghijklmnop.home.eblocker.com";
+        final Integer mappedPort = 1195;
+        statusIn.setExternalAddressType(ExternalAddressType.EBLOCKER_DYN_DNS);
+        statusIn.setPortForwardingMode(PortForwardingMode.AUTO);
+        statusIn.setMappedPort(mappedPort);
+        statusIn.setHost(dynDnsHost);
+        Mockito.when(dataSource.getOpenVpnServerHost()).thenReturn(dynDnsHost);
+
+        createAndInitService();
+
+        VpnServerStatus statusOut = service.setOpenVpnServerStatus(statusIn, true);
+
+        assertEquals(dynDnsHost, statusOut.getHost());
+        assertEquals(ExternalAddressType.EBLOCKER_DYN_DNS, statusOut.getExternalAddressType());
+        assertEquals(PortForwardingMode.AUTO, statusOut.getPortForwardingMode());
+        assertEquals(mappedPort, statusOut.getMappedPort());
+
+        Mockito.verify(dynDnsService).enable();
+        Mockito.verify(dynDnsService, Mockito.never()).update();
         Mockito.verify(dataSource).setOpenVpnServerHost(dynDnsHost);
     }
 
